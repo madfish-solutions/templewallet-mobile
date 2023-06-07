@@ -13,7 +13,9 @@ export const formatTimespan = (timespanMs: number, formatOptionsOverrides?: Form
   });
 };
 
-export const SECONDS_IN_DAY = 24 * 60 * 60;
+export const SECONDS_IN_MINUTE = 60;
+export const SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
+export const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
 export const APPROXIMATE_DAYS_IN_YEAR = 365;
 
 export const isTheSameDay = (first: Date, second: Date) =>

@@ -1,11 +1,15 @@
 import { useField } from 'formik';
-import React from 'react';
+import { noop } from 'lodash-es';
+import React, { useCallback } from 'react';
 
-import { Dropdown, DropdownProps } from '../components/dropdown/dropdown';
+import { Dropdown, DropdownProps } from 'src/components/dropdown/dropdown';
+import { EventFn } from 'src/config/general';
+
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props<T> extends DropdownProps<T> {
   name: string;
+  onValueChange?: EventFn<T | undefined>;
 }
 
 export const FormDropdown = <T extends unknown>({
@@ -16,9 +20,19 @@ export const FormDropdown = <T extends unknown>({
   equalityFn,
   renderValue,
   renderListItem,
-  renderActionButtons
+  renderActionButtons,
+  onValueChange = noop,
+  testID
 }: Props<T>) => {
   const [field, meta, helpers] = useField<T | undefined>(name);
+
+  const handleValueChange = useCallback(
+    (value?: T) => {
+      helpers.setValue(value);
+      onValueChange(value);
+    },
+    [helpers.setValue, onValueChange]
+  );
 
   return (
     <>
@@ -31,7 +45,8 @@ export const FormDropdown = <T extends unknown>({
         renderValue={renderValue}
         renderListItem={renderListItem}
         renderActionButtons={renderActionButtons}
-        onValueChange={helpers.setValue}
+        onValueChange={handleValueChange}
+        testID={testID}
       />
       <ErrorMessage meta={meta} />
     </>

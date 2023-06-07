@@ -2,6 +2,17 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useManageFarmingPoolModalStyles = createUseStyles(({ colors, typography }) => ({
+  background: {
+    backgroundColor: colors.pageBG,
+    flex: 1,
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(16)
+  },
+  depositPrompt: {
+    ...typography.caption13Regular,
+    letterSpacing: formatSize(-0.08),
+    color: colors.gray1
+  },
   loaderContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -22,28 +33,21 @@ export const useManageFarmingPoolModalStyles = createUseStyles(({ colors, typogr
   emphasized: {
     ...typography.caption13Semibold
   },
-  listItem: {
-    flexDirection: 'row'
+  detailsTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: formatSize(8)
   },
-  listItemBullet: {
-    ...typography.caption13Regular,
-    letterSpacing: formatSize(-0.08),
-    lineHeight: formatSize(18),
-    width: formatSize(20),
-    textAlign: 'center',
-    color: colors.black
+  farmTypeIconWrapper: {
+    padding: formatSize(4),
+    borderRadius: formatSize(4),
+    backgroundColor: colors.black,
+    border: formatSize(0.5),
+    borderColor: colors.lines
   },
-  listItemText: {
-    ...typography.caption13Regular,
-    letterSpacing: formatSize(-0.08),
-    lineHeight: formatSize(18),
-    flex: 1,
-    color: colors.black
-  },
-  acceptRisksText: {
+  detailsTitleText: {
     ...typography.body15Semibold,
-    letterSpacing: formatSize(-0.24),
     color: colors.black,
-    marginLeft: formatSize(10)
+    letterSpacing: formatSize(-0.24)
   }
 }));

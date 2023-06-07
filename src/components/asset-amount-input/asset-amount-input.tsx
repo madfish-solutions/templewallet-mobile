@@ -51,15 +51,6 @@ const getDefinedAmount = (
       : dollarToTokenAmount(amount, decimals, exchangeRate)
     : undefined;
 
-const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => (
-  <TokenDropdownItem
-    token={value}
-    actionIconName={IconNameEnum.TriangleDown}
-    isShowBalance={false}
-    iconSize={formatSize(32)}
-  />
-);
-
 const renderTokenListItem: DropdownListItemComponent<TokenInterface> = ({ item, isSelected }) => (
   <TokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
 );
@@ -68,6 +59,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   value,
   label,
   assetsList,
+  balanceLabel,
   frozenBalance,
   isError = false,
   toUsdToggle = true,
@@ -77,6 +69,9 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   selectionOptions = undefined,
   maxButton = false,
   expectedGasExpense = 0.3,
+  balanceValueStyles,
+  isShowNameForValue = true,
+  isSingleAsset = false,
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
@@ -138,6 +133,19 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
     return newNumericInputValue;
   }, [value.amount, isTokenInputType, value.asset.decimals, exchangeRate]);
+
+  const renderTokenValue = useCallback<DropdownValueComponent<TokenInterface>>(
+    ({ value: tokenValue }) => (
+      <TokenDropdownItem
+        token={tokenValue}
+        actionIconName={isSingleAsset ? undefined : IconNameEnum.TriangleDown}
+        isShowBalance={false}
+        isShowName={isShowNameForValue}
+        iconSize={formatSize(32)}
+      />
+    ),
+    [isSingleAsset, isShowNameForValue]
+  );
 
   const onChange = useCallback(
     newInputValue => {
@@ -257,6 +265,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         >
           <Dropdown
             description="Assets"
+            disabled={isSingleAsset}
             value={value.asset}
             list={assetsList}
             isSearchable={isSearchable}
@@ -289,7 +298,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
                 <AssetValueText
                   amount={frozenBalance}
                   asset={value.asset}
-                  style={styles.balanceText}
+                  style={[styles.balanceText, balanceValueStyles]}
                   convertToDollar={!isTokenInputType}
                 />
               </View>
@@ -297,13 +306,15 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             </>
           )}
           <View style={styles.balanceRow}>
-            <Text style={styles.balanceText}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
+            <Text style={styles.balanceText}>
+              {balanceLabel ?? (isLiquidityProviderToken ? 'Total Balance:' : 'Balance:')}
+            </Text>
             <Divider size={formatSize(4)} />
             <HideBalance style={styles.balanceText}>
               <AssetValueText
                 amount={balance}
                 asset={value.asset}
-                style={styles.balanceText}
+                style={[styles.balanceText, balanceValueStyles]}
                 convertToDollar={!isTokenInputType}
               />
             </HideBalance>
