@@ -1,6 +1,6 @@
-import { BlurView } from '@react-native-community/blur';
 import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { useThemeSelector } from '../../store/settings/settings-selectors';
@@ -14,16 +14,17 @@ export enum ImageBlurOverlayThemesEnum {
   list = 'list'
 }
 
-const BLUR_AMOUNT = 30;
 const ICON_SIZE_BIG = 40;
 const ICON_SIZE_SMALL = 24;
 
 interface Props {
+  size: number;
   theme?: ImageBlurOverlayThemesEnum;
   isTouchableOverlay?: boolean;
 }
 
 export const ImageBlurOverlay: FC<Props> = ({
+  size,
   theme = ImageBlurOverlayThemesEnum.list,
   isTouchableOverlay = true,
   children
@@ -31,36 +32,34 @@ export const ImageBlurOverlay: FC<Props> = ({
   const styles = useBlurStyles();
   const deviceTheme = useThemeSelector();
 
-  const [blurValue, setBlurValue] = useState(BLUR_AMOUNT);
+  const [isShowBlur, setIsShowBlur] = useState(true);
 
   const isFullViewTheme = theme === ImageBlurOverlayThemesEnum.fullView;
   const isLightTheme = deviceTheme === ThemesEnum.light;
-  const blurType = isLightTheme ? 'xlight' : 'materialDark';
   const iconSize = isFullViewTheme ? ICON_SIZE_BIG : ICON_SIZE_SMALL;
   const iconName = isLightTheme ? IconNameEnum.BlurEyeBlack : IconNameEnum.BlurEyeWhite;
+  const blurIcon = isLightTheme ? IconNameEnum.BlurLight : IconNameEnum.BlurDark;
 
   const handleLayoutPress = () => {
     if (isTouchableOverlay) {
-      setBlurValue(0);
+      setIsShowBlur(false);
     }
   };
 
   return (
-    <View style={styles.root}>
+    <TouchableOpacity onPress={handleLayoutPress} style={styles.root}>
       {children}
 
-      {blurValue === BLUR_AMOUNT && (
-        <View style={styles.blurContainer}>
-          <BlurView
-            blurAmount={blurValue}
-            blurType={blurType}
-            onTouchStart={handleLayoutPress}
-            style={styles.blurLayout}
-          />
-          <Icon name={iconName} size={iconSize} style={[conditionalStyle(isFullViewTheme, styles.marginBottom)]} />
-          {isFullViewTheme && <Text style={styles.text}>Tap to reveal</Text>}
+      {isShowBlur && (
+        <View style={[styles.blurContainer]}>
+          <Icon name={blurIcon} size={size} />
+
+          <View style={styles.container}>
+            <Icon name={iconName} size={iconSize} style={[conditionalStyle(isFullViewTheme, styles.marginBottom)]} />
+            {isFullViewTheme && <Text style={styles.text}>Tap to reveal</Text>}
+          </View>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };

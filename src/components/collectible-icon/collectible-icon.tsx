@@ -109,13 +109,13 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
 
     if (isDefined(collectible.isAdultContent) && collectible.isAdultContent) {
       return (
-        <ImageBlurOverlay theme={blurLayoutTheme} isTouchableOverlay={isTouchableOverlay}>
-          <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />
+        <ImageBlurOverlay theme={blurLayoutTheme} size={size} isTouchableOverlay={isTouchableOverlay}>
+          <FastImage source={{ uri: imageSrc }} onError={handleLoadingFailed} style={styles.image} />
         </ImageBlurOverlay>
       );
     }
 
-    return <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />;
+    return <FastImage source={{ uri: imageSrc }} onError={handleLoadingFailed} style={styles.image} />;
   }, [collectible.isAdultContent, blurLayoutTheme, imageSrc, handleLoadingFailed, isLoading]);
 
   return (

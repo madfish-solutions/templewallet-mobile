@@ -138,5 +138,7 @@ export enum IconNameEnum {
   AppleOnDark = 'AppleOnDark',
   GoogleDrive = 'GoogleDrive',
   BlurEyeBlack = 'BlurEyeBlack',
-  BlurEyeWhite = 'BlurEyeWhite'
+  BlurEyeWhite = 'BlurEyeWhite',
+  BlurLight = 'BlurLight',
+  BlurDark = 'BlurDark'
 }

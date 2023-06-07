@@ -8,16 +8,14 @@ export const useBlurStyles = createUseStyles(({ colors, typography }) => ({
     borderRadius: formatSize(4)
   },
   blurContainer: {
-    position: 'absolute',
-    height: '100%',
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center'
+    position: 'absolute'
   },
-  blurLayout: {
+  container: {
     position: 'absolute',
+    width: '100%',
     height: '100%',
-    width: '100%'
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   marginBottom: {
     marginBottom: formatSize(12)
