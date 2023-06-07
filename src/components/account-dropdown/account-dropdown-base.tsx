@@ -53,7 +53,7 @@ export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface
   renderAccountListItem,
   testID,
   testIDProperties,
-                                                                                                      isCollectibleScreen
+  isCollectibleScreen
 }) => {
   const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
 

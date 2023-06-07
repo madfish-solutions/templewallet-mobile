@@ -26,8 +26,8 @@ export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface>
   list,
   onValueChange,
   testID,
-  testIDProperties
-  isCollectibleScreen,
+  testIDProperties,
+  isCollectibleScreen
 }) => (
   <View style={CurrentAccountDropdownStyles.root}>
     <AccountDropdownBase
