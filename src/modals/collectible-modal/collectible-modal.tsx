@@ -1,7 +1,8 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
+import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { useMemo, useState } from 'react';
-import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Dimensions, Share, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SvgUri } from 'react-native-svg';
@@ -22,8 +23,12 @@ import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { showErrorToast } from '../../toast/error-toast.utils';
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
+import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
@@ -47,6 +52,8 @@ const SEGMENT_VALUES = [
   SegmentControlNamesEnum.Properties,
   SegmentControlNamesEnum.Offers
 ];
+
+const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
@@ -78,6 +85,7 @@ export const CollectibleModal = () => {
   const isPropertiesSelected = propertiesIndex === segmentControlIndex;
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
+  const { trackEvent } = useAnalytics();
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
@@ -95,6 +103,33 @@ export const CollectibleModal = () => {
 
     return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
   }, [fa.logo]);
+
+  const handleShare = useCallback(async () => {
+    try {
+      const dynamicLink = await getTempleDynamicLink(
+        `/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`,
+        {
+          title: collectible.name,
+          descriptionText: 'NFT description',
+          imageUrl: formatImgUri(collectible.thumbnailUri, 'medium')
+        }
+      );
+      await Share.share({
+        message: SHARE_NFT_CONTENT + dynamicLink
+      });
+
+      await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);
+    } catch (e: any) {
+      showErrorToast({
+        description: e.message,
+        isCopyButtonVisible: true,
+        onPress: () => copyStringToClipboard(e.message)
+      });
+      await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, {
+        errorMessage: e.message
+      });
+    }
+  }, []);
 
   return (
     <ScreenContainer
@@ -116,6 +151,10 @@ export const CollectibleModal = () => {
           <CollectibleIcon collectible={collectible} size={itemWidth} iconSize={CollectibleIconSize.BIG} />
 
           <Divider size={formatSize(12)} />
+
+          <TouchableOpacity onPress={handleShare}>
+            <Text>Share</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
             {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}

@@ -24,6 +24,7 @@ import {
 } from 'src/store/contact-book/contact-book-selectors';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import {
+  useAccountsListSelector,
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
   useVisibleAccountsListSelector
@@ -42,6 +43,7 @@ export const Wallet = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
+  const account = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -53,7 +55,11 @@ export const Wallet = () => {
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
 
   useEffect(() => {
-    if (!ignoredAddresses.includes(contactCandidateAddress) && !contactsAddresses.includes(contactCandidateAddress)) {
+    if (
+      !ignoredAddresses.includes(contactCandidateAddress) &&
+      !contactsAddresses.includes(contactCandidateAddress) &&
+      !account.find(({ publicKeyHash }) => publicKeyHash === contactCandidateAddress)
+    ) {
       bottomSheetController.open();
     }
   }, [contactCandidateAddress]);
