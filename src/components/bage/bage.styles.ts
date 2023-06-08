@@ -1,5 +1,5 @@
 import { createUseStyles } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useBageStyles = createUseStyles(({ colors, typography }) => ({
   root: {
@@ -11,7 +11,7 @@ export const useBageStyles = createUseStyles(({ colors, typography }) => ({
   text: {
     ...typography.caption11Semibold,
     color: 'white',
-    lineHeight: formatSize(18),
+    lineHeight: formatTextSize(18),
     letterSpacing: formatSize(-0.08),
     paddingHorizontal: formatSize(12)
   }

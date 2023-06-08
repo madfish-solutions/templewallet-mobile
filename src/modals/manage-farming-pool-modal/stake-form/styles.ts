@@ -1,5 +1,5 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography }) => ({
   depositPrompt: {
@@ -19,7 +19,7 @@ export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography 
   listItemBullet: {
     ...typography.caption13Regular,
     letterSpacing: formatSize(-0.08),
-    lineHeight: formatSize(18),
+    lineHeight: formatTextSize(18),
     width: formatSize(20),
     textAlign: 'center',
     color: colors.black
@@ -27,7 +27,7 @@ export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography 
   listItemText: {
     ...typography.caption13Regular,
     letterSpacing: formatSize(-0.08),
-    lineHeight: formatSize(18),
+    lineHeight: formatTextSize(18),
     flex: 1,
     color: colors.black
   },
@@ -40,7 +40,7 @@ export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography 
   disclaimerDescriptionText: {
     ...typography.caption13Regular,
     letterSpacing: formatSize(-0.08),
-    lineHeight: formatSize(18),
+    lineHeight: formatTextSize(18),
     color: colors.black
   },
   emphasized: {

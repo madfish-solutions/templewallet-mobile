@@ -39,7 +39,7 @@ const createUseStylesConfigMemoized =
   <T extends NamedStyles<T> = ButtonStyleConfig>(stylesFn: (props: CStylesFnProps) => T) =>
   () => {
     const colors = useColors();
+    const typography = useTypography();
 
-    // TODO: add `typography` dependency as soon as changes from https://github.com/madfish-solutions/templewallet-mobile/pull/834 appear
-    return useMemo(() => stylesFn({ colors, typography }), [colors]);
+    return useMemo(() => stylesFn({ colors, typography }), [colors, typography]);
   };

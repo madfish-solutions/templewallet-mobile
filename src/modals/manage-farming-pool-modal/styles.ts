@@ -1,5 +1,5 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useManageFarmingPoolModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
   background: {
@@ -27,7 +27,7 @@ export const useManageFarmingPoolModalStyles = createUseStylesMemoized(({ colors
   disclaimerDescriptionText: {
     ...typography.caption13Regular,
     letterSpacing: formatSize(-0.08),
-    lineHeight: formatSize(18),
+    lineHeight: formatTextSize(18),
     color: colors.black
   },
   emphasized: {
