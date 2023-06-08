@@ -1,7 +1,7 @@
 import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { formatSize, formatTextSize } from '../../../../styles/format-size';
 
-export const useSwapExchangeRateStyles = createUseStyles(({ colors }) => ({
+export const useSwapExchangeRateStyles = createUseStyles(({ colors, typography }) => ({
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center'
@@ -13,11 +13,12 @@ export const useSwapExchangeRateStyles = createUseStyles(({ colors }) => ({
     marginBottom: formatSize(12)
   },
   infoText: {
-    fontSize: formatSize(14),
-    lineHeight: formatSize(18),
+    ...typography.caption13Regular,
+    lineHeight: formatTextSize(18),
     color: colors.gray1
   },
   infoValue: {
+    ...typography.numbersRegular13,
     color: colors.black
   }
 }));
