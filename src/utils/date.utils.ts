@@ -13,7 +13,6 @@ export const formatTimespan = (timespanMs: number, formatOptionsOverrides?: Form
   });
 };
 
-const MS_IN_SECOND = 1000;
 export const SECONDS_IN_MINUTE = 60;
 export const SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60;
 export const SECONDS_IN_DAY = SECONDS_IN_HOUR * 24;
@@ -50,6 +49,8 @@ export const formatDateOutput = (date: number | string) =>
     hour: 'numeric',
     minute: 'numeric'
   });
+
+const MS_IN_SECOND = 1000;
 
 export function toIntegerSeconds(ms: number): number;
 export function toIntegerSeconds(date: Date): number;

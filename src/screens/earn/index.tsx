@@ -17,10 +17,11 @@ import { MainInfo } from './main-info/main-info';
 
 export const Earn: FC = () => {
   const dispatch = useDispatch();
-  usePageAnalytic(ScreensEnum.Earn);
   const farms = useAllFarmsSelector();
   const stakes = useLastStakesSelector();
   const styles = useEarnStyles();
+
+  usePageAnalytic(ScreensEnum.Earn);
 
   useEffect(() => {
     dispatch(loadAllFarmsAndStakesAction());

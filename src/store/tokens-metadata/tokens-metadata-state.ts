@@ -1,6 +1,7 @@
-import { DCP_TOKENS_METADATA, LOCAL_MAINNET_TOKENS_METADATA } from '../../token/data/tokens-metadata';
-import { emptyTokenMetadata, TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
+import { KNOWN_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
+import { emptyTokenMetadata, TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
@@ -10,7 +11,7 @@ export interface TokensMetadataState {
 }
 
 export const tokensMetadataInitialState: TokensMetadataState = {
-  metadataRecord: [...LOCAL_MAINNET_TOKENS_METADATA, ...DCP_TOKENS_METADATA].reduce(
+  metadataRecord: [...KNOWN_MAINNET_TOKENS_METADATA, ...PREDEFINED_DCP_TOKENS_METADATA].reduce(
     (obj, tokenMetadata) => ({
       ...obj,
       [getTokenSlug(tokenMetadata)]: tokenMetadata

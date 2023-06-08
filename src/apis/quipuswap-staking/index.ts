@@ -14,23 +14,13 @@ import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
-import { quipuswapStakingBaseUrls } from './consts';
-import { calculateStableswapWithdrawTokenOutput } from './stableswap-calculations';
-import {
-  FarmsListResponse,
-  NetworkEnum,
-  StableswapPoolStorage,
-  StableswapPoolsValue,
-  TooLowPoolReservesError
-} from './types';
+import { calculateStableswapLpTokenOutput, calculateStableswapWithdrawTokenOutput } from './stableswap-calculations';
+import { FarmsListResponse, StableswapPoolStorage, TooLowPoolReservesError } from './types';
 
-const apis = {
-  [NetworkEnum.Mainnet]: axios.create({ baseURL: quipuswapStakingBaseUrls[NetworkEnum.Mainnet] }),
-  [NetworkEnum.Ghostnet]: axios.create({ baseURL: quipuswapStakingBaseUrls[NetworkEnum.Ghostnet] })
-};
+const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.quipuswap.com' });
 
-export const getV3FarmsList = async (network: NetworkEnum) => {
-  const response = await apis[network].get<FarmsListResponse>('/v3/multi-v2');
+export const getV3FarmsList = async () => {
+  const response = await stakingApi.get<FarmsListResponse>('/v3/multi-v2');
 
   return response.data.list;
 };
@@ -62,7 +52,7 @@ const getStableswapPool = async (
 ) => {
   const { storage: internalPoolStorage } = await stableswapContract.storage<StableswapPoolStorage>();
   const { pools: poolsFromRpc, factory_address } = internalPoolStorage;
-  const poolFromRpc = await poolsFromRpc.get<StableswapPoolsValue>(new BigNumber(poolId));
+  const poolFromRpc = await poolsFromRpc.get(new BigNumber(poolId));
   const factoryContract = await getReadOnlyContract(factory_address, tezos);
   const devFeeF = await factoryContract.contractViews
     .dev_fee()
@@ -115,4 +105,23 @@ export const estimateWithdrawTokenOutput = async (
       return error instanceof TooLowPoolReservesError ? null : undefined;
     }
   });
+};
+
+export const estimateStableswapLpTokenOutput = async (
+  tezos: TezosToolkit,
+  stableswapContract: ContractAbstraction<ContractProvider>,
+  investedTokenIndex: number,
+  amount: BigNumber,
+  poolId: number
+) => {
+  const { devFeeF, pool } = await getStableswapPool(tezos, stableswapContract, poolId);
+
+  return calculateStableswapLpTokenOutput(
+    Array(pool.tokensInfo.length)
+      .fill(new BigNumber(0))
+      .map((_, index) => (index === investedTokenIndex ? amount : new BigNumber(0))),
+    pool,
+    pool.tokensInfo.length,
+    devFeeF
+  );
 };

@@ -26,7 +26,7 @@ const CHAINBITS_URL = 'https://buy.chainbits.com';
 
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
-  const { metadata, isTezosNode } = useNetworkInfo();
+  const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const styles = useHeaderCardActionButtonsStyles();
 
@@ -66,11 +66,11 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       <Divider size={formatSize(8)} />
       <View style={styles.buttonContainer}>
         <ButtonMedium
+          disabled={!isTezosNode || !isTezosMainnet}
           title="Earn"
           iconName={IconNameEnum.Earn}
           onPress={() => navigate(ScreensEnum.Earn)}
           styleConfigOverrides={actionButtonStylesOverrides}
-          disabled={!isTezosNode}
         />
       </View>
       <Divider size={formatSize(8)} />

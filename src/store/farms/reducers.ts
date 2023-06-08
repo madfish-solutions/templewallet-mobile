@@ -4,6 +4,7 @@ import { omit } from 'lodash-es';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
+import { setSelectedAccountAction } from '../wallet/wallet-actions';
 import {
   loadAllFarmsActions,
   loadAllFarmsAndStakesAction,
@@ -54,5 +55,10 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     ...state,
     lastStakes: payload,
     stakesLoading: false
+  }));
+
+  builder.addCase(setSelectedAccountAction, state => ({
+    ...state,
+    lastStakes: farmsInitialState.lastStakes
   }));
 });

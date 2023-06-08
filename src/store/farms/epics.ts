@@ -4,7 +4,6 @@ import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { getV3FarmsList } from 'src/apis/quipuswap-staking';
-import { NetworkEnum } from 'src/apis/quipuswap-staking/types';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
@@ -53,7 +52,7 @@ const loadAllFarms: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadAllFarmsActions.submit),
     switchMap(() =>
-      from(getV3FarmsList(NetworkEnum.Mainnet)).pipe(
+      from(getV3FarmsList()).pipe(
         map(farms => loadAllFarmsActions.success(farms)),
         catchError(err => {
           showErrorToast({ description: getAxiosQueryErrorMessage(err) });
@@ -68,7 +67,7 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
   action$.pipe(
     ofType(loadAllFarmsAndStakesAction),
     switchMap(() =>
-      from(getV3FarmsList(NetworkEnum.Mainnet)).pipe(
+      from(getV3FarmsList()).pipe(
         withSelectedAccount(state$),
         withSelectedRpcUrl(state$),
         switchMap(([[farms, selectedAccount], rpcUrl]) => {

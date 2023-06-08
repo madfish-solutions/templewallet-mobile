@@ -10,7 +10,8 @@ import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from 'src/store/se
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
@@ -68,13 +69,18 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
+  expectedGasExpense = 0.3,
+  balanceValueStyles,
   isShowNameForValue = true,
   isSingleAsset = false,
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
   onValueChange,
-  testID
+  testID,
+  tokenTestID,
+  switcherTestID,
+  maxButtonTestID
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
@@ -172,6 +178,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       amountInputRef.current.focus();
     }
     setInputTypeIndex(tokenTypeIndex);
+    trackEvent(switcherTestID, AnalyticsEventCategory.General, { tokenTypeIndex });
 
     onValueChange({
       ...value,
@@ -190,6 +197,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const asset = newAsset ?? emptyTezosLikeToken;
       const newExchangeRate = getTokenExchangeRate(getTokenSlug(asset));
 
+      trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, { token: asset.symbol });
+
       onValueChange({
         amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate ?? 1, isTokenInputType),
         asset
@@ -200,18 +209,20 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   const handleMaxButtonPress = useCallback(() => {
     if (isDefined(token)) {
-      const { symbol, balance } = token;
-      const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
+      const { address, id, balance } = token;
+      const isGasToken = toTokenSlug(address, id) === toTokenSlug(gasToken.address, gasToken.id);
+      const isGasTokenMaxAmountGuard = isGasToken ? tzToMutez(new BigNumber(expectedGasExpense), token.decimals) : 0;
       const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
       amountInputRef.current?.blur();
+      trackEvent(maxButtonTestID, AnalyticsEventCategory.ButtonPress);
 
       onValueChange({
         amount,
         asset: token
       });
     }
-  }, [token, gasToken, onValueChange, amountInputRef, trackEvent]);
+  }, [token, gasToken, onValueChange, amountInputRef, trackEvent, expectedGasExpense]);
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
@@ -254,7 +265,6 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
-          testID={testID}
         />
 
         <View
@@ -271,9 +281,9 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
-            testID={AssetAmountInputSelectors.assetsDropdown}
             keyExtractor={getTokenSlug}
             onValueChange={handleTokenChange}
+            testID={testID}
           />
         </View>
       </View>
@@ -295,7 +305,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
                 <AssetValueText
                   amount={frozenBalance}
                   asset={value.asset}
-                  style={styles.balanceText}
+                  style={[styles.balanceText, balanceValueStyles]}
                   convertToDollar={!isTokenInputType}
                 />
               </View>
@@ -311,7 +321,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
               <AssetValueText
                 amount={balance}
                 asset={value.asset}
-                style={styles.balanceText}
+                style={[styles.balanceText, balanceValueStyles]}
                 convertToDollar={!isTokenInputType}
               />
             </HideBalance>

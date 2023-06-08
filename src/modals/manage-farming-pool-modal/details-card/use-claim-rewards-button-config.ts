@@ -2,12 +2,13 @@ import { useMemo } from 'react';
 
 import { useButtonLargePrimaryStyleConfig } from 'src/components/button/button-large/button-large-primary/button-large-primary.styles';
 import { formatSize } from 'src/styles/format-size';
-import { typography } from 'src/styles/typography';
+import { useTypography } from 'src/styles/typography.context';
 import { useColors } from 'src/styles/use-colors';
 
 export const useClaimRewardsButtonConfig = () => {
   const basicConfig = useButtonLargePrimaryStyleConfig();
   const colors = useColors();
+  const typography = useTypography();
 
   return useMemo(
     () => ({
@@ -22,6 +23,6 @@ export const useClaimRewardsButtonConfig = () => {
         color: colors.white
       }
     }),
-    [basicConfig, colors]
+    [basicConfig, colors, typography]
   );
 };

@@ -62,7 +62,8 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
           ...accountsState[publicHash],
           tokensList: uniqBy(
             [
-              ...accountsState[publicHash].tokensList,
+              // `tokensList` appeared to be undefined once
+              ...(accountsState[publicHash].tokensList ?? []),
               ...tokensMetadata.map(token => ({
                 ...token,
                 slug: getTokenSlug(token),

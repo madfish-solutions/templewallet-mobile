@@ -2,20 +2,23 @@ import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback } from 'react';
 import { FlatListProps, ListRenderItemInfo, Text, View } from 'react-native';
 
-import { emptyComponent, emptyFn, EmptyFn, EventFn } from '../../config/general';
-import { useDropdownHeight } from '../../hooks/use-dropdown-height.hook';
-import { SectionDropdownDataInterface } from '../../interfaces/section-dropdown-data.interface';
-import { formatSize } from '../../styles/format-size';
-import { createGetItemLayout } from '../../utils/flat-list.utils';
-import { isDefined } from '../../utils/is-defined';
+import { EmptyFn, EventFn, emptyComponent, emptyFn } from 'src/config/general';
+import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
+import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { createGetItemLayout } from 'src/utils/flat-list.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { useDropdownStyles } from './styles';
 
-export interface SectionDropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'> {
+export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
   list: Array<SectionDropdownDataInterface<T>>;
   isSearchable?: boolean;
@@ -66,7 +69,9 @@ const SectionDropdownComponent = <T extends unknown>({
   renderActionButtons = emptyComponent,
   keyExtractor,
   onValueChange,
-  onLongPress
+  onLongPress,
+  testID,
+  testIDProperties
 }: SectionDropdownProps<T> & SectionDropdownValueProps<T>) => {
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
@@ -116,9 +121,11 @@ const SectionDropdownComponent = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity
+      <TouchableWithAnalytics
         style={styles.valueContainer}
         disabled={disabled}
+        testID={testID}
+        testIDProperties={testIDProperties}
         onPress={() => {
           scroll();
 
@@ -127,7 +134,7 @@ const SectionDropdownComponent = <T extends unknown>({
         onLongPress={onLongPress}
       >
         {renderValue({ value, disabled })}
-      </TouchableOpacity>
+      </TouchableWithAnalytics>
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>

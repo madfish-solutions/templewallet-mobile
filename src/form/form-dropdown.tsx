@@ -4,10 +4,11 @@ import React, { useCallback } from 'react';
 
 import { Dropdown, DropdownProps } from 'src/components/dropdown/dropdown';
 import { EventFn } from 'src/config/general';
+import { TestIdProps } from 'src/interfaces/test-id.props';
 
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props<T> extends DropdownProps<T> {
+interface Props<T> extends DropdownProps<T>, TestIdProps {
   name: string;
   onValueChange?: EventFn<T | undefined>;
 }
@@ -22,7 +23,8 @@ export const FormDropdown = <T extends unknown>({
   renderListItem,
   renderActionButtons,
   onValueChange = noop,
-  testID
+  testID,
+  testIDProperties
 }: Props<T>) => {
   const [field, meta, helpers] = useField<T | undefined>(name);
 
@@ -47,6 +49,7 @@ export const FormDropdown = <T extends unknown>({
         renderActionButtons={renderActionButtons}
         onValueChange={handleValueChange}
         testID={testID}
+        testIDProperties={testIDProperties}
       />
       <ErrorMessage meta={meta} />
     </>

@@ -67,6 +67,10 @@ const getD = (xp: BigNumber[], ampF: BigNumber) => {
   return d;
 };
 
+const getDMem = (tokensInfo: StableswapTokenInfo[], ampF: BigNumber) => {
+  return getD(xpMem(tokensInfo), ampF);
+};
+
 const divideFeeForBalance = (fee: BigNumber, tokensCount: BigNumber) => {
   return fee.times(tokensCount).dividedToIntegerBy(tokensCount.minus(1).times(4));
 };
@@ -332,4 +336,47 @@ export const calculateStableswapWithdrawTokenOutput = (
   }
 
   return x0;
+};
+
+export const calculateStableswapLpTokenOutput = (
+  inputs: BigNumber[],
+  pool: StableswapPool,
+  tokensCount: number,
+  devFeeF: BigNumber
+) => {
+  const ampF = getA(pool.initialATime, pool.initialAF, pool.futureATime, pool.futureAF);
+  const initTokensInfo = pool.tokensInfo;
+  const d0 = getDMem(initTokensInfo, ampF);
+  const tokenSupply = pool.totalSupply;
+  const newTokensInfo = initTokensInfo.map((tokenInfo, key) => {
+    const input = inputs[key] ?? new BigNumber(0);
+
+    return {
+      ...tokenInfo,
+      reserves: tokenInfo.reserves.plus(input)
+    };
+  });
+  const d1 = getDMem(newTokensInfo, ampF);
+
+  if (tokenSupply.gt(0)) {
+    const balanced = balanceInputs(
+      initTokensInfo,
+      d0,
+      newTokensInfo,
+      d1,
+      new BigNumber(tokensCount),
+      pool.fee,
+      devFeeF,
+      {
+        stakerAccumulator: pool.stakerAccumulator,
+        tokensInfo: newTokensInfo,
+        tokensInfoWithoutLp: newTokensInfo.map(tokenInfo => ({ ...tokenInfo }))
+      }
+    );
+    const d2 = getDMem(balanced.tokensInfoWithoutLp, ampF);
+
+    return tokenSupply.times(d2.minus(d0)).dividedToIntegerBy(d0);
+  }
+
+  return d1;
 };
