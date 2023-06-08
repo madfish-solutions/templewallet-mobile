@@ -7,7 +7,7 @@ import { useThemeSelector } from '../../store/settings/settings-selectors';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
-import { useBlurStyles } from './iimage-blur-overlay.styles';
+import { useBlurStyles } from './image-blur-overlay.styles';
 
 export enum ImageBlurOverlayThemesEnum {
   fullView = 'fullView',
@@ -47,7 +47,7 @@ export const ImageBlurOverlay: FC<Props> = ({
   };
 
   return (
-    <TouchableOpacity onPress={handleLayoutPress} style={styles.root}>
+    <TouchableOpacity activeOpacity={1} onPress={handleLayoutPress} style={styles.root}>
       {children}
 
       {isShowBlur && (

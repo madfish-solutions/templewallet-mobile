@@ -97,13 +97,14 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   const imageRequestObject = { ...collectible, assetSlug };
   const currentFallback = getFirstFallback(actualLoadingStrategy, isLoadingFailed, imageRequestObject);
   const imageSrc = currentFallback.uri(imageRequestObject[currentFallback.field] ?? assetSlug);
+  const isDefinedImage = isDefined(collectible.thumbnailUri) && isDefined(collectible.artifactUri);
 
   const handleLoadingFailed = useCallback(() => {
     setIsLoadingFailed(prevState => ({ ...prevState, [currentFallback.type]: true }));
   }, [currentFallback]);
 
   const fastImage = useMemo(() => {
-    if (isLoading) {
+    if (isLoading && !isDefinedImage) {
       return <View style={styles.image} />;
     }
 
@@ -116,7 +117,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
     }
 
     return <FastImage source={{ uri: imageSrc }} onError={handleLoadingFailed} style={styles.image} />;
-  }, [collectible.isAdultContent, blurLayoutTheme, imageSrc, handleLoadingFailed, isLoading]);
+  }, [collectible, blurLayoutTheme, imageSrc, handleLoadingFailed, isLoading]);
 
   return (
     <View
@@ -126,8 +127,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
         padding: formatSize(2)
       }}
     >
-      {isDefined(collectible.thumbnailUri) &&
-        isDefined(collectible.artifactUri) &&
+      {isDefinedImage &&
         (isImgUriDataUri(imageSrc) ? <DataUriImage style={styles.image} dataUri={imageSrc} /> : fastImage)}
     </View>
   );
