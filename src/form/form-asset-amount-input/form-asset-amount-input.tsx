@@ -32,7 +32,10 @@ export const FormAssetAmountInput: FC<Props> = ({
   expectedGasExpense,
   setSearchValue = emptyFn,
   onValueChange = emptyFn,
-  testID
+  testID,
+  tokenTestID,
+  switcherTestID,
+  maxButtonTestID
 }) => {
   const formikContext = useFormikContext();
   const [field, meta] = useField<AssetAmountInterface>(name);
@@ -68,6 +71,9 @@ export const FormAssetAmountInput: FC<Props> = ({
         onBlur={handleBlur}
         onValueChange={handleValueChange}
         testID={testID}
+        tokenTestID={tokenTestID}
+        switcherTestID={switcherTestID}
+        maxButtonTestID={maxButtonTestID}
       />
       <ErrorMessage meta={meta} />
     </>

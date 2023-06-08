@@ -3,7 +3,7 @@ import { View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { formatSizeScaled } from 'src/styles/format-size';
+import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { isImgUriSvg, isImgUriDataUri, isImageRectangular, formatImgUri } from 'src/utils/image.utils';
@@ -21,7 +21,7 @@ interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'
   style?: ViewStyle;
 }
 
-export const TokenIcon: FC<Props> = ({ size = formatSizeScaled(32), thumbnailUri, style, ...rest }) => {
+export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, style, ...rest }) => {
   const roundedStyle = useMemo(
     () => (isImageRectangular(thumbnailUri) ? undefined : { borderRadius: size / 2 }),
     [thumbnailUri]

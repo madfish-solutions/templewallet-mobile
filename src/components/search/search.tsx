@@ -19,10 +19,11 @@ interface Props extends TestIdProps {
   onChange: EventFn<string | undefined>;
 }
 
-export const Search: FC<Props> = ({ dividerSize = 24, testID, onChange, children }) => {
+export const Search: FC<Props> = ({ dividerSize = 24, testID, testIDProperties, onChange, children }) => {
   const colors = useColors();
-  const styles = useSearchStyles();
   const { trackEvent } = useAnalytics();
+
+  const styles = useSearchStyles();
 
   const debouncedOnChange = useMemo(
     () =>
@@ -39,6 +40,9 @@ export const Search: FC<Props> = ({ dividerSize = 24, testID, onChange, children
     trackEvent(testID, AnalyticsEventCategory.FormChange, { value: null });
     setIsSearchMode(false);
     onChange(undefined);
+    if (Boolean(testID)) {
+      trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+    }
   };
 
   return (

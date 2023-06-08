@@ -13,7 +13,6 @@ export const useBackupNotFoundStyles = createUseStyles(({ colors, typography }) 
   },
   text: {
     ...typography.caption11Regular,
-    fontSize: formatSize(11),
     color: colors.gray1
   }
 }));
