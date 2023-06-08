@@ -45,13 +45,11 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
   const [currentFallback, setCurrentFallback] = useState(initialFallback);
   const handleError = () => {
-    if (currentFallback.endsWith('/thumb288')) {
-      setCurrentFallback(
-        formatImgUri(isDefined(collectible.artifactUri) ? collectible.artifactUri : collectible.thumbnailUri, 'medium')
-      );
-    } else {
-      setCurrentFallback(formatCollectibleObjktMediumUri(assetSlug));
-    }
+    setCurrentFallback(
+      currentFallback.endsWith('/thumb288')
+        ? formatImgUri(collectible.thumbnailUri, 'medium')
+        : formatCollectibleObjktMediumUri(assetSlug)
+    );
   };
 
   const handleAnimatedError = () => {
@@ -90,6 +88,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
         return (
           <SimplePlayer
             uri={formatCollectibleObjktArtifactUri(objktArtifact)}
+            posterUri={formatCollectibleObjktMediumUri(assetSlug)}
             size={size}
             style={styles.image}
             onError={handleAnimatedError}

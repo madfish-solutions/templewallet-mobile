@@ -58,6 +58,17 @@ export const SimpleModelView: FC<SimpleModelViewProps> = ({
     return { uri: uri + '/index.html' };
   }, [uri]);
 
+  const injectedJs = useMemo(
+    () => `
+        window.onerror = function(message) {
+          window.ReactNativeWebView.postMessage(JSON.stringify(message));
+          return true;
+        };
+        true;
+      `,
+    []
+  );
+
   const handleTouchStart = () => setScrollEnabled(false);
   const handleTouchEnd = () => setScrollEnabled(true);
 
@@ -66,10 +77,12 @@ export const SimpleModelView: FC<SimpleModelViewProps> = ({
       source={source}
       style={[styles.loverOpacity, style]}
       onError={onError}
+      onMessage={onError}
       onLoadEnd={onLoadEnd}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
+      injectedJavaScriptBeforeContentLoaded={injectedJs}
     />
   );
 };
