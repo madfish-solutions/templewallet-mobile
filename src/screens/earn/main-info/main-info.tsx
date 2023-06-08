@@ -32,10 +32,11 @@ export const MainInfo: FC = () => {
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
 
-  const farmsWithEndedRewards = useMemo(
-    () => Object.entries(farms.lastStakes).filter(([, stakeRecord]) => (stakeRecord?.rewardsDueDate ?? 0) < Date.now()),
-    [farms]
-  );
+  const farmsWithEndedRewards = useMemo(() => {
+    const now = Date.now();
+
+    return Object.entries(farms.lastStakes).filter(([, stakeRecord]) => (stakeRecord?.rewardsDueDate ?? 0) < now);
+  }, [farms]);
 
   const { netApy, totalStakedAmountInUsd } = useMemo(() => {
     const result = {
