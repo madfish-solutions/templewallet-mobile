@@ -135,5 +135,5 @@ export enum IconNameEnum {
   GoogleDrive = 'GoogleDrive',
   Smile = 'Smile',
   SmileWithGlasses = 'SmileWithGlasses',
-  SmileWithDollar = 'Smile'
+  SmileWithDollar = 'SmileWithDollar'
 }

@@ -22,7 +22,7 @@ import { getWertLink } from './utils/get-wert-link.util';
 export const OnRampOverlay: FC = () => {
   const isOnRampPossibility = useIsOnRampPossibilitySelector();
 
-  return isOnRampPossibility ? <OverlayComponent /> : null;
+  return Boolean(isOnRampPossibility) ? <OverlayComponent /> : null;
 };
 
 const OverlayComponent = () => {
