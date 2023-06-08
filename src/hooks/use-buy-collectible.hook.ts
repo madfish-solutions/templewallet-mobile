@@ -49,7 +49,10 @@ export const useBuyCollectible = (marketplace: string) => {
       tezos,
       marketplace,
       selectedAccount.publicKeyHash,
-      tokenToSpend,
+      {
+        ...tokenToSpend,
+        tokenId: tokenToSpend.id.toString() ?? null
+      },
       new BigNumber(price)
     );
 
