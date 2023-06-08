@@ -35,7 +35,7 @@ export const RenameAccountModal = () => {
     goBack();
   };
 
-  usePageAnalytic(ModalsEnum.Receive);
+  usePageAnalytic(ModalsEnum.RenameAccount);
 
   return (
     <Formik

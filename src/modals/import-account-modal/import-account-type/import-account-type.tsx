@@ -16,6 +16,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 
 import { importAccountTypeInitialValues, importAccountTypeValidationSchema } from './import-account-type.form';
+import { ImportAccountTypeSelectors } from './import-account-type.selectors';
 
 interface Props {
   onSubmit: EventFn<ImportAccountTypeEnum>;
@@ -44,9 +45,14 @@ export const ImportAccountType: FC<Props> = ({ onSubmit }) => {
           </View>
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} />
+              <ButtonLargeSecondary title="Close" onPress={goBack} testID={ImportAccountTypeSelectors.closeButton} />
               <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Next" disabled={!isValid} onPress={submitForm} />
+              <ButtonLargePrimary
+                title="Next"
+                disabled={!isValid}
+                onPress={submitForm}
+                testID={ImportAccountTypeSelectors.nextButton}
+              />
             </ButtonsContainer>
             <InsetSubstitute type="bottom" />
           </View>

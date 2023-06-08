@@ -5,23 +5,25 @@ import React, { FC, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
-import { Divider } from '../../../components/divider/divider';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../components/label/label';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { FormAddressInput } from '../../../form/form-address-input';
-import { FormTextInput } from '../../../form/form-text-input';
-import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
-import { AccountBaseInterface } from '../../../interfaces/account.interface';
-import { ModalsEnum, ModalsParamList } from '../../../navigator/enums/modals.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { addContactAction, loadContactTezosBalance } from '../../../store/contact-book/contact-book-actions';
-import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { tezosDomainsResolver } from '../../../utils/dns.utils';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { Divider } from 'src/components/divider/divider';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { FormAddressInput } from 'src/form/form-address-input';
+import { FormTextInput } from 'src/form/form-text-input';
+import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { addContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { tezosDomainsResolver } from 'src/utils/dns.utils';
+
 import { handleContactSubmission } from '../utils/handle-contact-submission.util';
 import { useAddContactFormValidationSchema } from '../validation-schema';
 import { AddContactModalSelectors } from './add-contact-modal.selectors';
@@ -48,6 +50,8 @@ export const AddContactModal: FC = () => {
     name: params?.name ?? '',
     publicKeyHash: params?.publicKeyHash ?? ''
   };
+
+  usePageAnalytic(ModalsEnum.AddContact);
 
   return (
     <Formik
