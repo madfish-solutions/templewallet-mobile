@@ -90,6 +90,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
             </>
           ) : (
             <WalletAddress
+              isLocalDomainNameShowing
               publicKeyHash={account.publicKeyHash}
               isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
             />

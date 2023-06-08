@@ -9,9 +9,17 @@ import { ErrorMessage } from './error-message/error-message';
 
 interface Props extends Pick<StyledTextInputProps, 'placeholder'>, TestIdProps {
   name: string;
+  pasteButtonTestID?: string;
+  pasteButtonTestIDProperties?: object;
 }
 
-export const FormAddressInput: FC<Props> = ({ name, placeholder, testID }) => {
+export const FormAddressInput: FC<Props> = ({
+  name,
+  placeholder,
+  testID,
+  pasteButtonTestID,
+  pasteButtonTestIDProperties
+}) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 
@@ -24,6 +32,8 @@ export const FormAddressInput: FC<Props> = ({ name, placeholder, testID }) => {
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
         testID={testID}
+        pasteButtonTestID={pasteButtonTestID}
+        pasteButtonTestIDProperties={pasteButtonTestIDProperties}
       />
       <ErrorMessage meta={meta} />
     </>

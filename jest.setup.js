@@ -9,7 +9,7 @@ import './src/mocks/react-native-async-storage.mock';
 import './src/mocks/react-native-bootsplash.mock';
 import './src/mocks/react-native-clipboard-clipboard.mock';
 import './src/mocks/react-native-device-info.mock';
-import './src/mocks/react-native-firebase-app-check.mock';
+import './src/mocks/react-native-firebase.mock';
 import './src/mocks/react-native-fs.mock';
 import './src/mocks/react-native-orientation-locker.mock';
 import './src/mocks/react-native-permissions.mock';

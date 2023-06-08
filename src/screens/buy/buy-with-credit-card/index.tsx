@@ -1,7 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider } from 'formik';
-import { debounce } from 'lodash-es';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -13,7 +12,6 @@ import { Dropdown } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useInterval } from 'src/hooks/use-interval.hook';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -21,7 +19,6 @@ import { loadAllCurrenciesActions } from 'src/store/buy-with-credit-card/actions
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { jsonEqualityFn } from 'src/utils/store.utils';
@@ -31,8 +28,9 @@ import { renderSelectedPaymentProvider } from '../components/selected-payment-pr
 import { TopUpAssetAmountInterface } from '../components/top-up-asset-amount-input/types';
 import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amount-input';
 import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
+import { useFiatCurrenciesList } from './hooks/use-fiat-currencies-list.hook';
 import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
-import { useFilteredFiatCurrencies } from './hooks/use-filtered-fiat-currencies-list.hook';
+import { useFormInputsCallbacks } from './hooks/use-form-inputs-callbacks';
 import { usePaymentProviders } from './hooks/use-payment-providers.hook';
 import { BuyWithCreditCardSelectors } from './selectors';
 import { useBuyWithCreditCardStyles } from './styles';
@@ -60,50 +58,42 @@ export const BuyWithCreditCard: FC = () => {
 
   useEffect(() => void dispatch(loadAllCurrenciesActions.submit()), []);
 
+  const formik = useBuyWithCreditCardFormik();
+  const { errors, touched, values, submitForm, setFieldValue, isValid, submitCount } = formik;
+  const { asset: inputAsset, amount: inputAmount } = values.sendInput;
+  const { asset: outputAsset, amount: outputAmount } = values.getOutput;
   const {
-    allCurrencies: allFiatCurrencies,
+    currenciesWithPairLimits,
     filteredCurrencies: filteredFiatCurrencies,
     setSearchValue: setInputSearchValue
-  } = useFilteredFiatCurrencies();
+  } = useFiatCurrenciesList(inputAsset.code, outputAsset.code);
   const { filteredCurrencies: filteredCryptoCurrencies, setSearchValue: setOutputSearchValue } =
     useFilteredCryptoCurrencies();
 
-  const formik = useBuyWithCreditCardFormik();
-
-  const { errors, touched, values, submitForm, setFieldValue, setFieldTouched, isValid, submitCount } = formik;
-  const { asset: inputAsset, amount: inputAmount } = values.sendInput;
-  const { asset: outputAsset, amount: outputAmount } = values.getOutput;
-  const manuallySelectedProviderIdRef = useRef<TopUpProviderEnum>();
-
-  const { allPaymentProviders, paymentProvidersToDisplay, updateOutputAmounts } = usePaymentProviders(
-    inputAmount,
-    inputAsset,
-    outputAsset
-  );
+  const paymentProviders = usePaymentProviders(inputAmount, inputAsset, outputAsset);
+  const { paymentProvidersToDisplay } = paymentProviders;
+  const {
+    switchPaymentProvider,
+    handleInputValueChange,
+    handleOutputValueChange,
+    handlePaymentProviderChange,
+    handleSendInputBlur,
+    handleGetOutputBlur,
+    refreshForm
+  } = useFormInputsCallbacks(formik, paymentProviders, isLoading, setIsLoading);
   const isPaymentProviderError =
     isDefined(errors.paymentProvider) &&
     (isTruthy(touched.paymentProvider) || submitCount > 0) &&
     paymentProvidersToDisplay.length > 0;
 
-  const switchPaymentProvider = useCallback(
-    async (newProvider?: PaymentProviderInterface) => {
-      const newOutputAmount = newProvider?.outputAmount;
-      await Promise.all([
-        setFieldValue('paymentProvider', newProvider),
-        setFieldValue('getOutput.amount', isDefined(newOutputAmount) ? new BigNumber(newOutputAmount) : undefined)
-      ]);
-    },
-    [setFieldValue]
-  );
-
   useEffect(() => {
     const { asset: currentInputAsset, amount: currentInputAmount } = values.sendInput;
-    const newInputAsset = allFiatCurrencies.find(({ code }) => code === currentInputAsset.code);
+    const newInputAsset = currenciesWithPairLimits.find(({ code }) => code === currentInputAsset.code);
 
     if (isDefined(newInputAsset) && !jsonEqualityFn(newInputAsset, currentInputAsset)) {
       setFieldValue('sendInput', newTopUpAssetAmountFn(values.sendInput, newInputAsset, currentInputAmount));
     }
-  }, [values.sendInput, allFiatCurrencies, setFieldValue]);
+  }, [values.sendInput, currenciesWithPairLimits, setFieldValue]);
 
   useEffect(() => {
     const currentPaymentProvider = values.paymentProvider;
@@ -122,73 +112,7 @@ export const BuyWithCreditCard: FC = () => {
     return undefined;
   }, [inputAmount, outputAmount]);
 
-  const inputValueRef = useRef(values.sendInput);
-  const updateOutput = useMemo(
-    () =>
-      debounce(async (newInput: TopUpAssetAmountInterface, shouldSwitchBetweenProviders: boolean) => {
-        inputValueRef.current = newInput;
-        const amounts = await updateOutputAmounts(newInput.amount, newInput.asset);
-
-        if (inputValueRef.current !== newInput) {
-          return;
-        }
-
-        const patchedPaymentProviders = getPaymentProvidersToDisplay(
-          allPaymentProviders.map(({ id, ...rest }) => ({
-            ...rest,
-            id,
-            outputAmount: amounts[id]
-          })),
-          {},
-          {},
-          newInput.amount
-        );
-        const autoselectedPaymentProvider = patchedPaymentProviders[0];
-
-        if (shouldSwitchBetweenProviders && !isDefined(manuallySelectedProviderIdRef.current)) {
-          void switchPaymentProvider(autoselectedPaymentProvider);
-        } else if (isDefined(newInput.amount)) {
-          const patchedSameProvider = patchedPaymentProviders.find(({ id }) => id === values.paymentProvider?.id);
-          const newPaymentProvider = patchedSameProvider ?? autoselectedPaymentProvider;
-          void switchPaymentProvider(newPaymentProvider);
-        }
-        setIsLoading(false);
-      }, 200),
-    [values.paymentProvider, updateOutputAmounts, allPaymentProviders, switchPaymentProvider]
-  );
-
-  const handleInputValueChange = useCallback(
-    (newInput: TopUpAssetAmountInterface) => {
-      inputValueRef.current = newInput;
-      setIsLoading(true);
-      void updateOutput(newInput, true);
-    },
-    [updateOutput]
-  );
-
-  const handlePaymentProviderChange = useCallback(
-    (newProvider?: PaymentProviderInterface) => {
-      manuallySelectedProviderIdRef.current = newProvider?.id;
-      void switchPaymentProvider(newProvider);
-    },
-    [switchPaymentProvider]
-  );
-
-  const handleSendInputBlur = useCallback(() => void setFieldTouched('sendInput'), [setFieldTouched]);
-  const handleGetOutputBlur = useCallback(() => void setFieldTouched('getOutput'), [setFieldTouched]);
-
-  useInterval(
-    () => {
-      dispatch(loadAllCurrenciesActions.submit());
-      if (!isLoading) {
-        setIsLoading(true);
-        void updateOutput(values.sendInput, false);
-      }
-    },
-    10000,
-    [updateOutput, dispatch, values.sendInput, isLoading],
-    false
-  );
+  useInterval(refreshForm, 10000, [refreshForm], false);
 
   return (
     <>
@@ -206,6 +130,7 @@ export const BuyWithCreditCard: FC = () => {
               newValueFn={newTopUpAssetAmountFn}
               precision={inputAsset.precision}
               testID={BuyWithCreditCardSelectors.sendInput}
+              tokenTestID={BuyWithCreditCardSelectors.fiatCurrencyItem}
               onValueChange={handleInputValueChange}
               onBlur={handleSendInputBlur}
               setSearchValue={setInputSearchValue}
@@ -222,9 +147,10 @@ export const BuyWithCreditCard: FC = () => {
               emptyListText="Not found crypto currency"
               editable={false}
               isSearchable
-              singleAsset
+              onValueChange={handleOutputValueChange}
               assetsList={filteredCryptoCurrencies}
               testID={BuyWithCreditCardSelectors.getOutput}
+              tokenTestID={BuyWithCreditCardSelectors.cryptoCurrencyItem}
               onBlur={handleGetOutputBlur}
               setSearchValue={setOutputSearchValue}
             />
@@ -252,7 +178,7 @@ export const BuyWithCreditCard: FC = () => {
             <Text style={styles.exchangeRate}>Exchange Rate</Text>
             <Text style={styles.exchangeRateValue}>
               {isDefined(exchangeRate) && isDefined(inputAsset.code) && !isLoading
-                ? `1 ${inputAsset.code} = ${exchangeRate} ${outputAsset.code}`
+                ? `1 ${inputAsset.code} = ${exchangeRate} ${outputAsset.codeToDisplay ?? outputAsset.code}`
                 : '---'}
             </Text>
           </View>
