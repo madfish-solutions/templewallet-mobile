@@ -26,12 +26,14 @@ export const createUseStylesConfig =
     return stylesFn({ colors, typography });
   };
 
+/** Do not use if stylesFn is a hook itself */
 export const createUseStylesMemoized =
   <T extends NamedStyles<T>>(stylesFn: (props: CStylesFnProps) => T) =>
   () =>
     StyleSheet.create<T>(createUseStylesConfigMemoized(stylesFn)());
 
-export const createUseStylesConfigMemoized =
+/** Do not use if stylesFn is a hook itself */
+const createUseStylesConfigMemoized =
   <T extends NamedStyles<T> = ButtonStyleConfig>(stylesFn: (props: CStylesFnProps) => T) =>
   () => {
     const colors = useColors();
