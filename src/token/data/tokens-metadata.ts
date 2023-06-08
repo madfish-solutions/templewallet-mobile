@@ -1,4 +1,5 @@
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+
 import { emptyTokenMetadata, TokenMetadataInterface, TokenStandardsEnum } from '../interfaces/token-metadata.interface';
 
 export const TEZ_TOKEN_SLUG = 'tez';
@@ -29,7 +30,16 @@ export const WTEZ_TOKEN_METADATA: TokenMetadataInterface = {
   standard: TokenStandardsEnum.Fa2
 };
 
-export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+const DEPRECATED_TKEY_METADATA: TokenMetadataInterface = {
+  address: 'KT1WihWRnmzhfebi6zqQ4tvNGiPeVxiGwTi2',
+  id: 0,
+  name: 'Deprecated Temple Key',
+  symbol: 'TKEY_OLD',
+  decimals: 18,
+  standard: TokenStandardsEnum.Fa2
+};
+
+export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
     address: 'KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o',
@@ -96,7 +106,7 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   WTEZ_TOKEN_METADATA
 ];
 
-export const DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
+export const PREDEFINED_DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
     address: 'KT1N7Rh6SgSdExMPxfnYw1tHqrkSm7cm6JDN',
@@ -106,4 +116,9 @@ export const DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
     thumbnailUri: 'https://loonfilms.com/apx/apx-coin-220px.png',
     standard: TokenStandardsEnum.Fa2
   }
+];
+
+export const KNOWN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+  DEPRECATED_TKEY_METADATA,
+  ...PREDEFINED_MAINNET_TOKENS_METADATA
 ];

@@ -130,6 +130,7 @@ export const BuyWithCreditCard: FC = () => {
               newValueFn={newTopUpAssetAmountFn}
               precision={inputAsset.precision}
               testID={BuyWithCreditCardSelectors.sendInput}
+              tokenTestID={BuyWithCreditCardSelectors.fiatCurrencyItem}
               onValueChange={handleInputValueChange}
               onBlur={handleSendInputBlur}
               setSearchValue={setInputSearchValue}
@@ -149,6 +150,7 @@ export const BuyWithCreditCard: FC = () => {
               onValueChange={handleOutputValueChange}
               assetsList={filteredCryptoCurrencies}
               testID={BuyWithCreditCardSelectors.getOutput}
+              tokenTestID={BuyWithCreditCardSelectors.cryptoCurrencyItem}
               onBlur={handleGetOutputBlur}
               setSearchValue={setOutputSearchValue}
             />

@@ -12,6 +12,7 @@ import { useHdAccountListSelector } from '../../../store/wallet/wallet-selectors
 import { formatSize } from '../../../styles/format-size';
 import { getDerivationPath } from '../../../utils/keys.util';
 import { RevealSeedPhraseModalFormValues } from '../reveal-seed-phrase-modal.form';
+import { RevealSeedPharaseSelectors } from '../reveal-seed-phrase.selectors';
 import { RevealSeedPhraseView } from './reveal-seed-phrase-view/reveal-seed-phrase-view';
 
 export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFormValues>> = ({
@@ -37,7 +38,7 @@ export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFo
         label="Account"
         description="If you want to reveal a seed phrase from another account - you should select it in the top-right dropdown."
       />
-      <AccountFormDropdown name="account" list={hdAccounts} />
+      <AccountFormDropdown name="account" list={hdAccounts} testID={RevealSeedPharaseSelectors.accountDropdown} />
       <Label
         label="Derivation path"
         description="for HD accounts. This is the thing you use to recover all your accounts from your seed phrase."

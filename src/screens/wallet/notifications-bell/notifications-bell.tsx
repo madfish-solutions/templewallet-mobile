@@ -1,14 +1,15 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useIsNewNotificationsAvailableSelector } from '../../../store/notifications/notifications-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
-import { NotificationBellSelectors } from './notification-bell.selectors';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useIsNewNotificationsAvailableSelector } from 'src/store/notifications/notifications-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+
+import { WalletSelectors } from '../wallet.selectors';
 import { NotificationsBellStyles } from './notifications-bell.styles';
 
 export const NotificationsBell = () => {
@@ -21,7 +22,7 @@ export const NotificationsBell = () => {
     <TouchableOpacity
       style={NotificationsBellStyles.iconContainer}
       onPress={() => navigate(ScreensEnum.Notifications)}
-      testID={NotificationBellSelectors.notificationBellButton}
+      testID={WalletSelectors.notificationsButton}
     >
       {isNewNotificationsAvailable && (
         <Icon
