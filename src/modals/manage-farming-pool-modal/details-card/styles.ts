@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useDetailsCardStyles = createUseStyles(({ colors, typography }) => ({
+export const useDetailsCardStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
     backgroundColor: colors.cardBG,
     padding: formatSize(12),

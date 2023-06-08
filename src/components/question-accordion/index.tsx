@@ -19,14 +19,17 @@ interface Props extends TestIdProps {
   question: string;
 }
 
+const ANIMATION_CONFIGURATION = { duration: ANIMATION_DURATION_FAST, useNativeDriver: false };
+const ANIMATION_INTERPOLATION = { outputRange: ['180deg', '0deg'] };
+
 export const QuestionAccordion: FC<Props> = ({ question, children, testID, testIDProperties }) => {
   const [isOpen, setIsOpen] = useState(false);
   const styles = useQuestionAccordionStyles();
   const animation = useAnimationRef(isOpen);
 
   const toggleAccordion = useCallback(() => setIsOpen(state => !state), []);
-  useUpdateAnimation(animation, isOpen, { duration: ANIMATION_DURATION_FAST, useNativeDriver: false });
-  const rotate = useAnimationInterpolate(animation, { outputRange: ['180deg', '0deg'] }, [isOpen]);
+  useUpdateAnimation(animation, isOpen, ANIMATION_CONFIGURATION);
+  const rotate = useAnimationInterpolate(animation, ANIMATION_INTERPOLATION, [isOpen]);
 
   return (
     <View style={styles.container}>

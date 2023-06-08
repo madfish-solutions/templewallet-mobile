@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useQuestionAccordionStyles = createUseStyles(({ colors, typography }) => ({
+export const useQuestionAccordionStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {
     borderRadius: formatSize(8),
     backgroundColor: colors.peach10

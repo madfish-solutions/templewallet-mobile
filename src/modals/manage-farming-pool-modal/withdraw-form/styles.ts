@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useWithdrawFormStyles = createUseStyles(({ colors, typography }) => ({
+export const useWithdrawFormStyles = createUseStylesMemoized(({ colors, typography }) => ({
   formContainer: {
     flex: 1
   },

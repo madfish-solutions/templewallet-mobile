@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useStakeFormStyles = createUseStyles(({ colors, typography }) => ({
+export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography }) => ({
   depositPrompt: {
     ...typography.caption13Regular,
     letterSpacing: formatSize(-0.08),
