@@ -73,7 +73,8 @@ export const CollectibleModal = () => {
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
 
-  const { fa, creators, description, metadata, timestamp, royalties, supply, attributes, galleries } = collectibleInfo;
+  const { fa, creators, description, metadata, timestamp, royalties, supply, attributes, galleries, mime } =
+    collectibleInfo;
 
   const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
 
@@ -165,27 +166,25 @@ export const CollectibleModal = () => {
 
         <Divider size={formatSize(12)} />
 
-          <View style={styles.collectionContainer}>
-            <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-              {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+        <View style={styles.collectionContainer}>
+          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
 
-              <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
-                {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
-              </Text>
-            </TouchableOpacity>
+            <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
+              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
+            </Text>
+          </TouchableOpacity>
 
-            {isString(description) && (
-              <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-                <Icon name={IconNameEnum.Share} />
-                <Divider size={formatSize(4)} />
-                <Text style={styles.shareButtonText}>Share</Text>
-              </TouchableOpacity>
-            )}
-          </View>
+          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+            <Icon name={IconNameEnum.Share} />
+            <Divider size={formatSize(4)} />
+            <Text style={styles.shareButtonText}>Share</Text>
+          </TouchableOpacity>
+        </View>
 
-          <View style={styles.nameContainer}>
-            <Text style={styles.name}>{collectible.name}</Text>
-          </View>
+        <View style={styles.nameContainer}>
+          <Text style={styles.name}>{collectible.name}</Text>
+        </View>
 
         {isString(description) && (
           <View style={styles.descriptionContainer}>

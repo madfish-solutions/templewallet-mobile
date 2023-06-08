@@ -48,6 +48,7 @@ const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
 
 export const TokensList: FC = () => {
   const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
   const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
   const styles = useTokenListStyles();
 
