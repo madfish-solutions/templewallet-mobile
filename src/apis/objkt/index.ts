@@ -1,14 +1,14 @@
 import { catchError, map, Observable, of } from 'rxjs';
 
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
-import { AttributeInfo } from 'src/interfaces/attribute.interface';
-import { CollectibleInfo } from 'src/interfaces/collectible-info.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
+import { AttributeInfo } from '../../interfaces/attribute.interface';
+import { CollectibleInfo, UserAdultCollectibles } from '../../interfaces/collectible-info.interface';
 import {
   CollectibleInfoQueryResponse,
   CollectiblesByCollectionResponse,
@@ -17,6 +17,7 @@ import {
   GalleryAttributeCountQueryResponse,
   QueryResponse,
   TzProfilesQueryResponse
+  UserAdultCollectiblesQueryResponse
 } from './interfaces';
 import {
   buildGetCollectibleByAddressAndIdQuery,
@@ -26,6 +27,7 @@ import {
   buildGetGalleryAttributeCountQuery,
   buildGetHoldersInfoQuery,
   getCollectiblesByGalleryQuery
+  buildGetUserAdultCollectiblesQuery
 } from './queries';
 import { getUniqueAndMaxValueAttribute, transformCollectiblesArray } from './utils';
 
@@ -134,6 +136,12 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
       };
     })
   );
+};
+
+export const fetchUserAdultCollectibles$ = (address: string): Observable<UserAdultCollectibles[]> => {
+  const request = buildGetUserAdultCollectiblesQuery(address);
+
+  return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(map(result => result.token));
 };
 
 export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfo[]> => {

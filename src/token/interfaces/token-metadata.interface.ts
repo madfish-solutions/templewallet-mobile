@@ -36,6 +36,7 @@ export type TokenMetadataInterface = CollectibleMetadataInterface & {
   displayUri?: string;
   artifactUri?: string;
   standard?: TokenStandardsEnum | null;
+  isAdultContent?: boolean;
 
   // Stored as separate Record
   exchangeRate?: number;

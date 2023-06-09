@@ -44,3 +44,5 @@ export const HIDDEN_CONTRACTS = [
   'KT18pVpRXKPY2c4U2yFEGSH3ZnhB2kL8kwXS',
   'KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE'
 ];
+
+export const ADULT_ATTRIBUTE_NAME = '__nsfw_';

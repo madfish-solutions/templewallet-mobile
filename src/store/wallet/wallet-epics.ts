@@ -22,7 +22,6 @@ import {
   loadTezosBalance$,
   loadTokensWithBalance$
 } from 'src/utils/token-balance.utils';
-import { withMetadataSlugs } from 'src/utils/token-metadata.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
@@ -94,9 +93,8 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
     ofType(loadTokensActions.submit),
     withSelectedAccount(state$),
     withSelectedAccountState(state$),
-    withMetadataSlugs(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[[[, selectedAccount], selectedAccountState], metadataRecord], selectedRpcUrl]) =>
+    switchMap(([[[, selectedAccount], selectedAccountState], selectedRpcUrl]) =>
       loadTokensWithBalance$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
         concatMap(tokensWithBalance => {
           const tokensWithBalancesSlugs = tokensWithBalance.map(tokenWithBalance =>
@@ -111,14 +109,12 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
           const tokensList = (isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList) ?? [];
 
           const accountTokensSlugs = tokensList.map(token => token.slug);
-          const existingMetadataSlugs = Object.keys(metadataRecord);
 
           const allTokensSlugs = uniq([...accountTokensSlugs, ...tokensWithBalancesSlugs]);
-          const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !existingMetadataSlugs.includes(x));
 
           return [
             loadTokensActions.success(tokensWithBalancesSlugs),
-            loadTokensMetadataAction(assetWithoutMetadataSlugs),
+            loadTokensMetadataAction(allTokensSlugs),
             loadTokensBalancesArrayActions.submit()
           ];
         }),
