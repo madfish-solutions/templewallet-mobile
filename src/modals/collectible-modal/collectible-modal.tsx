@@ -13,6 +13,7 @@ import { CollectibleIconSize } from '../../components/collectible-icon/collectib
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { ImageBlurOverlayThemesEnum } from '../../components/image-blur-overlay/image-blur-overlay';
 import { LinkWithIcon } from '../../components/link-with-icon/link-with-icon';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -149,7 +150,13 @@ export const CollectibleModal = () => {
         <ModalStatusBar />
 
         <View>
-          <CollectibleIcon collectible={collectible} size={itemWidth} iconSize={CollectibleIconSize.BIG} />
+          <CollectibleIcon
+            collectible={collectible}
+            size={itemWidth}
+            iconSize={CollectibleIconSize.BIG}
+            blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
+            isLoading={isLoading}
+          />
 
           <Divider size={formatSize(12)} />
 

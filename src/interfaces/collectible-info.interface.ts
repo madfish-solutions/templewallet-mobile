@@ -1,3 +1,18 @@
+export interface CollectibleAttributes {
+  attribute: {
+    id: number;
+    name: string;
+    value: string;
+    rarity?: number;
+  };
+}
+[];
+
+export interface UserAdultCollectibles {
+  fa_contract: string;
+  token_id: string;
+}
+
 export interface CollectibleInfo {
   description: string;
   creators: {
@@ -13,14 +28,7 @@ export interface CollectibleInfo {
   };
   metadata: string;
   artifact_uri: string;
-  attributes: {
-    attribute: {
-      id: number;
-      name: string;
-      value: string;
-      rarity?: number;
-    };
-  }[];
+  attributes: CollectibleAttributes[];
   timestamp: string;
   royalties: {
     decimals: number;

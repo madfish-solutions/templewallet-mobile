@@ -1,17 +1,19 @@
 import { Observable, map } from 'rxjs';
 
 import { AttributeInfo } from '../../interfaces/attribute.interface';
-import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
+import { CollectibleInfo, UserAdultCollectibles } from '../../interfaces/collectible-info.interface';
 import { apolloObjktClient } from './constants';
 import {
   CollectibleInfoQueryResponse,
   FA2AttributeCountQueryResponse,
-  GalleryAttributeCountQueryResponse
+  GalleryAttributeCountQueryResponse,
+  UserAdultCollectiblesQueryResponse
 } from './interfaces';
 import {
   buildGetCollectibleByAddressAndIdQuery,
   buildGetFA2AttributeCountQuery,
-  buildGetGalleryAttributeCountQuery
+  buildGetGalleryAttributeCountQuery,
+  buildGetUserAdultCollectiblesQuery
 } from './queries';
 import { getUniqueAndMaxValueAttribute } from './utils';
 
@@ -41,6 +43,12 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
       };
     })
   );
+};
+
+export const fetchUserAdultCollectibles$ = (address: string): Observable<UserAdultCollectibles[]> => {
+  const request = buildGetUserAdultCollectiblesQuery(address);
+
+  return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(map(result => result.token));
 };
 
 export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfo[]> => {
