@@ -18,8 +18,6 @@ export const useTabBarButtonStyles = createUseStyles(({ typography }) => ({
     right: formatSize(4)
   },
   label: {
-    ...typography.caption11Regular,
-    // TODO: replace this with correct typography name
-    fontSize: 10
+    ...typography.caption10Regular
   }
 }));

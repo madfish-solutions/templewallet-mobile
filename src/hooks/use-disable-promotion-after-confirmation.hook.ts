@@ -2,12 +2,16 @@ import { useCallback } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { TextPromotionItemSelectors } from 'src/components/text-promotion-item/text-promotion-item.selectors';
 import { setIsPromotionEnabledAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { turnOffAdsBannerAction } from '../store/settings/settings-actions';
 
 export const usePromotionAfterConfirmation = () => {
   const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
 
   const enablePromotion = useCallback(
     () =>
@@ -41,12 +45,14 @@ wallet. If you turned off ADS, you can always activate it in the settings.',
         [
           {
             text: 'Cancel',
-            style: 'cancel'
+            style: 'cancel',
+            onPress: () => trackEvent(TextPromotionItemSelectors.cancelButton, AnalyticsEventCategory.ButtonPress)
           },
           {
             text: 'Disable',
             style: 'destructive',
             onPress: () => {
+              trackEvent(TextPromotionItemSelectors.disablelButton, AnalyticsEventCategory.ButtonPress);
               dispatch(setIsPromotionEnabledAction());
               dispatch(turnOffAdsBannerAction());
             }

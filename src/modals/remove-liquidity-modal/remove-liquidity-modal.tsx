@@ -162,6 +162,8 @@ export const RemoveLiquidityModal = () => {
                   assetsList={[values.lpToken.asset]}
                   maxButton
                   onValueChange={handleLpTokenChange}
+                  testID={RemoveLiquidityModalSelectors.lpDropdown}
+                  maxButtonTestID={RemoveLiquidityModalSelectors.lpMaxButton}
                 />
                 <Divider size={formatSize(16)} />
                 <View style={styles.iconCentered}>
@@ -173,6 +175,8 @@ export const RemoveLiquidityModal = () => {
                   label="Output"
                   assetsList={[values.aToken.asset]}
                   onValueChange={handleATokenChange}
+                  testID={RemoveLiquidityModalSelectors.aOutputTokenDropdown}
+                  switcherTestID={RemoveLiquidityModalSelectors.aOutputTokenSwitcher}
                 />
                 <Divider size={formatSize(16)} />
                 <View style={styles.iconCentered}>
@@ -184,6 +188,8 @@ export const RemoveLiquidityModal = () => {
                   label="Output"
                   assetsList={[values.bToken.asset]}
                   onValueChange={handleBTokenChange}
+                  testID={RemoveLiquidityModalSelectors.bOutputTokenDropdown}
+                  switcherTestID={RemoveLiquidityModalSelectors.bOutputTokenSwitcher}
                 />
                 <Text style={styles.sectionNameText}>Remove Liquidity Details</Text>
                 <View style={styles.lineDivider} />

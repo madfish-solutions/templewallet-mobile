@@ -12,6 +12,7 @@ import { HideBootsplashProvider } from '../hooks/use-hide-bootsplash';
 import { RootStackScreen } from '../navigator/root-stack';
 import { AppLockContextProvider } from '../shelter/app-lock/app-lock';
 import { persistor, store } from '../store/store';
+import { TypographyProvider } from '../styles/typography.context';
 import { ToastProvider } from '../toast/toast-provider';
 import { initSentry } from '../utils/sentry.utils';
 import { AppStyles } from './app.styles';
@@ -28,10 +29,12 @@ export const App = () => (
           <HideBalanceProvider>
             <AppLockContextProvider>
               <SafeAreaProvider>
-                <HideBootsplashProvider>
-                  <RootStackScreen />
-                </HideBootsplashProvider>
-                <ToastProvider />
+                <TypographyProvider>
+                  <HideBootsplashProvider>
+                    <RootStackScreen />
+                  </HideBootsplashProvider>
+                  <ToastProvider />
+                </TypographyProvider>
               </SafeAreaProvider>
             </AppLockContextProvider>
           </HideBalanceProvider>
