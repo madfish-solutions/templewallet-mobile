@@ -50,8 +50,8 @@ export const OptimalPromotionItem: FC<Props> = ({
     return (
       <TextPromotionItem
         testID={testID}
-        content={partnersPromotion.copy.content}
-        headline={partnersPromotion.copy.headline}
+        content={partnersPromotion?.copy?.content ?? 'fallback'}
+        headline={partnersPromotion?.copy?.headline ?? 'fallback'}
         imageUri={partnersPromotion.image}
         link={partnersPromotion.link}
         loading={partnersPromotionLoading}

@@ -10,9 +10,16 @@ import { isDefined } from 'src/utils/is-defined';
 export const TouchableCollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
   const { navigate } = useNavigation();
 
+  const handleNavigate = () => navigate(ModalsEnum.CollectibleModal, { collectible });
+
   return isDefined(collectible) ? (
-    <TouchableOpacity onPress={() => navigate(ModalsEnum.CollectibleModal, { collectible })}>
-      <CollectibleIcon iconSize={CollectibleIconSize.SMALL} collectible={collectible} size={size} />
+    <TouchableOpacity activeOpacity={1} onPress={handleNavigate}>
+      <CollectibleIcon
+        iconSize={CollectibleIconSize.SMALL}
+        collectible={collectible}
+        size={size}
+        isTouchableOverlay={false}
+      />
     </TouchableOpacity>
   ) : null;
 };
