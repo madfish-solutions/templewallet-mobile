@@ -62,7 +62,7 @@ export const TokenScreen = () => {
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
-  usePageAnalytic(ScreensEnum.TokenScreen);
+  usePageAnalytic(ScreensEnum.TokenScreen, undefined, { token: token.name });
 
   return (
     <>
@@ -80,7 +80,7 @@ export const TokenScreen = () => {
             handleUpdate={handleUpdate}
             activityGroups={activities}
             shouldShowPromotion={partnersPromotionEnabled && !promotionErrorOccurred}
-            onOptimalPromotionImageError={() => setPromotionErrorOccurred(true)}
+            onOptimalPromotionError={() => setPromotionErrorOccurred(true)}
           />
         }
         infoComponent={<TokenInfo token={token} />}

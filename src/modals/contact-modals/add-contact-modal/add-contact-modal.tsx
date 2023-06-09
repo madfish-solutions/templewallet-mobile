@@ -1,33 +1,46 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import { FormikProps } from 'formik/dist/types';
+import React, { FC, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
-import { Divider } from '../../../components/divider/divider';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../components/label/label';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { FormAddressInput } from '../../../form/form-address-input';
-import { FormTextInput } from '../../../form/form-text-input';
-import { AccountBaseInterface } from '../../../interfaces/account.interface';
-import { ModalsEnum, ModalsParamList } from '../../../navigator/enums/modals.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { addContactAction, loadContactTezosBalance } from '../../../store/contact-book/contact-book-actions';
-import { formatSize } from '../../../styles/format-size';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { Divider } from 'src/components/divider/divider';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { FormAddressInput } from 'src/form/form-address-input';
+import { FormTextInput } from 'src/form/form-text-input';
+import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { addContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { tezosDomainsResolver } from 'src/utils/dns.utils';
+
+import { handleContactSubmission } from '../utils/handle-contact-submission.util';
 import { useAddContactFormValidationSchema } from '../validation-schema';
 import { AddContactModalSelectors } from './add-contact-modal.selectors';
 
 export const AddContactModal: FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum.AddContact>>();
   const validationSchema = useAddContactFormValidationSchema();
+  const selectedAccount = useSelectedAccountSelector();
+  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const resolver = tezosDomainsResolver(tezos);
 
-  const onSubmit = (contact: AccountBaseInterface) => {
+  const formik = useRef<FormikProps<AccountBaseInterface>>(null);
+
+  const addContact = (contact: AccountBaseInterface) => {
     dispatch(addContactAction(contact));
     dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
     goBack();
@@ -38,13 +51,16 @@ export const AddContactModal: FC = () => {
     publicKeyHash: params?.publicKeyHash ?? ''
   };
 
+  usePageAnalytic(ModalsEnum.AddContact);
+
   return (
     <Formik
+      innerRef={formik}
       validateOnBlur
       validateOnChange
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      onSubmit={values => handleContactSubmission(values, formik, resolver, setIsLoading, addContact)}
     >
       {({ submitForm, isValid }) => (
         <ScreenContainer isFullScreenMode>
@@ -56,11 +72,16 @@ export const AddContactModal: FC = () => {
           </View>
           <View>
             <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} testID={AddContactModalSelectors.closeButton} />
+              <ButtonLargeSecondary
+                title="Close"
+                disabled={isLoading}
+                onPress={goBack}
+                testID={AddContactModalSelectors.closeButton}
+              />
               <Divider size={formatSize(16)} />
               <ButtonLargePrimary
                 title="Save"
-                disabled={!isValid}
+                disabled={!isValid || isLoading}
                 onPress={submitForm}
                 testID={AddContactModalSelectors.saveButton}
               />

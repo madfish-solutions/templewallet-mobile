@@ -15,7 +15,7 @@ const loadPartnersPromotionEpic = (action$: Observable<Action>) =>
     switchMap(payload =>
       from(getOptimalPromotion(payload)).pipe(
         map(optimalPromotion => loadPartnersPromoActions.success(optimalPromotion)),
-        catchError(error => of(loadPartnersPromoActions.fail(error)))
+        catchError(error => of(loadPartnersPromoActions.fail(error.message)))
       )
     )
   );

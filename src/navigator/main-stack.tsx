@@ -24,6 +24,7 @@ import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
 import { useLoadTokensApy } from 'src/hooks/use-load-tokens-apy.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useNFTDynamicLinks } from 'src/hooks/use-nft-dynamic-links.hook';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
 import { Backup } from 'src/screens/backup/backup';
@@ -95,6 +96,7 @@ export const MainStackScreen = () => {
   useAppLockTimer();
   useBeaconHandler();
   useFirebaseApp();
+  useNFTDynamicLinks();
   useAdvertising();
   useLoadTokensApy();
 

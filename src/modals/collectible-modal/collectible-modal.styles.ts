@@ -2,10 +2,15 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useCollectibleModalStyles = createUseStyles(({ colors, typography }) => ({
-  collection: {
+  collectionContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: formatSize(12)
+  },
+  collection: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   collectionLogo: {
     height: formatSize(36),
@@ -18,7 +23,8 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
   },
   collectionName: {
     ...typography.caption13Semibold,
-    color: colors.black
+    color: colors.black,
+    maxWidth: formatSize(150)
   },
   nameContainer: {
     marginBottom: formatSize(8)
@@ -71,5 +77,13 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
     marginRight: formatSize(2),
     ...typography.tagline13Tag,
     color: colors.destructive
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  shareButtonText: {
+    ...typography.tagline13Tag,
+    color: colors.peach
   }
 }));
