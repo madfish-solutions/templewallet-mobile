@@ -96,6 +96,7 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string, offset: 
     }
     listings_active {
       amount
+      seller_address
     }
     fa {
       items
@@ -154,6 +155,7 @@ query MyQuery {
         }
         listings_active {
           amount
+          seller_address
         }
         fa {
           items

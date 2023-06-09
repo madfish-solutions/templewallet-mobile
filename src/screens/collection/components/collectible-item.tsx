@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { OBJKT_CONTRACT } from 'src/apis/objkt/constants';
 import { CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon.props';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
+import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { FxHashContractInterface, ObjktContractInterface } from 'src/interfaces/marketplaces.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -31,9 +32,10 @@ const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 interface Props {
   item: TokenInterface;
   collectionContract: string;
+  setWidth: (arg: number) => void;
 }
 
-export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
+export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth }) => {
   const [offer, setOffer] = useState<ObjktContractInterface | FxHashContractInterface>();
   const selectedRpc = useSelectedRpcUrlSelector();
   const selectedAccount = useSelectedAccountSelector();
@@ -41,6 +43,10 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
   const dispatch = useDispatch();
 
   const styles = useCollectionStyles();
+
+  const { handleLayout, layoutWidth } = useLayoutSizes();
+
+  useEffect(() => setWidth(layoutWidth), [layoutWidth]);
 
   useEffect(() => {
     tezos.contract
@@ -136,12 +142,8 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
     }
   };
 
-  if (item.address === '') {
-    return <View style={styles.emptyBlock} />;
-  }
-
   return (
-    <View style={styles.collectibleContainer}>
+    <View style={styles.collectibleContainer} onLayout={handleLayout}>
       {isDefined(item.lowestAsk) && (
         <View style={styles.listed}>
           <Text style={styles.listedText}>LISTED</Text>
@@ -190,23 +192,25 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
                 {buttonText()}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleList}
-              style={[
-                styles.sellButton,
-                conditionalStyle(!isAbleToList, styles.listButtonNotListed, styles.listButtonActive)
-              ]}
-              disabled={!isAbleToList}
-            >
-              <Text
+            <View>
+              <TouchableOpacity
+                onPress={handleList}
                 style={[
-                  styles.sellButtonText,
-                  conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActive)
+                  styles.sellButton,
+                  conditionalStyle(!isAbleToList, styles.listButtonNotListed, styles.listButtonActive)
                 ]}
+                disabled={!isAbleToList}
               >
-                {!isAbleToList ? 'Listed' : 'List'}
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={[
+                    styles.sellButtonText,
+                    conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActive)
+                  ]}
+                >
+                  {!isAbleToList ? 'Listed' : 'List'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       </View>

@@ -122,5 +122,10 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
   },
   topContainer: {
     flex: 1
+  },
+  emptyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1
   }
 }));
