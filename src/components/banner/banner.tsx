@@ -39,14 +39,16 @@ export const Banner: FC<Props> = ({
           title={disableButtonText}
           onPress={onDisable}
           textStyle={styles.buttonText}
-          style={styles.button}
+          buttonStyle={styles.button}
+          style={styles.buttonContainer}
         />
         <Divider size={formatSize(16)} />
         <ButtonLargePrimary
           title={enableButtonText}
           onPress={onEnable}
           textStyle={styles.buttonText}
-          style={styles.button}
+          buttonStyle={styles.button}
+          style={styles.buttonContainer}
         />
       </View>
     </View>

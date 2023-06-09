@@ -23,7 +23,7 @@ import {
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
-  setIsEnableAdsBannerAction
+  turnOffAdsBannerAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -106,7 +106,7 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     applicationOpenCounter: (state.applicationOpenCounter ?? 0) + 1
   }));
 
-  builder.addCase(setIsEnableAdsBannerAction, state => ({
+  builder.addCase(turnOffAdsBannerAction, state => ({
     ...state,
     isEnableAdsBanner: false
   }));

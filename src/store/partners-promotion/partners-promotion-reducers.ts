@@ -17,8 +17,8 @@ export const partnersPromotionReducers = createReducer(partnersPromotionInitialS
     ...state,
     promotion: createEntity(state.promotion.data, false, payload)
   }));
-  builder.addCase(setIsPromotionEnabledAction, (state, { payload }) => ({
+  builder.addCase(setIsPromotionEnabledAction, state => ({
     ...state,
-    isEnabled: payload
+    isEnabled: !state.isEnabled
   }));
 });

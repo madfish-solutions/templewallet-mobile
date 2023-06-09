@@ -18,7 +18,6 @@ import {
   NOTIFICATIONS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
-import { useAdvertising } from 'src/hooks/use-advertising.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
@@ -94,7 +93,6 @@ export const MainStackScreen = () => {
   useAppLockTimer();
   useBeaconHandler();
   useFirebaseApp();
-  useAdvertising();
   useLoadTokensApy();
 
   const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];

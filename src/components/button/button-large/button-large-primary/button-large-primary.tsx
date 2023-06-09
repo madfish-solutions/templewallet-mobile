@@ -10,8 +10,17 @@ interface Props extends ButtonLargeProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const ButtonLargePrimary: FC<Props> = ({ style, textStyle, ...props }) => {
+export const ButtonLargePrimary: FC<Props> = ({ buttonStyle, style, textStyle, ...props }) => {
   const styleConfig = useButtonLargePrimaryStyleConfig();
 
-  return <Button {...props} styleConfig={styleConfig} isFullWidth={true} textStyle={textStyle} style={style} />;
+  return (
+    <Button
+      {...props}
+      styleConfig={styleConfig}
+      isFullWidth={true}
+      buttonStyle={buttonStyle}
+      textStyle={textStyle}
+      style={style}
+    />
+  );
 };

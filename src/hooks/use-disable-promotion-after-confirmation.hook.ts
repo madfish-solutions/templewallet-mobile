@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux';
 
 import { setIsPromotionEnabledAction } from 'src/store/partners-promotion/partners-promotion-actions';
 
+import { turnOffAdsBannerAction } from '../store/settings/settings-actions';
+
 export const usePromotionAfterConfirmation = () => {
   const dispatch = useDispatch();
 
@@ -20,7 +22,10 @@ export const usePromotionAfterConfirmation = () => {
           {
             text: 'Enable',
             style: 'destructive',
-            onPress: () => dispatch(setIsPromotionEnabledAction(true))
+            onPress: () => {
+              dispatch(setIsPromotionEnabledAction());
+              dispatch(turnOffAdsBannerAction());
+            }
           }
         ]
       ),
@@ -41,7 +46,10 @@ wallet. If you turned off ADS, you can always activate it in the settings.',
           {
             text: 'Disable',
             style: 'destructive',
-            onPress: () => dispatch(setIsPromotionEnabledAction(false))
+            onPress: () => {
+              dispatch(setIsPromotionEnabledAction());
+              dispatch(turnOffAdsBannerAction());
+            }
           }
         ]
       ),

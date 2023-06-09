@@ -22,7 +22,7 @@ import {
   setIsPromotionEnabledAction
 } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { setIsEnableAdsBannerAction, setZeroBalancesShown } from 'src/store/settings/settings-actions';
+import { turnOffAdsBannerAction, setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
   useSelectedAccountSelector,
@@ -38,7 +38,7 @@ import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { optimalFetchEnableAds } from '../../../apis/optimal';
 import { Banner } from '../../../components/banner/banner';
-import { useBanner } from '../../../hooks/use-banner.hook';
+import { loadAdvertisingPromotionActions } from '../../../store/advertising/advertising-actions';
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { TokenListSelectors } from './token-list.selectors';
@@ -73,8 +73,6 @@ export const TokensList: FC = () => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
-
-  const { isShowBanner, hideBanner } = useBanner(isEnabledAdsBanner);
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
@@ -125,15 +123,21 @@ export const TokensList: FC = () => {
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
   const handleDisableBannerButton = () => {
-    dispatch(setIsPromotionEnabledAction(false));
-    hideBanner(() => dispatch(setIsEnableAdsBannerAction()));
+    dispatch(setIsPromotionEnabledAction());
+    dispatch(turnOffAdsBannerAction());
   };
 
   const handleEnableBannerButton = async () => {
-    dispatch(setIsPromotionEnabledAction(true));
-    hideBanner(() => dispatch(setIsEnableAdsBannerAction()));
-    optimalFetchEnableAds(publicKeyHash);
+    dispatch(setIsPromotionEnabledAction());
+    dispatch(turnOffAdsBannerAction());
   };
+
+  useEffect(() => {
+    if (partnersPromotionEnabled) {
+      dispatch(loadAdvertisingPromotionActions.submit());
+      optimalFetchEnableAds(publicKeyHash);
+    }
+  }, [partnersPromotionEnabled, publicKeyHash]);
 
   const renderItem: ListRenderItem<FlatListItem> = useCallback(
     ({ item }) => {
@@ -202,7 +206,7 @@ export const TokensList: FC = () => {
         </Search>
       </View>
 
-      {isShowBanner && (
+      {isEnabledAdsBanner && (
         <Banner
           title="Earn by viewing ads in Temple Wallet"
           description="Support the development team and earn tokens by viewing ads inside the wallet. To enable this feature, we request your permission to trace your Wallet Address and IP address. You can always disable ads in the settings."

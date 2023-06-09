@@ -23,10 +23,13 @@ export const useBannerStyles = createUseStyles(({ colors, typography }) => ({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
-  button: {
+  buttonContainer: {
     flex: 1
   },
+  button: {
+    height: formatSize(38)
+  },
   buttonText: {
-    textTransform: 'uppercase'
+    ...typography.tagline13Tag
   }
 }));

@@ -25,6 +25,7 @@ export const Button: FC<Props> = ({
   disabled = false,
   styleConfig,
   textStyle,
+  buttonStyle,
   style,
 
   isFullWidth = false,
@@ -69,7 +70,8 @@ export const Button: FC<Props> = ({
           ButtonStyles.touchableOpacity,
           containerStyle,
           { backgroundColor, borderColor },
-          { marginTop, marginRight, marginBottom, marginLeft }
+          { marginTop, marginRight, marginBottom, marginLeft },
+          buttonStyle
         ]}
         onPress={handlePress}
         {...setTestID(testID)}

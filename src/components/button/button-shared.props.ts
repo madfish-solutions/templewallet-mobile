@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { StyleProp, ViewStyle } from 'react-native';
 
 import { EmptyFn } from '../../config/general';
 import { MarginProps } from '../../interfaces/margin.props';
@@ -10,4 +11,5 @@ export interface ButtonSharedProps extends MarginProps, TestIdProps {
   iconName?: IconNameEnum;
   disabled?: boolean;
   onPress: EmptyFn;
+  buttonStyle?: StyleProp<ViewStyle>;
 }

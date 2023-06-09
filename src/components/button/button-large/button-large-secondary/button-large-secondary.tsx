@@ -12,7 +12,13 @@ interface Props extends ButtonLargeProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const ButtonLargeSecondary: FC<Props> = ({ activeColorStyleConfig, textStyle, style, ...props }) => {
+export const ButtonLargeSecondary: FC<Props> = ({
+  activeColorStyleConfig,
+  textStyle,
+  buttonStyle,
+  style,
+  ...props
+}) => {
   const styleConfig = useButtonLargeSecondaryStyleConfig();
 
   const finalStyleConfig = activeColorStyleConfig
@@ -22,5 +28,14 @@ export const ButtonLargeSecondary: FC<Props> = ({ activeColorStyleConfig, textSt
       }
     : styleConfig;
 
-  return <Button {...props} styleConfig={finalStyleConfig} isFullWidth={true} textStyle={textStyle} style={style} />;
+  return (
+    <Button
+      {...props}
+      styleConfig={finalStyleConfig}
+      isFullWidth={true}
+      textStyle={textStyle}
+      buttonStyle={buttonStyle}
+      style={style}
+    />
+  );
 };

@@ -35,4 +35,4 @@ export const madeCloudBackupAction = createAction<void>('settings/MADE_CLOUD_BAC
 
 export const walletOpenedAction = createAction<void>('settings/APPLICATION_OPENED_ACTION');
 
-export const setIsEnableAdsBannerAction = createAction('settings/SET_IS_ENABLE_ADS_BANNER_ACTION');
+export const turnOffAdsBannerAction = createAction('settings/TURN_OFF_ADS_BANNER_ACTION');
