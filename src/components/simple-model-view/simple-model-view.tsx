@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { emptyFn, EventFn } from 'src/config/general';
+import { EmptyFn, emptyFn, EventFn } from 'src/config/general';
 
 import { useSimpleModelViewStyles } from './simple-model-view.styles';
 
@@ -32,8 +32,8 @@ interface SimpleModelViewProps {
   uri: string;
   isBinary: boolean;
   style?: ViewStyle;
-  onError?: () => void;
-  onLoadEnd?: () => void;
+  onError?: EmptyFn;
+  onLoadEnd?: EmptyFn;
   setScrollEnabled?: EventFn<boolean>;
 }
 

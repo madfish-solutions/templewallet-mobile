@@ -2,16 +2,18 @@ import React, { FC } from 'react';
 import { ViewStyle } from 'react-native';
 import Video from 'react-native-video';
 
-import { emptyFn } from 'src/config/general';
+import { EmptyFn, emptyFn } from 'src/config/general';
 
 interface SimpleVideoProps {
   uri: string;
   size: number;
   posterUri?: string;
   style?: ViewStyle;
-  onError?: () => void;
-  onLoad?: () => void;
+  onError?: EmptyFn;
+  onLoad?: EmptyFn;
 }
+
+const BUFFER_DURATION = 8000;
 
 export const SimplePlayer: FC<SimpleVideoProps> = ({
   uri,
@@ -29,7 +31,7 @@ export const SimplePlayer: FC<SimpleVideoProps> = ({
       style={[{ width: size, height: size }, style]}
       resizeMode="cover"
       bufferConfig={{
-        bufferForPlaybackMs: 8000
+        bufferForPlaybackMs: BUFFER_DURATION
       }}
       poster={posterUri}
       posterResizeMode="cover"

@@ -14,10 +14,8 @@ export const AudioPlaceholder: FC = () => {
   const styles = useAudioPlaceholderStyles();
 
   return (
-    <View style={styles.card}>
-      <View style={styles.container}>
-        <Icon name={IconNameEnum.Audio} width={width} height={height} />
-      </View>
+    <View style={styles.container}>
+      <Icon name={IconNameEnum.Audio} width={width} height={height} />
     </View>
   );
 };

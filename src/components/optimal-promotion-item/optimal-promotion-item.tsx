@@ -19,7 +19,7 @@ interface Props extends TestIdProps {
   style?: StyleProp<ViewStyle>;
   shouldShowCloseButton?: boolean;
   variant?: OptimalPromotionVariantEnum;
-  onImageError?: () => void;
+  onImageError?: EmptyFn;
   onEmptyPromotionReceived?: EmptyFn;
 }
 

@@ -4,7 +4,7 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useAudioPlaceholderStyles = createUseStyles(({ colors }) => ({
-  card: {
+  container: {
     ...StyleSheet.absoluteFillObject,
     width: '100%',
     height: '100%',
@@ -12,8 +12,5 @@ export const useAudioPlaceholderStyles = createUseStyles(({ colors }) => ({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.cardBG
-  },
-  container: {
-    position: 'relative'
   }
 }));
