@@ -10,12 +10,13 @@ export const useCollectibleByCollectionInfo = (
   contract: string,
   selectedPublicKey: string,
   type: ObjktTypeEnum,
+  offset: number,
   galleryId?: string
 ) => {
   const [collectibles, setCollectibles] = useState<TokenInterface[]>([]);
 
   useEffect(() => {
-    const subscription = fetchCollectiblesByCollection$(contract, selectedPublicKey, type, galleryId)
+    const subscription = fetchCollectiblesByCollection$(contract, selectedPublicKey, type, offset, galleryId)
       .pipe(
         map(result => result),
         catchError(err => {
@@ -24,10 +25,10 @@ export const useCollectibleByCollectionInfo = (
           return EMPTY;
         })
       )
-      .subscribe(collectibles => setCollectibles(collectibles));
+      .subscribe(collectibles => setCollectibles(prev => [...prev, ...collectibles]));
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [offset]);
 
   return collectibles;
 };

@@ -28,6 +28,10 @@ export const currencyInfoById: Record<number, CurrencyInfo> = {
   1924: {
     symbol: 'USDTz',
     decimals: 6
+  },
+  1872: {
+    symbol: 'uUSD',
+    decimals: 12
   }
 };
 

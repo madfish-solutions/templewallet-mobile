@@ -50,8 +50,12 @@ export const buildGetHoldersInfoQuery = (address: string) => gql`
   }
 `;
 
-export const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`query MyQuery {
-  token(where: {fa_contract: {_eq: "${contract}"}}) {
+export const buildGetCollectiblesByCollectionQuery = (contract: string, offset: number) => gql`query MyQuery {
+  token(
+    where: {fa_contract: {_eq: "${contract}"}}
+    limit: 10
+    offset: ${offset}
+    order_by: {token_id: asc}) {
     artifact_uri
     description
     display_uri
@@ -93,13 +97,18 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string) => gql`q
     listings_active {
       amount
     }
+    fa {
+      items
+    }
   }
 }`;
 
-export const getCollectiblesByGalleryQuery = (address: string) => gql`
+export const getCollectiblesByGalleryQuery = (address: string, offset: number) => gql`
 query MyQuery {
   gallery(
     where: {curators: {curator_address: {_eq: "${address}"}}, max_items: {_gt: 0}}
+    limit: 10
+    offset: ${offset}
     order_by: {inserted_at: asc}
   ) {
     gallery_id
@@ -145,6 +154,9 @@ query MyQuery {
         }
         listings_active {
           amount
+        }
+        fa {
+          items
         }
       }
     }

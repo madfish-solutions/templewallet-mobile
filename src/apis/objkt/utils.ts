@@ -38,7 +38,7 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
         name: token.name,
         metadata: token.metadata,
         lowestAsk: token.lowest_ask,
-        symbol: currency.symbol,
+        symbol: currency?.symbol ?? 'TEZ',
         thumbnailUri: token.thumbnail_uri,
         id: Number(token.token_id),
         visibility: VisibilityEnum.Visible,
@@ -49,7 +49,8 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
           symbol: currencyInfoById[lastPrice?.currency_id]?.symbol,
           decimals: currencyInfoById[lastPrice?.currency_id]?.decimals
         },
-        listed
+        listed,
+        items: token.fa.items
       };
     })
     .filter(collectible => collectible.editions !== 0);

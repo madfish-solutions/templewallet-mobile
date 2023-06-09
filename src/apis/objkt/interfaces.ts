@@ -42,6 +42,9 @@ export interface CollectibleResponse {
     currency_id: number;
   }[];
   listings_active: Listing[];
+  fa: {
+    items: number;
+  };
 }
 
 export interface QueryResponse {

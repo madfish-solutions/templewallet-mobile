@@ -83,12 +83,13 @@ export const fetchCollectiblesByCollection$ = (
   contract: string,
   selectedPublicKey: string,
   type: ObjktTypeEnum,
+  offset: number,
   galleryId?: string
 ): Observable<TokenInterface[]> => {
   const request =
     type === ObjktTypeEnum.faContract
-      ? buildGetCollectiblesByCollectionQuery(contract)
-      : getCollectiblesByGalleryQuery(selectedPublicKey);
+      ? buildGetCollectiblesByCollectionQuery(contract, offset)
+      : getCollectiblesByGalleryQuery(selectedPublicKey, offset);
 
   return apolloObjktClient.query<CollectiblesByCollectionResponse | CollectiblesByGalleriesResponse>(request).pipe(
     map(result => {

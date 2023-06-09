@@ -149,7 +149,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract }) => {
       )}
       <View style={styles.collectible}>
         <View style={styles.topContainer}>
-          <TouchableCollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(285)} />
+          <TouchableCollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(295)} />
           <Text style={styles.collectibleName} numberOfLines={1}>
             {item.name}
           </Text>

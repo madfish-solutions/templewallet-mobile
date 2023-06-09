@@ -50,6 +50,7 @@ interface CollectibleMetadataInterface {
   holders?: HolderInfo[];
   listed?: number;
   lastPrice?: { price: number | null } & CurrencyInfo;
+  items?: number;
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {
