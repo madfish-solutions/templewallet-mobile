@@ -33,7 +33,8 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     isTouchableBlurOverlay
   }) => {
     const [isLoading, setIsLoading] = useState(true);
-
+    const [isShowBlur, setIsShowBlur] = useState(true);
+    console.log(isShowBlur, 'is');
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
     const styles = useCollectibleIconStyles();
     const assetSlug = `${collectible.address}_${collectible.id}`;
@@ -129,14 +130,20 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const imageWithBlur = useMemo(() => {
       if (Boolean(collectible.isAdultContent)) {
         return (
-          <ImageBlurOverlay theme={blurLayoutTheme} size={size} isTouchableOverlay={isTouchableBlurOverlay}>
+          <ImageBlurOverlay
+            theme={blurLayoutTheme}
+            size={size}
+            isShowBlur={isShowBlur}
+            setIsShowBlur={setIsShowBlur}
+            isTouchableOverlay={isTouchableBlurOverlay}
+          >
             {image}
           </ImageBlurOverlay>
         );
       }
 
       return image;
-    }, [image, collectible.isAdultContent]);
+    }, [image, collectible.isAdultContent, isShowBlur]);
 
     return (
       <View
@@ -147,7 +154,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         }}
       >
         {imageWithBlur}
-        {isLoading && (
+        {isLoading && !isShowBlur && (
           <View style={styles.loader}>
             <ActivityIndicator size={iconSize === CollectibleIconSize.SMALL ? 'small' : 'large'} />
           </View>
