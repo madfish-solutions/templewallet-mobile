@@ -10,6 +10,7 @@ import { CollectibleResponse } from './interfaces';
 
 export const transformCollectiblesArray = (array: CollectibleResponse[], selectedPublicKey: string) => {
   const collectiblesArray = array
+    .filter(token => token.supply !== 0)
     .map(token => {
       const buyEvents = isDefined(token)
         ? token.events.filter(
@@ -52,8 +53,7 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
         listed,
         items: token.fa.items
       };
-    })
-    .filter(collectible => collectible.editions !== 0);
+    });
 
   return collectiblesArray;
 };

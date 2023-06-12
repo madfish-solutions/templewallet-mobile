@@ -35,6 +35,10 @@ export const currencyInfoById: Record<number, CurrencyInfo> = {
   }
 };
 
+/**
+ * These contracts are hidden because we don't show fxhash and rarible contracts as collection
+ */
+
 export const HIDDEN_CONTRACTS = [
   'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
   'KT1EfsNuqwLAWDd3o4pvfUx1CAh5GMdTrRvr',

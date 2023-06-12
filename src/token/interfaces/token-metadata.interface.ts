@@ -25,7 +25,7 @@ export interface Listing {
   seller_address: string;
 }
 
-export type TokenMetadataInterface = CollectibleMetadataInterface & {
+export interface TokenMetadataInterface extends CollectibleMetadataInterface {
   id: number;
   address: string;
   name: string;
@@ -40,7 +40,7 @@ export type TokenMetadataInterface = CollectibleMetadataInterface & {
 
   // Stored as separate Record
   exchangeRate?: number;
-};
+}
 
 interface CollectibleMetadataInterface {
   description?: string;

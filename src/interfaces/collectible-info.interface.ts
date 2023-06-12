@@ -1,4 +1,4 @@
-export interface CollectibleAttributes {
+interface CollectibleAttributes {
   attribute: {
     id: number;
     name: string;

@@ -6,9 +6,9 @@ import { Collection } from 'src/store/collectons/collections-state';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
-import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { CollectibleInfo, UserAdultCollectibles } from '../../interfaces/collectible-info.interface';
+import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
   CollectibleInfoQueryResponse,
   CollectiblesByCollectionResponse,
@@ -16,7 +16,7 @@ import {
   FA2AttributeCountQueryResponse,
   GalleryAttributeCountQueryResponse,
   QueryResponse,
-  TzProfilesQueryResponse
+  TzProfilesQueryResponse,
   UserAdultCollectiblesQueryResponse
 } from './interfaces';
 import {
@@ -26,8 +26,8 @@ import {
   buildGetFA2AttributeCountQuery,
   buildGetGalleryAttributeCountQuery,
   buildGetHoldersInfoQuery,
-  getCollectiblesByGalleryQuery
-  buildGetUserAdultCollectiblesQuery
+  buildGetUserAdultCollectiblesQuery,
+  buildGetCollectiblesByGalleryQuery
 } from './queries';
 import { getUniqueAndMaxValueAttribute, transformCollectiblesArray } from './utils';
 
@@ -91,7 +91,7 @@ export const fetchCollectiblesByCollection$ = (
   const request =
     type === ObjktTypeEnum.faContract
       ? buildGetCollectiblesByCollectionQuery(contract, offset)
-      : getCollectiblesByGalleryQuery(selectedPublicKey, offset);
+      : buildGetCollectiblesByGalleryQuery(selectedPublicKey, offset);
 
   return apolloObjktClient.query<CollectiblesByCollectionResponse | CollectiblesByGalleriesResponse>(request).pipe(
     map(result => {

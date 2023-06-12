@@ -107,7 +107,7 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string, offset: 
   }
 }`;
 
-export const getCollectiblesByGalleryQuery = (address: string, offset: number) => gql`
+export const buildGetCollectiblesByGalleryQuery = (address: string, offset: number) => gql`
 query MyQuery {
   gallery(
     where: {curators: {curator_address: {_eq: "${address}"}}, max_items: {_gt: 0}}
