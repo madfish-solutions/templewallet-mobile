@@ -4,8 +4,13 @@ import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from '../../utils/token-metadata.utils';
-import { withSelectedRpcUrl } from '../../utils/wallet.utils';
+import {
+  checkTokensMetadata$,
+  loadTokenMetadata$,
+  loadTokensMetadata$,
+  loadWhitelist$
+} from '../../utils/token-metadata.utils';
+import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { RootState } from '../create-store';
 import {
   addTokensMetadataAction,
@@ -21,7 +26,7 @@ const loadWhitelistEpic: Epic = (action$: Observable<Action>, state$: Observable
     withSelectedRpcUrl(state$),
     switchMap(([, selectedRpcUrl]) =>
       loadWhitelist$(selectedRpcUrl).pipe(
-        concatMap(tokensMetadata => [loadWhitelistAction.success(tokensMetadata)]),
+        concatMap(updatedTokensMetadata => [loadWhitelistAction.success(updatedTokensMetadata)]),
         catchError(err => of(loadWhitelistAction.fail(err.message)))
       )
     )
@@ -61,12 +66,14 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokensMetadataEpic = (action$: Observable<Action>) =>
+const loadTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokensMetadataAction),
     toPayload(),
-    switchMap(slugs =>
+    withSelectedAccount(state$),
+    switchMap(([slugs, account]) =>
       loadTokensMetadata$(slugs).pipe(
+        switchMap(tokensMetadata => checkTokensMetadata$(tokensMetadata, account)),
         map(tokensMetadata => addTokensMetadataAction(tokensMetadata)),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
       )

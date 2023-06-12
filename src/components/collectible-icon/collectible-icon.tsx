@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -12,6 +12,7 @@ import {
 import { isDefined } from 'src/utils/is-defined';
 
 import { DataUriImage } from '../data-uri-image';
+import { ImageBlurOverlay } from '../image-blur-overlay/image-blur-overlay';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
@@ -80,7 +81,10 @@ const getFirstFallback = (
 export const CollectibleIcon: FC<CollectibleIconProps> = ({
   collectible,
   size,
-  iconSize = CollectibleIconSize.SMALL
+  iconSize = CollectibleIconSize.SMALL,
+  blurLayoutTheme,
+  isLoading = false,
+  isTouchableOverlay
 }) => {
   const styles = useCollectibleIconStyles();
   const actualLoadingStrategy =
@@ -93,10 +97,27 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   const imageRequestObject = { ...collectible, assetSlug };
   const currentFallback = getFirstFallback(actualLoadingStrategy, isLoadingFailed, imageRequestObject);
   const imageSrc = currentFallback.uri(imageRequestObject[currentFallback.field] ?? assetSlug);
+  const isDefinedImage = isDefined(collectible.thumbnailUri) && isDefined(collectible.artifactUri);
 
-  const handleLoadingFailed = () => {
+  const handleLoadingFailed = useCallback(() => {
     setIsLoadingFailed(prevState => ({ ...prevState, [currentFallback.type]: true }));
-  };
+  }, [currentFallback]);
+
+  const fastImage = useMemo(() => {
+    if (isLoading && !isDefinedImage) {
+      return <View style={styles.image} />;
+    }
+
+    if (isDefined(collectible.isAdultContent) && collectible.isAdultContent) {
+      return (
+        <ImageBlurOverlay theme={blurLayoutTheme} size={size} isTouchableOverlay={isTouchableOverlay}>
+          <FastImage source={{ uri: imageSrc }} onError={handleLoadingFailed} style={styles.image} />
+        </ImageBlurOverlay>
+      );
+    }
+
+    return <FastImage source={{ uri: imageSrc }} onError={handleLoadingFailed} style={styles.image} />;
+  }, [collectible, blurLayoutTheme, imageSrc, handleLoadingFailed, isLoading]);
 
   return (
     <View
@@ -106,13 +127,8 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
         padding: formatSize(2)
       }}
     >
-      {isDefined(collectible.thumbnailUri) &&
-        isDefined(collectible.artifactUri) &&
-        (isImgUriDataUri(imageSrc) ? (
-          <DataUriImage style={styles.image} dataUri={imageSrc} />
-        ) : (
-          <FastImage style={styles.image} source={{ uri: imageSrc }} onError={handleLoadingFailed} />
-        ))}
+      {isDefinedImage &&
+        (isImgUriDataUri(imageSrc) ? <DataUriImage style={styles.image} dataUri={imageSrc} /> : fastImage)}
     </View>
   );
 };

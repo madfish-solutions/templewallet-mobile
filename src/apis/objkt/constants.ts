@@ -30,3 +30,5 @@ export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
     id: null
   }
 };
+
+export const ADULT_ATTRIBUTE_NAME = '__nsfw_';

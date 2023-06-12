@@ -14,6 +14,10 @@ import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BellIcon from './assets/bell.svg';
+import BlurDark from './assets/blur-dark.svg';
+import BlurEyeBlack from './assets/blur-eye-black.svg';
+import BlurEyeWhite from './assets/blur-eye-white.svg';
+import BlurLight from './assets/blur-light.svg';
 import BookOpenIcon from './assets/book-open.svg';
 import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
@@ -206,12 +210,15 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Apple]: AppleIcon,
   [IconNameEnum.AppleOnDark]: AppleOnDarkIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
+  [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.AliceBob]: AliceBobIcon,
   [IconNameEnum.Utorg]: UtorgIcon,
   [IconNameEnum.Ramp]: RampIcon,
+  [IconNameEnum.BlurEyeBlack]: BlurEyeBlack,
+  [IconNameEnum.BlurEyeWhite]: BlurEyeWhite,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
   [IconNameEnum.SwapTokenPlaceholderIcon]: SwapTokenPlaceholderIcon,
@@ -282,5 +289,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
-  [IconNameEnum.NFT]: NFT
+  [IconNameEnum.NFT]: NFT,
+  [IconNameEnum.BlurLight]: BlurLight,
+  [IconNameEnum.BlurDark]: BlurDark
 };

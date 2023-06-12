@@ -1,9 +1,13 @@
 import { TokenInterface } from '../../token/interfaces/token.interface';
+import { ImageBlurOverlayThemesEnum } from '../image-blur-overlay/image-blur-overlay';
 
 export interface CollectibleIconProps {
   collectible: TokenInterface;
   size: number;
   iconSize?: CollectibleIconSize;
+  blurLayoutTheme?: ImageBlurOverlayThemesEnum;
+  isLoading?: boolean;
+  isTouchableOverlay?: boolean;
 }
 
 export enum CollectibleIconSize {
