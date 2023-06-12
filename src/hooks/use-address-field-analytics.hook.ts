@@ -58,7 +58,7 @@ export const useAddressFieldAnalytics = <T extends string, U extends Record<T, s
           trackNetworkEvent(networkSlug);
         }
       });
-  }, [value]);
+  }, [value, trackNetworkEvent]);
 
   const onBlur = useCallback(async () => {
     const currentValue = valueRef.current;
