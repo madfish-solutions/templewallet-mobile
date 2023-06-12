@@ -3,6 +3,9 @@ import { ViewStyle } from 'react-native';
 import Video from 'react-native-video';
 
 import { EmptyFn, emptyFn } from 'src/config/general';
+import { useAppLock } from 'src/shelter/app-lock/app-lock';
+
+import { useAtBootsplash } from '../../hooks/use-hide-bootsplash';
 
 interface SimpleVideoProps {
   uri: string;
@@ -23,12 +26,16 @@ export const SimplePlayer: FC<SimpleVideoProps> = ({
   onError = emptyFn,
   onLoad = emptyFn
 }) => {
+  const atBootsplash = useAtBootsplash();
+  const { isLocked } = useAppLock();
+
   return (
     <Video
       repeat
       source={{ uri }}
       // @ts-ignore
       style={[{ width: size, height: size }, style]}
+      paused={atBootsplash || isLocked}
       resizeMode="cover"
       bufferConfig={{
         bufferForPlaybackMs: BUFFER_DURATION

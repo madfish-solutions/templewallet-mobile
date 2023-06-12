@@ -52,7 +52,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const handleError = () => {
       setCurrentFallback(
         currentFallback.endsWith('/thumb288')
-          ? formatImgUri(collectible.thumbnailUri, 'medium')
+          ? formatImgUri(collectible.artifactUri, 'medium')
           : formatCollectibleObjktMediumUri(assetSlug)
       );
     };
