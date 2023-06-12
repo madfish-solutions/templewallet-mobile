@@ -3,9 +3,8 @@ import { ViewStyle } from 'react-native';
 import Video from 'react-native-video';
 
 import { EmptyFn, emptyFn } from 'src/config/general';
+import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
-
-import { useAtBootsplash } from '../../hooks/use-hide-bootsplash';
 
 interface SimpleVideoProps {
   uri: string;
