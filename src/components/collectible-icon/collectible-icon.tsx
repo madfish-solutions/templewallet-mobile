@@ -33,8 +33,8 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     isTouchableBlurOverlay
   }) => {
     const [isLoading, setIsLoading] = useState(true);
-    const [isShowBlur, setIsShowBlur] = useState(true);
-    console.log(isShowBlur, 'is');
+    const [isShowBlur, setIsShowBlur] = useState(collectible.isAdultContent ?? false);
+
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
     const styles = useCollectibleIconStyles();
     const assetSlug = `${collectible.address}_${collectible.id}`;
