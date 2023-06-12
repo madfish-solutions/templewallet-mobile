@@ -24,6 +24,7 @@ import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-mo
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from 'src/modals/import-account-modal/import-account-modal';
+import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
 import { RemoveLiquidityModal } from 'src/modals/remove-liquidity-modal/remove-liquidity-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
@@ -98,6 +99,11 @@ export const RootStackScreen = () => {
             />
 
             {/* MODALS */}
+            <RootStack.Screen
+              name={ModalsEnum.Newsletter}
+              component={Newsletter}
+              options={useModalOptions('Newsletter')}
+            />
             <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
             <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
             <RootStack.Screen

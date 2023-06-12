@@ -28,6 +28,8 @@ import { exolixReducers } from './exolix/exolix-reducers';
 import { ExolixRootState } from './exolix/exolix-state';
 import { marketReducers } from './market/market-reducers';
 import { MarketRootState } from './market/market-state';
+import { newsletterReducers } from './newsletter/newsletter-reducers';
+import { NewsletterRootState } from './newsletter/newsletter-state';
 import { notificationsReducers } from './notifications/notifications-reducers';
 import { NotificationsRootState } from './notifications/notifications-state';
 import { partnersPromotionReducers } from './partners-promotion/partners-promotion-reducers';
@@ -59,7 +61,8 @@ export type RootState = WalletRootState &
   BuyWithCreditCardRootState &
   PartnersPromotionRootState &
   Route3RootState &
-  ABTestingRootState;
+  ABTestingRootState &
+  NewsletterRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -92,7 +95,8 @@ const rootReducer = rootStateReducer<RootState>({
   contactBook: contactBookReducers,
   buyWithCreditCard: buyWithCreditCardReducer,
   partnersPromotion: partnersPromotionReducers,
-  abTesting: abTestingReducer
+  abTesting: abTestingReducer,
+  newsletter: newsletterReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

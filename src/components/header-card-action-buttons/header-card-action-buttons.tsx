@@ -65,6 +65,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
           iconName={IconNameEnum.ArrowUp}
           onPress={() => navigate(ModalsEnum.Send, { token })}
         />
+        <ButtonMedium title="NEWS" iconName={IconNameEnum.ArrowUp} onPress={() => navigate(ModalsEnum.Newsletter)} />
       </View>
     </ButtonsContainer>
   );

@@ -20,7 +20,8 @@ export enum ModalsEnum {
   RemoveLiquidity = 'RemoveLiquidity',
   AddLiquidity = 'AddLiquidity',
   AddContact = 'AddContact',
-  EditContact = 'EditContact'
+  EditContact = 'EditContact',
+  Newsletter = 'Newsletter'
 }
 
 export type ModalsParamList = {
@@ -49,4 +50,5 @@ export type ModalsParamList = {
   };
   [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
   [ModalsEnum.EditContact]: { contact: AccountBaseInterface; index: number };
+  [ModalsEnum.Newsletter]: undefined;
 };
