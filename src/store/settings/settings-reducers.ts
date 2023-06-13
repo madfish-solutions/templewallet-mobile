@@ -22,7 +22,8 @@ import {
   setZeroBalancesShown,
   toggleDomainAddressShown,
   madeManualBackupAction,
-  madeCloudBackupAction
+  madeCloudBackupAction,
+  setOnRampPossibilityAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -99,6 +100,14 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     ...state,
     isCloudBackupMade: true
   }));
+
+  builder.addCase(setOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {
+    if (state.selectedRpcUrl !== DCP_RPC.url) {
+      return { ...state, isOnRampPossibility };
+    }
+
+    return state;
+  });
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,
