@@ -91,7 +91,7 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
           return [marketplaceContract.methods.fulfill_ask(listings_active[0].bigmap_key).toTransferParams(params)];
         } else {
           return [
-            marketplaceContract.methods.listing_accept(1, listings_active[0].bigmap_key).toTransferParams(params)
+            marketplaceContract.methods.listing_accept(listings_active[0].bigmap_key, 1).toTransferParams(params)
           ];
         }
       }
@@ -114,7 +114,7 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
 
     const { approve, revoke } = await getTransferPermissions(
       tezos,
-      listings_active[0].marketplace_contract ?? OBJKT_MARKETPLACE_CONTRACT,
+      marketplace,
       selectedAccount.publicKeyHash,
       token,
       new BigNumber(purchaseCurrency.price)

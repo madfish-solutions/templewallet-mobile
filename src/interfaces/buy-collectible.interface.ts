@@ -8,6 +8,6 @@ export interface ObjktBuyCollectibleContractInterface extends ContractAbstractio
 
 export interface FxHashBuyCollectibleContractInterface extends ContractAbstraction<ContractProvider> {
   methods: {
-    listing_accept: (amount: number, listing_id: number) => ContractMethod<ContractProvider>;
+    listing_accept: (listing_id: number, amount: number) => ContractMethod<ContractProvider>;
   };
 }

@@ -41,7 +41,7 @@ export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId:
         }
       }
       lowest_ask
-      listings_active {
+      listings_active(order_by: {price: asc}) {
         bigmap_key
         currency_id
         price
