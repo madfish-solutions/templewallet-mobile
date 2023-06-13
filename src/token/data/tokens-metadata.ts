@@ -105,15 +105,7 @@ export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     thumbnailUri: 'ipfs://QmRukmxJkSmu9v2mUutSU7FNMegPramzVgsZ6YfRSWjdnV',
     standard: TokenStandardsEnum.Fa2
   },
-  {
-    id: 0,
-    address: 'KT1WihWRnmzhfebi6zqQ4tvNGiPeVxiGwTi2',
-    name: 'Temple Key Old',
-    symbol: 'TKEY_OLD',
-    decimals: 18,
-    thumbnailUri: 'ipfs://Qmb9QUXYn1PW8e7E2CwpBMgEur7gFAPPpq2Zh7H2D7eQcT',
-    standard: TokenStandardsEnum.Fa2
-  },
+  DEPRECATED_TKEY_METADATA,
   {
     id: 0,
     address: 'KT1KEsRsSMvSkgZ9CwYy5fPA1e4j3TEpuiKK',
