@@ -6,7 +6,6 @@ import { map, tap, finalize, catchError, switchMap } from 'rxjs/operators';
 import { fetchCollectibleInfo$ } from 'src/apis/objkt/index';
 
 import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
-import { showErrorToast } from '../../toast/toast.utils';
 import { getAttributesInfo$, getAttributesWithRarity } from './collectible-info.utils';
 import { collectibleInfoInitialState } from './constants';
 
@@ -34,11 +33,7 @@ export const useCollectibleInfo = (address: string, id: string) => {
             })
           );
         }),
-        catchError(err => {
-          showErrorToast({ description: err.message });
-
-          return EMPTY;
-        }),
+        catchError(() => EMPTY),
         finalize(() => setIsLoading(false))
       )
       .subscribe(result => {

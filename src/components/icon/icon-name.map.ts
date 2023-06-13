@@ -13,6 +13,7 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
+import AudioIcon from './assets/audio.svg';
 import BellIcon from './assets/bell.svg';
 import BlurDark from './assets/blur-dark.svg';
 import BlurEyeBlack from './assets/blur-eye-black.svg';
@@ -146,6 +147,7 @@ import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
 
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
+  [IconNameEnum.Audio]: AudioIcon,
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
