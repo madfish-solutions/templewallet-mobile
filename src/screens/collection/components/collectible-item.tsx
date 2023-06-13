@@ -1,6 +1,6 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -129,7 +129,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
 
   const handleList = () => openUrl(navigateToObjktForBuy);
 
-  const buttonText = () => {
+  const buttonText = useMemo(() => {
     if (isHolder) {
       if (isOffersExisted) {
         return `Sell for ${highestOffer}`;
@@ -139,7 +139,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
     } else {
       return 'Make offer';
     }
-  };
+  }, [isOffersExisted, isHolder, highestOffer]);
 
   return (
     <View style={styles.collectibleContainer} onLayout={handleLayout}>
@@ -188,7 +188,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
                 conditionalStyle(isOffersExisted || !isHolder, styles.sellButtonActive, styles.sellButtonDisabled)
               ]}
             >
-              {buttonText()}
+              {buttonText}
             </Text>
           </TouchableOpacity>
           <View>
