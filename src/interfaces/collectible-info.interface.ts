@@ -35,6 +35,7 @@ export interface CollectibleInfo {
     amount: number;
   }[];
   supply: number;
+  mime: string;
   galleries: {
     gallery: {
       items: number;

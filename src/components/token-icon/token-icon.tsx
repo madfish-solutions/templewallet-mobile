@@ -10,7 +10,7 @@ import { isImgUriSvg, isImgUriDataUri, isImageRectangular } from 'src/utils/imag
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
-import { DataUriImage } from '../data-uri-image';
+import { DataUriImage } from '../data-uri-image/data-uri-image';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { LoadableTokenIconImage } from './loadable-image';

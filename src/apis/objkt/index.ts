@@ -32,8 +32,9 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
         metadata,
         royalties,
         supply,
-        galleries,
-        listings_active
+        listings_active,
+        mime,
+        galleries
       } = result.token[0];
 
       return {
@@ -51,7 +52,8 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
         royalties,
         supply,
         galleries,
-        listings_active
+        listings_active,
+        mime
       };
     })
   );
