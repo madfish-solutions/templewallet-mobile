@@ -1,15 +1,12 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SvgUri } from 'react-native-svg';
-import { useDispatch } from 'react-redux';
 
-import { currencyInfoById } from '../../apis/objkt/constants';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
@@ -22,19 +19,11 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from '../../components/touchable-with-analytics';
-import { Route3TokenStandardEnum } from '../../enums/route3.enum';
 import { useCollectibleInfo } from '../../hooks/collectible-info/use-collectible-info.hook';
 import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
-import {
-  FxHashBuyCollectibleContractInterface,
-  ObjktBuyCollectibleContractInterface
-} from '../../interfaces/buy-collectible.interface';
-import { ConfirmationTypeEnum } from '../../interfaces/confirm-payload/confirmation-type.enum';
+import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { navigateAction } from '../../store/root-state.actions';
-import { useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
-import { useCollectiblesListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
+import { useCollectiblesListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
 import { getTokenSlug } from '../../token/utils/token.utils';
@@ -48,15 +37,13 @@ import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
-import { createTezosToolkit } from '../../utils/rpc/tezos-toolkit.utils';
 import { getTruncatedProps } from '../../utils/style.util';
-import { getTransferPermissions } from '../../utils/swap-permissions.util';
 import { mutezToTz } from '../../utils/tezos.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
 import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
-import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME, COLLECTION_ICON_SIZE, OBJKT_MARKETPLACE_CONTRACT } from './constants';
+import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME, COLLECTION_ICON_SIZE } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
 enum SegmentControlNamesEnum {
@@ -72,8 +59,6 @@ const SEGMENT_VALUES = [
 ];
 
 const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
-const OBJKT_BUY_METHOD = 'fulfill_ask';
-const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 
 export const CollectibleModal = () => {
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
@@ -81,20 +66,7 @@ export const CollectibleModal = () => {
   const { width } = Dimensions.get('window');
   const itemWidth = width - 32;
 
-  const { navigate } = useNavigation();
-
   const collectibles = useCollectiblesListSelector();
-
-  const selectedRpc = useSelectedRpcUrlSelector();
-  const tezos = createTezosToolkit(selectedRpc);
-
-  const selectedAccount = useSelectedAccountSelector();
-
-  const dispatch = useDispatch();
-
-  const [marketplaceContract, setMarketplaceContract] = useState<
-    ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface
-  >();
 
   const isUserOwnerCurrentCollectible = useMemo(
     () => !!collectibles.find(ownCollectible => getTokenSlug(ownCollectible) === getTokenSlug(collectible)),
@@ -108,94 +80,10 @@ export const CollectibleModal = () => {
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
 
   const burnCollectible = useBurnCollectible(collectible);
+  const { handleSubmit, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
 
   const { fa, creators, description, metadata, timestamp, royalties, supply, attributes, galleries, listings_active } =
     collectibleInfo;
-
-  const purchaseCurrency = useMemo(() => {
-    if (!isNonEmptyArray(listings_active)) {
-      return {
-        price: 0,
-        contract: null,
-        decimals: 0,
-        id: null,
-        symbol: ''
-      };
-    }
-
-    const { price, currency_id } = listings_active[0];
-    const currentCurrency = currencyInfoById[currency_id];
-
-    return { price, ...currentCurrency };
-  }, [collectibleInfo]);
-
-  useEffect(() => {
-    tezos.contract
-      .at<ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface>(
-        isNonEmptyArray(listings_active) ? listings_active[0].marketplace_contract : OBJKT_MARKETPLACE_CONTRACT
-      )
-      .then(setMarketplaceContract);
-  }, [listings_active]);
-
-  const handleSubmit = async () => {
-    if (isUserOwnerCurrentCollectible) {
-      return navigate(ModalsEnum.Send, { token: collectible });
-    }
-
-    const getTransferParams = () => {
-      if (isDefined(marketplaceContract) && isNonEmptyArray(listings_active)) {
-        const isTezosCurrency = listings_active[0].currency_id === 1;
-        const params = isTezosCurrency
-          ? { amount: purchaseCurrency.price, mutez: true, source: selectedAccount.publicKeyHash }
-          : {};
-
-        if (OBJKT_BUY_METHOD in marketplaceContract?.methods) {
-          return [marketplaceContract.methods.fulfill_ask(listings_active[0].bigmap_key).toTransferParams(params)];
-        } else {
-          return [
-            marketplaceContract.methods.listing_accept(1, listings_active[0].bigmap_key).toTransferParams(params)
-          ];
-        }
-      }
-
-      return [];
-    };
-
-    const transferParams = getTransferParams();
-
-    const isTokenFa2 = listings_active[0].currency.type === Route3TokenStandardEnum.fa2;
-
-    const token = {
-      id: Number(purchaseCurrency.id),
-      symbol: purchaseCurrency.symbol,
-      standard: isTokenFa2 ? Route3TokenStandardEnum.fa2 : Route3TokenStandardEnum.fa12,
-      contract: purchaseCurrency.contract,
-      tokenId: `${purchaseCurrency.id}`,
-      decimals: purchaseCurrency.decimals
-    };
-
-    const { approve, revoke } = await getTransferPermissions(
-      tezos,
-      listings_active[0].marketplace_contract ?? OBJKT_MARKETPLACE_CONTRACT,
-      selectedAccount.publicKeyHash,
-      token,
-      new BigNumber(purchaseCurrency.price)
-    );
-
-    transferParams.unshift(...approve);
-    transferParams.push(...revoke);
-
-    const updatedTransferParams = transferParams
-      .filter(params => isDefined(params))
-      .map(item => ({ ...item, kind: OpKind.TRANSACTION, storageLimit: DEFAULT_OBJKT_STORAGE_LIMIT }));
-
-    dispatch(
-      navigateAction(ModalsEnum.Confirmation, {
-        type: ConfirmationTypeEnum.InternalOperations,
-        opParams: updatedTransferParams as ParamsWithKind[]
-      })
-    );
-  };
 
   const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
 
