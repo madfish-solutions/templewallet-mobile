@@ -27,6 +27,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
+import { DEFAULT_AMOUNT, DEFAULT_DECIMALS } from '../constants';
 import { useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
 
 interface Props {
@@ -34,10 +35,7 @@ interface Props {
   lastStakeRecord?: UserStakeValueInterface;
 }
 
-const FARM_PRECISION = 18;
-const DEFAULT_AMOUNT = 0;
 const DEFAULT_EXHANGE_RATE = 1;
-const DEFAULT_DECIMALS = 2;
 const SECONDS_IN_DAY = 86400;
 
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
@@ -56,17 +54,19 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
 
   const depositAmountAtomic = useMemo(
     () =>
-      mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
-        farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE
-      ),
+      mutezToTz(
+        new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT),
+        farm.item.stakedToken.metadata.decimals
+      ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE),
     [lastStakeRecord?.depositAmountAtomic]
   );
 
   const claimableRewardsAtomic = useMemo(
     () =>
-      mutezToTz(new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
-        farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE
-      ),
+      mutezToTz(
+        new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
+        farm.item.rewardToken.metadata.decimals
+      ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE),
     [lastStakeRecord?.claimableRewards]
   );
 

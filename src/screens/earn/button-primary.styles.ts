@@ -5,7 +5,6 @@ import { formatSize } from 'src/styles/format-size';
 export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ typography }) => ({
   ...useButtonLargePrimaryStyleConfig(),
   containerStyle: {
-    flex: 1,
     height: formatSize(38),
     borderRadius: formatSize(10)
   },

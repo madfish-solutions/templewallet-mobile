@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
+import { FormattedAmount } from 'src/components/formatted-amount';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -20,7 +21,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
-import { DEFAULT_AMOUNT, DEFAULT_DECIMALS } from '../constants';
+import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, PENNY } from '../constants';
 import { useMainInfoStyles } from './main-info.styles';
 
 export const MainInfo: FC = () => {
@@ -35,7 +36,11 @@ export const MainInfo: FC = () => {
   const farmsWithEndedRewards = useMemo(() => {
     const now = Date.now();
 
-    return Object.entries(farms.lastStakes).filter(([, stakeRecord]) => (stakeRecord?.rewardsDueDate ?? 0) < now);
+    return Object.entries(farms.lastStakes).filter(
+      ([, stakeRecord]) =>
+        new BigNumber(stakeRecord?.claimableRewards ?? 0).isGreaterThan(DEFAULT_AMOUNT) &&
+        (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now
+    );
   }, [farms]);
 
   const { netApy, totalStakedAmountInUsd } = useMemo(() => {
@@ -77,7 +82,7 @@ export const MainInfo: FC = () => {
   }, [farms]);
 
   const totalClaimableRewardsInUsd = useMemo(() => {
-    let result = new BigNumber(DEFAULT_AMOUNT);
+    let result = new BigNumber(PENNY);
 
     farmsWithEndedRewards.forEach(([address, stakeRecord]) => {
       const farm = farms.allFarms.data.find(_farm => _farm.item.contractAddress === address);
@@ -95,7 +100,10 @@ export const MainInfo: FC = () => {
     return result;
   }, [farms, farmsWithEndedRewards]);
 
-  const areSomeRewardsClaimable = useMemo(() => !isEmptyArray(farmsWithEndedRewards), [farmsWithEndedRewards]);
+  const areSomeRewardsClaimable = useMemo(
+    () => !isEmptyArray(farmsWithEndedRewards) && totalClaimableRewardsInUsd.isGreaterThan(PENNY),
+    [farmsWithEndedRewards]
+  );
 
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>
@@ -134,7 +142,7 @@ export const MainInfo: FC = () => {
         <View style={styles.container}>
           <View style={[styles.card, styles.deposit]}>
             <Text style={styles.titleText}>CURRENT DEPOSIT AMOUNT</Text>
-            <Text style={styles.valueText}>≈ {totalStakedAmountInUsd.toFixed(DEFAULT_DECIMALS)}$</Text>
+            <FormattedAmount isDollarValue amount={totalStakedAmountInUsd} style={styles.valueText} />
           </View>
           <Divider size={formatSize(8)} />
           <View style={[styles.card, styles.netApy]}>
@@ -142,19 +150,16 @@ export const MainInfo: FC = () => {
             <Text style={styles.valueText}>{netApy.toFixed(DEFAULT_DECIMALS)}%</Text>
           </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <Button
-            isFullWidth
-            styleConfig={buttonPrimaryStylesConfig}
-            title={
-              areSomeRewardsClaimable
-                ? `CLAIM ALL ≈ ${totalClaimableRewardsInUsd.toFixed(DEFAULT_DECIMALS)}$`
-                : 'EARN TO CLAIM REWARDS'
-            }
-            disabled={!areSomeRewardsClaimable}
-            onPress={claimAllRewards}
-          />
-        </View>
+        <Button
+          styleConfig={buttonPrimaryStylesConfig}
+          title={
+            areSomeRewardsClaimable
+              ? `CLAIM ALL ≈ ${totalClaimableRewardsInUsd.toFixed(DEFAULT_DECIMALS)}$`
+              : 'EARN TO CLAIM REWARDS'
+          }
+          disabled={!areSomeRewardsClaimable}
+          onPress={claimAllRewards}
+        />
       </View>
     </View>
   );
