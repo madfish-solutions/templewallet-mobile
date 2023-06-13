@@ -103,7 +103,7 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
 
     const isTokenFa2 = listings_active[0].currency.type === Route3TokenStandardEnum.fa2;
 
-    const token = {
+    const tokenToSpend = {
       id: Number(purchaseCurrency.id ?? 0),
       symbol: purchaseCurrency.symbol,
       standard: isTokenFa2 ? Route3TokenStandardEnum.fa2 : Route3TokenStandardEnum.fa12,
@@ -116,7 +116,7 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
       tezos,
       marketplace,
       selectedAccount.publicKeyHash,
-      token,
+      tokenToSpend,
       new BigNumber(purchaseCurrency.price)
     );
 
