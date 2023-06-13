@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { Text, TouchableWithoutFeedbackProps } from 'react-native';
+import { StyleProp, Text, TextStyle, TouchableWithoutFeedbackProps } from 'react-native';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -10,9 +10,10 @@ import { useBottomSheetActionButtonStyles } from './bottom-sheet-action-button.s
 
 interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress' | 'disabled'>, TestIdProps {
   title: string;
+  titleStyle?: StyleProp<TextStyle>;
 }
 
-export const BottomSheetActionButton: FC<Props> = ({ title, disabled, style, onPress, testID }) => {
+export const BottomSheetActionButton: FC<Props> = ({ title, disabled, style, titleStyle, onPress, testID }) => {
   const styles = useBottomSheetActionButtonStyles();
 
   return (
@@ -22,7 +23,7 @@ export const BottomSheetActionButton: FC<Props> = ({ title, disabled, style, onP
       onPress={onPress}
       {...setTestID(testID)}
     >
-      <Text style={[styles.title, conditionalStyle(Boolean(disabled), styles.disabledTitle)]}>{title}</Text>
+      <Text style={[styles.title, conditionalStyle(Boolean(disabled), styles.disabledTitle), titleStyle]}>{title}</Text>
     </TouchableOpacity>
   );
 };

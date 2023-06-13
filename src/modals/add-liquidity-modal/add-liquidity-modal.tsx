@@ -29,6 +29,7 @@ import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
 import { parseTransferParamsToParamsWithKind } from '../../utils/transfer-params.utils';
 import { AddLiquidityModalFormValues, addLiquidityModalValidationSchema } from './add-liquidity-modal.form';
+import { AddLiquidityModalSelectors } from './add-liquidity-modal.selectors';
 import { useAddLiquidityModalStyles } from './add-liquidity-modal.styles';
 
 export const AddLiquidityModal = () => {
@@ -142,6 +143,9 @@ export const AddLiquidityModal = () => {
                   assetsList={[values.aToken.asset]}
                   maxButton
                   onValueChange={handleATokenChange}
+                  testID={AddLiquidityModalSelectors.aTokenDropdown}
+                  switcherTestID={AddLiquidityModalSelectors.aTokenSwitcher}
+                  maxButtonTestID={AddLiquidityModalSelectors.aTokenMaxButton}
                 />
                 <Divider size={formatSize(16)} />
                 <View style={styles.iconCentered}>
@@ -154,6 +158,9 @@ export const AddLiquidityModal = () => {
                   assetsList={[values.bToken.asset]}
                   maxButton
                   onValueChange={handleBTokenChange}
+                  testID={AddLiquidityModalSelectors.bTokenDropdown}
+                  switcherTestID={AddLiquidityModalSelectors.bTokenSwitcher}
+                  maxButtonTestID={AddLiquidityModalSelectors.bTokenMaxButton}
                 />
                 <Text style={styles.sectionNameText}>Remove Liquidity Details</Text>
                 <View style={styles.lineDivider} />
@@ -178,7 +185,7 @@ export const AddLiquidityModal = () => {
                 </View>
               </ScreenContainer>
               <ButtonsFloatingContainer>
-                <ButtonLargePrimary title="Add" onPress={submitForm} />
+                <ButtonLargePrimary title="Add" onPress={submitForm} testID={AddLiquidityModalSelectors.addButton} />
               </ButtonsFloatingContainer>
               <InsetSubstitute type="bottom" />
             </>

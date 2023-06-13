@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { addKnownSvg, removeKnownSvg } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { useIsKnownSvgSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { formatSizeScaled } from 'src/styles/format-size';
+import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { isImgUriSvg, isImgUriDataUri, isImageRectangular, formatImgUri } from 'src/utils/image.utils';
@@ -23,7 +23,7 @@ interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'
   size?: number;
 }
 
-export const TokenIcon: FC<Props> = ({ size = formatSizeScaled(32), thumbnailUri, ...rest }) => {
+export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, ...rest }) => {
   const roundedStyle = useMemo(
     () => (isImageRectangular(thumbnailUri) ? undefined : { borderRadius: size / 2 }),
     [thumbnailUri]
