@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { ListRenderItem, ViewToken, ScrollView, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -37,13 +37,13 @@ export const Collection = () => {
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
     if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {
-      if (info.viewableItems[0].index === 0) {
-        setInnerScreenIndex(0);
-      } else {
-        setInnerScreenIndex(info.viewableItems[0].index - 1);
-      }
+      setInnerScreenIndex(info.viewableItems[0].index);
     }
   }, []);
+
+  const snapToInterval = useMemo(() => {
+    return itemWidth + formatSize(8);
+  }, [itemWidth]);
 
   const renderItem: ListRenderItem<TokenInterface> = ({ item }) => (
     <CollectibleItem item={item} collectionContract={params.collectionContract} setWidth={setItemWidth} />
@@ -58,7 +58,7 @@ export const Collection = () => {
         showsHorizontalScrollIndicator={false}
         onViewableItemsChanged={handleChanged}
         removeClippedSubviews={true}
-        snapToInterval={itemWidth + formatSize(8)}
+        snapToInterval={snapToInterval}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50,
           minimumViewTime: 100
