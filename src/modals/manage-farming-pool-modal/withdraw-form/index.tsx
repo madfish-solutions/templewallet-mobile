@@ -115,6 +115,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
       decimals: stakedToken.metadata.decimals,
       symbol: 'Shares',
       name: '',
+      thumbnailUri: stakedToken.metadata.thumbnailUri,
       address: stakedToken.contractAddress,
       exchangeRate: isDefined(depositExchangeRate) ? Number(depositExchangeRate) : undefined
     }),
