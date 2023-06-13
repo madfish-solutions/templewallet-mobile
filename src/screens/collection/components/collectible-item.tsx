@@ -25,7 +25,7 @@ import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from 'src/utils/swap-permissions.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { useCollectionStyles } from '../collection.styles';
+import { useCollectibleItemStyles } from './collectible-item.styles';
 
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 
@@ -42,7 +42,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
   const tezos = createTezosToolkit(selectedRpc);
   const dispatch = useDispatch();
 
-  const styles = useCollectionStyles();
+  const styles = useCollectibleItemStyles();
 
   const { handleLayout, layoutWidth } = useLayoutSizes();
 
@@ -191,25 +191,24 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
               {buttonText}
             </Text>
           </TouchableOpacity>
-          <View>
-            <TouchableOpacity
-              onPress={handleList}
+
+          <TouchableOpacity
+            onPress={handleList}
+            style={[
+              styles.sellButton,
+              conditionalStyle(!isAbleToList, styles.listButtonNotListed, styles.listButtonActive)
+            ]}
+            disabled={!isAbleToList}
+          >
+            <Text
               style={[
-                styles.sellButton,
-                conditionalStyle(!isAbleToList, styles.listButtonNotListed, styles.listButtonActive)
+                styles.sellButtonText,
+                conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActive)
               ]}
-              disabled={!isAbleToList}
             >
-              <Text
-                style={[
-                  styles.sellButtonText,
-                  conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActive)
-                ]}
-              >
-                {!isAbleToList ? 'Listed' : 'List'}
-              </Text>
-            </TouchableOpacity>
-          </View>
+              {!isAbleToList ? 'Listed' : 'List'}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
