@@ -68,7 +68,6 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
   const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holder_address) ?? [];
   const isHolder = holders.includes(selectedAccount.publicKeyHash);
   const isOffersExisted = isDefined(item.highestOffer);
-  const isListed = item.lowestAsk !== null;
   const listedByUser = item.listed ?? 0;
   const quantityByUser =
     item?.holders?.find(holder => holder.holder_address === selectedAccount.publicKeyHash)?.quantity ?? 0;
@@ -78,7 +77,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
   const navigateToObjktForBuy = `https://objkt.com/asset/${collectionContract}/${item.id}`;
 
   const handlePress = async () => {
-    if (!isHolder && isListed) {
+    if (!isHolder) {
       return openUrl(navigateToObjktForBuy);
     }
 
@@ -131,14 +130,14 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
   const handleList = () => openUrl(navigateToObjktForBuy);
 
   const buttonText = () => {
-    if (isOffersExisted) {
-      if (isHolder) {
+    if (isHolder) {
+      if (isOffersExisted) {
         return `Sell for ${highestOffer}`;
       } else {
-        return 'Make offer';
+        return 'No offers yet';
       }
     } else {
-      return 'No offers yet';
+      return 'Make offer';
     }
   };
 
@@ -173,46 +172,45 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
             </View>
           </View>
         </View>
-        {isHolder && (
-          <View style={styles.buttonContainer}>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={handlePress}
+            disabled={!isOffersExisted && isHolder}
+            style={[
+              styles.sellButton,
+              conditionalStyle(isOffersExisted || !isHolder, styles.sellButtonActive, styles.sellButtonDisabled)
+            ]}
+          >
+            <Text
+              style={[
+                styles.sellButtonText,
+                conditionalStyle(isOffersExisted || !isHolder, styles.sellButtonActive, styles.sellButtonDisabled)
+              ]}
+            >
+              {buttonText()}
+            </Text>
+          </TouchableOpacity>
+          <View>
             <TouchableOpacity
-              onPress={handlePress}
-              disabled={!isOffersExisted}
+              onPress={handleList}
               style={[
                 styles.sellButton,
-                conditionalStyle(isOffersExisted, styles.sellButtonActive, styles.sellButtonDisabled)
+                conditionalStyle(!isAbleToList, styles.listButtonNotListed, styles.listButtonActive)
               ]}
+              disabled={!isAbleToList}
             >
               <Text
                 style={[
                   styles.sellButtonText,
-                  conditionalStyle(isOffersExisted, styles.sellButtonActive, styles.sellButtonDisabled)
+                  conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActive)
                 ]}
               >
-                {buttonText()}
+                {!isAbleToList ? 'Listed' : 'List'}
               </Text>
             </TouchableOpacity>
-            <View>
-              <TouchableOpacity
-                onPress={handleList}
-                style={[
-                  styles.sellButton,
-                  conditionalStyle(!isAbleToList, styles.listButtonNotListed, styles.listButtonActive)
-                ]}
-                disabled={!isAbleToList}
-              >
-                <Text
-                  style={[
-                    styles.sellButtonText,
-                    conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActive)
-                  ]}
-                >
-                  {!isAbleToList ? 'Listed' : 'List'}
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
-        )}
+        </View>
       </View>
     </View>
   );
