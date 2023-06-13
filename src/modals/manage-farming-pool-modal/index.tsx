@@ -43,7 +43,7 @@ export const ManageFarmingPoolModal: FC = () => {
   const blockLevel = useBlockLevel();
   const prevBlockLevelRef = useRef(blockLevel);
   const dispatch = useDispatch();
-  const farm = useFarmSelector(params.id, params.version);
+  const farm = useFarmSelector(params.id, params.contractAddress);
   const farmIsLoading = useFarmsLoadingSelector();
   const stakes = useLastStakesSelector();
   const stake = isDefined(farm) ? stakes[farm.item.contractAddress] : undefined;
@@ -54,9 +54,9 @@ export const ManageFarmingPoolModal: FC = () => {
   const theme = useThemeSelector();
   const [tabIndex, setTabIndex] = useState(0);
 
-  const stakeFormik = useStakeFormik(params.id, params.version);
+  const stakeFormik = useStakeFormik(params.id, params.contractAddress);
   const { errors: stakeFormErrors, submitForm: submitStakeForm, isSubmitting: stakeFormSubmitting } = stakeFormik;
-  const withdrawFormik = useWithdrawFormik(params.id, params.version);
+  const withdrawFormik = useWithdrawFormik(params.id, params.contractAddress);
   const {
     errors: withdrawFormErrors,
     submitForm: submitWithdrawForm,

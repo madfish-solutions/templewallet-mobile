@@ -27,6 +27,7 @@ export const FarmTokens: FC<Props> = ({ stakeTokens, rewardToken }) => {
           {stakeTokens.map((token, index) => (
             <TokenIcon
               iconName={token.iconName}
+              key={token.symbol}
               thumbnailUri={token.thumbnailUri}
               size={formatSize(32)}
               style={conditionalStyle(index > 0, styles.nextToken)}

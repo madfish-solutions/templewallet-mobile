@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { BigMap } from 'src/interfaces/big-map.interface';
 
-export enum FarmVersionEnum {
+enum FarmVersionEnum {
   V1 = 'v1',
   V2 = 'v2',
   V3 = 'v3'
@@ -11,7 +11,8 @@ export enum FarmVersionEnum {
 
 export enum PoolType {
   STABLESWAP = 'STABLESWAP',
-  DEX_TWO = 'DEX_TWO'
+  DEX_TWO = 'DEX_TWO',
+  LIQUIDITY_BAKING = 'LIQUIDITY_BAKING'
 }
 
 enum StableswapPoolVersion {
@@ -28,7 +29,7 @@ interface FarmTokenMetadata {
   decimals: number;
   symbol: string;
   name: string;
-  thumbnailUri: string;
+  thumbnailUri?: string;
   categories?: string[];
 }
 
@@ -46,8 +47,6 @@ interface FarmBase {
   apr: string | null;
   depositExchangeRate: string | null;
   depositTokenUrl: string;
-  lastRewards: string;
-  discFactor: string;
   dailyDistribution: string;
   dailyDistributionDollarEquivalent: string;
   earnExchangeRate: string | null;
@@ -59,21 +58,32 @@ interface FarmBase {
   staked: string;
   tvlInUsd: string | null;
   tvlInStakedToken: string;
-  version: FarmVersionEnum;
   type?: PoolType;
 }
 
-interface StableswapFarm extends FarmBase {
+interface QuipuswapFarmBase extends FarmBase {
+  lastRewards: string;
+  discFactor: string;
+  version: FarmVersionEnum;
+}
+
+interface LiquidityBakingFarm extends FarmBase {
+  type: PoolType.LIQUIDITY_BAKING;
+}
+
+interface StableswapFarm extends QuipuswapFarmBase {
   type: PoolType.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;
 }
 
-interface OtherFarm extends FarmBase {
+interface DexTwoFarm extends QuipuswapFarmBase {
   type?: PoolType.DEX_TWO;
 }
 
-export type Farm = StableswapFarm | OtherFarm;
+export type QuipuswapFarm = StableswapFarm | DexTwoFarm;
+
+export type Farm = LiquidityBakingFarm | QuipuswapFarm;
 
 interface BlockInfo {
   level: number;
@@ -81,13 +91,20 @@ interface BlockInfo {
   timestamp: string;
 }
 
-export interface SingleFarmResponse {
-  item: Farm;
+interface SingleQuipuswapFarmResponse {
+  item: QuipuswapFarm;
   blockInfo: BlockInfo;
 }
 
+export interface LiquidityBakingFarmResponse {
+  item: LiquidityBakingFarm;
+  blockInfo: BlockInfo;
+}
+
+export type SingleFarmResponse = SingleQuipuswapFarmResponse | LiquidityBakingFarmResponse;
+
 export interface FarmsListResponse {
-  list: SingleFarmResponse[];
+  list: SingleQuipuswapFarmResponse[];
 }
 
 export interface StableswapTokenInfo {

@@ -4,7 +4,7 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { Farm } from 'src/apis/quipuswap-staking/types';
+import { QuipuswapFarm } from 'src/apis/quipuswap-staking/types';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
@@ -31,7 +31,7 @@ import { useDetailsCardStyles } from './styles';
 import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';
 
 interface DetailsCardProps {
-  farm: Farm;
+  farm: QuipuswapFarm;
   loading: boolean;
   stake?: UserStakeValueInterface;
   shouldShowClaimRewardsButton: boolean;

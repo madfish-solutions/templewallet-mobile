@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { FarmVersionEnum, PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
+import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
@@ -33,7 +33,7 @@ interface Props {
   lastStakeRecord?: UserStakeValueInterface;
 }
 
-const FARM_PRECISION = 18;
+const STABLESWAP_FARM_PRECISION = 18;
 const DEFAULT_AMOUNT = 0;
 const DEFAULT_EXHANGE_RATE = 1;
 const DEFAULT_DECIMALS = 2;
@@ -47,31 +47,34 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const { navigate } = useNavigation();
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
+  const isLiquidityBaking = farm.item.type === PoolType.LIQUIDITY_BAKING;
+  const farmPrecision = isLiquidityBaking ? 0 : STABLESWAP_FARM_PRECISION;
 
-  const apr = useMemo(
+  const apy = useMemo(
     () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
     [farm.item.apr]
   );
 
   const depositAmountAtomic = useMemo(
     () =>
-      mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
+      mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), farmPrecision).multipliedBy(
         farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE
       ),
     [lastStakeRecord?.depositAmountAtomic]
   );
+  const depositIsZero = depositAmountAtomic.isZero();
 
   const claimableRewardsAtomic = useMemo(
     () =>
-      mutezToTz(new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT), FARM_PRECISION).multipliedBy(
+      mutezToTz(new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT), farmPrecision).multipliedBy(
         farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE
       ),
     [lastStakeRecord?.claimableRewards]
   );
 
   const navigateToFarm = useCallback(
-    () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
-    [farm.item.id]
+    () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, contractAddress: farm.item.contractAddress }),
+    [farm.item.id, farm.item.contractAddress]
   );
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>
@@ -112,10 +115,13 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         <View style={[styles.tokensContainer, styles.row]}>
           <FarmTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
           <View>
-            <Text style={styles.apyText}>APY: {apr}%</Text>
+            <Text style={styles.apyText}>APY: {apy}%</Text>
             <View style={styles.earnSource}>
-              <Icon style={styles.earnSourceIcon} name={IconNameEnum.QsEarnSource} />
-              <Text style={styles.attributeTitle}>Quipuswap</Text>
+              <Icon
+                style={styles.earnSourceIcon}
+                name={isLiquidityBaking ? IconNameEnum.LbEarnSource : IconNameEnum.QsEarnSource}
+              />
+              <Text style={styles.attributeTitle}>{isLiquidityBaking ? 'Liquidity Baking' : 'Quipuswap'}</Text>
             </View>
           </View>
         </View>
@@ -125,25 +131,34 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
             <Text style={styles.attributeTitle}>Your deposit:</Text>
             <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
           </View>
-          <View style={styles.flex}>
-            <Text style={styles.attributeTitle}>Claimable rewards:</Text>
-            <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
-          </View>
+          {!isLiquidityBaking && (
+            <View style={styles.flex}>
+              <Text style={styles.attributeTitle}>Claimable rewards:</Text>
+              <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
+            </View>
+          )}
         </View>
 
         <View style={styles.row}>
-          {new BigNumber(depositAmountAtomic).isGreaterThan(DEFAULT_AMOUNT) ? (
+          {!depositIsZero && (
+            <View style={styles.flex}>
+              <Button title="MANAGE" isFullWidth onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
+            </View>
+          )}
+          {!depositIsZero && !isLiquidityBaking && (
             <>
-              <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
               <Divider size={formatSize(8)} />
-              <Button
-                isFullWidth
-                title="CLAIM REWARDS"
-                onPress={harvestAssetsApi}
-                styleConfig={buttonPrimaryStylesConfig}
-              />
+              <View style={styles.flex}>
+                <Button
+                  isFullWidth
+                  title="CLAIM REWARDS"
+                  onPress={harvestAssetsApi}
+                  styleConfig={buttonPrimaryStylesConfig}
+                />
+              </View>
             </>
-          ) : (
+          )}
+          {depositIsZero && (
             <Button
               isFullWidth
               title="START FARMING"

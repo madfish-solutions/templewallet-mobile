@@ -24,3 +24,5 @@ export const TEMPLE_TOKEN: Route3Token = {
   tokenId: '0',
   decimals: 18
 };
+
+export const APP_ID = 2;

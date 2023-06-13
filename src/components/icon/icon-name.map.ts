@@ -65,6 +65,7 @@ import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
+import LbEarnSource from './assets/lb-earn-source.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
 import LiquidityBakingIcon from './assets/liquidity-baking.svg';
@@ -276,5 +277,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
   [IconNameEnum.NFT]: NFT,
-  [IconNameEnum.QsEarnSource]: QsEarnSource
+  [IconNameEnum.QsEarnSource]: QsEarnSource,
+  [IconNameEnum.LbEarnSource]: LbEarnSource
 };

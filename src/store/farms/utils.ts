@@ -1,6 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
+import { Observable, withLatestFrom } from 'rxjs';
 
-import { Farm } from 'src/apis/quipuswap-staking/types';
+import { Farm, PoolType } from 'src/apis/quipuswap-staking/types';
 import { FarmContractStorageInterface } from 'src/interfaces/earn.interface';
 import { getLastElement } from 'src/utils/array.utils';
 import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
@@ -8,14 +9,16 @@ import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { getBalance } from 'src/utils/token-balance.utils';
 
+import { RootState } from '../create-store';
+import { ExchangeRateRecord } from '../currency/currency-state';
 import { UserStakeValueInterface } from './state';
 
 export interface RawStakeValue {
-  lastStakeId: string;
-  depositAmountAtomic: string;
-  claimableRewards: string;
-  fullReward: string;
-  ageTimestamp: string;
+  lastStakeId?: string;
+  depositAmountAtomic?: string;
+  claimableRewards?: string;
+  fullReward?: string;
+  ageTimestamp?: string;
 }
 
 export class GetFarmStakeError extends Error {
@@ -32,11 +35,23 @@ export const toUserStakeValueInterface = (
 
   return {
     ...rest,
-    rewardsDueDate: new Date(ageTimestamp).getTime() + Number(vestingPeriodSeconds) * 1000
+    rewardsDueDate: isDefined(ageTimestamp)
+      ? new Date(ageTimestamp).getTime() + Number(vestingPeriodSeconds) * 1000
+      : undefined
   };
 };
 
 export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: string) => {
+  if (farm.type === PoolType.LIQUIDITY_BAKING) {
+    const sirsTokenContract = await getReadOnlyContract(farm.stakedToken.contractAddress, tezos);
+    const depositAmountAtomic = await getBalance(sirsTokenContract, accountPkh, farm.stakedToken.fa2TokenId);
+
+    return {
+      lastStakeId: '0',
+      depositAmountAtomic: depositAmountAtomic.toFixed()
+    };
+  }
+
   const farmContractInstance = await tezos.contract.at(farm.contractAddress);
   const farmContractStorage = await farmContractInstance.storage<FarmContractStorageInterface>();
   const stakesIds = await farmContractStorage.stakes_owner_lookup.get(accountPkh);
@@ -77,3 +92,27 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
 
   return undefined;
 };
+
+/*
+export const withSelectedAccount =
+  <T>(state$: Observable<WalletRootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { wallet }): [T, AccountInterface] => {
+        const selectedAccount =
+          wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === wallet.selectedAccountPublicKeyHash) ??
+          emptyAccount;
+
+        return [value, selectedAccount];
+      })
+    );
+*/
+
+export const withExchangeRates =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { currency }): [T, ExchangeRateRecord] => {
+        return [value, currency.usdToTokenRates.data];
+      })
+    );

@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { from, map } from 'rxjs';
 
 import { route3Api } from 'src/apis/route3';
+import { TEMPLE_TOKEN } from 'src/config/swap';
 import {
   Hop,
   Route3Chain,
@@ -10,7 +11,6 @@ import {
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
-import { TEMPLE_TOKEN } from 'src/screens/swap/config';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -18,7 +18,7 @@ import { toTokenSlug } from 'src/token/utils/token.utils';
 import { TEMPLE_WALLET_ROUTE3_AUTH_TOKEN } from './env.utils';
 import { tzToMutez } from './tezos.util';
 
-export const fetchRoute3Tokens = () =>
+export const fetchRoute3Tokens$ = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
 
 const parser = (origJSON: string): ReturnType<typeof JSON['parse']> => {

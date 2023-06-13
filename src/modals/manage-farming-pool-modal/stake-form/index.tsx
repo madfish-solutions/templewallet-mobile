@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Divider } from 'src/components/divider/divider';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
+import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -13,7 +14,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { useStakeFormStyles } from './styles';
-import { useFarmTokens } from './use-farm-tokens';
 import { useStakeFormik } from './use-stake-formik';
 
 interface StakeFormProps {
@@ -26,7 +26,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
   const { asset } = values.assetAmount;
 
   const styles = useStakeFormStyles();
-  const assetsList = useFarmTokens(farm);
+  const { stakeTokens: assetsList } = useFarmTokens(farm.item);
   const prevAssetsListRef = useRef(assetsList);
   const { filteredAssetsList, setSearchValue: setSearchValueFromTokens } = useFilteredAssetsList(
     assetsList,

@@ -133,5 +133,6 @@ export enum IconNameEnum {
   Apple = 'Apple',
   AppleOnDark = 'AppleOnDark',
   GoogleDrive = 'GoogleDrive',
-  QsEarnSource = 'QsEarnSource'
+  QsEarnSource = 'QsEarnSource',
+  LbEarnSource = 'LbEarnSource'
 }

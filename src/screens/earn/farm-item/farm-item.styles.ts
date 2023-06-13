@@ -80,7 +80,7 @@ export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ typography
   ...useButtonLargeSecondaryStyleConfig(),
   containerStyle: {
     flex: 1,
-    width: formatSize(156),
+    // width: formatSize(156),
     height: formatSize(38),
     borderRadius: formatSize(10),
     borderWidth: formatSize(2)

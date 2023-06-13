@@ -3,9 +3,9 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { object as objectSchema, SchemaOf } from 'yup';
 
-import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
+import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -22,32 +22,31 @@ import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
 import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { createStakeOperationParams } from './create-stake-operation-params';
-import { useFarmTokens } from './use-farm-tokens';
 
 interface StakeFormValues {
   assetAmount: AssetAmountInterface;
 }
 
-export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => {
-  const farm = useFarmSelector(farmId, farmVersion);
-  const farmTokens = useFarmTokens(farm);
+export const useStakeFormik = (farmId: string, contractAddress: string) => {
+  const farm = useFarmSelector(farmId, contractAddress);
+  const { stakeTokens } = useFarmTokens(farm?.item);
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const selectedAccount = useSelectedAccountSelector();
   const { publicKeyHash: accountPkh } = selectedAccount;
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const stake = useStakeSelector(farm?.item.contractAddress ?? '');
+  const stake = useStakeSelector(contractAddress);
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
   const initialValues = useMemo(
     () => ({
       assetAmount: {
-        asset: farmTokens[0] ?? emptyTezosLikeToken,
+        asset: stakeTokens[0] ?? emptyTezosLikeToken,
         amount: undefined
       }
     }),
-    [farmTokens]
+    [stakeTokens]
   );
 
   const validationSchema = useMemo<SchemaOf<StakeFormValues>>(
@@ -83,7 +82,7 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },
-    [farm, farmTokens, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
+    [farm, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
   );
 
   return useFormik<StakeFormValues>({
