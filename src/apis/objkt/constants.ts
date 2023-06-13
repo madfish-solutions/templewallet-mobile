@@ -11,13 +11,13 @@ export const apolloObjktClient = getApolloConfigurableClient(OBJKT_API);
 type CurrencyIdFromApi = number;
 
 export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
-  23: {
+  2537: {
     symbol: 'uUSD',
     decimals: 12,
     contract: 'KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW',
     id: '0'
   },
-  218: {
+  2557: {
     symbol: 'USDtz',
     decimals: 6,
     contract: 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9',

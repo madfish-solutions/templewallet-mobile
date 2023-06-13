@@ -129,49 +129,57 @@ export const CollectibleModal = () => {
     return { price, ...currentCurrency };
   }, [collectibleInfo]);
 
-  const contractParamsData = useMemo(
-    () => ({
-      bigmapKey: isNonEmptyArray(listings_active) ? listings_active[0].bigmap_key : 0,
-      marketplace: isNonEmptyArray(listings_active)
-        ? listings_active[0].marketplace_contract
-        : OBJKT_MARKETPLACE_CONTRACT,
-      price: purchaseCurrency.price,
-      tokenToSpend: {
-        id: 0,
-        contract: purchaseCurrency.contract,
-        tokenId: purchaseCurrency.id,
-        decimals: collectible.decimals,
-        standard: Route3TokenStandardEnum.fa2,
-        symbol: purchaseCurrency.symbol
-      }
-    }),
-    [collectibleInfo, purchaseCurrency, collectible]
-  );
-
   useEffect(() => {
     tezos.contract
       .at<ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface>(
-        contractParamsData.marketplace ?? OBJKT_MARKETPLACE_CONTRACT
+        isNonEmptyArray(listings_active) ? listings_active[0].marketplace_contract : OBJKT_MARKETPLACE_CONTRACT
       )
       .then(setMarketplaceContract);
-  }, []);
+  }, [listings_active]);
 
-  const handleBuyCollectible = async () => {
-    const transferParams = isDefined(marketplaceContract)
-      ? OBJKT_BUY_METHOD in marketplaceContract?.methods
-        ? [marketplaceContract.methods.fulfill_ask(contractParamsData.bigmapKey).toTransferParams()]
-        : [marketplaceContract.methods.listing_accept(1, contractParamsData.bigmapKey).toTransferParams()]
-      : [];
+  const handleSubmit = async () => {
+    if (isUserOwnerCurrentCollectible) {
+      return navigate(ModalsEnum.Send, { token: collectible });
+    }
+
+    const getTransferParams = () => {
+      if (isDefined(marketplaceContract) && isNonEmptyArray(listings_active)) {
+        const isTezosCurrency = listings_active[0].currency_id === 1;
+        const params = isTezosCurrency
+          ? { amount: purchaseCurrency.price, mutez: true, source: selectedAccount.publicKeyHash }
+          : {};
+
+        if (OBJKT_BUY_METHOD in marketplaceContract?.methods) {
+          return [marketplaceContract.methods.fulfill_ask(listings_active[0].bigmap_key).toTransferParams(params)];
+        } else {
+          return [
+            marketplaceContract.methods.listing_accept(1, listings_active[0].bigmap_key).toTransferParams(params)
+          ];
+        }
+      }
+
+      return [];
+    };
+
+    const transferParams = getTransferParams();
+
+    const isTokenFa2 = listings_active[0].currency.type === Route3TokenStandardEnum.fa2;
+
+    const token = {
+      id: Number(purchaseCurrency.id),
+      symbol: purchaseCurrency.symbol,
+      standard: isTokenFa2 ? Route3TokenStandardEnum.fa2 : Route3TokenStandardEnum.fa12,
+      contract: purchaseCurrency.contract,
+      tokenId: `${purchaseCurrency.id}`,
+      decimals: purchaseCurrency.decimals
+    };
 
     const { approve, revoke } = await getTransferPermissions(
       tezos,
-      contractParamsData.marketplace,
+      listings_active[0].marketplace_contract ?? OBJKT_MARKETPLACE_CONTRACT,
       selectedAccount.publicKeyHash,
-      {
-        ...contractParamsData.tokenToSpend,
-        tokenId: contractParamsData.tokenToSpend.id.toString() ?? null
-      },
-      new BigNumber(contractParamsData.price)
+      token,
+      new BigNumber(purchaseCurrency.price)
     );
 
     transferParams.unshift(...approve);
@@ -223,14 +231,6 @@ export const CollectibleModal = () => {
     return `Buy for ${price.toFixed(2)} ${purchaseCurrency.symbol}`;
   }, [isUserOwnerCurrentCollectible, listings_active, isLoading]);
 
-  const handleSubmitButton = useCallback(async () => {
-    if (isUserOwnerCurrentCollectible) {
-      return navigate(ModalsEnum.Send, { token: collectible });
-    }
-
-    handleBuyCollectible();
-  }, [isUserOwnerCurrentCollectible, collectible, contractParamsData]);
-
   const collectionLogo = useMemo(() => {
     if (fa.logo.endsWith('.svg')) {
       return (
@@ -280,7 +280,7 @@ export const CollectibleModal = () => {
           <ButtonLargePrimary
             disabled={isLoading || (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listings_active))}
             title={submitButtonTitle}
-            onPress={handleSubmitButton}
+            onPress={handleSubmit}
             testID={CollectibleModalSelectors.sendButton}
           />
         )

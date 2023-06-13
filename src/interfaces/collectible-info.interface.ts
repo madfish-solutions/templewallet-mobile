@@ -46,5 +46,8 @@ export interface CollectibleInfo {
     currency_id: number;
     price: number;
     marketplace_contract: string;
+    currency: {
+      type: string;
+    };
   }[];
 }

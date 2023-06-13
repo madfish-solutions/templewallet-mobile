@@ -46,6 +46,9 @@ export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId:
         currency_id
         price
         marketplace_contract
+        currency {
+          type
+        }
       }
     }
   }
