@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
+import { ProviderErrors } from 'src/interfaces/buy-with-card';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 
 import { isDefined } from './is-defined';
@@ -28,11 +29,11 @@ const fiatPurchaseProvidersSortPredicate = (
 
 export const getPaymentProvidersToDisplay = (
   allProviders: PaymentProviderInterface[],
-  providersErrors: Partial<Record<TopUpProviderEnum, boolean>>,
+  providersErrors: Partial<Record<TopUpProviderEnum, ProviderErrors>>,
   providersLoading: Partial<Record<TopUpProviderEnum, boolean>>,
   inputAmount?: BigNumber | number
 ) => {
-  const shouldFilterByLimits = allProviders.some(
+  const shouldFilterByLimitsDefined = allProviders.some(
     ({ minInputAmount, maxInputAmount }) => isDefined(minInputAmount) && isDefined(maxInputAmount)
   );
   const shouldFilterByOutputAmount = allProviders.some(
@@ -41,13 +42,14 @@ export const getPaymentProvidersToDisplay = (
 
   const result = allProviders
     .filter(({ id, minInputAmount, maxInputAmount, outputAmount }) => {
-      const isError = Boolean(providersErrors[id]);
+      const errors = providersErrors[id];
+      const isError = isDefined(errors) && (isDefined(errors.currencies) || errors.output);
       const limitsAreDefined = isDefined(minInputAmount) && isDefined(maxInputAmount);
       const outputAmountIsLegit = isTruthy(outputAmount) && outputAmount > 0;
 
       return (
-        !isError &&
-        (!shouldFilterByLimits || limitsAreDefined) &&
+        isError === false &&
+        (!shouldFilterByLimitsDefined || limitsAreDefined) &&
         (!shouldFilterByOutputAmount || outputAmountIsLegit || Boolean(providersLoading[id])) &&
         isInRange(minInputAmount, maxInputAmount, inputAmount)
       );

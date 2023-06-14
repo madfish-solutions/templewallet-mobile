@@ -31,6 +31,7 @@ import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-for
 import { useFiatCurrenciesList } from './hooks/use-fiat-currencies-list.hook';
 import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
 import { useFormInputsCallbacks } from './hooks/use-form-inputs-callbacks';
+import { usePairLimitsAreLoading } from './hooks/use-input-limits.hook';
 import { usePaymentProviders } from './hooks/use-payment-providers.hook';
 import { BuyWithCreditCardSelectors } from './selectors';
 import { useBuyWithCreditCardStyles } from './styles';
@@ -52,7 +53,7 @@ export const BuyWithCreditCard: FC = () => {
   const dispatch = useDispatch();
   const colors = useColors();
   const styles = useBuyWithCreditCardStyles();
-  const [isLoading, setIsLoading] = useState(false);
+  const [formIsLoading, setFormIsLoading] = useState(false);
 
   usePageAnalytic(ScreensEnum.BuyWithCreditCard);
 
@@ -80,7 +81,10 @@ export const BuyWithCreditCard: FC = () => {
     handleSendInputBlur,
     handleGetOutputBlur,
     refreshForm
-  } = useFormInputsCallbacks(formik, paymentProviders, isLoading, setIsLoading);
+  } = useFormInputsCallbacks(formik, paymentProviders, formIsLoading, setFormIsLoading);
+
+  const pairLimitsLoading = usePairLimitsAreLoading(inputAsset.code, outputAsset.code);
+
   const isPaymentProviderError =
     isDefined(errors.paymentProvider) &&
     (isTruthy(touched.paymentProvider) || submitCount > 0) &&
@@ -115,7 +119,7 @@ export const BuyWithCreditCard: FC = () => {
   useInterval(refreshForm, 10000, [refreshForm], false);
 
   const someErrorOccured = Object.keys(errors).length > 0;
-  const submitDisabled = (submitCount !== 0 && !isValid) || isLoading || someErrorOccured;
+  const submitDisabled = (submitCount !== 0 && !isValid) || formIsLoading || pairLimitsLoading || someErrorOccured;
 
   return (
     <>
@@ -190,7 +194,7 @@ export const BuyWithCreditCard: FC = () => {
           <View style={styles.exchangeContainer}>
             <Text style={styles.exchangeRate}>Exchange Rate</Text>
             <Text style={styles.exchangeRateValue}>
-              {isDefined(exchangeRate) && isDefined(inputAsset.code) && !isLoading
+              {isDefined(exchangeRate) && isDefined(inputAsset.code) && !formIsLoading
                 ? `1 ${inputAsset.code} = ${exchangeRate} ${outputAsset.codeToDisplay ?? outputAsset.code}`
                 : '---'}
             </Text>
@@ -200,14 +204,14 @@ export const BuyWithCreditCard: FC = () => {
 
           <Disclaimer
             title="Disclaimer"
-            texts={['Temple integrated third-party solutions to buy TEZ or USDT with crypto or a Debit/Credit card.']}
+            texts={['Temple integrated third-party solutions to buy TEZ or other currencies with Debit/Credit card.']}
           />
         </View>
       </ScreenContainer>
 
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
-          title={isLoading ? 'Loading...' : 'Top Up'}
+          title={formIsLoading ? 'Loading...' : 'Top Up'}
           disabled={submitDisabled}
           testID={BuyWithCreditCardSelectors.submitButton}
           onPress={submitForm}

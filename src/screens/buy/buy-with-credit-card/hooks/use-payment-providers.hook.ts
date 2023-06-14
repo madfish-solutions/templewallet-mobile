@@ -8,9 +8,14 @@ import { estimateBinanceConnectOutput } from 'src/apis/temple-static';
 import { convertFiatAmountToCrypto } from 'src/apis/utorg';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
+import { ProviderErrors } from 'src/interfaces/buy-with-card';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { updateTopUpProviderPairLimitsAction } from 'src/store/buy-with-credit-card/actions';
-import { useCryptoCurrenciesSelector, useFiatCurrenciesSelector } from 'src/store/buy-with-credit-card/selectors';
+import {
+  useCryptoCurrenciesSelector,
+  useFiatCurrenciesSelector,
+  useProviderCurrenciesErrorSelector
+} from 'src/store/buy-with-credit-card/selectors';
 import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
@@ -94,10 +99,11 @@ const usePaymentProvider = (
   outputAsset: TopUpInputInterface
 ) => {
   const [outputAmount, setOutputAmount] = useState<number>();
-  const [isError, setIsError] = useState(false);
+  const [isOutputError, setIsError] = useState(false);
   const [outputAmountLoading, setOutputAmountLoading] = useState<boolean>(false);
   const fiatCurrencies = useFiatCurrenciesSelector(providerId);
   const cryptoCurrencies = useCryptoCurrenciesSelector(providerId);
+  const currenciesError = useProviderCurrenciesErrorSelector(providerId);
   const { min: minInputAmount, max: maxInputAmount } = useInputLimits(providerId, inputAsset.code, outputAsset.code);
   const initialData = initialPaymentProvidersData[providerId];
   const getOutputAmount = getOutputAmountFunctions[providerId];
@@ -172,11 +178,19 @@ const usePaymentProvider = (
     [initialData, inputAmount, inputAsset, outputAmount, outputAsset, minInputAmount, maxInputAmount]
   );
 
+  const errors: ProviderErrors = useMemo(
+    () => ({
+      currencies: currenciesError,
+      output: isOutputError
+    }),
+    [currenciesError, isOutputError]
+  );
+
   return {
     provider,
-    isError,
-    updateOutputAmount,
-    loading: outputAmountLoading
+    errors,
+    loading: outputAmountLoading,
+    updateOutputAmount
   };
 };
 
@@ -186,28 +200,28 @@ export const usePaymentProviders = (
   outputAsset: TopUpInputInterface
 ) => {
   const {
-    isError: moonPayIsError,
     provider: moonPayProvider,
-    updateOutputAmount: updateMoonPayOutputAmount,
-    loading: moonPayLoading
+    loading: moonPayLoading,
+    errors: moonPayErrors,
+    updateOutputAmount: updateMoonPayOutputAmount
   } = usePaymentProvider(TopUpProviderEnum.MoonPay, inputAmount, inputAsset, outputAsset);
   const {
-    isError: utorgIsError,
     provider: utorgProvider,
-    updateOutputAmount: updateUtorgOutputAmount,
-    loading: utorgLoading
+    loading: utorgLoading,
+    errors: utorgErrors,
+    updateOutputAmount: updateUtorgOutputAmount
   } = usePaymentProvider(TopUpProviderEnum.Utorg, inputAmount, inputAsset, outputAsset);
   const {
-    isError: aliceBobIsError,
     provider: aliceBobProvider,
-    updateOutputAmount: updateAliceBobOutputAmount,
-    loading: aliceBobLoading
+    loading: aliceBobLoading,
+    errors: aliceBobErrors,
+    updateOutputAmount: updateAliceBobOutputAmount
   } = usePaymentProvider(TopUpProviderEnum.AliceBob, inputAmount, inputAsset, outputAsset);
   const {
-    isError: binanceConnectIsError,
     provider: binanceConnectProvider,
-    updateOutputAmount: updateBinanceConnectOutputAmount,
-    loading: binanceConnectLoading
+    loading: binanceConnectLoading,
+    errors: binanceConnectErrors,
+    updateOutputAmount: updateBinanceConnectOutputAmount
   } = usePaymentProvider(TopUpProviderEnum.BinanceConnect, inputAmount, inputAsset, outputAsset);
 
   const allPaymentProviders = useMemo(
@@ -215,35 +229,29 @@ export const usePaymentProviders = (
     [moonPayProvider, utorgProvider, aliceBobProvider, binanceConnectProvider]
   );
 
+  const providersErrors = useMemo(
+    () => ({
+      [TopUpProviderEnum.MoonPay]: moonPayErrors,
+      [TopUpProviderEnum.Utorg]: utorgErrors,
+      [TopUpProviderEnum.AliceBob]: aliceBobErrors,
+      [TopUpProviderEnum.BinanceConnect]: binanceConnectErrors
+    }),
+    [moonPayErrors, utorgErrors, aliceBobErrors, binanceConnectErrors]
+  );
+
+  const providersLoading = useMemo(
+    () => ({
+      [TopUpProviderEnum.MoonPay]: moonPayLoading,
+      [TopUpProviderEnum.Utorg]: utorgLoading,
+      [TopUpProviderEnum.AliceBob]: aliceBobLoading,
+      [TopUpProviderEnum.BinanceConnect]: binanceConnectLoading
+    }),
+    [moonPayLoading, utorgLoading, aliceBobLoading, binanceConnectLoading]
+  );
+
   const paymentProvidersToDisplay = useMemo(
-    () =>
-      getPaymentProvidersToDisplay(
-        allPaymentProviders,
-        {
-          [TopUpProviderEnum.MoonPay]: moonPayIsError,
-          [TopUpProviderEnum.Utorg]: utorgIsError,
-          [TopUpProviderEnum.AliceBob]: aliceBobIsError,
-          [TopUpProviderEnum.BinanceConnect]: binanceConnectIsError
-        },
-        {
-          [TopUpProviderEnum.MoonPay]: moonPayLoading,
-          [TopUpProviderEnum.Utorg]: utorgLoading,
-          [TopUpProviderEnum.AliceBob]: aliceBobLoading,
-          [TopUpProviderEnum.BinanceConnect]: binanceConnectLoading
-        },
-        inputAmount
-      ),
-    [
-      allPaymentProviders,
-      moonPayIsError,
-      utorgIsError,
-      aliceBobIsError,
-      binanceConnectIsError,
-      moonPayLoading,
-      utorgLoading,
-      aliceBobLoading,
-      binanceConnectLoading
-    ]
+    () => getPaymentProvidersToDisplay(allPaymentProviders, providersErrors, providersLoading, inputAmount),
+    [allPaymentProviders, providersErrors, providersLoading, inputAmount]
   );
 
   const updateOutputAmounts = useCallback(

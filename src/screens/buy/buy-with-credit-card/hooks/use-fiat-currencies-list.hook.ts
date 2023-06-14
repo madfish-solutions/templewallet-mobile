@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { useFiatCurrenciesSelector, usePairLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
+import { useFiatCurrenciesSelector, usePairLimitsByProvidersSelector } from 'src/store/buy-with-credit-card/selectors';
 import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { isDefined } from 'src/utils/is-defined';
-import { intersectAssetsLimits, mergeAssetsLimits } from 'src/utils/pair-limits';
 
+import { mergeProvidersLimits } from '../utils';
 import { useFilteredCurrencies } from './use-filtered-currencies';
 
 export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSymbol: string) => {
@@ -14,25 +14,9 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
   const aliceBobFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.AliceBob);
   const binanceConnectFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.BinanceConnect);
 
-  const moonPayPairLimits = usePairLimitsSelector(inputCurrencySymbol, outputTokenSymbol, TopUpProviderEnum.MoonPay);
-  const utorgPairLimits = usePairLimitsSelector(inputCurrencySymbol, outputTokenSymbol, TopUpProviderEnum.Utorg);
-  const aliceBobPairLimits = usePairLimitsSelector(inputCurrencySymbol, outputTokenSymbol, TopUpProviderEnum.AliceBob);
-  const binanceConnectPairLimits = usePairLimitsSelector(
-    inputCurrencySymbol,
-    outputTokenSymbol,
-    TopUpProviderEnum.BinanceConnect
-  );
+  const pairLimitsByProviders = usePairLimitsByProvidersSelector(inputCurrencySymbol, outputTokenSymbol);
 
-  const pairLimits = useMemo(
-    () =>
-      mergeAssetsLimits(
-        [moonPayPairLimits, utorgPairLimits, aliceBobPairLimits, binanceConnectPairLimits]
-          .filter(isDefined)
-          .map(({ data }) => data)
-          .filter(isDefined)
-      ),
-    [moonPayPairLimits, utorgPairLimits, aliceBobPairLimits, binanceConnectPairLimits]
-  );
+  const pairLimits = useMemo(() => mergeProvidersLimits(pairLimitsByProviders), [pairLimitsByProviders]);
 
   const noPairLimitsCurrencies = useMemo(
     () =>
@@ -63,20 +47,20 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
   );
 
   const currenciesWithPairLimits = useMemo(() => {
-    const fiatCurrenciesWithPairLimits = [...noPairLimitsCurrencies];
-    const inputCurrencyIndex = fiatCurrenciesWithPairLimits.findIndex(({ code }) => code === inputCurrencySymbol);
-    if (inputCurrencyIndex !== -1) {
-      const inputCurrency = fiatCurrenciesWithPairLimits[inputCurrencyIndex];
-      const { min: minAmount, max: maxAmount } = intersectAssetsLimits([
-        { min: inputCurrency.minAmount, max: inputCurrency.maxAmount },
-        pairLimits
-      ]);
-      fiatCurrenciesWithPairLimits[inputCurrencyIndex] = {
-        ...inputCurrency,
-        minAmount,
-        maxAmount
-      };
+    const inputCurrencyIndex = noPairLimitsCurrencies.findIndex(({ code }) => code === inputCurrencySymbol);
+    if (inputCurrencyIndex === -1) {
+      return noPairLimitsCurrencies;
     }
+
+    const fiatCurrenciesWithPairLimits = [...noPairLimitsCurrencies];
+    const inputCurrency = fiatCurrenciesWithPairLimits[inputCurrencyIndex];
+
+    const { min: minAmount, max: maxAmount } = pairLimits;
+    fiatCurrenciesWithPairLimits[inputCurrencyIndex] = {
+      ...inputCurrency,
+      minAmount,
+      maxAmount
+    };
 
     return fiatCurrenciesWithPairLimits;
   }, [noPairLimitsCurrencies, pairLimits, inputCurrencySymbol]);

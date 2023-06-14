@@ -9,15 +9,12 @@ import { buyWithCreditCardInitialState, BuyWithCreditCardState } from './state';
 export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
   buyWithCreditCardInitialState,
   builder => {
-    builder.addCase(loadAllCurrenciesActions.submit, state => ({
-      ...state,
-      currencies: {
-        [TopUpProviderEnum.MoonPay]: createEntity(state.currencies[TopUpProviderEnum.MoonPay].data, true),
-        [TopUpProviderEnum.Utorg]: createEntity(state.currencies[TopUpProviderEnum.Utorg].data, true),
-        [TopUpProviderEnum.AliceBob]: createEntity(state.currencies[TopUpProviderEnum.AliceBob].data, true),
-        [TopUpProviderEnum.BinanceConnect]: createEntity(state.currencies[TopUpProviderEnum.BinanceConnect].data, true)
-      }
-    }));
+    builder.addCase(loadAllCurrenciesActions.submit, state => {
+      state.currencies[TopUpProviderEnum.MoonPay].isLoading = true;
+      state.currencies[TopUpProviderEnum.Utorg].isLoading = true;
+      state.currencies[TopUpProviderEnum.AliceBob].isLoading = true;
+      state.currencies[TopUpProviderEnum.BinanceConnect].isLoading = true;
+    });
 
     builder.addCase(loadAllCurrenciesActions.success, (state, { payload: currencies }) => ({
       ...state,

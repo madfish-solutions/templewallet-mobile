@@ -13,7 +13,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { intersectAssetsLimits, mergeAssetsLimits } from 'src/utils/pair-limits';
+import { mergeAssetsLimits } from 'src/utils/pair-limits';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { BuyWithCreditCardSelectors } from '../selectors';
@@ -25,11 +25,11 @@ export const useFormInputsCallbacks = (
   formik: ReturnType<typeof useBuyWithCreditCardFormik>,
   paymentProviders: ReturnType<typeof usePaymentProviders>,
   isLoading: boolean,
-  setIsLoading: (newValue: boolean) => void
+  setFormIsLoading: (newValue: boolean) => void
 ) => {
   const { trackEvent } = useAnalytics();
   const { setFieldValue, values, setFieldTouched } = formik;
-  const { sendInput: inputValue, getOutput: outputValue } = values;
+  const { sendInput: inputValue, getOutput: outputValue, paymentProvider } = values;
   const { asset: outputToken } = outputValue;
   const { allPaymentProviders, updateOutputAmounts } = paymentProviders;
   const outputCalculationDataRef = useRef({ inputValue, outputToken });
@@ -63,73 +63,73 @@ export const useFormInputsCallbacks = (
 
   const updateOutput = useMemo(
     () =>
-      debounce(
-        async (
-          newInput: TopUpAssetAmountInterface,
-          newOutputToken: TopUpInputInterface,
-          shouldSwitchBetweenProviders: boolean
-        ) => {
-          const { asset: newInputAsset, amount: newInputAmount } = newInput;
-          const outputCalculationData = { inputValue: newInput, outputToken: newOutputToken };
+      debounce(async (newInput: TopUpAssetAmountInterface, newOutputToken: TopUpInputInterface) => {
+        const { asset: newInputAsset, amount: newInputAmount } = newInput;
+        const outputCalculationData = { inputValue: newInput, outputToken: newOutputToken };
 
-          const amounts = await updateOutputAmounts(newInputAmount, newInputAsset, newOutputToken);
+        const amounts = await updateOutputAmounts(newInputAmount, newInputAsset, newOutputToken);
 
-          if (!jsonEqualityFn(outputCalculationData, outputCalculationDataRef.current)) {
-            return;
-          }
+        if (!jsonEqualityFn(outputCalculationData, outputCalculationDataRef.current)) {
+          setFormIsLoading(false);
 
-          const patchedPaymentProviders = getPaymentProvidersToDisplay(
-            allPaymentProviders.map(({ id, ...rest }) => ({
-              ...rest,
-              id,
-              inputSymbol: newInputAsset.codeToDisplay ?? newInputAsset.code,
-              inputPrecision: newInputAsset.precision,
-              minInputAmount: newInputAsset.minAmount,
-              maxInputAmount: newInputAsset.maxAmount,
-              outputAmount: amounts[id],
-              outputSymbol: newOutputToken.codeToDisplay ?? newOutputToken.code,
-              outputPrecision: newOutputToken.precision
-            })),
-            {},
-            {},
-            newInputAmount
-          );
-          const autoselectedPaymentProvider = patchedPaymentProviders[0];
+          return;
+        }
 
-          if (shouldSwitchBetweenProviders && !isDefined(manuallySelectedProviderIdRef.current)) {
-            void switchPaymentProvider(autoselectedPaymentProvider);
-          } else if (isDefined(newInputAmount)) {
-            const currentProviderId = valuesRef.current.paymentProvider?.id;
-            const patchedSameProvider = patchedPaymentProviders.find(({ id }) => id === currentProviderId);
-            const newPaymentProvider = patchedSameProvider ?? autoselectedPaymentProvider;
-            void switchPaymentProvider(newPaymentProvider);
-          }
-          setIsLoading(false);
-        },
-        200
-      ),
-    [updateOutputAmounts, allPaymentProviders, switchPaymentProvider]
+        const patchedPaymentProviders = getPaymentProvidersToDisplay(
+          allPaymentProviders.map(({ id, ...rest }) => ({
+            ...rest,
+            id,
+            inputSymbol: newInputAsset.codeToDisplay ?? newInputAsset.code,
+            inputPrecision: newInputAsset.precision,
+            minInputAmount: newInputAsset.minAmount,
+            maxInputAmount: newInputAsset.maxAmount,
+            outputAmount: amounts[id],
+            outputSymbol: newOutputToken.codeToDisplay ?? newOutputToken.code,
+            outputPrecision: newOutputToken.precision
+          })),
+          {},
+          {},
+          newInputAmount
+        );
+
+        const patchedPossibleProviders = patchedPaymentProviders.filter(({ id }) => {
+          const pairLimits = allPairsLimits[newInputAsset.code]?.[newOutputToken.code]?.[id];
+
+          return isDefined(pairLimits?.data);
+        });
+
+        const autoselectedProvider = patchedPossibleProviders[0];
+        const patchedSamePossibleProvider = patchedPossibleProviders.find(({ id }) => id === paymentProvider?.id);
+        const patchedSameProvider = patchedPaymentProviders.find(({ id }) => id === paymentProvider?.id);
+        const newPaymentProvider = patchedSamePossibleProvider ?? autoselectedProvider ?? patchedSameProvider;
+
+        if (!jsonEqualityFn(newPaymentProvider, paymentProvider)) {
+          switchPaymentProvider(newPaymentProvider);
+        }
+
+        setFormIsLoading(false);
+      }, 200),
+    [updateOutputAmounts, allPaymentProviders, paymentProvider, allPairsLimits, switchPaymentProvider]
   );
 
   const handleInputValueChange = useCallback(
     (newInput: TopUpAssetAmountInterface) => {
       const currentOutputToken = valuesRef.current.getOutput.asset;
       outputCalculationDataRef.current = { inputValue: newInput, outputToken: currentOutputToken };
-      setIsLoading(true);
-      void updateOutput(newInput, currentOutputToken, true);
+      setFormIsLoading(true);
+      updateOutput(newInput, currentOutputToken);
     },
     [updateOutput]
   );
   const handleOutputValueChange = useCallback(
     (newOutput: TopUpAssetAmountInterface) => {
       const { amount: inputAmount, asset: inputCurrency } = valuesRef.current.sendInput;
-      const noPairLimitsInputCurrency = noPairLimitsFiatCurrencies.find(({ code }) => code === inputCurrency.code);
-      const { min: minInputAmount, max: maxInputAmount } = intersectAssetsLimits([
-        { min: noPairLimitsInputCurrency?.minAmount, max: noPairLimitsInputCurrency?.maxAmount },
-        mergeAssetsLimits(
-          Object.values(allPairsLimits[inputCurrency.code]?.[newOutput.asset.code] ?? {}).map(({ data }) => data)
-        )
-      ]);
+
+      const pairLimits = allPairsLimits[inputCurrency.code]?.[newOutput.asset.code];
+      const { min: minInputAmount, max: maxInputAmount } = mergeAssetsLimits(
+        Object.values(pairLimits ?? {}).map(({ data }) => data)
+      );
+
       const patchedInputCurrency = {
         ...inputCurrency,
         minAmount: minInputAmount,
@@ -141,15 +141,16 @@ export const useFormInputsCallbacks = (
         inputValue: patchedInputValue,
         outputToken: newOutput.asset
       };
-      setIsLoading(true);
-      void updateOutput(patchedInputValue, newOutput.asset, true);
+
+      setFormIsLoading(true);
+      updateOutput(patchedInputValue, newOutput.asset);
     },
     [noPairLimitsFiatCurrencies, allPairsLimits, updateOutput]
   );
   const handlePaymentProviderChange = useCallback(
     (newProvider?: PaymentProviderInterface) => {
       manuallySelectedProviderIdRef.current = newProvider?.id;
-      void switchPaymentProvider(newProvider);
+      switchPaymentProvider(newProvider);
       if (isDefined(newProvider)) {
         trackEvent(BuyWithCreditCardSelectors.provider, AnalyticsEventCategory.ButtonPress, { newProvider });
       }
@@ -164,8 +165,8 @@ export const useFormInputsCallbacks = (
     dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputCurrency.code, cryptoSymbol: currentOutputToken.code }));
     if (!isLoadingRef.current) {
       outputCalculationDataRef.current = { inputValue: currentInputValue, outputToken: currentOutputToken };
-      setIsLoading(true);
-      void updateOutput(currentInputValue, currentOutputToken, false);
+      setFormIsLoading(true);
+      updateOutput(currentInputValue, currentOutputToken);
     }
   }, [dispatch, updateOutput]);
 
