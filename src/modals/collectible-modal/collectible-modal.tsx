@@ -21,11 +21,10 @@ import { TouchableWithAnalytics } from '../../components/touchable-with-analytic
 import { useCollectibleInfo } from '../../hooks/collectible-info/use-collectible-info.hook';
 import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
 import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
+import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useCollectiblesListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
-import { getTokenSlug } from '../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
@@ -67,12 +66,7 @@ export const CollectibleModal = () => {
   const { width } = Dimensions.get('window');
   const iconSize = width - formatSize(32);
 
-  const collectibles = useCollectiblesListSelector();
-
-  const isUserOwnerCurrentCollectible = useMemo(
-    () => !!collectibles.find(ownCollectible => getTokenSlug(ownCollectible) === getTokenSlug(collectible)),
-    [collectible, collectibles]
-  );
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
 

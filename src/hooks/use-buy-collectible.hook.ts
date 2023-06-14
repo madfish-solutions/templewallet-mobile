@@ -17,12 +17,12 @@ import { ModalsEnum } from '../navigator/enums/modals.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { navigateAction } from '../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useCollectiblesListSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { TokenInterface } from '../token/interfaces/token.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from '../utils/is-defined';
 import { createTezosToolkit } from '../utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from '../utils/swap-permissions.util';
+import { useCollectibleOwnerCheck } from './use-check-is-user-collectible-owner.hook';
 
 const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
@@ -35,14 +35,10 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
   const tezos = createTezosToolkit(selectedRpc);
 
   const selectedAccount = useSelectedAccountSelector();
-  const collectibles = useCollectiblesListSelector();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
-  const isUserOwnerCurrentCollectible = useMemo(
-    () => !!collectibles.find(ownCollectible => getTokenSlug(ownCollectible) === getTokenSlug(collectible)),
-    [collectible, collectibles]
-  );
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
 
   const marketplace = isNonEmptyArray(listings_active)
     ? listings_active[0].marketplace_contract
