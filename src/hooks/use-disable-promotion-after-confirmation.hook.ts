@@ -3,11 +3,11 @@ import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { TextPromotionItemSelectors } from 'src/components/text-promotion-item/text-promotion-item.selectors';
-import { setIsPromotionEnabledAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
-import { turnOffAdsBannerAction } from '../store/settings/settings-actions';
+import { setAdsBannerVisibilityAction } from '../store/settings/settings-actions';
 
 export const usePromotionAfterConfirmation = () => {
   const dispatch = useDispatch();
@@ -27,8 +27,8 @@ export const usePromotionAfterConfirmation = () => {
             text: 'Enable',
             style: 'destructive',
             onPress: () => {
-              dispatch(setIsPromotionEnabledAction());
-              dispatch(turnOffAdsBannerAction());
+              dispatch(togglePartnersPromotionAction(true));
+              dispatch(setAdsBannerVisibilityAction(false));
             }
           }
         ]
@@ -53,8 +53,8 @@ wallet. If you turned off ADS, you can always activate it in the settings.',
             style: 'destructive',
             onPress: () => {
               trackEvent(TextPromotionItemSelectors.disablelButton, AnalyticsEventCategory.ButtonPress);
-              dispatch(setIsPromotionEnabledAction());
-              dispatch(turnOffAdsBannerAction());
+              dispatch(togglePartnersPromotionAction(false));
+              dispatch(setAdsBannerVisibilityAction(false));
             }
           }
         ]

@@ -23,8 +23,9 @@ import {
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
-  turnOffAdsBannerAction,
-  setOnRampPossibilityAction
+  setAdsBannerVisibilityAction,
+  setOnRampPossibilityAction,
+  setLastProjectBuildVersion
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -115,9 +116,9 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     applicationOpenCounter: (state.applicationOpenCounter ?? 0) + 1
   }));
 
-  builder.addCase(turnOffAdsBannerAction, state => ({
+  builder.addCase(setAdsBannerVisibilityAction, (state, { payload }) => ({
     ...state,
-    isEnableAdsBanner: false
+    isEnableAdsBanner: payload
   }));
 
   // MIGRATIONS
@@ -155,4 +156,8 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
+  builder.addCase(setLastProjectBuildVersion, (state, { payload: lastBuildVersion }) => ({
+    ...state,
+    buildVersion: lastBuildVersion
+  }));
 });

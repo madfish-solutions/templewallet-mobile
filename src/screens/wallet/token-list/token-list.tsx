@@ -19,10 +19,10 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import {
   loadPartnersPromoActions,
-  setIsPromotionEnabledAction
+  togglePartnersPromotionAction
 } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { turnOffAdsBannerAction, setZeroBalancesShown } from 'src/store/settings/settings-actions';
+import { setAdsBannerVisibilityAction, setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
   useSelectedAccountSelector,
@@ -127,13 +127,13 @@ export const TokensList: FC = () => {
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
   const handleDisableBannerButton = () => {
-    dispatch(setIsPromotionEnabledAction());
-    dispatch(turnOffAdsBannerAction());
+    dispatch(togglePartnersPromotionAction(false));
+    dispatch(setAdsBannerVisibilityAction(false));
   };
 
   const handleEnableBannerButton = async () => {
-    dispatch(setIsPromotionEnabledAction());
-    dispatch(turnOffAdsBannerAction());
+    dispatch(togglePartnersPromotionAction(true));
+    dispatch(setAdsBannerVisibilityAction(false));
   };
 
   useEffect(() => {

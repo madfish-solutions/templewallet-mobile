@@ -34,6 +34,7 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
+import { useCheckProjectBuildVersion } from '../../hooks/use-check-project-build-version.hook';
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
 import { OnRampOverlay } from './on-ramp-overlay/on-ramp-overlay';
@@ -59,6 +60,8 @@ export const Wallet = () => {
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
   const handleDropdownValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
+
+  useCheckProjectBuildVersion();
 
   useEffect(() => {
     if (
