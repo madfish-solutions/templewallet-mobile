@@ -102,6 +102,9 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     color: colors.white,
     backgroundColor: colors.peach
   },
+  listButtonActiveText: {
+    color: colors.white
+  },
   sellButtonDisabled: {
     borderColor: colors.disabled,
     color: colors.disabled
@@ -126,6 +129,11 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
   emptyContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
+    width: formatSize(335)
+  },
+  loader: {
+    width: formatSize(335),
+    justifyContent: 'center'
   }
 }));

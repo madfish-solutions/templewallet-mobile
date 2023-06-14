@@ -1,7 +1,7 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useCallback, useMemo, useState } from 'react';
-import { ListRenderItem, ViewToken, ScrollView, View } from 'react-native';
+import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -17,6 +17,7 @@ import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
 
 const COLLECTIBLE_SIZE = 335;
+const PAGINATION_STEP = 15;
 
 export const Collection = () => {
   const styles = useCollectionStyles();
@@ -25,7 +26,7 @@ export const Collection = () => {
   const [offset, setOffset] = useState<number>(0);
   const [itemWidth, setItemWidth] = useState(formatSize(COLLECTIBLE_SIZE));
 
-  const collectibles = useCollectibleByCollectionInfo(
+  const { collectibles, isLoading } = useCollectibleByCollectionInfo(
     params.collectionContract,
     selectedAccount.publicKeyHash,
     params.type,
@@ -49,6 +50,21 @@ export const Collection = () => {
     <CollectibleItem item={item} collectionContract={params.collectionContract} setWidth={setItemWidth} />
   );
 
+  const footerComponent = () =>
+    isLoading && collectibles.length % PAGINATION_STEP === 0 ? (
+      <View style={[styles.collectibleContainer, styles.loader]}>
+        <ActivityIndicator size="large" />
+      </View>
+    ) : (
+      <View style={styles.emptyBlock} />
+    );
+
+  const emptyComponent = () => (
+    <View style={styles.emptyContainer}>
+      <DataPlaceholder text="Not found any NFT" />
+    </View>
+  );
+
   return (
     <ScrollView style={styles.root}>
       <FlatList
@@ -65,16 +81,16 @@ export const Collection = () => {
         }}
         decelerationRate={0}
         scrollEventThrottle={16}
-        keyExtractor={item => `${item.address}_${item.id}`}
-        onEndReached={() => setOffset(offset + 15)}
-        onEndReachedThreshold={1}
-        ListFooterComponent={<View style={styles.emptyBlock} />}
+        keyExtractor={(item, index) => `${item.address}_${item.id}_${index}`}
+        onEndReached={() => {
+          if (collectibles.length % PAGINATION_STEP === 0 && !isLoading) {
+            setOffset(offset + PAGINATION_STEP);
+          }
+        }}
+        onEndReachedThreshold={0.5}
+        ListEmptyComponent={emptyComponent}
+        ListFooterComponent={footerComponent}
         ListHeaderComponent={<View style={styles.emptyBlock} />}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <DataPlaceholder text="Not found any NFT" />
-          </View>
-        }
       />
     </ScrollView>
   );

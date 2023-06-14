@@ -9,7 +9,6 @@ import { MarketPlaceEventEnum } from './enums';
 import { CollectibleResponse } from './interfaces';
 
 export const transformCollectiblesArray = (array: CollectibleResponse[], selectedPublicKey: string) => {
-  console.log(array.length, 'array nfts');
   const collectiblesArray = array.map(token => {
     const buyEvents = isDefined(token)
       ? token.events.filter(
@@ -25,7 +24,14 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
     const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
     const highestOffer = correctOffers[correctOffers.length - 1];
     const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
-    const listed = token.listings_active.find(listings => listings.seller_address === selectedPublicKey)?.amount ?? 0;
+
+    const listedBySelectedUser = token.listings_active.reduce((acc, current) => {
+      if (current.seller_address === selectedPublicKey) {
+        acc += current.amount;
+      }
+
+      return acc;
+    }, 0);
 
     return {
       artifactUri: token.artifact_uri,
@@ -49,7 +55,7 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
         symbol: currencyInfoById[lastPrice?.currency_id]?.symbol,
         decimals: currencyInfoById[lastPrice?.currency_id]?.decimals
       },
-      listed,
+      listed: listedBySelectedUser,
       items: token.fa.items
     };
   });

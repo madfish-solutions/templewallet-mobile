@@ -204,7 +204,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
                 <Text
                   style={[
                     styles.sellButtonText,
-                    conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActive)
+                    conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActiveText)
                   ]}
                 >
                   {!isAbleToList ? 'Listed' : 'List'}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { catchError, EMPTY, map } from 'rxjs';
+import { catchError, EMPTY, finalize, map } from 'rxjs';
 
 import { fetchCollectiblesByCollection$ } from 'src/apis/objkt';
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
@@ -14,8 +14,10 @@ export const useCollectibleByCollectionInfo = (
   galleryId?: string
 ) => {
   const [collectibles, setCollectibles] = useState<TokenInterface[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     const subscription = fetchCollectiblesByCollection$(contract, selectedPublicKey, type, offset, galleryId)
       .pipe(
         map(result => result),
@@ -23,12 +25,13 @@ export const useCollectibleByCollectionInfo = (
           showErrorToast({ description: err.message });
 
           return EMPTY;
-        })
+        }),
+        finalize(() => setIsLoading(false))
       )
       .subscribe(collectibles => setCollectibles(prev => [...prev, ...collectibles]));
 
     return () => subscription.unsubscribe();
   }, [offset]);
 
-  return collectibles;
+  return { collectibles, isLoading };
 };
