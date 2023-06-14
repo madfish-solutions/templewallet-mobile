@@ -7,7 +7,7 @@ import { useColors } from '../../styles/use-colors';
 import { HeaderCloseButton } from './header-close-button/header-close-button';
 import { HeaderTitle } from './header-title/header-title';
 
-export const useModalOptions = (title: string): StackNavigationOptions => {
+export const useModalOptions = (title: string, disableAndroidGestures = false): StackNavigationOptions => {
   const colors = useColors();
 
   return {
@@ -20,6 +20,7 @@ export const useModalOptions = (title: string): StackNavigationOptions => {
       borderBottomColor: colors.lines,
       shadowOpacity: 0
     },
+    gestureEnabled: disableAndroidGestures ? isIOS : undefined,
     gestureResponseDistance: isIOS ? undefined : 30,
     headerLeft: () => null,
     headerTitle: () => <HeaderTitle title={title} />,

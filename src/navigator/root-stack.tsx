@@ -5,7 +5,6 @@ import React, { createRef, useState } from 'react';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
-import { isIOS } from 'src/config/system';
 import { useStorageMigration } from 'src/hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
@@ -114,7 +113,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
               component={SelectBakerModal}
-              options={{ ...useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`), gestureEnabled: isIOS }}
+              options={useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`, true)}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}
@@ -179,7 +178,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.ManageFarmingPool}
               component={ManageFarmingPoolModal}
-              options={useModalOptions('Manage farming pool')}
+              options={useModalOptions('Manage farming pool', true)}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

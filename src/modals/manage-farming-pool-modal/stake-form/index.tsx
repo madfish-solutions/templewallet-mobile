@@ -1,9 +1,8 @@
 import { FormikProvider } from 'formik';
-import React, { FC, useCallback, useEffect, useRef } from 'react';
+import React, { FC, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 
 import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
-import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { QuestionAccordion } from 'src/components/question-accordion';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
@@ -13,13 +12,12 @@ import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
-import { useVestingPeriod } from '../use-vesting-period';
+import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
 import { useStakeFormStyles } from './styles';
 import { useFarmTokens } from './use-farm-tokens';
 import { useStakeFormik } from './use-stake-formik';
@@ -28,15 +26,18 @@ interface StakeFormProps {
   farm: SingleFarmResponse;
   stake?: UserStakeValueInterface;
   formik: ReturnType<typeof useStakeFormik>;
+  acceptRisksRef?: RefObject<View>;
 }
 
 const risksPoints = [
-  'The value of a yield-generating asset may not perfectly track its reference value, however with the conversion rights, the holder has a protection against significant price differences that may occur.',
-  'There is a risk that the collateral is not managed adequately and, in extreme scenarios, the protection via the conversion can no longer be kept. Such situations may require a liquidation of YOU staked tokens.',
-  'Liquidity providers consider the risk of impermanent loss, however, due to the nature of the youves flat-curves (CFMM) and the highly-correlated asset pairs, such risks are much lower than on constant product market maker (CPMM) DEXs with uncorrelated pairs.'
+  'Smart Contract Reliability: This pool operates using DEX smart contracts, farming smart contracts, QuipuSwap stable pools smart contracts and interacts with Yupana Lending protocol contracts. The safety of your assets is dependent on the reliability and security of these contracts. While external audits of smart contracts have been conducted, there is always a risk of potential vulnerabilities or unforeseen issues that could impact the safety of your assets.',
+  'Stable Token Value: Stable tokens are designed to maintain a stable value relative to a benchmark, such as a fiat currency. However, there is a risk that the value of stable tokens may not perfectly track their benchmark value. Factors such as the conversion conditions and operational mechanisms specific to each stable token can influence its value. It is important to be aware of this potential risk when using stable tokens in this pool.',
+  'Market Risk: Farming involves exposure to the performance and volatility of the assets in the liquidity pool. Fluctuations in the market value of the assets can impact the overall value of the farm and potentially lead to losses. It is essential to consider the risks associated with the specific assets and their market dynamics.',
+  'Slippage: Slippage refers to the difference between the expected and actual execution price of a trade. In fast-moving markets or with illiquid assets, slippage can be significant and impact profitability.',
+  'Regulatory and Compliance Risks: Depending on your jurisdiction, participating in farming may have legal and regulatory implications. It is important to ensure compliance with applicable laws, tax obligations, and any necessary licenses or permissions.'
 ];
 
-export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake }) => {
+export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisksRef }) => {
   const { setFieldTouched, setFieldValue, values } = formik;
   const { asset } = values.assetAmount;
 
@@ -49,7 +50,6 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake }) => {
     true
   );
 
-  const { vestingPeriodSeconds, formattedVestingPeriod } = useVestingPeriod(farm.item);
   const stakesLoading = useStakesLoadingSelector();
 
   const handleAssetAmountChange = useCallback(() => {
@@ -104,18 +104,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake }) => {
           loading={stakesLoading && !isDefined(stake)}
         />
         <Divider size={formatSize(16)} />
-        {vestingPeriodSeconds >= SECONDS_IN_DAY && (
-          <>
-            <Disclaimer title="Long-term rewards vesting">
-              <Text style={styles.disclaimerDescriptionText}>
-                You can pick up your assets at any time, but the reward will be distributed within{' '}
-                <Text style={styles.emphasized}>{formattedVestingPeriod}</Text> of staking. Which means that if you pick
-                up sooner you won't get the entire reward.
-              </Text>
-            </Disclaimer>
-            <Divider size={formatSize(16)} />
-          </>
-        )}
+        <VestingPeriodDisclaimers farm={farm.item} />
         <QuestionAccordion
           question="What are the main risks?"
           testID={ManageFarmingPoolModalSelectors.mainRisksQuestion}
@@ -131,13 +120,15 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake }) => {
           ))}
         </QuestionAccordion>
         <Divider size={formatSize(16)} />
-        <FormCheckbox
-          testID={ManageFarmingPoolModalSelectors.acceptRisksCheckbox}
-          size={formatSize(20)}
-          name="acceptRisks"
-        >
-          <Text style={styles.acceptRisksText}>Accept risks</Text>
-        </FormCheckbox>
+        <View ref={acceptRisksRef}>
+          <FormCheckbox
+            testID={ManageFarmingPoolModalSelectors.acceptRisksCheckbox}
+            size={formatSize(20)}
+            name="acceptRisks"
+          >
+            <Text style={styles.acceptRisksText}>Accept risks</Text>
+          </FormCheckbox>
+        </View>
       </View>
     </FormikProvider>
   );

@@ -36,14 +36,5 @@ export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography 
     letterSpacing: formatSize(-0.24),
     color: colors.black,
     marginLeft: formatSize(10)
-  },
-  disclaimerDescriptionText: {
-    ...typography.caption13Regular,
-    letterSpacing: formatSize(-0.08),
-    lineHeight: formatTextSize(18),
-    color: colors.black
-  },
-  emphasized: {
-    ...typography.caption13Semibold
   }
 }));

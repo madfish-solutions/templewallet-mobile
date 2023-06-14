@@ -1,6 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { noop } from 'lodash-es';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, findNodeHandle, ScrollView, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { PoolType } from 'src/apis/quipuswap-staking/types';
@@ -16,14 +17,17 @@ import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms
 import { useFarmSelector, useFarmsLoadingSelector, useLastStakesSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { hasError } from 'src/utils/has-error';
 import { isDefined } from 'src/utils/is-defined';
 
 import { ManageFarmingPoolModalSelectors } from './selectors';
 import { StakeForm } from './stake-form';
-import { useStakeFormik } from './stake-form/use-stake-formik';
+import { StakeFormValues, useStakeFormik } from './stake-form/use-stake-formik';
 import { useManageFarmingPoolModalStyles } from './styles';
 import { WithdrawForm } from './withdraw-form';
 import { useWithdrawFormik } from './withdraw-form/use-withdraw-formik';
+
+const stakeFormFields: Array<keyof StakeFormValues> = ['assetAmount', 'acceptRisks'];
 
 export const ManageFarmingPoolModal: FC = () => {
   const params = useRoute<RouteProp<ModalsParamList, ModalsEnum.ManageFarmingPool>>().params;
@@ -37,9 +41,17 @@ export const ManageFarmingPoolModal: FC = () => {
   const stake = isDefined(farm) ? stakes[farm.item.contractAddress] : undefined;
   const pageIsLoading = farmIsLoading && !isDefined(farm);
   const [tabIndex, setTabIndex] = useState(0);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const acceptRisksRef = useRef<View>(null);
 
   const stakeFormik = useStakeFormik(params.id, params.version);
-  const { errors: stakeFormErrors, submitForm: submitStakeForm, isSubmitting: stakeFormSubmitting } = stakeFormik;
+  const {
+    errors: stakeFormErrors,
+    submitForm: submitStakeForm,
+    isSubmitting: stakeFormSubmitting,
+    getFieldMeta: getStakeFieldMeta
+  } = stakeFormik;
+  const stakeFormErrorsVisible = stakeFormFields.some(fieldName => hasError(getStakeFieldMeta(fieldName)));
   const withdrawFormik = useWithdrawFormik(params.id, params.version);
   const {
     errors: withdrawFormErrors,
@@ -60,6 +72,23 @@ export const ManageFarmingPoolModal: FC = () => {
     }
   }, [farm]);
 
+  const handleDepositClick = useCallback(() => {
+    const scrollViewHandle = findNodeHandle(scrollViewRef.current);
+    if (
+      isDefined(stakeFormErrors.acceptRisks) &&
+      !isDefined(stakeFormErrors.assetAmount) &&
+      isDefined(acceptRisksRef.current) &&
+      isDefined(scrollViewHandle)
+    ) {
+      acceptRisksRef.current.measureLayout(
+        scrollViewHandle,
+        (_, y) => scrollViewRef.current?.scrollTo({ y, animated: true }),
+        noop
+      );
+    }
+    submitStakeForm();
+  }, [submitStakeForm, stakeFormErrors]);
+
   usePageAnalytic(ModalsEnum.ManageFarmingPool);
 
   const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
@@ -67,7 +96,7 @@ export const ManageFarmingPoolModal: FC = () => {
   return (
     <>
       <ModalStatusBar />
-      <ScreenContainer isFullScreenMode>
+      <ScreenContainer isFullScreenMode scrollViewRef={scrollViewRef}>
         <TextSegmentControl
           disabledValuesIndices={disabledTabSwitcherIndices}
           selectedIndex={tabIndex}
@@ -84,7 +113,7 @@ export const ManageFarmingPoolModal: FC = () => {
         {!pageIsLoading && farm?.item.type === PoolType.STABLESWAP && (
           <View style={styles.content}>
             {tabIndex === 0 ? (
-              <StakeForm farm={farm} formik={stakeFormik} stake={stake} />
+              <StakeForm acceptRisksRef={acceptRisksRef} farm={farm} formik={stakeFormik} stake={stake} />
             ) : (
               <WithdrawForm farm={farm} formik={withdrawFormik} stake={stake} />
             )}
@@ -101,12 +130,9 @@ export const ManageFarmingPoolModal: FC = () => {
           <ButtonLargePrimary
             title="Deposit"
             disabled={
-              pageIsLoading ||
-              farm?.item.type !== PoolType.STABLESWAP ||
-              Object.keys(stakeFormErrors).length > 0 ||
-              stakeFormSubmitting
+              pageIsLoading || farm?.item.type !== PoolType.STABLESWAP || stakeFormErrorsVisible || stakeFormSubmitting
             }
-            onPress={submitStakeForm}
+            onPress={handleDepositClick}
             testID={ManageFarmingPoolModalSelectors.depositButton}
           />
         ) : (

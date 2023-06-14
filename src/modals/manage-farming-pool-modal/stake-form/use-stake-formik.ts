@@ -24,7 +24,7 @@ import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { createStakeOperationParams } from './create-stake-operation-params';
 import { useFarmTokens } from './use-farm-tokens';
 
-interface StakeFormValues {
+export interface StakeFormValues {
   assetAmount: AssetAmountInterface;
   acceptRisks: boolean;
 }
