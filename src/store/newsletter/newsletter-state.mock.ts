@@ -1,5 +1,6 @@
 import { NewsletterState } from './newsletter-state';
 
 export const mockNewsletterState: NewsletterState = {
-  emails: []
+  emails: [],
+  shouldShowNewsletterModal: true
 };

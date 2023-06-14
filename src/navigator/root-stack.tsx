@@ -99,11 +99,6 @@ export const RootStackScreen = () => {
             />
 
             {/* MODALS */}
-            <RootStack.Screen
-              name={ModalsEnum.Newsletter}
-              component={Newsletter}
-              options={useModalOptions('Newsletter')}
-            />
             <RootStack.Screen name={ModalsEnum.Receive} component={ReceiveModal} options={useModalOptions('Receive')} />
             <RootStack.Screen name={ModalsEnum.Send} component={SendModal} options={useModalOptions('Send')} />
             <RootStack.Screen
@@ -180,6 +175,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.EditContact}
               component={EditContactModal}
               options={useModalOptions('Edit contact')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.Newsletter}
+              component={Newsletter}
+              options={useModalOptions('Newsletter')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

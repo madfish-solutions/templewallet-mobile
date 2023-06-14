@@ -24,6 +24,7 @@ import {
   useContactsAddressesSelector,
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
+import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import {
   useAccountsListSelector,
@@ -54,6 +55,7 @@ export const Wallet = () => {
   const ignoredAddresses = useIgnoredAddressesSelector();
   const contactsAddresses = useContactsAddressesSelector();
   const bottomSheetController = useBottomSheetController();
+  const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
   const handleDropdownValueChange = (value: AccountBaseInterface | undefined) =>
@@ -68,6 +70,12 @@ export const Wallet = () => {
       bottomSheetController.open();
     }
   }, [contactCandidateAddress]);
+
+  useEffect(() => {
+    if (shouldShowNewsletterModal) {
+      navigate(ModalsEnum.Newsletter);
+    }
+  }, []);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');

@@ -1,6 +1,8 @@
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
+import { IMAGE_HEIGHT } from './constants';
+
 export const useNewsletterModalStyles = createUseStyles(({ colors, typography }) => ({
   title: {
     ...typography.body15Semibold,
@@ -13,7 +15,12 @@ export const useNewsletterModalStyles = createUseStyles(({ colors, typography })
     marginBottom: formatSize(8)
   },
   imgContainer: {
-    justifyContent: 'center',
-    alignItems: 'center'
+    width: '100%',
+    height: IMAGE_HEIGHT,
+    alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: colors.orange10,
+    borderRadius: formatSize(8),
+    marginBottom: formatSize(32)
   }
 }));
