@@ -15,6 +15,7 @@ import { addNewsletterEmailAction, shouldShowNewsletterModalAction } from 'src/s
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 
 import { IMAGE_HEIGHT, IMAGE_URI } from './constants';
+import { NewsletterModalSelectors } from './newsletter-modal.selectors';
 import { useNewsletterModalStyles } from './newsletter-modal.styles';
 import { useNewsletterValidationSchema } from './use-newsletter-validation.hook';
 
@@ -61,13 +62,23 @@ export const Newsletter: FC = () => {
               <View>
                 <Text style={styles.title}>Subscribe to our Newsletter</Text>
                 <Text style={styles.subtitle}>Keep up with the latest news from Madfish</Text>
-                <FormTextInput name="email" placeholder="example@mail.com" autoCapitalize="none" />
+                <FormTextInput
+                  name="email"
+                  placeholder="example@mail.com"
+                  autoCapitalize="none"
+                  testID={NewsletterModalSelectors.emailInput}
+                />
               </View>
             </View>
           </ScreenContainer>
 
           <ButtonsFloatingContainer>
-            <ButtonLargePrimary title="Subscribe" disabled={isSubmitting} onPress={submitForm} />
+            <ButtonLargePrimary
+              title="Subscribe"
+              disabled={isSubmitting}
+              onPress={submitForm}
+              testID={NewsletterModalSelectors.subscribeButton}
+            />
             <InsetSubstitute type="bottom" />
           </ButtonsFloatingContainer>
         </>
