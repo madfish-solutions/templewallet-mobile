@@ -102,7 +102,7 @@ export const MainInfo: FC = () => {
 
   const areSomeRewardsClaimable = useMemo(
     () => !isEmptyArray(farmsWithEndedRewards) && totalClaimableRewardsInUsd.isGreaterThan(PENNY),
-    [farmsWithEndedRewards]
+    [farmsWithEndedRewards, totalClaimableRewardsInUsd]
   );
 
   const navigateHarvestFarm = useCallback(

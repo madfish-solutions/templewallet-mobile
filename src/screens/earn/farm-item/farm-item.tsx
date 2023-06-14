@@ -58,7 +58,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT),
         farm.item.stakedToken.metadata.decimals
       ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.depositAmountAtomic]
+    [lastStakeRecord?.depositAmountAtomic, farm.item]
   );
 
   const claimableRewardsAtomic = useMemo(
