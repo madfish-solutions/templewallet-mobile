@@ -75,6 +75,7 @@ export const CollectibleModal = () => {
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
 
   const burnCollectible = useBurnCollectible(collectible);
+
   const { handleSubmit, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
 
   const {
@@ -272,17 +273,19 @@ export const CollectibleModal = () => {
           <CollectibleAttributes attributes={filteredAttributes} />
         )}
 
-        <View style={styles.burnContainer}>
-          <TouchableWithAnalytics
-            Component={TouchableOpacity}
-            onPress={burnCollectible}
-            style={styles.burnButton}
-            testID={CollectibleModalSelectors.burnButton}
-          >
-            <Text style={styles.burnButtonText}>Burn Nft</Text>
-            <Icon name={IconNameEnum.Burn} />
-          </TouchableWithAnalytics>
-        </View>
+        {isUserOwnerCurrentCollectible && (
+          <View style={styles.burnContainer}>
+            <TouchableWithAnalytics
+              Component={TouchableOpacity}
+              onPress={burnCollectible}
+              style={styles.burnButton}
+              testID={CollectibleModalSelectors.burnButton}
+            >
+              <Text style={styles.burnButtonText}>Burn Nft</Text>
+              <Icon name={IconNameEnum.Burn} />
+            </TouchableWithAnalytics>
+          </View>
+        )}
       </View>
     </ScreenContainer>
   );

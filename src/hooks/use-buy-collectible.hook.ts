@@ -52,7 +52,7 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
     tezos.contract
       .at<ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface>(marketplace)
       .then(setMarketplaceContract);
-  }, []);
+  }, [marketplace]);
 
   const purchaseCurrency = useMemo(() => {
     if (!isNonEmptyArray(listings_active)) {
