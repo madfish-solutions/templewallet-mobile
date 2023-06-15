@@ -3,7 +3,8 @@ import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switc
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getLiquidityBakingFarm, getV3FarmsList } from 'src/apis/quipuswap-staking';
+import { getLiquidityBakingFarm } from 'src/apis/liquidity-baking';
+import { getV3FarmsList } from 'src/apis/quipuswap-staking';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';

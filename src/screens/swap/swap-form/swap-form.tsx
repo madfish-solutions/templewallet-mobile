@@ -46,7 +46,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { fetchRoute3SwapParams, getRoute3TokenSymbol, isInputTokenEqualToTempleToken } from 'src/utils/route3.util';
-import { calculateRoutingInputAndFee, getRoutingFeeTransferParams } from 'src/utils/swap.utils';
+import { calculateRoutingInputAndFee, calculateSlippageRatio, getRoutingFeeTransferParams } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
@@ -77,7 +77,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const swapParams = useSwapParamsSelector();
-  const slippageRatio = useMemo(() => (100 - slippageTolerance) / 100, [slippageTolerance]);
+  const slippageRatio = useMemo(() => calculateSlippageRatio(slippageTolerance), [slippageTolerance]);
 
   const handleSubmit = async () => {
     const inputAssetSlug = getTokenSlug(inputAssets.asset);

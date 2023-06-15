@@ -2,13 +2,13 @@ import { FormikProvider } from 'formik';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Divider } from 'src/components/divider/divider';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { isDefined } from 'src/utils/is-defined';
 
 import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
@@ -60,7 +60,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
 
   return (
     <FormikProvider value={formik}>
-      <View style={styles.formContainer}>
+      <View>
         <Divider size={formatSize(16)} />
         <Text style={styles.depositPrompt}>
           You can choose any asset from the provided list for your deposit. The selected asset will be automatically

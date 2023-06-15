@@ -56,6 +56,9 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     paddingRight: formatSize(12),
     paddingVertical: formatSize(12)
   },
+  disabledDropdownContainer: {
+    backgroundColor: colors.input
+  },
   quoteContainer: {
     width: formatSize(126),
     paddingRight: formatSize(12)

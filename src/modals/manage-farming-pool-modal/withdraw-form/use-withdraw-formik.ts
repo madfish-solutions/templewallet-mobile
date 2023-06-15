@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { number as numberSchema, object as objectSchema, SchemaOf } from 'yup';
 
-import { PoolType } from 'src/apis/quipuswap-staking/types';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -13,6 +13,7 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useFarmSelector, useStakeSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
+import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
@@ -24,6 +25,7 @@ import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createWithdrawOperationParams } from './create-withdraw-operation-params';
+import { PERCENTAGE_OPTIONS } from './percentage-options';
 
 export interface WithdrawTokenOption {
   token: TokenInterface;
@@ -48,10 +50,11 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
   const stake = useStakeSelector(contractAddress);
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
+  const slippageTolerance = useSlippageSelector();
 
   const initialValues = useMemo(
     () => ({
-      amountOptionIndex: isDefined(farm) && farm.item.type !== PoolType.STABLESWAP ? 0 : 3,
+      amountOptionIndex: isDefined(farm) && farm.item.type !== FarmPoolTypeEnum.STABLESWAP ? 0 : 3,
       tokenOption: {
         token: stakeTokens[0] ?? emptyTezosLikeToken
       }
@@ -72,7 +75,19 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
         const tokenIndex = stakeTokens.findIndex(farmToken => getTokenSlug(farmToken) === getTokenSlug(token));
 
         try {
-          const opParams = await createWithdrawOperationParams(farm, tokenIndex, tezos, publicKeyHash, stake);
+          const opParams = await createWithdrawOperationParams(
+            farm,
+            tokenIndex,
+            tezos,
+            publicKeyHash,
+            stake,
+            slippageTolerance,
+            farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING && isDefined(stake.depositAmountAtomic)
+              ? new BigNumber(stake.depositAmountAtomic)
+                  .times(PERCENTAGE_OPTIONS[values.amountOptionIndex])
+                  .dividedToIntegerBy(100)
+              : undefined
+          );
           dispatch(
             navigateAction(ModalsEnum.Confirmation, {
               type: ConfirmationTypeEnum.InternalOperations,
@@ -106,7 +121,7 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
       }
       helpers.setSubmitting(false);
     },
-    [stakeTokens, farm, tezos, publicKeyHash, stake, dispatch]
+    [stakeTokens, farm, tezos, publicKeyHash, stake, dispatch, slippageTolerance, trackEvent]
   );
 
   return useFormik<WithdrawFormValues>({

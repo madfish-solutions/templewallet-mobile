@@ -44,7 +44,6 @@ export enum IconNameEnum {
   Youves = 'Youves',
   Vortex = 'Vortex',
   Plenty = 'Plenty',
-  LiquidityBaking = 'LiquidityBaking',
   QuipuSwap = 'QuipuSwap',
   QuipuSwapDark = 'QuipuSwapDark',
   Close = 'Close',
@@ -134,5 +133,5 @@ export enum IconNameEnum {
   AppleOnDark = 'AppleOnDark',
   GoogleDrive = 'GoogleDrive',
   QsEarnSource = 'QsEarnSource',
-  LbEarnSource = 'LbEarnSource'
+  LiquidityBakingLogo = 'LiquidityBakingLogo'
 }

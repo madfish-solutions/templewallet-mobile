@@ -111,3 +111,6 @@ export const getSwapTransferParams = async (
 
   return resultParams;
 };
+
+export const calculateSlippageRatio = (slippageTolerancePercentage: number) =>
+  (100 - slippageTolerancePercentage) / 100;

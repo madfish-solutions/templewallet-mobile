@@ -1,8 +1,8 @@
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { AccountInterface, AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { Farm } from 'src/types/farm';
 
 export enum ModalsEnum {
   Receive = 'Receive',

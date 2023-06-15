@@ -1,8 +1,9 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { Observable, withLatestFrom } from 'rxjs';
 
-import { Farm, PoolType } from 'src/apis/quipuswap-staking/types';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { FarmContractStorageInterface } from 'src/interfaces/earn.interface';
+import { Farm } from 'src/types/farm';
 import { getLastElement } from 'src/utils/array.utils';
 import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -42,7 +43,7 @@ export const toUserStakeValueInterface = (
 };
 
 export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: string) => {
-  if (farm.type === PoolType.LIQUIDITY_BAKING) {
+  if (farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING) {
     const sirsTokenContract = await getReadOnlyContract(farm.stakedToken.contractAddress, tezos);
     const depositAmountAtomic = await getBalance(sirsTokenContract, accountPkh, farm.stakedToken.fa2TokenId);
 

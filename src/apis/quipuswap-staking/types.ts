@@ -1,7 +1,11 @@
 import { MichelsonMap } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
+import { FarmTokenStandardEnum } from 'src/enums/farm-token-standard.enum';
 import { BigMap } from 'src/interfaces/big-map.interface';
+import { BlockInfo } from 'src/interfaces/block-info.interface';
+import { FarmBase } from 'src/interfaces/farm-base.interface';
 
 enum FarmVersionEnum {
   V1 = 'v1',
@@ -9,20 +13,9 @@ enum FarmVersionEnum {
   V3 = 'v3'
 }
 
-export enum PoolType {
-  STABLESWAP = 'STABLESWAP',
-  DEX_TWO = 'DEX_TWO',
-  LIQUIDITY_BAKING = 'LIQUIDITY_BAKING'
-}
-
 enum StableswapPoolVersion {
   V1 = 'v1',
   V2 = 'v2'
-}
-
-export enum FarmTokenStandardsEnum {
-  Fa12 = 'FA12',
-  Fa2 = 'FA2'
 }
 
 interface FarmTokenMetadata {
@@ -36,29 +29,9 @@ interface FarmTokenMetadata {
 export interface FarmToken {
   contractAddress: string;
   fa2TokenId?: number;
-  type: FarmTokenStandardsEnum;
+  type: FarmTokenStandardEnum;
   isWhitelisted: boolean | null;
   metadata: FarmTokenMetadata;
-}
-
-interface FarmBase {
-  id: string;
-  contractAddress: string;
-  apr: string | null;
-  depositExchangeRate: string | null;
-  depositTokenUrl: string;
-  dailyDistribution: string;
-  dailyDistributionDollarEquivalent: string;
-  earnExchangeRate: string | null;
-  vestingPeriodSeconds: string;
-  stakeUrl: string;
-  stakedToken: FarmToken;
-  tokens: FarmToken[];
-  rewardToken: FarmToken;
-  staked: string;
-  tvlInUsd: string | null;
-  tvlInStakedToken: string;
-  type?: PoolType;
 }
 
 interface QuipuswapFarmBase extends FarmBase {
@@ -67,41 +40,22 @@ interface QuipuswapFarmBase extends FarmBase {
   version: FarmVersionEnum;
 }
 
-interface LiquidityBakingFarm extends FarmBase {
-  type: PoolType.LIQUIDITY_BAKING;
-}
-
 interface StableswapFarm extends QuipuswapFarmBase {
-  type: PoolType.STABLESWAP;
+  type: FarmPoolTypeEnum.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;
 }
 
 interface DexTwoFarm extends QuipuswapFarmBase {
-  type?: PoolType.DEX_TWO;
+  type?: FarmPoolTypeEnum.DEX_TWO;
 }
 
 export type QuipuswapFarm = StableswapFarm | DexTwoFarm;
 
-export type Farm = LiquidityBakingFarm | QuipuswapFarm;
-
-interface BlockInfo {
-  level: number;
-  hash: string;
-  timestamp: string;
-}
-
-interface SingleQuipuswapFarmResponse {
+export interface SingleQuipuswapFarmResponse {
   item: QuipuswapFarm;
   blockInfo: BlockInfo;
 }
-
-export interface LiquidityBakingFarmResponse {
-  item: LiquidityBakingFarm;
-  blockInfo: BlockInfo;
-}
-
-export type SingleFarmResponse = SingleQuipuswapFarmResponse | LiquidityBakingFarmResponse;
 
 export interface FarmsListResponse {
   list: SingleQuipuswapFarmResponse[];

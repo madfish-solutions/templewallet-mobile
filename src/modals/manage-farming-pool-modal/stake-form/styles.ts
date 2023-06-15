@@ -7,9 +7,6 @@ export const useStakeFormStyles = createUseStyles(({ colors, typography }) => ({
     letterSpacing: formatSize(-0.08),
     color: colors.gray1
   },
-  formContainer: {
-    flex: 1
-  },
   balanceText: {
     color: colors.black
   }

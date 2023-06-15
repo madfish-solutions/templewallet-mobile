@@ -5,7 +5,6 @@ import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
@@ -13,6 +12,7 @@ import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -21,6 +21,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
+import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -47,7 +48,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const { navigate } = useNavigation();
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
-  const isLiquidityBaking = farm.item.type === PoolType.LIQUIDITY_BAKING;
+  const isLiquidityBaking = farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING;
   const farmPrecision = isLiquidityBaking ? 0 : STABLESWAP_FARM_PRECISION;
 
   const apy = useMemo(
@@ -108,7 +109,9 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   return (
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
-        {farm.item.type === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
+        {farm.item.type === FarmPoolTypeEnum.STABLESWAP && (
+          <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />
+        )}
         {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(SECONDS_IN_DAY) && <Bage text="Long-Term Farm" />}
       </View>
       <View style={styles.mainContent}>
@@ -117,10 +120,13 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
           <View>
             <Text style={styles.apyText}>APY: {apy}%</Text>
             <View style={styles.earnSource}>
-              <Icon
-                style={styles.earnSourceIcon}
-                name={isLiquidityBaking ? IconNameEnum.LbEarnSource : IconNameEnum.QsEarnSource}
-              />
+              {isLiquidityBaking ? (
+                <View style={[styles.earnSourceIcon, styles.liquidityBakingIconWrapper]}>
+                  <Icon size={formatSize(6)} name={IconNameEnum.LiquidityBakingLogo} />
+                </View>
+              ) : (
+                <Icon style={styles.earnSourceIcon} name={IconNameEnum.QsEarnSource} size={formatSize(12)} />
+              )}
               <Text style={styles.attributeTitle}>{isLiquidityBaking ? 'Liquidity Baking' : 'Quipuswap'}</Text>
             </View>
           </View>
