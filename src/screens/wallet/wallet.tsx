@@ -75,7 +75,7 @@ export const Wallet = () => {
     if (shouldShowNewsletterModal) {
       navigate(ModalsEnum.Newsletter);
     }
-  }, []);
+  }, [shouldShowNewsletterModal]);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');

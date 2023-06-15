@@ -1,10 +1,10 @@
-import axios from 'axios';
 import { Formik, FormikHelpers, FormikProps } from 'formik';
 import React, { FC, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
+import { newsletterApi } from 'src/apis/newsletter';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -19,13 +19,16 @@ import { NewsletterModalSelectors } from './newsletter-modal.selectors';
 import { useNewsletterModalStyles } from './newsletter-modal.styles';
 import { useNewsletterValidationSchema } from './use-newsletter-validation.hook';
 
-const newsletterApi = axios.create({
-  baseURL: 'https://jellyfish-app-deove.ondigitalocean.app/'
-});
+interface NewsletterModalInitialValuesInterface {
+  email: string;
+}
 
-const initialValues = {
+const initialValues: NewsletterModalInitialValuesInterface = {
   email: ''
 };
+
+const SUSSESS_TOAST_DESCRIPTION = { description: 'Thanks for your subscribing!' };
+const ERROR_TOAST_DESCRIPTION = { description: 'Something went wrong' };
 
 export const Newsletter: FC = () => {
   const dispatch = useDispatch();
@@ -36,19 +39,22 @@ export const Newsletter: FC = () => {
 
   useEffect(() => () => void dispatch(shouldShowNewsletterModalAction(false)), []);
 
-  const onSubmit = ({ email }: { email: string }, formikHelpers: FormikHelpers<{ email: string }>) =>
+  const onSubmit = (
+    { email }: NewsletterModalInitialValuesInterface,
+    formikHelpers: FormikHelpers<NewsletterModalInitialValuesInterface>
+  ) =>
     newsletterApi
-      .post('https://jellyfish-app-deove.ondigitalocean.app/', {
+      .post('/', {
         NAME: email,
         EMAIL: email
       })
       .then(() => {
-        showSuccessToast({ description: 'Thanks for your subscribing!' });
+        showSuccessToast(SUSSESS_TOAST_DESCRIPTION);
         dispatch(addNewsletterEmailAction(email));
         formikHelpers.resetForm();
         goBack();
       })
-      .catch(() => showErrorToast({ description: 'Something went wrong' }));
+      .catch(() => showErrorToast(ERROR_TOAST_DESCRIPTION));
 
   return (
     <Formik innerRef={formik} initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
