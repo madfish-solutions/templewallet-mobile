@@ -1,9 +1,8 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { catchError, from, map, Observable, of } from 'rxjs';
-import { contracts } from 'youves-sdk/src/networks';
+import { contracts, AssetDefinition, createEngine, Storage, StorageKey, StorageKeyReturnType } from 'youves-sdk';
 import { mainnetTokens, mainnetNetworkConstants } from 'youves-sdk/src/networks.mainnet';
-import { AssetDefinition, createEngine, Storage, StorageKey, StorageKeyReturnType } from 'youves-sdk/src/public';
 import { UnifiedStaking } from 'youves-sdk/src/staking/unified-staking';
 
 import { getFastRpcClient } from '../../utils/rpc/fast-rpc';

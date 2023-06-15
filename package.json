@@ -49,10 +49,10 @@
     "@react-navigation/stack": "^6.3.2",
     "@reduxjs/toolkit": "^1.8.5",
     "@sentry/react-native": "4.3.1",
-    "@taquito/taquito": "15.0.1",
-    "@taquito/rpc": "15.0.1",
     "@taquito/local-forging": "15.0.1",
+    "@taquito/rpc": "15.0.1",
     "@taquito/signer": "15.0.1",
+    "@taquito/taquito": "15.0.1",
     "@taquito/tzip12": "15.0.1",
     "@taquito/tzip16": "15.0.1",
     "@taquito/utils": "15.0.1",
@@ -126,7 +126,7 @@
     "url": "^0.11.0",
     "util": "^0.12.4",
     "vm-browserify": "^1.1.2",
-    "youves-sdk": "https://github.com/youves-com/youves-sdk",
+    "youves-sdk": "^0.0.6",
     "yup": "^0.32.11"
   },
   "devDependencies": {

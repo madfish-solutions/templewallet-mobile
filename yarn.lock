@@ -17167,9 +17167,10 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-"youves-sdk@https://github.com/youves-com/youves-sdk":
-  version "0.0.1"
-  resolved "https://github.com/youves-com/youves-sdk#7835ba5d3addc2235269c0de21eeee124eb01d15"
+youves-sdk@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/youves-sdk/-/youves-sdk-0.0.6.tgz#c575aa26d353af003ea726950527a960b5f042b6"
+  integrity sha512-RTk617JSJ66n0S+NnacTxH+Cm4XffiLsDlSZID/Y+uGMVr/y34tZkaF2DIhrA5hNgf0gUgA/etJqFdmK/2DVNQ==
   dependencies:
     "@taquito/beacon-wallet" "^12.1.1"
     "@taquito/contracts-library" "^12.1.1"
