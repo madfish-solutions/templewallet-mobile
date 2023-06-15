@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
+import { version as appVersion } from '../package.json';
 import {
   TEMPLE_WALLET_API_URL,
   TEMPLE_WALLET_EVERSTAKE_API_KEY,
@@ -8,7 +9,6 @@ import {
   TEZOS_METADATA_API_URL
 } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
-import { version as appVersion } from '../package.json';
 
 const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
 const dcpTzktApi = axios.create({ baseURL: 'https://explorer-api.tlnt.net/v1' });
