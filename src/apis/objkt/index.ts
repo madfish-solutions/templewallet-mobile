@@ -115,8 +115,19 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
 
   return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
     map(result => {
-      const { description, creators, fa, timestamp, artifact_uri, attributes, metadata, royalties, supply, galleries } =
-        result.token[0];
+      const {
+        description,
+        creators,
+        fa,
+        timestamp,
+        artifact_uri,
+        attributes,
+        metadata,
+        royalties,
+        supply,
+        mime,
+        galleries
+      } = result.token[0];
 
       return {
         description,
@@ -132,6 +143,7 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
         timestamp,
         royalties,
         supply,
+        mime,
         galleries
       };
     })

@@ -1,8 +1,14 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
-import { View } from 'react-native';
+import React, { FC, useMemo, useState, memo } from 'react';
+import { ActivityIndicator, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
+import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
+import { AudioPlaceholder } from 'src/components/audio-placeholder/audio-placeholder';
+import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
+import { SimplePlayer } from 'src/components/simple-player/simple-player';
+import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
 import {
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
@@ -11,124 +17,149 @@ import {
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { DataUriImage } from '../data-uri-image';
 import { ImageBlurOverlay } from '../image-blur-overlay/image-blur-overlay';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 
-interface LoadStrategy {
-  type: string;
-  uri: (value: string) => string;
-  field: 'thumbnailUri' | 'artifactUri' | 'displayUri' | 'assetSlug';
-}
+export const CollectibleIcon: FC<CollectibleIconProps> = memo(
+  ({
+    collectible,
+    size,
+    iconSize = CollectibleIconSize.SMALL,
+    mime,
+    objktArtifact,
+    setScrollEnabled,
+    blurLayoutTheme,
+    isTouchableBlurOverlay
+  }) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [isShowBlur, setIsShowBlur] = useState(collectible.isAdultContent ?? false);
 
-const collectibleBigLoadStrategy: Array<LoadStrategy> = [
-  { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
-  { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
-  { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
-  { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
-  { type: 'thumbnailUri', uri: formatImgUri, field: 'thumbnailUri' }
-];
+    const isBigIcon = iconSize === CollectibleIconSize.BIG;
+    const styles = useCollectibleIconStyles();
+    const assetSlug = `${collectible.address}_${collectible.id}`;
 
-const collectibleThumbnailLoadStrategy: Array<LoadStrategy> = [
-  { type: 'objktMed', uri: formatCollectibleObjktMediumUri, field: 'assetSlug' }, // gif
-  { type: 'objktArtifact', uri: formatCollectibleObjktArtifactUri, field: 'artifactUri' },
-  { type: 'displayUri', uri: formatImgUri, field: 'displayUri' },
-  { type: 'artifactUri', uri: formatImgUri, field: 'artifactUri' },
-  { type: 'thumbnailUri', uri: formatImgUri, field: 'thumbnailUri' }
-];
+    const initialFallback = useMemo(() => {
+      if (isDefined(collectible.artifactUri) && isBigIcon) {
+        return formatCollectibleObjktArtifactUri(collectible.artifactUri);
+      }
 
-interface MetadataFormats {
-  dimensions: {
-    unit: string;
-    value: string;
-  };
-  fileName: string;
-  fileSize: number;
-  mimeType: string;
-  uri: string;
-}
+      return formatCollectibleObjktMediumUri(assetSlug);
+    }, []);
 
-type ImageRequestObject = {
-  assetSlug: string;
-  displayUri?: string;
-  artifactUri?: string;
-  thumbnailUri?: string;
-  formats?: Array<MetadataFormats>;
-};
-
-const getFirstFallback = (
-  strategy: Array<LoadStrategy>,
-  currentState: Record<string, boolean>,
-  metadata: ImageRequestObject
-): LoadStrategy => {
-  for (const strategyItem of strategy) {
-    const isArtifactUri = isDefined(metadata.artifactUri) && strategyItem.field === 'artifactUri';
-    const isDisplayUri = isDefined(metadata.displayUri) && strategyItem.field === 'displayUri';
-    const isThumbnailUri = isDefined(metadata.thumbnailUri) && strategyItem.field === 'thumbnailUri';
-    const isObjktMed =
-      ((isDefined(metadata.formats) && metadata.formats.some(x => x.mimeType === 'image/gif')) ||
-        !isDefined(metadata.formats)) &&
-      strategyItem.type === 'objktMed';
-    if ((isArtifactUri || isDisplayUri || isThumbnailUri || isObjktMed) && !currentState[strategyItem.type]) {
-      return strategyItem;
-    }
-  }
-
-  return strategy[0];
-};
-
-export const CollectibleIcon: FC<CollectibleIconProps> = ({
-  collectible,
-  size,
-  iconSize = CollectibleIconSize.SMALL,
-  blurLayoutTheme,
-  isLoading = false,
-  isTouchableOverlay
-}) => {
-  const styles = useCollectibleIconStyles();
-  const actualLoadingStrategy =
-    iconSize === CollectibleIconSize.SMALL ? collectibleThumbnailLoadStrategy : collectibleBigLoadStrategy;
-  const [isLoadingFailed, setIsLoadingFailed] = useState(
-    actualLoadingStrategy.reduce<Record<string, boolean>>((acc, cur) => ({ ...acc, [cur.type]: false }), {})
-  );
-  const assetSlug = `${collectible?.address}_${collectible?.id}`;
-
-  const imageRequestObject = { ...collectible, assetSlug };
-  const currentFallback = getFirstFallback(actualLoadingStrategy, isLoadingFailed, imageRequestObject);
-  const imageSrc = currentFallback.uri(imageRequestObject[currentFallback.field] ?? assetSlug);
-  const isDefinedImage = isDefined(collectible.thumbnailUri) && isDefined(collectible.artifactUri);
-
-  const handleLoadingFailed = useCallback(() => {
-    setIsLoadingFailed(prevState => ({ ...prevState, [currentFallback.type]: true }));
-  }, [currentFallback]);
-
-  const fastImage = useMemo(() => {
-    if (isLoading && !isDefinedImage) {
-      return <View style={styles.image} />;
-    }
-
-    if (isDefined(collectible.isAdultContent) && collectible.isAdultContent) {
-      return (
-        <ImageBlurOverlay theme={blurLayoutTheme} size={size} isTouchableOverlay={isTouchableOverlay}>
-          <FastImage source={{ uri: imageSrc }} onError={handleLoadingFailed} style={styles.image} />
-        </ImageBlurOverlay>
+    const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
+    const [currentFallback, setCurrentFallback] = useState(initialFallback);
+    const handleError = () => {
+      setCurrentFallback(
+        currentFallback.endsWith('/thumb288')
+          ? formatImgUri(collectible.artifactUri, 'medium')
+          : formatCollectibleObjktMediumUri(assetSlug)
       );
-    }
+    };
 
-    return <FastImage source={{ uri: imageSrc }} onError={handleLoadingFailed} style={styles.image} />;
-  }, [collectible, blurLayoutTheme, imageSrc, handleLoadingFailed, isLoading]);
+    const handleAnimatedError = () => {
+      setIsAnimatedRenderedOnce(true);
+      handleError();
+    };
+    const handleLoadEnd = () => void setIsLoading(false);
 
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        padding: formatSize(2)
-      }}
-    >
-      {isDefinedImage &&
-        (isImgUriDataUri(imageSrc) ? <DataUriImage style={styles.image} dataUri={imageSrc} /> : fastImage)}
-    </View>
-  );
-};
+    const image = useMemo(() => {
+      if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon) {
+        if (isImgUriDataUri(objktArtifact)) {
+          return (
+            <AnimatedSvg
+              style={styles.image}
+              dataUri={objktArtifact}
+              onError={handleAnimatedError}
+              onLoadEnd={handleLoadEnd}
+            />
+          );
+        }
+
+        if (mime === NonStaticMimeTypes.MODEL || mime === NonStaticMimeTypes.INTERACTIVE) {
+          return (
+            <SimpleModelView
+              uri={formatCollectibleObjktArtifactUri(objktArtifact)}
+              isBinary={mime === NonStaticMimeTypes.MODEL}
+              style={styles.image}
+              onError={handleAnimatedError}
+              onLoadEnd={handleLoadEnd}
+              setScrollEnabled={setScrollEnabled}
+            />
+          );
+        }
+
+        if (mime === NonStaticMimeTypes.VIDEO) {
+          return (
+            <SimplePlayer
+              uri={formatCollectibleObjktArtifactUri(objktArtifact)}
+              posterUri={formatCollectibleObjktMediumUri(assetSlug)}
+              size={size}
+              style={styles.image}
+              onError={handleAnimatedError}
+              onLoad={handleLoadEnd}
+            />
+          );
+        }
+
+        if (mime === NonStaticMimeTypes.AUDIO) {
+          return (
+            <>
+              <SimplePlayer
+                uri={formatCollectibleObjktArtifactUri(objktArtifact)}
+                size={size}
+                onError={() => showErrorToast({ description: 'Invalid audio' })}
+                onLoad={handleLoadEnd}
+              />
+              <AudioPlaceholder />
+            </>
+          );
+        }
+      }
+
+      return (
+        <FastImage
+          style={styles.image}
+          source={{ uri: currentFallback }}
+          onError={handleError}
+          onLoadEnd={handleLoadEnd}
+        />
+      );
+    }, [mime, objktArtifact, currentFallback]);
+
+    const imageWithBlur = useMemo(() => {
+      if (Boolean(collectible.isAdultContent)) {
+        return (
+          <ImageBlurOverlay
+            theme={blurLayoutTheme}
+            size={size}
+            isShowBlur={isShowBlur}
+            setIsShowBlur={setIsShowBlur}
+            isTouchableOverlay={isTouchableBlurOverlay}
+          >
+            {image}
+          </ImageBlurOverlay>
+        );
+      }
+
+      return image;
+    }, [image, collectible.isAdultContent, isShowBlur]);
+
+    return (
+      <View
+        style={{
+          width: size,
+          height: size,
+          padding: formatSize(2)
+        }}
+      >
+        {imageWithBlur}
+        {isLoading && !isShowBlur && (
+          <View style={styles.loader}>
+            <ActivityIndicator size={iconSize === CollectibleIconSize.SMALL ? 'small' : 'large'} />
+          </View>
+        )}
+      </View>
+    );
+  }
+);

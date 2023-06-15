@@ -32,6 +32,7 @@ interface Props extends TestIdProps {
   };
   style?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
+  scrollEnabled?: boolean;
 }
 
 export const ScreenContainer: FC<Props> = ({
@@ -41,6 +42,7 @@ export const ScreenContainer: FC<Props> = ({
   style,
   contentContainerStyle,
   fixedFooterContainer,
+  scrollEnabled = true,
   children,
   testID
 }) => {
@@ -59,6 +61,7 @@ export const ScreenContainer: FC<Props> = ({
       behavior={keyboardBehavior}
     >
       <ScrollView
+        scrollEnabled={scrollEnabled}
         contentContainerStyle={[
           styles.scrollViewContentContainer,
           conditionalStyle(isFullScreenMode, styles.fullScreenMode),

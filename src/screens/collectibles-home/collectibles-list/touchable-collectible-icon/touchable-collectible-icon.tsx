@@ -18,7 +18,7 @@ export const TouchableCollectibleIcon: FC<CollectibleIconProps> = ({
 
   return isDefined(collectible) ? (
     <TouchableOpacity activeOpacity={1} onPress={handleNavigate}>
-      <CollectibleIcon iconSize={iconSize} collectible={collectible} size={size} isTouchableOverlay={false} />
+      <CollectibleIcon iconSize={iconSize} collectible={collectible} size={size} isTouchableBlurOverlay={false} />
     </TouchableOpacity>
   ) : null;
 };
