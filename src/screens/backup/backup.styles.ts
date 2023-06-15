@@ -28,3 +28,17 @@ export const useBackupStyles = createUseStyles(({ typography, colors }) => ({
     color: colors.orange
   }
 }));
+
+export const useEraseCloudBackupButtonStyles = createUseStyles(({ typography, colors }) => ({
+  button: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: formatSize(8)
+  },
+  text: {
+    ...typography.tagline13Tag,
+    color: colors.destructive,
+    marginRight: formatSize(4)
+  }
+}));

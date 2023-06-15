@@ -1,5 +1,5 @@
 export enum ReceiveModalSelectors {
-  publicAddressSwitchButton = 'Receive/Public Address Switch Button',
-  domainSwitchButton = 'Receive/Domain Switch Button',
+  publicAddressCopyButton = 'Receive/Public Address Copy Button',
+  domainCopyButton = 'Receive/Domain Copy Button',
   copyButton = 'Receive/Copy Button'
 }

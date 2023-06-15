@@ -1,20 +1,23 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Text, TextInput, View } from 'react-native';
 
-import { emptyFn } from '../../config/general';
-import { useNetworkInfo } from '../../hooks/use-network-info.hook';
-import { useNumericInput } from '../../hooks/use-numeric-input.hook';
-import { useTokenExchangeRateGetter } from '../../hooks/use-token-exchange-rate-getter.hook';
-import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { conditionalStyle } from '../../utils/conditional-style';
-import { isDefined } from '../../utils/is-defined';
-import { getNetworkGasTokenMetadata } from '../../utils/network.utils';
-import { isCollectible, mutezToTz, tzToMutez } from '../../utils/tezos.util';
+import { emptyFn } from 'src/config/general';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
+import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
+import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { isDefined } from 'src/utils/is-defined';
+import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
+import { isCollectible, mutezToTz, tzToMutez } from 'src/utils/tezos.util';
+
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
@@ -24,9 +27,11 @@ import { Label } from '../label/label';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { AssetAmountInputProps } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
+import { AssetAmountInputSelectors } from './selectors';
 
 export interface AssetAmountInterface {
   asset: TokenInterface;
@@ -68,6 +73,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isError = false,
   toUsdToggle = true,
   editable = true,
+  isLoading = false,
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
@@ -75,10 +81,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   onBlur,
   onFocus,
   onValueChange,
-  testID
+  testID,
+  tokenTestID,
+  switcherTestID,
+  maxButtonTestID
 }) => {
   const styles = useAssetAmountInputStyles();
   const colors = useColors();
+  const { trackEvent } = useAnalytics();
 
   const token = useMemo(
     () => assetsList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(value.asset)),
@@ -159,6 +169,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       amountInputRef.current.focus();
     }
     setInputTypeIndex(tokenTypeIndex);
+    trackEvent(switcherTestID, AnalyticsEventCategory.General, { tokenTypeIndex });
 
     onValueChange({
       ...value,
@@ -177,6 +188,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const asset = newAsset ?? emptyTezosLikeToken;
       const newExchangeRate = getTokenExchangeRate(getTokenSlug(asset));
 
+      trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, { token: asset.symbol });
+
       onValueChange({
         amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate ?? 1, isTokenInputType),
         asset
@@ -192,13 +205,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
       const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
       amountInputRef.current?.blur();
+      trackEvent(maxButtonTestID, AnalyticsEventCategory.ButtonPress);
 
       onValueChange({
         amount,
         asset: token
       });
     }
-  }, [token, gasToken, onValueChange, amountInputRef]);
+  }, [token, gasToken, onValueChange, amountInputRef, trackEvent]);
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
@@ -211,14 +225,22 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             width={formatSize(158)}
             selectedIndex={inputTypeIndex}
             values={['TOKEN', fiatCurrency]}
+            testID={AssetAmountInputSelectors.inputTypeSwitcher}
             onChange={handleTokenInputTypeChange}
           />
         )}
       </View>
       <Divider size={formatSize(8)} />
 
-      <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]}>
+      <View
+        style={[
+          styles.inputContainer,
+          conditionalStyle(!editable, styles.disabledInputContainer),
+          conditionalStyle(isError, styles.inputContainerError)
+        ]}
+      >
         <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
+
         <TextInput
           ref={amountInputRef}
           value={stringValue}
@@ -233,9 +255,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
           onBlur={handleBlur}
           onFocus={handleFocus}
           onChangeText={handleChange}
-          testID={testID}
         />
-        <Divider size={formatSize(8)} />
 
         <View
           style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}
@@ -245,12 +265,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             value={value.asset}
             list={assetsList}
             isSearchable={isSearchable}
+            isLoading={isLoading}
             setSearchValue={setSearchValue}
             equalityFn={tokenEqualityFn}
             renderValue={renderTokenValue}
             renderListItem={renderTokenListItem}
             keyExtractor={getTokenSlug}
             onValueChange={handleTokenChange}
+            testID={testID}
           />
         </View>
       </View>
@@ -293,12 +315,14 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             {maxButton && (
               <>
                 <Divider size={formatSize(8)} />
-                <TouchableOpacity
+                <TouchableWithAnalytics
                   hitSlop={{ top: formatSize(8), left: formatSize(8), right: formatSize(8), bottom: formatSize(8) }}
                   onPress={handleMaxButtonPress}
+                  testID={AssetAmountInputSelectors.maxButton}
+                  testIDProperties={{ token: token?.symbol }}
                 >
                   <Text style={styles.maxButtonText}>MAX</Text>
-                </TouchableOpacity>
+                </TouchableWithAnalytics>
               </>
             )}
           </View>

@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-import { exolixApi } from '../api.service';
+import { exolixApi } from 'src/api.service';
+import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import {
   ExolixCurrenciesResponseInterface,
   ExchangeDataInterface,
@@ -8,9 +9,10 @@ import {
   GetRateResponse,
   GetRateResponseWithAmountTooLow,
   SubmitExchangePayload
-} from '../interfaces/exolix.interface';
-import { TopUpInputInterface } from '../interfaces/topup.interface';
-import { outputTokensList } from '../screens/buy/crypto/exolix/config';
+} from 'src/interfaces/exolix.interface';
+import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { outputTokensList } from 'src/screens/buy/crypto/exolix/config';
+
 import { isDefined } from './is-defined';
 
 const currenciesLimit = 100;
@@ -35,7 +37,8 @@ export const loadExolixCurrencies = async (): Promise<Array<TopUpInputInterface>
         name,
         network: network.network,
         networkFullName: network.name,
-        networkShortName: network.shortName === '' ? null : network.shortName
+        networkShortName: network.shortName === '' ? null : network.shortName,
+        type: TopUpInputTypeEnum.Crypto
       }))
     )
     .flat()

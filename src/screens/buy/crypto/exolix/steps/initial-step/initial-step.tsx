@@ -17,13 +17,14 @@ import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
-import { TopUpAssetAmountInterface } from '../../../../components/top-up-asset-amount-input/top-up-asset-amount-input.props';
-import { TopUpFormAssetAmountInput } from '../../../../components/top-up-form-asset-amount-input/top-up-form-asset-amount-input';
+import { TopUpAssetAmountInterface } from '../../../../components/top-up-asset-amount-input/types';
+import { TopUpFormAssetAmountInput } from '../../../../components/top-up-form-asset-amount-input';
 import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
 import { initialData } from './initial-step.data';
+import { InitialStepSelectors } from './initial-step.selectors';
 import { useInitialStepStyles } from './initial-step.styles';
 import { getProperNetworkFullName, loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
 
@@ -106,11 +107,10 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
   const disclaimerMessage = useMemo(
     () => [
-      `Please, deposit only ${inputCurrency.name} transfer network ${getProperNetworkFullName(inputCurrency)}.`,
-      'Otherwise, you may lose your assets',
-      'permanently.'
+      `Please, deposit only ${inputCurrency.name} transfer network ${getProperNetworkFullName(inputCurrency)}. \
+Otherwise, you may lose your assets permanently.`
     ],
-    [inputCurrency.name]
+    [inputCurrency]
   );
 
   return (
@@ -128,6 +128,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   isSearchable
                   assetsList={filteredCurrenciesList}
                   onValueChange={handleInputValueChange}
+                  tokenTestID={InitialStepSelectors.sendTokenChange}
                   setSearchValue={setSearchValue}
                 />
                 <Divider size={formatSize(8)} />
@@ -141,6 +142,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
                   editable={false}
                   assetsList={outputTokensList}
                   onValueChange={handleOutputValueChange}
+                  tokenTestID={InitialStepSelectors.getTokenChange}
                 />
               </FormikProvider>
               <Divider size={formatSize(16)} />
@@ -165,8 +167,8 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
               </View>
               <Divider size={formatSize(16)} />
               <Text style={styles.thirdParty}>
-                The token exchange feature is provided by a third party. The Temple wallet is not responsible for the
-                work of third-party services.
+                The token exchange feature is provided by Exolix as a third party provider. Temple wallet is not
+                responsible for the work of third-party services.
               </Text>
             </View>
           </ScreenContainer>

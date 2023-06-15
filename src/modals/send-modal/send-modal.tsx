@@ -52,7 +52,7 @@ export const SendModal: FC = () => {
   const styles = useSendModalStyles();
   const assetsList = useVisibleAssetListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const { filteredAssetsList } = useFilteredAssetsList(assetsList, true, true, tezosToken);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true, tezosToken);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
@@ -125,7 +125,12 @@ export const SendModal: FC = () => {
               name="assetAmount"
               label="Asset"
               assetsList={filteredAssetsList}
+              isSearchable
+              setSearchValue={setSearchValue}
               testID={SendModalSelectors.assetInput}
+              tokenTestID={SendModalSelectors.tokenChange}
+              maxButtonTestID={SendModalSelectors.maxButton}
+              switcherTestID={SendModalSelectors.switcherButton}
             />
             <Divider />
 
@@ -139,6 +144,7 @@ export const SendModal: FC = () => {
                   name="recipient"
                   list={filteredReceiversList}
                   setSearchValue={handleSearchValueChange}
+                  testID={SendModalSelectors.sectionDropdown}
                 />
                 <Divider size={formatSize(10)} />
               </>
@@ -147,6 +153,7 @@ export const SendModal: FC = () => {
                 name="receiverPublicKeyHash"
                 placeholder="e.g. address"
                 testID={SendModalSelectors.toInput}
+                pasteButtonTestID={SendModalSelectors.pasteAddressButton}
               />
             )}
 

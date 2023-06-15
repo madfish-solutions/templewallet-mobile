@@ -5,21 +5,23 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { object, string } from 'yup';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { Divider } from '../../../components/divider/divider';
-import { HeaderButton } from '../../../components/header/header-button/header-button';
-import { HeaderTitle } from '../../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { EmptyFn } from '../../../config/general';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useShelter } from '../../../shelter/use-shelter.hook';
-import { madeManualBackupAction } from '../../../store/settings/settings-actions';
-import { formatSize } from '../../../styles/format-size';
-import { showErrorToast, showSuccessToast } from '../../../toast/toast.utils';
-import { formatOrdinalNumber } from '../../../utils/number-format.utils';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { Divider } from 'src/components/divider/divider';
+import { HeaderButton } from 'src/components/header/header-button/header-button';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { EmptyFn } from 'src/config/general';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useShelter } from 'src/shelter/use-shelter.hook';
+import { madeManualBackupAction, setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { formatOrdinalNumber } from 'src/utils/number-format.utils';
+
 import { VerifySeedPhraseRow } from './verify-seed-phrase-row/verify-seed-phrase-row';
 import { VerifySeedPhraseSelectors } from './verify-seed-phrase.selectors';
 import { useVerifySeedPhraseStyles } from './verify-seed-phrase.styles';
@@ -33,7 +35,7 @@ const WORDS_TO_FILL = 2;
 export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
   const dispatch = useDispatch();
   const styles = useVerifySeedPhraseStyles();
-  const { goBack } = useNavigation();
+  const { navigate } = useNavigation();
   const { revealSeedPhrase } = useShelter();
 
   const [words, setWords] = useState<string[]>([]);
@@ -108,7 +110,9 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
     dispatch(madeManualBackupAction());
     showSuccessToast({ description: 'You have successfully verified seed phrase!' });
 
-    goBack();
+    navigate(ScreensEnum.Wallet);
+
+    dispatch(setOnRampPossibilityAction(true));
   };
 
   return (

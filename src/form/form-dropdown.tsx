@@ -1,10 +1,12 @@
 import { useField } from 'formik';
 import React from 'react';
 
+import { TestIdProps } from 'src/interfaces/test-id.props';
+
 import { Dropdown, DropdownProps } from '../components/dropdown/dropdown';
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props<T> extends DropdownProps<T> {
+interface Props<T> extends DropdownProps<T>, TestIdProps {
   name: string;
 }
 
@@ -16,7 +18,9 @@ export const FormDropdown = <T extends unknown>({
   equalityFn,
   renderValue,
   renderListItem,
-  renderActionButtons
+  renderActionButtons,
+  testID,
+  testIDProperties
 }: Props<T>) => {
   const [field, meta, helpers] = useField<T | undefined>(name);
 
@@ -32,6 +36,8 @@ export const FormDropdown = <T extends unknown>({
         renderListItem={renderListItem}
         renderActionButtons={renderActionButtons}
         onValueChange={helpers.setValue}
+        testID={testID}
+        testIDProperties={testIDProperties}
       />
       <ErrorMessage meta={meta} />
     </>

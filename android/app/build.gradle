@@ -1,5 +1,4 @@
 apply plugin: "com.android.application"
-apply plugin: "com.google.gms.google-services"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
@@ -136,12 +135,21 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    packagingOptions {
+        /*
+          Build fix since 'react-native-cloud-fs'. See:
+          - https://developer.android.com/reference/tools/gradle-api/7.2/com/android/build/api/dsl/ResourcesPackagingOptions
+          - https://github.com/google/android-fhir/issues/534#issuecomment-1067098894
+        */
+        exclude 'META-INF/DEPENDENCIES'
+    }
+
     defaultConfig {
         applicationId "com.templewallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 319
-        versionName "1.14"
+        versionName "1.15"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -213,6 +221,7 @@ android {
             include (*reactNativeArchitectures())
         }
     }
+
     signingConfigs {
         release {
             storeFile file(KEYSTORE_STORE_FILE)
@@ -227,6 +236,7 @@ android {
             keyPassword 'android'
         }
     }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -286,6 +296,12 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    /*
+      Build fix since 'react-native-cloud-fs'
+      See: https://stackoverflow.com/a/60492942/9371122
+    */
+    implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 }
 
 if (isNewArchitectureEnabled()) {
@@ -312,6 +328,8 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+
+apply plugin: "com.google.gms.google-services"
 
 def isNewArchitectureEnabled() {
     // To opt-in for the New Architecture, you can either:

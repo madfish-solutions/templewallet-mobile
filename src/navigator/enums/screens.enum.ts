@@ -1,4 +1,4 @@
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export enum ScreensEnum {
   Welcome = 'Welcome',
@@ -6,6 +6,7 @@ export enum ScreensEnum {
   SyncInstructions = 'SyncInstructions',
   ConfirmSync = 'ConfirmSync',
   CreateAccount = 'CreateAccount',
+  ContinueWithCloud = 'ContinueWithCloud',
 
   /** Wallet stack **/
   Wallet = 'Wallet',
@@ -26,13 +27,11 @@ export enum ScreensEnum {
   /** Swap stack **/
   SwapScreen = 'SwapScreen',
   SwapSettingsScreen = 'SwapSettingsScreen',
-  SwapQuestionsScreen = 'SwapQuestionsScreen',
 
   /** Buy stack **/
   Buy = 'Buy',
+  BuyWithCreditCard = 'BuyWithCreditCard',
   Exolix = 'Exolix',
-  AliceBob = 'AliceBob',
-  Utorg = 'Utorg',
 
   /** Market stack **/
   Market = 'Market',
@@ -48,6 +47,7 @@ export enum ScreensEnum {
   NodeSettings = 'NodeSettings',
   Backup = 'Backup',
   ManualBackup = 'ManualBackup',
+  CloudBackup = 'CloudBackup',
   NotificationsSettings = 'NotificationsSettings',
   Debug = 'Debug'
 }
@@ -57,7 +57,8 @@ export type ScreensParamList = {
   [ScreensEnum.ImportAccount]: undefined;
   [ScreensEnum.SyncInstructions]: undefined;
   [ScreensEnum.ConfirmSync]: { payload: string };
-  [ScreensEnum.CreateAccount]: undefined;
+  [ScreensEnum.CreateAccount]: { backupToCloud?: boolean; cloudBackupId?: number };
+  [ScreensEnum.ContinueWithCloud]: undefined;
 
   /** Wallet stack **/
   [ScreensEnum.Wallet]: undefined;
@@ -72,9 +73,8 @@ export type ScreensParamList = {
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
   [ScreensEnum.Buy]: undefined;
+  [ScreensEnum.BuyWithCreditCard]: undefined;
   [ScreensEnum.Exolix]: undefined;
-  [ScreensEnum.AliceBob]: { min: number; max: number };
-  [ScreensEnum.Utorg]: { min: number; max: number; currencies: string[] };
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
@@ -83,7 +83,6 @@ export type ScreensParamList = {
   /** Swap stack **/
   [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
   [ScreensEnum.SwapSettingsScreen]: undefined;
-  [ScreensEnum.SwapQuestionsScreen]: undefined;
 
   /** Market stack **/
   [ScreensEnum.Market]: undefined;
@@ -102,13 +101,13 @@ export type ScreensParamList = {
   [ScreensEnum.NodeSettings]: undefined;
   [ScreensEnum.Backup]: undefined;
   [ScreensEnum.ManualBackup]: undefined;
+  [ScreensEnum.CloudBackup]: undefined;
   [ScreensEnum.NotificationsSettings]: undefined;
   [ScreensEnum.Debug]: undefined;
 };
 
 export const walletStackScreens = [
   ScreensEnum.Wallet,
-  ScreensEnum.CollectiblesHome,
   ScreensEnum.TezosTokenScreen,
   ScreensEnum.TokenScreen,
   ScreensEnum.Delegation,
@@ -116,27 +115,12 @@ export const walletStackScreens = [
   ScreensEnum.Activity,
   ScreensEnum.ScanQrCode,
   ScreensEnum.Buy,
+  ScreensEnum.BuyWithCreditCard,
   ScreensEnum.Exolix,
-  ScreensEnum.AliceBob,
   ScreensEnum.Notifications,
   ScreensEnum.NotificationsItem
 ];
+export const nftStackScreens = [ScreensEnum.CollectiblesHome];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
-export const swapStackScreens = [
-  ScreensEnum.SwapScreen,
-  ScreensEnum.SwapSettingsScreen,
-  ScreensEnum.SwapQuestionsScreen
-];
+export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];
-export const settingsStackScreens = [
-  ScreensEnum.Settings,
-  ScreensEnum.ManageAccounts,
-  ScreensEnum.Contacts,
-  ScreensEnum.About,
-  ScreensEnum.DAppsSettings,
-  ScreensEnum.SecureSettings,
-  ScreensEnum.Backup,
-  ScreensEnum.ManualBackup,
-  ScreensEnum.NotificationsSettings,
-  ScreensEnum.NodeSettings
-];

@@ -31,6 +31,6 @@ export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, t
   },
   apyText: {
     ...typography.caption13Semibold,
-    color: colors.white
+    color: 'white'
   }
 }));

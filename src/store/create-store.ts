@@ -10,10 +10,14 @@ import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { isDefined } from '../utils/is-defined';
+import { abTestingReducer } from './ab-testing/ab-testing-reducers';
+import { ABTestingRootState } from './ab-testing/ab-testing-state';
 import { advertisingReducers } from './advertising/advertising-reducers';
 import { AdvertisingRootState } from './advertising/advertising-state';
 import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
+import { buyWithCreditCardReducer } from './buy-with-credit-card/reducers';
+import { BuyWithCreditCardRootState } from './buy-with-credit-card/state';
 import { contactBookReducers } from './contact-book/contact-book-reducers';
 import { ContactsBookRootState } from './contact-book/contact-book-state';
 import { currencyReducers } from './currency/currency-reducers';
@@ -26,11 +30,15 @@ import { marketReducers } from './market/market-reducers';
 import { MarketRootState } from './market/market-state';
 import { notificationsReducers } from './notifications/notifications-reducers';
 import { NotificationsRootState } from './notifications/notifications-state';
+import { partnersPromotionReducers } from './partners-promotion/partners-promotion-reducers';
+import { PartnersPromotionRootState } from './partners-promotion/partners-promotion-state';
 import { rootStateReducer } from './root-state.reducers';
 import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
 import { SettingsRootState } from './settings/settings-state';
+import { swapReducer } from './swap/swap-reducers';
+import { Route3RootState } from './swap/swap-state';
 import { tokensMetadataReducers } from './tokens-metadata/tokens-metadata-reducers';
 import { TokensMetadataRootState } from './tokens-metadata/tokens-metadata-state';
 import { walletReducers } from './wallet/wallet-reducers';
@@ -47,7 +55,11 @@ export type RootState = WalletRootState &
   AdvertisingRootState &
   MarketRootState &
   NotificationsRootState &
-  ContactsBookRootState;
+  ContactsBookRootState &
+  BuyWithCreditCardRootState &
+  PartnersPromotionRootState &
+  Route3RootState &
+  ABTestingRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -76,7 +88,11 @@ const rootReducer = rootStateReducer<RootState>({
   advertising: advertisingReducers,
   market: marketReducers,
   notifications: notificationsReducers,
-  contactBook: contactBookReducers
+  swap: swapReducer,
+  contactBook: contactBookReducers,
+  buyWithCreditCard: buyWithCreditCardReducer,
+  partnersPromotion: partnersPromotionReducers,
+  abTesting: abTestingReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

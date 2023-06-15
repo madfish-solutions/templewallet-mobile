@@ -3,9 +3,9 @@ import React, { FC, useMemo } from 'react';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { delegationApy } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
@@ -18,7 +18,9 @@ import { openUrl } from 'src/utils/linking.util';
 
 import { INITIAL_ARP_VALUE } from '../../apis/youves/constants';
 import { getDelegateText } from '../../utils/get-delegate-text.util';
-import { Divider } from '../divider/divider';
+import { ABContainer } from '../ab-container/ab-container';
+import { DelegateTagA } from '../delegate-tag/components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
+import { DelegateTagB } from '../delegate-tag/components/delegate-ab-components/delegate-tag-b/delegate-tag-b';
 import { useApyStyles } from './apy.styles';
 import { apyLinkSelectors } from './token-header.selectors';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
@@ -38,8 +40,11 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   const { trackEvent } = useAnalytics();
   const isTezos = token.address === '';
   const tokenSlug = getTokenSlug(token);
+  const { isDcpNode } = useNetworkInfo();
 
-  const { isTezosNode } = useNetworkInfo();
+  const navigationFlow = () => {
+    isDcpNode && !isBakerSelected ? navigate(ModalsEnum.SelectBaker) : navigate(ScreensEnum.Delegation);
+  };
 
   const { rate: apyRate = INITIAL_ARP_VALUE, link: apyLink } = useTokenApyInfo(tokenSlug);
 
@@ -49,18 +54,17 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   );
 
   if (showHistoryComponent && isTezos) {
-    return isTezosNode ? (
-      <TouchableOpacity style={styles.delegateContainer} onPress={() => navigate(ScreensEnum.Delegation)}>
+    return (
+      <TouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
         {isBakerSelected ? (
           <Text style={styles.delegateText}>Rewards & Redelegate</Text>
         ) : (
-          <Text style={styles.delegateText}>
-            Delegate: <Text style={styles.apyText}>{delegationApy}% APY</Text>
-          </Text>
+          <ABContainer
+            groupAComponent={<DelegateTagA style={styles.delegateText} />}
+            groupBComponent={<DelegateTagB style={styles.delegateText} />}
+          />
         )}
       </TouchableOpacity>
-    ) : (
-      <Divider />
     );
   }
 

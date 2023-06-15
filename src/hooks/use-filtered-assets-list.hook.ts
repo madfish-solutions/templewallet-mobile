@@ -1,12 +1,10 @@
-import { BigNumber } from 'bignumber.js';
 import { useMemo, useState } from 'react';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getDollarValue } from 'src/utils/balance.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
-import { isTruthy } from 'src/utils/is-truthy';
 import { isNonZeroBalance } from 'src/utils/tezos.util';
+import { applySortByDollarValueDecrease, isAssetSearched } from 'src/utils/token-metadata.utils';
 
 export const useFilteredAssetsList = (
   assetsList: TokenInterface[],
@@ -49,7 +47,7 @@ export const useFilteredAssetsList = (
     }
 
     return [leadingAsset, ...searchedAssetsList];
-  }, [searchedAssetsList, searchValue, leadingAsset, leadingAssetIsFilterable]);
+  }, [searchedAssetsList, searchValue, filterZeroBalances, leadingAsset, leadingAssetIsFilterable]);
 
   return {
     filteredAssetsList,
@@ -57,16 +55,3 @@ export const useFilteredAssetsList = (
     setSearchValue
   };
 };
-
-const isAssetSearched = ({ name, symbol, address }: TokenInterface, lowerCaseSearchValue: string) =>
-  name.toLowerCase().includes(lowerCaseSearchValue) ||
-  symbol.toLowerCase().includes(lowerCaseSearchValue) ||
-  address.toLowerCase().includes(lowerCaseSearchValue);
-
-const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
-  assets.sort((a, b) => {
-    const aDollarValue = isTruthy(a.exchangeRate) ? getDollarValue(a.balance, a, a.exchangeRate) : BigNumber(0);
-    const bDollarValue = isTruthy(b.exchangeRate) ? getDollarValue(b.balance, b, b.exchangeRate) : BigNumber(0);
-
-    return bDollarValue.minus(aDollarValue).toNumber();
-  });

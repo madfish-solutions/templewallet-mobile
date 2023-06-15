@@ -4,7 +4,6 @@ import {
   TEMPLE_WALLET_API_URL,
   TEMPLE_WALLET_EVERSTAKE_API_KEY,
   TEMPLE_WALLET_EXOLIX_API_KEY,
-  TEMPLE_WALLET_UTORG_SID,
   TEZOS_METADATA_API_URL
 } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
@@ -31,15 +30,6 @@ export const exolixApi = axios.create({
   }
 });
 
-export const utorgApi = axios.create({
-  baseURL: 'https://app.utorg.pro/api/merchant/v1',
-  headers: {
-    'Content-Type': 'application/json',
-    'X-AUTH-SID': TEMPLE_WALLET_UTORG_SID,
-    'X-AUTH-NONCE': Math.random().toString()
-  }
-});
-
 export const everstakeApi = axios.create({
   baseURL: 'https://aff-api.everstake.one/temple',
   headers: {
@@ -47,3 +37,5 @@ export const everstakeApi = axios.create({
     'X-API-Key': TEMPLE_WALLET_EVERSTAKE_API_KEY
   }
 });
+
+export const optimalApi = axios.create({ baseURL: 'https://i.useoptimal.xyz' });

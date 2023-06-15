@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.14</string>
+	<string>1.15</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -66,6 +66,18 @@
 	<string>Allow to use camera for QR-code scan</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>One</string>
+		</dict>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Inter-Bold.ttf</string>

@@ -46,5 +46,12 @@ export const useSelectBakerModalStyles = createUseStyles(({ colors, typography }
   selectedBakerFieldWrapper: {
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  dcpBaker: {
+    paddingHorizontal: formatSize(16)
+  },
+  buttons: {
+    flex: 1,
+    justifyContent: 'flex-end'
   }
 }));

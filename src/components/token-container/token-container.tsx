@@ -1,30 +1,18 @@
-import { BigNumber } from 'bignumber.js';
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
 import { formatSize } from 'src/styles/format-size';
-import { getTokenSlug } from 'src/token/utils/token.utils';
-import { isDefined } from 'src/utils/is-defined';
 import { getTruncatedProps } from 'src/utils/style.util';
 
 import { INITIAL_ARP_VALUE } from '../../apis/youves/constants';
-import { getDelegateText } from '../../utils/get-delegate-text.util';
+import { DelegateTag } from '../delegate-tag/delegate-tag';
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
-import { useApyStyles } from '../token-screen-content-container/apy.styles';
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
-const DECIMAL_VALUE = 2;
-
 export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_ARP_VALUE, children }) => {
   const styles = useTokenContainerStyles();
-  const apyStyles = useApyStyles();
-  const tokenSlug = getTokenSlug(token);
-
-  const label = getDelegateText(token);
-
-  const apyRateValue = useMemo(() => new BigNumber(apy).decimalPlaces(DECIMAL_VALUE).toFixed(DECIMAL_VALUE), [apy]);
 
   return (
     <View style={styles.container}>
@@ -34,11 +22,7 @@ export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_A
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
             <Text {...getTruncatedProps(styles.symbolText)}>{token.symbol}</Text>
-            {isDefined(apy) && apy > 0 && (
-              <View style={[styles.apyContainer, apyStyles[tokenSlug]]}>
-                <Text style={styles.apyText}>{`${label}: ${apyRateValue}%`}</Text>
-              </View>
-            )}
+            <DelegateTag token={token} apy={apy} />
           </View>
           <Text {...getTruncatedProps(styles.nameText)}>{token.name}</Text>
         </View>

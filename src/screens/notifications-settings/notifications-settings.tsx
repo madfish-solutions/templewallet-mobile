@@ -1,6 +1,10 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { useDisablePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
+import { setIsPromotionEnabledAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+
 import { Divider } from '../../components/divider/divider';
 import { Label } from '../../components/label/label';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -19,21 +23,49 @@ export const NotificationsSettings = () => {
   const dispatch = useDispatch();
 
   const isNewsEnabled = useIsNewsEnabledSelector();
+  const isAdsEnabled = useIsPartnersPromoEnabledSelector();
+  const disablePromotionAfterConfirmation = useDisablePromotionAfterConfirmation();
+
+  const handleAdsToggle = (value: boolean) => {
+    if (value) {
+      dispatch(setIsPromotionEnabledAction(value));
+    } else {
+      disablePromotionAfterConfirmation();
+    }
+  };
 
   usePageAnalytic(ScreensEnum.NotificationsSettings);
 
   return (
     <ScreenContainer>
       <Divider size={formatSize(8)} />
-      <Label description="Configure the notifications you want to receive. (Platform updates and emergency notifications can’t be disabled)" />
+      <Label description="Configure the notifications and ads. (Platform updates and emergency notifications can’t be disabled)" />
       <Divider size={formatSize(8)} />
       <WhiteContainer>
-        <WhiteContainerAction onPress={() => dispatch(setIsNewsEnabledAction(!isNewsEnabled))}>
+        <WhiteContainerAction
+          onPress={() => dispatch(setIsNewsEnabledAction(!isNewsEnabled))}
+          testID={NotificationsSettingsSelectors.newsAction}
+          testIDProperties={{ newValue: !isNewsEnabled }}
+        >
           <WhiteContainerText text="News" />
           <Switch
             value={isNewsEnabled}
             onChange={value => dispatch(setIsNewsEnabledAction(value))}
             testID={NotificationsSettingsSelectors.newsToggle}
+            testIDProperties={{ newValue: !isNewsEnabled }}
+          />
+        </WhiteContainerAction>
+        <WhiteContainerAction
+          onPress={() => handleAdsToggle(!isAdsEnabled)}
+          testID={NotificationsSettingsSelectors.adsAction}
+          testIDProperties={{ newValue: !isAdsEnabled }}
+        >
+          <WhiteContainerText text="Ads" />
+          <Switch
+            value={isAdsEnabled}
+            onChange={handleAdsToggle}
+            testID={NotificationsSettingsSelectors.adsToggle}
+            testIDProperties={{ newValue: !isAdsEnabled }}
           />
         </WhiteContainerAction>
       </WhiteContainer>

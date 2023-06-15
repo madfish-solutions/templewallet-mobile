@@ -9,6 +9,7 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -17,9 +18,9 @@ import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking.util';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
+import { getTruncatedProps } from 'src/utils/style.util';
 
-import { TestIdProps } from '../../../interfaces/test-id.props';
-import { RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
+import { HELP_UKRAINE_BAKER_ADDRESS, RECOMMENDED_BAKER_ADDRESS } from '../select-baker-modal';
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
 interface Props extends TestIdProps {
@@ -31,7 +32,8 @@ interface Props extends TestIdProps {
 export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID }) => {
   const styles = useSelectBakerItemStyles();
   const isRecommendedBaker = baker.address === RECOMMENDED_BAKER_ADDRESS;
-  const { metadata } = useNetworkInfo();
+  const isHelpUkraineBaker = baker.address === HELP_UKRAINE_BAKER_ADDRESS;
+  const { metadata, isDcpNode } = useNetworkInfo();
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
@@ -39,17 +41,13 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
 
   return (
     <TouchableOpacity
-      style={[
-        styles.container,
-        conditionalStyle(selected, styles.containerSelected),
-        conditionalStyle(isRecommendedBaker, styles.containerPaddingWithRecommended)
-      ]}
+      style={[styles.container, conditionalStyle(selected, styles.containerSelected)]}
       onPress={onPress}
       testID={testID}
     >
-      {isRecommendedBaker && (
+      {(isRecommendedBaker || isHelpUkraineBaker) && (
         <View style={styles.recommendedContainer}>
-          <Text style={styles.recommendedText}>Recommended</Text>
+          <Text style={styles.recommendedText}>{isRecommendedBaker ? 'Recommended ' : 'Help Ukraine 🇺🇦'}</Text>
         </View>
       )}
 
@@ -61,7 +59,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
             <RobotIcon size={formatSize(32)} seed={baker.address} />
           )}
           <Divider size={formatSize(10)} />
-          <Text style={styles.nameText}>{baker.name}</Text>
+          <Text {...getTruncatedProps(styles.nameText)}>{baker.name}</Text>
         </View>
 
         <View style={styles.actionsContainer}>
@@ -73,26 +71,28 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
 
       <Divider size={formatSize(8)} />
 
-      <View style={styles.lowerContainer}>
-        <View>
-          <Text style={styles.cellTitle}>Baker fee:</Text>
-          <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+      {!isDcpNode && (
+        <View style={styles.lowerContainer}>
+          <View>
+            <Text style={styles.cellTitle}>Baker fee:</Text>
+            <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+          </View>
+          <Divider size={formatSize(16)} />
+          <View>
+            <Text style={styles.cellTitle}>Space:</Text>
+            <Text style={styles.cellValueText}>
+              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
+            </Text>
+          </View>
+          <Divider size={formatSize(16)} />
+          <View>
+            <Text style={styles.cellTitle}>Staking:</Text>
+            <Text style={styles.cellValueText}>
+              {isTruthy(baker.stakingBalance) ? kFormatter(baker.stakingBalance) : '--'}
+            </Text>
+          </View>
         </View>
-        <Divider size={formatSize(16)} />
-        <View>
-          <Text style={styles.cellTitle}>Space:</Text>
-          <Text style={styles.cellValueText}>
-            {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
-          </Text>
-        </View>
-        <Divider size={formatSize(16)} />
-        <View>
-          <Text style={styles.cellTitle}>Staking:</Text>
-          <Text style={styles.cellValueText}>
-            {isTruthy(baker.stakingBalance) ? kFormatter(baker.stakingBalance) : '--'}
-          </Text>
-        </View>
-      </View>
+      )}
     </TouchableOpacity>
   );
 };

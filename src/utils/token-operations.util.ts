@@ -18,7 +18,7 @@ import { getTokenType } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
-import { sleep } from './sleep.util';
+import { sleep } from './timeouts.util';
 
 const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
   getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);

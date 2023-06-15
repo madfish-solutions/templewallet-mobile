@@ -1,11 +1,23 @@
 import React, { FC } from 'react';
 
 import { Button } from '../../button';
+import { ButtonStyleConfig } from '../../button-style.config';
 import { ButtonLargeProps } from '../button-large.props';
 import { useButtonLargeSecondaryStyleConfig } from './button-large-secondary.styles';
 
-export const ButtonLargeSecondary: FC<ButtonLargeProps> = props => {
+interface Props extends ButtonLargeProps {
+  activeColorStyleConfig?: ButtonStyleConfig['activeColorConfig'];
+}
+
+export const ButtonLargeSecondary: FC<Props> = props => {
   const styleConfig = useButtonLargeSecondaryStyleConfig();
 
-  return <Button {...props} styleConfig={styleConfig} isFullWidth={true} />;
+  const finalStyleConfig = props.activeColorStyleConfig
+    ? {
+        ...styleConfig,
+        activeColorConfig: props.activeColorStyleConfig
+      }
+    : styleConfig;
+
+  return <Button {...props} styleConfig={finalStyleConfig} isFullWidth={true} />;
 };

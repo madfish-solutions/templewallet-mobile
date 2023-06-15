@@ -1,3 +1,6 @@
 export enum NotificationsSettingsSelectors {
-  newsToggle = 'Settings Notifications/News Toggle'
+  newsAction = 'Settings Notifications/News Action',
+  newsToggle = 'Settings Notifications/News Toggle',
+  adsAction = 'Settings Notifications/Ads Action',
+  adsToggle = 'Settings Notifications/Ads Toggle'
 }
