@@ -19,11 +19,11 @@ import { NewsletterModalSelectors } from './newsletter-modal.selectors';
 import { useNewsletterModalStyles } from './newsletter-modal.styles';
 import { useNewsletterValidationSchema } from './use-newsletter-validation.hook';
 
-interface NewsletterModalInitialValuesInterface {
+interface FormData {
   email: string;
 }
 
-const initialValues: NewsletterModalInitialValuesInterface = {
+const initialValues: FormData = {
   email: ''
 };
 
@@ -39,10 +39,7 @@ export const Newsletter: FC = () => {
 
   useEffect(() => () => void dispatch(shouldShowNewsletterModalAction(false)), []);
 
-  const onSubmit = (
-    { email }: NewsletterModalInitialValuesInterface,
-    formikHelpers: FormikHelpers<NewsletterModalInitialValuesInterface>
-  ) =>
+  const onSubmit = ({ email }: FormData, formikHelpers: FormikHelpers<FormData>) =>
     newsletterApi
       .post('/', {
         NAME: email,
