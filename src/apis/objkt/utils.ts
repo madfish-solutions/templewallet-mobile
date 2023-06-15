@@ -20,7 +20,8 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
             marketplace_event_type === MarketPlaceEventEnum.englishAuctionSettle
         )
       : [];
-    const lastPrice = buyEvents.filter(event => event.price_xtz !== null)[0];
+    const lastPrice = buyEvents.find(event => event.price_xtz !== null);
+    const lastPriceCurrencyId = lastPrice?.currency_id ?? 1;
     const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
     const highestOffer = correctOffers[correctOffers.length - 1];
     const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
@@ -52,8 +53,8 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
       holders: token.holders,
       lastPrice: {
         price: lastPrice?.price,
-        symbol: currencyInfoById[lastPrice?.currency_id]?.symbol,
-        decimals: currencyInfoById[lastPrice?.currency_id]?.decimals
+        symbol: currencyInfoById[lastPriceCurrencyId]?.symbol,
+        decimals: currencyInfoById[lastPriceCurrencyId]?.decimals
       },
       listed: listedBySelectedUser,
       items: token.fa.items

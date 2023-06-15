@@ -1,6 +1,6 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -54,12 +54,15 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
       .then(setOffer);
   }, []);
 
-  const lastPrice =
-    isDefined(item.lastPrice) && isDefined(item.lastPrice.price)
-      ? `${formatAssetAmount(mutezToTz(BigNumber(item.lastPrice?.price), item.lastPrice?.decimals))} ${
-          item.lastPrice.symbol
-        }`
-      : '---';
+  const lastPrice = useMemo(() => {
+    if (isDefined(item.lastPrice) && isDefined(item.lastPrice.price)) {
+      const price = formatAssetAmount(mutezToTz(BigNumber(item.lastPrice?.price), item.lastPrice?.decimals));
+
+      return `${price} ${item.lastPrice.symbol}`;
+    }
+
+    return '---';
+  }, [item]);
 
   const highestOffer = isDefined(item.highestOffer)
     ? `${mutezToTz(BigNumber(item.highestOffer.price), item.decimals)} ${item.symbol}`
