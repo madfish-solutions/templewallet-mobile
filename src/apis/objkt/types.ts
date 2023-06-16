@@ -1,9 +1,9 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
+import { AttributeInfo } from 'src/interfaces/attribute.interface';
+import { CollectibleInfo, UserAdultCollectibles } from 'src/interfaces/collectible-info.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
-import { HolderInfo, Offer, Listing } from 'src/token/interfaces/token-metadata.interface';
+import { HolderInfo, Listing, Offer } from 'src/token/interfaces/token-metadata.interface';
 
-import { AttributeInfo } from '../../interfaces/attribute.interface';
-import { CollectibleInfo, UserAdultCollectibles } from '../../interfaces/collectible-info.interface';
 import { MarketPlaceEventEnum } from './enums';
 
 export interface FA2AttributeCountQueryResponse {
@@ -15,6 +15,13 @@ export interface GalleryAttributeCountQueryResponse {
 
 export interface CollectibleInfoQueryResponse {
   token: CollectibleInfo[];
+}
+
+export interface CurrencyInfo {
+  symbol: string;
+  decimals: number;
+  contract: string | null;
+  id: string | null;
 }
 
 export interface CollectibleResponse {
@@ -75,11 +82,6 @@ export interface CollectiblesByCollectionResponse {
 
 export interface CollectiblesByGalleriesResponse {
   gallery: { tokens: CollectiblesByCollectionResponse[]; gallery_id: string }[];
-}
-
-export interface CurrencyInfo {
-  symbol: string;
-  decimals: number;
 }
 
 export interface UserAdultCollectiblesQueryResponse {

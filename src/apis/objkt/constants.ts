@@ -1,43 +1,12 @@
 import { getApolloConfigurableClient } from 'src/apollo/utils/get-apollo-configurable-client.util';
 
-import { CurrencyInfo } from './interfaces';
+import { CurrencyInfo } from './types';
 
 const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
 
 export const OBJKT_CONTRACT = 'KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC';
 
 export const apolloObjktClient = getApolloConfigurableClient(OBJKT_API);
-
-export const currencyInfoById: Record<number, CurrencyInfo> = {
-  23: {
-    symbol: 'uUSD',
-    decimals: 12
-  },
-  218: {
-    symbol: 'USDtz',
-    decimals: 6
-  },
-  1: {
-    symbol: 'TEZ',
-    decimals: 6
-  },
-  4: {
-    symbol: 'oXTZ',
-    decimals: 6
-  },
-  1924: {
-    symbol: 'USDTz',
-    decimals: 6
-  },
-  1872: {
-    symbol: 'uUSD',
-    decimals: 12
-  },
-  2557: {
-    symbol: 'USDtz',
-    decimals: 6
-  }
-};
 
 /**
  * These contracts are hidden because we don't show fxhash and rarible contracts as collection
@@ -51,5 +20,40 @@ export const HIDDEN_CONTRACTS = [
   'KT18pVpRXKPY2c4U2yFEGSH3ZnhB2kL8kwXS',
   'KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE'
 ];
+
+type CurrencyIdFromApi = number;
+
+export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
+  2537: {
+    symbol: 'uUSD',
+    decimals: 12,
+    contract: 'KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW',
+    id: '0'
+  },
+  2557: {
+    symbol: 'USDtz',
+    decimals: 6,
+    contract: 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9',
+    id: '0'
+  },
+  1: {
+    symbol: 'TEZ',
+    decimals: 6,
+    contract: null,
+    id: null
+  },
+  4: {
+    symbol: 'oXTZ',
+    decimals: 6,
+    contract: 'KT1TjnZYs5CGLbmV6yuW169P8Pnr9BiVwwjz',
+    id: '0'
+  },
+  3: {
+    symbol: 'USDtz',
+    decimals: 6,
+    contract: 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9',
+    id: '0'
+  }
+};
 
 export const ADULT_ATTRIBUTE_NAME = '__nsfw_';

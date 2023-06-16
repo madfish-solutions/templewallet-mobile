@@ -57,19 +57,23 @@ export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
   return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${address}/${id}/thumb288`;
 };
 
-const cutIpfsPrefix = (artifactUri: string) =>
-  artifactUri.startsWith(IPFS_PROTOCOL_PREFIX) ? artifactUri.substring(IPFS_PROTOCOL_PREFIX.length) : artifactUri;
+const cutIpfsPrefix = (artifactUri: string) => {
+  const url = new URL(artifactUri);
+
+  url.protocol === 'ipfs:' ? artifactUri.substring(IPFS_PROTOCOL_PREFIX.length) : artifactUri;
+};
 
 export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
   if (artifactUri.startsWith('data:image')) {
     return artifactUri;
   }
 
-  if (artifactUri.includes('fxhash')) {
-    const [artifactUriWithoutFxHash, fxhash] = artifactUri.split('?');
+  const url = new URL(artifactUri);
+  const urlPath = `${url.protocol}${url.pathname}`;
 
-    return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(artifactUriWithoutFxHash)}/artifact/index.html?${fxhash}`;
+  if (url.searchParams.get('fxhash') !== null) {
+    return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact/index.html${url.search}`;
   }
 
-  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(artifactUri)}/artifact`;
+  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact`;
 };

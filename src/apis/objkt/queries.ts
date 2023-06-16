@@ -208,6 +208,16 @@ export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId:
           name
         }
       }
+      lowest_ask
+      listings_active(order_by: {price_xtz: asc}) {
+        bigmap_key
+        currency_id
+        price
+        marketplace_contract
+        currency {
+          type
+        }
+      }
     }
   }
 `;
