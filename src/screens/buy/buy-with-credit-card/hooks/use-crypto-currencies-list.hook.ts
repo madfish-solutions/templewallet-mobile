@@ -7,13 +7,13 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { useFilteredCurrencies } from './use-filtered-currencies';
 
-export const useFilteredCryptoCurrencies = () => {
+export const useCryptoCurrencies = () => {
   const moonpayCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.MoonPay);
   const utorgCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.Utorg);
   const aliceBobCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.AliceBob);
   const binanceConnectCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.BinanceConnect);
 
-  const topUpCurrencies = useMemo(
+  const allCryptoCurrencies = useMemo(
     () =>
       Object.values(
         [
@@ -32,5 +32,10 @@ export const useFilteredCryptoCurrencies = () => {
     [moonpayCryptoCurrencies, utorgCryptoCurrencies, aliceBobCryptoCurrencies, binanceConnectCryptoCurrencies]
   );
 
-  return useFilteredCurrencies(topUpCurrencies);
+  const filtered = useFilteredCurrencies(allCryptoCurrencies);
+
+  return {
+    allCryptoCurrencies,
+    ...filtered
+  };
 };

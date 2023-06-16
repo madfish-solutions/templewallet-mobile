@@ -19,7 +19,7 @@ export const usePairLimitsAreLoading = (fiatCurrencyCode: string, cryptoCurrency
   const pairLimits = usePairLimitsByProvidersSelector(fiatCurrencyCode, cryptoCurrencyCode);
 
   return useMemo(
-    () => isDefined(pairLimits) && Object.values(pairLimits).some(providerPairLimits => providerPairLimits.isLoading),
+    () => isDefined(pairLimits) && Object.values(pairLimits).some(({ isLoading }) => isLoading),
     [pairLimits]
   );
 };

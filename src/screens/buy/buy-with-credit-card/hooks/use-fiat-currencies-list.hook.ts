@@ -18,7 +18,7 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
 
   const pairLimits = useMemo(() => mergeProvidersLimits(pairLimitsByProviders), [pairLimitsByProviders]);
 
-  const noPairLimitsCurrencies = useMemo(
+  const noPairLimitsFiatCurrencies = useMemo(
     () =>
       Object.values(
         [
@@ -47,12 +47,12 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
   );
 
   const currenciesWithPairLimits = useMemo(() => {
-    const inputCurrencyIndex = noPairLimitsCurrencies.findIndex(({ code }) => code === inputCurrencySymbol);
+    const inputCurrencyIndex = noPairLimitsFiatCurrencies.findIndex(({ code }) => code === inputCurrencySymbol);
     if (inputCurrencyIndex === -1) {
-      return noPairLimitsCurrencies;
+      return noPairLimitsFiatCurrencies;
     }
 
-    const fiatCurrenciesWithPairLimits = [...noPairLimitsCurrencies];
+    const fiatCurrenciesWithPairLimits = [...noPairLimitsFiatCurrencies];
     const inputCurrency = fiatCurrenciesWithPairLimits[inputCurrencyIndex];
 
     const { min: minAmount, max: maxAmount } = pairLimits;
@@ -63,11 +63,13 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
     };
 
     return fiatCurrenciesWithPairLimits;
-  }, [noPairLimitsCurrencies, pairLimits, inputCurrencySymbol]);
+  }, [noPairLimitsFiatCurrencies, pairLimits, inputCurrencySymbol]);
+
+  const filtered = useFilteredCurrencies(currenciesWithPairLimits);
 
   return {
-    ...useFilteredCurrencies(currenciesWithPairLimits),
     currenciesWithPairLimits,
-    noPairLimitsCurrencies
+    noPairLimitsFiatCurrencies,
+    ...filtered
   };
 };

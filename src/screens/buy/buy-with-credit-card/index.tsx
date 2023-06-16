@@ -16,7 +16,8 @@ import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/compon
 import { useInterval } from 'src/hooks/use-interval.hook';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { loadAllCurrenciesActions } from 'src/store/buy-with-credit-card/actions';
+import { loadAllCurrenciesActions, updatePairLimitsActions } from 'src/store/buy-with-credit-card/actions';
+import { useCurrenciesLoadingSelector } from 'src/store/buy-with-credit-card/selectors';
 import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -28,11 +29,12 @@ import { jsonEqualityFn } from 'src/utils/store.utils';
 import { renderPaymentProviderOption } from '../components/payment-provider';
 import { renderSelectedPaymentProvider } from '../components/selected-payment-provider';
 import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
+import { useCryptoCurrencies } from './hooks/use-crypto-currencies-list.hook';
 import { useFiatCurrenciesList } from './hooks/use-fiat-currencies-list.hook';
-import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
 import { useFormInputsCallbacks } from './hooks/use-form-inputs-callbacks';
 import { usePairLimitsAreLoading } from './hooks/use-input-limits.hook';
 import { usePaymentProviders } from './hooks/use-payment-providers.hook';
+import { useUpdateCurrentProvider } from './hooks/use-update-current-provider.hook';
 import { BuyWithCreditCardSelectors } from './selectors';
 import { useBuyWithCreditCardStyles } from './styles';
 
@@ -63,25 +65,34 @@ export const BuyWithCreditCard: FC = () => {
   const { errors, touched, values, submitForm, setFieldValue, isValid, submitCount } = formik;
   const { asset: inputAsset, amount: inputAmount } = values.sendInput;
   const { asset: outputAsset, amount: outputAmount } = values.getOutput;
+
+  const currenciesLoading = useCurrenciesLoadingSelector();
+
   const {
+    noPairLimitsFiatCurrencies,
     currenciesWithPairLimits,
     filteredCurrencies: filteredFiatCurrencies,
     setSearchValue: setInputSearchValue
   } = useFiatCurrenciesList(inputAsset.code, outputAsset.code);
-  const { filteredCurrencies: filteredCryptoCurrencies, setSearchValue: setOutputSearchValue } =
-    useFilteredCryptoCurrencies();
 
-  const paymentProviders = usePaymentProviders(inputAmount, inputAsset, outputAsset);
-  const { paymentProvidersToDisplay } = paymentProviders;
   const {
-    switchPaymentProvider,
+    allCryptoCurrencies,
+    filteredCurrencies: filteredCryptoCurrencies,
+    setSearchValue: setOutputSearchValue
+  } = useCryptoCurrencies();
+
+  const { paymentProvidersToDisplay, updateOutputAmounts } = usePaymentProviders(inputAmount, inputAsset, outputAsset);
+
+  const {
     handleInputValueChange,
     handleOutputValueChange,
     handlePaymentProviderChange,
     handleSendInputBlur,
     handleGetOutputBlur,
-    refreshForm
-  } = useFormInputsCallbacks(formik, paymentProviders, formIsLoading, setFormIsLoading);
+    refreshForm,
+    setPaymentProvider,
+    manuallySelectedProviderIdRef
+  } = useFormInputsCallbacks(formik, updateOutputAmounts, formIsLoading, setFormIsLoading);
 
   const pairLimitsLoading = usePairLimitsAreLoading(inputAsset.code, outputAsset.code);
 
@@ -99,15 +110,6 @@ export const BuyWithCreditCard: FC = () => {
     }
   }, [values.sendInput, currenciesWithPairLimits, setFieldValue]);
 
-  useEffect(() => {
-    const currentPaymentProvider = values.paymentProvider;
-    const newPaymentProvider = paymentProvidersToDisplay.find(({ id }) => id === currentPaymentProvider?.id);
-
-    if (isDefined(newPaymentProvider) && !jsonEqualityFn(newPaymentProvider, currentPaymentProvider)) {
-      switchPaymentProvider(newPaymentProvider);
-    }
-  }, [values.paymentProvider, paymentProvidersToDisplay, switchPaymentProvider]);
-
   const exchangeRate = useMemo(() => {
     if (isDefined(inputAmount) && inputAmount.gt(0) && isDefined(outputAmount) && outputAmount.gt(0)) {
       return outputAmount.div(inputAmount).decimalPlaces(6);
@@ -116,10 +118,24 @@ export const BuyWithCreditCard: FC = () => {
     return undefined;
   }, [inputAmount, outputAmount]);
 
+  const isLoading = formIsLoading || currenciesLoading || pairLimitsLoading;
+
+  useEffect(() => {
+    dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputAsset.code, cryptoSymbol: outputAsset.code }));
+  }, [dispatch, inputAsset.code, outputAsset.code, noPairLimitsFiatCurrencies.length, allCryptoCurrencies.length]);
+
+  useUpdateCurrentProvider(
+    paymentProvidersToDisplay,
+    values.paymentProvider,
+    manuallySelectedProviderIdRef,
+    setPaymentProvider,
+    isLoading
+  );
+
   useInterval(refreshForm, 10000, [refreshForm], false);
 
   const someErrorOccured = Object.keys(errors).length > 0;
-  const submitDisabled = (submitCount !== 0 && !isValid) || formIsLoading || pairLimitsLoading || someErrorOccured;
+  const submitDisabled = (submitCount !== 0 && !isValid) || isLoading || someErrorOccured;
 
   return (
     <>

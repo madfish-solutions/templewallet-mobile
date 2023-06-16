@@ -11,10 +11,8 @@ import { useAllPairsLimitsSelector } from 'src/store/buy-with-credit-card/select
 import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mergeAssetsLimits } from 'src/utils/pair-limits';
-import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { BuyWithCreditCardSelectors } from '../selectors';
 import { useBuyWithCreditCardFormik } from './use-buy-with-credit-card-formik.hook';
@@ -23,35 +21,32 @@ import { usePaymentProviders } from './use-payment-providers.hook';
 
 export const useFormInputsCallbacks = (
   formik: ReturnType<typeof useBuyWithCreditCardFormik>,
-  paymentProviders: ReturnType<typeof usePaymentProviders>,
+  updateProvidersOutputs: ReturnType<typeof usePaymentProviders>['updateOutputAmounts'],
   isLoading: boolean,
   setFormIsLoading: (newValue: boolean) => void
 ) => {
   const { trackEvent } = useAnalytics();
   const { setFieldValue, values, setFieldTouched } = formik;
-  const { sendInput: inputValue, getOutput: outputValue, paymentProvider } = values;
+  const { sendInput: inputValue, getOutput: outputValue } = values;
   const { asset: outputToken } = outputValue;
-  const { allPaymentProviders, updateOutputAmounts } = paymentProviders;
   const outputCalculationDataRef = useRef({ inputValue, outputToken });
   const manuallySelectedProviderIdRef = useRef<TopUpProviderEnum>();
   const valuesRef = useRef(values);
   const isLoadingRef = useRef(isLoading);
   const dispatch = useDispatch();
   const allPairsLimits = useAllPairsLimitsSelector();
-  const { noPairLimitsCurrencies: noPairLimitsFiatCurrencies } = useFiatCurrenciesList(
-    inputValue.asset.code,
-    outputToken.code
-  );
+  const { noPairLimitsFiatCurrencies } = useFiatCurrenciesList(inputValue.asset.code, outputToken.code);
 
   useEffect(() => {
     valuesRef.current = values;
   }, [values]);
+
   useEffect(() => {
     isLoadingRef.current = isLoading;
   }, [isLoading]);
 
-  const switchPaymentProvider = useCallback(
-    async (newProvider?: PaymentProviderInterface) => {
+  const setPaymentProvider = useCallback(
+    async (newProvider: PaymentProviderInterface | undefined) => {
       const newOutputAmount = newProvider?.outputAmount;
       await Promise.all([
         setFieldValue('paymentProvider', newProvider),
@@ -65,51 +60,12 @@ export const useFormInputsCallbacks = (
     () =>
       debounce(async (newInput: TopUpAssetAmountInterface, newOutputToken: TopUpInputInterface) => {
         const { asset: newInputAsset, amount: newInputAmount } = newInput;
-        const outputCalculationData = { inputValue: newInput, outputToken: newOutputToken };
 
-        const amounts = await updateOutputAmounts(newInputAmount, newInputAsset, newOutputToken);
-
-        if (!jsonEqualityFn(outputCalculationData, outputCalculationDataRef.current)) {
-          setFormIsLoading(false);
-
-          return;
-        }
-
-        const patchedPaymentProviders = getPaymentProvidersToDisplay(
-          allPaymentProviders.map(({ id, ...rest }) => ({
-            ...rest,
-            id,
-            inputSymbol: newInputAsset.codeToDisplay ?? newInputAsset.code,
-            inputPrecision: newInputAsset.precision,
-            minInputAmount: newInputAsset.minAmount,
-            maxInputAmount: newInputAsset.maxAmount,
-            outputAmount: amounts[id],
-            outputSymbol: newOutputToken.codeToDisplay ?? newOutputToken.code,
-            outputPrecision: newOutputToken.precision
-          })),
-          {},
-          {},
-          newInputAmount
-        );
-
-        const patchedPossibleProviders = patchedPaymentProviders.filter(({ id }) => {
-          const pairLimits = allPairsLimits[newInputAsset.code]?.[newOutputToken.code]?.[id];
-
-          return isDefined(pairLimits?.data);
-        });
-
-        const autoselectedProvider = patchedPossibleProviders[0];
-        const patchedSamePossibleProvider = patchedPossibleProviders.find(({ id }) => id === paymentProvider?.id);
-        const patchedSameProvider = patchedPaymentProviders.find(({ id }) => id === paymentProvider?.id);
-        const newPaymentProvider = patchedSamePossibleProvider ?? autoselectedProvider ?? patchedSameProvider;
-
-        if (!jsonEqualityFn(newPaymentProvider, paymentProvider)) {
-          switchPaymentProvider(newPaymentProvider);
-        }
+        await updateProvidersOutputs(newInputAmount, newInputAsset, newOutputToken);
 
         setFormIsLoading(false);
       }, 200),
-    [updateOutputAmounts, allPaymentProviders, paymentProvider, allPairsLimits, switchPaymentProvider]
+    [updateProvidersOutputs]
   );
 
   const handleInputValueChange = useCallback(
@@ -121,6 +77,7 @@ export const useFormInputsCallbacks = (
     },
     [updateOutput]
   );
+
   const handleOutputValueChange = useCallback(
     (newOutput: TopUpAssetAmountInterface) => {
       const { amount: inputAmount, asset: inputCurrency } = valuesRef.current.sendInput;
@@ -147,22 +104,26 @@ export const useFormInputsCallbacks = (
     },
     [noPairLimitsFiatCurrencies, allPairsLimits, updateOutput]
   );
+
   const handlePaymentProviderChange = useCallback(
     (newProvider?: PaymentProviderInterface) => {
       manuallySelectedProviderIdRef.current = newProvider?.id;
-      switchPaymentProvider(newProvider);
+      setPaymentProvider(newProvider);
       if (isDefined(newProvider)) {
         trackEvent(BuyWithCreditCardSelectors.provider, AnalyticsEventCategory.ButtonPress, { newProvider });
       }
     },
-    [switchPaymentProvider]
+    [setPaymentProvider]
   );
+
   const refreshForm = useCallback(() => {
     const currentInputValue = valuesRef.current.sendInput;
     const { asset: inputCurrency } = currentInputValue;
     const { asset: currentOutputToken } = valuesRef.current.getOutput;
+
     dispatch(loadAllCurrenciesActions.submit());
     dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputCurrency.code, cryptoSymbol: currentOutputToken.code }));
+
     if (!isLoadingRef.current) {
       outputCalculationDataRef.current = { inputValue: currentInputValue, outputToken: currentOutputToken };
       setFormIsLoading(true);
@@ -174,12 +135,13 @@ export const useFormInputsCallbacks = (
   const handleGetOutputBlur = useCallback(() => void setFieldTouched('getOutput'), [setFieldTouched]);
 
   return {
-    switchPaymentProvider,
     handleInputValueChange,
     handleOutputValueChange,
     handlePaymentProviderChange,
     handleSendInputBlur,
     handleGetOutputBlur,
-    refreshForm
+    refreshForm,
+    setPaymentProvider,
+    manuallySelectedProviderIdRef
   };
 };

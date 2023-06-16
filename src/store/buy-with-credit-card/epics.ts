@@ -77,13 +77,25 @@ const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<Ro
     ofType(updatePairLimitsActions.submit),
     withLatestFrom(state$),
     switchMap(([{ payload }, rootState]) => {
-      const { currencies } = rootState.buyWithCreditCard;
       const { fiatSymbol, cryptoSymbol } = payload;
+      const { currencies } = rootState.buyWithCreditCard;
+      const currentLimits = rootState.buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSymbol];
 
       return forkJoin(
         allTopUpProviderEnums.map(providerId => {
-          const fiatCurrency = currencies[providerId].data.fiat.find(({ code }) => code === fiatSymbol);
-          const cryptoCurrency = currencies[providerId].data.crypto.find(({ code }) => code === cryptoSymbol);
+          const fiatCurrencies = currencies[providerId].data.fiat;
+          const cryptoCurrencies = currencies[providerId].data.crypto;
+          if (fiatCurrencies.length < 1 || cryptoCurrencies.length < 1) {
+            return of(createEntity(undefined));
+          }
+
+          const prevEntity = currentLimits?.[providerId];
+          if (prevEntity?.error === PAIR_NOT_FOUND_MESSAGE) {
+            return of(createEntity(undefined, false, PAIR_NOT_FOUND_MESSAGE));
+          }
+
+          const fiatCurrency = fiatCurrencies.find(({ code }) => code === fiatSymbol);
+          const cryptoCurrency = cryptoCurrencies.find(({ code }) => code === cryptoSymbol);
 
           if (isDefined(fiatCurrency) && isDefined(cryptoCurrency)) {
             return from(getUpdatedFiatLimits(fiatCurrency, cryptoCurrency, providerId));

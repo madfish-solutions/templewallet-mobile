@@ -13,7 +13,7 @@ export const useFilteredCurrencies = <T extends TopUpInputInterface>(allCurrenci
       const result: TopUpInputInterface[] = [];
 
       for (const currency of allCurrencies) {
-        if (currency.code.toLowerCase().includes(lowerCaseSearchValue)) {
+        if (currency.code.toLowerCase().includes(lowerCaseSearchValue) === true) {
           result.push(currency);
         }
       }

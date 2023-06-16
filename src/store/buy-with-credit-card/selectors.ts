@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PairLimits } from 'src/utils/pair-limits';
 
@@ -11,6 +13,17 @@ export const useFiatCurrenciesSelector = (topUpProvider: TopUpProviderEnum) =>
 export const useCryptoCurrenciesSelector = (topUpProvider: TopUpProviderEnum) =>
   useSelector(({ buyWithCreditCard }) => buyWithCreditCard.currencies[topUpProvider].data.crypto);
 
+const useCurrenciesByProviderLoadingSelector = (topUpProvider: TopUpProviderEnum) =>
+  useSelector(({ buyWithCreditCard }) => buyWithCreditCard.currencies[topUpProvider].isLoading);
+
+export const useCurrenciesLoadingSelector = () => {
+  const moonPayLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.MoonPay);
+  const utorgLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.Utorg);
+  const aliceBobLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.AliceBob);
+  const binanceConnectLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.BinanceConnect);
+
+  return moonPayLoading || utorgLoading || aliceBobLoading || binanceConnectLoading;
+};
 export const useProviderCurrenciesErrorSelector = (topUpProvider: TopUpProviderEnum) =>
   useSelector(({ buyWithCreditCard }) => buyWithCreditCard.currencies[topUpProvider].error);
 
@@ -28,3 +41,33 @@ export const usePairLimitsSelector = (
   topUpProvider: TopUpProviderEnum
 ): LoadableEntityState<PairLimits | undefined> =>
   useSelector(({ buyWithCreditCard }) => buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSymbol]?.[topUpProvider]);
+
+export const useProviderPairLimitsErrorSelector = (
+  fiatSymbol: string,
+  cryptoSymbol: string,
+  topUpProvider: TopUpProviderEnum
+): string | undefined =>
+  useSelector(
+    ({ buyWithCreditCard }) => buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSymbol]?.[topUpProvider]?.error
+  );
+
+export const usePairLimitsErrorsSelector = (fiatSymbol: string, cryptoSymbol: string) => {
+  const moonPayError = useProviderPairLimitsErrorSelector(fiatSymbol, cryptoSymbol, TopUpProviderEnum.MoonPay);
+  const utorgError = useProviderPairLimitsErrorSelector(fiatSymbol, cryptoSymbol, TopUpProviderEnum.Utorg);
+  const aliceBobError = useProviderPairLimitsErrorSelector(fiatSymbol, cryptoSymbol, TopUpProviderEnum.AliceBob);
+  const binanceConnectError = useProviderPairLimitsErrorSelector(
+    fiatSymbol,
+    cryptoSymbol,
+    TopUpProviderEnum.BinanceConnect
+  );
+
+  return useMemo(
+    () => ({
+      [TopUpProviderEnum.MoonPay]: moonPayError,
+      [TopUpProviderEnum.Utorg]: utorgError,
+      [TopUpProviderEnum.AliceBob]: aliceBobError,
+      [TopUpProviderEnum.BinanceConnect]: binanceConnectError
+    }),
+    [moonPayError, utorgError, aliceBobError, binanceConnectError]
+  );
+};

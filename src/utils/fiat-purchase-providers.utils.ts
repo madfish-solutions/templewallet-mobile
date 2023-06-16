@@ -3,9 +3,9 @@ import { BigNumber } from 'bignumber.js';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { ProviderErrors } from 'src/interfaces/buy-with-card';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
-
-import { isDefined } from './is-defined';
-import { isTruthy } from './is-truthy';
+import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
+import { isPositiveNumber } from 'src/utils/number.util';
 
 const isInRange = (min = 0, max = Infinity, inputAmount?: BigNumber | number) => {
   const inputAmountBN = isDefined(inputAmount) ? new BigNumber(inputAmount) : undefined;
@@ -33,6 +33,26 @@ export const getPaymentProvidersToDisplay = (
   providersLoading: Partial<Record<TopUpProviderEnum, boolean>>,
   inputAmount?: BigNumber | number
 ) => {
+  const filtered = filterPaymentProviders(allProviders, providersErrors, providersLoading, inputAmount);
+
+  if (filtered.length < 2) {
+    return filtered;
+  }
+
+  const sorted = filtered.sort(fiatPurchaseProvidersSortPredicate);
+
+  return sorted.map((provider, index) => ({
+    ...provider,
+    isBestPrice: index === 0 && isPositiveNumber(provider.outputAmount)
+  }));
+};
+
+const filterPaymentProviders = (
+  allProviders: PaymentProviderInterface[],
+  providersErrors: Partial<Record<TopUpProviderEnum, ProviderErrors>>,
+  providersLoading: Partial<Record<TopUpProviderEnum, boolean>>,
+  inputAmount?: BigNumber | number
+) => {
   const shouldFilterByLimitsDefined = allProviders.some(
     ({ minInputAmount, maxInputAmount }) => isDefined(minInputAmount) && isDefined(maxInputAmount)
   );
@@ -40,37 +60,17 @@ export const getPaymentProvidersToDisplay = (
     ({ outputAmount, id }) => isDefined(outputAmount) || providersLoading[id]
   );
 
-  const result = allProviders
-    .filter(({ id, minInputAmount, maxInputAmount, outputAmount }) => {
-      const errors = providersErrors[id];
-      const isError = isDefined(errors) && (isDefined(errors.currencies) || errors.output);
-      const limitsAreDefined = isDefined(minInputAmount) && isDefined(maxInputAmount);
-      const outputAmountIsLegit = isTruthy(outputAmount) && outputAmount > 0;
+  return allProviders.filter(({ id, minInputAmount, maxInputAmount, outputAmount }) => {
+    const errors = providersErrors[id];
+    const isError = isDefined(errors) && (isDefined(errors.currencies) || errors.output);
+    const limitsAreDefined = isDefined(minInputAmount) && isDefined(maxInputAmount);
+    const outputAmountIsLegit = isTruthy(outputAmount) && outputAmount > 0;
 
-      return (
-        isError === false &&
-        (!shouldFilterByLimitsDefined || limitsAreDefined) &&
-        (!shouldFilterByOutputAmount || outputAmountIsLegit || Boolean(providersLoading[id])) &&
-        isInRange(minInputAmount, maxInputAmount, inputAmount)
-      );
-    })
-    .sort(fiatPurchaseProvidersSortPredicate);
-
-  if (result.length < 2) {
-    return result;
-  }
-
-  let bestPriceOptionIndex = 0;
-  for (let i = 1; i < result.length; i++) {
-    const currentBestOutput = result[bestPriceOptionIndex].outputAmount ?? 0;
-    const currentOutput = result[i].outputAmount ?? 0;
-    if (currentOutput > currentBestOutput) {
-      bestPriceOptionIndex = i;
-    }
-  }
-
-  return result.map((provider, index) => ({
-    ...provider,
-    isBestPrice: index === bestPriceOptionIndex
-  }));
+    return (
+      isError === false &&
+      (!shouldFilterByLimitsDefined || limitsAreDefined) &&
+      (!shouldFilterByOutputAmount || outputAmountIsLegit || Boolean(providersLoading[id])) &&
+      isInRange(minInputAmount, maxInputAmount, inputAmount)
+    );
+  });
 };
