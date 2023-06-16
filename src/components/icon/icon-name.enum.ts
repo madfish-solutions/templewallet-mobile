@@ -6,6 +6,7 @@ export enum IconNameEnum {
   Bell = 'Bell',
   DetailsArrowUp = 'DetailsArrowUp',
   DetailsArrowDown = 'DetailsArrowDown',
+  DetailsArrowRight = 'DetailsArrowRight',
   CycleStatusInProgress = 'CycleStatusInProgress',
   CycleStatusUnlocked = 'CycleStatusUnlocked',
   CycleStatusLocked = 'CycleStatusLocked',
@@ -132,5 +133,8 @@ export enum IconNameEnum {
   SwapRouteItemBackground = 'SwapRouteItemBackground',
   Apple = 'Apple',
   AppleOnDark = 'AppleOnDark',
-  GoogleDrive = 'GoogleDrive'
+  GoogleDrive = 'GoogleDrive',
+  Smile = 'Smile',
+  SmileWithGlasses = 'SmileWithGlasses',
+  SmileWithDollar = 'SmileWithDollar'
 }

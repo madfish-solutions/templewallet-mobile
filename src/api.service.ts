@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { Platform } from 'react-native';
 
 import { concatUrlPath } from 'src/utils/url.utils';
 
 import {
+  APP_VERSION,
   TEMPLE_WALLET_API_URL,
   TEMPLE_WALLET_EVERSTAKE_API_KEY,
   TEMPLE_WALLET_EXOLIX_API_KEY,
@@ -40,4 +42,9 @@ export const everstakeApi = axios.create({
   }
 });
 
-export const optimalApi = axios.create({ baseURL: 'https://i.useoptimal.xyz' });
+export const optimalApi = axios.create({
+  baseURL: 'https://i.useoptimal.xyz',
+  headers: {
+    'User-Agent': `TempleWallet-${Platform.OS}/${APP_VERSION}`
+  }
+});

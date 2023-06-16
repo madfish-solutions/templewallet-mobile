@@ -5,7 +5,7 @@ import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
-import { DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
+import { PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -50,7 +50,9 @@ const addDcpTokensMetadataEpic: Epic = (action$: Observable<Action>, state$: Obs
       if (!existingMetadataSlugs.includes(APX_TOKEN_SLUG)) {
         const newTokensMetadata = { ...rootState.tokensMetadata.metadataRecord };
 
-        DCP_TOKENS_METADATA.forEach(tokenMetadata => (newTokensMetadata[getTokenSlug(tokenMetadata)] = tokenMetadata));
+        PREDEFINED_DCP_TOKENS_METADATA.forEach(
+          tokenMetadata => (newTokensMetadata[getTokenSlug(tokenMetadata)] = tokenMetadata)
+        );
 
         return [setNewTokensMetadata(newTokensMetadata)];
       }

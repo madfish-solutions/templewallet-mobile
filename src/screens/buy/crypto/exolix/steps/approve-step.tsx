@@ -200,7 +200,7 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
           </TouchableOpacity>
         </ScreenContainer>
       ) : !isDefined(exchangeData) ? (
-        <Text>Loading</Text>
+        <Text style={styles.loadingText}>Loading</Text>
       ) : (
         <ErrorComponent setIsError={setIsError} />
       )}

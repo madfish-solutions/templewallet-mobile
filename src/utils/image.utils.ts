@@ -4,15 +4,18 @@ const IPFS_PROTOCOL_PREFIX = 'ipfs://';
 const OBJKT_ORIGIN = 'https://assets.objkt.media/file';
 const OBJKT_RESIZE_3 = 'assets-003';
 
+const IPFS_GATE = 'https://cloudflare-ipfs.com/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net';
 const MEDIA_SIZE = 'small';
 
-export const formatImgUri = (origin = '') => {
+export const formatImgUri = (origin = '', shouldUseMediaHost = true) => {
   if (origin.startsWith('ipfs://')) {
-    return `${MEDIA_HOST}/media/${MEDIA_SIZE}/ipfs/${origin.substring(7)}`;
+    const ipfsId = origin.substring(7);
+
+    return shouldUseMediaHost ? `${MEDIA_HOST}/media/${MEDIA_SIZE}/ipfs/${ipfsId}` : `${IPFS_GATE}/${ipfsId}`;
   }
 
-  if (origin.startsWith('http')) {
+  if (origin.startsWith('http') && shouldUseMediaHost) {
     return `${MEDIA_HOST}/media/${MEDIA_SIZE}/web/${origin.replace(/^https?:\/\//, '')}`;
   }
 

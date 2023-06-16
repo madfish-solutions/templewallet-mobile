@@ -13,7 +13,7 @@ import {
 import { GetBinanceConnectCurrenciesResponse } from 'src/apis/temple-static';
 import { UTORG_CRYPTO_ICONS_BASE_URL, UTORG_FIAT_ICONS_BASE_URL } from 'src/apis/utorg/consts';
 import { CurrencyInfoType as UtorgCurrencyType, UtorgCurrencyInfo } from 'src/apis/utorg/types';
-import { LOCAL_MAINNET_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
+import { KNOWN_MAINNET_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { filterByStringProperty } from 'src/utils/array.utils';
 import { SVG_DATA_URI_UTF8_PREFIX } from 'src/utils/image.utils';
@@ -158,5 +158,5 @@ const getBinanceConnectCryptoCurrencyName = (code: string, address: string | nul
     return 'Tezos';
   }
 
-  return LOCAL_MAINNET_TOKENS_METADATA.find(m => m.address === address && m.id === 0)?.name ?? code;
+  return KNOWN_MAINNET_TOKENS_METADATA.find(m => m.address === address && m.id === 0)?.name ?? code;
 };

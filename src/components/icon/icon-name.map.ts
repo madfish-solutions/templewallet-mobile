@@ -40,6 +40,7 @@ import Delegate2Icon from './assets/delegate-2.svg';
 import Delegate3Icon from './assets/delegate-3.svg';
 import Delegate4Icon from './assets/delegate-4.svg';
 import DetailsArrowDownIcon from './assets/details-arrow-down.svg';
+import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
@@ -97,6 +98,9 @@ import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
+import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
+import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
+import SmileIcon from './assets/smile.svg';
 import DiscordIcon from './assets/socials/discord.svg';
 import RedditIcon from './assets/socials/reddit.svg';
 import TelegramIcon from './assets/socials/telegram.svg';
@@ -145,6 +149,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
+  [IconNameEnum.DetailsArrowRight]: DetailsArrowRightIcon,
   [IconNameEnum.OwnBlocks]: OwnBlocksIcon,
   [IconNameEnum.Endorsements]: EndorsementsIcon,
   [IconNameEnum.MissedEndorsements]: MissedEndorsementsIcon,
@@ -274,5 +279,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
-  [IconNameEnum.NFT]: NFT
+  [IconNameEnum.NFT]: NFT,
+  [IconNameEnum.Smile]: SmileIcon,
+  [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
 };

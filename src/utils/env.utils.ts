@@ -1,6 +1,10 @@
 // eslint-disable-next-line import/no-named-as-default
 import Config from 'react-native-config';
 
+import { version } from '../../package.json';
+
+export const APP_VERSION = version;
+
 const getEnv = (key: string): string => Config[key] ?? '';
 
 export const READ_ONLY_SIGNER_PUBLIC_KEY = getEnv('READ_ONLY_SIGNER_PUBLIC_KEY');
