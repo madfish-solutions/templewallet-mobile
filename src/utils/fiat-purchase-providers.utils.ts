@@ -62,12 +62,16 @@ const filterPaymentProviders = (
 
   return allProviders.filter(({ id, minInputAmount, maxInputAmount, outputAmount }) => {
     const errors = providersErrors[id];
-    const isError = isDefined(errors) && (isDefined(errors.currencies) || errors.output);
+    if (isDefined(errors)) {
+      if (isDefined(errors.currencies) || isDefined(errors.limits) || errors.output === true) {
+        return false;
+      }
+    }
+
     const limitsAreDefined = isDefined(minInputAmount) && isDefined(maxInputAmount);
     const outputAmountIsLegit = isTruthy(outputAmount) && outputAmount > 0;
 
     return (
-      isError === false &&
       (!shouldFilterByLimitsDefined || limitsAreDefined) &&
       (!shouldFilterByOutputAmount || outputAmountIsLegit || Boolean(providersLoading[id])) &&
       isInRange(minInputAmount, maxInputAmount, inputAmount)
