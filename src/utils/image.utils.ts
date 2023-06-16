@@ -1,4 +1,5 @@
 import { isString } from './is-string';
+import 'react-native-url-polyfill/auto';
 
 const IPFS_PROTOCOL_PREFIX = 'ipfs://';
 const OBJKT_ORIGIN = 'https://assets.objkt.media/file';

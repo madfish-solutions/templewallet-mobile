@@ -136,7 +136,7 @@ export const CollectibleItem: FC<Props> = ({ item, collectionContract, setWidth 
   const buttonText = () => {
     if (isOffersExisted) {
       if (isHolder) {
-        return `Sell for ${highestOffer}`;
+        return `Sell for ${Number(highestOffer).toFixed(2)}`;
       } else {
         return 'Make offer';
       }
