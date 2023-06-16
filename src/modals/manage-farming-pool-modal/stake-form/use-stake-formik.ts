@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { object as objectSchema, SchemaOf } from 'yup';
+import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
 import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
@@ -24,8 +24,9 @@ import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { createStakeOperationParams } from './create-stake-operation-params';
 import { useFarmTokens } from './use-farm-tokens';
 
-interface StakeFormValues {
+export interface StakeFormValues {
   assetAmount: AssetAmountInterface;
+  acceptRisks: boolean;
 }
 
 export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => {
@@ -45,7 +46,8 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
       assetAmount: {
         asset: farmTokens[0] ?? emptyTezosLikeToken,
         amount: undefined
-      }
+      },
+      acceptRisks: false
     }),
     [farmTokens]
   );
@@ -53,7 +55,8 @@ export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => 
   const validationSchema = useMemo<SchemaOf<StakeFormValues>>(
     () =>
       objectSchema().shape({
-        assetAmount: createAssetAmountWithMaxValidation(gasToken, EXPECTED_STAKING_GAS_EXPENSE)
+        assetAmount: createAssetAmountWithMaxValidation(gasToken, EXPECTED_STAKING_GAS_EXPENSE),
+        acceptRisks: booleanSchema().oneOf([true], 'Accept risks before depositing').required()
       }),
     [gasToken]
   );

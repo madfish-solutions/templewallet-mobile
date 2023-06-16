@@ -106,7 +106,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
         {farm.item.type === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
-        {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(SECONDS_IN_DAY) && <Bage text="Long-Term Farm" />}
+        {Number(farm.item.vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
@@ -132,7 +132,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         </View>
 
         <View style={styles.row}>
-          {new BigNumber(depositAmountAtomic).isGreaterThan(DEFAULT_AMOUNT) ? (
+          {depositAmountAtomic.isGreaterThan(DEFAULT_AMOUNT) ? (
             <>
               <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
               <Divider size={formatSize(8)} />

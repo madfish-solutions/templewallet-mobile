@@ -14,6 +14,7 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { TokenDropdownItem } from 'src/components/token-dropdown/token-dropdown-item/token-dropdown-item';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormDropdown } from 'src/form/form-dropdown';
+import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -22,7 +23,9 @@ import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
+import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
+import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
 import { useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
 import { useWithdrawFormik, WithdrawTokenOption } from './use-withdraw-formik';
@@ -82,6 +85,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
     [tokensOptions, tokenSearchValue]
   );
   const styles = useWithdrawFormStyles();
+  const stakesLoading = useStakesLoadingSelector();
 
   const handleTokenOptionChange = useCallback(() => void setFieldTouched('tokenOption', true), [setFieldTouched]);
 
@@ -112,6 +116,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
       balance: stake?.depositAmountAtomic ?? '0',
       visibility: VisibilityEnum.Visible,
       id: stakedToken.fa2TokenId ?? 0,
+      iconName: IconNameEnum.NoNameToken,
       decimals: stakedToken.metadata.decimals,
       symbol: 'Shares',
       name: '',
@@ -173,6 +178,14 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
           testID={ManageFarmingPoolModalSelectors.tokenSelector}
         />
       </View>
+      <Divider size={formatSize(16)} />
+      <DetailsSection
+        farm={farm.item}
+        stake={stake}
+        shouldShowClaimRewardsButton={false}
+        loading={stakesLoading && !isDefined(stake)}
+      />
+      <VestingPeriodDisclaimers farm={farm.item} />
     </FormikProvider>
   );
 };

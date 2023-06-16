@@ -1,11 +1,11 @@
 import { useButtonLargePrimaryStyleConfig } from 'src/components/button/button-large/button-large-primary/button-large-primary.styles';
 import { useButtonLargeSecondaryStyleConfig } from 'src/components/button/button-large/button-large-secondary/button-large-secondary.styles';
 import { black } from 'src/config/styles';
-import { createUseStyles, createUseStylesConfig } from 'src/styles/create-use-styles';
+import { createUseStylesConfig, createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
-export const useFarmItemStyles = createUseStyles(({ colors, typography }) => ({
+export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
     ...generateShadow(2, black),
     borderRadius: formatSize(10),
