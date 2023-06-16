@@ -6,7 +6,13 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
 import { setNewTokensMetadata } from '../migration/migration-actions';
-import { addTokensMetadataAction, loadTokenSuggestionActions, loadWhitelistAction } from './tokens-metadata-actions';
+import {
+  addKnownSvg,
+  addTokensMetadataAction,
+  loadTokenSuggestionActions,
+  loadWhitelistAction,
+  removeKnownSvg
+} from './tokens-metadata-actions';
 import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metadata-state';
 
 export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadataInitialState, builder => {
@@ -67,6 +73,21 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
   builder.addCase(loadTokenSuggestionActions.fail, (state, { payload: error }) => ({
     ...state,
     addTokenSuggestion: createEntity(emptyTokenMetadata, false, error)
+  }));
+
+  builder.addCase(addKnownSvg, (state, { payload: url }) => ({
+    ...state,
+    knownSvgs: {
+      ...state.knownSvgs,
+      [url]: true
+    }
+  }));
+  builder.addCase(removeKnownSvg, (state, { payload: url }) => ({
+    ...state,
+    knownSvgs: {
+      ...state.knownSvgs,
+      [url]: false
+    }
   }));
 
   // MIGRATIONS
