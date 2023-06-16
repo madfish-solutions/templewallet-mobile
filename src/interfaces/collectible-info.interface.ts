@@ -42,4 +42,13 @@ export interface CollectibleInfo {
       name: string;
     };
   }[];
+  listings_active: {
+    bigmap_key: number;
+    currency_id: number;
+    price: number;
+    marketplace_contract: string;
+    currency: {
+      type: string;
+    };
+  }[];
 }

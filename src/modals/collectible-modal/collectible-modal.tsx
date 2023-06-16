@@ -1,8 +1,8 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/core';
+import { BigNumber } from 'bignumber.js';
 import React, { useCallback, useMemo, useState } from 'react';
-import { Dimensions, Share, Text, View } from 'react-native';
+import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
@@ -20,8 +20,9 @@ import { TextSegmentControl } from '../../components/segmented-control/text-segm
 import { TouchableWithAnalytics } from '../../components/touchable-with-analytics';
 import { useCollectibleInfo } from '../../hooks/collectible-info/use-collectible-info.hook';
 import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
+import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
+import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
@@ -35,6 +36,7 @@ import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { getTruncatedProps } from '../../utils/style.util';
+import { mutezToTz } from '../../utils/tezos.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
@@ -64,9 +66,7 @@ export const CollectibleModal = () => {
   const { width } = Dimensions.get('window');
   const iconSize = width - formatSize(32);
 
-  const { navigate } = useNavigation();
-
-  const burnCollectible = useBurnCollectible(collectible);
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
 
@@ -74,8 +74,23 @@ export const CollectibleModal = () => {
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
 
-  const { fa, creators, description, metadata, timestamp, royalties, supply, attributes, galleries, mime } =
-    collectibleInfo;
+  const burnCollectible = useBurnCollectible(collectible);
+
+  const { handleSubmit, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
+
+  const {
+    fa,
+    creators,
+    description,
+    metadata,
+    timestamp,
+    royalties,
+    supply,
+    attributes,
+    galleries,
+    listings_active,
+    mime
+  } = collectibleInfo;
 
   const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
 
@@ -92,6 +107,24 @@ export const CollectibleModal = () => {
   const { trackEvent } = useAnalytics();
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
+
+  const submitButtonTitle = useMemo(() => {
+    if (isLoading) {
+      return '...';
+    }
+
+    if (isUserOwnerCurrentCollectible) {
+      return 'Send';
+    }
+
+    if (!isNonEmptyArray(listings_active)) {
+      return 'Not listed';
+    }
+
+    const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
+
+    return `Buy for ${price.toFixed(2)} ${purchaseCurrency.symbol}`;
+  }, [isUserOwnerCurrentCollectible, listings_active, isLoading]);
 
   const collectionLogo = useMemo(() => {
     if (fa.logo) {
@@ -144,8 +177,9 @@ export const CollectibleModal = () => {
       fixedFooterContainer={{
         submitButton: (
           <ButtonLargePrimary
-            title="Send"
-            onPress={() => navigate(ModalsEnum.Send, { token: collectible })}
+            disabled={isLoading || (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listings_active))}
+            title={submitButtonTitle}
+            onPress={handleSubmit}
             testID={CollectibleModalSelectors.sendButton}
           />
         )
@@ -239,17 +273,19 @@ export const CollectibleModal = () => {
           <CollectibleAttributes attributes={filteredAttributes} />
         )}
 
-        <View style={styles.burnContainer}>
-          <TouchableWithAnalytics
-            Component={TouchableOpacity}
-            onPress={burnCollectible}
-            style={styles.burnButton}
-            testID={CollectibleModalSelectors.burnButton}
-          >
-            <Text style={styles.burnButtonText}>Burn Nft</Text>
-            <Icon name={IconNameEnum.Burn} />
-          </TouchableWithAnalytics>
-        </View>
+        {isUserOwnerCurrentCollectible && (
+          <View style={styles.burnContainer}>
+            <TouchableWithAnalytics
+              Component={TouchableOpacity}
+              onPress={burnCollectible}
+              style={styles.burnButton}
+              testID={CollectibleModalSelectors.burnButton}
+            >
+              <Text style={styles.burnButtonText}>Burn Nft</Text>
+              <Icon name={IconNameEnum.Burn} />
+            </TouchableWithAnalytics>
+          </View>
+        )}
       </View>
     </ScreenContainer>
   );
