@@ -10,6 +10,7 @@ import {
 } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { isEmptyPromotion } from 'src/utils/optimal.utils';
 
+import { mockPartnersPromotion } from '../../store/partners-promotion/partners-promotion-state.mock';
 import { PromotionItem } from '../promotion-item/promotion-item';
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
@@ -39,7 +40,10 @@ export const OptimalPromotionItem: FC<Props> = ({
     return null;
   }
 
-  if (isEmptyPromotion(partnersPromotion)) {
+  if (
+    isEmptyPromotion(partnersPromotion) ||
+    JSON.stringify(mockPartnersPromotion) === JSON.stringify(partnersPromotion)
+  ) {
     onEmptyPromotionReceived?.();
 
     return null;

@@ -82,6 +82,28 @@ export const TokensList: FC = () => {
     trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
   }, []);
 
+  useEffect(() => {
+    const listener = () => {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
+      setPromotionErrorOccurred(false);
+    };
+
+    if (partnersPromotionEnabled) {
+      addNavigationListener('focus', listener);
+    }
+
+    return () => {
+      removeNavigationListener('focus', listener);
+    };
+  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromotionEnabled]);
+
+  useEffect(() => {
+    if (partnersPromotionEnabled) {
+      dispatch(loadAdvertisingPromotionActions.submit());
+      optimalFetchEnableAds(publicKeyHash);
+    }
+  }, [partnersPromotionEnabled]);
+
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,
@@ -112,18 +134,6 @@ export const TokensList: FC = () => {
     searchValue
   ]);
 
-  useEffect(() => {
-    const listener = () => {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
-      setPromotionErrorOccurred(false);
-    };
-    addNavigationListener('focus', listener);
-
-    return () => {
-      removeNavigationListener('focus', listener);
-    };
-  }, [dispatch, addNavigationListener, removeNavigationListener]);
-
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
   const handleDisableBannerButton = () => {
@@ -135,13 +145,6 @@ export const TokensList: FC = () => {
     dispatch(togglePartnersPromotionAction(true));
     dispatch(setAdsBannerVisibilityAction(false));
   };
-
-  useEffect(() => {
-    if (partnersPromotionEnabled) {
-      dispatch(loadAdvertisingPromotionActions.submit());
-      optimalFetchEnableAds(publicKeyHash);
-    }
-  }, [partnersPromotionEnabled, publicKeyHash]);
 
   const renderItem: ListRenderItem<FlatListItem> = useCallback(
     ({ item }) => {

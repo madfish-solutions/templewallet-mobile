@@ -55,8 +55,13 @@ export const TokenScreen = () => {
         slug: getTokenSlug(token)
       })
     );
-    dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
   }, []);
+
+  useEffect(() => {
+    if (partnersPromotionEnabled) {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
+    }
+  }, [partnersPromotionEnabled]);
 
   const { activities, handleUpdate } = useContractActivity(getTokenSlug(initialToken));
 
