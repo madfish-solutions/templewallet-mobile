@@ -1,6 +1,6 @@
 import { TokenSymbol } from './token';
 
-export enum TokenType {
+enum TokenType {
   NATIVE = 0,
   FA1p2 = 1,
   FA2 = 2
@@ -45,7 +45,7 @@ export interface Farm {
   swapAddress?: string;
 }
 
-export interface FlatYouvesExchangeInfo {
+interface FlatYouvesExchangeInfo {
   token1: Token;
   token2: Token;
   dexType: DexType.FLAT_CURVE;
@@ -53,7 +53,7 @@ export interface FlatYouvesExchangeInfo {
   liquidityToken: Token;
 }
 
-export interface CheckerExchangeInfo {
+interface CheckerExchangeInfo {
   token1: Token;
   token2: Token;
   dexType: DexType.CHECKER;
@@ -61,7 +61,7 @@ export interface CheckerExchangeInfo {
   liquidityToken: Token;
 }
 
-export interface QuipuswapExchangeInfo {
+interface QuipuswapExchangeInfo {
   token1: Token;
   token2: Token;
   dexType: DexType.QUIPUSWAP;
@@ -69,7 +69,7 @@ export interface QuipuswapExchangeInfo {
   liquidityToken: Token;
 }
 
-export interface PlentyExchangeInfo {
+interface PlentyExchangeInfo {
   token1: Token;
   token2: Token;
   dexType: DexType.PLENTY;
@@ -78,56 +78,6 @@ export interface PlentyExchangeInfo {
 }
 
 export type ExchangePair = FlatYouvesExchangeInfo | CheckerExchangeInfo | QuipuswapExchangeInfo | PlentyExchangeInfo;
-
-export interface TargetOracle {
-  address: string;
-  decimals: number;
-  entrypoint: string;
-  isView?: boolean;
-}
-
-export interface CollateralInfo {
-  isLatest: boolean;
-  collateralTarget: number;
-  collateralWarning: number;
-  collateralEmergency: number;
-  token: Token;
-  targetOracle: TargetOracle;
-  ORACLE_SYMBOL: string;
-  ENGINE_ADDRESS: string;
-  ENGINE_TYPE: EngineType;
-  OPTIONS_LISTING_ADDRESS: string;
-  SUPPORTS_BAILOUT: boolean;
-  SUPPORTS_CONVERSION: boolean;
-  HAS_OBSERVED_PRICE: boolean;
-  migrationPeriodEndTimestamp?: number;
-  new?: boolean;
-  infoBadge?: string;
-}
-
-export interface AssetMetadata {
-  targetSymbol: string;
-  impliedPrice: number;
-  new: boolean;
-  doubleRewards: string;
-}
-
-export type AssetDefinition = {
-  id: AssetField;
-  symbol: AssetField;
-  metadata: AssetMetadata;
-  collateralOptions: CollateralInfo[];
-  token: Token;
-  governanceToken: Token;
-  REWARD_POOL_ADDRESS: string;
-  SAVINGS_POOL_ADDRESS: string;
-  SAVINGS_V2_POOL_ADDRESS: string;
-  SAVINGS_V3_POOL_ADDRESS: string;
-  SAVINGS_V2_VESTING_ADDRESS: string;
-  GOVERNANCE_DEX: string;
-  DEX: ExchangePair[];
-};
-
 export interface NetworkConstants {
   fakeAddress: string;
   natViewerCallback: string;
@@ -138,20 +88,6 @@ export interface NetworkConstants {
   dexes: ExchangePair[];
   unifiedStaking: string;
   ctezTezDex: string;
-}
-export interface Assets {
-  mainnet: AssetDefinition[];
-  ithacanet: AssetDefinition[];
-}
-
-export type AssetField = 'uUSD' | 'uDEFI' | 'uBTC' | 'cCHF' | 'uXTZ';
-
-export enum EngineType {
-  TRACKER_V1 = 'tracker-v1',
-  TRACKER_V2 = 'tracker-v2',
-  TRACKER_V3 = 'tracker-v3',
-  TRACKER_V3_0 = 'tracker-v3-0',
-  CHECKER_V1 = 'checker-v1'
 }
 
 export enum DexType {
@@ -611,20 +547,6 @@ export const uxtzxtzLP: Omit<Token, 'contractAddress'> = {
   unit: 'uxtzxtzLP',
   impliedPrice: 1,
   tokenId: 0,
-  decimalPlaces: 2,
-  inputDecimalPlaces: 4
-};
-export const uxtzusdtLP: Omit<Token, 'contractAddress'> = {
-  id: 'uxtzusdtLP',
-  type: TokenType.FA2,
-  name: 'uXTZ/USDt LP',
-  shortName: 'uXTZ/USDt LP',
-  decimals: 12, //TODO UXTZ
-  symbol: 'uxtzusdtLP',
-  targetSymbol: 'uXTZ/USDt LP',
-  unit: 'uxtzusdtLP',
-  impliedPrice: 1,
-  tokenId: 0, //TODO UXTZ
   decimalPlaces: 2,
   inputDecimalPlaces: 4
 };
