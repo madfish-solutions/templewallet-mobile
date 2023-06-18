@@ -5,8 +5,8 @@ export const contracts = {
   ithacanet: [emptyObject]
 };
 
-jest.mock('youves-sdk/src/networks', () => ({ contracts }));
-jest.mock('youves-sdk/src/networks.mainnet', () => emptyObject);
-jest.mock('youves-sdk/src/public', () => emptyObject);
-jest.mock('youves-sdk/src/staking/unified-staking', () => emptyObject);
-jest.mock('youves-sdk/src/networks.base', () => emptyObject);
+jest.mock('youves-sdk', () => ({ contracts }));
+// jest.mock('youves-sdk/src/networks.mainnet', () => emptyObject);
+jest.mock('youves-sdk', () => emptyObject);
+jest.mock('youves-sdk', () => emptyObject);
+// jest.mock('youves-sdk/src/networks.base', () => emptyObject);
