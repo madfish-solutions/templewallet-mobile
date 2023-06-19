@@ -20,6 +20,8 @@ import { CollectibleItem } from './components/collectible-item';
 const COLLECTIBLE_SIZE = 327;
 const PAGINATION_STEP = 15;
 
+const keyExtractor = (item: TokenInterface) => `${item.address}_${item.id}`;
+
 export const Collection = () => {
   const styles = useCollectionStyles();
   const selectedAccount = useSelectedAccountSelector();
@@ -73,8 +75,6 @@ export const Collection = () => {
       <DataPlaceholder text="Not found any NFT" />
     </View>
   );
-
-  const keyExtractor = useCallback(item => `${item.address}_${item.id}`, []);
 
   return (
     <ScrollView style={styles.root}>
