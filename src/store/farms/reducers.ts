@@ -36,6 +36,7 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   builder.addCase(loadAllFarmsAndStakesAction, state => ({
     ...state,
     allFarms: createEntity(state.allFarms.data, true),
+    lastStakes: {},
     stakesLoading: true
   }));
   builder.addCase(loadAllFarmsActions.submit, state => ({

@@ -1,8 +1,7 @@
-import { black } from 'src/config/styles';
-import { createUseStyles } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
-export const useManageFarmingPoolModalStyles = createUseStyles(({ colors, typography }) => ({
+export const useManageFarmingPoolModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
   background: {
     backgroundColor: colors.pageBG,
     flex: 1,
@@ -28,7 +27,7 @@ export const useManageFarmingPoolModalStyles = createUseStyles(({ colors, typogr
   disclaimerDescriptionText: {
     ...typography.caption13Regular,
     letterSpacing: formatSize(-0.08),
-    lineHeight: formatSize(18),
+    lineHeight: formatTextSize(18),
     color: colors.black
   },
   emphasized: {
@@ -38,23 +37,6 @@ export const useManageFarmingPoolModalStyles = createUseStyles(({ colors, typogr
     flexDirection: 'row',
     alignItems: 'center',
     gap: formatSize(8)
-  },
-  farmTypeIconWrapper: {
-    padding: formatSize(4),
-    borderRadius: formatSize(4),
-    borderWidth: formatSize(0.5),
-    borderColor: colors.lines
-  },
-  quipuswapIconWrapper: {
-    backgroundColor: black
-  },
-  liquidityBakingIconWrapper: {
-    backgroundColor: colors.blue
-  },
-  detailsTitleText: {
-    ...typography.body15Semibold,
-    color: colors.black,
-    letterSpacing: formatSize(-0.24)
   },
   restContainer: {
     flex: 1

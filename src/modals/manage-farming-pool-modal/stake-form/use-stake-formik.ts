@@ -1,7 +1,7 @@
 import { useFormik } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { object as objectSchema, SchemaOf } from 'yup';
+import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
@@ -24,8 +24,9 @@ import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 import { createStakeOperationParams } from './create-stake-operation-params';
 
-interface StakeFormValues {
+export interface StakeFormValues {
   assetAmount: AssetAmountInterface;
+  acceptRisks: boolean;
 }
 
 export const useStakeFormik = (farmId: string, contractAddress: string) => {
@@ -45,7 +46,8 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
       assetAmount: {
         asset: stakeTokens[0] ?? emptyTezosLikeToken,
         amount: undefined
-      }
+      },
+      acceptRisks: false
     }),
     [stakeTokens]
   );
@@ -56,7 +58,8 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
         assetAmount: createAssetAmountWithMaxValidation(
           gasToken,
           farm?.item.type === FarmPoolTypeEnum.STABLESWAP ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE : undefined
-        )
+        ),
+        acceptRisks: booleanSchema().oneOf([true], 'Accept risks before depositing').required()
       }),
     [gasToken, farm?.item.type]
   );

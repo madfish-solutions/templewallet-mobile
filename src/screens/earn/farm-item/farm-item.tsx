@@ -27,17 +27,16 @@ import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { useButtonPrimaryStyleConfig, useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
+import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
+import { DEFAULT_AMOUNT, DEFAULT_DECIMALS } from '../constants';
+import { useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
 
 interface Props {
   farm: SingleFarmResponse;
   lastStakeRecord?: UserStakeValueInterface;
 }
 
-const STABLESWAP_FARM_PRECISION = 18;
-const DEFAULT_AMOUNT = 0;
 const DEFAULT_EXHANGE_RATE = 1;
-const DEFAULT_DECIMALS = 2;
 const SECONDS_IN_DAY = 86400;
 
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
@@ -49,7 +48,6 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
   const isLiquidityBaking = farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING;
-  const farmPrecision = isLiquidityBaking ? 0 : STABLESWAP_FARM_PRECISION;
 
   const apy = useMemo(
     () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
@@ -58,19 +56,21 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
 
   const depositAmountAtomic = useMemo(
     () =>
-      mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), farmPrecision).multipliedBy(
-        farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE
-      ),
-    [lastStakeRecord?.depositAmountAtomic]
+      mutezToTz(
+        new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT),
+        farm.item.stakedToken.metadata.decimals
+      ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE),
+    [lastStakeRecord?.depositAmountAtomic, farm.item]
   );
   const depositIsZero = depositAmountAtomic.isZero();
 
   const claimableRewardsAtomic = useMemo(
     () =>
-      mutezToTz(new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT), farmPrecision).multipliedBy(
-        farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE
-      ),
-    [lastStakeRecord?.claimableRewards]
+      mutezToTz(
+        new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
+        farm.item.rewardToken.metadata.decimals
+      ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE),
+    [lastStakeRecord?.claimableRewards, farm.item]
   );
 
   const navigateToFarm = useCallback(
@@ -112,7 +112,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         {farm.item.type === FarmPoolTypeEnum.STABLESWAP && (
           <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />
         )}
-        {new BigNumber(farm.item.vestingPeriodSeconds).isGreaterThan(SECONDS_IN_DAY) && <Bage text="Long-Term Farm" />}
+        {Number(farm.item.vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
