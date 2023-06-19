@@ -46,11 +46,11 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   const isHolder = holders.includes(selectedPublicKeyHash);
   const isOffersExisted = isDefined(item.highestOffer);
 
-  const listedByUser = item.listed ?? 0;
+  const listedByUser = item.listedAmount ?? 0;
   const quantityByUser = item?.holders?.find(holder => holder.holder_address === selectedPublicKeyHash)?.quantity ?? 0;
 
   const isAbleToList = quantityByUser > listedByUser;
-  const isListed = isDefined(item.listed) && item.listed !== 0;
+  const isListed = isDefined(item.listedAmount) && item.listedAmount !== 0;
 
   const handleList = () => openUrl(navigateToObjktForBuy(collectionContract, item.id));
 

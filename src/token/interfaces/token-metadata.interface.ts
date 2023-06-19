@@ -50,7 +50,7 @@ interface CollectibleMetadataInterface {
   metadata?: string;
   editions?: number;
   holders?: HolderInfo[];
-  listed?: number;
+  listedAmount?: number;
   lastPrice?: { price: number | null | undefined } & Omit<CurrencyInfo, 'contract' | 'id'>;
   items?: number;
   listing_active?: Listing[];
