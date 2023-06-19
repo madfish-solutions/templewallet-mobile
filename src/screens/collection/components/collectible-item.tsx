@@ -8,7 +8,6 @@ import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -41,15 +40,18 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
     : 'No offers yet';
 
   const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holder_address) ?? [];
-  const isHolder = holders.includes(selectedPublicKeyHash);
+  const isHolder = useMemo(() => holders.includes(selectedPublicKeyHash), [selectedPublicKeyHash]);
   const isOffersExisted = isDefined(item.highestOffer);
 
   const listedByUser = item.listed ?? 0;
-  const quantityByUser = item?.holders?.find(holder => holder.holder_address === selectedPublicKeyHash)?.quantity ?? 0;
+  const quantityByUser = useMemo(
+    () => item?.holders?.find(holder => holder.holder_address === selectedPublicKeyHash)?.quantity ?? 0,
+    [selectedPublicKeyHash, item]
+  );
 
   const isAbleToList = quantityByUser > listedByUser;
 
-  const handleList = () => openUrl(navigateToObjktForBuy(collectionContract, item.id));
+  const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
 
   return (
     <View style={styles.collectibleContainer}>
