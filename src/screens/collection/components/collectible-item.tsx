@@ -50,7 +50,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   const quantityByUser = item?.holders?.find(holder => holder.holder_address === selectedPublicKeyHash)?.quantity ?? 0;
 
   const isAbleToList = quantityByUser > listedByUser;
-  const isListed = item.listed !== undefined && item.listed !== 0;
+  const isListed = isDefined(item.listed) && item.listed !== 0;
 
   const handleList = () => openUrl(navigateToObjktForBuy(collectionContract, item.id));
 
