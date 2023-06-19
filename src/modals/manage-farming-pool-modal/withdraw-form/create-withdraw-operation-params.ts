@@ -1,21 +1,22 @@
 import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
+import { firstValueFrom } from 'rxjs';
 
 import { calculateUnstakeParams } from 'src/apis/liquidity-baking';
 import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
 import { TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
 import { ROUTE3_CONTRACT, ROUTING_FEE_ADDRESS } from 'src/config/swap';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
+import { AccountInterface } from 'src/interfaces/account.interface';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { SingleFarmResponse } from 'src/types/single-farm-response';
-import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { convertFarmToken } from 'src/utils/staking.utils';
 import { getSwapTransferParams } from 'src/utils/swap.utils';
-import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
+import { getTransferParams$, parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
 
 import { STABLESWAP_REFERRAL } from '../constants';
 
@@ -23,11 +24,12 @@ export const createWithdrawOperationParams = async (
   farm: SingleFarmResponse,
   tokenIndex: number,
   tezos: TezosToolkit,
-  accountPkh: string,
+  account: AccountInterface,
   stake: UserStakeValueInterface,
   slippageTolerancePercentage: number,
   lpAmount?: BigNumber
 ) => {
+  const { publicKeyHash: accountPkh } = account;
   const { contractAddress: farmAddress, stakedToken } = farm.item;
   const poolAddress = farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING ? farmAddress : stakedToken.contractAddress;
   const poolContract = await getReadOnlyContract(poolAddress, tezos);
@@ -63,15 +65,15 @@ export const createWithdrawOperationParams = async (
         )
         .toTransferParams({ mutez: true });
 
-      const transferDevFeeParams = isDefined(threeRouteFromToken.contract)
-        ? (await getReadOnlyContract(threeRouteFromToken.contract, tezos)).methods
-            .transfer(accountPkh, ROUTING_FEE_ADDRESS, routingFeeAtomic.toNumber())
-            .toTransferParams({ mutez: true })
-        : {
-            to: ROUTING_FEE_ADDRESS,
-            amount: routingFeeAtomic.toNumber(),
-            mutez: true
-          };
+      const transferDevFeeParams = await firstValueFrom(
+        getTransferParams$(
+          { address: threeRouteFromToken.contract ?? '', id: 0 },
+          tezos.rpc.getRpcUrl(),
+          account,
+          ROUTING_FEE_ADDRESS,
+          routingFeeAtomic
+        )
+      );
 
       const swapContract = await getReadOnlyContract(ROUTE3_CONTRACT, tezos);
       const threeRouteSwapOpParams = await getSwapTransferParams(
@@ -121,7 +123,7 @@ export const createWithdrawOperationParams = async (
       transferParams = [withdrawTransferParams, divestOneCoinTransferParams, ...burnWTezParams];
       break;
     default:
-      throw new Error('Non-stableswap pools are not supported');
+      throw new Error('Unsupported farm type');
   }
 
   return transferParams.map(parseTransferParamsToParamsWithKind).flat();

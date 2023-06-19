@@ -1,8 +1,9 @@
 import { ContractAbstraction, ContractProvider, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { APP_ID, ROUTE3_CONTRACT, ROUTING_FEE_RATIO, ZERO } from 'src/config/swap';
+import { APP_ID, LIQUIDITY_BAKING_PROXY_CONTRACT, ROUTE3_CONTRACT, ROUTING_FEE_RATIO, ZERO } from 'src/config/swap';
 import { Route3Chain, Route3Token } from 'src/interfaces/route3.interface';
+import { TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 
 import { mapToRoute3ExecuteHops } from './route3.util';
 import { getTransferPermissions } from './transfer-permissions.util';
@@ -66,6 +67,25 @@ export const getRoutingFeeTransferParams = async (
   return [];
 };
 
+export const withTransferPermissions = async (
+  transferParams: TransferParams[],
+  tezos: TezosToolkit,
+  accountPkh: string,
+  fromRoute3Token: Route3Token,
+  inputAmountAtomic: BigNumber,
+  spender: string
+) => {
+  const { approve, revoke } = await getTransferPermissions(
+    tezos,
+    spender,
+    accountPkh,
+    fromRoute3Token,
+    inputAmountAtomic
+  );
+
+  return [...approve, ...transferParams, ...revoke];
+};
+
 export const getSwapTransferParams = async (
   fromRoute3Token: Route3Token,
   toRoute3Token: Route3Token,
@@ -76,9 +96,7 @@ export const getSwapTransferParams = async (
   accountPkh: string,
   swapContract: ContractAbstraction<ContractProvider>
 ) => {
-  const resultParams: Array<TransferParams> = [];
-
-  const swapOpParams = swapContract.methods.execute(
+  const swapMethod = swapContract.methods.execute(
     fromRoute3Token.id,
     toRoute3Token.id,
     minimumReceivedAtomic,
@@ -87,29 +105,56 @@ export const getSwapTransferParams = async (
     APP_ID
   );
 
-  if (fromRoute3Token.symbol.toLowerCase() === 'xtz') {
-    resultParams.push(
-      swapOpParams.toTransferParams({
-        amount: inputAmountAtomic.toNumber(),
-        mutez: true
-      })
-    );
-  } else {
-    resultParams.push(swapOpParams.toTransferParams());
-  }
+  const swapOpParams = swapMethod.toTransferParams({
+    amount: fromRoute3Token.symbol.toLowerCase() === 'xtz' ? inputAmountAtomic.toNumber() : 0,
+    mutez: true
+  });
 
-  const { approve, revoke } = await getTransferPermissions(
+  return await withTransferPermissions(
+    [swapOpParams],
     tezos,
-    ROUTE3_CONTRACT,
     accountPkh,
     fromRoute3Token,
-    inputAmountAtomic
+    inputAmountAtomic,
+    ROUTE3_CONTRACT
+  );
+};
+
+export const getLiquidityBakingTransferParams = async (
+  fromRoute3Token: Route3Token,
+  toRoute3Token: Route3Token,
+  inputAmountAtomic: BigNumber,
+  minimumReceivedAtomic: BigNumber,
+  tzbtcChains: Array<Route3Chain>,
+  xtzChains: Array<Route3Chain>,
+  tezos: TezosToolkit,
+  accountPkh: string,
+  liquidityBakingProxyContract: ContractAbstraction<ContractProvider>
+) => {
+  const swapMethod = liquidityBakingProxyContract.methods.swap(
+    fromRoute3Token.id,
+    toRoute3Token.id,
+    mapToRoute3ExecuteHops(xtzChains, TZBTC_TOKEN_METADATA.decimals),
+    mapToRoute3ExecuteHops(tzbtcChains, TEZ_TOKEN_METADATA.decimals),
+    inputAmountAtomic,
+    minimumReceivedAtomic,
+    accountPkh,
+    APP_ID
   );
 
-  resultParams.unshift(...approve);
-  resultParams.push(...revoke);
+  const swapOpParams = swapMethod.toTransferParams({
+    amount: fromRoute3Token.symbol.toLowerCase() === 'xtz' ? inputAmountAtomic.toNumber() : 0,
+    mutez: true
+  });
 
-  return resultParams;
+  return await withTransferPermissions(
+    [swapOpParams],
+    tezos,
+    accountPkh,
+    fromRoute3Token,
+    inputAmountAtomic,
+    LIQUIDITY_BAKING_PROXY_CONTRACT
+  );
 };
 
 export const calculateSlippageRatio = (slippageTolerancePercentage: number) =>

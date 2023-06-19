@@ -3,6 +3,7 @@ import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
@@ -11,7 +12,7 @@ import { toTokenSlug } from 'src/token/utils/token.utils';
 import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { isDefined } from 'src/utils/is-defined';
 
-import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
+import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { useStakeFormStyles } from './styles';
 import { useStakeFormik } from './use-stake-formik';
@@ -71,7 +72,9 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik }) => {
           name="assetAmount"
           label="Amount"
           balanceValueStyles={styles.balanceText}
-          expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
+          expectedGasExpense={
+            farm.item.type === FarmPoolTypeEnum.STABLESWAP ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE : undefined
+          }
           isSearchable
           maxButton
           assetsList={filteredAssetsList}

@@ -101,6 +101,19 @@ export const getLiquidityBakingFarm = async (
   };
 };
 
+export const getThreeRouteLbTokens = async () => {
+  const allTokens = await firstValueFrom(fetchRoute3Tokens$());
+  const tezToken = allTokens.find(({ symbol }) => symbol === 'XTZ');
+  const tzBTCToken = allTokens.find(({ symbol }) => symbol === 'TZBTC');
+  const sirsToken = allTokens.find(({ symbol }) => symbol === 'SIRS');
+
+  if (!isDefined(tezToken) || !isDefined(tzBTCToken) || !isDefined(sirsToken)) {
+    throw new Error('Failed to find at least one of XTZ, tzBTC and SIRS tokens in Route3 tokens list');
+  }
+
+  return { tezToken, tzBTCToken, sirsToken };
+};
+
 export const calculateUnstakeParams = async (
   tezos: TezosToolkit,
   outputTokenIndexes: number[],
@@ -111,13 +124,7 @@ export const calculateUnstakeParams = async (
   const divestMutezAmount = xtzPool.times(lpAmount).dividedToIntegerBy(lqtTotal);
   const divestTzBTCAmount = tokenPool.times(lpAmount).dividedToIntegerBy(lqtTotal);
 
-  const allTokens = await firstValueFrom(fetchRoute3Tokens$());
-  const tezToken = allTokens.find(({ symbol }) => symbol === 'XTZ');
-  const tzBTCToken = allTokens.find(({ symbol }) => symbol === 'TZBTC');
-
-  if (!isDefined(tezToken) || !isDefined(tzBTCToken)) {
-    throw new Error('Failed to find XTZ or TZBTC token in Route3 tokens list');
-  }
+  const { tezToken, tzBTCToken } = await getThreeRouteLbTokens();
 
   const outputTokenIndexDependentParams = await Promise.all(
     outputTokenIndexes.map(async outputTokenIndex => {

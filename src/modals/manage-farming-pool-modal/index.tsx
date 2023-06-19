@@ -55,12 +55,11 @@ export const ManageFarmingPoolModal: FC = () => {
 
   const stakeFormik = useStakeFormik(params.id, params.contractAddress);
   const { errors: stakeFormErrors, submitForm: submitStakeForm, isSubmitting: stakeFormSubmitting } = stakeFormik;
-  const withdrawFormik = useWithdrawFormik(params.id, params.contractAddress);
-  const {
-    errors: withdrawFormErrors,
-    submitForm: submitWithdrawForm,
-    isSubmitting: withdrawFormSubmitting
-  } = withdrawFormik;
+  const { formik: withdrawFormik, isSubmitting: withdrawFormSubmitting } = useWithdrawFormik(
+    params.id,
+    params.contractAddress
+  );
+  const { errors: withdrawFormErrors, submitForm: submitWithdrawForm } = withdrawFormik;
 
   useEffect(() => {
     if (!isDefined(farm) || prevBlockLevelRef.current !== blockLevel) {

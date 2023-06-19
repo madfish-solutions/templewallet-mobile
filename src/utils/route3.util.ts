@@ -7,6 +7,7 @@ import {
   Hop,
   Route3Chain,
   Route3Dex,
+  Route3LiquidityBakingParamsResponse,
   Route3SwapParamsRequest,
   Route3SwapParamsResponse,
   Route3Token
@@ -36,6 +37,19 @@ export const fetchRoute3SwapParams = ({
   chainsLimit = 3
 }: Route3SwapParamsRequest): Promise<Route3SwapParamsResponse> =>
   fetch(`https://temple.3route.io/v3/swap/${fromSymbol}/${toSymbol}/${amount}?chainsLimit=${chainsLimit}`, {
+    headers: {
+      Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
+    }
+  })
+    .then(res => res.text())
+    .then(res => parser(res));
+
+export const fetchRoute3LiquidityBakingParams = ({
+  fromSymbol,
+  toSymbol,
+  amount
+}: Omit<Route3SwapParamsRequest, 'chainLimits'>): Promise<Route3LiquidityBakingParamsResponse> =>
+  fetch(`https://temple.3route.io/v3/swap-sirs/${fromSymbol}/${toSymbol}/${amount}`, {
     headers: {
       Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
     }

@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { secondsInHour } from 'date-fns';
-import { FormikHelpers, useFormik } from 'formik';
-import { useCallback, useMemo } from 'react';
+import { useFormik } from 'formik';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { number as numberSchema, object as objectSchema, SchemaOf } from 'yup';
 
@@ -32,7 +32,7 @@ export interface WithdrawTokenOption {
   amount?: BigNumber;
 }
 
-interface WithdrawFormValues {
+export interface WithdrawFormValues {
   amountOptionIndex: number;
   tokenOption: WithdrawTokenOption;
 }
@@ -43,9 +43,10 @@ const validationSchema: SchemaOf<WithdrawFormValues> = objectSchema().shape({
 });
 
 export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
+  const [isSubmitting, setIsSubmiting] = useState(false);
   const farm = useFarmSelector(farmId, contractAddress);
   const { stakeTokens } = useFarmTokens(farm?.item);
-  const { publicKeyHash } = useSelectedAccountSelector();
+  const account = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit();
   const stake = useStakeSelector(contractAddress);
   const dispatch = useDispatch();
@@ -63,13 +64,13 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
   );
 
   const handleSubmit = useCallback(
-    (values: WithdrawFormValues, helpers: FormikHelpers<WithdrawFormValues>) => {
+    (values: WithdrawFormValues) => {
       if (!isDefined(farm)) {
         return;
       }
 
       const doWithdraw = async () => {
-        helpers.setSubmitting(true);
+        setIsSubmiting(true);
         const { tokenOption } = values;
         const { token } = tokenOption;
         const tokenIndex = stakeTokens.findIndex(farmToken => getTokenSlug(farmToken) === getTokenSlug(token));
@@ -79,7 +80,7 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
             farm,
             tokenIndex,
             tezos,
-            publicKeyHash,
+            account,
             stake,
             slippageTolerance,
             farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING && isDefined(stake.depositAmountAtomic)
@@ -100,7 +101,7 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
           showErrorToastByError(error, undefined, true);
           trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
         } finally {
-          helpers.setSubmitting(false);
+          setIsSubmiting(false);
         }
       };
 
@@ -119,14 +120,18 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
           () => void doWithdraw()
         );
       }
-      helpers.setSubmitting(false);
     },
-    [stakeTokens, farm, tezos, publicKeyHash, stake, dispatch, slippageTolerance, trackEvent]
+    [stakeTokens, farm, tezos, account, stake, dispatch, slippageTolerance, trackEvent]
   );
 
-  return useFormik<WithdrawFormValues>({
+  const formik = useFormik<WithdrawFormValues>({
     initialValues,
     validationSchema,
     onSubmit: handleSubmit
   });
+
+  return {
+    formik,
+    isSubmitting
+  };
 };

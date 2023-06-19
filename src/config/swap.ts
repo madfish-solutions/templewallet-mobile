@@ -7,6 +7,7 @@ export const ROUTING_FEE_ADDRESS = 'tz1XYSt74vwVWgixEXdiS4C5t3UvuExRRTZR';
 export const BURN_ADDREESS = 'tz1burnburnburnburnburnburnburjAYjjX';
 
 export const ROUTE3_CONTRACT = 'KT1R7WEtNNim3YgkxPt8wPMczjH3eyhbJMtz';
+export const LIQUIDITY_BAKING_PROXY_CONTRACT = 'KT1WLWMMm9MywjCqnA8wBAYy9QhUE1LzfZ4j';
 
 export const ROUTING_FEE_PERCENT = 0.35;
 export const CASHBACK_PERCENT = 0.175;
