@@ -4,13 +4,16 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { Divider } from 'src/components/divider/divider';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/selectors';
+import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { useEarnStyles } from './earn.styles';
 import { FarmItem } from './farm-item/farm-item';
+import { MainInfo } from './main-info/main-info';
 
 export const Earn: FC = () => {
   const dispatch = useDispatch();
@@ -26,6 +29,8 @@ export const Earn: FC = () => {
 
   return (
     <>
+      <MainInfo />
+      <Divider size={formatSize(8)} />
       {Boolean(farms.isLoading) ? (
         <ActivityIndicator style={styles.loader} size="large" />
       ) : (

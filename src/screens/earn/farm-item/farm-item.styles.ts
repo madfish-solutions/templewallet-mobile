@@ -1,4 +1,3 @@
-import { useButtonLargePrimaryStyleConfig } from 'src/components/button/button-large/button-large-primary/button-large-primary.styles';
 import { useButtonLargeSecondaryStyleConfig } from 'src/components/button/button-large/button-large-secondary/button-large-secondary.styles';
 import { black } from 'src/config/styles';
 import { createUseStylesConfig, createUseStylesMemoized } from 'src/styles/create-use-styles';
@@ -61,18 +60,6 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
   },
   earnSourceIcon: {
     marginRight: formatSize(2)
-  }
-}));
-
-export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ typography }) => ({
-  ...useButtonLargePrimaryStyleConfig(),
-  containerStyle: {
-    flex: 1,
-    height: formatSize(38),
-    borderRadius: formatSize(10)
-  },
-  titleStyle: {
-    ...typography.tagline13Tag
   }
 }));
 

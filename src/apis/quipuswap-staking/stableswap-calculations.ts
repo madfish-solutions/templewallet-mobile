@@ -179,7 +179,7 @@ const calculateLpTokensToBurn = (outputs: BigNumber[], pool: StableswapPool, dev
   const newTokensInfo = outputs.map((value, index) => {
     const newReserves = initTokensInfo[index].reserves.minus(value);
 
-    if (newReserves.lte(0)) {
+    if (Boolean(newReserves.lte(0))) {
       throw new TooLowPoolReservesError();
     }
 
