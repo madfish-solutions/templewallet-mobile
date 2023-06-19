@@ -50,7 +50,7 @@ export const useFilteredFarms = () => {
     }
 
     return result;
-  }, [searchValue, depositedOnly, sortField]);
+  }, [farms, searchValue, depositedOnly, sortField]);
 
   const handleSetSortField = (sortField: FarmsSortFieldEnum) => setSortField(sortField);
   const handleToggleDepositOnly = () => setDepositedOnly(prevState => !prevState);
