@@ -12,7 +12,7 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
     borderRadius: formatSize(10),
     borderColor: colors.lines,
     backgroundColor: colors.navigation,
-    width: '100%',
+    width: formatSize(327),
     marginHorizontal: formatSize(4),
     position: 'relative'
   },

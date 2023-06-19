@@ -8,6 +8,7 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -16,7 +17,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
 
-const COLLECTIBLE_SIZE = 335;
+const COLLECTIBLE_SIZE = 327;
 const PAGINATION_STEP = 15;
 
 export const Collection = () => {
@@ -24,7 +25,7 @@ export const Collection = () => {
   const selectedAccount = useSelectedAccountSelector();
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
   const [offset, setOffset] = useState<number>(0);
-  const [itemWidth, setItemWidth] = useState(formatSize(COLLECTIBLE_SIZE));
+  const selectedRpc = useSelectedRpcUrlSelector();
 
   const { collectibles, isLoading } = useCollectibleByCollectionInfo(
     params.collectionContract,
@@ -43,11 +44,19 @@ export const Collection = () => {
   }, []);
 
   const snapToInterval = useMemo(() => {
-    return itemWidth + formatSize(8);
-  }, [itemWidth]);
+    return formatSize(COLLECTIBLE_SIZE) + formatSize(8);
+  }, []);
 
-  const renderItem: ListRenderItem<TokenInterface> = ({ item }) => (
-    <CollectibleItem item={item} collectionContract={params.collectionContract} setWidth={setItemWidth} />
+  const renderItem: ListRenderItem<TokenInterface> = useCallback(
+    ({ item }) => (
+      <CollectibleItem
+        item={item}
+        collectionContract={params.collectionContract}
+        selectedRpc={selectedRpc}
+        selectedPublicKeyHash={selectedAccount.publicKeyHash}
+      />
+    ),
+    []
   );
 
   const footerComponent = () =>
@@ -65,6 +74,8 @@ export const Collection = () => {
     </View>
   );
 
+  const keyExtractor = useCallback(item => `${item.address}_${item.id}`, []);
+
   return (
     <ScrollView style={styles.root}>
       <FlatList
@@ -77,11 +88,11 @@ export const Collection = () => {
         snapToInterval={snapToInterval}
         viewabilityConfig={{
           itemVisiblePercentThreshold: 50,
-          minimumViewTime: 100
+          minimumViewTime: 200
         }}
         decelerationRate={0}
         scrollEventThrottle={16}
-        keyExtractor={(item, index) => `${item.address}_${item.id}_${index}`}
+        keyExtractor={keyExtractor}
         onEndReached={() => {
           if (collectibles.length % PAGINATION_STEP === 0 && !isLoading) {
             setOffset(offset + PAGINATION_STEP);
@@ -91,6 +102,8 @@ export const Collection = () => {
         ListEmptyComponent={emptyComponent}
         ListFooterComponent={footerComponent}
         ListHeaderComponent={<View style={styles.emptyBlock} />}
+        windowSize={3}
+        initialNumToRender={3}
       />
     </ScrollView>
   );
