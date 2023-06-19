@@ -135,7 +135,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         <View style={styles.row}>
           {depositAmountAtomic.isGreaterThan(DEFAULT_AMOUNT) ? (
             <>
-              <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
+              <Button isFullWidth title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
               <Divider size={formatSize(8)} />
               <Button
                 isFullWidth
