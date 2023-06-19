@@ -2,12 +2,11 @@ import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { catchError, from, map, Observable, of } from 'rxjs';
 import { contracts, AssetDefinition, createEngine, Storage, StorageKey, StorageKeyReturnType } from 'youves-sdk';
+import { mainnetTokens, mainnetNetworkConstants } from 'youves-sdk/dist/networks.mainnet';
 import { UnifiedStaking } from 'youves-sdk/dist/staking/unified-staking';
 
 import { getFastRpcClient } from '../../utils/rpc/fast-rpc';
 import { INITIAL_ARP_VALUE, MAINNET_SMARTPY_RPC, YOUVES_INDEXER_URL } from './constants';
-import { mainnetNetworkConstants } from './mock/mainnet-network-constants';
-import { mainnetTokens } from './mock/mainnet-networks';
 
 const toolkit = new TezosToolkit(getFastRpcClient(MAINNET_SMARTPY_RPC));
 const indexerConfig = { url: YOUVES_INDEXER_URL, headCheckUrl: '' };
