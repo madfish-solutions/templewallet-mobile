@@ -54,11 +54,13 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
   const handleList = () => openUrl(navigateToObjktForBuy(collectionContract, item.id));
 
-  const { handleSubmit: handleBuy } = useBuyCollectible(item.listing_active ?? [], item);
+  const { handleSubmit: handleBuy, purchaseCurrency } = useBuyCollectible(item.listing_active ?? [], item);
 
   const buttonText = useMemo(() => {
     if (isNonEmptyArray(item.listing_active) && isListed) {
-      return `buy for ${item.listing_active[0].price}`;
+      const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
+
+      return `buy for ${price}`;
     }
 
     return 'Not listed';
