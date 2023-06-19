@@ -1,4 +1,5 @@
 import { CurrencyInfo } from 'src/apis/objkt/types';
+import { ListingInfo } from 'src/interfaces/collectible-info.interface';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 
@@ -20,7 +21,7 @@ export interface Offer {
   currency_id: number;
 }
 
-export interface Listing {
+export interface Listing extends ListingInfo {
   amount: number;
   seller_address: string;
 }
@@ -52,6 +53,7 @@ interface CollectibleMetadataInterface {
   listed?: number;
   lastPrice?: { price: number | null | undefined } & Omit<CurrencyInfo, 'contract' | 'id'>;
   items?: number;
+  listing_active?: Listing[];
 }
 
 export const emptyTokenMetadata: TokenMetadataInterface = {

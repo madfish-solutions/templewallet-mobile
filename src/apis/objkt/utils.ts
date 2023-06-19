@@ -57,7 +57,8 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
         decimals: currencyInfoById[lastPriceCurrencyId]?.decimals
       },
       listed: listedBySelectedUser,
-      items: token.fa.items
+      items: token.fa.items,
+      listing_active: token.listings_active
     };
   });
 

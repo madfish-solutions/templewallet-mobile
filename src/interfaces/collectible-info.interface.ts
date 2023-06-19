@@ -13,6 +13,16 @@ export interface UserAdultCollectibles {
   token_id: string;
 }
 
+export interface ListingInfo {
+  bigmap_key: number;
+  currency_id: number;
+  price: number;
+  marketplace_contract: string;
+  currency: {
+    type: string;
+  };
+}
+
 export interface CollectibleInfo {
   description: string;
   creators: {
@@ -42,13 +52,5 @@ export interface CollectibleInfo {
       name: string;
     };
   }[];
-  listings_active: {
-    bigmap_key: number;
-    currency_id: number;
-    price: number;
-    marketplace_contract: string;
-    currency: {
-      type: string;
-    };
-  }[];
+  listings_active: ListingInfo[];
 }

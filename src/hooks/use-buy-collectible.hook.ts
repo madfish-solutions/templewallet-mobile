@@ -10,7 +10,7 @@ import {
   FxHashBuyCollectibleContractInterface,
   ObjktBuyCollectibleContractInterface
 } from '../interfaces/buy-collectible.interface';
-import { CollectibleInfo } from '../interfaces/collectible-info.interface';
+import { ListingInfo } from '../interfaces/collectible-info.interface';
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
 import { OBJKT_MARKETPLACE_CONTRACT } from '../modals/collectible-modal/constants';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
@@ -28,9 +28,7 @@ const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible: TokenInterface) => {
-  const { listings_active } = collectibleInfo;
-
+export const useBuyCollectible = (listings_active: ListingInfo[], collectible: TokenInterface) => {
   const selectedRpc = useSelectedRpcUrlSelector();
   const tezos = createTezosToolkit(selectedRpc);
 
@@ -69,7 +67,7 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
     const currentCurrency = currencyInfoById[currency_id];
 
     return { price, ...currentCurrency };
-  }, [collectibleInfo]);
+  }, [listings_active]);
 
   const handleSubmit = async () => {
     if (isUserOwnerCurrentCollectible) {

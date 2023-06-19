@@ -1,8 +1,10 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useMemo } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 
 import { CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon.props';
+import { useBuyCollectible } from 'src/hooks/use-buy-collectible.hook';
 import { TouchableCollectibleIcon } from 'src/screens/collectibles-home/collectibles-list/touchable-collectible-icon/touchable-collectible-icon';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -48,8 +50,19 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   const quantityByUser = item?.holders?.find(holder => holder.holder_address === selectedPublicKeyHash)?.quantity ?? 0;
 
   const isAbleToList = quantityByUser > listedByUser;
+  const isListed = item.listed !== undefined && item.listed !== 0;
 
   const handleList = () => openUrl(navigateToObjktForBuy(collectionContract, item.id));
+
+  const { handleSubmit: handleBuy } = useBuyCollectible(item.listing_active ?? [], item);
+
+  const buttonText = useMemo(() => {
+    if (isNonEmptyArray(item.listing_active) && isListed) {
+      return `buy for ${item.listing_active[0].price}`;
+    }
+
+    return 'Not listed';
+  }, []);
 
   return (
     <View style={styles.collectibleContainer}>
@@ -82,18 +95,19 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
             </View>
           </View>
         </View>
-        {isHolder && (
-          <View style={styles.buttonContainer}>
-            <OfferButton
-              isHolder={isHolder}
-              isOffersExisted={isOffersExisted}
-              highestOffer={highestOffer}
-              item={item}
-              selectedPublicKeyHash={selectedPublicKeyHash}
-              selectedRpc={selectedRpc}
-              collectionContract={collectionContract}
-            />
-            <View>
+
+        <View style={styles.buttonContainer}>
+          <OfferButton
+            isHolder={isHolder}
+            isOffersExisted={isOffersExisted}
+            highestOffer={highestOffer}
+            item={item}
+            selectedPublicKeyHash={selectedPublicKeyHash}
+            selectedRpc={selectedRpc}
+            collectionContract={collectionContract}
+          />
+          <View>
+            {isHolder ? (
               <TouchableOpacity
                 onPress={handleList}
                 style={[
@@ -111,9 +125,27 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
                   {!isAbleToList ? 'Listed' : 'List'}
                 </Text>
               </TouchableOpacity>
-            </View>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.sellButton,
+                  conditionalStyle(isListed, styles.listButtonActive, styles.listButtonNotListed)
+                ]}
+                onPress={handleBuy}
+                disabled={!isListed}
+              >
+                <Text
+                  style={[
+                    styles.sellButtonText,
+                    conditionalStyle(isListed, styles.listButtonActiveText, styles.listButtonDisabled)
+                  ]}
+                >
+                  {buttonText}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-        )}
+        </View>
       </View>
     </View>
   );
