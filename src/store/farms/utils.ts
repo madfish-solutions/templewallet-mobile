@@ -15,11 +15,11 @@ import { ExchangeRateRecord } from '../currency/currency-state';
 import { UserStakeValueInterface } from './state';
 
 export interface RawStakeValue {
-  lastStakeId?: string;
-  depositAmountAtomic?: string;
-  claimableRewards?: string;
-  fullReward?: string;
-  ageTimestamp?: string;
+  lastStakeId: string;
+  depositAmountAtomic: string;
+  claimableRewards: string;
+  fullReward: string;
+  ageTimestamp: string;
 }
 
 export class GetFarmStakeError extends Error {
@@ -36,9 +36,7 @@ export const toUserStakeValueInterface = (
 
   return {
     ...rest,
-    rewardsDueDate: isDefined(ageTimestamp)
-      ? new Date(ageTimestamp).getTime() + Number(vestingPeriodSeconds) * 1000
-      : undefined
+    rewardsDueDate: new Date(ageTimestamp).getTime() + Number(vestingPeriodSeconds) * 1000
   };
 };
 
@@ -49,7 +47,10 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
 
     return {
       lastStakeId: '0',
-      depositAmountAtomic: depositAmountAtomic.toFixed()
+      depositAmountAtomic: depositAmountAtomic.toFixed(),
+      claimableRewards: '0',
+      fullReward: '0',
+      ageTimestamp: new Date().toISOString()
     };
   }
 
@@ -93,21 +94,6 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
 
   return undefined;
 };
-
-/*
-export const withSelectedAccount =
-  <T>(state$: Observable<WalletRootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { wallet }): [T, AccountInterface] => {
-        const selectedAccount =
-          wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === wallet.selectedAccountPublicKeyHash) ??
-          emptyAccount;
-
-        return [value, selectedAccount];
-      })
-    );
-*/
 
 export const withExchangeRates =
   <T>(state$: Observable<RootState>) =>
