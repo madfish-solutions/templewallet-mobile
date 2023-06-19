@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import FastImage, { Source } from 'react-native-fast-image';
 
+import { emptyFn } from 'src/config/general';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 
@@ -11,9 +12,10 @@ import { TokenIconStyles } from './token-icon.styles';
 interface Props {
   uri: string;
   size: number;
+  onError?: () => void;
 }
 
-export const LoadableTokenIconImage: FC<Props> = ({ uri, size }) => {
+export const LoadableTokenIconImage: FC<Props> = ({ uri, size, onError = emptyFn }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFailed, setIsFailed] = useState(false);
 
@@ -26,7 +28,10 @@ export const LoadableTokenIconImage: FC<Props> = ({ uri, size }) => {
 
   const source = useMemo<Source>(() => (isString(uri) ? { uri: formatImgUri(uri) } : {}), [uri]);
 
-  const handleError = useCallback(() => setIsFailed(true), []);
+  const handleError = useCallback(() => {
+    setIsFailed(true);
+    onError();
+  }, [onError]);
   const handleLoadEnd = useCallback(() => setIsLoading(false), []);
 
   return (

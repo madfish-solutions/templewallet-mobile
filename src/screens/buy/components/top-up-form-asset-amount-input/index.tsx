@@ -18,6 +18,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   isSearchable = false,
   precision,
   testID,
+  tokenTestID,
   newValueFn,
   setSearchValue = emptyFn,
   onValueChange = emptyFn,
@@ -56,6 +57,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
       precision={precision}
       setSearchValue={setSearchValue}
       testID={testID}
+      tokenTestID={tokenTestID}
       newValueFn={newValueFn}
       onBlur={handleBlur}
       onValueChange={handleValueChange}

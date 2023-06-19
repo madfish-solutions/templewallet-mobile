@@ -1,18 +1,19 @@
 import React, { FC, useEffect } from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View, Text } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { Divider } from 'src/components/divider/divider';
 import { Search } from 'src/components/search/search';
 import { Sorter } from 'src/components/sorter/sorter';
 import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
 import { useFilteredFarms } from 'src/hooks/use-filtered-farms.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { loadAllFarmsActions } from 'src/store/farms/actions';
+import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { useLastStakesSelector } from 'src/store/farms/selectors';
+import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { EarmSelectorsEnum } from './earn.selectors';
@@ -36,23 +37,24 @@ const earnSortFieldsOptions: Array<FarmsSortFieldEnum> = [
 
 export const Earn: FC = () => {
   const dispatch = useDispatch();
-  usePageAnalytic(ScreensEnum.Earn);
-  const stakes = useLastStakesSelector();
   const styles = useEarnStyles();
+  const stakes = useLastStakesSelector();
 
   const {
     filteredFarmsList,
+    isFarmsLoading,
     sortField,
     depositedOnly,
-    isFarmsLoading,
     handleToggleDepositOnly,
     setSearchValue,
     handleSetSortField
   } = useFilteredFarms();
 
   useEffect(() => {
-    dispatch(loadAllFarmsActions.submit());
+    dispatch(loadAllFarmsAndStakesAction());
   }, []);
+
+  usePageAnalytic(ScreensEnum.Earn);
 
   return (
     <>
@@ -75,17 +77,16 @@ export const Earn: FC = () => {
           />
         </Search>
       </View>
-      <ScreenContainer>
-        {isFarmsLoading ? (
-          <ActivityIndicator style={styles.loader} size="large" />
-        ) : (
-          <FlatList
-            data={filteredFarmsList}
-            ListEmptyComponent={<DataPlaceholder text="No records found." />}
-            renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
-          />
-        )}
-      </ScreenContainer>
+      <Divider size={formatSize(8)} />
+      {Boolean(isFarmsLoading) ? (
+        <ActivityIndicator style={styles.loader} size="large" />
+      ) : (
+        <FlatList
+          data={filteredFarmsList}
+          ListEmptyComponent={<DataPlaceholder text="No records found." />}
+          renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
+        />
+      )}
     </>
   );
 };

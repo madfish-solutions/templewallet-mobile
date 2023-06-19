@@ -33,6 +33,7 @@ import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
 export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
+export const HELP_UKRAINE_BAKER_ADDRESS = 'tz1bMFzs2aECPn4aCRmKQWHSLHF8ZnZbYcah';
 const DISCLAIMER_MESSAGE =
   'Provided address is not known to us as a baker! Only delegate funds to it at your own risk.';
 
@@ -78,12 +79,18 @@ export const SelectBakerModal: FC = () => {
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
 
   const recommendedBakers = useMemo(
-    () => allBakers.filter(baker => baker.address === RECOMMENDED_BAKER_ADDRESS),
+    () =>
+      allBakers.filter(
+        baker => baker.address === RECOMMENDED_BAKER_ADDRESS || baker.address === HELP_UKRAINE_BAKER_ADDRESS
+      ),
     [allBakers]
   );
 
   const filteredBakersList = useMemo(
-    () => allBakers.filter(baker => baker.address !== RECOMMENDED_BAKER_ADDRESS),
+    () =>
+      allBakers.filter(
+        baker => baker.address !== RECOMMENDED_BAKER_ADDRESS && baker.address !== HELP_UKRAINE_BAKER_ADDRESS
+      ),
     [allBakers]
   );
 
@@ -97,9 +104,14 @@ export const SelectBakerModal: FC = () => {
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {
       const isRecommendedBakerSelected = selectedBaker.address === RECOMMENDED_BAKER_ADDRESS;
+      const isHelpUkraineBakerSelected = selectedBaker.address === RECOMMENDED_BAKER_ADDRESS;
 
       if (isRecommendedBakerSelected) {
         trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
+      }
+
+      if (isHelpUkraineBakerSelected) {
+        trackEvent('HELP_UKRAINE_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
       }
 
       if (currentBaker.address === selectedBaker.address) {
@@ -114,6 +126,7 @@ export const SelectBakerModal: FC = () => {
             { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
           ],
           ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
+          ...(isHelpUkraineBakerSelected && { testID: 'HELP_UKRAINE_BAKER_DELEGATION' }),
           ...(Boolean(selectedBaker.isUnknownBaker) && !isDcpNode && { disclaimerMessage: DISCLAIMER_MESSAGE })
         });
       }

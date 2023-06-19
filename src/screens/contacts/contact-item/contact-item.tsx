@@ -56,7 +56,7 @@ export const ContactItem: FC<Props> = ({ contact, index }) => {
         <RobotIcon seed={contact.publicKeyHash} />
         <View style={styles.accountContainerData}>
           <Text {...getTruncatedProps(styles.name)}>{contact.name}</Text>
-          <WalletAddress publicKeyHash={contact.publicKeyHash} />
+          <WalletAddress isLocalDomainNameShowing publicKeyHash={contact.publicKeyHash} />
         </View>
       </View>
       <View style={styles.actions}>

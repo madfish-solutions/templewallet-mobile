@@ -18,6 +18,7 @@ import {
   revealPrivateKeyModalValidationSchema
 } from './reveal-private-key-modal.form';
 import { RevealPrivateKeyView } from './reveal-private-key-view/reveal-private-key-view';
+import { RevealPrivateKeySelectors } from './reveal-private-key.selectors';
 
 export const RevealPrivateKeyModal = () => {
   const account = useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealPrivateKey>>().params.account;
@@ -42,7 +43,7 @@ export const RevealPrivateKeyModal = () => {
             label="Account"
             description="If you want to reveal a private key from another account - you should select it in the top-right dropdown."
           />
-          <AccountFormDropdown name="account" list={accounts} />
+          <AccountFormDropdown name="account" list={accounts} testID={RevealPrivateKeySelectors.accountDropdown} />
           <Label label="Private Key" description="Current account key. Keep it in secret." />
           <RevealPrivateKeyView publicKeyHash={values.account.publicKeyHash} />
           <Divider size={formatSize(16)} />

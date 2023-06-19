@@ -1,7 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { emptyTokenMetadata } from '../../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
+import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { createEntity } from '../create-entity';
 import { setNewTokensMetadata } from '../migration/migration-actions';
 import { addTokensMetadataAction, loadTokenSuggestionActions, loadWhitelistAction } from './tokens-metadata-actions';
@@ -9,6 +11,10 @@ import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metada
 
 export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadataInitialState, builder => {
   builder.addCase(addTokensMetadataAction, (state, { payload: tokensMetadata }) => {
+    if (tokensMetadata.length < 1) {
+      return state;
+    }
+
     const metadataRecord = tokensMetadata.reduce((prevState, tokenMetadata) => {
       const slug = getTokenSlug(tokenMetadata);
 
@@ -27,16 +33,28 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
     };
   });
 
-  builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) => ({
-    ...state,
-    metadataRecord: tokensMetadata.reduce(
-      (obj, tokenMetadata) => ({
-        ...obj,
-        [getTokenSlug(tokenMetadata)]: tokenMetadata
-      }),
-      state.metadataRecord
-    )
-  }));
+  builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) => {
+    const newMetadata = tokensMetadata.filter(metadata => {
+      const slug = getTokenSlug(metadata);
+
+      return !isDefined(state.metadataRecord[slug]);
+    });
+
+    if (newMetadata.length < 1) {
+      return state;
+    }
+
+    return {
+      ...state,
+      metadataRecord: newMetadata.reduce(
+        (obj, tokenMetadata) => ({
+          ...obj,
+          [getTokenSlug(tokenMetadata)]: tokenMetadata
+        }),
+        state.metadataRecord
+      )
+    };
+  });
 
   builder.addCase(loadTokenSuggestionActions.submit, state => ({
     ...state,

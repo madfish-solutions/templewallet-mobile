@@ -7,6 +7,8 @@ import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { loadAllCurrenciesActions, updatePairLimitsActions } from 'src/store/buy-with-credit-card/actions';
 import { useAllPairsLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
 import { intersectAssetsLimits } from 'src/utils/intersect-assets-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -14,6 +16,7 @@ import { mergeAssetsLimits } from 'src/utils/merge-assets-limits.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { TopUpAssetAmountInterface } from '../../components/top-up-asset-amount-input/types';
+import { BuyWithCreditCardSelectors } from '../selectors';
 import { useBuyWithCreditCardFormik } from './use-buy-with-credit-card-formik.hook';
 import { useFiatCurrenciesList } from './use-fiat-currencies-list.hook';
 import { usePaymentProviders } from './use-payment-providers.hook';
@@ -24,6 +27,7 @@ export const useFormInputsCallbacks = (
   isLoading: boolean,
   setIsLoading: (newValue: boolean) => void
 ) => {
+  const { trackEvent } = useAnalytics();
   const { setFieldValue, values, setFieldTouched } = formik;
   const { sendInput: inputValue, getOutput: outputValue } = values;
   const { asset: outputToken } = outputValue;
@@ -146,6 +150,9 @@ export const useFormInputsCallbacks = (
     (newProvider?: PaymentProviderInterface) => {
       manuallySelectedProviderIdRef.current = newProvider?.id;
       void switchPaymentProvider(newProvider);
+      if (isDefined(newProvider)) {
+        trackEvent(BuyWithCreditCardSelectors.provider, AnalyticsEventCategory.ButtonPress, { newProvider });
+      }
     },
     [switchPaymentProvider]
   );

@@ -207,7 +207,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Earn}
                 component={Earn}
-                options={generateScreenOptions(<HeaderTitle title="Earn" />)}
+                options={generateScreenOptions(<HeaderTitle title="Farming" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />

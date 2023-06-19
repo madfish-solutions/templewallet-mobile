@@ -35,7 +35,7 @@ export const fetchRoute3SwapParams = ({
   amount,
   chainsLimit = 3
 }: Route3SwapParamsRequest): Promise<Route3SwapParamsResponse> =>
-  fetch(`https://temple.3route.io/swap/${fromSymbol}/${toSymbol}/${amount}?chainsLimit=${chainsLimit}`, {
+  fetch(`https://temple.3route.io/v3/swap/${fromSymbol}/${toSymbol}/${amount}?chainsLimit=${chainsLimit}`, {
     headers: {
       Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
     }
@@ -55,7 +55,8 @@ export const mapToRoute3ExecuteHops = (chains: Array<Route3Chain>, decimals: num
       hops.push({
         code: (j === 0 ? 1 : 0) + (hop.forward ? 2 : 0),
         dex_id: hop.dex,
-        amount_opt: j === 0 ? tzToMutez(new BigNumber(chain.input), decimals) : null
+        amount_opt: j === 0 ? tzToMutez(new BigNumber(chain.input), decimals) : null,
+        params: ''
       });
     }
   }

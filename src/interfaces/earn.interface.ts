@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 
-import { BigMap } from './tezos-toolkit.interface';
+import { BigMap } from './big-map.interface';
 
 interface DepositTokenInterface {
   token_type: string;
@@ -13,7 +13,7 @@ interface DepositTokenInterface {
 export interface StakesValueInterface {
   stake: BigNumber;
   disc_factor: BigNumber;
-  age_timestamp: number;
+  age_timestamp: string;
 }
 
 export interface FarmContractStorageInterface {

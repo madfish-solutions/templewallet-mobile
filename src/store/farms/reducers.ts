@@ -1,29 +1,44 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { omit } from 'lodash-es';
+
+import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
-import { loadAllFarmsActions, loadAllStakesActions, loadSingleFarmActions } from './actions';
+import { setSelectedAccountAction } from '../wallet/wallet-actions';
+import {
+  loadAllFarmsActions,
+  loadAllFarmsAndStakesAction,
+  loadAllStakesActions,
+  loadSingleFarmStakeActions
+} from './actions';
 import { farmsInitialState, FarmsState } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
-  builder.addCase(loadSingleFarmActions.submit, state => ({
+  builder.addCase(loadSingleFarmStakeActions.submit, state => ({
     ...state,
-    farms: createEntity(state.farms.data, true)
+    stakesLoading: true
   }));
+  builder.addCase(loadSingleFarmStakeActions.success, (state, { payload: { stake, farmAddress } }) => {
+    const otherStakes = omit(state.lastStakes, farmAddress);
 
-  builder.addCase(loadSingleFarmActions.success, (state, { payload: newItem }) => ({
+    return {
+      ...state,
+      lastStakes: isDefined(stake)
+        ? {
+            ...otherStakes,
+            [farmAddress]: stake
+          }
+        : otherStakes,
+      stakesLoading: false
+    };
+  });
+
+  builder.addCase(loadAllFarmsAndStakesAction, state => ({
     ...state,
-    farms: createEntity({
-      list: state.farms.data.list
-        .filter(farm => farm.item.id !== newItem.item.id || farm.item.version === newItem.item.version)
-        .concat(newItem)
-    })
+    allFarms: createEntity(state.allFarms.data, true),
+    lastStakes: {},
+    stakesLoading: true
   }));
-
-  builder.addCase(loadSingleFarmActions.fail, (state, { payload: error }) => ({
-    ...state,
-    farms: createEntity(state.farms.data, false, error)
-  }));
-
   builder.addCase(loadAllFarmsActions.submit, state => ({
     ...state,
     allFarms: createEntity(state.allFarms.data, true)
@@ -38,6 +53,12 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   }));
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => ({
     ...state,
-    lastStakes: payload
+    lastStakes: payload,
+    stakesLoading: false
+  }));
+
+  builder.addCase(setSelectedAccountAction, state => ({
+    ...state,
+    lastStakes: farmsInitialState.lastStakes
   }));
 });

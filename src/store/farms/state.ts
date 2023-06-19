@@ -1,4 +1,4 @@
-import { FarmsListResponse, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
@@ -13,15 +13,15 @@ export interface UserStakeValueInterface {
 
 export type LastUserStakeInterface = Record<string, UserStakeValueInterface>;
 export interface FarmsState {
-  farms: LoadableEntityState<FarmsListResponse>;
   allFarms: LoadableEntityState<Array<SingleFarmResponse>>;
   lastStakes: LastUserStakeInterface;
+  stakesLoading: boolean;
 }
 
 export const farmsInitialState: FarmsState = {
-  farms: createEntity({ list: [] }),
   lastStakes: {},
-  allFarms: createEntity([])
+  allFarms: createEntity([]),
+  stakesLoading: false
 };
 
 export interface FarmsRootState {

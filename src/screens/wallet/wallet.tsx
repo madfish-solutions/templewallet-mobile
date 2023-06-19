@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -13,6 +14,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { useWalletOpenTacker } from 'src/hooks/use-wallet-open-tacker.hook';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -24,12 +26,13 @@ import {
 } from 'src/store/contact-book/contact-book-selectors';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import {
+  useAccountsListSelector,
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
   useVisibleAccountsListSelector
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
@@ -40,8 +43,10 @@ import { WalletStyles } from './wallet.styles';
 
 export const Wallet = () => {
   const dispatch = useDispatch();
+  const { pageEvent } = useAnalytics();
   const { navigate } = useNavigation();
 
+  const account = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -51,15 +56,26 @@ export const Wallet = () => {
   const bottomSheetController = useBottomSheetController();
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
+  const handleDropdownValueChange = (value: AccountBaseInterface | undefined) =>
+    dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
   useEffect(() => {
-    if (!ignoredAddresses.includes(contactCandidateAddress) && !contactsAddresses.includes(contactCandidateAddress)) {
+    if (
+      !ignoredAddresses.includes(contactCandidateAddress) &&
+      !contactsAddresses.includes(contactCandidateAddress) &&
+      !account.find(({ publicKeyHash }) => publicKeyHash === contactCandidateAddress)
+    ) {
       bottomSheetController.open();
     }
   }, [contactCandidateAddress]);
 
+  const trackPageOpened = useCallback(() => {
+    pageEvent(ScreensEnum.Wallet, '');
+  }, []);
+
+  useFocusEffect(trackPageOpened);
+
   useWalletOpenTacker();
-  usePageAnalytic(ScreensEnum.Wallet);
 
   return (
     <>
@@ -68,7 +84,8 @@ export const Wallet = () => {
           <CurrentAccountDropdown
             value={selectedAccount}
             list={visibleAccounts}
-            onValueChange={value => dispatch(setSelectedAccountAction(value?.publicKeyHash))}
+            onValueChange={handleDropdownValueChange}
+            testID={WalletSelectors.accountDropdownButton}
           />
 
           <Divider />

@@ -24,6 +24,7 @@ export interface TopUpFormAssetAmountInputProps extends TestIdProps {
   isSearchable?: boolean;
   selectionOptions?: TextInputProps['selection'];
   precision?: number;
+  tokenTestID?: string;
   newValueFn?: (
     prevValue: TopUpAssetAmountInterface,
     newAsset: TopUpInputInterface,

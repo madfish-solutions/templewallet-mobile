@@ -12,6 +12,8 @@ import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
 import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -63,6 +65,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     meta,
     precision = 18,
     testID,
+    tokenTestID,
     newValueFn = defaultNewValueFn,
     onBlur,
     onFocus,
@@ -70,6 +73,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
   }) => {
     const styles = useTopUpAssetAmountInputStyles();
     const colors = useColors();
+    const { trackEvent } = useAnalytics();
 
     const error: string | Record<string, string> = (meta.touched ? meta.error : undefined) ?? {};
     const errorStr = (typeof error === 'string' ? error : error[Object.keys(error)[0]]) || ' ';
@@ -113,6 +117,9 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     const handleTokenChange = useCallback(
       (newAsset?: TopUpInputInterface) => {
         if (isDefined(newAsset)) {
+          trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, {
+            token: newAsset
+          });
           onValueChange(newValueFn(value, newAsset, inputValueRef.current));
         }
       },
