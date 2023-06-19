@@ -67,7 +67,7 @@ export const getRoutingFeeTransferParams = async (
   return [];
 };
 
-export const withTransferPermissions = async (
+const withTransferPermissions = async (
   transferParams: TransferParams[],
   tezos: TezosToolkit,
   accountPkh: string,
