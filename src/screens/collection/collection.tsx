@@ -50,7 +50,7 @@ export const Collection = () => {
   }, []);
 
   const snapToInterval = useMemo(() => {
-    return formatSize(COLLECTIBLE_SIZE) + formatSize(8);
+    return formatSize(COLLECTIBLE_SIZE) + formatSize(4) + formatSize(4);
   }, []);
 
   const renderItem: ListRenderItem<TokenInterface> = useCallback(
