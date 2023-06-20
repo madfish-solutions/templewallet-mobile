@@ -6,16 +6,8 @@
 import { URL } from 'react-native-url-polyfill';
 
 export const concatUrlPath = (baseUrl: string, path: string) => {
-  // const result = new URL(path, baseUrl).href;
-  // console.log('a', result);
-
-  // return new URL(path, baseUrl).href;
-
-  // baseUrl = new URL(baseUrl).href; // gonna end with '/'
-  baseUrl = baseUrl.endsWith('/') ? baseUrl.slice(baseUrl.length - 1) : baseUrl;
+  baseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, baseUrl.length - 1) : baseUrl;
   path = path.startsWith('/') ? path.slice(1) : path;
-
-  console.log('b', baseUrl, path);
 
   return `${baseUrl}/${path}`;
 };
