@@ -55,7 +55,7 @@ export const Newsletter: FC = () => {
 
   return (
     <Formik innerRef={formik} initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-      {({ submitForm, isSubmitting }) => (
+      {({ submitForm, isSubmitting, isValid }) => (
         <>
           <ScreenContainer isFullScreenMode>
             <View>
@@ -78,7 +78,7 @@ export const Newsletter: FC = () => {
           <ButtonsFloatingContainer>
             <ButtonLargePrimary
               title="Subscribe"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isValid}
               onPress={submitForm}
               testID={NewsletterModalSelectors.subscribeButton}
             />
