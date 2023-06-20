@@ -3,7 +3,6 @@ import { BigNumber } from 'bignumber.js';
 
 import { APP_ID, LIQUIDITY_BAKING_PROXY_CONTRACT, ROUTE3_CONTRACT, ROUTING_FEE_RATIO, ZERO } from 'src/config/swap';
 import { Route3Chain, Route3Token } from 'src/interfaces/route3.interface';
-import { TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 
 import { mapToRoute3ExecuteHops } from './route3.util';
 import { getTransferPermissions } from './transfer-permissions.util';
@@ -134,8 +133,8 @@ export const getLiquidityBakingTransferParams = async (
   const swapMethod = liquidityBakingProxyContract.methods.swap(
     fromRoute3Token.id,
     toRoute3Token.id,
-    mapToRoute3ExecuteHops(xtzChains, TZBTC_TOKEN_METADATA.decimals),
-    mapToRoute3ExecuteHops(tzbtcChains, TEZ_TOKEN_METADATA.decimals),
+    mapToRoute3ExecuteHops(xtzChains, fromRoute3Token.decimals),
+    mapToRoute3ExecuteHops(tzbtcChains, fromRoute3Token.decimals),
     inputAmountAtomic,
     minimumReceivedAtomic,
     accountPkh,
