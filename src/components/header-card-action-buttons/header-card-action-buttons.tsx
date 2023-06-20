@@ -1,10 +1,12 @@
 import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -25,6 +27,7 @@ interface Props {
 const CHAINBITS_URL = 'https://buy.chainbits.com';
 
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
+  const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -43,6 +46,12 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
     }),
     [styles.actionButtonTitle]
   );
+  const handleTouchStart = () => {
+    if (disableSendAsset) {
+      showErrorToast({ description: errorMessage });
+      dispatch(setOnRampPossibilityAction(true));
+    }
+  };
 
   return (
     <ButtonsContainer>
@@ -74,10 +83,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         />
       </View>
       <Divider size={formatSize(8)} />
-      <View
-        style={styles.buttonContainer}
-        onTouchStart={() => void (disableSendAsset && showErrorToast({ description: errorMessage }))}
-      >
+      <View style={styles.buttonContainer} onTouchStart={handleTouchStart}>
         <ButtonMedium
           title="Send"
           disabled={disableSendAsset}

@@ -107,7 +107,7 @@
     "react-native-screens": "^3.18.2",
     "react-native-scrypt": "^1.2.1",
     "react-native-sha256": "^1.4.8",
-    "react-native-svg": "^12.4.4",
+    "react-native-svg": "madfish-solutions/react-native-svg#41c5c2b78a9fc86aa1b0e47761123068504d9298",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-themis": "^0.14.7",
     "react-native-toast-message": "^2.1.5",

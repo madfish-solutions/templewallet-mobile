@@ -1,8 +1,11 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
+import { useDispatch } from 'react-redux';
 
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { addKnownSvg, removeKnownSvg } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { useIsKnownSvgSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
@@ -26,9 +29,10 @@ export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, styl
     () => (isImageRectangular(thumbnailUri) ? undefined : { borderRadius: size / 2 }),
     [thumbnailUri]
   );
+  const containerSizeStyle = useMemo(() => ({ width: size, height: size }), [size]);
 
   return (
-    <View style={[TokenIconStyles.container, roundedStyle, style]}>
+    <View style={[TokenIconStyles.container, roundedStyle, containerSizeStyle, style]}>
       <TokenIconImage size={size} thumbnailUri={thumbnailUri} {...rest} />
     </View>
   );
@@ -38,20 +42,31 @@ type TokenIconImageProps = Props & {
   size: number;
 };
 
+const ENDS_WITH_EXTENSION_REGEX = /\.[a-z0-9]+$/i;
+
 const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size }) => {
-  const isFromIpfs = thumbnailUri?.startsWith('ipfs') ?? false;
+  const mayBeUnknownSvg = !ENDS_WITH_EXTENSION_REGEX.test(thumbnailUri ?? '');
   const colors = useColors();
-  const [forceSvg, setForceSvg] = useState(false);
+  const dispatch = useDispatch();
+  const isKnownSvg = useIsKnownSvgSelector(thumbnailUri ?? '');
+  const [svgFailed, setSvgFailed] = useState(false);
 
   const { metadata } = useNetworkInfo();
 
   const handleLoadableTokenIconError = useCallback(() => {
-    if (isFromIpfs) {
-      setForceSvg(true);
+    if (mayBeUnknownSvg && !svgFailed) {
+      dispatch(addKnownSvg(thumbnailUri ?? ''));
     }
-  }, [isFromIpfs]);
+  }, [mayBeUnknownSvg, thumbnailUri, svgFailed, dispatch]);
 
-  useEffect(() => setForceSvg(false), [thumbnailUri]);
+  const handleSvgError = useCallback(() => {
+    if (mayBeUnknownSvg) {
+      setSvgFailed(true);
+      dispatch(removeKnownSvg(thumbnailUri ?? ''));
+    }
+  }, [thumbnailUri, mayBeUnknownSvg, dispatch]);
+
+  useEffect(() => setSvgFailed(false), [thumbnailUri]);
 
   if (isDefined(iconName)) {
     return <Icon name={iconName} color={metadata.iconName === iconName ? colors.black : undefined} size={size} />;
@@ -61,15 +76,22 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
     return <Icon name={IconNameEnum.NoNameToken} size={size} />;
   }
 
-  if (isImgUriSvg(thumbnailUri) || forceSvg) {
-    const normalizedUri = isFromIpfs ? formatImgUri(thumbnailUri) : thumbnailUri;
+  if (isImgUriSvg(thumbnailUri) || (isKnownSvg && !svgFailed)) {
+    const normalizedUri = thumbnailUri.startsWith('ipfs://') ? formatImgUri(thumbnailUri) : thumbnailUri;
 
-    return <SvgCssUri width={size} height={size} uri={normalizedUri} />;
+    return <SvgCssUri width={size} height={size} uri={normalizedUri} onError={handleSvgError} />;
   }
 
   if (isImgUriDataUri(thumbnailUri)) {
     return <DataUriImage width={size} height={size} dataUri={thumbnailUri} />;
   }
 
-  return <LoadableTokenIconImage uri={thumbnailUri} size={size} onError={handleLoadableTokenIconError} />;
+  return (
+    <LoadableTokenIconImage
+      uri={thumbnailUri}
+      size={size}
+      onError={handleLoadableTokenIconError}
+      useOriginal={svgFailed}
+    />
+  );
 };
