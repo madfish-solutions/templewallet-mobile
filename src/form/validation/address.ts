@@ -1,4 +1,4 @@
-import { validate } from '@keshan3262/wallet-address-validator';
+import { validate } from '@temple-wallet/wallet-address-validator';
 import { string as stringSchema } from 'yup';
 
 import { AddressValidationErrorEnum } from 'src/enums/address-validation-error.enum';

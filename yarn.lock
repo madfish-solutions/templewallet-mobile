@@ -2898,16 +2898,6 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@keshan3262/wallet-address-validator@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@keshan3262/wallet-address-validator/-/wallet-address-validator-0.4.2.tgz#ebb6a01336e23a5b70b74a072b0b9d81cb1812c0"
-  integrity sha512-P6PSMA16pPkmxhcKkFlPjU3QzFYFD3JgCMv8F+CrN6AT8G5n2YiR4nbgBSTQ5sE+uqtJoEzIAv5IZ/kcTmz89w==
-  dependencies:
-    base-x "^3.0.4"
-    bs58check "^3.0.1"
-    crc "^3.8.0"
-    jssha "2.3.1"
-
 "@noble/hashes@^1.2.0":
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.1.tgz#8831ef002114670c603c458ab8b11328406953a9"
@@ -3781,6 +3771,16 @@
     buffer "^6.0.3"
     elliptic "^6.5.4"
     typedarray-to-buffer "^4.0.0"
+
+"@temple-wallet/wallet-address-validator@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@temple-wallet/wallet-address-validator/-/wallet-address-validator-0.4.2.tgz#1334a67aa71d0c397dd7c20a94245a612fd7feff"
+  integrity sha512-FPsHW+IYKBu1/qvGDGtwaCfyP60xPIKMPhGgbU+mUVN/AMsdgNf3FkG2hTuBC0jylToxuI+ijGGSzpIj+Yl1Qg==
+  dependencies:
+    base-x "^3.0.4"
+    bs58check "^3.0.1"
+    crc "^3.8.0"
+    jssha "2.3.1"
 
 "@testing-library/react-hooks@^7.0.2":
   version "7.0.2"
