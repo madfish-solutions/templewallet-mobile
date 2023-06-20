@@ -40,6 +40,7 @@ import { DApps } from 'src/screens/d-apps/d-apps';
 import { Debug } from 'src/screens/debug/debug';
 import { DelegationScreen } from 'src/screens/delegation-screen/delegation-screen';
 import { Earn } from 'src/screens/earn';
+import { Farming } from 'src/screens/farming';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
 import { ImportAccount } from 'src/screens/import-account/import-account';
 import { LiquidityBakingDapp } from 'src/screens/liquidity-baking-dapp/liquidity-baking-dapp';
@@ -207,6 +208,11 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Earn}
                 component={Earn}
+                options={generateScreenOptions(<HeaderTitle title="Earn" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Farming}
+                component={Farming}
                 options={generateScreenOptions(<HeaderTitle title="Farming" />)}
               />
 

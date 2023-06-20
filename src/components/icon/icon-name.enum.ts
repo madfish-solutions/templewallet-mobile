@@ -139,5 +139,6 @@ export enum IconNameEnum {
   QsEarnSource = 'QsEarnSource',
   Smile = 'Smile',
   SmileWithGlasses = 'SmileWithGlasses',
-  SmileWithDollar = 'SmileWithDollar'
+  SmileWithDollar = 'SmileWithDollar',
+  Data = 'Data'
 }

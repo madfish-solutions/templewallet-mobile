@@ -10,13 +10,13 @@ import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useFarmStoreSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { aprToApy } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -43,43 +43,7 @@ export const MainInfo: FC = () => {
     );
   }, [farms]);
 
-  const { netApy, totalStakedAmountInUsd } = useMemo(() => {
-    const result = {
-      netApy: new BigNumber(DEFAULT_AMOUNT),
-      totalStakedAmountInUsd: new BigNumber(DEFAULT_AMOUNT),
-      totalClaimableRewardsInUsd: new BigNumber(DEFAULT_AMOUNT)
-    };
-
-    let totalWeightedApy = new BigNumber(DEFAULT_AMOUNT);
-
-    Object.entries(farms.lastStakes).forEach(([address, stakeRecord]) => {
-      const farm = farms.allFarms.data.find(_farm => _farm.item.contractAddress === address);
-
-      if (isDefined(farm)) {
-        const depositValueInUsd = mutezToTz(
-          new BigNumber(stakeRecord.depositAmountAtomic ?? DEFAULT_AMOUNT),
-          farm.item.stakedToken.metadata.decimals
-        ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_AMOUNT);
-
-        totalWeightedApy = totalWeightedApy.plus(
-          new BigNumber(aprToApy(Number(farm.item.apr) ?? DEFAULT_AMOUNT)).multipliedBy(depositValueInUsd)
-        );
-        result.totalStakedAmountInUsd = result.totalStakedAmountInUsd.plus(depositValueInUsd);
-        result.totalClaimableRewardsInUsd = result.totalClaimableRewardsInUsd.plus(
-          mutezToTz(
-            new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT),
-            farm.item.rewardToken.metadata.decimals
-          ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_AMOUNT)
-        );
-      }
-    });
-
-    if (result.totalStakedAmountInUsd.isGreaterThan(DEFAULT_AMOUNT)) {
-      result.netApy = totalWeightedApy.dividedBy(result.totalStakedAmountInUsd);
-    }
-
-    return result;
-  }, [farms]);
+  const { netApy, totalStakedAmountInUsd } = useUserFarmingStats();
 
   const totalClaimableRewardsInUsd = useMemo(() => {
     let result = new BigNumber(PENNY);
