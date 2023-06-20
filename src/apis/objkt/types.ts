@@ -81,7 +81,7 @@ export interface CollectiblesByCollectionResponse {
 }
 
 export interface CollectiblesByGalleriesResponse {
-  gallery: { tokens: CollectiblesByCollectionResponse[]; gallery_id: string }[];
+  gallery: { tokens: { token: CollectibleResponse; gallery: { items: number } }[]; gallery_id: string }[];
 }
 
 export interface UserAdultCollectiblesQueryResponse {

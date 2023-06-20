@@ -53,9 +53,13 @@ export const buildGetHoldersInfoQuery = (address: string) => gql`
   }
 `;
 
-export const buildGetCollectiblesByCollectionQuery = (contract: string, offset: number) => gql`query MyQuery {
+export const buildGetCollectiblesByCollectionQuery = (
+  contract: string,
+  address: string,
+  offset: number
+) => gql`query MyQuery {
   token(
-    where: {fa_contract: {_eq: "${contract}"}, supply: {_gt: "0"}}
+    where: {fa_contract: {_eq: "${contract}"}, supply: {_gt: "0"}, creators: {creator_address: {_eq: "${address}"}}}
     limit: 15
     offset: ${offset}
     order_by: {token_id: asc}) {
@@ -164,6 +168,9 @@ query MyQuery {
         fa {
           items
         }
+      }
+      gallery {
+        items
       }
     }
   }
