@@ -41,7 +41,7 @@ export const Collection = () => {
     params.galleryId
   );
 
-  const { setInnerScreenIndex } = useInnerScreenProgress(collectibles?.[0]?.items ?? collectibles.length);
+  const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
     if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {
