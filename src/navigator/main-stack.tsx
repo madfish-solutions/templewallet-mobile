@@ -52,6 +52,7 @@ import { NodeSettings } from 'src/screens/node-settings/node-settings';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
 import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
 import { Notifications } from 'src/screens/notifications/notifications';
+import { Savings } from 'src/screens/savings';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
@@ -214,6 +215,11 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Farming}
                 component={Farming}
                 options={generateScreenOptions(<HeaderTitle title="Farming" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Savings}
+                component={Savings}
+                options={generateScreenOptions(<HeaderTitle title="Savings" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
