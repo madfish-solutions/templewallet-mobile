@@ -25,7 +25,7 @@ export const useAddressFieldAnalytics = <T extends string, U extends Record<T, s
         network: networkSlug,
         isValidAddress: isDefined(networkSlug)
       }),
-    [analytics, addressFromNetworkEventName]
+    [analytics.trackEvent, addressFromNetworkEventName]
   );
 
   useEffect(() => {
