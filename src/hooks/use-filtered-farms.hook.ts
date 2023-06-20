@@ -45,7 +45,10 @@ export const useFilteredFarms = () => {
         result.sort((farmA, farmB) => new BigNumber(farmB?.item?.apr ?? 0).minus(farmA?.item?.apr ?? 0).toNumber());
         break;
       case FarmsSortFieldEnum.Newest:
-        result.reverse();
+        result.sort(
+          (farmA, farmB) =>
+            new Date(farmB.item.firstActivityTime).getTime() - new Date(farmA?.item?.firstActivityTime).getTime()
+        );
         break;
     }
 

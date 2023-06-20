@@ -62,14 +62,17 @@ interface FarmBase {
   version: FarmVersionEnum;
   type?: PoolType;
 }
+export interface FarmWithFirstActivityTime extends FarmBase {
+  firstActivityTime: string;
+}
 
-interface StableswapFarm extends FarmBase {
+interface StableswapFarm extends FarmWithFirstActivityTime {
   type: PoolType.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;
 }
 
-interface OtherFarm extends FarmBase {
+interface OtherFarm extends FarmWithFirstActivityTime {
   type?: PoolType.DEX_TWO;
 }
 
