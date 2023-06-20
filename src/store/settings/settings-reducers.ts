@@ -24,8 +24,7 @@ import {
   madeManualBackupAction,
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
-  setOnRampPossibilityAction,
-  setLastProjectBuildVersion
+  setOnRampPossibilityAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -156,8 +155,4 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
-  builder.addCase(setLastProjectBuildVersion, (state, { payload: lastBuildVersion }) => ({
-    ...state,
-    buildVersion: lastBuildVersion
-  }));
 });

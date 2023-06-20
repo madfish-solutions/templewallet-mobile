@@ -38,5 +38,3 @@ export const setOnRampPossibilityAction = createAction<boolean>('settings/SET_ON
 export const walletOpenedAction = createAction<void>('settings/APPLICATION_OPENED_ACTION');
 
 export const setAdsBannerVisibilityAction = createAction<boolean>('settings/TURN_OFF_ADS_BANNER_ACTION');
-
-export const setLastProjectBuildVersion = createAction<string>('settings/GET_PROJECT_BUILD_VERSION');
