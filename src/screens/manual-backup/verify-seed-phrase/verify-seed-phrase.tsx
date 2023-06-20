@@ -17,7 +17,7 @@ import { EmptyFn } from 'src/config/general';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
-import { madeManualBackupAction } from 'src/store/settings/settings-actions';
+import { madeManualBackupAction, setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { formatOrdinalNumber } from 'src/utils/number-format.utils';
@@ -111,6 +111,8 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
     showSuccessToast({ description: 'You have successfully verified seed phrase!' });
 
     navigate(ScreensEnum.Wallet);
+
+    dispatch(setOnRampPossibilityAction(true));
   };
 
   return (
