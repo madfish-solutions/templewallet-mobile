@@ -19,6 +19,10 @@ import { CollectibleItem } from './components/collectible-item';
 
 const COLLECTIBLE_SIZE = 327;
 const PAGINATION_STEP = 15;
+const VIEWABILITY_CONFIG = {
+  itemVisiblePercentThreshold: 50,
+  minimumViewTime: 200
+};
 
 const keyExtractor = (item: TokenInterface) => `${item.address}_${item.id}`;
 
@@ -37,7 +41,7 @@ export const Collection = () => {
     params.galleryId
   );
 
-  const { setInnerScreenIndex } = useInnerScreenProgress(collectibles?.[0]?.items ?? collectibles.length);
+  const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
     if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {
@@ -46,7 +50,7 @@ export const Collection = () => {
   }, []);
 
   const snapToInterval = useMemo(() => {
-    return formatSize(COLLECTIBLE_SIZE) + formatSize(8);
+    return formatSize(COLLECTIBLE_SIZE) + formatSize(4) + formatSize(4);
   }, []);
 
   const renderItem: ListRenderItem<TokenInterface> = useCallback(
@@ -86,10 +90,7 @@ export const Collection = () => {
         onViewableItemsChanged={handleChanged}
         removeClippedSubviews={true}
         snapToInterval={snapToInterval}
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 50,
-          minimumViewTime: 200
-        }}
+        viewabilityConfig={VIEWABILITY_CONFIG}
         decelerationRate={0}
         scrollEventThrottle={16}
         keyExtractor={keyExtractor}

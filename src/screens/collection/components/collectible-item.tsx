@@ -10,7 +10,6 @@ import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -43,7 +42,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
     : 'No offers yet';
 
   const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holder_address) ?? [];
-  const isHolder = holders.includes(selectedPublicKeyHash);
+  const isHolder = useMemo(() => holders.includes(selectedPublicKeyHash), [selectedPublicKeyHash]);
   const isOffersExisted = isDefined(item.highestOffer);
 
   const listedByUser = item.listedAmount ?? 0;
@@ -55,7 +54,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   const isAbleToList = quantityByUser > listedByUser;
   const isListed = isNonEmptyArray(item.listing_active);
 
-  const handleList = () => openUrl(navigateToObjktForBuy(collectionContract, item.id));
+  const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
 
   const { handleSubmit: handleBuy, purchaseCurrency } = useBuyCollectible(item.listing_active ?? [], item);
 
