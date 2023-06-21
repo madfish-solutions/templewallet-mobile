@@ -22,6 +22,7 @@ export interface SettingsState {
   isShowLoader: boolean;
   isManualBackupMade: boolean;
   isCloudBackupMade: boolean;
+  isOnRampPossibility: boolean;
   applicationOpenCounter: number;
 }
 
@@ -41,6 +42,7 @@ export const settingsInitialState: SettingsState = {
   isShowLoader: false,
   isManualBackupMade: true,
   isCloudBackupMade: true,
+  isOnRampPossibility: false,
   applicationOpenCounter: 0
 };
 

@@ -2,7 +2,8 @@ import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
 import { ButtonStyleConfig } from '../components/button/button-style.config';
 import { Colors } from './colors';
-import { Typography, typography } from './typography';
+import { useTypography } from './typography.context';
+import { Typography } from './typography.types';
 import { useColors } from './use-colors';
 
 type NamedStyles<T> = { [P in keyof T]: ViewStyle | TextStyle | ImageStyle };
@@ -21,6 +22,7 @@ export const createUseStylesConfig =
   <T extends NamedStyles<T> = ButtonStyleConfig>(stylesFn: (props: CStylesFnProps) => T) =>
   () => {
     const colors = useColors();
+    const typography = useTypography();
 
     return stylesFn({ colors, typography });
   };

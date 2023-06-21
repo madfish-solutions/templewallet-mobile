@@ -1,5 +1,5 @@
 import { VisibilityEnum } from '../enums/visibility.enum';
-import { DCP_TOKENS_METADATA, LOCAL_MAINNET_TOKENS_METADATA } from '../token/data/tokens-metadata';
+import { PREDEFINED_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } from '../token/data/tokens-metadata';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 
@@ -14,12 +14,12 @@ export interface AccountStateInterface {
 export const initialAccountState: AccountStateInterface = {
   isVisible: true,
   tezosBalance: '0',
-  tokensList: LOCAL_MAINNET_TOKENS_METADATA.map(token => ({
+  tokensList: PREDEFINED_MAINNET_TOKENS_METADATA.map(token => ({
     slug: getTokenSlug(token),
     balance: '0',
     visibility: VisibilityEnum.Visible
   })),
-  dcpTokensList: DCP_TOKENS_METADATA.map(token => ({
+  dcpTokensList: PREDEFINED_DCP_TOKENS_METADATA.map(token => ({
     slug: getTokenSlug(token),
     balance: '0',
     visibility: VisibilityEnum.Visible

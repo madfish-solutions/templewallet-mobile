@@ -1,9 +1,13 @@
 import { OpKind } from '@taquito/taquito';
-import React, { FC } from 'react';
+import { BigNumber } from 'bignumber.js';
+import React, { FC, useEffect, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
+import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { isTruthy } from 'src/utils/is-truthy';
 
 import { everstakeApi } from '../../../api.service';
@@ -15,7 +19,10 @@ import { StacksEnum } from '../../../navigator/enums/stacks.enum';
 import { navigateAction } from '../../../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from '../../../store/wallet/wallet-actions';
-import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
+import {
+  useSelectedAccountSelector,
+  useSelectedAccountTezosTokenSelector
+} from '../../../store/wallet/wallet-selectors';
 import { showSuccessToast } from '../../../toast/toast.utils';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from '../../../utils/env.utils';
 import { isDefined } from '../../../utils/is-defined';
@@ -56,8 +63,25 @@ const approveInternalOperationRequest = ({
 export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle, disclaimerMessage, testID }) => {
   const selectedAccount = useSelectedAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
+  const dispatch = useDispatch();
+  const { balance: tezBalance } = useSelectedAccountTezosTokenSelector();
 
   const { confirmRequest, isLoading } = useRequestConfirmation(approveInternalOperationRequest);
+
+  const totalTransactionCost = useMemo(() => {
+    if (opParams[0]?.kind === OpKind.TRANSACTION) {
+      // @ts-ignore
+      return BigNumber.sum(...opParams.map(({ amount }) => amount));
+    }
+
+    return new BigNumber(0);
+  }, [opParams]);
+
+  useEffect(() => {
+    if (new BigNumber(tezBalance).isLessThanOrEqualTo(totalTransactionCost)) {
+      dispatch(setOnRampPossibilityAction(true));
+    }
+  }, [tezBalance, totalTransactionCost]);
 
   useNavigationSetOptions(
     {
@@ -80,13 +104,16 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
   ) : undefined;
 
   return (
-    <OperationsConfirmation
-      sender={selectedAccount}
-      opParams={opParams}
-      isLoading={isLoading}
-      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
-      testID={testID}
-      disclaimer={disclaimer}
-    />
+    <>
+      <OperationsConfirmation
+        sender={selectedAccount}
+        opParams={opParams}
+        isLoading={isLoading}
+        onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
+        testID={testID}
+        disclaimer={disclaimer}
+      />
+      <OnRampOverlay />
+    </>
   );
 };
