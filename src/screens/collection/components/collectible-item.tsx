@@ -50,17 +50,17 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   const quantityByUser = item?.holders?.find(holder => holder.holder_address === selectedPublicKeyHash)?.quantity ?? 0;
 
   const isAbleToList = quantityByUser > listedByUser;
-  const isListed = isDefined(item.listedAmount) && item.listedAmount !== 0;
+  const isListed = isNonEmptyArray(item.listing_active);
 
   const handleList = () => openUrl(navigateToObjktForBuy(collectionContract, item.id));
 
   const { handleSubmit: handleBuy, purchaseCurrency } = useBuyCollectible(item.listing_active ?? [], item);
 
   const buttonText = useMemo(() => {
-    if (isNonEmptyArray(item.listing_active) && isListed) {
+    if (isListed) {
       const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
 
-      return `buy for ${price}`;
+      return `buy for ${price} ${purchaseCurrency.symbol}`;
     }
 
     return 'Not listed';
