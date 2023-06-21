@@ -115,5 +115,8 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
   },
   topContainer: {
     flex: 1
+  },
+  listButtonActiveText: {
+    color: colors.white
   }
 }));

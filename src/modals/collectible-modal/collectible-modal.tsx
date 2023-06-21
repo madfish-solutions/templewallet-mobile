@@ -1,10 +1,9 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/core';
+import { BigNumber } from 'bignumber.js';
 import React, { useCallback, useMemo, useState } from 'react';
-import { Dimensions, Share, Text, View } from 'react-native';
+import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { ScrollView } from 'react-native-gesture-handler';
 import { SvgUri } from 'react-native-svg';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -21,8 +20,9 @@ import { TextSegmentControl } from '../../components/segmented-control/text-segm
 import { TouchableWithAnalytics } from '../../components/touchable-with-analytics';
 import { useCollectibleInfo } from '../../hooks/collectible-info/use-collectible-info.hook';
 import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
+import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
+import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
@@ -36,6 +36,7 @@ import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { getTruncatedProps } from '../../utils/style.util';
+import { mutezToTz } from '../../utils/tezos.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
@@ -58,14 +59,14 @@ const SEGMENT_VALUES = [
 const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = () => {
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const { width } = Dimensions.get('window');
-  const itemWidth = width - 32;
+  const iconSize = width - formatSize(32);
 
-  const { navigate } = useNavigation();
-
-  const burnCollectible = useBurnCollectible(collectible);
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
 
@@ -73,7 +74,23 @@ export const CollectibleModal = () => {
 
   const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
 
-  const { fa, creators, description, metadata, timestamp, royalties, supply, attributes, galleries } = collectibleInfo;
+  const burnCollectible = useBurnCollectible(collectible);
+
+  const { handleSubmit, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
+
+  const {
+    fa,
+    creators,
+    description,
+    metadata,
+    timestamp,
+    royalties,
+    supply,
+    attributes,
+    galleries,
+    listings_active,
+    mime
+  } = collectibleInfo;
 
   const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
 
@@ -91,19 +108,41 @@ export const CollectibleModal = () => {
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
-  const collectionLogo = useMemo(() => {
-    if (fa.logo.endsWith('.svg')) {
-      return (
-        <SvgUri
-          uri={fa.logo}
-          height={COLLECTION_ICON_SIZE}
-          width={COLLECTION_ICON_SIZE}
-          style={styles.collectionLogo}
-        />
-      );
+  const submitButtonTitle = useMemo(() => {
+    if (isLoading) {
+      return '...';
     }
 
-    return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
+    if (isUserOwnerCurrentCollectible) {
+      return 'Send';
+    }
+
+    if (!isNonEmptyArray(listings_active)) {
+      return 'Not listed';
+    }
+
+    const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
+
+    return `Buy for ${price.toFixed(2)} ${purchaseCurrency.symbol}`;
+  }, [isUserOwnerCurrentCollectible, listings_active, isLoading]);
+
+  const collectionLogo = useMemo(() => {
+    if (fa.logo) {
+      if (fa.logo.endsWith('.svg')) {
+        return (
+          <SvgUri
+            uri={fa.logo}
+            height={COLLECTION_ICON_SIZE}
+            width={COLLECTION_ICON_SIZE}
+            style={styles.collectionLogo}
+          />
+        );
+      }
+
+      return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
+    }
+
+    return null;
   }, [fa.logo]);
 
   const handleShare = useCallback(async () => {
@@ -138,101 +177,103 @@ export const CollectibleModal = () => {
       fixedFooterContainer={{
         submitButton: (
           <ButtonLargePrimary
-            title="Send"
-            onPress={() => navigate(ModalsEnum.Send, { token: collectible })}
+            disabled={isLoading || (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listings_active))}
+            title={submitButtonTitle}
+            onPress={handleSubmit}
             testID={CollectibleModalSelectors.sendButton}
           />
         )
       }}
       isFullScreenMode={true}
+      scrollEnabled={scrollEnabled}
     >
-      <ScrollView>
-        <ModalStatusBar />
+      <ModalStatusBar />
 
-        <View>
-          <CollectibleIcon
-            collectible={collectible}
-            size={itemWidth}
-            iconSize={CollectibleIconSize.BIG}
-            blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
-            isLoading={isLoading}
+      <View>
+        <CollectibleIcon
+          collectible={collectible}
+          mime={mime}
+          objktArtifact={collectibleInfo.artifact_uri}
+          size={iconSize}
+          iconSize={CollectibleIconSize.BIG}
+          setScrollEnabled={setScrollEnabled}
+          blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
+        />
+
+        <Divider size={formatSize(12)} />
+
+        <View style={styles.collectionContainer}>
+          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+
+            <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
+              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+            <Icon name={IconNameEnum.Share} />
+            <Divider size={formatSize(4)} />
+            <Text style={styles.shareButtonText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.nameContainer}>
+          <Text style={styles.name}>{collectible.name}</Text>
+        </View>
+
+        {isString(description) && (
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.description}>{description}</Text>
+          </View>
+        )}
+
+        {isNonEmptyArray(creators) && (
+          <View style={styles.creatorsContainer}>
+            <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
+
+            {creators.map(({ holder }, index) => (
+              <LinkWithIcon
+                key={holder.address}
+                text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                link={getObjktProfileLink(holder.address)}
+                valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                style={[
+                  styles.linkWithIcon,
+                  conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
+                ]}
+              />
+            ))}
+          </View>
+        )}
+
+        {!isLoading && (
+          <TextSegmentControl
+            selectedIndex={segmentControlIndex}
+            values={segmentValues}
+            onChange={setSegmentControlIndex}
+            disabledIndexes={[disabledOffers]}
+            style={styles.segmentControl}
           />
+        )}
 
-          <Divider size={formatSize(12)} />
+        {!isLoading && isPropertiesSelected && (
+          <CollectibleProperties
+            contract={collectible.address}
+            tokenId={collectible.id}
+            editions={supply}
+            metadata={metadata}
+            minted={timestamp}
+            owned={collectible.balance}
+            royalties={royalties}
+          />
+        )}
 
-          <View style={styles.collectionContainer}>
-            <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-              {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+        {!isLoading && !isPropertiesSelected && isAttributesExist && (
+          <CollectibleAttributes attributes={filteredAttributes} />
+        )}
 
-              <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
-                {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
-              </Text>
-            </TouchableOpacity>
-
-            {isString(description) && (
-              <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-                <Icon name={IconNameEnum.Share} />
-                <Divider size={formatSize(4)} />
-                <Text style={styles.shareButtonText}>Share</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-
-          <View style={styles.nameContainer}>
-            <Text style={styles.name}>{collectible.name}</Text>
-          </View>
-
-          {isString(description) && (
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.description}>{description}</Text>
-            </View>
-          )}
-
-          {isNonEmptyArray(creators) && (
-            <View style={styles.creatorsContainer}>
-              <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
-
-              {creators.map(({ holder }, index) => (
-                <LinkWithIcon
-                  key={holder.address}
-                  text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                  link={getObjktProfileLink(holder.address)}
-                  valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                  style={[
-                    styles.linkWithIcon,
-                    conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
-                  ]}
-                />
-              ))}
-            </View>
-          )}
-
-          {!isLoading && (
-            <TextSegmentControl
-              selectedIndex={segmentControlIndex}
-              values={segmentValues}
-              onChange={setSegmentControlIndex}
-              disabledIndexes={[disabledOffers]}
-              style={styles.segmentControl}
-            />
-          )}
-
-          {!isLoading && isPropertiesSelected && (
-            <CollectibleProperties
-              contract={collectible.address}
-              tokenId={collectible.id}
-              editions={supply}
-              metadata={metadata}
-              minted={timestamp}
-              owned={collectible.balance}
-              royalties={royalties}
-            />
-          )}
-
-          {!isLoading && !isPropertiesSelected && isAttributesExist && (
-            <CollectibleAttributes attributes={filteredAttributes} />
-          )}
-
+        {isUserOwnerCurrentCollectible && (
           <View style={styles.burnContainer}>
             <TouchableWithAnalytics
               Component={TouchableOpacity}
@@ -244,8 +285,8 @@ export const CollectibleModal = () => {
               <Icon name={IconNameEnum.Burn} />
             </TouchableWithAnalytics>
           </View>
-        </View>
-      </ScrollView>
+        )}
+      </View>
     </ScreenContainer>
   );
 };

@@ -1,4 +1,5 @@
 export enum IconNameEnum {
+  Audio = 'Audio',
   ArrowUp = 'ArrowUp',
   ArrowDown = 'ArrowDown',
   ArrowRight = 'ArrowRight',

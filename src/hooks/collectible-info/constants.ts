@@ -15,7 +15,9 @@ export const collectibleInfoInitialState: CollectibleInfo = {
   timestamp: '',
   royalties: [],
   supply: 0,
-  galleries: []
+  galleries: [],
+  listings_active: [],
+  mime: ''
 };
 
 export const attributesInfoInitialState: AttributeInfo[] = [

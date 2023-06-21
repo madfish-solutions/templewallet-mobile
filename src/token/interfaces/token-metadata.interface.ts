@@ -1,4 +1,4 @@
-import { CurrencyInfo } from 'src/apis/objkt/interfaces';
+import { CurrencyInfo } from 'src/apis/objkt/types';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 
@@ -50,7 +50,7 @@ interface CollectibleMetadataInterface {
   editions?: number;
   holders?: HolderInfo[];
   listed?: number;
-  lastPrice?: { price: number | null } & CurrencyInfo;
+  lastPrice?: { price: number | null | undefined } & Omit<CurrencyInfo, 'contract' | 'id'>;
   items?: number;
 }
 

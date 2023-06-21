@@ -10,16 +10,6 @@ import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { CollectibleInfo, UserAdultCollectibles } from '../../interfaces/collectible-info.interface';
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
-  CollectibleInfoQueryResponse,
-  CollectiblesByCollectionResponse,
-  CollectiblesByGalleriesResponse,
-  FA2AttributeCountQueryResponse,
-  GalleryAttributeCountQueryResponse,
-  QueryResponse,
-  TzProfilesQueryResponse,
-  UserAdultCollectiblesQueryResponse
-} from './interfaces';
-import {
   buildGetCollectibleByAddressAndIdQuery,
   buildGetCollectiblesByCollectionQuery,
   buildGetCollectiblesInfoQuery,
@@ -29,6 +19,16 @@ import {
   buildGetUserAdultCollectiblesQuery,
   buildGetCollectiblesByGalleryQuery
 } from './queries';
+import {
+  CollectibleInfoQueryResponse,
+  CollectiblesByCollectionResponse,
+  CollectiblesByGalleriesResponse,
+  FA2AttributeCountQueryResponse,
+  GalleryAttributeCountQueryResponse,
+  QueryResponse,
+  TzProfilesQueryResponse,
+  UserAdultCollectiblesQueryResponse
+} from './types';
 import { getUniqueAndMaxValueAttribute, transformCollectiblesArray } from './utils';
 
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
@@ -90,7 +90,7 @@ export const fetchCollectiblesByCollection$ = (
 ): Observable<TokenInterface[]> => {
   const request =
     type === ObjktTypeEnum.faContract
-      ? buildGetCollectiblesByCollectionQuery(contract, offset)
+      ? buildGetCollectiblesByCollectionQuery(contract, selectedPublicKey, offset)
       : buildGetCollectiblesByGalleryQuery(selectedPublicKey, offset);
 
   return apolloObjktClient.query<CollectiblesByCollectionResponse | CollectiblesByGalleriesResponse>(request).pipe(
@@ -101,7 +101,12 @@ export const fetchCollectiblesByCollection$ = (
         return collectibles;
       } else {
         const currentGallery = result.gallery.find(gallery => gallery.gallery_id === galleryId);
-        const tokens = currentGallery?.tokens.map(token => token.token).flat() ?? [];
+        const tokens =
+          currentGallery?.tokens.map(token => {
+            const items = token.gallery.items;
+
+            return { ...token.token, fa: { items } };
+          }) ?? [];
         const collectibles = transformCollectiblesArray(tokens, selectedPublicKey);
 
         return collectibles;
@@ -115,8 +120,20 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
 
   return apolloObjktClient.query<CollectibleInfoQueryResponse>(request).pipe(
     map(result => {
-      const { description, creators, fa, timestamp, artifact_uri, attributes, metadata, royalties, supply, galleries } =
-        result.token[0];
+      const {
+        description,
+        creators,
+        fa,
+        timestamp,
+        artifact_uri,
+        attributes,
+        metadata,
+        royalties,
+        supply,
+        listings_active,
+        mime,
+        galleries
+      } = result.token[0];
 
       return {
         description,
@@ -132,7 +149,9 @@ export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observa
         timestamp,
         royalties,
         supply,
-        galleries
+        galleries,
+        listings_active,
+        mime
       };
     })
   );
