@@ -13,7 +13,6 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from 'src/utils/swap-permissions.util';
 
@@ -39,7 +38,7 @@ export const OfferButton: FC<Props> = memo(
     const [offer, setOffer] = useState<ObjktContractInterface | FxHashContractInterface>();
     const dispatch = useDispatch();
 
-    const tezos = createTezosToolkit(selectedRpc);
+    const tezos = useMemo(() => createTezosToolkit(selectedRpc), [selectedRpc]);
 
     useEffect(() => {
       tezos.contract
@@ -63,7 +62,7 @@ export const OfferButton: FC<Props> = memo(
 
     const handlePress = useCallback(async () => {
       if (!isHolder && isListed) {
-        return openUrl(navigateToObjktForBuy(collectionContract, item.id));
+        return navigateToObjktForBuy(collectionContract, item.id);
       }
 
       const getTransferParams = () => {
