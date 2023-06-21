@@ -135,5 +135,9 @@ export const useCollectionStyles = createUseStyles(({ colors, typography }) => (
   loader: {
     width: formatSize(335),
     justifyContent: 'center'
+  },
+  scrollViewContainer: {
+    flexGrow: 1,
+    justifyContent: 'center'
   }
 }));

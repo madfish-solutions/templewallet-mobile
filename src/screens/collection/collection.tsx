@@ -18,7 +18,7 @@ import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
 
 const COLLECTIBLE_SIZE = 327;
-const PAGINATION_STEP = 15;
+const PAGINATION_STEP = 500;
 
 const keyExtractor = (item: TokenInterface) => `${item.address}_${item.id}`;
 
@@ -37,7 +37,7 @@ export const Collection = () => {
     params.galleryId
   );
 
-  const { setInnerScreenIndex } = useInnerScreenProgress(collectibles?.[0]?.items ?? collectibles.length);
+  const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
     if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {
@@ -77,34 +77,40 @@ export const Collection = () => {
   );
 
   return (
-    <ScrollView style={styles.root}>
-      <FlatList
-        data={collectibles}
-        renderItem={renderItem}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        onViewableItemsChanged={handleChanged}
-        removeClippedSubviews={true}
-        snapToInterval={snapToInterval}
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 50,
-          minimumViewTime: 200
-        }}
-        decelerationRate={0}
-        scrollEventThrottle={16}
-        keyExtractor={keyExtractor}
-        onEndReached={() => {
-          if (collectibles.length % PAGINATION_STEP === 0 && !isLoading) {
-            setOffset(offset + PAGINATION_STEP);
-          }
-        }}
-        onEndReachedThreshold={0.5}
-        ListEmptyComponent={emptyComponent}
-        ListFooterComponent={footerComponent}
-        ListHeaderComponent={<View style={styles.emptyBlock} />}
-        windowSize={3}
-        initialNumToRender={3}
-      />
+    <ScrollView style={styles.root} contentContainerStyle={styles.scrollViewContainer}>
+      {isLoading && offset === 0 ? (
+        <View>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <FlatList
+          data={collectibles}
+          renderItem={renderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          onViewableItemsChanged={handleChanged}
+          removeClippedSubviews={true}
+          snapToInterval={snapToInterval}
+          viewabilityConfig={{
+            itemVisiblePercentThreshold: 50,
+            minimumViewTime: 200
+          }}
+          decelerationRate={0}
+          scrollEventThrottle={16}
+          keyExtractor={keyExtractor}
+          onEndReached={() => {
+            if (collectibles.length % PAGINATION_STEP === 0 && !isLoading) {
+              setOffset(offset + PAGINATION_STEP);
+            }
+          }}
+          onEndReachedThreshold={0.5}
+          ListEmptyComponent={emptyComponent}
+          ListFooterComponent={footerComponent}
+          ListHeaderComponent={<View style={styles.emptyBlock} />}
+          windowSize={3}
+          initialNumToRender={3}
+        />
+      )}
     </ScrollView>
   );
 };

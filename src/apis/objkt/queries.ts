@@ -60,7 +60,7 @@ export const buildGetCollectiblesByCollectionQuery = (
 ) => gql`query MyQuery {
   token(
     where: {fa_contract: {_eq: "${contract}"}, supply: {_gt: "0"}, creators: {creator_address: {_eq: "${address}"}}}
-    limit: 15
+    limit: 500
     offset: ${offset}
     order_by: {token_id: asc}) {
     artifact_uri
@@ -126,7 +126,7 @@ query MyQuery {
   ) {
     gallery_id
     tokens(
-      limit: 15
+      limit: 500
       offset: ${offset}
     ) {
       token {
