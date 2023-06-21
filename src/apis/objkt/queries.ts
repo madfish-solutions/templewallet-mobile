@@ -60,11 +60,7 @@ export const buildGetCollectiblesByCollectionQuery = (
 ) => gql`query MyQuery {
   token(
     where: {fa_contract: {_eq: "${contract}"}, supply: {_gt: "0"}, creators: {creator_address: {_eq: "${address}"}}}
-<<<<<<< HEAD
     limit: 500
-=======
-    limit: 15
->>>>>>> tw-618/list-nft
     offset: ${offset}
     order_by: {token_id: asc}) {
     artifact_uri
