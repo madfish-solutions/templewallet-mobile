@@ -16,8 +16,8 @@ import { isDefined } from 'src/utils/is-defined';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from 'src/utils/swap-permissions.util';
 
-import { useCollectionStyles } from '../collection.styles';
 import { navigateToObjktForBuy } from '../utils';
+import { useCollectibleItemStyles } from './collectible-item.styles';
 
 interface Props {
   isOffersExisted: boolean;
@@ -33,7 +33,7 @@ const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 
 export const OfferButton: FC<Props> = memo(
   ({ isOffersExisted, isHolder, highestOffer, item, selectedPublicKeyHash, selectedRpc, collectionContract }) => {
-    const styles = useCollectionStyles();
+    const styles = useCollectibleItemStyles();
 
     const [offer, setOffer] = useState<ObjktContractInterface | FxHashContractInterface>();
     const dispatch = useDispatch();
