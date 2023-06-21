@@ -1,7 +1,8 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { createRef, useState } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
@@ -38,9 +39,10 @@ import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
-import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
+import { useIsEnabledAdsBannerSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
+import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -60,6 +62,8 @@ export const RootStackScreen = () => {
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
   const { isDcpNode } = useNetworkInfo();
+  const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
+  const dispatch = useDispatch();
 
   useStorageMigration();
 
@@ -80,6 +84,12 @@ export const RootStackScreen = () => {
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+
+  useEffect(() => {
+    if (isEnableAdsBanner) {
+      dispatch(togglePartnersPromotionAction(false));
+    }
+  }, [isEnableAdsBanner]);
 
   return (
     <NavigationContainer
