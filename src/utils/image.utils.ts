@@ -1,4 +1,5 @@
 import { isString } from './is-string';
+import 'react-native-url-polyfill/auto';
 
 const IPFS_PROTOCOL_PREFIX = 'ipfs://';
 const OBJKT_ORIGIN = 'https://assets.objkt.media/file';
@@ -57,15 +58,23 @@ export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
   return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${address}/${id}/thumb288`;
 };
 
-const checkIpfs = (artifactUri: string) =>
-  artifactUri.includes('ipfs://') ? artifactUri.substring(IPFS_PROTOCOL_PREFIX.length) : artifactUri;
+const cutIpfsPrefix = (artifactUri: string) => {
+  const url = new URL(artifactUri);
+
+  url.protocol === 'ipfs:' ? artifactUri.substring(IPFS_PROTOCOL_PREFIX.length) : artifactUri;
+};
 
 export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
-  if (artifactUri.includes('fxhash')) {
-    const [artifactUriWithoutFxHash, fxhash] = artifactUri.split('?');
-
-    return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${checkIpfs(artifactUriWithoutFxHash)}/artifact/index.html?${fxhash}`;
+  if (artifactUri.startsWith('data:image')) {
+    return artifactUri;
   }
 
-  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${checkIpfs(artifactUri)}/artifact`;
+  const url = new URL(artifactUri);
+  const urlPath = `${url.protocol}${url.pathname}`;
+
+  if (url.searchParams.get('fxhash') !== null) {
+    return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact/index.html${url.search}`;
+  }
+
+  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact`;
 };

@@ -19,7 +19,7 @@ export const HeaderProgress: FC<Props> = ({ current, total }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>
+      <Text style={styles.text} numberOfLines={1}>
         {current}/{total}
       </Text>
 

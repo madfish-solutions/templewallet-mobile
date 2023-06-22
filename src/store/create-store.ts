@@ -77,7 +77,8 @@ const persistConfig: PersistConfig<RootState> = {
   key: 'root',
   version: 1,
   storage: AsyncStorage,
-  stateReconciler: autoMergeLevel2
+  stateReconciler: autoMergeLevel2,
+  blacklist: ['collections']
 };
 
 const rootReducer = rootStateReducer<RootState>({

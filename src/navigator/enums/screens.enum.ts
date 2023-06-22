@@ -1,3 +1,4 @@
+import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export enum ScreensEnum {
@@ -19,6 +20,7 @@ export enum ScreensEnum {
   ScanQrCode = 'ScanQrCode',
   Notifications = 'Notifications',
   NotificationsItem = 'NotificationsItem',
+  Collection = 'Collection',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -75,6 +77,12 @@ export type ScreensParamList = {
   [ScreensEnum.Buy]: undefined;
   [ScreensEnum.BuyWithCreditCard]: undefined;
   [ScreensEnum.Exolix]: undefined;
+  [ScreensEnum.Collection]: {
+    collectionContract: string;
+    collectionName: string;
+    type: ObjktTypeEnum;
+    galleryId: string | undefined;
+  };
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;

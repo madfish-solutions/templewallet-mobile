@@ -7,19 +7,18 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { isDefined } from 'src/utils/is-defined';
 
-export const TouchableCollectibleIcon: FC<CollectibleIconProps> = ({ collectible, size }) => {
+export const TouchableCollectibleIcon: FC<CollectibleIconProps> = ({
+  collectible,
+  size,
+  iconSize = CollectibleIconSize.SMALL
+}) => {
   const { navigate } = useNavigation();
 
   const handleNavigate = () => navigate(ModalsEnum.CollectibleModal, { collectible });
 
   return isDefined(collectible) ? (
     <TouchableOpacity activeOpacity={1} onPress={handleNavigate}>
-      <CollectibleIcon
-        iconSize={CollectibleIconSize.SMALL}
-        collectible={collectible}
-        size={size}
-        isTouchableBlurOverlay={false}
-      />
+      <CollectibleIcon iconSize={iconSize} collectible={collectible} size={size} isTouchableBlurOverlay={false} />
     </TouchableOpacity>
   ) : null;
 };

@@ -15,6 +15,7 @@ import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon
 import { emptyFn } from 'src/config/general';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
@@ -27,12 +28,12 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
-import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
@@ -63,6 +64,7 @@ export const CollectiblesHome = () => {
   const { height: windowHeight } = useWindowDimensions();
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
+  const { navigate } = useNavigation();
 
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = 53 + insets.bottom;
@@ -83,7 +85,7 @@ export const CollectiblesHome = () => {
 
   const socialLinks: SocialLinksInterface[] = [
     { url: twitter, icon: IconNameEnum.Twitter },
-    { url: isDefined(discord) ? `https://discord.com/invite/${discord}` : discord, icon: IconNameEnum.Discord },
+    { url: discord, icon: IconNameEnum.Discord },
     { url: website, icon: IconNameEnum.Website },
     { url: github, icon: IconNameEnum.Github }
   ].sort((a, b) => {
@@ -118,11 +120,18 @@ export const CollectiblesHome = () => {
       style={[styles.socialsIcon, conditionalStyle(!isDefined(item.url), styles.socialIconsBgColor)]}
       color={isDefined(item.url) ? colors.orange : colors.disabled}
       size={SMALL_SOCIAL_ICON_SIZE}
+      onPress={item.url === discord ? () => copyStringToClipboard(item.url) : undefined}
     />
   );
 
   const renderItemCollections: ListRenderItem<Collection> = ({ item }) => {
-    const handleCollectionPress = () => openUrl(objktCollectionUrl(item.contract));
+    const handleCollectionPress = () =>
+      navigate(ScreensEnum.Collection, {
+        collectionContract: item.contract,
+        collectionName: item.name,
+        type: item.type,
+        galleryId: item.galleryId
+      });
 
     return (
       <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>

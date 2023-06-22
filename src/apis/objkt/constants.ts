@@ -8,6 +8,19 @@ export const OBJKT_CONTRACT = 'KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC';
 
 export const apolloObjktClient = getApolloConfigurableClient(OBJKT_API);
 
+/**
+ * These contracts are hidden because we don't show fxhash and rarible contracts as collection
+ */
+export const HIDDEN_CONTRACTS = [
+  'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
+  'KT1EfsNuqwLAWDd3o4pvfUx1CAh5GMdTrRvr',
+  'KT1GtbuswcNMGhHF2TSuH1Yfaqn16do8Qtva',
+  'KT1GbyoDi7H1sfXmimXpptZJuCdHMh66WS9u',
+  'KT1U6EHmNxJTkvaWJ4ThczG4FSDaHC21ssvi',
+  'KT18pVpRXKPY2c4U2yFEGSH3ZnhB2kL8kwXS',
+  'KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE'
+];
+
 type CurrencyIdFromApi = number;
 
 export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
@@ -28,6 +41,18 @@ export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
     decimals: 6,
     contract: null,
     id: null
+  },
+  4: {
+    symbol: 'oXTZ',
+    decimals: 6,
+    contract: 'KT1TjnZYs5CGLbmV6yuW169P8Pnr9BiVwwjz',
+    id: '0'
+  },
+  3: {
+    symbol: 'USDtz',
+    decimals: 6,
+    contract: 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9',
+    id: '0'
   }
 };
 

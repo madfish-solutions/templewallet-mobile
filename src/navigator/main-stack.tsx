@@ -33,6 +33,7 @@ import { BuyWithCreditCard } from 'src/screens/buy/buy-with-credit-card';
 import { Exolix } from 'src/screens/buy/crypto/exolix/exolix';
 import { CloudBackup } from 'src/screens/cloud-backup';
 import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
+import { Collection } from 'src/screens/collection/collection';
 import { Contacts } from 'src/screens/contacts/contacts';
 import { ContinueWithCloud } from 'src/screens/continue-with-cloud';
 import { CreateNewWallet } from 'src/screens/create-new-wallet/create-new-wallet';
@@ -211,6 +212,13 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.BuyWithCreditCard}
                 component={BuyWithCreditCard}
                 options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Collection}
+                component={Collection}
+                options={({ route: { params } }) =>
+                  generateScreenOptions(<HeaderTitle title={`${params.collectionName}`} />)
+                }
               />
 
               {/** DApps stack **/}
