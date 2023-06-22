@@ -135,14 +135,9 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         <View style={styles.row}>
           {depositAmountAtomic.isGreaterThan(DEFAULT_AMOUNT) ? (
             <>
-              <Button isFullWidth title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
+              <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
               <Divider size={formatSize(8)} />
-              <Button
-                isFullWidth
-                title="CLAIM REWARDS"
-                onPress={harvestAssetsApi}
-                styleConfig={buttonPrimaryStylesConfig}
-              />
+              <Button title="CLAIM REWARDS" onPress={harvestAssetsApi} styleConfig={buttonPrimaryStylesConfig} />
             </>
           ) : (
             <Button

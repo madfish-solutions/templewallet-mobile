@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
 
 import { APPROXIMATE_DAYS_IN_YEAR, calculateTimeDiffInSeconds } from './date.utils';
@@ -48,3 +49,14 @@ export const calculateYouvesFarmingRewards = (
 
 export const aprToApy = (aprPercentage: number, compoundFrequency = APPROXIMATE_DAYS_IN_YEAR) =>
   ((1 + Number(aprPercentage) / 100 / compoundFrequency) ** compoundFrequency - 1) * 100;
+
+export const sortByNewest = (farmA: SingleFarmResponse, farmB: SingleFarmResponse) =>
+  new Date(farmB?.item?.firstActivityTime ?? Date.now()).getTime() -
+  new Date(farmA?.item?.firstActivityTime ?? Date.now()).getTime();
+
+export const sortByOldest = (farmA: SingleFarmResponse, farmB: SingleFarmResponse) =>
+  new Date(farmA?.item?.firstActivityTime ?? Date.now()).getTime() -
+  new Date(farmB?.item?.firstActivityTime ?? Date.now()).getTime();
+
+export const sortByApy = (farmA: SingleFarmResponse, farmB: SingleFarmResponse) =>
+  new BigNumber(farmB?.item?.apr ?? 0).minus(farmA?.item?.apr ?? 0).toNumber();

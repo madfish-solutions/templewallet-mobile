@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
 import { Farm, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
+import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
 
 import { createActions } from '../create-actions';
 import { LastUserStakeInterface, UserStakeValueInterface } from './state';
@@ -18,3 +19,5 @@ export const loadAllFarmsActions = createActions<void, Array<SingleFarmResponse>
 export const loadAllStakesActions = createActions<Array<SingleFarmResponse>, LastUserStakeInterface, void>(
   'farms/LOAD_ALL_STAKES'
 );
+
+export const selectSortValue = createAction<FarmsSortFieldEnum>('farms/SELECT_SORT_VALUE');

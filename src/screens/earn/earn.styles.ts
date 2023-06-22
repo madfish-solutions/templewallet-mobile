@@ -3,8 +3,8 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useEarnStyles = createUseStyles(({ colors, typography }) => ({
   container: {
-    paddingVertical: formatSize(12),
-    paddingHorizontal: formatSize(20),
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(16),
     borderBottomWidth: formatSize(1),
     borderColor: colors.lines
   },

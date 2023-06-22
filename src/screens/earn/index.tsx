@@ -61,8 +61,8 @@ export const Earn: FC = () => {
       <MainInfo />
       <View style={[styles.row, styles.container]}>
         <View style={styles.row}>
-          <Checkbox value={depositedOnly} onChange={handleToggleDepositOnly}>
-            <Text style={styles.depositText}>Deposit only</Text>
+          <Checkbox value={depositedOnly} onChange={handleToggleDepositOnly} size={formatSize(14)}>
+            <Text style={styles.depositText}>Deposited only</Text>
           </Checkbox>
         </View>
         <Search placeholder="Search farm" onChange={setSearchValue} dividerSize={12} testID={EarmSelectorsEnum.search}>

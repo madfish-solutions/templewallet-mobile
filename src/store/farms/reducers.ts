@@ -9,7 +9,8 @@ import {
   loadAllFarmsActions,
   loadAllFarmsAndStakesAction,
   loadAllStakesActions,
-  loadSingleFarmStakeActions
+  loadSingleFarmStakeActions,
+  selectSortValue
 } from './actions';
 import { farmsInitialState, FarmsState } from './state';
 
@@ -56,9 +57,12 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     lastStakes: payload,
     stakesLoading: false
   }));
-
   builder.addCase(setSelectedAccountAction, state => ({
     ...state,
     lastStakes: farmsInitialState.lastStakes
+  }));
+  builder.addCase(selectSortValue, (state, { payload }) => ({
+    ...state,
+    sortField: payload
   }));
 });
