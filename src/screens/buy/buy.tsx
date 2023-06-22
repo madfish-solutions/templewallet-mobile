@@ -42,7 +42,7 @@ export const Buy = () => {
       <Disclaimer
         title="Disclaimer"
         texts={[
-          `Temple integrated third-party solutions to buy ${metadata.symbol} or other currencies with Debit/Credit card.`
+          `Temple integrated third-party solutions to buy ${metadata.symbol} or other tokens with cryptocurrencies or Debit/Credit cards.`
         ]}
       />
     </ScreenContainer>

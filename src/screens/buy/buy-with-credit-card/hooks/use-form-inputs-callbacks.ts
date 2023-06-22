@@ -26,7 +26,7 @@ export const useFormInputsCallbacks = (
   setFormIsLoading: (newValue: boolean) => void
 ) => {
   const { trackEvent } = useAnalytics();
-  const { setFieldValue, values, setFieldTouched } = formik;
+  const { values, setFieldTouched, setValues } = formik;
   const { sendInput: inputValue, getOutput: outputValue } = values;
   const { asset: outputToken } = outputValue;
   const outputCalculationDataRef = useRef({ inputValue, outputToken });
@@ -48,12 +48,16 @@ export const useFormInputsCallbacks = (
   const setPaymentProvider = useCallback(
     async (newProvider: PaymentProviderInterface | undefined) => {
       const newOutputAmount = newProvider?.outputAmount;
-      await Promise.all([
-        setFieldValue('paymentProvider', newProvider),
-        setFieldValue('getOutput.amount', isDefined(newOutputAmount) ? new BigNumber(newOutputAmount) : undefined)
-      ]);
+      await setValues(values => ({
+        ...values,
+        getOutput: {
+          ...values.getOutput,
+          amount: isDefined(newOutputAmount) ? new BigNumber(newOutputAmount) : undefined
+        },
+        paymentProvider: newProvider
+      }));
     },
-    [setFieldValue]
+    [setValues]
   );
 
   const updateOutput = useMemo(

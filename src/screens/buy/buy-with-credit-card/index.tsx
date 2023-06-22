@@ -220,7 +220,7 @@ export const BuyWithCreditCard: FC = () => {
 
           <Disclaimer
             title="Disclaimer"
-            texts={['Temple integrated third-party solutions to buy TEZ or other currencies with Debit/Credit card.']}
+            texts={['Temple integrated third-party solutions to buy TEZ or other tokens with a Debit/Credit card.']}
           />
         </View>
       </ScreenContainer>

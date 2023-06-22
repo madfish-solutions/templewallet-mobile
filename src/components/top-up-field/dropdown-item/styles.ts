@@ -30,6 +30,7 @@ export const useTopUpTokenDropdownItemStyles = createUseStyles(({ colors, typogr
   },
   textRegular13: {
     ...typography.numbersRegular13,
+    flex: 1,
     color: colors.gray1
   }
 }));
