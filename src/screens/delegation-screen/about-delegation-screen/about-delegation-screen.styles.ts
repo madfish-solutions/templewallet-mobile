@@ -1,5 +1,5 @@
 import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { formatSize, formatTextSize } from '../../../styles/format-size';
 
 export const useAboutDelegationScreenStyles = createUseStyles(({ colors, typography }) => ({
   content: {
@@ -7,11 +7,11 @@ export const useAboutDelegationScreenStyles = createUseStyles(({ colors, typogra
   },
   title: {
     ...typography.numbersRegular22,
-    fontSize: formatSize(18),
+    fontSize: formatTextSize(18),
     fontWeight: '700',
     color: colors.black,
     letterSpacing: formatSize(0.38),
-    lineHeight: formatSize(25),
+    lineHeight: formatTextSize(25),
     textAlign: 'center'
   },
   titleBlue: {
@@ -33,7 +33,7 @@ export const useAboutDelegationScreenStyles = createUseStyles(({ colors, typogra
     marginLeft: formatSize(20),
     marginRight: formatSize(24),
     letterSpacing: formatSize(-0.24),
-    lineHeight: formatSize(20),
+    lineHeight: formatTextSize(20),
     fontWeight: '400',
     color: colors.black
   },

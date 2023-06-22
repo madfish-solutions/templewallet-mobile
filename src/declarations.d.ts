@@ -8,3 +8,7 @@ declare module '*.svg' {
 }
 
 declare module 'node-forge';
+
+declare module '@temple-wallet/wallet-address-validator' {
+  export function validate(address: string, currency: string): boolean;
+}

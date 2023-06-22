@@ -13,6 +13,15 @@ export const useApyStyles = createUseStyles(
     },
     [KNOWN_TOKENS_SLUGS.tzBTC]: {
       backgroundColor: colors.blue
+    },
+    [KNOWN_TOKENS_SLUGS.uBTC]: {
+      backgroundColor: colors.darkGreen
+    },
+    [KNOWN_TOKENS_SLUGS.uUSD]: {
+      backgroundColor: colors.darkGreen
+    },
+    [KNOWN_TOKENS_SLUGS.YOU]: {
+      backgroundColor: colors.darkGreen
     }
   })
 );

@@ -13,6 +13,7 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useQuickActions } from 'src/hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from 'src/hooks/use-reset-keychain-on-install.hook';
 import { useResetLoading } from 'src/hooks/use-reset-loading.hook';
+import { useTokensMetadataFixtures } from 'src/hooks/use-tokens-metadata-fixtures';
 import { useWhitelist } from 'src/hooks/use-whitelist.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
 import { AddLiquidityModal } from 'src/modals/add-liquidity-modal/add-liquidity-modal';
@@ -63,6 +64,7 @@ export const RootStackScreen = () => {
 
   useStorageMigration();
 
+  useTokensMetadataFixtures();
   useWhitelist();
   useQuickActions();
   useResetLoading();
