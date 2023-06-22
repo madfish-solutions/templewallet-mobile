@@ -62,7 +62,7 @@ interface FarmBase {
   version: FarmVersionEnum;
   type?: PoolType;
 }
-export interface FarmWithFirstActivityTime extends FarmBase {
+interface FarmWithFirstActivityTime extends FarmBase {
   firstActivityTime: string;
 }
 
