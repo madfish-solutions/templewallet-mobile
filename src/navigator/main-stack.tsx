@@ -22,7 +22,6 @@ import { useAdvertising } from 'src/hooks/use-advertising.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
-import { useLoadTokensApy } from 'src/hooks/use-load-tokens-apy.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
@@ -74,6 +73,8 @@ import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/w
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
+import { useUsdToTokenRates } from '../store/currency/currency-selectors';
+import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
@@ -86,6 +87,7 @@ export const MainStackScreen = () => {
   const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
+  const exchangeRates = useUsdToTokenRates();
 
   const blockSubscription = useBlockSubscription();
 
@@ -95,10 +97,10 @@ export const MainStackScreen = () => {
   useBeaconHandler();
   useFirebaseApp();
   useAdvertising();
-  useLoadTokensApy();
 
   const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 
+  useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
   useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
   useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, refreshDeps);
   useAuthorisedInterval(

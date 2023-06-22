@@ -8,6 +8,7 @@ import type { RootState } from 'src/store/types';
 import { AccountStateInterface, emptyAccountState } from '../interfaces/account-state.interface';
 import { AccountInterface, emptyAccount } from '../interfaces/account.interface';
 import { Shelter } from '../shelter/shelter';
+import { ExchangeRateRecord } from '../store/currency/currency-state';
 import { useTokenMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { emptyToken } from '../token/interfaces/token.interface';
@@ -42,6 +43,13 @@ export const withSelectedRpcUrl =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(withLatestFrom(state$, (value, { settings }): [T, string] => [value, settings.selectedRpcUrl]));
+
+export const withUsdToTokenRates =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { currency }): [T, ExchangeRateRecord] => [value, currency.usdToTokenRates.data])
+    );
 
 export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opParams: ParamsWithKind[]) =>
   Shelter.getSigner$(sender.publicKeyHash).pipe(
