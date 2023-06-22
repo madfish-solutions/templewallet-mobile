@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
-import { selectSortValue } from 'src/store/farms/actions';
+import { selectSortValueAction } from 'src/store/farms/actions';
 import { useAllFarmsSelector, useFarmSortFieldSelector, useLastStakesSelector } from 'src/store/farms/selectors';
 import { sortByApy, sortByNewest, sortByOldest } from 'src/utils/earn.utils';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
@@ -65,7 +65,7 @@ export const useFilteredFarms = () => {
     return result;
   }, [farms, searchValue, depositedOnly, sortField]);
 
-  const handleSetSortField = (sortField: FarmsSortFieldEnum) => dispatch(selectSortValue(sortField));
+  const handleSetSortField = (sortField: FarmsSortFieldEnum) => dispatch(selectSortValueAction(sortField));
   const handleToggleDepositOnly = () => setDepositedOnly(prevState => !prevState);
 
   return {

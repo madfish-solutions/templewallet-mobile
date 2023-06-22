@@ -54,9 +54,7 @@ export const sortByNewest = (farmA: SingleFarmResponse, farmB: SingleFarmRespons
   new Date(farmB?.item?.firstActivityTime ?? Date.now()).getTime() -
   new Date(farmA?.item?.firstActivityTime ?? Date.now()).getTime();
 
-export const sortByOldest = (farmA: SingleFarmResponse, farmB: SingleFarmResponse) =>
-  new Date(farmA?.item?.firstActivityTime ?? Date.now()).getTime() -
-  new Date(farmB?.item?.firstActivityTime ?? Date.now()).getTime();
+export const sortByOldest = (farmA: SingleFarmResponse, farmB: SingleFarmResponse) => sortByNewest(farmB, farmA);
 
 export const sortByApy = (farmA: SingleFarmResponse, farmB: SingleFarmResponse) =>
   new BigNumber(farmB?.item?.apr ?? 0).minus(farmA?.item?.apr ?? 0).toNumber();

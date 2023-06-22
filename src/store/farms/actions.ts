@@ -20,4 +20,4 @@ export const loadAllStakesActions = createActions<Array<SingleFarmResponse>, Las
   'farms/LOAD_ALL_STAKES'
 );
 
-export const selectSortValue = createAction<FarmsSortFieldEnum>('farms/SELECT_SORT_VALUE');
+export const selectSortValueAction = createAction<FarmsSortFieldEnum>('farms/SELECT_SORT_VALUE');
