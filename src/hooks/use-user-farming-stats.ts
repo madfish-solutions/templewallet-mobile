@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
-import { useFarmStoreSelector } from 'src/store/farms/selectors';
+import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/selectors';
 import { aprToApy } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -9,7 +9,8 @@ import { mutezToTz } from 'src/utils/tezos.util';
 const DEFAULT_AMOUNT = 0;
 
 export const useUserFarmingStats = () => {
-  const farms = useFarmStoreSelector();
+  const farms = useAllFarmsSelector();
+  const stakes = useLastStakesSelector();
 
   return useMemo(() => {
     const result = {
@@ -18,14 +19,14 @@ export const useUserFarmingStats = () => {
       totalClaimableRewardsInUsd: new BigNumber(DEFAULT_AMOUNT),
       maxApy: BigNumber.maximum(
         DEFAULT_AMOUNT,
-        ...farms.allFarms.data.map(({ item }) => aprToApy(Number(item.apr) ?? DEFAULT_AMOUNT))
+        ...farms.data.map(({ item }) => aprToApy(Number(item.apr) ?? DEFAULT_AMOUNT))
       )
     };
 
     let totalWeightedApy = new BigNumber(DEFAULT_AMOUNT);
 
-    Object.entries(farms.lastStakes).forEach(([address, stakeRecord]) => {
-      const farm = farms.allFarms.data.find(_farm => _farm.item.contractAddress === address);
+    Object.entries(stakes).forEach(([address, stakeRecord]) => {
+      const farm = farms.data.find(_farm => _farm.item.contractAddress === address);
 
       if (isDefined(farm)) {
         const depositValueInUsd = mutezToTz(
@@ -51,5 +52,5 @@ export const useUserFarmingStats = () => {
     }
 
     return result;
-  }, [farms]);
+  }, [farms, stakes]);
 };
