@@ -2,6 +2,7 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
 import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
@@ -17,6 +18,7 @@ import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biome
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
@@ -32,6 +34,7 @@ import {
 import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 
 export const CreateNewWallet = () => {
+  const dispatch = useDispatch();
   const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
   const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = useRestoredCloudBackup(cloudBackupId);
@@ -127,7 +130,10 @@ export const CreateNewWallet = () => {
             <ButtonLargePrimary
               title="Create"
               disabled={!isValid}
-              onPress={submitForm}
+              onPress={() => {
+                submitForm();
+                dispatch(shouldShowNewsletterModalAction(true));
+              }}
               testID={CreateNewWalletSelectors.createButton}
             />
             <InsetSubstitute type="bottom" />

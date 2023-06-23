@@ -21,6 +21,7 @@ export const useNewsletterModalStyles = createUseStyles(({ colors, typography })
     overflow: 'hidden',
     backgroundColor: colors.orange10,
     borderRadius: formatSize(8),
+    marginTop: formatSize(12),
     marginBottom: formatSize(32)
   }
 }));
