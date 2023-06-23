@@ -69,7 +69,7 @@ export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ typography
     height: formatSize(38),
     borderRadius: formatSize(10),
     borderWidth: formatSize(2),
-    minWidth: '50%'
+    minWidth: '48%'
   },
   titleStyle: {
     ...typography.tagline13Tag

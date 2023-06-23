@@ -7,7 +7,7 @@ export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ typography }
   containerStyle: {
     height: formatSize(38),
     borderRadius: formatSize(10),
-    minWidth: '50%'
+    minWidth: '48%'
   },
   titleStyle: {
     ...typography.tagline13Tag

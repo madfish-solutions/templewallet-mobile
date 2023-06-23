@@ -59,33 +59,40 @@ export const Earn: FC = () => {
   return (
     <>
       <MainInfo />
-      <View style={[styles.row, styles.container]}>
-        <View style={styles.row}>
-          <Checkbox value={depositedOnly} onChange={handleToggleDepositOnly} size={formatSize(14)}>
-            <Text style={styles.depositText}>Deposited only</Text>
-          </Checkbox>
-        </View>
-        <Search placeholder="Search farm" onChange={setSearchValue} dividerSize={12} testID={EarmSelectorsEnum.search}>
-          <Sorter
-            bottomSheetContentHeight={264}
-            sortValue={sortField}
-            description="Sort by:"
-            sortFieldsOptions={earnSortFieldsOptions}
-            sortFieldsLabels={earnSortFieldsLabels}
-            onSetSortValue={handleSetSortField}
-            testID={EarmSelectorsEnum.sorter}
-          />
-        </Search>
-      </View>
-      <Divider size={formatSize(8)} />
       {Boolean(isFarmsLoading) ? (
         <ActivityIndicator style={styles.loader} size="large" />
       ) : (
-        <FlatList
-          data={filteredFarmsList}
-          ListEmptyComponent={<DataPlaceholder text="No records found." />}
-          renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
-        />
+        <>
+          <View style={[styles.row, styles.container]}>
+            <View style={styles.row}>
+              <Checkbox value={depositedOnly} onChange={handleToggleDepositOnly} size={formatSize(16)}>
+                <Text style={styles.depositText}>Deposited only</Text>
+              </Checkbox>
+            </View>
+            <Search
+              placeholder="Search farm"
+              onChange={setSearchValue}
+              dividerSize={12}
+              testID={EarmSelectorsEnum.search}
+            >
+              <Sorter
+                bottomSheetContentHeight={264}
+                sortValue={sortField}
+                description="Sort by:"
+                sortFieldsOptions={earnSortFieldsOptions}
+                sortFieldsLabels={earnSortFieldsLabels}
+                onSetSortValue={handleSetSortField}
+                testID={EarmSelectorsEnum.sorter}
+              />
+            </Search>
+          </View>
+          <Divider size={formatSize(8)} />
+          <FlatList
+            data={filteredFarmsList}
+            ListEmptyComponent={<DataPlaceholder text="No records found." />}
+            renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
+          />
+        </>
       )}
     </>
   );
