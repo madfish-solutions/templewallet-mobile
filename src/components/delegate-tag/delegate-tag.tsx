@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Text } from 'react-native';
 
@@ -5,6 +6,7 @@ import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
 import { TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
 import { TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
+import { getDelegateText } from '../../utils/get-delegate-text.util';
 import { isDefined } from '../../utils/is-defined';
 import { ABContainer } from '../ab-container/ab-container';
 import { DelegateTagA } from './components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
@@ -17,6 +19,8 @@ interface Props {
   apy?: number;
 }
 
+const DECIMAL_VALUE = 2;
+
 export const DelegateTag: FC<Props> = ({ apy, token }) => {
   const styles = useDelegateTagStyles();
   const [, isBakerSelected] = useSelectedBakerSelector();
@@ -25,7 +29,14 @@ export const DelegateTag: FC<Props> = ({ apy, token }) => {
 
   const isTezosToken = tokenSlug === TEZ_TOKEN_SLUG;
 
-  const apyValue = useMemo(() => <Text style={styles.text}>APY: {apy}%</Text>, [apy]);
+  const label = getDelegateText(token);
+
+  const apyRateValue = useMemo(
+    () => new BigNumber(apy ?? 0).decimalPlaces(DECIMAL_VALUE).toFixed(DECIMAL_VALUE),
+    [apy]
+  );
+
+  const apyValue = useMemo(() => <Text style={styles.text}>{`${label}: ${apyRateValue}%`}</Text>, [apy]);
 
   const regularToken = useMemo(() => isDefined(apy) && apy > 0 && apyValue, [apy, apyValue]);
 

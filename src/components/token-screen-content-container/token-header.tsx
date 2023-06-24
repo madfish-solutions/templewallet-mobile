@@ -1,4 +1,5 @@
-import React, { FC } from 'react';
+import { BigNumber } from 'bignumber.js';
+import React, { FC, useMemo } from 'react';
 import { Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -15,6 +16,8 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
+import { INITIAL_ARP_VALUE } from '../../apis/youves/constants';
+import { getDelegateText } from '../../utils/get-delegate-text.util';
 import { ABContainer } from '../ab-container/ab-container';
 import { DelegateTagA } from '../delegate-tag/components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
 import { DelegateTagB } from '../delegate-tag/components/delegate-ab-components/delegate-tag-b/delegate-tag-b';
@@ -26,6 +29,8 @@ interface Props {
   showHistoryComponent: boolean;
   token: TokenInterface;
 }
+
+const DECIMAL_VALUE = 2;
 
 export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   const styles = useTokenScreenContentContainerStyles();
@@ -41,7 +46,12 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
     isDcpNode && !isBakerSelected ? navigate(ModalsEnum.SelectBaker) : navigate(ScreensEnum.Delegation);
   };
 
-  const { rate: apyRate = 0, link: apyLink } = useTokenApyInfo(tokenSlug);
+  const { rate: apyRate = INITIAL_ARP_VALUE, link: apyLink } = useTokenApyInfo(tokenSlug);
+
+  const apyRateValue = useMemo(
+    () => new BigNumber(apyRate).decimalPlaces(DECIMAL_VALUE).toFixed(DECIMAL_VALUE),
+    [apyRate]
+  );
 
   if (showHistoryComponent && isTezos) {
     return (
@@ -70,9 +80,13 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
       : undefined;
 
   if (showHistoryComponent && isDefined(handleApyPress)) {
+    const label = getDelegateText(token);
+
     return (
       <TouchableOpacity onPress={handleApyPress} style={[styles.delegateContainer, apyStyles[tokenSlug]]}>
-        <Text style={styles.delegateText}>Get up to {apyRate}% APY </Text>
+        <Text style={styles.delegateText}>
+          Get up to {apyRateValue}% {label}
+        </Text>
       </TouchableOpacity>
     );
   }

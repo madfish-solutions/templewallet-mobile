@@ -1,6 +1,6 @@
 import { black } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
 export const usePromotionItemStyles = createUseStyles(({ colors, typography }) => ({
@@ -40,7 +40,7 @@ export const usePromotionItemStyles = createUseStyles(({ colors, typography }) =
   text: {
     ...typography.caption13Semibold,
     color: 'white',
-    lineHeight: formatSize(18),
+    lineHeight: formatTextSize(18),
     letterSpacing: formatSize(-0.08),
     paddingHorizontal: formatSize(12)
   },

@@ -1,7 +1,7 @@
 import { createUseStyles } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
-export const useSwapRouteStyles = createUseStyles(({ colors }) => ({
+export const useSwapRouteStyles = createUseStyles(({ colors, typography }) => ({
   flex: {
     flex: 1,
     justifyContent: 'space-between'
@@ -11,11 +11,12 @@ export const useSwapRouteStyles = createUseStyles(({ colors }) => ({
     alignItems: 'center'
   },
   infoText: {
-    fontSize: formatSize(14),
-    lineHeight: formatSize(18),
+    ...typography.caption13Regular,
+    lineHeight: formatTextSize(18),
     color: colors.gray1
   },
   infoValue: {
+    ...typography.numbersRegular13,
     color: colors.black
   },
   mb8: {
