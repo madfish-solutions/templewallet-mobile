@@ -292,7 +292,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusIcon]: PlusIcon,
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.UkraineIcon]: UkraineIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.Market]: MarketIcon,
   [IconNameEnum.Buy]: BuyIcon,
   [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,
