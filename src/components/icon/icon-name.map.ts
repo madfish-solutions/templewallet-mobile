@@ -50,6 +50,7 @@ import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
+import EditNewIcon from './assets/edit-new.svg';
 import EditIcon from './assets/edit.svg';
 import EndorsementsIcon from './assets/endorsements.svg';
 import ExolixIcon from './assets/exolix.svg';
@@ -101,6 +102,7 @@ import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
 import RetryIcon from './assets/retry.svg';
+import SearchIconNew from './assets/search-new.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -121,6 +123,7 @@ import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
 import SwapInfo from './assets/swap-info.svg';
 import SwapRouteItemBackgroundIcon from './assets/swap-route-item-background.svg';
+import SwapSettingsNew from './assets/swap-settings-new.svg';
 import SwapSettings from './assets/swap-settings.svg';
 import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
@@ -187,6 +190,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
   [IconNameEnum.SwapSettings]: SwapSettings,
+  [IconNameEnum.SwapSettingsNew]: SwapSettingsNew,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
   [IconNameEnum.XBold]: XBoldIcon,
@@ -259,10 +263,12 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ExternalLinkTag]: ExternalLinkTagIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.Search]: SearchIcon,
+  [IconNameEnum.SearchNew]: SearchIconNew,
   [IconNameEnum.XSearch]: XSearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.AlertMonochrome]: AlertMonochromeIcon,
   [IconNameEnum.Edit]: EditIcon,
+  [IconNameEnum.EditNew]: EditNewIcon,
   [IconNameEnum.TouchId]: TouchIdIcon,
   [IconNameEnum.Trash]: TrashIcon,
   [IconNameEnum.LogOut]: LogOutIcon,

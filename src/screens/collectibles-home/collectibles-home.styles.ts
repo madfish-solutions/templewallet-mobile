@@ -1,5 +1,3 @@
-import { generateShadow } from 'src/styles/generate-shadow';
-
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -26,7 +24,7 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   profileContainer: {
     flexDirection: 'row',
-    marginHorizontal: formatSize(24),
+    marginHorizontal: formatSize(16),
     marginBottom: formatSize(20),
     marginTop: formatSize(4)
   },
@@ -37,11 +35,11 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   socialIconsBgColor: {
     backgroundColor: colors.gray4
   },
-  createProfile: {
+  align: {
     flexDirection: 'row',
     alignItems: 'center'
   },
-  createProfileText: {
+  profileText: {
     ...typography.tagline13Tag,
     color: colors.orange,
     marginLeft: formatSize(4),
@@ -91,41 +89,14 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     alignItems: 'center',
     justifyContent: 'center'
   },
-  nftTypeContainer: {
-    flexDirection: 'row',
-    marginHorizontal: formatSize(16),
-    marginVertical: formatSize(8),
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    backgroundColor: colors.lines,
-    borderRadius: formatSize(8)
-  },
-  NFTType: {
-    alignItems: 'center',
-    marginVertical: formatSize(2),
-    borderRadius: formatSize(7),
-    flex: 1
-  },
-  NFTtypeActive: {
-    backgroundColor: colors.white,
-    marginLeft: formatSize(2),
-    ...generateShadow(3, 'black')
-  },
-  NFTtypeText: {
-    color: colors.orange,
-    paddingVertical: formatSize(3),
-    ...typography.caption13Semibold
-  },
-  NFTtypeTextDisabled: {
-    color: colors.gray3
-  },
   infoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: formatSize(20),
-    paddingVertical: formatSize(13),
-    borderBottomColor: colors.lines,
+    paddingVertical: formatSize(8),
+    paddingHorizontal: formatSize(16),
+    borderColor: colors.lines,
     borderBottomWidth: formatSize(0.5),
+    borderTopWidth: formatSize(0.5),
     backgroundColor: colors.pageBG
   },
   checkboxText: {
@@ -137,12 +108,13 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     flexDirection: 'row',
     justifyContent: 'space-around'
   },
-  centerIcon: {
-    marginHorizontal: formatSize(20)
+  offsetBetween: {
+    marginHorizontal: formatSize(16)
   },
   checkboxContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginLeft: formatSize(4)
   },
   handleStyle: {
     display: 'none'

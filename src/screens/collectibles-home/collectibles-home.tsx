@@ -38,13 +38,6 @@ import { SocialButton } from '../settings/settings-header/social-button/social-b
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
 
-enum CollectiblesTypeEnum {
-  Owned = 'Owned',
-  Created = 'Created',
-  OnSale = 'On sale',
-  Offers = 'Offers'
-}
-
 interface SocialLinksInterface {
   url: string | undefined;
   icon: IconNameEnum;
@@ -67,7 +60,7 @@ export const CollectiblesHome = () => {
   const { navigate } = useNavigation();
 
   const insets = useSafeAreaInsets();
-  const TAB_BAR_HEIGHT = 53 + insets.bottom;
+  const TAB_BAR_HEIGHT = 82 + insets.bottom;
   const ICON_COVER_GAP = 2;
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
@@ -175,19 +168,17 @@ export const CollectiblesHome = () => {
           }}
         >
           <View style={styles.profileContainer}>
-            <View style={styles.createProfile}>
-              {isDefined(alias) ? (
-                <TouchableOpacity onPress={openTzProfiles} style={styles.createProfile}>
-                  <Icon name={IconNameEnum.Edit} onPress={() => null} size={formatSize(16)} />
-                  <Text style={styles.createProfileText}>EDIT PROFILE</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={openTzProfiles} style={styles.createProfile}>
-                  <Icon name={IconNameEnum.PlusCircle} onPress={() => null} size={formatSize(16)} />
-                  <Text style={styles.createProfileText}>CREATE PROFILE</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+            {isDefined(alias) ? (
+              <TouchableOpacity onPress={openTzProfiles} style={styles.align}>
+                <Icon name={IconNameEnum.EditNew} />
+                <Text style={styles.profileText}>EDIT PROFILE</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={openTzProfiles} style={styles.align}>
+                <Icon name={IconNameEnum.PlusCircle} size={formatSize(16)} />
+                <Text style={styles.profileText}>CREATE PROFILE</Text>
+              </TouchableOpacity>
+            )}
             <FlatList data={socialLinks} renderItem={renderItemSocialLinks} horizontal={true} />
           </View>
 
@@ -217,37 +208,17 @@ export const CollectiblesHome = () => {
         style={styles.bottomSheet}
         backgroundStyle={styles.bottomSheet}
       >
-        <View style={styles.nftTypeContainer}>
-          <TouchableOpacity style={[styles.NFTType, styles.NFTtypeActive]}>
-            <Text style={styles.NFTtypeText}>{CollectiblesTypeEnum.Owned}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.NFTType} disabled>
-            <Text style={[styles.NFTtypeText, styles.NFTtypeTextDisabled]}>{CollectiblesTypeEnum.Created}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.NFTType} disabled>
-            <Text style={[styles.NFTtypeText, styles.NFTtypeTextDisabled]}>{CollectiblesTypeEnum.OnSale}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.NFTType} disabled>
-            <Text style={[styles.NFTtypeText, styles.NFTtypeTextDisabled]}>{CollectiblesTypeEnum.Offers}</Text>
-          </TouchableOpacity>
-        </View>
         <View style={styles.infoContainer}>
           <View style={styles.checkboxContainer}>
             <Checkbox value={false} size={formatSize(16)} strokeWidth={formatSize(2)} onChange={emptyFn}>
-              <Divider size={formatSize(5)} />
+              <Divider size={formatSize(4)} />
               <Text style={styles.checkboxText}>Show Info</Text>
             </Checkbox>
           </View>
           <View style={styles.icons}>
-            <TouchableIcon
-              name={IconNameEnum.SwapSettings}
-              onPress={emptyFn}
-              size={formatSize(16)}
-              disabled
-              color={colors.disabled}
-            />
-            <TouchableIcon name={IconNameEnum.Edit} onPress={emptyFn} size={formatSize(16)} style={styles.centerIcon} />
-            <TouchableIcon name={IconNameEnum.Search} onPress={emptyFn} size={formatSize(16)} />
+            <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
+            <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} style={styles.offsetBetween} />
+            <TouchableIcon name={IconNameEnum.SearchNew} onPress={emptyFn} />
           </View>
         </View>
         <CollectiblesList collectiblesList={collectibles} />
