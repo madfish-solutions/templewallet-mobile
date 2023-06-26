@@ -34,6 +34,8 @@ import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
 import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
 import CycleStatusUnlockedIcon from './assets/cycle-status-unlocked.svg';
 import DAppsIcon from './assets/dapps.svg';
+import DataIcon from './assets/data.svg';
+import DatabaseIcon from './assets/database.svg';
 import DealIcon from './assets/deal.svg';
 import Delegate1Icon from './assets/delegate-1.svg';
 import Delegate2Icon from './assets/delegate-2.svg';
@@ -288,5 +290,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.QsEarnSource]: QsEarnSource,
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
-  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
+  [IconNameEnum.Data]: DataIcon,
+  [IconNameEnum.Database]: DatabaseIcon
 };

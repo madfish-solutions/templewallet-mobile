@@ -35,6 +35,8 @@ export enum ScreensEnum {
 
   /** Earn stack **/
   Earn = 'Earn',
+  Farming = 'Farming',
+  Savings = 'Savings',
 
   /** Market stack **/
   Market = 'Market',
@@ -80,6 +82,8 @@ export type ScreensParamList = {
   [ScreensEnum.Exolix]: undefined;
 
   [ScreensEnum.Earn]: undefined;
+  [ScreensEnum.Farming]: undefined;
+  [ScreensEnum.Savings]: undefined;
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
