@@ -217,7 +217,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Apple]: AppleIcon,
   [IconNameEnum.AppleOnDark]: AppleOnDarkIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
-  [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
@@ -287,7 +286,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusIcon]: PlusIcon,
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.UkraineIcon]: UkraineIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.Market]: MarketIcon,
   [IconNameEnum.Buy]: BuyIcon,
   [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,

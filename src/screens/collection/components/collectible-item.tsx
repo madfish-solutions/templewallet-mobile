@@ -13,8 +13,8 @@ import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { useCollectionStyles } from '../collection.styles';
 import { navigateToObjktForBuy } from '../utils';
+import { useCollectibleItemStyles } from './collectible-item.styles';
 import { OfferButton } from './offer-button';
 
 interface Props {
@@ -25,7 +25,7 @@ interface Props {
 }
 
 export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, selectedRpc, selectedPublicKeyHash }) => {
-  const styles = useCollectionStyles();
+  const styles = useCollectibleItemStyles();
 
   const lastPrice = useMemo(() => {
     if (isDefined(item.lastPrice) && isDefined(item.lastPrice.price)) {

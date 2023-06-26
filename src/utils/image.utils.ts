@@ -7,17 +7,21 @@ const OBJKT_RESIZE_3 = 'assets-003';
 
 const IPFS_GATE = 'https://cloudflare-ipfs.com/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net';
-const MEDIA_SIZE = 'small';
 
-export const formatImgUri = (origin = '', shouldUseMediaHost = true) => {
+export enum ImageResolutionEnum {
+  SMALL = 'small',
+  MEDIUM = 'medium'
+}
+
+export const formatImgUri = (origin = '', resolution = ImageResolutionEnum.SMALL, shouldUseMediaHost = true) => {
   if (origin.startsWith('ipfs://')) {
     const ipfsId = origin.substring(7);
 
-    return shouldUseMediaHost ? `${MEDIA_HOST}/media/${MEDIA_SIZE}/ipfs/${ipfsId}` : `${IPFS_GATE}/${ipfsId}`;
+    return shouldUseMediaHost ? `${MEDIA_HOST}/media/${resolution}/ipfs/${ipfsId}` : `${IPFS_GATE}/${ipfsId}`;
   }
 
   if (origin.startsWith('http') && shouldUseMediaHost) {
-    return `${MEDIA_HOST}/media/${MEDIA_SIZE}/web/${origin.replace(/^https?:\/\//, '')}`;
+    return `${MEDIA_HOST}/media/${resolution}/web/${origin.replace(/^https?:\/\//, '')}`;
   }
 
   return origin;
