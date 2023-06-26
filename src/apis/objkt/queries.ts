@@ -125,7 +125,7 @@ query MyQuery {
   ) {
     gallery_id
     tokens(
-      limit: 50
+      limit: 15
       offset: ${offset}
     ) {
       token {

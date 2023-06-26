@@ -41,7 +41,7 @@ export const Collection = () => {
     params.galleryId
   );
 
-  const PAGINATION_STEP = useMemo(() => (params.type === ObjktTypeEnum.faContract ? 500 : 50), []);
+  const PAGINATION_STEP = useMemo(() => (params.type === ObjktTypeEnum.faContract ? 500 : 15), []);
 
   const screenProgressAmount = useMemo(
     () =>
