@@ -98,11 +98,11 @@ export const TokensList: FC = () => {
   }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromotionEnabled]);
 
   useEffect(() => {
-    if (partnersPromotionEnabled) {
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
       dispatch(loadAdvertisingPromotionActions.submit());
       optimalFetchEnableAds(publicKeyHash);
     }
-  }, [partnersPromotionEnabled]);
+  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,

@@ -11,23 +11,29 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { useIsPartnersPromoEnabledSelector } from '../../store/partners-promotion/partners-promotion-selectors';
+import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
 import { TezosInfo } from './tezos-info/tezos-info';
 import { TopTokensTable } from './top-coins-table/top-tokens-table';
 
 export const Market = () => {
   const dispatch = useDispatch();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
+  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
   useAuthorisedInterval(() => {
     dispatch(loadMarketTopTokenActions.submit());
     dispatch(loadMarketTokensSlugsActions.submit());
   }, MARKET_SYNC_INTERVAL);
 
-  useAuthorisedInterval(() => {
-    if (partnersPromotionEnabled) {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
-    }
-  }, PROMO_SYNC_INTERVAL);
+  useAuthorisedInterval(
+    () => {
+      if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+        dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
+      }
+    },
+    PROMO_SYNC_INTERVAL,
+    [partnersPromotionEnabled, isEnabledAdsBanner]
+  );
 
   usePageAnalytic(ScreensEnum.Market);
 
