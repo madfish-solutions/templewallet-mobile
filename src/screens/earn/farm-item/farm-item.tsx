@@ -73,7 +73,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       )
         .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE)
         .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.claimableRewards]
+    [lastStakeRecord?.claimableRewards, fiatToUsdRate]
   );
 
   const navigateToFarm = useCallback(
