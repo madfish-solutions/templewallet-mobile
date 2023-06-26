@@ -8,7 +8,8 @@ export const useOpportunityCategoryCardStyles = createUseStylesMemoized(({ color
     ...generateShadow(1, black),
     borderRadius: formatSize(10),
     backgroundColor: colors.cardBG,
-    margin: formatSize(16),
+    marginVertical: formatSize(8),
+    marginHorizontal: formatSize(16),
     padding: formatSize(16)
   },
   title: {

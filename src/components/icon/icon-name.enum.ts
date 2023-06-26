@@ -140,5 +140,6 @@ export enum IconNameEnum {
   Smile = 'Smile',
   SmileWithGlasses = 'SmileWithGlasses',
   SmileWithDollar = 'SmileWithDollar',
-  Data = 'Data'
+  Data = 'Data',
+  Database = 'Database'
 }

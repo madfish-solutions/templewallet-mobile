@@ -17,7 +17,7 @@ import { useOpportunityCategoryCardStyles } from './styles';
 interface OpportunityCategoryCardProps extends TestIdProps {
   title: string;
   description: string;
-  screen: ScreensEnum.Farming;
+  screen: ScreensEnum.Farming | ScreensEnum.Savings;
   depositAmount: BigNumber;
   iconName: IconNameEnum;
   netApy: BigNumber;
