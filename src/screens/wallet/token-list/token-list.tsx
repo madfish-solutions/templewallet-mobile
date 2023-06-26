@@ -88,14 +88,14 @@ export const TokensList: FC = () => {
       setPromotionErrorOccurred(false);
     };
 
-    if (partnersPromotionEnabled) {
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
       addNavigationListener('focus', listener);
     }
 
     return () => {
       removeNavigationListener('focus', listener);
     };
-  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromotionEnabled]);
+  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromotionEnabled, isEnabledAdsBanner]);
 
   useEffect(() => {
     if (partnersPromotionEnabled && !isEnabledAdsBanner) {

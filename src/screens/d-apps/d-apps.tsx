@@ -45,7 +45,7 @@ export const DApps = () => {
   }, []);
 
   useEffect(() => {
-    if (partnersPromotionEnabled && isEnabledAdsBanner) {
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
       dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
     }
   }, [partnersPromotionEnabled, isEnabledAdsBanner]);
