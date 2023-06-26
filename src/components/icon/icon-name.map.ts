@@ -304,5 +304,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.BlurDark]: BlurDark,
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
-  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
+  [IconNameEnum.NotificationDot]: NotificationDotIcon
 };
