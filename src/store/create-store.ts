@@ -35,6 +35,8 @@ import { NotificationsRootState } from './notifications/notifications-state';
 import { partnersPromotionReducers } from './partners-promotion/partners-promotion-reducers';
 import { PartnersPromotionRootState } from './partners-promotion/partners-promotion-state';
 import { rootStateReducer } from './root-state.reducers';
+import { savingsReducer } from './savings/reducers';
+import { SavingsRootState } from './savings/state';
 import { securityReducers } from './security/security-reducers';
 import { SecurityRootState } from './security/security-state';
 import { settingsReducers } from './settings/settings-reducers';
@@ -62,7 +64,8 @@ export type RootState = WalletRootState &
   PartnersPromotionRootState &
   Route3RootState &
   ABTestingRootState &
-  FarmsRootState;
+  FarmsRootState &
+  SavingsRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -96,7 +99,8 @@ const rootReducer = rootStateReducer<RootState>({
   buyWithCreditCard: buyWithCreditCardReducer,
   partnersPromotion: partnersPromotionReducers,
   abTesting: abTestingReducer,
-  farms: farmsReducer
+  farms: farmsReducer,
+  savings: savingsReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

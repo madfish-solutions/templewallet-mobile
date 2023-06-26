@@ -143,6 +143,7 @@ import XBoldIcon from './assets/x-bold.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
+import YouvesEarnSourceIcon from './assets/youves-earn-source.svg';
 import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
 
@@ -292,5 +293,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
   [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
   [IconNameEnum.Data]: DataIcon,
-  [IconNameEnum.Database]: DatabaseIcon
+  [IconNameEnum.Database]: DatabaseIcon,
+  [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon
 };

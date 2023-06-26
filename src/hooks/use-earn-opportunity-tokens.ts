@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
-import { Farm, FarmToken } from 'src/apis/quipuswap-staking/types';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
+import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
 import {
   useAssetsListSelector,
   useSelectedAccountSelector,
@@ -10,17 +10,18 @@ import {
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { convertFarmToken } from 'src/utils/staking.utils';
 
-export const useFarmTokens = (farm?: Farm) => {
+export const useEarnOpportunityTokens = (earnOpportunity?: EarnOpportunity) => {
   const getExchangeRate = useTokenExchangeRateGetter();
   const accountAssetsList = useAssetsListSelector();
   const { publicKeyHash: accountPkh } = useSelectedAccountSelector();
   const tezToken = useTezosTokenSelector(accountPkh);
 
   const convertToken = useCallback(
-    (token: FarmToken) => {
+    (token: EarnOpportunityToken) => {
       const tokenAddress = token.contractAddress === 'tez' ? undefined : token.contractAddress;
       const tokenSlug = toTokenSlug(tokenAddress, token.fa2TokenId);
       const accountAsset =
@@ -30,7 +31,7 @@ export const useFarmTokens = (farm?: Farm) => {
 
       return (
         accountAsset ?? {
-          ...convertFarmToken(token),
+          ...convertEarnOpportunityToken(token),
           exchangeRate: getExchangeRate(tokenSlug),
           balance: '0'
         }
@@ -41,9 +42,9 @@ export const useFarmTokens = (farm?: Farm) => {
 
   return useMemo(
     () => ({
-      stakeTokens: farm?.tokens.map(convertToken) ?? [],
-      rewardToken: isDefined(farm) ? convertToken(farm.rewardToken) : emptyTezosLikeToken
+      stakeTokens: earnOpportunity?.tokens.map(convertToken) ?? [],
+      rewardToken: isDefined(earnOpportunity) ? convertToken(earnOpportunity.rewardToken) : emptyTezosLikeToken
     }),
-    [farm, convertToken]
+    [earnOpportunity, convertToken]
   );
 };

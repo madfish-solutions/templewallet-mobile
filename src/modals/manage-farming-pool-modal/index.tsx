@@ -4,13 +4,13 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { ActivityIndicator, findNodeHandle, ScrollView, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { PoolType } from 'src/apis/quipuswap-staking/types';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
@@ -110,7 +110,7 @@ export const ManageFarmingPoolModal: FC = () => {
           </View>
         )}
         {!pageIsLoading && <Divider size={formatSize(16)} />}
-        {!pageIsLoading && farm?.item.type === PoolType.STABLESWAP && (
+        {!pageIsLoading && farm?.item.type === EarnOpportunityTypeEnum.STABLESWAP && (
           <View style={styles.content}>
             {tabIndex === 0 ? (
               <StakeForm acceptRisksRef={acceptRisksRef} farm={farm} formik={stakeFormik} stake={stake} />
@@ -119,7 +119,7 @@ export const ManageFarmingPoolModal: FC = () => {
             )}
           </View>
         )}
-        {!pageIsLoading && isDefined(farm) && farm.item.type !== PoolType.STABLESWAP && (
+        {!pageIsLoading && isDefined(farm) && farm.item.type !== EarnOpportunityTypeEnum.STABLESWAP && (
           <View style={styles.content}>
             <Text style={styles.notSupportedText}>Non-stableswap farms are not supported yet</Text>
           </View>
@@ -130,7 +130,10 @@ export const ManageFarmingPoolModal: FC = () => {
           <ButtonLargePrimary
             title="Deposit"
             disabled={
-              pageIsLoading || farm?.item.type !== PoolType.STABLESWAP || stakeFormErrorsVisible || stakeFormSubmitting
+              pageIsLoading ||
+              farm?.item.type !== EarnOpportunityTypeEnum.STABLESWAP ||
+              stakeFormErrorsVisible ||
+              stakeFormSubmitting
             }
             onPress={handleDepositClick}
             testID={ManageFarmingPoolModalSelectors.depositButton}
@@ -140,7 +143,7 @@ export const ManageFarmingPoolModal: FC = () => {
             title="Withdraw & Claim rewards"
             disabled={
               pageIsLoading ||
-              farm?.item.type !== PoolType.STABLESWAP ||
+              farm?.item.type !== EarnOpportunityTypeEnum.STABLESWAP ||
               Object.keys(withdrawFormErrors).length > 0 ||
               withdrawFormSubmitting
             }

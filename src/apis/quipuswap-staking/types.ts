@@ -1,7 +1,9 @@
 import { MichelsonMap } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { BigMap } from 'src/interfaces/big-map.interface';
+import { FarmBase } from 'src/interfaces/earn-opportunity/farm-base.interface';
 
 export enum FarmVersionEnum {
   V1 = 'v1',
@@ -9,68 +11,25 @@ export enum FarmVersionEnum {
   V3 = 'v3'
 }
 
-export enum PoolType {
-  STABLESWAP = 'STABLESWAP',
-  DEX_TWO = 'DEX_TWO'
-}
-
 enum StableswapPoolVersion {
   V1 = 'v1',
   V2 = 'v2'
 }
 
-export enum FarmTokenStandardsEnum {
-  Fa12 = 'FA12',
-  Fa2 = 'FA2'
-}
-
-interface FarmTokenMetadata {
-  decimals: number;
-  symbol: string;
-  name: string;
-  thumbnailUri: string;
-  categories?: string[];
-}
-
-export interface FarmToken {
-  contractAddress: string;
-  fa2TokenId?: number;
-  type: FarmTokenStandardsEnum;
-  isWhitelisted: boolean | null;
-  metadata: FarmTokenMetadata;
-}
-
-interface FarmBase {
-  id: string;
-  contractAddress: string;
-  apr: string | null;
-  depositExchangeRate: string | null;
-  depositTokenUrl: string;
+interface QuipuswapFarmBase extends FarmBase {
   lastRewards: string;
   discFactor: string;
-  dailyDistribution: string;
-  dailyDistributionDollarEquivalent: string;
-  earnExchangeRate: string | null;
-  vestingPeriodSeconds: string;
-  stakeUrl: string;
-  stakedToken: FarmToken;
-  tokens: FarmToken[];
-  rewardToken: FarmToken;
-  staked: string;
-  tvlInUsd: string | null;
-  tvlInStakedToken: string;
   version: FarmVersionEnum;
-  type?: PoolType;
 }
 
-interface StableswapFarm extends FarmBase {
-  type: PoolType.STABLESWAP;
+interface StableswapFarm extends QuipuswapFarmBase {
+  type: EarnOpportunityTypeEnum.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;
 }
 
-interface OtherFarm extends FarmBase {
-  type?: PoolType.DEX_TWO;
+interface OtherFarm extends QuipuswapFarmBase {
+  type?: EarnOpportunityTypeEnum.DEX_TWO;
 }
 
 export type Farm = StableswapFarm | OtherFarm;

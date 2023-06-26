@@ -4,6 +4,7 @@ import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { getV3FarmsList } from 'src/apis/quipuswap-staking';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
@@ -17,7 +18,6 @@ import {
   loadAllStakesActions,
   loadSingleFarmStakeActions
 } from './actions';
-import { UserStakeValueInterface } from './state';
 import { getFarmStake, GetFarmStakeError, RawStakeValue, toUserStakeValueInterface } from './utils';
 
 const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>

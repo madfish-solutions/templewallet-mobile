@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
-import { FarmVersionEnum, PoolType } from 'src/apis/quipuswap-staking/types';
+import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 
 import { useSelector } from '../selector';
 
@@ -19,7 +20,7 @@ export const useAllFarmsSelector = () => {
 
   return useMemo(() => {
     const data = farms.data.filter(
-      farm => farm.item.type === PoolType.STABLESWAP && farm.item.dailyDistribution !== '0'
+      farm => farm.item.type === EarnOpportunityTypeEnum.STABLESWAP && farm.item.dailyDistribution !== '0'
     );
 
     return {

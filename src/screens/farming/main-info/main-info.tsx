@@ -43,7 +43,7 @@ export const MainInfo: FC = () => {
     );
   }, [farms]);
 
-  const { netApy, totalStakedAmountInUsd } = useUserFarmingStats();
+  const { netApy, totalStakedAmountInFiat } = useUserFarmingStats();
 
   const totalClaimableRewardsInUsd = useMemo(() => {
     let result = new BigNumber(PENNY);
@@ -106,7 +106,7 @@ export const MainInfo: FC = () => {
         <View style={styles.container}>
           <View style={[styles.card, styles.deposit]}>
             <Text style={styles.titleText}>CURRENT DEPOSIT AMOUNT</Text>
-            <FormattedAmount isDollarValue amount={totalStakedAmountInUsd} style={styles.valueText} />
+            <FormattedAmount isDollarValue amount={totalStakedAmountInFiat} style={styles.valueText} />
           </View>
           <Divider size={formatSize(8)} />
           <View style={[styles.card, styles.netApy]}>

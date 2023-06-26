@@ -1,4 +1,46 @@
-import React, { FC } from 'react';
-import { Text } from 'react-native';
+import React, { FC, useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { useDispatch } from 'react-redux';
 
-export const Savings: FC = () => <Text>TODO: Add some contents</Text>;
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { useBlockLevel } from 'src/hooks/use-block-level.hook';
+import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
+import {
+  useSavingsItemsLoadingSelector,
+  useSavingsItemsSelector,
+  useSavingsStakesSelector
+} from 'src/store/savings/selectors';
+
+import { SavingsItemCard } from './savings-item-card';
+import { useSavingsStyles } from './styles';
+
+export const Savings: FC = () => {
+  const dispatch = useDispatch();
+  const savingsItems = useSavingsItemsSelector();
+  const savingsItemsLoading = useSavingsItemsLoadingSelector();
+  const savingsStakes = useSavingsStakesSelector();
+  const blockLevel = useBlockLevel();
+  const styles = useSavingsStyles();
+  const pageIsLoading = savingsItemsLoading && savingsItems.length === 0;
+
+  useEffect(() => {
+    dispatch(loadAllSavingsAndStakesAction());
+  }, [dispatch, blockLevel]);
+
+  return pageIsLoading ? (
+    <ActivityIndicator style={styles.loader} size="large" />
+  ) : (
+    <FlatList
+      data={savingsItems}
+      ListEmptyComponent={<DataPlaceholder text="No records found." />}
+      renderItem={({ item }) => (
+        <SavingsItemCard
+          key={`${item.id}_${item.contractAddress}`}
+          item={item}
+          lastStakeRecord={savingsStakes[item.contractAddress]}
+        />
+      )}
+    />
+  );
+};

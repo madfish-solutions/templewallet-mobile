@@ -7,15 +7,15 @@ import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
 import { Farm } from 'src/apis/quipuswap-staking/types';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
-import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
+import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HorizontalBorder } from 'src/components/horizontal-border';
-import { useFarmTokens } from 'src/hooks/use-farm-tokens';
+import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useInterval } from 'src/hooks/use-interval.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
@@ -59,7 +59,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
   const dispatch = useDispatch();
   const tezos = useReadOnlyTezosToolkit();
-  const farmTokens = useFarmTokens(farm);
+  const farmTokens = useEarnOpportunityTokens(farm);
   const rewardTokenDecimals = rewardToken.metadata.decimals;
   const rewardTokenSymbol = rewardToken.metadata.symbol;
 
@@ -139,7 +139,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   return (
     <View style={styles.root}>
       <View style={styles.title}>
-        <FarmTokens {...farmTokens} />
+        <EarnOpportunityTokens {...farmTokens} />
         <Text style={styles.apyLabel}>APY: {isDefined(apy) ? `${apy.toFixed(2)}%` : '-'}</Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />

@@ -11,7 +11,7 @@ import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/sele
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { FarmItem } from './farm-item/farm-item';
+import { FarmItem } from './farm-item';
 import { MainInfo } from './main-info/main-info';
 import { useFarmingStyles } from './styles';
 
