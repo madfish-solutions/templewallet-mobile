@@ -5,6 +5,7 @@ import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from '
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
@@ -18,7 +19,6 @@ import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
 
 const COLLECTIBLE_SIZE = 327;
-const PAGINATION_STEP = 500;
 const VIEWABILITY_CONFIG = {
   itemVisiblePercentThreshold: 50,
   minimumViewTime: 200
@@ -41,7 +41,15 @@ export const Collection = () => {
     params.galleryId
   );
 
-  const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
+  const PAGINATION_STEP = useMemo(() => (params.type === ObjktTypeEnum.faContract ? 500 : 50), []);
+
+  const screenProgressAmount = useMemo(
+    () =>
+      params.type === ObjktTypeEnum.gallery ? collectibles?.[0]?.items ?? collectibles.length : collectibles.length,
+    [collectibles]
+  );
+
+  const { setInnerScreenIndex } = useInnerScreenProgress(screenProgressAmount);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
     if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {

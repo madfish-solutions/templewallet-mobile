@@ -9,7 +9,6 @@ export const buildGetCollectiblesInfoQuery = (address: string) => gql`
       where: {
         _or: [
           { creator_address: { _eq: "${address}" } }
-          { collaborators: { collaborator_address: { _eq: "${address}" } } }
           {
             tokens: {
               creators: { creator_address: { _eq: "${address}" }, verified: { _eq: true } }
@@ -126,7 +125,7 @@ query MyQuery {
   ) {
     gallery_id
     tokens(
-      limit: 500
+      limit: 50
       offset: ${offset}
     ) {
       token {
