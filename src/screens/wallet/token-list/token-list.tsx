@@ -21,7 +21,11 @@ import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
+import {
+  useSelectedAccountTezosTokenSelector,
+  useSelectedAccountTkeyTokenSelector,
+  useVisibleTokensListSelector
+} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
@@ -59,6 +63,7 @@ export const TokensList: FC = () => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tkey = useSelectedAccountTkeyTokenSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
@@ -72,7 +77,7 @@ export const TokensList: FC = () => {
     visibleTokensList,
     isHideZeroBalance,
     true,
-    tezosToken
+    [tezosToken, tkey]
   );
 
   const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
