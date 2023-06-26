@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import memoize from 'mem';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -10,7 +10,7 @@ import { tezosMetadataApi, whitelistApi } from '../api.service';
 import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
 import { RootState } from '../store/create-store';
 import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
-import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import {
   emptyTokenMetadata,
   TokenMetadataInterface,
@@ -164,6 +164,14 @@ export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetad
 
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> => {
+    const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
+      token => token.address === address && token.id === id
+    );
+
+    if (isDefined(overridenTokenMetadata)) {
+      return of(overridenTokenMetadata);
+    }
+
     const slug = `${address}_${id}`;
     console.log('Loading metadata for:', slug);
 
@@ -182,8 +190,11 @@ export const loadTokensMetadata$ = memoize(
         data
           .map((token, index) => {
             const [address, id] = slugs[index].split('_');
+            const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
+              token => token.address === address && token.id === Number(id)
+            );
 
-            return transformDataToTokenMetadata(token, address, Number(id));
+            return overridenTokenMetadata ?? transformDataToTokenMetadata(token, address, Number(id));
           })
           .filter(isDefined)
       )

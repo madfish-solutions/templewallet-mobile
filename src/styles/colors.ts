@@ -19,7 +19,7 @@ const accentAlphaColors = {
   blue10: hexa(accentColors.blue, 0.1)
 };
 
-const basicLightColors = {
+export const basicLightColors = {
   black: '#000000',
   white: '#ffffff',
   liteOrange: '#E5E5EA',
