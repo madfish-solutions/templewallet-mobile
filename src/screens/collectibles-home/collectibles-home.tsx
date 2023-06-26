@@ -60,7 +60,7 @@ export const CollectiblesHome = () => {
   const { navigate } = useNavigation();
 
   const insets = useSafeAreaInsets();
-  const TAB_BAR_HEIGHT = 82 + insets.bottom;
+  const TAB_BAR_HEIGHT = formatSize(79) + insets.bottom;
   const ICON_COVER_GAP = 2;
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
