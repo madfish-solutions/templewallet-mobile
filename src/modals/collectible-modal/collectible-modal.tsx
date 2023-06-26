@@ -152,7 +152,7 @@ export const CollectibleModal = () => {
         {
           title: collectible.name,
           descriptionText: description,
-          imageUrl: formatImgUri(collectible.thumbnailUri, 'medium')
+          imageUrl: formatImgUri(collectible.thumbnailUri)
         }
       );
       await Share.share({

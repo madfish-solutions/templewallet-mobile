@@ -1,7 +1,7 @@
 import { black } from '../../config/styles';
 import { zIndexEnum } from '../../enums/z-index.enum';
 import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { formatSize, formatTextSize } from '../../styles/format-size';
 import { generateShadow } from '../../styles/generate-shadow';
 
 export const useToastStyles = createUseStyles(({ colors, typography }) => ({
@@ -25,7 +25,7 @@ export const useToastStyles = createUseStyles(({ colors, typography }) => ({
   },
   description: {
     ...typography.caption13Regular,
-    lineHeight: formatSize(20)
+    lineHeight: formatTextSize(20)
   },
   textWrapper: {
     flex: 1,

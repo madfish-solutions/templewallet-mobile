@@ -8,6 +8,7 @@ export enum IconNameEnum {
   Burn = 'Burn',
   DetailsArrowUp = 'DetailsArrowUp',
   DetailsArrowDown = 'DetailsArrowDown',
+  DetailsArrowRight = 'DetailsArrowRight',
   CycleStatusInProgress = 'CycleStatusInProgress',
   CycleStatusUnlocked = 'CycleStatusUnlocked',
   CycleStatusLocked = 'CycleStatusLocked',
@@ -141,5 +142,8 @@ export enum IconNameEnum {
   BlurEyeBlack = 'BlurEyeBlack',
   BlurEyeWhite = 'BlurEyeWhite',
   BlurLight = 'BlurLight',
-  BlurDark = 'BlurDark'
+  BlurDark = 'BlurDark',
+  Smile = 'Smile',
+  SmileWithGlasses = 'SmileWithGlasses',
+  SmileWithDollar = 'SmileWithDollar'
 }

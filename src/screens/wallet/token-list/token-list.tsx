@@ -22,7 +22,7 @@ import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
-import { formatSize, formatSizeScaled } from 'src/styles/format-size';
+import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -42,7 +42,7 @@ type FlatListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
 // padding size + icon size
-const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
+const ITEM_HEIGHT = formatSize(24) + formatSize(32);
 const keyExtractor = (item: FlatListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
 

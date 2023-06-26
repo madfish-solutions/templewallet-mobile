@@ -1,4 +1,5 @@
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+
 import { emptyTokenMetadata, TokenMetadataInterface, TokenStandardsEnum } from '../interfaces/token-metadata.interface';
 
 export const TEZ_TOKEN_SLUG = 'tez';
@@ -19,7 +20,16 @@ export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.FilmToken
 };
 
-export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+const DEPRECATED_TKEY_METADATA: TokenMetadataInterface = {
+  address: 'KT1WihWRnmzhfebi6zqQ4tvNGiPeVxiGwTi2',
+  id: 0,
+  name: 'Deprecated Temple Key',
+  symbol: 'TKEY_OLD',
+  decimals: 18,
+  standard: TokenStandardsEnum.Fa2
+};
+
+export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
     address: 'KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o',
@@ -85,7 +95,65 @@ export const LOCAL_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   }
 ];
 
-export const DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
+export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+  {
+    id: 0,
+    address: 'KT1Rk86CX85DjBKmuyBhrCyNsHyudHVtASec',
+    name: 'Yupana XTZ',
+    symbol: 'y-XTZ',
+    decimals: 6,
+    thumbnailUri: 'ipfs://QmRukmxJkSmu9v2mUutSU7FNMegPramzVgsZ6YfRSWjdnV',
+    standard: TokenStandardsEnum.Fa2
+  },
+  DEPRECATED_TKEY_METADATA,
+  {
+    id: 0,
+    address: 'KT1KEsRsSMvSkgZ9CwYy5fPA1e4j3TEpuiKK',
+    name: 'Weed',
+    symbol: 'WEED',
+    decimals: 8,
+    thumbnailUri: 'https://i.ibb.co/CnPdk2Y/Weed-Token.jpg',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT19oivKN2qzeWgCs886BbttSVYtkcJHRtuQ',
+    name: 'Shitz',
+    symbol: 'SHTz',
+    decimals: 2,
+    thumbnailUri: 'https://i.ibb.co/9ZV2T54/shitz-small.png',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT1M81KrJr6TxYLkZkVqcpSTNKGoya8XytWT',
+    name: 'ECOIN NETWORK',
+    symbol: 'ECN',
+    decimals: 8,
+    thumbnailUri: 'https://cdn.tzstats.com/KT1M81KrJr6TxYLkZkVqcpSTNKGoya8XytWT.png',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT1Vn88tz943W4uKvJ2anSS3JJfeiVdQrqLe',
+    name: 'TROLL',
+    symbol: 'TROLL',
+    decimals: 0,
+    thumbnailUri: 'ipfs://QmNjXSkR1AgarJdgYQzruQxbh5QZim4Dq1i2vg1LQe8JZk',
+    standard: TokenStandardsEnum.Fa2
+  },
+  {
+    id: 0,
+    address: 'KT19JYndHaesXpvUfiwgg8BtE41HKkjjGMRC',
+    name: 'Rocket',
+    symbol: 'RCKT',
+    decimals: 6,
+    thumbnailUri: 'ipfs://QmNwMXAL5tVaPxauq7W4mXMhFGNVsstBfQ87AwUUo94thL',
+    standard: TokenStandardsEnum.Fa2
+  }
+];
+
+export const PREDEFINED_DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
   {
     id: 0,
     address: 'KT1N7Rh6SgSdExMPxfnYw1tHqrkSm7cm6JDN',
@@ -95,4 +163,9 @@ export const DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
     thumbnailUri: 'https://loonfilms.com/apx/apx-coin-220px.png',
     standard: TokenStandardsEnum.Fa2
   }
+];
+
+export const KNOWN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+  DEPRECATED_TKEY_METADATA,
+  ...PREDEFINED_MAINNET_TOKENS_METADATA
 ];
