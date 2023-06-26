@@ -62,7 +62,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       )
         .multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE)
         .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.depositAmountAtomic, farm.item]
+    [lastStakeRecord?.depositAmountAtomic, fiatToUsdRate, farm.item]
   );
 
   const claimableRewardsAtomic = useMemo(
