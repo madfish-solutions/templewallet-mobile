@@ -10,6 +10,7 @@ import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import {
+  ImageResolutionEnum,
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
   formatImgUri,
@@ -52,7 +53,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const handleError = () => {
       setCurrentFallback(
         currentFallback.endsWith('/thumb288')
-          ? formatImgUri(collectible.artifactUri, 'medium')
+          ? formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
           : formatCollectibleObjktMediumUri(assetSlug)
       );
     };

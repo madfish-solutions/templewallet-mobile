@@ -30,7 +30,7 @@ import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analyti
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
-import { formatImgUri } from '../../utils/image.utils';
+import { ImageResolutionEnum, formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
@@ -152,7 +152,7 @@ export const CollectibleModal = () => {
         {
           title: collectible.name,
           descriptionText: description,
-          imageUrl: formatImgUri(collectible.thumbnailUri, 'medium')
+          imageUrl: formatImgUri(collectible.thumbnailUri, ImageResolutionEnum.MEDIUM)
         }
       );
       await Share.share({
