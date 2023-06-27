@@ -15,8 +15,7 @@ export const useEarnStyles = createUseStyles(({ colors, typography }) => ({
   },
   depositText: {
     ...typography.caption11Regular,
-    color: colors.gray1,
-    marginLeft: formatSize(5)
+    color: colors.gray1
   },
   loader: {
     marginTop: formatSize(100)

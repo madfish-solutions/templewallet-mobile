@@ -1,8 +1,9 @@
-import React, { FC, useEffect } from 'react';
-import { ActivityIndicator, View, Text } from 'react-native';
+import React, { FC, useCallback, useEffect } from 'react';
+import { ActivityIndicator, View, Text, ListRenderItemInfo } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
@@ -35,6 +36,8 @@ const earnSortFieldsOptions: Array<FarmsSortFieldEnum> = [
   FarmsSortFieldEnum.Newest
 ];
 
+const keyExtractor = (farm: SingleFarmResponse) => `${farm.item.contractAddress}_${farm.item.id}`;
+
 export const Earn: FC = () => {
   const dispatch = useDispatch();
   const styles = useEarnStyles();
@@ -56,6 +59,13 @@ export const Earn: FC = () => {
 
   usePageAnalytic(ScreensEnum.Earn);
 
+  const renderItem = useCallback(
+    (farm: ListRenderItemInfo<SingleFarmResponse>) => (
+      <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />
+    ),
+    []
+  );
+
   return (
     <>
       <MainInfo />
@@ -65,7 +75,13 @@ export const Earn: FC = () => {
         <>
           <View style={[styles.row, styles.container]}>
             <View style={styles.row}>
-              <Checkbox value={depositedOnly} onChange={handleToggleDepositOnly} size={formatSize(16)}>
+              <Checkbox
+                value={depositedOnly}
+                size={formatSize(16)}
+                strokeWidth={formatSize(2)}
+                onChange={handleToggleDepositOnly}
+              >
+                <Divider size={formatSize(4)} />
                 <Text style={styles.depositText}>Deposited only</Text>
               </Checkbox>
             </View>
@@ -89,8 +105,9 @@ export const Earn: FC = () => {
           <Divider size={formatSize(8)} />
           <FlatList
             data={filteredFarmsList}
+            keyExtractor={keyExtractor}
             ListEmptyComponent={<DataPlaceholder text="No records found." />}
-            renderItem={farm => <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />}
+            renderItem={renderItem}
           />
         </>
       )}

@@ -24,7 +24,7 @@ export const useFilteredFarms = () => {
 
     if (depositedOnly) {
       const stakedFarmsAddresses = Object.keys(stakes);
-      result = result.filter(farm => stakedFarmsAddresses.includes(farm.item.contractAddress));
+      result = result.filter(farm => stakedFarmsAddresses.includes(farm?.item?.contractAddress));
     }
 
     if (isString(searchValue)) {
@@ -33,15 +33,15 @@ export const useFilteredFarms = () => {
       result = result.filter(farm => {
         const isRewardsTokenSearched = isAssetSearched(
           {
-            name: farm.item.rewardToken.metadata.name,
-            symbol: farm.item.rewardToken.metadata.symbol,
-            address: farm.item.rewardToken.contractAddress
+            name: farm?.item?.rewardToken?.metadata?.name,
+            symbol: farm?.item?.rewardToken?.metadata?.symbol,
+            address: farm?.item?.rewardToken?.contractAddress
           },
           lowerCaseSearchValue
         );
-        const isStakedTokenSearched = farm.item.tokens.find(token =>
+        const isStakedTokenSearched = farm?.item?.tokens.find(token =>
           isAssetSearched(
-            { name: token.metadata.name, symbol: token.metadata.symbol, address: token.contractAddress },
+            { name: token?.metadata?.name, symbol: token?.metadata?.symbol, address: token?.contractAddress },
             lowerCaseSearchValue
           )
         );
