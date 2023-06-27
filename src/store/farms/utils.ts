@@ -45,13 +45,15 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
     const sirsTokenContract = await getReadOnlyContract(farm.stakedToken.contractAddress, tezos);
     const depositAmountAtomic = await getBalance(sirsTokenContract, accountPkh, farm.stakedToken.fa2TokenId);
 
-    return {
-      lastStakeId: '0',
-      depositAmountAtomic: depositAmountAtomic.toFixed(),
-      claimableRewards: '0',
-      fullReward: '0',
-      ageTimestamp: new Date().toISOString()
-    };
+    return depositAmountAtomic.isZero()
+      ? undefined
+      : {
+          lastStakeId: '0',
+          depositAmountAtomic: depositAmountAtomic.toFixed(),
+          claimableRewards: '0',
+          fullReward: '0',
+          ageTimestamp: new Date().toISOString()
+        };
   }
 
   const farmContractInstance = await tezos.contract.at(farm.contractAddress);

@@ -2,7 +2,7 @@ import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { firstValueFrom } from 'rxjs';
 
-import { MAX_ROUTING_FEE_CHAINS, ZERO } from 'src/config/swap';
+import { MAX_ROUTING_FEE_CHAINS, ROUTING_FEE_PERCENT, ZERO } from 'src/config/swap';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { FarmTokenStandardEnum } from 'src/enums/farm-token-standard.enum';
 import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking/liquidity-baking-storage.interface';
@@ -14,7 +14,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking.util';
 import { fetchRoute3SwapParams, fetchRoute3Tokens$ } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
-import { calculateRoutingInputAndFee, calculateSlippageRatio } from 'src/utils/swap.utils';
+import { calculateSlippageRatio } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import { DEFAULT_LIQUIDITY_BAKING_SUBSIDY, DEFAULT_MINIMAL_BLOCK_DELAY, liquidityBakingStakingId } from './consts';
@@ -130,13 +130,12 @@ export const calculateUnstakeParams = async (
     outputTokenIndexes.map(async outputTokenIndex => {
       const threeRouteFromToken = outputTokenIndex === 0 ? tzBTCToken : tezToken;
       const threeRouteToToken = outputTokenIndex === 0 ? tezToken : tzBTCToken;
-      const { swapInputMinusFeeAtomic, routingFeeAtomic } = calculateRoutingInputAndFee(
-        outputTokenIndex === 0 ? divestTzBTCAmount : divestMutezAmount
-      );
+      const swapInputAtomic = outputTokenIndex === 0 ? divestTzBTCAmount : divestMutezAmount;
+      const directDivestOutputAtomic = outputTokenIndex === 0 ? divestMutezAmount : divestTzBTCAmount;
       const { chains: swapParamsChains, output: rawSwapOutput } = await fetchRoute3SwapParams({
         fromSymbol: threeRouteFromToken.symbol,
         toSymbol: threeRouteToToken.symbol,
-        amount: mutezToTz(swapInputMinusFeeAtomic, threeRouteFromToken.decimals).toFixed(),
+        amount: mutezToTz(swapInputAtomic, threeRouteFromToken.decimals).toFixed(),
         chainsLimit: MAX_ROUTING_FEE_CHAINS
       });
       const slippageRatio = calculateSlippageRatio(slippageTolerancePercentage);
@@ -148,14 +147,20 @@ export const calculateUnstakeParams = async (
       const swapOutputAtomic = tzToMutez(new BigNumber(rawSwapOutput), threeRouteToToken.decimals)
         .times(slippageRatio)
         .integerValue(BigNumber.ROUND_DOWN);
+      const routingFeeAtomic = directDivestOutputAtomic
+        .plus(swapOutputAtomic)
+        .times(ROUTING_FEE_PERCENT)
+        .div(100)
+        .integerValue(BigNumber.ROUND_UP);
 
       return {
         threeRouteFromToken,
         threeRouteToToken,
-        swapToOutputTokenInput: swapInputMinusFeeAtomic,
+        swapToOutputTokenInput: swapInputAtomic,
         routingFeeAtomic,
         swapParamsChains,
-        swapOutputAtomic
+        swapOutputAtomic,
+        directDivestOutputAtomic
       };
     })
   );

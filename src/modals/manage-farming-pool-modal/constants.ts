@@ -13,3 +13,5 @@ export const WTEZ_TOKEN: TokenMetadataInterface = {
 };
 
 export const STABLESWAP_REFERRAL = 'tz1Sw2mFAUzbkm7dkGCDrbeBsJTTtV7JD8Ey';
+
+export const MINIMAL_DIVISIBLE_ATOMIC_AMOUNT = 4;

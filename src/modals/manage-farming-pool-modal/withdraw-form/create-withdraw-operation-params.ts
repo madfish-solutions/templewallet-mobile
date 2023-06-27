@@ -67,7 +67,7 @@ export const createWithdrawOperationParams = async (
 
       const transferDevFeeParams = await firstValueFrom(
         getTransferParams$(
-          { address: threeRouteFromToken.contract ?? '', id: 0 },
+          { address: threeRouteToToken.contract ?? '', id: 0 },
           tezos.rpc.getRpcUrl(),
           account,
           ROUTING_FEE_ADDRESS,

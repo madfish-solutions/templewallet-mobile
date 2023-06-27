@@ -117,7 +117,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
           <FarmTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
-          <View>
+          <View style={styles.alignEnd}>
             <Text style={styles.apyText}>APY: {apy}%</Text>
             <View style={styles.earnSource}>
               {isLiquidityBaking ? (

@@ -70,6 +70,9 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
     borderRadius: formatSize(4),
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  alignEnd: {
+    alignItems: 'flex-end'
   }
 }));
 

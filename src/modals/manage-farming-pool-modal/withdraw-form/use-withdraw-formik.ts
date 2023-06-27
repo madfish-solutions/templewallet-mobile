@@ -24,6 +24,7 @@ import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT } from '../constants';
 import { createWithdrawOperationParams } from './create-withdraw-operation-params';
 import { PERCENTAGE_OPTIONS } from './percentage-options';
 
@@ -53,14 +54,23 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
 
+  const depositAmountAtomic = useMemo(
+    () => new BigNumber(stake?.depositAmountAtomic ?? 0),
+    [stake?.depositAmountAtomic]
+  );
   const initialValues = useMemo(
     () => ({
-      amountOptionIndex: isDefined(farm) && farm.item.type !== FarmPoolTypeEnum.STABLESWAP ? 0 : 3,
+      amountOptionIndex:
+        isDefined(farm) &&
+        farm.item.type !== FarmPoolTypeEnum.STABLESWAP &&
+        depositAmountAtomic.gte(MINIMAL_DIVISIBLE_ATOMIC_AMOUNT)
+          ? 0
+          : 3,
       tokenOption: {
         token: stakeTokens[0] ?? emptyTezosLikeToken
       }
     }),
-    [stakeTokens, farm]
+    [stakeTokens, farm, depositAmountAtomic]
   );
 
   const handleSubmit = useCallback(

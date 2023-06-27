@@ -44,13 +44,13 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
           const tokensIndexes = farm.tokens.map((_, index) => index);
           const outputPromise =
             farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING
-              ? calculateUnstakeParams(tezos, tokensIndexes, lpAmount, slippageTolerance).then(params => {
-                  const { divestMutezAmount, divestTzBTCAmount, outputTokenIndexDependentParams } = params;
-
-                  return outputTokenIndexDependentParams.map(({ swapOutputAtomic }, index) =>
-                    swapOutputAtomic.plus(index === 0 ? divestMutezAmount : divestTzBTCAmount)
-                  );
-                })
+              ? calculateUnstakeParams(tezos, tokensIndexes, lpAmount, slippageTolerance).then(
+                  ({ outputTokenIndexDependentParams }) =>
+                    outputTokenIndexDependentParams.map(
+                      ({ swapOutputAtomic, directDivestOutputAtomic, routingFeeAtomic }) =>
+                        swapOutputAtomic.plus(directDivestOutputAtomic).minus(routingFeeAtomic)
+                    )
+                )
               : estimateStableswapWithdrawTokenOutput(
                   tezos,
                   stableswapContract,
