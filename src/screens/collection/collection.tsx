@@ -4,6 +4,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
+import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from 'src/apis/objkt/constants';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
@@ -41,7 +42,10 @@ export const Collection = () => {
     params.galleryId
   );
 
-  const PAGINATION_STEP = useMemo(() => (params.type === ObjktTypeEnum.faContract ? 500 : 15), []);
+  const PAGINATION_STEP = useMemo(
+    () => (params.type === ObjktTypeEnum.faContract ? PAGINATION_STEP_FA : PAGINATION_STEP_GALLERY),
+    []
+  );
 
   const screenProgressAmount = useMemo(
     () =>
