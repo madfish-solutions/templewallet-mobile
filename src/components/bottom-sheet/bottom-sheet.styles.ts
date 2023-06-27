@@ -13,8 +13,7 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: formatSize(16),
-    paddingHorizontal: formatSize(12),
+    padding: formatSize(16),
     borderBottomColor: colors.lines,
     borderBottomWidth: formatSize(0.5)
   },
