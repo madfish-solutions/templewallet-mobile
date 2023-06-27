@@ -49,7 +49,9 @@
     "@reduxjs/toolkit": "^1.8.5",
     "@sentry/react-native": "4.3.1",
     "@taquito/local-forging": "17.0.0",
+    "@taquito/rpc": "17.0.0",
     "@taquito/signer": "17.0.0",
+    "@taquito/taquito": "17.0.0",
     "@taquito/tzip12": "17.0.0",
     "@taquito/tzip16": "17.0.0",
     "@taquito/utils": "17.0.0",
@@ -124,6 +126,7 @@
     "url": "^0.11.0",
     "util": "^0.12.4",
     "vm-browserify": "^1.1.2",
+    "youves-sdk": "^0.0.6",
     "yup": "^0.32.11"
   },
   "devDependencies": {
