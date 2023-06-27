@@ -5,29 +5,26 @@ import { useDispatch } from 'react-redux';
 import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
+import { everstakeApi } from 'src/api.service';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { ApproveInternalOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-internal-operation-request-action-payload.interface';
+import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
+import { RECOMMENDED_BAKER_ADDRESS } from 'src/modals/select-baker-modal/select-baker-modal';
+import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
+import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
+import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { showSuccessToast } from 'src/toast/toast.utils';
+import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isTruthy } from 'src/utils/is-truthy';
+import { sendTransaction$ } from 'src/utils/wallet.utils';
 
-import { everstakeApi } from '../../../api.service';
-import { HeaderTitle } from '../../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
-import { ApproveInternalOperationRequestActionPayloadInterface } from '../../../hooks/request-confirmation/approve-internal-operation-request-action-payload.interface';
-import { useRequestConfirmation } from '../../../hooks/request-confirmation/use-request-confirmation.hook';
-import { StacksEnum } from '../../../navigator/enums/stacks.enum';
-import { navigateAction } from '../../../store/root-state.actions';
-import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
-import { waitForOperationCompletionAction } from '../../../store/wallet/wallet-actions';
-import {
-  useSelectedAccountSelector,
-  useSelectedAccountTezosTokenSelector
-} from '../../../store/wallet/wallet-selectors';
-import { showSuccessToast } from '../../../toast/toast.utils';
-import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from '../../../utils/env.utils';
 import { isDefined } from '../../../utils/is-defined';
-import { sendTransaction$ } from '../../../utils/wallet.utils';
-import { RECOMMENDED_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
 
@@ -61,9 +58,9 @@ const approveInternalOperationRequest = ({
   );
 
 export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle, disclaimerMessage, testID }) => {
+  const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
-  const dispatch = useDispatch();
   const { balance: tezBalance } = useSelectedAccountTezosTokenSelector();
 
   const { confirmRequest, isLoading } = useRequestConfirmation(approveInternalOperationRequest);
