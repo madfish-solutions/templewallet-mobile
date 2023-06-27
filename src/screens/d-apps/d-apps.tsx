@@ -20,6 +20,8 @@ import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
+import { useIsPartnersPromoEnabledSelector } from '../../store/partners-promotion/partners-promotion-selectors';
+import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
@@ -35,10 +37,18 @@ const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
 export const DApps = () => {
   const dispatch = useDispatch();
+  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
+  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+
   useEffect(() => {
     dispatch(loadDAppsListActions.submit());
-    dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
   }, []);
+
+  useEffect(() => {
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
+    }
+  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
   const styles = useDAppsStyles();
 
