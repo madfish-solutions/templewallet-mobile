@@ -2,7 +2,7 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 import memoize from 'mem';
 import { from, Observable, of } from 'rxjs';
-import { map, filter, withLatestFrom } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -12,7 +12,6 @@ import { fetchUserAdultCollectibles$ } from '../apis/objkt/index';
 import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
 import { AccountInterface } from '../interfaces/account.interface';
 import { RootState } from '../store/create-store';
-import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import {
   emptyTokenMetadata,
@@ -142,16 +141,6 @@ export const getTokenMetadata = (state: RootState, slug: string) => {
     exchangeRate
   };
 };
-
-export const withMetadataSlugs =
-  <T>(state$: Observable<TokensMetadataRootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
-        value,
-        tokensMetadata.metadataRecord
-      ])
-    );
 
 export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetadataInterface>> =>
   isDcpNode(selectedRpc)
