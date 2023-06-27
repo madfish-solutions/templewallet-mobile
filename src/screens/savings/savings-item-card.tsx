@@ -1,4 +1,5 @@
 import React, { FC, useCallback } from 'react';
+import { Alert } from 'react-native';
 
 import { EarnOpportunityItem } from 'src/components/earn-opportunity-item';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
@@ -10,9 +11,10 @@ interface Props {
 }
 
 export const SavingsItemCard: FC<Props> = ({ item, lastStakeRecord }) => {
-  const navigateToOpportunity = useCallback(() => {
-    console.log(`TODO: navigate to ${item.id} savings item, type: ${item.type}`);
-  }, [item]);
+  const navigateToOpportunity = useCallback(
+    () => Alert.alert(`TODO: navigate to ${item.id} savings item, type: ${item.type}`),
+    [item]
+  );
 
   return (
     <EarnOpportunityItem item={item} lastStakeRecord={lastStakeRecord} navigateToOpportunity={navigateToOpportunity} />

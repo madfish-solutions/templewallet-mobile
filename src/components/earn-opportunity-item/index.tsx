@@ -19,7 +19,7 @@ import { SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { aprToApy, isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { EarnOpportunityStatsItem } from '../earn-opportunity-stats-item';
+import { StatsItem } from './stats-item';
 import { useButtonPrimaryStyleConfig, useButtonSecondaryStyleConfig, useEarnOpportunityItemStyles } from './styles';
 import { useAmounts } from './use-amounts';
 
@@ -30,7 +30,7 @@ interface Props {
   harvestRewards?: EmptyFn;
 }
 
-const APY_DECIMALS = 2;
+const PERCENTAGE_DECIMALS = 2;
 
 export const EarnOpportunityItem: FC<Props> = ({
   item,
@@ -45,8 +45,8 @@ export const EarnOpportunityItem: FC<Props> = ({
   const { stakeTokens, rewardToken } = useEarnOpportunityTokens(item);
   const itemIsFarm = isFarm(item);
 
-  const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(2) : '---'), [apr]);
-  const apy = useMemo(() => (isDefined(apr) ? aprToApy(Number(apr)).toFixed(APY_DECIMALS) : '---'), [apr]);
+  const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
+  const apy = useMemo(() => (isDefined(apr) ? aprToApy(Number(apr)).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
 
   const { amount: depositAmount, fiatEquivalent: depositFiatEquivalent } = useAmounts(
     lastStakeRecord?.depositAmountAtomic,
@@ -90,7 +90,7 @@ export const EarnOpportunityItem: FC<Props> = ({
         </View>
 
         <View style={[styles.row, styles.mb16]}>
-          <EarnOpportunityStatsItem
+          <StatsItem
             title="Your deposit:"
             value={
               itemIsFarm ? (
@@ -106,7 +106,7 @@ export const EarnOpportunityItem: FC<Props> = ({
             loading={false}
             fiatEquivalent={itemIsFarm ? undefined : depositFiatEquivalent}
           />
-          <EarnOpportunityStatsItem
+          <StatsItem
             title="Claimable rewards:"
             value={
               itemIsFarm ? (

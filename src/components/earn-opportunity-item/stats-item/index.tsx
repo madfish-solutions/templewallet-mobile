@@ -6,9 +6,9 @@ import { FormattedAmount } from 'src/components/formatted-amount';
 import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
 import { isDefined } from 'src/utils/is-defined';
 
-import { useEarnOpportunityStatsItemStyles } from './styles';
+import { useStatsItemStyles } from './styles';
 
-interface EarnOpportunityStatsItemProps {
+interface Props {
   title: string;
   loading: boolean;
   value: ReactChild | ReactChild[];
@@ -16,15 +16,9 @@ interface EarnOpportunityStatsItemProps {
   titleStyle?: StyleProp<TextStyle>;
 }
 
-export const EarnOpportunityStatsItem: FC<EarnOpportunityStatsItemProps> = ({
-  loading,
-  title,
-  value,
-  fiatEquivalent,
-  titleStyle
-}) => {
+export const StatsItem: FC<Props> = ({ loading, title, value, fiatEquivalent, titleStyle }) => {
   const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
-  const styles = useEarnOpportunityStatsItemStyles();
+  const styles = useStatsItemStyles();
 
   return (
     <View style={styles.root}>

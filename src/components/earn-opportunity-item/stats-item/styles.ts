@@ -1,7 +1,7 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useEarnOpportunityStatsItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
+export const useStatsItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
     flex: 1
   },
