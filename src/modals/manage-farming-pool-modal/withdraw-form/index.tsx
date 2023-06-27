@@ -117,7 +117,6 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
       balance: stake?.depositAmountAtomic ?? '0',
       visibility: VisibilityEnum.Visible,
       id: stakedToken.fa2TokenId ?? 0,
-      iconName: IconNameEnum.NoNameToken,
       decimals: stakedToken.metadata.decimals,
       symbol: 'Shares',
       name: '',
