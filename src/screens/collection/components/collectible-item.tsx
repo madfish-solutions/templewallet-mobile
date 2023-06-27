@@ -58,6 +58,8 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
   const { handleSubmit: handleBuy, purchaseCurrency } = useBuyCollectible(item.listing_active ?? [], item);
 
+  const fxHashListed = item?.listing_active?.find(listing => listing.seller_address === selectedPublicKeyHash);
+
   const buttonText = useMemo(() => {
     if (isListed) {
       const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
@@ -111,7 +113,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
             collectionContract={collectionContract}
           />
           <View>
-            {isHolder ? (
+            {isHolder || !!fxHashListed ? (
               <TouchableOpacity
                 onPress={handleList}
                 style={[
