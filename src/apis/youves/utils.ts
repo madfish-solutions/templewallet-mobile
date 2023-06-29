@@ -12,7 +12,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { getFastRpcClient } from 'src/utils/rpc/fast-rpc';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
-import { indexerConfig, MAINNET_SMARTPY_RPC, youvesTokensIcons } from './constants';
+import { INDEXER_CONFIG, MAINNET_SMARTPY_RPC, YOUVES_TOKENS_ICONS } from './constants';
 import { YouvesTokensEnum } from './enums';
 
 const youvesTokensIds: string[] = [YouvesTokensEnum.UBTC, YouvesTokensEnum.UUSD];
@@ -59,7 +59,7 @@ export const createEngineMemoized = memoize(
       tezos: getTezosToolkit(account),
       contracts: token,
       storage: new MemoryStorage(),
-      indexerConfig,
+      indexerConfig: INDEXER_CONFIG,
       tokens: mainnetTokens,
       activeCollateral: contracts.mainnet[0].collateralOptions[0],
       networkConstants: mainnetNetworkConstants
@@ -74,7 +74,7 @@ export const createUnifiedSavings = memoize(
       assetDefinition.token,
       assetDefinition.token,
       createReadOnlyTezosToolkit(MAINNET_SMARTPY_RPC, account),
-      indexerConfig,
+      INDEXER_CONFIG,
       mainnetNetworkConstants
     ),
   {
@@ -84,7 +84,7 @@ export const createUnifiedSavings = memoize(
 );
 
 export const createUnifiedStaking = memoize(
-  (account?: AccountInterface) => new UnifiedStaking(getTezosToolkit(account), indexerConfig, mainnetNetworkConstants),
+  (account?: AccountInterface) => new UnifiedStaking(getTezosToolkit(account), INDEXER_CONFIG, mainnetNetworkConstants),
   { cacheKey: args => JSON.stringify(args) }
 );
 
@@ -107,7 +107,7 @@ export const toEarnOpportunityToken = (token: YouvesToken) => {
       decimals: tokenDecimals,
       symbol: tokenSymbol,
       name: tokenName,
-      thumbnailUri: youvesTokensIcons[tokenId]
+      thumbnailUri: YOUVES_TOKENS_ICONS[tokenId]
     }
   };
 };
