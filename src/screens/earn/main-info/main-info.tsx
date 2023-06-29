@@ -110,7 +110,7 @@ export const MainInfo: FC = () => {
     });
 
     return result;
-  }, [farms, farmsWithEndedRewards]);
+  }, [farms, farmsWithEndedRewards, fiatToUsdRate]);
 
   const areSomeRewardsClaimable = useMemo(
     () => !isEmptyArray(farmsWithEndedRewards) && totalClaimableRewardsInFiat.isGreaterThan(PENNY),
