@@ -101,9 +101,16 @@ export const buildGetCollectiblesByCollectionQuery = (
       currency_id
       timestamp
     }
-    listings_active {
+    listings_active(order_by: {price_xtz: asc}) {
       amount
       seller_address
+      bigmap_key
+      currency_id
+      marketplace_contract
+      price
+      currency {
+        type
+      }
     }
     fa {
       items
@@ -161,9 +168,16 @@ query MyQuery {
           currency_id
           timestamp
         }
-        listings_active {
+        listings_active(order_by: {price_xtz: asc}) {
           amount
           seller_address
+          bigmap_key
+          currency_id
+          marketplace_contract
+          price
+          currency {
+            type
+          }
         }
         fa {
           items

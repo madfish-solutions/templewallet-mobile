@@ -76,7 +76,7 @@ export const CollectibleModal = () => {
 
   const burnCollectible = useBurnCollectible(collectible);
 
-  const { handleSubmit, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
+  const { handleSubmit, purchaseCurrency } = useBuyCollectible(collectibleInfo.listings_active, collectible);
 
   const {
     fa,

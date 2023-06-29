@@ -1,6 +1,7 @@
 import { groupBy, map, maxBy } from 'lodash-es';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { AttributeInfo } from '../../interfaces/attribute.interface';
@@ -8,7 +9,10 @@ import { currencyInfoById } from './constants';
 import { MarketPlaceEventEnum } from './enums';
 import { CollectibleResponse } from './types';
 
-export const transformCollectiblesArray = (array: CollectibleResponse[], selectedPublicKey: string) => {
+export const transformCollectiblesArray = (
+  array: CollectibleResponse[],
+  selectedPublicKey: string
+): TokenInterface[] => {
   const collectiblesArray = array.map(token => {
     const buyEvents = isDefined(token)
       ? token.events.filter(
@@ -56,8 +60,9 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
         symbol: currencyInfoById[lastPriceCurrencyId]?.symbol,
         decimals: currencyInfoById[lastPriceCurrencyId]?.decimals
       },
-      listed: listedBySelectedUser,
-      items: token.fa.items
+      listedAmount: listedBySelectedUser,
+      items: token.fa.items,
+      listing_active: token.listings_active
     };
   });
 
