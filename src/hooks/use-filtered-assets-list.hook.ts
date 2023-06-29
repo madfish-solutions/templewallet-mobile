@@ -39,7 +39,7 @@ export const useFilteredAssetsList = (
     }
 
     if (leadingAssetsAreFilterable) {
-      if (filterZeroBalances && leadingAssets.every(asset => isNonZeroBalance(asset))) {
+      if (filterZeroBalances && leadingAssets.every(asset => !isNonZeroBalance(asset))) {
         return searchedAssetsList;
       }
       const searchValueLowercased = searchValue?.toLowerCase();
