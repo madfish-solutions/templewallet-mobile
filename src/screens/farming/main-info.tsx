@@ -3,12 +3,9 @@ import { ParamsWithKind, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { isEmptyArray } from 'formik';
 import React, { FC, useCallback, useMemo } from 'react';
-import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { Button } from 'src/components/button/button';
-import { Divider } from 'src/components/divider/divider';
-import { FormattedAmount } from 'src/components/formatted-amount';
+import { EarnOpportunitiesMainInfo } from 'src/components/earn-opportunities-main-info';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -16,19 +13,14 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useFarmStoreSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
-import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, PENNY } from '../constants';
-import { useMainInfoStyles } from './main-info.styles';
+import { DEFAULT_AMOUNT, PENNY } from './constants';
 
 export const MainInfo: FC = () => {
   const dispatch = useDispatch();
 
-  const styles = useMainInfoStyles();
-  const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
   const farms = useFarmStoreSelector();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
@@ -101,30 +93,12 @@ export const MainInfo: FC = () => {
   };
 
   return (
-    <View style={styles.root}>
-      <View>
-        <View style={styles.container}>
-          <View style={[styles.card, styles.deposit]}>
-            <Text style={styles.titleText}>CURRENT DEPOSIT AMOUNT</Text>
-            <FormattedAmount isDollarValue amount={totalStakedAmountInFiat} style={styles.valueText} />
-          </View>
-          <Divider size={formatSize(8)} />
-          <View style={[styles.card, styles.netApy]}>
-            <Text style={styles.titleText}>NET APY</Text>
-            <Text style={styles.valueText}>{netApy.toFixed(DEFAULT_DECIMALS)}%</Text>
-          </View>
-        </View>
-        <Button
-          styleConfig={buttonPrimaryStylesConfig}
-          title={
-            areSomeRewardsClaimable
-              ? `CLAIM ALL ≈ ${totalClaimableRewardsInUsd.toFixed(DEFAULT_DECIMALS)}$`
-              : 'EARN TO CLAIM REWARDS'
-          }
-          disabled={!areSomeRewardsClaimable}
-          onPress={claimAllRewards}
-        />
-      </View>
-    </View>
+    <EarnOpportunitiesMainInfo
+      claimAllRewards={claimAllRewards}
+      shouldShowClaimRewardsButton
+      totalClaimableRewardsInUsd={totalClaimableRewardsInUsd}
+      netApy={netApy}
+      totalStakedAmountInFiat={totalStakedAmountInFiat}
+    />
   );
 };

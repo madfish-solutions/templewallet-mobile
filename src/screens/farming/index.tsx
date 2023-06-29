@@ -12,7 +12,7 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { FarmItem } from './farm-item';
-import { MainInfo } from './main-info/main-info';
+import { MainInfo } from './main-info';
 import { useFarmingStyles } from './styles';
 
 export const Farming: FC = () => {
