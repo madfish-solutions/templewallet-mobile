@@ -6,6 +6,7 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { EarnOpportunitiesMainInfo } from 'src/components/earn-opportunities-main-info';
+import { DEFAULT_AMOUNT, PENNY } from 'src/config/earn-opportunities-main-info';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -15,8 +16,6 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
-
-import { DEFAULT_AMOUNT, PENNY } from './constants';
 
 export const MainInfo: FC = () => {
   const dispatch = useDispatch();

@@ -6,10 +6,10 @@ import { View, Text } from 'react-native';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
+import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, PENNY } from 'src/config/earn-opportunities-main-info';
 import { EmptyFn } from 'src/config/general';
 import { formatSize } from 'src/styles/format-size';
 
-import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, PENNY } from './constants';
 import { useEarnOpportunitiesMainInfoStyles, useButtonPrimaryStyleConfig } from './styles';
 
 interface Props {
