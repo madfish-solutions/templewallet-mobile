@@ -9,6 +9,7 @@ import { FormattedAmount } from 'src/components/formatted-amount';
 import { EmptyFn } from 'src/config/general';
 import { formatSize } from 'src/styles/format-size';
 
+import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, PENNY } from './constants';
 import { useEarnOpportunitiesMainInfoStyles, useButtonPrimaryStyleConfig } from './styles';
 
 interface Props {
@@ -18,10 +19,6 @@ interface Props {
   netApy: BigNumber;
   totalStakedAmountInFiat: BigNumber;
 }
-
-const DEFAULT_AMOUNT = new BigNumber(0);
-const DEFAULT_DECIMALS = 2;
-const PENNY = 0.01;
 
 export const EarnOpportunitiesMainInfo: FC<Props> = ({
   claimAllRewards = noop,
