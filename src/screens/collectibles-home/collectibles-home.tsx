@@ -13,6 +13,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { emptyFn } from 'src/config/general';
+import { isAndroid } from 'src/config/system';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -60,7 +61,7 @@ export const CollectiblesHome = () => {
   const { navigate } = useNavigation();
 
   const insets = useSafeAreaInsets();
-  const TAB_BAR_HEIGHT = formatSize(79) + insets.bottom;
+  const TAB_BAR_HEIGHT = (isAndroid ? formatSize(73) : formatSize(50)) + insets.bottom;
   const ICON_COVER_GAP = 2;
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
