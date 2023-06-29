@@ -62,7 +62,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
     if (isNonEmptyArray(item.listing_active) && isListed) {
       const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
 
-      return `buy for ${price}`;
+      return `Buy for ${price}`;
     }
 
     return 'Not listed';
