@@ -63,7 +63,7 @@ export const Earn: FC = () => {
     (farm: ListRenderItemInfo<SingleFarmResponse>) => (
       <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />
     ),
-    []
+    [stakes]
   );
 
   return (
