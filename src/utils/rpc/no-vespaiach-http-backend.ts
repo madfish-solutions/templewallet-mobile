@@ -63,7 +63,7 @@ export class NoVespaiachHttpBackend extends HttpBackend {
           url + this.serialize(query)
         );
       } else {
-        throw new HttpRequestFailed(`${method} ${url + this.serialize(query)} ${String(err)}`);
+        throw new HttpRequestFailed(method ?? 'GET', url + this.serialize(query), err as Error);
       }
     }
   }
