@@ -63,7 +63,7 @@ export const TokensList: FC = () => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const tkey = useSelectedAccountTkeyTokenSelector();
+  const tkeyToken = useSelectedAccountTkeyTokenSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
@@ -73,11 +73,13 @@ export const TokensList: FC = () => {
     trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
   }, []);
 
+  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
+
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,
     true,
-    [tezosToken, tkey]
+    leadingAssets
   );
 
   const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);

@@ -4,7 +4,6 @@ import { isString } from 'src/utils/is-string';
 
 import { TokenMethodsAssertionsMap } from '../data/token-methods-assertions';
 import { TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
-import { TokenInterface } from '../interfaces/token.interface';
 
 export const getTokenSlug = <T extends { address?: string; id?: number | string }>({ address, id }: T) =>
   toTokenSlug(address, id);
@@ -35,13 +34,3 @@ export const isValidTokenContract = (contract: ContractType) =>
 
 export const getTokenType = (tokenContract: ContractType) =>
   assertTokenContractType(tokenContract, TokenTypeEnum.FA_2) ? TokenTypeEnum.FA_2 : TokenTypeEnum.FA_1_2;
-
-export const getUniqueTokens = (accumulator: Array<TokenInterface>, current: TokenInterface) => {
-  const currentTokenSlug = toTokenSlug(current.address, current.id);
-
-  if (!Boolean(accumulator.find(asset => toTokenSlug(asset.address, asset.id) === currentTokenSlug))) {
-    accumulator.push(current);
-  }
-
-  return accumulator;
-};

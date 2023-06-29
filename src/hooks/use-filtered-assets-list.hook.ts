@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getUniqueTokens } from 'src/token/utils/token.utils';
+import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { isNonZeroBalance } from 'src/utils/tezos.util';
@@ -51,9 +51,14 @@ export const useFilteredAssetsList = (
       }
     }
 
-    const result: Array<TokenInterface> = [];
+    const result = [...leadingAssets, ...searchedAssetsList];
 
-    return [...leadingAssets, ...searchedAssetsList].reduce(getUniqueTokens, result);
+    return result.filter((asset, i) => {
+      const slug = toTokenSlug(asset.address, asset.id);
+      const firstIndex = result.findIndex(({ address, id }) => toTokenSlug(address, id) === slug);
+
+      return firstIndex === i;
+    });
   }, [searchedAssetsList, searchValue, filterZeroBalances, leadingAssets, leadingAssetsAreFilterable]);
 
   return {
