@@ -124,7 +124,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           source={{ uri: currentFallback }}
           onError={handleError}
           onLoad={handleLoadEnd}
-          resizeMode={FastImage.resizeMode.center}
         />
       );
     }, [mime, objktArtifact, currentFallback]);

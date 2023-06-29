@@ -21,8 +21,8 @@ export const useCollectibleByCollectionInfo = (
     const subscription = fetchCollectiblesByCollection$(contract, selectedPublicKey, type, offset, galleryId)
       .pipe(
         map(result => result),
-        catchError(err => {
-          showErrorToast({ description: err.message });
+        catchError(() => {
+          showErrorToast({ description: 'Sorry, something went wrong..' });
 
           return EMPTY;
         }),

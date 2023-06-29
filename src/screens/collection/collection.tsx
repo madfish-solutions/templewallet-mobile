@@ -22,7 +22,7 @@ import { CollectibleItem } from './components/collectible-item';
 const COLLECTIBLE_SIZE = 327;
 const VIEWABILITY_CONFIG = {
   itemVisiblePercentThreshold: 50,
-  minimumViewTime: 200
+  minimumViewTime: 0
 };
 
 const keyExtractor = (item: TokenInterface) => `${item.address}_${item.id}`;
@@ -110,6 +110,7 @@ export const Collection = () => {
           viewabilityConfig={VIEWABILITY_CONFIG}
           decelerationRate={0}
           scrollEventThrottle={16}
+          disableIntervalMomentum
           keyExtractor={keyExtractor}
           onEndReached={() => {
             if (collectibles.length % PAGINATION_STEP === 0 && !isLoading) {
