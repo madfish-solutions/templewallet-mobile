@@ -19,6 +19,7 @@ import { SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { aprToApy, isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { EarnOpportunityItemSelectors } from './selectors';
 import { StatsItem } from './stats-item';
 import { useButtonPrimaryStyleConfig, useButtonSecondaryStyleConfig, useEarnOpportunityItemStyles } from './styles';
 import { useAmounts } from './use-amounts';
@@ -132,6 +133,7 @@ export const EarnOpportunityItem: FC<Props> = ({
                 isFullWidth
                 onPress={navigateToOpportunity}
                 styleConfig={buttonSecondaryStylesConfig}
+                testID={EarnOpportunityItemSelectors.ManageButton}
               />
             </View>
           )}
@@ -144,6 +146,7 @@ export const EarnOpportunityItem: FC<Props> = ({
                   title="CLAIM REWARDS"
                   onPress={harvestRewards}
                   styleConfig={buttonPrimaryStylesConfig}
+                  testID={EarnOpportunityItemSelectors.ClaimRewardsButton}
                 />
               </View>
             </>
@@ -154,6 +157,7 @@ export const EarnOpportunityItem: FC<Props> = ({
               title={itemIsFarm ? 'START FARMING' : 'START EARNING'}
               onPress={navigateToOpportunity}
               styleConfig={buttonPrimaryStylesConfig}
+              testID={EarnOpportunityItemSelectors.StartFarmingButton}
             />
           )}
         </View>
