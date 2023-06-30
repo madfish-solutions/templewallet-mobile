@@ -6,6 +6,8 @@ import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
+const ERROR_MESSAGE = 'Sorry, something went wrong..';
+
 export const useCollectibleByCollectionInfo = (
   contract: string,
   selectedPublicKey: string,
@@ -22,7 +24,7 @@ export const useCollectibleByCollectionInfo = (
       .pipe(
         map(result => result),
         catchError(() => {
-          showErrorToast({ description: 'Sorry, something went wrong..' });
+          showErrorToast({ description: ERROR_MESSAGE });
 
           return EMPTY;
         }),
