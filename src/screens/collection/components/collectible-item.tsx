@@ -52,17 +52,19 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   );
 
   const isAbleToList = quantityByUser > listedByUser;
-  const isListed = isDefined(item.listedAmount) && item.listedAmount !== 0;
+  const isListed = isNonEmptyArray(item.listing_active);
 
   const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
 
   const { handleSubmit: handleBuy, purchaseCurrency } = useBuyCollectible(item.listing_active ?? [], item);
 
+  const fxHashListed = item?.listing_active?.find(listing => listing.seller_address === selectedPublicKeyHash);
+
   const buttonText = useMemo(() => {
-    if (isNonEmptyArray(item.listing_active) && isListed) {
+    if (isListed) {
       const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
 
-      return `Buy for ${price}`;
+      return `buy for ${price} ${purchaseCurrency.symbol}`;
     }
 
     return 'Not listed';
@@ -111,7 +113,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
             collectionContract={collectionContract}
           />
           <View>
-            {isHolder ? (
+            {isHolder || !!fxHashListed ? (
               <TouchableOpacity
                 onPress={handleList}
                 style={[
