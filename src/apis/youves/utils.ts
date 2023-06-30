@@ -64,7 +64,7 @@ export const createEngineMemoized = memoize(
       activeCollateral: contracts.mainnet[0].collateralOptions[0],
       networkConstants: mainnetNetworkConstants
     }),
-  { cacheKey: args => JSON.stringify(args) }
+  { cacheKey: ([token, account]) => [token.id, account?.publicKey, account?.publicKeyHash].join('_') }
 );
 
 export const createUnifiedSavings = memoize(
@@ -79,13 +79,13 @@ export const createUnifiedSavings = memoize(
     ),
   {
     cacheKey: ([{ SAVINGS_V3_POOL_ADDRESS, token }, account]) =>
-      JSON.stringify([SAVINGS_V3_POOL_ADDRESS, token, account])
+      [SAVINGS_V3_POOL_ADDRESS, token.id, account.publicKey, account.publicKeyHash].join('_')
   }
 );
 
 export const createUnifiedStaking = memoize(
   (account?: AccountInterface) => new UnifiedStaking(getTezosToolkit(account), INDEXER_CONFIG, mainnetNetworkConstants),
-  { cacheKey: args => JSON.stringify(args) }
+  { cacheKey: ([account]) => `${account?.publicKey}_${account?.publicKeyHash}` }
 );
 
 export const toEarnOpportunityToken = (token: YouvesToken) => {
