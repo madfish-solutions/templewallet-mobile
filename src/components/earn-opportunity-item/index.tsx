@@ -14,6 +14,7 @@ import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { aprToApy, isFarm } from 'src/utils/earn.utils';
@@ -39,6 +40,7 @@ export const EarnOpportunityItem: FC<Props> = ({
   harvestRewards = noop
 }) => {
   const { apr, stakedToken, depositExchangeRate, earnExchangeRate, type: itemType, vestingPeriodSeconds } = item;
+  const colors = useColors();
   const styles = useEarnOpportunityItemStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
   const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
@@ -65,7 +67,7 @@ export const EarnOpportunityItem: FC<Props> = ({
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
         {itemType === EarnOpportunityTypeEnum.STABLESWAP && (
-          <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />
+          <Bage text="Stable Pool" color={colors.kolibriGreen} style={styles.bage} />
         )}
         {Number(vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
       </View>

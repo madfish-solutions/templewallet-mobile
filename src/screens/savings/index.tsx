@@ -1,11 +1,12 @@
-import React, { FC, useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import React, { FC, useCallback, useEffect } from 'react';
+import { ActivityIndicator, ListRenderItem } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
+import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import {
   useSavingsItemsLoadingSelector,
@@ -18,6 +19,8 @@ import { MainInfo } from './main-info';
 import { SavingsItemCard } from './savings-item-card';
 import { useSavingsStyles } from './styles';
 
+const savingsKeyExtractor = (item: SavingsItem) => `${item.id}_${item.contractAddress}`;
+
 export const Savings: FC = () => {
   const dispatch = useDispatch();
   const savingsItems = useSavingsItemsSelector();
@@ -26,6 +29,11 @@ export const Savings: FC = () => {
   const blockLevel = useBlockLevel();
   const styles = useSavingsStyles();
   const pageIsLoading = savingsItemsLoading && savingsItems.length === 0;
+
+  const renderItem = useCallback<ListRenderItem<SavingsItem>>(
+    ({ item }) => <SavingsItemCard item={item} lastStakeRecord={savingsStakes[item.contractAddress]} />,
+    [savingsStakes]
+  );
 
   useEffect(() => {
     dispatch(loadAllSavingsAndStakesAction());
@@ -40,14 +48,9 @@ export const Savings: FC = () => {
       ) : (
         <FlatList
           data={savingsItems}
+          keyExtractor={savingsKeyExtractor}
           ListEmptyComponent={<DataPlaceholder text="No records found." />}
-          renderItem={({ item }) => (
-            <SavingsItemCard
-              key={`${item.id}_${item.contractAddress}`}
-              item={item}
-              lastStakeRecord={savingsStakes[item.contractAddress]}
-            />
-          )}
+          renderItem={renderItem}
         />
       )}
     </>

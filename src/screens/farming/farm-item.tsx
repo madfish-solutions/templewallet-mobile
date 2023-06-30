@@ -14,6 +14,8 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { HARVEST_CONFIRMATION_TEXT } from './constants';
+
 interface Props {
   farm: SingleFarmResponse;
   lastStakeRecord?: UserStakeValueInterface;
@@ -46,11 +48,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       const opParams = await getHarvestAssetsTransferParams(tezos, farm.item.contractAddress, lastStakeId);
 
       if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
-        doAfterConfirmation(
-          'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
-          'Claim rewards',
-          () => navigateHarvestFarm(opParams)
-        );
+        doAfterConfirmation(HARVEST_CONFIRMATION_TEXT, 'Claim rewards', () => navigateHarvestFarm(opParams));
       } else {
         navigateHarvestFarm(opParams);
       }
