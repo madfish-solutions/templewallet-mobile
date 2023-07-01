@@ -26,6 +26,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
+import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
@@ -35,6 +36,7 @@ export const TokenScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
@@ -55,8 +57,13 @@ export const TokenScreen = () => {
         slug: getTokenSlug(token)
       })
     );
-    dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
   }, []);
+
+  useEffect(() => {
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
+    }
+  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
   const { activities, handleUpdate } = useContractActivity(getTokenSlug(initialToken));
 

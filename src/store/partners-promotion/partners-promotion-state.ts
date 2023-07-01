@@ -11,5 +11,5 @@ export interface PartnersPromotionState {
 
 export const partnersPromotionInitialState: PartnersPromotionState = {
   promotion: createEntity(mockPartnersPromotion),
-  isEnabled: true
+  isEnabled: false
 };

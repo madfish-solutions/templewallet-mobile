@@ -43,5 +43,9 @@ export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
   },
   promotionItem: {
     width: '100%'
+  },
+  banner: {
+    marginVertical: formatSize(12),
+    marginHorizontal: formatSize(16)
   }
 }));
