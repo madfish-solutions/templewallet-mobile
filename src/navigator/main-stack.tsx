@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
@@ -60,10 +60,12 @@ import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-scr
 import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
 import { Welcome } from 'src/screens/welcome/welcome';
+import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import {
   loadTokensActions,
   loadTezosBalanceActions,
@@ -84,6 +86,7 @@ const MainStack = createStackNavigator<ScreensParamList>();
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
+  const { isLocked } = useAppLock();
   const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styleScreenOptions = useStackNavigatorStyleOptions();
@@ -116,13 +119,17 @@ export const MainStackScreen = () => {
     selectedAccountPkh
   ]);
 
+  const shouldShowUnauthorizedScreens = !isAuthorised;
+  const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
+  const shouldShowBlankScreen = isAuthorised && isLocked;
+
   return (
     <PortalProvider>
       <ScreenStatusBar />
 
       <NavigationBar>
         <MainStack.Navigator screenOptions={styleScreenOptions}>
-          {!isAuthorised ? (
+          {shouldShowUnauthorizedScreens && (
             <>
               <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
               <MainStack.Screen
@@ -151,7 +158,8 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
               />
             </>
-          ) : (
+          )}
+          {shouldShowAuthorizedScreens && (
             <>
               {/** Wallet stack **/}
               <MainStack.Screen
@@ -316,6 +324,11 @@ export const MainStackScreen = () => {
               />
             </>
           )}
+
+          {shouldShowBlankScreen && (
+            <MainStack.Screen name={ScreensEnum.Blank} component={() => null} options={{ headerShown: false }} />
+          )}
+
           <MainStack.Screen
             name={ScreensEnum.ScanQrCode}
             component={ScanQrCode}
