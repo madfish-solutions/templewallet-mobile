@@ -123,7 +123,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           style={styles.image}
           source={{ uri: currentFallback }}
           onError={handleError}
-          onLoadEnd={handleLoadEnd}
+          onLoad={handleLoadEnd}
         />
       );
     }, [mime, objktArtifact, currentFallback]);

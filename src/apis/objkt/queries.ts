@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 import { ADULT_CONTENT_TAGS } from './adult-tags';
-import { ADULT_ATTRIBUTE_NAME } from './constants';
+import { ADULT_ATTRIBUTE_NAME, PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
 
 export const buildGetCollectiblesInfoQuery = (address: string) => gql`
   query MyQuery {
@@ -9,7 +9,6 @@ export const buildGetCollectiblesInfoQuery = (address: string) => gql`
       where: {
         _or: [
           { creator_address: { _eq: "${address}" } }
-          { collaborators: { collaborator_address: { _eq: "${address}" } } }
           {
             tokens: {
               creators: { creator_address: { _eq: "${address}" }, verified: { _eq: true } }
@@ -60,7 +59,7 @@ export const buildGetCollectiblesByCollectionQuery = (
 ) => gql`query MyQuery {
   token(
     where: {fa_contract: {_eq: "${contract}"}, supply: {_gt: "0"}, creators: {creator_address: {_eq: "${address}"}}}
-    limit: 15
+    limit: ${PAGINATION_STEP_FA}
     offset: ${offset}
     order_by: {token_id: asc}) {
     artifact_uri
@@ -126,7 +125,7 @@ query MyQuery {
   ) {
     gallery_id
     tokens(
-      limit: 15
+      limit: ${PAGINATION_STEP_GALLERY}
       offset: ${offset}
     ) {
       token {
