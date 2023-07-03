@@ -71,7 +71,7 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
     return { price, ...currentCurrency };
   }, [collectibleInfo]);
 
-  const handleSubmit = async () => {
+  const buyCollectible = async () => {
     if (isUserOwnerCurrentCollectible) {
       return navigate(ModalsEnum.Send, { token: collectible });
     }
@@ -131,5 +131,5 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
     );
   };
 
-  return { handleSubmit, purchaseCurrency };
+  return { buyCollectible, purchaseCurrency };
 };

@@ -1,4 +1,4 @@
-interface CollectibleAttributes {
+export interface CollectibleAttributes {
   attribute: {
     id: number;
     name: string;
@@ -6,14 +6,16 @@ interface CollectibleAttributes {
     rarity?: number;
   };
 }
-[];
 
-export interface UserAdultCollectibles {
-  fa_contract: string;
-  token_id: string;
+interface CollectibleTag {
+  tag: {
+    name: string;
+  };
 }
 
 export interface CollectibleInfo {
+  fa_contract: string;
+  token_id: string;
   description: string;
   creators: {
     holder: {
@@ -29,6 +31,7 @@ export interface CollectibleInfo {
   metadata: string;
   artifact_uri: string;
   attributes: CollectibleAttributes[];
+  tags: CollectibleTag[];
   timestamp: string;
   royalties: {
     decimals: number;
@@ -51,4 +54,5 @@ export interface CollectibleInfo {
       type: string;
     };
   }[];
+  isAdultContent?: boolean;
 }

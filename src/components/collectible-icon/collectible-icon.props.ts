@@ -1,3 +1,5 @@
+import { StyleProp, ViewStyle } from 'react-native';
+
 import { EventFn } from 'src/config/general';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
@@ -12,6 +14,8 @@ export interface CollectibleIconProps {
   setScrollEnabled?: EventFn<boolean>;
   blurLayoutTheme?: ImageBlurOverlayThemesEnum;
   isTouchableBlurOverlay?: boolean;
+  isShowInfo?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 
 export enum CollectibleIconSize {

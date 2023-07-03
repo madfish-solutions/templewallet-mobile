@@ -2,12 +2,10 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, ListRenderItem, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, initialWindowMetrics } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
-import { Checkbox } from 'src/components/checkbox/checkbox';
-import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -34,6 +32,10 @@ import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
+import { CheckboxIcon } from '../../components/checkbox-icon/checkbox-icon';
+import { isAndroid } from '../../config/system';
+import { switchIsShowCollectibleInfoAction } from '../../store/settings/settings-actions';
+import { useIsShowCollectibleInfoSelector } from '../../store/settings/settings-selectors';
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
@@ -46,22 +48,36 @@ interface SocialLinksInterface {
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
 
 export const CollectiblesHome = () => {
-  const styles = useCollectiblesHomeStyles();
+  const { navigate } = useNavigation();
   const dispatch = useDispatch();
+
   const collections = useCreatedCollectionsSelector();
   const collectibles = useCollectiblesListSelector();
-
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
+  const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
+
+  const styles = useCollectiblesHomeStyles();
   const colors = useColors();
   const { height: windowHeight } = useWindowDimensions();
+
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
-  const { navigate } = useNavigation();
 
-  const insets = useSafeAreaInsets();
-  const TAB_BAR_HEIGHT = formatSize(79) + insets.bottom;
-  const ICON_COVER_GAP = 2;
+  const iosSafeArea = useSafeAreaInsets();
+
+  const androidSafeAreaValue = isDefined(initialWindowMetrics)
+    ? initialWindowMetrics.insets.bottom > 0
+      ? initialWindowMetrics.insets.bottom + initialWindowMetrics.insets.top
+      : initialWindowMetrics.insets.bottom
+    : 0;
+
+  const TAB_BAR_HEIGHT = isAndroid ? androidSafeAreaValue : iosSafeArea.bottom;
+
+  // LOGGER
+  // console.log('initialWindowMetrics', JSON.stringify({ iosSafeArea, initialWindowMetrics } ?? {}, null, 2));
+
+  const ICON_COVER_GAP = 12;
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
@@ -97,7 +113,7 @@ export const CollectiblesHome = () => {
 
   const snapPoints = useMemo(
     () => [
-      windowHeight - (headerHeight + TAB_BAR_HEIGHT),
+      windowHeight - (headerHeight + TAB_BAR_HEIGHT + 4),
       windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP)
     ],
     [headerHeight, visibleBlockHeight]
@@ -105,6 +121,8 @@ export const CollectiblesHome = () => {
 
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
+
+  const handleSwitchShowInfo = () => void dispatch(switchIsShowCollectibleInfoAction());
 
   const renderItemSocialLinks: ListRenderItem<SocialLinksInterface> = ({ item }) => (
     <SocialButton
@@ -129,7 +147,7 @@ export const CollectiblesHome = () => {
     return (
       <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
         {item.logo ? (
-          <FastImage style={styles.collection} source={{ uri: formatImgUri(item.logo) }} />
+          <FastImage source={{ uri: formatImgUri(item.logo) }} style={styles.collection} />
         ) : (
           <View style={[styles.collection, styles.brokenImage]}>
             <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
@@ -161,46 +179,51 @@ export const CollectiblesHome = () => {
             isCollectibleScreen
           />
         </View>
+
         <View
           onLayout={event => {
             const { height } = event.nativeEvent.layout;
             setVisibleBlockHeight(height);
           }}
+          style={styles.profileContainer}
         >
-          <View style={styles.profileContainer}>
+          <View style={styles.profileActions}>
             {isDefined(alias) ? (
-              <TouchableOpacity onPress={openTzProfiles} style={styles.align}>
+              <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
                 <Icon name={IconNameEnum.EditNew} />
                 <Text style={styles.profileText}>EDIT PROFILE</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity onPress={openTzProfiles} style={styles.align}>
+              <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
                 <Icon name={IconNameEnum.PlusCircle} size={formatSize(16)} />
                 <Text style={styles.profileText}>CREATE PROFILE</Text>
               </TouchableOpacity>
             )}
+
             <FlatList data={socialLinks} renderItem={renderItemSocialLinks} horizontal={true} />
           </View>
 
           {collections.length > 0 && (
             <View style={styles.collectionsHeader}>
               <Text style={styles.collectionsLabel}>Created collections</Text>
+
               <TouchableOpacity>
-                <Text style={styles.disabled}>See All</Text>
+                <Text style={styles.buttonDisabled}>See All</Text>
               </TouchableOpacity>
             </View>
           )}
-          <View style={styles.collectionsContainer}>
-            <FlatList
-              data={collections}
-              renderItem={renderItemCollections}
-              keyExtractor={(collection, id) => `${collection.logo}_${collection.name}+${id}`}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-            />
-          </View>
+
+          <FlatList
+            data={collections}
+            renderItem={renderItemCollections}
+            keyExtractor={(collection, id) => `${collection.logo}_${collection.name}+${id}`}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.collectionsContainer}
+          />
         </View>
       </HeaderCard>
+
       <BottomSheet
         ref={sheetRef}
         snapPoints={snapPoints}
@@ -209,19 +232,21 @@ export const CollectiblesHome = () => {
         backgroundStyle={styles.bottomSheet}
       >
         <View style={styles.infoContainer}>
-          <View style={styles.checkboxContainer}>
-            <Checkbox value={false} size={formatSize(16)} strokeWidth={formatSize(2)} onChange={emptyFn}>
-              <Divider size={formatSize(4)} />
-              <Text style={styles.checkboxText}>Show Info</Text>
-            </Checkbox>
-          </View>
+          <CheckboxIcon
+            text="Show info"
+            initialState={isShowCollectibleInfo}
+            onActive={handleSwitchShowInfo}
+            onDisactive={handleSwitchShowInfo}
+          />
+
           <View style={styles.icons}>
             <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
             <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} style={styles.offsetBetween} />
             <TouchableIcon name={IconNameEnum.SearchNew} onPress={emptyFn} />
           </View>
         </View>
-        <CollectiblesList collectiblesList={collectibles} />
+
+        <CollectiblesList collectiblesList={collectibles} isShowInfo={isShowCollectibleInfo} />
       </BottomSheet>
     </>
   );

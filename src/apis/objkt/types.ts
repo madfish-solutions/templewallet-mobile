@@ -1,6 +1,6 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { AttributeInfo } from 'src/interfaces/attribute.interface';
-import { CollectibleInfo, UserAdultCollectibles } from 'src/interfaces/collectible-info.interface';
+import { CollectibleInfo } from 'src/interfaces/collectible-info.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { HolderInfo, Listing, Offer } from 'src/token/interfaces/token-metadata.interface';
 
@@ -11,10 +11,6 @@ export interface FA2AttributeCountQueryResponse {
 }
 export interface GalleryAttributeCountQueryResponse {
   gallery_attribute_count: AttributeInfo[];
-}
-
-export interface CollectibleInfoQueryResponse {
-  token: CollectibleInfo[];
 }
 
 export interface CurrencyInfo {
@@ -85,5 +81,5 @@ export interface CollectiblesByGalleriesResponse {
 }
 
 export interface UserAdultCollectiblesQueryResponse {
-  token: UserAdultCollectibles[];
+  token: CollectibleInfo[];
 }

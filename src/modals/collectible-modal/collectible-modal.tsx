@@ -6,6 +6,7 @@ import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
+import { collectiblesInfoInitialValue } from '../../apis/objkt/constants';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
@@ -18,13 +19,15 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from '../../components/touchable-with-analytics';
-import { useCollectibleInfo } from '../../hooks/collectible-info/use-collectible-info.hook';
 import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
 import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
+import { useFetchCollectibleAttributes } from '../../hooks/use-fetch-collectible-attributes.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
+import { useTokenMetadataSelector } from '../../store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
+import { getTokenSlug } from '../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
@@ -41,7 +44,7 @@ import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
 import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
-import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME, COLLECTION_ICON_SIZE } from './constants';
+import { COLLECTION_ICON_SIZE } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
 enum SegmentControlNamesEnum {
@@ -59,60 +62,44 @@ const SEGMENT_VALUES = [
 const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = () => {
-  const [scrollEnabled, setScrollEnabled] = useState(true);
-
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const { width } = Dimensions.get('window');
   const iconSize = width - formatSize(32);
 
-  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
+  usePageAnalytic(ModalsEnum.CollectibleModal);
 
-  const [segmentControlIndex, setSegmentControlIndex] = useState(0);
+  const { trackEvent } = useAnalytics();
 
   const styles = useCollectibleModalStyles();
 
-  const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
+  const { collectibleInfo: collectibleInfoFromStore } = useTokenMetadataSelector(getTokenSlug(collectible));
 
+  const [segmentControlIndex, setSegmentControlIndex] = useState(0);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
+  const collectibleInfo = useMemo(
+    () => collectibleInfoFromStore ?? collectiblesInfoInitialValue,
+    [collectibleInfoFromStore]
+  );
+
+  const { fa, creators, description, metadata, timestamp, royalties, supply, galleries, listings_active, mime } =
+    collectibleInfo;
+
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
   const burnCollectible = useBurnCollectible(collectible);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
+  const { attributes, isLoading } = useFetchCollectibleAttributes(collectibleInfo);
 
-  const { handleSubmit, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
+  console.log('collectible', collectible);
 
-  const {
-    fa,
-    creators,
-    description,
-    metadata,
-    timestamp,
-    royalties,
-    supply,
-    attributes,
-    galleries,
-    listings_active,
-    mime
-  } = collectibleInfo;
-
-  const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
-
-  const isAttributesExist = filteredAttributes.length > 0;
+  const isAttributesExist = attributes.length > 0;
 
   const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 3);
-
-  const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
-  const disabledOffers = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Offers);
-
-  const isPropertiesSelected = propertiesIndex === segmentControlIndex;
-
-  usePageAnalytic(ModalsEnum.CollectibleModal);
-  const { trackEvent } = useAnalytics();
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
   const submitButtonTitle = useMemo(() => {
-    if (isLoading) {
-      return '...';
-    }
-
     if (isUserOwnerCurrentCollectible) {
       return 'Send';
     }
@@ -124,7 +111,7 @@ export const CollectibleModal = () => {
     const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
 
     return `Buy for ${price.toFixed(2)} ${purchaseCurrency.symbol}`;
-  }, [isUserOwnerCurrentCollectible, listings_active, isLoading]);
+  }, [isUserOwnerCurrentCollectible, listings_active]);
 
   const collectionLogo = useMemo(() => {
     if (fa.logo) {
@@ -172,14 +159,19 @@ export const CollectibleModal = () => {
     }
   }, [description]);
 
+  const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
+  const disabledOffers = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Offers);
+
+  const isPropertiesSelected = propertiesIndex === segmentControlIndex;
+
   return (
     <ScreenContainer
       fixedFooterContainer={{
         submitButton: (
           <ButtonLargePrimary
-            disabled={isLoading || (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listings_active))}
+            disabled={!isUserOwnerCurrentCollectible && !isNonEmptyArray(listings_active)}
             title={submitButtonTitle}
-            onPress={handleSubmit}
+            onPress={buyCollectible}
             testID={CollectibleModalSelectors.sendButton}
           />
         )
@@ -269,9 +261,7 @@ export const CollectibleModal = () => {
           />
         )}
 
-        {!isLoading && !isPropertiesSelected && isAttributesExist && (
-          <CollectibleAttributes attributes={filteredAttributes} />
-        )}
+        {!isLoading && !isPropertiesSelected && isAttributesExist && <CollectibleAttributes attributes={attributes} />}
 
         {isUserOwnerCurrentCollectible && (
           <View style={styles.burnContainer}>

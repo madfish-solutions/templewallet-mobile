@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import ActionIcon from './assets/action.svg';
 import AlertCircleIcon from './assets/alert-circle.svg';
 import AlertMonochromeIcon from './assets/alert-monochrome.svg';
 import ShieldIcon from './assets/alert-shield.svg';
@@ -26,6 +27,8 @@ import BuyIcon from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
+import CheckboxOffIcon from './assets/checkbox-off.svg';
+import CheckboxOnIcon from './assets/checkbox-on.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
@@ -155,6 +158,7 @@ import { IconNameEnum } from './icon-name.enum';
 
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Audio]: AudioIcon,
+  [IconNameEnum.Action]: ActionIcon,
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
@@ -305,5 +309,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
   [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon
+  [IconNameEnum.NotificationDot]: NotificationDotIcon,
+  [IconNameEnum.CheckboxOn]: CheckboxOnIcon,
+  [IconNameEnum.CheckboxOff]: CheckboxOffIcon
 };

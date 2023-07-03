@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
+import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { createActions } from '../create-actions';
 
@@ -24,3 +25,9 @@ export const loadTokenSuggestionActions = createActions<
   TokenMetadataInterface,
   string
 >('assets/LOAD_TOKEN_SUGGESTION');
+
+export const loadCollectibleAttributesActions = createActions<
+  { tokenSlug: string; attributeIds: number[]; isGallery: boolean },
+  { tokenSlug: string; attributesInfo: AttributeInfo[] },
+  string
+>('assets/LOAD_TOKEN_METADATA');

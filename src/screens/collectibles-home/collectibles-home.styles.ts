@@ -4,7 +4,7 @@ import { formatSize } from '../../styles/format-size';
 export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }) => ({
   headerCard: {
     paddingHorizontal: 0,
-    paddingBottom: 0
+    // paddingBottom: 0
   },
   headerContainer: {
     flexDirection: 'row',
@@ -23,19 +23,13 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     marginBottom: formatSize(12)
   },
   profileContainer: {
+    marginHorizontal: formatSize(16)
+  },
+  profileActions: {
     flexDirection: 'row',
-    marginHorizontal: formatSize(16),
-    marginBottom: formatSize(20),
-    marginTop: formatSize(4)
+    marginBottom: formatSize(16)
   },
-  socialsIcon: {
-    width: formatSize(24),
-    height: formatSize(24)
-  },
-  socialIconsBgColor: {
-    backgroundColor: colors.gray4
-  },
-  align: {
+  profileActionButton: {
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -45,10 +39,24 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     marginLeft: formatSize(4),
     marginRight: formatSize(24)
   },
+  socialsIcon: {
+    width: formatSize(24),
+    height: formatSize(24)
+  },
+  socialIconsBgColor: {
+    backgroundColor: colors.gray4
+  },
   collectionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: formatSize(16)
+    marginBottom: formatSize(12)
+  },
+  collectionsLabel: {
+    ...typography.body15Semibold,
+    color: colors.black
+  },
+  collectionsContainer: {
+    marginLeft: formatSize(4)
   },
   collection: {
     borderRadius: formatSize(10),
@@ -56,23 +64,20 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     borderColor: colors.lines,
     width: formatSize(56),
     height: formatSize(56),
-    marginHorizontal: formatSize(4),
+    // marginHorizontal: formatSize(4),
     marginBottom: formatSize(4)
   },
   collectionBlock: {
-    marginHorizontal: formatSize(2),
-    marginTop: formatSize(12),
-    marginBottom: formatSize(16),
-    height: formatSize(64),
+    // marginHorizontal: formatSize(2),
+    // marginTop: formatSize(12),
+    // marginBottom: formatSize(16),
+    // height: formatSize(64),
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1
+    marginRight: formatSize(12)
+    // flex: 1
   },
-  collectionsLabel: {
-    ...typography.body15Semibold,
-    color: colors.black
-  },
-  disabled: {
+  buttonDisabled: {
     ...typography.caption13Semibold,
     color: colors.disabled
   },
@@ -81,9 +86,6 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     textAlign: 'center',
     color: colors.black,
     ...typography.caption10Regular
-  },
-  collectionsContainer: {
-    marginLeft: formatSize(16)
   },
   brokenImage: {
     alignItems: 'center',
@@ -99,11 +101,6 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     borderTopWidth: formatSize(0.5),
     backgroundColor: colors.pageBG
   },
-  checkboxText: {
-    ...typography.caption11Regular,
-    color: colors.gray1,
-    marginBottom: formatSize(2)
-  },
   icons: {
     flexDirection: 'row',
     justifyContent: 'space-around'
@@ -113,8 +110,7 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   checkboxContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: formatSize(4)
+    alignItems: 'center'
   },
   handleStyle: {
     display: 'none'

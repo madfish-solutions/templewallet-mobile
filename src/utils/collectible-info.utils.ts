@@ -1,12 +1,21 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { Observable, catchError, map, of } from 'rxjs';
 
-import { fetchGalleryAttributeCount$, fetchFA2AttributeCount$ } from '../../apis/objkt/index';
-import { AttributeInfo } from '../../interfaces/attribute.interface';
-import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
-import { attributesInfoInitialState } from './constants';
+import { fetchGalleryAttributeCount$, fetchFA2AttributeCount$ } from '../apis/objkt/index';
+import { AttributeInfo } from '../interfaces/attribute.interface';
+import { CollectibleAttributes, CollectibleInfo } from '../interfaces/collectible-info.interface';
 
-export const getAttributesWithRarity = (attributesInfo: AttributeInfo[], collectibleInfo: CollectibleInfo) => {
+const attributesInfoInitialState: AttributeInfo[] = [
+  {
+    attribute_id: 0,
+    tokens: 0
+  }
+];
+
+export const getAttributesWithRarity = (
+  attributesInfo: AttributeInfo[],
+  collectibleInfo: CollectibleInfo
+): CollectibleAttributes[] => {
   const isExistGallery = isNonEmptyArray(collectibleInfo.galleries);
   const collectibleCalleryCount = isExistGallery
     ? collectibleInfo.galleries[0].gallery.items

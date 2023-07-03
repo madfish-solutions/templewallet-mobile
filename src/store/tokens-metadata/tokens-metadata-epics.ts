@@ -4,8 +4,9 @@ import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { getAttributesInfo$ } from '../../utils/collectible-info.utils';
 import {
-  checkTokensMetadata$,
+  addAllInfoToCollectibles$,
   loadTokenMetadata$,
   loadTokensMetadata$,
   loadWhitelist$
@@ -14,6 +15,7 @@ import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.util
 import { RootState } from '../create-store';
 import {
   addTokensMetadataAction,
+  loadCollectibleAttributesActions,
   loadTokenMetadataActions,
   loadTokensMetadataAction,
   loadTokenSuggestionActions,
@@ -73,9 +75,21 @@ const loadTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<
     withSelectedAccount(state$),
     switchMap(([slugs, account]) =>
       loadTokensMetadata$(slugs).pipe(
-        switchMap(tokensMetadata => checkTokensMetadata$(tokensMetadata, account)),
-        map(tokensMetadata => addTokensMetadataAction(tokensMetadata)),
+        switchMap(tokensMetadata => addAllInfoToCollectibles$(tokensMetadata, account)),
+        map(collectibles => addTokensMetadataAction(collectibles)),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
+      )
+    )
+  );
+
+const loadCollectibleAttributesEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(loadCollectibleAttributesActions.submit),
+    toPayload(),
+    switchMap(({ tokenSlug, attributeIds, isGallery }) =>
+      getAttributesInfo$(attributeIds, isGallery).pipe(
+        map(attributesInfo => loadCollectibleAttributesActions.success({ tokenSlug, attributesInfo })),
+        catchError(err => of(loadCollectibleAttributesActions.fail(err.message)))
       )
     )
   );
@@ -84,5 +98,6 @@ export const tokensMetadataEpics = combineEpics(
   loadWhitelistEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
-  loadTokensMetadataEpic
+  loadTokensMetadataEpic,
+  loadCollectibleAttributesEpic
 );

@@ -4,11 +4,13 @@ import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interfac
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { getAttributesWithRarity } from '../../utils/collectible-info.utils';
 import { createEntity } from '../create-entity';
 import { setNewTokensMetadata } from '../migration/migration-actions';
 import {
   addKnownSvg,
   addTokensMetadataAction,
+  loadCollectibleAttributesActions,
   loadTokenSuggestionActions,
   loadWhitelistAction,
   removeKnownSvg
@@ -49,6 +51,32 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
     if (newMetadata.length < 1) {
       return state;
     }
+
+    return {
+      ...state,
+      metadataRecord: newMetadata.reduce(
+        (obj, tokenMetadata) => ({
+          ...obj,
+          [getTokenSlug(tokenMetadata)]: tokenMetadata
+        }),
+        state.metadataRecord
+      )
+    };
+  });
+  builder.addCase(loadCollectibleAttributesActions.success, (state, { payload: { tokenSlug, attributesInfo } }) => {
+    const newMetadata = Object.entries(state.metadataRecord).map(([slug, metadata]) => {
+      if (slug === tokenSlug && isDefined(metadata.collectibleInfo)) {
+        return {
+          ...metadata,
+          collectibleInfo: {
+            ...metadata.collectibleInfo,
+            attributes: getAttributesWithRarity(attributesInfo, metadata.collectibleInfo)
+          }
+        };
+      }
+
+      return metadata;
+    });
 
     return {
       ...state,

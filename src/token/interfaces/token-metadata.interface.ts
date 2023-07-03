@@ -1,6 +1,7 @@
 import { CurrencyInfo } from 'src/apis/objkt/types';
 
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
 
 export enum TokenStandardsEnum {
   Fa2 = 'fa2',
@@ -36,7 +37,8 @@ export interface TokenMetadataInterface extends CollectibleMetadataInterface {
   displayUri?: string;
   artifactUri?: string;
   standard?: TokenStandardsEnum | null;
-  isAdultContent?: boolean;
+
+  collectibleInfo?: CollectibleInfo;
 
   // Stored as separate Record
   exchangeRate?: number;
