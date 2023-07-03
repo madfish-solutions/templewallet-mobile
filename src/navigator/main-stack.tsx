@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
@@ -60,7 +60,6 @@ import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-scr
 import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
 import { Welcome } from 'src/screens/welcome/welcome';
-import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
