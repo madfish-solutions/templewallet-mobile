@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
@@ -18,7 +18,6 @@ import {
   NOTIFICATIONS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
-import { useAdvertising } from 'src/hooks/use-advertising.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
@@ -63,7 +62,7 @@ import { Welcome } from 'src/screens/welcome/welcome';
 import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import {
   loadTokensActions,
   loadTezosBalanceActions,
@@ -75,6 +74,7 @@ import { cloudTitle } from 'src/utils/cloud-backup';
 
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
+import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
@@ -86,17 +86,24 @@ export const MainStackScreen = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const styleScreenOptions = useStackNavigatorStyleOptions();
+  const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();
 
   const blockSubscription = useBlockSubscription();
 
+  const styleScreenOptions = useStackNavigatorStyleOptions();
+
   const { metadata } = useNetworkInfo();
+
+  useEffect(() => {
+    if (isEnableAdsBanner) {
+      dispatch(togglePartnersPromotionAction(false));
+    }
+  }, [isEnableAdsBanner]);
 
   useAppLockTimer();
   useBeaconHandler();
   useFirebaseApp();
-  useAdvertising();
 
   const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 

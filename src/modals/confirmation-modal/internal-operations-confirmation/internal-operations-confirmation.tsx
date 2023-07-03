@@ -11,7 +11,6 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { ApproveInternalOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-internal-operation-request-action-payload.interface';
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
-import { RECOMMENDED_BAKER_ADDRESS } from 'src/modals/select-baker-modal/select-baker-modal';
 import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { navigateAction } from 'src/store/root-state.actions';
@@ -22,6 +21,7 @@ import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isTruthy } from 'src/utils/is-truthy';
+import { RECOMMENDED_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';

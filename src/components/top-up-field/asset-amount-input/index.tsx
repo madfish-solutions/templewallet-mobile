@@ -9,7 +9,7 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Label } from 'src/components/label/label';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -17,41 +17,37 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
-import { initialData } from '../../crypto/exolix/steps/initial-step/initial-step.data';
-import {
-  renderTopUpTokenListItem,
-  TopUpTokenDropdownItem
-} from '../top-up-token-dropdown-item/top-up-token-dropdown-item';
+import { renderTopUpTokenListItem, TopUpTokenDropdownItem } from '../dropdown-item';
+import { TopUpAssetValueText } from './asset-value-text';
 import { TopUpAssetAmountInputSelectors } from './selectors';
 import { useTopUpAssetAmountInputStyles } from './styles';
-import { TopUpAssetValueText } from './top-up-asset-value-text';
 import { TopUpAssetAmountInputProps, TopUpAssetAmountInterface } from './types';
 
-const renderTokenValue: DropdownValueComponent<TopUpInputInterface> = ({ value }) => (
+const renderTokenValue: DropdownValueComponent<TopUpInterfaceBase> = ({ value }) => (
   <TopUpTokenDropdownItem
     token={value}
     actionIconName={IconNameEnum.TriangleDown}
     iconSize={formatSize(32)}
-    isDropdownClosed
+    isFacadeItem
   />
 );
 
 const defaultNewValueFn: TopUpAssetAmountInputProps['newValueFn'] = (
   newValue: TopUpAssetAmountInterface,
-  newAsset: TopUpInputInterface,
+  newAsset: TopUpInterfaceBase,
   amount: BigNumber | undefined
 ) => ({
   ...newValue,
   asset: newAsset,
   amount
 });
-const topUpInputEqualityFn = (a: TopUpInputInterface, b?: TopUpInputInterface) =>
+const topUpInputEqualityFn = (a: TopUpInterfaceBase, b?: TopUpInterfaceBase) =>
   a.code === b?.code && a.network === b.network;
-const topUpInputKeyExtractor = (token: TopUpInputInterface, index: number) => `${index}_${token.code}_${token.network}`;
+const topUpInputKeyExtractor = (token: TopUpInterfaceBase, index: number) => `${index}_${token.code}_${token.network}`;
 
 const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMetaProps<TopUpAssetAmountInterface> }> =
   ({
-    value = initialData.coinFrom,
+    value,
     label,
     description = 'Assets',
     emptyListText,
@@ -115,7 +111,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
     );
 
     const handleTokenChange = useCallback(
-      (newAsset?: TopUpInputInterface) => {
+      (newAsset?: TopUpInterfaceBase) => {
         if (isDefined(newAsset)) {
           trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, {
             token: newAsset
@@ -155,7 +151,7 @@ const AssetAmountInputComponent: FC<TopUpAssetAmountInputProps & { meta: FieldMe
 
           <View style={styles.dropdownContainer}>
             {singleAsset ? (
-              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isDropdownClosed />
+              <TopUpTokenDropdownItem token={value.asset} iconSize={formatSize(32)} isFacadeItem />
             ) : (
               <Dropdown
                 description={description}

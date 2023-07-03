@@ -1,8 +1,12 @@
-import { TopUpProviderPairLimits } from '../interfaces/topup.interface';
 import { isDefined } from './is-defined';
 
-export const mergeAssetsLimits = (limits: Array<Partial<TopUpProviderPairLimits> | undefined>) =>
-  limits.reduce<Partial<TopUpProviderPairLimits>>((result, limits) => {
+export interface PairLimits {
+  min: number;
+  max: number;
+}
+
+export const mergeAssetsLimits = (limits: (Partial<PairLimits> | undefined)[]) =>
+  limits.reduce<Partial<PairLimits>>((result, limits) => {
     const { min, max } = limits ?? {};
 
     if (isDefined(min)) {
