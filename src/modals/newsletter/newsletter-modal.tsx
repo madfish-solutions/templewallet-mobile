@@ -1,5 +1,5 @@
 import { Formik, FormikHelpers, FormikProps } from 'formik';
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import { Text, View } from 'react-native';
 import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
@@ -11,7 +11,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormTextInput } from 'src/form/form-text-input';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { addNewsletterEmailAction, shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
+import { addNewsletterEmailAction } from 'src/store/newsletter/newsletter-actions';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 
 import { IMAGE_HEIGHT, IMAGE_URI } from './constants';
@@ -36,8 +36,6 @@ export const Newsletter: FC = () => {
   const validationSchema = useNewsletterValidationSchema();
   const formik = useRef<FormikProps<{ email: string }>>(null);
   const { goBack } = useNavigation();
-
-  useEffect(() => () => void dispatch(shouldShowNewsletterModalAction(false)), []);
 
   const onSubmit = ({ email }: FormData, formikHelpers: FormikHelpers<FormData>) =>
     newsletterApi

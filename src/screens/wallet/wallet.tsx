@@ -25,6 +25,7 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
+import { useIsAnyBackupMadeSelector, useIsOnRampPossibilitySelector } from 'src/store/settings/settings-selectors';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import {
   useAccountsListSelector,
@@ -48,6 +49,8 @@ export const Wallet = () => {
   const { pageEvent } = useAnalytics();
   const { navigate } = useNavigation();
 
+  const isAnyBackupMade = useIsAnyBackupMadeSelector();
+  const isOnRampPossibility = useIsOnRampPossibilitySelector();
   const account = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
@@ -73,10 +76,10 @@ export const Wallet = () => {
   }, [contactCandidateAddress]);
 
   useEffect(() => {
-    if (shouldShowNewsletterModal) {
+    if (shouldShowNewsletterModal && !isOnRampPossibility && isAnyBackupMade) {
       navigate(ModalsEnum.Newsletter);
     }
-  }, [shouldShowNewsletterModal]);
+  }, [shouldShowNewsletterModal, isOnRampPossibility, isAnyBackupMade]);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');
