@@ -96,6 +96,7 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
 ];
 
 export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+  DEPRECATED_TKEY_METADATA,
   {
     id: 0,
     address: 'KT1Rk86CX85DjBKmuyBhrCyNsHyudHVtASec',
@@ -105,7 +106,6 @@ export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     thumbnailUri: 'ipfs://QmRukmxJkSmu9v2mUutSU7FNMegPramzVgsZ6YfRSWjdnV',
     standard: TokenStandardsEnum.Fa2
   },
-  DEPRECATED_TKEY_METADATA,
   {
     id: 0,
     address: 'KT1KEsRsSMvSkgZ9CwYy5fPA1e4j3TEpuiKK',
@@ -166,6 +166,6 @@ export const PREDEFINED_DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
 ];
 
 export const KNOWN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
-  DEPRECATED_TKEY_METADATA,
-  ...PREDEFINED_MAINNET_TOKENS_METADATA
+  ...PREDEFINED_MAINNET_TOKENS_METADATA,
+  ...OVERRIDEN_MAINNET_TOKENS_METADATA
 ];

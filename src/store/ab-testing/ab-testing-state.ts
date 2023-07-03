@@ -7,7 +7,3 @@ export interface ABTestingState {
 export const abTestingInitialState: ABTestingState = {
   groupName: ABTestGroup.Unknown
 };
-
-export interface ABTestingRootState {
-  abTesting: ABTestingState;
-}

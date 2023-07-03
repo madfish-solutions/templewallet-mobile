@@ -1,5 +1,6 @@
-import { createEntity } from '../create-entity';
-import { PartnersPromotionState } from './partners-promotion-state';
+import { createEntity } from 'src/store/create-entity';
+
+import type { PartnersPromotionState } from './partners-promotion-state';
 
 export const mockPartnersPromotion = {
   body: '',

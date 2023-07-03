@@ -2,12 +2,13 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { AndroidKeyboardDisclaimer } from '../../../../components/android-keyboard-disclaimer/android-keyboard-disclaimer';
-import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { InsetSubstitute } from '../../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../../components/label/label';
-import { FormMnemonicInput } from '../../../../form/form-mnemonic-input';
-import { ImportWalletProps } from '../import-wallet';
+import { AndroidKeyboardDisclaimer } from 'src/components/android-keyboard-disclaimer/android-keyboard-disclaimer';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
+
+import type { ImportWalletProps } from '../import-wallet';
 import {
   importWalletFromSeedPhraseInitialValues,
   importWalletFromSeedPhraseValidationSchema

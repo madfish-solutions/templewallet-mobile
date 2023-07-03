@@ -47,7 +47,3 @@ export const settingsInitialState: SettingsState = {
   isEnableAdsBanner: true,
   isOnRampPossibility: false
 };
-
-export interface SettingsRootState {
-  settings: SettingsState;
-}

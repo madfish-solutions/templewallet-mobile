@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
 import { usePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
@@ -8,9 +8,8 @@ import {
   usePartnersPromoLoadingSelector,
   usePartnersPromoSelector
 } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { isEmptyPromotion } from 'src/utils/optimal.utils';
+import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
 
-import { mockPartnersPromotion } from '../../store/partners-promotion/partners-promotion-state.mock';
 import { PromotionItem } from '../promotion-item/promotion-item';
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
@@ -36,16 +35,15 @@ export const OptimalPromotionItem: FC<Props> = ({
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const { disablePromotion } = usePromotionAfterConfirmation();
 
-  if (!partnersPromotionEnabled) {
-    return null;
-  }
+  const promotionIsEmpty = useIsEmptyPromotion(partnersPromotion);
 
-  if (
-    isEmptyPromotion(partnersPromotion) ||
-    JSON.stringify(mockPartnersPromotion) === JSON.stringify(partnersPromotion)
-  ) {
-    onEmptyPromotionReceived?.();
+  useEffect(() => {
+    if (partnersPromotionEnabled && onEmptyPromotionReceived && promotionIsEmpty) {
+      onEmptyPromotionReceived();
+    }
+  }, [partnersPromotionEnabled, onEmptyPromotionReceived, promotionIsEmpty]);
 
+  if (!partnersPromotionEnabled || promotionIsEmpty) {
     return null;
   }
 

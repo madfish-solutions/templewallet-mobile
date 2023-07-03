@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useTopUpTokenDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
   infoContainer: {
@@ -30,9 +30,7 @@ export const useTopUpTokenDropdownItemStyles = createUseStyles(({ colors, typogr
   },
   textRegular13: {
     ...typography.numbersRegular13,
-    color: colors.gray1
-  },
-  colorGray1: {
+    flex: 1,
     color: colors.gray1
   }
 }));

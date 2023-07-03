@@ -7,11 +7,11 @@ import { ofType } from 'ts-action-operators';
 import { getTzktApi } from 'src/api.service';
 import { BakerInterface, bakingBadApi, fetchBaker, emptyBaker, buildUnknownBaker } from 'src/apis/baking-bad';
 import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+import type { RootState } from 'src/store/types';
 import { isTruthy } from 'src/utils/is-truthy';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import { RootState } from '../create-store';
 import { loadBakerRewardsListActions, loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 
 const NUMBER_OF_BAKER_REWARDS_TO_LOAD = 30;

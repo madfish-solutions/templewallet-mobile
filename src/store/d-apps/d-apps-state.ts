@@ -18,7 +18,3 @@ export const dAppsInitialState: DAppsState = {
   dappsList: createEntity([]),
   tokensApyRates: {}
 };
-
-export interface DAppsRootState {
-  dApps: DAppsState;
-}
