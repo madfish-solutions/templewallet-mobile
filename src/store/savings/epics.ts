@@ -1,5 +1,5 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, EMPTY, forkJoin, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -31,8 +31,12 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
     withUsdToTokenRates(state$),
     switchMap(([, rates]) => getYouvesSavingsItems$(rates)),
     withSelectedAccount(state$),
-    switchMap(([savings, selectedAccount]) =>
-      forkJoin(
+    switchMap(([savings, selectedAccount]) => {
+      if (savings.length === 0) {
+        throw new Error('Failed to fetch any savings items');
+      }
+
+      return forkJoin(
         savings.map(savingsItem =>
           getUserStake(selectedAccount, savingsItem.id, savingsItem.type)
             .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
@@ -49,12 +53,12 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
           )
         ),
         mergeMap(stakes => merge(of(loadAllSavingsActions.success(savings)), of(loadAllStakesActions.success(stakes))))
-      )
-    ),
+      );
+    }),
     catchError(err => {
       showErrorToastByError(err, undefined, true);
 
-      return mergeMap(() => merge(of(loadAllSavingsActions.fail()), of(loadAllStakesActions.fail())))(EMPTY);
+      return of(loadAllSavingsActions.fail(), loadAllStakesActions.fail());
     })
   );
 

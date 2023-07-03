@@ -126,6 +126,8 @@ export const walletStackScreens = [
   ScreensEnum.Buy,
   ScreensEnum.BuyWithCreditCard,
   ScreensEnum.Earn,
+  ScreensEnum.Farming,
+  ScreensEnum.Savings,
   ScreensEnum.Exolix,
   ScreensEnum.Notifications,
   ScreensEnum.NotificationsItem
