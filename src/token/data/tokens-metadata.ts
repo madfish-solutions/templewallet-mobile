@@ -30,16 +30,6 @@ export const WTEZ_TOKEN_METADATA: TokenMetadataInterface = {
   standard: TokenStandardsEnum.Fa2
 };
 
-export const TZBTC_TOKEN_METADATA: TokenMetadataInterface = {
-  id: 0,
-  address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
-  name: 'Tezos BTC',
-  symbol: 'tzBTC',
-  decimals: 8,
-  iconName: IconNameEnum.TzBtcToken,
-  standard: TokenStandardsEnum.Fa12
-};
-
 const DEPRECATED_TKEY_METADATA: TokenMetadataInterface = {
   address: 'KT1WihWRnmzhfebi6zqQ4tvNGiPeVxiGwTi2',
   id: 0,
@@ -77,7 +67,15 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     thumbnailUri: 'https://kolibri-data.s3.amazonaws.com/logo.png',
     standard: TokenStandardsEnum.Fa12
   },
-  TZBTC_TOKEN_METADATA,
+  {
+    id: 0,
+    address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
+    name: 'Tezos BTC',
+    symbol: 'tzBTC',
+    decimals: 8,
+    iconName: IconNameEnum.TzBtcToken,
+    standard: TokenStandardsEnum.Fa12
+  },
   {
     id: 2,
     address: 'KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW',

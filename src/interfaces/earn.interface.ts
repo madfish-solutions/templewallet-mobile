@@ -33,4 +33,4 @@ export interface FarmContractStorageInterface {
   total_stake: BigNumber;
 }
 
-export type FarmToken = Pick<TokenMetadataInterface, 'symbol' | 'thumbnailUri' | 'iconName' | 'address' | 'id'>;
+export type FarmToken = Pick<TokenMetadataInterface, 'symbol' | 'thumbnailUri' | 'iconName'>;

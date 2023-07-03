@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { StyleProp, View, ViewStyle } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
@@ -21,7 +21,7 @@ import { TokenIconStyles } from './token-icon.styles';
 
 interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'> {
   size?: number;
-  style?: StyleProp<ViewStyle>;
+  style?: ViewStyle;
 }
 
 export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, style, ...rest }) => {

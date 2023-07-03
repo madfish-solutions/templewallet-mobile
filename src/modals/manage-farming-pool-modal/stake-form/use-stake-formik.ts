@@ -3,16 +3,15 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
+import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
-import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useFarmSelector, useStakeSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
-import { useSelectedRpcUrlSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
@@ -21,47 +20,45 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
-import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
+import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { createStakeOperationParams } from './create-stake-operation-params';
+import { useFarmTokens } from './use-farm-tokens';
 
 export interface StakeFormValues {
   assetAmount: AssetAmountInterface;
   acceptRisks: boolean;
 }
 
-export const useStakeFormik = (farmId: string, contractAddress: string) => {
-  const farm = useFarmSelector(farmId, contractAddress);
-  const { stakeTokens } = useFarmTokens(farm?.item);
+export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => {
+  const farm = useFarmSelector(farmId, farmVersion);
+  const farmTokens = useFarmTokens(farm);
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const selectedAccount = useSelectedAccountSelector();
+  const { publicKeyHash: accountPkh } = selectedAccount;
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const stake = useStakeSelector(contractAddress);
+  const stake = useStakeSelector(farm?.item.contractAddress ?? '');
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
-  const slippageTolerance = useSlippageSelector();
 
   const initialValues = useMemo(
     () => ({
       assetAmount: {
-        asset: stakeTokens[0] ?? emptyTezosLikeToken,
+        asset: farmTokens[0] ?? emptyTezosLikeToken,
         amount: undefined
       },
       acceptRisks: false
     }),
-    [stakeTokens]
+    [farmTokens]
   );
 
   const validationSchema = useMemo<SchemaOf<StakeFormValues>>(
     () =>
       objectSchema().shape({
-        assetAmount: createAssetAmountWithMaxValidation(
-          gasToken,
-          farm?.item.type === FarmPoolTypeEnum.STABLESWAP ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE : undefined
-        ),
+        assetAmount: createAssetAmountWithMaxValidation(gasToken, EXPECTED_STAKING_GAS_EXPENSE),
         acceptRisks: booleanSchema().oneOf([true], 'Accept risks before depositing').required()
       }),
-    [gasToken, farm?.item.type]
+    [gasToken]
   );
 
   const handleSubmit = useCallback(
@@ -73,15 +70,7 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
       }
 
       try {
-        const opParams = await createStakeOperationParams(
-          farm,
-          amount,
-          asset,
-          tezos,
-          selectedAccount,
-          stake?.lastStakeId,
-          slippageTolerance
-        );
+        const opParams = await createStakeOperationParams(farm, amount, asset, tezos, accountPkh, stake?.lastStakeId);
 
         dispatch(
           navigateAction(ModalsEnum.Confirmation, {
@@ -92,11 +81,12 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
         );
         trackEvent('STAKE_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
       } catch (error) {
-        showErrorToastByError(error, undefined, true);
+        console.error(error);
+        showErrorToastByError(error);
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },
-    [farm, tezos, selectedAccount, trackEvent, stake?.lastStakeId, dispatch, slippageTolerance]
+    [farm, farmTokens, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
   );
 
   return useFormik<StakeFormValues>({

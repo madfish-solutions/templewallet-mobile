@@ -5,6 +5,7 @@ import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
+import { FarmVersionEnum, PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
@@ -12,7 +13,6 @@ import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -21,7 +21,6 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
-import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -47,9 +46,8 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const { navigate } = useNavigation();
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
-  const isLiquidityBaking = farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING;
 
-  const apy = useMemo(
+  const apr = useMemo(
     () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
     [farm.item.apr]
   );
@@ -62,7 +60,6 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE),
     [lastStakeRecord?.depositAmountAtomic, farm.item]
   );
-  const depositIsZero = depositAmountAtomic.isZero();
 
   const claimableRewardsAtomic = useMemo(
     () =>
@@ -70,12 +67,12 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
         farm.item.rewardToken.metadata.decimals
       ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.claimableRewards, farm.item]
+    [lastStakeRecord?.claimableRewards]
   );
 
   const navigateToFarm = useCallback(
-    () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, contractAddress: farm.item.contractAddress }),
-    [farm.item.id, farm.item.contractAddress]
+    () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
+    [farm.item.id]
   );
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>
@@ -109,25 +106,17 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   return (
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
-        {farm.item.type === FarmPoolTypeEnum.STABLESWAP && (
-          <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />
-        )}
+        {farm.item.type === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
         {Number(farm.item.vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
           <FarmTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
-          <View style={styles.alignEnd}>
-            <Text style={styles.apyText}>APY: {apy}%</Text>
+          <View>
+            <Text style={styles.apyText}>APY: {apr}%</Text>
             <View style={styles.earnSource}>
-              {isLiquidityBaking ? (
-                <View style={[styles.earnSourceIcon, styles.liquidityBakingIconWrapper]}>
-                  <Icon size={formatSize(6)} name={IconNameEnum.LiquidityBakingLogo} />
-                </View>
-              ) : (
-                <Icon style={styles.earnSourceIcon} name={IconNameEnum.QsEarnSource} size={formatSize(12)} />
-              )}
-              <Text style={styles.attributeTitle}>{isLiquidityBaking ? 'Liquidity Baking' : 'Quipuswap'}</Text>
+              <Icon style={styles.earnSourceIcon} name={IconNameEnum.QsEarnSource} />
+              <Text style={styles.attributeTitle}>Quipuswap</Text>
             </View>
           </View>
         </View>
@@ -137,34 +126,25 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
             <Text style={styles.attributeTitle}>Your deposit:</Text>
             <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
           </View>
-          {!isLiquidityBaking && (
-            <View style={styles.flex}>
-              <Text style={styles.attributeTitle}>Claimable rewards:</Text>
-              <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
-            </View>
-          )}
+          <View style={styles.flex}>
+            <Text style={styles.attributeTitle}>Claimable rewards:</Text>
+            <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
+          </View>
         </View>
 
         <View style={styles.row}>
-          {!depositIsZero && (
-            <View style={styles.flex}>
-              <Button title="MANAGE" isFullWidth onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
-            </View>
-          )}
-          {!depositIsZero && !isLiquidityBaking && (
+          {depositAmountAtomic.isGreaterThan(DEFAULT_AMOUNT) ? (
             <>
+              <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
               <Divider size={formatSize(8)} />
-              <View style={styles.flex}>
-                <Button
-                  isFullWidth
-                  title="CLAIM REWARDS"
-                  onPress={harvestAssetsApi}
-                  styleConfig={buttonPrimaryStylesConfig}
-                />
-              </View>
+              <Button
+                isFullWidth
+                title="CLAIM REWARDS"
+                onPress={harvestAssetsApi}
+                styleConfig={buttonPrimaryStylesConfig}
+              />
             </>
-          )}
-          {depositIsZero && (
+          ) : (
             <Button
               isFullWidth
               title="START FARMING"

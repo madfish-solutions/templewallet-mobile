@@ -60,19 +60,6 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
   },
   earnSourceIcon: {
     marginRight: formatSize(2)
-  },
-  liquidityBakingIconWrapper: {
-    width: formatSize(12),
-    height: formatSize(12),
-    backgroundColor: colors.blue,
-    borderWidth: formatSize(0.5),
-    borderColor: colors.lines,
-    borderRadius: formatSize(4),
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  alignEnd: {
-    alignItems: 'flex-end'
   }
 }));
 
@@ -80,6 +67,7 @@ export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ typography
   ...useButtonLargeSecondaryStyleConfig(),
   containerStyle: {
     flex: 1,
+    width: formatSize(156),
     height: formatSize(38),
     borderRadius: formatSize(10),
     borderWidth: formatSize(2)
