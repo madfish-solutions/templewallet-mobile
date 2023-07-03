@@ -33,7 +33,6 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
           }))
         ),
         catchError(error => {
-          console.error('Transaction error', error);
           Sentry.captureException(error);
           showErrorToast({
             title: 'Warning!',

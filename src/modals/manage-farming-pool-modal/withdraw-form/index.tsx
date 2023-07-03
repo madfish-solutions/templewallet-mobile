@@ -1,9 +1,10 @@
 import { BigNumber } from 'bignumber.js';
-import { FormikProvider, FormikProps } from 'formik';
+import { FormikProvider } from 'formik';
 import { noop } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInput } from 'src/components/asset-amount-input/asset-amount-input';
 import { Divider } from 'src/components/divider/divider';
 import { DropdownListItemComponent, DropdownValueComponent } from 'src/components/dropdown/dropdown';
@@ -11,34 +12,32 @@ import { DropdownItemContainer } from 'src/components/dropdown/dropdown-item-con
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from 'src/components/token-dropdown/token-dropdown-item/token-dropdown-item';
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormDropdown } from 'src/form/form-dropdown';
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { UserStakeValueInterface } from 'src/store/farms/state';
-import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
-import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT } from '../constants';
 import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
-import { PERCENTAGE_OPTIONS, PERCENTAGE_OPTIONS_TEXTS } from './percentage-options';
-import { useAssetAmountInputStylesConfig, useWithdrawFormStyles } from './styles';
+import { useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
-import { WithdrawFormValues, WithdrawTokenOption } from './use-withdraw-formik';
+import { useWithdrawFormik, WithdrawTokenOption } from './use-withdraw-formik';
 
 interface WithdrawFormProps {
   farm: SingleFarmResponse;
   stake?: UserStakeValueInterface;
-  formik: FormikProps<WithdrawFormValues>;
+  formik: ReturnType<typeof useWithdrawFormik>;
 }
+
+const PERCENTAGE_OPTIONS = [25, 50, 75, 100];
+const PERCENTAGE_OPTIONS_TEXTS = PERCENTAGE_OPTIONS.map(value => `${value}%`);
 
 const tokenOptionEqualityFn = (a: WithdrawTokenOption, b?: WithdrawTokenOption) =>
   getTokenSlug(a.token) === (b && getTokenSlug(b.token));
@@ -49,6 +48,16 @@ const getTokenDropdownItemToken = (value?: WithdrawTokenOption) =>
     balance: value.amount?.toFixed() ?? ''
   };
 
+const renderTokenOptionValue: DropdownValueComponent<WithdrawTokenOption> = ({ value }) => (
+  <DropdownItemContainer>
+    <TokenDropdownItem
+      isShowBalanceLoading={isDefined(value) && !isDefined(value.amount)}
+      token={getTokenDropdownItemToken(value)}
+      actionIconName={IconNameEnum.TriangleDown}
+    />
+  </DropdownItemContainer>
+);
+
 const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> = ({ item, isSelected }) => (
   <TokenDropdownItem
     isShowBalanceLoading={!isDefined(item.amount)}
@@ -57,20 +66,16 @@ const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> 
   />
 );
 
-const PERCENTAGE_OPTIONS_INDICES = PERCENTAGE_OPTIONS.map((_, index) => index);
-
 export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => {
-  const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
-  const { stakedToken, depositExchangeRate, type: farmType } = farm.item;
+  const { stakedToken, depositExchangeRate } = farm.item;
   const { setFieldTouched, setFieldValue, values } = formik;
   const { amountOptionIndex, tokenOption } = values;
-  const depositAmountAtomic = useMemo(
-    () => new BigNumber(stake?.depositAmountAtomic ?? 0),
-    [stake?.depositAmountAtomic]
-  );
   const lpAmountAtomic = useMemo(
-    () => depositAmountAtomic.times(PERCENTAGE_OPTIONS[amountOptionIndex]).dividedToIntegerBy(100),
-    [depositAmountAtomic, amountOptionIndex]
+    () =>
+      new BigNumber(stake?.depositAmountAtomic ?? 0)
+        .times(PERCENTAGE_OPTIONS[amountOptionIndex])
+        .dividedToIntegerBy(100),
+    [stake?.depositAmountAtomic, amountOptionIndex]
   );
   const tokensOptions = useTokensOptions(farm.item, lpAmountAtomic);
   const prevTokensOptionsRef = useRef<WithdrawTokenOption[]>();
@@ -79,22 +84,8 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
     () => tokensOptions.filter(({ token }) => isAssetSearched(token, tokenSearchValue.toLowerCase())),
     [tokensOptions, tokenSearchValue]
   );
-  const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
   const styles = useWithdrawFormStyles();
   const stakesLoading = useStakesLoadingSelector();
-
-  const renderTokenOptionValue = useCallback<DropdownValueComponent<WithdrawTokenOption>>(
-    ({ value }) => (
-      <DropdownItemContainer style={styles.tokenSelector}>
-        <TokenDropdownItem
-          isShowBalanceLoading={isDefined(value) && !isDefined(value.amount)}
-          token={getTokenDropdownItemToken(value)}
-          actionIconName={IconNameEnum.TriangleDown}
-        />
-      </DropdownItemContainer>
-    ),
-    [styles]
-  );
 
   const handleTokenOptionChange = useCallback(() => void setFieldTouched('tokenOption', true), [setFieldTouched]);
 
@@ -116,22 +107,9 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
   }, [setFieldValue, tokensOptions, tokenOption]);
 
   const disabledPercentageOptionsIndices = useMemo(
-    () =>
-      farmType === FarmPoolTypeEnum.STABLESWAP || depositAmountAtomic.lt(MINIMAL_DIVISIBLE_ATOMIC_AMOUNT)
-        ? [0, 1, 2]
-        : [],
-    [farmType, depositAmountAtomic]
+    () => (farm.item.type === PoolType.STABLESWAP ? [0, 1, 2] : []),
+    [farm.item.type]
   );
-
-  useEffect(() => {
-    if (disabledPercentageOptionsIndices.includes(amountOptionIndex)) {
-      setFieldValue(
-        'amountOptionIndex',
-        PERCENTAGE_OPTIONS_INDICES.find(index => !disabledPercentageOptionsIndices.includes(index)) ??
-          PERCENTAGE_OPTIONS.length - 1
-      );
-    }
-  }, [disabledPercentageOptionsIndices, amountOptionIndex, setFieldValue]);
 
   const lpToken = useMemo<TokenInterface>(
     () => ({
@@ -143,12 +121,9 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
       name: '',
       thumbnailUri: stakedToken.metadata.thumbnailUri,
       address: stakedToken.contractAddress,
-      exchangeRate:
-        isDefined(depositExchangeRate) && isDefined(fiatToUsdExchangeRate)
-          ? Number(depositExchangeRate) * fiatToUsdExchangeRate
-          : undefined
+      exchangeRate: isDefined(depositExchangeRate) ? Number(depositExchangeRate) : undefined
     }),
-    [stake?.depositAmountAtomic, stakedToken, depositExchangeRate, fiatToUsdExchangeRate]
+    [stake?.depositAmountAtomic, stakedToken, depositExchangeRate]
   );
 
   const amountInputAssetsList = useMemo<TokenInterface[]>(() => [lpToken], [lpToken]);
@@ -163,7 +138,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
 
   return (
     <FormikProvider value={formik}>
-      <View>
+      <View style={styles.formContainer}>
         <Divider size={formatSize(8)} />
         <AssetAmountInput
           value={lpInputValue}
@@ -174,7 +149,6 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
           editable={false}
           isShowNameForValue={false}
           isSingleAsset={true}
-          stylesConfig={assetAmountInputStylesConfig}
           testID={ManageFarmingPoolModalSelectors.sharesAmountInput}
           onValueChange={noop}
         />
@@ -210,7 +184,6 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
         shouldShowClaimRewardsButton={false}
         loading={stakesLoading && !isDefined(stake)}
       />
-      <Divider size={formatSize(16)} />
       <VestingPeriodDisclaimers farm={farm.item} />
     </FormikProvider>
   );

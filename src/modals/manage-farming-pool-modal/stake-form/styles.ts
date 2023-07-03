@@ -1,4 +1,4 @@
-import { createUseStylesMemoized, createUseStylesConfigMemoized } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography }) => ({
@@ -6,6 +6,12 @@ export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography 
     ...typography.caption13Regular,
     letterSpacing: formatSize(-0.08),
     color: colors.gray1
+  },
+  formContainer: {
+    flex: 1
+  },
+  balanceText: {
+    color: colors.black
   },
   listItem: {
     flexDirection: 'row'
@@ -30,14 +36,5 @@ export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography 
     letterSpacing: formatSize(-0.24),
     color: colors.black,
     marginLeft: formatSize(10)
-  }
-}));
-
-export const useAssetAmountInputStylesConfig = createUseStylesConfigMemoized(({ colors }) => ({
-  balanceText: {
-    color: colors.black
-  },
-  amountInput: {
-    borderRightWidth: formatSize(1)
   }
 }));

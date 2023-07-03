@@ -12,15 +12,6 @@ import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
-import {
-  BURN_ADDREESS,
-  MAX_ROUTING_FEE_CHAINS,
-  ROUTING_FEE_ADDRESS,
-  ROUTING_FEE_SLIPPAGE_RATIO,
-  SWAP_THRESHOLD_TO_GET_CASHBACK,
-  TEMPLE_TOKEN,
-  ZERO
-} from 'src/config/swap';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
@@ -46,9 +37,19 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { fetchRoute3SwapParams, getRoute3TokenSymbol, isInputTokenEqualToTempleToken } from 'src/utils/route3.util';
-import { calculateRoutingInputAndFee, calculateSlippageRatio, getRoutingFeeTransferParams } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
+import {
+  BURN_ADDREESS,
+  MAX_ROUTING_FEE_CHAINS,
+  ROUTING_FEE_ADDRESS,
+  ROUTING_FEE_RATIO,
+  ROUTING_FEE_SLIPPAGE_RATIO,
+  SWAP_THRESHOLD_TO_GET_CASHBACK,
+  TEMPLE_TOKEN,
+  ZERO
+} from '../config';
+import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapDisclaimer } from './swap-disclaimer/swap-disclaimer';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
@@ -77,7 +78,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const swapParams = useSwapParamsSelector();
-  const slippageRatio = useMemo(() => calculateSlippageRatio(slippageTolerance), [slippageTolerance]);
+  const slippageRatio = useMemo(() => (100 - slippageTolerance) / 100, [slippageTolerance]);
 
   const handleSubmit = async () => {
     const inputAssetSlug = getTokenSlug(inputAssets.asset);
@@ -297,6 +298,17 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         amount: mutezToTz(amount, input.asset.decimals).toFixed()
       })
     );
+  }, []);
+
+  const calculateRoutingInputAndFee = useCallback((inputAmount: BigNumber | undefined) => {
+    const swapInputAtomic = (inputAmount ?? ZERO).integerValue(BigNumber.ROUND_DOWN);
+    const swapInputMinusFeeAtomic = swapInputAtomic.times(ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_DOWN);
+    const routingFeeAtomic = swapInputAtomic.minus(swapInputMinusFeeAtomic);
+
+    return {
+      swapInputMinusFeeAtomic,
+      routingFeeAtomic
+    };
   }, []);
 
   return (

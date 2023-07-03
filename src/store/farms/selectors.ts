@@ -1,19 +1,15 @@
 import { useMemo } from 'react';
 
-import { poolTypesToDisplay } from 'src/config/staking';
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
+import { FarmVersionEnum, PoolType } from 'src/apis/quipuswap-staking/types';
 
 import { useSelector } from '../selector';
 
 export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.allFarms.isLoading);
 
-export const useFarmSelector = (id: string, contractAddress: string) => {
+export const useFarmSelector = (id: string, version: FarmVersionEnum) => {
   const list = useSelector(({ farms }) => farms.allFarms.data);
 
-  return useMemo(
-    () => list.find(({ item }) => item.id === id && item.contractAddress === contractAddress),
-    [list, id, contractAddress]
-  );
+  return useMemo(() => list.find(({ item }) => item.id === id && item.version === version), [list, id, version]);
 };
 
 export const useStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes[farmAddress]);
@@ -23,8 +19,7 @@ export const useAllFarmsSelector = () => {
 
   return useMemo(() => {
     const data = farms.data.filter(
-      farm =>
-        poolTypesToDisplay.includes(farm.item.type ?? FarmPoolTypeEnum.DEX_TWO) && farm.item.dailyDistribution !== '0'
+      farm => farm.item.type === PoolType.STABLESWAP && farm.item.dailyDistribution !== '0'
     );
 
     return {
