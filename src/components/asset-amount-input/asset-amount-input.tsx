@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
-import { emptyFn } from 'src/config/general';
+import { DEFAULT_EXPECTED_GAS_EXPENSE, emptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
@@ -28,7 +28,7 @@ import { TextSegmentControl } from '../segmented-control/text-segment-control/te
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
-import { AssetAmountInputProps } from './asset-amount-input.props';
+import { AssetAmountInputProps, AssetAmountInputStylesConfig } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
 import { AssetAmountInputSelectors } from './selectors';
@@ -39,6 +39,7 @@ export interface AssetAmountInterface {
 }
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
+const defaultAssetAmountInputStylesConfig: AssetAmountInputStylesConfig = {};
 
 const getDefinedAmount = (
   amount: BigNumber | undefined,
@@ -69,8 +70,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
-  expectedGasExpense = 0.3,
-  balanceValueStyles,
+  expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
+  stylesConfig = defaultAssetAmountInputStylesConfig,
   isShowNameForValue = true,
   isSingleAsset = false,
   setSearchValue = emptyFn,
@@ -83,8 +84,20 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   maxButtonTestID
 }) => {
   const styles = useAssetAmountInputStyles();
+  const {
+    balanceText: configBalanceTextStyles,
+    amountInput: configAmountInputStyles,
+    inputContainer: configInputContainerStyles
+  } = stylesConfig;
   const colors = useColors();
   const { trackEvent } = useAnalytics();
+
+  const configInputPaddingStyles = useMemo(
+    () => ({
+      backgroundColor: configAmountInputStyles?.backgroundColor
+    }),
+    [configAmountInputStyles]
+  );
 
   const token = useMemo(
     () => assetsList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(value.asset)),
@@ -246,16 +259,19 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         style={[
           styles.inputContainer,
           conditionalStyle(!editable, styles.disabledInputContainer),
-          conditionalStyle(isError, styles.inputContainerError)
+          conditionalStyle(isError, styles.inputContainerError),
+          configInputContainerStyles
         ]}
       >
-        <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
+        <View
+          style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding), configInputPaddingStyles]}
+        />
 
         <TextInput
           ref={amountInputRef}
           value={stringValue}
           placeholder="0.00"
-          style={[styles.numericInput, conditionalStyle(!editable, styles.disabledInput)]}
+          style={[styles.numericInput, conditionalStyle(!editable, styles.disabledInput), configAmountInputStyles]}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
           editable={editable}
@@ -309,7 +325,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
                 <AssetValueText
                   amount={frozenBalance}
                   asset={value.asset}
-                  style={[styles.balanceText, balanceValueStyles]}
+                  style={[styles.balanceText, configBalanceTextStyles]}
                   convertToDollar={!isTokenInputType}
                 />
               </View>
@@ -325,7 +341,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
               <AssetValueText
                 amount={balance}
                 asset={value.asset}
-                style={[styles.balanceText, balanceValueStyles]}
+                style={[styles.balanceText, configBalanceTextStyles]}
                 convertToDollar={!isTokenInputType}
               />
             </HideBalance>

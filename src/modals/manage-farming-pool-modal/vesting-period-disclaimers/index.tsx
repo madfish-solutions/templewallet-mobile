@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Text } from 'react-native';
 
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { formatSize } from 'src/styles/format-size';
+import { Farm } from 'src/types/farm';
 import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
 
 import { useVestingPeriodDisclaimersStyles } from './styles';
