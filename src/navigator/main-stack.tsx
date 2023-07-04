@@ -125,13 +125,17 @@ export const MainStackScreen = () => {
     selectedAccountPkh
   ]);
 
+  const shouldShowUnauthorizedScreens = !isAuthorised;
+  const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
+  const shouldShowBlankScreen = isAuthorised && isLocked;
+
   return (
     <PortalProvider>
       <ScreenStatusBar />
 
       <NavigationBar>
         <MainStack.Navigator screenOptions={styleScreenOptions}>
-          {!isAuthorised || isLocked ? (
+          {shouldShowUnauthorizedScreens && (
             <>
               <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
               <MainStack.Screen
@@ -160,7 +164,8 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
               />
             </>
-          ) : (
+          )}
+          {shouldShowAuthorizedScreens && (
             <>
               {/** Wallet stack **/}
               <MainStack.Screen
@@ -325,6 +330,11 @@ export const MainStackScreen = () => {
               />
             </>
           )}
+
+          {shouldShowBlankScreen && (
+            <MainStack.Screen name={ScreensEnum.Blank} component={() => null} options={{ headerShown: false }} />
+          )}
+
           <MainStack.Screen
             name={ScreensEnum.ScanQrCode}
             component={ScanQrCode}
