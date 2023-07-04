@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Text } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -7,7 +7,8 @@ import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokensListSelector } from 'src/store/wallet/wallet-selectors';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { TEMPLE_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
@@ -18,7 +19,11 @@ export const ManageTokens = () => {
   const { isTezosNode } = useNetworkInfo();
 
   const tokensList = useTokensListSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensList, false, true);
+  const tokensWithoutTkey = useMemo(
+    () => tokensList.filter(token => toTokenSlug(token.address, token.id) !== TEMPLE_TOKEN_SLUG),
+    [tokensList]
+  );
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensWithoutTkey, false, true);
 
   return (
     <>
