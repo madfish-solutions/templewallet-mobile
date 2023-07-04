@@ -3,18 +3,23 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
 import { CollectibleIconProps, CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon.props';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { isDefined } from 'src/utils/is-defined';
 
 import { currencyInfoById } from '../../../../apis/objkt/constants';
+import { CollectibleIcon } from '../../../../components/collectible-icon/collectible-icon';
+import { CollectibleInterface } from '../../../../token/interfaces/collectible-interfaces.interface';
 import { formatNumber } from '../../../../utils/format-price';
 import { mutezToTz } from '../../../../utils/tezos.util';
 import { useTouchableCollectibleIconStyles } from './touchable-collectible-icon.styles';
 
-export const TouchableCollectibleIcon: FC<CollectibleIconProps> = ({
+type Props = Omit<CollectibleIconProps, 'collectible'> & {
+  collectible: CollectibleInterface;
+};
+
+export const TouchableCollectibleIcon: FC<Props> = ({
   collectible,
   size,
   iconSize = CollectibleIconSize.SMALL,
@@ -23,17 +28,20 @@ export const TouchableCollectibleIcon: FC<CollectibleIconProps> = ({
 }) => {
   const { navigate } = useNavigation();
 
-  const handleNavigate = () => navigate(ModalsEnum.CollectibleModal, { collectible });
+  const handleNavigate = () =>
+    navigate(ModalsEnum.CollectibleModal, {
+      collectible
+    });
 
   const styles = useTouchableCollectibleIconStyles();
 
   const name = collectible.name;
 
   const purchaseCurrency = useMemo(() => {
-    if (isDefined(collectible.collectibleInfo) && isNonEmptyArray(collectible.collectibleInfo.listings_active)) {
-      const listing = collectible.collectibleInfo.listings_active;
-      const { price, currency_id } = listing[0];
-      const currentCurrency = currencyInfoById[currency_id];
+    if (isNonEmptyArray(collectible.listingsActive)) {
+      const listing = collectible.listingsActive;
+      const { price, currencyId } = listing[0];
+      const currentCurrency = currencyInfoById[currencyId];
 
       return { price, ...currentCurrency };
     }
@@ -48,7 +56,7 @@ export const TouchableCollectibleIcon: FC<CollectibleIconProps> = ({
   }, [collectible]);
 
   const priceTitle = useMemo(() => {
-    if (isDefined(collectible.collectibleInfo) && isNonEmptyArray(collectible.collectibleInfo.listings_active)) {
+    if (isNonEmptyArray(collectible.listingsActive)) {
       const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
 
       return `Floor: ${formatNumber(+price)} ${purchaseCurrency.symbol}`;

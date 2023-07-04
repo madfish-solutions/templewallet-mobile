@@ -4,11 +4,15 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { isDefined } from 'src/utils/is-defined';
 
 import { AttributeInfo } from '../../interfaces/attribute.interface';
+import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
 import { currencyInfoById } from './constants';
 import { MarketPlaceEventEnum } from './enums';
 import { CollectibleResponse } from './types';
 
-export const transformCollectiblesArray = (array: CollectibleResponse[], selectedPublicKey: string) => {
+export const transformCollectiblesArray = (
+  array: CollectibleResponse[],
+  selectedPublicKey: string
+): CollectibleOfferInteface[] => {
   const collectiblesArray = array.map(token => {
     const buyEvents = isDefined(token)
       ? token.events.filter(
@@ -22,7 +26,18 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
       : [];
     const lastPrice = buyEvents.find(event => event.price_xtz !== null);
     const lastPriceCurrencyId = lastPrice?.currency_id ?? 1;
-    const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
+    const correctOffers = token.offers_active
+      .map(item => ({
+        ...item,
+        buyerAddress: item.buyer_address,
+        collectionOffer: item.collection_offer,
+        priceXtz: item.price_xtz,
+        bigmapKey: item.bigmap_key,
+        marketplaceContract: item.marketplace_contract,
+        faContract: item.fa_contract,
+        currencyId: item.currency_id
+      }))
+      .filter(offer => offer.buyer_address !== selectedPublicKey);
     const highestOffer = correctOffers[correctOffers.length - 1];
     const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
 
@@ -50,7 +65,7 @@ export const transformCollectiblesArray = (array: CollectibleResponse[], selecte
       id: Number(token.token_id),
       visibility: VisibilityEnum.Visible,
       editions: token.supply,
-      holders: token.holders,
+      holders: token.holders.map(item => ({ holderAddress: item.holder_address, quantity: item.quantity })),
       lastPrice: {
         price: lastPrice?.price,
         symbol: currencyInfoById[lastPriceCurrencyId]?.symbol,

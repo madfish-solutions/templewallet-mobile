@@ -15,7 +15,8 @@ import {
   BALANCES_SYNC_INTERVAL,
   RATES_SYNC_INTERVAL,
   SELECTED_BAKER_SYNC_INTERVAL,
-  NOTIFICATIONS_SYNC_INTERVAL
+  NOTIFICATIONS_SYNC_INTERVAL,
+  COLLECTIBLES_DETAILS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAdvertising } from 'src/hooks/use-advertising.hook';
@@ -75,6 +76,7 @@ import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/w
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
+import { loadCollectiblesDetailsActions } from '../store/collectibles/collectibles-actions';
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
@@ -105,6 +107,11 @@ export const MainStackScreen = () => {
 
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
   useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
+  useAuthorisedInterval(
+    () => dispatch(loadCollectiblesDetailsActions.submit(selectedAccountPkh)),
+    COLLECTIBLES_DETAILS_SYNC_INTERVAL,
+    refreshDeps
+  );
   useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, refreshDeps);
   useAuthorisedInterval(
     () => {

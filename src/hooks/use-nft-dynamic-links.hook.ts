@@ -6,8 +6,9 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/error-toast.utils';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
+
+import { CollectibleInterface } from '../token/interfaces/collectible-interfaces.interface';
 
 const NOT_AUTHORISED_ERROR_MESSAGE = 'You need to create an account to view the NFT';
 
@@ -17,7 +18,7 @@ const decodeNFTJsonData = (url: string) => {
   if (isDefined(encodedData)) {
     try {
       const decodedData = decodeURIComponent(encodedData.replace(/\+/g, ' '));
-      const collectible: TokenInterface = JSON.parse(decodedData);
+      const collectible: CollectibleInterface = JSON.parse(decodedData);
 
       return collectible;
     } catch (e) {

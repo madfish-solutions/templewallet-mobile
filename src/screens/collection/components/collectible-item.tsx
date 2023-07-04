@@ -2,21 +2,21 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useMemo } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 
-import { CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon.props';
-import { TouchableCollectibleIcon } from 'src/screens/collectibles-home/collectibles-list/touchable-collectible-icon/touchable-collectible-icon';
-import { formatSize } from 'src/styles/format-size';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 
+import { CollectibleIcon } from '../../../components/collectible-icon/collectible-icon';
+import { CollectibleIconSize } from '../../../components/collectible-icon/collectible-icon.props';
+import { formatSize } from '../../../styles/format-size';
+import { CollectibleOfferInteface } from '../../../token/interfaces/collectible-interfaces.interface';
 import { navigateToObjktForBuy } from '../utils';
 import { useCollectibleItemStyles } from './collectible-item.styles';
 import { OfferButton } from './offer-button';
 
 interface Props {
-  item: TokenInterface;
+  item: CollectibleOfferInteface;
   collectionContract: string;
   selectedRpc: string;
   selectedPublicKeyHash: string;
@@ -39,12 +39,12 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
     ? `${mutezToTz(BigNumber(item.highestOffer.price), item.decimals)} ${item.symbol}`
     : 'No offers yet';
 
-  const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holder_address) ?? [];
+  const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holderAddress) ?? [];
   const isHolder = useMemo(() => holders.includes(selectedPublicKeyHash), [selectedPublicKeyHash]);
   const isOffersExisted = isDefined(item.highestOffer);
   const listedByUser = item.listed ?? 0;
   const quantityByUser = useMemo(
-    () => item?.holders?.find(holder => holder.holder_address === selectedPublicKeyHash)?.quantity ?? 0,
+    () => item?.holders?.find(holder => holder.holderAddress === selectedPublicKeyHash)?.quantity ?? 0,
     [selectedPublicKeyHash, item]
   );
 
@@ -61,7 +61,9 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
       )}
       <View style={styles.collectible}>
         <View style={styles.topContainer}>
-          <TouchableCollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(295)} />
+          {/* TODO: Rework */}
+          <CollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(295)} />
+
           <Text style={styles.collectibleName} numberOfLines={1}>
             {item.name}
           </Text>

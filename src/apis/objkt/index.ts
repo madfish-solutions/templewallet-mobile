@@ -3,11 +3,10 @@ import { catchError, map, Observable, of } from 'rxjs';
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { AttributeInfo } from '../../interfaces/attribute.interface';
-import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
+import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
   buildGetCollectiblesByCollectionQuery,
@@ -16,9 +15,11 @@ import {
   buildGetGalleryAttributeCountQuery,
   buildGetHoldersInfoQuery,
   buildGetAllUserCollectiblesQuery,
-  buildGetCollectiblesByGalleryQuery
+  buildGetCollectiblesByGalleryQuery,
+  buildGetCollectibleByAddressAndIdQuery
 } from './queries';
 import {
+  CollectibleDetailsResponse,
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
   FA2AttributeCountQueryResponse,
@@ -85,7 +86,7 @@ export const fetchCollectiblesByCollection$ = (
   type: ObjktTypeEnum,
   offset: number,
   galleryId?: string
-): Observable<TokenInterface[]> => {
+): Observable<CollectibleOfferInteface[]> => {
   const request =
     type === ObjktTypeEnum.faContract
       ? buildGetCollectiblesByCollectionQuery(contract, selectedPublicKey, offset)
@@ -113,7 +114,7 @@ export const fetchCollectiblesByCollection$ = (
   );
 };
 
-export const fetchAllUserCollectibles$ = (address: string): Observable<CollectibleInfo[]> => {
+export const fetchAllCollectiblesDetails$ = (address: string): Observable<CollectibleDetailsResponse[]> => {
   const request = buildGetAllUserCollectiblesQuery(address);
 
   return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(
@@ -126,7 +127,6 @@ export const fetchAllUserCollectibles$ = (address: string): Observable<Collectib
           creators,
           fa,
           timestamp,
-          artifact_uri,
           attributes,
           tags,
           isAdultContent,
@@ -147,7 +147,6 @@ export const fetchAllUserCollectibles$ = (address: string): Observable<Collectib
             items: fa.items
           },
           metadata,
-          artifact_uri,
           attributes,
           tags,
           timestamp,
@@ -160,6 +159,54 @@ export const fetchAllUserCollectibles$ = (address: string): Observable<Collectib
         })
       )
     )
+  );
+};
+
+export const fetchCollectibleInfo$ = (address: string, tokenId: string): Observable<CollectibleDetailsResponse> => {
+  const request = buildGetCollectibleByAddressAndIdQuery(address, tokenId);
+
+  return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(
+    map(result => {
+      const {
+        fa_contract,
+        token_id,
+        description,
+        creators,
+        tags,
+        fa,
+        timestamp,
+        artifact_uri,
+        attributes,
+        metadata,
+        royalties,
+        supply,
+        listings_active,
+        mime,
+        galleries
+      } = result.token[0];
+
+      return {
+        fa_contract,
+        token_id,
+        description,
+        creators,
+        tags,
+        fa: {
+          name: fa.name,
+          logo: fa.logo,
+          items: fa.items
+        },
+        metadata,
+        artifact_uri,
+        attributes,
+        timestamp,
+        royalties,
+        supply,
+        galleries,
+        listings_active,
+        mime
+      };
+    })
   );
 };
 

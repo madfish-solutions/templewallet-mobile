@@ -6,7 +6,6 @@ import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
-import { collectiblesInfoInitialValue } from '../../apis/objkt/constants';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
@@ -24,10 +23,8 @@ import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
 import { useFetchCollectibleAttributes } from '../../hooks/use-fetch-collectible-attributes.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useTokenMetadataSelector } from '../../store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
-import { getTokenSlug } from '../../token/utils/token.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
@@ -73,25 +70,28 @@ export const CollectibleModal = () => {
 
   const styles = useCollectibleModalStyles();
 
-  const { collectibleInfo: collectibleInfoFromStore } = useTokenMetadataSelector(getTokenSlug(collectible));
-
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
-  const collectibleInfo = useMemo(
-    () => collectibleInfoFromStore ?? collectiblesInfoInitialValue,
-    [collectibleInfoFromStore]
-  );
-
-  const { fa, creators, description, metadata, timestamp, royalties, supply, galleries, listings_active, mime } =
-    collectibleInfo;
+  const {
+    collection,
+    creators,
+    description,
+    metadata,
+    timestamp,
+    royalties,
+    editions,
+    galleries,
+    listingsActive,
+    mime
+  } = collectible;
 
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
   const burnCollectible = useBurnCollectible(collectible);
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
-  const { attributes, isLoading } = useFetchCollectibleAttributes(collectibleInfo);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectible);
+  const { attributes, isLoading } = useFetchCollectibleAttributes(collectible);
 
-  console.log('collectible', collectible);
+  console.log('collectible details:', collectible);
 
   const isAttributesExist = attributes.length > 0;
 
@@ -104,21 +104,21 @@ export const CollectibleModal = () => {
       return 'Send';
     }
 
-    if (!isNonEmptyArray(listings_active)) {
+    if (!isNonEmptyArray(listingsActive)) {
       return 'Not listed';
     }
 
     const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
 
     return `Buy for ${price.toFixed(2)} ${purchaseCurrency.symbol}`;
-  }, [isUserOwnerCurrentCollectible, listings_active]);
+  }, [isUserOwnerCurrentCollectible, listingsActive]);
 
   const collectionLogo = useMemo(() => {
-    if (fa.logo) {
-      if (fa.logo.endsWith('.svg')) {
+    if (isDefined(collection) && isDefined(collection.logo)) {
+      if (collection.logo.endsWith('.svg')) {
         return (
           <SvgUri
-            uri={fa.logo}
+            uri={collection.logo}
             height={COLLECTION_ICON_SIZE}
             width={COLLECTION_ICON_SIZE}
             style={styles.collectionLogo}
@@ -126,11 +126,11 @@ export const CollectibleModal = () => {
         );
       }
 
-      return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
+      return <FastImage source={{ uri: formatImgUri(collection.logo) }} style={styles.collectionLogo} />;
     }
 
     return null;
-  }, [fa.logo]);
+  }, [collection]);
 
   const handleShare = useCallback(async () => {
     try {
@@ -169,7 +169,7 @@ export const CollectibleModal = () => {
       fixedFooterContainer={{
         submitButton: (
           <ButtonLargePrimary
-            disabled={!isUserOwnerCurrentCollectible && !isNonEmptyArray(listings_active)}
+            disabled={!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)}
             title={submitButtonTitle}
             onPress={buyCollectible}
             testID={CollectibleModalSelectors.sendButton}
@@ -185,7 +185,7 @@ export const CollectibleModal = () => {
         <CollectibleIcon
           collectible={collectible}
           mime={mime}
-          objktArtifact={collectibleInfo.artifact_uri}
+          objktArtifact={collectible.artifactUri}
           size={iconSize}
           iconSize={CollectibleIconSize.BIG}
           setScrollEnabled={setScrollEnabled}
@@ -196,10 +196,14 @@ export const CollectibleModal = () => {
 
         <View style={styles.collectionContainer}>
           <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+            {isDefined(collection.logo) ? (
+              collectionLogo
+            ) : (
+              <View style={[styles.collectionLogo, styles.logoFallBack]} />
+            )}
 
             <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
-              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
+              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : collection.name}
             </Text>
           </TouchableOpacity>
 
@@ -253,7 +257,7 @@ export const CollectibleModal = () => {
           <CollectibleProperties
             contract={collectible.address}
             tokenId={collectible.id}
-            editions={supply}
+            editions={editions}
             metadata={metadata}
             minted={timestamp}
             owned={collectible.balance}

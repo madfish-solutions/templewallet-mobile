@@ -3,12 +3,13 @@ import { useEffect, useState } from 'react';
 import { EMPTY } from 'rxjs';
 import { map, tap, finalize, catchError } from 'rxjs/operators';
 
-import { CollectibleAttributes, CollectibleInfo } from '../interfaces/collectible-info.interface';
+import { CollectibleAttributes } from '../apis/objkt/types';
 import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME } from '../modals/collectible-modal/constants';
-import { getAttributesInfo$, getAttributesWithRarity } from '../utils/collectible-info.utils';
+import { CollectibleInterface } from '../token/interfaces/collectible-interfaces.interface';
+import { getAttributesInfo$, getAttributesWithRarity } from '../utils/collectibles.utils';
 
-export const useFetchCollectibleAttributes = (collectibleInfo: CollectibleInfo) => {
-  const initialAttributes = collectibleInfo.attributes.filter(
+export const useFetchCollectibleAttributes = (collectible: CollectibleInterface) => {
+  const initialAttributes = collectible.attributes.filter(
     item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME
   );
 
@@ -16,7 +17,7 @@ export const useFetchCollectibleAttributes = (collectibleInfo: CollectibleInfo) 
   const [isLoading, setIsLoading] = useState(false);
 
   const attributeIds = initialAttributes.map(({ attribute }) => attribute.id);
-  const isGallery = isNonEmptyArray(collectibleInfo.galleries);
+  const isGallery = isNonEmptyArray(collectible.galleries);
 
   useEffect(() => {
     if (!isNonEmptyArray(initialAttributes)) {
@@ -26,7 +27,7 @@ export const useFetchCollectibleAttributes = (collectibleInfo: CollectibleInfo) 
     const subscription = getAttributesInfo$(attributeIds, isGallery)
       .pipe(
         tap(() => setIsLoading(true)),
-        map(attributesInfo => getAttributesWithRarity(attributesInfo, collectibleInfo)),
+        map(attributesInfo => getAttributesWithRarity(attributesInfo, collectible)),
         catchError(() => EMPTY),
         finalize(() => setIsLoading(false))
       )

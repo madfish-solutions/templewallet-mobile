@@ -36,7 +36,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     isTouchableBlurOverlay,
     isShowInfo = false
   }) => {
-    const isAdultContent = collectible.collectibleInfo?.isAdultContent ?? false;
+    const isAdultContent = collectible.isAdultContent ?? false;
     const [isLoading, setIsLoading] = useState(true);
     const [isShowBlur, setIsShowBlur] = useState(isAdultContent);
 

@@ -1,12 +1,13 @@
 import { StyleProp, ViewStyle } from 'react-native';
 
 import { EventFn } from 'src/config/general';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 
+import { CollectibleCommonInterface } from '../../token/interfaces/collectible-interfaces.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { ImageBlurOverlayThemesEnum } from '../image-blur-overlay/image-blur-overlay';
 
 export interface CollectibleIconProps {
-  collectible: TokenInterface;
+  collectible: TokenInterface & Pick<CollectibleCommonInterface, 'isAdultContent'>;
   size: number;
   mime?: string;
   objktArtifact?: string;

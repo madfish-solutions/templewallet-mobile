@@ -18,11 +18,7 @@ import { loadCollectionsActions } from 'src/store/collectons/collections-actions
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
 import { loadTzProfileIfoAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
-import {
-  useCollectiblesListSelector,
-  useSelectedAccountSelector,
-  useVisibleAccountsListSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -34,6 +30,7 @@ import { openUrl } from 'src/utils/linking.util';
 
 import { CheckboxIcon } from '../../components/checkbox-icon/checkbox-icon';
 import { isAndroid } from '../../config/system';
+import { useCollectiblesWithFullData } from '../../hooks/use-collectibles-with-full-data.hook';
 import { switchIsShowCollectibleInfoAction } from '../../store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from '../../store/settings/settings-selectors';
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
@@ -52,7 +49,7 @@ export const CollectiblesHome = () => {
   const dispatch = useDispatch();
 
   const collections = useCreatedCollectionsSelector();
-  const collectibles = useCollectiblesListSelector();
+  const collectibles = useCollectiblesWithFullData();
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
@@ -73,9 +70,6 @@ export const CollectiblesHome = () => {
     : 0;
 
   const TAB_BAR_HEIGHT = isAndroid ? androidSafeAreaValue : iosSafeArea.bottom;
-
-  // LOGGER
-  // console.log('initialWindowMetrics', JSON.stringify({ iosSafeArea, initialWindowMetrics } ?? {}, null, 2));
 
   const ICON_COVER_GAP = 12;
 

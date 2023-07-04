@@ -4,18 +4,11 @@ import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { getAttributesInfo$ } from '../../utils/collectible-info.utils';
-import {
-  addAllInfoToCollectibles$,
-  loadTokenMetadata$,
-  loadTokensMetadata$,
-  loadWhitelist$
-} from '../../utils/token-metadata.utils';
-import { withSelectedAccount, withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from '../../utils/token-metadata.utils';
+import { withSelectedRpcUrl } from '../../utils/wallet.utils';
 import { RootState } from '../create-store';
 import {
   addTokensMetadataAction,
-  loadCollectibleAttributesActions,
   loadTokenMetadataActions,
   loadTokensMetadataAction,
   loadTokenSuggestionActions,
@@ -68,28 +61,14 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokensMetadataEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensMetadataEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadTokensMetadataAction),
     toPayload(),
-    withSelectedAccount(state$),
-    switchMap(([slugs, account]) =>
+    switchMap(slugs =>
       loadTokensMetadata$(slugs).pipe(
-        switchMap(tokensMetadata => addAllInfoToCollectibles$(tokensMetadata, account)),
-        map(collectibles => addTokensMetadataAction(collectibles)),
+        map(tokensMetadata => addTokensMetadataAction(tokensMetadata)),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
-      )
-    )
-  );
-
-const loadCollectibleAttributesEpic = (action$: Observable<Action>) =>
-  action$.pipe(
-    ofType(loadCollectibleAttributesActions.submit),
-    toPayload(),
-    switchMap(({ tokenSlug, attributeIds, isGallery }) =>
-      getAttributesInfo$(attributeIds, isGallery).pipe(
-        map(attributesInfo => loadCollectibleAttributesActions.success({ tokenSlug, attributesInfo })),
-        catchError(err => of(loadCollectibleAttributesActions.fail(err.message)))
       )
     )
   );
@@ -98,6 +77,5 @@ export const tokensMetadataEpics = combineEpics(
   loadWhitelistEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
-  loadTokensMetadataEpic,
-  loadCollectibleAttributesEpic
+  loadTokensMetadataEpic
 );

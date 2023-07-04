@@ -6,6 +6,7 @@ import { isTablet } from 'react-native-device-info';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useScreenContainerStyles } from '../../../components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from '../../../config/styles';
+import { CollectibleInterface } from '../../../token/interfaces/collectible-interfaces.interface';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { sliceIntoChunks } from '../../../utils/array.utils';
@@ -15,7 +16,7 @@ import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
 
 interface Props {
-  collectiblesList: TokenInterface[];
+  collectiblesList: CollectibleInterface[];
   isShowInfo: boolean;
 }
 
@@ -38,7 +39,7 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList, isShowInfo }) =>
 
   const getItemLayout = createGetItemLayout<TokenInterface[]>(itemSize);
 
-  const renderItem: ListRenderItem<TokenInterface[]> = useCallback(
+  const renderItem: ListRenderItem<CollectibleInterface[]> = useCallback(
     ({ item }) => (
       <View style={CollectiblesListStyles.rowContainer}>
         {item.map((collectible, i) => (

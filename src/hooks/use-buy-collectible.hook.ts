@@ -10,7 +10,6 @@ import {
   FxHashBuyCollectibleContractInterface,
   ObjktBuyCollectibleContractInterface
 } from '../interfaces/buy-collectible.interface';
-import { CollectibleInfo } from '../interfaces/collectible-info.interface';
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
 import { OBJKT_MARKETPLACE_CONTRACT } from '../modals/collectible-modal/constants';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
@@ -18,7 +17,7 @@ import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { navigateAction } from '../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { TokenInterface } from '../token/interfaces/token.interface';
+import { CollectibleInterface } from '../token/interfaces/collectible-interfaces.interface';
 import { isDefined } from '../utils/is-defined';
 import { createTezosToolkit } from '../utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from '../utils/swap-permissions.util';
@@ -28,8 +27,8 @@ const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible: TokenInterface) => {
-  const { listings_active } = collectibleInfo;
+export const useBuyCollectible = (collectible: CollectibleInterface) => {
+  const { listingsActive } = collectible;
 
   const selectedRpc = useSelectedRpcUrlSelector();
   const tezos = createTezosToolkit(selectedRpc);
@@ -40,8 +39,8 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
 
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
 
-  const marketplace = isNonEmptyArray(listings_active)
-    ? listings_active[0].marketplace_contract
+  const marketplace = isNonEmptyArray(listingsActive)
+    ? listingsActive[0].marketplaceContract
     : OBJKT_MARKETPLACE_CONTRACT;
 
   const [marketplaceContract, setMarketplaceContract] = useState<
@@ -55,7 +54,7 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
   }, [marketplace]);
 
   const purchaseCurrency = useMemo(() => {
-    if (!isNonEmptyArray(listings_active)) {
+    if (!isNonEmptyArray(listingsActive)) {
       return {
         price: 0,
         contract: null,
@@ -65,11 +64,11 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
       };
     }
 
-    const { price, currency_id } = listings_active[0];
-    const currentCurrency = currencyInfoById[currency_id];
+    const { price, currencyId } = listingsActive[0];
+    const currentCurrency = currencyInfoById[currencyId];
 
     return { price, ...currentCurrency };
-  }, [collectibleInfo]);
+  }, [collectible]);
 
   const buyCollectible = async () => {
     if (isUserOwnerCurrentCollectible) {
@@ -77,18 +76,16 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
     }
 
     const getTransferParams = () => {
-      if (isDefined(marketplaceContract) && isNonEmptyArray(listings_active)) {
-        const isTezosCurrency = listings_active[0].currency_id === TEZOS_ID_OBJKT;
+      if (isDefined(marketplaceContract) && isNonEmptyArray(listingsActive)) {
+        const isTezosCurrency = listingsActive[0].currencyId === TEZOS_ID_OBJKT;
         const params = isTezosCurrency
           ? { amount: purchaseCurrency.price, mutez: true, source: selectedAccount.publicKeyHash }
           : {};
 
         if (OBJKT_BUY_METHOD in marketplaceContract?.methods) {
-          return [marketplaceContract.methods.fulfill_ask(listings_active[0].bigmap_key).toTransferParams(params)];
+          return [marketplaceContract.methods.fulfill_ask(listingsActive[0].bigmapKey).toTransferParams(params)];
         } else {
-          return [
-            marketplaceContract.methods.listing_accept(listings_active[0].bigmap_key, 1).toTransferParams(params)
-          ];
+          return [marketplaceContract.methods.listing_accept(listingsActive[0].bigmapKey, 1).toTransferParams(params)];
         }
       }
 
@@ -97,7 +94,9 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
 
     const transferParams = getTransferParams();
 
-    const isTokenFa2 = listings_active[0].currency.type === Route3TokenStandardEnum.fa2;
+    const isTokenFa2 = isNonEmptyArray(listingsActive)
+      ? listingsActive[0].currency.type === Route3TokenStandardEnum.fa2
+      : true;
 
     const tokenToSpend = {
       id: Number(purchaseCurrency.id ?? 0),

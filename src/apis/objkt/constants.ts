@@ -1,6 +1,5 @@
 import { getApolloConfigurableClient } from 'src/apollo/utils/get-apollo-configurable-client.util';
 
-import { CollectibleInfo } from '../../interfaces/collectible-info.interface';
 import { CurrencyInfo } from './types';
 
 const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
@@ -59,24 +58,21 @@ export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
 
 export const ADULT_ATTRIBUTE_NAME = '__nsfw_';
 
-export const collectiblesInfoInitialValue: CollectibleInfo = {
-  fa_contract: '',
-  token_id: '',
+export const collectibleInfoInitialValue = {
   description: '',
   creators: [],
-  fa: {
+  collection: {
     name: '',
     logo: '',
     items: 0
   },
   metadata: '',
-  artifact_uri: '',
   attributes: [],
   tags: [],
   timestamp: '',
   royalties: [],
-  supply: 0,
+  editions: 0,
   mime: '',
   galleries: [],
-  listings_active: []
+  listingsActive: []
 };

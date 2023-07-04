@@ -11,9 +11,10 @@ import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum'
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
+import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
 
@@ -53,7 +54,7 @@ export const Collection = () => {
     return formatSize(COLLECTIBLE_SIZE) + formatSize(4) + formatSize(4);
   }, []);
 
-  const renderItem: ListRenderItem<TokenInterface> = useCallback(
+  const renderItem: ListRenderItem<CollectibleOfferInteface> = useCallback(
     ({ item }) => (
       <CollectibleItem
         item={item}
