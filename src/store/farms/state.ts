@@ -26,7 +26,3 @@ export const farmsInitialState: FarmsState = {
   stakesLoading: false,
   sortField: FarmsSortFieldEnum.Default
 };
-
-export interface FarmsRootState {
-  farms: FarmsState;
-}

@@ -10,7 +10,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import { RootState } from '../create-store';
+import type { RootState } from '../types';
 import {
   loadAllFarmsActions,
   loadAllFarmsAndStakesAction,
