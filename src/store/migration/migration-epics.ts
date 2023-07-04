@@ -9,8 +9,8 @@ import { PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { RootState } from '../create-store';
 import { emptyAction } from '../root-state.actions';
+import type { RootState } from '../types';
 import {
   addDcpTokensMetadata,
   deleteOldIsShownDomainName,

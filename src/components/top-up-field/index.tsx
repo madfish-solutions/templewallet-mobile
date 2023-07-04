@@ -4,8 +4,10 @@ import React, { FC, useCallback } from 'react';
 import { emptyFn, EventFn } from 'src/config/general';
 import { hasError } from 'src/utils/has-error';
 
-import { TopUpAssetAmountInput } from '../top-up-asset-amount-input';
-import { TopUpAssetAmountInterface, TopUpFormAssetAmountInputProps } from '../top-up-asset-amount-input/types';
+import { TopUpAssetAmountInput } from './asset-amount-input';
+import type { TopUpAssetAmountInterface, TopUpFormAssetAmountInputProps } from './asset-amount-input/types';
+
+export type { TopUpAssetAmountInterface } from './asset-amount-input/types';
 
 export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   name,

@@ -1,3 +1,7 @@
+import { BigNumber } from 'bignumber.js';
+import { binanceCryptoIcons } from 'binance-icons';
+import CurrenciesCodes from 'currency-codes';
+
 import { PairInfoResponse as AliceBobPairInfoResponse } from 'src/apis/alice-bob/types';
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
 import {
@@ -6,11 +10,18 @@ import {
   FiatCurrency as MoonPayFiatCurrency,
   Currency
 } from 'src/apis/moonpay/types';
+import { GetBinanceConnectCurrenciesResponse } from 'src/apis/temple-static';
 import { UTORG_CRYPTO_ICONS_BASE_URL, UTORG_FIAT_ICONS_BASE_URL } from 'src/apis/utorg/consts';
 import { CurrencyInfoType as UtorgCurrencyType, UtorgCurrencyInfo } from 'src/apis/utorg/types';
-import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
+import { KNOWN_MAINNET_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { filterByStringProperty } from 'src/utils/array.utils';
+import { SVG_DATA_URI_UTF8_PREFIX } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
+import { isTruthy } from 'src/utils/is-truthy';
+
+import { TopUpProviderCurrencies } from './state';
 
 const knownUtorgFiatCurrenciesNames: Record<string, string> = {
   PHP: 'Philippine Peso',
@@ -20,22 +31,16 @@ const knownUtorgFiatCurrenciesNames: Record<string, string> = {
 const aliceBobHryvnia = {
   name: 'Ukrainian Hryvnia',
   code: 'UAH',
-  network: '',
-  networkFullName: '',
   icon: '',
-  precision: 2,
-  type: TopUpInputTypeEnum.Fiat
+  precision: 2
 };
 
 const aliceBobTezos = {
   name: 'Tezos',
   code: 'XTZ',
-  network: 'tezos',
-  networkFullName: 'Tezos',
   icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/xtz.svg`,
   precision: 6,
-  slug: 'tez',
-  type: TopUpInputTypeEnum.Crypto
+  slug: 'tez'
 };
 
 export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
@@ -45,13 +50,10 @@ export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
       name,
       code: code.toUpperCase(),
       codeToDisplay: code.toUpperCase().split('_')[0],
-      network: '',
-      networkFullName: '',
       icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/${code}.svg`,
       minAmount: minBuyAmount,
       maxAmount: maxBuyAmount,
-      precision: Math.min(precision, 2), // Currencies like JOD have 3 decimals but Moonpay fails to process input with 3 decimals
-      type: TopUpInputTypeEnum.Fiat
+      precision: Math.min(precision, 2) // Currencies like JOD have 3 decimals but Moonpay fails to process input with 3 decimals
     })),
   crypto: currencies
     .filter(
@@ -62,13 +64,10 @@ export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
       name,
       code: code.toUpperCase(),
       codeToDisplay: code.toUpperCase().split('_')[0],
-      network: 'tezos',
-      networkFullName: 'Tezos',
       icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/${code}.svg`,
       minAmount: minBuyAmount ?? undefined,
       maxAmount: maxBuyAmount ?? undefined,
       precision,
-      type: TopUpInputTypeEnum.Crypto,
       slug: isDefined(metadata.contractAddress)
         ? toTokenSlug(metadata.contractAddress, metadata.coinType ?? undefined)
         : ''
@@ -82,11 +81,8 @@ export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => (
       name: knownUtorgFiatCurrenciesNames[symbol] ?? '',
       code: symbol,
       codeToDisplay: display,
-      network: '',
-      networkFullName: '',
       icon: `${UTORG_FIAT_ICONS_BASE_URL}${symbol.slice(0, -1)}.svg`,
       precision,
-      type: TopUpInputTypeEnum.Fiat,
       minAmount: depositMin,
       maxAmount: depositMax
     })),
@@ -96,11 +92,8 @@ export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => (
       name: display,
       code: currency,
       codeToDisplay: display,
-      network: 'tezos',
-      networkFullName: 'Tezos',
       icon: `${UTORG_CRYPTO_ICONS_BASE_URL}/${currency}.svg`,
       precision,
-      type: TopUpInputTypeEnum.Crypto,
       slug: '' // TODO: implement making correct slug as soon as any Tezos token is supported by Utorg
     }))
 });
@@ -115,3 +108,55 @@ export const mapAliceBobProviderCurrencies = ({ minAmount, maxAmount }: AliceBob
   ],
   crypto: [aliceBobTezos]
 });
+
+export const mapBinanceConnectProviderCurrencies = (
+  data: GetBinanceConnectCurrenciesResponse
+): TopUpProviderCurrencies => {
+  const fiat = filterByStringProperty(data.pairs, 'fiatCurrency').map(item => {
+    const code = item.fiatCurrency;
+
+    return {
+      name: CurrenciesCodes.code(code)?.currency ?? code,
+      code,
+      icon: `${UTORG_FIAT_ICONS_BASE_URL}${code.slice(0, -1)}.svg`,
+      /** Assumed */
+      precision: 2,
+      minAmount: item.minLimit,
+      maxAmount: item.maxLimit
+    };
+  });
+
+  const crypto = data.assets.map(asset => {
+    const { contractAddress, cryptoCurrency: code, withdrawIntegerMultiple } = asset;
+
+    const precision =
+      withdrawIntegerMultiple && Number.isFinite(withdrawIntegerMultiple)
+        ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          new BigNumber(withdrawIntegerMultiple).decimalPlaces()!
+        : 0;
+
+    const iconSvgString = binanceCryptoIcons.get(code.toLowerCase());
+    const icon = isString(iconSvgString) ? `${SVG_DATA_URI_UTF8_PREFIX}${encodeURIComponent(iconSvgString)}` : '';
+
+    return {
+      /** No token id available */
+      slug: isString(contractAddress) ? toTokenSlug(contractAddress) : '',
+      name: getBinanceConnectCryptoCurrencyName(code, contractAddress),
+      code,
+      icon,
+      precision,
+      minAmount: asset.withdrawMin,
+      maxAmount: asset.withdrawMax
+    };
+  });
+
+  return { fiat, crypto };
+};
+
+const getBinanceConnectCryptoCurrencyName = (code: string, address: string | null) => {
+  if (!isTruthy(address) || code === 'XTZ') {
+    return 'Tezos';
+  }
+
+  return KNOWN_MAINNET_TOKENS_METADATA.find(m => m.address === address && m.id === 0)?.name ?? code;
+};

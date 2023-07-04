@@ -12,7 +12,3 @@ export const currencyInitialState: CurrencyState = {
   usdToTokenRates: createEntity({}),
   fiatToTezosRates: createEntity({})
 };
-
-export interface CurrencyRootState {
-  currency: CurrencyState;
-}

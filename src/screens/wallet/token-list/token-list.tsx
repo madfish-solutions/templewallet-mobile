@@ -18,11 +18,18 @@ import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
+import {
+  loadPartnersPromoActions,
+  togglePartnersPromotionAction
+} from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
-import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
+import { setAdsBannerVisibilityAction, setZeroBalancesShown } from 'src/store/settings/settings-actions';
+import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
+import {
+  useSelectedAccountSelector,
+  useSelectedAccountTezosTokenSelector,
+  useVisibleTokensListSelector
+} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
@@ -32,6 +39,9 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
+import { optimalFetchEnableAds } from '../../../apis/optimal';
+import { Banner } from '../../../components/banner/banner';
+import { loadAdvertisingPromotionActions } from '../../../store/advertising/advertising-actions';
 import { WalletSelectors } from '../wallet.selectors';
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -64,10 +74,36 @@ export const TokensList: FC = () => {
   const visibleTokensList = useVisibleTokensListSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
 
+  const { publicKeyHash } = useSelectedAccountSelector();
+
+  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
     trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
   }, []);
+
+  useEffect(() => {
+    const listener = () => {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
+      setPromotionErrorOccurred(false);
+    };
+
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+      addNavigationListener('focus', listener);
+    }
+
+    return () => {
+      removeNavigationListener('focus', listener);
+    };
+  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromotionEnabled, isEnabledAdsBanner]);
+
+  useEffect(() => {
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+      dispatch(loadAdvertisingPromotionActions.submit());
+      optimalFetchEnableAds(publicKeyHash);
+    }
+  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
@@ -99,19 +135,17 @@ export const TokensList: FC = () => {
     searchValue
   ]);
 
-  useEffect(() => {
-    const listener = () => {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
-      setPromotionErrorOccurred(false);
-    };
-    addNavigationListener('focus', listener);
-
-    return () => {
-      removeNavigationListener('focus', listener);
-    };
-  }, [dispatch, addNavigationListener, removeNavigationListener]);
-
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
+
+  const handleDisableBannerButton = () => {
+    dispatch(togglePartnersPromotionAction(false));
+    dispatch(setAdsBannerVisibilityAction(false));
+  };
+
+  const handleEnableBannerButton = async () => {
+    dispatch(togglePartnersPromotionAction(true));
+    dispatch(setAdsBannerVisibilityAction(false));
+  };
 
   const renderItem: ListRenderItem<FlatListItem> = useCallback(
     ({ item }) => {
@@ -177,6 +211,17 @@ export const TokensList: FC = () => {
           />
         </Search>
       </View>
+
+      {isEnabledAdsBanner && (
+        <Banner
+          title="Earn by viewing ads in Temple Wallet"
+          description="Support the development team and earn tokens by viewing ads inside the wallet. To enable this feature, we request your permission to trace your Wallet Address and IP address. You can always disable ads in the settings."
+          enableButtonText="Enable ADS"
+          onDisable={handleDisableBannerButton}
+          onEnable={handleEnableBannerButton}
+          style={styles.banner}
+        />
+      )}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlatList

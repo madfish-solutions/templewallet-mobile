@@ -2,8 +2,8 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle } from 'react-native';
 
-import { isDefined } from '../../../../utils/is-defined';
-import { formatAssetAmount } from '../../../../utils/number.util';
+import { isDefined } from 'src/utils/is-defined';
+import { formatAssetAmount } from 'src/utils/number.util';
 
 interface Props {
   amount?: BigNumber;
