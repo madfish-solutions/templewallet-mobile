@@ -9,6 +9,7 @@ import {
 import axios from 'axios';
 import { BigNumber } from 'bignumber.js';
 
+import { tzktApi } from 'src/api.service';
 import { toIntegerSeconds } from 'src/utils/date.utils';
 import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -22,7 +23,15 @@ const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.qui
 export const getV3FarmsList = async () => {
   const response = await stakingApi.get<FarmsListResponse>('/v3/multi-v2');
 
-  return response.data.list;
+  const farmAddresses = response.data.list.map(({ item: { contractAddress } }) => contractAddress);
+  const firstActivityArr = await Promise.all(
+    farmAddresses.map(address => tzktApi.get<{ firstActivityTime: string }>(`/accounts/${address}`))
+  );
+
+  return response.data.list.map((farmItem, index) => ({
+    ...farmItem,
+    item: { ...farmItem.item, firstActivityTime: firstActivityArr[index].data.firstActivityTime }
+  }));
 };
 
 export const getHarvestAssetsTransferParams = async (
@@ -54,7 +63,7 @@ const getStableswapPool = async (
   const { pools: poolsFromRpc, factory_address } = internalPoolStorage;
   const poolFromRpc = await poolsFromRpc.get(new BigNumber(poolId));
   const factoryContract = await getReadOnlyContract(factory_address, tezos);
-  const devFeeF = await factoryContract.contractViews
+  const devFee = await factoryContract.contractViews
     .dev_fee()
     .executeView({ viewCaller: READ_ONLY_SIGNER_PUBLIC_KEY_HASH });
 
@@ -63,7 +72,7 @@ const getStableswapPool = async (
   }
 
   return {
-    devFeeF,
+    devFee,
     pool: {
       initialAF: poolFromRpc.initial_A_f,
       initialATime: new BigNumber(toIntegerSeconds(new Date(poolFromRpc.initial_A_time))),
@@ -96,11 +105,11 @@ export const estimateWithdrawTokenOutput = async (
   shares: BigNumber,
   poolId: number
 ) => {
-  const { devFeeF, pool } = await getStableswapPool(tezos, stableswapContract, poolId);
+  const { devFee, pool } = await getStableswapPool(tezos, stableswapContract, poolId);
 
   return tokenIndexes.map(tokenIndex => {
     try {
-      return calculateStableswapWithdrawTokenOutput(shares, tokenIndex, pool, devFeeF);
+      return calculateStableswapWithdrawTokenOutput(shares, tokenIndex, pool, devFee);
     } catch (error) {
       return error instanceof TooLowPoolReservesError ? null : undefined;
     }
@@ -114,7 +123,7 @@ export const estimateStableswapLpTokenOutput = async (
   amount: BigNumber,
   poolId: number
 ) => {
-  const { devFeeF, pool } = await getStableswapPool(tezos, stableswapContract, poolId);
+  const { devFee, pool } = await getStableswapPool(tezos, stableswapContract, poolId);
 
   return calculateStableswapLpTokenOutput(
     Array(pool.tokensInfo.length)
@@ -122,6 +131,6 @@ export const estimateStableswapLpTokenOutput = async (
       .map((_, index) => (index === investedTokenIndex ? amount : new BigNumber(0))),
     pool,
     pool.tokensInfo.length,
-    devFeeF
+    devFee
   );
 };

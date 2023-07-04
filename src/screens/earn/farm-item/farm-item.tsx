@@ -20,6 +20,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
+import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
@@ -46,6 +47,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const { navigate } = useNavigation();
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
+  const fiatToUsdRate = useFiatToUsdRateSelector();
 
   const apr = useMemo(
     () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
@@ -57,8 +59,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       mutezToTz(
         new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT),
         farm.item.stakedToken.metadata.decimals
-      ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.depositAmountAtomic, farm.item]
+      )
+        .multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE)
+        .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
+    [lastStakeRecord?.depositAmountAtomic, fiatToUsdRate, farm.item]
   );
 
   const claimableRewardsAtomic = useMemo(
@@ -66,8 +70,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       mutezToTz(
         new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
         farm.item.rewardToken.metadata.decimals
-      ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.claimableRewards]
+      )
+        .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE)
+        .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
+    [lastStakeRecord?.claimableRewards, fiatToUsdRate]
   );
 
   const navigateToFarm = useCallback(
@@ -137,12 +143,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
             <>
               <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
               <Divider size={formatSize(8)} />
-              <Button
-                isFullWidth
-                title="CLAIM REWARDS"
-                onPress={harvestAssetsApi}
-                styleConfig={buttonPrimaryStylesConfig}
-              />
+              <Button title="CLAIM REWARDS" onPress={harvestAssetsApi} styleConfig={buttonPrimaryStylesConfig} />
             </>
           ) : (
             <Button

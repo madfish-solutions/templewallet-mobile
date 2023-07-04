@@ -1,14 +1,14 @@
 import { useButtonLargeSecondaryStyleConfig } from 'src/components/button/button-large/button-large-secondary/button-large-secondary.styles';
 import { black } from 'src/config/styles';
-import { createUseStylesConfig, createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized, createUseStylesConfig } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
-    ...generateShadow(2, black),
+    ...generateShadow(1, black),
     borderRadius: formatSize(10),
-    backgroundColor: colors.cardBG,
+    backgroundColor: colors.white,
     marginHorizontal: formatSize(16)
   },
   mainContent: {
@@ -66,11 +66,10 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
 export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ typography }) => ({
   ...useButtonLargeSecondaryStyleConfig(),
   containerStyle: {
-    flex: 1,
-    width: formatSize(156),
     height: formatSize(38),
     borderRadius: formatSize(10),
-    borderWidth: formatSize(2)
+    borderWidth: formatSize(2),
+    minWidth: '48%'
   },
   titleStyle: {
     ...typography.tagline13Tag
