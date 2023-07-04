@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
+import { tzktApi } from 'src/api.service';
 import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
 
@@ -58,3 +59,6 @@ export const sortByOldest = (farmA: SingleFarmResponse, farmB: SingleFarmRespons
 
 export const sortByApy = (farmA: SingleFarmResponse, farmB: SingleFarmResponse) =>
   new BigNumber(farmB?.item?.apr ?? 0).minus(farmA?.item?.apr ?? 0).toNumber();
+
+export const getFirstAccountActivityTime = async (address: string) =>
+  tzktApi.get<{ firstActivityTime: string }>(`/accounts/${address}`).then(response => response.data.firstActivityTime);

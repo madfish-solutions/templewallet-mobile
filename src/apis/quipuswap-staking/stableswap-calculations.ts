@@ -13,6 +13,10 @@ import {
   TooLowPoolReservesError
 } from './types';
 
+const NUMERIC_METHODS_EPSILON = 1;
+const MAX_TOKENS_COUNT = 4;
+const MAX_ITERATIONS = 100;
+
 const xpMem = (tokensInfo: StableswapTokenInfo[]) => {
   return tokensInfo.map(({ rateF, reserves }) => rateF.times(reserves).dividedToIntegerBy(precision));
 };
@@ -46,7 +50,7 @@ const getD = (xp: BigNumber[], ampF: BigNumber) => {
   let d = sumC;
   let prevD = new BigNumber(0);
 
-  while (d.minus(prevD).abs().gt(1)) {
+  while (d.minus(prevD).abs().gt(NUMERIC_METHODS_EPSILON)) {
     const dConst = d;
     const counted = xp.reduce(
       (accum, value) => [accum[0].times(dConst), accum[1].times(value.times(tokensCount))],
@@ -72,7 +76,7 @@ const getDMem = (tokensInfo: StableswapTokenInfo[], ampF: BigNumber) => {
 };
 
 const divideFeeForBalance = (fee: BigNumber, tokensCount: BigNumber) => {
-  return fee.times(tokensCount).dividedToIntegerBy(tokensCount.minus(1).times(4));
+  return fee.times(tokensCount).dividedToIntegerBy(tokensCount.minus(1).times(MAX_TOKENS_COUNT));
 };
 
 const nipFeesOffReserves = (
@@ -136,7 +140,7 @@ const calcY = (c: BigNumber, aNNF: BigNumber, s_: BigNumber, d: BigNumber, pool:
   c = c.times(d).times(aPrecision).div(aNNF.times(tokensCount)).integerValue(BigNumber.ROUND_CEIL);
   const b = s_.plus(d.times(aPrecision).dividedToIntegerBy(aNNF));
   let tmp = { y: d, prevY: new BigNumber(0) };
-  while (tmp.y.minus(tmp.prevY).abs().gt(1)) {
+  while (tmp.y.minus(tmp.prevY).abs().gt(NUMERIC_METHODS_EPSILON)) {
     tmp = { ...tmp, prevY: tmp.y };
     tmp.y = tmp.y
       .times(tmp.y)
@@ -293,7 +297,7 @@ export const calculateStableswapWithdrawTokenOutput = (
     y1 = pool.totalSupply.minus(shares);
   }
 
-  while (x1.minus(x0).gt(1) && i < 100) {
+  while (x1.minus(x0).gt(NUMERIC_METHODS_EPSILON) && i < MAX_ITERATIONS) {
     i++;
     /** Candidate for X value from chord method */
     const x2 = bigIntClamp(

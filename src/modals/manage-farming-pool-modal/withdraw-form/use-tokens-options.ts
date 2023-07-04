@@ -1,15 +1,14 @@
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
-import { from, switchMap } from 'rxjs';
+import { catchError, from, of } from 'rxjs';
 
-import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
+import { estimateDivestOneCoinOutputs } from 'src/apis/quipuswap-staking';
 import { Farm } from 'src/apis/quipuswap-staking/types';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { getTaquitoRpcErrorMessage } from 'src/utils/get-taquito-rpc-error-message';
 import { isDefined } from 'src/utils/is-defined';
-import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
 import { WithdrawTokenOption } from './use-withdraw-formik';
 
@@ -25,23 +24,21 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
       return;
     }
 
-    const subscription = from(getReadOnlyContract(farm.stakedToken.contractAddress, tezos))
+    const subscription = from(
+      estimateDivestOneCoinOutputs(
+        tezos,
+        farm.stakedToken.contractAddress,
+        farm.tokens.map((_, index) => index),
+        lpAmount,
+        farm.stakedToken.fa2TokenId ?? 0
+      )
+    )
       .pipe(
-        switchMap(stableswapContract =>
-          from(
-            estimateWithdrawTokenOutput(
-              tezos,
-              stableswapContract,
-              farm.tokens.map((_, index) => index),
-              lpAmount,
-              farm.stakedToken.fa2TokenId ?? 0
-            ).catch(error => {
-              showErrorToast({ description: getTaquitoRpcErrorMessage(error) });
+        catchError(error => {
+          showErrorToast({ description: getTaquitoRpcErrorMessage(error) });
 
-              return undefined;
-            })
-          )
-        )
+          return of(undefined);
+        })
       )
       .subscribe(value => setAtomicAmounts(value));
 
