@@ -69,7 +69,7 @@ export const useFilteredFarms = () => {
     (sortField: FarmsSortFieldEnum) => dispatch(selectSortValueAction(sortField)),
     [dispatch]
   );
-  const handleToggleDepositOnly = useCallback(() => setDepositedOnly(prevState => !prevState), [setDepositedOnly]);
+  const handleToggleDepositOnly = useCallback(() => setDepositedOnly(prevState => !prevState), []);
 
   return {
     sortField,

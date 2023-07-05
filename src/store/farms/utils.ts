@@ -43,36 +43,38 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
 
   const lastStakeId = getLastElement(stakesIds ?? []);
 
-  if (isDefined(lastStakeId)) {
-    const stakeAmount = await farmContractStorage.stakes.get(lastStakeId);
-
-    if (isDefined(stakeAmount)) {
-      const rewardTokenContractInstance = await getReadOnlyContract(farm.rewardToken.contractAddress, tezos);
-      const farmBalanceInRewardToken = await getBalance(
-        rewardTokenContractInstance,
-        farm.contractAddress,
-        farm.rewardToken.fa2TokenId
-      );
-      const { claimableReward, fullReward } = calculateYouvesFarmingRewards(
-        {
-          lastRewards: farmContractStorage.last_rewards.toFixed(),
-          discFactor: farmContractStorage.disc_factor,
-          vestingPeriodSeconds: farmContractStorage.max_release_period,
-          totalStaked: farmContractStorage.total_stake
-        },
-        farmBalanceInRewardToken,
-        stakeAmount
-      );
-
-      return {
-        lastStakeId: lastStakeId.toFixed(),
-        depositAmountAtomic: stakeAmount.stake.toFixed(),
-        claimableRewards: claimableReward.toFixed(),
-        fullReward: fullReward.toFixed(),
-        ageTimestamp: stakeAmount.age_timestamp
-      };
-    }
+  if (!isDefined(lastStakeId)) {
+    return;
   }
 
-  return undefined;
+  const stakeAmount = await farmContractStorage.stakes.get(lastStakeId);
+
+  if (!isDefined(stakeAmount)) {
+    return;
+  }
+
+  const rewardTokenContractInstance = await getReadOnlyContract(farm.rewardToken.contractAddress, tezos);
+  const farmBalanceInRewardToken = await getBalance(
+    rewardTokenContractInstance,
+    farm.contractAddress,
+    farm.rewardToken.fa2TokenId
+  );
+  const { claimableReward, fullReward } = calculateYouvesFarmingRewards(
+    {
+      lastRewards: farmContractStorage.last_rewards.toFixed(),
+      discFactor: farmContractStorage.disc_factor,
+      vestingPeriodSeconds: farmContractStorage.max_release_period,
+      totalStaked: farmContractStorage.total_stake
+    },
+    farmBalanceInRewardToken,
+    stakeAmount
+  );
+
+  return {
+    lastStakeId: lastStakeId.toFixed(),
+    depositAmountAtomic: stakeAmount.stake.toFixed(),
+    claimableRewards: claimableReward.toFixed(),
+    fullReward: fullReward.toFixed(),
+    ageTimestamp: stakeAmount.age_timestamp
+  };
 };

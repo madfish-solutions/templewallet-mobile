@@ -23,18 +23,23 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     const otherStakes = omit(state.lastStakes.data, farmAddress);
 
     const lastStakes = isDefined(stake)
-      ? createEntity({
+      ? {
           ...otherStakes,
           [farmAddress]: stake
-        })
-      : createEntity({ ...otherStakes });
+        }
+      : { ...otherStakes };
 
     return {
       ...state,
-      lastStakes
+      lastStakes: createEntity(lastStakes)
     };
   });
-
+  builder.addCase(loadSingleFarmStakeActions.fail, (state, { payload }) => {
+    return {
+      ...state,
+      lastStakes: createEntity(state.lastStakes.data, false, payload.error)
+    };
+  });
   builder.addCase(loadAllFarmsAndStakesAction, state => ({
     ...state,
     allFarms: createEntity(state.allFarms.data, true),
