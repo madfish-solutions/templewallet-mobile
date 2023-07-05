@@ -27,6 +27,7 @@ import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/
 import {
   useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
+  useSelectedAccountTkeyTokenSelector,
   useVisibleTokensListSelector
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -69,6 +70,7 @@ export const TokensList: FC = () => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tkeyToken = useSelectedAccountTkeyTokenSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
@@ -104,11 +106,12 @@ export const TokensList: FC = () => {
     }
   }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
+  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,
     true,
-    tezosToken
+    leadingAssets
   );
 
   const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
