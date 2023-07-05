@@ -3,7 +3,9 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 
 import { emptyTokenMetadata, TokenMetadataInterface, TokenStandardsEnum } from '../interfaces/token-metadata.interface';
 import { TokenInterface } from '../interfaces/token.interface';
-import { toTokenSlug } from '../utils/token.utils';
+
+export const TEZ_TOKEN_SLUG = 'tez';
+export const TEMPLE_TOKEN_SLUG = 'KT1VaEsVNiBoA56eToEK6n6BcPgh1tdx9eXi_0';
 
 export const TEMPLE_TOKEN: TokenInterface = {
   id: 0,
@@ -16,9 +18,6 @@ export const TEMPLE_TOKEN: TokenInterface = {
   visibility: VisibilityEnum.Visible,
   thumbnailUri: 'ipfs://Qmb9QUXYn1PW8e7E2CwpBMgEur7gFAPPpq2Zh7H2D7eQcT'
 };
-
-export const TEZ_TOKEN_SLUG = 'tez';
-export const TEMPLE_TOKEN_SLUG = toTokenSlug(TEMPLE_TOKEN.address, TEMPLE_TOKEN.id);
 
 export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
   ...emptyTokenMetadata,
