@@ -5,7 +5,6 @@ import { emptyTokenMetadata, TokenMetadataInterface, TokenStandardsEnum } from '
 import { TokenInterface } from '../interfaces/token.interface';
 
 export const TEZ_TOKEN_SLUG = 'tez';
-export const TEMPLE_TOKEN_SLUG = 'KT1VaEsVNiBoA56eToEK6n6BcPgh1tdx9eXi_0';
 
 export const TEMPLE_TOKEN: TokenInterface = {
   id: 0,

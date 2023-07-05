@@ -7,7 +7,7 @@ import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokensListSelector } from 'src/store/wallet/wallet-selectors';
-import { TEMPLE_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
