@@ -1,7 +1,7 @@
-import { MichelsonMap, OpKind, TezosToolkit, TransferParams } from '@taquito/taquito';
+import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
+import { estimateDivestOneCoinOutputs } from 'src/apis/quipuswap-staking';
 import { PoolType, SingleFarmResponse, TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { UserStakeValueInterface } from 'src/store/farms/state';
@@ -9,6 +9,7 @@ import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metad
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { convertFarmToken } from 'src/utils/staking.utils';
+import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
 
 import { STABLESWAP_REFERRAL } from '../constants';
 
@@ -31,7 +32,7 @@ export const createWithdrawOperationParams = async (
   const farmContract = await getReadOnlyContract(farmAddress, tezos);
   const poolContract = await getReadOnlyContract(poolAddress, tezos);
   const depositAmount = new BigNumber(stake.depositAmountAtomic ?? 0);
-  const [tokenOutput] = await estimateWithdrawTokenOutput(tezos, poolContract, [tokenIndex], depositAmount, poolId);
+  const [tokenOutput] = await estimateDivestOneCoinOutputs(tezos, poolAddress, [tokenIndex], depositAmount, poolId);
 
   if (tokenOutput === null) {
     throw new TooLowPoolReservesError();
@@ -55,8 +56,7 @@ export const createWithdrawOperationParams = async (
     .divest_imbalanced(poolId, tokensOutput, depositAmount, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)
     .toTransferParams();
 
-  return [withdrawTransferParams, divestOneCoinTransferParams, ...burnWTezParams].map(operation => ({
-    ...operation,
-    kind: OpKind.TRANSACTION as const
-  }));
+  return [withdrawTransferParams, divestOneCoinTransferParams, ...burnWTezParams]
+    .map(parseTransferParamsToParamsWithKind)
+    .flat();
 };

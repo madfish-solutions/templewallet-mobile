@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { bigIntClamp } from 'src/utils/big-number.utils';
 import { toIntegerSeconds } from 'src/utils/date.utils';
 
-import { accumPrecision, aPrecision, feeDenominator, precision } from './consts';
+import { ACCUM_PRECISION, A_PRECISION, FEE_DENOMINATOR, PRECISION } from './consts';
 import {
   BalancingAccum,
   PrepareParamsAccum,
@@ -13,8 +13,12 @@ import {
   TooLowPoolReservesError
 } from './types';
 
+const NUMERIC_METHODS_EPSILON = 1;
+const MAX_TOKENS_COUNT = 4;
+const MAX_ITERATIONS = 100;
+
 const xpMem = (tokensInfo: StableswapTokenInfo[]) => {
-  return tokensInfo.map(({ rateF, reserves }) => rateF.times(reserves).dividedToIntegerBy(precision));
+  return tokensInfo.map(({ rateF, reserves }) => rateF.times(reserves).dividedToIntegerBy(PRECISION));
 };
 
 const getA = (
@@ -46,7 +50,7 @@ const getD = (xp: BigNumber[], ampF: BigNumber) => {
   let d = sumC;
   let prevD = new BigNumber(0);
 
-  while (d.minus(prevD).abs().gt(1)) {
+  while (d.minus(prevD).abs().gt(NUMERIC_METHODS_EPSILON)) {
     const dConst = d;
     const counted = xp.reduce(
       (accum, value) => [accum[0].times(dConst), accum[1].times(value.times(tokensCount))],
@@ -56,11 +60,11 @@ const getD = (xp: BigNumber[], ampF: BigNumber) => {
     prevD = d;
     d = aNnF
       .times(sumC)
-      .dividedToIntegerBy(aPrecision)
+      .dividedToIntegerBy(A_PRECISION)
       .plus(dP.times(tokensCount))
       .times(d)
       .dividedToIntegerBy(
-        aNnF.minus(aPrecision).times(d).dividedToIntegerBy(aPrecision).plus(tokensCount.plus(1).times(dP))
+        aNnF.minus(A_PRECISION).times(d).dividedToIntegerBy(A_PRECISION).plus(tokensCount.plus(1).times(dP))
       );
   }
 
@@ -72,7 +76,7 @@ const getDMem = (tokensInfo: StableswapTokenInfo[], ampF: BigNumber) => {
 };
 
 const divideFeeForBalance = (fee: BigNumber, tokensCount: BigNumber) => {
-  return fee.times(tokensCount).dividedToIntegerBy(tokensCount.minus(1).times(4));
+  return fee.times(tokensCount).dividedToIntegerBy(tokensCount.minus(1).times(MAX_TOKENS_COUNT));
 };
 
 const nipFeesOffReserves = (
@@ -101,18 +105,18 @@ const balanceInputs = (
     const oldInfo = initTokensInfo[i];
     const idealBalance = d1.times(oldInfo.reserves).dividedToIntegerBy(d0);
     const diff = idealBalance.minus(tokenInfo.reserves).abs();
-    const toDev = diff.times(divideFeeForBalance(devFee, tokensCount)).dividedToIntegerBy(feeDenominator);
-    const toRef = diff.times(divideFeeForBalance(fees.refF, tokensCount)).dividedToIntegerBy(feeDenominator);
-    let toLp = diff.times(divideFeeForBalance(fees.lpF, tokensCount)).dividedToIntegerBy(feeDenominator);
+    const toDev = diff.times(divideFeeForBalance(devFee, tokensCount)).dividedToIntegerBy(FEE_DENOMINATOR);
+    const toRef = diff.times(divideFeeForBalance(fees.refF, tokensCount)).dividedToIntegerBy(FEE_DENOMINATOR);
+    let toLp = diff.times(divideFeeForBalance(fees.lpF, tokensCount)).dividedToIntegerBy(FEE_DENOMINATOR);
     let toStakers = new BigNumber(0);
 
     if (accum.stakerAccumulator.totalStaked.isZero()) {
-      toLp = toLp.plus(diff.times(divideFeeForBalance(fees.stakersF, tokensCount)).dividedToIntegerBy(feeDenominator));
+      toLp = toLp.plus(diff.times(divideFeeForBalance(fees.stakersF, tokensCount)).dividedToIntegerBy(FEE_DENOMINATOR));
     } else {
-      toStakers = diff.times(divideFeeForBalance(fees.stakersF, tokensCount)).dividedToIntegerBy(feeDenominator);
+      toStakers = diff.times(divideFeeForBalance(fees.stakersF, tokensCount)).dividedToIntegerBy(FEE_DENOMINATOR);
       accum.stakerAccumulator.totalFees[i] = toStakers.plus(accum.stakerAccumulator.totalFees[i] ?? new BigNumber(0));
       accum.stakerAccumulator.accumulatorF[i] = toStakers
-        .times(accumPrecision)
+        .times(ACCUM_PRECISION)
         .dividedToIntegerBy(accum.stakerAccumulator.totalStaked)
         .plus(accum.stakerAccumulator.accumulatorF[i] ?? new BigNumber(0));
     }
@@ -133,10 +137,10 @@ const sumAllFee = (fee: StableswapFeesStorage, devFee: BigNumber) =>
 
 const calcY = (c: BigNumber, aNNF: BigNumber, s_: BigNumber, d: BigNumber, pool: StableswapPool) => {
   const tokensCount = pool.tokensInfo.length;
-  c = c.times(d).times(aPrecision).div(aNNF.times(tokensCount)).integerValue(BigNumber.ROUND_CEIL);
-  const b = s_.plus(d.times(aPrecision).dividedToIntegerBy(aNNF));
+  c = c.times(d).times(A_PRECISION).div(aNNF.times(tokensCount)).integerValue(BigNumber.ROUND_CEIL);
+  const b = s_.plus(d.times(A_PRECISION).dividedToIntegerBy(aNNF));
   let tmp = { y: d, prevY: new BigNumber(0) };
-  while (tmp.y.minus(tmp.prevY).abs().gt(1)) {
+  while (tmp.y.minus(tmp.prevY).abs().gt(NUMERIC_METHODS_EPSILON)) {
     tmp = { ...tmp, prevY: tmp.y };
     tmp.y = tmp.y
       .times(tmp.y)
@@ -232,7 +236,7 @@ const estimateStableswapWithdrawTokenOutput = (
         : value.minus(value.times(d1).dividedToIntegerBy(d0));
 
     return value.minus(
-      dxExpected.times(divideFeeForBalance(baseFeeF, new BigNumber(tokensCount))).dividedToIntegerBy(feeDenominator)
+      dxExpected.times(divideFeeForBalance(baseFeeF, new BigNumber(tokensCount))).dividedToIntegerBy(FEE_DENOMINATOR)
     );
   });
 
@@ -293,7 +297,7 @@ export const calculateStableswapWithdrawTokenOutput = (
     y1 = pool.totalSupply.minus(shares);
   }
 
-  while (x1.minus(x0).gt(1) && i < 100) {
+  while (x1.minus(x0).gt(NUMERIC_METHODS_EPSILON) && i < MAX_ITERATIONS) {
     i++;
     /** Candidate for X value from chord method */
     const x2 = bigIntClamp(

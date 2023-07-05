@@ -1,4 +1,4 @@
-import { FormikProvider } from 'formik';
+import { FormikProps, FormikProvider } from 'formik';
 import React, { FC, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 
@@ -7,6 +7,7 @@ import { Divider } from 'src/components/divider/divider';
 import { QuestionAccordion } from 'src/components/question-accordion';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
+import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { UserStakeValueInterface } from 'src/store/farms/state';
@@ -19,13 +20,12 @@ import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
 import { useStakeFormStyles } from './styles';
-import { useFarmTokens } from './use-farm-tokens';
-import { useStakeFormik } from './use-stake-formik';
+import { StakeFormValues } from './use-stake-formik';
 
 interface StakeFormProps {
   farm: SingleFarmResponse;
   stake?: UserStakeValueInterface;
-  formik: ReturnType<typeof useStakeFormik>;
+  formik: FormikProps<StakeFormValues>;
   acceptRisksRef?: RefObject<View>;
 }
 
@@ -42,7 +42,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
   const { asset } = values.assetAmount;
 
   const styles = useStakeFormStyles();
-  const assetsList = useFarmTokens(farm);
+  const { stakeTokens: assetsList } = useFarmTokens(farm?.item);
   const prevAssetsListRef = useRef(assetsList);
   const { filteredAssetsList, setSearchValue: setSearchValueFromTokens } = useFilteredAssetsList(
     assetsList,

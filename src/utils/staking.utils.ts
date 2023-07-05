@@ -1,3 +1,4 @@
+import { TEZOS_CONTRACT_ADDRESS } from 'src/apis/quipuswap-staking/consts';
 import { FarmToken, FarmTokenStandardsEnum } from 'src/apis/quipuswap-staking/types';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
@@ -12,8 +13,8 @@ export const convertFarmToken = (rawToken: FarmToken): TokenInterface => {
     balance: '0',
     visibility: VisibilityEnum.Visible,
     id: fa2TokenId ?? 0,
-    address: contractAddress === 'tez' ? '' : contractAddress,
-    iconName: contractAddress === 'tez' ? IconNameEnum.TezToken : undefined,
+    address: contractAddress === TEZOS_CONTRACT_ADDRESS ? '' : contractAddress,
+    iconName: contractAddress === TEZOS_CONTRACT_ADDRESS ? IconNameEnum.TezToken : undefined,
     name,
     symbol,
     decimals,

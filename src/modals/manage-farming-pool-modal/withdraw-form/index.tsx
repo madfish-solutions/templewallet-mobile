@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { FormikProvider } from 'formik';
+import { FormikProps, FormikProvider } from 'formik';
 import { noop } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -28,12 +28,12 @@ import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
 import { useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
-import { useWithdrawFormik, WithdrawTokenOption } from './use-withdraw-formik';
+import { WithdrawFormValues, WithdrawTokenOption } from './use-withdraw-formik';
 
 interface WithdrawFormProps {
   farm: SingleFarmResponse;
   stake?: UserStakeValueInterface;
-  formik: ReturnType<typeof useWithdrawFormik>;
+  formik: FormikProps<WithdrawFormValues>;
 }
 
 const PERCENTAGE_OPTIONS = [25, 50, 75, 100];

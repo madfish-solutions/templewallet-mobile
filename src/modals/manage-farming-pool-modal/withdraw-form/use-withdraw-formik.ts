@@ -30,7 +30,7 @@ export interface WithdrawTokenOption {
   amount?: BigNumber;
 }
 
-interface WithdrawFormValues {
+export interface WithdrawFormValues {
   amountOptionIndex: number;
   tokenOption: WithdrawTokenOption;
 }
