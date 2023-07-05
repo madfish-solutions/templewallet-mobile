@@ -3,17 +3,7 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 
 import { emptyTokenMetadata, TokenMetadataInterface, TokenStandardsEnum } from '../interfaces/token-metadata.interface';
 import { TokenInterface } from '../interfaces/token.interface';
-
-export const TEZ_TOKEN_SLUG = 'tez';
-export const TEMPLE_TOKEN_SLUG = 'KT1VaEsVNiBoA56eToEK6n6BcPgh1tdx9eXi_0';
-
-export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
-  ...emptyTokenMetadata,
-  name: 'Tezos',
-  symbol: 'TEZ',
-  decimals: 6,
-  iconName: IconNameEnum.TezToken
-};
+import { toTokenSlug } from '../utils/token.utils';
 
 export const TEMPLE_TOKEN: TokenInterface = {
   id: 0,
@@ -25,6 +15,17 @@ export const TEMPLE_TOKEN: TokenInterface = {
   standard: TokenStandardsEnum.Fa2,
   visibility: VisibilityEnum.Visible,
   thumbnailUri: 'ipfs://Qmb9QUXYn1PW8e7E2CwpBMgEur7gFAPPpq2Zh7H2D7eQcT'
+};
+
+export const TEZ_TOKEN_SLUG = 'tez';
+export const TEMPLE_TOKEN_SLUG = toTokenSlug(TEMPLE_TOKEN.address, TEMPLE_TOKEN.id);
+
+export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
+  ...emptyTokenMetadata,
+  name: 'Tezos',
+  symbol: 'TEZ',
+  decimals: 6,
+  iconName: IconNameEnum.TezToken
 };
 
 export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
