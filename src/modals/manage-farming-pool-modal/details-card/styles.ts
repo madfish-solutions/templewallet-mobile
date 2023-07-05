@@ -11,7 +11,7 @@ export const useDetailsCardStyles = createUseStylesMemoized(({ colors, typograph
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: formatSize(8)
+    paddingBottom: formatSize(10)
   },
   titleBorder: {
     marginBottom: formatSize(8)

@@ -11,6 +11,7 @@ import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
+import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
@@ -126,6 +127,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
             </View>
           </View>
         </View>
+
+        <HorizontalBorder />
+
+        <Divider size={formatSize(8)} />
 
         <View style={[styles.row, styles.mb16]}>
           <View style={styles.flex}>

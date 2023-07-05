@@ -8,7 +8,7 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
   root: {
     ...generateShadow(1, black),
     borderRadius: formatSize(10),
-    backgroundColor: colors.white,
+    backgroundColor: colors.cardBG,
     marginHorizontal: formatSize(16)
   },
   mainContent: {
@@ -37,10 +37,7 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
     color: colors.black
   },
   tokensContainer: {
-    paddingBottom: formatSize(8),
-    borderBottomWidth: formatSize(1),
-    marginBottom: formatSize(8),
-    borderColor: colors.lines
+    paddingBottom: formatSize(10)
   },
   bage: {
     position: 'relative',
