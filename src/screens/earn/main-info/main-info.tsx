@@ -58,7 +58,7 @@ export const MainInfo: FC = () => {
 
     let totalWeightedApy = new BigNumber(DEFAULT_AMOUNT);
 
-    Object.entries(farms.lastStakes).forEach(([address, stakeRecord]) => {
+    Object.entries(farms.lastStakes.data).forEach(([address, stakeRecord]) => {
       const farm = farms.allFarms.data.find(_farm => _farm.item.contractAddress === address);
 
       if (isDefined(farm)) {

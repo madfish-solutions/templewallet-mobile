@@ -17,28 +17,28 @@ import { farmsInitialState, FarmsState } from './state';
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
   builder.addCase(loadSingleFarmStakeActions.submit, state => ({
     ...state,
-    stakesLoading: true
+    lastStakes: createEntity(state.lastStakes.data, true)
   }));
   builder.addCase(loadSingleFarmStakeActions.success, (state, { payload: { stake, farmAddress } }) => {
-    const otherStakes = omit(state.lastStakes, farmAddress);
+    const otherStakes = omit(state.lastStakes.data, farmAddress);
+
+    const lastStakes = isDefined(stake)
+      ? createEntity({
+          ...otherStakes,
+          [farmAddress]: stake
+        })
+      : createEntity({ ...otherStakes });
 
     return {
       ...state,
-      lastStakes: isDefined(stake)
-        ? {
-            ...otherStakes,
-            [farmAddress]: stake
-          }
-        : otherStakes,
-      stakesLoading: false
+      lastStakes
     };
   });
 
   builder.addCase(loadAllFarmsAndStakesAction, state => ({
     ...state,
     allFarms: createEntity(state.allFarms.data, true),
-    lastStakes: {},
-    stakesLoading: true
+    lastStakes: createEntity(state.lastStakes.data, true)
   }));
   builder.addCase(loadAllFarmsActions.submit, state => ({
     ...state,
@@ -54,8 +54,7 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   }));
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => ({
     ...state,
-    lastStakes: payload,
-    stakesLoading: false
+    lastStakes: createEntity(payload)
   }));
   builder.addCase(setSelectedAccountAction, state => ({
     ...state,
