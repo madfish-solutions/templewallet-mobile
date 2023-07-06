@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { StyleProp, TextInputProps, TextStyle } from 'react-native';
+import { TextInputProps, TextStyle, ViewStyle } from 'react-native';
 
 import { EmptyFn, EventFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -7,9 +7,15 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import type { AssetAmountInterface } from './asset-amount-input';
 
+export interface AssetAmountInputStylesConfig {
+  balanceText?: TextStyle;
+  amountInput?: TextStyle;
+  inputContainer?: ViewStyle;
+}
+
 export interface AssetAmountInputProps extends TestIdProps {
   expectedGasExpense?: BigNumber.Value;
-  balanceValueStyles?: StyleProp<TextStyle>;
+  stylesConfig?: AssetAmountInputStylesConfig;
   maxButton?: boolean;
   value: AssetAmountInterface;
   label: string;
