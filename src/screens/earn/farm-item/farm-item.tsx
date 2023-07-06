@@ -35,12 +35,13 @@ import { useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.st
 interface Props {
   farm: SingleFarmResponse;
   lastStakeRecord?: UserStakeValueInterface;
+  stakeIsLoading: boolean;
 }
 
 const DEFAULT_EXHANGE_RATE = 1;
 const SECONDS_IN_DAY = 86400;
 
-export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
+export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) => {
   const styles = useFarmItemStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
   const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
@@ -138,11 +139,19 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         <View style={[styles.row, styles.mb16]}>
           <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Your deposit:</Text>
-            <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
+            {stakeIsLoading ? (
+              <Text style={styles.attributeValue}>---</Text>
+            ) : (
+              <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
+            )}
           </View>
           <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Claimable rewards:</Text>
-            <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
+            {stakeIsLoading ? (
+              <Text style={styles.attributeValue}>---</Text>
+            ) : (
+              <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
+            )}
           </View>
         </View>
 
