@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { Divider } from 'src/components/divider/divider';
 import { formatSize } from 'src/styles/format-size';
 
-import { ButtonLargePrimary } from '../../button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from '../../divider/divider';
 import { BannerGroupProps } from '../banner.props';
 import { useCommonBannerStyles } from '../common-banner.styles';
 
