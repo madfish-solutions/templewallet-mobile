@@ -61,6 +61,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
   const dispatch = useDispatch();
+
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
@@ -87,7 +88,7 @@ export const RootStackScreen = () => {
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
 
-  const handleNewsletterCrossPress = () => dispatch(shouldShowNewsletterModalAction(false));
+  const beforeRemove = () => dispatch(shouldShowNewsletterModalAction(false));
 
   return (
     <NavigationContainer
@@ -186,7 +187,8 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.Newsletter}
               component={Newsletter}
-              options={useModalOptions('Newsletter', handleNewsletterCrossPress)}
+              options={useModalOptions('Newsletter')}
+              listeners={{ beforeRemove }}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>
