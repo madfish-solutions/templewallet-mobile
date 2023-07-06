@@ -138,8 +138,8 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
 
   return (
     <FormikProvider value={formik}>
-      <View style={styles.formContainer}>
-        <Divider size={formatSize(8)} />
+      <View>
+        <Divider size={formatSize(12)} />
         <AssetAmountInput
           value={lpInputValue}
           label="Amount"
@@ -177,7 +177,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
           testID={ManageFarmingPoolModalSelectors.tokenSelector}
         />
       </View>
-      <Divider size={formatSize(16)} />
+      <Divider size={formatSize(12)} />
       <DetailsSection
         farm={farm.item}
         stake={stake}

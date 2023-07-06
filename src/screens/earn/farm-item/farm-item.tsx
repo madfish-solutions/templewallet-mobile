@@ -22,6 +22,7 @@ import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -40,6 +41,7 @@ const DEFAULT_EXHANGE_RATE = 1;
 const SECONDS_IN_DAY = 86400;
 
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
+  const colors = useColors();
   const styles = useFarmItemStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
   const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
@@ -112,8 +114,12 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   return (
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
-        {farm.item.type === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
-        {Number(farm.item.vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
+        {farm.item.type === PoolType.STABLESWAP && (
+          <Bage text="Stable Pool" color={colors.kolibriGreen} style={styles.bage} textStyle={styles.bageText} />
+        )}
+        {Number(farm.item.vestingPeriodSeconds) > SECONDS_IN_DAY && (
+          <Bage text="Long-Term Farm" style={[styles.bage, styles.lastBage]} textStyle={styles.bageText} />
+        )}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
