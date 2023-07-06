@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { number as numberSchema, object as objectSchema, SchemaOf } from 'yup';
 
-import { FarmVersionEnum, PoolType } from 'src/apis/quipuswap-staking/types';
+import { PoolType } from 'src/apis/quipuswap-staking/types';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -40,12 +40,12 @@ const validationSchema: SchemaOf<WithdrawFormValues> = objectSchema().shape({
   tokenOption: objectSchema().shape({}).required(makeRequiredErrorMessage('Token'))
 });
 
-export const useWithdrawFormik = (farmId: string, farmVersion: FarmVersionEnum) => {
-  const farm = useFarmSelector(farmId, farmVersion);
+export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
+  const farm = useFarmSelector(farmId, contractAddress);
   const { stakeTokens } = useFarmTokens(farm?.item);
   const { publicKeyHash } = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit();
-  const stake = useStakeSelector(farm?.item.contractAddress ?? '');
+  const stake = useStakeSelector(contractAddress);
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 

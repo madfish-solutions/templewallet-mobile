@@ -35,7 +35,7 @@ export const ManageFarmingPoolModal: FC = () => {
   const blockLevel = useBlockLevel();
   const prevBlockLevelRef = useRef(blockLevel);
   const dispatch = useDispatch();
-  const farm = useFarmSelector(params.id, params.version);
+  const farm = useFarmSelector(params.id, params.contractAddress);
   const farmIsLoading = useFarmsLoadingSelector();
   const stakes = useLastStakesSelector();
   const stake = isDefined(farm) ? stakes[farm.item.contractAddress] : undefined;
@@ -44,7 +44,7 @@ export const ManageFarmingPoolModal: FC = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const acceptRisksRef = useRef<View>(null);
 
-  const stakeFormik = useStakeFormik(params.id, params.version);
+  const stakeFormik = useStakeFormik(params.id, params.contractAddress);
   const {
     errors: stakeFormErrors,
     submitForm: submitStakeForm,
@@ -52,7 +52,7 @@ export const ManageFarmingPoolModal: FC = () => {
     getFieldMeta: getStakeFieldMeta
   } = stakeFormik;
   const stakeFormErrorsVisible = stakeFormFields.some(fieldName => hasError(getStakeFieldMeta(fieldName)));
-  const withdrawFormik = useWithdrawFormik(params.id, params.version);
+  const withdrawFormik = useWithdrawFormik(params.id, params.contractAddress);
   const {
     errors: withdrawFormErrors,
     submitForm: submitWithdrawForm,

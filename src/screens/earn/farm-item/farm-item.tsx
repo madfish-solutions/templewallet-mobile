@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { FarmVersionEnum, PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
+import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
@@ -49,21 +49,24 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
   const fiatToUsdRate = useFiatToUsdRateSelector();
+  const {
+    apr,
+    stakedToken,
+    depositExchangeRate,
+    id,
+    contractAddress,
+    type: farmType,
+    vestingPeriodSeconds
+  } = farm.item;
 
-  const apr = useMemo(
-    () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
-    [farm.item.apr]
-  );
+  const apy = useMemo(() => (isDefined(apr) ? aprToApy(Number(apr)).toFixed(DEFAULT_DECIMALS) : '---'), [apr]);
 
   const depositAmountAtomic = useMemo(
     () =>
-      mutezToTz(
-        new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT),
-        farm.item.stakedToken.metadata.decimals
-      )
-        .multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE)
+      mutezToTz(new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT), stakedToken.metadata.decimals)
+        .multipliedBy(depositExchangeRate ?? DEFAULT_EXHANGE_RATE)
         .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.depositAmountAtomic, fiatToUsdRate, farm.item]
+    [lastStakeRecord?.depositAmountAtomic, fiatToUsdRate, depositExchangeRate, stakedToken]
   );
 
   const claimableRewardsAtomic = useMemo(
@@ -74,12 +77,12 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       )
         .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE)
         .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.claimableRewards, fiatToUsdRate]
+    [lastStakeRecord?.claimableRewards, fiatToUsdRate, farm.item]
   );
 
   const navigateToFarm = useCallback(
-    () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
-    [farm.item.id]
+    () => navigate(ModalsEnum.ManageFarmingPool, { id, contractAddress }),
+    [id, contractAddress]
   );
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>
@@ -96,7 +99,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const lastStakeId = lastStakeRecord?.lastStakeId;
   const harvestAssetsApi = useCallback(async () => {
     if (isDefined(lastStakeId)) {
-      const opParams = await getHarvestAssetsTransferParams(tezos, farm.item.contractAddress, lastStakeId);
+      const opParams = await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId);
 
       if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
         doAfterConfirmation(
@@ -108,19 +111,19 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         navigateHarvestFarm(opParams);
       }
     }
-  }, [lastStakeRecord?.rewardsDueDate, lastStakeId, farm.item.contractAddress, tezos]);
+  }, [lastStakeRecord?.rewardsDueDate, lastStakeId, contractAddress, tezos]);
 
   return (
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
-        {farm.item.type === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
-        {Number(farm.item.vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
+        {farmType === PoolType.STABLESWAP && <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />}
+        {Number(vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
           <FarmTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
           <View>
-            <Text style={styles.apyText}>APY: {apr}%</Text>
+            <Text style={styles.apyText}>APY: {apy}%</Text>
             <View style={styles.earnSource}>
               <Icon style={styles.earnSourceIcon} name={IconNameEnum.QsEarnSource} />
               <Text style={styles.attributeTitle}>Quipuswap</Text>
