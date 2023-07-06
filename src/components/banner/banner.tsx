@@ -1,56 +1,35 @@
 import React, { FC } from 'react';
-import { View, Text, StyleProp, ViewStyle } from 'react-native';
+import { useDispatch } from 'react-redux';
 
-import { EmptyFn } from '../../config/general';
-import { formatSize } from '../../styles/format-size';
-import { ButtonLargePrimary } from '../button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from '../divider/divider';
-import { useBannerStyles } from './banner.styles';
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { setAdsBannerVisibilityAction } from 'src/store/settings/settings-actions';
 
-interface Props {
-  title: string;
-  description: string;
-  onEnable: EmptyFn;
-  onDisable: EmptyFn;
-  enableButtonText?: string;
-  disableButtonText?: string;
-  style?: StyleProp<ViewStyle>;
-}
+import { ABContainer } from '../ab-container/ab-container';
+import { AGroupBanner } from './a-group-banner/a-group-banner';
+import { BGroupBanner } from './b-group-banner/b-group-banner';
+import { BannerProps } from './banner.props';
 
-export const Banner: FC<Props> = ({
-  title,
-  description,
-  onEnable,
-  onDisable,
-  enableButtonText = 'Enable',
-  disableButtonText = 'Disable',
-  style
-}) => {
-  const styles = useBannerStyles();
+export const Banner: FC<BannerProps> = ({ style }) => {
+  const dispatch = useDispatch();
+
+  const handleDisableBannerButton = () => {
+    dispatch(togglePartnersPromotionAction(false));
+    dispatch(setAdsBannerVisibilityAction(false));
+  };
+
+  const handleEnableBannerButton = () => {
+    dispatch(togglePartnersPromotionAction(true));
+    dispatch(setAdsBannerVisibilityAction(false));
+  };
 
   return (
-    <View style={[styles.root, style]}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
-
-      <View style={styles.buttons}>
-        <ButtonLargeSecondary
-          title={disableButtonText}
-          onPress={onDisable}
-          textStyle={styles.buttonText}
-          buttonStyle={styles.button}
-          style={styles.buttonContainer}
-        />
-        <Divider size={formatSize(16)} />
-        <ButtonLargePrimary
-          title={enableButtonText}
-          onPress={onEnable}
-          textStyle={styles.buttonText}
-          buttonStyle={styles.button}
-          style={styles.buttonContainer}
-        />
-      </View>
-    </View>
+    <ABContainer
+      groupAComponent={
+        <AGroupBanner style={style} onDisable={handleDisableBannerButton} onEnable={handleEnableBannerButton} />
+      }
+      groupBComponent={
+        <BGroupBanner style={style} onDisable={handleDisableBannerButton} onEnable={handleEnableBannerButton} />
+      }
+    />
   );
 };

@@ -17,12 +17,9 @@ import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
-import {
-  loadPartnersPromoActions,
-  togglePartnersPromotionAction
-} from 'src/store/partners-promotion/partners-promotion-actions';
+import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { setAdsBannerVisibilityAction, setZeroBalancesShown } from 'src/store/settings/settings-actions';
+import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
   useSelectedAccountSelector,
@@ -139,16 +136,6 @@ export const TokensList: FC = () => {
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
-  const handleDisableBannerButton = () => {
-    dispatch(togglePartnersPromotionAction(false));
-    dispatch(setAdsBannerVisibilityAction(false));
-  };
-
-  const handleEnableBannerButton = async () => {
-    dispatch(togglePartnersPromotionAction(true));
-    dispatch(setAdsBannerVisibilityAction(false));
-  };
-
   const renderItem: ListRenderItem<FlatListItem> = useCallback(
     ({ item }) => {
       if (item === AD_PLACEHOLDER) {
@@ -214,16 +201,7 @@ export const TokensList: FC = () => {
         </Search>
       </View>
 
-      {isEnabledAdsBanner && (
-        <Banner
-          title="Earn by viewing ads in Temple Wallet"
-          description="Support the development team and earn tokens by viewing ads inside the wallet. To enable this feature, we request your permission to trace your Wallet Address and IP address. You can always disable ads in the settings."
-          enableButtonText="Enable ADS"
-          onDisable={handleDisableBannerButton}
-          onEnable={handleEnableBannerButton}
-          style={styles.banner}
-        />
-      )}
+      {isEnabledAdsBanner && <Banner style={styles.banner} />}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlatList
