@@ -1,6 +1,13 @@
 import { advanceTo } from 'jest-date-mock';
 
-import { formatTimespan, isTheSameDay, isToday, isYesterday, toIntegerSeconds } from './date.utils';
+import {
+  formatTimespan,
+  isTheSameDay,
+  isToday,
+  isYesterday,
+  toIntegerSeconds,
+  calculateTimeDiffInSeconds
+} from './date.utils';
 
 describe('formatTimespan', () => {
   it('should apply default formatting if no options overrides are provided', () => {
@@ -88,5 +95,20 @@ describe('toIntegerSeconds', () => {
 
   it('should return 1684220153 for new Date(2023, 4, 16, 6, 55, 53)', () => {
     expect(toIntegerSeconds(new Date(2023, 4, 16, 6, 55, 53))).toEqual(1684220153);
+  });
+});
+
+describe('calculateTimeDiffInSeconds', () => {
+  const SECONDS_IN_DAY = 86400;
+
+  it('should return 86400 for two days in seconds', () => {
+    const independenceDayOfUkraine = 679611600;
+    const nextDay = 679698000;
+    expect(calculateTimeDiffInSeconds(independenceDayOfUkraine, nextDay)).toEqual(SECONDS_IN_DAY);
+  });
+  it('should return 86400 for two days in Date format', () => {
+    const independenceDayOfUkraine = new Date(1991, 6, 16);
+    const nextDay = new Date(1991, 6, 17);
+    expect(calculateTimeDiffInSeconds(independenceDayOfUkraine, nextDay)).toEqual(SECONDS_IN_DAY);
   });
 });

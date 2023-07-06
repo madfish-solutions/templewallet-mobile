@@ -16,7 +16,7 @@ export const Bage: FC<Props> = ({ text, color, style }) => {
   const styles = useBageStyles();
 
   return (
-    <View style={[style, conditionalStyle(isDefined(color), { ...styles.root, backgroundColor: color }, styles.root)]}>
+    <View style={[style, styles.root, conditionalStyle(isDefined(color), { backgroundColor: color })]}>
       <Text style={styles.text}>{text}</Text>
     </View>
   );

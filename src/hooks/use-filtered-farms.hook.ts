@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
@@ -24,7 +24,7 @@ export const useFilteredFarms = () => {
 
     if (depositedOnly) {
       const stakedFarmsAddresses = Object.keys(stakes);
-      result = result.filter(farm => stakedFarmsAddresses.includes(farm?.item?.contractAddress));
+      result = result.filter(farm => stakedFarmsAddresses.includes(farm.item.contractAddress));
     }
 
     if (isString(searchValue)) {
@@ -65,8 +65,11 @@ export const useFilteredFarms = () => {
     return result;
   }, [farms, searchValue, depositedOnly, sortField]);
 
-  const handleSetSortField = (sortField: FarmsSortFieldEnum) => dispatch(selectSortValueAction(sortField));
-  const handleToggleDepositOnly = () => setDepositedOnly(prevState => !prevState);
+  const handleSetSortField = useCallback(
+    (sortField: FarmsSortFieldEnum) => dispatch(selectSortValueAction(sortField)),
+    [dispatch]
+  );
+  const handleToggleDepositOnly = useCallback(() => setDepositedOnly(prevState => !prevState), []);
 
   return {
     sortField,
