@@ -42,5 +42,4 @@ export const useLastStakesSelector = () => useSelector(({ farms }) => farms.last
 
 export const useStakesLoadingSelector = () => useSelector(({ farms }) => farms.lastStakes.isLoading);
 
-export const useFarmStoreSelector = () => useSelector(({ farms }) => farms);
 export const useFarmSortFieldSelector = () => useSelector(({ farms }) => farms.sortField);
