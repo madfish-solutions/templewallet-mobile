@@ -1,5 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { isAndroid } from 'src/config/system';
 import { DCP_RPC, OLD_TEMPLE_RPC_URL, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
 import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
@@ -103,7 +104,7 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   }));
 
   builder.addCase(setOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {
-    if (state.selectedRpcUrl !== DCP_RPC.url) {
+    if (state.selectedRpcUrl !== DCP_RPC.url && isAndroid) {
       return { ...state, isOnRampPossibility };
     }
 

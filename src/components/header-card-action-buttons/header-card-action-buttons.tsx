@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { isAndroid } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -56,14 +57,18 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
           onPress={() => navigate(ModalsEnum.Receive, { token })}
         />
       </View>
-      <Divider size={formatSize(8)} />
-      <View style={styles.buttonContainer}>
-        <ButtonMedium
-          title="Buy"
-          iconName={IconNameEnum.ShoppingCard}
-          onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
-        />
-      </View>
+      {isAndroid && (
+        <>
+          <Divider size={formatSize(8)} />
+          <View style={styles.buttonContainer}>
+            <ButtonMedium
+              title="Buy"
+              iconName={IconNameEnum.ShoppingCard}
+              onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
+            />
+          </View>
+        </>
+      )}
       <Divider size={formatSize(8)} />
       <View style={styles.buttonContainer} onTouchStart={handleTouchStart}>
         <ButtonMedium
