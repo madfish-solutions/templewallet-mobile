@@ -11,7 +11,7 @@ export interface GalleryAttributeCountQueryResponse {
   gallery_attribute_count: AttributeInfo[];
 }
 
-export interface Offer {
+interface Offer {
   buyer_address: string;
   collection_offer: string | null;
   price: number;
@@ -22,7 +22,7 @@ export interface Offer {
   currency_id: number;
 }
 
-export type HolderInfo = { holder_address: string; quantity: number };
+type HolderInfo = { holder_address: string; quantity: number };
 
 export interface CurrencyInfo {
   symbol: string;
@@ -110,7 +110,7 @@ export interface CollectibleTag {
   };
 }
 
-export interface ListingsActiveResponse {
+interface ListingsActiveResponse {
   bigmap_key: number;
   currency_id: number;
   price: number;
@@ -120,7 +120,7 @@ export interface ListingsActiveResponse {
   };
 }
 
-export interface ListingResponse extends ListingsActiveResponse {
+interface ListingResponse extends ListingsActiveResponse {
   amount: number;
   seller_address: string;
 }

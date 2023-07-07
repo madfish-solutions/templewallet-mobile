@@ -58,25 +58,6 @@ export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
 
 export const ADULT_ATTRIBUTE_NAME = '__nsfw_';
 
-export const collectibleInfoInitialValue = {
-  description: '',
-  creators: [],
-  collection: {
-    name: '',
-    logo: '',
-    items: 0
-  },
-  metadata: '',
-  attributes: [],
-  tags: [],
-  timestamp: '',
-  royalties: [],
-  editions: 0,
-  mime: '',
-  galleries: [],
-  listingsActive: []
-};
-
 export const PAGINATION_STEP_FA = 500;
 
 export const PAGINATION_STEP_GALLERY = 15;
