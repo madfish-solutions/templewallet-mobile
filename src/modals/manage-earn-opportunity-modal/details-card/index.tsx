@@ -4,7 +4,6 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
@@ -19,19 +18,20 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { ManageFarmingPoolModalSelectors } from '../selectors';
+import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { StatsItem } from './stats-item';
 import { useDetailsCardStyles } from './styles';
 import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';
 
 interface DetailsCardProps {
-  farm: Farm;
+  earnOpportunityItem: EarnOpportunity;
   loading: boolean;
   stake?: UserStakeValueInterface;
   shouldShowClaimRewardsButton: boolean;
@@ -45,13 +45,13 @@ const COUNTDOWN_TOKENS_BASE = [
 ];
 
 export const DetailsCard: FC<DetailsCardProps> = ({
-  farm,
+  earnOpportunityItem,
   loading,
   stake = EMPTY_STAKE,
   shouldShowClaimRewardsButton
 }) => {
   const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
-  const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = farm;
+  const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = earnOpportunityItem;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
   const apy = isDefined(apr) ? aprToApy(Number(apr)) : undefined;
   const [claimPending, setClaimPending] = useState(false);
@@ -59,7 +59,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
   const dispatch = useDispatch();
   const tezos = useReadOnlyTezosToolkit();
-  const farmTokens = useEarnOpportunityTokens(farm);
+  const tokens = useEarnOpportunityTokens(earnOpportunityItem);
   const rewardTokenDecimals = rewardToken.metadata.decimals;
   const rewardTokenSymbol = rewardToken.metadata.symbol;
 
@@ -139,7 +139,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   return (
     <View style={styles.root}>
       <View style={styles.title}>
-        <EarnOpportunityTokens {...farmTokens} />
+        <EarnOpportunityTokens {...tokens} />
         <Text style={styles.apyLabel}>APY: {isDefined(apy) ? `${apy.toFixed(2)}%` : '-'}</Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />
@@ -190,7 +190,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
             isFullWidth
             disabled={claimableRewardAmount.isZero() || claimPending}
             title={claimableRewardAmount.isZero() ? 'EARN TO CLAIM REWARDS' : 'CLAIM REWARDS'}
-            testID={ManageFarmingPoolModalSelectors.claimRewardsButton}
+            testID={ManageEarnOpportunityModalSelectors.claimRewardsButton}
             onPress={claimRewardsIfConfirmed}
           />
         </>

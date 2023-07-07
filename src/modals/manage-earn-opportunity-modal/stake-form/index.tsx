@@ -2,7 +2,6 @@ import { FormikProvider } from 'formik';
 import React, { FC, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Divider } from 'src/components/divider/divider';
 import { QuestionAccordion } from 'src/components/question-accordion';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
@@ -12,43 +11,40 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { DetailsSection } from '../details-section';
-import { ManageFarmingPoolModalSelectors } from '../selectors';
+import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
+import { quipuswapFarmsRisksPoints, youvesSavingsRisksPoints } from './constants';
 import { useStakeFormStyles } from './styles';
-import { useFarmTokens } from './use-farm-tokens';
+import { useEarnOpportunityTokens } from './use-earn-opportunity-tokens';
 import { useStakeFormik } from './use-stake-formik';
 
 interface StakeFormProps {
-  farm: SingleFarmResponse;
+  earnOpportunityItem: EarnOpportunity;
   stake?: UserStakeValueInterface;
   formik: ReturnType<typeof useStakeFormik>;
   acceptRisksRef?: RefObject<View>;
 }
 
-const risksPoints = [
-  'Smart Contract Reliability: This pool operates using DEX smart contracts, farming smart contracts, QuipuSwap stable pools smart contracts and interacts with Yupana Lending protocol contracts. The safety of your assets is dependent on the reliability and security of these contracts. While external audits of smart contracts have been conducted, there is always a risk of potential vulnerabilities or unforeseen issues that could impact the safety of your assets.',
-  'Stable Token Value: Stable tokens are designed to maintain a stable value relative to a benchmark, such as a fiat currency. However, there is a risk that the value of stable tokens may not perfectly track their benchmark value. Factors such as the conversion conditions and operational mechanisms specific to each stable token can influence its value. It is important to be aware of this potential risk when using stable tokens in this pool.',
-  'Market Risk: Farming involves exposure to the performance and volatility of the assets in the liquidity pool. Fluctuations in the market value of the assets can impact the overall value of the farm and potentially lead to losses. It is essential to consider the risks associated with the specific assets and their market dynamics.',
-  'Slippage: Slippage refers to the difference between the expected and actual execution price of a trade. In fast-moving markets or with illiquid assets, slippage can be significant and impact profitability.',
-  'Regulatory and Compliance Risks: Depending on your jurisdiction, participating in farming may have legal and regulatory implications. It is important to ensure compliance with applicable laws, tax obligations, and any necessary licenses or permissions.'
-];
-
-export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisksRef }) => {
+export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, stake, acceptRisksRef }) => {
+  const itemIsFarm = isFarm(earnOpportunityItem);
   const { setFieldTouched, setFieldValue, values } = formik;
   const { asset } = values.assetAmount;
 
   const styles = useStakeFormStyles();
-  const assetsList = useFarmTokens(farm);
+  const assetsList = useEarnOpportunityTokens(earnOpportunityItem);
   const prevAssetsListRef = useRef(assetsList);
   const { filteredAssetsList, setSearchValue: setSearchValueFromTokens } = useFilteredAssetsList(
     assetsList,
     false,
     true
   );
+  const risksPoints = itemIsFarm ? quipuswapFarmsRisksPoints : youvesSavingsRisksPoints;
 
   const stakesLoading = useStakesLoadingSelector();
 
@@ -80,8 +76,9 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
     <FormikProvider value={formik}>
       <View style={styles.formContainer}>
         <Text style={styles.depositPrompt}>
-          You can choose any asset from the provided list for your deposit. The selected asset will be automatically
-          converted by Temple Wallet.
+          {itemIsFarm
+            ? 'You can choose any asset from the provided list for your deposit. The selected asset will be automatically converted by Temple Wallet.'
+            : 'You can choose asset from the provided list for your deposit.'}
         </Text>
         <Divider size={formatSize(24)} />
         <FormAssetAmountInput
@@ -94,20 +91,20 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
           assetsList={filteredAssetsList}
           onValueChange={handleAssetAmountChange}
           setSearchValue={setSearchValueFromTokens}
-          testID={ManageFarmingPoolModalSelectors.amountInput}
+          testID={ManageEarnOpportunityModalSelectors.amountInput}
         />
         <Divider size={formatSize(16)} />
         <DetailsSection
-          farm={farm.item}
+          earnOpportunityItem={earnOpportunityItem}
           stake={stake}
-          shouldShowClaimRewardsButton
+          shouldShowClaimRewardsButton={itemIsFarm}
           loading={stakesLoading && !isDefined(stake)}
         />
         <Divider size={formatSize(16)} />
-        <VestingPeriodDisclaimers farm={farm.item} />
+        <VestingPeriodDisclaimers earnOpportunityItem={earnOpportunityItem} />
         <QuestionAccordion
           question="What are the main risks?"
-          testID={ManageFarmingPoolModalSelectors.mainRisksQuestion}
+          testID={ManageEarnOpportunityModalSelectors.mainRisksQuestion}
         >
           {risksPoints.map((point, index) => (
             <React.Fragment key={index}>
@@ -122,7 +119,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
         <Divider size={formatSize(16)} />
         <View ref={acceptRisksRef}>
           <FormCheckbox
-            testID={ManageFarmingPoolModalSelectors.acceptRisksCheckbox}
+            testID={ManageEarnOpportunityModalSelectors.acceptRisksCheckbox}
             size={formatSize(20)}
             name="acceptRisks"
           >

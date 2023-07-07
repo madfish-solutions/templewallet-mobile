@@ -1,10 +1,8 @@
-import { OpKind } from '@taquito/rpc';
 import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { estimateStableswapLpTokenOutput } from 'src/apis/quipuswap-staking';
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
-import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
+import { StableswapFarm } from 'src/apis/quipuswap-staking/types';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -17,19 +15,15 @@ import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
 import { STABLESWAP_REFERRAL, WTEZ_TOKEN } from '../constants';
 
-export const createStakeOperationParams = async (
-  farm: SingleFarmResponse,
+export const createStableswapStakeTransfersParams = async (
+  earnOpportunity: StableswapFarm,
   amount: BigNumber,
   asset: TokenInterface,
   tezos: TezosToolkit,
   accountPkh: string,
   stakeId?: string
 ) => {
-  if (farm.item.type !== EarnOpportunityTypeEnum.STABLESWAP) {
-    throw new Error('Non-stableswap pools are not supported');
-  }
-
-  const { contractAddress: farmAddress, stakedToken } = farm.item;
+  const { contractAddress: farmAddress, stakedToken } = earnOpportunity;
   const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
   const assetSlug = toTokenSlug(asset.address, asset.id);
   const shouldUseWtezToken = assetSlug === TEZ_TOKEN_SLUG;
@@ -46,7 +40,7 @@ export const createStakeOperationParams = async (
     ];
   }
 
-  const tokenIndex = farm.item.tokens
+  const tokenIndex = earnOpportunity.tokens
     .map(convertEarnOpportunityToken)
     .findIndex(farmToken => toTokenSlug(farmToken.address, farmToken.id) === assetSlug);
   const michelsonAmounts = new MichelsonMap<number, BigNumber>();
@@ -92,5 +86,5 @@ export const createStakeOperationParams = async (
     depositTransferParams,
     ...revokeLp,
     ...revokeAsset
-  ].map(operation => ({ ...operation, kind: OpKind.TRANSACTION as const }));
+  ];
 };

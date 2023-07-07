@@ -1,7 +1,7 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
-export const useManageFarmingPoolModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
+export const useEarnOpportunityModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
   background: {
     backgroundColor: colors.pageBG,
     flex: 1,

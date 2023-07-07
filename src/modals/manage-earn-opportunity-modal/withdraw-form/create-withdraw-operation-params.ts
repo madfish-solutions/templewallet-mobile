@@ -2,31 +2,32 @@ import { MichelsonMap, OpKind, TezosToolkit, TransferParams } from '@taquito/taq
 import { BigNumber } from 'bignumber.js';
 
 import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
-import { SingleFarmResponse, TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
+import { TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
 import { STABLESWAP_REFERRAL } from '../constants';
 
 export const createWithdrawOperationParams = async (
-  farm: SingleFarmResponse,
+  earnOpportunity: EarnOpportunity,
   tokenIndex: number,
   tezos: TezosToolkit,
   accountPkh: string,
   stake: UserStakeValueInterface
 ) => {
-  if (farm.item.type !== EarnOpportunityTypeEnum.STABLESWAP) {
+  if (earnOpportunity.type !== EarnOpportunityTypeEnum.STABLESWAP) {
     throw new Error('Non-stableswap pools are not supported');
   }
 
-  const { contractAddress: farmAddress, stakedToken } = farm.item;
+  const { contractAddress: farmAddress, stakedToken } = earnOpportunity;
   const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
-  const asset = convertEarnOpportunityToken(farm.item.tokens[tokenIndex]);
+  const asset = convertEarnOpportunityToken(earnOpportunity.tokens[tokenIndex]);
   const assetSlug = toTokenSlug(asset.address, asset.id);
   const shouldBurnWtezToken = assetSlug === TEZ_TOKEN_SLUG;
   const farmContract = await getReadOnlyContract(farmAddress, tezos);

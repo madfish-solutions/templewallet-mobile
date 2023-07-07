@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import {
   useAssetsListSelector,
@@ -9,10 +8,11 @@ import {
 } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-export const useFarmTokens = (farm?: SingleFarmResponse) => {
+export const useEarnOpportunityTokens = (earnOpportunity?: EarnOpportunity) => {
   const getExchangeRate = useTokenExchangeRateGetter();
   const accountAssetsList = useAssetsListSelector();
   const { publicKeyHash: accountPkh } = useSelectedAccountSelector();
@@ -20,8 +20,8 @@ export const useFarmTokens = (farm?: SingleFarmResponse) => {
 
   return useMemo(
     () =>
-      isDefined(farm)
-        ? farm.item.tokens.map(token => {
+      isDefined(earnOpportunity)
+        ? earnOpportunity.tokens.map(token => {
             const tokenAddress = token.contractAddress === 'tez' ? undefined : token.contractAddress;
             const tokenSlug = toTokenSlug(tokenAddress, token.fa2TokenId);
             const accountAsset =
@@ -38,6 +38,6 @@ export const useFarmTokens = (farm?: SingleFarmResponse) => {
             );
           })
         : [],
-    [farm, getExchangeRate, accountAssetsList, tezToken]
+    [earnOpportunity, getExchangeRate, accountAssetsList, tezToken]
   );
 };

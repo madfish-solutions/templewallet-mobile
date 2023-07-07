@@ -5,7 +5,7 @@ import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { BigMap } from 'src/interfaces/big-map.interface';
 import { FarmBase } from 'src/interfaces/earn-opportunity/farm-base.interface';
 
-export enum FarmVersionEnum {
+enum FarmVersionEnum {
   V1 = 'v1',
   V2 = 'v2',
   V3 = 'v3'
@@ -22,7 +22,7 @@ interface QuipuswapFarmBase extends FarmBase {
   version: FarmVersionEnum;
 }
 
-interface StableswapFarm extends QuipuswapFarmBase {
+export interface StableswapFarm extends QuipuswapFarmBase {
   type: EarnOpportunityTypeEnum.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;

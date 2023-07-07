@@ -14,6 +14,12 @@ export const useDetailsSectionStyles = createUseStylesMemoized(({ colors, typogr
     border: formatSize(0.5),
     borderColor: colors.lines
   },
+  youvesIconWrapper: {
+    borderRadius: formatSize(6),
+    border: formatSize(0.5),
+    borderColor: colors.lines,
+    backgroundColor: colors.darkGreen
+  },
   detailsTitleText: {
     ...typography.body15Semibold,
     color: colors.black,
