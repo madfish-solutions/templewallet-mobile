@@ -11,6 +11,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { emptyFn } from 'src/config/general';
+import { isAndroid } from 'src/config/system';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -29,7 +30,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
 import { CheckboxIcon } from '../../components/checkbox-icon/checkbox-icon';
-import { isAndroid } from '../../config/system';
 import { useCollectiblesWithFullData } from '../../hooks/use-collectibles-with-full-data.hook';
 import { switchIsShowCollectibleInfoAction } from '../../store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from '../../store/settings/settings-selectors';
