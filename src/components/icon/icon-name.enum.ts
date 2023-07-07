@@ -142,5 +142,6 @@ export enum IconNameEnum {
   SmileWithDollar = 'SmileWithDollar',
   Data = 'Data',
   Database = 'Database',
-  YouvesEarnSource = 'YouvesEarnSource'
+  YouvesEarnSource = 'YouvesEarnSource',
+  YouvesEarnSourceDark = 'YouvesEarnSourceDark'
 }

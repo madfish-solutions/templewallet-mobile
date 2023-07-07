@@ -12,9 +12,13 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EmptyFn } from 'src/config/general';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { KNOWN_STABLECOINS_SLUGS } from 'src/token/data/token-slugs';
+import { toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { aprToApy, isFarm } from 'src/utils/earn.utils';
@@ -41,11 +45,20 @@ export const EarnOpportunityItem: FC<Props> = ({
 }) => {
   const { apr, stakedToken, depositExchangeRate, earnExchangeRate, type: itemType, vestingPeriodSeconds } = item;
   const colors = useColors();
+  const theme = useThemeSelector();
   const styles = useEarnOpportunityItemStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
   const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
   const { stakeTokens, rewardToken } = useEarnOpportunityTokens(item);
   const itemIsFarm = isFarm(item);
+  const allTokensAreStablecoins = useMemo(
+    () =>
+      item.tokens.every(token =>
+        KNOWN_STABLECOINS_SLUGS.includes(toTokenSlug(token.contractAddress, token.fa2TokenId))
+      ),
+    [item.tokens]
+  );
+  const youvesIconName = theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
 
   const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
   const apy = useMemo(() => (isDefined(apr) ? aprToApy(Number(apr)).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
@@ -66,10 +79,12 @@ export const EarnOpportunityItem: FC<Props> = ({
   return (
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
-        {itemType === EarnOpportunityTypeEnum.STABLESWAP && (
+        {(itemType === EarnOpportunityTypeEnum.STABLESWAP || (allTokensAreStablecoins && !itemIsFarm)) && (
           <Bage text="Stable Pool" color={colors.kolibriGreen} style={styles.bage} />
         )}
-        {Number(vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
+        {Number(vestingPeriodSeconds) > SECONDS_IN_DAY && (
+          <Bage text={itemIsFarm ? 'Long-Term Farm' : 'Long-Term Savings Pool'} />
+        )}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
@@ -84,7 +99,7 @@ export const EarnOpportunityItem: FC<Props> = ({
               <Icon
                 style={styles.earnSourceIcon}
                 size={formatSize(12)}
-                name={itemIsFarm ? IconNameEnum.QsEarnSource : IconNameEnum.YouvesEarnSource}
+                name={itemIsFarm ? IconNameEnum.QsEarnSource : youvesIconName}
               />
               <Text style={styles.attributeTitle}>{itemIsFarm ? 'Quipuswap' : 'Youves'}</Text>
             </View>
