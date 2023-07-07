@@ -296,6 +296,28 @@ export const buildGetAllUserCollectiblesQuery = (address: string) => {
           price
           marketplace_contract
           id
+          currency {
+            type
+          }
+        }
+      }
+    }
+  `;
+};
+
+export const buildGetCollectibleFloorPriceQuery = (address: string, id: string) => {
+  return gql`
+    query MyQuery {
+      token(where: { fa_contract: { _eq: "${address}" }, token_id: { _eq: "${id}" } }) {
+        listings_active(order_by: { price_xtz: asc }) {
+          bigmap_key
+          currency_id
+          price
+          marketplace_contract
+          id
+          currency {
+            type
+          }
         }
       }
     }

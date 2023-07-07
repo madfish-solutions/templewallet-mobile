@@ -24,7 +24,7 @@ export const useCollectibleIconStyles = createUseStyles(({ colors, typography })
     alignItems: 'center',
     paddingHorizontal: formatSize(4),
     paddingVertical: formatSize(2),
-    backgroundColor: hexa(basicLightColors.black, 0.99),
+    backgroundColor: hexa(basicLightColors.black, 0.9),
     borderRadius: formatSize(4)
   },
   balanceText: {

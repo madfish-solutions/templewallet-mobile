@@ -12,34 +12,37 @@ interface Offer {
   currencyId: number;
 }
 
-type HolderInfo = { holderAddress: string; quantity: number };
+interface HolderInfo {
+  holderAddress: string;
+  quantity: number;
+}
 
-type Creators = {
+interface Creators {
   holder: {
     address: string;
     tzdomain: string;
   };
-};
+}
 
-type Collection = {
+interface Collection {
   name: string;
   logo: string;
   items: number;
-};
+}
 
-type Royalties = {
+interface Royalties {
   decimals: number;
   amount: number;
-};
+}
 
-type Galleries = {
+interface Galleries {
   gallery: {
     items: number;
     name: string;
   };
-};
+}
 
-type ListingsActive = {
+export interface ListingsActive {
   bigmapKey: number;
   currencyId: number;
   price: number;
@@ -47,7 +50,7 @@ type ListingsActive = {
   currency: {
     type: string;
   };
-};
+}
 
 export interface CollectibleCommonInterface {
   description: string;
@@ -78,6 +81,6 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   artifactUri?: string;
 }
 
-export interface CollectibleInterface extends CollectibleCommonInterface, TokenInterface, CollectibleDetailsInterface {}
-
 export interface CollectibleOfferInteface extends CollectibleCommonInterface, TokenInterface, OfferInteface {}
+
+export interface CollectibleInterface extends CollectibleCommonInterface, TokenInterface, CollectibleDetailsInterface {}

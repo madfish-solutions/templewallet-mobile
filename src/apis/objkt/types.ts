@@ -111,6 +111,16 @@ export interface CollectibleTag {
   };
 }
 
+export interface ListingsActiveResponse {
+  bigmap_key: number;
+  currency_id: number;
+  price: number;
+  marketplace_contract: string;
+  currency: {
+    type: string;
+  };
+}
+
 export interface CollectibleDetailsResponse {
   fa_contract: string;
   token_id: string;
@@ -143,14 +153,12 @@ export interface CollectibleDetailsResponse {
       name: string;
     };
   }[];
-  listings_active: {
-    bigmap_key: number;
-    currency_id: number;
-    price: number;
-    marketplace_contract: string;
-    currency: {
-      type: string;
-    };
-  }[];
+  listings_active: ListingsActiveResponse[];
   isAdultContent?: boolean;
+}
+
+export interface CollectibleFloorPriceQueryResponse {
+  token: {
+    listings_active: ListingsActiveResponse[];
+  }[];
 }

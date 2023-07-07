@@ -9,9 +9,9 @@ import { CollectibleInterface } from '../token/interfaces/collectible-interfaces
 import { getAttributesInfo$, getAttributesWithRarity } from '../utils/collectibles.utils';
 
 export const useFetchCollectibleAttributes = (collectible: CollectibleInterface) => {
-  const initialAttributes = collectible.attributes.filter(
-    item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME
-  );
+  const initialAttributes = isNonEmptyArray(collectible.attributes)
+    ? collectible.attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME)
+    : [];
 
   const [attributes, setAttributes] = useState<CollectibleAttributes[]>(initialAttributes);
   const [isLoading, setIsLoading] = useState(false);

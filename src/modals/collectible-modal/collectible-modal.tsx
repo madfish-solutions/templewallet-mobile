@@ -1,10 +1,10 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { BigNumber } from 'bignumber.js';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
@@ -18,11 +18,14 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from '../../components/touchable-with-analytics';
+import { ONE_MINUTE } from '../../config/fixed-times';
 import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
 import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
 import { useFetchCollectibleAttributes } from '../../hooks/use-fetch-collectible-attributes.hook';
+import { useAuthorisedInterval } from '../../hooks/use-interval.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
+import { updateCollectibleDetailsAction } from '../../store/collectibles/collectibles-actions';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
@@ -36,7 +39,6 @@ import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { getTruncatedProps } from '../../utils/style.util';
-import { mutezToTz } from '../../utils/tezos.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
@@ -67,6 +69,7 @@ export const CollectibleModal = () => {
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
   const { trackEvent } = useAnalytics();
+  const dispatch = useDispatch();
 
   const styles = useCollectibleModalStyles();
 
@@ -88,10 +91,18 @@ export const CollectibleModal = () => {
 
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
   const burnCollectible = useBurnCollectible(collectible);
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectible);
   const { attributes, isLoading } = useFetchCollectibleAttributes(collectible);
+  const { buyCollectible, purchaseCurrency, isLoadingDetails } = useBuyCollectible(collectible);
 
-  console.log('collectible details:', collectible);
+  useAuthorisedInterval(
+    () => {
+      if (!isUserOwnerCurrentCollectible) {
+        dispatch(updateCollectibleDetailsAction.submit(collectible));
+      }
+    },
+    ONE_MINUTE,
+    [collectible, isUserOwnerCurrentCollectible]
+  );
 
   const isAttributesExist = attributes.length > 0;
 
@@ -100,6 +111,10 @@ export const CollectibleModal = () => {
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
   const submitButtonTitle = useMemo(() => {
+    if (isLoadingDetails && !isUserOwnerCurrentCollectible) {
+      return '';
+    }
+
     if (isUserOwnerCurrentCollectible) {
       return 'Send';
     }
@@ -108,10 +123,8 @@ export const CollectibleModal = () => {
       return 'Not listed';
     }
 
-    const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
-
-    return `Buy for ${price.toFixed(2)} ${purchaseCurrency.symbol}`;
-  }, [isUserOwnerCurrentCollectible, listingsActive]);
+    return `Buy for ${purchaseCurrency.priceToDisplay.toFixed(2)} ${purchaseCurrency.symbol}`;
+  }, [isUserOwnerCurrentCollectible, purchaseCurrency, listingsActive, isLoadingDetails]);
 
   const collectionLogo = useMemo(() => {
     if (isDefined(collection) && isDefined(collection.logo)) {
@@ -164,13 +177,26 @@ export const CollectibleModal = () => {
 
   const isPropertiesSelected = propertiesIndex === segmentControlIndex;
 
+  const collectionName = useMemo(() => {
+    if (isNonEmptyArray(galleries)) {
+      return galleries[0].gallery.name;
+    }
+
+    if (isDefined(collection)) {
+      return collection.name;
+    }
+
+    return 'Unkown collection';
+  }, [galleries, collection]);
+
   return (
     <ScreenContainer
       fixedFooterContainer={{
         submitButton: (
           <ButtonLargePrimary
-            disabled={!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)}
+            disabled={(!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)) || isLoadingDetails}
             title={submitButtonTitle}
+            isLoading={isLoadingDetails}
             onPress={buyCollectible}
             testID={CollectibleModalSelectors.sendButton}
           />
@@ -196,14 +222,14 @@ export const CollectibleModal = () => {
 
         <View style={styles.collectionContainer}>
           <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {isDefined(collection.logo) ? (
+            {isDefined(collection) && isDefined(collection.logo) ? (
               collectionLogo
             ) : (
               <View style={[styles.collectionLogo, styles.logoFallBack]} />
             )}
 
             <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
-              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : collection.name}
+              {collectionName}
             </Text>
           </TouchableOpacity>
 

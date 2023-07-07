@@ -184,12 +184,12 @@ export const CollectiblesHome = () => {
           <View style={styles.profileActions}>
             {isDefined(alias) ? (
               <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
-                <Icon name={IconNameEnum.EditNew} />
+                <Icon name={IconNameEnum.EditNew} size={formatSize(24)} />
                 <Text style={styles.profileText}>EDIT PROFILE</Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
-                <Icon name={IconNameEnum.PlusCircle} size={formatSize(16)} />
+                <Icon name={IconNameEnum.PlusCircleNew} size={formatSize(24)} />
                 <Text style={styles.profileText}>CREATE PROFILE</Text>
               </TouchableOpacity>
             )}

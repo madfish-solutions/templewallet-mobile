@@ -28,6 +28,7 @@ export enum IconNameEnum {
   HourGlasses = 'HourGlasses',
   PlusSquare = 'PlusSquare',
   PlusCircle = 'PlusCircle',
+  PlusCircleNew = 'PlusCircleNew',
   InputXCircle = 'InputXCircle',
   X = 'X',
   XBold = 'XBold',

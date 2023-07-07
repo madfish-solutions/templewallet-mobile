@@ -108,9 +108,11 @@ export const MainStackScreen = () => {
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
   useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
   useAuthorisedInterval(
-    () => dispatch(loadCollectiblesDetailsActions.submit(selectedAccountPkh)),
+    () => {
+      dispatch(loadCollectiblesDetailsActions.submit(selectedAccountPkh));
+    },
     COLLECTIBLES_DETAILS_SYNC_INTERVAL,
-    refreshDeps
+    [selectedAccountPkh, selectedRpcUrl]
   );
   useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, refreshDeps);
   useAuthorisedInterval(

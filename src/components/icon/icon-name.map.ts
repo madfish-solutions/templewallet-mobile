@@ -94,6 +94,7 @@ import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
 import PlentyIcon from './assets/plenty.svg';
+import PlusCircleNewIcon from './assets/plus-circle-new.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
 import PlusIcon from './assets/plus-icon.svg';
@@ -105,7 +106,7 @@ import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
 import RetryIcon from './assets/retry.svg';
-import SearchIconNew from './assets/search-new.svg';
+import SearchNewIcon from './assets/search-new.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -126,7 +127,7 @@ import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
 import SwapInfo from './assets/swap-info.svg';
 import SwapRouteItemBackgroundIcon from './assets/swap-route-item-background.svg';
-import SwapSettingsNew from './assets/swap-settings-new.svg';
+import SwapSettingsNewIcon from './assets/swap-settings-new.svg';
 import SwapSettings from './assets/swap-settings.svg';
 import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
@@ -189,12 +190,13 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
+  [IconNameEnum.PlusCircleNew]: PlusCircleNewIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
   [IconNameEnum.SwapSettings]: SwapSettings,
-  [IconNameEnum.SwapSettingsNew]: SwapSettingsNew,
+  [IconNameEnum.SwapSettingsNew]: SwapSettingsNewIcon,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
   [IconNameEnum.XBold]: XBoldIcon,
@@ -267,7 +269,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ExternalLinkTag]: ExternalLinkTagIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.Search]: SearchIcon,
-  [IconNameEnum.SearchNew]: SearchIconNew,
+  [IconNameEnum.SearchNew]: SearchNewIcon,
   [IconNameEnum.XSearch]: XSearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.AlertMonochrome]: AlertMonochromeIcon,

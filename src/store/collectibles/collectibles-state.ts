@@ -1,12 +1,13 @@
 import { CollectibleDetailsInterface } from '../../token/interfaces/collectible-interfaces.interface';
+import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface CollectiblesState {
-  details: Record<string, CollectibleDetailsInterface>;
+  details: LoadableEntityState<Record<string, CollectibleDetailsInterface>>;
 }
 
 export const collectiblesInitialState: CollectiblesState = {
-  details: {}
+  details: createEntity({})
 };
 
 export interface CollectiblesRootState {

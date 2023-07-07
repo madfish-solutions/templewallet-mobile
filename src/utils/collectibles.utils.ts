@@ -10,7 +10,10 @@ import {
 } from '../apis/objkt/index';
 import { CollectibleAttributes } from '../apis/objkt/types';
 import { AttributeInfo } from '../interfaces/attribute.interface';
-import { CollectibleDetailsInterface } from '../token/interfaces/collectible-interfaces.interface';
+import {
+  CollectibleDetailsInterface,
+  CollectibleInterface
+} from '../token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 
 const attributesInfoInitialState: AttributeInfo[] = [
@@ -90,3 +93,20 @@ export const loadAllCollectiblesDetails$ = (
       return collectitblesDetailsRecord;
     })
   );
+
+export const getCollectibleDetails = (collectible: CollectibleInterface): CollectibleDetailsInterface => ({
+  description: collectible.description,
+  editions: collectible.editions,
+  isAdultContent: collectible.isAdultContent,
+  creators: collectible.creators,
+  collection: collectible.collection,
+  metadata: collectible.metadata,
+  attributes: collectible.attributes,
+  tags: collectible.tags,
+  timestamp: collectible.timestamp,
+  royalties: collectible.royalties,
+  mime: collectible.mime,
+  galleries: collectible.galleries,
+  listingsActive: collectible.listingsActive,
+  artifactUri: collectible.artifactUri
+});
