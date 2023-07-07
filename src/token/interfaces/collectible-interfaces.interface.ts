@@ -43,6 +43,8 @@ interface Galleries {
 }
 
 export interface ListingsActive {
+  amount?: number;
+  sellerAddress?: string;
   bigmapKey: number;
   currencyId: number;
   price: number;
@@ -52,10 +54,11 @@ export interface ListingsActive {
   };
 }
 
-export interface CollectibleCommonInterface {
+export interface CollectibleCommonInterface extends TokenInterface {
   description: string;
   editions: number;
   isAdultContent?: boolean;
+  listingsActive: ListingsActive[];
 }
 
 interface OfferInteface {
@@ -77,10 +80,9 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   royalties: Royalties[];
   mime: string;
   galleries: Galleries[];
-  listingsActive: ListingsActive[];
   artifactUri?: string;
 }
 
-export interface CollectibleOfferInteface extends CollectibleCommonInterface, TokenInterface, OfferInteface {}
+export interface CollectibleOfferInteface extends CollectibleCommonInterface, OfferInteface {}
 
-export interface CollectibleInterface extends CollectibleCommonInterface, TokenInterface, CollectibleDetailsInterface {}
+export interface CollectibleInterface extends CollectibleCommonInterface, CollectibleDetailsInterface {}

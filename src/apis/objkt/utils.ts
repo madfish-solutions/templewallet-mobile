@@ -72,7 +72,14 @@ export const transformCollectiblesArray = (
         decimals: currencyInfoById[lastPriceCurrencyId]?.decimals
       },
       listed: listedBySelectedUser,
-      items: token.fa.items
+      items: token.fa.items,
+      listingsActive: token.listings_active.map(item => ({
+        bigmapKey: item.bigmap_key,
+        currency: item.currency,
+        currencyId: item.currency_id,
+        marketplaceContract: item.marketplace_contract,
+        price: item.price
+      }))
     };
   });
 

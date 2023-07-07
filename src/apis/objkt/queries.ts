@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 
 import { fromTokenSlug } from '../../utils/from-token-slug';
+import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
 
 export const buildGetCollectiblesInfoQuery = (address: string) => gql`
   query MyQuery {
@@ -8,7 +9,6 @@ export const buildGetCollectiblesInfoQuery = (address: string) => gql`
       where: {
         _or: [
           { creator_address: { _eq: "${address}" } }
-          { collaborators: { collaborator_address: { _eq: "${address}" } } }
           {
             tokens: {
               creators: { creator_address: { _eq: "${address}" }, verified: { _eq: true } }
@@ -59,7 +59,7 @@ export const buildGetCollectiblesByCollectionQuery = (
 ) => gql`query MyQuery {
   token(
     where: {fa_contract: {_eq: "${contract}"}, supply: {_gt: "0"}, creators: {creator_address: {_eq: "${address}"}}}
-    limit: 15
+    limit: ${PAGINATION_STEP_FA}
     offset: ${offset}
     order_by: {token_id: asc}) {
     artifact_uri
@@ -100,9 +100,16 @@ export const buildGetCollectiblesByCollectionQuery = (
       currency_id
       timestamp
     }
-    listings_active {
+    listings_active(order_by: {price_xtz: asc}) {
       amount
       seller_address
+      bigmap_key
+      currency_id
+      marketplace_contract
+      price
+      currency {
+        type
+      }
     }
     fa {
       items
@@ -118,7 +125,7 @@ query MyQuery {
   ) {
     gallery_id
     tokens(
-      limit: 15
+      limit: ${PAGINATION_STEP_GALLERY}
       offset: ${offset}
     ) {
       token {
@@ -160,9 +167,16 @@ query MyQuery {
           currency_id
           timestamp
         }
-        listings_active {
+        listings_active(order_by: {price_xtz: asc}) {
           amount
           seller_address
+          bigmap_key
+          currency_id
+          marketplace_contract
+          price
+          currency {
+            type
+          }
         }
         fa {
           items

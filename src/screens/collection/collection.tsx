@@ -4,7 +4,9 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
+import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from 'src/apis/objkt/constants';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
@@ -19,10 +21,9 @@ import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
 
 const COLLECTIBLE_SIZE = 327;
-const PAGINATION_STEP = 15;
 const VIEWABILITY_CONFIG = {
   itemVisiblePercentThreshold: 50,
-  minimumViewTime: 200
+  minimumViewTime: 0
 };
 
 const keyExtractor = (item: TokenInterface) => `${item.address}_${item.id}`;
@@ -42,7 +43,18 @@ export const Collection = () => {
     params.galleryId
   );
 
-  const { setInnerScreenIndex } = useInnerScreenProgress(collectibles.length);
+  const PAGINATION_STEP = useMemo(
+    () => (params.type === ObjktTypeEnum.faContract ? PAGINATION_STEP_FA : PAGINATION_STEP_GALLERY),
+    []
+  );
+
+  const screenProgressAmount = useMemo(
+    () =>
+      params.type === ObjktTypeEnum.gallery ? collectibles?.[0]?.items ?? collectibles.length : collectibles.length,
+    [collectibles]
+  );
+
+  const { setInnerScreenIndex } = useInnerScreenProgress(screenProgressAmount);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
     if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {
@@ -82,31 +94,38 @@ export const Collection = () => {
   );
 
   return (
-    <ScrollView style={styles.root}>
-      <FlatList
-        data={collectibles}
-        renderItem={renderItem}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        onViewableItemsChanged={handleChanged}
-        removeClippedSubviews={true}
-        snapToInterval={snapToInterval}
-        viewabilityConfig={VIEWABILITY_CONFIG}
-        decelerationRate={0}
-        scrollEventThrottle={16}
-        keyExtractor={keyExtractor}
-        onEndReached={() => {
-          if (collectibles.length % PAGINATION_STEP === 0 && !isLoading) {
-            setOffset(offset + PAGINATION_STEP);
-          }
-        }}
-        onEndReachedThreshold={0.5}
-        ListEmptyComponent={emptyComponent}
-        ListFooterComponent={footerComponent}
-        ListHeaderComponent={<View style={styles.emptyBlock} />}
-        windowSize={3}
-        initialNumToRender={3}
-      />
+    <ScrollView style={styles.root} contentContainerStyle={styles.scrollViewContainer}>
+      {isLoading && offset === 0 ? (
+        <View>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <FlatList
+          data={collectibles}
+          renderItem={renderItem}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          onViewableItemsChanged={handleChanged}
+          removeClippedSubviews={true}
+          snapToInterval={snapToInterval}
+          viewabilityConfig={VIEWABILITY_CONFIG}
+          decelerationRate={0}
+          scrollEventThrottle={16}
+          disableIntervalMomentum
+          keyExtractor={keyExtractor}
+          onEndReached={() => {
+            if (collectibles.length % PAGINATION_STEP === 0 && !isLoading) {
+              setOffset(offset + PAGINATION_STEP);
+            }
+          }}
+          onEndReachedThreshold={0.5}
+          ListEmptyComponent={emptyComponent}
+          ListFooterComponent={footerComponent}
+          ListHeaderComponent={<View style={styles.emptyBlock} />}
+          windowSize={3}
+          initialNumToRender={3}
+        />
+      )}
     </ScrollView>
   );
 };

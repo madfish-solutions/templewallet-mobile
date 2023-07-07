@@ -76,3 +76,7 @@ export const collectibleInfoInitialValue = {
   galleries: [],
   listingsActive: []
 };
+
+export const PAGINATION_STEP_FA = 500;
+
+export const PAGINATION_STEP_GALLERY = 15;

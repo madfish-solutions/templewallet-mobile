@@ -1,7 +1,6 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { AttributeInfo } from 'src/interfaces/attribute.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
-import { Listing } from 'src/token/interfaces/token-metadata.interface';
 
 import { MarketPlaceEventEnum } from './enums';
 
@@ -56,7 +55,7 @@ export interface CollectibleResponse {
     price: number | null;
     currency_id: number;
   }[];
-  listings_active: Listing[];
+  listings_active: ListingResponse[];
   fa: {
     items: number;
   };
@@ -119,6 +118,11 @@ export interface ListingsActiveResponse {
   currency: {
     type: string;
   };
+}
+
+export interface ListingResponse extends ListingsActiveResponse {
+  amount: number;
+  seller_address: string;
 }
 
 export interface CollectibleDetailsResponse {

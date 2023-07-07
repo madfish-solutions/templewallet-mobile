@@ -4,10 +4,6 @@ export enum TokenStandardsEnum {
   Fa2 = 'fa2',
   Fa12 = 'fa12'
 }
-export interface Listing {
-  amount: number;
-  seller_address: string;
-}
 
 export interface TokenMetadataInterface {
   id: number;

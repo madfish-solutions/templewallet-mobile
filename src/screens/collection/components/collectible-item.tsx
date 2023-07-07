@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useMemo } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
@@ -9,6 +10,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 
 import { CollectibleIcon } from '../../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../../components/collectible-icon/collectible-icon.props';
+import { useBuyCollectible } from '../../../hooks/use-buy-collectible.hook';
 import { formatSize } from '../../../styles/format-size';
 import { CollectibleOfferInteface } from '../../../token/interfaces/collectible-interfaces.interface';
 import { navigateToObjktForBuy } from '../utils';
@@ -42,6 +44,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holderAddress) ?? [];
   const isHolder = useMemo(() => holders.includes(selectedPublicKeyHash), [selectedPublicKeyHash]);
   const isOffersExisted = isDefined(item.highestOffer);
+
   const listedByUser = item.listed ?? 0;
   const quantityByUser = useMemo(
     () => item?.holders?.find(holder => holder.holderAddress === selectedPublicKeyHash)?.quantity ?? 0,
@@ -49,8 +52,23 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   );
 
   const isAbleToList = quantityByUser > listedByUser;
+  const isListed = isNonEmptyArray(item.listingsActive);
 
   const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
+
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(item);
+
+  const fxHashListed = item?.listingsActive?.find(listing => listing.sellerAddress === selectedPublicKeyHash);
+
+  const buttonText = useMemo(() => {
+    if (isListed) {
+      const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
+
+      return `buy for ${price} ${purchaseCurrency.symbol}`;
+    }
+
+    return 'Not listed';
+  }, []);
 
   return (
     <View style={styles.collectibleContainer}>
@@ -85,18 +103,19 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
             </View>
           </View>
         </View>
-        {isHolder && (
-          <View style={styles.buttonContainer}>
-            <OfferButton
-              isHolder={isHolder}
-              isOffersExisted={isOffersExisted}
-              highestOffer={highestOffer}
-              item={item}
-              selectedPublicKeyHash={selectedPublicKeyHash}
-              selectedRpc={selectedRpc}
-              collectionContract={collectionContract}
-            />
-            <View>
+
+        <View style={styles.buttonContainer}>
+          <OfferButton
+            isHolder={isHolder}
+            isOffersExisted={isOffersExisted}
+            highestOffer={highestOffer}
+            item={item}
+            selectedPublicKeyHash={selectedPublicKeyHash}
+            selectedRpc={selectedRpc}
+            collectionContract={collectionContract}
+          />
+          <View>
+            {isHolder || !!fxHashListed ? (
               <TouchableOpacity
                 onPress={handleList}
                 style={[
@@ -114,9 +133,27 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
                   {!isAbleToList ? 'Listed' : 'List'}
                 </Text>
               </TouchableOpacity>
-            </View>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.sellButton,
+                  conditionalStyle(isListed, styles.listButtonActive, styles.listButtonNotListed)
+                ]}
+                onPress={buyCollectible}
+                disabled={!isListed}
+              >
+                <Text
+                  style={[
+                    styles.sellButtonText,
+                    conditionalStyle(isListed, styles.listButtonActiveText, styles.listButtonDisabled)
+                  ]}
+                >
+                  {buttonText}
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-        )}
+        </View>
       </View>
     </View>
   );
