@@ -146,15 +146,17 @@ export const CollectibleModal = () => {
   }, [fa.logo]);
 
   const handleShare = useCallback(async () => {
+    const urlEncodedData = encodeURIComponent(JSON.stringify({ ...collectible, description: '', holders: undefined }));
+
     try {
-      const dynamicLink = await getTempleDynamicLink(
-        `/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`,
-        {
-          title: collectible.name,
-          descriptionText: description,
-          imageUrl: formatImgUri(collectible.thumbnailUri, ImageResolutionEnum.MEDIUM)
-        }
-      );
+      const dynamicLink = await getTempleDynamicLink(`/nft?jsonData=${urlEncodedData}`, {
+        title: collectible.name,
+        descriptionText: isString(description) ? description : undefined,
+        imageUrl: isDefined(collectible.thumbnailUri)
+          ? formatImgUri(collectible.thumbnailUri, ImageResolutionEnum.MEDIUM)
+          : undefined
+      });
+
       await Share.share({
         message: SHARE_NFT_CONTENT + dynamicLink
       });
@@ -222,11 +224,9 @@ export const CollectibleModal = () => {
           <Text style={styles.name}>{collectible.name}</Text>
         </View>
 
-        {isString(description) && (
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.description}>{description}</Text>
-          </View>
-        )}
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.description}>{description}</Text>
+        </View>
 
         {isNonEmptyArray(creators) && (
           <View style={styles.creatorsContainer}>
