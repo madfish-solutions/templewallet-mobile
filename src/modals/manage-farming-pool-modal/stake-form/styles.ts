@@ -1,4 +1,4 @@
-import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized, createUseStylesConfigMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography }) => ({
@@ -34,5 +34,14 @@ export const useStakeFormStyles = createUseStylesMemoized(({ colors, typography 
     letterSpacing: formatTextSize(-0.24),
     color: colors.black,
     marginLeft: formatSize(10)
+  }
+}));
+
+export const useAssetAmountInputStylesConfig = createUseStylesConfigMemoized(({ colors }) => ({
+  balanceText: {
+    color: colors.black
+  },
+  amountInput: {
+    borderRightWidth: formatSize(1)
   }
 }));

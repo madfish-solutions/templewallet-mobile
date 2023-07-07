@@ -16,6 +16,7 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormDropdown } from 'src/form/form-dropdown';
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { UserStakeValueInterface } from 'src/store/farms/state';
+import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -26,7 +27,7 @@ import { isAssetSearched } from 'src/utils/token-metadata.utils';
 import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
-import { useWithdrawFormStyles } from './styles';
+import { useAssetAmountInputStylesConfig, useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
 import { WithdrawFormValues, WithdrawTokenOption } from './use-withdraw-formik';
 
@@ -48,16 +49,6 @@ const getTokenDropdownItemToken = (value?: WithdrawTokenOption) =>
     balance: value.amount?.toFixed() ?? ''
   };
 
-const renderTokenOptionValue: DropdownValueComponent<WithdrawTokenOption> = ({ value }) => (
-  <DropdownItemContainer>
-    <TokenDropdownItem
-      isShowBalanceLoading={isDefined(value) && !isDefined(value.amount)}
-      token={getTokenDropdownItemToken(value)}
-      actionIconName={IconNameEnum.TriangleDown}
-    />
-  </DropdownItemContainer>
-);
-
 const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> = ({ item, isSelected }) => (
   <TokenDropdownItem
     isShowBalanceLoading={!isDefined(item.amount)}
@@ -67,6 +58,7 @@ const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> 
 );
 
 export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => {
+  const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
   const { stakedToken, depositExchangeRate } = farm.item;
   const { setFieldTouched, setFieldValue, values } = formik;
   const { amountOptionIndex, tokenOption } = values;
@@ -77,6 +69,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
         .dividedToIntegerBy(100),
     [stake?.depositAmountAtomic, amountOptionIndex]
   );
+  const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
   const tokensOptions = useTokensOptions(farm.item, lpAmountAtomic);
   const prevTokensOptionsRef = useRef<WithdrawTokenOption[]>();
   const [tokenSearchValue, setTokenSearchValue] = useState('');
@@ -86,6 +79,19 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
   );
   const styles = useWithdrawFormStyles();
   const stakesLoading = useStakesLoadingSelector();
+
+  const renderTokenOptionValue = useCallback<DropdownValueComponent<WithdrawTokenOption>>(
+    ({ value }) => (
+      <DropdownItemContainer style={styles.tokenSelector}>
+        <TokenDropdownItem
+          isShowBalanceLoading={isDefined(value) && !isDefined(value.amount)}
+          token={getTokenDropdownItemToken(value)}
+          actionIconName={IconNameEnum.TriangleDown}
+        />
+      </DropdownItemContainer>
+    ),
+    [styles]
+  );
 
   const handleTokenOptionChange = useCallback(() => void setFieldTouched('tokenOption', true), [setFieldTouched]);
 
@@ -121,9 +127,12 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
       name: '',
       thumbnailUri: stakedToken.metadata.thumbnailUri,
       address: stakedToken.contractAddress,
-      exchangeRate: isDefined(depositExchangeRate) ? Number(depositExchangeRate) : undefined
+      exchangeRate:
+        isDefined(depositExchangeRate) && isDefined(fiatToUsdExchangeRate)
+          ? Number(depositExchangeRate) * fiatToUsdExchangeRate
+          : undefined
     }),
-    [stake?.depositAmountAtomic, stakedToken, depositExchangeRate]
+    [stake?.depositAmountAtomic, stakedToken, depositExchangeRate, fiatToUsdExchangeRate]
   );
 
   const amountInputAssetsList = useMemo<TokenInterface[]>(() => [lpToken], [lpToken]);
@@ -149,6 +158,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
           editable={false}
           isShowNameForValue={false}
           isSingleAsset={true}
+          stylesConfig={assetAmountInputStylesConfig}
           testID={ManageFarmingPoolModalSelectors.sharesAmountInput}
           onValueChange={noop}
         />

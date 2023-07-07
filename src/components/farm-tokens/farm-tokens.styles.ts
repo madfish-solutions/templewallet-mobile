@@ -6,12 +6,23 @@ export const useFarmTokensStyles = createUseStyles(({ colors, typography }) => (
     flexDirection: 'row'
   },
   tokensContainer: {
-    position: 'relative'
+    position: 'relative',
+    height: formatSize(36)
   },
   nextToken: {
     marginLeft: formatSize(-8)
   },
-  rewardToken: { position: 'absolute', bottom: 0, right: formatSize(-8) },
+  rewardTokenWrapper: {
+    position: 'absolute',
+    top: formatSize(14),
+    right: formatSize(-6),
+    backgroundColor: colors.cardBG,
+    borderRadius: formatSize(12),
+    width: formatSize(24),
+    height: formatSize(24),
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   stakeTokenSymbols: {
     ...typography.caption13Semibold,
     color: colors.black,

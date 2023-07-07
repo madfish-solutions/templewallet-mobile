@@ -37,10 +37,7 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
     color: colors.black
   },
   tokensContainer: {
-    paddingBottom: formatSize(8),
-    borderBottomWidth: formatSize(1),
-    marginBottom: formatSize(8),
-    borderColor: colors.lines
+    paddingBottom: formatSize(10)
   },
   bage: {
     position: 'relative',

@@ -19,7 +19,7 @@ import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
-import { useStakeFormStyles } from './styles';
+import { useAssetAmountInputStylesConfig, useStakeFormStyles } from './styles';
 import { StakeFormValues } from './use-stake-formik';
 
 interface StakeFormProps {
@@ -42,6 +42,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
   const { asset } = values.assetAmount;
 
   const styles = useStakeFormStyles();
+  const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
   const { stakeTokens: assetsList } = useFarmTokens(farm?.item);
   const prevAssetsListRef = useRef(assetsList);
   const { filteredAssetsList, setSearchValue: setSearchValueFromTokens } = useFilteredAssetsList(
@@ -87,11 +88,11 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
         <FormAssetAmountInput
           name="assetAmount"
           label="Amount"
-          balanceValueStyles={styles.balanceText}
           expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
           isSearchable
           maxButton
           assetsList={filteredAssetsList}
+          stylesConfig={assetAmountInputStylesConfig}
           onValueChange={handleAssetAmountChange}
           setSearchValue={setSearchValueFromTokens}
           testID={ManageFarmingPoolModalSelectors.amountInput}

@@ -40,7 +40,7 @@ export const createUseStylesMemoized = <T extends NamedStyles<T>>(stylesFn: (pro
 };
 
 /** Do not use if stylesFn is a hook itself */
-const createUseStylesConfigMemoized =
+export const createUseStylesConfigMemoized =
   <T extends NamedStyles<T> = ButtonStyleConfig>(stylesFn: (props: CStylesFnProps) => T) =>
   () => {
     const colors = useColors();
