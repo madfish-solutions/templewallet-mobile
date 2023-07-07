@@ -33,12 +33,9 @@ export const EarnOpportunityTokens: FC<Props> = ({ stakeTokens, rewardToken }) =
               style={conditionalStyle(index > 0, styles.nextToken)}
             />
           ))}
-          <TokenIcon
-            iconName={rewardToken.iconName}
-            thumbnailUri={rewardToken.thumbnailUri}
-            size={formatSize(20)}
-            style={styles.rewardToken}
-          />
+          <View style={styles.rewardTokenWrapper}>
+            <TokenIcon iconName={rewardToken.iconName} thumbnailUri={rewardToken.thumbnailUri} size={formatSize(20)} />
+          </View>
         </View>
         <Divider size={formatSize(14)} />
         <View>
