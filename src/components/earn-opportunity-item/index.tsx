@@ -12,7 +12,9 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EmptyFn } from 'src/config/general';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { KNOWN_STABLECOINS_SLUGS } from 'src/token/data/token-slugs';
@@ -43,6 +45,7 @@ export const EarnOpportunityItem: FC<Props> = ({
 }) => {
   const { apr, stakedToken, depositExchangeRate, earnExchangeRate, type: itemType, vestingPeriodSeconds } = item;
   const colors = useColors();
+  const theme = useThemeSelector();
   const styles = useEarnOpportunityItemStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
   const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
@@ -55,6 +58,7 @@ export const EarnOpportunityItem: FC<Props> = ({
       ),
     [item.tokens]
   );
+  const youvesIconName = theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
 
   const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
   const apy = useMemo(() => (isDefined(apr) ? aprToApy(Number(apr)).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
@@ -95,7 +99,7 @@ export const EarnOpportunityItem: FC<Props> = ({
               <Icon
                 style={styles.earnSourceIcon}
                 size={formatSize(12)}
-                name={itemIsFarm ? IconNameEnum.QsEarnSource : IconNameEnum.YouvesEarnSource}
+                name={itemIsFarm ? IconNameEnum.QsEarnSource : youvesIconName}
               />
               <Text style={styles.attributeTitle}>{itemIsFarm ? 'Quipuswap' : 'Youves'}</Text>
             </View>
