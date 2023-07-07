@@ -1,10 +1,10 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { BigNumber } from 'bignumber.js';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
+import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
@@ -18,17 +18,21 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from '../../components/touchable-with-analytics';
-import { useCollectibleInfo } from '../../hooks/collectible-info/use-collectible-info.hook';
+import { ONE_MINUTE } from '../../config/fixed-times';
 import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
 import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
+import { useFetchCollectibleAttributes } from '../../hooks/use-fetch-collectible-attributes.hook';
+import { useAuthorisedInterval } from '../../hooks/use-interval.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
+import { updateCollectibleDetailsAction } from '../../store/collectibles/collectibles-actions';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
+import { formatNumber } from '../../utils/format-price';
 import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { ImageResolutionEnum, formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -36,12 +40,11 @@ import { isString } from '../../utils/is-string';
 import { openUrl } from '../../utils/linking.util';
 import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
 import { getTruncatedProps } from '../../utils/style.util';
-import { mutezToTz } from '../../utils/tezos.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
 import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
-import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME, COLLECTION_ICON_SIZE } from './constants';
+import { COLLECTION_ICON_SIZE } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
 enum SegmentControlNamesEnum {
@@ -59,79 +62,77 @@ const SEGMENT_VALUES = [
 const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = () => {
-  const [scrollEnabled, setScrollEnabled] = useState(true);
-
   const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const { width } = Dimensions.get('window');
   const iconSize = width - formatSize(32);
 
-  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
+  usePageAnalytic(ModalsEnum.CollectibleModal);
 
-  const [segmentControlIndex, setSegmentControlIndex] = useState(0);
+  const { trackEvent } = useAnalytics();
+  const dispatch = useDispatch();
 
   const styles = useCollectibleModalStyles();
 
-  const { collectibleInfo, isLoading } = useCollectibleInfo(collectible.address, collectible.id.toString());
-
-  const burnCollectible = useBurnCollectible(collectible);
-
-  const { handleSubmit, purchaseCurrency } = useBuyCollectible(collectibleInfo, collectible);
+  const [segmentControlIndex, setSegmentControlIndex] = useState(0);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
 
   const {
-    fa,
+    collection,
     creators,
     description,
     metadata,
     timestamp,
     royalties,
-    supply,
-    attributes,
+    editions,
     galleries,
-    listings_active,
+    listingsActive,
     mime
-  } = collectibleInfo;
+  } = collectible;
 
-  const filteredAttributes = attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME);
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
+  const burnCollectible = useBurnCollectible(collectible);
+  const { attributes, isLoading } = useFetchCollectibleAttributes(collectible);
+  const { buyCollectible, purchaseCurrency, isLoadingDetails } = useBuyCollectible(collectible);
 
-  const isAttributesExist = filteredAttributes.length > 0;
+  useAuthorisedInterval(
+    () => {
+      if (!isUserOwnerCurrentCollectible) {
+        dispatch(updateCollectibleDetailsAction.submit(collectible));
+      }
+    },
+    ONE_MINUTE,
+    [collectible, isUserOwnerCurrentCollectible]
+  );
+
+  const isAttributesExist = attributes.length > 0;
 
   const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 3);
-
-  const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
-  const disabledOffers = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Offers);
-
-  const isPropertiesSelected = propertiesIndex === segmentControlIndex;
-
-  usePageAnalytic(ModalsEnum.CollectibleModal);
-  const { trackEvent } = useAnalytics();
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
 
   const submitButtonTitle = useMemo(() => {
-    if (isLoading) {
-      return '...';
+    if (isLoadingDetails && !isUserOwnerCurrentCollectible) {
+      return '';
     }
 
     if (isUserOwnerCurrentCollectible) {
       return 'Send';
     }
 
-    if (!isNonEmptyArray(listings_active)) {
+    if (!isNonEmptyArray(listingsActive)) {
       return 'Not listed';
     }
 
-    const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
-
-    return `Buy for ${price.toFixed(2)} ${purchaseCurrency.symbol}`;
-  }, [isUserOwnerCurrentCollectible, listings_active, isLoading]);
+    return `Buy for ${formatNumber(purchaseCurrency.priceToDisplay)} ${purchaseCurrency.symbol}`;
+  }, [isUserOwnerCurrentCollectible, purchaseCurrency, listingsActive, isLoadingDetails]);
 
   const collectionLogo = useMemo(() => {
-    if (fa.logo) {
-      if (fa.logo.endsWith('.svg')) {
+    if (isDefined(collection) && isDefined(collection.logo)) {
+      if (collection.logo.endsWith('.svg')) {
         return (
           <SvgUri
-            uri={fa.logo}
+            uri={collection.logo}
             height={COLLECTION_ICON_SIZE}
             width={COLLECTION_ICON_SIZE}
             style={styles.collectionLogo}
@@ -139,11 +140,11 @@ export const CollectibleModal = () => {
         );
       }
 
-      return <FastImage source={{ uri: formatImgUri(fa.logo) }} style={styles.collectionLogo} />;
+      return <FastImage source={{ uri: formatImgUri(collection.logo) }} style={styles.collectionLogo} />;
     }
 
     return null;
-  }, [fa.logo]);
+  }, [collection]);
 
   const handleShare = useCallback(async () => {
     try {
@@ -172,14 +173,32 @@ export const CollectibleModal = () => {
     }
   }, [description]);
 
+  const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
+  const disabledOffers = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Offers);
+
+  const isPropertiesSelected = propertiesIndex === segmentControlIndex;
+
+  const collectionName = useMemo(() => {
+    if (isNonEmptyArray(galleries)) {
+      return galleries[0].gallery.name;
+    }
+
+    if (isDefined(collection)) {
+      return collection.name;
+    }
+
+    return 'Unkown collection';
+  }, [galleries, collection]);
+
   return (
     <ScreenContainer
       fixedFooterContainer={{
         submitButton: (
           <ButtonLargePrimary
-            disabled={isLoading || (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listings_active))}
+            disabled={(!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)) || isLoadingDetails}
             title={submitButtonTitle}
-            onPress={handleSubmit}
+            isLoading={isLoadingDetails}
+            onPress={buyCollectible}
             testID={CollectibleModalSelectors.sendButton}
           />
         )
@@ -193,7 +212,7 @@ export const CollectibleModal = () => {
         <CollectibleIcon
           collectible={collectible}
           mime={mime}
-          objktArtifact={collectibleInfo.artifact_uri}
+          objktArtifact={collectible.artifactUri}
           size={iconSize}
           iconSize={CollectibleIconSize.BIG}
           setScrollEnabled={setScrollEnabled}
@@ -204,10 +223,14 @@ export const CollectibleModal = () => {
 
         <View style={styles.collectionContainer}>
           <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {isDefined(fa.logo) ? collectionLogo : <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+            {isDefined(collection) && isDefined(collection.logo) ? (
+              collectionLogo
+            ) : (
+              <View style={[styles.collectionLogo, styles.logoFallBack]} />
+            )}
 
             <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
-              {isNonEmptyArray(galleries) ? galleries[0].gallery.name : fa.name}
+              {collectionName}
             </Text>
           </TouchableOpacity>
 
@@ -261,7 +284,7 @@ export const CollectibleModal = () => {
           <CollectibleProperties
             contract={collectible.address}
             tokenId={collectible.id}
-            editions={supply}
+            editions={editions}
             metadata={metadata}
             minted={timestamp}
             owned={collectible.balance}
@@ -269,9 +292,7 @@ export const CollectibleModal = () => {
           />
         )}
 
-        {!isLoading && !isPropertiesSelected && isAttributesExist && (
-          <CollectibleAttributes attributes={filteredAttributes} />
-        )}
+        {!isLoading && !isPropertiesSelected && isAttributesExist && <CollectibleAttributes attributes={attributes} />}
 
         {isUserOwnerCurrentCollectible && (
           <View style={styles.burnContainer}>

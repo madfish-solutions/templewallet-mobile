@@ -1,24 +1,28 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { currencyInfoById } from '../apis/objkt/constants';
 import { Route3TokenStandardEnum } from '../enums/route3.enum';
 import {
   FxHashBuyCollectibleContractInterface,
   ObjktBuyCollectibleContractInterface
 } from '../interfaces/buy-collectible.interface';
-import { CollectibleInfo } from '../interfaces/collectible-info.interface';
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
 import { OBJKT_MARKETPLACE_CONTRACT } from '../modals/collectible-modal/constants';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
+import {
+  useCollectibleDetailsLoadingSelector,
+  useCollectibleDetailsSelector
+} from '../store/collectibles/collectibles-selectors';
 import { navigateAction } from '../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { TokenInterface } from '../token/interfaces/token.interface';
+import { CollectibleInterface } from '../token/interfaces/collectible-interfaces.interface';
+import { getTokenSlug } from '../token/utils/token.utils';
+import { getPurchaseCurrency } from '../utils/get-pusrchase-currency.util';
 import { isDefined } from '../utils/is-defined';
 import { createTezosToolkit } from '../utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from '../utils/swap-permissions.util';
@@ -28,8 +32,11 @@ const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible: TokenInterface) => {
-  const { listings_active } = collectibleInfo;
+export const useBuyCollectible = (collectible: CollectibleInterface) => {
+  const data = useCollectibleDetailsSelector(getTokenSlug(collectible));
+  const isLoadingDetails = useCollectibleDetailsLoadingSelector();
+
+  const listingsActive = isDefined(data) && isNonEmptyArray(data.listingsActive) ? data.listingsActive : [];
 
   const selectedRpc = useSelectedRpcUrlSelector();
   const tezos = createTezosToolkit(selectedRpc);
@@ -40,8 +47,8 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
 
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
 
-  const marketplace = isNonEmptyArray(listings_active)
-    ? listings_active[0].marketplace_contract
+  const marketplace = isNonEmptyArray(listingsActive)
+    ? listingsActive[0].marketplaceContract
     : OBJKT_MARKETPLACE_CONTRACT;
 
   const [marketplaceContract, setMarketplaceContract] = useState<
@@ -54,41 +61,24 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
       .then(setMarketplaceContract);
   }, [marketplace]);
 
-  const purchaseCurrency = useMemo(() => {
-    if (!isNonEmptyArray(listings_active)) {
-      return {
-        price: 0,
-        contract: null,
-        decimals: 0,
-        id: null,
-        symbol: ''
-      };
-    }
+  const purchaseCurrency = getPurchaseCurrency(listingsActive);
 
-    const { price, currency_id } = listings_active[0];
-    const currentCurrency = currencyInfoById[currency_id];
-
-    return { price, ...currentCurrency };
-  }, [collectibleInfo]);
-
-  const handleSubmit = async () => {
+  const buyCollectible = async () => {
     if (isUserOwnerCurrentCollectible) {
       return navigate(ModalsEnum.Send, { token: collectible });
     }
 
     const getTransferParams = () => {
-      if (isDefined(marketplaceContract) && isNonEmptyArray(listings_active)) {
-        const isTezosCurrency = listings_active[0].currency_id === TEZOS_ID_OBJKT;
+      if (isDefined(marketplaceContract) && isNonEmptyArray(listingsActive)) {
+        const isTezosCurrency = listingsActive[0].currencyId === TEZOS_ID_OBJKT;
         const params = isTezosCurrency
           ? { amount: purchaseCurrency.price, mutez: true, source: selectedAccount.publicKeyHash }
           : {};
 
         if (OBJKT_BUY_METHOD in marketplaceContract?.methods) {
-          return [marketplaceContract.methods.fulfill_ask(listings_active[0].bigmap_key).toTransferParams(params)];
+          return [marketplaceContract.methods.fulfill_ask(listingsActive[0].bigmapKey).toTransferParams(params)];
         } else {
-          return [
-            marketplaceContract.methods.listing_accept(listings_active[0].bigmap_key, 1).toTransferParams(params)
-          ];
+          return [marketplaceContract.methods.listing_accept(listingsActive[0].bigmapKey, 1).toTransferParams(params)];
         }
       }
 
@@ -97,7 +87,9 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
 
     const transferParams = getTransferParams();
 
-    const isTokenFa2 = listings_active[0].currency.type === Route3TokenStandardEnum.fa2;
+    const isTokenFa2 = isNonEmptyArray(listingsActive)
+      ? listingsActive[0].currency.type === Route3TokenStandardEnum.fa2
+      : true;
 
     const tokenToSpend = {
       id: Number(purchaseCurrency.id ?? 0),
@@ -131,5 +123,5 @@ export const useBuyCollectible = (collectibleInfo: CollectibleInfo, collectible:
     );
   };
 
-  return { handleSubmit, purchaseCurrency };
+  return { buyCollectible, purchaseCurrency, isLoadingDetails };
 };

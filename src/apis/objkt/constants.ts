@@ -57,3 +57,22 @@ export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
 };
 
 export const ADULT_ATTRIBUTE_NAME = '__nsfw_';
+
+export const collectibleInfoInitialValue = {
+  description: '',
+  creators: [],
+  collection: {
+    name: '',
+    logo: '',
+    items: 0
+  },
+  metadata: '',
+  attributes: [],
+  tags: [],
+  timestamp: '',
+  royalties: [],
+  editions: 0,
+  mime: '',
+  galleries: [],
+  listingsActive: []
+};

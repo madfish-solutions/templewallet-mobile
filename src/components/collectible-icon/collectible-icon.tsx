@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useState, memo } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
@@ -7,7 +7,6 @@ import { AudioPlaceholder } from 'src/components/audio-placeholder/audio-placeho
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
-import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import {
   ImageResolutionEnum,
@@ -18,6 +17,9 @@ import {
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { formatSize } from '../../styles/format-size';
+import { Icon } from '../icon/icon';
+import { IconNameEnum } from '../icon/icon-name.enum';
 import { ImageBlurOverlay } from '../image-blur-overlay/image-blur-overlay';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
@@ -31,10 +33,12 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     objktArtifact,
     setScrollEnabled,
     blurLayoutTheme,
-    isTouchableBlurOverlay
+    isTouchableBlurOverlay,
+    isShowInfo = false
   }) => {
+    const isAdultContent = collectible.isAdultContent ?? false;
     const [isLoading, setIsLoading] = useState(true);
-    const [isShowBlur, setIsShowBlur] = useState(collectible.isAdultContent ?? false);
+    const [isShowBlur, setIsShowBlur] = useState(isAdultContent);
 
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
     const styles = useCollectibleIconStyles();
@@ -120,7 +124,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
 
       return (
         <FastImage
-          style={styles.image}
+          style={[styles.image, { height: size, width: size }]}
           source={{ uri: currentFallback }}
           onError={handleError}
           onLoadEnd={handleLoadEnd}
@@ -129,7 +133,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     }, [mime, objktArtifact, currentFallback]);
 
     const imageWithBlur = useMemo(() => {
-      if (Boolean(collectible.isAdultContent)) {
+      if (Boolean(isAdultContent)) {
         return (
           <ImageBlurOverlay
             theme={blurLayoutTheme}
@@ -144,17 +148,22 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
 
       return image;
-    }, [image, collectible.isAdultContent, isShowBlur]);
+    }, [image, isAdultContent, isShowBlur]);
 
     return (
       <View
         style={{
           width: size,
-          height: size,
-          padding: formatSize(2)
+          height: size
         }}
       >
         {imageWithBlur}
+        {isShowInfo && (
+          <View style={styles.balanceContainer}>
+            <Text style={styles.balanceText}>{collectible.balance}</Text>
+            <Icon name={IconNameEnum.Action} size={formatSize(8)} />
+          </View>
+        )}
         {isLoading && !isShowBlur && (
           <View style={styles.loader}>
             <ActivityIndicator size={iconSize === CollectibleIconSize.SMALL ? 'small' : 'large'} />

@@ -1,4 +1,3 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 import memoize from 'mem';
 import { from, Observable, of } from 'rxjs';
@@ -8,11 +7,8 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { tezosMetadataApi, whitelistApi } from '../api.service';
-import { fetchUserAdultCollectibles$ } from '../apis/objkt/index';
 import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
-import { AccountInterface } from '../interfaces/account.interface';
 import { RootState } from '../store/create-store';
-import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import {
   emptyTokenMetadata,
@@ -24,7 +20,6 @@ import { FiatCurrenciesEnum } from './exchange-rate.util';
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
-import { isCollectible } from './tezos.util';
 
 export interface TokenMetadataResponse {
   decimals: number;
@@ -143,16 +138,6 @@ export const getTokenMetadata = (state: RootState, slug: string) => {
   };
 };
 
-export const withMetadataSlugs =
-  <T>(state$: Observable<TokensMetadataRootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
-        value,
-        tokensMetadata.metadataRecord
-      ])
-    );
-
 export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetadataInterface>> =>
   isDcpNode(selectedRpc)
     ? from([])
@@ -218,34 +203,12 @@ export const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
     return bDollarValue.minus(aDollarValue).toNumber();
   });
 
-export const checkTokensMetadata$ = (tokensMetadata: TokenMetadataInterface[], account: AccountInterface) =>
-  fetchUserAdultCollectibles$(account.publicKeyHash).pipe(
-    map(adultCollectibles => {
-      if (isNonEmptyArray(adultCollectibles)) {
-        const newTokensMetadata = tokensMetadata.map(token => {
-          if (!isCollectible(token) || token.isAdultContent === true) {
-            return token;
-          }
-
-          const tokenSlug = getTokenSlug(token);
-
-          const isAdultCollectible = adultCollectibles.find(
-            ({ fa_contract, token_id }) => tokenSlug === getTokenSlug({ address: fa_contract, id: token_id })
-          );
-
-          if (isDefined(isAdultCollectible)) {
-            return {
-              ...token,
-              isAdultContent: true
-            };
-          }
-
-          return token;
-        });
-
-        return newTokensMetadata;
-      }
-
-      return tokensMetadata;
-    })
-  );
+export const withMetadataSlugs =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
+        value,
+        tokensMetadata.metadataRecord
+      ])
+    );

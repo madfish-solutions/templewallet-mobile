@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { ADULT_CONTENT_TAGS } from './adult-tags';
-import { ADULT_ATTRIBUTE_NAME } from './constants';
+import { fromTokenSlug } from '../../utils/from-token-slug';
 
 export const buildGetCollectiblesInfoQuery = (address: string) => gql`
   query MyQuery {
@@ -247,20 +246,89 @@ export const buildGetGalleryAttributeCountQuery = (ids: number[]) => gql`
   }
 `;
 
-export const buildGetUserAdultCollectiblesQuery = (address: string) => {
+export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) => {
+  const items = collectiblesSlugs.map(slug => fromTokenSlug(slug));
+
   return gql`
     query MyQuery {
-      token(
-        where: {
-          holders: { holder_address: { _eq: "${address}" } }
-          _or: [
-            { attributes: { attribute: { name: { _eq: "${ADULT_ATTRIBUTE_NAME}" } } } }
-            { tags: { tag: { name: { _in: [${ADULT_CONTENT_TAGS}] } } } }
-          ]
-        }
-      ) {
+      token(where: {
+        _or: [
+          ${items
+            .map(([contract, id]) => `{ fa_contract: {_eq: "${contract}"}, token_id: {_eq: "${id}"} }`)
+            .join(',\n')}
+        ]
+      }) {
         fa_contract
         token_id
+        description
+        creators {
+          holder {
+            address
+            tzdomain
+          }
+        }
+        fa {
+          name
+          logo
+          items
+        }
+        metadata
+        artifact_uri
+        name
+        tags {
+          tag {
+            name
+          }
+        }
+        attributes {
+          attribute {
+            id
+            name
+            value
+          }
+        }
+        timestamp
+        royalties {
+          decimals
+          amount
+        }
+        supply
+        galleries {
+          gallery {
+            items
+            name
+          }
+        }
+        lowest_ask
+        listings_active(order_by: {price_xtz: asc}) {
+          bigmap_key
+          currency_id
+          price
+          marketplace_contract
+          id
+          currency {
+            type
+          }
+        }
+      }
+    }
+  `;
+};
+
+export const buildGetCollectibleFloorPriceQuery = (address: string, id: string) => {
+  return gql`
+    query MyQuery {
+      token(where: { fa_contract: { _eq: "${address}" }, token_id: { _eq: "${id}" } }) {
+        listings_active(order_by: { price_xtz: asc }) {
+          bigmap_key
+          currency_id
+          price
+          marketplace_contract
+          id
+          currency {
+            type
+          }
+        }
       }
     }
   `;

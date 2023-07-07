@@ -1,8 +1,7 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { AttributeInfo } from 'src/interfaces/attribute.interface';
-import { CollectibleInfo, UserAdultCollectibles } from 'src/interfaces/collectible-info.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
-import { HolderInfo, Listing, Offer } from 'src/token/interfaces/token-metadata.interface';
+import { Listing } from 'src/token/interfaces/token-metadata.interface';
 
 import { MarketPlaceEventEnum } from './enums';
 
@@ -13,9 +12,18 @@ export interface GalleryAttributeCountQueryResponse {
   gallery_attribute_count: AttributeInfo[];
 }
 
-export interface CollectibleInfoQueryResponse {
-  token: CollectibleInfo[];
+export interface Offer {
+  buyer_address: string;
+  collection_offer: string | null;
+  price: number;
+  price_xtz: number;
+  bigmap_key: number;
+  marketplace_contract: string;
+  fa_contract: string;
+  currency_id: number;
 }
+
+export type HolderInfo = { holder_address: string; quantity: number };
 
 export interface CurrencyInfo {
   symbol: string;
@@ -85,5 +93,72 @@ export interface CollectiblesByGalleriesResponse {
 }
 
 export interface UserAdultCollectiblesQueryResponse {
-  token: UserAdultCollectibles[];
+  token: CollectibleDetailsResponse[];
+}
+
+export interface CollectibleAttributes {
+  attribute: {
+    id: number;
+    name: string;
+    value: string;
+    rarity?: number;
+  };
+}
+
+export interface CollectibleTag {
+  tag: {
+    name: string;
+  };
+}
+
+export interface ListingsActiveResponse {
+  bigmap_key: number;
+  currency_id: number;
+  price: number;
+  marketplace_contract: string;
+  currency: {
+    type: string;
+  };
+}
+
+export interface CollectibleDetailsResponse {
+  fa_contract: string;
+  token_id: string;
+  description: string;
+  creators: {
+    holder: {
+      address: string;
+      tzdomain: string;
+    };
+  }[];
+  fa: {
+    name: string;
+    logo: string;
+    items: number;
+  };
+  metadata: string;
+  attributes: CollectibleAttributes[];
+  artifact_uri?: string[];
+  tags: CollectibleTag[];
+  timestamp: string;
+  royalties: {
+    decimals: number;
+    amount: number;
+  }[];
+  supply: number;
+  mime: string;
+  galleries: {
+    gallery: {
+      items: number;
+      name: string;
+    };
+  }[];
+  listings_active: ListingsActiveResponse[];
+  isAdultContent?: boolean;
+}
+
+export interface CollectibleFloorPriceQueryResponse {
+  token: {
+    listings_active: ListingsActiveResponse[];
+  }[];
 }

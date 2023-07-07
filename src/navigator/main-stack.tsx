@@ -75,6 +75,7 @@ import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/w
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
+import { useLoadCollectiblesDetails } from '../hooks/use-load-collectibles-details.hook';
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
@@ -100,6 +101,7 @@ export const MainStackScreen = () => {
   useFirebaseApp();
   useNFTDynamicLinks();
   useAdvertising();
+  useLoadCollectiblesDetails();
 
   const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 

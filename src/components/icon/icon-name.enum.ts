@@ -4,6 +4,7 @@ export enum IconNameEnum {
   ArrowDown = 'ArrowDown',
   ArrowRight = 'ArrowRight',
   ArrowLeft = 'ArrowLeft',
+  Action = 'Action',
   Bell = 'Bell',
   Burn = 'Burn',
   DetailsArrowUp = 'DetailsArrowUp',
@@ -27,6 +28,7 @@ export enum IconNameEnum {
   HourGlasses = 'HourGlasses',
   PlusSquare = 'PlusSquare',
   PlusCircle = 'PlusCircle',
+  PlusCircleNew = 'PlusCircleNew',
   InputXCircle = 'InputXCircle',
   X = 'X',
   XBold = 'XBold',
@@ -148,5 +150,7 @@ export enum IconNameEnum {
   BlurDark = 'BlurDark',
   Smile = 'Smile',
   SmileWithGlasses = 'SmileWithGlasses',
-  SmileWithDollar = 'SmileWithDollar'
+  SmileWithDollar = 'SmileWithDollar',
+  CheckboxOn = 'CheckboxOn',
+  CheckboxOff = 'CheckboxOff'
 }
