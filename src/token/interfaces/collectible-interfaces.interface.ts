@@ -54,7 +54,7 @@ export interface ListingsActive {
   };
 }
 
-export interface CollectibleCommonInterface extends TokenInterface {
+export interface CollectibleCommonInterface {
   description: string;
   editions: number;
   isAdultContent?: boolean;
@@ -83,6 +83,6 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   artifactUri?: string;
 }
 
-export interface CollectibleOfferInteface extends CollectibleCommonInterface, OfferInteface {}
+export interface CollectibleOfferInteface extends TokenInterface, CollectibleCommonInterface, OfferInteface {}
 
-export interface CollectibleInterface extends CollectibleCommonInterface, CollectibleDetailsInterface {}
+export interface CollectibleInterface extends TokenInterface, CollectibleCommonInterface, CollectibleDetailsInterface {}

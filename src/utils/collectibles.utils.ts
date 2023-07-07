@@ -76,7 +76,16 @@ export const loadAllCollectiblesDetails$ = (
           Boolean(collectible.tags.find(({ tag }) => ADULT_CONTENT_TAGS.includes(tag.name)));
 
         collectitblesDetailsRecord[collectibleSlug] = {
-          ...collectible,
+          description: collectible.description,
+          creators: collectible.creators,
+          metadata: collectible.metadata,
+          attributes: collectible.attributes,
+          tags: collectible.tags,
+          timestamp: collectible.timestamp,
+          royalties: collectible.royalties,
+          mime: collectible.mime,
+          galleries: collectible.galleries,
+          artifactUri: collectible.artifact_uri,
           editions: collectible.supply,
           collection: collectible.fa,
           listingsActive: collectible.listings_active.map(item => ({
@@ -95,6 +104,7 @@ export const loadAllCollectiblesDetails$ = (
   );
 
 export const getCollectibleDetails = (collectible: CollectibleInterface): CollectibleDetailsInterface => ({
+  ...collectible,
   description: collectible.description,
   editions: collectible.editions,
   isAdultContent: collectible.isAdultContent,

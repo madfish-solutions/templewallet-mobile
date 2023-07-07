@@ -142,7 +142,7 @@ export interface CollectibleDetailsResponse {
   };
   metadata: string;
   attributes: CollectibleAttributes[];
-  artifact_uri?: string[];
+  artifact_uri?: string;
   tags: CollectibleTag[];
   timestamp: string;
   royalties: {

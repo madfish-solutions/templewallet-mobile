@@ -21,6 +21,7 @@ import { navigateAction } from '../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { CollectibleCommonInterface } from '../token/interfaces/collectible-interfaces.interface';
+import { TokenInterface } from '../token/interfaces/token.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { getPurchaseCurrency } from '../utils/get-pusrchase-currency.util';
 import { isDefined } from '../utils/is-defined';
@@ -32,7 +33,7 @@ const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (collectible: CollectibleCommonInterface) => {
+export const useBuyCollectible = (collectible: CollectibleCommonInterface & TokenInterface) => {
   const data = useCollectibleDetailsSelector(getTokenSlug(collectible));
   const isLoadingDetails = useCollectibleDetailsLoadingSelector();
 

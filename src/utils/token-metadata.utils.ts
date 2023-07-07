@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import memoize from 'mem';
 import { from, Observable, of } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
