@@ -25,7 +25,7 @@ import { useSavingsStyles } from './styles';
 
 const earnSortFieldsLabels = {
   [EarnOpportunitiesSortFieldEnum.Default]: 'Default',
-  [EarnOpportunitiesSortFieldEnum.APY]: 'APY',
+  [EarnOpportunitiesSortFieldEnum.APY]: 'Rate',
   [EarnOpportunitiesSortFieldEnum.Oldest]: 'Oldest',
   [EarnOpportunitiesSortFieldEnum.Newest]: 'Newest'
 };
