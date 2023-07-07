@@ -32,6 +32,7 @@ import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.en
 import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
+import { formatNumber } from '../../utils/format-price';
 import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { ImageResolutionEnum, formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -123,7 +124,7 @@ export const CollectibleModal = () => {
       return 'Not listed';
     }
 
-    return `Buy for ${purchaseCurrency.priceToDisplay.toFixed(2)} ${purchaseCurrency.symbol}`;
+    return `Buy for ${formatNumber(purchaseCurrency.priceToDisplay)} ${purchaseCurrency.symbol}`;
   }, [isUserOwnerCurrentCollectible, purchaseCurrency, listingsActive, isLoadingDetails]);
 
   const collectionLogo = useMemo(() => {

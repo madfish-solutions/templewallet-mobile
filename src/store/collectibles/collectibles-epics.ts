@@ -12,8 +12,8 @@ const loadCollectiblesDetailsEpic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadCollectiblesDetailsActions.submit),
     toPayload(),
-    switchMap(account =>
-      loadAllCollectiblesDetails$(account).pipe(
+    switchMap(collectiblesSlugs =>
+      loadAllCollectiblesDetails$(collectiblesSlugs).pipe(
         map(collectiblesDetails => loadCollectiblesDetailsActions.success(collectiblesDetails)),
         catchError(err => of(loadCollectiblesDetailsActions.fail(err.message)))
       )

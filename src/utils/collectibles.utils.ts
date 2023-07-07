@@ -62,9 +62,9 @@ export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observabl
 };
 
 export const loadAllCollectiblesDetails$ = (
-  publicKeyHash: string
+  collectiblesSlugs: string[]
 ): Observable<Record<string, CollectibleDetailsInterface>> =>
-  fetchAllCollectiblesDetails$(publicKeyHash).pipe(
+  fetchAllCollectiblesDetails$(collectiblesSlugs).pipe(
     map(collectiblesDetails => {
       const collectitblesDetailsRecord: Record<string, CollectibleDetailsInterface> = {};
 

@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client';
 
+import { fromTokenSlug } from '../../utils/from-token-slug';
+
 export const buildGetCollectiblesInfoQuery = (address: string) => gql`
   query MyQuery {
     fa(
@@ -244,10 +246,18 @@ export const buildGetGalleryAttributeCountQuery = (ids: number[]) => gql`
   }
 `;
 
-export const buildGetAllUserCollectiblesQuery = (address: string) => {
+export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) => {
+  const items = collectiblesSlugs.map(slug => fromTokenSlug(slug));
+
   return gql`
     query MyQuery {
-      token(where: {holders: {holder_address: {_eq: "${address}"}}}) {
+      token(where: {
+        _or: [
+          ${items
+            .map(([contract, id]) => `{ fa_contract: {_eq: "${contract}"}, token_id: {_eq: "${id}"} }`)
+            .join(',\n')}
+        ]
+      }) {
         fa_contract
         token_id
         description

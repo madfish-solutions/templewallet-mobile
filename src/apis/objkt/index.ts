@@ -115,8 +115,8 @@ export const fetchCollectiblesByCollection$ = (
   );
 };
 
-export const fetchAllCollectiblesDetails$ = (address: string): Observable<CollectibleDetailsResponse[]> => {
-  const request = buildGetAllUserCollectiblesQuery(address);
+export const fetchAllCollectiblesDetails$ = (collectiblesSlugs: string[]): Observable<CollectibleDetailsResponse[]> => {
+  const request = buildGetAllUserCollectiblesQuery(collectiblesSlugs);
 
   return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(
     map(result =>
