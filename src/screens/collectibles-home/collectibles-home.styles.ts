@@ -4,7 +4,6 @@ import { formatSize } from '../../styles/format-size';
 export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }) => ({
   headerCard: {
     paddingHorizontal: 0
-    // paddingBottom: 0
   },
   headerContainer: {
     flexDirection: 'row',
@@ -64,18 +63,12 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     borderColor: colors.lines,
     width: formatSize(56),
     height: formatSize(56),
-    // marginHorizontal: formatSize(4),
     marginBottom: formatSize(4)
   },
   collectionBlock: {
-    // marginHorizontal: formatSize(2),
-    // marginTop: formatSize(12),
-    // marginBottom: formatSize(16),
-    // height: formatSize(64),
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: formatSize(12)
-    // flex: 1
   },
   buttonDisabled: {
     ...typography.caption13Semibold,
