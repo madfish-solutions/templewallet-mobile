@@ -1,17 +1,21 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
-import { AttributeInfo } from 'src/interfaces/attribute.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 
 import { MarketPlaceEventEnum } from './enums';
 
-export interface FA2AttributeCountQueryResponse {
-  fa2_attribute_count: AttributeInfo[];
-}
-export interface GalleryAttributeCountQueryResponse {
-  gallery_attribute_count: AttributeInfo[];
+export interface AttributeInfoResponse {
+  attribute_id: number;
+  tokens: number;
 }
 
-interface Offer {
+export interface FA2AttributeCountQueryResponse {
+  fa2_attribute_count: AttributeInfoResponse[];
+}
+export interface GalleryAttributeCountQueryResponse {
+  gallery_attribute_count: AttributeInfoResponse[];
+}
+
+interface OfferResponse {
   buyer_address: string;
   collection_offer: string | null;
   price: number;
@@ -48,7 +52,7 @@ export interface CollectibleResponse {
   symbol: string;
   token_id: string;
   holders: HolderInfo[];
-  offers_active: Offer[];
+  offers_active: OfferResponse[];
   events: {
     marketplace_event_type: MarketPlaceEventEnum;
     price_xtz: number | null;

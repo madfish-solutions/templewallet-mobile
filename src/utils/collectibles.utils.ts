@@ -18,22 +18,22 @@ import { getTokenSlug } from '../token/utils/token.utils';
 
 const attributesInfoInitialState: AttributeInfo[] = [
   {
-    attribute_id: 0,
+    attributeId: 0,
     tokens: 0
   }
 ];
 
 export const getAttributesWithRarity = (
   attributesInfo: AttributeInfo[],
-  collectibleDetails: CollectibleDetailsInterface
+  collectible: CollectibleDetailsInterface
 ): CollectibleAttributes[] => {
-  const isExistGallery = isNonEmptyArray(collectibleDetails.galleries);
+  const isExistGallery = isNonEmptyArray(collectible.galleries);
   const collectibleCalleryCount = isExistGallery
-    ? collectibleDetails.galleries[0].gallery.items
-    : collectibleDetails.collection.items;
+    ? collectible.galleries[0].gallery.items
+    : collectible.collection.items;
 
-  return collectibleDetails.attributes.map(({ attribute }) => {
-    const attributeTokenCount = attributesInfo.find(el => el.attribute_id === attribute.id)?.tokens ?? 0;
+  return collectible.attributes.map(({ attribute }) => {
+    const attributeTokenCount = attributesInfo.find(el => el.attributeId === attribute.id)?.tokens ?? 0;
     const rarity = Number(((attributeTokenCount / collectibleCalleryCount) * 100).toFixed(2));
 
     return {
@@ -50,13 +50,23 @@ export const getAttributesWithRarity = (
 export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observable<AttributeInfo[]> => {
   if (isGallery) {
     return fetchGalleryAttributeCount$(ids).pipe(
-      map(result => result),
+      map(result =>
+        result.map(({ attribute_id, tokens }) => ({
+          attributeId: attribute_id,
+          tokens
+        }))
+      ),
       catchError(() => of(attributesInfoInitialState))
     );
   }
 
   return fetchFA2AttributeCount$(ids).pipe(
-    map(result => result),
+    map(result =>
+      result.map(({ attribute_id, tokens }) => ({
+        attributeId: attribute_id,
+        tokens
+      }))
+    ),
     catchError(() => of(attributesInfoInitialState))
   );
 };

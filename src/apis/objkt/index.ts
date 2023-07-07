@@ -5,7 +5,6 @@ import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
-import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { CollectibleOfferInteface, ListingsActive } from '../../token/interfaces/collectible-interfaces.interface';
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
@@ -19,6 +18,7 @@ import {
   buildGetCollectibleFloorPriceQuery
 } from './queries';
 import {
+  AttributeInfoResponse,
   CollectibleDetailsResponse,
   CollectibleFloorPriceQueryResponse,
   CollectiblesByCollectionResponse,
@@ -163,7 +163,7 @@ export const fetchAllCollectiblesDetails$ = (collectiblesSlugs: string[]): Obser
   );
 };
 
-export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfo[]> => {
+export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {
   const request = buildGetFA2AttributeCountQuery(ids);
 
   return apolloObjktClient
@@ -171,7 +171,7 @@ export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfo
     .pipe(map(result => getUniqueAndMaxValueAttribute(result.fa2_attribute_count)));
 };
 
-export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<AttributeInfo[]> => {
+export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {
   const request = buildGetGalleryAttributeCountQuery(ids);
 
   return apolloObjktClient

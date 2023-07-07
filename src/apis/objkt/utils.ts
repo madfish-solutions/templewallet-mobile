@@ -3,11 +3,10 @@ import { groupBy, map, maxBy } from 'lodash-es';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { isDefined } from 'src/utils/is-defined';
 
-import { AttributeInfo } from '../../interfaces/attribute.interface';
 import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
 import { currencyInfoById } from './constants';
 import { MarketPlaceEventEnum } from './enums';
-import { CollectibleResponse } from './types';
+import { AttributeInfoResponse, CollectibleResponse } from './types';
 
 export const transformCollectiblesArray = (
   array: CollectibleResponse[],
@@ -28,7 +27,7 @@ export const transformCollectiblesArray = (
     const lastPriceCurrencyId = lastPrice?.currency_id ?? 1;
     const correctOffers = token.offers_active
       .map(item => ({
-        ...item,
+        price: item.price,
         buyerAddress: item.buyer_address,
         collectionOffer: item.collection_offer,
         priceXtz: item.price_xtz,
@@ -37,9 +36,9 @@ export const transformCollectiblesArray = (
         faContract: item.fa_contract,
         currencyId: item.currency_id
       }))
-      .filter(offer => offer.buyer_address !== selectedPublicKey);
+      .filter(offer => offer.buyerAddress !== selectedPublicKey);
     const highestOffer = correctOffers[correctOffers.length - 1];
-    const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
+    const currency = currencyInfoById[highestOffer?.currencyId ?? 1];
 
     const listedBySelectedUser = token.listings_active.reduce((acc, current) => {
       if (current.seller_address === selectedPublicKey) {
@@ -86,8 +85,8 @@ export const transformCollectiblesArray = (
   return collectiblesArray;
 };
 
-export const getUniqueAndMaxValueAttribute = (array: AttributeInfo[]) => {
+export const getUniqueAndMaxValueAttribute = (array: AttributeInfoResponse[]) => {
   const grouped = groupBy(array, 'attribute_id');
 
-  return map(grouped, value => maxBy(value, 'tokens') as AttributeInfo);
+  return map(grouped, value => maxBy(value, 'tokens') as AttributeInfoResponse);
 };

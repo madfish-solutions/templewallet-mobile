@@ -63,15 +63,14 @@ export const CollectiblesHome = () => {
 
   const iosSafeArea = useSafeAreaInsets();
 
-  const androidSafeAreaValue = isDefined(initialWindowMetrics)
-    ? initialWindowMetrics.insets.bottom > 0
+  const androidSafeAreaValue =
+    isDefined(initialWindowMetrics) && initialWindowMetrics.insets.bottom > 0
       ? initialWindowMetrics.insets.bottom + initialWindowMetrics.insets.top
-      : initialWindowMetrics.insets.bottom
-    : 0;
+      : 0;
 
   const TAB_BAR_HEIGHT = isAndroid ? androidSafeAreaValue : iosSafeArea.bottom;
 
-  const ICON_COVER_GAP = 12;
+  const ICON_COVER_GAP = formatSize(12);
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
@@ -107,7 +106,7 @@ export const CollectiblesHome = () => {
 
   const snapPoints = useMemo(
     () => [
-      windowHeight - (headerHeight + TAB_BAR_HEIGHT + 4),
+      windowHeight - (headerHeight + TAB_BAR_HEIGHT + formatSize(4)),
       windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP)
     ],
     [headerHeight, visibleBlockHeight]
