@@ -63,7 +63,7 @@ export const useFilteredFarms = () => {
     }
 
     return result;
-  }, [farms, searchValue, depositedOnly, sortField]);
+  }, [farms, searchValue, depositedOnly, sortField, stakes]);
 
   const handleSetSortField = useCallback(
     (sortField: FarmsSortFieldEnum) => dispatch(selectSortValueAction(sortField)),
