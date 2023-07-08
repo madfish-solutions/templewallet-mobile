@@ -12,7 +12,7 @@ import {
   loadSingleFarmStakeActions,
   selectSortValueAction
 } from './actions';
-import { farmsInitialState, FarmsState, LastUserStakeInterface } from './state';
+import { farmsInitialState, FarmsState, LastUserStakeInterface, UserStakeValueInterface } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
   builder.addCase(loadSingleFarmStakeActions.submit, state => ({
@@ -59,14 +59,18 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   }));
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => {
     const newStakes = Object.entries(payload).reduce<LastUserStakeInterface>((acc, [farmAddress, stake]) => {
+      let newStake: UserStakeValueInterface | undefined;
       switch (stake) {
         case undefined:
-          acc[farmAddress] = state.lastStakes.data[farmAddress];
+          newStake = state.lastStakes.data[farmAddress];
           break;
         case null:
           break;
         default:
-          acc[farmAddress] = stake;
+          newStake = stake;
+      }
+      if (isDefined(newStake)) {
+        acc[farmAddress] = newStake;
       }
 
       return acc;
