@@ -12,7 +12,7 @@ import {
   loadSingleFarmStakeActions,
   selectSortValueAction
 } from './actions';
-import { farmsInitialState, FarmsState } from './state';
+import { farmsInitialState, FarmsState, LastUserStakeInterface } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
   builder.addCase(loadSingleFarmStakeActions.submit, state => ({
@@ -57,10 +57,26 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     ...state,
     allFarms: createEntity(state.allFarms.data, false, payload)
   }));
-  builder.addCase(loadAllStakesActions.success, (state, { payload }) => ({
-    ...state,
-    lastStakes: createEntity(payload)
-  }));
+  builder.addCase(loadAllStakesActions.success, (state, { payload }) => {
+    const newStakes = Object.entries(payload).reduce<LastUserStakeInterface>((acc, [farmAddress, stake]) => {
+      switch (stake) {
+        case undefined:
+          acc[farmAddress] = state.lastStakes.data[farmAddress];
+          break;
+        case null:
+          break;
+        default:
+          acc[farmAddress] = stake;
+      }
+
+      return acc;
+    }, {});
+
+    return {
+      ...state,
+      lastStakes: createEntity(newStakes)
+    };
+  });
   builder.addCase(setSelectedAccountAction, state => ({
     ...state,
     lastStakes: farmsInitialState.lastStakes

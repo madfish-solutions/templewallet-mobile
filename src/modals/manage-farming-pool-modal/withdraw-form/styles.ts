@@ -11,8 +11,10 @@ export const useWithdrawFormStyles = createUseStylesMemoized(({ colors, typograp
   },
   tokenSelector: {
     backgroundColor: colors.cardBG,
-    borderWidth: 0,
-    margin: 0
+    borderWidth: 0
+  },
+  tokenSelectorWrapper: {
+    margin: formatSize(-2)
   }
 }));
 

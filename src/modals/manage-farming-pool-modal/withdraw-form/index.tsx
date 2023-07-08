@@ -173,19 +173,21 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
         <Divider size={formatSize(20)} />
         <Text style={styles.tokenSelectorTitle}>Receive in</Text>
         <Divider size={formatSize(12)} />
-        <FormDropdown
-          name="tokenOption"
-          description="Choose token"
-          itemHeight={formatSize(56)}
-          equalityFn={tokenOptionEqualityFn}
-          renderValue={renderTokenOptionValue}
-          renderListItem={renderTokenOptionListItem}
-          isSearchable={true}
-          setSearchValue={setTokenSearchValue}
-          list={filteredTokensOptions}
-          onValueChange={handleTokenOptionChange}
-          testID={ManageFarmingPoolModalSelectors.tokenSelector}
-        />
+        <View style={styles.tokenSelectorWrapper}>
+          <FormDropdown
+            name="tokenOption"
+            description="Choose token"
+            itemHeight={formatSize(56)}
+            equalityFn={tokenOptionEqualityFn}
+            renderValue={renderTokenOptionValue}
+            renderListItem={renderTokenOptionListItem}
+            isSearchable={true}
+            setSearchValue={setTokenSearchValue}
+            list={filteredTokensOptions}
+            onValueChange={handleTokenOptionChange}
+            testID={ManageFarmingPoolModalSelectors.tokenSelector}
+          />
+        </View>
       </View>
       <Divider size={formatSize(12)} />
       <DetailsSection
