@@ -6,7 +6,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
-import { UserStakeValueInterface } from 'src/store/farms/state';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 

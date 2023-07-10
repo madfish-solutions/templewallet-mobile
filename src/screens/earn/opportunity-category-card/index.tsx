@@ -18,7 +18,7 @@ interface OpportunityCategoryCardProps extends TestIdProps {
   title: string;
   description: string;
   screen: ScreensEnum.Farming | ScreensEnum.Savings;
-  depositAmount: BigNumber;
+  depositAmountInFiat: BigNumber;
   iconName: IconNameEnum;
   netApy: BigNumber;
   maxApy: BigNumber;
@@ -28,7 +28,7 @@ export const OpportunityCategoryCard: FC<OpportunityCategoryCardProps> = ({
   title,
   description,
   screen,
-  depositAmount,
+  depositAmountInFiat,
   iconName,
   netApy,
   maxApy
@@ -52,18 +52,23 @@ export const OpportunityCategoryCard: FC<OpportunityCategoryCardProps> = ({
       <HorizontalBorder />
       <Divider size={formatSize(8)} />
       <View style={styles.footer}>
-        {depositAmount.gt(0) ? (
+        {depositAmountInFiat.gt(0) ? (
           <View style={styles.leftStatsItem}>
             <Text style={styles.statsItemLabel}>Current deposit amount:</Text>
             <Divider size={formatSize(2)} />
-            <FormattedAmount hideApproximateSign isDollarValue amount={depositAmount} style={styles.statsItemValue} />
+            <FormattedAmount
+              hideApproximateSign
+              isDollarValue
+              amount={depositAmountInFiat}
+              style={styles.statsItemValue}
+            />
           </View>
         ) : (
           <Text style={styles.description}>{description}</Text>
         )}
         <View style={styles.rightStatsItem}>
-          <Text style={styles.statsItemLabel}>{depositAmount.gt(0) ? 'Net APY:' : 'Max APY:'}</Text>
-          <Text style={styles.statsItemValue}>{depositAmount.gt(0) ? netApyFormatted : maxApyFormatted}%</Text>
+          <Text style={styles.statsItemLabel}>{depositAmountInFiat.gt(0) ? 'Net APY:' : 'Max APY:'}</Text>
+          <Text style={styles.statsItemValue}>{depositAmountInFiat.gt(0) ? netApyFormatted : maxApyFormatted}%</Text>
         </View>
       </View>
     </TouchableOpacity>

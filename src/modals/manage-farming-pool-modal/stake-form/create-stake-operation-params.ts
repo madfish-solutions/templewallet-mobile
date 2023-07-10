@@ -3,15 +3,16 @@ import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { estimateStableswapLpTokenOutput } from 'src/apis/quipuswap-staking';
-import { PoolType, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
-import { convertFarmToken } from 'src/utils/staking.utils';
 import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
 import { STABLESWAP_REFERRAL, WTEZ_TOKEN } from '../constants';
@@ -24,7 +25,7 @@ export const createStakeOperationParams = async (
   accountPkh: string,
   stakeId?: string
 ) => {
-  if (farm.item.type !== PoolType.STABLESWAP) {
+  if (farm.item.type !== EarnOpportunityTypeEnum.STABLESWAP) {
     throw new Error('Non-stableswap pools are not supported');
   }
 
@@ -46,7 +47,7 @@ export const createStakeOperationParams = async (
   }
 
   const tokenIndex = farm.item.tokens
-    .map(convertFarmToken)
+    .map(convertEarnOpportunityToken)
     .findIndex(farmToken => toTokenSlug(farmToken.address, farmToken.id) === assetSlug);
   const michelsonAmounts = new MichelsonMap<number, BigNumber>();
   michelsonAmounts.set(tokenIndex, amount);

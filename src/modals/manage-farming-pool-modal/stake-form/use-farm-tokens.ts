@@ -9,8 +9,8 @@ import {
 } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { convertFarmToken } from 'src/utils/staking.utils';
 
 export const useFarmTokens = (farm?: SingleFarmResponse) => {
   const getExchangeRate = useTokenExchangeRateGetter();
@@ -31,7 +31,7 @@ export const useFarmTokens = (farm?: SingleFarmResponse) => {
 
             return (
               accountAsset ?? {
-                ...convertFarmToken(token),
+                ...convertEarnOpportunityToken(token),
                 exchangeRate: getExchangeRate(tokenSlug),
                 balance: '0'
               }

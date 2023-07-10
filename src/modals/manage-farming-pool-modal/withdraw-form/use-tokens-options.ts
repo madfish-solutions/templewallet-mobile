@@ -4,7 +4,7 @@ import { from, switchMap } from 'rxjs';
 
 import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
 import { Farm } from 'src/apis/quipuswap-staking/types';
-import { useFarmTokens } from 'src/hooks/use-farm-tokens';
+import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { getTaquitoRpcErrorMessage } from 'src/utils/get-taquito-rpc-error-message';
@@ -14,7 +14,7 @@ import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { WithdrawTokenOption } from './use-withdraw-formik';
 
 export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
-  const { stakeTokens } = useFarmTokens(farm);
+  const { stakeTokens } = useEarnOpportunityTokens(farm);
   const tezos = useReadOnlyTezosToolkit();
   const [atomicAmounts, setAtomicAmounts] = useState<(BigNumber | null | undefined)[]>();
 

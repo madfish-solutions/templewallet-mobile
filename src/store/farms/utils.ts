@@ -2,13 +2,12 @@ import { TezosToolkit } from '@taquito/taquito';
 
 import { Farm } from 'src/apis/quipuswap-staking/types';
 import { FarmContractStorageInterface } from 'src/interfaces/earn.interface';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { getLastElement } from 'src/utils/array.utils';
 import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { getBalance } from 'src/utils/token-balance.utils';
-
-import { UserStakeValueInterface } from './state';
 
 export interface RawStakeValue {
   lastStakeId: string;

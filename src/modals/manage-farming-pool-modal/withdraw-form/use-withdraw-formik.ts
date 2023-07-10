@@ -5,9 +5,10 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { number as numberSchema, object as objectSchema, SchemaOf } from 'yup';
 
-import { FarmVersionEnum, PoolType } from 'src/apis/quipuswap-staking/types';
+import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
-import { useFarmTokens } from 'src/hooks/use-farm-tokens';
+import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -42,7 +43,7 @@ const validationSchema: SchemaOf<WithdrawFormValues> = objectSchema().shape({
 
 export const useWithdrawFormik = (farmId: string, farmVersion: FarmVersionEnum) => {
   const farm = useFarmSelector(farmId, farmVersion);
-  const { stakeTokens } = useFarmTokens(farm?.item);
+  const { stakeTokens } = useEarnOpportunityTokens(farm?.item);
   const { publicKeyHash } = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit();
   const stake = useStakeSelector(farm?.item.contractAddress ?? '');
@@ -51,7 +52,7 @@ export const useWithdrawFormik = (farmId: string, farmVersion: FarmVersionEnum) 
 
   const initialValues = useMemo(
     () => ({
-      amountOptionIndex: isDefined(farm) && farm.item.type !== PoolType.STABLESWAP ? 0 : 3,
+      amountOptionIndex: isDefined(farm) && farm.item.type !== EarnOpportunityTypeEnum.STABLESWAP ? 0 : 3,
       tokenOption: {
         token: stakeTokens[0] ?? emptyTezosLikeToken
       }

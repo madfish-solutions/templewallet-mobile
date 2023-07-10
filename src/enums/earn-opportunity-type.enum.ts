@@ -1,0 +1,6 @@
+export enum EarnOpportunityTypeEnum {
+  STABLESWAP = 'STABLESWAP',
+  DEX_TWO = 'DEX_TWO',
+  YOUVES_SAVING = 'YOUVES_SAVING',
+  YOUVES_STAKING = 'YOUVES_STAKING'
+}

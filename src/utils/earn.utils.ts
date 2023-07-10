@@ -1,6 +1,15 @@
 import { BigNumber } from 'bignumber.js';
 
+import { Farm } from 'src/apis/quipuswap-staking/types';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
+import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 
 import { APPROXIMATE_DAYS_IN_YEAR, calculateTimeDiffInSeconds } from './date.utils';
 
@@ -48,3 +57,25 @@ export const calculateYouvesFarmingRewards = (
 
 export const aprToApy = (aprPercentage: number, compoundFrequency = APPROXIMATE_DAYS_IN_YEAR) =>
   ((1 + Number(aprPercentage) / 100 / compoundFrequency) ** compoundFrequency - 1) * 100;
+
+export const convertEarnOpportunityToken = (rawToken: EarnOpportunityToken): TokenInterface => {
+  const { fa2TokenId, contractAddress, metadata, type } = rawToken;
+  const { name, symbol, decimals, thumbnailUri } = metadata;
+
+  return {
+    balance: '0',
+    visibility: VisibilityEnum.Visible,
+    id: fa2TokenId ?? 0,
+    address: contractAddress === 'tez' ? '' : contractAddress,
+    iconName: contractAddress === 'tez' ? IconNameEnum.TezToken : undefined,
+    name,
+    symbol,
+    decimals,
+    thumbnailUri,
+    standard: type === EarnOpportunityTokenStandardEnum.Fa2 ? TokenStandardsEnum.Fa2 : TokenStandardsEnum.Fa12
+  };
+};
+
+const farmEarnOpportunityTypes = [EarnOpportunityTypeEnum.STABLESWAP, EarnOpportunityTypeEnum.DEX_TWO];
+export const isFarm = (earnOpportunity: EarnOpportunity): earnOpportunity is Farm =>
+  farmEarnOpportunityTypes.includes(earnOpportunity.type ?? EarnOpportunityTypeEnum.DEX_TWO);
