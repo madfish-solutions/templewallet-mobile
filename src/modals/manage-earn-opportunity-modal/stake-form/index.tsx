@@ -6,6 +6,7 @@ import { Divider } from 'src/components/divider/divider';
 import { QuestionAccordion } from 'src/components/question-accordion';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
+import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
@@ -21,7 +22,6 @@ import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
 import { quipuswapFarmsRisksPoints, youvesSavingsRisksPoints } from './constants';
 import { useStakeFormStyles } from './styles';
-import { useEarnOpportunityTokens } from './use-earn-opportunity-tokens';
 import { useStakeFormik } from './use-stake-formik';
 
 interface StakeFormProps {
@@ -37,7 +37,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
   const { asset } = values.assetAmount;
 
   const styles = useStakeFormStyles();
-  const assetsList = useEarnOpportunityTokens(earnOpportunityItem);
+  const { stakeTokens: assetsList } = useEarnOpportunityTokens(earnOpportunityItem);
   const prevAssetsListRef = useRef(assetsList);
   const { filteredAssetsList, setSearchValue: setSearchValueFromTokens } = useFilteredAssetsList(
     assetsList,
@@ -87,6 +87,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
           balanceValueStyles={styles.balanceText}
           expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
           isSearchable
+          isSingleAsset={assetsList.length === 1}
           maxButton
           assetsList={filteredAssetsList}
           onValueChange={handleAssetAmountChange}

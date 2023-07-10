@@ -19,9 +19,12 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { INITIAL_ARP_VALUE, PERCENTAGE_MULTIPLIER } from './constants';
 import { SavingsPoolStorage } from './types';
 import {
+  createEngineCache,
   createEngineMemoized,
   createUnifiedSavings,
+  createUnifiedSavingsCache,
   createUnifiedStaking,
+  createUnifiedStakingCache,
   fallbackTezosToolkit,
   toEarnOpportunityToken
 } from './utils';
@@ -34,7 +37,11 @@ export const getYOUTokenApr$ = (
 
   return from(unifiedStaking.getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)).pipe(
     map(value => Number(value.multipliedBy(PERCENTAGE_MULTIPLIER))),
-    catchError(() => of(INITIAL_ARP_VALUE))
+    catchError(() => {
+      createUnifiedStakingCache.deleteByArgs(undefined);
+
+      return of(INITIAL_ARP_VALUE);
+    })
   );
 };
 
@@ -43,7 +50,11 @@ export const getYouvesTokenApr$ = (token: AssetDefinition): Observable<number> =
 
   return from(youves.getSavingsPoolV3YearlyInterestRate()).pipe(
     map(value => Number(value.multipliedBy(PERCENTAGE_MULTIPLIER))),
-    catchError(() => of(INITIAL_ARP_VALUE))
+    catchError(() => {
+      createEngineCache.deleteByArgs(token, undefined);
+
+      return of(INITIAL_ARP_VALUE);
+    })
   );
 };
 
@@ -142,16 +153,28 @@ export const getUserStake = async (
 
   switch (type) {
     case EarnOpportunityTypeEnum.YOUVES_STAKING:
-      const unifiedStaking = createUnifiedStaking(account);
-      lastStake = getLastElement(await unifiedStaking.getOwnStakesWithExtraInfo());
+      try {
+        const unifiedStaking = createUnifiedStaking(account);
+        lastStake = getLastElement(await unifiedStaking.getOwnStakesWithExtraInfo());
+      } catch (e) {
+        createUnifiedStakingCache.deleteByArgs(account);
+
+        throw e;
+      }
       break;
     case EarnOpportunityTypeEnum.YOUVES_SAVING:
       if (!isDefined(assetDefinition)) {
         throw new Error(`Unknown saving with id ${stakingOrSavingId}`);
       }
 
-      const savings = createUnifiedSavings(assetDefinition, account);
-      lastStake = getLastElement(await savings.getOwnStakesWithExtraInfo());
+      try {
+        const savings = createUnifiedSavings(assetDefinition, account);
+        lastStake = getLastElement(await savings.getOwnStakesWithExtraInfo());
+      } catch (e) {
+        createUnifiedSavingsCache.deleteByArgs(assetDefinition, account);
+
+        throw e;
+      }
       break;
     default:
       throw new Error('Unsupported savings type');

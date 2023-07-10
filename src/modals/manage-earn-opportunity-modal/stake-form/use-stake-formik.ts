@@ -5,6 +5,7 @@ import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup'
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
+import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
@@ -22,7 +23,6 @@ import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
 import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
 import { createStakeOperationParams } from './create-stake-operation-params';
-import { useEarnOpportunityTokens } from './use-earn-opportunity-tokens';
 
 export interface StakeFormValues {
   assetAmount: AssetAmountInterface;
@@ -30,7 +30,7 @@ export interface StakeFormValues {
 }
 
 export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserStakeValueInterface) => {
-  const tokens = useEarnOpportunityTokens(earnOpportunity);
+  const { stakeTokens } = useEarnOpportunityTokens(earnOpportunity);
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const selectedAccount = useSelectedAccountSelector();
@@ -42,12 +42,12 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const initialValues = useMemo(
     () => ({
       assetAmount: {
-        asset: tokens[0] ?? emptyTezosLikeToken,
+        asset: stakeTokens[0] ?? emptyTezosLikeToken,
         amount: undefined
       },
       acceptRisks: false
     }),
-    [tokens]
+    [stakeTokens]
   );
 
   const validationSchema = useMemo<SchemaOf<StakeFormValues>>(
@@ -91,7 +91,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },
-    [earnOpportunity, tokens, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
+    [earnOpportunity, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
   );
 
   return useFormik<StakeFormValues>({
