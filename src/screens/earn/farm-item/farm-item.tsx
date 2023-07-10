@@ -10,7 +10,7 @@ import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
-import { FormattedAmount } from 'src/components/formatted-amount';
+import { FormattedAmountWithLoader } from 'src/components/formatted-amount-with-loader';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -114,6 +114,8 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
     }
   }, [lastStakeRecord?.rewardsDueDate, lastStakeId, contractAddress, tezos]);
 
+  const renderStatsLoader = useCallback(() => <Text style={styles.attributeValue}>---</Text>, [styles]);
+
   return (
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
@@ -139,19 +141,23 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
         <View style={[styles.row, styles.mb16]}>
           <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Your deposit:</Text>
-            {stakeIsLoading ? (
-              <Text style={styles.attributeValue}>---</Text>
-            ) : (
-              <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
-            )}
+            <FormattedAmountWithLoader
+              isLoading={stakeIsLoading}
+              renderLoader={renderStatsLoader}
+              isDollarValue
+              amount={depositAmountAtomic}
+              style={styles.attributeValue}
+            />
           </View>
           <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Claimable rewards:</Text>
-            {stakeIsLoading ? (
-              <Text style={styles.attributeValue}>---</Text>
-            ) : (
-              <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
-            )}
+            <FormattedAmountWithLoader
+              isLoading={stakeIsLoading}
+              renderLoader={renderStatsLoader}
+              isDollarValue
+              amount={claimableRewardsAtomic}
+              style={styles.attributeValue}
+            />
           </View>
         </View>
 
