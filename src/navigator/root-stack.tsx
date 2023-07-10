@@ -42,6 +42,8 @@ import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
+import { useFirebaseApp } from '../hooks/use-firebase-app.hook';
+import { usePushNotifications } from '../hooks/use-push-notifications';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -69,6 +71,9 @@ export const RootStackScreen = () => {
   useQuickActions();
   useResetLoading();
   useResetKeychainOnInstall();
+
+  useFirebaseApp();
+  usePushNotifications();
 
   const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
