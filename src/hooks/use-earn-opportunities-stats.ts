@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
-import { aprToApy } from 'src/utils/earn.utils';
 import { atomicTokenAmountToFiat } from 'src/utils/fiat.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -21,9 +20,9 @@ export const useEarnOpportunitiesStats = (
       netApy: new BigNumber(DEFAULT_AMOUNT),
       totalStakedAmountInFiat: new BigNumber(DEFAULT_AMOUNT),
       totalClaimableRewardsInFiat: new BigNumber(DEFAULT_AMOUNT),
-      maxApy: BigNumber.maximum(
+      maxApr: BigNumber.maximum(
         DEFAULT_AMOUNT,
-        ...earnOpportunities.map(item => aprToApy(Number(item.apr) ?? DEFAULT_AMOUNT))
+        ...earnOpportunities.map(item => new BigNumber(item.apr ?? DEFAULT_AMOUNT))
       )
     };
 
@@ -41,7 +40,7 @@ export const useEarnOpportunitiesStats = (
         );
 
         totalWeightedApy = totalWeightedApy.plus(
-          new BigNumber(aprToApy(Number(item.apr) ?? DEFAULT_AMOUNT)).multipliedBy(depositValueInFiat)
+          new BigNumber(item.apr ?? DEFAULT_AMOUNT).multipliedBy(depositValueInFiat)
         );
         result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.plus(depositValueInFiat);
         result.totalClaimableRewardsInFiat = result.totalClaimableRewardsInFiat.plus(

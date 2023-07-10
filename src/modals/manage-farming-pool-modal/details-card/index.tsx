@@ -20,7 +20,6 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
-import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -53,7 +52,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = farm;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
-  const apy = isDefined(apr) ? aprToApy(Number(apr)) : undefined;
+  const aprFormatted = isDefined(apr) ? `${Number(apr).toFixed(2)}%` : '-';
   const [claimPending, setClaimPending] = useState(false);
   const styles = useDetailsCardStyles();
   const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
@@ -140,7 +139,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
     <View style={styles.root}>
       <View style={styles.title}>
         <EarnOpportunityTokens {...farmTokens} />
-        <Text style={styles.apyLabel}>APY: {isDefined(apy) ? `${apy.toFixed(2)}%` : '-'}</Text>
+        <Text style={styles.apyLabel}>APR: {aprFormatted}</Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />
       <View style={styles.statsRow}>

@@ -21,7 +21,7 @@ import { KNOWN_STABLECOINS_SLUGS } from 'src/token/data/token-slugs';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { SECONDS_IN_DAY } from 'src/utils/date.utils';
-import { aprToApy, isFarm } from 'src/utils/earn.utils';
+import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { StatsItem } from './stats-item';
@@ -61,7 +61,6 @@ export const EarnOpportunityItem: FC<Props> = ({
   const youvesIconName = theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
 
   const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
-  const apy = useMemo(() => (isDefined(apr) ? aprToApy(Number(apr)).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
 
   const { amount: depositAmount, fiatEquivalent: depositFiatEquivalent } = useAmounts(
     lastStakeRecord?.depositAmountAtomic,
@@ -90,11 +89,7 @@ export const EarnOpportunityItem: FC<Props> = ({
         <View style={[styles.tokensContainer, styles.row]}>
           <EarnOpportunityTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
           <View>
-            <Text style={styles.apyText}>
-              {itemType === EarnOpportunityTypeEnum.YOUVES_SAVING || itemType === EarnOpportunityTypeEnum.YOUVES_STAKING
-                ? `APR: ${formattedApr}%`
-                : `APY: ${apy}%`}
-            </Text>
+            <Text style={styles.apyText}>APR: {formattedApr}%</Text>
             <View style={styles.earnSource}>
               <Icon
                 style={styles.earnSourceIcon}

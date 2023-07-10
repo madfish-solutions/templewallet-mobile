@@ -67,7 +67,7 @@ export const OpportunityCategoryCard: FC<OpportunityCategoryCardProps> = ({
           <Text style={styles.description}>{description}</Text>
         )}
         <View style={styles.rightStatsItem}>
-          <Text style={styles.statsItemLabel}>{depositAmountInFiat.gt(0) ? 'Net APY:' : 'Max APY:'}</Text>
+          <Text style={styles.statsItemLabel}>{depositAmountInFiat.gt(0) ? 'Net APR:' : 'Max APR:'}</Text>
           <Text style={styles.statsItemValue}>{depositAmountInFiat.gt(0) ? netApyFormatted : maxApyFormatted}%</Text>
         </View>
       </View>

@@ -11,7 +11,7 @@ import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interfac
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 
-import { APPROXIMATE_DAYS_IN_YEAR, calculateTimeDiffInSeconds } from './date.utils';
+import { calculateTimeDiffInSeconds } from './date.utils';
 
 interface YouvesFarmRewardsStats {
   lastRewards: string; // From farm store
@@ -54,9 +54,6 @@ export const calculateYouvesFarmingRewards = (
 
   return { claimableReward, fullReward };
 };
-
-export const aprToApy = (aprPercentage: number, compoundFrequency = APPROXIMATE_DAYS_IN_YEAR) =>
-  ((1 + Number(aprPercentage) / 100 / compoundFrequency) ** compoundFrequency - 1) * 100;
 
 export const convertEarnOpportunityToken = (rawToken: EarnOpportunityToken): TokenInterface => {
   const { fa2TokenId, contractAddress, metadata, type } = rawToken;
