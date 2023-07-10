@@ -83,7 +83,7 @@ export const ManageEarnOpportunityModal: FC = () => {
       prevBlockLevelRef.current = blockLevel;
       dispatch(loadAllFarmsActions.submit());
     }
-  }, [blockLevel, farm, dispatch]);
+  }, [blockLevel, earnOpportunityItem, dispatch]);
 
   useEffect(() => {
     if (isDefined(earnOpportunityItem)) {
@@ -112,7 +112,7 @@ export const ManageEarnOpportunityModal: FC = () => {
     submitStakeForm();
   }, [submitStakeForm, stakeFormErrors]);
 
-  usePageAnalytic(route.name);
+  usePageAnalytic(route.name, undefined, route.params);
 
   const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
 

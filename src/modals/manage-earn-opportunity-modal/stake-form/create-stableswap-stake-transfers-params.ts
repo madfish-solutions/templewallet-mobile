@@ -16,14 +16,14 @@ import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 import { STABLESWAP_REFERRAL, WTEZ_TOKEN } from '../constants';
 
 export const createStableswapStakeTransfersParams = async (
-  earnOpportunity: StableswapFarm,
+  farm: StableswapFarm,
   amount: BigNumber,
   asset: TokenInterface,
   tezos: TezosToolkit,
   accountPkh: string,
   stakeId?: string
 ) => {
-  const { contractAddress: farmAddress, stakedToken } = earnOpportunity;
+  const { contractAddress: farmAddress, stakedToken } = farm;
   const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
   const assetSlug = toTokenSlug(asset.address, asset.id);
   const shouldUseWtezToken = assetSlug === TEZ_TOKEN_SLUG;
@@ -40,7 +40,7 @@ export const createStableswapStakeTransfersParams = async (
     ];
   }
 
-  const tokenIndex = earnOpportunity.tokens
+  const tokenIndex = farm.tokens
     .map(convertEarnOpportunityToken)
     .findIndex(farmToken => toTokenSlug(farmToken.address, farmToken.id) === assetSlug);
   const michelsonAmounts = new MichelsonMap<number, BigNumber>();

@@ -1,14 +1,13 @@
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
-import { from, of, switchMap } from 'rxjs';
+import { catchError, from, of, switchMap } from 'rxjs';
 
 import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
-import { showErrorToast } from 'src/toast/error-toast.utils';
+import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
-import { getTaquitoRpcErrorMessage } from 'src/utils/get-taquito-rpc-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
@@ -37,20 +36,21 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
                   earnOpportunityItem.tokens.map((_, index) => index),
                   lpAmount,
                   earnOpportunityItem.stakedToken.fa2TokenId ?? 0
-                ).catch(error => {
-                  showErrorToast({ description: getTaquitoRpcErrorMessage(error) });
-
-                  return undefined;
-                })
+                )
               )
             : // TODO: implement this for savings
               of(Array<BigNumber>(earnOpportunityItem.tokens.length).fill(new BigNumber(0)))
-        )
+        ),
+        catchError(error => {
+          showErrorToastByError(error);
+
+          return of(undefined);
+        })
       )
       .subscribe(value => setAtomicAmounts(value));
 
     return () => subscription.unsubscribe();
-  }, [earnOpportunityItem, lpAmount, lpAmount, tezos]);
+  }, [earnOpportunityItem, lpAmount, tezos]);
 
   const options = useMemo(() => {
     const shouldFilterOutFailingOptions = isDefined(atomicAmounts) && atomicAmounts.some(amount => amount !== null);
