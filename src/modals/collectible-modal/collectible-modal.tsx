@@ -146,12 +146,13 @@ export const CollectibleModal = () => {
   }, [fa.logo]);
 
   const handleShare = useCallback(async () => {
+    //Max link length: 7168 symbols, so we need to reduce the amount of data we send
     const urlEncodedData = encodeURIComponent(JSON.stringify({ ...collectible, description: '', holders: undefined }));
 
     try {
       const dynamicLink = await getTempleDynamicLink(`/nft?jsonData=${urlEncodedData}`, {
         title: collectible.name,
-        descriptionText: isString(description) ? description : undefined,
+        descriptionText: description,
         imageUrl: isDefined(collectible.thumbnailUri)
           ? formatImgUri(collectible.thumbnailUri, ImageResolutionEnum.MEDIUM)
           : undefined
@@ -224,9 +225,11 @@ export const CollectibleModal = () => {
           <Text style={styles.name}>{collectible.name}</Text>
         </View>
 
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.description}>{description}</Text>
-        </View>
+        {isString(description) && (
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.description}>{description}</Text>
+          </View>
+        )}
 
         {isNonEmptyArray(creators) && (
           <View style={styles.creatorsContainer}>
