@@ -40,7 +40,7 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
             <FormattedAmount isDollarValue amount={totalStakedAmountInFiat} style={styles.valueText} />
           </View>
           <Divider size={formatSize(8)} />
-          <View style={[styles.card, styles.netApy]}>
+          <View style={[styles.card, styles.netApr]}>
             <Text style={styles.titleText}>NET APR</Text>
             <Text style={styles.valueText}>{netApy.toFixed(DEFAULT_DECIMALS)}%</Text>
           </View>
