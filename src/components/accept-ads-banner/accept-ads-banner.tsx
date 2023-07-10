@@ -6,10 +6,10 @@ import { setAdsBannerVisibilityAction } from 'src/store/settings/settings-action
 
 import { ABContainer } from '../ab-container/ab-container';
 import { AGroupBanner } from './a-group-banner/a-group-banner';
+import { BannerProps } from './accept-ads-banner.props';
 import { BGroupBanner } from './b-group-banner/b-group-banner';
-import { BannerProps } from './banner.props';
 
-export const Banner: FC<BannerProps> = ({ style }) => {
+export const AcceptAdsBanner: FC<BannerProps> = ({ style }) => {
   const dispatch = useDispatch();
 
   const handleDisableBannerButton = () => {

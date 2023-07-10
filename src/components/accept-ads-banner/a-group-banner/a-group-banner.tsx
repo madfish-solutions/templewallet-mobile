@@ -6,7 +6,8 @@ import { ButtonLargeSecondary } from 'src/components/button/button-large/button-
 import { Divider } from 'src/components/divider/divider';
 import { formatSize } from 'src/styles/format-size';
 
-import { BannerGroupProps } from '../banner.props';
+import { BannerGroupProps } from '../accept-ads-banner.props';
+import { AcceptAdsBannerSelectors } from '../accept-ads-banner.selectors';
 import { useCommonBannerStyles } from '../common-banner.styles';
 
 export const AGroupBanner: FC<BannerGroupProps> = ({ onDisable, onEnable, style }) => {
@@ -26,6 +27,7 @@ export const AGroupBanner: FC<BannerGroupProps> = ({ onDisable, onEnable, style 
         onPress={onDisable}
         textStyle={commonStyles.buttonText}
         buttonStyle={commonStyles.button}
+        testID={AcceptAdsBannerSelectors.aGroupDisable}
       />
       <Divider size={formatSize(8)} />
       <ButtonLargePrimary
@@ -33,6 +35,7 @@ export const AGroupBanner: FC<BannerGroupProps> = ({ onDisable, onEnable, style 
         onPress={onEnable}
         textStyle={commonStyles.buttonText}
         buttonStyle={commonStyles.button}
+        testID={AcceptAdsBannerSelectors.aGroupEnable}
       />
     </View>
   );

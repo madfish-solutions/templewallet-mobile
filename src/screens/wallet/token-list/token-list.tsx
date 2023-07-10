@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
@@ -37,7 +38,6 @@ import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { optimalFetchEnableAds } from '../../../apis/optimal';
-import { Banner } from '../../../components/banner/banner';
 import { loadAdvertisingPromotionActions } from '../../../store/advertising/advertising-actions';
 import { WalletSelectors } from '../wallet.selectors';
 import { TezosToken } from './token-list-item/tezos-token';
@@ -201,7 +201,7 @@ export const TokensList: FC = () => {
         </Search>
       </View>
 
-      {isEnabledAdsBanner && <Banner style={styles.banner} />}
+      {isEnabledAdsBanner && <AcceptAdsBanner style={styles.banner} />}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlatList
