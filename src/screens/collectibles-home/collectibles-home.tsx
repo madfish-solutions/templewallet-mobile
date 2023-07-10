@@ -56,7 +56,7 @@ export const CollectiblesHome = () => {
 
   const styles = useCollectiblesHomeStyles();
   const colors = useColors();
-  const { height: windowHeight } = useWindowDimensions();
+  const { height: windowHeightDimensions, scale } = useWindowDimensions();
 
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
@@ -68,9 +68,15 @@ export const CollectiblesHome = () => {
       ? initialWindowMetrics.insets.bottom + initialWindowMetrics.insets.top
       : 0;
 
-  const TAB_BAR_HEIGHT = isAndroid ? androidSafeAreaValue : iosSafeArea.bottom;
-
-  const ICON_COVER_GAP = formatSize(12);
+  // LOGGER
+  useEffect(() => {
+    console.log('scale', scale);
+    console.log('windowHeightDimensions', windowHeightDimensions);
+    console.log('visibleBlockHeight', visibleBlockHeight);
+    console.log('headerHeight', headerHeight);
+    console.log('iosSafeArea', iosSafeArea);
+    console.log(androidSafeAreaValue, JSON.stringify(initialWindowMetrics, null, 2));
+  }, [initialWindowMetrics, windowHeightDimensions, headerHeight, scale, iosSafeArea]);
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
@@ -104,13 +110,21 @@ export const CollectiblesHome = () => {
     return 1;
   });
 
+  const androidSafeArea = isDefined(initialWindowMetrics)
+    ? initialWindowMetrics.insets.top + initialWindowMetrics.insets.bottom
+    : 0;
+  const globalHeight = isDefined(initialWindowMetrics) ? initialWindowMetrics.frame.height : windowHeightDimensions;
+  const applicationHeight = isAndroid ? globalHeight - androidSafeArea : globalHeight - iosSafeArea.bottom;
+  const topOffset = 78;
+
+  console.log('TEST', globalHeight, applicationHeight, topOffset);
+
   const snapPoints = useMemo(
-    () => [
-      windowHeight - (headerHeight + TAB_BAR_HEIGHT + formatSize(4)),
-      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP)
-    ],
-    [headerHeight, visibleBlockHeight]
+    () => [applicationHeight - headerHeight, applicationHeight - 18],
+    [headerHeight, topOffset]
   );
+
+  useEffect(() => void console.log(snapPoints), [snapPoints]);
 
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
@@ -164,7 +178,13 @@ export const CollectiblesHome = () => {
           setHeaderHeight(height);
         }}
       >
-        <View style={styles.accountContainer}>
+        <View
+          onLayout={event => {
+            const { height } = event.nativeEvent.layout;
+            setVisibleBlockHeight(height);
+          }}
+          style={styles.accountContainer}
+        >
           <CurrentAccountDropdown
             value={selectedAccount}
             list={visibleAccounts}
@@ -176,7 +196,7 @@ export const CollectiblesHome = () => {
         <View
           onLayout={event => {
             const { height } = event.nativeEvent.layout;
-            setVisibleBlockHeight(height);
+            // setVisibleBlockHeight(height);
           }}
           style={styles.profileContainer}
         >
