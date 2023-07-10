@@ -89,7 +89,7 @@ export const ManageFarmingPoolModal: FC = () => {
     submitStakeForm();
   }, [submitStakeForm, stakeFormErrors]);
 
-  usePageAnalytic(ModalsEnum.ManageFarmingPool);
+  usePageAnalytic(ModalsEnum.ManageFarmingPool, undefined, params);
 
   const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
 

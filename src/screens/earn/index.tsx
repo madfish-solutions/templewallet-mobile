@@ -17,7 +17,7 @@ import { useLastStakesSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { EarmSelectorsEnum } from './earn.selectors';
+import { EarnSelectorsEnum } from './earn.selectors';
 import { useEarnStyles } from './earn.styles';
 import { FarmItem } from './farm-item/farm-item';
 import { MainInfo } from './main-info/main-info';
@@ -89,7 +89,7 @@ export const Earn: FC = () => {
               placeholder="Search farm"
               onChange={setSearchValue}
               dividerSize={12}
-              testID={EarmSelectorsEnum.search}
+              testID={EarnSelectorsEnum.search}
             >
               <Sorter
                 bottomSheetContentHeight={264}
@@ -98,7 +98,7 @@ export const Earn: FC = () => {
                 sortFieldsOptions={earnSortFieldsOptions}
                 sortFieldsLabels={earnSortFieldsLabels}
                 onSetSortValue={handleSetSortField}
-                testID={EarmSelectorsEnum.sorter}
+                testID={EarnSelectorsEnum.sorter}
               />
             </Search>
           </View>

@@ -77,13 +77,13 @@ export const useWithdrawFormik = (farmId: string, farmVersion: FarmVersionEnum) 
             navigateAction(ModalsEnum.Confirmation, {
               type: ConfirmationTypeEnum.InternalOperations,
               opParams,
-              testID: 'STAKE_TRANSACTION_SENT'
+              testID: 'WITHDRAW_TRANSACTION_SENT'
             })
           );
           trackEvent('WITHDRAW_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
         } catch (error) {
           showErrorToastByError(error, undefined, true);
-          trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
+          trackEvent('WITHDRAW_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
         } finally {
           helpers.setSubmitting(false);
         }

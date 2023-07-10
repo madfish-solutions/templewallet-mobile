@@ -31,6 +31,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
 import { DEFAULT_AMOUNT, DEFAULT_DECIMALS } from '../constants';
 import { useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
+import { FarmItemSelectors } from './selectors';
 
 interface Props {
   farm: SingleFarmResponse;
@@ -110,6 +111,14 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
     }
   }, [lastStakeRecord?.rewardsDueDate, lastStakeId, farm.item.contractAddress, tezos]);
 
+  const actionButtonsTestIDProperties = useMemo(
+    () => ({
+      id: farm.item.id,
+      contractAddress: farm.item.contractAddress
+    }),
+    [farm.item]
+  );
+
   return (
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
@@ -146,9 +155,21 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         <View style={styles.row}>
           {depositAmountAtomic.isGreaterThan(DEFAULT_AMOUNT) ? (
             <>
-              <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
+              <Button
+                title="MANAGE"
+                onPress={navigateToFarm}
+                styleConfig={buttonSecondaryStylesConfig}
+                testID={FarmItemSelectors.manageButton}
+                testIDProperties={actionButtonsTestIDProperties}
+              />
               <Divider size={formatSize(8)} />
-              <Button title="CLAIM REWARDS" onPress={harvestAssetsApi} styleConfig={buttonPrimaryStylesConfig} />
+              <Button
+                title="CLAIM REWARDS"
+                onPress={harvestAssetsApi}
+                styleConfig={buttonPrimaryStylesConfig}
+                testID={FarmItemSelectors.claimRewardsButton}
+                testIDProperties={actionButtonsTestIDProperties}
+              />
             </>
           ) : (
             <Button
@@ -156,6 +177,8 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
               title="START FARMING"
               onPress={navigateToFarm}
               styleConfig={buttonPrimaryStylesConfig}
+              testID={FarmItemSelectors.startFarmingButton}
+              testIDProperties={actionButtonsTestIDProperties}
             />
           )}
         </View>
