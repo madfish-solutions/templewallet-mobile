@@ -57,14 +57,20 @@ export const Earn: FC = () => {
     setSearchValue,
     handleSetSortField
   } = useFilteredFarms();
+  const prevFarmsLoadingRef = useRef(isFarmsLoading);
 
   useEffect(() => {
     if (isFirstLoading || prevBlockLevelRef.current !== blockLevel) {
       dispatch(loadAllFarmsAndStakesAction());
-      setIsFirstLoading(false);
       prevBlockLevelRef.current = blockLevel;
     }
   }, [dispatch, blockLevel, isFirstLoading]);
+  useEffect(() => {
+    if (isFirstLoading && !isFarmsLoading && prevFarmsLoadingRef.current) {
+      setIsFirstLoading(false);
+    }
+    prevFarmsLoadingRef.current = isFarmsLoading;
+  }, [isFirstLoading, isFarmsLoading]);
 
   usePageAnalytic(ScreensEnum.Earn);
 
