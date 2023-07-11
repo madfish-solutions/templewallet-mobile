@@ -9,7 +9,9 @@ import { isIOS } from 'src/config/system';
 import { useStorageMigration } from 'src/hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
+import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { usePushNotifications } from 'src/hooks/use-push-notifications';
 import { useQuickActions } from 'src/hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from 'src/hooks/use-reset-keychain-on-install.hook';
 import { useResetLoading } from 'src/hooks/use-reset-loading.hook';
@@ -42,8 +44,6 @@ import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
-import { useFirebaseApp } from '../hooks/use-firebase-app.hook';
-import { usePushNotifications } from '../hooks/use-push-notifications';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';

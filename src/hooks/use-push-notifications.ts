@@ -4,69 +4,59 @@ import { useEffect } from 'react';
 import { PermissionsAndroid } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 
-import { isDefined } from '../utils/is-defined';
+import { isAndroid } from 'src/config/system';
+import { isDefined } from 'src/utils/is-defined';
 
 export const usePushNotifications = () => {
   useEffect(() => {
     requestUserPermission();
-    const unsubscribe = notificationService();
+    const unsubscribe = handleForegroundNotifications();
 
     return unsubscribe;
   });
-
-  return null;
 };
 
 const requestUserPermission = async () => {
-  await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  if (isAndroid) {
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  }
 
   const authStatus = await messaging().requestPermission();
   const enabled =
     authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('Authorization status:', authStatus);
     await getFcmToken();
   }
 };
 
 const getFcmToken = async () => {
   const savedFcmToken = await AsyncStorage.getItem('fcmToken').catch(() => null);
-  console.log(savedFcmToken, 'savedFcmToken');
 
   if (!isDefined(savedFcmToken)) {
-    try {
-      await messaging().registerDeviceForRemoteMessages();
-      const fcmToken = await messaging().getToken();
+    await messaging().registerDeviceForRemoteMessages();
+    const fcmToken = await messaging().getToken();
 
-      if (isDefined(fcmToken)) {
-        await AsyncStorage.setItem('fcmToken', fcmToken);
-      }
-    } catch (e) {
-      console.log(e);
+    if (isDefined(fcmToken)) {
+      await AsyncStorage.setItem('fcmToken', fcmToken);
     }
   }
 };
 
-const notificationService = () => {
-  // Foreground notifications
+const handleForegroundNotifications = () => {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
-    console.log('A new FCM message arrived in foreground!', JSON.stringify(remoteMessage));
-
     const { messageId, notification } = remoteMessage;
 
     if (isDefined(notification) && isDefined(notification.body)) {
-      try {
-        PushNotification.localNotification({
-          channelId: 'channel-id',
-          messageId,
-          title: notification.title,
-          message: notification.body,
-          soundName: 'default',
-          vibrate: true,
-          playSound: true
-        });
-      } catch {}
+      PushNotification.localNotification({
+        channelId: 'channel-id',
+        messageId,
+        title: notification.title,
+        message: notification.body,
+        soundName: 'default',
+        vibrate: true,
+        playSound: true
+      });
     }
   });
 
