@@ -5,3 +5,5 @@ export const useSavingsItemsLoadingSelector = () => useSelector(({ savings }) =>
 export const useSavingsItemsSelector = () => useSelector(({ savings }) => savings.allSavingsItems.data);
 
 export const useSavingsStakesSelector = () => useSelector(({ savings }) => savings.stakes.data);
+
+export const useSavingsSortFieldSelector = () => useSelector(({ savings }) => savings.sortField);
