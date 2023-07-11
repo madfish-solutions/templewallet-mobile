@@ -1,7 +1,7 @@
 import { useButtonLargeSecondaryStyleConfig } from 'src/components/button/button-large/button-large-secondary/button-large-secondary.styles';
 import { black } from 'src/config/styles';
 import { createUseStylesMemoized, createUseStylesConfig } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
@@ -42,7 +42,14 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
   bage: {
     position: 'relative',
     zIndex: 2,
-    marginRight: formatSize(-8)
+    marginRight: formatSize(-6),
+    paddingVertical: formatSize(4)
+  },
+  bageText: {
+    lineHeight: formatTextSize(13)
+  },
+  lastBage: {
+    zIndex: 1
   },
   mb16: {
     marginBottom: formatSize(16)

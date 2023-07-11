@@ -79,7 +79,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
 
   return (
     <FormikProvider value={formik}>
-      <View style={styles.formContainer}>
+      <View>
         <Text style={styles.depositPrompt}>
           You can choose any asset from the provided list for your deposit. The selected asset will be automatically
           converted by Temple Wallet.

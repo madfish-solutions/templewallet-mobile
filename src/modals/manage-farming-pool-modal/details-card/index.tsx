@@ -145,45 +145,58 @@ export const DetailsCard: FC<DetailsCardProps> = ({
         <Text style={styles.apyLabel}>APY: {isDefined(apy) ? `${apy.toFixed(2)}%` : '-'}</Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />
-      <View style={styles.statsRow}>
-        <StatsItem
-          loading={loading}
-          title="Your deposit:"
-          value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
-          usdEquivalent={depositUsdEquivalent}
-        />
-        <StatsItem
-          loading={loading}
-          title="Claimable rewards:"
-          value={
-            <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
-          }
-          usdEquivalent={claimableRewardUsdEquivalent}
-        />
-      </View>
-      <Divider size={formatSize(12)} />
-      <View style={styles.statsRow}>
-        <StatsItem
-          loading={loading}
-          title="Long-term rewards:"
-          value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
-          usdEquivalent={fullRewardUsdEquivalent}
-        />
-        <StatsItem
-          loading={loading}
-          title="Fully claimable:"
-          value={
-            <Text style={styles.statsValue}>
-              {countdownTokens.map(({ unit, value }) => (
-                <React.Fragment key={unit}>
-                  {value}
-                  <Text style={styles.timespanUnit}>{unit}</Text>{' '}
-                </React.Fragment>
-              ))}
-            </Text>
-          }
-        />
-      </View>
+      {depositAmount.isZero() ? (
+        <View style={styles.statsRow}>
+          <StatsItem
+            loading={false}
+            title="Your deposit & Rewards:"
+            value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
+            usdEquivalent={depositUsdEquivalent}
+          />
+        </View>
+      ) : (
+        <>
+          <View style={styles.statsRow}>
+            <StatsItem
+              loading={loading}
+              title="Your deposit:"
+              value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
+              usdEquivalent={depositUsdEquivalent}
+            />
+            <StatsItem
+              loading={loading}
+              title="Claimable rewards:"
+              value={
+                <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+              }
+              usdEquivalent={claimableRewardUsdEquivalent}
+            />
+          </View>
+          <Divider size={formatSize(12)} />
+          <View style={styles.statsRow}>
+            <StatsItem
+              loading={loading}
+              title="Long-term rewards:"
+              value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
+              usdEquivalent={fullRewardUsdEquivalent}
+            />
+            <StatsItem
+              loading={loading}
+              title="Fully claimable:"
+              value={
+                <Text style={styles.statsValue}>
+                  {countdownTokens.map(({ unit, value }) => (
+                    <React.Fragment key={unit}>
+                      {value}
+                      <Text style={styles.timespanUnit}>{unit}</Text>{' '}
+                    </React.Fragment>
+                  ))}
+                </Text>
+              }
+            />
+          </View>
+        </>
+      )}
       {shouldShowClaimRewardsButton && (
         <>
           <Divider size={formatSize(16)} />
