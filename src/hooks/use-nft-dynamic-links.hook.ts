@@ -8,8 +8,6 @@ import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { CollectibleInterface } from '../token/interfaces/collectible-interfaces.interface';
-
 const NOT_AUTHORISED_ERROR_MESSAGE = 'You need to create an account to view the NFT';
 
 const decodeNFTJsonData = (url: string) => {
@@ -18,9 +16,9 @@ const decodeNFTJsonData = (url: string) => {
   if (isDefined(encodedData)) {
     try {
       const decodedData = decodeURIComponent(encodedData.replace(/\+/g, ' '));
-      const collectible: CollectibleInterface = JSON.parse(decodedData);
+      const data: { slug: string } = JSON.parse(decodedData);
 
-      return collectible;
+      return data;
     } catch (e) {
       console.log(e);
     }
@@ -34,10 +32,10 @@ export const useNFTDynamicLinks = () => {
   const handleDynamicLinks = (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
     if (link && link.url.indexOf('/nft') !== -1) {
       if (isAuthorised) {
-        const collectible = decodeNFTJsonData(link.url);
+        const data = decodeNFTJsonData(link.url);
 
-        if (collectible) {
-          navigate(ModalsEnum.CollectibleModal, { collectible });
+        if (isDefined(data)) {
+          navigate(ModalsEnum.CollectibleModal, { slug: data.slug });
         }
       } else {
         showErrorToast({ description: NOT_AUTHORISED_ERROR_MESSAGE });

@@ -15,8 +15,8 @@ export const useCollectiblesWithFullData = (): CollectibleInterface[] => {
         const collectibleSlug = getTokenSlug({ address: collectibleFromStore.address, id: collectibleFromStore.id });
 
         return {
-          ...collectibleFromStore,
-          ...collectiblesDetails[collectibleSlug]
+          ...collectiblesDetails[collectibleSlug],
+          ...collectibleFromStore
         };
       }),
     [collectiblesFromStore, collectiblesDetails]

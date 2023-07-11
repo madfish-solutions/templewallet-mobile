@@ -132,7 +132,9 @@ interface ListingResponse extends ListingsActiveResponse {
 export interface CollectibleDetailsResponse {
   fa_contract: string;
   token_id: string;
+  name: string;
   description: string;
+  thumbnail_uri: string;
   creators: {
     holder: {
       address: string;
@@ -146,7 +148,7 @@ export interface CollectibleDetailsResponse {
   };
   metadata: string;
   attributes: CollectibleAttributes[];
-  artifact_uri?: string;
+  artifact_uri: string;
   tags: CollectibleTag[];
   timestamp: string;
   royalties: {
@@ -162,7 +164,6 @@ export interface CollectibleDetailsResponse {
     };
   }[];
   listings_active: ListingsActiveResponse[];
-  isAdultContent?: boolean;
 }
 
 export interface CollectibleFloorPriceQueryResponse {

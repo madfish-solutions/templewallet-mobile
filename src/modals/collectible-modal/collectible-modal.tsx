@@ -22,10 +22,12 @@ import { ONE_MINUTE } from '../../config/fixed-times';
 import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
 import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
+import { useCurrentCollectibleFullData } from '../../hooks/use-current-collectible-full-data.hook';
 import { useFetchCollectibleAttributes } from '../../hooks/use-fetch-collectible-attributes.hook';
 import { useAuthorisedInterval } from '../../hooks/use-interval.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { updateCollectibleDetailsAction } from '../../store/collectibles/collectibles-actions';
+import { useCollectibleDetailsLoadingSelector } from '../../store/collectibles/collectibles-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
@@ -33,6 +35,7 @@ import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analyti
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { formatNumber } from '../../utils/format-price';
+import { fromTokenSlug } from '../../utils/from-token-slug';
 import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
 import { ImageResolutionEnum, formatImgUri } from '../../utils/image.utils';
 import { isDefined } from '../../utils/is-defined';
@@ -62,7 +65,9 @@ const SEGMENT_VALUES = [
 const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = () => {
-  const { collectible } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
+  const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
+
+  const [address, id] = fromTokenSlug(slug);
 
   const { width } = Dimensions.get('window');
   const iconSize = width - formatSize(32);
@@ -77,6 +82,16 @@ export const CollectibleModal = () => {
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
+
+  const { collectible } = useCurrentCollectibleFullData(slug, isUserOwnerCurrentCollectible);
+
+  const burnCollectible = useBurnCollectible(collectible);
+  const { attributes, isLoading } = useFetchCollectibleAttributes(collectible);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(slug);
+
+  const isLoadingDetails = useCollectibleDetailsLoadingSelector();
+
   const {
     collection,
     creators,
@@ -87,29 +102,26 @@ export const CollectibleModal = () => {
     editions,
     galleries,
     listingsActive,
-    mime
+    mime,
+    name,
+    thumbnailUri
   } = collectible;
-
-  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
-  const burnCollectible = useBurnCollectible(collectible);
-  const { attributes, isLoading } = useFetchCollectibleAttributes(collectible);
-  const { buyCollectible, purchaseCurrency, isLoadingDetails } = useBuyCollectible(collectible);
 
   useAuthorisedInterval(
     () => {
       if (!isUserOwnerCurrentCollectible) {
-        dispatch(updateCollectibleDetailsAction.submit(collectible));
+        dispatch(updateCollectibleDetailsAction.submit({ address, id }));
       }
     },
     ONE_MINUTE,
-    [collectible, isUserOwnerCurrentCollectible]
+    [address, id, slug, isUserOwnerCurrentCollectible]
   );
 
   const isAttributesExist = attributes.length > 0;
 
   const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 3);
 
-  const handleCollectionNamePress = () => openUrl(objktCollectionUrl(collectible.address));
+  const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 
   const submitButtonTitle = useMemo(() => {
     if (isLoadingDetails && !isUserOwnerCurrentCollectible) {
@@ -147,15 +159,20 @@ export const CollectibleModal = () => {
   }, [collection]);
 
   const handleShare = useCallback(async () => {
+    // Max link length: 7168 symbols, so we need to reduce the amount of data we send
+    const urlEncodedData = encodeURIComponent(JSON.stringify({ slug }));
+
+    if (urlEncodedData.length > 7168) {
+      return void showErrorToast({ title: 'Cannot share', description: 'Data is too large' });
+    }
+
     try {
-      const dynamicLink = await getTempleDynamicLink(
-        `/nft?jsonData=${encodeURIComponent(JSON.stringify(collectible))}`,
-        {
-          title: collectible.name,
-          descriptionText: description,
-          imageUrl: formatImgUri(collectible.thumbnailUri, ImageResolutionEnum.MEDIUM)
-        }
-      );
+      const dynamicLink = await getTempleDynamicLink(`/nft?jsonData=${urlEncodedData}`, {
+        title: name,
+        descriptionText: description,
+        imageUrl: isDefined(thumbnailUri) ? formatImgUri(thumbnailUri, ImageResolutionEnum.MEDIUM) : undefined
+      });
+
       await Share.share({
         message: SHARE_NFT_CONTENT + dynamicLink
       });
@@ -171,7 +188,7 @@ export const CollectibleModal = () => {
         errorMessage: e.message
       });
     }
-  }, [description]);
+  }, [slug, name, description, thumbnailUri]);
 
   const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
   const disabledOffers = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Offers);
@@ -209,15 +226,17 @@ export const CollectibleModal = () => {
       <ModalStatusBar />
 
       <View>
-        <CollectibleIcon
-          collectible={collectible}
-          mime={mime}
-          objktArtifact={collectible.artifactUri}
-          size={iconSize}
-          iconSize={CollectibleIconSize.BIG}
-          setScrollEnabled={setScrollEnabled}
-          blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
-        />
+        {isDefined(collectible) && (
+          <CollectibleIcon
+            collectible={collectible}
+            mime={mime}
+            objktArtifact={collectible.artifactUri}
+            size={iconSize}
+            iconSize={CollectibleIconSize.BIG}
+            setScrollEnabled={setScrollEnabled}
+            blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
+          />
+        )}
 
         <Divider size={formatSize(12)} />
 
@@ -282,12 +301,12 @@ export const CollectibleModal = () => {
 
         {!isLoading && isPropertiesSelected && (
           <CollectibleProperties
-            contract={collectible.address}
-            tokenId={collectible.id}
+            contract={address}
+            tokenId={Number(id)}
             editions={editions}
             metadata={metadata}
             minted={timestamp}
-            owned={collectible.balance}
+            owned={collectible.balance ?? '0'}
             royalties={royalties}
           />
         )}

@@ -71,6 +71,9 @@ interface OfferInteface {
 }
 
 export interface CollectibleDetailsInterface extends CollectibleCommonInterface {
+  address: string;
+  id: string;
+  name: string;
   creators: Creators[];
   collection: Collection;
   metadata: string;
@@ -81,8 +84,11 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   mime: string;
   galleries: Galleries[];
   artifactUri?: string;
+  thumbnailUri?: string;
 }
 
-export interface CollectibleOfferInteface extends TokenInterface, CollectibleCommonInterface, OfferInteface {}
+export interface CollectibleInterface
+  extends Omit<CollectibleDetailsInterface, 'address' | 'id' | 'name'>,
+    TokenInterface {}
 
-export interface CollectibleInterface extends TokenInterface, CollectibleCommonInterface, CollectibleDetailsInterface {}
+export interface CollectibleOfferInteface extends TokenInterface, CollectibleCommonInterface, OfferInteface {}

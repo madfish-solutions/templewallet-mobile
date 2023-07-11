@@ -13,16 +13,10 @@ import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation
 import { OBJKT_MARKETPLACE_CONTRACT } from '../modals/collectible-modal/constants';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
-import {
-  useCollectibleDetailsLoadingSelector,
-  useCollectibleDetailsSelector
-} from '../store/collectibles/collectibles-selectors';
+import { useCollectibleDetailsSelector } from '../store/collectibles/collectibles-selectors';
 import { navigateAction } from '../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { CollectibleCommonInterface } from '../token/interfaces/collectible-interfaces.interface';
-import { TokenInterface } from '../token/interfaces/token.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
+import { useCollectibleSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { getPurchaseCurrency } from '../utils/get-pusrchase-currency.util';
 import { isDefined } from '../utils/is-defined';
 import { createTezosToolkit } from '../utils/rpc/tezos-toolkit.utils';
@@ -33,20 +27,20 @@ const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (collectible: CollectibleCommonInterface & TokenInterface) => {
-  const data = useCollectibleDetailsSelector(getTokenSlug(collectible));
-  const isLoadingDetails = useCollectibleDetailsLoadingSelector();
-
-  const listingsActive = isDefined(data) && isNonEmptyArray(data.listingsActive) ? data.listingsActive : [];
+export const useBuyCollectible = (slug: string) => {
+  const dispatch = useDispatch();
+  const { navigate } = useNavigation();
 
   const selectedRpc = useSelectedRpcUrlSelector();
   const tezos = createTezosToolkit(selectedRpc);
 
   const selectedAccount = useSelectedAccountSelector();
-  const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const tokenMetadata = useCollectibleSelector(slug);
+  const data = useCollectibleDetailsSelector(slug);
 
-  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(collectible);
+  const listingsActive = isDefined(data) && isNonEmptyArray(data.listingsActive) ? data.listingsActive : [];
+
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
 
   const marketplace = isNonEmptyArray(listingsActive)
     ? listingsActive[0].marketplaceContract
@@ -66,7 +60,7 @@ export const useBuyCollectible = (collectible: CollectibleCommonInterface & Toke
 
   const buyCollectible = async () => {
     if (isUserOwnerCurrentCollectible) {
-      return navigate(ModalsEnum.Send, { token: collectible });
+      return navigate(ModalsEnum.Send, { token: tokenMetadata });
     }
 
     const getTransferParams = () => {
@@ -124,5 +118,5 @@ export const useBuyCollectible = (collectible: CollectibleCommonInterface & Toke
     );
   };
 
-  return { buyCollectible, purchaseCurrency, isLoadingDetails };
+  return { buyCollectible, purchaseCurrency };
 };

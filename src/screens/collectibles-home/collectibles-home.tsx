@@ -1,6 +1,14 @@
 import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, ListRenderItem, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  ListRenderItem,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useSafeAreaInsets, initialWindowMetrics } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
@@ -31,6 +39,7 @@ import { openUrl } from 'src/utils/linking.util';
 
 import { CheckboxIcon } from '../../components/checkbox-icon/checkbox-icon';
 import { useCollectiblesWithFullData } from '../../hooks/use-collectibles-with-full-data.hook';
+import { useCollectibleDetailsLoadingSelector } from '../../store/collectibles/collectibles-selectors';
 import { switchIsShowCollectibleInfoAction } from '../../store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from '../../store/settings/settings-selectors';
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
@@ -53,6 +62,7 @@ export const CollectiblesHome = () => {
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
+  const isDetailsLoading = useCollectibleDetailsLoadingSelector();
 
   const styles = useCollectiblesHomeStyles();
   const colors = useColors();
@@ -239,7 +249,13 @@ export const CollectiblesHome = () => {
           </View>
         </View>
 
-        <CollectiblesList collectiblesList={collectibles} isShowInfo={isShowCollectibleInfo} />
+        {isDetailsLoading ? (
+          <View style={styles.loader}>
+            <ActivityIndicator size="large" />
+          </View>
+        ) : (
+          <CollectiblesList collectibles={collectibles} isShowInfo={isShowCollectibleInfo} />
+        )}
       </BottomSheet>
     </>
   );
