@@ -42,7 +42,7 @@ export const MainInfo: FC = () => {
   const farmsWithEndedRewards = useMemo(() => {
     const now = Date.now();
 
-    return Object.entries(farms.lastStakes).filter(
+    return Object.entries(farms.lastStakes.data).filter(
       ([, stakeRecord]) =>
         new BigNumber(stakeRecord?.claimableRewards ?? 0).isGreaterThan(DEFAULT_AMOUNT) &&
         (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now

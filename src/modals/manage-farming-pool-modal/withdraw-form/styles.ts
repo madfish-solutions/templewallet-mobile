@@ -3,9 +3,6 @@ import { createUseStylesConfigMemoized, createUseStylesMemoized } from 'src/styl
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useWithdrawFormStyles = createUseStylesMemoized(({ colors, typography }) => ({
-  formContainer: {
-    flex: 1
-  },
   tokenSelectorTitle: {
     ...typography.body15Semibold,
     lineHeight: formatTextSize(20),
@@ -14,8 +11,10 @@ export const useWithdrawFormStyles = createUseStylesMemoized(({ colors, typograp
   },
   tokenSelector: {
     backgroundColor: colors.cardBG,
-    borderWidth: 0,
-    margin: 0
+    borderWidth: 0
+  },
+  tokenSelectorWrapper: {
+    margin: formatSize(-2)
   }
 }));
 

@@ -44,13 +44,13 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
   const lastStakeId = getLastElement(stakesIds ?? []);
 
   if (!isDefined(lastStakeId)) {
-    return;
+    return null;
   }
 
   const stakeAmount = await farmContractStorage.stakes.get(lastStakeId);
 
   if (!isDefined(stakeAmount)) {
-    return;
+    return null;
   }
 
   const rewardTokenContractInstance = await getReadOnlyContract(farm.rewardToken.contractAddress, tezos);
