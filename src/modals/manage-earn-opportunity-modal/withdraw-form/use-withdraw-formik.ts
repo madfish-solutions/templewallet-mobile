@@ -21,9 +21,11 @@ import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
+import { isFarm } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { PERCENTAGE_OPTIONS } from '../constants';
 import { createWithdrawOperationParams } from './create-withdraw-operation-params';
 
 export interface WithdrawTokenOption {
@@ -67,7 +69,7 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
 
       const doWithdraw = async () => {
         helpers.setSubmitting(true);
-        const { tokenOption } = values;
+        const { tokenOption, amountOptionIndex } = values;
         const { token } = tokenOption;
         const tokenIndex = stakeTokens.findIndex(farmToken => getTokenSlug(farmToken) === getTokenSlug(token));
 
@@ -77,7 +79,8 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
             tokenIndex,
             tezos,
             publicKeyHash,
-            stake
+            stake,
+            PERCENTAGE_OPTIONS[amountOptionIndex]
           );
           dispatch(
             navigateAction(ModalsEnum.Confirmation, {
@@ -101,7 +104,9 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
         const vestingPeriodSeconds = Number(earnOpportunity.vestingPeriodSeconds);
         doAfterConfirmation(
           vestingPeriodSeconds > SECONDS_IN_DAY
-            ? 'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.'
+            ? `It is a long-term ${
+                isFarm(earnOpportunity) ? 'farm' : 'savings pool'
+              }. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.`
             : `It is a farm with a locked period of ${formatTimespan(vestingPeriodSeconds * 1000, {
                 unit: vestingPeriodSeconds < secondsInHour ? 'minute' : 'hour',
                 roundingMethod: 'ceil'

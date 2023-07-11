@@ -43,7 +43,8 @@ export const useEarnOpportunityTokens = (earnOpportunity?: EarnOpportunity) => {
   return useMemo(
     () => ({
       stakeTokens: earnOpportunity?.tokens.map(convertToken) ?? [],
-      rewardToken: isDefined(earnOpportunity) ? convertToken(earnOpportunity.rewardToken) : emptyTezosLikeToken
+      rewardToken: isDefined(earnOpportunity) ? convertToken(earnOpportunity.rewardToken) : emptyTezosLikeToken,
+      stakedToken: isDefined(earnOpportunity) ? convertToken(earnOpportunity.stakedToken) : emptyTezosLikeToken
     }),
     [earnOpportunity, convertToken]
   );
