@@ -17,8 +17,8 @@ import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { useLastStakesSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { EarnSelectorsEnum } from './earn.selectors';
 
+import { EarnSelectorsEnum } from './earn.selectors';
 import { useEarnStyles } from './earn.styles';
 import { FarmItem } from './farm-item/farm-item';
 import { MainInfo } from './main-info/main-info';
@@ -78,6 +78,7 @@ export const Earn: FC = () => {
             size={formatSize(16)}
             strokeWidth={formatSize(2)}
             onChange={handleToggleDepositOnly}
+            testID={EarnSelectorsEnum.depositedOnlyCheckbox}
           >
             <Divider size={formatSize(4)} />
             <Text style={styles.depositText}>Deposited only</Text>
