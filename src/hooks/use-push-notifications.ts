@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import { useEffect } from 'react';
 import { PermissionsAndroid } from 'react-native';
+/* eslint-disable-next-line import/no-named-as-default */
 import PushNotification from 'react-native-push-notification';
 
 import { isAndroid } from 'src/config/system';
@@ -17,13 +18,16 @@ export const usePushNotifications = () => {
 };
 
 const requestUserPermission = async () => {
-  if (isAndroid) {
-    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-  }
+  let enabled = false;
 
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  if (isAndroid) {
+    enabled = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+  } else {
+    const iosAuthStatus = await messaging().requestPermission();
+    enabled =
+      iosAuthStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      iosAuthStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  }
 
   if (enabled) {
     await getFcmToken();
