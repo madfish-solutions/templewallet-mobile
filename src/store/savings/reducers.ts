@@ -2,7 +2,12 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
 import { setSelectedAccountAction } from '../wallet/wallet-actions';
-import { loadAllSavingsActions, loadAllSavingsAndStakesAction, loadAllStakesActions } from './actions';
+import {
+  loadAllSavingsActions,
+  loadAllSavingsAndStakesAction,
+  loadAllStakesActions,
+  selectSavingsSortValueAction
+} from './actions';
 import { savingsInitialState, SavingsState } from './state';
 
 export const savingsReducer = createReducer<SavingsState>(savingsInitialState, builder => {
@@ -30,5 +35,9 @@ export const savingsReducer = createReducer<SavingsState>(savingsInitialState, b
   builder.addCase(setSelectedAccountAction, state => ({
     ...state,
     stakes: savingsInitialState.stakes
+  }));
+  builder.addCase(selectSavingsSortValueAction, (state, { payload }) => ({
+    ...state,
+    sortField: payload
   }));
 });

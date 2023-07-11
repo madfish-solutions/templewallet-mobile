@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
+import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 
 import { createActions } from '../create-actions';
@@ -12,3 +13,5 @@ export const loadAllSavingsActions = createActions<void, Array<SavingsItem>, voi
 export const loadAllStakesActions = createActions<Array<SavingsItem>, UserStakeInterface, void>(
   'savings/LOAD_ALL_STAKES'
 );
+
+export const selectSavingsSortValueAction = createAction<EarnOpportunitiesSortFieldEnum>('savings/SELECT_SORT_VALUE');
