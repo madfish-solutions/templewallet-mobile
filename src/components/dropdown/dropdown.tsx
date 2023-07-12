@@ -16,6 +16,7 @@ import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
@@ -42,6 +43,7 @@ export interface DropdownValueProps<T> extends TestIdProps {
   list: T[];
   disabled?: boolean;
   onValueChange: EventFn<T | undefined>;
+  itemTestIDPropertiesFn?: (value: T) => object | undefined;
 }
 
 export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
@@ -81,7 +83,8 @@ const DropdownComponent = <T extends unknown>({
   onValueChange,
   onLongPress,
   testID,
-  testIDProperties
+  testIDProperties,
+  itemTestIDPropertiesFn = emptyFn
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
@@ -100,14 +103,20 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableOpacity key={index} onPress={handlePress} testID={DropdownSelectors.option}>
+        <TouchableWithAnalytics
+          Component={TouchableOpacity}
+          key={index}
+          onPress={handlePress}
+          testID={DropdownSelectors.option}
+          testIDProperties={itemTestIDPropertiesFn(item)}
+        >
           <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
-        </TouchableOpacity>
+        </TouchableWithAnalytics>
       );
     },
-    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem]
+    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem, itemTestIDPropertiesFn]
   );
 
   const scroll = useCallback(() => {

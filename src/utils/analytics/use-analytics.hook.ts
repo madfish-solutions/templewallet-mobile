@@ -23,20 +23,25 @@ export const useAnalytics = () => {
       event?: string,
       category: AnalyticsEventCategory = AnalyticsEventCategory.General,
       additionalProperties: AnalyticsEventProperties = {}
-    ) =>
+    ) => {
+      if (event !== undefined && shouldSendAnalytics) {
+        console.log('trackEvent', event, category, JSON.stringify(additionalProperties));
+      }
+
       event !== undefined &&
-      shouldSendAnalytics &&
-      jitsu.track(category, {
-        userId,
-        event,
-        timestamp: Date.now(),
-        properties: {
+        shouldSendAnalytics &&
+        jitsu.track(category, {
+          userId,
           event,
-          category,
-          ABTestingCategory: testGroupName,
-          ...additionalProperties
-        }
-      }),
+          timestamp: Date.now(),
+          properties: {
+            event,
+            category,
+            ABTestingCategory: testGroupName,
+            ...additionalProperties
+          }
+        });
+    },
     [analyticsEnabled, userId, testGroupName]
   );
 

@@ -18,12 +18,15 @@ import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -52,6 +55,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
   const fiatToUsdRate = useFiatToUsdRateSelector();
+  const { trackEvent } = useAnalytics();
 
   const apr = useMemo(
     () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
@@ -102,16 +106,31 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       const opParams = await getHarvestAssetsTransferParams(tezos, farm.item.contractAddress, lastStakeId);
 
       if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
+        const modalAnswerAnalyticsProperties = {
+          page: ScreensEnum.Earn,
+          farmId: farm.item.id,
+          farmContractAddress: farm.item.contractAddress
+        };
+
         doAfterConfirmation(
           'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
           'Claim rewards',
-          () => navigateHarvestFarm(opParams)
+          () => {
+            trackEvent(
+              'CLAIM_REWARDS_MODAL_CONFIRM',
+              AnalyticsEventCategory.ButtonPress,
+              modalAnswerAnalyticsProperties
+            );
+            navigateHarvestFarm(opParams);
+          },
+          () =>
+            trackEvent('CLAIM_REWARDS_MODAL_CANCEL', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties)
         );
       } else {
         navigateHarvestFarm(opParams);
       }
     }
-  }, [lastStakeRecord?.rewardsDueDate, lastStakeId, farm.item.contractAddress, tezos]);
+  }, [lastStakeRecord?.rewardsDueDate, lastStakeId, farm.item, tezos, trackEvent]);
 
   const actionButtonsTestIDProperties = useMemo(
     () => ({
