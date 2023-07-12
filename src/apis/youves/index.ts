@@ -115,16 +115,16 @@ export const getYouvesSavingsItems$ = (tokenUsdExchangeRates: ExchangeRateRecord
           const tvlInStakedToken = mutezToTz(tvlInStakedTokenAtoms, tokenDecimals);
 
           const stakedToken = toEarnOpportunityToken(token);
-          const tokenExchangeRate = tokenUsdExchangeRates[toTokenSlug(tokenAddress, tokenId)] ?? null;
+          const tokenExchangeRate = tokenUsdExchangeRates[toTokenSlug(tokenAddress, tokenId)]?.toString() ?? null;
 
           return {
             id,
             contractAddress: SAVINGS_V3_POOL_ADDRESS,
             apr: apr.toString(),
-            depositExchangeRate: tokenExchangeRate.toString(),
+            depositExchangeRate: tokenExchangeRate,
             depositTokenUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), tokenAddress),
             discFactor: savingsStorage.disc_factor.toFixed(),
-            earnExchangeRate: tokenExchangeRate.toString(),
+            earnExchangeRate: tokenExchangeRate,
             vestingPeriodSeconds: savingsStorage.max_release_period.toFixed(),
             stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), SAVINGS_V3_POOL_ADDRESS),
             stakedToken,

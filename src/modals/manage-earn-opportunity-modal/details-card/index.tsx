@@ -20,7 +20,7 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
-import { aprToApy } from 'src/utils/earn.utils';
+import { aprToApy, isFarm } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -54,6 +54,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = earnOpportunityItem;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
   const apy = isDefined(apr) ? aprToApy(Number(apr)) : undefined;
+  const apyOrApr = isFarm(earnOpportunityItem) ? apy : Number(apr);
   const [claimPending, setClaimPending] = useState(false);
   const styles = useDetailsCardStyles();
   const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
@@ -140,7 +141,9 @@ export const DetailsCard: FC<DetailsCardProps> = ({
     <View style={styles.root}>
       <View style={styles.title}>
         <EarnOpportunityTokens {...tokens} />
-        <Text style={styles.apyLabel}>APY: {isDefined(apy) ? `${apy.toFixed(2)}%` : '-'}</Text>
+        <Text style={styles.apyLabel}>
+          {isFarm(earnOpportunityItem) ? 'APY' : 'APR'}: {isDefined(apyOrApr) ? `${apyOrApr.toFixed(2)}%` : '-'}
+        </Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />
       <View style={styles.statsRow}>
@@ -156,14 +159,16 @@ export const DetailsCard: FC<DetailsCardProps> = ({
           }
           usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
         />
-        <StatsItem
-          loading={loading}
-          title="Claimable rewards:"
-          value={
-            <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
-          }
-          usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
-        />
+        {depositAmount.gt(0) && (
+          <StatsItem
+            loading={loading}
+            title="Claimable rewards:"
+            value={
+              <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+            }
+            usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
+          />
+        )}
       </View>
       <Divider size={formatSize(12)} />
       {!depositAmount.isZero() && (
@@ -178,14 +183,16 @@ export const DetailsCard: FC<DetailsCardProps> = ({
             loading={loading}
             title="Fully claimable:"
             value={
-              <Text style={styles.statsValue}>
+              <View style={styles.timespanValue}>
                 {countdownTokens.map(({ unit, value }) => (
                   <React.Fragment key={unit}>
-                    {value}
-                    <Text style={styles.timespanUnit}>{unit}</Text>{' '}
+                    <Text style={styles.statsValue}>{value}</Text>
+                    <Divider size={formatSize(2)} />
+                    <Text style={styles.timespanUnit}>{unit}</Text>
+                    <Divider size={formatSize(6)} />
                   </React.Fragment>
                 ))}
-              </Text>
+              </View>
             }
           />
         </View>
