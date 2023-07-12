@@ -10,6 +10,7 @@ import axios from 'axios';
 import { BigNumber } from 'bignumber.js';
 
 import { toIntegerSeconds } from 'src/utils/date.utils';
+import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
@@ -21,8 +22,17 @@ const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.qui
 
 export const getV3FarmsList = async () => {
   const response = await stakingApi.get<FarmsListResponse>('/v3/multi-v2');
+  const firstActivityTimestamps = await Promise.all(
+    response.data.list.map(({ item }) => getFirstAccountActivityTime(item.contractAddress))
+  );
 
-  return response.data.list;
+  return response.data.list.map(({ item, ...rest }, index) => ({
+    ...rest,
+    item: {
+      ...item,
+      firstActivityTime: firstActivityTimestamps[index]
+    }
+  }));
 };
 
 export const getHarvestAssetsTransferParams = async (

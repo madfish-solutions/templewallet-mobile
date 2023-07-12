@@ -28,7 +28,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
 
   const navigateToFarm = useCallback(
     () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, contractAddress: farm.item.contractAddress }),
-    [farm.item.id]
+    [farm.item]
   );
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>

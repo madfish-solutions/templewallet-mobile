@@ -10,6 +10,7 @@ import { ExchangeRateRecord } from 'src/store/currency/currency-state';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { getLastElement } from 'src/utils/array.utils';
+import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { tzktUrl } from 'src/utils/linking.util';
@@ -70,6 +71,7 @@ const getYOUTokenSavingItem = async (youToUsdExchangeRate: BigNumber): Promise<S
       unifiedStaking.stakeToken.decimals
     ).integerValue(BigNumber.ROUND_DOWN);
     const tvlInStakedToken = mutezToTz(tvlInStakedTokenAtoms, unifiedStaking.stakeToken.decimals);
+    const firstActivityTime = await getFirstAccountActivityTime(unifiedStaking.stakingContract);
 
     return {
       id: unifiedStaking.stakeToken.id,
@@ -87,7 +89,8 @@ const getYOUTokenSavingItem = async (youToUsdExchangeRate: BigNumber): Promise<S
       staked: tvlInStakedTokenAtoms.toFixed(),
       tvlInUsd: tvlInStakedToken.times(youToUsdExchangeRate).toFixed(),
       tvlInStakedToken: tvlInStakedToken.toFixed(),
-      type: EarnOpportunityTypeEnum.YOUVES_STAKING
+      type: EarnOpportunityTypeEnum.YOUVES_STAKING,
+      firstActivityTime
     };
   } catch (error) {
     console.error(error);
@@ -116,6 +119,7 @@ export const getYouvesSavingsItems$ = (tokenUsdExchangeRates: ExchangeRateRecord
 
           const stakedToken = toEarnOpportunityToken(token);
           const tokenExchangeRate = tokenUsdExchangeRates[toTokenSlug(tokenAddress, tokenId)]?.toString() ?? null;
+          const firstActivityTime = await getFirstAccountActivityTime(SAVINGS_V3_POOL_ADDRESS);
 
           return {
             id,
@@ -133,7 +137,8 @@ export const getYouvesSavingsItems$ = (tokenUsdExchangeRates: ExchangeRateRecord
             staked: tvlInStakedTokenAtoms.toFixed(),
             tvlInUsd: isDefined(tokenExchangeRate) ? tvlInStakedToken.times(tokenExchangeRate).toFixed() : null,
             tvlInStakedToken: tvlInStakedToken.toFixed(),
-            type: EarnOpportunityTypeEnum.YOUVES_SAVING
+            type: EarnOpportunityTypeEnum.YOUVES_SAVING,
+            firstActivityTime
           };
         } catch (error) {
           console.error(error);
