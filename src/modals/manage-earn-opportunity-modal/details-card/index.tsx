@@ -159,14 +159,16 @@ export const DetailsCard: FC<DetailsCardProps> = ({
           }
           usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
         />
-        <StatsItem
-          loading={loading}
-          title="Claimable rewards:"
-          value={
-            <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
-          }
-          usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
-        />
+        {depositAmount.gt(0) && (
+          <StatsItem
+            loading={loading}
+            title="Claimable rewards:"
+            value={
+              <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+            }
+            usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
+          />
+        )}
       </View>
       <Divider size={formatSize(12)} />
       {!depositAmount.isZero() && (
@@ -181,14 +183,16 @@ export const DetailsCard: FC<DetailsCardProps> = ({
             loading={loading}
             title="Fully claimable:"
             value={
-              <Text style={styles.statsValue}>
+              <View style={styles.timespanValue}>
                 {countdownTokens.map(({ unit, value }) => (
                   <React.Fragment key={unit}>
-                    {value}
-                    <Text style={styles.timespanUnit}>{unit}</Text>{' '}
+                    <Text style={styles.statsValue}>{value}</Text>
+                    <Divider size={formatSize(2)} />
+                    <Text style={styles.timespanUnit}>{unit}</Text>
+                    <Divider size={formatSize(6)} />
                   </React.Fragment>
                 ))}
-              </Text>
+              </View>
             }
           />
         </View>

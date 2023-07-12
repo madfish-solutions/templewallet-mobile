@@ -24,6 +24,10 @@ export const useDetailsCardStyles = createUseStylesMemoized(({ colors, typograph
     letterSpacing: formatSize(-0.41),
     color: colors.black
   },
+  timespanValue: {
+    flexDirection: 'row',
+    alignItems: 'baseline'
+  },
   timespanUnit: {
     ...typography.numbersRegular13,
     letterSpacing: formatSize(-0.08),
