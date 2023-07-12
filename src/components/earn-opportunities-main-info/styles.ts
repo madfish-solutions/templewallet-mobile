@@ -1,9 +1,10 @@
+import { useButtonLargePrimaryStyleConfig } from 'src/components/button/button-large/button-large-primary/button-large-primary.styles';
 import { black } from 'src/config/styles';
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesConfig, createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
-export const useMainInfoStyles = createUseStyles(({ colors, typography }) => ({
+export const useEarnOpportunitiesMainInfoStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
     ...generateShadow(1, black),
     padding: formatSize(16),
@@ -11,8 +12,7 @@ export const useMainInfoStyles = createUseStyles(({ colors, typography }) => ({
   },
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: formatSize(16)
+    justifyContent: 'space-between'
   },
   card: {
     paddingVertical: formatSize(8),
@@ -38,5 +38,16 @@ export const useMainInfoStyles = createUseStyles(({ colors, typography }) => ({
   },
   buttonContainer: {
     height: formatSize(38)
+  }
+}));
+
+export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ typography }) => ({
+  ...useButtonLargePrimaryStyleConfig(),
+  containerStyle: {
+    height: formatSize(38),
+    borderRadius: formatSize(10)
+  },
+  titleStyle: {
+    ...typography.tagline13Tag
   }
 }));

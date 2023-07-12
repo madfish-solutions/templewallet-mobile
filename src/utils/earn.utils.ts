@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
+import { tzktApi } from 'src/api.service';
 import { Farm } from 'src/apis/quipuswap-staking/types';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
@@ -58,6 +59,15 @@ export const calculateYouvesFarmingRewards = (
 export const aprToApy = (aprPercentage: number, compoundFrequency = APPROXIMATE_DAYS_IN_YEAR) =>
   ((1 + Number(aprPercentage) / 100 / compoundFrequency) ** compoundFrequency - 1) * 100;
 
+export const sortByNewest = (itemA: EarnOpportunity, itemB: EarnOpportunity) =>
+  new Date(itemB?.firstActivityTime ?? Date.now()).getTime() -
+  new Date(itemA?.firstActivityTime ?? Date.now()).getTime();
+
+export const sortByOldest = (itemA: EarnOpportunity, itemB: EarnOpportunity) => sortByNewest(itemB, itemA);
+
+export const sortByApy = (itemA: EarnOpportunity, itemB: EarnOpportunity) =>
+  new BigNumber(itemB?.apr ?? 0).minus(itemA?.apr ?? 0).toNumber();
+
 export const convertEarnOpportunityToken = (rawToken: EarnOpportunityToken): TokenInterface => {
   const { fa2TokenId, contractAddress, metadata, type } = rawToken;
   const { name, symbol, decimals, thumbnailUri } = metadata;
@@ -79,3 +89,6 @@ export const convertEarnOpportunityToken = (rawToken: EarnOpportunityToken): Tok
 const farmEarnOpportunityTypes = [EarnOpportunityTypeEnum.STABLESWAP, EarnOpportunityTypeEnum.DEX_TWO];
 export const isFarm = (earnOpportunity: EarnOpportunity): earnOpportunity is Farm =>
   farmEarnOpportunityTypes.includes(earnOpportunity.type ?? EarnOpportunityTypeEnum.DEX_TWO);
+
+export const getFirstAccountActivityTime = async (address: string) =>
+  tzktApi.get<{ firstActivityTime: string }>(`/accounts/${address}`).then(response => response.data.firstActivityTime);
