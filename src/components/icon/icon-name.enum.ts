@@ -46,6 +46,7 @@ export enum IconNameEnum {
   Youves = 'Youves',
   Vortex = 'Vortex',
   Plenty = 'Plenty',
+  LiquidityBaking = 'LiquidityBaking',
   QuipuSwap = 'QuipuSwap',
   QuipuSwapDark = 'QuipuSwapDark',
   Close = 'Close',
@@ -66,6 +67,7 @@ export enum IconNameEnum {
   Exolix = 'Exolix',
   AliceBob = 'AliceBob',
   Utorg = 'Utorg',
+  Binance = 'Binance',
   Uah = 'Uah',
   Ramp = 'Ramp',
   Check = 'Check',
@@ -136,7 +138,6 @@ export enum IconNameEnum {
   AppleOnDark = 'AppleOnDark',
   GoogleDrive = 'GoogleDrive',
   QsEarnSource = 'QsEarnSource',
-  LiquidityBakingLogo = 'LiquidityBakingLogo',
   Smile = 'Smile',
   SmileWithGlasses = 'SmileWithGlasses',
   SmileWithDollar = 'SmileWithDollar'

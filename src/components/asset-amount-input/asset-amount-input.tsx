@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
-import { DEFAULT_EXPECTED_GAS_EXPENSE, emptyFn } from 'src/config/general';
+import { emptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
@@ -70,7 +70,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
-  expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
+  expectedGasExpense = 0.3,
   stylesConfig = defaultAssetAmountInputStylesConfig,
   isShowNameForValue = true,
   isSingleAsset = false,

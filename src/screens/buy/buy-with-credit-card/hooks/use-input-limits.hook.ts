@@ -1,27 +1,25 @@
 import { useMemo } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { useFiatCurrenciesSelector, usePairLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
-import { intersectAssetsLimits } from 'src/utils/intersect-assets-limits.utils';
+import { usePairLimitsByProvidersSelector, usePairLimitsSelector } from 'src/store/buy-with-credit-card/selectors';
 import { isDefined } from 'src/utils/is-defined';
+import { PairLimits } from 'src/utils/pair-limits';
 
 export const useInputLimits = (
   topUpProvider: TopUpProviderEnum,
   fiatCurrencyCode: string,
   cryptoCurrencyCode: string
-) => {
-  const fiatCurrencies = useFiatCurrenciesSelector(topUpProvider);
-  const fiatCurrency = useMemo(
-    () => fiatCurrencies.find(({ code }) => code === fiatCurrencyCode),
-    [fiatCurrencies, fiatCurrencyCode]
-  );
+): Partial<PairLimits> => {
   const pairLimits = usePairLimitsSelector(fiatCurrencyCode, cryptoCurrencyCode, topUpProvider);
 
-  return useMemo(() => {
-    if (isDefined(pairLimits) && !isDefined(pairLimits.data) && isDefined(pairLimits.error)) {
-      return {};
-    }
+  return useMemo(() => pairLimits?.data ?? {}, [pairLimits]);
+};
 
-    return intersectAssetsLimits([pairLimits?.data, { min: fiatCurrency?.minAmount, max: fiatCurrency?.maxAmount }]);
-  }, [pairLimits, fiatCurrency]);
+export const usePairLimitsAreLoading = (fiatCurrencyCode: string, cryptoCurrencyCode: string) => {
+  const pairLimits = usePairLimitsByProvidersSelector(fiatCurrencyCode, cryptoCurrencyCode);
+
+  return useMemo(
+    () => isDefined(pairLimits) && Object.values(pairLimits).some(({ isLoading }) => isLoading),
+    [pairLimits]
+  );
 };

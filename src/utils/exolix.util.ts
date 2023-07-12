@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import { exolixApi } from 'src/api.service';
-import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import {
   ExolixCurrenciesResponseInterface,
   ExchangeDataInterface,
@@ -10,14 +9,15 @@ import {
   GetRateResponseWithAmountTooLow,
   SubmitExchangePayload
 } from 'src/interfaces/exolix.interface';
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
 import { outputTokensList } from 'src/screens/buy/crypto/exolix/config';
+import { ExolixTopUpInputInterface } from 'src/screens/buy/crypto/exolix/exolix-topup.form';
 
 import { isDefined } from './is-defined';
+import { isTruthy } from './is-truthy';
 
 const currenciesLimit = 100;
 
-export const loadExolixCurrencies = async (): Promise<Array<TopUpInputInterface>> => {
+export const loadExolixCurrencies = async (): Promise<ExolixTopUpInputInterface[]> => {
   let page = 1;
   let result = await loadCurrency(page);
   let totalData = result.data;
@@ -35,16 +35,19 @@ export const loadExolixCurrencies = async (): Promise<Array<TopUpInputInterface>
         code,
         icon,
         name,
-        network: network.network,
-        networkFullName: network.name,
-        networkShortName: network.shortName === '' ? null : network.shortName,
-        type: TopUpInputTypeEnum.Crypto
+        network: {
+          code: network.network,
+          fullName: network.name,
+          shortName: isTruthy(network.shortName) ? network.shortName : undefined
+        }
       }))
     )
     .flat()
     .filter(
       ({ name, network }) =>
-        outputTokensList.find(outputToken => outputToken.name === name && outputToken.network === network) === undefined
+        outputTokensList.find(
+          outputToken => outputToken.name === name && outputToken.network?.code === network.code
+        ) === undefined
     );
 };
 

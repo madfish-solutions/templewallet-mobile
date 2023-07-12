@@ -5,7 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { PaymentProviderInterface } from 'src/interfaces/topup.interface';
+import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { useCryptoCurrenciesSelector } from 'src/store/buy-with-credit-card/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';

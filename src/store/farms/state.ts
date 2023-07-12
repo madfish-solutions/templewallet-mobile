@@ -1,4 +1,5 @@
-import { SingleFarmResponse } from 'src/types/single-farm-response';
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
+import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
 
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
@@ -14,16 +15,12 @@ export interface UserStakeValueInterface {
 export type LastUserStakeInterface = Record<string, UserStakeValueInterface>;
 export interface FarmsState {
   allFarms: LoadableEntityState<Array<SingleFarmResponse>>;
-  lastStakes: LastUserStakeInterface;
-  stakesLoading: boolean;
+  lastStakes: LoadableEntityState<LastUserStakeInterface>;
+  sortField: FarmsSortFieldEnum;
 }
 
 export const farmsInitialState: FarmsState = {
-  lastStakes: {},
+  lastStakes: createEntity({}),
   allFarms: createEntity([]),
-  stakesLoading: false
+  sortField: FarmsSortFieldEnum.Default
 };
-
-export interface FarmsRootState {
-  farms: FarmsState;
-}

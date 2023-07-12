@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, PropsWithChildren, useEffect, useRef } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import { Animated, View } from 'react-native';
 
 import { EventFn } from 'src/config/general';
@@ -57,35 +57,53 @@ export const SegmentedControl = <T extends unknown>({
     [selectedIndex, tileWidth]
   );
 
+  const renderOption = useCallback(
+    (item: T, index: number) => {
+      const disabled = disabledValuesIndices?.includes(index) ?? false;
+
+      return (
+        <TouchableOpacity
+          disabled={disabled}
+          key={index}
+          style={[styles.itemContainer, { width: tileWidth }]}
+          hitSlop={{
+            ...(index === 0 && { left: formatSize(12) }),
+            top: formatSize(12),
+            ...(index === values.length - 1 && { right: formatSize(12) }),
+            bottom: formatSize(8)
+          }}
+          onPress={() => {
+            trackEvent(testID, AnalyticsEventCategory.FormChange, { ...testIDProperties, index });
+            onChange(index);
+          }}
+        >
+          {renderValue({
+            item,
+            isDisabled: disabled,
+            isSelected: index === selectedIndex
+          })}
+        </TouchableOpacity>
+      );
+    },
+    [
+      disabledValuesIndices,
+      styles,
+      tileWidth,
+      trackEvent,
+      testID,
+      testIDProperties,
+      onChange,
+      renderValue,
+      selectedIndex,
+      values
+    ]
+  );
+
   return (
     <View style={[styles.container, { width }]} onLayout={handleLayout}>
       <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }] }]} />
 
-      <View style={styles.contentContainer}>
-        {values.map((item, index) => (
-          <TouchableOpacity
-            disabled={disabledValuesIndices?.includes(index) ?? false}
-            key={index}
-            style={[styles.itemContainer, { width: tileWidth }]}
-            hitSlop={{
-              ...(index === 0 && { left: formatSize(12) }),
-              top: formatSize(12),
-              ...(index === values.length - 1 && { right: formatSize(12) }),
-              bottom: formatSize(8)
-            }}
-            onPress={() => {
-              trackEvent(testID, AnalyticsEventCategory.FormChange, { ...testIDProperties, index });
-              onChange(index);
-            }}
-          >
-            {renderValue({
-              item,
-              isDisabled: disabledValuesIndices?.includes(index) ?? false,
-              isSelected: index === selectedIndex
-            })}
-          </TouchableOpacity>
-        ))}
-      </View>
+      <View style={styles.contentContainer}>{values.map(renderOption)}</View>
     </View>
   );
 };

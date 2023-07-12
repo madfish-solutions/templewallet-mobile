@@ -1,9 +1,9 @@
-import { NotificationStatus } from '../../enums/notification-status.enum';
-import { NotificationType } from '../../enums/notification-type.enum';
-import { useSelector } from '../selector';
-import { NotificationsRootState } from './notifications-state';
+import { NotificationStatus } from 'src/enums/notification-status.enum';
+import { NotificationType } from 'src/enums/notification-type.enum';
+import { useSelector } from 'src/store/selector';
+import type { RootState } from 'src/store/types';
 
-const getFilteredNotifications = (state: NotificationsRootState) => {
+const getFilteredNotifications = (state: RootState) => {
   const notifications = state.notifications.list.data;
 
   if (!state.notifications.isNewsEnabled) {

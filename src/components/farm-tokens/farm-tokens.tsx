@@ -5,8 +5,6 @@ import { Divider } from 'src/components/divider/divider';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { FarmToken } from 'src/interfaces/earn.interface';
 import { formatSize } from 'src/styles/format-size';
-import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
-import { getTokenSlug } from 'src/token/utils/token.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { getTruncatedProps } from 'src/utils/style.util';
 
@@ -32,18 +30,12 @@ export const FarmTokens: FC<Props> = ({ stakeTokens, rewardToken }) => {
               iconName={token.iconName}
               thumbnailUri={token.thumbnailUri}
               size={formatSize(32)}
-              style={[
-                conditionalStyle(index > 0, styles.nextToken),
-                conditionalStyle(getTokenSlug(token) === KNOWN_TOKENS_SLUGS.tzBTC, styles.whiteBg)
-              ]}
+              style={conditionalStyle(index > 0, styles.nextToken)}
             />
           ))}
-          <TokenIcon
-            iconName={rewardToken.iconName}
-            thumbnailUri={rewardToken.thumbnailUri}
-            size={formatSize(20)}
-            style={styles.rewardToken}
-          />
+          <View style={styles.rewardTokenWrapper}>
+            <TokenIcon iconName={rewardToken.iconName} thumbnailUri={rewardToken.thumbnailUri} size={formatSize(20)} />
+          </View>
         </View>
         <Divider size={formatSize(14)} />
         <View>

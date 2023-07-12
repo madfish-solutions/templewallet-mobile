@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
-import { FarmToken } from 'src/apis/quipuswap-staking/types';
+import { TEZOS_CONTRACT_ADDRESS } from 'src/apis/quipuswap-staking/consts';
+import { Farm, FarmToken } from 'src/apis/quipuswap-staking/types';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import {
   useAssetsListSelector,
@@ -10,7 +11,6 @@ import {
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { Farm } from 'src/types/farm';
 import { isDefined } from 'src/utils/is-defined';
 import { convertFarmToken } from 'src/utils/staking.utils';
 
@@ -22,7 +22,7 @@ export const useFarmTokens = (farm?: Farm) => {
 
   const convertToken = useCallback(
     (token: FarmToken) => {
-      const tokenAddress = token.contractAddress === 'tez' ? undefined : token.contractAddress;
+      const tokenAddress = token.contractAddress === TEZOS_CONTRACT_ADDRESS ? undefined : token.contractAddress;
       const tokenSlug = toTokenSlug(tokenAddress, token.fa2TokenId);
       const accountAsset =
         tokenSlug === TEZ_TOKEN_SLUG

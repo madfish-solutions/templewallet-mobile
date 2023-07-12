@@ -27,6 +27,7 @@
     "react-hooks/exhaustive-deps": "off",
     "import/no-duplicates": "error",
     "import/no-self-import": "error",
+    "import/no-cycle": "error",
     "import/order": [
       "error",
       {

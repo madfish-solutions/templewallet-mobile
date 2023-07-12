@@ -4,14 +4,13 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { ActivityIndicator, findNodeHandle, ScrollView, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { PoolType } from 'src/apis/quipuswap-staking/types';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
-import { poolTypesToDisplay } from 'src/config/staking';
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
@@ -36,17 +35,16 @@ export const ManageFarmingPoolModal: FC = () => {
   const blockLevel = useBlockLevel();
   const prevBlockLevelRef = useRef(blockLevel);
   const dispatch = useDispatch();
-  const farm = useFarmSelector(params.id, params.contractAddress);
+  const farm = useFarmSelector(params.id, params.version);
   const farmIsLoading = useFarmsLoadingSelector();
   const stakes = useLastStakesSelector();
   const stake = isDefined(farm) ? stakes[farm.item.contractAddress] : undefined;
   const pageIsLoading = farmIsLoading && !isDefined(farm);
   const [tabIndex, setTabIndex] = useState(0);
-  const poolIsSupported = poolTypesToDisplay.includes(farm?.item.type ?? FarmPoolTypeEnum.DEX_TWO);
   const scrollViewRef = useRef<ScrollView>(null);
   const acceptRisksRef = useRef<View>(null);
 
-  const stakeFormik = useStakeFormik(params.id, params.contractAddress);
+  const stakeFormik = useStakeFormik(params.id, params.version);
   const {
     errors: stakeFormErrors,
     submitForm: submitStakeForm,
@@ -54,11 +52,12 @@ export const ManageFarmingPoolModal: FC = () => {
     getFieldMeta: getStakeFieldMeta
   } = stakeFormik;
   const stakeFormErrorsVisible = stakeFormFields.some(fieldName => hasError(getStakeFieldMeta(fieldName)));
-  const { formik: withdrawFormik, isSubmitting: withdrawFormSubmitting } = useWithdrawFormik(
-    params.id,
-    params.contractAddress
-  );
-  const { errors: withdrawFormErrors, submitForm: submitWithdrawForm } = withdrawFormik;
+  const withdrawFormik = useWithdrawFormik(params.id, params.version);
+  const {
+    errors: withdrawFormErrors,
+    submitForm: submitWithdrawForm,
+    isSubmitting: withdrawFormSubmitting
+  } = withdrawFormik;
 
   useEffect(() => {
     if (!isDefined(farm) || prevBlockLevelRef.current !== blockLevel) {
@@ -111,7 +110,7 @@ export const ManageFarmingPoolModal: FC = () => {
           </View>
         )}
         {!pageIsLoading && <Divider size={formatSize(16)} />}
-        {!pageIsLoading && isDefined(farm) && poolIsSupported && (
+        {!pageIsLoading && farm?.item.type === PoolType.STABLESWAP && (
           <View style={styles.content}>
             {tabIndex === 0 ? (
               <StakeForm acceptRisksRef={acceptRisksRef} farm={farm} formik={stakeFormik} stake={stake} />
@@ -120,9 +119,9 @@ export const ManageFarmingPoolModal: FC = () => {
             )}
           </View>
         )}
-        {!pageIsLoading && isDefined(farm) && !poolIsSupported && (
+        {!pageIsLoading && isDefined(farm) && farm.item.type !== PoolType.STABLESWAP && (
           <View style={styles.content}>
-            <Text style={styles.notSupportedText}>Only stableswap farms and liquidity baking are supported now</Text>
+            <Text style={styles.notSupportedText}>Non-stableswap farms are not supported yet</Text>
           </View>
         )}
       </ScreenContainer>
@@ -130,7 +129,9 @@ export const ManageFarmingPoolModal: FC = () => {
         {tabIndex === 0 ? (
           <ButtonLargePrimary
             title="Deposit"
-            disabled={pageIsLoading || !poolIsSupported || stakeFormErrorsVisible || stakeFormSubmitting}
+            disabled={
+              pageIsLoading || farm?.item.type !== PoolType.STABLESWAP || stakeFormErrorsVisible || stakeFormSubmitting
+            }
             onPress={handleDepositClick}
             testID={ManageFarmingPoolModalSelectors.depositButton}
           />
@@ -138,7 +139,10 @@ export const ManageFarmingPoolModal: FC = () => {
           <ButtonLargePrimary
             title="Withdraw & Claim rewards"
             disabled={
-              pageIsLoading || !poolIsSupported || Object.keys(withdrawFormErrors).length > 0 || withdrawFormSubmitting
+              pageIsLoading ||
+              farm?.item.type !== PoolType.STABLESWAP ||
+              Object.keys(withdrawFormErrors).length > 0 ||
+              withdrawFormSubmitting
             }
             onPress={submitWithdrawForm}
             testID={ManageFarmingPoolModalSelectors.withdrawButton}
