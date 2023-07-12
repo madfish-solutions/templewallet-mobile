@@ -10,6 +10,7 @@ import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
+import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
@@ -20,7 +21,9 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
+import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
@@ -40,6 +43,7 @@ const DEFAULT_EXHANGE_RATE = 1;
 const SECONDS_IN_DAY = 86400;
 
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
+  const colors = useColors();
   const styles = useFarmItemStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
   const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
@@ -48,6 +52,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
   const isLiquidityBaking = farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING;
+  const fiatToUsdRate = useFiatToUsdRateSelector();
 
   const apy = useMemo(
     () => (isDefined(farm.item.apr) ? aprToApy(Number(farm.item.apr)).toFixed(DEFAULT_DECIMALS) : '---'),
@@ -59,8 +64,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       mutezToTz(
         new BigNumber(lastStakeRecord?.depositAmountAtomic ?? DEFAULT_AMOUNT),
         farm.item.stakedToken.metadata.decimals
-      ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.depositAmountAtomic, farm.item]
+      )
+        .multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXHANGE_RATE)
+        .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
+    [lastStakeRecord?.depositAmountAtomic, fiatToUsdRate, farm.item]
   );
   const depositIsZero = depositAmountAtomic.isZero();
 
@@ -69,8 +76,10 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       mutezToTz(
         new BigNumber(lastStakeRecord?.claimableRewards ?? DEFAULT_AMOUNT),
         farm.item.rewardToken.metadata.decimals
-      ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE),
-    [lastStakeRecord?.claimableRewards, farm.item]
+      )
+        .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXHANGE_RATE)
+        .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
+    [lastStakeRecord?.claimableRewards, fiatToUsdRate]
   );
 
   const navigateToFarm = useCallback(
@@ -110,9 +119,11 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
         {farm.item.type === FarmPoolTypeEnum.STABLESWAP && (
-          <Bage text="Stable Pool" color="#46BC94" style={styles.bage} />
+          <Bage text="Stable Pool" color={colors.kolibriGreen} style={styles.bage} textStyle={styles.bageText} />
         )}
-        {Number(farm.item.vestingPeriodSeconds) > SECONDS_IN_DAY && <Bage text="Long-Term Farm" />}
+        {Number(farm.item.vestingPeriodSeconds) > SECONDS_IN_DAY && (
+          <Bage text="Long-Term Farm" style={[styles.bage, styles.lastBage]} textStyle={styles.bageText} />
+        )}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
@@ -132,12 +143,16 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
           </View>
         </View>
 
+        <HorizontalBorder />
+
+        <Divider size={formatSize(8)} />
+
         <View style={[styles.row, styles.mb16]}>
           <View style={styles.flex}>
             <Text style={styles.attributeTitle}>Your deposit:</Text>
             <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
           </View>
-          {!isLiquidityBaking && (
+          {!isLiquidityBaking && depositAmountAtomic.gt(0) && (
             <View style={styles.flex}>
               <Text style={styles.attributeTitle}>Claimable rewards:</Text>
               <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />

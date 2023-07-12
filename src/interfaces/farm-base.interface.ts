@@ -20,4 +20,5 @@ export interface FarmBase {
   tvlInUsd: string | null;
   tvlInStakedToken: string;
   type?: FarmPoolTypeEnum;
+  firstActivityTime: string;
 }

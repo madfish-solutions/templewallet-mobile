@@ -1,4 +1,4 @@
-import { FormikProvider } from 'formik';
+import { FormikProps, FormikProvider } from 'formik';
 import React, { FC, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 
@@ -22,12 +22,12 @@ import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
 import { liquidityBakingRisksPoints, quipuswapFarmsRisksPoints } from './constants';
 import { useAssetAmountInputStylesConfig, useStakeFormStyles } from './styles';
-import { useStakeFormik } from './use-stake-formik';
+import { StakeFormValues } from './use-stake-formik';
 
 interface StakeFormProps {
   farm: SingleFarmResponse;
   stake?: UserStakeValueInterface;
-  formik: ReturnType<typeof useStakeFormik>;
+  formik: FormikProps<StakeFormValues>;
   acceptRisksRef?: RefObject<View>;
 }
 
@@ -99,7 +99,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
         <DetailsSection
           farm={farm.item}
           stake={stake}
-          shouldShowClaimRewardsButton
+          shouldShowClaimRewardsButton={farm.item.type !== FarmPoolTypeEnum.LIQUIDITY_BAKING}
           loading={stakesLoading && !isDefined(stake)}
         />
         <Divider size={formatSize(16)} />

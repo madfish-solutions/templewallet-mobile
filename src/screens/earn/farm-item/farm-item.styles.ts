@@ -1,12 +1,12 @@
 import { useButtonLargeSecondaryStyleConfig } from 'src/components/button/button-large/button-large-secondary/button-large-secondary.styles';
 import { black } from 'src/config/styles';
-import { createUseStylesConfig, createUseStylesMemoized } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { createUseStylesMemoized, createUseStylesConfig } from 'src/styles/create-use-styles';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
-    ...generateShadow(2, black),
+    ...generateShadow(1, black),
     borderRadius: formatSize(10),
     backgroundColor: colors.cardBG,
     marginHorizontal: formatSize(16)
@@ -37,15 +37,19 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
     color: colors.black
   },
   tokensContainer: {
-    paddingBottom: formatSize(8),
-    borderBottomWidth: formatSize(1),
-    marginBottom: formatSize(8),
-    borderColor: colors.lines
+    paddingBottom: formatSize(10)
   },
   bage: {
     position: 'relative',
     zIndex: 2,
-    marginRight: formatSize(-8)
+    marginRight: formatSize(-6),
+    paddingVertical: formatSize(4)
+  },
+  bageText: {
+    lineHeight: formatTextSize(13)
+  },
+  lastBage: {
+    zIndex: 1
   },
   mb16: {
     marginBottom: formatSize(16)
@@ -79,10 +83,10 @@ export const useFarmItemStyles = createUseStylesMemoized(({ colors, typography }
 export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ typography }) => ({
   ...useButtonLargeSecondaryStyleConfig(),
   containerStyle: {
-    flex: 1,
     height: formatSize(38),
     borderRadius: formatSize(10),
-    borderWidth: formatSize(2)
+    borderWidth: formatSize(2),
+    minWidth: '48%'
   },
   titleStyle: {
     ...typography.tagline13Tag

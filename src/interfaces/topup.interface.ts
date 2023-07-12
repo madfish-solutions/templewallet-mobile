@@ -1,41 +1,20 @@
-import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
-import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
+interface TopUpItemNetwork {
+  code: string;
+  fullName: string;
+  shortName?: string;
+}
 
-import { IconNameEnum } from '../components/icon/icon-name.enum';
-
-export interface TopUpInputInterface {
+export interface TopUpInterfaceBase {
   name: string;
   code: string;
   codeToDisplay?: string;
-  network: string;
-  networkFullName: string;
+  network?: TopUpItemNetwork;
   icon: string;
-  type: TopUpInputTypeEnum;
-  networkShortName?: string | null;
   minAmount?: number;
   maxAmount?: number;
   precision?: number;
 }
 
-export interface TopUpOutputInterface extends TopUpInputInterface {
-  slug: string;
-}
-
-export interface PaymentProviderInterface {
-  name: string;
-  id: TopUpProviderEnum;
-  iconName: IconNameEnum;
-  kycRequired: boolean;
-  isBestPrice: boolean;
-  minInputAmount?: number;
-  maxInputAmount?: number;
-  inputAmount?: number;
-  inputSymbol?: string;
-  outputAmount?: number;
-  outputSymbol?: string;
-}
-
-export interface TopUpProviderPairLimits {
-  min: number;
-  max: number;
+export interface TopUpWithNetworkInterface extends TopUpInterfaceBase {
+  network: TopUpItemNetwork;
 }

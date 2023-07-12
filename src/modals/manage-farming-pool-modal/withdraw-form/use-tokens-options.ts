@@ -1,9 +1,9 @@
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { from, switchMap } from 'rxjs';
+import { catchError, from, of } from 'rxjs';
 
 import { calculateUnstakeParams } from 'src/apis/liquidity-baking';
-import { estimateWithdrawTokenOutput as estimateStableswapWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
+import { estimateDivestOneCoinOutputs as estimateStableswapDivestOutputs } from 'src/apis/quipuswap-staking';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -12,7 +12,6 @@ import { showErrorToast } from 'src/toast/error-toast.utils';
 import { Farm } from 'src/types/farm';
 import { getTaquitoRpcErrorMessage } from 'src/utils/get-taquito-rpc-error-message';
 import { isDefined } from 'src/utils/is-defined';
-import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
 import { WithdrawTokenOption } from './use-withdraw-formik';
 
@@ -38,34 +37,29 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
       setAtomicAmounts(emptyAmounts);
     }
 
-    const subscription = from(getReadOnlyContract(farm.stakedToken.contractAddress, tezos))
-      .pipe(
-        switchMap(stableswapContract => {
-          const tokensIndexes = farm.tokens.map((_, index) => index);
-          const outputPromise =
-            farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING
-              ? calculateUnstakeParams(tezos, tokensIndexes, lpAmount, slippageTolerance).then(
-                  ({ outputTokenIndexDependentParams }) =>
-                    outputTokenIndexDependentParams.map(
-                      ({ swapOutputAtomic, directDivestOutputAtomic, routingFeeAtomic }) =>
-                        swapOutputAtomic.plus(directDivestOutputAtomic).minus(routingFeeAtomic)
-                    )
-                )
-              : estimateStableswapWithdrawTokenOutput(
-                  tezos,
-                  stableswapContract,
-                  tokensIndexes,
-                  lpAmount,
-                  farm.stakedToken.fa2TokenId ?? 0
-                );
-
-          return from(
-            outputPromise.catch(error => {
-              showErrorToast({ description: getTaquitoRpcErrorMessage(error) });
-
-              return undefined;
-            })
+    const tokensIndexes = farm.tokens.map((_, index) => index);
+    const outputPromise =
+      farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING
+        ? calculateUnstakeParams(tezos, tokensIndexes, lpAmount, slippageTolerance).then(
+            ({ outputTokenIndexDependentParams }) =>
+              outputTokenIndexDependentParams.map(({ swapOutputAtomic, directDivestOutputAtomic, routingFeeAtomic }) =>
+                swapOutputAtomic.plus(directDivestOutputAtomic).minus(routingFeeAtomic)
+              )
+          )
+        : estimateStableswapDivestOutputs(
+            tezos,
+            farm.stakedToken.contractAddress,
+            farm.tokens.map((_, index) => index),
+            lpAmount,
+            farm.stakedToken.fa2TokenId ?? 0
           );
+
+    const subscription = from(outputPromise)
+      .pipe(
+        catchError(error => {
+          showErrorToast({ description: getTaquitoRpcErrorMessage(error) });
+
+          return of(undefined);
         })
       )
       .subscribe(value => setAtomicAmounts(value));
@@ -78,7 +72,7 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
 
     return stakeTokens.reduce<WithdrawTokenOption[]>((acc, token, index) => {
       const amount = atomicAmounts?.[index];
-      if (!shouldFilterOutFailingOptions || amount !== null) {
+      if ((!shouldFilterOutFailingOptions || amount !== null) && (!isDefined(amount) || amount.gt(0))) {
         acc.push({ token, amount: amount ?? undefined });
       }
 

@@ -1,12 +1,12 @@
-import { BigNumber } from 'bignumber.js';
-import { TextInputProps } from 'react-native';
+import type { BigNumber } from 'bignumber.js';
+import type { TextInputProps } from 'react-native';
 
-import { EmptyFn, EventFn } from 'src/config/general';
-import { TestIdProps } from 'src/interfaces/test-id.props';
-import { TopUpInputInterface } from 'src/interfaces/topup.interface';
+import type { EmptyFn, EventFn } from 'src/config/general';
+import type { TestIdProps } from 'src/interfaces/test-id.props';
+import type { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 
 export interface TopUpAssetAmountInterface {
-  asset: TopUpInputInterface;
+  asset: TopUpInterfaceBase;
   amount?: BigNumber;
   min?: number;
   max?: number;
@@ -17,7 +17,7 @@ export interface TopUpFormAssetAmountInputProps extends TestIdProps {
   label: string;
   description?: string;
   emptyListText?: string;
-  assetsList?: TopUpInputInterface[];
+  assetsList?: TopUpInterfaceBase[];
   singleAsset?: boolean;
   isError?: boolean;
   editable?: boolean;
@@ -27,7 +27,7 @@ export interface TopUpFormAssetAmountInputProps extends TestIdProps {
   tokenTestID?: string;
   newValueFn?: (
     prevValue: TopUpAssetAmountInterface,
-    newAsset: TopUpInputInterface,
+    newAsset: TopUpInterfaceBase,
     newAmount: BigNumber | undefined
   ) => TopUpAssetAmountInterface;
   setSearchValue?: EventFn<string>;
@@ -37,6 +37,6 @@ export interface TopUpFormAssetAmountInputProps extends TestIdProps {
 }
 
 export interface TopUpAssetAmountInputProps extends TopUpFormAssetAmountInputProps {
-  value?: TopUpAssetAmountInterface;
+  value: TopUpAssetAmountInterface;
   onValueChange: EventFn<TopUpAssetAmountInterface>;
 }

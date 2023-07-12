@@ -16,7 +16,7 @@ export const useFarmSelector = (id: string, contractAddress: string) => {
   );
 };
 
-export const useStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes[farmAddress]);
+export const useStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes.data[farmAddress]);
 
 export const useAllFarmsSelector = () => {
   const farms = useSelector(({ farms }) => farms.allFarms);
@@ -34,8 +34,9 @@ export const useAllFarmsSelector = () => {
     };
   }, [farms]);
 };
-export const useLastStakesSelector = () => useSelector(({ farms }) => farms.lastStakes);
+export const useLastStakesSelector = () => useSelector(({ farms }) => farms.lastStakes.data);
 
-export const useStakesLoadingSelector = () => useSelector(({ farms }) => farms.stakesLoading);
+export const useStakesLoadingSelector = () => useSelector(({ farms }) => farms.lastStakes.isLoading);
 
 export const useFarmStoreSelector = () => useSelector(({ farms }) => farms);
+export const useFarmSortFieldSelector = () => useSelector(({ farms }) => farms.sortField);

@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { firstValueFrom } from 'rxjs';
 
 import { calculateUnstakeParams } from 'src/apis/liquidity-baking';
-import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
+import { estimateDivestOneCoinOutputs } from 'src/apis/quipuswap-staking';
 import { TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
 import { ROUTE3_CONTRACT, ROUTING_FEE_ADDRESS } from 'src/config/swap';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
@@ -96,7 +96,7 @@ export const createWithdrawOperationParams = async (
       const shouldBurnWtezToken = assetSlug === TEZ_TOKEN_SLUG;
       const farmContract = await getReadOnlyContract(farmAddress, tezos);
       const depositAmount = new BigNumber(stake.depositAmountAtomic ?? 0);
-      const [tokenOutput] = await estimateWithdrawTokenOutput(tezos, poolContract, [tokenIndex], depositAmount, poolId);
+      const [tokenOutput] = await estimateDivestOneCoinOutputs(tezos, poolAddress, [tokenIndex], depositAmount, poolId);
 
       if (tokenOutput === null) {
         throw new TooLowPoolReservesError();

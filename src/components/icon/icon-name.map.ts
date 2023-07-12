@@ -14,6 +14,7 @@ import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BellIcon from './assets/bell.svg';
+import BinanceIcon from './assets/binance.svg';
 import BookOpenIcon from './assets/book-open.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
@@ -211,6 +212,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.AliceBob]: AliceBobIcon,
   [IconNameEnum.Utorg]: UtorgIcon,
+  [IconNameEnum.Binance]: BinanceIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,

@@ -26,22 +26,13 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
+import { RECOMMENDED_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { isValidAddress } from 'src/utils/tezos.util';
 
 import { BakerListItem } from './baker-list-item/baker-list-item';
+import { DISCLAIMER_MESSAGE, TEZ_LABEL, DCP_LABEL, TEZ_DESCRIPTION, DCP_DESCRIPTION } from './constants';
 import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
-
-export const RECOMMENDED_BAKER_ADDRESS = 'tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM';
-export const HELP_UKRAINE_BAKER_ADDRESS = 'tz1bMFzs2aECPn4aCRmKQWHSLHF8ZnZbYcah';
-const DISCLAIMER_MESSAGE =
-  'Provided address is not known to us as a baker! Only delegate funds to it at your own risk.';
-
-const TEZ_LABEL = 'Delegate to Recommended Bakers';
-const TEZ_DESCRIPTION = 'Click on the Baker you want to delegate funds to. This list is powered by Baking Bad.';
-const DCP_LABEL = 'Delegate to producer';
-const DCP_DESCRIPTION =
-  'Enter the address or domain name of a registered producer to whom you want to delegate your funds.';
 
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
   [BakersSortFieldEnum.Fee]: 'Fee',

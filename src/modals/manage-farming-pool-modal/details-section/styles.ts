@@ -4,6 +4,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useDetailsSectionStyles = createUseStylesMemoized(({ colors, typography }) => ({
   detailsTitle: {
+    paddingHorizontal: formatSize(4),
     flexDirection: 'row',
     alignItems: 'center',
     gap: formatSize(8)

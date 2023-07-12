@@ -1,10 +1,11 @@
 import { createAction } from '@reduxjs/toolkit';
 
+import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
 import { Farm } from 'src/types/farm';
 import { SingleFarmResponse } from 'src/types/single-farm-response';
 
 import { createActions } from '../create-actions';
-import { LastUserStakeInterface, UserStakeValueInterface } from './state';
+import { UserStakeValueInterface } from './state';
 
 export const loadSingleFarmStakeActions = createActions<
   Farm,
@@ -16,6 +17,14 @@ export const loadAllFarmsAndStakesAction = createAction<void>('farms/LOAD_ALL_FA
 
 export const loadAllFarmsActions = createActions<void, Array<SingleFarmResponse>, void>('farms/LOAD_ALL_FARMS');
 
-export const loadAllStakesActions = createActions<Array<SingleFarmResponse>, LastUserStakeInterface, void>(
-  'farms/LOAD_ALL_STAKES'
-);
+/**
+ * `undefined` as the value in success payload stands for failed attempt to load stake, so the old stake should be used;
+ * `null` means that a user has no stake in the farm.
+ */
+export const loadAllStakesActions = createActions<
+  Array<SingleFarmResponse>,
+  Record<string, UserStakeValueInterface | nullish>,
+  void
+>('farms/LOAD_ALL_STAKES');
+
+export const selectSortValueAction = createAction<FarmsSortFieldEnum>('farms/SELECT_SORT_VALUE');

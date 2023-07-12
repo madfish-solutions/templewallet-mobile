@@ -2,7 +2,6 @@ import { BigNumber } from 'bignumber.js';
 import { from, map } from 'rxjs';
 
 import { route3Api } from 'src/apis/route3';
-import { TEMPLE_TOKEN } from 'src/config/swap';
 import {
   Hop,
   Route3Chain,
@@ -12,6 +11,7 @@ import {
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
+import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -93,8 +93,6 @@ export const getRoute3TokenBySlug = (route3Tokens: Array<Route3Token>, slug: str
 
   return route3Tokens.find(({ contract, tokenId }) => toTokenSlug(contract ?? '', tokenId ?? 0) === slug);
 };
-
-const TEMPLE_TOKEN_SLUG = `${TEMPLE_TOKEN.contract}_${TEMPLE_TOKEN.tokenId}`;
 
 export const isInputTokenEqualToTempleToken = (inptuTokenSlug: string | undefined): boolean =>
   inptuTokenSlug === TEMPLE_TOKEN_SLUG;

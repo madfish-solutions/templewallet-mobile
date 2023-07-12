@@ -14,6 +14,10 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useFarmStoreSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
+import {
+  useCurrentFiatCurrencyMetadataSelector,
+  useFiatToUsdRateSelector
+} from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { aprToApy } from 'src/utils/earn.utils';
@@ -21,7 +25,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
-import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, PENNY } from '../constants';
+import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, DEFAULT_EXCHANGE_RATE, PENNY } from '../constants';
 import { useMainInfoStyles } from './main-info.styles';
 
 export const MainInfo: FC = () => {
@@ -32,56 +36,62 @@ export const MainInfo: FC = () => {
   const farms = useFarmStoreSelector();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const fiatToUsdRate = useFiatToUsdRateSelector();
+  const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
 
   const farmsWithEndedRewards = useMemo(() => {
     const now = Date.now();
 
-    return Object.entries(farms.lastStakes).filter(
+    return Object.entries(farms.lastStakes.data).filter(
       ([, stakeRecord]) =>
         new BigNumber(stakeRecord?.claimableRewards ?? 0).isGreaterThan(DEFAULT_AMOUNT) &&
         (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now
     );
   }, [farms]);
 
-  const { netApy, totalStakedAmountInUsd } = useMemo(() => {
+  const { netApy, totalStakedAmountInFiat } = useMemo(() => {
     const result = {
       netApy: new BigNumber(DEFAULT_AMOUNT),
-      totalStakedAmountInUsd: new BigNumber(DEFAULT_AMOUNT),
-      totalClaimableRewardsInUsd: new BigNumber(DEFAULT_AMOUNT)
+      totalStakedAmountInFiat: new BigNumber(DEFAULT_AMOUNT),
+      totalClaimableRewardsInFiat: new BigNumber(DEFAULT_AMOUNT)
     };
 
     let totalWeightedApy = new BigNumber(DEFAULT_AMOUNT);
 
-    Object.entries(farms.lastStakes).forEach(([address, stakeRecord]) => {
+    Object.entries(farms.lastStakes.data).forEach(([address, stakeRecord]) => {
       const farm = farms.allFarms.data.find(_farm => _farm.item.contractAddress === address);
 
       if (isDefined(farm)) {
         const depositValueInUsd = mutezToTz(
           new BigNumber(stakeRecord.depositAmountAtomic ?? DEFAULT_AMOUNT),
           farm.item.stakedToken.metadata.decimals
-        ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_AMOUNT);
+        ).multipliedBy(farm.item.depositExchangeRate ?? DEFAULT_EXCHANGE_RATE);
 
         totalWeightedApy = totalWeightedApy.plus(
           new BigNumber(aprToApy(Number(farm.item.apr) ?? DEFAULT_AMOUNT)).multipliedBy(depositValueInUsd)
         );
-        result.totalStakedAmountInUsd = result.totalStakedAmountInUsd.plus(depositValueInUsd);
-        result.totalClaimableRewardsInUsd = result.totalClaimableRewardsInUsd.plus(
+        result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.plus(depositValueInUsd);
+        result.totalClaimableRewardsInFiat = result.totalClaimableRewardsInFiat.plus(
           mutezToTz(
             new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT),
             farm.item.rewardToken.metadata.decimals
-          ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_AMOUNT)
+          ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXCHANGE_RATE)
         );
       }
     });
 
-    if (result.totalStakedAmountInUsd.isGreaterThan(DEFAULT_AMOUNT)) {
-      result.netApy = totalWeightedApy.dividedBy(result.totalStakedAmountInUsd);
+    if (result.totalStakedAmountInFiat.isGreaterThan(DEFAULT_AMOUNT)) {
+      result.netApy = totalWeightedApy.dividedBy(result.totalStakedAmountInFiat);
     }
+
+    result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.multipliedBy(
+      fiatToUsdRate ?? DEFAULT_EXCHANGE_RATE
+    );
 
     return result;
   }, [farms]);
 
-  const totalClaimableRewardsInUsd = useMemo(() => {
+  const totalClaimableRewardsInFiat = useMemo(() => {
     let result = new BigNumber(PENNY);
 
     farmsWithEndedRewards.forEach(([address, stakeRecord]) => {
@@ -90,19 +100,21 @@ export const MainInfo: FC = () => {
       if (isDefined(farm)) {
         result = result.plus(
           mutezToTz(
-            new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT),
+            new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_EXCHANGE_RATE),
             farm.item.rewardToken.metadata.decimals
-          ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_AMOUNT)
+          )
+            .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_EXCHANGE_RATE)
+            .multipliedBy(fiatToUsdRate ?? DEFAULT_EXCHANGE_RATE)
         );
       }
     });
 
     return result;
-  }, [farms, farmsWithEndedRewards]);
+  }, [farms, farmsWithEndedRewards, fiatToUsdRate]);
 
   const areSomeRewardsClaimable = useMemo(
-    () => !isEmptyArray(farmsWithEndedRewards) && totalClaimableRewardsInUsd.isGreaterThan(PENNY),
-    [farmsWithEndedRewards, totalClaimableRewardsInUsd]
+    () => !isEmptyArray(farmsWithEndedRewards) && totalClaimableRewardsInFiat.isGreaterThan(PENNY),
+    [farmsWithEndedRewards, totalClaimableRewardsInFiat]
   );
 
   const navigateHarvestFarm = useCallback(
@@ -142,7 +154,7 @@ export const MainInfo: FC = () => {
         <View style={styles.container}>
           <View style={[styles.card, styles.deposit]}>
             <Text style={styles.titleText}>CURRENT DEPOSIT AMOUNT</Text>
-            <FormattedAmount isDollarValue amount={totalStakedAmountInUsd} style={styles.valueText} />
+            <FormattedAmount isDollarValue amount={totalStakedAmountInFiat} style={styles.valueText} />
           </View>
           <Divider size={formatSize(8)} />
           <View style={[styles.card, styles.netApy]}>
@@ -154,7 +166,7 @@ export const MainInfo: FC = () => {
           styleConfig={buttonPrimaryStylesConfig}
           title={
             areSomeRewardsClaimable
-              ? `CLAIM ALL ≈ ${totalClaimableRewardsInUsd.toFixed(DEFAULT_DECIMALS)}$`
+              ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(DEFAULT_DECIMALS)}${fiatSymbol}`
               : 'EARN TO CLAIM REWARDS'
           }
           disabled={!areSomeRewardsClaimable}

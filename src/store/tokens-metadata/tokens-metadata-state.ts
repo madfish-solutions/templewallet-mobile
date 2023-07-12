@@ -1,8 +1,4 @@
-import {
-  OVERRIDEN_MAINNET_TOKENS_METADATA,
-  KNOWN_MAINNET_TOKENS_METADATA,
-  PREDEFINED_DCP_TOKENS_METADATA
-} from 'src/token/data/tokens-metadata';
+import { KNOWN_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { emptyTokenMetadata, TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
@@ -16,11 +12,7 @@ export interface TokensMetadataState {
 }
 
 export const tokensMetadataInitialState: TokensMetadataState = {
-  metadataRecord: [
-    ...KNOWN_MAINNET_TOKENS_METADATA,
-    ...OVERRIDEN_MAINNET_TOKENS_METADATA,
-    ...PREDEFINED_DCP_TOKENS_METADATA
-  ].reduce(
+  metadataRecord: [...KNOWN_MAINNET_TOKENS_METADATA, ...PREDEFINED_DCP_TOKENS_METADATA].reduce(
     (obj, tokenMetadata) => ({
       ...obj,
       [getTokenSlug(tokenMetadata)]: tokenMetadata
@@ -30,7 +22,3 @@ export const tokensMetadataInitialState: TokensMetadataState = {
   addTokenSuggestion: createEntity(emptyTokenMetadata),
   knownSvgs: {}
 };
-
-export interface TokensMetadataRootState {
-  tokensMetadata: TokensMetadataState;
-}

@@ -38,12 +38,9 @@ export const FarmTokens: FC<Props> = ({ stakeTokens, rewardToken }) => {
               ]}
             />
           ))}
-          <TokenIcon
-            iconName={rewardToken.iconName}
-            thumbnailUri={rewardToken.thumbnailUri}
-            size={formatSize(20)}
-            style={styles.rewardToken}
-          />
+          <View style={styles.rewardTokenWrapper}>
+            <TokenIcon iconName={rewardToken.iconName} thumbnailUri={rewardToken.thumbnailUri} size={formatSize(20)} />
+          </View>
         </View>
         <Divider size={formatSize(14)} />
         <View>
