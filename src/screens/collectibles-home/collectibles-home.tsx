@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
   View
 } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import { useSafeAreaInsets, initialWindowMetrics } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
@@ -19,7 +20,6 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { emptyFn } from 'src/config/general';
-import { isAndroid } from 'src/config/system';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -66,27 +66,12 @@ export const CollectiblesHome = () => {
 
   const styles = useCollectiblesHomeStyles();
   const colors = useColors();
-  const { height: windowHeightDimensions, scale } = useWindowDimensions();
+  const { height: windowHeightDimensions } = useWindowDimensions();
 
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
 
   const iosSafeArea = useSafeAreaInsets();
-
-  const androidSafeAreaValue =
-    isDefined(initialWindowMetrics) && initialWindowMetrics.insets.bottom > 0
-      ? initialWindowMetrics.insets.bottom + initialWindowMetrics.insets.top
-      : 0;
-
-  // LOGGER
-  useEffect(() => {
-    console.log('scale', scale);
-    console.log('windowHeightDimensions', windowHeightDimensions);
-    console.log('visibleBlockHeight', visibleBlockHeight);
-    console.log('headerHeight', headerHeight);
-    console.log('iosSafeArea', iosSafeArea);
-    console.log(androidSafeAreaValue, JSON.stringify(initialWindowMetrics, null, 2));
-  }, [initialWindowMetrics, windowHeightDimensions, headerHeight, scale, iosSafeArea]);
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
@@ -120,19 +105,43 @@ export const CollectiblesHome = () => {
     return 1;
   });
 
-  const androidSafeArea = isDefined(initialWindowMetrics)
-    ? initialWindowMetrics.insets.top + initialWindowMetrics.insets.bottom
-    : 0;
-  const globalHeight = isDefined(initialWindowMetrics) ? initialWindowMetrics.frame.height : windowHeightDimensions;
-  const applicationHeight = isAndroid ? globalHeight - androidSafeArea : globalHeight - iosSafeArea.bottom;
-  const topOffset = 78;
+  // const androidSafeArea =
+  //   isDefined(initialWindowMetrics) && initialWindowMetrics?.insets.bottom > 0
+  //     ? formatSize(initialWindowMetrics.insets.top) + formatSize(initialWindowMetrics.insets.bottom)
+  //     : 0;
+  const globalHeight = isDefined(initialWindowMetrics) ? initialWindowMetrics?.frame.height : windowHeightDimensions;
 
-  console.log('TEST', globalHeight, applicationHeight, topOffset);
+  // LOGGER
+  // useEffect(() => {
+  //   console.log(
+  //     JSON.stringify(
+  //       {
+  //         windowHeightDimensions,
+  //         visibleBlockHeight,
+  //         globalHeight,
+  //         applicationHeight,
+  //         androidSafeArea,
+  //         initialWindowMetrics
+  //       },
+  //       null,
+  //       2
+  //     )
+  //   );
+  // }, [
+  //   globalHeight,
+  //   applicationHeight,
+  //   androidSafeArea,
+  //   initialWindowMetrics,
+  //   windowHeightDimensions,
+  //   visibleBlockHeight
+  // ]);
 
-  const snapPoints = useMemo(
-    () => [applicationHeight - headerHeight, applicationHeight - 18],
-    [headerHeight, topOffset]
-  );
+  const navigationHeight = formatSize(47);
+
+  const bottomListPoint = globalHeight - headerHeight - (isTablet() ? 0 : navigationHeight);
+  const topListPoint = globalHeight - visibleBlockHeight - (isTablet() ? 0 : navigationHeight);
+
+  const snapPoints = useMemo(() => [bottomListPoint, topListPoint], [bottomListPoint, topListPoint]);
 
   useEffect(() => void console.log(snapPoints), [snapPoints]);
 
@@ -182,11 +191,11 @@ export const CollectiblesHome = () => {
     <>
       <HeaderCard
         hasInsetTop={true}
-        style={styles.headerCard}
         onLayout={event => {
           const { height } = event.nativeEvent.layout;
           setHeaderHeight(height);
         }}
+        style={styles.headerCard}
       >
         <View
           onLayout={event => {
@@ -203,13 +212,7 @@ export const CollectiblesHome = () => {
           />
         </View>
 
-        <View
-          onLayout={event => {
-            const { height } = event.nativeEvent.layout;
-            // setVisibleBlockHeight(height);
-          }}
-          style={styles.profileContainer}
-        >
+        <View style={styles.profileContainer}>
           <View style={styles.profileActions}>
             {isDefined(alias) ? (
               <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>

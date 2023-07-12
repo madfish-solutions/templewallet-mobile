@@ -19,7 +19,7 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     justifyContent: 'space-between',
     alignItems: 'center',
     marginLeft: formatSize(16),
-    marginBottom: formatSize(12)
+    paddingBottom: formatSize(12)
   },
   profileContainer: {
     marginHorizontal: formatSize(16)
