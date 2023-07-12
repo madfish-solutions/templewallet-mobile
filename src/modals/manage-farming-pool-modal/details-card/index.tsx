@@ -3,12 +3,12 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HorizontalBorder } from 'src/components/horizontal-border';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { useAssetAmount } from 'src/hooks/use-asset-amount.hook';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useInterval } from 'src/hooks/use-interval.hook';
@@ -19,6 +19,7 @@ import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import { Farm } from 'src/types/farm';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
@@ -172,31 +173,37 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               usdEquivalent={claimableRewardUsdEquivalent}
             />
           </View>
-          <Divider size={formatSize(12)} />
-          <View style={styles.statsRow}>
-            <StatsItem
-              loading={loading}
-              title="Long-term rewards:"
-              value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
-              usdEquivalent={fullRewardUsdEquivalent}
-            />
-            <StatsItem
-              loading={loading}
-              title="Fully claimable:"
-              value={
-                <View style={styles.timespanValue}>
-                  {countdownTokens.map(({ unit, value }) => (
-                    <React.Fragment key={unit}>
-                      <Text style={styles.statsValue}>{value}</Text>
-                      <Divider size={formatSize(2)} />
-                      <Text style={styles.timespanUnit}>{unit}</Text>
-                      <Divider size={formatSize(6)} />
-                    </React.Fragment>
-                  ))}
-                </View>
-              }
-            />
-          </View>
+          {farm.type === FarmPoolTypeEnum.STABLESWAP && (
+            <>
+              <Divider size={formatSize(12)} />
+              <View style={styles.statsRow}>
+                <StatsItem
+                  loading={loading}
+                  title="Long-term rewards:"
+                  value={
+                    <FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+                  }
+                  usdEquivalent={fullRewardUsdEquivalent}
+                />
+                <StatsItem
+                  loading={loading}
+                  title="Fully claimable:"
+                  value={
+                    <View style={styles.timespanValue}>
+                      {countdownTokens.map(({ unit, value }) => (
+                        <React.Fragment key={unit}>
+                          <Text style={styles.statsValue}>{value}</Text>
+                          <Divider size={formatSize(2)} />
+                          <Text style={styles.timespanUnit}>{unit}</Text>
+                          <Divider size={formatSize(6)} />
+                        </React.Fragment>
+                      ))}
+                    </View>
+                  }
+                />
+              </View>
+            </>
+          )}
         </>
       )}
       {shouldShowClaimRewardsButton && (

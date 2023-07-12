@@ -12,7 +12,7 @@ import { isString } from './is-string';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const getTransferParams$ = (
-  asset: TokenMetadataInterface,
+  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
   rpcUrl: string,
   sender: AccountInterface,
   receiverPublicKeyHash: string,

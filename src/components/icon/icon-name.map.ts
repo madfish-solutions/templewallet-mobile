@@ -71,7 +71,7 @@ import IosSearchIcon from './assets/ios-search.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
-import LiquidityBakingIcon from './assets/liquidity-baking.svg';
+import LiquidityBakingLogo from './assets/liquidity-baking-logo.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MarketIcon from './assets/market.svg';
@@ -190,7 +190,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
   [IconNameEnum.Settings]: SettingsIcon,
-  [IconNameEnum.LiquidityBaking]: LiquidityBakingIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
   [IconNameEnum.Spicy]: SpicyIcon,
   [IconNameEnum.Youves]: YouvesIcon,
@@ -288,6 +287,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
   [IconNameEnum.NFT]: NFT,
   [IconNameEnum.QsEarnSource]: QsEarnSource,
+  [IconNameEnum.LiquidityBakingLogo]: LiquidityBakingLogo,
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
   [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
