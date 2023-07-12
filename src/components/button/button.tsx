@@ -77,7 +77,7 @@ export const Button: FC<Props> = ({
         )}
 
         <Text style={[titleStyle, { color: titleColor }]}>{title}</Text>
-        {isDefined(isLoading) && isLoading && (
+        {Boolean(isLoading) && (
           <View style={ButtonStyles.loader}>
             <ActivityIndicator size="small" />
           </View>

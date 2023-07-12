@@ -129,40 +129,48 @@ interface ListingResponse extends ListingsActiveResponse {
   seller_address: string;
 }
 
+interface Creator {
+  holder: {
+    address: string;
+    tzdomain: string;
+  };
+}
+
+interface Fa {
+  name: string;
+  logo: string;
+  items: number;
+}
+
+interface Royalty {
+  decimals: number;
+  amount: number;
+}
+
+interface Gallery {
+  gallery: {
+    items: number;
+    name: string;
+  };
+}
+
 export interface CollectibleDetailsResponse {
   fa_contract: string;
   token_id: string;
   name: string;
   description: string;
   thumbnail_uri: string;
-  creators: {
-    holder: {
-      address: string;
-      tzdomain: string;
-    };
-  }[];
-  fa: {
-    name: string;
-    logo: string;
-    items: number;
-  };
+  creators: Creator[];
+  fa: Fa;
   metadata: string;
   attributes: CollectibleAttributes[];
   artifact_uri: string;
   tags: CollectibleTag[];
   timestamp: string;
-  royalties: {
-    decimals: number;
-    amount: number;
-  }[];
+  royalties: Royalty[];
   supply: number;
   mime: string;
-  galleries: {
-    gallery: {
-      items: number;
-      name: string;
-    };
-  }[];
+  galleries: Gallery[];
   listings_active: ListingsActiveResponse[];
 }
 
