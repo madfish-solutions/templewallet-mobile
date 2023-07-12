@@ -2,6 +2,7 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useCallback } from 'react';
 import { Path, Rect, Svg } from 'react-native-svg';
 
+import { emptyFn } from 'src/config/general';
 import { formatSize } from 'src/styles/format-size';
 import { generateHitSlop } from 'src/styles/generate-hit-slop';
 import { useColors } from 'src/styles/use-colors';
@@ -18,7 +19,7 @@ export const Checkbox: FC<CheckboxProps> = ({
   size = formatSize(24),
   strokeWidth = formatSize(1.5),
   children,
-  onChange,
+  onChange = emptyFn,
   testID
 }) => {
   const colors = useColors();
@@ -26,8 +27,8 @@ export const Checkbox: FC<CheckboxProps> = ({
 
   const handlePress = useCallback(() => {
     trackEvent(testID, AnalyticsEventCategory.ButtonPress, { value: !value });
-    onChange?.(!value);
-  }, [value, testID, trackEvent]);
+    onChange(!value);
+  }, [value, testID, trackEvent, onChange]);
 
   return (
     <TouchableOpacity
