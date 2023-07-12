@@ -155,16 +155,18 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
               style={styles.attributeValue}
             />
           </View>
-          <View style={styles.flex}>
-            <Text style={styles.attributeTitle}>Claimable rewards:</Text>
-            <FormattedAmountWithLoader
-              isLoading={stakeIsLoading}
-              renderLoader={renderStatsLoader}
-              isDollarValue
-              amount={claimableRewardsAtomic}
-              style={styles.attributeValue}
-            />
-          </View>
+          {depositAmountAtomic.gt(0) && (
+            <View style={styles.flex}>
+              <Text style={styles.attributeTitle}>Claimable rewards:</Text>
+              <FormattedAmountWithLoader
+                isLoading={stakeIsLoading}
+                renderLoader={renderStatsLoader}
+                isDollarValue
+                amount={claimableRewardsAtomic}
+                style={styles.attributeValue}
+              />
+            </View>
+          )}
         </View>
 
         <View style={styles.row}>
