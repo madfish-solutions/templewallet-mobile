@@ -124,7 +124,7 @@ const getTokenExchangeRate = (state: RootState, slug: string) => {
   return isDefined(tokenUsdExchangeRate) && isDefined(fiatToUsdRate) ? tokenUsdExchangeRate * fiatToUsdRate : undefined;
 };
 
-export const getTokenMetadata = (state: RootState, slug: string) => {
+export const getTokenMetadata = (state: RootState, slug: string): TokenMetadataInterface => {
   const tokenMetadata = normalizeTokenMetadata(
     state.settings.selectedRpcUrl,
     slug,

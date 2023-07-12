@@ -13,6 +13,7 @@ import { CollectibleIconSize } from '../../../components/collectible-icon/collec
 import { useBuyCollectible } from '../../../hooks/use-buy-collectible.hook';
 import { formatSize } from '../../../styles/format-size';
 import { CollectibleOfferInteface } from '../../../token/interfaces/collectible-interfaces.interface';
+import { getTokenSlug } from '../../../token/utils/token.utils';
 import { navigateToObjktForBuy } from '../utils';
 import { useCollectibleItemStyles } from './collectible-item.styles';
 import { OfferButton } from './offer-button';
@@ -56,7 +57,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
   const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
 
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(item);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(getTokenSlug(item));
 
   const fxHashListed = item?.listingsActive?.find(listing => listing.sellerAddress === selectedPublicKeyHash);
 

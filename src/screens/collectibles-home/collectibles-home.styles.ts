@@ -113,5 +113,10 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   bottomSheet: {
     backgroundColor: colors.pageBG
+  },
+  loader: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: formatSize(12)
   }
 }));

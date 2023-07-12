@@ -17,7 +17,10 @@ import {
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { useCollectibleDetailsSelector } from '../../store/collectibles/collectibles-selectors';
 import { formatSize } from '../../styles/format-size';
+import { getTokenSlug } from '../../token/utils/token.utils';
+import { isAdultCollectible } from '../../utils/collectibles.utils';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { ImageBlurOverlay } from '../image-blur-overlay/image-blur-overlay';
@@ -36,9 +39,16 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     isTouchableBlurOverlay,
     isShowInfo = false
   }) => {
-    const isAdultContent = collectible.isAdultContent ?? false;
+    const collectibleDetails = useCollectibleDetailsSelector(getTokenSlug(collectible));
+
     const [isLoading, setIsLoading] = useState(true);
-    const [isShowBlur, setIsShowBlur] = useState(isAdultContent);
+    const [isShowBlur, setIsShowBlur] = useState(() => {
+      if (isDefined(collectibleDetails)) {
+        return isAdultCollectible(collectibleDetails.attributes, collectibleDetails.tags);
+      }
+
+      return false;
+    });
 
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
     const styles = useCollectibleIconStyles();
@@ -133,7 +143,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     }, [mime, objktArtifact, currentFallback]);
 
     const imageWithBlur = useMemo(() => {
-      if (Boolean(isAdultContent)) {
+      if (Boolean(isShowBlur)) {
         return (
           <ImageBlurOverlay
             theme={blurLayoutTheme}
@@ -148,7 +158,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
 
       return image;
-    }, [image, isAdultContent, isShowBlur]);
+    }, [image, isShowBlur]);
 
     return (
       <View

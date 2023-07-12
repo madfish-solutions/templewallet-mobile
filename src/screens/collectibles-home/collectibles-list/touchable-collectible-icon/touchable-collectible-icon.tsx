@@ -9,6 +9,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { CollectibleIcon } from '../../../../components/collectible-icon/collectible-icon';
 import { CollectibleInterface } from '../../../../token/interfaces/collectible-interfaces.interface';
+import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { formatNumber } from '../../../../utils/format-price';
 import { getPurchaseCurrency } from '../../../../utils/get-pusrchase-currency.util';
 import { useTouchableCollectibleIconStyles } from './touchable-collectible-icon.styles';
@@ -28,7 +29,7 @@ export const TouchableCollectibleIcon: FC<Props> = ({
 
   const handleNavigate = () =>
     navigate(ModalsEnum.CollectibleModal, {
-      collectible
+      slug: getTokenSlug(collectible)
     });
 
   const styles = useTouchableCollectibleIconStyles();

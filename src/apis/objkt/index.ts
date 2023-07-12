@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import { catchError, map, Observable, of } from 'rxjs';
 
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
@@ -5,7 +6,11 @@ import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
-import { CollectibleOfferInteface, ListingsActive } from '../../token/interfaces/collectible-interfaces.interface';
+import {
+  CollectibleDetailsInterface,
+  CollectibleOfferInteface,
+  ListingsActive
+} from '../../token/interfaces/collectible-interfaces.interface';
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
   buildGetCollectiblesByCollectionQuery,
@@ -15,7 +20,8 @@ import {
   buildGetHoldersInfoQuery,
   buildGetAllUserCollectiblesQuery,
   buildGetCollectiblesByGalleryQuery,
-  buildGetCollectibleFloorPriceQuery
+  buildGetCollectibleFloorPriceQuery,
+  buildGetCollectibleByAddressAndIdQuery
 } from './queries';
 import {
   AttributeInfoResponse,
@@ -119,18 +125,20 @@ export const fetchAllCollectiblesDetails$ = (collectiblesSlugs: string[]): Obser
   const request = buildGetAllUserCollectiblesQuery(collectiblesSlugs);
 
   return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(
-    map(result =>
-      result.token.map(
+    map(result => {
+      return result.token.map(
         ({
           fa_contract,
           token_id,
+          name,
           description,
+          thumbnail_uri,
+          artifact_uri,
           creators,
           fa,
           timestamp,
           attributes,
           tags,
-          isAdultContent,
           metadata,
           royalties,
           supply,
@@ -140,7 +148,10 @@ export const fetchAllCollectiblesDetails$ = (collectiblesSlugs: string[]): Obser
         }) => ({
           fa_contract,
           token_id,
+          name,
           description,
+          thumbnail_uri,
+          artifact_uri,
           creators,
           fa: {
             name: fa.name,
@@ -155,11 +166,10 @@ export const fetchAllCollectiblesDetails$ = (collectiblesSlugs: string[]): Obser
           supply,
           galleries,
           listings_active,
-          mime,
-          isAdultContent
+          mime
         })
-      )
-    )
+      );
+    })
   );
 };
 
@@ -186,16 +196,80 @@ export const fetchCollectibleFloorPrice$ = (address: string, id: string): Observ
     map(result => {
       const { listings_active } = result.token[0];
 
-      return [
-        {
-          bigmapKey: listings_active[0].bigmap_key,
-          currency: listings_active[0].currency,
-          currencyId: listings_active[0].currency_id,
-          marketplaceContract: listings_active[0].marketplace_contract,
-          price: listings_active[0].price
-        }
-      ];
+      return isNonEmptyArray(listings_active)
+        ? [
+            {
+              bigmapKey: listings_active[0].bigmap_key ?? 0,
+              currency: listings_active[0].currency,
+              currencyId: listings_active[0].currency_id,
+              marketplaceContract: listings_active[0].marketplace_contract,
+              price: listings_active[0].price
+            }
+          ]
+        : [];
     }),
     catchError(() => of([]))
+  );
+};
+
+export const fetchCollectibleDetails$ = (address: string, id: string): Observable<CollectibleDetailsInterface> => {
+  const request = buildGetCollectibleByAddressAndIdQuery(address, id);
+
+  return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(
+    map(result => {
+      const {
+        fa_contract,
+        token_id,
+        name,
+        description,
+        thumbnail_uri,
+        artifact_uri,
+        creators,
+        fa,
+        timestamp,
+        attributes,
+        tags,
+        metadata,
+        royalties,
+        supply,
+        listings_active,
+        mime,
+        galleries
+      } = result.token[0];
+
+      return {
+        address: fa_contract,
+        id: token_id,
+        name,
+        description,
+        thumbnailUri: thumbnail_uri,
+        artifactUri: artifact_uri,
+        creators,
+        collection: {
+          name: fa.name,
+          logo: fa.logo,
+          items: fa.items
+        },
+        metadata,
+        attributes,
+        tags,
+        timestamp,
+        royalties,
+        editions: supply,
+        galleries,
+        listingsActive: isNonEmptyArray(listings_active)
+          ? [
+              {
+                bigmapKey: listings_active[0].bigmap_key,
+                currency: listings_active[0].currency,
+                currencyId: listings_active[0].currency_id,
+                marketplaceContract: listings_active[0].marketplace_contract,
+                price: listings_active[0].price
+              }
+            ]
+          : [],
+        mime
+      };
+    })
   );
 };

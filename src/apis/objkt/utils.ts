@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import { groupBy, map, maxBy } from 'lodash-es';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
@@ -72,13 +73,15 @@ export const transformCollectiblesArray = (
       },
       listed: listedBySelectedUser,
       items: token.fa.items,
-      listingsActive: token.listings_active.map(item => ({
-        bigmapKey: item.bigmap_key,
-        currency: item.currency,
-        currencyId: item.currency_id,
-        marketplaceContract: item.marketplace_contract,
-        price: item.price
-      }))
+      listingsActive: isNonEmptyArray(token.listings_active)
+        ? token.listings_active.map(item => ({
+            bigmapKey: item.bigmap_key,
+            currency: item.currency,
+            currencyId: item.currency_id,
+            marketplaceContract: item.marketplace_contract,
+            price: item.price
+          }))
+        : []
     };
   });
 

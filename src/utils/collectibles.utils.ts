@@ -1,5 +1,5 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
-import { Observable, catchError, map, of } from 'rxjs';
+import { Observable, catchError, map, of, withLatestFrom } from 'rxjs';
 
 import { ADULT_CONTENT_TAGS } from '../apis/objkt/adult-tags';
 import { ADULT_ATTRIBUTE_NAME } from '../apis/objkt/constants';
@@ -8,8 +8,9 @@ import {
   fetchFA2AttributeCount$,
   fetchAllCollectiblesDetails$
 } from '../apis/objkt/index';
-import { CollectibleAttributes } from '../apis/objkt/types';
+import { CollectibleAttributes, CollectibleTag } from '../apis/objkt/types';
 import { AttributeInfo } from '../interfaces/attribute.interface';
+import { CollectiblesRootState } from '../store/collectibles/collectibles-state';
 import {
   CollectibleDetailsInterface,
   CollectibleInterface
@@ -25,7 +26,7 @@ const attributesInfoInitialState: AttributeInfo[] = [
 
 export const getAttributesWithRarity = (
   attributesInfo: AttributeInfo[],
-  collectible: CollectibleDetailsInterface
+  collectible: CollectibleInterface
 ): CollectibleAttributes[] => {
   const isExistGallery = isNonEmptyArray(collectible.galleries);
   const collectibleCalleryCount = isExistGallery
@@ -71,6 +72,21 @@ export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observabl
   );
 };
 
+export const isAdultCollectible = (attributes?: CollectibleAttributes[], tags?: CollectibleTag[]) => {
+  let includesAdultAttributes = false;
+  let includesAdultTags = false;
+
+  if (isNonEmptyArray(attributes)) {
+    includesAdultAttributes = attributes.some(({ attribute }) => attribute.name === ADULT_ATTRIBUTE_NAME);
+  }
+
+  if (isNonEmptyArray(tags)) {
+    includesAdultTags = tags.some(({ tag }) => ADULT_CONTENT_TAGS.includes(tag.name));
+  }
+
+  return includesAdultAttributes || includesAdultTags;
+};
+
 export const loadAllCollectiblesDetails$ = (
   collectiblesSlugs: string[]
 ): Observable<Record<string, CollectibleDetailsInterface>> =>
@@ -81,11 +97,10 @@ export const loadAllCollectiblesDetails$ = (
       for (const collectible of collectiblesDetails) {
         const collectibleSlug = getTokenSlug({ address: collectible.fa_contract, id: collectible.token_id });
 
-        const isAdultContent =
-          collectible.attributes.some(({ attribute }) => attribute.name === ADULT_ATTRIBUTE_NAME) ||
-          Boolean(collectible.tags.find(({ tag }) => ADULT_CONTENT_TAGS.includes(tag.name)));
-
         collectitblesDetailsRecord[collectibleSlug] = {
+          address: collectible.fa_contract,
+          id: collectible.token_id,
+          name: collectible.name,
           description: collectible.description,
           creators: collectible.creators,
           metadata: collectible.metadata,
@@ -98,14 +113,17 @@ export const loadAllCollectiblesDetails$ = (
           artifactUri: collectible.artifact_uri,
           editions: collectible.supply,
           collection: collectible.fa,
-          listingsActive: collectible.listings_active.map(item => ({
-            bigmapKey: item.bigmap_key,
-            currencyId: item.currency_id,
-            marketplaceContract: item.marketplace_contract,
-            currency: item.currency,
-            price: item.price
-          })),
-          isAdultContent
+          listingsActive: isNonEmptyArray(collectible.listings_active)
+            ? [
+                {
+                  bigmapKey: collectible.listings_active[0].bigmap_key,
+                  currencyId: collectible.listings_active[0].currency_id,
+                  marketplaceContract: collectible.listings_active[0].marketplace_contract,
+                  currency: collectible.listings_active[0].currency,
+                  price: collectible.listings_active[0].price
+                }
+              ]
+            : []
         };
       }
 
@@ -114,7 +132,9 @@ export const loadAllCollectiblesDetails$ = (
   );
 
 export const getCollectibleDetails = (collectible: CollectibleInterface): CollectibleDetailsInterface => ({
-  ...collectible,
+  address: collectible.address,
+  id: String(collectible.id),
+  name: collectible.name,
   description: collectible.description,
   editions: collectible.editions,
   isAdultContent: collectible.isAdultContent,
@@ -128,5 +148,16 @@ export const getCollectibleDetails = (collectible: CollectibleInterface): Collec
   mime: collectible.mime,
   galleries: collectible.galleries,
   listingsActive: collectible.listingsActive,
-  artifactUri: collectible.artifactUri
+  artifactUri: collectible.artifactUri,
+  thumbnailUri: collectible.thumbnailUri
 });
+
+export const withAllCollectiblesDetails =
+  <T>(state$: Observable<CollectiblesRootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { collectibles }): [T, Record<string, CollectibleDetailsInterface>] => [
+        value,
+        collectibles.details.data
+      ])
+    );

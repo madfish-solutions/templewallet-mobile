@@ -7,7 +7,6 @@ import { DataPlaceholder } from '../../../components/data-placeholder/data-place
 import { useScreenContainerStyles } from '../../../components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from '../../../config/styles';
 import { CollectibleInterface } from '../../../token/interfaces/collectible-interfaces.interface';
-import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { sliceIntoChunks } from '../../../utils/array.utils';
 import { conditionalStyle } from '../../../utils/conditional-style';
@@ -16,28 +15,28 @@ import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
 
 interface Props {
-  collectiblesList: CollectibleInterface[];
+  collectibles: CollectibleInterface[];
   isShowInfo: boolean;
 }
 
 const ITEMS_PER_ROW = 3;
 
-const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
+const keyExtractor = (item: CollectibleInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
 const TABBAR_MARGINS = 32;
 const SIDEBAR_MARGINS = 51;
 const OFFSET_BETWEEN_ICONS = 4;
 
-export const CollectiblesList: FC<Props> = ({ collectiblesList, isShowInfo }) => {
+export const CollectiblesList: FC<Props> = ({ collectibles, isShowInfo }) => {
   const styles = useScreenContainerStyles();
   const windowWidth = useWindowDimensions().width;
   const itemSize =
     (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW -
     OFFSET_BETWEEN_ICONS;
 
-  const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
+  const data = useMemo(() => sliceIntoChunks(collectibles, ITEMS_PER_ROW), [collectibles]);
 
-  const getItemLayout = createGetItemLayout<TokenInterface[]>(itemSize);
+  const getItemLayout = createGetItemLayout<CollectibleInterface[]>(itemSize);
 
   const renderItem: ListRenderItem<CollectibleInterface[]> = useCallback(
     ({ item }) => (
