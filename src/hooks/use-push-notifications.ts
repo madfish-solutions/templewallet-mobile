@@ -34,7 +34,7 @@ export const usePushNotifications = () => {
 
       await trackEvent('PUSH_NOTIFICATIONS_ENABLED', AnalyticsEventCategory.General);
     }
-  }, []);
+  }, [trackEvent]);
 };
 
 const requestUserPermission = async (getFcmToken: () => void) => {
