@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
-import { useSafeAreaInsets, initialWindowMetrics } from 'react-native-safe-area-context';
+import { initialWindowMetrics } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
@@ -71,7 +71,7 @@ export const CollectiblesHome = () => {
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
 
-  const iosSafeArea = useSafeAreaInsets();
+  // const iosSafeArea = useSafeAreaInsets();
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
