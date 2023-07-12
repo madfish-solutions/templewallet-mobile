@@ -1,8 +1,22 @@
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 
 import { emptyTokenMetadata, TokenMetadataInterface, TokenStandardsEnum } from '../interfaces/token-metadata.interface';
+import { TokenInterface } from '../interfaces/token.interface';
 
 export const TEZ_TOKEN_SLUG = 'tez';
+
+export const TEMPLE_TOKEN: TokenInterface = {
+  id: 0,
+  address: 'KT1VaEsVNiBoA56eToEK6n6BcPgh1tdx9eXi',
+  name: 'Temple Key',
+  symbol: 'TKEY',
+  decimals: 18,
+  balance: '0',
+  standard: TokenStandardsEnum.Fa2,
+  visibility: VisibilityEnum.Visible,
+  thumbnailUri: 'ipfs://Qmb9QUXYn1PW8e7E2CwpBMgEur7gFAPPpq2Zh7H2D7eQcT'
+};
 
 export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
   ...emptyTokenMetadata,
@@ -40,6 +54,7 @@ const DEPRECATED_TKEY_METADATA: TokenMetadataInterface = {
 };
 
 export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+  TEMPLE_TOKEN,
   {
     id: 0,
     address: 'KT1XnTn74bUtxHfDtBmm2bGZAQfhPbvKWR8o',

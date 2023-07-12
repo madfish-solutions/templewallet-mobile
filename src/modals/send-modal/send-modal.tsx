@@ -53,7 +53,9 @@ export const SendModal: FC = () => {
   const styles = useSendModalStyles();
   const assetsList = useVisibleAssetListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true, tezosToken);
+  const leadingAssets = useMemo(() => [tezosToken], [tezosToken]);
+
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true, leadingAssets);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);

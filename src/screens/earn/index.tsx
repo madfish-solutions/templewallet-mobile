@@ -7,6 +7,7 @@ import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
+import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Search } from 'src/components/search/search';
 import { Sorter } from 'src/components/sorter/sorter';
 import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
@@ -88,39 +89,36 @@ export const Earn: FC = () => {
   return (
     <>
       <MainInfo />
+      <HorizontalBorder />
+      <View style={[styles.row, styles.container]}>
+        <View style={styles.row}>
+          <Checkbox
+            value={depositedOnly}
+            size={formatSize(16)}
+            strokeWidth={formatSize(2)}
+            onChange={handleToggleDepositOnly}
+          >
+            <Divider size={formatSize(4)} />
+            <Text style={styles.depositText}>Deposited only</Text>
+          </Checkbox>
+        </View>
+        <Search placeholder="Search farm" onChange={setSearchValue} dividerSize={12} testID={EarmSelectorsEnum.search}>
+          <Sorter
+            bottomSheetContentHeight={264}
+            sortValue={sortField}
+            description="Sort by:"
+            sortFieldsOptions={earnSortFieldsOptions}
+            sortFieldsLabels={earnSortFieldsLabels}
+            onSetSortValue={handleSetSortField}
+            testID={EarmSelectorsEnum.sorter}
+          />
+        </Search>
+      </View>
+      <HorizontalBorder />
       {isFarmsLoading && isFirstLoading ? (
         <ActivityIndicator style={styles.loader} size="large" />
       ) : (
         <>
-          <View style={[styles.row, styles.container]}>
-            <View style={styles.row}>
-              <Checkbox
-                value={depositedOnly}
-                size={formatSize(16)}
-                strokeWidth={formatSize(2)}
-                onChange={handleToggleDepositOnly}
-              >
-                <Divider size={formatSize(4)} />
-                <Text style={styles.depositText}>Deposited only</Text>
-              </Checkbox>
-            </View>
-            <Search
-              placeholder="Search farm"
-              onChange={setSearchValue}
-              dividerSize={12}
-              testID={EarmSelectorsEnum.search}
-            >
-              <Sorter
-                bottomSheetContentHeight={264}
-                sortValue={sortField}
-                description="Sort by:"
-                sortFieldsOptions={earnSortFieldsOptions}
-                sortFieldsLabels={earnSortFieldsLabels}
-                onSetSortValue={handleSetSortField}
-                testID={EarmSelectorsEnum.sorter}
-              />
-            </Search>
-          </View>
           <Divider size={formatSize(8)} />
           <FlatList
             data={filteredFarmsList}

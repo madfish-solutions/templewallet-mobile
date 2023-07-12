@@ -50,7 +50,7 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
 
     return stakeTokens.reduce<WithdrawTokenOption[]>((acc, token, index) => {
       const amount = atomicAmounts?.[index];
-      if (!shouldFilterOutFailingOptions || amount !== null) {
+      if ((!shouldFilterOutFailingOptions || amount !== null) && (!isDefined(amount) || amount.gt(0))) {
         acc.push({ token, amount: amount ?? undefined });
       }
 
