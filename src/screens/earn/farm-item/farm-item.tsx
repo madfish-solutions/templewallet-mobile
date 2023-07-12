@@ -143,10 +143,12 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
             <Text style={styles.attributeTitle}>Your deposit:</Text>
             <FormattedAmount isDollarValue amount={depositAmountAtomic} style={styles.attributeValue} />
           </View>
-          <View style={styles.flex}>
-            <Text style={styles.attributeTitle}>Claimable rewards:</Text>
-            <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
-          </View>
+          {depositAmountAtomic.gt(0) && (
+            <View style={styles.flex}>
+              <Text style={styles.attributeTitle}>Claimable rewards:</Text>
+              <FormattedAmount isDollarValue amount={claimableRewardsAtomic} style={styles.attributeValue} />
+            </View>
+          )}
         </View>
 
         <View style={styles.row}>
