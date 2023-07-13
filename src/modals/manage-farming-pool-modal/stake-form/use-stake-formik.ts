@@ -3,7 +3,6 @@ import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
-import { FarmVersionEnum } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
@@ -29,15 +28,15 @@ export interface StakeFormValues {
   acceptRisks: boolean;
 }
 
-export const useStakeFormik = (farmId: string, farmVersion: FarmVersionEnum) => {
-  const farm = useFarmSelector(farmId, farmVersion);
+export const useStakeFormik = (farmId: string, contractAddress: string) => {
+  const farm = useFarmSelector(farmId, contractAddress);
   const { stakeTokens } = useFarmTokens(farm?.item);
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const selectedAccount = useSelectedAccountSelector();
   const { publicKeyHash: accountPkh } = selectedAccount;
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const stake = useStakeSelector(farm?.item.contractAddress ?? '');
+  const stake = useStakeSelector(contractAddress);
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 

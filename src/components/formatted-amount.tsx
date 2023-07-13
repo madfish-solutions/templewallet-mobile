@@ -6,7 +6,7 @@ import { useCurrentFiatCurrencyMetadataSelector } from '../store/settings/settin
 import { bigIntClamp } from '../utils/big-number.utils';
 import { formatAssetAmount } from '../utils/number.util';
 
-interface Props {
+export interface FormattedAmountProps {
   amount: BigNumber;
   isDollarValue?: boolean;
   showAllDecimalPlaces?: boolean;
@@ -19,7 +19,7 @@ interface Props {
 const MIN_POSITIVE_AMOUNT_VALUE = new BigNumber(0.01);
 const MAX_NEGATIVE_AMOUNT_VALUE = new BigNumber(-0.01);
 
-export const FormattedAmount: FC<Props> = ({
+export const FormattedAmount: FC<FormattedAmountProps> = ({
   amount,
   isDollarValue = false,
   showMinusSign = false,

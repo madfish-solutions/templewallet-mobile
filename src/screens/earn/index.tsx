@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, View, Text, ListRenderItemInfo } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
@@ -11,10 +11,11 @@ import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Search } from 'src/components/search/search';
 import { Sorter } from 'src/components/sorter/sorter';
 import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
+import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { useFilteredFarms } from 'src/hooks/use-filtered-farms.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
-import { useLastStakesSelector } from 'src/store/farms/selectors';
+import { useLastStakesSelector, useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -43,6 +44,10 @@ export const Earn: FC = () => {
   const dispatch = useDispatch();
   const styles = useEarnStyles();
   const stakes = useLastStakesSelector();
+  const stakesLoading = useStakesLoadingSelector();
+  const blockLevel = useBlockLevel();
+  const prevBlockLevelRef = useRef(blockLevel);
+  const [isFirstLoading, setIsFirstLoading] = useState(true);
 
   const {
     filteredFarmsList,
@@ -53,18 +58,32 @@ export const Earn: FC = () => {
     setSearchValue,
     handleSetSortField
   } = useFilteredFarms();
+  const prevFarmsLoadingRef = useRef(isFarmsLoading);
 
   useEffect(() => {
-    dispatch(loadAllFarmsAndStakesAction());
-  }, []);
+    if (isFirstLoading || prevBlockLevelRef.current !== blockLevel) {
+      dispatch(loadAllFarmsAndStakesAction());
+      prevBlockLevelRef.current = blockLevel;
+    }
+  }, [dispatch, blockLevel, isFirstLoading]);
+  useEffect(() => {
+    if (isFirstLoading && !isFarmsLoading && prevFarmsLoadingRef.current) {
+      setIsFirstLoading(false);
+    }
+    prevFarmsLoadingRef.current = isFarmsLoading;
+  }, [isFirstLoading, isFarmsLoading]);
 
   usePageAnalytic(ScreensEnum.Earn);
 
   const renderItem = useCallback(
     (farm: ListRenderItemInfo<SingleFarmResponse>) => (
-      <FarmItem farm={farm.item} lastStakeRecord={stakes[farm.item.item.contractAddress]} />
+      <FarmItem
+        farm={farm.item}
+        lastStakeRecord={stakes[farm.item.item.contractAddress]}
+        stakeIsLoading={stakesLoading}
+      />
     ),
-    [stakes]
+    [stakes, stakesLoading]
   );
 
   return (
@@ -97,7 +116,7 @@ export const Earn: FC = () => {
         </Search>
       </View>
       <HorizontalBorder />
-      {Boolean(isFarmsLoading) ? (
+      {isFarmsLoading && isFirstLoading ? (
         <ActivityIndicator style={styles.loader} size="large" />
       ) : (
         <>
