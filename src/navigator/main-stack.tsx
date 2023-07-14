@@ -60,6 +60,7 @@ import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-scr
 import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
 import { Welcome } from 'src/screens/welcome/welcome';
+import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
@@ -89,6 +90,7 @@ export const MainStackScreen = () => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();
+  const { isLocked } = useAppLock();
 
   const blockSubscription = useBlockSubscription();
 
@@ -124,13 +126,17 @@ export const MainStackScreen = () => {
     selectedAccountPkh
   ]);
 
+  const shouldShowUnauthorizedScreens = !isAuthorised;
+  const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
+  const shouldShowBlankScreen = isAuthorised && isLocked;
+
   return (
     <PortalProvider>
       <ScreenStatusBar />
 
       <NavigationBar>
         <MainStack.Navigator screenOptions={styleScreenOptions}>
-          {!isAuthorised ? (
+          {shouldShowUnauthorizedScreens && (
             <>
               <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
               <MainStack.Screen
@@ -159,7 +165,8 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
               />
             </>
-          ) : (
+          )}
+          {shouldShowAuthorizedScreens && (
             <>
               {/** Wallet stack **/}
               <MainStack.Screen
@@ -330,6 +337,11 @@ export const MainStackScreen = () => {
               />
             </>
           )}
+
+          {shouldShowBlankScreen && (
+            <MainStack.Screen name={ScreensEnum.Blank} component={() => null} options={{ headerShown: false }} />
+          )}
+
           <MainStack.Screen
             name={ScreensEnum.ScanQrCode}
             component={ScanQrCode}

@@ -52,7 +52,8 @@ export enum ScreensEnum {
   ManualBackup = 'ManualBackup',
   CloudBackup = 'CloudBackup',
   NotificationsSettings = 'NotificationsSettings',
-  Debug = 'Debug'
+  Debug = 'Debug',
+  Blank = 'Blank'
 }
 
 export type ScreensParamList = {
@@ -109,6 +110,7 @@ export type ScreensParamList = {
   [ScreensEnum.CloudBackup]: undefined;
   [ScreensEnum.NotificationsSettings]: undefined;
   [ScreensEnum.Debug]: undefined;
+  [ScreensEnum.Blank]: undefined;
 };
 
 export const walletStackScreens = [
@@ -124,7 +126,8 @@ export const walletStackScreens = [
   ScreensEnum.Earn,
   ScreensEnum.Exolix,
   ScreensEnum.Notifications,
-  ScreensEnum.NotificationsItem
+  ScreensEnum.NotificationsItem,
+  ScreensEnum.Blank
 ];
 export const nftStackScreens = [ScreensEnum.CollectiblesHome];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
