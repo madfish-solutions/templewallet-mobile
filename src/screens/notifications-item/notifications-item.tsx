@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
-import { SvgUri } from 'react-native-svg';
+import { SvgCssUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -19,6 +19,7 @@ import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { formatDateOutput } from '../../utils/date.utils';
 import { isDefined } from '../../utils/is-defined';
+import { NotificationImageFallbacks } from './notification-image-fallbacks';
 import { NotificationItemSelectors } from './notification-item.selectors';
 import { NotificationsItemContent } from './notifications-item-content/notifications-item-content';
 import { IMAGE_HEIGHT, useNotificationsItemStyles } from './notifications-item.styles';
@@ -30,6 +31,8 @@ export const NotificationsItem: FC = () => {
 
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.NotificationsItem>>();
   const notification = useNotificationsItemSelector(params.id);
+
+  const [fallbackImageUri, setFallbackImageUri] = useState(notification?.mobileImageUrl ?? '');
 
   useEffect(() => void dispatch(readNotificationsItemAction(notification?.id ?? 0)), [notification?.id]);
 
@@ -47,7 +50,11 @@ export const NotificationsItem: FC = () => {
       <ScreenContainer isFullScreenMode={true}>
         <View>
           <View style={styles.imageContainer}>
-            <SvgUri uri={notification.mobileImageUrl} height={IMAGE_HEIGHT} />
+            <SvgCssUri
+              uri={fallbackImageUri}
+              height={IMAGE_HEIGHT}
+              onError={() => setFallbackImageUri(NotificationImageFallbacks[notification.type])}
+            />
           </View>
           <Divider size={formatSize(20)} />
           <Text style={styles.title}>{notification.title}</Text>
