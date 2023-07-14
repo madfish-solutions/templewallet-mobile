@@ -153,7 +153,8 @@ export const toEarnOpportunityToken = (token: YouvesToken) => {
     symbol: tokenSymbol,
     contractAddress: tokenAddress,
     type: tokenType,
-    tokenId
+    tokenId,
+    id
   } = token;
 
   return {
@@ -165,7 +166,7 @@ export const toEarnOpportunityToken = (token: YouvesToken) => {
       decimals: tokenDecimals,
       symbol: tokenSymbol,
       name: tokenName,
-      thumbnailUri: YOUVES_TOKENS_ICONS[tokenId]
+      thumbnailUri: YOUVES_TOKENS_ICONS[id]
     }
   };
 };

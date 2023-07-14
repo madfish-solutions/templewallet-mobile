@@ -1,3 +1,4 @@
+import { debounce } from 'lodash-es';
 import { combineEpics, Epic } from 'redux-observable';
 import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
@@ -51,6 +52,8 @@ const loadAllSavingsItems: Epic = (action$: Observable<Action>, state$: Observab
     })
   );
 
+const showStakeLoadError = debounce((e: unknown) => showErrorToastByError(e), 500, { leading: true, trailing: false });
+
 const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllSavingsAndStakesAction),
@@ -66,8 +69,9 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
         savings.map(savingsItem =>
           getUserStake(selectedAccount, savingsItem.id, savingsItem.type)
             .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
-            .catch(() => {
+            .catch(e => {
               console.error('Error while loading farm stakes: ', savingsItem.contractAddress);
+              showStakeLoadError(e);
 
               return [savingsItem.contractAddress, undefined];
             })

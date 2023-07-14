@@ -38,8 +38,7 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
                   earnOpportunityItem.stakedToken.fa2TokenId ?? 0
                 )
               )
-            : // TODO: implement this for savings
-              of(Array<BigNumber>(earnOpportunityItem.tokens.length).fill(new BigNumber(0)))
+            : of([lpAmount])
         ),
         catchError(error => {
           showErrorToastByError(error);
