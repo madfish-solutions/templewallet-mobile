@@ -1,11 +1,15 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { Path, Rect, Svg } from 'react-native-svg';
 
-import { formatSize } from '../../styles/format-size';
-import { generateHitSlop } from '../../styles/generate-hit-slop';
-import { useColors } from '../../styles/use-colors';
-import { setTestID } from '../../utils/test-id.utils';
+import { emptyFn } from 'src/config/general';
+import { formatSize } from 'src/styles/format-size';
+import { generateHitSlop } from 'src/styles/generate-hit-slop';
+import { useColors } from 'src/styles/use-colors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { setTestID } from 'src/utils/test-id.utils';
+
 import { CheckboxProps } from './checkbox.props';
 import { CheckboxStyles } from './checkbox.styles';
 
@@ -15,10 +19,16 @@ export const Checkbox: FC<CheckboxProps> = ({
   size = formatSize(24),
   strokeWidth = formatSize(1.5),
   children,
-  onChange,
+  onChange = emptyFn,
   testID
 }) => {
   const colors = useColors();
+  const { trackEvent } = useAnalytics();
+
+  const handlePress = useCallback(() => {
+    trackEvent(testID, AnalyticsEventCategory.ButtonPress, { value: !value });
+    onChange(!value);
+  }, [value, testID, trackEvent, onChange]);
 
   return (
     <TouchableOpacity
@@ -26,7 +36,7 @@ export const Checkbox: FC<CheckboxProps> = ({
       style={CheckboxStyles.container}
       activeOpacity={1}
       hitSlop={generateHitSlop(formatSize(4))}
-      onPress={() => onChange(!value)}
+      onPress={handlePress}
       {...setTestID(testID)}
     >
       <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">

@@ -26,6 +26,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 
 import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
 import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, DEFAULT_EXCHANGE_RATE, PENNY } from '../constants';
+import { EarnSelectorsEnum } from '../earn.selectors';
 import { useMainInfoStyles } from './main-info.styles';
 
 export const MainInfo: FC = () => {
@@ -173,6 +174,7 @@ export const MainInfo: FC = () => {
           }
           disabled={!areSomeRewardsClaimable}
           onPress={claimAllRewards}
+          testID={EarnSelectorsEnum.claimRewardsButton}
         />
       </View>
     </View>

@@ -28,6 +28,8 @@ import { WithdrawForm } from './withdraw-form';
 import { useWithdrawFormik } from './withdraw-form/use-withdraw-formik';
 
 const stakeFormFields: Array<keyof StakeFormValues> = ['assetAmount', 'acceptRisks'];
+const tabs = ['Deposit', 'Withdraw'];
+const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
 
 export const ManageFarmingPoolModal: FC = () => {
   const params = useRoute<RouteProp<ModalsParamList, ModalsEnum.ManageFarmingPool>>().params;
@@ -89,7 +91,7 @@ export const ManageFarmingPoolModal: FC = () => {
     submitStakeForm();
   }, [submitStakeForm, stakeFormErrors]);
 
-  usePageAnalytic(ModalsEnum.ManageFarmingPool);
+  usePageAnalytic(ModalsEnum.ManageFarmingPool, undefined, params);
 
   const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
 
@@ -100,8 +102,9 @@ export const ManageFarmingPoolModal: FC = () => {
         <TextSegmentControl
           disabledValuesIndices={disabledTabSwitcherIndices}
           selectedIndex={tabIndex}
-          values={['Deposit', 'Withdraw']}
+          values={tabs}
           onChange={setTabIndex}
+          optionAnalyticsPropertiesFn={tabAnalyticsPropertiesFn}
           testID={ManageFarmingPoolModalSelectors.tabSwitch}
         />
         {pageIsLoading && (

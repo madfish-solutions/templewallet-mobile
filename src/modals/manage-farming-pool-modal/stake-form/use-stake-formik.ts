@@ -68,6 +68,11 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
         return;
       }
 
+      trackEvent('STAKE_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+        farmAddress: farm.item.contractAddress,
+        token: asset.symbol,
+        atomicAmount: amount.toFixed()
+      });
       try {
         const opParams = await createStakeOperationParams(farm, amount, asset, tezos, accountPkh, stake?.lastStakeId);
 

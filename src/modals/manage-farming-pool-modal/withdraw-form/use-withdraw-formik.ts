@@ -65,10 +65,15 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
         return;
       }
 
+      const { tokenOption } = values;
+      const { token } = tokenOption;
+      trackEvent('WITHDRAW_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+        farmAddress: farm.item.contractAddress,
+        token: token.symbol
+      });
+
       const doWithdraw = async () => {
         helpers.setSubmitting(true);
-        const { tokenOption } = values;
-        const { token } = tokenOption;
         const tokenIndex = stakeTokens.findIndex(farmToken => getTokenSlug(farmToken) === getTokenSlug(token));
 
         try {
@@ -77,13 +82,13 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
             navigateAction(ModalsEnum.Confirmation, {
               type: ConfirmationTypeEnum.InternalOperations,
               opParams,
-              testID: 'STAKE_TRANSACTION_SENT'
+              testID: 'WITHDRAW_TRANSACTION_SENT'
             })
           );
           trackEvent('WITHDRAW_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
         } catch (error) {
           showErrorToastByError(error, undefined, true);
-          trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
+          trackEvent('WITHDRAW_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
         } finally {
           helpers.setSubmitting(false);
         }
@@ -93,6 +98,10 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
         void doWithdraw();
       } else {
         const vestingPeriodSeconds = Number(farm.item.vestingPeriodSeconds);
+        const modalAnswerAnalyticsProperties = {
+          farmId: farm.item.id,
+          farmContractAddress: farm.item.contractAddress
+        };
         doAfterConfirmation(
           vestingPeriodSeconds > SECONDS_IN_DAY
             ? 'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.'
@@ -101,12 +110,16 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
                 roundingMethod: 'ceil'
               })}. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.`,
           'Withdraw & Claim rewards',
-          () => void doWithdraw()
+          () => {
+            trackEvent('WITHDRAW_MODAL_CONFIRM', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties);
+            void doWithdraw();
+          },
+          () => trackEvent('WITHDRAW_MODAL_CANCEL', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties)
         );
       }
       helpers.setSubmitting(false);
     },
-    [stakeTokens, farm, tezos, publicKeyHash, stake, dispatch]
+    [stakeTokens, farm, tezos, publicKeyHash, stake, dispatch, trackEvent]
   );
 
   return useFormik<WithdrawFormValues>({

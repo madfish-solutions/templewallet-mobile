@@ -57,6 +57,10 @@ const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> 
   />
 );
 
+const tokenOptionTestIDPropertiesFn = (option: WithdrawTokenOption) => ({
+  token: option.token.symbol
+});
+
 export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => {
   const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
   const { stakedToken, depositExchangeRate } = farm.item;
@@ -184,6 +188,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
             isSearchable={true}
             setSearchValue={setTokenSearchValue}
             list={filteredTokensOptions}
+            itemTestIDPropertiesFn={tokenOptionTestIDPropertiesFn}
             onValueChange={handleTokenOptionChange}
             testID={ManageFarmingPoolModalSelectors.tokenSelector}
           />

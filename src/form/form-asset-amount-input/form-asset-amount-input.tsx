@@ -35,7 +35,8 @@ export const FormAssetAmountInput: FC<Props> = ({
   testID,
   tokenTestID,
   switcherTestID,
-  maxButtonTestID
+  maxButtonTestID,
+  assetOptionTestIdPropertiesFn
 }) => {
   const formikContext = useFormikContext();
   const [field, meta] = useField<AssetAmountInterface>(name);
@@ -74,6 +75,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         tokenTestID={tokenTestID}
         switcherTestID={switcherTestID}
         maxButtonTestID={maxButtonTestID}
+        assetOptionTestIdPropertiesFn={assetOptionTestIdPropertiesFn}
       />
       <ErrorMessage meta={meta} />
     </>

@@ -19,7 +19,7 @@ import { useLastStakesSelector, useStakesLoadingSelector } from 'src/store/farms
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { EarmSelectorsEnum } from './earn.selectors';
+import { EarnSelectorsEnum } from './earn.selectors';
 import { useEarnStyles } from './earn.styles';
 import { FarmItem } from './farm-item/farm-item';
 import { MainInfo } from './main-info/main-info';
@@ -97,12 +97,13 @@ export const Earn: FC = () => {
             size={formatSize(16)}
             strokeWidth={formatSize(2)}
             onChange={handleToggleDepositOnly}
+            testID={EarnSelectorsEnum.depositedOnlyCheckbox}
           >
             <Divider size={formatSize(4)} />
             <Text style={styles.depositText}>Deposited only</Text>
           </Checkbox>
         </View>
-        <Search placeholder="Search farm" onChange={setSearchValue} dividerSize={12} testID={EarmSelectorsEnum.search}>
+        <Search placeholder="Search farm" onChange={setSearchValue} dividerSize={12} testID={EarnSelectorsEnum.search}>
           <Sorter
             bottomSheetContentHeight={264}
             sortValue={sortField}
@@ -110,7 +111,7 @@ export const Earn: FC = () => {
             sortFieldsOptions={earnSortFieldsOptions}
             sortFieldsLabels={earnSortFieldsLabels}
             onSetSortValue={handleSetSortField}
-            testID={EarmSelectorsEnum.sorter}
+            testID={EarnSelectorsEnum.sorter}
           />
         </Search>
       </View>

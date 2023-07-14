@@ -18,12 +18,15 @@ import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -32,6 +35,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { useButtonPrimaryStyleConfig } from '../button-primary.styles';
 import { DEFAULT_AMOUNT, DEFAULT_DECIMALS } from '../constants';
 import { useButtonSecondaryStyleConfig, useFarmItemStyles } from './farm-item.styles';
+import { FarmItemSelectors } from './selectors';
 
 interface Props {
   farm: SingleFarmResponse;
@@ -52,6 +56,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
   const tezos = useReadOnlyTezosToolkit();
   const { rewardToken, stakeTokens } = useFarmTokens(farm.item);
   const fiatToUsdRate = useFiatToUsdRateSelector();
+  const { trackEvent } = useAnalytics();
   const {
     apr,
     stakedToken,
@@ -101,20 +106,41 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
 
   const lastStakeId = lastStakeRecord?.lastStakeId;
   const harvestAssetsApi = useCallback(async () => {
-    if (isDefined(lastStakeId)) {
-      const opParams = await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId);
-
-      if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
-        doAfterConfirmation(
-          'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
-          'Claim rewards',
-          () => navigateHarvestFarm(opParams)
-        );
-      } else {
-        navigateHarvestFarm(opParams);
-      }
+    if (!isDefined(lastStakeId)) {
+      return;
     }
-  }, [lastStakeRecord?.rewardsDueDate, lastStakeId, contractAddress, tezos]);
+
+    const opParams = await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId);
+
+    if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
+      const modalAnswerAnalyticsProperties = {
+        page: ScreensEnum.Earn,
+        farmId: id,
+        farmContractAddress: contractAddress
+      };
+
+      doAfterConfirmation(
+        'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
+        'Claim rewards',
+        () => {
+          trackEvent('CLAIM_REWARDS_MODAL_CONFIRM', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties);
+          navigateHarvestFarm(opParams);
+        },
+        () =>
+          trackEvent('CLAIM_REWARDS_MODAL_CANCEL', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties)
+      );
+    } else {
+      navigateHarvestFarm(opParams);
+    }
+  }, [lastStakeId, lastStakeRecord?.rewardsDueDate, id, contractAddress, tezos, trackEvent]);
+
+  const actionButtonsTestIDProperties = useMemo(
+    () => ({
+      id,
+      contractAddress
+    }),
+    [id, contractAddress]
+  );
 
   const renderStatsLoader = useCallback(() => <Text style={styles.attributeValue}>---</Text>, [styles]);
 
@@ -172,9 +198,21 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
         <View style={styles.row}>
           {depositAmountAtomic.isGreaterThan(DEFAULT_AMOUNT) ? (
             <>
-              <Button title="MANAGE" onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
+              <Button
+                title="MANAGE"
+                onPress={navigateToFarm}
+                styleConfig={buttonSecondaryStylesConfig}
+                testID={FarmItemSelectors.manageButton}
+                testIDProperties={actionButtonsTestIDProperties}
+              />
               <Divider size={formatSize(8)} />
-              <Button title="CLAIM REWARDS" onPress={harvestAssetsApi} styleConfig={buttonPrimaryStylesConfig} />
+              <Button
+                title="CLAIM REWARDS"
+                onPress={harvestAssetsApi}
+                styleConfig={buttonPrimaryStylesConfig}
+                testID={FarmItemSelectors.claimRewardsButton}
+                testIDProperties={actionButtonsTestIDProperties}
+              />
             </>
           ) : (
             <Button
@@ -182,6 +220,8 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
               title="START FARMING"
               onPress={navigateToFarm}
               styleConfig={buttonPrimaryStylesConfig}
+              testID={FarmItemSelectors.startFarmingButton}
+              testIDProperties={actionButtonsTestIDProperties}
             />
           )}
         </View>
