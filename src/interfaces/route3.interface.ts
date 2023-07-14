@@ -39,6 +39,13 @@ export interface Route3SwapParamsResponse {
   chains: Array<Route3Chain>;
 }
 
+export interface Route3LiquidityBakingParamsResponse {
+  input: string | undefined;
+  output: string | undefined;
+  tzbtcChain: Route3SwapParamsResponse;
+  xtzChain: Route3SwapParamsResponse;
+}
+
 export interface Route3Token {
   id: number;
   symbol: string;

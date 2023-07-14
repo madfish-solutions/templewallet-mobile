@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -11,7 +12,7 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useFarmSelector, useStakeSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedRpcUrlSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
@@ -20,7 +21,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
-import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
+import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 import { createStakeOperationParams } from './create-stake-operation-params';
 
 export interface StakeFormValues {
@@ -34,11 +35,11 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const selectedAccount = useSelectedAccountSelector();
-  const { publicKeyHash: accountPkh } = selectedAccount;
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
   const stake = useStakeSelector(contractAddress);
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
+  const slippageTolerance = useSlippageSelector();
 
   const initialValues = useMemo(
     () => ({
@@ -54,10 +55,13 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
   const validationSchema = useMemo<SchemaOf<StakeFormValues>>(
     () =>
       objectSchema().shape({
-        assetAmount: createAssetAmountWithMaxValidation(gasToken, EXPECTED_STAKING_GAS_EXPENSE),
+        assetAmount: createAssetAmountWithMaxValidation(
+          gasToken,
+          farm?.item.type === FarmPoolTypeEnum.STABLESWAP ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE : undefined
+        ),
         acceptRisks: booleanSchema().oneOf([true], 'Accept risks before depositing').required()
       }),
-    [gasToken]
+    [gasToken, farm?.item.type]
   );
 
   const handleSubmit = useCallback(
@@ -74,7 +78,15 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
         atomicAmount: amount.toFixed()
       });
       try {
-        const opParams = await createStakeOperationParams(farm, amount, asset, tezos, accountPkh, stake?.lastStakeId);
+        const opParams = await createStakeOperationParams(
+          farm,
+          amount,
+          asset,
+          tezos,
+          selectedAccount,
+          stake?.lastStakeId,
+          slippageTolerance
+        );
 
         dispatch(
           navigateAction(ModalsEnum.Confirmation, {
@@ -85,12 +97,11 @@ export const useStakeFormik = (farmId: string, contractAddress: string) => {
         );
         trackEvent('STAKE_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
       } catch (error) {
-        console.error(error);
-        showErrorToastByError(error);
+        showErrorToastByError(error, undefined, true);
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },
-    [farm, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
+    [farm, tezos, selectedAccount, trackEvent, stake?.lastStakeId, dispatch, slippageTolerance]
   );
 
   return useFormik<StakeFormValues>({

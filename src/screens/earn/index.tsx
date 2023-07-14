@@ -3,7 +3,6 @@ import { ActivityIndicator, View, Text, ListRenderItemInfo } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
@@ -17,6 +16,7 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { useLastStakesSelector, useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
+import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { EarnSelectorsEnum } from './earn.selectors';

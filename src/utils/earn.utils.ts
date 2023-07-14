@@ -1,8 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 
 import { tzktApi } from 'src/api.service';
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
+import { SingleFarmResponse } from 'src/types/single-farm-response';
 
 import { APPROXIMATE_DAYS_IN_YEAR, calculateTimeDiffInSeconds } from './date.utils';
 

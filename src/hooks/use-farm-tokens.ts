@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
 import { TEZOS_CONTRACT_ADDRESS } from 'src/apis/quipuswap-staking/consts';
-import { Farm, FarmToken } from 'src/apis/quipuswap-staking/types';
+import { FarmToken } from 'src/apis/quipuswap-staking/types';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import {
   useAssetsListSelector,
@@ -11,6 +11,7 @@ import {
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { Farm } from 'src/types/farm';
 import { isDefined } from 'src/utils/is-defined';
 import { convertFarmToken } from 'src/utils/staking.utils';
 
