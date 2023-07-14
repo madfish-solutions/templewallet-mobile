@@ -52,9 +52,6 @@ export type ModalsParamList = {
   };
   [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
   [ModalsEnum.EditContact]: { contact: AccountBaseInterface; index: number };
-<<<<<<< HEAD
   [ModalsEnum.ManageFarmingPool]: Pick<Farm, 'id' | 'contractAddress'>;
-=======
   [ModalsEnum.Newsletter]: undefined;
->>>>>>> 77354374b9f5234561fe2228d04e7a257e836a8b
 };
