@@ -32,7 +32,7 @@ export const NotificationsItem: FC = () => {
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.NotificationsItem>>();
   const notification = useNotificationsItemSelector(params.id);
 
-  const [fallbackImageUri, setFallbackImageUri] = useState(notification?.mobileImageUrl ?? '');
+  const [imageUri, setImageUri] = useState(notification?.mobileImageUrl ?? '');
 
   useEffect(() => void dispatch(readNotificationsItemAction(notification?.id ?? 0)), [notification?.id]);
 
@@ -51,9 +51,9 @@ export const NotificationsItem: FC = () => {
         <View>
           <View style={styles.imageContainer}>
             <SvgCssUri
-              uri={fallbackImageUri}
+              uri={imageUri}
               height={IMAGE_HEIGHT}
-              onError={() => setFallbackImageUri(NotificationImageFallbacks[notification.type])}
+              onError={() => setImageUri(NotificationImageFallbacks[notification.type])}
             />
           </View>
           <Divider size={formatSize(20)} />
