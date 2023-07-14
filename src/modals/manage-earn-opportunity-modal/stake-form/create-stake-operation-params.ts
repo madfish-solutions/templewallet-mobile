@@ -2,6 +2,7 @@ import { TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
+import { Route3Token } from 'src/interfaces/route3.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
@@ -15,7 +16,9 @@ export const createStakeOperationParams = async (
   asset: TokenInterface,
   tezos: TezosToolkit,
   accountPkh: string,
-  stakeId?: string
+  stakeId: string | undefined,
+  threeRouteTokens: Route3Token[],
+  slippageTolerancePercentage: number
 ) => {
   let transfersParams: TransferParams[];
 
@@ -32,7 +35,16 @@ export const createStakeOperationParams = async (
       break;
     case EarnOpportunityTypeEnum.YOUVES_SAVING:
     case EarnOpportunityTypeEnum.YOUVES_STAKING:
-      transfersParams = await createYouvesStakeTransfersParams(earnOpportunity, amount, tezos, accountPkh, stakeId);
+      transfersParams = await createYouvesStakeTransfersParams(
+        earnOpportunity,
+        amount,
+        asset,
+        tezos,
+        accountPkh,
+        stakeId,
+        threeRouteTokens,
+        slippageTolerancePercentage
+      );
       break;
     default:
       throw new Error('Staking is not supported here yet');

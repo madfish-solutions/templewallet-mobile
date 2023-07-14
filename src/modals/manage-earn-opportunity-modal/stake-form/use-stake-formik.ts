@@ -11,7 +11,8 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedRpcUrlSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
+import { useSwapTokensSelector } from 'src/store/swap/swap-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
@@ -34,8 +35,10 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const selectedAccount = useSelectedAccountSelector();
+  const { data: threeRouteTokens } = useSwapTokensSelector();
   const { publicKeyHash: accountPkh } = selectedAccount;
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const slippageTolerancePercentage = useSlippageSelector();
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
@@ -74,7 +77,9 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
           asset,
           tezos,
           accountPkh,
-          stake?.lastStakeId
+          stake?.lastStakeId,
+          threeRouteTokens,
+          slippageTolerancePercentage
         );
 
         dispatch(
@@ -91,7 +96,16 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },
-    [earnOpportunity, tezos, accountPkh, trackEvent, stake?.lastStakeId, dispatch]
+    [
+      earnOpportunity,
+      tezos,
+      accountPkh,
+      trackEvent,
+      stake?.lastStakeId,
+      threeRouteTokens,
+      dispatch,
+      slippageTolerancePercentage
+    ]
   );
 
   return useFormik<StakeFormValues>({

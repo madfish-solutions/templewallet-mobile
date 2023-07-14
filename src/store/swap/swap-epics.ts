@@ -9,7 +9,7 @@ import { Route3SwapParamsRequest, Route3SwapParamsRequestRaw } from 'src/interfa
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { fetchRoute3Tokens, fetchRoute3Dexes$, fetchRoute3SwapParams } from 'src/utils/route3.util';
+import { fetchRoute3Tokens$, fetchRoute3Dexes$, fetchRoute3SwapParams } from 'src/utils/route3.util';
 import { loadTokensMetadata$ } from 'src/utils/token-metadata.utils';
 
 import {
@@ -48,7 +48,7 @@ const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadSwapTokensAction.submit),
     switchMap(() =>
-      fetchRoute3Tokens().pipe(
+      fetchRoute3Tokens$().pipe(
         mergeMap(tokens => {
           const filteredTokensList = tokens.filter(token => token.contract !== null);
           const filteredTokensSlugs = filteredTokensList.map(token =>

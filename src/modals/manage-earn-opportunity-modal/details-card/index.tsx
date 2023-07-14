@@ -146,52 +146,71 @@ export const DetailsCard: FC<DetailsCardProps> = ({
         </Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />
-      <View style={styles.statsRow}>
-        <StatsItem
-          loading={loading}
-          title="Your deposit:"
-          value={
-            <FormattedAmount
-              amount={depositAmount}
-              style={styles.statsValue}
-              symbol={tokens.stakeTokens.length === 1 ? stakedToken.metadata.symbol : 'Shares'}
-            />
-          }
-          usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
-        />
-        <StatsItem
-          loading={loading}
-          title="Claimable rewards:"
-          value={
-            <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
-          }
-          usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
-        />
-      </View>
-      <Divider size={formatSize(12)} />
-      {!depositAmount.isZero() && (
+      {depositAmount.isZero() ? (
         <View style={styles.statsRow}>
           <StatsItem
             loading={loading}
-            title="Long-term rewards:"
-            value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
-            usdEquivalent={isDefined(earnExchangeRate) ? fullRewardAmount.times(earnExchangeRate) : undefined}
-          />
-          <StatsItem
-            loading={loading}
-            title="Fully claimable:"
+            title="Your deposit & Rewards:"
             value={
-              <Text style={styles.statsValue}>
-                {countdownTokens.map(({ unit, value }) => (
-                  <React.Fragment key={unit}>
-                    {value}
-                    <Text style={styles.timespanUnit}>{unit}</Text>{' '}
-                  </React.Fragment>
-                ))}
-              </Text>
+              <FormattedAmount
+                amount={depositAmount}
+                style={styles.statsValue}
+                symbol={tokens.stakeTokens.length === 1 ? stakedToken.metadata.symbol : 'Shares'}
+              />
             }
+            usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
           />
         </View>
+      ) : (
+        <>
+          <View style={styles.statsRow}>
+            <StatsItem
+              loading={loading}
+              title="Your deposit:"
+              value={
+                <FormattedAmount
+                  amount={depositAmount}
+                  style={styles.statsValue}
+                  symbol={tokens.stakeTokens.length === 1 ? stakedToken.metadata.symbol : 'Shares'}
+                />
+              }
+              usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
+            />
+            <StatsItem
+              loading={loading}
+              title="Claimable rewards:"
+              value={
+                <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+              }
+              usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
+            />
+          </View>
+
+          <Divider size={formatSize(12)} />
+
+          <View style={styles.statsRow}>
+            <StatsItem
+              loading={loading}
+              title="Long-term rewards:"
+              value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
+              usdEquivalent={isDefined(earnExchangeRate) ? fullRewardAmount.times(earnExchangeRate) : undefined}
+            />
+            <StatsItem
+              loading={loading}
+              title="Fully claimable:"
+              value={
+                <Text style={styles.statsValue}>
+                  {countdownTokens.map(({ unit, value }) => (
+                    <React.Fragment key={unit}>
+                      {value}
+                      <Text style={styles.timespanUnit}>{unit}</Text>{' '}
+                    </React.Fragment>
+                  ))}
+                </Text>
+              }
+            />
+          </View>
+        </>
       )}
       {shouldShowClaimRewardsButton && (
         <>

@@ -20,6 +20,16 @@ export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.FilmToken
 };
 
+export const TZBTC_TOKEN_METADATA: TokenMetadataInterface = {
+  id: 0,
+  address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
+  name: 'Tezos BTC',
+  symbol: 'tzBTC',
+  decimals: 8,
+  iconName: IconNameEnum.TzBtcToken,
+  standard: TokenStandardsEnum.Fa12
+};
+
 export const WTEZ_TOKEN_METADATA: TokenMetadataInterface = {
   id: 0,
   address: 'KT1UpeXdK6AJbX58GJ92pLZVCucn2DR8Nu4b',
@@ -28,6 +38,16 @@ export const WTEZ_TOKEN_METADATA: TokenMetadataInterface = {
   decimals: 6,
   thumbnailUri: 'ipfs://QmUWhCYXtC8r8aXgjrwsLrZmopiGMHdLWoQzEueAktJbHB',
   standard: TokenStandardsEnum.Fa2
+};
+
+export const SIRS_TOKEN_METADATA: TokenMetadataInterface = {
+  id: 0,
+  address: 'KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo',
+  name: 'Sirius',
+  symbol: 'SIRS',
+  decimals: 0,
+  thumbnailUri: 'ipfs://QmNXQPkRACxaR17cht5ZWaaKiQy46qfCwNVT5FGZy6qnyp',
+  standard: TokenStandardsEnum.Fa12
 };
 
 const DEPRECATED_TKEY_METADATA: TokenMetadataInterface = {
@@ -67,15 +87,7 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     thumbnailUri: 'https://kolibri-data.s3.amazonaws.com/logo.png',
     standard: TokenStandardsEnum.Fa12
   },
-  {
-    id: 0,
-    address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
-    name: 'Tezos BTC',
-    symbol: 'tzBTC',
-    decimals: 8,
-    iconName: IconNameEnum.TzBtcToken,
-    standard: TokenStandardsEnum.Fa12
-  },
+  TZBTC_TOKEN_METADATA,
   {
     id: 2,
     address: 'KT1XRPEPXbZK25r3Htzp2o1x7xdMMmfocKNW',

@@ -1,6 +1,8 @@
+import { uniqBy } from 'lodash-es';
 import { useMemo, useState } from 'react';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { isNonZeroBalance } from 'src/utils/tezos.util';
@@ -46,7 +48,7 @@ export const useFilteredAssetsList = (
       }
     }
 
-    return [leadingAsset, ...searchedAssetsList];
+    return uniqBy([leadingAsset, ...searchedAssetsList], getTokenSlug);
   }, [searchedAssetsList, searchValue, filterZeroBalances, leadingAsset, leadingAssetIsFilterable]);
 
   return {

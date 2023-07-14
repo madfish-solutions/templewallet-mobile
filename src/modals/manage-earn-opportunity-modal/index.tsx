@@ -22,6 +22,8 @@ import {
   useSavingsItemsLoadingSelector,
   useSavingsItemStakeSelector
 } from 'src/store/savings/selectors';
+import { loadSwapTokensAction } from 'src/store/swap/swap-actions';
+import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isFarm } from 'src/utils/earn.utils';
@@ -47,7 +49,8 @@ export const ManageEarnOpportunityModal: FC = () => {
   const farmIsLoading = useFarmsLoadingSelector();
   const savingsItemIsLoading = useSavingsItemsLoadingSelector();
   const earnOpportunityLoading = isFarmingPool ? farmIsLoading : savingsItemIsLoading;
-  const pageIsLoading = earnOpportunityLoading && !isDefined(earnOpportunityItem);
+  const { isLoading: swapTokensMetadataLoading } = useSwapTokensMetadataSelector();
+  const pageIsLoading = (earnOpportunityLoading && !isDefined(earnOpportunityItem)) || swapTokensMetadataLoading;
   const farmStake = useFarmStakeSelector(contractAddress);
   const savingsStake = useSavingsItemStakeSelector(contractAddress);
   const stake = isFarmingPool ? farmStake : savingsStake;
@@ -58,6 +61,7 @@ export const ManageEarnOpportunityModal: FC = () => {
   const styles = useEarnOpportunityModalStyles();
   const blockLevel = useBlockLevel();
   const prevBlockLevelRef = useRef(blockLevel);
+  const startedLoadingTokensRef = useRef(false);
   const dispatch = useDispatch();
   const [tabIndex, setTabIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -86,12 +90,19 @@ export const ManageEarnOpportunityModal: FC = () => {
   }, [blockLevel, earnOpportunityItem, dispatch]);
 
   useEffect(() => {
-    if (isDefined(earnOpportunityItem)) {
-      dispatch(
-        isFarm(earnOpportunityItem)
-          ? loadSingleFarmStakeActions.submit(earnOpportunityItem)
-          : loadSingleSavingStakeActions.submit(earnOpportunityItem)
-      );
+    if (!isDefined(earnOpportunityItem)) {
+      return;
+    }
+
+    dispatch(
+      isFarm(earnOpportunityItem)
+        ? loadSingleFarmStakeActions.submit(earnOpportunityItem)
+        : loadSingleSavingStakeActions.submit(earnOpportunityItem)
+    );
+
+    if (!isFarm(earnOpportunityItem) && !startedLoadingTokensRef.current) {
+      dispatch(loadSwapTokensAction.submit());
+      startedLoadingTokensRef.current = true;
     }
   }, [earnOpportunityItem, dispatch]);
 

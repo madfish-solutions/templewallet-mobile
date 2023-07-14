@@ -2,15 +2,16 @@ import { BigNumber } from 'bignumber.js';
 import { from, map } from 'rxjs';
 
 import { route3Api } from 'src/apis/route3';
+import { TEMPLE_TOKEN, THREE_ROUTE_SIRS_SYMBOL } from 'src/config/swap';
 import {
   Hop,
   Route3Chain,
   Route3Dex,
+  Route3LiquidityBakingParamsResponse,
   Route3SwapParamsRequest,
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
-import { TEMPLE_TOKEN } from 'src/screens/swap/config';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -18,7 +19,7 @@ import { toTokenSlug } from 'src/token/utils/token.utils';
 import { TEMPLE_WALLET_ROUTE3_AUTH_TOKEN } from './env.utils';
 import { tzToMutez } from './tezos.util';
 
-export const fetchRoute3Tokens = () =>
+export const fetchRoute3Tokens$ = () =>
   from(route3Api.get<Array<Route3Token>>('/tokens')).pipe(map(response => response.data));
 
 const parser = (origJSON: string): ReturnType<typeof JSON['parse']> => {
@@ -29,7 +30,7 @@ const parser = (origJSON: string): ReturnType<typeof JSON['parse']> => {
   return JSON.parse(stringedJSON);
 };
 
-export const fetchRoute3SwapParams = ({
+const fetchRoute3TraditionalSwapParams = ({
   fromSymbol,
   toSymbol,
   amount,
@@ -42,6 +43,24 @@ export const fetchRoute3SwapParams = ({
   })
     .then(res => res.text())
     .then(res => parser(res));
+
+const fetchRoute3LiquidityBakingParams = ({
+  fromSymbol,
+  toSymbol,
+  amount
+}: Omit<Route3SwapParamsRequest, 'chainLimits'>): Promise<Route3LiquidityBakingParamsResponse> =>
+  fetch(`https://temple.3route.io/v3/swap-sirs/${fromSymbol}/${toSymbol}/${amount}`, {
+    headers: {
+      Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
+    }
+  })
+    .then(res => res.text())
+    .then(res => parser(res));
+
+export const fetchRoute3SwapParams = (params: Route3SwapParamsRequest) =>
+  [params.fromSymbol, params.toSymbol].includes(THREE_ROUTE_SIRS_SYMBOL)
+    ? fetchRoute3LiquidityBakingParams(params)
+    : fetchRoute3TraditionalSwapParams(params);
 
 export const fetchRoute3Dexes$ = () =>
   from(route3Api.get<Array<Route3Dex>>('/dexes')).pipe(map(response => response.data));

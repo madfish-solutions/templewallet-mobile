@@ -1,7 +1,7 @@
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useSwapRouteItem = createUseStyles(({ colors, typography }) => ({
+export const useSwapRouteItem = createUseStyles(() => ({
   flex: {
     flex: 1,
     flexDirection: 'row',
@@ -14,25 +14,10 @@ export const useSwapRouteItem = createUseStyles(({ colors, typography }) => ({
     position: 'relative',
     justifyContent: 'space-around'
   },
-  icon: {
+  iconWrapper: {
     position: 'absolute',
-    left: formatSize(0)
-  },
-  amountsContainer: {
-    width: formatSize(44)
-  },
-  amount: {
-    ...typography.caption13Regular,
-    color: colors.gray2
-  },
-  alignEnd: {
-    alignSelf: 'flex-end'
-  },
-  alignStart: {
-    alignSelf: 'flex-start'
-  },
-  percantage: {
-    ...typography.caption13Regular,
-    color: colors.blue
+    left: formatSize(0),
+    overflow: 'hidden',
+    width: '100%'
   }
 }));
