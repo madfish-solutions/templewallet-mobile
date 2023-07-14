@@ -19,6 +19,8 @@ import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
 import { aprToApy } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
@@ -59,6 +61,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   const dispatch = useDispatch();
   const tezos = useReadOnlyTezosToolkit();
   const farmTokens = useFarmTokens(farm);
+  const { trackEvent } = useAnalytics();
   const rewardTokenDecimals = rewardToken.metadata.decimals;
   const rewardTokenSymbol = rewardToken.metadata.symbol;
 
@@ -112,15 +115,26 @@ export const DetailsCard: FC<DetailsCardProps> = ({
     };
 
     if (msToVestingEnd > 0) {
+      const modalAnswerAnalyticsProperties = {
+        page: ModalsEnum.ManageFarmingPool,
+        farmId: farm.id,
+        farmContractAddress: farm.contractAddress
+      };
+
       doAfterConfirmation(
         'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
         'Claim rewards',
-        claimRewards
+        () => {
+          trackEvent('CLAIM_REWARDS_MODAL_CONFIRM', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties);
+          void claimRewards();
+        },
+        () =>
+          trackEvent('CLAIM_REWARDS_MODAL_CANCEL', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties)
       );
     } else {
       void claimRewards();
     }
-  }, [lastStakeId, dispatch, contractAddress, tezos, msToVestingEnd]);
+  }, [lastStakeId, dispatch, contractAddress, tezos, msToVestingEnd, farm, trackEvent]);
 
   const { assetAmount: depositAmount, usdEquivalent: depositUsdEquivalent } = useAssetAmount(
     depositAmountAtomic,
@@ -184,14 +198,16 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               loading={loading}
               title="Fully claimable:"
               value={
-                <Text style={styles.statsValue}>
+                <View style={styles.timespanValue}>
                   {countdownTokens.map(({ unit, value }) => (
                     <React.Fragment key={unit}>
-                      {value}
-                      <Text style={styles.timespanUnit}>{unit}</Text>{' '}
+                      <Text style={styles.statsValue}>{value}</Text>
+                      <Divider size={formatSize(2)} />
+                      <Text style={styles.timespanUnit}>{unit}</Text>
+                      <Divider size={formatSize(6)} />
                     </React.Fragment>
                   ))}
-                </Text>
+                </View>
               }
             />
           </View>

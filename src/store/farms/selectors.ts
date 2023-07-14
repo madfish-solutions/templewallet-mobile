@@ -1,15 +1,24 @@
 import { useMemo } from 'react';
 
-import { FarmVersionEnum, PoolType } from 'src/apis/quipuswap-staking/types';
+import { PoolType } from 'src/apis/quipuswap-staking/types';
 
 import { useSelector } from '../selector';
 
 export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.allFarms.isLoading);
 
-export const useFarmSelector = (id: string, version: FarmVersionEnum) => {
+export const useFarmSelector = (id: string, contractAddress: string) => {
   const list = useSelector(({ farms }) => farms.allFarms.data);
 
-  return useMemo(() => list.find(({ item }) => item.id === id && item.version === version), [list, id, version]);
+  return useMemo(() => {
+    const sameContractFarms = list.filter(({ item }) => item.contractAddress === contractAddress);
+
+    // IDs of the same farms from Quipuswap API may differ
+    if (sameContractFarms.length === 1) {
+      return sameContractFarms[0];
+    }
+
+    return sameContractFarms.find(({ item }) => item.id === id);
+  }, [list, id, contractAddress]);
 };
 
 export const useStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes.data[farmAddress]);
@@ -33,5 +42,4 @@ export const useLastStakesSelector = () => useSelector(({ farms }) => farms.last
 
 export const useStakesLoadingSelector = () => useSelector(({ farms }) => farms.lastStakes.isLoading);
 
-export const useFarmStoreSelector = () => useSelector(({ farms }) => farms);
 export const useFarmSortFieldSelector = () => useSelector(({ farms }) => farms.sortField);
