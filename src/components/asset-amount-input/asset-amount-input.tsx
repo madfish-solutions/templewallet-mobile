@@ -40,6 +40,7 @@ export interface AssetAmountInterface {
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
 const defaultAssetAmountInputStylesConfig: AssetAmountInputStylesConfig = {};
+const defaultAssetOptionTestIdPropertiesFn = (asset: TokenInterface) => ({ token: asset.symbol });
 
 const getDefinedAmount = (
   amount: BigNumber | undefined,
@@ -81,7 +82,8 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   testID,
   tokenTestID,
   switcherTestID,
-  maxButtonTestID
+  maxButtonTestID,
+  assetOptionTestIdPropertiesFn = defaultAssetOptionTestIdPropertiesFn
 }) => {
   const styles = useAssetAmountInputStyles();
   const {
@@ -304,6 +306,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             keyExtractor={getTokenSlug}
             onValueChange={handleTokenChange}
             testID={testID}
+            itemTestIDPropertiesFn={assetOptionTestIdPropertiesFn}
           />
         </View>
       </View>

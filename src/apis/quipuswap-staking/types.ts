@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { BigMap } from 'src/interfaces/big-map.interface';
 
-export enum FarmVersionEnum {
+enum FarmVersionEnum {
   V1 = 'v1',
   V2 = 'v2',
   V3 = 'v3'

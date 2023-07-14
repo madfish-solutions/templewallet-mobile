@@ -28,6 +28,8 @@ import { WithdrawForm } from './withdraw-form';
 import { useWithdrawFormik } from './withdraw-form/use-withdraw-formik';
 
 const stakeFormFields: Array<keyof StakeFormValues> = ['assetAmount', 'acceptRisks'];
+const tabs = ['Deposit', 'Withdraw'];
+const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
 
 export const ManageFarmingPoolModal: FC = () => {
   const params = useRoute<RouteProp<ModalsParamList, ModalsEnum.ManageFarmingPool>>().params;
@@ -35,7 +37,7 @@ export const ManageFarmingPoolModal: FC = () => {
   const blockLevel = useBlockLevel();
   const prevBlockLevelRef = useRef(blockLevel);
   const dispatch = useDispatch();
-  const farm = useFarmSelector(params.id, params.version);
+  const farm = useFarmSelector(params.id, params.contractAddress);
   const farmIsLoading = useFarmsLoadingSelector();
   const stakes = useLastStakesSelector();
   const stake = isDefined(farm) ? stakes[farm.item.contractAddress] : undefined;
@@ -44,7 +46,7 @@ export const ManageFarmingPoolModal: FC = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const acceptRisksRef = useRef<View>(null);
 
-  const stakeFormik = useStakeFormik(params.id, params.version);
+  const stakeFormik = useStakeFormik(params.id, params.contractAddress);
   const {
     errors: stakeFormErrors,
     submitForm: submitStakeForm,
@@ -52,7 +54,7 @@ export const ManageFarmingPoolModal: FC = () => {
     getFieldMeta: getStakeFieldMeta
   } = stakeFormik;
   const stakeFormErrorsVisible = stakeFormFields.some(fieldName => hasError(getStakeFieldMeta(fieldName)));
-  const withdrawFormik = useWithdrawFormik(params.id, params.version);
+  const withdrawFormik = useWithdrawFormik(params.id, params.contractAddress);
   const {
     errors: withdrawFormErrors,
     submitForm: submitWithdrawForm,
@@ -89,7 +91,7 @@ export const ManageFarmingPoolModal: FC = () => {
     submitStakeForm();
   }, [submitStakeForm, stakeFormErrors]);
 
-  usePageAnalytic(ModalsEnum.ManageFarmingPool);
+  usePageAnalytic(ModalsEnum.ManageFarmingPool, undefined, params);
 
   const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
 
@@ -100,8 +102,9 @@ export const ManageFarmingPoolModal: FC = () => {
         <TextSegmentControl
           disabledValuesIndices={disabledTabSwitcherIndices}
           selectedIndex={tabIndex}
-          values={['Deposit', 'Withdraw']}
+          values={tabs}
           onChange={setTabIndex}
+          optionAnalyticsPropertiesFn={tabAnalyticsPropertiesFn}
           testID={ManageFarmingPoolModalSelectors.tabSwitch}
         />
         {pageIsLoading && (

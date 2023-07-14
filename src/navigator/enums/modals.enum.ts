@@ -22,7 +22,8 @@ export enum ModalsEnum {
   AddLiquidity = 'AddLiquidity',
   AddContact = 'AddContact',
   EditContact = 'EditContact',
-  ManageFarmingPool = 'ManageFarmingPool'
+  ManageFarmingPool = 'ManageFarmingPool',
+  Newsletter = 'Newsletter'
 }
 
 export type ModalsParamList = {
@@ -51,5 +52,6 @@ export type ModalsParamList = {
   };
   [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
   [ModalsEnum.EditContact]: { contact: AccountBaseInterface; index: number };
-  [ModalsEnum.ManageFarmingPool]: Pick<Farm, 'id' | 'version'>;
+  [ModalsEnum.ManageFarmingPool]: Pick<Farm, 'id' | 'contractAddress'>;
+  [ModalsEnum.Newsletter]: undefined;
 };

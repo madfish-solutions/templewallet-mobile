@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
@@ -18,12 +19,9 @@ import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
-import {
-  loadPartnersPromoActions,
-  togglePartnersPromotionAction
-} from 'src/store/partners-promotion/partners-promotion-actions';
+import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { setAdsBannerVisibilityAction, setZeroBalancesShown } from 'src/store/settings/settings-actions';
+import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
   useSelectedAccountSelector,
@@ -41,7 +39,6 @@ import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { optimalFetchEnableAds } from '../../../apis/optimal';
-import { Banner } from '../../../components/banner/banner';
 import { loadAdvertisingPromotionActions } from '../../../store/advertising/advertising-actions';
 import { WalletSelectors } from '../wallet.selectors';
 import { TezosToken } from './token-list-item/tezos-token';
@@ -140,16 +137,6 @@ export const TokensList: FC = () => {
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
-  const handleDisableBannerButton = () => {
-    dispatch(togglePartnersPromotionAction(false));
-    dispatch(setAdsBannerVisibilityAction(false));
-  };
-
-  const handleEnableBannerButton = async () => {
-    dispatch(togglePartnersPromotionAction(true));
-    dispatch(setAdsBannerVisibilityAction(false));
-  };
-
   const renderItem: ListRenderItem<FlatListItem> = useCallback(
     ({ item }) => {
       if (item === AD_PLACEHOLDER) {
@@ -215,16 +202,7 @@ export const TokensList: FC = () => {
         </Search>
       </View>
 
-      {isEnabledAdsBanner && (
-        <Banner
-          title="Earn by viewing ads in Temple Wallet"
-          description="Support the development team and earn tokens by viewing ads inside the wallet. To enable this feature, we request your permission to trace your Wallet Address and IP address. You can always disable ads in the settings."
-          enableButtonText="Enable ADS"
-          onDisable={handleDisableBannerButton}
-          onEnable={handleEnableBannerButton}
-          style={styles.banner}
-        />
-      )}
+      {isEnabledAdsBanner && <AcceptAdsBanner style={styles.banner} />}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlatList

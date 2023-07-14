@@ -8,6 +8,7 @@ import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { exolixReducers } from './exolix/exolix-reducers';
 import { farmsReducer } from './farms/reducers';
 import { marketReducers } from './market/market-reducers';
+import { newsletterReducers } from './newsletter/newsletter-reducers';
 import { notificationsReducers } from './notifications/notifications-reducers';
 import { partnersPromotionReducers } from './partners-promotion/partners-promotion-reducers';
 import { securityReducers } from './security/security-reducers';
@@ -33,5 +34,6 @@ export const rootStateReducersMap = {
   buyWithCreditCard: buyWithCreditCardReducer,
   partnersPromotion: partnersPromotionReducers,
   abTesting: abTestingReducer,
-  farms: farmsReducer
+  farms: farmsReducer,
+  newsletter: newsletterReducers
 };

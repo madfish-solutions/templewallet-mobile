@@ -1,8 +1,8 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
-import { generateShadow } from '../../styles/generate-shadow';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
+import { generateShadow } from 'src/styles/generate-shadow';
 
-export const useBannerStyles = createUseStyles(({ colors, typography }) => ({
+export const useCommonBannerStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     padding: formatSize(12),
     borderRadius: formatSize(10),
@@ -18,13 +18,6 @@ export const useBannerStyles = createUseStyles(({ colors, typography }) => ({
     marginBottom: formatSize(16),
     ...typography.caption13Regular,
     color: colors.black
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  buttonContainer: {
-    flex: 1
   },
   button: {
     height: formatSize(38)

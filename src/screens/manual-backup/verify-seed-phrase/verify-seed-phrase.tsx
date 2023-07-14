@@ -14,6 +14,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { EmptyFn } from 'src/config/general';
+import { isAndroid } from 'src/config/system';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
@@ -112,7 +113,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
 
     navigate(ScreensEnum.Wallet);
 
-    dispatch(setOnRampPossibilityAction(true));
+    isAndroid && dispatch(setOnRampPossibilityAction(true));
   };
 
   return (

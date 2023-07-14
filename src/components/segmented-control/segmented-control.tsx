@@ -17,6 +17,7 @@ export interface SegmentedControlProps<T> extends TestIdProps {
   values: T[];
   width?: number;
   onChange: EventFn<number>;
+  optionAnalyticsPropertiesFn?: (value: T, index: number) => object | undefined;
 }
 
 interface Props<T> extends SegmentedControlProps<T> {
@@ -29,6 +30,8 @@ export type SegmentedControlValueComponent<T> = FC<{
   isSelected: boolean;
 }>;
 
+const defaultOptionAnalyticsPropertiesFn = (_: unknown, index: number) => ({ index });
+
 export const SegmentedControl = <T extends unknown>({
   disabledValuesIndices,
   selectedIndex,
@@ -37,6 +40,7 @@ export const SegmentedControl = <T extends unknown>({
   width,
   testID,
   testIDProperties,
+  optionAnalyticsPropertiesFn = defaultOptionAnalyticsPropertiesFn,
   onChange
 }: PropsWithChildren<Props<T>>) => {
   const { trackEvent } = useAnalytics();
@@ -73,7 +77,10 @@ export const SegmentedControl = <T extends unknown>({
             bottom: formatSize(8)
           }}
           onPress={() => {
-            trackEvent(testID, AnalyticsEventCategory.FormChange, { ...testIDProperties, index });
+            trackEvent(testID, AnalyticsEventCategory.FormChange, {
+              ...testIDProperties,
+              ...optionAnalyticsPropertiesFn(item, index)
+            });
             onChange(index);
           }}
         >
@@ -95,7 +102,8 @@ export const SegmentedControl = <T extends unknown>({
       onChange,
       renderValue,
       selectedIndex,
-      values
+      values,
+      optionAnalyticsPropertiesFn
     ]
   );
 
