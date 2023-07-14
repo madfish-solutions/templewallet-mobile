@@ -20,10 +20,7 @@ export const useEarnOpportunitiesStats = (
       netApy: new BigNumber(DEFAULT_AMOUNT),
       totalStakedAmountInFiat: new BigNumber(DEFAULT_AMOUNT),
       totalClaimableRewardsInFiat: new BigNumber(DEFAULT_AMOUNT),
-      maxApr: BigNumber.maximum(
-        DEFAULT_AMOUNT,
-        ...earnOpportunities.map(item => new BigNumber(item.apr ?? DEFAULT_AMOUNT))
-      )
+      maxApr: BigNumber.maximum(DEFAULT_AMOUNT, ...earnOpportunities.map(item => item.apr ?? DEFAULT_AMOUNT))
     };
 
     let totalWeightedApy = new BigNumber(DEFAULT_AMOUNT);
