@@ -72,7 +72,7 @@ interface OfferInteface {
 
 export interface CollectibleDetailsInterface extends CollectibleCommonInterface {
   address: string;
-  id: string;
+  id: number;
   name: string;
   creators: Creators[];
   collection: Collection;

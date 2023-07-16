@@ -101,7 +101,6 @@ export const MainStackScreen = () => {
   useFirebaseApp();
   useNFTDynamicLinks();
   useAdvertising();
-  useLoadCollectiblesDetails();
 
   const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 

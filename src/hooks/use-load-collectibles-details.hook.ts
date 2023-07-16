@@ -9,9 +9,9 @@ import { useAuthorisedInterval } from './use-interval.hook';
 
 export const useLoadCollectiblesDetails = () => {
   const dispatch = useDispatch();
+
   const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
-
   const collectiblesList = useCollectiblesListSelector();
 
   const collectiblesSlugs = collectiblesList.map(collectible => getTokenSlug(collectible));

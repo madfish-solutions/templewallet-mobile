@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState, memo } from 'react';
+import React, { FC, useMemo, useState, memo, useEffect } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -41,32 +41,41 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
   }) => {
     const collectibleDetails = useCollectibleDetailsSelector(getTokenSlug(collectible));
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [isShowBlur, setIsShowBlur] = useState(() => {
+    const isShowBlurInitialValue = useMemo(() => {
       if (isDefined(collectibleDetails)) {
         return isAdultCollectible(collectibleDetails.attributes, collectibleDetails.tags);
       }
 
       return false;
-    });
+    }, [collectibleDetails]);
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [isShowBlur, setIsShowBlur] = useState(isShowBlurInitialValue);
+
+    useEffect(() => void setIsShowBlur(isShowBlurInitialValue), [collectibleDetails]);
 
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
     const styles = useCollectibleIconStyles();
     const assetSlug = `${collectible.address}_${collectible.id}`;
 
-    const initialFallback = useMemo(() => {
-      if (isDefined(collectible.artifactUri) && isBigIcon) {
-        return formatCollectibleObjktArtifactUri(collectible.artifactUri);
+    const formattedImage = useMemo(() => {
+      if (isDefined(objktArtifact) && isBigIcon) {
+        return formatCollectibleObjktArtifactUri(objktArtifact);
       }
 
       return formatCollectibleObjktMediumUri(assetSlug);
-    }, []);
+    }, [objktArtifact, assetSlug, isBigIcon]);
 
     const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
-    const [currentFallback, setCurrentFallback] = useState(initialFallback);
+    const [fastImage, setFastImage] = useState(formattedImage);
+
+    useEffect(() => {
+      setFastImage(formattedImage);
+    }, [objktArtifact]);
+
     const handleError = () => {
-      setCurrentFallback(
-        currentFallback.endsWith('/thumb288')
+      setFastImage(
+        fastImage.endsWith('/thumb288')
           ? formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
           : formatCollectibleObjktMediumUri(assetSlug)
       );
@@ -135,12 +144,12 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       return (
         <FastImage
           style={[styles.image, { height: size, width: size }]}
-          source={{ uri: currentFallback }}
+          source={{ uri: fastImage }}
           onError={handleError}
           onLoad={handleLoadEnd}
         />
       );
-    }, [mime, objktArtifact, currentFallback]);
+    }, [mime, objktArtifact, fastImage, isAnimatedRenderedOnce]);
 
     const imageWithBlur = useMemo(() => {
       if (Boolean(isShowBlur)) {
@@ -158,7 +167,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
 
       return image;
-    }, [image, isShowBlur]);
+    }, [image, isShowBlur, objktArtifact, fastImage]);
 
     return (
       <View

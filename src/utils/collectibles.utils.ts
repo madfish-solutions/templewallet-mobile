@@ -99,7 +99,7 @@ export const loadAllCollectiblesDetails$ = (
 
         collectitblesDetailsRecord[collectibleSlug] = {
           address: collectible.fa_contract,
-          id: collectible.token_id,
+          id: +collectible.token_id,
           name: collectible.name,
           description: collectible.description,
           creators: collectible.creators,
@@ -133,7 +133,7 @@ export const loadAllCollectiblesDetails$ = (
 
 export const getCollectibleDetails = (collectible: CollectibleInterface): CollectibleDetailsInterface => ({
   address: collectible.address,
-  id: String(collectible.id),
+  id: collectible.id,
   name: collectible.name,
   description: collectible.description,
   editions: collectible.editions,

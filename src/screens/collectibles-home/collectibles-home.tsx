@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import BottomSheet from '@gorhom/bottom-sheet';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -39,6 +40,7 @@ import { openUrl } from 'src/utils/linking.util';
 
 import { CheckboxIcon } from '../../components/checkbox-icon/checkbox-icon';
 import { useCollectiblesWithFullData } from '../../hooks/use-collectibles-with-full-data.hook';
+import { useLoadCollectiblesDetails } from '../../hooks/use-load-collectibles-details.hook';
 import { useCollectibleDetailsLoadingSelector } from '../../store/collectibles/collectibles-selectors';
 import { switchIsShowCollectibleInfoAction } from '../../store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from '../../store/settings/settings-selectors';
@@ -85,6 +87,8 @@ export const CollectiblesHome = () => {
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
+
+  useLoadCollectiblesDetails();
 
   useEffect(() => {
     dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash));
@@ -249,7 +253,7 @@ export const CollectiblesHome = () => {
           </View>
         </View>
 
-        {isDetailsLoading ? (
+        {isDetailsLoading && !isNonEmptyArray(collectibles) ? (
           <View style={styles.loader}>
             <ActivityIndicator size="large" />
           </View>

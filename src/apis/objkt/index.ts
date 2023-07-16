@@ -239,7 +239,7 @@ export const fetchCollectibleDetails$ = (address: string, id: string): Observabl
 
       return {
         address: fa_contract,
-        id: token_id,
+        id: +token_id,
         name,
         description,
         thumbnailUri: thumbnail_uri,

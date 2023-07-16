@@ -20,5 +20,5 @@ export const useCurrentCollectibleFullData = (slug: string, isUserOwnerCollectib
     }
   }, [slug, isUserOwnerCollectible]);
 
-  return { collectible: { ...collectibleDetails, ...collectibleMetadata } };
+  return { collectible: { ...collectibleMetadata, ...collectibleDetails } };
 };

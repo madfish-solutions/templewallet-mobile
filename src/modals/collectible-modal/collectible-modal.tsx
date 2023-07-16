@@ -1,11 +1,12 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
+import { SUPPORTED_CONTRACTS } from '../../apis/objkt/constants';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
@@ -88,7 +89,7 @@ export const CollectibleModal = () => {
 
   const burnCollectible = useBurnCollectible(collectible);
   const { attributes, isLoading } = useFetchCollectibleAttributes(collectible);
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(slug);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectible);
 
   const isLoadingDetails = useCollectibleDetailsLoadingSelector();
 
@@ -104,7 +105,8 @@ export const CollectibleModal = () => {
     listingsActive,
     mime,
     name,
-    thumbnailUri
+    thumbnailUri,
+    artifactUri
   } = collectible;
 
   useAuthorisedInterval(
@@ -123,8 +125,14 @@ export const CollectibleModal = () => {
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 
+  const isSupportedContract = useMemo(
+    () =>
+      isNonEmptyArray(listingsActive) ? SUPPORTED_CONTRACTS.includes(listingsActive[0].marketplaceContract) : true,
+    [listingsActive]
+  );
+
   const submitButtonTitle = useMemo(() => {
-    if (isLoadingDetails && !isUserOwnerCurrentCollectible) {
+    if ((isLoadingDetails && !isUserOwnerCurrentCollectible) || isLoadingDetails) {
       return '';
     }
 
@@ -136,8 +144,12 @@ export const CollectibleModal = () => {
       return 'Not listed';
     }
 
+    if (!isSupportedContract) {
+      return 'Comming soon..';
+    }
+
     return `Buy for ${formatNumber(purchaseCurrency.priceToDisplay)} ${purchaseCurrency.symbol}`;
-  }, [isUserOwnerCurrentCollectible, purchaseCurrency, listingsActive, isLoadingDetails]);
+  }, [isUserOwnerCurrentCollectible, purchaseCurrency, listingsActive, isLoadingDetails, isSupportedContract]);
 
   const collectionLogo = useMemo(() => {
     if (isDefined(collection) && isDefined(collection.logo)) {
@@ -207,12 +219,17 @@ export const CollectibleModal = () => {
     return 'Unkown collection';
   }, [galleries, collection]);
 
+  const isDisabled =
+    (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)) ||
+    isLoadingDetails ||
+    (!isUserOwnerCurrentCollectible && !isSupportedContract);
+
   return (
     <ScreenContainer
       fixedFooterContainer={{
         submitButton: (
           <ButtonLargePrimary
-            disabled={(!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)) || isLoadingDetails}
+            disabled={isDisabled}
             title={submitButtonTitle}
             isLoading={isLoadingDetails}
             onPress={buyCollectible}
@@ -230,7 +247,7 @@ export const CollectibleModal = () => {
           <CollectibleIcon
             collectible={collectible}
             mime={mime}
-            objktArtifact={collectible.artifactUri}
+            objktArtifact={artifactUri}
             size={iconSize}
             iconSize={CollectibleIconSize.BIG}
             setScrollEnabled={setScrollEnabled}

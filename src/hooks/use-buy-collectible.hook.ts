@@ -13,10 +13,12 @@ import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation
 import { OBJKT_MARKETPLACE_CONTRACT } from '../modals/collectible-modal/constants';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
-import { useCollectibleDetailsSelector } from '../store/collectibles/collectibles-selectors';
 import { navigateAction } from '../store/root-state.actions';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useCollectibleSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { CollectibleCommonInterface } from '../token/interfaces/collectible-interfaces.interface';
+import { TokenInterface } from '../token/interfaces/token.interface';
+import { getTokenSlug } from '../token/utils/token.utils';
 import { getPurchaseCurrency } from '../utils/get-pusrchase-currency.util';
 import { isDefined } from '../utils/is-defined';
 import { createTezosToolkit } from '../utils/rpc/tezos-toolkit.utils';
@@ -27,7 +29,7 @@ const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (slug: string) => {
+export const useBuyCollectible = (collectible: CollectibleCommonInterface & TokenInterface) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
@@ -35,12 +37,11 @@ export const useBuyCollectible = (slug: string) => {
   const tezos = createTezosToolkit(selectedRpc);
 
   const selectedAccount = useSelectedAccountSelector();
-  const tokenMetadata = useCollectibleSelector(slug);
-  const data = useCollectibleDetailsSelector(slug);
 
-  const listingsActive = isDefined(data) && isNonEmptyArray(data.listingsActive) ? data.listingsActive : [];
+  const listingsActive =
+    isDefined(collectible) && isNonEmptyArray(collectible.listingsActive) ? collectible.listingsActive : [];
 
-  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(getTokenSlug(collectible));
 
   const marketplace = isNonEmptyArray(listingsActive)
     ? listingsActive[0].marketplaceContract
@@ -60,7 +61,7 @@ export const useBuyCollectible = (slug: string) => {
 
   const buyCollectible = async () => {
     if (isUserOwnerCurrentCollectible) {
-      return navigate(ModalsEnum.Send, { token: tokenMetadata });
+      return navigate(ModalsEnum.Send, { token: collectible });
     }
 
     const getTransferParams = () => {
