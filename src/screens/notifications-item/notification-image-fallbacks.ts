@@ -5,5 +5,5 @@ const BUCKET_URL = 'https://generic-objects.fra1.digitaloceanspaces.com/notifica
 export const NotificationImageFallbacks: Record<NotificationType, string> = {
   [NotificationType.News]: `${BUCKET_URL}/news.svg`,
   [NotificationType.PlatformUpdate]: `${BUCKET_URL}/platform-update.svg`,
-  [NotificationType.SecurityNote]: `${BUCKET_URL}//security-note.svg`
+  [NotificationType.SecurityNote]: `${BUCKET_URL}/security-note.svg`
 };
