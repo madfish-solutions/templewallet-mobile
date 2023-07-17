@@ -114,7 +114,7 @@ export interface CollectibleTag {
   };
 }
 
-export interface ListingsActiveResponse {
+interface ListingsActiveResponse {
   bigmap_key: number;
   currency_id: number;
   price: number;

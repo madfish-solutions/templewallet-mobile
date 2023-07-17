@@ -131,27 +131,6 @@ export const loadAllCollectiblesDetails$ = (
     })
   );
 
-export const getCollectibleDetails = (collectible: CollectibleInterface): CollectibleDetailsInterface => ({
-  address: collectible.address,
-  id: collectible.id,
-  name: collectible.name,
-  description: collectible.description,
-  editions: collectible.editions,
-  isAdultContent: collectible.isAdultContent,
-  creators: collectible.creators,
-  collection: collectible.collection,
-  metadata: collectible.metadata,
-  attributes: collectible.attributes,
-  tags: collectible.tags,
-  timestamp: collectible.timestamp,
-  royalties: collectible.royalties,
-  mime: collectible.mime,
-  galleries: collectible.galleries,
-  listingsActive: collectible.listingsActive,
-  artifactUri: collectible.artifactUri,
-  thumbnailUri: collectible.thumbnailUri
-});
-
 export const withAllCollectiblesDetails =
   <T>(state$: Observable<CollectiblesRootState>) =>
   (observable$: Observable<T>) =>

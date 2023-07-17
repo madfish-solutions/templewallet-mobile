@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
