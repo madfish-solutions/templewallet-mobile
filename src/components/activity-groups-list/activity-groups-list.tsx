@@ -54,49 +54,55 @@ export const ActivityGroupsList: FC<Props> = ({
     return result;
   }, [activityGroups]);
 
+  console.log('sections: ', sections[0]?.title, JSON.stringify(sections[0]?.data[0], null, 2));
+
   const isShowPlaceholder = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
-  return isShowPlaceholder ? (
+  return (
     <>
-      {shouldShowPromotion && (
-        <View style={styles.promotionItemWrapper}>
-          <OptimalPromotionItem
-            style={[styles.promotionItem, styles.centeredItem]}
-            testID={ActivityGroupsListSelectors.promotion}
-            onImageError={onOptimalPromotionError}
-            onEmptyPromotionReceived={onOptimalPromotionError}
-          />
-        </View>
-      )}
-      <DataPlaceholder text="No Activity records were found" />
-    </>
-  ) : (
-    <>
-      <SectionList
-        sections={sections}
-        stickySectionHeadersEnabled={true}
-        contentContainerStyle={styles.sectionListContentContainer}
-        onEndReachedThreshold={0.01}
-        onEndReached={handleUpdate}
-        keyExtractor={item => item[0].hash}
-        renderItem={({ item, index, section }) => (
-          <>
-            <ActivityGroupItem group={item} />
-            {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
-              <View style={styles.promotionItemWrapper}>
-                <OptimalPromotionItem
-                  style={styles.promotionItem}
-                  testID={ActivityGroupsListSelectors.promotion}
-                  onImageError={onOptimalPromotionError}
-                  onEmptyPromotionReceived={onOptimalPromotionError}
-                />
-              </View>
+      {isShowPlaceholder ? (
+        <>
+          {shouldShowPromotion && (
+            <View style={styles.promotionItemWrapper}>
+              <OptimalPromotionItem
+                style={[styles.promotionItem, styles.centeredItem]}
+                testID={ActivityGroupsListSelectors.promotion}
+                onImageError={onOptimalPromotionError}
+                onEmptyPromotionReceived={onOptimalPromotionError}
+              />
+            </View>
+          )}
+          <DataPlaceholder text="No Activity records were found" />
+        </>
+      ) : (
+        <>
+          <SectionList
+            sections={sections}
+            stickySectionHeadersEnabled={true}
+            contentContainerStyle={styles.sectionListContentContainer}
+            onEndReachedThreshold={0.01}
+            onEndReached={handleUpdate}
+            keyExtractor={item => item[0].hash}
+            renderItem={({ item, index, section }) => (
+              <>
+                <ActivityGroupItem group={item} />
+                {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
+                  <View style={styles.promotionItemWrapper}>
+                    <OptimalPromotionItem
+                      style={styles.promotionItem}
+                      testID={ActivityGroupsListSelectors.promotion}
+                      onImageError={onOptimalPromotionError}
+                      onEmptyPromotionReceived={onOptimalPromotionError}
+                    />
+                  </View>
+                )}
+              </>
             )}
-          </>
-        )}
-        renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
-        refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
-      />
+            renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+            refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
+          />
+        </>
+      )}
     </>
   );
 };

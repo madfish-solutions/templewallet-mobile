@@ -4,8 +4,16 @@ export const useActivityGroupAmountChangeStyles = createUseStyles(({ colors, typ
   container: {
     alignItems: 'flex-end'
   },
-  amountText: {
-    ...typography.numbersRegular17,
+  amountWeight: {
+    fontWeight: '400'
+  },
+  amountText15: {
+    ...typography.numbersRegular15
+  },
+  amountText13: {
+    ...typography.numbersRegular13
+  },
+  destructiveAmountText: {
     color: colors.destructive
   },
   positiveAmountText: {

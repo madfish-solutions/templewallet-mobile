@@ -12,6 +12,7 @@ export const useActivityGroupDollarAmountChangeStyles = createUseStyles(({ color
     color: colors.destructive
   },
   valueText: {
-    ...typography.numbersRegular11
+    ...typography.numbersRegular11,
+    color: colors.gray1
   }
 }));

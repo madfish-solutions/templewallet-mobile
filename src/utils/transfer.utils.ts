@@ -27,7 +27,8 @@ export const mapTransfersToActivities = (address: string, transfers: TransferInt
       id: token_id ?? 0,
       type: ActivityTypeEnum.Transaction,
       amount: source.address === address ? `-${amount}` : amount,
-      timestamp: new Date(timestamp).getTime()
+      timestamp: new Date(timestamp).getTime(),
+      reciever: { address: '' }
     });
   }
 

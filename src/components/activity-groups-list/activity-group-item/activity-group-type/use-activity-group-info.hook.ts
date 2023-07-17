@@ -1,47 +1,75 @@
 import { useMemo } from 'react';
 
-import { ActivityTypeEnum } from '../../../../enums/activity-type.enum';
-import { ActivityGroup, emptyActivity } from '../../../../interfaces/activity.interface';
-import { useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
-import { useColors } from '../../../../styles/use-colors';
-import { isString } from '../../../../utils/is-string';
-import { IconNameEnum } from '../../../icon/icon-name.enum';
+import { ActivityTypeEnum } from 'src/enums/activity-type.enum';
+import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useColors } from 'src/styles/use-colors';
+import { truncateLongAddress } from 'src/utils/exolix.util';
+import { isString } from 'src/utils/is-string';
+
+interface ReturnType {
+  transactionType: string;
+  transactionSubtype: string;
+  transactionHash: string;
+  destination: [string, string, string];
+}
 
 export const useActivityGroupInfo = (group: ActivityGroup) => {
   const colors = useColors();
-  const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
+  const { publicKeyHash } = useSelectedAccountSelector();
 
-  return useMemo<[IconNameEnum, string, string]>(() => {
-    if (group.length > 1) {
-      return [IconNameEnum.Clipboard, colors.gray1, 'Interaction'];
-    }
-
+  return useMemo<ReturnType>(() => {
     const firstActivity = group[0] ?? emptyActivity;
+
+    if (group.length > 1) {
+      return {
+        transactionType: 'Interaction',
+        transactionSubtype: 'Sent',
+        transactionHash: firstActivity.hash,
+        destination: ['To:', truncateLongAddress(firstActivity.destination.address), firstActivity.destination.address]
+      };
+    }
 
     switch (firstActivity.type) {
       case ActivityTypeEnum.Transaction:
         if (firstActivity.source.address !== publicKeyHash) {
-          return [IconNameEnum.ArrowDown, colors.adding, firstActivity.source.alias ?? 'Received'];
+          return {
+            transactionType: firstActivity.source.alias ?? 'Receive',
+            transactionSubtype: 'Received',
+            transactionHash: firstActivity.hash,
+            destination: ['From:', truncateLongAddress(firstActivity.source.address), firstActivity.source.address]
+          };
         }
 
-        return [
-          IconNameEnum.ArrowUp,
-          colors.destructive,
-          isString(firstActivity.entrypoint)
-            ? `Called ${firstActivity.entrypoint}`
-            : firstActivity.destination.alias ?? 'Sent'
-        ];
+        return {
+          transactionType: isString(firstActivity.entrypoint) ? `Called ${firstActivity.entrypoint}` : 'Send',
+          transactionSubtype: 'Sent',
+          transactionHash: firstActivity.hash,
+          destination: ['To:', truncateLongAddress(firstActivity.reciever.address), firstActivity.reciever.address]
+        };
+
       case ActivityTypeEnum.Delegation:
         const alias = firstActivity.destination.alias;
-        const postfix = isString(alias) ? ` to ${alias}` : '';
+        const postfix = isString(alias) ? alias : truncateLongAddress(firstActivity.destination.address);
 
-        return [
-          IconNameEnum.Deal,
-          colors.gray1,
-          isString(firstActivity.destination.address) ? 'Delegated' + postfix : 'Undelegated'
-        ];
+        return {
+          transactionType: isString(firstActivity.destination.address) ? 'Delegation' : 'Undelegation',
+          transactionSubtype: 'Sent',
+          transactionHash: firstActivity.hash,
+          destination: ['To:', postfix, firstActivity.destination.address]
+        };
+
       default:
-        return [IconNameEnum.Clipboard, colors.gray1, 'Undelegated'];
+        return {
+          transactionType: 'Undelegation',
+          transactionSubtype: 'Sent',
+          transactionHash: firstActivity.hash,
+          destination: [
+            'Received:',
+            truncateLongAddress(firstActivity.reciever.address),
+            firstActivity.reciever.address
+          ]
+        };
     }
   }, [group, publicKeyHash, colors]);
 };

@@ -21,6 +21,10 @@ const mockAppliedOperation: ActivityInterface = {
   destination: {
     address: 'address1',
     alias: 'alias1'
+  },
+  reciever: {
+    address: 'address1',
+    alias: 'alias1'
   }
 };
 
@@ -36,6 +40,10 @@ const mockPendingOperation: ActivityInterface = {
   destination: {
     address: 'address3',
     alias: 'alias3'
+  },
+  reciever: {
+    address: 'address3',
+    alias: 'alias3'
   }
 };
 
@@ -48,6 +56,10 @@ const mockAppliedDelegationOperation: ActivityInterface = {
   timestamp: 6,
   source: mockMember,
   destination: {
+    address: 'address3',
+    alias: 'alias3'
+  },
+  reciever: {
     address: 'address3',
     alias: 'alias3'
   }
@@ -102,6 +114,10 @@ export const mockActivitiesWithoutMatchedAddress: Array<ActivityInterface> = [
       address: 'address0',
       alias: 'alias0'
     },
+    reciever: {
+      address: 'address0',
+      alias: 'alias0'
+    },
     entrypoint: 'transfer',
     hash: 'hash',
     source: {
@@ -120,6 +136,7 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
   {
     amount: '-1',
     destination: { address: 'address4', alias: 'alias4' },
+    reciever: { address: 'address4', alias: 'alias4' },
     entrypoint: 'transfer',
     hash: 'hash',
     id: 0,
@@ -132,6 +149,7 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
   {
     amount: '-0',
     destination: { address: 'address7', alias: 'alias7' },
+    reciever: { address: 'address7', alias: 'alias7' },
     entrypoint: 'transfer',
     hash: 'hash',
     id: 1,
@@ -144,6 +162,7 @@ export const mockActivitiesWithMatchedAddress: Array<ActivityInterface> = [
   {
     amount: '-contractBalance',
     destination: { address: 'address0', alias: 'alias0' },
+    reciever: { address: 'address0', alias: 'alias0' },
     entrypoint: 'transfer',
     hash: 'hash',
     id: 2,

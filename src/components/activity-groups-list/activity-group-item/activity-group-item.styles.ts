@@ -1,31 +1,45 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useActivityGroupItemStyles = createUseStyles(({ colors }) => ({
-  container: {
-    borderBottomColor: colors.lines,
-    borderBottomWidth: formatSize(0.5),
+export const useActivityGroupItemStyles = createUseStyles(({ colors, typography }) => ({
+  root: {
+    paddingVertical: formatSize(16),
     paddingRight: formatSize(16)
   },
-  upperContainer: {
+  card: {
+    marginTop: formatSize(12),
+    paddingHorizontal: formatSize(12),
+    borderRadius: formatSize(8),
+    backgroundColor: colors.cardBG
+  },
+  oprationTitle: {
+    ...typography.body15Regular,
+    color: colors.black
+  },
+  oprationSubtitle: {
+    ...typography.numbersRegular11,
+    color: colors.gray1
+  },
+  detailItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingVertical: formatSize(12)
   },
-  exploreContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+  detailText: {
+    color: colors.gray1
   },
-  lowerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end'
+  detailItemBorder: {
+    borderBottomWidth: formatSize(1),
+    borderBottomColor: colors.lines
   },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+  row: {
+    flexDirection: 'row'
   },
-  accountPkh: {
-    height: formatSize(24)
+  justifyBetween: {
+    justifyContent: 'space-between'
+  },
+  itemsStart: {
+    alignItems: 'flex-start'
   }
 }));

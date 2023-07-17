@@ -14,6 +14,7 @@ export interface ActivityInterface {
   entrypoint?: string;
   source: MemberInterface;
   destination: MemberInterface;
+  reciever: MemberInterface;
   level?: number;
 }
 
@@ -27,5 +28,6 @@ export const emptyActivity: ActivityInterface = {
   id: 0,
   timestamp: 0,
   source: emptyMember,
+  reciever: emptyMember,
   destination: emptyMember
 };

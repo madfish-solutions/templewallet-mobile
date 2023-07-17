@@ -34,6 +34,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
 
     const source = sender;
     let destination: MemberInterface = { address: '' };
+    const reciever: MemberInterface = { address: '' };
     let amount = '0';
     let tokenId = null;
     let contractAddress = null;
@@ -59,6 +60,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
             source.address = address;
             isUserSenderOrReceiverOfFa2Operation = true;
             tokenId = fa2Parameter.value[0].txs[0].token_id;
+            reciever.address = fa2Parameter.value[0].txs[0].to_;
           }
           for (const param of fa2Parameter.value) {
             const val = param.txs.find(tx => {
@@ -78,6 +80,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
             continue;
           }
           if (isDefined(fa12Parameter.value.from) || isDefined(fa12Parameter.value.to)) {
+            reciever.address = fa12Parameter.value.to;
             if (fa12Parameter.value.from === address) {
               source.address = address;
             } else if (fa12Parameter.value.to === address) {
@@ -101,6 +104,8 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
                 (isDefined(parameter) && (parameter as ParameterFa12).value.to === address)
               ? tokenOrTezAmount
               : `-${tokenOrTezAmount}`;
+        } else {
+          reciever.address = target.address;
         }
         if (
           !isDefined(operation.parameter) &&
@@ -138,6 +143,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
       entrypoint,
       level,
       destination,
+      reciever,
       amount: source.address === address ? `-${amount}` : amount,
       timestamp: new Date(timestamp).getTime()
     });
