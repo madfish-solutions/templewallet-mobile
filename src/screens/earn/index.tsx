@@ -23,12 +23,12 @@ export const Earn: FC = () => {
   const {
     netApy: farmsNetApy,
     totalStakedAmountInFiat: farmsTotalStakedAmountInFiat,
-    maxApy: farmsMaxApy
+    maxApr: farmsMaxApy
   } = useUserFarmingStats();
   const {
     netApy: savingsNetApy,
     totalStakedAmountInFiat: savingsTotalStakedAmountInFiat,
-    maxApy: savingsMaxApy
+    maxApr: savingsMaxApy
   } = useUserSavingsStats();
   const farms = useAllFarmsSelector();
   const savingsLoading = useSavingsItemsLoadingSelector();

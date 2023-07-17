@@ -53,7 +53,7 @@ export const useFilteredEarnOpportunities = <T extends EarnOpportunity, E extend
     }
 
     switch (sortField) {
-      case EarnOpportunitiesSortFieldEnum.APY:
+      case EarnOpportunitiesSortFieldEnum.APR:
         result.sort(sortByApy);
         break;
       case EarnOpportunitiesSortFieldEnum.Newest:
