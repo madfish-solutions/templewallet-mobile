@@ -11,7 +11,7 @@ import {
   View
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { useSafeAreaInsets, initialWindowMetrics } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
@@ -20,7 +20,6 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { emptyFn } from 'src/config/general';
-import { isAndroid } from 'src/config/system';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -73,16 +72,38 @@ export const CollectiblesHome = () => {
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
 
-  const iosSafeArea = useSafeAreaInsets();
+  // TODO: Refactor or delete later
+  // const iosSafeArea = useSafeAreaInsets();
 
-  const androidSafeAreaValue =
-    isDefined(initialWindowMetrics) && initialWindowMetrics.insets.bottom > 0
-      ? initialWindowMetrics.insets.bottom + initialWindowMetrics.insets.top
-      : 0;
+  // const androidSafeAreaValue =
+  //   isDefined(initialWindowMetrics) && initialWindowMetrics.insets.bottom > 0
+  //     ? initialWindowMetrics.insets.bottom + initialWindowMetrics.insets.top
+  //     : 0;
 
-  const TAB_BAR_HEIGHT = isAndroid ? androidSafeAreaValue : iosSafeArea.bottom;
+  // Why iosSafeArea only bottom?
+  // const TAB_BAR_HEIGHT = isAndroid ? androidSafeAreaValue : iosSafeArea.bottom;
 
-  const ICON_COVER_GAP = formatSize(12);
+  // const ICON_COVER_GAP = formatSize(12);
+
+  // const snapPoints = useMemo(
+  //   () => [
+  //     windowHeight - (headerHeight + TAB_BAR_HEIGHT + formatSize(4)),
+  //     windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP)
+  //   ],
+  //   [headerHeight, visibleBlockHeight]
+  // );
+
+  const insets = useSafeAreaInsets();
+  const TAB_BAR_HEIGHT = 53 + insets.bottom;
+  const ICON_COVER_GAP = 2;
+  const DELETED_NAV_BAR_HEIGHT = 44;
+  const snapPoints = useMemo(
+    () => [
+      windowHeight - (headerHeight + TAB_BAR_HEIGHT + DELETED_NAV_BAR_HEIGHT),
+      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP + DELETED_NAV_BAR_HEIGHT)
+    ],
+    [headerHeight, visibleBlockHeight]
+  );
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
@@ -117,14 +138,6 @@ export const CollectiblesHome = () => {
 
     return 1;
   });
-
-  const snapPoints = useMemo(
-    () => [
-      windowHeight - (headerHeight + TAB_BAR_HEIGHT + formatSize(4)),
-      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP)
-    ],
-    [headerHeight, visibleBlockHeight]
-  );
 
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
