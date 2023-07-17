@@ -1,5 +1,6 @@
 import { ContractMethod, ContractProvider, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
+import { firstValueFrom } from 'rxjs';
 
 import {
   APP_ID,
@@ -19,6 +20,7 @@ import { TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-
 
 import { mapToRoute3ExecuteHops } from './route3.util';
 import { getReadOnlyContract } from './rpc/contract.utils';
+import { getTransferParams$ } from './transfer-params.utils';
 import { getTransferPermissions } from './transfer-permissions.util';
 
 export const calculateRoutingInputAndFee = (inputAmount: BigNumber | undefined) => {
@@ -38,47 +40,16 @@ export const getRoutingFeeTransferParams = async (
   senderPublicKeyHash: string,
   routingFeeAddress: string,
   tezos: TezosToolkit
-) => {
-  if (token.contract === null) {
-    return [
-      {
-        amount: feeAmountAtomic.toNumber(),
-        to: routingFeeAddress,
-        mutez: true
-      }
-    ];
-  }
-
-  const assetContract = await tezos.wallet.at(token.contract);
-
-  if (token.standard === 'fa12') {
-    return [
-      assetContract.methods
-        .transfer(senderPublicKeyHash, routingFeeAddress, feeAmountAtomic.toNumber())
-        .toTransferParams({ mutez: true })
-    ];
-  }
-  if (token.standard === 'fa2') {
-    return [
-      assetContract.methods
-        .transfer([
-          {
-            from_: senderPublicKeyHash,
-            txs: [
-              {
-                to_: routingFeeAddress,
-                token_id: token.tokenId,
-                amount: feeAmountAtomic.toNumber()
-              }
-            ]
-          }
-        ])
-        .toTransferParams({ mutez: true })
-    ];
-  }
-
-  return [];
-};
+) =>
+  firstValueFrom(
+    getTransferParams$(
+      { address: token.contract ?? '', id: Number(token.tokenId ?? 0) },
+      tezos,
+      senderPublicKeyHash,
+      routingFeeAddress,
+      feeAmountAtomic
+    )
+  );
 
 export const getSwapTransferParams = async (
   fromRoute3Token: Route3Token,

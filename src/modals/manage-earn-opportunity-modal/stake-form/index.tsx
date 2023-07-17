@@ -42,8 +42,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
   const { stakeTokens, stakedToken } = useEarnOpportunityTokens(earnOpportunityItem);
   const { filteredTokensList: savingsAssetsList } = useFilteredSwapTokensList(TokensInputsEnum.From);
   const savingsAssetsListWithFallback = useMemo(
-    () =>
-      savingsAssetsList.length === 0 ? [stakedToken] : uniqBy([stakedToken].concat(savingsAssetsList), getTokenSlug),
+    () => uniqBy([stakedToken].concat(savingsAssetsList), getTokenSlug),
     [savingsAssetsList, stakedToken]
   );
   const assetsList = itemIsFarm ? stakeTokens : savingsAssetsListWithFallback;
@@ -52,7 +51,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
     assetsList,
     false,
     true,
-    stakedToken
+    itemIsFarm ? undefined : stakedToken
   );
   const risksPoints = itemIsFarm ? quipuswapFarmsRisksPoints : youvesSavingsRisksPoints;
 

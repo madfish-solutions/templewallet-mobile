@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -71,7 +71,7 @@ export const SwapRoute: FC<Props> = ({ isLbInput, isLbOutput }) => {
 
   const iconName = isRouteVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown;
 
-  const toggleRoutePress = () => setIsVisible(prevState => !prevState);
+  const toggleRoutePress = useCallback(() => setIsVisible(prevState => !prevState), []);
 
   return (
     <View>
