@@ -18,4 +18,5 @@ export interface EarnOpportunityBase {
   tvlInUsd: string | null;
   tvlInStakedToken: string;
   type?: EarnOpportunityTypeEnum;
+  firstActivityTime: string;
 }
