@@ -40,7 +40,7 @@ interface QuipuswapFarmBase extends FarmBase {
   version: FarmVersionEnum;
 }
 
-interface StableswapFarm extends QuipuswapFarmBase {
+export interface StableswapFarm extends QuipuswapFarmBase {
   type: FarmPoolTypeEnum.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;

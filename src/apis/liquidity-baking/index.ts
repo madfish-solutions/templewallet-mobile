@@ -1,6 +1,5 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { firstValueFrom } from 'rxjs';
 
 import { MAX_ROUTING_FEE_CHAINS, ROUTING_FEE_PERCENT, ZERO } from 'src/config/swap';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
@@ -13,12 +12,19 @@ import { APPROXIMATE_DAYS_IN_YEAR, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking.util';
-import { fetchRoute3SwapParams, fetchRoute3Tokens$ } from 'src/utils/route3.util';
+import { fetchRoute3SwapParams } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { calculateSlippageRatio } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
-import { DEFAULT_LIQUIDITY_BAKING_SUBSIDY, DEFAULT_MINIMAL_BLOCK_DELAY, liquidityBakingStakingId } from './consts';
+import {
+  DEFAULT_LIQUIDITY_BAKING_SUBSIDY,
+  DEFAULT_MINIMAL_BLOCK_DELAY,
+  liquidityBakingStakingId,
+  SIRS_TOKEN_METADATA,
+  THREE_ROUTE_TZBTC_TOKEN,
+  THREE_ROUTE_XTZ_TOKEN
+} from './consts';
 import { LiquidityBakingFarmResponse } from './types';
 
 const getLiquidityBakingStorage = async (tezos: TezosToolkit) => {
@@ -81,12 +87,7 @@ export const getLiquidityBakingFarm = async (
         contractAddress: SIRS_TOKEN.address,
         type: FarmTokenStandardEnum.Fa12,
         isWhitelisted: true,
-        metadata: {
-          decimals: 0,
-          symbol: 'SIRS',
-          name: 'Sirius',
-          thumbnailUri: 'ipfs://QmNXQPkRACxaR17cht5ZWaaKiQy46qfCwNVT5FGZy6qnyp'
-        }
+        metadata: SIRS_TOKEN_METADATA
       },
       tokens: [toFarmToken(TEZ_TOKEN_METADATA), toFarmToken(TZBTC_TOKEN_METADATA)],
       rewardToken: toFarmToken(TEZ_TOKEN_METADATA),
@@ -103,19 +104,6 @@ export const getLiquidityBakingFarm = async (
   };
 };
 
-export const getThreeRouteLbTokens = async () => {
-  const allTokens = await firstValueFrom(fetchRoute3Tokens$());
-  const tezToken = allTokens.find(({ symbol }) => symbol.toLowerCase() === 'xtz');
-  const tzBTCToken = allTokens.find(({ symbol }) => symbol.toLowerCase() === 'tzbtc');
-  const sirsToken = allTokens.find(({ symbol }) => symbol.toLowerCase() === 'sirs');
-
-  if (!isDefined(tezToken) || !isDefined(tzBTCToken) || !isDefined(sirsToken)) {
-    throw new Error('Failed to find at least one of XTZ, tzBTC and SIRS tokens in Route3 tokens list');
-  }
-
-  return { tezToken, tzBTCToken, sirsToken };
-};
-
 export const calculateUnstakeParams = async (
   tezos: TezosToolkit,
   outputTokenIndexes: number[],
@@ -126,12 +114,10 @@ export const calculateUnstakeParams = async (
   const divestMutezAmount = xtzPool.times(lpAmount).dividedToIntegerBy(lqtTotal);
   const divestTzBTCAmount = tokenPool.times(lpAmount).dividedToIntegerBy(lqtTotal);
 
-  const { tezToken, tzBTCToken } = await getThreeRouteLbTokens();
-
   const outputTokenIndexDependentParams = await Promise.all(
     outputTokenIndexes.map(async outputTokenIndex => {
-      const threeRouteFromToken = outputTokenIndex === 0 ? tzBTCToken : tezToken;
-      const threeRouteToToken = outputTokenIndex === 0 ? tezToken : tzBTCToken;
+      const threeRouteFromToken = outputTokenIndex === 0 ? THREE_ROUTE_TZBTC_TOKEN : THREE_ROUTE_XTZ_TOKEN;
+      const threeRouteToToken = outputTokenIndex === 0 ? THREE_ROUTE_XTZ_TOKEN : THREE_ROUTE_TZBTC_TOKEN;
       const swapInputAtomic = outputTokenIndex === 0 ? divestTzBTCAmount : divestMutezAmount;
       const directDivestOutputAtomic = outputTokenIndex === 0 ? divestMutezAmount : divestTzBTCAmount;
       const { chains: swapParamsChains, output: rawSwapOutput } = await fetchRoute3SwapParams({

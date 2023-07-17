@@ -78,7 +78,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
         .multipliedBy(fiatToUsdRate ?? DEFAULT_EXHANGE_RATE),
     [lastStakeRecord?.depositAmountAtomic, fiatToUsdRate, depositExchangeRate, stakedToken]
   );
-  const depositIsZero = depositAmountAtomic.isZero();
+  const assetsAreDeposited = depositAmountAtomic.gt(0);
 
   const claimableRewardsAtomic = useMemo(
     () =>
@@ -190,7 +190,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
               style={styles.attributeValue}
             />
           </View>
-          {!isLiquidityBaking && depositAmountAtomic.gt(0) && (
+          {!isLiquidityBaking && assetsAreDeposited && (
             <View style={styles.flex}>
               <Text style={styles.attributeTitle}>Claimable rewards:</Text>
               <FormattedAmountWithLoader
@@ -205,12 +205,12 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
         </View>
 
         <View style={styles.row}>
-          {!depositIsZero && (
+          {assetsAreDeposited && (
             <View style={styles.flex}>
               <Button title="MANAGE" isFullWidth onPress={navigateToFarm} styleConfig={buttonSecondaryStylesConfig} />
             </View>
           )}
-          {!depositIsZero && !isLiquidityBaking && (
+          {assetsAreDeposited && !isLiquidityBaking && (
             <>
               <Divider size={formatSize(8)} />
               <View style={styles.flex}>
@@ -223,7 +223,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
               </View>
             </>
           )}
-          {depositIsZero && (
+          {!assetsAreDeposited && (
             <Button
               isFullWidth
               title="START FARMING"

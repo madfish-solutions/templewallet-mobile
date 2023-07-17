@@ -1,10 +1,20 @@
 import { ContractAbstraction, ContractProvider, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
+import { firstValueFrom } from 'rxjs';
 
-import { APP_ID, LIQUIDITY_BAKING_PROXY_CONTRACT, ROUTE3_CONTRACT, ROUTING_FEE_RATIO, ZERO } from 'src/config/swap';
+import {
+  APP_ID,
+  LIQUIDITY_BAKING_PROXY_CONTRACT,
+  ROUTE3_CONTRACT,
+  ROUTING_FEE_RATIO,
+  THREE_ROUTE_SIRS_SYMBOL,
+  ZERO
+} from 'src/config/swap';
 import { Route3Chain, Route3Token } from 'src/interfaces/route3.interface';
+import { TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 
 import { mapToRoute3ExecuteHops } from './route3.util';
+import { getTransferParams$ } from './transfer-params.utils';
 import { getTransferPermissions } from './transfer-permissions.util';
 
 export const calculateRoutingInputAndFee = (inputAmount: BigNumber | undefined) => {
@@ -24,47 +34,16 @@ export const getRoutingFeeTransferParams = async (
   senderPublicKeyHash: string,
   routingFeeAddress: string,
   tezos: TezosToolkit
-) => {
-  if (token.contract === null) {
-    return [
-      {
-        amount: feeAmountAtomic.toNumber(),
-        to: routingFeeAddress,
-        mutez: true
-      }
-    ];
-  }
-
-  const assetContract = await tezos.wallet.at(token.contract);
-
-  if (token.standard === 'fa12') {
-    return [
-      assetContract.methods
-        .transfer(senderPublicKeyHash, routingFeeAddress, feeAmountAtomic.toNumber())
-        .toTransferParams({ mutez: true })
-    ];
-  }
-  if (token.standard === 'fa2') {
-    return [
-      assetContract.methods
-        .transfer([
-          {
-            from_: senderPublicKeyHash,
-            txs: [
-              {
-                to_: routingFeeAddress,
-                token_id: token.tokenId,
-                amount: feeAmountAtomic.toNumber()
-              }
-            ]
-          }
-        ])
-        .toTransferParams({ mutez: true })
-    ];
-  }
-
-  return [];
-};
+) =>
+  firstValueFrom(
+    getTransferParams$(
+      { address: token.contract ?? '', id: Number(token.tokenId ?? 0) },
+      tezos,
+      senderPublicKeyHash,
+      routingFeeAddress,
+      feeAmountAtomic
+    )
+  );
 
 const withTransferPermissions = async (
   transferParams: TransferParams[],
@@ -130,11 +109,12 @@ export const getLiquidityBakingTransferParams = async (
   accountPkh: string,
   liquidityBakingProxyContract: ContractAbstraction<ContractProvider>
 ) => {
+  const isDivestingFromLb = fromRoute3Token.symbol.toLowerCase() === THREE_ROUTE_SIRS_SYMBOL.toLowerCase();
   const swapMethod = liquidityBakingProxyContract.methods.swap(
     fromRoute3Token.id,
     toRoute3Token.id,
-    mapToRoute3ExecuteHops(xtzChains, fromRoute3Token.decimals),
-    mapToRoute3ExecuteHops(tzbtcChains, fromRoute3Token.decimals),
+    mapToRoute3ExecuteHops(xtzChains, isDivestingFromLb ? TEZ_TOKEN_METADATA.decimals : fromRoute3Token.decimals),
+    mapToRoute3ExecuteHops(tzbtcChains, isDivestingFromLb ? TZBTC_TOKEN_METADATA.decimals : fromRoute3Token.decimals),
     inputAmountAtomic,
     minimumReceivedAtomic,
     accountPkh,
