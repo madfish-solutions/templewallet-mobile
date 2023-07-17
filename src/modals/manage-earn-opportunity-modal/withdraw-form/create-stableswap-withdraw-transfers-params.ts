@@ -1,9 +1,8 @@
-import { MichelsonMap, OpKind, TezosToolkit, TransferParams } from '@taquito/taquito';
+import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
-import { SingleFarmResponse, TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
-import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
+import { StableswapFarm, TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
@@ -13,20 +12,16 @@ import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
 import { STABLESWAP_REFERRAL } from '../constants';
 
-export const createWithdrawOperationParams = async (
-  farm: SingleFarmResponse,
+export const createStableswapWithdrawTransfersParams = async (
+  farm: StableswapFarm,
   tokenIndex: number,
   tezos: TezosToolkit,
   accountPkh: string,
   stake: UserStakeValueInterface
 ) => {
-  if (farm.item.type !== EarnOpportunityTypeEnum.STABLESWAP) {
-    throw new Error('Non-stableswap pools are not supported');
-  }
-
-  const { contractAddress: farmAddress, stakedToken } = farm.item;
+  const { contractAddress: farmAddress, stakedToken } = farm;
   const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
-  const asset = convertEarnOpportunityToken(farm.item.tokens[tokenIndex]);
+  const asset = convertEarnOpportunityToken(farm.tokens[tokenIndex]);
   const assetSlug = toTokenSlug(asset.address, asset.id);
   const shouldBurnWtezToken = assetSlug === TEZ_TOKEN_SLUG;
   const farmContract = await getReadOnlyContract(farmAddress, tezos);
@@ -56,8 +51,5 @@ export const createWithdrawOperationParams = async (
     .divest_imbalanced(poolId, tokensOutput, depositAmount, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)
     .toTransferParams();
 
-  return [withdrawTransferParams, divestOneCoinTransferParams, ...burnWTezParams].map(operation => ({
-    ...operation,
-    kind: OpKind.TRANSACTION as const
-  }));
+  return [withdrawTransferParams, divestOneCoinTransferParams, ...burnWTezParams];
 };

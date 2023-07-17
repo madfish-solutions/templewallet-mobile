@@ -1,20 +1,20 @@
 import React, { FC } from 'react';
 import { Text } from 'react-native';
 
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { formatSize } from 'src/styles/format-size';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
 
 import { useVestingPeriodDisclaimersStyles } from './styles';
 
 interface Props {
-  farm: Farm;
+  earnOpportunityItem: EarnOpportunity;
 }
 
-export const VestingPeriodDisclaimers: FC<Props> = ({ farm }) => {
-  const vestingPeriodSeconds = Number(farm.vestingPeriodSeconds);
+export const VestingPeriodDisclaimers: FC<Props> = ({ earnOpportunityItem }) => {
+  const vestingPeriodSeconds = Number(earnOpportunityItem.vestingPeriodSeconds);
   const formattedVestingPeriod = formatTimespan(vestingPeriodSeconds * 1000, {
     roundingMethod: 'ceil',
     unit: vestingPeriodSeconds < SECONDS_IN_DAY ? 'hour' : 'day'

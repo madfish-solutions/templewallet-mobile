@@ -3,7 +3,7 @@ import React, { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { FarmVersionEnum, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
+import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { EarnOpportunityItem } from 'src/components/earn-opportunity-item';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -27,8 +27,8 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const tezos = useReadOnlyTezosToolkit();
 
   const navigateToFarm = useCallback(
-    () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, version: FarmVersionEnum.V3 }),
-    [farm.item.id]
+    () => navigate(ModalsEnum.ManageFarmingPool, { id: farm.item.id, contractAddress: farm.item.contractAddress }),
+    [farm.item]
   );
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>

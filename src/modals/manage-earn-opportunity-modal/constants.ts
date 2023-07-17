@@ -13,3 +13,5 @@ export const WTEZ_TOKEN: TokenMetadataInterface = {
 };
 
 export const STABLESWAP_REFERRAL = 'tz1Sw2mFAUzbkm7dkGCDrbeBsJTTtV7JD8Ey';
+
+export const PERCENTAGE_OPTIONS = [25, 50, 75, 100];

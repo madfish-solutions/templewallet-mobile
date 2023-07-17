@@ -5,3 +5,8 @@ export interface SavingsPoolStorage {
   max_release_period: BigNumber;
   total_stake: BigNumber;
 }
+
+export interface CacheStorageType<T> {
+  maxAge: number;
+  data: T;
+}

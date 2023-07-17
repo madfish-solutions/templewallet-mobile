@@ -4,7 +4,6 @@ import { noop } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { AssetAmountInput } from 'src/components/asset-amount-input/asset-amount-input';
 import { Divider } from 'src/components/divider/divider';
 import { DropdownListItemComponent, DropdownValueComponent } from 'src/components/dropdown/dropdown';
@@ -15,29 +14,32 @@ import { TokenDropdownItem } from 'src/components/token-dropdown/token-dropdown-
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormDropdown } from 'src/form/form-dropdown';
+import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
+import { PERCENTAGE_OPTIONS } from '../constants';
 import { DetailsSection } from '../details-section';
-import { ManageFarmingPoolModalSelectors } from '../selectors';
+import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
 import { useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
 import { useWithdrawFormik, WithdrawTokenOption } from './use-withdraw-formik';
 
 interface WithdrawFormProps {
-  farm: SingleFarmResponse;
+  earnOpportunityItem: EarnOpportunity;
   stake?: UserStakeValueInterface;
   formik: ReturnType<typeof useWithdrawFormik>;
 }
 
-const PERCENTAGE_OPTIONS = [25, 50, 75, 100];
 const PERCENTAGE_OPTIONS_TEXTS = PERCENTAGE_OPTIONS.map(value => `${value}%`);
 
 const tokenOptionEqualityFn = (a: WithdrawTokenOption, b?: WithdrawTokenOption) =>
@@ -67,8 +69,9 @@ const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> 
   />
 );
 
-export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => {
-  const { stakedToken, depositExchangeRate } = farm.item;
+export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formik, stake }) => {
+  const { depositExchangeRate, tokens } = earnOpportunityItem;
+  const { stakedToken } = useEarnOpportunityTokens(earnOpportunityItem);
   const { setFieldTouched, setFieldValue, values } = formik;
   const { amountOptionIndex, tokenOption } = values;
   const lpAmountAtomic = useMemo(
@@ -78,7 +81,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
         .dividedToIntegerBy(100),
     [stake?.depositAmountAtomic, amountOptionIndex]
   );
-  const tokensOptions = useTokensOptions(farm.item, lpAmountAtomic);
+  const tokensOptions = useTokensOptions(earnOpportunityItem, lpAmountAtomic);
   const prevTokensOptionsRef = useRef<WithdrawTokenOption[]>();
   const [tokenSearchValue, setTokenSearchValue] = useState('');
   const filteredTokensOptions = useMemo(
@@ -108,23 +111,23 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
   }, [setFieldValue, tokensOptions, tokenOption]);
 
   const disabledPercentageOptionsIndices = useMemo(
-    () => (farm.item.type === EarnOpportunityTypeEnum.STABLESWAP ? [0, 1, 2] : []),
-    [farm.item.type]
+    () => (earnOpportunityItem.type === EarnOpportunityTypeEnum.STABLESWAP ? [0, 1, 2] : []),
+    [earnOpportunityItem.type]
   );
 
   const lpToken = useMemo<TokenInterface>(
     () => ({
       balance: stake?.depositAmountAtomic ?? '0',
       visibility: VisibilityEnum.Visible,
-      id: stakedToken.fa2TokenId ?? 0,
-      decimals: stakedToken.metadata.decimals,
-      symbol: 'Shares',
-      name: '',
-      thumbnailUri: stakedToken.metadata.thumbnailUri,
-      address: stakedToken.contractAddress,
+      id: stakedToken.id ?? 0,
+      decimals: stakedToken.decimals,
+      symbol: tokens.length === 1 ? stakedToken.symbol : 'Shares',
+      name: stakedToken.name,
+      thumbnailUri: stakedToken.thumbnailUri,
+      address: stakedToken.address,
       exchangeRate: isDefined(depositExchangeRate) ? Number(depositExchangeRate) : undefined
     }),
-    [stake?.depositAmountAtomic, stakedToken, depositExchangeRate]
+    [stake?.depositAmountAtomic, stakedToken, depositExchangeRate, tokens.length]
   );
 
   const amountInputAssetsList = useMemo<TokenInterface[]>(() => [lpToken], [lpToken]);
@@ -148,9 +151,9 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
           balanceLabel="Current deposit:"
           toUsdToggle={false}
           editable={false}
-          isShowNameForValue={false}
+          isShowNameForValue={!isFarm(earnOpportunityItem)}
           isSingleAsset={true}
-          testID={ManageFarmingPoolModalSelectors.sharesAmountInput}
+          testID={ManageEarnOpportunityModalSelectors.sharesAmountInput}
           onValueChange={noop}
         />
         <Divider size={formatSize(16)} />
@@ -159,33 +162,38 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ farm, formik, stake }) => 
           selectedIndex={amountOptionIndex}
           values={PERCENTAGE_OPTIONS_TEXTS}
           onChange={handleAmountOptionIndexChange}
-          testID={ManageFarmingPoolModalSelectors.amountPercentageSwitcher}
+          testID={ManageEarnOpportunityModalSelectors.amountPercentageSwitcher}
         />
         <Divider size={formatSize(20)} />
-        <Text style={styles.tokenSelectorTitle}>Receive in</Text>
-        <Divider size={formatSize(12)} />
-        <FormDropdown
-          name="tokenOption"
-          description="Choose token"
-          itemHeight={formatSize(56)}
-          equalityFn={tokenOptionEqualityFn}
-          renderValue={renderTokenOptionValue}
-          renderListItem={renderTokenOptionListItem}
-          isSearchable={true}
-          setSearchValue={setTokenSearchValue}
-          list={filteredTokensOptions}
-          onValueChange={handleTokenOptionChange}
-          testID={ManageFarmingPoolModalSelectors.tokenSelector}
-        />
+        {isFarm(earnOpportunityItem) && (
+          <>
+            <Text style={styles.tokenSelectorTitle}>Receive in</Text>
+            <Divider size={formatSize(12)} />
+            <FormDropdown
+              name="tokenOption"
+              description="Choose token"
+              itemHeight={formatSize(56)}
+              equalityFn={tokenOptionEqualityFn}
+              renderValue={renderTokenOptionValue}
+              renderListItem={renderTokenOptionListItem}
+              isSearchable={true}
+              setSearchValue={setTokenSearchValue}
+              list={filteredTokensOptions}
+              onValueChange={handleTokenOptionChange}
+              testID={ManageEarnOpportunityModalSelectors.tokenSelector}
+            />
+          </>
+        )}
       </View>
       <Divider size={formatSize(16)} />
       <DetailsSection
-        farm={farm.item}
+        earnOpportunityItem={earnOpportunityItem}
         stake={stake}
         shouldShowClaimRewardsButton={false}
         loading={stakesLoading && !isDefined(stake)}
       />
-      <VestingPeriodDisclaimers farm={farm.item} />
+      <Divider size={formatSize(16)} />
+      <VestingPeriodDisclaimers earnOpportunityItem={earnOpportunityItem} />
     </FormikProvider>
   );
 };

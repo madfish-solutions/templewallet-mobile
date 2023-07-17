@@ -144,6 +144,7 @@ import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
 import YouvesEarnSourceDarkIcon from './assets/youves-earn-source-dark.svg';
+import YouvesEarnSourceLargeIcon from './assets/youves-earn-source-large.svg';
 import YouvesEarnSourceIcon from './assets/youves-earn-source.svg';
 import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
@@ -296,5 +297,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Data]: DataIcon,
   [IconNameEnum.Database]: DatabaseIcon,
   [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
-  [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon
+  [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
+  [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon
 };

@@ -7,7 +7,7 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { Divider } from 'src/components/divider/divider';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
-import { useAllFarmsSelector, useLastStakesSelector } from 'src/store/farms/selectors';
+import { useAllFarmsSelector, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -18,7 +18,7 @@ import { useFarmingStyles } from './styles';
 export const Farming: FC = () => {
   const dispatch = useDispatch();
   const farms = useAllFarmsSelector();
-  const stakes = useLastStakesSelector();
+  const stakes = useLastFarmsStakesSelector();
   const styles = useFarmingStyles();
 
   usePageAnalytic(ScreensEnum.Farming);

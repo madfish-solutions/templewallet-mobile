@@ -4,7 +4,6 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
@@ -19,19 +18,20 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
-import { aprToApy } from 'src/utils/earn.utils';
+import { aprToApy, isFarm } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { ManageFarmingPoolModalSelectors } from '../selectors';
+import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { StatsItem } from './stats-item';
 import { useDetailsCardStyles } from './styles';
 import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';
 
 interface DetailsCardProps {
-  farm: Farm;
+  earnOpportunityItem: EarnOpportunity;
   loading: boolean;
   stake?: UserStakeValueInterface;
   shouldShowClaimRewardsButton: boolean;
@@ -45,21 +45,22 @@ const COUNTDOWN_TOKENS_BASE = [
 ];
 
 export const DetailsCard: FC<DetailsCardProps> = ({
-  farm,
+  earnOpportunityItem,
   loading,
   stake = EMPTY_STAKE,
   shouldShowClaimRewardsButton
 }) => {
   const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
-  const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = farm;
+  const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = earnOpportunityItem;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
   const apy = isDefined(apr) ? aprToApy(Number(apr)) : undefined;
+  const apyOrApr = isFarm(earnOpportunityItem) ? apy : Number(apr);
   const [claimPending, setClaimPending] = useState(false);
   const styles = useDetailsCardStyles();
   const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
   const dispatch = useDispatch();
   const tezos = useReadOnlyTezosToolkit();
-  const farmTokens = useEarnOpportunityTokens(farm);
+  const tokens = useEarnOpportunityTokens(earnOpportunityItem);
   const rewardTokenDecimals = rewardToken.metadata.decimals;
   const rewardTokenSymbol = rewardToken.metadata.symbol;
 
@@ -139,49 +140,63 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   return (
     <View style={styles.root}>
       <View style={styles.title}>
-        <EarnOpportunityTokens {...farmTokens} />
-        <Text style={styles.apyLabel}>APY: {isDefined(apy) ? `${apy.toFixed(2)}%` : '-'}</Text>
+        <EarnOpportunityTokens {...tokens} />
+        <Text style={styles.apyLabel}>
+          {isFarm(earnOpportunityItem) ? 'APY' : 'APR'}: {isDefined(apyOrApr) ? `${apyOrApr.toFixed(2)}%` : '-'}
+        </Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />
       <View style={styles.statsRow}>
         <StatsItem
           loading={loading}
           title="Your deposit:"
-          value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
+          value={
+            <FormattedAmount
+              amount={depositAmount}
+              style={styles.statsValue}
+              symbol={tokens.stakeTokens.length === 1 ? stakedToken.metadata.symbol : 'Shares'}
+            />
+          }
           usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
         />
-        <StatsItem
-          loading={loading}
-          title="Claimable rewards:"
-          value={
-            <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
-          }
-          usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
-        />
+        {depositAmount.gt(0) && (
+          <StatsItem
+            loading={loading}
+            title="Claimable rewards:"
+            value={
+              <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+            }
+            usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
+          />
+        )}
       </View>
       <Divider size={formatSize(12)} />
-      <View style={styles.statsRow}>
-        <StatsItem
-          loading={loading}
-          title="Long-term rewards:"
-          value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
-          usdEquivalent={isDefined(earnExchangeRate) ? fullRewardAmount.times(earnExchangeRate) : undefined}
-        />
-        <StatsItem
-          loading={loading}
-          title="Fully claimable:"
-          value={
-            <Text style={styles.statsValue}>
-              {countdownTokens.map(({ unit, value }) => (
-                <React.Fragment key={unit}>
-                  {value}
-                  <Text style={styles.timespanUnit}>{unit}</Text>{' '}
-                </React.Fragment>
-              ))}
-            </Text>
-          }
-        />
-      </View>
+      {!depositAmount.isZero() && (
+        <View style={styles.statsRow}>
+          <StatsItem
+            loading={loading}
+            title="Long-term rewards:"
+            value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
+            usdEquivalent={isDefined(earnExchangeRate) ? fullRewardAmount.times(earnExchangeRate) : undefined}
+          />
+          <StatsItem
+            loading={loading}
+            title="Fully claimable:"
+            value={
+              <View style={styles.timespanValue}>
+                {countdownTokens.map(({ unit, value }) => (
+                  <React.Fragment key={unit}>
+                    <Text style={styles.statsValue}>{value}</Text>
+                    <Divider size={formatSize(2)} />
+                    <Text style={styles.timespanUnit}>{unit}</Text>
+                    <Divider size={formatSize(6)} />
+                  </React.Fragment>
+                ))}
+              </View>
+            }
+          />
+        </View>
+      )}
       {shouldShowClaimRewardsButton && (
         <>
           <Divider size={formatSize(16)} />
@@ -190,7 +205,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
             isFullWidth
             disabled={claimableRewardAmount.isZero() || claimPending}
             title={claimableRewardAmount.isZero() ? 'EARN TO CLAIM REWARDS' : 'CLAIM REWARDS'}
-            testID={ManageFarmingPoolModalSelectors.claimRewardsButton}
+            testID={ManageEarnOpportunityModalSelectors.claimRewardsButton}
             onPress={claimRewardsIfConfirmed}
           />
         </>
