@@ -7,18 +7,22 @@ import { useColors } from 'src/styles/use-colors';
 import { truncateLongAddress } from 'src/utils/exolix.util';
 import { isString } from 'src/utils/is-string';
 
-interface ReturnType {
+interface ActivityInfo {
   transactionType: string;
   transactionSubtype: string;
   transactionHash: string;
-  destination: [string, string, string];
+  destination: {
+    label: string;
+    value: string;
+    address: string | undefined;
+  };
 }
 
 export const useActivityGroupInfo = (group: ActivityGroup) => {
   const colors = useColors();
   const { publicKeyHash } = useSelectedAccountSelector();
 
-  return useMemo<ReturnType>(() => {
+  return useMemo<ActivityInfo>(() => {
     const firstActivity = group[0] ?? emptyActivity;
 
     if (group.length > 1) {
@@ -26,7 +30,11 @@ export const useActivityGroupInfo = (group: ActivityGroup) => {
         transactionType: 'Interaction',
         transactionSubtype: 'Sent',
         transactionHash: firstActivity.hash,
-        destination: ['To:', truncateLongAddress(firstActivity.destination.address), firstActivity.destination.address]
+        destination: {
+          label: 'To:',
+          value: truncateLongAddress(firstActivity.destination.address),
+          address: firstActivity.destination.address
+        }
       };
     }
 
@@ -37,7 +45,11 @@ export const useActivityGroupInfo = (group: ActivityGroup) => {
             transactionType: firstActivity.source.alias ?? 'Receive',
             transactionSubtype: 'Received',
             transactionHash: firstActivity.hash,
-            destination: ['From:', truncateLongAddress(firstActivity.source.address), firstActivity.source.address]
+            destination: {
+              label: 'From:',
+              value: truncateLongAddress(firstActivity.source.address),
+              address: firstActivity.source.address
+            }
           };
         }
 
@@ -45,7 +57,11 @@ export const useActivityGroupInfo = (group: ActivityGroup) => {
           transactionType: isString(firstActivity.entrypoint) ? `Called ${firstActivity.entrypoint}` : 'Send',
           transactionSubtype: 'Sent',
           transactionHash: firstActivity.hash,
-          destination: ['To:', truncateLongAddress(firstActivity.reciever.address), firstActivity.reciever.address]
+          destination: {
+            label: 'To:',
+            value: truncateLongAddress(firstActivity.reciever?.address ?? ''),
+            address: firstActivity.reciever?.address
+          }
         };
 
       case ActivityTypeEnum.Delegation:
@@ -56,7 +72,7 @@ export const useActivityGroupInfo = (group: ActivityGroup) => {
           transactionType: isString(firstActivity.destination.address) ? 'Delegation' : 'Undelegation',
           transactionSubtype: 'Sent',
           transactionHash: firstActivity.hash,
-          destination: ['To:', postfix, firstActivity.destination.address]
+          destination: { label: 'To:', value: postfix, address: firstActivity.destination.address }
         };
 
       default:
@@ -64,11 +80,11 @@ export const useActivityGroupInfo = (group: ActivityGroup) => {
           transactionType: 'Undelegation',
           transactionSubtype: 'Sent',
           transactionHash: firstActivity.hash,
-          destination: [
-            'Received:',
-            truncateLongAddress(firstActivity.reciever.address),
-            firstActivity.reciever.address
-          ]
+          destination: {
+            label: 'Received:',
+            value: truncateLongAddress(firstActivity.reciever?.address ?? ''),
+            address: firstActivity.reciever?.address
+          }
         };
     }
   }, [group, publicKeyHash, colors]);

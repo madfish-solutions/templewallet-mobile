@@ -54,8 +54,6 @@ export const ActivityGroupsList: FC<Props> = ({
     return result;
   }, [activityGroups]);
 
-  console.log('sections: ', sections[0]?.title, JSON.stringify(sections[0]?.data[0], null, 2));
-
   const isShowPlaceholder = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
   return (

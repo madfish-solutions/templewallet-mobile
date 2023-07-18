@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash-es';
-import React, { FC, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { FC, useCallback, useState } from 'react';
+import { View, Text } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
@@ -8,12 +8,14 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { isAndroid } from 'src/config/system';
 import { useNonZeroAmounts } from 'src/hooks/use-non-zero-amounts.hook';
-import { ActivityGroup } from 'src/interfaces/activity.interface';
+import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking.util';
 
 import { ActivityGroupAmountChange, TextSize } from './activity-group-amount-change/activity-group-amount-change';
@@ -35,13 +37,16 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
     transactionType,
     transactionSubtype,
     transactionHash,
-    destination: [label, value, address]
+    destination: { label, value, address }
   } = useActivityGroupInfo(group);
   const nonZeroAmounts = useNonZeroAmounts(group);
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const [areDetailsVisible, setAreDetailsVisible] = useState(false);
+  const handleOpenActivityDetailsPress = useCallback(() => setAreDetailsVisible(prevState => !prevState), []);
+
+  const firstActivity = group[0] ?? emptyActivity;
 
   return (
     <View style={styles.root}>
@@ -64,13 +69,13 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
       <Divider size={formatSize(12)} />
       <View style={[styles.row, styles.justifyBetween]}>
         <View style={styles.row}>
-          <ActivityStatusBadge status={group[0].status} />
+          <ActivityStatusBadge status={firstActivity.status} />
           <Divider size={formatSize(4)} />
-          <ActivityTime timestamp={1689343447} />
+          <ActivityTime timestamp={firstActivity.timestamp} />
         </View>
-        <TouchableOpacity onPress={() => setAreDetailsVisible(prevState => !prevState)}>
+        <TouchableWithAnalytics testID={ActivityGroupItemSelectors.details} onPress={handleOpenActivityDetailsPress}>
           <Icon name={areDetailsVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown} />
-        </TouchableOpacity>
+        </TouchableWithAnalytics>
       </View>
       {areDetailsVisible && (
         <View style={styles.card}>
@@ -83,10 +88,12 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
               </View>
             </View>
           )}
-          <View style={[styles.detailItem, styles.detailItemBorder]}>
-            <Text style={styles.detailText}>{label}</Text>
-            <WalletAddress isLocalDomainNameShowing publicKeyHash={address} isPublicKeyHashTextDisabled={isAndroid} />
-          </View>
+          {isDefined(address) && (
+            <View style={[styles.detailItem, styles.detailItemBorder]}>
+              <Text style={styles.detailText}>{label}</Text>
+              <WalletAddress isLocalDomainNameShowing publicKeyHash={address} isPublicKeyHashTextDisabled={isAndroid} />
+            </View>
+          )}
           <View style={styles.detailItem}>
             <Text style={styles.detailText}>TxHash:</Text>
             <View style={styles.row}>
