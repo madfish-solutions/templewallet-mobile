@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { from, map } from 'rxjs';
 
 import { route3Api } from 'src/apis/route3';
-import { TEMPLE_TOKEN, THREE_ROUTE_SIRS_SYMBOL } from 'src/config/swap';
+import { TEMPLE_TOKEN } from 'src/config/swap';
 import {
   Hop,
   Route3Chain,
@@ -12,6 +12,7 @@ import {
   Route3SwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
+import { THREE_ROUTE_SIRS_TOKEN, THREE_ROUTE_TZBTC_TOKEN } from 'src/token/data/three-route-tokens';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -47,18 +48,33 @@ const fetchRoute3TraditionalSwapParams = ({
 const fetchRoute3LiquidityBakingParams = ({
   fromSymbol,
   toSymbol,
-  amount
-}: Omit<Route3SwapParamsRequest, 'chainLimits'>): Promise<Route3LiquidityBakingParamsResponse> =>
-  fetch(`https://temple.3route.io/v3/swap-sirs/${fromSymbol}/${toSymbol}/${amount}`, {
+  amount,
+  chainsLimit = 3
+}: Route3SwapParamsRequest): Promise<Route3LiquidityBakingParamsResponse> => {
+  let queryParamsInit: Record<string, string>;
+  if ([fromSymbol, toSymbol].includes(TEZ_TOKEN_METADATA.symbol)) {
+    queryParamsInit = { xtzChainsLimit: chainsLimit.toString() };
+  } else if ([fromSymbol, toSymbol].includes(THREE_ROUTE_TZBTC_TOKEN.symbol)) {
+    queryParamsInit = { tzbtcChainsLimit: chainsLimit.toString() };
+  } else {
+    queryParamsInit = {
+      xtzChainsLimit: Math.ceil(chainsLimit / 2).toString(),
+      tzbtcChainsLimit: Math.floor(chainsLimit / 2).toString()
+    };
+  }
+  const searchParams = new URLSearchParams(queryParamsInit).toString();
+
+  return fetch(`https://temple.3route.io/v3/swap-sirs/${fromSymbol}/${toSymbol}/${amount}?${searchParams}`, {
     headers: {
       Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
     }
   })
     .then(res => res.text())
     .then(res => parser(res));
+};
 
 export const fetchRoute3SwapParams = (params: Route3SwapParamsRequest) =>
-  [params.fromSymbol, params.toSymbol].includes(THREE_ROUTE_SIRS_SYMBOL)
+  [params.fromSymbol, params.toSymbol].includes(THREE_ROUTE_SIRS_TOKEN.symbol)
     ? fetchRoute3LiquidityBakingParams(params)
     : fetchRoute3TraditionalSwapParams(params);
 

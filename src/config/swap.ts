@@ -16,6 +16,7 @@ export const ROUTING_FEE_SLIPPAGE_RATIO = 0.99;
 export const ZERO = new BigNumber(0);
 export const MAX_ROUTING_FEE_CHAINS = 1;
 export const SWAP_THRESHOLD_TO_GET_CASHBACK = 10;
+export const ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT = 286; // ceil(1 / 0.0035)
 
 export const TEMPLE_TOKEN: Route3Token = {
   id: 138,
@@ -27,5 +28,3 @@ export const TEMPLE_TOKEN: Route3Token = {
 };
 
 export const APP_ID = 2;
-
-export const THREE_ROUTE_SIRS_SYMBOL = 'SIRS';

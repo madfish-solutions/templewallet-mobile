@@ -19,9 +19,17 @@ interface Props {
   outputAsset: TokenInterface;
   inputAmount: BigNumber | undefined;
   outputAmount: BigNumber | undefined;
+  routingFeeIsTakenFromOutput: boolean;
 }
 
-export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageRatio, inputAmount, outputAmount }) => {
+export const SwapExchangeRate: FC<Props> = ({
+  inputAsset,
+  outputAsset,
+  slippageRatio,
+  inputAmount,
+  outputAmount,
+  routingFeeIsTakenFromOutput
+}) => {
   const styles = useSwapExchangeRateStyles();
 
   const exchangeRate = useMemo(() => {
@@ -34,17 +42,18 @@ export const SwapExchangeRate: FC<Props> = ({ inputAsset, outputAsset, slippageR
     }
 
     return '---';
-  }, [inputAmount, outputAmount]);
+  }, [inputAmount, outputAmount, inputAsset, outputAsset]);
 
   const minimumReceivedAmount = useMemo(() => {
     if (isDefined(outputAmount) && outputAmount.isGreaterThan(0)) {
-      return `${outputAmount.multipliedBy(slippageRatio).multipliedBy(ROUTING_FEE_RATIO).toFixed(8)} ${
-        outputAsset.symbol
-      }`;
+      return `${outputAmount
+        .multipliedBy(slippageRatio)
+        .multipliedBy(routingFeeIsTakenFromOutput ? ROUTING_FEE_RATIO : 1)
+        .toFixed(Math.min(8, outputAsset.decimals), BigNumber.ROUND_DOWN)} ${outputAsset.symbol}`;
     }
 
     return '---';
-  }, [slippageRatio, outputAmount, outputAsset.decimals]);
+  }, [slippageRatio, outputAmount, outputAsset.decimals, routingFeeIsTakenFromOutput]);
 
   const routingFeeAlert = () =>
     Alert.alert(

@@ -13,7 +13,8 @@ import { isDefined } from 'src/utils/is-defined';
 import { fetchRoute3SwapParams } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import {
-  calculateRoutingInputAndFee,
+  calculateFeeFromOutput,
+  calculateRoutingInputAndFeeFromInput,
   calculateSlippageRatio,
   getRoutingFeeTransferParams,
   getSwapTransferParams
@@ -78,7 +79,7 @@ export const createYouvesStakeTransfersParams = async (
     throw new Error('Failed to find 3route input or output token');
   }
 
-  const { swapInputMinusFeeAtomic, routingFeeAtomic } = calculateRoutingInputAndFee(amount);
+  const { swapInputMinusFeeAtomic, routingFeeFromInputAtomic } = calculateRoutingInputAndFeeFromInput(amount);
   const threeRouteSwapParams = await fetchRoute3SwapParams({
     fromSymbol: fromRoute3Token.symbol,
     toSymbol: toRoute3Token.symbol,
@@ -95,6 +96,7 @@ export const createYouvesStakeTransfersParams = async (
       .integerValue(BigNumber.ROUND_DOWN),
     1
   );
+  const routingFeeFromOutputAtomic = calculateFeeFromOutput(amount, minimumReceivedAtomic);
   const swapTransferParams = await getSwapTransferParams(
     fromRoute3Token,
     toRoute3Token,
@@ -104,9 +106,16 @@ export const createYouvesStakeTransfersParams = async (
     tezos,
     accountPkh
   );
-  const feeTransferParams = await getRoutingFeeTransferParams(
+  const feeFromInputTransferParams = await getRoutingFeeTransferParams(
     fromRoute3Token,
-    routingFeeAtomic,
+    routingFeeFromInputAtomic,
+    accountPkh,
+    ROUTING_FEE_ADDRESS,
+    tezos
+  );
+  const feeFromOutputTransferParams = await getRoutingFeeTransferParams(
+    toRoute3Token,
+    routingFeeFromOutputAtomic,
     accountPkh,
     ROUTING_FEE_ADDRESS,
     tezos
@@ -119,5 +128,10 @@ export const createYouvesStakeTransfersParams = async (
     stakeId
   );
 
-  return [...feeTransferParams, ...swapTransferParams, ...depositTransferParams];
+  return [
+    ...feeFromInputTransferParams,
+    ...swapTransferParams,
+    ...depositTransferParams,
+    ...feeFromOutputTransferParams
+  ];
 };
