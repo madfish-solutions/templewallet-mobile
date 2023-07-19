@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { toIntegerSeconds } from 'src/utils/date.utils';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
-import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
+import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH, TEMPLE_WALLET_STAKING_API_URL } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
@@ -12,7 +12,7 @@ import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.u
 import { calculateStableswapLpTokenOutput, calculateStableswapWithdrawTokenOutput } from './stableswap-calculations';
 import { FarmsListResponse, StableswapPoolStorage, TooLowPoolReservesError } from './types';
 
-const stakingApi = axios.create({ baseURL: 'https://staking-api-mainnet.prod.quipuswap.com' });
+const stakingApi = axios.create({ baseURL: TEMPLE_WALLET_STAKING_API_URL });
 
 export const getV3FarmsList = async () => {
   const response = await stakingApi.get<FarmsListResponse>('/v3/multi-v2');

@@ -72,6 +72,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
               title="Buy"
               iconName={IconNameEnum.ShoppingCard}
               onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
+              styleConfigOverrides={actionButtonStylesOverrides}
             />
           </View>
         </>

@@ -21,6 +21,7 @@ const xpMem = (tokensInfo: StableswapTokenInfo[]) => {
   return tokensInfo.map(({ rateF, reserves }) => rateF.times(reserves).dividedToIntegerBy(PRECISION));
 };
 
+// Handle ramping A up or down
 const getA = (
   /** timestamp in seconds */
   t0: BigNumber,
@@ -43,6 +44,15 @@ const getA = (
   return a1;
 };
 
+/**
+ * D invariant calculation in non-overflowing integer operations iteratively
+ *
+ * A * sum(x_i) * n ** n + D = A * D * n ** n + D ** (n+1) / (n ** n * prod(x_i))
+ *
+ * Converging solution:
+ *
+ * D[j+1] = (A * n ** n * sum(x_i) - D[j] ** (n+1) / (n ** n prod(x_i))) / (A * n ** n - 1)
+ */
 const getD = (xp: BigNumber[], ampF: BigNumber) => {
   const sumC = xp.reduce((accum, i) => accum.plus(i), new BigNumber(0));
   const tokensCount = new BigNumber(xp.length);
@@ -135,6 +145,17 @@ const balanceInputs = (
 const sumAllFee = (fee: StableswapFeesStorage, devFee: BigNumber) =>
   fee.lpF.plus(fee.stakersF).plus(fee.refF).plus(devFee);
 
+/**
+ * Calculate x[j] if one makes x[i] = x
+ *
+ * Done by solving quadratic equation iteratively.
+ *
+ * x_1 ** 2 + x_1 * (sum' - (A * n ** n - 1) * D / (A * n ** n)) = D ** (n + 1) / (n ** (2 * n) * prod' * A)
+ *
+ * x_1 ** 2 + b * x_1 = c
+ *
+ * x_1 = (x_1 ** 2 + c) / (2 * x_1 + b)
+ */
 const calcY = (c: BigNumber, aNNF: BigNumber, s_: BigNumber, d: BigNumber, pool: StableswapPool) => {
   const tokensCount = pool.tokensInfo.length;
   c = c.times(d).times(A_PRECISION).div(aNNF.times(tokensCount)).integerValue(BigNumber.ROUND_CEIL);
@@ -152,6 +173,19 @@ const calcY = (c: BigNumber, aNNF: BigNumber, s_: BigNumber, d: BigNumber, pool:
   return tmp.y;
 };
 
+/**
+ * Calculate x[i] if one reduces D from being calculated for xp to D
+ *
+ * Done by solving quadratic equation iteratively.
+ *
+ * x_1 ** 2 + x_1 * (sum' - (A * n ** n - 1) * D / (A * n ** n)) = D ** (n + 1) / (n ** (2 * n) * prod' * A)
+ *
+ * x_1 ** 2 + b * x_1 = c
+ *
+ * x_1 = (x_1 ** 2 + c) / (2 * x_1 + b)
+ *
+ * x in the input is converted to the same price/precision
+ */
 const getYD = (ampF: BigNumber, i: number, xp: BigNumber[], d: BigNumber, pool: StableswapPool) => {
   const tokensCount = pool.tokensInfo.length;
 
