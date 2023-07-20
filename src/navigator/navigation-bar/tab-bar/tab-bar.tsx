@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -61,20 +62,24 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           focused={isStackFocused(nftStackScreens)}
           disabledOnPress={disabledOnPress}
         />
-        <TabBarButton
-          label="Swap"
-          iconName={IconNameEnum.Swap}
-          iconWidth={formatSize(32)}
-          routeName={ScreensEnum.SwapScreen}
-          params={
-            isDefined(route) && currentRouteName === ScreensEnum.TokenScreen
-              ? { inputToken: route.params?.token }
-              : undefined
-          }
-          focused={isStackFocused(swapStackScreens)}
-          disabled={isDcpNode}
-          disabledOnPress={disabledOnPress}
-        />
+
+        {!isIOS && (
+          <TabBarButton
+            label="Swap"
+            iconName={IconNameEnum.Swap}
+            iconWidth={formatSize(32)}
+            routeName={ScreensEnum.SwapScreen}
+            params={
+              isDefined(route) && currentRouteName === ScreensEnum.TokenScreen
+                ? { inputToken: route.params?.token }
+                : undefined
+            }
+            focused={isStackFocused(swapStackScreens)}
+            disabled={isDcpNode}
+            disabledOnPress={disabledOnPress}
+          />
+        )}
+
         <TabBarButton
           label="DApps"
           iconName={IconNameEnum.DApps}
