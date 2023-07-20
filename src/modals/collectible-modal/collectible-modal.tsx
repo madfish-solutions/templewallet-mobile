@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
@@ -25,7 +25,7 @@ import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
 import { useCurrentCollectibleFullData } from '../../hooks/use-current-collectible-full-data.hook';
 import { useFetchCollectibleAttributes } from '../../hooks/use-fetch-collectible-attributes.hook';
-import { useAuthorisedInterval } from '../../hooks/use-interval.hook';
+import { useInterval } from '../../hooks/use-interval.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { updateCollectibleDetailsAction } from '../../store/collectibles/collectibles-actions';
 import { useCollectibleDetailsLoadingSelector } from '../../store/collectibles/collectibles-selectors';
@@ -65,7 +65,7 @@ const SEGMENT_VALUES = [
 
 const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
-export const CollectibleModal = () => {
+export const CollectibleModal = memo(() => {
   const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const [address, id] = fromTokenSlug(slug);
@@ -109,14 +109,15 @@ export const CollectibleModal = () => {
     artifactUri
   } = collectible;
 
-  useAuthorisedInterval(
+  useInterval(
     () => {
       if (!isUserOwnerCurrentCollectible) {
         dispatch(updateCollectibleDetailsAction.submit({ address, id }));
       }
     },
     ONE_MINUTE,
-    [address, id, slug, isUserOwnerCurrentCollectible]
+    [address, id, slug, isUserOwnerCurrentCollectible],
+    false
   );
 
   const isAttributesExist = attributes.length > 0;
@@ -132,6 +133,10 @@ export const CollectibleModal = () => {
   );
 
   const submitButtonTitle = useMemo(() => {
+    if (!isSupportedContract) {
+      return 'Buy';
+    }
+
     if ((isLoadingDetails && !isUserOwnerCurrentCollectible) || isLoadingDetails) {
       return '';
     }
@@ -142,10 +147,6 @@ export const CollectibleModal = () => {
 
     if (!isNonEmptyArray(listingsActive)) {
       return 'Not listed';
-    }
-
-    if (!isSupportedContract) {
-      return 'Comming soon..';
     }
 
     return `Buy for ${formatNumber(purchaseCurrency.priceToDisplay)} ${purchaseCurrency.symbol}`;
@@ -216,13 +217,11 @@ export const CollectibleModal = () => {
       return collection.name;
     }
 
-    return 'Unkown collection';
+    return 'Unknown collection';
   }, [galleries, collection]);
 
   const isDisabled =
-    (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)) ||
-    isLoadingDetails ||
-    (!isUserOwnerCurrentCollectible && !isSupportedContract);
+    (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)) || isLoadingDetails || !isSupportedContract;
 
   return (
     <ScreenContainer
@@ -346,4 +345,4 @@ export const CollectibleModal = () => {
       </View>
     </ScreenContainer>
   );
-};
+});

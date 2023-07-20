@@ -4,7 +4,9 @@ import { formatSize } from '../../../styles/format-size';
 
 export const CollectiblesListStyles = StyleSheet.create({
   rowContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1
   },
   collectible: {
     marginBottom: formatSize(4)

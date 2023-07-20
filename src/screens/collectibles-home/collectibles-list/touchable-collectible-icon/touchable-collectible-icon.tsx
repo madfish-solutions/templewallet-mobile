@@ -45,7 +45,7 @@ export const TouchableCollectibleIcon: FC<Props> = ({
   }, [purchaseCurrency, collectible]);
 
   return isDefined(collectible) ? (
-    <TouchableOpacity activeOpacity={1} onPress={handleNavigate} style={[styles.root, style]}>
+    <TouchableOpacity activeOpacity={1} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
       <CollectibleIcon
         iconSize={iconSize}
         collectible={collectible}

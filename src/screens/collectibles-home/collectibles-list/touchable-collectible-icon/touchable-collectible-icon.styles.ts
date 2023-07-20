@@ -3,7 +3,6 @@ import { formatSize } from '../../../../styles/format-size';
 
 export const useTouchableCollectibleIconStyles = createUseStyles(({ colors, typography }) => ({
   root: {
-    width: formatSize(112),
     backgroundColor: colors.cardBG,
     borderRadius: formatSize(4)
   },

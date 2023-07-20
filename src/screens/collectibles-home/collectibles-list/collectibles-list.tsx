@@ -3,6 +3,8 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
+import { formatSize } from 'src/styles/format-size';
+
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useScreenContainerStyles } from '../../../components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from '../../../config/styles';
@@ -23,9 +25,9 @@ const ITEMS_PER_ROW = 3;
 
 const keyExtractor = (item: CollectibleInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
-const TABBAR_MARGINS = 32;
-const SIDEBAR_MARGINS = 51;
-const OFFSET_BETWEEN_ICONS = 4;
+const TABBAR_MARGINS = formatSize(32);
+const SIDEBAR_MARGINS = formatSize(51);
+const OFFSET_BETWEEN_ICONS = formatSize(4);
 
 export const CollectiblesList: FC<Props> = ({ collectibles, isShowInfo }) => {
   const styles = useScreenContainerStyles();
