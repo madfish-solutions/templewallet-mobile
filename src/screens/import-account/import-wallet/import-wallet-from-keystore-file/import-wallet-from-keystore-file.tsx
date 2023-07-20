@@ -4,21 +4,22 @@ import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 import { readFile } from 'react-native-fs';
 
-import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { Divider } from '../../../../components/divider/divider';
-import { InsetSubstitute } from '../../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../../components/label/label';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { Divider } from 'src/components/divider/divider';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
 import {
   LETTERS_NUMBERS_MIXTURE_REGX,
   MIN_PASSWORD_LENGTH,
   UPPER_CASE_LOWER_CASE_MIXTURE_REGX
-} from '../../../../config/security';
-import { FormCheckbox } from '../../../../form/form-checkbox';
-import { FormFileInput } from '../../../../form/form-file-input';
-import { FormPasswordInput } from '../../../../form/form-password-input';
-import { showErrorToast } from '../../../../toast/toast.utils';
-import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from '../../../../utils/kukai.utils';
-import { ImportWalletProps } from '../import-wallet';
+} from 'src/config/security';
+import { FormCheckbox } from 'src/form/form-checkbox';
+import { FormFileInput } from 'src/form/form-file-input';
+import { FormPasswordInput } from 'src/form/form-password-input';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from 'src/utils/kukai.utils';
+
+import type { ImportWalletProps } from '../import-wallet';
 import {
   ImportWalletFromKeystoreFileFormValues,
   importWalletFromKeystoreFileInitialValues,

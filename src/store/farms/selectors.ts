@@ -10,13 +10,20 @@ export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.al
 export const useFarmSelector = (id: string, contractAddress: string) => {
   const list = useSelector(({ farms }) => farms.allFarms.data);
 
-  return useMemo(
-    () => list.find(({ item }) => item.id === id && item.contractAddress === contractAddress),
-    [list, id, contractAddress]
-  );
+  return useMemo(() => {
+    const sameContractFarms = list.filter(({ item }) => item.contractAddress === contractAddress);
+
+    // IDs of the same farms from Quipuswap API may differ
+    if (sameContractFarms.length === 1) {
+      return sameContractFarms[0];
+    }
+
+    return sameContractFarms.find(({ item }) => item.id === id);
+  }, [list, id, contractAddress]);
 };
 
-export const useFarmStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes[farmAddress]);
+export const useFarmStakeSelector = (farmAddress: string) =>
+  useSelector(({ farms }) => farms.lastStakes.data[farmAddress]);
 
 export const useAllFarmsSelector = () => {
   const farms = useSelector(({ farms }) => farms.allFarms);
@@ -37,6 +44,6 @@ export const useAllFarmsSelector = () => {
 };
 export const useLastFarmsStakesSelector = () => useSelector(({ farms }) => farms.lastStakes);
 
-export const useStakesLoadingSelector = () => useSelector(({ farms }) => farms.stakesLoading);
+export const useStakesLoadingSelector = () => useSelector(({ farms }) => farms.lastStakes.isLoading);
 
-export const useFarmStoreSelector = () => useSelector(({ farms }) => farms);
+export const useFarmSortFieldSelector = () => useSelector(({ farms }) => farms.sortField);

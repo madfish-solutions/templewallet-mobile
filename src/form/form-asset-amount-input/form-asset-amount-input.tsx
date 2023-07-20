@@ -22,8 +22,8 @@ export const FormAssetAmountInput: FC<Props> = ({
   label,
   assetsList,
   frozenBalance,
-  balanceValueStyles,
   editable,
+  stylesConfig,
   toUsdToggle = true,
   isLoading = false,
   isSearchable = false,
@@ -36,7 +36,8 @@ export const FormAssetAmountInput: FC<Props> = ({
   testID,
   tokenTestID,
   switcherTestID,
-  maxButtonTestID
+  maxButtonTestID,
+  assetOptionTestIdPropertiesFn
 }) => {
   const formikContext = useFormikContext();
   const [field, meta] = useField<AssetAmountInterface>(name);
@@ -59,7 +60,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         label={label}
         assetsList={assetsList}
         frozenBalance={frozenBalance}
-        balanceValueStyles={balanceValueStyles}
+        stylesConfig={stylesConfig}
         isError={isError}
         isLoading={isLoading}
         isSearchable={isSearchable}
@@ -76,6 +77,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         tokenTestID={tokenTestID}
         switcherTestID={switcherTestID}
         maxButtonTestID={maxButtonTestID}
+        assetOptionTestIdPropertiesFn={assetOptionTestIdPropertiesFn}
       />
       <ErrorMessage meta={meta} />
     </>

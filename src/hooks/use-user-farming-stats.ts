@@ -9,5 +9,5 @@ export const useUserFarmingStats = () => {
   const lastStakes = useLastFarmsStakesSelector();
   const farms = useMemo(() => allFarms.data.map(({ item }) => item), [allFarms.data]);
 
-  return useEarnOpportunitiesStats(farms, lastStakes);
+  return useEarnOpportunitiesStats(farms, lastStakes.data);
 };

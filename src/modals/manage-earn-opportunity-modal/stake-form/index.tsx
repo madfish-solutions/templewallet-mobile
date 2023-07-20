@@ -1,4 +1,4 @@
-import { FormikProvider } from 'formik';
+import { FormikProps, FormikProvider } from 'formik';
 import { uniqBy } from 'lodash-es';
 import React, { FC, RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Text, View } from 'react-native';
@@ -23,13 +23,13 @@ import { DetailsSection } from '../details-section';
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
 import { quipuswapFarmsRisksPoints, youvesSavingsRisksPoints } from './constants';
-import { useStakeFormStyles } from './styles';
-import { useStakeFormik } from './use-stake-formik';
+import { useAssetAmountInputStylesConfig, useStakeFormStyles } from './styles';
+import { StakeFormValues } from './use-stake-formik';
 
 interface StakeFormProps {
   earnOpportunityItem: EarnOpportunity;
   stake?: UserStakeValueInterface;
-  formik: ReturnType<typeof useStakeFormik>;
+  formik: FormikProps<StakeFormValues>;
   acceptRisksRef?: RefObject<View>;
 }
 
@@ -46,12 +46,14 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
     [savingsAssetsList, stakedToken]
   );
   const assetsList = itemIsFarm ? stakeTokens : savingsAssetsListWithFallback;
+  const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
   const prevAssetsListRef = useRef(assetsList);
+  const leadingTokens = useMemo(() => (itemIsFarm ? undefined : [stakedToken]), [itemIsFarm, stakedToken]);
   const { filteredAssetsList, setSearchValue: setSearchValueFromTokens } = useFilteredAssetsList(
     assetsList,
     false,
     true,
-    itemIsFarm ? undefined : stakedToken
+    leadingTokens
   );
   const risksPoints = itemIsFarm ? quipuswapFarmsRisksPoints : youvesSavingsRisksPoints;
 
@@ -83,7 +85,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
 
   return (
     <FormikProvider value={formik}>
-      <View style={styles.formContainer}>
+      <View>
         <Text style={styles.depositPrompt}>
           {itemIsFarm
             ? 'You can choose any asset from the provided list for your deposit. The selected asset will be automatically converted by Temple Wallet.'
@@ -93,12 +95,12 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
         <FormAssetAmountInput
           name="assetAmount"
           label="Amount"
-          balanceValueStyles={styles.balanceText}
           expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
           isSearchable
           isSingleAsset={assetsList.length === 1}
           maxButton
           assetsList={filteredAssetsList}
+          stylesConfig={assetAmountInputStylesConfig}
           onValueChange={handleAssetAmountChange}
           setSearchValue={setSearchValueFromTokens}
           testID={ManageEarnOpportunityModalSelectors.amountInput}

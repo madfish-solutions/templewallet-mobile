@@ -1,6 +1,9 @@
 import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
+export const isPositiveNumber = <T extends BigNumber.Value>(value?: T): value is T =>
+  value != null && new BigNumber(value).isGreaterThan(0);
+
 export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6, showAllDecimalPlaces = false) => {
   if (isNaN(amount.toNumber())) {
     return '';

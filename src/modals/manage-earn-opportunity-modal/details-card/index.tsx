@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -9,6 +8,7 @@ import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HorizontalBorder } from 'src/components/horizontal-border';
+import { useAssetAmount } from 'src/hooks/use-asset-amount.hook';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useInterval } from 'src/hooks/use-interval.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -19,11 +19,12 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
 import { aprToApy, isFarm } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { mutezToTz } from 'src/utils/tezos.util';
 
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { StatsItem } from './stats-item';
@@ -61,6 +62,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   const dispatch = useDispatch();
   const tezos = useReadOnlyTezosToolkit();
   const tokens = useEarnOpportunityTokens(earnOpportunityItem);
+  const { trackEvent } = useAnalytics();
   const rewardTokenDecimals = rewardToken.metadata.decimals;
   const rewardTokenSymbol = rewardToken.metadata.symbol;
 
@@ -114,27 +116,48 @@ export const DetailsCard: FC<DetailsCardProps> = ({
     };
 
     if (msToVestingEnd > 0) {
+      const { id, contractAddress } = earnOpportunityItem;
+      const modalAnswerAnalyticsProperties = isFarm(earnOpportunityItem)
+        ? {
+            page: ModalsEnum.ManageFarmingPool,
+            farmId: id,
+            farmContractAddress: contractAddress
+          }
+        : {
+            page: ModalsEnum.ManageSavingsPool,
+            savingsItemId: id,
+            savingsItemAddress: contractAddress
+          };
+
       doAfterConfirmation(
         'Your claimable rewards will be claimed and sent to you. But your full rewards will be totally lost and redistributed among other participants.',
         'Claim rewards',
-        claimRewards
+        () => {
+          trackEvent('CLAIM_REWARDS_MODAL_CONFIRM', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties);
+          void claimRewards();
+        },
+        () =>
+          trackEvent('CLAIM_REWARDS_MODAL_CANCEL', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties)
       );
     } else {
       void claimRewards();
     }
-  }, [lastStakeId, dispatch, contractAddress, tezos, msToVestingEnd]);
+  }, [lastStakeId, dispatch, contractAddress, tezos, msToVestingEnd, earnOpportunityItem, trackEvent]);
 
-  const depositAmount = useMemo(
-    () => mutezToTz(new BigNumber(depositAmountAtomic), stakedTokenDecimals),
-    [depositAmountAtomic, stakedTokenDecimals]
+  const { assetAmount: depositAmount, usdEquivalent: depositUsdEquivalent } = useAssetAmount(
+    depositAmountAtomic,
+    stakedTokenDecimals,
+    depositExchangeRate
   );
-  const claimableRewardAmount = useMemo(
-    () => mutezToTz(new BigNumber(claimableRewards), rewardTokenDecimals),
-    [claimableRewards, rewardTokenDecimals]
+  const { assetAmount: claimableRewardAmount, usdEquivalent: claimableRewardUsdEquivalent } = useAssetAmount(
+    claimableRewards,
+    rewardTokenDecimals,
+    earnExchangeRate
   );
-  const fullRewardAmount = useMemo(
-    () => mutezToTz(new BigNumber(fullReward), rewardTokenDecimals),
-    [fullReward, rewardTokenDecimals]
+  const { assetAmount: fullRewardAmount, usdEquivalent: fullRewardUsdEquivalent } = useAssetAmount(
+    fullReward,
+    rewardTokenDecimals,
+    earnExchangeRate
   );
 
   return (
@@ -158,7 +181,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
                 symbol={tokens.stakeTokens.length === 1 ? stakedToken.metadata.symbol : 'Shares'}
               />
             }
-            usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
+            usdEquivalent={depositUsdEquivalent}
           />
         </View>
       ) : (
@@ -174,7 +197,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
                   symbol={tokens.stakeTokens.length === 1 ? stakedToken.metadata.symbol : 'Shares'}
                 />
               }
-              usdEquivalent={isDefined(depositExchangeRate) ? depositAmount.times(depositExchangeRate) : undefined}
+              usdEquivalent={depositUsdEquivalent}
             />
             <StatsItem
               loading={loading}
@@ -182,7 +205,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               value={
                 <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
               }
-              usdEquivalent={isDefined(earnExchangeRate) ? claimableRewardAmount.times(earnExchangeRate) : undefined}
+              usdEquivalent={claimableRewardUsdEquivalent}
             />
           </View>
 
@@ -193,20 +216,22 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               loading={loading}
               title="Long-term rewards:"
               value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
-              usdEquivalent={isDefined(earnExchangeRate) ? fullRewardAmount.times(earnExchangeRate) : undefined}
+              usdEquivalent={fullRewardUsdEquivalent}
             />
             <StatsItem
               loading={loading}
               title="Fully claimable:"
               value={
-                <Text style={styles.statsValue}>
+                <View style={styles.timespanValue}>
                   {countdownTokens.map(({ unit, value }) => (
                     <React.Fragment key={unit}>
-                      {value}
-                      <Text style={styles.timespanUnit}>{unit}</Text>{' '}
+                      <Text style={styles.statsValue}>{value}</Text>
+                      <Divider size={formatSize(2)} />
+                      <Text style={styles.timespanUnit}>{unit}</Text>
+                      <Divider size={formatSize(6)} />
                     </React.Fragment>
                   ))}
-                </Text>
+                </View>
               }
             />
           </View>

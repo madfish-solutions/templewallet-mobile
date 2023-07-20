@@ -23,7 +23,3 @@ export const route3InitialState: SwapState = {
   tokens: createEntity([]),
   tokensMetadata: createEntity([])
 };
-
-export interface Route3RootState {
-  swap: SwapState;
-}

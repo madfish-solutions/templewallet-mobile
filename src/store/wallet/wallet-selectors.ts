@@ -3,8 +3,9 @@ import { useMemo } from 'react';
 import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { TEMPLE_TOKEN } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
@@ -141,4 +142,10 @@ export const useSelectedAccountTezosTokenSelector = (): TokenInterface => {
   const selectedAccountPublicKeyHash = useSelector(({ wallet }) => wallet.selectedAccountPublicKeyHash);
 
   return useTezosTokenSelector(selectedAccountPublicKeyHash);
+};
+
+export const useSelectedAccountTkeyTokenSelector = (): TokenInterface => {
+  const tkey = useTokenSelector(toTokenSlug(TEMPLE_TOKEN.address, TEMPLE_TOKEN.id));
+
+  return tkey ?? TEMPLE_TOKEN;
 };

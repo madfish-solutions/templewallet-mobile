@@ -11,7 +11,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import { RootState } from '../create-store';
+import type { RootState } from '../types';
 import {
   loadAllFarmsActions,
   loadAllFarmsAndStakesAction,
@@ -76,8 +76,9 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
           return forkJoin(
             farms.map(async ({ item: farm }) =>
               getFarmStake(farm, tezos, selectedAccount.publicKeyHash)
-                .then((stake): [string, RawStakeValue | undefined] => [farm.contractAddress, stake])
-                .catch((): [string, undefined] => {
+                .then((stake): [string, RawStakeValue | null] => [farm.contractAddress, stake])
+                .catch((e): [string, undefined] => {
+                  showErrorToastByError(e);
                   console.error('Error while loading farm stakes: ', farm.contractAddress);
 
                   return [farm.contractAddress, undefined];
@@ -86,13 +87,14 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
           ).pipe(
             map(stakesEntries =>
               Object.fromEntries(
-                stakesEntries
-                  .filter((entry): entry is [string, RawStakeValue] => isDefined(entry[1]))
-                  .map(([farmAddress, stake]): [string, UserStakeValueInterface] => {
-                    const farm = farms.find(({ item }) => item.contractAddress === farmAddress);
+                stakesEntries.map(([farmAddress, stake]): [string, UserStakeValueInterface | null | undefined] => {
+                  const farm = farms.find(({ item }) => item.contractAddress === farmAddress);
 
-                    return [farmAddress, toUserStakeValueInterface(stake, farm?.item.vestingPeriodSeconds ?? '0')];
-                  })
+                  return [
+                    farmAddress,
+                    stake && toUserStakeValueInterface(stake, farm?.item.vestingPeriodSeconds ?? '0')
+                  ];
+                })
               )
             ),
             mergeMap(stakes => merge(of(loadAllFarmsActions.success(farms)), of(loadAllStakesActions.success(stakes))))

@@ -1,15 +1,14 @@
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
-import { catchError, from, of, switchMap } from 'rxjs';
+import { catchError, from, of } from 'rxjs';
 
-import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
+import { estimateDivestOneCoinOutputs } from 'src/apis/quipuswap-staking';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
 import { WithdrawTokenOption } from './use-withdraw-formik';
 
@@ -25,21 +24,19 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
       return;
     }
 
-    const subscription = from(getReadOnlyContract(earnOpportunityItem.stakedToken.contractAddress, tezos))
+    const observable = isFarm(earnOpportunityItem)
+      ? from(
+          estimateDivestOneCoinOutputs(
+            tezos,
+            earnOpportunityItem.stakedToken.contractAddress,
+            earnOpportunityItem.tokens.map((_, index) => index),
+            lpAmount,
+            earnOpportunityItem.stakedToken.fa2TokenId ?? 0
+          )
+        )
+      : of([lpAmount]);
+    const subscription = observable
       .pipe(
-        switchMap(stableswapContract =>
-          isFarm(earnOpportunityItem)
-            ? from(
-                estimateWithdrawTokenOutput(
-                  tezos,
-                  stableswapContract,
-                  earnOpportunityItem.tokens.map((_, index) => index),
-                  lpAmount,
-                  earnOpportunityItem.stakedToken.fa2TokenId ?? 0
-                )
-              )
-            : of([lpAmount])
-        ),
         catchError(error => {
           showErrorToastByError(error);
 
@@ -56,7 +53,7 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
 
     return stakeTokens.reduce<WithdrawTokenOption[]>((acc, token, index) => {
       const amount = atomicAmounts?.[index];
-      if (!shouldFilterOutFailingOptions || amount !== null) {
+      if ((!shouldFilterOutFailingOptions || amount !== null) && (!isDefined(amount) || amount.gt(0))) {
         acc.push({ token, amount: amount ?? undefined });
       }
 

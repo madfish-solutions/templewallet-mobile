@@ -70,6 +70,11 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         return;
       }
 
+      trackEvent('STAKE_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+        farmAddress: earnOpportunity.contractAddress,
+        token: asset.symbol,
+        atomicAmount: amount.toFixed()
+      });
       try {
         const opParams = await createStakeOperationParams(
           earnOpportunity,

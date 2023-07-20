@@ -15,7 +15,3 @@ export const securityInitialState: SecurityState = {
   isForceUpdateNeeded: createEntity(false),
   isAppCheckFailed: createEntity(false)
 };
-
-export interface SecurityRootState {
-  security: SecurityState;
-}

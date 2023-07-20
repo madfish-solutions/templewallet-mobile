@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
+import { TEZOS_CONTRACT_ADDRESS } from 'src/apis/quipuswap-staking/consts';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
 import {
@@ -22,7 +23,7 @@ export const useEarnOpportunityTokens = (earnOpportunity?: EarnOpportunity) => {
 
   const convertToken = useCallback(
     (token: EarnOpportunityToken) => {
-      const tokenAddress = token.contractAddress === 'tez' ? undefined : token.contractAddress;
+      const tokenAddress = token.contractAddress === TEZOS_CONTRACT_ADDRESS ? undefined : token.contractAddress;
       const tokenSlug = toTokenSlug(tokenAddress, token.fa2TokenId);
       const accountAsset =
         tokenSlug === TEZ_TOKEN_SLUG

@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { FormikProvider } from 'formik';
+import { FormikProps, FormikProvider } from 'formik';
 import { noop } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -17,6 +17,7 @@ import { FormDropdown } from 'src/form/form-dropdown';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
+import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -30,14 +31,14 @@ import { PERCENTAGE_OPTIONS } from '../constants';
 import { DetailsSection } from '../details-section';
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
-import { useWithdrawFormStyles } from './styles';
+import { useAssetAmountInputStylesConfig, useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
-import { useWithdrawFormik, WithdrawTokenOption } from './use-withdraw-formik';
+import { WithdrawFormValues, WithdrawTokenOption } from './use-withdraw-formik';
 
 interface WithdrawFormProps {
   earnOpportunityItem: EarnOpportunity;
   stake?: UserStakeValueInterface;
-  formik: ReturnType<typeof useWithdrawFormik>;
+  formik: FormikProps<WithdrawFormValues>;
 }
 
 const PERCENTAGE_OPTIONS_TEXTS = PERCENTAGE_OPTIONS.map(value => `${value}%`);
@@ -51,16 +52,6 @@ const getTokenDropdownItemToken = (value?: WithdrawTokenOption) =>
     balance: value.amount?.toFixed() ?? ''
   };
 
-const renderTokenOptionValue: DropdownValueComponent<WithdrawTokenOption> = ({ value }) => (
-  <DropdownItemContainer>
-    <TokenDropdownItem
-      isShowBalanceLoading={isDefined(value) && !isDefined(value.amount)}
-      token={getTokenDropdownItemToken(value)}
-      actionIconName={IconNameEnum.TriangleDown}
-    />
-  </DropdownItemContainer>
-);
-
 const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> = ({ item, isSelected }) => (
   <TokenDropdownItem
     isShowBalanceLoading={!isDefined(item.amount)}
@@ -69,7 +60,12 @@ const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> 
   />
 );
 
+const tokenOptionTestIDPropertiesFn = (option: WithdrawTokenOption) => ({
+  token: option.token.symbol
+});
+
 export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formik, stake }) => {
+  const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
   const { depositExchangeRate, tokens } = earnOpportunityItem;
   const { stakedToken } = useEarnOpportunityTokens(earnOpportunityItem);
   const { setFieldTouched, setFieldValue, values } = formik;
@@ -82,6 +78,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
     [stake?.depositAmountAtomic, amountOptionIndex]
   );
   const tokensOptions = useTokensOptions(earnOpportunityItem, lpAmountAtomic);
+  const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
   const prevTokensOptionsRef = useRef<WithdrawTokenOption[]>();
   const [tokenSearchValue, setTokenSearchValue] = useState('');
   const filteredTokensOptions = useMemo(
@@ -90,6 +87,19 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
   );
   const styles = useWithdrawFormStyles();
   const stakesLoading = useStakesLoadingSelector();
+
+  const renderTokenOptionValue = useCallback<DropdownValueComponent<WithdrawTokenOption>>(
+    ({ value }) => (
+      <DropdownItemContainer style={styles.tokenSelector}>
+        <TokenDropdownItem
+          isShowBalanceLoading={isDefined(value) && !isDefined(value.amount)}
+          token={getTokenDropdownItemToken(value)}
+          actionIconName={IconNameEnum.TriangleDown}
+        />
+      </DropdownItemContainer>
+    ),
+    [styles]
+  );
 
   const handleTokenOptionChange = useCallback(() => void setFieldTouched('tokenOption', true), [setFieldTouched]);
 
@@ -125,7 +135,10 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
       name: stakedToken.name,
       thumbnailUri: stakedToken.thumbnailUri,
       address: stakedToken.address,
-      exchangeRate: isDefined(depositExchangeRate) ? Number(depositExchangeRate) : undefined
+      exchangeRate:
+        isDefined(depositExchangeRate) && isDefined(fiatToUsdExchangeRate)
+          ? Number(depositExchangeRate) * fiatToUsdExchangeRate
+          : undefined
     }),
     [stake?.depositAmountAtomic, stakedToken, depositExchangeRate, tokens.length]
   );
@@ -142,8 +155,8 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
 
   return (
     <FormikProvider value={formik}>
-      <View style={styles.formContainer}>
-        <Divider size={formatSize(8)} />
+      <View>
+        <Divider size={formatSize(12)} />
         <AssetAmountInput
           value={lpInputValue}
           label="Amount"
@@ -153,6 +166,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
           editable={false}
           isShowNameForValue={!isFarm(earnOpportunityItem)}
           isSingleAsset={true}
+          stylesConfig={assetAmountInputStylesConfig}
           testID={ManageEarnOpportunityModalSelectors.sharesAmountInput}
           onValueChange={noop}
         />
@@ -169,23 +183,26 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
           <>
             <Text style={styles.tokenSelectorTitle}>Receive in</Text>
             <Divider size={formatSize(12)} />
-            <FormDropdown
-              name="tokenOption"
-              description="Choose token"
-              itemHeight={formatSize(56)}
-              equalityFn={tokenOptionEqualityFn}
-              renderValue={renderTokenOptionValue}
-              renderListItem={renderTokenOptionListItem}
-              isSearchable={true}
-              setSearchValue={setTokenSearchValue}
-              list={filteredTokensOptions}
-              onValueChange={handleTokenOptionChange}
-              testID={ManageEarnOpportunityModalSelectors.tokenSelector}
-            />
+            <View style={styles.tokenSelectorWrapper}>
+              <FormDropdown
+                name="tokenOption"
+                description="Choose token"
+                itemHeight={formatSize(56)}
+                equalityFn={tokenOptionEqualityFn}
+                renderValue={renderTokenOptionValue}
+                renderListItem={renderTokenOptionListItem}
+                isSearchable={true}
+                setSearchValue={setTokenSearchValue}
+                list={filteredTokensOptions}
+                itemTestIDPropertiesFn={tokenOptionTestIDPropertiesFn}
+                onValueChange={handleTokenOptionChange}
+                testID={ManageEarnOpportunityModalSelectors.tokenSelector}
+              />
+            </View>
           </>
         )}
       </View>
-      <Divider size={formatSize(16)} />
+      <Divider size={formatSize(12)} />
       <DetailsSection
         earnOpportunityItem={earnOpportunityItem}
         stake={stake}

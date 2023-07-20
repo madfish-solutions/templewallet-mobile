@@ -23,6 +23,9 @@ export const ContinueWithCloudButton = () => {
   const cloudIsAvailable = useIsCloudAvailable();
 
   const iconName = getCloudIconEnum(theme, cloudIsAvailable);
+  const handlePress = () => {
+    navigate(ScreensEnum.ContinueWithCloud);
+  };
 
   return (
     <ButtonLargeSecondary
@@ -30,7 +33,7 @@ export const ContinueWithCloudButton = () => {
       iconName={iconName}
       activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
       disabled={!cloudIsAvailable}
-      onPress={() => navigate(ScreensEnum.ContinueWithCloud)}
+      onPress={handlePress}
       testID={WelcomeSelectors.continueWithCloudButton}
       testIDProperties={{ cloud: cloudTitle }}
     />
