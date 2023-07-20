@@ -1,38 +1,22 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 
-export const useSwapRouteItem = createUseStyles(({ colors, typography }) => ({
+export const useSwapRouteItem = createUseStylesMemoized(() => ({
   flex: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: 'row'
   },
   container: {
     justifyContent: 'space-between'
   },
   hopsContainer: {
     position: 'relative',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    alignItems: 'center'
   },
-  icon: {
+  iconWrapper: {
     position: 'absolute',
-    left: formatSize(0)
-  },
-  amountsContainer: {
-    width: formatSize(44)
-  },
-  amount: {
-    ...typography.caption13Regular,
-    color: colors.gray2
-  },
-  alignEnd: {
-    alignSelf: 'flex-end'
-  },
-  alignStart: {
-    alignSelf: 'flex-start'
-  },
-  percantage: {
-    ...typography.caption13Regular,
-    color: colors.blue
+    left: 0,
+    overflow: 'hidden',
+    width: '100%'
   }
 }));

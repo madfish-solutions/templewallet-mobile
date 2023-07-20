@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, isEmptyArray, useFormik } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -12,12 +12,23 @@ import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating
 import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
+import {
+  ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT,
+  BURN_ADDREESS,
+  MAX_ROUTING_FEE_CHAINS,
+  ROUTING_FEE_ADDRESS,
+  ROUTING_FEE_SLIPPAGE_RATIO,
+  SWAP_THRESHOLD_TO_GET_CASHBACK,
+  TEMPLE_TOKEN,
+  ZERO
+} from 'src/config/swap';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useSwap } from 'src/hooks/use-swap.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { isLiquidityBakingParamsResponse } from 'src/interfaces/route3.interface';
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
@@ -31,25 +42,21 @@ import {
 import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { SIRS_TOKEN } from 'src/token/data/token-slugs';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { fetchRoute3SwapParams, getRoute3TokenSymbol, isInputTokenEqualToTempleToken } from 'src/utils/route3.util';
+import {
+  calculateFeeFromOutput,
+  calculateRoutingInputAndFeeFromInput,
+  calculateSlippageRatio,
+  getRoutingFeeTransferParams
+} from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
-import {
-  BURN_ADDREESS,
-  MAX_ROUTING_FEE_CHAINS,
-  ROUTING_FEE_ADDRESS,
-  ROUTING_FEE_RATIO,
-  ROUTING_FEE_SLIPPAGE_RATIO,
-  SWAP_THRESHOLD_TO_GET_CASHBACK,
-  TEMPLE_TOKEN,
-  ZERO
-} from '../config';
-import { getRoutingFeeTransferParams } from '../swap.util';
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapDisclaimer } from './swap-disclaimer/swap-disclaimer';
 import { SwapExchangeRate } from './swap-exchange-rate/swap-exchange-rate';
@@ -78,12 +85,17 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { publicKeyHash } = useSelectedAccountSelector();
 
   const swapParams = useSwapParamsSelector();
-  const slippageRatio = useMemo(() => (100 - slippageTolerance) / 100, [slippageTolerance]);
+  const prevOutputRef = useRef(swapParams.data.output);
+  const { input: rawInput, output: rawOutput } = swapParams.data;
+  const slippageRatio = useMemo(() => calculateSlippageRatio(slippageTolerance), [slippageTolerance]);
 
   const handleSubmit = async () => {
     const inputAssetSlug = getTokenSlug(inputAssets.asset);
     const outputAssetSlug = getTokenSlug(outputAssets.asset);
-    const { swapInputMinusFeeAtomic, routingFeeAtomic } = calculateRoutingInputAndFee(inputAssets.amount);
+    const { swapInputMinusFeeAtomic, routingFeeFromInputAtomic } = calculateRoutingInputAndFeeFromInput(
+      inputAssets.amount
+    );
+    const routingFeeFromOutputAtomic = calculateFeeFromOutput(inputAssets.amount, minimumReceivedAmountAtomic);
 
     const analyticsProperties = {
       inputAsset: inputAssetSlug,
@@ -97,49 +109,52 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     }
 
     const allSwapParams: Array<TransferParams> = [];
+    let routingOutputFeeTransferParams: TransferParams[] = await getRoutingFeeTransferParams(
+      toRoute3Token,
+      routingFeeFromOutputAtomic,
+      publicKeyHash,
+      ROUTING_FEE_ADDRESS,
+      tezos
+    );
 
     const route3SwapOpParams = await getSwapParams(
       fromRoute3Token,
       toRoute3Token,
       swapInputMinusFeeAtomic,
       minimumReceivedAmountAtomic,
-      swapParams.data.chains
+      swapParams.data
     );
 
-    if (!route3SwapOpParams) {
-      return;
-    }
-
     const inputAmountInUsd = mutezToTz(
-      swapInputMinusFeeAtomic.plus(routingFeeAtomic).times(inputAssets.asset.exchangeRate ?? ZERO),
+      swapInputMinusFeeAtomic.plus(routingFeeFromInputAtomic).times(inputAssets.asset.exchangeRate ?? ZERO),
       fromRoute3Token.decimals
     );
     const isInputTokenTempleToken = isInputTokenEqualToTempleToken(inputAssetSlug);
     const isSwapAmountMoreThreshold = inputAmountInUsd.isGreaterThanOrEqualTo(SWAP_THRESHOLD_TO_GET_CASHBACK);
 
     if (isInputTokenTempleToken && isSwapAmountMoreThreshold) {
-      const routingFeeOpParams = await getRoutingFeeTransferParams(
+      const routingInputFeeOpParams = await getRoutingFeeTransferParams(
         fromRoute3Token,
-        routingFeeAtomic.dividedToIntegerBy(2),
+        routingFeeFromInputAtomic.dividedToIntegerBy(2),
         publicKeyHash,
         BURN_ADDREESS,
         tezos
       );
-      allSwapParams.push(...routingFeeOpParams);
+      allSwapParams.push(...routingInputFeeOpParams);
     } else if (isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
-      const routingFeeOpParams = await getRoutingFeeTransferParams(
+      const routingInputFeeOpParams = await getRoutingFeeTransferParams(
         TEMPLE_TOKEN,
-        routingFeeAtomic,
+        routingFeeFromInputAtomic,
         publicKeyHash,
         ROUTING_FEE_ADDRESS,
         tezos
       );
-      allSwapParams.push(...routingFeeOpParams);
-    } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold) {
+      allSwapParams.push(...routingInputFeeOpParams);
+    } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold && routingFeeFromInputAtomic.gt(0)) {
       const swapToTempleParams = await fetchRoute3SwapParams({
         fromSymbol: fromRoute3Token.symbol,
         toSymbol: TEMPLE_TOKEN.symbol,
-        amount: mutezToTz(routingFeeAtomic, fromRoute3Token.decimals).toFixed(),
+        amount: mutezToTz(routingFeeFromInputAtomic, fromRoute3Token.decimals).toFixed(),
         chainsLimit: MAX_ROUTING_FEE_CHAINS
       });
 
@@ -150,14 +165,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       const swapToTempleTokenOpParams = await getSwapParams(
         fromRoute3Token,
         TEMPLE_TOKEN,
-        routingFeeAtomic,
+        routingFeeFromInputAtomic,
         templeOutputAtomic,
-        swapToTempleParams.chains
+        swapToTempleParams
       );
 
-      if (!swapToTempleTokenOpParams) {
-        return;
-      }
       allSwapParams.push(...swapToTempleTokenOpParams);
 
       const routingFeeOpParams = await getRoutingFeeTransferParams(
@@ -168,18 +180,46 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         tezos
       );
       allSwapParams.push(...routingFeeOpParams);
-    } else if (!isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
+    } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold) {
+      const swapToTempleParams = await fetchRoute3SwapParams({
+        fromSymbol: toRoute3Token.symbol,
+        toSymbol: TEMPLE_TOKEN.symbol,
+        amount: mutezToTz(routingFeeFromOutputAtomic, toRoute3Token.decimals).toFixed(),
+        chainsLimit: MAX_ROUTING_FEE_CHAINS
+      });
+
+      const templeOutputAtomic = tzToMutez(new BigNumber(swapToTempleParams.output ?? ZERO), TEMPLE_TOKEN.decimals)
+        .multipliedBy(ROUTING_FEE_SLIPPAGE_RATIO)
+        .integerValue(BigNumber.ROUND_DOWN);
+
+      const swapToTempleTokenOpParams = await getSwapParams(
+        toRoute3Token,
+        TEMPLE_TOKEN,
+        routingFeeFromOutputAtomic,
+        templeOutputAtomic,
+        swapToTempleParams
+      );
+
       const routingFeeOpParams = await getRoutingFeeTransferParams(
+        TEMPLE_TOKEN,
+        templeOutputAtomic.dividedToIntegerBy(2),
+        publicKeyHash,
+        BURN_ADDREESS,
+        tezos
+      );
+      routingOutputFeeTransferParams = [...swapToTempleTokenOpParams, ...routingFeeOpParams];
+    } else if (!isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
+      const routingInputFeeOpParams = await getRoutingFeeTransferParams(
         fromRoute3Token,
-        routingFeeAtomic,
+        routingFeeFromInputAtomic,
         publicKeyHash,
         ROUTING_FEE_ADDRESS,
         tezos
       );
-      allSwapParams.push(...routingFeeOpParams);
+      allSwapParams.push(...routingInputFeeOpParams);
     }
 
-    allSwapParams.push(...route3SwapOpParams);
+    allSwapParams.push(...route3SwapOpParams, ...routingOutputFeeTransferParams);
 
     const opParams: Array<ParamsWithKind> = allSwapParams.map(transferParams => ({
       ...transferParams,
@@ -255,14 +295,24 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   }, [blockLevel]);
 
   useEffect(() => {
-    setFieldValue('outputAssets', {
-      asset: outputAssets.asset,
-      amount:
-        swapParams.data.output === undefined
-          ? undefined
-          : tzToMutez(new BigNumber(swapParams.data.output), outputAssets.asset.decimals)
-    });
-  }, [swapParams.data.output]);
+    const currentOutput = swapParams.data.output;
+
+    if (currentOutput === prevOutputRef.current) {
+      return;
+    }
+
+    prevOutputRef.current = currentOutput;
+    if (currentOutput === undefined) {
+      setFieldValue('outputAssets', { asset: outputAssets.asset, amount: undefined });
+    } else {
+      const outputAtomicAmountPlusFee = tzToMutez(new BigNumber(currentOutput), outputAssets.asset.decimals);
+      const feeFromOutput = calculateFeeFromOutput(inputAssets.amount, outputAtomicAmountPlusFee);
+      setFieldValue('outputAssets', {
+        asset: outputAssets.asset,
+        amount: outputAtomicAmountPlusFee.minus(feeFromOutput)
+      });
+    }
+  }, [swapParams.data.output, inputAssets.amount, outputAssets.asset]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
@@ -289,7 +339,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   );
 
   const dispatchLoadSwapParams = useCallback((input: AssetAmountInterface, output: AssetAmountInterface) => {
-    const { swapInputMinusFeeAtomic: amount } = calculateRoutingInputAndFee(input.amount);
+    const { swapInputMinusFeeAtomic: amount } = calculateRoutingInputAndFeeFromInput(input.amount);
 
     dispatch(
       loadSwapParamsAction.submit({
@@ -300,16 +350,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     );
   }, []);
 
-  const calculateRoutingInputAndFee = useCallback((inputAmount: BigNumber | undefined) => {
-    const swapInputAtomic = (inputAmount ?? ZERO).integerValue(BigNumber.ROUND_DOWN);
-    const swapInputMinusFeeAtomic = swapInputAtomic.times(ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_DOWN);
-    const routingFeeAtomic = swapInputAtomic.minus(swapInputMinusFeeAtomic);
-
-    return {
-      swapInputMinusFeeAtomic,
-      routingFeeAtomic
-    };
-  }, []);
+  const chainsAreAbsent = isLiquidityBakingParamsResponse(swapParams.data)
+    ? isEmptyArray(swapParams.data.tzbtcChain.chains) && isEmptyArray(swapParams.data.xtzChain.chains)
+    : isEmptyArray(swapParams.data.chains);
+  const inputAmount = useMemo(() => (isDefined(rawInput) ? new BigNumber(rawInput) : undefined), [rawInput]);
+  const outputAmount = useMemo(() => (isDefined(rawOutput) ? new BigNumber(rawOutput) : undefined), [rawOutput]);
+  const routingFeeIsTakenFromOutput = inputAssets.amount?.lt(ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT) ?? false;
 
   return (
     <FormikProvider value={formik}>
@@ -349,10 +395,15 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             inputAsset={inputAssets.asset}
             slippageRatio={slippageRatio}
             outputAsset={outputAssets.asset}
-            inputAmount={swapParams.data.input !== undefined ? new BigNumber(swapParams.data.input) : undefined}
-            outputAmount={swapParams.data.output !== undefined ? new BigNumber(swapParams.data.output) : undefined}
+            inputAmount={inputAmount}
+            outputAmount={outputAmount}
+            routingFeeIsTakenFromOutput={routingFeeIsTakenFromOutput}
           />
-          <SwapRoute />
+          <SwapRoute
+            isLbInput={isDefined(inputAssets.asset) && getTokenSlug(inputAssets.asset) === getTokenSlug(SIRS_TOKEN)}
+            isLbOutput={isDefined(outputAssets.asset) && getTokenSlug(outputAssets.asset) === getTokenSlug(SIRS_TOKEN)}
+            routingFeeIsTakenFromOutput={routingFeeIsTakenFromOutput}
+          />
         </View>
 
         <SwapDisclaimer />
@@ -360,11 +411,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
-          disabled={
-            (submitCount !== 0 && !isValid) ||
-            (submitCount !== 0 && isEmptyArray(swapParams.data.chains)) ||
-            swapParams.isLoading
-          }
+          disabled={(submitCount !== 0 && !isValid) || (submitCount !== 0 && chainsAreAbsent) || swapParams.isLoading}
           title={Boolean(swapParams.isLoading) ? 'Searching the best route' : 'Swap'}
           onPress={submitForm}
           testID={SwapFormSelectors.swapButton}

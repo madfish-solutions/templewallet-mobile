@@ -33,21 +33,11 @@ export const useManageFarmingPoolModalStyles = createUseStylesMemoized(({ colors
   emphasized: {
     ...typography.caption13Semibold
   },
-  detailsTitle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: formatSize(8)
-  },
   farmTypeIconWrapper: {
     padding: formatSize(4),
     borderRadius: formatSize(4),
     backgroundColor: colors.black,
     border: formatSize(0.5),
     borderColor: colors.lines
-  },
-  detailsTitleText: {
-    ...typography.body15Semibold,
-    color: colors.black,
-    letterSpacing: formatSize(-0.24)
   }
 }));
