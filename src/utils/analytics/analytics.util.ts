@@ -7,5 +7,5 @@ export const jitsu = jitsuClient({
   tracking_host: JITSU_TRACKING_HOST,
   key: JITSU_ANALYTICS_KEY,
   fetch,
-  privacy_policy: 'strict'
+  ip_policy: 'strict'
 });
