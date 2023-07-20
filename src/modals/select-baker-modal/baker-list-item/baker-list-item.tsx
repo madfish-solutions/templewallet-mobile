@@ -3,9 +3,9 @@ import React, { memo } from 'react';
 import { BakerInterface } from 'src/apis/baking-bad';
 import { Divider } from 'src/components/divider/divider';
 import { EventFn } from 'src/config/general';
+import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 
-import { TestIdProps } from '../../../interfaces/test-id.props';
 import { SelectBakerItem } from '../select-baker-item/select-baker-item';
 
 type BakerListItemProps = TestIdProps & {

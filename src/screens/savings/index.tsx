@@ -13,6 +13,7 @@ import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { useFilteredSavings } from 'src/hooks/use-filtered-savings.hook';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import { useSavingsStakesSelector } from 'src/store/savings/selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -42,6 +43,7 @@ const keyExtractor = ({ id, contractAddress }: SavingsItem) => `${id}_${contract
 export const Savings: FC = () => {
   const dispatch = useDispatch();
   const savingsStakes = useSavingsStakesSelector();
+  const stakesLoading = useStakesLoadingSelector();
   const blockLevel = useBlockLevel();
   const styles = useSavingsStyles();
   const {
@@ -57,8 +59,14 @@ export const Savings: FC = () => {
   usePageAnalytic(ScreensEnum.Savings);
 
   const renderItem = useCallback<ListRenderItem<SavingsItem>>(
-    ({ item }) => <SavingsItemCard item={item} lastStakeRecord={savingsStakes[item.contractAddress]} />,
-    [savingsStakes]
+    ({ item }) => (
+      <SavingsItemCard
+        item={item}
+        lastStakeRecord={savingsStakes[item.contractAddress]}
+        stakeIsLoading={stakesLoading}
+      />
+    ),
+    [savingsStakes, stakesLoading]
   );
 
   useEffect(() => {

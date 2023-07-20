@@ -10,14 +10,15 @@ import { useAttentionMessageStyles } from './attention-message.styles';
 
 interface Props {
   title?: string;
+  iconName?: IconNameEnum;
 }
 
-export const AttentionMessage: FC<Props> = ({ children, title }) => {
+export const AttentionMessage: FC<Props> = ({ children, title, iconName = IconNameEnum.Alert }) => {
   const styles = useAttentionMessageStyles();
 
   return (
     <View style={styles.container}>
-      <Icon name={IconNameEnum.Alert} />
+      <Icon name={iconName} />
       <Divider size={formatSize(8)} />
       <View style={styles.content}>
         {isDefined(title) && <Text style={styles.title}>{title}</Text>}

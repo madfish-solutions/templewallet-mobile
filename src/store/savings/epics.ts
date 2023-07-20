@@ -10,7 +10,7 @@ import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { withSelectedAccount, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
-import { RootState } from '../create-store';
+import { RootState } from '../types';
 import {
   loadAllSavingsActions,
   loadAllSavingsAndStakesAction,

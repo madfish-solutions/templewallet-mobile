@@ -8,6 +8,7 @@ import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, PENNY } from 'src/config/earn-opportunities-main-info';
 import { EmptyFn } from 'src/config/general';
+import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 
 import { useEarnOpportunitiesMainInfoStyles, useButtonPrimaryStyleConfig } from './styles';
@@ -15,7 +16,7 @@ import { useEarnOpportunitiesMainInfoStyles, useButtonPrimaryStyleConfig } from 
 interface Props {
   claimAllRewards?: EmptyFn;
   shouldShowClaimRewardsButton?: boolean;
-  totalClaimableRewardsInUsd?: BigNumber;
+  totalClaimableRewardsInFiat?: BigNumber;
   netApy: BigNumber;
   totalStakedAmountInFiat: BigNumber;
 }
@@ -23,13 +24,14 @@ interface Props {
 export const EarnOpportunitiesMainInfo: FC<Props> = ({
   claimAllRewards = noop,
   shouldShowClaimRewardsButton = false,
-  totalClaimableRewardsInUsd = DEFAULT_AMOUNT,
+  totalClaimableRewardsInFiat = DEFAULT_AMOUNT,
   netApy,
   totalStakedAmountInFiat
 }) => {
   const styles = useEarnOpportunitiesMainInfoStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
-  const areSomeRewardsClaimable = totalClaimableRewardsInUsd.isGreaterThan(PENNY);
+  const areSomeRewardsClaimable = totalClaimableRewardsInFiat.isGreaterThan(PENNY);
+  const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
 
   return (
     <View style={styles.root}>
@@ -52,7 +54,7 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
               styleConfig={buttonPrimaryStylesConfig}
               title={
                 areSomeRewardsClaimable
-                  ? `CLAIM ALL ≈ ${totalClaimableRewardsInUsd.toFixed(DEFAULT_DECIMALS)}$`
+                  ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(DEFAULT_DECIMALS)}${fiatSymbol}`
                   : 'EARN TO CLAIM REWARDS'
               }
               disabled={!areSomeRewardsClaimable}

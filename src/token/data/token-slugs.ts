@@ -1,4 +1,5 @@
 import { getTokenSlug, toTokenSlug } from '../utils/token.utils';
+import { TEMPLE_TOKEN } from './tokens-metadata';
 
 export const SIRS_TOKEN = {
   address: 'KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo',
@@ -20,3 +21,5 @@ export const KNOWN_TOKENS_SLUGS: Record<string, string> = {
 export const KNOWN_STABLECOINS_SLUGS = [KNOWN_TOKENS_SLUGS.KUSD, KNOWN_TOKENS_SLUGS.uUSD, KNOWN_TOKENS_SLUGS.USDT];
 
 export const LIQUIDITY_BAKING_DEX_ADDRESS = 'KT1TxqZ8QtKvLu3V3JH7Gx58n7Co8pgtpQU5';
+
+export const TEMPLE_TOKEN_SLUG = toTokenSlug(TEMPLE_TOKEN.address, TEMPLE_TOKEN.id);

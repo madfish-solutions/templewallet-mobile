@@ -9,9 +9,10 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 interface Props {
   item: SavingsItem;
   lastStakeRecord?: UserStakeValueInterface;
+  stakeIsLoading: boolean;
 }
 
-export const SavingsItemCard: FC<Props> = ({ item, lastStakeRecord }) => {
+export const SavingsItemCard: FC<Props> = ({ item, lastStakeRecord, stakeIsLoading }) => {
   const { navigate } = useNavigation();
 
   const navigateToOpportunity = useCallback(
@@ -20,6 +21,11 @@ export const SavingsItemCard: FC<Props> = ({ item, lastStakeRecord }) => {
   );
 
   return (
-    <EarnOpportunityItem item={item} lastStakeRecord={lastStakeRecord} navigateToOpportunity={navigateToOpportunity} />
+    <EarnOpportunityItem
+      item={item}
+      lastStakeRecord={lastStakeRecord}
+      navigateToOpportunity={navigateToOpportunity}
+      stakeIsLoading={stakeIsLoading}
+    />
   );
 };

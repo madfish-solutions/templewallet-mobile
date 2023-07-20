@@ -11,22 +11,22 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { BlackTextLink } from 'src/components/text-link/black-text-link';
+import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
+import { getProperNetworkFullName } from 'src/utils/topup';
 
-import { TopUpAssetAmountInterface } from '../../../../components/top-up-asset-amount-input/types';
-import { TopUpFormAssetAmountInput } from '../../../../components/top-up-form-asset-amount-input';
 import { ErrorComponent } from '../../components/error-component';
-import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList } from '../../config';
+import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList, initialFormValues } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
-import { initialData } from './initial-step.data';
 import { InitialStepSelectors } from './initial-step.selectors';
 import { useInitialStepStyles } from './initial-step.styles';
-import { getProperNetworkFullName, loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
+import { loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
 
 interface InitialStepProps {
   isError: boolean;
@@ -48,9 +48,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     dispatch(
       loadExolixExchangeDataActions.submit({
         coinFrom: inputCurrency.code,
-        networkFrom: inputCurrency.network,
+        networkFrom: inputCurrency.network.code,
         coinTo: outputCurrency.code,
-        networkTo: outputCurrency.network,
+        networkTo: outputCurrency.network.code,
         amount: values.coinFrom.amount.toNumber(),
         withdrawalAddress: publicKeyHash,
         withdrawalExtraId: ''
@@ -59,7 +59,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   };
 
   const formik = useFormik<ExolixTopupFormValues>({
-    initialValues: initialData,
+    initialValues: initialFormValues,
     validationSchema: exolixTopupFormValidationSchema,
     onSubmit: handleSubmit
   });
@@ -74,19 +74,25 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     loadMinMaxFields(
       setFieldValue,
       inputCurrency.code,
-      inputCurrency.network,
+      inputCurrency.network?.code,
       outputCurrency.code,
-      outputCurrency.network,
+      outputCurrency.network?.code,
       outputTokenPrice
     );
   }, [inputCurrency, outputCurrency, outputTokenPrice]);
 
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
+    const inputAssetCode = inputCurrency.asset.code;
+    const inputAsset = filteredCurrenciesList.find(item => item.code === inputAssetCode);
+    if (!isTruthy(inputAsset)) {
+      throw new Error('Selected asset not found');
+    }
+
     const requestData = {
-      coinFrom: inputCurrency.asset.code,
-      coinFromNetwork: inputCurrency.asset.network,
+      coinFrom: inputAssetCode,
+      coinFromNetwork: inputAsset.network.code,
       coinTo: outputCurrency.code,
-      coinToNetwork: outputCurrency.network,
+      coinToNetwork: outputCurrency.network.code,
       amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0
     };
 
@@ -94,11 +100,17 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   };
 
   const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
+    const outputAssetCode = outputCurrency.asset.code;
+    const outputAsset = outputTokensList.find(item => item.code === outputAssetCode);
+    if (!isTruthy(outputAsset)) {
+      throw new Error('Selected asset not found');
+    }
+
     const requestData = {
       coinFrom: inputCurrency.code,
-      coinFromNetwork: inputCurrency.network,
-      coinTo: outputCurrency.asset.code,
-      coinToNetwork: outputCurrency.asset.network,
+      coinFromNetwork: inputCurrency.network.code,
+      coinTo: outputAssetCode,
+      coinToNetwork: outputAsset.network.code,
       amount: isDefined(values.coinFrom.amount) ? values.coinFrom.amount.toNumber() : 0
     };
 

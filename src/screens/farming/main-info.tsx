@@ -6,58 +6,63 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { EarnOpportunitiesMainInfo } from 'src/components/earn-opportunities-main-info';
-import { DEFAULT_AMOUNT, PENNY } from 'src/config/earn-opportunities-main-info';
+import { DEFAULT_AMOUNT, DEFAULT_EXCHANGE_RATE, PENNY } from 'src/config/earn-opportunities-main-info';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useFarmStoreSelector } from 'src/store/farms/selectors';
+import { useAllFarmsSelector, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
+import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 export const MainInfo: FC = () => {
   const dispatch = useDispatch();
-
-  const farms = useFarmStoreSelector();
+  const farms = useAllFarmsSelector();
+  const stakes = useLastFarmsStakesSelector();
   const selectedAccount = useSelectedAccountSelector();
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
 
-  const farmsWithEndedRewards = useMemo(() => {
+  const stakesEntriesWithEndedRewards = useMemo(() => {
     const now = Date.now();
 
-    return Object.entries(farms.lastStakes).filter(
-      ([, stakeRecord]) =>
+    return Object.entries(stakes).filter(
+      ([contractAddress, stakeRecord]) =>
         new BigNumber(stakeRecord?.claimableRewards ?? 0).isGreaterThan(DEFAULT_AMOUNT) &&
-        (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now
+        (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now &&
+        farms.data.some(farm => farm.item.contractAddress === contractAddress)
     );
-  }, [farms]);
+  }, [stakes, farms]);
 
   const { netApy, totalStakedAmountInFiat } = useUserFarmingStats();
 
-  const totalClaimableRewardsInUsd = useMemo(() => {
+  const totalClaimableRewardsInFiat = useMemo(() => {
     let result = new BigNumber(PENNY);
 
-    farmsWithEndedRewards.forEach(([address, stakeRecord]) => {
-      const farm = farms.allFarms.data.find(_farm => _farm.item.contractAddress === address);
+    stakesEntriesWithEndedRewards.forEach(([address, stakeRecord]) => {
+      const farm = farms.data.find(_farm => _farm.item.contractAddress === address);
 
       if (isDefined(farm)) {
         result = result.plus(
           mutezToTz(
             new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT),
             farm.item.rewardToken.metadata.decimals
-          ).multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_AMOUNT)
+          )
+            .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_AMOUNT)
+            .multipliedBy(fiatToUsdExchangeRate ?? DEFAULT_EXCHANGE_RATE)
         );
       }
     });
 
     return result;
-  }, [farms, farmsWithEndedRewards]);
+  }, [farms, stakesEntriesWithEndedRewards, fiatToUsdExchangeRate]);
 
   const areSomeRewardsClaimable = useMemo(
-    () => !isEmptyArray(farmsWithEndedRewards) && totalClaimableRewardsInUsd.isGreaterThan(PENNY),
-    [farmsWithEndedRewards, totalClaimableRewardsInUsd]
+    () => !isEmptyArray(stakesEntriesWithEndedRewards) && totalClaimableRewardsInFiat.isGreaterThan(PENNY),
+    [stakesEntriesWithEndedRewards, totalClaimableRewardsInFiat]
   );
 
   const navigateHarvestFarm = useCallback(
@@ -74,7 +79,7 @@ export const MainInfo: FC = () => {
 
   const claimAllRewards = async () => {
     const claimAllRewardParams: Array<TransferParams> = await Promise.all(
-      farmsWithEndedRewards.map(([address, stakeRecord]) =>
+      stakesEntriesWithEndedRewards.map(([address, stakeRecord]) =>
         tezos.wallet
           .at(address)
           .then(contractInstance => contractInstance.methods.claim(stakeRecord.lastStakeId).toTransferParams())
@@ -95,7 +100,7 @@ export const MainInfo: FC = () => {
     <EarnOpportunitiesMainInfo
       claimAllRewards={claimAllRewards}
       shouldShowClaimRewardsButton
-      totalClaimableRewardsInUsd={totalClaimableRewardsInUsd}
+      totalClaimableRewardsInFiat={totalClaimableRewardsInFiat}
       netApy={netApy}
       totalStakedAmountInFiat={totalStakedAmountInFiat}
     />

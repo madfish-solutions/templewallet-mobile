@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { StyleProp, ViewStyle, TextStyle } from 'react-native';
 
 import { Button } from '../../button';
 import { ButtonStyleConfig } from '../../button-style.config';
@@ -7,17 +8,34 @@ import { useButtonLargeSecondaryStyleConfig } from './button-large-secondary.sty
 
 interface Props extends ButtonLargeProps {
   activeColorStyleConfig?: ButtonStyleConfig['activeColorConfig'];
+  textStyle?: StyleProp<TextStyle>;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const ButtonLargeSecondary: FC<Props> = props => {
+export const ButtonLargeSecondary: FC<Props> = ({
+  activeColorStyleConfig,
+  textStyle,
+  buttonStyle,
+  style,
+  ...props
+}) => {
   const styleConfig = useButtonLargeSecondaryStyleConfig();
 
-  const finalStyleConfig = props.activeColorStyleConfig
+  const finalStyleConfig = activeColorStyleConfig
     ? {
         ...styleConfig,
-        activeColorConfig: props.activeColorStyleConfig
+        activeColorConfig: activeColorStyleConfig
       }
     : styleConfig;
 
-  return <Button {...props} styleConfig={finalStyleConfig} isFullWidth={true} />;
+  return (
+    <Button
+      {...props}
+      styleConfig={finalStyleConfig}
+      isFullWidth={true}
+      textStyle={textStyle}
+      buttonStyle={buttonStyle}
+      style={style}
+    />
+  );
 };

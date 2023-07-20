@@ -17,7 +17,3 @@ export const savingsInitialState: SavingsState = {
   allSavingsItems: createEntity([]),
   sortField: EarnOpportunitiesSortFieldEnum.Default
 };
-
-export interface SavingsRootState {
-  savings: SavingsState;
-}

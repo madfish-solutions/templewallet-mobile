@@ -127,7 +127,9 @@ export const CreateNewWallet = () => {
             <ButtonLargePrimary
               title="Create"
               disabled={!isValid}
-              onPress={submitForm}
+              onPress={() => {
+                submitForm();
+              }}
               testID={CreateNewWalletSelectors.createButton}
             />
             <InsetSubstitute type="bottom" />

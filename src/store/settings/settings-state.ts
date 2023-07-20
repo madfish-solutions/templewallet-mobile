@@ -24,6 +24,7 @@ export interface SettingsState {
   isCloudBackupMade: boolean;
   isOnRampPossibility: boolean;
   applicationOpenCounter: number;
+  isEnableAdsBanner: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -42,10 +43,7 @@ export const settingsInitialState: SettingsState = {
   isShowLoader: false,
   isManualBackupMade: true,
   isCloudBackupMade: true,
-  isOnRampPossibility: false,
-  applicationOpenCounter: 0
+  applicationOpenCounter: 0,
+  isEnableAdsBanner: true,
+  isOnRampPossibility: false
 };
-
-export interface SettingsRootState {
-  settings: SettingsState;
-}

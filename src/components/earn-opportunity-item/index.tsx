@@ -1,12 +1,12 @@
 import { noop } from 'lodash-es';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
-import { FormattedAmount } from 'src/components/formatted-amount';
+import { FormattedAmountWithLoader } from 'src/components/formatted-amount-with-loader';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EmptyFn } from 'src/config/general';
@@ -34,6 +34,7 @@ interface Props {
   lastStakeRecord?: UserStakeValueInterface;
   navigateToOpportunity: EmptyFn;
   harvestRewards?: EmptyFn;
+  stakeIsLoading: boolean;
 }
 
 const PERCENTAGE_DECIMALS = 2;
@@ -42,7 +43,8 @@ export const EarnOpportunityItem: FC<Props> = ({
   item,
   lastStakeRecord,
   navigateToOpportunity,
-  harvestRewards = noop
+  harvestRewards = noop,
+  stakeIsLoading
 }) => {
   const { apr, stakedToken, depositExchangeRate, earnExchangeRate, type: itemType, vestingPeriodSeconds } = item;
   const colors = useColors();
@@ -76,6 +78,8 @@ export const EarnOpportunityItem: FC<Props> = ({
     rewardToken.decimals,
     earnExchangeRate
   );
+
+  const renderStatsLoader = useCallback(() => <Text style={styles.attributeValue}>---</Text>, [styles]);
 
   return (
     <View style={[styles.root, styles.mb16]}>
@@ -112,12 +116,20 @@ export const EarnOpportunityItem: FC<Props> = ({
             title="Your deposit:"
             value={
               itemIsFarm ? (
-                <FormattedAmount isDollarValue amount={depositFiatEquivalent} style={styles.attributeValue} />
+                <FormattedAmountWithLoader
+                  isLoading={stakeIsLoading}
+                  isDollarValue
+                  amount={depositFiatEquivalent}
+                  style={styles.attributeValue}
+                  renderLoader={renderStatsLoader}
+                />
               ) : (
-                <FormattedAmount
+                <FormattedAmountWithLoader
+                  isLoading={stakeIsLoading}
                   symbol={stakedToken.metadata.symbol}
                   amount={depositAmount}
                   style={styles.attributeValue}
+                  renderLoader={renderStatsLoader}
                 />
               )
             }
@@ -128,12 +140,20 @@ export const EarnOpportunityItem: FC<Props> = ({
             title="Claimable rewards:"
             value={
               itemIsFarm ? (
-                <FormattedAmount isDollarValue amount={claimableRewardsFiatEquivalent} style={styles.attributeValue} />
+                <FormattedAmountWithLoader
+                  isLoading={stakeIsLoading}
+                  isDollarValue
+                  amount={claimableRewardsFiatEquivalent}
+                  style={styles.attributeValue}
+                  renderLoader={renderStatsLoader}
+                />
               ) : (
-                <FormattedAmount
+                <FormattedAmountWithLoader
+                  isLoading={stakeIsLoading}
                   symbol={rewardToken.symbol}
                   amount={claimableRewardsAmount}
                   style={styles.attributeValue}
+                  renderLoader={renderStatsLoader}
                 />
               )
             }

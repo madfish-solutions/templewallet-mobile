@@ -33,7 +33,7 @@ export interface WithdrawTokenOption {
   amount?: BigNumber;
 }
 
-interface WithdrawFormValues {
+export interface WithdrawFormValues {
   amountOptionIndex: number;
   tokenOption: WithdrawTokenOption;
 }
@@ -67,10 +67,15 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
         return;
       }
 
+      const { tokenOption, amountOptionIndex } = values;
+      const { token } = tokenOption;
+      trackEvent('WITHDRAW_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+        farmAddress: earnOpportunity.contractAddress,
+        token: token.symbol
+      });
+
       const doWithdraw = async () => {
         helpers.setSubmitting(true);
-        const { tokenOption, amountOptionIndex } = values;
-        const { token } = tokenOption;
         const tokenIndex = stakeTokens.findIndex(farmToken => getTokenSlug(farmToken) === getTokenSlug(token));
 
         try {
@@ -86,13 +91,13 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
             navigateAction(ModalsEnum.Confirmation, {
               type: ConfirmationTypeEnum.InternalOperations,
               opParams,
-              testID: 'STAKE_TRANSACTION_SENT'
+              testID: 'WITHDRAW_TRANSACTION_SENT'
             })
           );
           trackEvent('WITHDRAW_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
         } catch (error) {
           showErrorToastByError(error, undefined, true);
-          trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
+          trackEvent('WITHDRAW_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
         } finally {
           helpers.setSubmitting(false);
         }
@@ -102,6 +107,16 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
         void doWithdraw();
       } else {
         const vestingPeriodSeconds = Number(earnOpportunity.vestingPeriodSeconds);
+        const { id, contractAddress } = earnOpportunity;
+        const modalAnswerAnalyticsProperties = isFarm(earnOpportunity)
+          ? {
+              farmId: id,
+              farmContractAddress: contractAddress
+            }
+          : {
+              savingsItemId: id,
+              savingsItemContractAddress: contractAddress
+            };
         doAfterConfirmation(
           vestingPeriodSeconds > SECONDS_IN_DAY
             ? `It is a long-term ${
@@ -112,12 +127,16 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
                 roundingMethod: 'ceil'
               })}. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.`,
           'Withdraw & Claim rewards',
-          () => void doWithdraw()
+          () => {
+            trackEvent('WITHDRAW_MODAL_CONFIRM', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties);
+            void doWithdraw();
+          },
+          () => trackEvent('WITHDRAW_MODAL_CANCEL', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties)
         );
       }
       helpers.setSubmitting(false);
     },
-    [stakeTokens, earnOpportunity, tezos, publicKeyHash, stake, dispatch]
+    [stakeTokens, earnOpportunity, tezos, publicKeyHash, stake, dispatch, trackEvent]
   );
 
   return useFormik<WithdrawFormValues>({

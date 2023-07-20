@@ -1,7 +1,7 @@
 import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { estimateWithdrawTokenOutput } from 'src/apis/quipuswap-staking';
+import { estimateDivestOneCoinOutputs } from 'src/apis/quipuswap-staking';
 import { StableswapFarm, TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
@@ -27,7 +27,7 @@ export const createStableswapWithdrawTransfersParams = async (
   const farmContract = await getReadOnlyContract(farmAddress, tezos);
   const poolContract = await getReadOnlyContract(poolAddress, tezos);
   const depositAmount = new BigNumber(stake.depositAmountAtomic ?? 0);
-  const [tokenOutput] = await estimateWithdrawTokenOutput(tezos, poolContract, [tokenIndex], depositAmount, poolId);
+  const [tokenOutput] = await estimateDivestOneCoinOutputs(tezos, poolAddress, [tokenIndex], depositAmount, poolId);
 
   if (tokenOutput === null) {
     throw new TooLowPoolReservesError();

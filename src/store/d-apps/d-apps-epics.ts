@@ -11,8 +11,8 @@ import { CustomDAppsInfo } from '../../interfaces/custom-dapps-info.interface';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
 import { withUsdToTokenRates } from '../../utils/wallet.utils';
-import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
+import type { RootState } from '../types';
 import {
   loadTokensApyActions,
   abortRequestAction,

@@ -36,6 +36,8 @@ import { WithdrawForm } from './withdraw-form';
 import { useWithdrawFormik } from './withdraw-form/use-withdraw-formik';
 
 const stakeFormFields: Array<keyof StakeFormValues> = ['assetAmount', 'acceptRisks'];
+const tabs = ['Deposit', 'Withdraw'];
+const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
 
 export const ManageEarnOpportunityModal: FC = () => {
   const route = useRoute<RouteProp<ModalsParamList, ModalsEnum.ManageFarmingPool | ModalsEnum.ManageSavingsPool>>();
@@ -123,8 +125,9 @@ export const ManageEarnOpportunityModal: FC = () => {
         <TextSegmentControl
           disabledValuesIndices={disabledTabSwitcherIndices}
           selectedIndex={tabIndex}
-          values={['Deposit', 'Withdraw']}
+          values={tabs}
           onChange={setTabIndex}
+          optionAnalyticsPropertiesFn={tabAnalyticsPropertiesFn}
           testID={ManageEarnOpportunityModalSelectors.tabSwitch}
         />
         {pageIsLoading && (

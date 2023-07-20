@@ -2,15 +2,16 @@ import { useField } from 'formik';
 import { noop } from 'lodash-es';
 import React, { useCallback } from 'react';
 
-import { Dropdown, DropdownProps } from 'src/components/dropdown/dropdown';
-import { EventFn } from 'src/config/general';
+import { Dropdown, DropdownProps, DropdownValueProps } from 'src/components/dropdown/dropdown';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props<T> extends DropdownProps<T>, TestIdProps {
+interface Props<T>
+  extends DropdownProps<T>,
+    TestIdProps,
+    Partial<Pick<DropdownValueProps<T>, 'onValueChange' | 'itemTestIDPropertiesFn'>> {
   name: string;
-  onValueChange?: EventFn<T | undefined>;
 }
 
 export const FormDropdown = <T extends unknown>({
@@ -24,7 +25,8 @@ export const FormDropdown = <T extends unknown>({
   renderActionButtons,
   onValueChange = noop,
   testID,
-  testIDProperties
+  testIDProperties,
+  itemTestIDPropertiesFn
 }: Props<T>) => {
   const [field, meta, helpers] = useField<T | undefined>(name);
 
@@ -50,6 +52,7 @@ export const FormDropdown = <T extends unknown>({
         onValueChange={handleValueChange}
         testID={testID}
         testIDProperties={testIDProperties}
+        itemTestIDPropertiesFn={itemTestIDPropertiesFn}
       />
       <ErrorMessage meta={meta} />
     </>
