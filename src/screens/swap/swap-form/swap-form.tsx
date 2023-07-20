@@ -124,7 +124,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         BURN_ADDREESS,
         tezos
       );
-      allSwapParams.push(...routingFeeOpParams);
+      allSwapParams.push(routingFeeOpParams);
     } else if (isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
       const routingFeeOpParams = await getRoutingFeeTransferParams(
         TEMPLE_TOKEN,
@@ -133,7 +133,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         ROUTING_FEE_ADDRESS,
         tezos
       );
-      allSwapParams.push(...routingFeeOpParams);
+      allSwapParams.push(routingFeeOpParams);
     } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold) {
       const swapToTempleParams = await fetchRoute3SwapParams({
         fromSymbol: fromRoute3Token.symbol,
@@ -166,7 +166,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         BURN_ADDREESS,
         tezos
       );
-      allSwapParams.push(...routingFeeOpParams);
+      allSwapParams.push(routingFeeOpParams);
     } else if (!isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
       const routingFeeOpParams = await getRoutingFeeTransferParams(
         fromRoute3Token,
@@ -175,7 +175,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         ROUTING_FEE_ADDRESS,
         tezos
       );
-      allSwapParams.push(...routingFeeOpParams);
+      allSwapParams.push(routingFeeOpParams);
     }
 
     allSwapParams.push(...route3SwapOpParams);
