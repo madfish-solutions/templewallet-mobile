@@ -1,7 +1,10 @@
 import { BigNumber } from 'bignumber.js';
 import { isNaN } from 'lodash-es';
 
-export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
+export const isPositiveNumber = <T extends BigNumber.Value>(value?: T): value is T =>
+  value != null && new BigNumber(value).isGreaterThan(0);
+
+export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6, showAllDecimalPlaces = false) => {
   if (isNaN(amount.toNumber())) {
     return '';
   }
@@ -15,8 +18,11 @@ export const formatAssetAmount = (amount: BigNumber, decimalPlace = 6) => {
   ) {
     return amount.isNegative() ? `< -${minDisplayedAmount}` : `< ${minDisplayedAmount}`;
   } else {
+    const decimalPlacesToShow = amount.abs().lt(1000) ? decimalPlace : 2;
+    const roundedAmount = amount.decimalPlaces(decimalPlacesToShow, BigNumber.ROUND_DOWN);
+
     return numberWithSpaces(
-      amount.decimalPlaces(amount.abs().lt(1000) ? decimalPlace : 2, BigNumber.ROUND_DOWN).toFixed()
+      showAllDecimalPlaces ? roundedAmount.toFixed(decimalPlacesToShow) : roundedAmount.toFixed()
     );
   }
 };

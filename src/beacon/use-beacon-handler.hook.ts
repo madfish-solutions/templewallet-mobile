@@ -1,7 +1,8 @@
 import { Serializer } from '@airgap/beacon-sdk';
 import { useEffect } from 'react';
 import { EmitterSubscription, Linking } from 'react-native';
-import { URL } from 'react-native-url-polyfill';
+
+import { getUrlQueryParams } from 'src/utils/url.utils';
 
 import { EmptyFn, EventFn } from '../config/general';
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
@@ -17,7 +18,7 @@ export const beaconDeepLinkHandler = async (
   onError: EventFn<string>
 ) => {
   try {
-    const searchParams = new URL(url ?? '').searchParams;
+    const searchParams = getUrlQueryParams(url ?? '');
     const type = searchParams.get('type');
     const data = searchParams.get('data');
 

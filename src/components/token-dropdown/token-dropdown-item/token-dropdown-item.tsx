@@ -19,6 +19,8 @@ interface Props {
   token?: TokenInterface;
   actionIconName?: IconNameEnum;
   isShowBalance?: boolean;
+  isShowBalanceLoading?: boolean;
+  isShowName?: boolean;
   iconSize?: number;
 }
 
@@ -26,6 +28,8 @@ export const TokenDropdownItem: FC<Props> = ({
   token = emptyToken,
   actionIconName,
   isShowBalance = true,
+  isShowBalanceLoading = false,
+  isShowName = true,
   iconSize = formatSize(40)
 }) => {
   const styles = useTokenDropdownItemStyles();
@@ -64,7 +68,11 @@ export const TokenDropdownItem: FC<Props> = ({
             <Divider size={formatSize(4)} />
             {isShowBalance && (
               <HideBalance style={styles.balance}>
-                <AssetValueText asset={token} amount={token?.balance} showSymbol={false} />
+                {isShowBalanceLoading ? (
+                  '---'
+                ) : (
+                  <AssetValueText asset={token} amount={token?.balance} showSymbol={false} />
+                )}
               </HideBalance>
             )}
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
@@ -72,10 +80,10 @@ export const TokenDropdownItem: FC<Props> = ({
         </View>
 
         <View style={styles.infoRow}>
-          <Text {...getTruncatedProps(styles.name)}>{token.name}</Text>
+          {isShowName && <Text {...getTruncatedProps(styles.name)}>{token.name}</Text>}
 
           <View style={styles.rightContainer}>
-            <Divider size={formatSize(4)} />
+            {isShowName && <Divider size={formatSize(4)} />}
             {isShowBalance && (
               <HideBalance
                 style={[
@@ -83,7 +91,11 @@ export const TokenDropdownItem: FC<Props> = ({
                   conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
                 ]}
               >
-                <AssetValueText asset={token} convertToDollar amount={token?.balance} />
+                {isShowBalanceLoading ? (
+                  '---'
+                ) : (
+                  <AssetValueText asset={token} convertToDollar amount={token?.balance} />
+                )}
               </HideBalance>
             )}
           </View>

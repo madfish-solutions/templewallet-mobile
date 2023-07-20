@@ -7,6 +7,7 @@ export interface Hop {
   amount_opt: BigNumber | null;
   dex_id: number;
   code: number;
+  params: string;
 }
 
 export interface Route3SwapParamsRequestRaw {

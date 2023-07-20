@@ -4,8 +4,10 @@ import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
+import { DataUriImage } from 'src/components/data-uri-image';
 import { isIOS } from 'src/config/system';
-import { formatSizeScaled } from 'src/styles/format-size';
+import { formatSize } from 'src/styles/format-size';
+import { isImgUriDataUri } from 'src/utils/image.utils';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -19,7 +21,7 @@ interface Props {
 const flagWidth = 21;
 const flagHeight = 15;
 
-export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(32) }) => {
+export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSize(32) }) => {
   const [isFailed, setIsFailed] = useState(false);
   const [loadedIconUri, setLoadedIconUri] = useState('');
   const styles = useStaticTokenIconStyles();
@@ -53,24 +55,28 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSizeScaled(3
     return <Icon name={IconNameEnum.NoNameToken} size={size} />;
   }
 
+  if (uri.endsWith('.svg')) {
+    return (
+      <View style={[styles.center, { width: size, height: size, borderRadius: size / 2 }]}>
+        <SvgUri
+          width={isMoonpayIcon ? size : flagWidth * flagScaleFactor}
+          height={isMoonpayIcon ? size : flagHeight * flagScaleFactor}
+          uri={uri}
+          style={svgImageStyle}
+          onLoad={handleLoad}
+          onError={handleError}
+        />
+      </View>
+    );
+  }
+
+  if (isImgUriDataUri(uri)) {
+    return <DataUriImage width={size} height={size} dataUri={uri} />;
+  }
+
   return (
-    <>
-      {uri.endsWith('.svg') ? (
-        <View style={[styles.center, { width: size, height: size, borderRadius: size / 2 }]}>
-          <SvgUri
-            width={isMoonpayIcon ? size : flagWidth * flagScaleFactor}
-            height={isMoonpayIcon ? size : flagHeight * flagScaleFactor}
-            uri={uri}
-            style={svgImageStyle}
-            onLoad={handleLoad}
-            onError={handleError}
-          />
-        </View>
-      ) : (
-        <View style={[styles.container, { borderRadius: size / 2 }]}>
-          <FastImage style={imageStyle} source={{ uri }} onLoad={handleLoad} onError={handleError} />
-        </View>
-      )}
-    </>
+    <View style={[styles.container, { borderRadius: size / 2 }]}>
+      <FastImage style={imageStyle} source={{ uri }} onLoad={handleLoad} onError={handleError} />
+    </View>
   );
 };

@@ -25,6 +25,7 @@ import { useAccountsListSelector } from '../../../../store/wallet/wallet-selecto
 import { formatSize } from '../../../../styles/format-size';
 import { showSuccessToast } from '../../../../toast/toast.utils';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
+import { SignPayloadRequestConfirmationSelectors } from './sign-payload-request-confirmation.selectors';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 
 interface Props {
@@ -96,9 +97,19 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
         </Text>
       </ScreenContainer>
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
+        <ButtonLargeSecondary
+          title="Cancel"
+          disabled={isLoading}
+          onPress={goBack}
+          testID={SignPayloadRequestConfirmationSelectors.cancelButton}
+        />
         <Divider size={formatSize(16)} />
-        <ButtonLargePrimary title="Sign" disabled={isLoading} onPress={() => confirmRequest(message)} />
+        <ButtonLargePrimary
+          title="Sign"
+          disabled={isLoading}
+          onPress={() => confirmRequest(message)}
+          testID={SignPayloadRequestConfirmationSelectors.signButton}
+        />
       </ModalButtonsContainer>
     </>
   );

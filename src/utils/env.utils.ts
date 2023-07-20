@@ -1,6 +1,10 @@
 // eslint-disable-next-line import/no-named-as-default
 import Config from 'react-native-config';
 
+import { version } from '../../package.json';
+
+export const APP_VERSION = version;
+
 const getEnv = (key: string): string => Config[key] ?? '';
 
 export const READ_ONLY_SIGNER_PUBLIC_KEY = getEnv('READ_ONLY_SIGNER_PUBLIC_KEY');
@@ -17,6 +21,8 @@ export const TEMPLE_WALLET_EVERSTAKE_LINK_ID = getEnv('TEMPLE_WALLET_EVERSTAKE_L
 export const TEMPLE_WALLET_UTORG_SID = getEnv('TEMPLE_WALLET_UTORG_SID');
 
 export const TEMPLE_WALLET_API_URL = getEnv('TEMPLE_WALLET_API_URL');
+export const TEMPLE_WALLET_STAKING_API_URL = getEnv('TEMPLE_WALLET_STAKING_API_URL');
+export const TEMPLE_WALLET_STATIC_API_URL = getEnv('TEMPLE_WALLET_STATIC_API_URL');
 export const TEZOS_METADATA_API_URL = getEnv('TEZOS_METADATA_API_URL');
 export const TEZOS_DEXES_API_URL = getEnv('TEZOS_DEXES_API_URL');
 

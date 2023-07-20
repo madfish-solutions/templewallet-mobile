@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { DelegateDisclaimer } from 'src/components/delegate-disclaimer/delegate-disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
@@ -20,14 +21,19 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
+import { HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { tzToMutez } from 'src/utils/tezos.util';
 
+import { ConfirmationModalSelectors } from '../confirmation-modal.selectors';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
 import { useFeeForm } from './hooks/use-fee-form.hook';
 import { useOperationsConfirmationStyles } from './operations-confirmation.styles';
 import { OperationsPreview } from './operations-preview/operations-preview';
+
+const disclaimerMessage =
+  'By delegating for this Baker, you agree that all of your rewards will go to support Ukraine. Thank you for your contribution!';
 
 interface Props extends TestIdProps {
   sender: AccountInterface;
@@ -112,6 +118,14 @@ export const OperationsConfirmation: FC<Props> = ({
               <LoadingPlaceholder text="Operation is loading..." />
             ) : (
               <>
+                {opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === HELP_UKRAINE_BAKER_ADDRESS && (
+                  <>
+                    <Divider size={formatSize(12)} />
+                    <DelegateDisclaimer title="This Baker helps Ukraine 🇺🇦" text={disclaimerMessage} />
+                    <Divider size={formatSize(28)} />
+                  </>
+                )}
+
                 <Text style={styles.sectionTitle}>Account</Text>
                 <Divider />
 
@@ -142,12 +156,18 @@ export const OperationsConfirmation: FC<Props> = ({
           </ScreenContainer>
 
           <ModalButtonsContainer>
-            <ButtonLargeSecondary title="Back" disabled={isLoading} onPress={goBack} />
+            <ButtonLargeSecondary
+              title="Back"
+              disabled={isLoading}
+              onPress={goBack}
+              testID={ConfirmationModalSelectors.backButton}
+            />
             <Divider size={formatSize(16)} />
             <ButtonLargePrimary
               title="Confirm"
               disabled={estimations.isLoading || isLoading || !isValid}
               onPress={submitForm}
+              testID={ConfirmationModalSelectors.confirmButton}
             />
           </ModalButtonsContainer>
         </>

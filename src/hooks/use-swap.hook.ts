@@ -6,7 +6,7 @@ import { Route3Chain, Route3ContractInterface, Route3Token } from 'src/interface
 import { ROUTE3_CONTRACT } from 'src/screens/swap/config';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { mapToRoute3ExecuteHops } from 'src/utils/route3.util';
-import { getTransferPermissions } from 'src/utils/swap-permissions.util';
+import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 

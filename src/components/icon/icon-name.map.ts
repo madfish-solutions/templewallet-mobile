@@ -14,6 +14,7 @@ import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BellIcon from './assets/bell.svg';
+import BinanceIcon from './assets/binance.svg';
 import BookOpenIcon from './assets/book-open.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
@@ -21,6 +22,7 @@ import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
+import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
@@ -39,10 +41,12 @@ import Delegate2Icon from './assets/delegate-2.svg';
 import Delegate3Icon from './assets/delegate-3.svg';
 import Delegate4Icon from './assets/delegate-4.svg';
 import DetailsArrowDownIcon from './assets/details-arrow-down.svg';
+import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
+import EarnIcon from './assets/earn.svg';
 import EditIcon from './assets/edit.svg';
 import EndorsementsIcon from './assets/endorsements.svg';
 import ExolixIcon from './assets/exolix.svg';
@@ -57,6 +61,7 @@ import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
 import GoogleDriveIcon from './assets/google-drive.svg';
+import HelpCircleIcon from './assets/help-circle.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
@@ -87,6 +92,7 @@ import PlusIcon from './assets/plus-icon.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerBoldIcon from './assets/qr-scanner-bold.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
+import QsEarnSource from './assets/qs-earn-source.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
@@ -96,6 +102,9 @@ import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
 import ShoppingCardIcon from './assets/shopping-card.svg';
+import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
+import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
+import SmileIcon from './assets/smile.svg';
 import DiscordIcon from './assets/socials/discord.svg';
 import RedditIcon from './assets/socials/reddit.svg';
 import TelegramIcon from './assets/socials/telegram.svg';
@@ -144,6 +153,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
+  [IconNameEnum.DetailsArrowRight]: DetailsArrowRightIcon,
   [IconNameEnum.OwnBlocks]: OwnBlocksIcon,
   [IconNameEnum.Endorsements]: EndorsementsIcon,
   [IconNameEnum.MissedEndorsements]: MissedEndorsementsIcon,
@@ -165,6 +175,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
+  [IconNameEnum.HelpCircle]: HelpCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
@@ -202,6 +213,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.AliceBob]: AliceBobIcon,
   [IconNameEnum.Utorg]: UtorgIcon,
+  [IconNameEnum.Binance]: BinanceIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
@@ -222,6 +234,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
+  [IconNameEnum.ChevronUp]: ChevronUpIcon,
   [IconNameEnum.NoResult]: NoResultIcon,
   [IconNameEnum.News]: NewsIcon,
   [IconNameEnum.TempleLogo]: TempleLogoIcon,
@@ -265,6 +278,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.UkraineIcon]: UkraineIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.Market]: MarketIcon,
+  [IconNameEnum.Earn]: EarnIcon,
   [IconNameEnum.Buy]: BuyIcon,
   [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,
   [IconNameEnum.CreditCard]: CreditCardIcon,
@@ -272,5 +286,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
-  [IconNameEnum.NFT]: NFT
+  [IconNameEnum.NFT]: NFT,
+  [IconNameEnum.QsEarnSource]: QsEarnSource,
+  [IconNameEnum.Smile]: SmileIcon,
+  [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
 };

@@ -97,5 +97,8 @@ export const useExolixStyles = createUseStyles(({ colors, typography }) => ({
     alignItems: 'center',
     color: colors.destructive,
     justifyContent: 'center'
+  },
+  loadingText: {
+    ...typography.caption13Regular
   }
 }));

@@ -25,15 +25,6 @@ export const CollectiblesHome = () => {
     <>
       <HeaderCard hasInsetTop={true} style={styles.headerCard}>
         <View style={[styles.headerContainer, styles.widthPaddingHorizontal]}>
-          <View style={styles.actionsContainer}>
-            {/*<TouchableIcon*/}
-            {/*  name={isSearchMode ? IconNameEnum.XSearch : IconNameEnum.Search}*/}
-            {/*  onPress={() => setIsSearchMode(!isSearchMode)}*/}
-            {/*/>*/}
-            {/*<Divider size={formatSize(16)} />*/}
-            {/*<TouchableIcon name={IconNameEnum.Hummer} disabled={true} color={colors.disabled} onPress={emptyFn} />*/}
-          </View>
-
           <TouchableOpacity style={styles.walletNavigationButton} onPress={() => navigate(ScreensEnum.Wallet)}>
             <Text style={styles.walletNavigationButtonText}>To wallet</Text>
             <Icon name={IconNameEnum.ArrowRight} size={formatSize(16)} />

@@ -6,14 +6,16 @@ import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { BiometryAvailabilityProvider } from '../biometry/biometry-availability.provider';
-import { HideBalanceProvider } from '../hooks/hide-balance/hide-balance.provider';
-import { HideBootsplashProvider } from '../hooks/use-hide-bootsplash';
-import { RootStackScreen } from '../navigator/root-stack';
-import { AppLockContextProvider } from '../shelter/app-lock/app-lock';
-import { persistor, store } from '../store/store';
-import { ToastProvider } from '../toast/toast-provider';
-import { initSentry } from '../utils/sentry.utils';
+import { BiometryAvailabilityProvider } from 'src/biometry/biometry-availability.provider';
+import { HideBalanceProvider } from 'src/hooks/hide-balance/hide-balance.provider';
+import { HideBootsplashProvider } from 'src/hooks/use-hide-bootsplash';
+import { RootStackScreen } from 'src/navigator/root-stack';
+import { AppLockContextProvider } from 'src/shelter/app-lock/app-lock';
+import { persistor, store } from 'src/store';
+import { TypographyProvider } from 'src/styles/typography.context';
+import { ToastProvider } from 'src/toast/toast-provider';
+import { initSentry } from 'src/utils/sentry.utils';
+
 import { AppStyles } from './app.styles';
 
 initSentry();
@@ -28,10 +30,12 @@ export const App = () => (
           <HideBalanceProvider>
             <AppLockContextProvider>
               <SafeAreaProvider>
-                <HideBootsplashProvider>
-                  <RootStackScreen />
-                </HideBootsplashProvider>
-                <ToastProvider />
+                <TypographyProvider>
+                  <HideBootsplashProvider>
+                    <RootStackScreen />
+                  </HideBootsplashProvider>
+                  <ToastProvider />
+                </TypographyProvider>
               </SafeAreaProvider>
             </AppLockContextProvider>
           </HideBalanceProvider>

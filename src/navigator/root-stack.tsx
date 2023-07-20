@@ -2,10 +2,10 @@ import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { createRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
-import { isIOS } from 'src/config/system';
 import { useStorageMigration } from 'src/hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
@@ -13,6 +13,7 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useQuickActions } from 'src/hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from 'src/hooks/use-reset-keychain-on-install.hook';
 import { useResetLoading } from 'src/hooks/use-reset-loading.hook';
+import { useTokensMetadataFixtures } from 'src/hooks/use-tokens-metadata-fixtures';
 import { useWhitelist } from 'src/hooks/use-whitelist.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
 import { AddLiquidityModal } from 'src/modals/add-liquidity-modal/add-liquidity-modal';
@@ -24,6 +25,8 @@ import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-mo
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from 'src/modals/import-account-modal/import-account-modal';
+import { ManageFarmingPoolModal } from 'src/modals/manage-farming-pool-modal';
+import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
 import { RemoveLiquidityModal } from 'src/modals/remove-liquidity-modal/remove-liquidity-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
@@ -37,6 +40,7 @@ import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
@@ -56,6 +60,8 @@ type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
+  const dispatch = useDispatch();
+
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
@@ -63,6 +69,7 @@ export const RootStackScreen = () => {
 
   useStorageMigration();
 
+  useTokensMetadataFixtures();
   useWhitelist();
   useQuickActions();
   useResetLoading();
@@ -80,6 +87,8 @@ export const RootStackScreen = () => {
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+
+  const beforeRemove = () => dispatch(shouldShowNewsletterModalAction(false));
 
   return (
     <NavigationContainer
@@ -113,7 +122,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
               component={SelectBakerModal}
-              options={{ ...useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`), gestureEnabled: isIOS }}
+              options={useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`, true)}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}
@@ -174,6 +183,17 @@ export const RootStackScreen = () => {
               name={ModalsEnum.EditContact}
               component={EditContactModal}
               options={useModalOptions('Edit contact')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ManageFarmingPool}
+              component={ManageFarmingPoolModal}
+              options={useModalOptions('Manage farming pool', true)}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.Newsletter}
+              component={Newsletter}
+              options={useModalOptions('Newsletter')}
+              listeners={{ beforeRemove }}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

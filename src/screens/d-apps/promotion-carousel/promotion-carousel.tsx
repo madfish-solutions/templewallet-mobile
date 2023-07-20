@@ -9,6 +9,7 @@ import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
+import { useIsEnabledAdsBannerSelector } from '../../../store/settings/settings-selectors';
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { COMMON_PROMOTION_CAROUSEL_DATA } from './promotion-carousel.data';
 import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
@@ -19,6 +20,7 @@ export const PromotionCarousel = () => {
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const styles = usePromotionCarouselStyles();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
+  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -34,7 +36,7 @@ export const PromotionCarousel = () => {
       );
     }
 
-    if (partnersPromotionEnabled && !promotionErrorOccurred) {
+    if (partnersPromotionEnabled && !promotionErrorOccurred && !isEnabledAdsBanner) {
       result.unshift(
         <OptimalPromotionItem
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
@@ -47,7 +49,7 @@ export const PromotionCarousel = () => {
     }
 
     return result;
-  }, [activePromotion, partnersPromotionEnabled, promotionErrorOccurred, styles]);
+  }, [activePromotion, partnersPromotionEnabled, promotionErrorOccurred, styles, isEnabledAdsBanner]);
 
   const { layoutWidth, handleLayout } = useLayoutSizes();
   const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);

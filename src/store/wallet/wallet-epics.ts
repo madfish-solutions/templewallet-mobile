@@ -26,9 +26,9 @@ import { getTransferParams$ } from 'src/utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { loadSelectedBakerActions } from '../baking/baking-actions';
-import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
 import { loadTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
+import type { RootState } from '../types';
 import {
   addTokenAction,
   highPriorityLoadTokenBalanceAction,

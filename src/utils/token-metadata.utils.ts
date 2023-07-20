@@ -1,21 +1,20 @@
 import { BigNumber } from 'bignumber.js';
 import memoize from 'mem';
-import { from, Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
-import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
-
-import { tezosMetadataApi, whitelistApi } from '../api.service';
-import { UNKNOWN_TOKEN_SYMBOL } from '../config/general';
-import { RootState } from '../store/create-store';
-import { TokensMetadataRootState } from '../store/tokens-metadata/tokens-metadata-state';
-import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
+import { tezosMetadataApi, whitelistApi } from 'src/api.service';
+import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
+import type { RootState } from 'src/store/types';
+import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import {
   emptyTokenMetadata,
   TokenMetadataInterface,
   TokenStandardsEnum
-} from '../token/interfaces/token-metadata.interface';
+} from 'src/token/interfaces/token-metadata.interface';
+import type { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+
 import { getDollarValue } from './balance.utils';
 import { FiatCurrenciesEnum } from './exchange-rate.util';
 import { isDefined } from './is-defined';
@@ -140,7 +139,7 @@ export const getTokenMetadata = (state: RootState, slug: string) => {
 };
 
 export const withMetadataSlugs =
-  <T>(state$: Observable<TokensMetadataRootState>) =>
+  <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
@@ -164,6 +163,14 @@ export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetad
 
 export const loadTokenMetadata$ = memoize(
   (address: string, id = 0): Observable<TokenMetadataInterface> => {
+    const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
+      token => token.address === address && token.id === id
+    );
+
+    if (isDefined(overridenTokenMetadata)) {
+      return of(overridenTokenMetadata);
+    }
+
     const slug = `${address}_${id}`;
     console.log('Loading metadata for:', slug);
 
@@ -182,8 +189,11 @@ export const loadTokensMetadata$ = memoize(
         data
           .map((token, index) => {
             const [address, id] = slugs[index].split('_');
+            const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
+              token => token.address === address && token.id === Number(id)
+            );
 
-            return transformDataToTokenMetadata(token, address, Number(id));
+            return overridenTokenMetadata ?? transformDataToTokenMetadata(token, address, Number(id));
           })
           .filter(isDefined)
       )

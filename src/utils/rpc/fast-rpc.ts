@@ -1,8 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { HttpBackend } from '@taquito/http-utils';
 import { RpcClient } from '@taquito/rpc';
 import memoize from 'mem';
 
 import { isDefined } from '../is-defined';
+import { NoVespaiachHttpBackend } from './no-vespaiach-http-backend';
 
 interface RPCOptions {
   block: string;
@@ -16,6 +18,10 @@ class FastRpcClient extends RpcClient {
     hash: string;
     refreshedAt: number; // timestamp
   };
+
+  constructor(url: string, chain?: string, httpBackend?: HttpBackend) {
+    super(url, chain, httpBackend ?? new NoVespaiachHttpBackend());
+  }
 
   async getBlockHash(opts?: RPCOptions) {
     await this.loadLatestBlock(opts);

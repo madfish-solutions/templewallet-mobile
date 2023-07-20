@@ -8,4 +8,4 @@ export const loadPartnersPromoActions = createActions<OptimalPromotionAdType, Op
   'partnersPromo/LOAD_PARTNERS_PROMOTION'
 );
 
-export const setIsPromotionEnabledAction = createAction<boolean>('partnersPromo/SET_IS_PROMOTION_ENABLED');
+export const togglePartnersPromotionAction = createAction<boolean>('partnersPromo/SET_IS_PROMOTION_ENABLED');

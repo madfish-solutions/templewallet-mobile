@@ -10,7 +10,9 @@ import { BeaconHandler } from '../../beacon/beacon-handler';
 import { CustomDAppsInfo } from '../../interfaces/custom-dapps-info.interface';
 import { StacksEnum } from '../../navigator/enums/stacks.enum';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
+import { withUsdToTokenRates } from '../../utils/wallet.utils';
 import { navigateAction } from '../root-state.actions';
+import type { RootState } from '../types';
 import {
   loadTokensApyActions,
   abortRequestAction,
@@ -18,7 +20,7 @@ import {
   loadPermissionsActions,
   removePermissionAction
 } from './d-apps-actions';
-import { fetchUSDTApy$, fetchKUSDApy$, fetchTzBtcApy$ } from './utils';
+import { fetchUSDTApy$, fetchKUSDApy$, fetchTzBtcApy$, fetchUBTCApr$, fetchUUSDCApr$, fetchYOUApr$ } from './utils';
 
 const loadPermissionsEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -103,13 +105,19 @@ const loadDAppsListEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokensApyEpic = (action$: Observable<Action>) =>
+const loadTokensApyEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokensApyActions.submit),
-    switchMap(() =>
-      forkJoin([fetchUSDTApy$(), fetchTzBtcApy$(), fetchKUSDApy$()]).pipe(
-        map(responses => loadTokensApyActions.success(Object.assign({}, ...responses)))
-      )
+    withUsdToTokenRates(state$),
+    switchMap(([, tokenUsdExchangeRates]) =>
+      forkJoin([
+        fetchUSDTApy$(),
+        fetchTzBtcApy$(),
+        fetchKUSDApy$(),
+        fetchUBTCApr$(),
+        fetchUUSDCApr$(),
+        fetchYOUApr$(tokenUsdExchangeRates)
+      ]).pipe(map(responses => loadTokensApyActions.success(Object.assign({}, ...responses))))
     )
   );
 

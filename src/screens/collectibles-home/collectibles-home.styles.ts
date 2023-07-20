@@ -13,10 +13,6 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  actionsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
   walletNavigationButton: {
     flexDirection: 'row',
     alignItems: 'center'

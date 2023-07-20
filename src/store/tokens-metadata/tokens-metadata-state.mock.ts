@@ -8,5 +8,6 @@ export const mockTokensMetadataState: TokensMetadataState = {
     [getTokenSlug(mockFA1_2TokenMetadata)]: mockFA1_2TokenMetadata,
     [getTokenSlug(mockFA2TokenMetadata)]: mockFA2TokenMetadata
   },
-  addTokenSuggestion: createEntity(mockFA1_2TokenMetadata)
+  addTokenSuggestion: createEntity(mockFA1_2TokenMetadata),
+  knownSvgs: {}
 };

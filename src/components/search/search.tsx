@@ -15,14 +15,23 @@ import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { useSearchStyles } from './search.styles';
 
 interface Props extends TestIdProps {
+  placeholder?: string;
   dividerSize?: number;
   onChange: EventFn<string | undefined>;
 }
 
-export const Search: FC<Props> = ({ dividerSize = 24, testID, onChange, children }) => {
+export const Search: FC<Props> = ({
+  dividerSize = 24,
+  placeholder = 'Search token',
+  testID,
+  testIDProperties,
+  onChange,
+  children
+}) => {
   const colors = useColors();
-  const styles = useSearchStyles();
   const { trackEvent } = useAnalytics();
+
+  const styles = useSearchStyles();
 
   const debouncedOnChange = useMemo(
     () =>
@@ -39,6 +48,9 @@ export const Search: FC<Props> = ({ dividerSize = 24, testID, onChange, children
     trackEvent(testID, AnalyticsEventCategory.FormChange, { value: null });
     setIsSearchMode(false);
     onChange(undefined);
+    if (Boolean(testID)) {
+      trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+    }
   };
 
   return (
@@ -48,7 +60,7 @@ export const Search: FC<Props> = ({ dividerSize = 24, testID, onChange, children
           <TextInput
             autoFocus={true}
             style={styles.searchInput}
-            placeholder="Search token"
+            placeholder={placeholder}
             placeholderTextColor={colors.gray1}
             onChangeText={debouncedOnChange}
           />

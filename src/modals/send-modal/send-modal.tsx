@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { Formik } from 'formik';
-import React, { FC, useMemo, useState } from 'react';
+import { FormikProvider, useFormik } from 'formik';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -17,6 +17,7 @@ import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn
 import { FormAddressInput } from 'src/form/form-address-input';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
+import { useAddressFieldAnalytics } from 'src/hooks/use-address-field-analytics.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -52,16 +53,16 @@ export const SendModal: FC = () => {
   const styles = useSendModalStyles();
   const assetsList = useVisibleAssetListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true, tezosToken);
+  const leadingAssets = useMemo(() => [tezosToken], [tezosToken]);
+
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true, leadingAssets);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit(selectedAccount);
-  const resolver = tezosDomainsResolver(tezos);
+  const resolver = useMemo(() => tezosDomainsResolver(tezos), [tezos]);
 
   const isTransferDisabled = filteredReceiversList.length === 0;
   const recipient = filteredReceiversList[0]?.data[0];
-
-  usePageAnalytic(ModalsEnum.Send);
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
@@ -76,121 +77,138 @@ export const SendModal: FC = () => {
     [filteredAssetsList]
   );
 
-  const onSubmit = async ({
-    assetAmount: { asset, amount },
-    receiverPublicKeyHash,
-    recipient,
-    transferBetweenOwnAccounts
-  }: SendModalFormValues) => {
-    if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
-      setIsLoading(true);
+  const onSubmit = useCallback(
+    async ({
+      assetAmount: { asset, amount },
+      receiverPublicKeyHash,
+      recipient,
+      transferBetweenOwnAccounts
+    }: SendModalFormValues) => {
+      if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
+        setIsLoading(true);
 
-      const address = await resolver.resolveNameToAddress(receiverPublicKeyHash).catch(() => null);
-      setIsLoading(false);
-      if (address !== null) {
-        receiverPublicKeyHash = address;
-      } else if (!isValidAddress(receiverPublicKeyHash)) {
-        showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
+        const address = await resolver.resolveNameToAddress(receiverPublicKeyHash).catch(() => null);
+        setIsLoading(false);
+        if (address !== null) {
+          receiverPublicKeyHash = address;
+        } else if (!isValidAddress(receiverPublicKeyHash)) {
+          showErrorToast({ title: 'Error!', description: 'Your address has been expired' });
 
-        return;
+          return;
+        }
       }
-    }
 
-    void (isDefined(amount) &&
-      dispatch(
-        sendAssetActions.submit({
-          asset,
-          receiverPublicKeyHash: transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash,
-          amount: amount.toNumber()
-        })
-      ),
-    !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash)));
-  };
+      void (isDefined(amount) &&
+        dispatch(
+          sendAssetActions.submit({
+            asset,
+            receiverPublicKeyHash: transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash,
+            amount: amount.toNumber()
+          })
+        ),
+      !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash)));
+    },
+    [resolver, dispatch]
+  );
+
+  const formik = useFormik({
+    initialValues: sendModalInitialValues,
+    validationSchema: sendModalValidationSchema,
+    onSubmit,
+    enableReinitialize: true
+  });
+  const { errors, values, submitForm } = formik;
+
+  usePageAnalytic(ModalsEnum.Send);
+  const { onBlur: handleAddressInputBlur } = useAddressFieldAnalytics(
+    'RECIPIENT_NETWORK',
+    'receiverPublicKeyHash' as const,
+    formik
+  );
 
   return (
-    <Formik
-      initialValues={sendModalInitialValues}
-      enableReinitialize={true}
-      validationSchema={sendModalValidationSchema}
-      onSubmit={onSubmit}
-    >
-      {({ values, submitForm }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <ModalStatusBar />
+    <FormikProvider value={formik}>
+      <ScreenContainer isFullScreenMode={true}>
+        <ModalStatusBar />
 
-          <View>
-            <Divider size={formatSize(8)} />
-            <FormAssetAmountInput
-              maxButton
-              name="assetAmount"
-              label="Asset"
-              assetsList={filteredAssetsList}
-              isSearchable
-              setSearchValue={setSearchValue}
-              testID={SendModalSelectors.assetInput}
-            />
-            <Divider />
+        <View>
+          <Divider size={formatSize(8)} />
+          <FormAssetAmountInput
+            maxButton
+            name="assetAmount"
+            label="Asset"
+            assetsList={filteredAssetsList}
+            isSearchable
+            setSearchValue={setSearchValue}
+            testID={SendModalSelectors.assetInput}
+            tokenTestID={SendModalSelectors.tokenChange}
+            maxButtonTestID={SendModalSelectors.maxButton}
+            switcherTestID={SendModalSelectors.switcherButton}
+          />
+          <Divider />
 
-            <Label
-              label="To"
-              description={`Address or Tezos domain to send ${values.assetAmount.asset.symbol} funds to.`}
-            />
-            {values.transferBetweenOwnAccounts ? (
-              <>
-                <AccountFormSectionDropdown
-                  name="recipient"
-                  list={filteredReceiversList}
-                  setSearchValue={handleSearchValueChange}
-                />
-                <Divider size={formatSize(10)} />
-              </>
-            ) : (
-              <FormAddressInput
-                name="receiverPublicKeyHash"
-                placeholder="e.g. address"
-                testID={SendModalSelectors.toInput}
+          <Label
+            label="To"
+            description={`Address or Tezos domain to send ${values.assetAmount.asset.symbol} funds to.`}
+          />
+          {values.transferBetweenOwnAccounts ? (
+            <>
+              <AccountFormSectionDropdown
+                name="recipient"
+                list={filteredReceiversList}
+                setSearchValue={handleSearchValueChange}
+                testID={SendModalSelectors.sectionDropdown}
               />
-            )}
+              <Divider size={formatSize(10)} />
+            </>
+          ) : (
+            <FormAddressInput
+              name="receiverPublicKeyHash"
+              onBlur={handleAddressInputBlur}
+              placeholder="e.g. address"
+              testID={SendModalSelectors.toInput}
+              pasteButtonTestID={SendModalSelectors.pasteAddressButton}
+            />
+          )}
 
-            <View
-              onTouchStart={() =>
-                void (isTransferDisabled && showWarningToast({ description: 'Create one more account or contact' }))
-              }
+          <View
+            onTouchStart={() =>
+              void (isTransferDisabled && showWarningToast({ description: 'Create one more account or contact' }))
+            }
+          >
+            <FormCheckbox
+              disabled={isTransferDisabled}
+              name="transferBetweenOwnAccounts"
+              size={formatSize(16)}
+              testID={SendModalSelectors.transferBetweenMyAccountsCheckBox}
             >
-              <FormCheckbox
-                disabled={isTransferDisabled}
-                name="transferBetweenOwnAccounts"
-                size={formatSize(16)}
-                testID={SendModalSelectors.transferBetweenMyAccountsCheckBox}
-              >
-                <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
-              </FormCheckbox>
-            </View>
-
-            <Divider />
+              <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
+            </FormCheckbox>
           </View>
 
-          <View>
-            <ButtonsContainer>
-              <ButtonLargeSecondary
-                title="Close"
-                onPress={goBack}
-                disabled={isLoading}
-                testID={SendModalSelectors.closeButton}
-              />
-              <Divider size={formatSize(16)} />
-              <ButtonLargePrimary
-                title="Send"
-                onPress={submitForm}
-                disabled={isLoading}
-                testID={SendModalSelectors.sendButton}
-              />
-            </ButtonsContainer>
+          <Divider />
+        </View>
 
-            <InsetSubstitute type="bottom" />
-          </View>
-        </ScreenContainer>
-      )}
-    </Formik>
+        <View>
+          <ButtonsContainer>
+            <ButtonLargeSecondary
+              title="Close"
+              onPress={goBack}
+              disabled={isLoading}
+              testID={SendModalSelectors.closeButton}
+            />
+            <Divider size={formatSize(16)} />
+            <ButtonLargePrimary
+              title="Send"
+              onPress={submitForm}
+              disabled={isLoading || Object.keys(errors).length > 0}
+              testID={SendModalSelectors.sendButton}
+            />
+          </ButtonsContainer>
+
+          <InsetSubstitute type="bottom" />
+        </View>
+      </ScreenContainer>
+    </FormikProvider>
   );
 };

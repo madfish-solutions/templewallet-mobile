@@ -1,18 +1,25 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { DEPRECATED_TKEY_METADATA } from 'src/token/data/tokens-metadata';
-import { TokenMetadataInterface, emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
+import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
-import { setNewTokensMetadata, patchMetadataAction } from '../migration/migration-actions';
-import { addTokensMetadataAction, loadTokenSuggestionActions, loadWhitelistAction } from './tokens-metadata-actions';
+import { setNewTokensMetadata } from '../migration/migration-actions';
+import {
+  addKnownSvg,
+  addTokensMetadataAction,
+  loadTokenSuggestionActions,
+  loadWhitelistAction,
+  removeKnownSvg
+} from './tokens-metadata-actions';
 import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metadata-state';
 
 export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadataInitialState, builder => {
   builder.addCase(addTokensMetadataAction, (state, { payload: tokensMetadata }) => {
-    tokensMetadata = patchMetadata(tokensMetadata);
+    if (tokensMetadata.length < 1) {
+      return state;
+    }
 
     const metadataRecord = tokensMetadata.reduce((prevState, tokenMetadata) => {
       const slug = getTokenSlug(tokenMetadata);
@@ -43,8 +50,6 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
       return state;
     }
 
-    tokensMetadata = patchMetadata(tokensMetadata);
-
     return {
       ...state,
       metadataRecord: newMetadata.reduce(
@@ -70,29 +75,24 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
     addTokenSuggestion: createEntity(emptyTokenMetadata, false, error)
   }));
 
+  builder.addCase(addKnownSvg, (state, { payload: url }) => ({
+    ...state,
+    knownSvgs: {
+      ...state.knownSvgs,
+      [url]: true
+    }
+  }));
+  builder.addCase(removeKnownSvg, (state, { payload: url }) => ({
+    ...state,
+    knownSvgs: {
+      ...state.knownSvgs,
+      [url]: false
+    }
+  }));
+
   // MIGRATIONS
   builder.addCase(setNewTokensMetadata, (state, { payload: metadataRecord }) => ({
     ...state,
     metadataRecord
   }));
-  builder.addCase(patchMetadataAction, state => {
-    const slug = getTokenSlug(DEPRECATED_TKEY_METADATA);
-    if (state.metadataRecord[slug]?.symbol !== DEPRECATED_TKEY_METADATA.symbol) {
-      state.metadataRecord[slug] = DEPRECATED_TKEY_METADATA;
-    }
-  });
 });
-
-const patchMetadata = (tokensMetadata: TokenMetadataInterface[]) => {
-  const slug = getTokenSlug(DEPRECATED_TKEY_METADATA);
-  const index = tokensMetadata.findIndex(metadata => getTokenSlug(metadata) === slug);
-
-  if (index < 0) {
-    return tokensMetadata;
-  }
-
-  const newArray = [...tokensMetadata];
-  newArray.splice(index, 1, DEPRECATED_TKEY_METADATA);
-
-  return newArray;
-};

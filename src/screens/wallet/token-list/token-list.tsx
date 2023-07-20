@@ -2,9 +2,11 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
+import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
@@ -20,18 +22,27 @@ import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
-import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
-import { formatSize, formatSizeScaled } from 'src/styles/format-size';
+import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
+import {
+  useSelectedAccountSelector,
+  useSelectedAccountTezosTokenSelector,
+  useSelectedAccountTkeyTokenSelector,
+  useVisibleTokensListSelector
+} from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
+import { optimalFetchEnableAds } from '../../../apis/optimal';
+import { loadAdvertisingPromotionActions } from '../../../store/advertising/advertising-actions';
+import { WalletSelectors } from '../wallet.selectors';
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
-import { TokenListSelectors } from './token-list.selectors';
 import { useTokenListStyles } from './token-list.styles';
 
 const AD_PLACEHOLDER = 'ad';
@@ -40,12 +51,13 @@ type FlatListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
 // padding size + icon size
-const ITEM_HEIGHT = formatSize(24) + formatSizeScaled(32);
+const ITEM_HEIGHT = formatSize(24) + formatSize(32);
 const keyExtractor = (item: FlatListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
 
 export const TokensList: FC = () => {
   const dispatch = useDispatch();
+  const { trackEvent } = useAnalytics();
   const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
   const styles = useTokenListStyles();
 
@@ -56,19 +68,48 @@ export const TokensList: FC = () => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tkeyToken = useSelectedAccountTkeyTokenSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
 
+  const { publicKeyHash } = useSelectedAccountSelector();
+
+  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
+    trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
   }, []);
 
+  useEffect(() => {
+    const listener = () => {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
+      setPromotionErrorOccurred(false);
+    };
+
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+      addNavigationListener('focus', listener);
+    }
+
+    return () => {
+      removeNavigationListener('focus', listener);
+    };
+  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromotionEnabled, isEnabledAdsBanner]);
+
+  useEffect(() => {
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+      dispatch(loadAdvertisingPromotionActions.submit());
+      optimalFetchEnableAds(publicKeyHash);
+    }
+  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
+
+  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,
     true,
-    tezosToken
+    leadingAssets
   );
 
   const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
@@ -94,18 +135,6 @@ export const TokensList: FC = () => {
     searchValue
   ]);
 
-  useEffect(() => {
-    const listener = () => {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
-      setPromotionErrorOccurred(false);
-    };
-    addNavigationListener('focus', listener);
-
-    return () => {
-      removeNavigationListener('focus', listener);
-    };
-  }, [dispatch, addNavigationListener, removeNavigationListener]);
-
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
   const renderItem: ListRenderItem<FlatListItem> = useCallback(
@@ -117,12 +146,12 @@ export const TokensList: FC = () => {
               <OptimalPromotionItem
                 variant={OptimalPromotionVariantEnum.Text}
                 style={styles.promotionItem}
-                testID={TokenListSelectors.promotion}
+                testID={WalletSelectors.promotion}
                 onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
                 onImageError={() => setPromotionErrorOccurred(true)}
               />
             </View>
-            <View style={isAndroid ? styles.promotionItemBorderAndroid : styles.promotionItemBorderIOS} />
+            <HorizontalBorder style={styles.promotionItemBorder} />
           </View>
         );
       }
@@ -151,31 +180,31 @@ export const TokensList: FC = () => {
             size={formatSize(16)}
             strokeWidth={formatSize(2)}
             onChange={handleHideZeroBalanceChange}
-            testID={TokenListSelectors.hideZeroBalanceCheckBox}
+            testID={WalletSelectors.hideZeroBalancesCheckbox}
           >
             <Divider size={formatSize(4)} />
             <Text style={styles.hideZeroBalanceText}>Hide 0 balance</Text>
           </Checkbox>
         </View>
 
-        <Search onChange={setSearchValue}>
+        <Search onChange={setSearchValue} testID={WalletSelectors.searchTokenButton}>
           <TouchableIcon
             name={IconNameEnum.Clock}
             size={formatSize(16)}
             onPress={() => navigate(ScreensEnum.Activity)}
-            testID={TokenListSelectors.activityButton}
           />
           <Divider size={formatSize(24)} />
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
             onPress={() => navigate(ScreensEnum.ManageAssets)}
-            testID={TokenListSelectors.manageAssetsButton}
           />
         </Search>
       </View>
 
-      <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={TokenListSelectors.tokenList}>
+      {isEnabledAdsBanner && <AcceptAdsBanner style={styles.banner} />}
+
+      <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlatList
           scrollEnabled
           data={renderData}

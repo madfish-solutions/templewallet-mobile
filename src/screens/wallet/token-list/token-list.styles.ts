@@ -29,19 +29,14 @@ export const useTokenListStyles = createUseStyles(({ colors, typography }) => ({
     paddingVertical: formatSize(12),
     paddingHorizontal: formatSize(8)
   },
-  promotionItemBorderAndroid: {
-    marginLeft: formatSize(16),
-    width: '100%',
-    borderBottomWidth: formatSize(0.5),
-    borderColor: colors.lines
-  },
-  promotionItemBorderIOS: {
-    marginLeft: formatSize(16),
-    width: '100%',
-    height: formatSize(0.5),
-    backgroundColor: colors.lines
+  promotionItemBorder: {
+    marginLeft: formatSize(16)
   },
   promotionItem: {
     width: '100%'
+  },
+  banner: {
+    marginVertical: formatSize(12),
+    marginHorizontal: formatSize(16)
   }
 }));

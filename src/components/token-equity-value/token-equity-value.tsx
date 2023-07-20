@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
+
 import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { useTotalBalance } from '../../hooks/use-total-balance';
@@ -36,6 +38,7 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
           name={isBalanceHidden ? IconNameEnum.EyeClosedBold : IconNameEnum.EyeOpenBold}
           size={formatSize(24)}
           onPress={toggleHideBalance}
+          testID={WalletSelectors.tokenEquityButton}
         />
         {showTokenValue ? (
           <View style={styles.equityContainer}>

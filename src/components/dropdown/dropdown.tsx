@@ -7,6 +7,8 @@ import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -14,6 +16,7 @@ import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
@@ -34,25 +37,23 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   onLongPress?: EmptyFn;
 }
 
-export interface DropdownValueProps<T> {
+export interface DropdownValueProps<T> extends TestIdProps {
   value?: T;
   itemHeight?: number;
   list: T[];
   disabled?: boolean;
   onValueChange: EventFn<T | undefined>;
+  itemTestIDPropertiesFn?: (value: T) => object | undefined;
 }
 
 export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
   renderValue: DropdownValueComponent<T>;
   renderAccountListItem: DropdownListItemComponent<T>;
-};
+} & TestIdProps;
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
-export type DropdownValueComponent<T> = FC<{
-  value?: T;
-  disabled?: boolean;
-}>;
+export type DropdownValueComponent<T> = FC<{ value?: T; disabled?: boolean } & TestIdProps>;
 
 export type DropdownListItemComponent<T> = FC<{
   item: T;
@@ -79,10 +80,13 @@ const DropdownComponent = <T extends unknown>({
   renderListItem,
   renderActionButtons = emptyComponent,
   keyExtractor,
-  testID,
   onValueChange,
-  onLongPress
+  onLongPress,
+  testID,
+  testIDProperties,
+  itemTestIDPropertiesFn = emptyFn
 }: DropdownProps<T> & DropdownValueProps<T>) => {
+  const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
@@ -99,14 +103,20 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableOpacity key={index} onPress={handlePress} testID={DropdownSelectors.option}>
+        <TouchableWithAnalytics
+          Component={TouchableOpacity}
+          key={index}
+          onPress={handlePress}
+          testID={DropdownSelectors.option}
+          testIDProperties={itemTestIDPropertiesFn(item)}
+        >
           <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}
           </DropdownItemContainer>
-        </TouchableOpacity>
+        </TouchableWithAnalytics>
       );
     },
-    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem]
+    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem, itemTestIDPropertiesFn]
   );
 
   const scroll = useCallback(() => {
@@ -127,7 +137,10 @@ const DropdownComponent = <T extends unknown>({
         style={styles.valueContainer}
         disabled={disabled}
         onPress={() => {
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
           scroll();
+
+          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
           return dropdownBottomSheetController.open();
         }}

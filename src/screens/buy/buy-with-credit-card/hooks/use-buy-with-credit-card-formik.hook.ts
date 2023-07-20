@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 
 import { createOrder as createAliceBobOrder } from 'src/apis/alice-bob';
 import { getSignedMoonPayUrl } from 'src/apis/moonpay';
+import { createBinanceConnectTradeOrder } from 'src/apis/temple-static';
 import { createOrder as createUtorgOrder } from 'src/apis/utorg';
-import { TopUpInputTypeEnum } from 'src/enums/top-up-input-type.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useUserIdSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
@@ -17,24 +17,26 @@ import { openUrl } from 'src/utils/linking.util';
 
 import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from '../form';
 
+const CRYPTO_NETWORK_TEZOS_PLUG = {
+  code: 'tezos',
+  fullName: 'Tezos'
+};
+
 const DEFAULT_INPUT_CURRENCY = {
   code: 'USD',
   icon: 'https://static.moonpay.com/widget/currencies/usd.svg',
   name: 'US Dollar',
-  network: '',
-  networkFullName: '',
-  precision: 2,
-  type: TopUpInputTypeEnum.Fiat
+  precision: 2
 };
+
 const DEFAULT_OUTPUT_TOKEN = {
   code: 'XTZ',
   name: 'Tezos',
   icon: 'https://exolix.com/icons/coins/XTZ.png',
-  network: 'tezos',
-  networkFullName: 'Tezos',
-  slug: 'tez',
-  type: TopUpInputTypeEnum.Crypto
+  network: CRYPTO_NETWORK_TEZOS_PLUG,
+  slug: 'tez'
 };
+
 const initialValues: BuyWithCreditCardFormValues = {
   sendInput: {
     asset: DEFAULT_INPUT_CURRENCY,
@@ -84,6 +86,14 @@ export const useBuyWithCreditCardFormik = () => {
             break;
           case TopUpProviderEnum.Utorg:
             urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, publicKeyHash, outputSymbol);
+            break;
+          case TopUpProviderEnum.BinanceConnect:
+            urlToOpen = await createBinanceConnectTradeOrder(
+              inputSymbol,
+              outputSymbol,
+              inputAmount.toFixed(),
+              publicKeyHash
+            );
             break;
           default:
             const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
