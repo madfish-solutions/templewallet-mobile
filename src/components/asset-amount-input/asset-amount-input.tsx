@@ -10,7 +10,7 @@ import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from 'src/store/se
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -28,7 +28,7 @@ import { TextSegmentControl } from '../segmented-control/text-segment-control/te
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
-import { AssetAmountInputProps } from './asset-amount-input.props';
+import { AssetAmountInputProps, AssetAmountInputStylesConfig } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
 import { AssetAmountInputSelectors } from './selectors';
@@ -39,6 +39,8 @@ export interface AssetAmountInterface {
 }
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
+const defaultAssetAmountInputStylesConfig: AssetAmountInputStylesConfig = {};
+const defaultAssetOptionTestIdPropertiesFn = (asset: TokenInterface) => ({ token: asset.symbol });
 
 const getDefinedAmount = (
   amount: BigNumber | undefined,
@@ -52,15 +54,6 @@ const getDefinedAmount = (
       : dollarToTokenAmount(amount, decimals, exchangeRate)
     : undefined;
 
-const renderTokenValue: DropdownValueComponent<TokenInterface> = ({ value }) => (
-  <TokenDropdownItem
-    token={value}
-    actionIconName={IconNameEnum.TriangleDown}
-    isShowBalance={false}
-    iconSize={formatSize(32)}
-  />
-);
-
 const renderTokenListItem: DropdownListItemComponent<TokenInterface> = ({ item, isSelected }) => (
   <TokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
 );
@@ -69,6 +62,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   value,
   label,
   assetsList,
+  balanceLabel,
   frozenBalance,
   isError = false,
   toUsdToggle = true,
@@ -77,6 +71,10 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   isSearchable = false,
   selectionOptions = undefined,
   maxButton = false,
+  expectedGasExpense = 0.3,
+  stylesConfig = defaultAssetAmountInputStylesConfig,
+  isShowNameForValue = true,
+  isSingleAsset = false,
   setSearchValue = emptyFn,
   onBlur,
   onFocus,
@@ -84,11 +82,24 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
   testID,
   tokenTestID,
   switcherTestID,
-  maxButtonTestID
+  maxButtonTestID,
+  assetOptionTestIdPropertiesFn = defaultAssetOptionTestIdPropertiesFn
 }) => {
   const styles = useAssetAmountInputStyles();
+  const {
+    balanceText: configBalanceTextStyles,
+    amountInput: configAmountInputStyles,
+    inputContainer: configInputContainerStyles
+  } = stylesConfig;
   const colors = useColors();
   const { trackEvent } = useAnalytics();
+
+  const configInputPaddingStyles = useMemo(
+    () => ({
+      backgroundColor: configAmountInputStyles?.backgroundColor
+    }),
+    [configAmountInputStyles]
+  );
 
   const token = useMemo(
     () => assetsList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(value.asset)),
@@ -141,6 +152,19 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
     return newNumericInputValue;
   }, [value.amount, isTokenInputType, value.asset.decimals, exchangeRate]);
+
+  const renderTokenValue = useCallback<DropdownValueComponent<TokenInterface>>(
+    ({ value: tokenValue }) => (
+      <TokenDropdownItem
+        token={tokenValue}
+        actionIconName={isSingleAsset ? undefined : IconNameEnum.TriangleDown}
+        isShowBalance={false}
+        isShowName={isShowNameForValue}
+        iconSize={formatSize(32)}
+      />
+    ),
+    [isSingleAsset, isShowNameForValue]
+  );
 
   const onChange = useCallback(
     newInputValue => {
@@ -200,8 +224,9 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
 
   const handleMaxButtonPress = useCallback(() => {
     if (isDefined(token)) {
-      const { symbol, balance } = token;
-      const isGasTokenMaxAmountGuard = symbol === gasToken.symbol ? tzToMutez(new BigNumber(0.3), token.decimals) : 0;
+      const { address, id, balance } = token;
+      const isGasToken = toTokenSlug(address, id) === toTokenSlug(gasToken.address, gasToken.id);
+      const isGasTokenMaxAmountGuard = isGasToken ? tzToMutez(new BigNumber(expectedGasExpense), token.decimals) : 0;
       const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
       amountInputRef.current?.blur();
@@ -212,7 +237,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         asset: token
       });
     }
-  }, [token, gasToken, onValueChange, amountInputRef, trackEvent]);
+  }, [token, gasToken, onValueChange, amountInputRef, trackEvent, expectedGasExpense]);
 
   useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
@@ -236,16 +261,19 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         style={[
           styles.inputContainer,
           conditionalStyle(!editable, styles.disabledInputContainer),
-          conditionalStyle(isError, styles.inputContainerError)
+          conditionalStyle(isError, styles.inputContainerError),
+          configInputContainerStyles
         ]}
       >
-        <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
+        <View
+          style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding), configInputPaddingStyles]}
+        />
 
         <TextInput
           ref={amountInputRef}
           value={stringValue}
           placeholder="0.00"
-          style={[styles.numericInput, conditionalStyle(!editable, styles.disabledInput)]}
+          style={[styles.numericInput, conditionalStyle(!editable, styles.disabledInput), configAmountInputStyles]}
           placeholderTextColor={colors.gray3}
           selectionColor={colors.orange}
           editable={editable}
@@ -258,10 +286,15 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
         />
 
         <View
-          style={[styles.dropdownContainer, conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer)]}
+          style={[
+            styles.dropdownContainer,
+            conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer),
+            conditionalStyle(!editable, styles.disabledDropdownContainer)
+          ]}
         >
           <Dropdown
             description="Assets"
+            disabled={isSingleAsset}
             value={value.asset}
             list={assetsList}
             isSearchable={isSearchable}
@@ -273,6 +306,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             keyExtractor={getTokenSlug}
             onValueChange={handleTokenChange}
             testID={testID}
+            itemTestIDPropertiesFn={assetOptionTestIdPropertiesFn}
           />
         </View>
       </View>
@@ -294,7 +328,7 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
                 <AssetValueText
                   amount={frozenBalance}
                   asset={value.asset}
-                  style={styles.balanceText}
+                  style={[styles.balanceText, configBalanceTextStyles]}
                   convertToDollar={!isTokenInputType}
                 />
               </View>
@@ -302,13 +336,15 @@ const AssetAmountInputComponent: FC<AssetAmountInputProps> = ({
             </>
           )}
           <View style={styles.balanceRow}>
-            <Text style={styles.balanceText}>{isLiquidityProviderToken ? 'Total Balance:' : 'Balance:'}</Text>
+            <Text style={styles.balanceText}>
+              {balanceLabel ?? (isLiquidityProviderToken ? 'Total Balance:' : 'Balance:')}
+            </Text>
             <Divider size={formatSize(4)} />
             <HideBalance style={styles.balanceText}>
               <AssetValueText
                 amount={balance}
                 asset={value.asset}
-                style={styles.balanceText}
+                style={[styles.balanceText, configBalanceTextStyles]}
                 convertToDollar={!isTokenInputType}
               />
             </HideBalance>

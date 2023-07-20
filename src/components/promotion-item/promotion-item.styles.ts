@@ -27,7 +27,7 @@ export const usePromotionItemStyles = createUseStyles(({ colors, typography }) =
     width: formatSize(343),
     borderRadius: formatSize(10)
   },
-  textContainer: {
+  bageContainer: {
     position: 'absolute',
     top: 0,
     left: 0,

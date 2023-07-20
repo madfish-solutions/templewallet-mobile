@@ -7,6 +7,7 @@ import { createStore } from './create-store';
 import { currencyEpics } from './currency/currency-epics';
 import { dAppsEpics } from './d-apps/d-apps-epics';
 import { exolixEpics } from './exolix/exolix-epics';
+import { farmsEpics } from './farms/epics';
 import { marketEpics } from './market/market-epics';
 import { migrationEpics } from './migration/migration-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
@@ -36,5 +37,6 @@ export const { store, persistor } = createStore(
   contactsEpics,
   buyWithCreditCardEpics,
   partnersPromotionEpics,
-  abTestingEpics
+  abTestingEpics,
+  farmsEpics
 );

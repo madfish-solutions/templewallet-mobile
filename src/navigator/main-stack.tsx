@@ -37,6 +37,7 @@ import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
 import { DApps } from 'src/screens/d-apps/d-apps';
 import { Debug } from 'src/screens/debug/debug';
 import { DelegationScreen } from 'src/screens/delegation-screen/delegation-screen';
+import { Earn } from 'src/screens/earn';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
 import { ImportAccount } from 'src/screens/import-account/import-account';
 import { LiquidityBakingDapp } from 'src/screens/liquidity-baking-dapp/liquidity-baking-dapp';
@@ -217,6 +218,12 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Buy}
                 component={Buy}
                 options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.Earn}
+                component={Earn}
+                options={generateScreenOptions(<HeaderTitle title="Farming" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />

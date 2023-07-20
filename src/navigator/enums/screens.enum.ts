@@ -33,6 +33,9 @@ export enum ScreensEnum {
   BuyWithCreditCard = 'BuyWithCreditCard',
   Exolix = 'Exolix',
 
+  /** Earn stack **/
+  Earn = 'Earn',
+
   /** Market stack **/
   Market = 'Market',
 
@@ -77,6 +80,8 @@ export type ScreensParamList = {
   [ScreensEnum.BuyWithCreditCard]: undefined;
   [ScreensEnum.Exolix]: undefined;
 
+  [ScreensEnum.Earn]: undefined;
+
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
   [ScreensEnum.LiquidityBakingDapp]: undefined;
@@ -118,6 +123,7 @@ export const walletStackScreens = [
   ScreensEnum.ScanQrCode,
   ScreensEnum.Buy,
   ScreensEnum.BuyWithCreditCard,
+  ScreensEnum.Earn,
   ScreensEnum.Exolix,
   ScreensEnum.Notifications,
   ScreensEnum.NotificationsItem,

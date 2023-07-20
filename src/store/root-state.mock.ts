@@ -6,6 +6,7 @@ import { mockContactBookState } from './contact-book/contact-book-state.mock';
 import { mockCurrencyState } from './currency/currency-state.mock';
 import { mockDAppsState } from './d-apps/d-apps-state.mock';
 import { mockExolixState } from './exolix/exolix-state.mock';
+import { mockFarmsState } from './farms/state.mock';
 import { mockMarketState } from './market/market-state.mock';
 import { mockNewsletterState } from './newsletter/newsletter-state.mock';
 import { mockNotificationsState } from './notifications/notifications-state.mock';
@@ -34,5 +35,6 @@ export const mockRootState: RootState = {
   buyWithCreditCard: mockBuyWithCreditCardState,
   partnersPromotion: mockPartnersPromotionState,
   abTesting: mockABTestingState,
+  farms: mockFarmsState,
   newsletter: mockNewsletterState
 };

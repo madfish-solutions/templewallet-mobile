@@ -6,6 +6,7 @@ import { contactBookReducers } from './contact-book/contact-book-reducers';
 import { currencyReducers } from './currency/currency-reducers';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
 import { exolixReducers } from './exolix/exolix-reducers';
+import { farmsReducer } from './farms/reducers';
 import { marketReducers } from './market/market-reducers';
 import { newsletterReducers } from './newsletter/newsletter-reducers';
 import { notificationsReducers } from './notifications/notifications-reducers';
@@ -33,5 +34,6 @@ export const rootStateReducersMap = {
   buyWithCreditCard: buyWithCreditCardReducer,
   partnersPromotion: partnersPromotionReducers,
   abTesting: abTestingReducer,
+  farms: farmsReducer,
   newsletter: newsletterReducers
 };

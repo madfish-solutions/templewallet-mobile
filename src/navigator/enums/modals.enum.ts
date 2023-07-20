@@ -1,7 +1,8 @@
-import { AccountInterface, AccountBaseInterface } from '../../interfaces/account.interface';
-import { ConfirmationModalParams } from '../../modals/confirmation-modal/confirmation-modal.params';
-import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { TokenInterface } from '../../token/interfaces/token.interface';
+import { Farm } from 'src/apis/quipuswap-staking/types';
+import { AccountInterface, AccountBaseInterface } from 'src/interfaces/account.interface';
+import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export enum ModalsEnum {
   Receive = 'Receive',
@@ -21,6 +22,7 @@ export enum ModalsEnum {
   AddLiquidity = 'AddLiquidity',
   AddContact = 'AddContact',
   EditContact = 'EditContact',
+  ManageFarmingPool = 'ManageFarmingPool',
   Newsletter = 'Newsletter'
 }
 
@@ -50,5 +52,6 @@ export type ModalsParamList = {
   };
   [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
   [ModalsEnum.EditContact]: { contact: AccountBaseInterface; index: number };
+  [ModalsEnum.ManageFarmingPool]: Pick<Farm, 'id' | 'contractAddress'>;
   [ModalsEnum.Newsletter]: undefined;
 };

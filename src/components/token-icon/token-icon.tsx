@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
@@ -21,9 +21,10 @@ import { TokenIconStyles } from './token-icon.styles';
 
 interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'> {
   size?: number;
+  style?: ViewStyle;
 }
 
-export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, ...rest }) => {
+export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, style, ...rest }) => {
   const roundedStyle = useMemo(
     () => (isImageRectangular(thumbnailUri) ? undefined : { borderRadius: size / 2 }),
     [thumbnailUri]
@@ -31,7 +32,7 @@ export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, ...r
   const containerSizeStyle = useMemo(() => ({ width: size, height: size }), [size]);
 
   return (
-    <View style={[TokenIconStyles.container, roundedStyle, containerSizeStyle]}>
+    <View style={[TokenIconStyles.container, roundedStyle, containerSizeStyle, style]}>
       <TokenIconImage size={size} thumbnailUri={thumbnailUri} {...rest} />
     </View>
   );

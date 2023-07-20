@@ -3,7 +3,7 @@ import { useAnimationRef } from '../../hooks/use-animation-ref.hook';
 import { useUpdateAnimation } from '../../hooks/use-update-animation.hook';
 import { useColors } from '../../styles/use-colors';
 
-export const useSegmentedControlColor = (isSelected: boolean) => {
+export const useSegmentedControlColor = (isSelected: boolean, isDisabled: boolean) => {
   const colors = useColors();
   const animation = useAnimationRef();
 
@@ -17,5 +17,5 @@ export const useSegmentedControlColor = (isSelected: boolean) => {
 
   useUpdateAnimation(animation, isSelected, { useNativeDriver: false });
 
-  return color;
+  return isDisabled ? colors.gray3 : color;
 };
