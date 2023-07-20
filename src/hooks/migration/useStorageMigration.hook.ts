@@ -7,6 +7,7 @@ import {
   addDcpRpc,
   migrateQuipuApy,
   migrateTokensMetadata,
+  patchMetadataAction,
   migrateTokenSuggestion,
   addDcpTokensMetadata,
   changeTempleRpc,
@@ -18,6 +19,7 @@ export const useStorageMigration = () => {
 
   useEffect(() => {
     dispatch(migrateTokensMetadata());
+    dispatch(patchMetadataAction());
     dispatch(migrateTokenSuggestion());
     dispatch(migrateIsShownDomainName());
     dispatch(migrateQuipuApy());
