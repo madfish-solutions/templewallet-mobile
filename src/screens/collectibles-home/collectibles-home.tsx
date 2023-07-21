@@ -8,8 +8,10 @@ import {
   Text,
   TouchableOpacity,
   useWindowDimensions,
+  StatusBar,
   View
 } from 'react-native';
+import { isTablet } from 'react-native-device-info';
 import FastImage from 'react-native-fast-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
@@ -72,35 +74,16 @@ export const CollectiblesHome = () => {
   const [headerHeight, setHeaderHeight] = useState(1);
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
 
-  // TODO: Refactor or delete later
-  // const iosSafeArea = useSafeAreaInsets();
-
-  // const androidSafeAreaValue =
-  //   isDefined(initialWindowMetrics) && initialWindowMetrics.insets.bottom > 0
-  //     ? initialWindowMetrics.insets.bottom + initialWindowMetrics.insets.top
-  //     : 0;
-
-  // Why iosSafeArea only bottom?
-  // const TAB_BAR_HEIGHT = isAndroid ? androidSafeAreaValue : iosSafeArea.bottom;
-
-  // const ICON_COVER_GAP = formatSize(12);
-
-  // const snapPoints = useMemo(
-  //   () => [
-  //     windowHeight - (headerHeight + TAB_BAR_HEIGHT + formatSize(4)),
-  //     windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP)
-  //   ],
-  //   [headerHeight, visibleBlockHeight]
-  // );
-
   const insets = useSafeAreaInsets();
-  const TAB_BAR_HEIGHT = 53 + insets.bottom;
-  const ICON_COVER_GAP = 2;
-  const DELETED_NAV_BAR_HEIGHT = 44;
+  const TAB_BAR_HEIGHT = isTablet() ? 0 : formatSize(48) + insets.bottom;
+  const MARGIN_BETWEEN_ELEMENTS = formatSize(16);
+
+  const statusBar = useMemo(() => StatusBar.currentHeight ?? 0, [StatusBar.currentHeight]);
+
   const snapPoints = useMemo(
     () => [
-      windowHeight - (headerHeight + TAB_BAR_HEIGHT + DELETED_NAV_BAR_HEIGHT),
-      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - ICON_COVER_GAP + DELETED_NAV_BAR_HEIGHT)
+      windowHeight - (headerHeight + TAB_BAR_HEIGHT + statusBar),
+      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - MARGIN_BETWEEN_ELEMENTS + statusBar)
     ],
     [headerHeight, visibleBlockHeight]
   );
