@@ -1,5 +1,5 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
-import { Observable, catchError, map, of, withLatestFrom } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 
 import { ADULT_CONTENT_TAGS } from '../apis/objkt/adult-tags';
 import { ADULT_ATTRIBUTE_NAME } from '../apis/objkt/constants';
@@ -10,7 +10,6 @@ import {
 } from '../apis/objkt/index';
 import { CollectibleAttributes, CollectibleTag } from '../apis/objkt/types';
 import { AttributeInfo } from '../interfaces/attribute.interface';
-import { CollectiblesRootState } from '../store/collectibles/collectibles-state';
 import {
   CollectibleDetailsInterface,
   CollectibleInterface
@@ -94,7 +93,7 @@ export const loadAllCollectiblesDetails$ = (
     map(collectiblesDetails => {
       const collectitblesDetailsRecord: Record<string, CollectibleDetailsInterface> = {};
 
-      for (const collectible of collectiblesDetails) {
+      for (const collectible of collectiblesDetails.token) {
         const collectibleSlug = getTokenSlug({ address: collectible.fa_contract, id: collectible.token_id });
 
         collectitblesDetailsRecord[collectibleSlug] = {
@@ -130,13 +129,3 @@ export const loadAllCollectiblesDetails$ = (
       return collectitblesDetailsRecord;
     })
   );
-
-export const withAllCollectiblesDetails =
-  <T>(state$: Observable<CollectiblesRootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { collectibles }): [T, Record<string, CollectibleDetailsInterface>] => [
-        value,
-        collectibles.details.data
-      ])
-    );

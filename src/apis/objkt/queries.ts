@@ -277,25 +277,6 @@ export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) =>
   `;
 };
 
-export const buildGetCollectibleFloorPriceQuery = (address: string, id: string) => {
-  return gql`
-    query MyQuery {
-      token(where: { fa_contract: { _eq: "${address}" }, token_id: { _eq: "${id}" } }) {
-        listings_active(order_by: { price_xtz: asc }) {
-          bigmap_key
-          currency_id
-          price
-          marketplace_contract
-          id
-          currency {
-            type
-          }
-        }
-      }
-    }
-  `;
-};
-
 export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string) => gql`
   query MyQuery {
     token(where: { fa_contract: { _eq: "${address}" }, token_id: { _eq: "${tokenId}" } }) {

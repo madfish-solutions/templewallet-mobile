@@ -8,8 +8,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import {
   CollectibleDetailsInterface,
-  CollectibleOfferInteface,
-  ListingsActive
+  CollectibleOfferInteface
 } from '../../token/interfaces/collectible-interfaces.interface';
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
@@ -20,13 +19,10 @@ import {
   buildGetHoldersInfoQuery,
   buildGetAllUserCollectiblesQuery,
   buildGetCollectiblesByGalleryQuery,
-  buildGetCollectibleFloorPriceQuery,
   buildGetCollectibleByAddressAndIdQuery
 } from './queries';
 import {
   AttributeInfoResponse,
-  CollectibleDetailsResponse,
-  CollectibleFloorPriceQueryResponse,
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
   FA2AttributeCountQueryResponse,
@@ -121,56 +117,12 @@ export const fetchCollectiblesByCollection$ = (
   );
 };
 
-export const fetchAllCollectiblesDetails$ = (collectiblesSlugs: string[]): Observable<CollectibleDetailsResponse[]> => {
+export const fetchAllCollectiblesDetails$ = (
+  collectiblesSlugs: string[]
+): Observable<UserAdultCollectiblesQueryResponse> => {
   const request = buildGetAllUserCollectiblesQuery(collectiblesSlugs);
 
-  return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(
-    map(result => {
-      return result.token.map(
-        ({
-          fa_contract,
-          token_id,
-          name,
-          description,
-          thumbnail_uri,
-          artifact_uri,
-          creators,
-          fa,
-          timestamp,
-          attributes,
-          tags,
-          metadata,
-          royalties,
-          supply,
-          listings_active,
-          mime,
-          galleries
-        }) => ({
-          fa_contract,
-          token_id,
-          name,
-          description,
-          thumbnail_uri,
-          artifact_uri,
-          creators,
-          fa: {
-            name: fa.name,
-            logo: fa.logo,
-            items: fa.items
-          },
-          metadata,
-          attributes,
-          tags,
-          timestamp,
-          royalties,
-          supply,
-          galleries,
-          listings_active,
-          mime
-        })
-      );
-    })
-  );
+  return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request);
 };
 
 export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {
@@ -187,29 +139,6 @@ export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<Attribute
   return apolloObjktClient
     .query<GalleryAttributeCountQueryResponse>(request)
     .pipe(map(result => getUniqueAndMaxValueAttribute(result.gallery_attribute_count)));
-};
-
-export const fetchCollectibleFloorPrice$ = (address: string, id: string): Observable<ListingsActive[]> => {
-  const request = buildGetCollectibleFloorPriceQuery(address, id);
-
-  return apolloObjktClient.query<CollectibleFloorPriceQueryResponse>(request).pipe(
-    map(result => {
-      const { listings_active } = result.token[0];
-
-      return isNonEmptyArray(listings_active)
-        ? [
-            {
-              bigmapKey: listings_active[0].bigmap_key ?? 0,
-              currency: listings_active[0].currency,
-              currencyId: listings_active[0].currency_id,
-              marketplaceContract: listings_active[0].marketplace_contract,
-              price: listings_active[0].price
-            }
-          ]
-        : [];
-    }),
-    catchError(() => of([]))
-  );
 };
 
 export const fetchCollectibleDetails$ = (address: string, id: string): Observable<CollectibleDetailsInterface> => {

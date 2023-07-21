@@ -1,26 +1,28 @@
+import { isEqual } from 'lodash';
 import { useDispatch } from 'react-redux';
+import { useCustomCompareMemo } from 'use-custom-compare';
 
 import { COLLECTIBLES_DETAILS_SYNC_INTERVAL } from '../config/fixed-times';
 import { loadCollectiblesDetailsActions } from '../store/collectibles/collectibles-actions';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useCollectiblesListSelector, useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { useCollectiblesListSelector } from '../store/wallet/wallet-selectors';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { useAuthorisedInterval } from './use-interval.hook';
 
 export const useLoadCollectiblesDetails = () => {
   const dispatch = useDispatch();
 
-  const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
   const collectiblesList = useCollectiblesListSelector();
 
-  const collectiblesSlugs = collectiblesList.map(collectible => getTokenSlug(collectible));
-
+  const collectiblesSlugs = useCustomCompareMemo(
+    () => collectiblesList.map(collectible => getTokenSlug(collectible)).sort(),
+    [collectiblesList],
+    isEqual
+  );
   useAuthorisedInterval(
     () => {
       dispatch(loadCollectiblesDetailsActions.submit(collectiblesSlugs));
     },
     COLLECTIBLES_DETAILS_SYNC_INTERVAL,
-    [selectedAccountPkh, selectedRpcUrl, collectiblesSlugs.length]
+    [collectiblesSlugs]
   );
 };

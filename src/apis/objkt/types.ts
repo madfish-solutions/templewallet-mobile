@@ -154,7 +154,7 @@ interface Gallery {
   };
 }
 
-export interface CollectibleDetailsResponse {
+interface CollectibleDetailsResponse {
   fa_contract: string;
   token_id: string;
   name: string;
@@ -172,10 +172,4 @@ export interface CollectibleDetailsResponse {
   mime: string;
   galleries: Gallery[];
   listings_active: ListingsActiveResponse[];
-}
-
-export interface CollectibleFloorPriceQueryResponse {
-  token: {
-    listings_active: ListingsActiveResponse[];
-  }[];
 }

@@ -12,9 +12,3 @@ export const loadCollectibleDetailsActions = createActions<
   Record<string, CollectibleDetailsInterface>,
   string
 >('collectibles/LOAD_COLLECTIBLE_DETAILS');
-
-export const updateCollectibleDetailsAction = createActions<
-  { address: string; id: string },
-  Record<string, CollectibleDetailsInterface>,
-  string
->('collectibles/UPDATE_COLLECTIBLES_DETAILS');

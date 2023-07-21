@@ -27,7 +27,7 @@ import { useCurrentCollectibleFullData } from '../../hooks/use-current-collectib
 import { useFetchCollectibleAttributes } from '../../hooks/use-fetch-collectible-attributes.hook';
 import { useInterval } from '../../hooks/use-interval.hook';
 import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { updateCollectibleDetailsAction } from '../../store/collectibles/collectibles-actions';
+import { loadCollectiblesDetailsActions } from '../../store/collectibles/collectibles-actions';
 import { useCollectibleDetailsLoadingSelector } from '../../store/collectibles/collectibles-selectors';
 import { formatSize } from '../../styles/format-size';
 import { showErrorToast } from '../../toast/error-toast.utils';
@@ -112,11 +112,11 @@ export const CollectibleModal = memo(() => {
   useInterval(
     () => {
       if (!isUserOwnerCurrentCollectible) {
-        dispatch(updateCollectibleDetailsAction.submit({ address, id }));
+        dispatch(loadCollectiblesDetailsActions.submit([slug]));
       }
     },
     ONE_MINUTE,
-    [address, id, slug, isUserOwnerCurrentCollectible],
+    [slug, isUserOwnerCurrentCollectible],
     false
   );
 
