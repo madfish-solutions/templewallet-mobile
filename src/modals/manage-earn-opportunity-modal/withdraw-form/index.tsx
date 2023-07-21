@@ -210,7 +210,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
         loading={stakesLoading && !isDefined(stake)}
       />
       <Divider size={formatSize(16)} />
-      <VestingPeriodDisclaimers earnOpportunityItem={earnOpportunityItem} />
+      <VestingPeriodDisclaimers earnOpportunityItem={earnOpportunityItem} stake={stake} />
     </FormikProvider>
   );
 };

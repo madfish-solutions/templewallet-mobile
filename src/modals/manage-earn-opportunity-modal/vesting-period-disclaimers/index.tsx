@@ -4,6 +4,7 @@ import { Text } from 'react-native';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { formatSize } from 'src/styles/format-size';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
@@ -12,15 +13,20 @@ import { useVestingPeriodDisclaimersStyles } from './styles';
 
 interface Props {
   earnOpportunityItem: EarnOpportunity;
+  stake?: UserStakeValueInterface;
 }
 
-export const VestingPeriodDisclaimers: FC<Props> = ({ earnOpportunityItem }) => {
+export const VestingPeriodDisclaimers: FC<Props> = ({ earnOpportunityItem, stake }) => {
   const vestingPeriodSeconds = Number(earnOpportunityItem.vestingPeriodSeconds);
   const formattedVestingPeriod = formatTimespan(vestingPeriodSeconds * 1000, {
     roundingMethod: 'ceil',
     unit: vestingPeriodSeconds < SECONDS_IN_DAY ? 'hour' : 'day'
   });
   const styles = useVestingPeriodDisclaimersStyles();
+
+  if ((stake?.rewardsDueDate ?? Infinity) < Date.now()) {
+    return null;
+  }
 
   return (
     <>

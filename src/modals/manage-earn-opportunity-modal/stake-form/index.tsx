@@ -103,7 +103,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
           loading={stakesLoading && !isDefined(stake)}
         />
         <Divider size={formatSize(16)} />
-        <VestingPeriodDisclaimers earnOpportunityItem={earnOpportunityItem} />
+        <VestingPeriodDisclaimers earnOpportunityItem={earnOpportunityItem} stake={stake} />
         <QuestionAccordion
           question="What are the main risks?"
           testID={ManageEarnOpportunityModalSelectors.mainRisksQuestion}
