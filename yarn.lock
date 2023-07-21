@@ -2927,10 +2927,9 @@
   dependencies:
     core-js "^2.5.7"
 
-"@jitsu/sdk-js@^3.1.5":
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/@jitsu/sdk-js/-/sdk-js-3.1.5.tgz#3d0d92ccc01b621cbe67484c6e246d5ff8721de8"
-  integrity sha512-e7P8uvGBNwWCC864MItcYSv0IT2+nwYiX8QXZ0lfyG8hutEXXX9Yt2/+MynXuGxMIoIrJ+j0bWVu20k9rrhxSg==
+"@jitsu/sdk-js@madfish-solutions/jitsu-js#87c49de334f5747952f7beda573b95ceb5d86903":
+  version "3.0.0"
+  resolved "https://codeload.github.com/madfish-solutions/jitsu-js/tar.gz/87c49de334f5747952f7beda573b95ceb5d86903"
 
 "@jridgewell/gen-mapping@^0.3.2":
   version "0.3.2"
@@ -8000,6 +7999,11 @@ csstype@^3.0.2:
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.0.8.tgz"
   integrity sha512-jXKhWqXPmlUeoQnF/EhTtTl4C9SnrxSH/jZUih3jmO6lBKr99rP3/+FmrMj4EFpOXzMtXHAZkd3x0E6h6Fgflw==
 
+csstype@^3.1.0:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.2.tgz#1d4bf9d572f11c14031f0436e1c10bc1f571f50b"
+  integrity sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==
+
 currency-codes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/currency-codes/-/currency-codes-2.1.0.tgz#6d84a1b7fec70ecb9ef64e57bf60f4271899044c"
@@ -8007,11 +8011,6 @@ currency-codes@^2.1.0:
   dependencies:
     first-match "~0.0.1"
     nub "~0.0.0"
-
-csstype@^3.1.0:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.2.tgz#1d4bf9d572f11c14031f0436e1c10bc1f571f50b"
-  integrity sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==
 
 cycle@^1.0.3:
   version "1.0.3"
