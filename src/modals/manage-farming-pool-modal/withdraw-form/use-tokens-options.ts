@@ -40,11 +40,8 @@ export const useTokensOptions = (farm: Farm, lpAmount?: BigNumber) => {
     const tokensIndexes = farm.tokens.map((_, index) => index);
     const outputPromise =
       farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING
-        ? calculateUnstakeParams(tezos, tokensIndexes, lpAmount, slippageTolerance).then(
-            ({ outputTokenIndexDependentParams }) =>
-              outputTokenIndexDependentParams.map(({ swapOutputAtomic, directDivestOutputAtomic, routingFeeAtomic }) =>
-                swapOutputAtomic.plus(directDivestOutputAtomic).minus(routingFeeAtomic)
-              )
+        ? calculateUnstakeParams(tokensIndexes, lpAmount, slippageTolerance).then(params =>
+            params.map(({ outputAfterFeeAtomic }) => outputAfterFeeAtomic)
           )
         : estimateStableswapDivestOutputs(
             tezos,

@@ -102,12 +102,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       toRoute3Token,
       swapInputMinusFeeAtomic,
       minimumReceivedAmountAtomic,
-      swapParams.data.chains
+      swapParams.data
     );
-
-    if (!route3SwapOpParams) {
-      return;
-    }
 
     const inputAmountInUsd = mutezToTz(
       swapInputMinusFeeAtomic.plus(routingFeeAtomic).times(inputAssets.asset.exchangeRate ?? ZERO),
@@ -151,12 +147,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         TEMPLE_TOKEN,
         routingFeeAtomic,
         templeOutputAtomic,
-        swapToTempleParams.chains
+        swapToTempleParams
       );
 
-      if (!swapToTempleTokenOpParams) {
-        return;
-      }
       allSwapParams.push(...swapToTempleTokenOpParams);
 
       const routingFeeOpParams = await getRoutingFeeTransferParams(

@@ -4,11 +4,10 @@ import { firstValueFrom } from 'rxjs';
 
 import { calculateUnstakeParams } from 'src/apis/liquidity-baking';
 import { LiquidityBakingFarm } from 'src/apis/liquidity-baking/types';
-import { ROUTE3_CONTRACT, ROUTING_FEE_ADDRESS } from 'src/config/swap';
+import { ROUTING_FEE_ADDRESS } from 'src/config/swap';
 import { AccountInterface } from 'src/interfaces/account.interface';
-import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { UserStakeValueInterface } from 'src/store/farms/state';
-import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
+import { THREE_ROUTE_SIRS_TOKEN } from 'src/token/data/three-route-tokens';
 import { getSwapTransferParams } from 'src/utils/swap.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
 
@@ -22,50 +21,29 @@ export const createLiquidityBakingWithdrawTransfersParams = async (
   lpAmount?: BigNumber
 ) => {
   const { publicKeyHash: accountPkh } = account;
-  const poolContract = await getReadOnlyContract(farm.contractAddress, tezos);
   const lpAmountWithDefault = lpAmount ?? new BigNumber(stake.depositAmountAtomic ?? 0);
-  const { divestMutezAmount, divestTzBTCAmount, outputTokenIndexDependentParams } = await calculateUnstakeParams(
-    tezos,
-    [tokenIndex],
-    lpAmountWithDefault,
-    slippageTolerancePercentage
-  );
-  const [
-    {
-      threeRouteFromToken,
-      threeRouteToToken,
-      swapToOutputTokenInput,
-      routingFeeAtomic,
-      swapParamsChains,
-      swapOutputAtomic
-    }
-  ] = outputTokenIndexDependentParams;
-
-  const removeLiquidityParams = poolContract.methods
-    .removeLiquidity(accountPkh, lpAmountWithDefault, divestMutezAmount, divestTzBTCAmount, getTransactionTimeoutDate())
-    .toTransferParams({ mutez: true });
+  const [{ threeRouteOutputToken, outputAtomic, routingFeeFromOutputAtomic, xtzChain, tzbtcChain }] =
+    await calculateUnstakeParams([tokenIndex], lpAmountWithDefault, slippageTolerancePercentage);
 
   const transferDevFeeParams = await firstValueFrom(
     getTransferParams$(
-      { address: threeRouteToToken.contract ?? '', id: 0 },
+      { address: threeRouteOutputToken.contract ?? '', id: Number(threeRouteOutputToken.tokenId ?? '0') },
       tezos.rpc.getRpcUrl(),
       account,
       ROUTING_FEE_ADDRESS,
-      routingFeeAtomic
+      routingFeeFromOutputAtomic
     )
   );
 
-  const swapContract = await getReadOnlyContract(ROUTE3_CONTRACT, tezos);
   const threeRouteSwapOpParams = await getSwapTransferParams(
-    threeRouteFromToken,
-    threeRouteToToken,
-    swapToOutputTokenInput,
-    swapOutputAtomic,
-    swapParamsChains,
+    THREE_ROUTE_SIRS_TOKEN,
+    threeRouteOutputToken,
+    lpAmountWithDefault,
+    outputAtomic,
+    { xtzChain, tzbtcChain },
     tezos,
-    accountPkh,
-    swapContract
+    accountPkh
   );
 
-  return [removeLiquidityParams, transferDevFeeParams, ...threeRouteSwapOpParams];
+  return [...threeRouteSwapOpParams, transferDevFeeParams];
 };

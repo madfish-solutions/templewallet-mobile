@@ -44,7 +44,7 @@ const validationSchema: SchemaOf<WithdrawFormValues> = objectSchema().shape({
 });
 
 export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
-  const [isSubmitting, setIsSubmiting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const farm = useFarmSelector(farmId, contractAddress);
   const { stakeTokens } = useFarmTokens(farm?.item);
   const account = useSelectedAccountSelector();
@@ -87,7 +87,7 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
       });
 
       const doWithdraw = async () => {
-        setIsSubmiting(true);
+        setIsSubmitting(true);
         const { tokenOption } = values;
         const { token } = tokenOption;
         const tokenIndex = stakeTokens.findIndex(farmToken => getTokenSlug(farmToken) === getTokenSlug(token));
@@ -118,7 +118,7 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
           showErrorToastByError(error, undefined, true);
           trackEvent('WITHDRAW_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
         } finally {
-          setIsSubmiting(false);
+          setIsSubmitting(false);
         }
       };
 

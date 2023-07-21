@@ -34,6 +34,16 @@ export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.FilmToken
 };
 
+export const TZBTC_TOKEN_METADATA: TokenMetadataInterface = {
+  id: 0,
+  address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
+  name: 'Tezos BTC',
+  symbol: 'tzBTC',
+  decimals: 8,
+  iconName: IconNameEnum.TzBtcToken,
+  standard: TokenStandardsEnum.Fa12
+};
+
 export const WTEZ_TOKEN_METADATA: TokenMetadataInterface = {
   id: 0,
   address: 'KT1UpeXdK6AJbX58GJ92pLZVCucn2DR8Nu4b',
@@ -44,13 +54,13 @@ export const WTEZ_TOKEN_METADATA: TokenMetadataInterface = {
   standard: TokenStandardsEnum.Fa2
 };
 
-export const TZBTC_TOKEN_METADATA: TokenMetadataInterface = {
+export const SIRS_TOKEN_METADATA: TokenMetadataInterface = {
   id: 0,
-  address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
-  name: 'Tezos BTC',
-  symbol: 'tzBTC',
-  decimals: 8,
-  iconName: IconNameEnum.TzBtcToken,
+  address: 'KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo',
+  name: 'Sirius',
+  symbol: 'SIRS',
+  decimals: 0,
+  thumbnailUri: 'ipfs://QmNXQPkRACxaR17cht5ZWaaKiQy46qfCwNVT5FGZy6qnyp',
   standard: TokenStandardsEnum.Fa12
 };
 

@@ -1,18 +1,18 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { MAX_ROUTING_FEE_CHAINS, ROUTING_FEE_PERCENT, ZERO } from 'src/config/swap';
+import { ROUTING_FEE_RATIO, ZERO } from 'src/config/swap';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { FarmTokenStandardEnum } from 'src/enums/farm-token-standard.enum';
 import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking/liquidity-baking-storage.interface';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, SIRS_TOKEN } from 'src/token/data/token-slugs';
-import { TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { SIRS_TOKEN_METADATA, TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { APPROXIMATE_DAYS_IN_YEAR, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking.util';
-import { fetchRoute3SwapParams } from 'src/utils/route3.util';
+import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { calculateSlippageRatio } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
@@ -21,9 +21,7 @@ import {
   DEFAULT_LIQUIDITY_BAKING_SUBSIDY,
   DEFAULT_MINIMAL_BLOCK_DELAY,
   liquidityBakingStakingId,
-  SIRS_TOKEN_METADATA,
-  THREE_ROUTE_TZBTC_TOKEN,
-  THREE_ROUTE_XTZ_TOKEN
+  THREE_ROUTE_LB_TOKENS
 } from './consts';
 import { LiquidityBakingFarmResponse } from './types';
 
@@ -105,57 +103,42 @@ export const getLiquidityBakingFarm = async (
 };
 
 export const calculateUnstakeParams = async (
-  tezos: TezosToolkit,
   outputTokenIndexes: number[],
   lpAmount: BigNumber,
   slippageTolerancePercentage: number
 ) => {
-  const { xtzPool, tokenPool, lqtTotal } = await getLiquidityBakingStorage(tezos);
-  const divestMutezAmount = xtzPool.times(lpAmount).dividedToIntegerBy(lqtTotal);
-  const divestTzBTCAmount = tokenPool.times(lpAmount).dividedToIntegerBy(lqtTotal);
-
-  const outputTokenIndexDependentParams = await Promise.all(
+  // TODO: change logic with fees as soon as https://github.com/madfish-solutions/templewallet-mobile/pull/889 is merged
+  return Promise.all(
     outputTokenIndexes.map(async outputTokenIndex => {
-      const threeRouteFromToken = outputTokenIndex === 0 ? THREE_ROUTE_TZBTC_TOKEN : THREE_ROUTE_XTZ_TOKEN;
-      const threeRouteToToken = outputTokenIndex === 0 ? THREE_ROUTE_XTZ_TOKEN : THREE_ROUTE_TZBTC_TOKEN;
-      const swapInputAtomic = outputTokenIndex === 0 ? divestTzBTCAmount : divestMutezAmount;
-      const directDivestOutputAtomic = outputTokenIndex === 0 ? divestMutezAmount : divestTzBTCAmount;
-      const { chains: swapParamsChains, output: rawSwapOutput } = await fetchRoute3SwapParams({
-        fromSymbol: threeRouteFromToken.symbol,
-        toSymbol: threeRouteToToken.symbol,
-        amount: mutezToTz(swapInputAtomic, threeRouteFromToken.decimals).toFixed(),
-        chainsLimit: MAX_ROUTING_FEE_CHAINS
+      const threeRouteOutputToken = THREE_ROUTE_LB_TOKENS[outputTokenIndex];
+      const {
+        output: rawOutput,
+        xtzChain,
+        tzbtcChain
+      } = await fetchRoute3LiquidityBakingParams({
+        fromSymbol: SIRS_TOKEN_METADATA.symbol,
+        toSymbol: threeRouteOutputToken.symbol,
+        amount: mutezToTz(lpAmount, SIRS_TOKEN_METADATA.decimals).toFixed()
       });
-      const slippageRatio = calculateSlippageRatio(slippageTolerancePercentage);
 
-      if (!isDefined(rawSwapOutput) || rawSwapOutput === ZERO.toFixed()) {
-        throw new Error(`Cannot swap ${threeRouteFromToken.symbol} to ${threeRouteToToken.symbol}`);
+      if (rawOutput === ZERO.toFixed() || !isDefined(rawOutput)) {
+        throw new Error(`Failed to calculate swap params for ${threeRouteOutputToken.symbol}`);
       }
 
-      const swapOutputAtomic = tzToMutez(new BigNumber(rawSwapOutput), threeRouteToToken.decimals)
-        .times(slippageRatio)
+      const outputAtomic = tzToMutez(new BigNumber(rawOutput), threeRouteOutputToken.decimals)
+        .times(calculateSlippageRatio(slippageTolerancePercentage))
         .integerValue(BigNumber.ROUND_DOWN);
-      const routingFeeAtomic = directDivestOutputAtomic
-        .plus(swapOutputAtomic)
-        .times(ROUTING_FEE_PERCENT)
-        .div(100)
-        .integerValue(BigNumber.ROUND_UP);
+      const outputAfterFeeAtomic = outputAtomic.times(ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_DOWN);
+      const routingFeeFromOutputAtomic = outputAtomic.minus(outputAfterFeeAtomic);
 
       return {
-        threeRouteFromToken,
-        threeRouteToToken,
-        swapToOutputTokenInput: swapInputAtomic,
-        routingFeeAtomic,
-        swapParamsChains,
-        swapOutputAtomic,
-        directDivestOutputAtomic
+        threeRouteOutputToken,
+        outputAtomic,
+        routingFeeFromOutputAtomic,
+        outputAfterFeeAtomic,
+        xtzChain,
+        tzbtcChain
       };
     })
   );
-
-  return {
-    divestMutezAmount,
-    divestTzBTCAmount,
-    outputTokenIndexDependentParams
-  };
 };

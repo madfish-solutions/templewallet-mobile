@@ -1,4 +1,3 @@
-import { ContractAbstraction, ContractProvider, ContractMethod } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { Route3DexTypeEnum, Route3TokenStandardEnum } from 'src/enums/route3.enum';
@@ -46,6 +45,13 @@ export interface Route3LiquidityBakingParamsResponse {
   xtzChain: Route3SwapParamsResponse;
 }
 
+export type Route3SwapChains = Pick<Route3SwapParamsResponse, 'chains'>;
+
+export type Route3LiquidityBakingChains = Pick<Route3LiquidityBakingParamsResponse, 'tzbtcChain' | 'xtzChain'>;
+
+export const isSwapChains = (chains: Route3SwapChains | Route3LiquidityBakingChains): chains is Route3SwapChains =>
+  'chains' in chains;
+
 export interface Route3Token {
   id: number;
   symbol: string;
@@ -61,17 +67,4 @@ export interface Route3Dex {
   contract: string;
   token1: Route3Token;
   token2: Route3Token;
-}
-
-export interface Route3ContractInterface extends ContractAbstraction<ContractProvider> {
-  methods: {
-    execute: (
-      token_in_id: number,
-      token_out_id: number,
-      min_out: BigNumber,
-      receiver: string,
-      hops: Array<Hop>,
-      app_id: number
-    ) => ContractMethod<ContractProvider>;
-  };
 }

@@ -27,5 +27,3 @@ export const TEMPLE_TOKEN: Route3Token = {
 };
 
 export const APP_ID = 2;
-
-export const THREE_ROUTE_SIRS_SYMBOL = 'SIRS';
