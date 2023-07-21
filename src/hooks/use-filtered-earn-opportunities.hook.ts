@@ -35,15 +35,15 @@ export const useFilteredEarnOpportunities = <T extends EarnOpportunity, E extend
       result = result.filter(item => {
         const isRewardsTokenSearched = isAssetSearched(
           {
-            name: item.rewardToken?.metadata?.name,
-            symbol: item.rewardToken?.metadata?.symbol,
-            address: item.rewardToken?.contractAddress
+            name: item.rewardToken.metadata.name,
+            symbol: item.rewardToken.metadata.symbol,
+            address: item.rewardToken.contractAddress
           },
           lowerCaseSearchValue
         );
         const isStakedTokenSearched = item.tokens.find(token =>
           isAssetSearched(
-            { name: token?.metadata?.name, symbol: token?.metadata?.symbol, address: token?.contractAddress },
+            { name: token.metadata.name, symbol: token.metadata.symbol, address: token.contractAddress },
             lowerCaseSearchValue
           )
         );

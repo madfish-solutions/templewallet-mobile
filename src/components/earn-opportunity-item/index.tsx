@@ -133,7 +133,6 @@ export const EarnOpportunityItem: FC<Props> = ({
                 />
               )
             }
-            loading={false}
             fiatEquivalent={itemIsFarm ? undefined : depositFiatEquivalent}
           />
           {depositAmount.gt(0) && (
@@ -158,7 +157,6 @@ export const EarnOpportunityItem: FC<Props> = ({
                   />
                 )
               }
-              loading={false}
               fiatEquivalent={itemIsFarm ? undefined : claimableRewardsFiatEquivalent}
             />
           )}

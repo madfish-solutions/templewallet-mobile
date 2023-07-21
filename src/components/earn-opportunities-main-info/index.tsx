@@ -19,6 +19,7 @@ interface Props {
   totalClaimableRewardsInFiat?: BigNumber;
   netApy: BigNumber;
   totalStakedAmountInFiat: BigNumber;
+  areSomeRewardsClaimable?: boolean;
 }
 
 export const EarnOpportunitiesMainInfo: FC<Props> = ({
@@ -26,12 +27,13 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
   shouldShowClaimRewardsButton = false,
   totalClaimableRewardsInFiat = DEFAULT_AMOUNT,
   netApy,
-  totalStakedAmountInFiat
+  totalStakedAmountInFiat,
+  areSomeRewardsClaimable = false
 }) => {
   const styles = useEarnOpportunitiesMainInfoStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
-  const areSomeRewardsClaimable = totalClaimableRewardsInFiat.isGreaterThan(PENNY);
   const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
+  const roundingMode = totalClaimableRewardsInFiat?.isLessThan(PENNY) ? BigNumber.ROUND_UP : undefined;
 
   return (
     <View style={styles.root}>
@@ -54,7 +56,7 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
               styleConfig={buttonPrimaryStylesConfig}
               title={
                 areSomeRewardsClaimable
-                  ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(DEFAULT_DECIMALS)}${fiatSymbol}`
+                  ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(DEFAULT_DECIMALS, roundingMode)}${fiatSymbol}`
                   : 'EARN TO CLAIM REWARDS'
               }
               disabled={!areSomeRewardsClaimable}
