@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunitySearchPanel } from 'src/components/earn-opportunity-search-panel';
+import { HorizontalBorder } from 'src/components/horizontal-border';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { useFilteredSavings } from 'src/hooks/use-filtered-savings.hook';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
@@ -59,6 +60,7 @@ export const Savings: FC = () => {
   return (
     <>
       <MainInfo />
+      <HorizontalBorder />
       <EarnOpportunitySearchPanel
         checkboxTestID={SavingsSelectorsEnum.depositedOnlyCheckbox}
         searchTestID={SavingsSelectorsEnum.search}
@@ -69,6 +71,7 @@ export const Savings: FC = () => {
         setSearchValue={setSearchValue}
         handleSetSortField={handleSetSortField}
       />
+      <HorizontalBorder />
       {pageIsLoading ? (
         <ActivityIndicator style={styles.loader} size="large" />
       ) : (
