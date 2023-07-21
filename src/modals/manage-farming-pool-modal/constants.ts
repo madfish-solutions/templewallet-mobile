@@ -1,3 +1,0 @@
-export const EXPECTED_STAKING_GAS_EXPENSE = 0.4;
-
-export const STABLESWAP_REFERRAL = 'tz1Sw2mFAUzbkm7dkGCDrbeBsJTTtV7JD8Ey';
