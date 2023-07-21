@@ -133,7 +133,6 @@ export const EarnOpportunityItem: FC<Props> = ({
                 />
               )
             }
-            loading={false}
             fiatEquivalent={itemIsFarm ? undefined : depositFiatEquivalent}
           />
           <StatsItem
@@ -157,7 +156,6 @@ export const EarnOpportunityItem: FC<Props> = ({
                 />
               )
             }
-            loading={false}
             fiatEquivalent={itemIsFarm ? undefined : claimableRewardsFiatEquivalent}
           />
         </View>

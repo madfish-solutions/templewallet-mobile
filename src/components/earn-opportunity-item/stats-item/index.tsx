@@ -10,20 +10,19 @@ import { useStatsItemStyles } from './styles';
 
 interface Props {
   title: string;
-  loading: boolean;
   value: ReactChild | ReactChild[];
   fiatEquivalent?: BigNumber;
   titleStyle?: StyleProp<TextStyle>;
 }
 
-export const StatsItem: FC<Props> = ({ loading, title, value, fiatEquivalent, titleStyle }) => {
+export const StatsItem: FC<Props> = ({ title, value, fiatEquivalent, titleStyle }) => {
   const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
   const styles = useStatsItemStyles();
 
   return (
     <View style={styles.root}>
       <Text style={[styles.title, titleStyle]}>{title}</Text>
-      {loading ? <Text style={styles.loader}>---</Text> : value}
+      {value}
       {isDefined(fiatEquivalent) && (
         <FormattedAmount
           style={styles.fiatEquity}

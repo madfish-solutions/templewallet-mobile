@@ -32,27 +32,29 @@ export const useEarnOpportunitiesStats = (
     Object.entries(userStakes).forEach(([address, stakeRecord]) => {
       const item = earnOpportunities.find(({ contractAddress }) => contractAddress === address);
 
-      if (isDefined(item)) {
-        const depositValueInFiat = atomicTokenAmountToFiat(
-          new BigNumber(stakeRecord.depositAmountAtomic ?? DEFAULT_AMOUNT),
-          item.stakedToken.metadata.decimals,
-          item.depositExchangeRate,
-          fiatToUsdRate
-        );
-
-        totalWeightedApy = totalWeightedApy.plus(
-          new BigNumber(aprToApy(Number(item.apr) ?? DEFAULT_AMOUNT)).multipliedBy(depositValueInFiat)
-        );
-        result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.plus(depositValueInFiat);
-        result.totalClaimableRewardsInFiat = result.totalClaimableRewardsInFiat.plus(
-          atomicTokenAmountToFiat(
-            new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT),
-            item.rewardToken.metadata.decimals,
-            item.earnExchangeRate,
-            fiatToUsdRate
-          )
-        );
+      if (!isDefined(item)) {
+        return;
       }
+
+      const depositValueInFiat = atomicTokenAmountToFiat(
+        new BigNumber(stakeRecord.depositAmountAtomic ?? DEFAULT_AMOUNT),
+        item.stakedToken.metadata.decimals,
+        item.depositExchangeRate,
+        fiatToUsdRate
+      );
+
+      totalWeightedApy = totalWeightedApy.plus(
+        new BigNumber(aprToApy(Number(item.apr) ?? DEFAULT_AMOUNT)).multipliedBy(depositValueInFiat)
+      );
+      result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.plus(depositValueInFiat);
+      result.totalClaimableRewardsInFiat = result.totalClaimableRewardsInFiat.plus(
+        atomicTokenAmountToFiat(
+          new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT),
+          item.rewardToken.metadata.decimals,
+          item.earnExchangeRate,
+          fiatToUsdRate
+        )
+      );
     });
 
     if (result.totalStakedAmountInFiat.isGreaterThan(DEFAULT_AMOUNT)) {
