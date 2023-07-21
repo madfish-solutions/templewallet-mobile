@@ -11,7 +11,9 @@ import { ROUTING_FEE_RATIO } from 'src/config/swap';
 import { isSwapChains, Route3Chain } from 'src/interfaces/route3.interface';
 import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
+import { isDefined } from 'src/utils/is-defined';
 
 import { LbPoolPart } from '../lb-pool-part';
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
@@ -21,10 +23,11 @@ import { useSwapRouteStyles } from './swap-route.styles';
 interface Props {
   isLbOutput: boolean;
   isLbInput: boolean;
+  outputToken: TokenInterface;
   routingFeeIsTakenFromOutput: boolean;
 }
 
-export const SwapRoute: FC<Props> = ({ isLbInput, isLbOutput, routingFeeIsTakenFromOutput }) => {
+export const SwapRoute: FC<Props> = ({ isLbInput, isLbOutput, routingFeeIsTakenFromOutput, outputToken }) => {
   const styles = useSwapRouteStyles();
   const [isRouteVisible, setIsVisible] = useState(false);
   const {
@@ -65,10 +68,12 @@ export const SwapRoute: FC<Props> = ({ isLbInput, isLbOutput, routingFeeIsTakenF
     return routingFeeIsTakenFromOutput
       ? chainsHeapBeforeOutputFee.map(chain => ({
           ...chain,
-          output: new BigNumber(chain.output).times(ROUTING_FEE_RATIO).toFixed(6, BigNumber.ROUND_DOWN)
+          output: new BigNumber(chain.output)
+            .times(ROUTING_FEE_RATIO)
+            .toFixed(outputToken.decimals, BigNumber.ROUND_DOWN)
         }))
       : chainsHeapBeforeOutputFee;
-  }, [chains, routingFeeIsTakenFromOutput]);
+  }, [chains, routingFeeIsTakenFromOutput, outputToken.decimals]);
 
   const totalChains = chainsHeap.length;
 
@@ -86,6 +91,14 @@ export const SwapRoute: FC<Props> = ({ isLbInput, isLbOutput, routingFeeIsTakenF
   const iconName = isRouteVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown;
 
   const toggleRoutePress = useCallback(() => setIsVisible(prevState => !prevState), []);
+
+  const outputAfterFee = useMemo(
+    () =>
+      routingFeeIsTakenFromOutput && isDefined(output)
+        ? new BigNumber(output).times(ROUTING_FEE_RATIO).toFixed(outputToken.decimals, BigNumber.ROUND_DOWN)
+        : output,
+    [output, outputToken.decimals, routingFeeIsTakenFromOutput]
+  );
 
   return (
     <View>
@@ -121,7 +134,7 @@ export const SwapRoute: FC<Props> = ({ isLbInput, isLbOutput, routingFeeIsTakenF
               </View>
             ))}
           </View>
-          {isLbOutput && <LbPoolPart isLbOutput amount={output} totalChains={totalChains} />}
+          {isLbOutput && <LbPoolPart isLbOutput amount={outputAfterFee} totalChains={totalChains} />}
         </View>
       )}
       <Divider size={formatSize(shouldShowRoute ? 16 : 4)} />
