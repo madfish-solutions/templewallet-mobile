@@ -143,7 +143,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           onLoad={handleLoadEnd}
         />
       );
-    }, [mime, objktArtifact, currentFallback]);
+    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce]);
 
     const imageWithBlur = useMemo(() => {
       if (Boolean(collectible.isAdultContent) && currentFallback !== FINAL_FALLBACK) {
