@@ -1,26 +1,29 @@
-import React, { FC, useMemo, useState, memo } from 'react';
+import React, { FC, memo, useMemo, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
 import { AudioPlaceholder } from 'src/components/audio-placeholder/audio-placeholder';
+import { Icon } from 'src/components/icon/icon';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/toast.utils';
 import {
-  ImageResolutionEnum,
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
   formatImgUri,
+  ImageResolutionEnum,
   isImgUriDataUri
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { IconNameEnum } from '../icon/icon-name.enum';
 import { ImageBlurOverlay } from '../image-blur-overlay/image-blur-overlay';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
+
+const FINAL_FALLBACK = 'FINAL_FALLBACK';
 
 export const CollectibleIcon: FC<CollectibleIconProps> = memo(
   ({
@@ -40,28 +43,30 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const styles = useCollectibleIconStyles();
     const assetSlug = `${collectible.address}_${collectible.id}`;
 
-    const initialFallback = useMemo(() => {
-      if (isDefined(collectible.artifactUri) && isBigIcon) {
-        return formatCollectibleObjktArtifactUri(collectible.artifactUri);
-      }
-
-      return formatCollectibleObjktMediumUri(assetSlug);
-    }, []);
+    const imageFallbackURLs = useMemo(
+      () => [
+        formatCollectibleObjktArtifactUri(collectible.artifactUri ?? ''),
+        formatCollectibleObjktMediumUri(assetSlug),
+        formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
+      ],
+      [collectible]
+    );
 
     const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
-    const [currentFallback, setCurrentFallback] = useState(initialFallback);
+    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
+    const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
+
     const handleError = () => {
-      setCurrentFallback(
-        currentFallback.endsWith('/thumb288')
-          ? formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
-          : formatCollectibleObjktMediumUri(assetSlug)
-      );
+      if (currentFallbackIndex < imageFallbackURLs.length - 1) {
+        setCurrentFallback(imageFallbackURLs[currentFallbackIndex + 1]);
+        setCurrentFallbackIndex(prevState => prevState + 1);
+      } else {
+        setCurrentFallback(FINAL_FALLBACK);
+        handleLoadEnd();
+      }
     };
 
-    const handleAnimatedError = () => {
-      setIsAnimatedRenderedOnce(true);
-      handleError();
-    };
+    const handleAnimatedError = () => void setIsAnimatedRenderedOnce(true);
     const handleLoadEnd = () => void setIsLoading(false);
 
     const image = useMemo(() => {
@@ -94,7 +99,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           return (
             <SimplePlayer
               uri={formatCollectibleObjktArtifactUri(objktArtifact)}
-              posterUri={formatCollectibleObjktMediumUri(assetSlug)}
               size={size}
               style={styles.image}
               onError={handleAnimatedError}
@@ -109,7 +113,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
               <SimplePlayer
                 uri={formatCollectibleObjktArtifactUri(objktArtifact)}
                 size={size}
-                onError={() => showErrorToast({ description: 'Invalid audio' })}
+                onError={handleAnimatedError}
                 onLoad={handleLoadEnd}
               />
               <AudioPlaceholder />
@@ -154,10 +158,16 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           padding: formatSize(2)
         }}
       >
-        {imageWithBlur}
-        {isLoading && !isShowBlur && (
+        {currentFallback === FINAL_FALLBACK ? (
           <View style={styles.loader}>
-            <ActivityIndicator size={iconSize === CollectibleIconSize.SMALL ? 'small' : 'large'} />
+            <Icon name={IconNameEnum.BrokenImage} width={formatSize(38)} height={formatSize(48)} />
+          </View>
+        ) : (
+          imageWithBlur
+        )}
+        {isLoading && !Boolean(isShowBlur) && (
+          <View style={styles.loader}>
+            <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />
           </View>
         )}
       </View>
