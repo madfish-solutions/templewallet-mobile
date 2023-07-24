@@ -21,7 +21,7 @@ import { KNOWN_STABLECOINS_SLUGS } from 'src/token/data/token-slugs';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { SECONDS_IN_DAY } from 'src/utils/date.utils';
-import { aprToApy, isFarm } from 'src/utils/earn.utils';
+import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { EarnOpportunityItemSelectors } from './selectors';
@@ -64,7 +64,6 @@ export const EarnOpportunityItem: FC<Props> = ({
   const youvesIconName = theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
 
   const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
-  const apy = useMemo(() => (isDefined(apr) ? aprToApy(Number(apr)).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
 
   const { amount: depositAmount, fiatEquivalent: depositFiatEquivalent } = useAmounts(
     lastStakeRecord?.depositAmountAtomic,
@@ -85,21 +84,21 @@ export const EarnOpportunityItem: FC<Props> = ({
     <View style={[styles.root, styles.mb16]}>
       <View style={styles.bageContainer}>
         {(itemType === EarnOpportunityTypeEnum.STABLESWAP || (allTokensAreStablecoins && !itemIsFarm)) && (
-          <Bage text="Stable Pool" color={colors.kolibriGreen} style={styles.bage} />
+          <Bage text="Stable Pool" color={colors.kolibriGreen} style={styles.bage} textStyle={styles.bageText} />
         )}
         {Number(vestingPeriodSeconds) > SECONDS_IN_DAY && (
-          <Bage text={itemIsFarm ? 'Long-Term Farm' : 'Long-Term Savings Pool'} />
+          <Bage
+            text={itemIsFarm ? 'Long-Term Farm' : 'Long-Term Savings Pool'}
+            style={[styles.bage, styles.lastBage]}
+            textStyle={styles.bageText}
+          />
         )}
       </View>
       <View style={styles.mainContent}>
         <View style={[styles.tokensContainer, styles.row]}>
           <EarnOpportunityTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
           <View>
-            <Text style={styles.apyText}>
-              {itemType === EarnOpportunityTypeEnum.YOUVES_SAVING || itemType === EarnOpportunityTypeEnum.YOUVES_STAKING
-                ? `APR: ${formattedApr}%`
-                : `APY: ${apy}%`}
-            </Text>
+            <Text style={styles.aprText}>APR: {formattedApr}%</Text>
             <View style={styles.earnSource}>
               <Icon
                 style={styles.earnSourceIcon}

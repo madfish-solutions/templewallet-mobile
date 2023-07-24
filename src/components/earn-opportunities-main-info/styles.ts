@@ -24,7 +24,7 @@ export const useEarnOpportunitiesMainInfoStyles = createUseStylesMemoized(({ col
   deposit: {
     flex: 1
   },
-  netApy: {
+  netApr: {
     minWidth: formatSize(128)
   },
   titleText: {

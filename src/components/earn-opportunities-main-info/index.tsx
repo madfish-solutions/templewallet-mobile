@@ -17,7 +17,7 @@ interface Props {
   claimAllRewards?: EmptyFn;
   shouldShowClaimRewardsButton?: boolean;
   totalClaimableRewardsInFiat?: BigNumber;
-  netApy: BigNumber;
+  netApr: BigNumber;
   totalStakedAmountInFiat: BigNumber;
   areSomeRewardsClaimable?: boolean;
 }
@@ -26,7 +26,7 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
   claimAllRewards = noop,
   shouldShowClaimRewardsButton = false,
   totalClaimableRewardsInFiat = DEFAULT_AMOUNT,
-  netApy,
+  netApr,
   totalStakedAmountInFiat,
   areSomeRewardsClaimable = false
 }) => {
@@ -44,9 +44,9 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
             <FormattedAmount isDollarValue amount={totalStakedAmountInFiat} style={styles.valueText} />
           </View>
           <Divider size={formatSize(8)} />
-          <View style={[styles.card, styles.netApy]}>
-            <Text style={styles.titleText}>NET APY</Text>
-            <Text style={styles.valueText}>{netApy.toFixed(DEFAULT_DECIMALS)}%</Text>
+          <View style={[styles.card, styles.netApr]}>
+            <Text style={styles.titleText}>NET APR</Text>
+            <Text style={styles.valueText}>{netApr.toFixed(DEFAULT_DECIMALS)}%</Text>
           </View>
         </View>
         {shouldShowClaimRewardsButton && (

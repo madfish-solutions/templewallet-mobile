@@ -24,14 +24,14 @@ interface Props {
 
 const earnSortFieldsLabels = {
   [EarnOpportunitiesSortFieldEnum.Default]: 'Default',
-  [EarnOpportunitiesSortFieldEnum.APY]: 'APR',
+  [EarnOpportunitiesSortFieldEnum.APR]: 'APR',
   [EarnOpportunitiesSortFieldEnum.Oldest]: 'Oldest',
   [EarnOpportunitiesSortFieldEnum.Newest]: 'Newest'
 };
 
 const earnSortFieldsOptions = [
   EarnOpportunitiesSortFieldEnum.Default,
-  EarnOpportunitiesSortFieldEnum.APY,
+  EarnOpportunitiesSortFieldEnum.APR,
   EarnOpportunitiesSortFieldEnum.Oldest,
   EarnOpportunitiesSortFieldEnum.Newest
 ];

@@ -22,7 +22,7 @@ import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
-import { aprToApy, isFarm } from 'src/utils/earn.utils';
+import { isFarm } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -54,8 +54,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = earnOpportunityItem;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
-  const apy = isDefined(apr) ? aprToApy(Number(apr)) : undefined;
-  const apyOrApr = isFarm(earnOpportunityItem) ? apy : Number(apr);
+  const aprFormatted = isDefined(apr) ? `${Number(apr).toFixed(2)}%` : '-';
   const [claimPending, setClaimPending] = useState(false);
   const styles = useDetailsCardStyles();
   const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
@@ -164,9 +163,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
     <View style={styles.root}>
       <View style={styles.title}>
         <EarnOpportunityTokens {...tokens} />
-        <Text style={styles.apyLabel}>
-          {isFarm(earnOpportunityItem) ? 'APY' : 'APR'}: {isDefined(apyOrApr) ? `${apyOrApr.toFixed(2)}%` : '-'}
-        </Text>
+        <Text style={styles.aprLabel}>APR: {aprFormatted}</Text>
       </View>
       <HorizontalBorder style={styles.titleBorder} />
       {depositAmount.isZero() ? (
