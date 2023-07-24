@@ -1,4 +1,4 @@
-import React, { FC, memo, useMemo, useState } from 'react';
+import React, { FC, memo, useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -56,7 +56,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
     const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
 
-    const handleError = () => {
+    const handleError = useCallback(() => {
       if (currentFallbackIndex < imageFallbackURLs.length - 1) {
         setCurrentFallback(imageFallbackURLs[currentFallbackIndex + 1]);
         setCurrentFallbackIndex(prevState => prevState + 1);
@@ -64,10 +64,13 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         setCurrentFallback(FINAL_FALLBACK);
         handleLoadEnd();
       }
-    };
+    }, [currentFallbackIndex, imageFallbackURLs]);
 
-    const handleAnimatedError = () => void setIsAnimatedRenderedOnce(true);
-    const handleLoadEnd = () => void setIsLoading(false);
+    const handleAnimatedError = useCallback(() => setIsAnimatedRenderedOnce(true), []);
+    const handleLoadEnd = useCallback(() => setIsLoading(false), []);
+
+    const finalFallbackIconWidth = useMemo(() => formatSize(isBigIcon ? 72 : 38), [isBigIcon]);
+    const finalFallbackIconHeight = useMemo(() => formatSize(isBigIcon ? 90 : 48), [isBigIcon]);
 
     const image = useMemo(() => {
       if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon) {
@@ -122,6 +125,14 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         }
       }
 
+      if (currentFallback === FINAL_FALLBACK) {
+        return (
+          <View style={styles.image}>
+            <Icon name={IconNameEnum.BrokenImage} width={finalFallbackIconWidth} height={finalFallbackIconHeight} />
+          </View>
+        );
+      }
+
       return (
         <FastImage
           style={styles.image}
@@ -133,7 +144,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     }, [mime, objktArtifact, currentFallback]);
 
     const imageWithBlur = useMemo(() => {
-      if (Boolean(collectible.isAdultContent)) {
+      if (Boolean(collectible.isAdultContent) && currentFallback !== FINAL_FALLBACK) {
         return (
           <ImageBlurOverlay
             theme={blurLayoutTheme}
@@ -148,7 +159,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
 
       return image;
-    }, [image, collectible.isAdultContent, isShowBlur]);
+    }, [image, collectible.isAdultContent, isShowBlur, currentFallback]);
 
     return (
       <View
@@ -158,13 +169,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           padding: formatSize(2)
         }}
       >
-        {currentFallback === FINAL_FALLBACK ? (
-          <View style={styles.loader}>
-            <Icon name={IconNameEnum.BrokenImage} width={formatSize(38)} height={formatSize(48)} />
-          </View>
-        ) : (
-          imageWithBlur
-        )}
+        {imageWithBlur}
         {isLoading && !Boolean(isShowBlur) && (
           <View style={styles.loader}>
             <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />

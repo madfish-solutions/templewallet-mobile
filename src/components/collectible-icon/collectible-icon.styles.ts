@@ -12,7 +12,9 @@ export const useCollectibleIconStyles = createUseStyles(({ colors }) => ({
     width: '100%',
     height: '100%',
     backgroundColor: colors.blue10,
-    borderRadius: formatSize(4)
+    borderRadius: formatSize(4),
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   loader: {
     ...StyleSheet.absoluteFillObject,

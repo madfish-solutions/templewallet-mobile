@@ -1,7 +1,7 @@
 import { isString } from './is-string';
 import 'react-native-url-polyfill/auto';
 
-const IPFS_PROTOCOL_PREFIX = 'ipfs://';
+const IPFS_PROTOCOL = 'ipfs:';
 const OBJKT_ORIGIN = 'https://assets.objkt.media/file';
 const OBJKT_RESIZE_3 = 'assets-003';
 
@@ -68,7 +68,7 @@ export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
 const cutIpfsPrefix = (artifactUri: string) => {
   const url = new URL(artifactUri);
 
-  url.protocol === 'ipfs:' ? artifactUri.substring(IPFS_PROTOCOL_PREFIX.length) : artifactUri;
+  return url.protocol === 'ipfs:' ? artifactUri.substring(IPFS_PROTOCOL.length) : artifactUri;
 };
 
 export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
@@ -77,7 +77,7 @@ export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
   }
 
   const url = new URL(artifactUri);
-  const urlPath = `${url.protocol}${url.pathname}`;
+  const urlPath = `${url.protocol}${url.hostname}`;
 
   if (url.searchParams.get('fxhash') !== null) {
     return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact/index.html${url.search}`;
