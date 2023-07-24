@@ -9,6 +9,7 @@ import { SimpleModelView } from 'src/components/simple-model-view/simple-model-v
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
 import {
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
@@ -68,6 +69,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
 
     const handleAnimatedError = useCallback(() => setIsAnimatedRenderedOnce(true), []);
     const handleLoadEnd = useCallback(() => setIsLoading(false), []);
+    const handleAudioError = useCallback(() => showErrorToast({ description: 'Invalid audio' }), []);
 
     const finalFallbackIconWidth = useMemo(() => formatSize(isBigIcon ? 72 : 38), [isBigIcon]);
     const finalFallbackIconHeight = useMemo(() => formatSize(isBigIcon ? 90 : 48), [isBigIcon]);
@@ -116,7 +118,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
               <SimplePlayer
                 uri={formatCollectibleObjktArtifactUri(objktArtifact)}
                 size={size}
-                onError={handleAnimatedError}
+                onError={handleAudioError}
                 onLoad={handleLoadEnd}
               />
               <AudioPlaceholder />
