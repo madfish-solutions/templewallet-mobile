@@ -22,10 +22,11 @@ export const useAnalytics = () => {
     async (
       event?: string,
       category: AnalyticsEventCategory = AnalyticsEventCategory.General,
-      additionalProperties: AnalyticsEventProperties = {}
+      additionalProperties: AnalyticsEventProperties = {},
+      sendWithoutAuth = false
     ) =>
       event !== undefined &&
-      shouldSendAnalytics &&
+      (shouldSendAnalytics || sendWithoutAuth) &&
       jitsu.track(category, {
         userId,
         event,

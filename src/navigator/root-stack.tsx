@@ -45,6 +45,7 @@ import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
+import { useApkUserEvent } from '../hooks/use-apk-user-event';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -69,6 +70,7 @@ export const RootStackScreen = () => {
 
   useStorageMigration();
 
+  useApkUserEvent();
   useTokensMetadataFixtures();
   useWhitelist();
   useQuickActions();
