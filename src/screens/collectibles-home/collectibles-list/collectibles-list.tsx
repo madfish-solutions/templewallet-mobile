@@ -5,6 +5,7 @@ import { isTablet } from 'react-native-device-info';
 
 import { formatSize } from 'src/styles/format-size';
 
+import { AudioPlaceholderTheme } from '../../../components/audio-placeholder/audio-placeholder';
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useScreenContainerStyles } from '../../../components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from '../../../config/styles';
@@ -48,6 +49,8 @@ export const CollectiblesList: FC<Props> = ({ collectibles, isShowInfo }) => {
             key={getTokenSlug(collectible)}
             collectible={collectible}
             isShowInfo={isShowInfo}
+            audioPlaceholderTheme={AudioPlaceholderTheme.small}
+            muted
             size={itemSize}
             style={[
               CollectiblesListStyles.collectible,

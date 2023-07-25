@@ -12,5 +12,13 @@ export const useAudioPlaceholderStyles = createUseStyles(({ colors }) => ({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.cardBG
+  },
+  small: {
+    width: formatSize(32),
+    height: formatSize(40)
+  },
+  big: {
+    width: formatSize(80),
+    height: formatSize(100)
   }
 }));

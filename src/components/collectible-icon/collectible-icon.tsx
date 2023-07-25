@@ -35,7 +35,9 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     size,
     iconSize = CollectibleIconSize.SMALL,
     mime,
+    muted,
     objktArtifact,
+    audioPlaceholderTheme,
     setScrollEnabled,
     blurLayoutTheme,
     isTouchableBlurOverlay,
@@ -134,6 +136,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
             <SimplePlayer
               uri={formatCollectibleObjktArtifactUri(objktArtifact)}
               size={size}
+              muted={muted}
               style={styles.image}
               onError={handleAnimatedError}
               onLoad={handleLoadEnd}
@@ -141,16 +144,17 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           );
         }
 
-        if (mime === NonStaticMimeTypes.AUDIO) {
+        if (isDefined(mime) && mime.includes(NonStaticMimeTypes.AUDIO)) {
           return (
             <>
               <SimplePlayer
                 uri={formatCollectibleObjktArtifactUri(objktArtifact)}
                 size={size}
+                muted={muted}
                 onError={handleAudioError}
                 onLoad={handleLoadEnd}
               />
-              <AudioPlaceholder />
+              <AudioPlaceholder theme={audioPlaceholderTheme} />
             </>
           );
         }
@@ -172,7 +176,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           onLoad={handleLoadEnd}
         />
       );
-    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce]);
+    }, [mime, muted, objktArtifact, currentFallback, isAnimatedRenderedOnce, audioPlaceholderTheme]);
 
     const imageWithBlur = useMemo(() => {
       if (Boolean(collectible.isAdultContent) && currentFallback !== FINAL_FALLBACK) {
