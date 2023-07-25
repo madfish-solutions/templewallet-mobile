@@ -1,4 +1,4 @@
-import { OpKind, ParamsWithKind } from '@taquito/taquito';
+import { OpKind, ParamsWithKind, TezosToolkit } from '@taquito/taquito';
 import { TransferParams } from '@taquito/taquito/dist/types/operations/types';
 import { BigNumber } from 'bignumber.js';
 import { from, Observable, of } from 'rxjs';
@@ -11,17 +11,36 @@ import { getTokenType } from '../token/utils/token.utils';
 import { isString } from './is-string';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
-export const getTransferParams$ = (
-  asset: TokenMetadataInterface,
+export function getTransferParams$(
+  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
+  tezos: TezosToolkit,
+  senderPkh: string,
+  receiverPublicKeyHash: string,
+  amount: BigNumber
+): Observable<TransferParams>;
+export function getTransferParams$(
+  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
   rpcUrl: string,
   sender: AccountInterface,
   receiverPublicKeyHash: string,
   amount: BigNumber
-): Observable<TransferParams> => {
+): Observable<TransferParams>;
+export function getTransferParams$(
+  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
+  rpcUrlOrTezos: string | TezosToolkit,
+  sender: AccountInterface | string,
+  receiverPublicKeyHash: string,
+  amount: BigNumber
+): Observable<TransferParams> {
   const { id, address } = asset;
+  const tezos =
+    typeof rpcUrlOrTezos === 'string'
+      ? createReadOnlyTezosToolkit(rpcUrlOrTezos, sender as AccountInterface)
+      : rpcUrlOrTezos;
+  const senderPkh = typeof sender === 'string' ? sender : sender.publicKeyHash;
 
   return isString(address)
-    ? from(createReadOnlyTezosToolkit(rpcUrl, sender).contract.at(address)).pipe(
+    ? from(tezos.contract.at(address)).pipe(
         map(contract =>
           getTokenType(contract) === TokenTypeEnum.FA_2
             ? {
@@ -33,7 +52,7 @@ export const getTransferParams$ = (
                     {
                       prim: 'Pair',
                       args: [
-                        { string: sender.publicKeyHash },
+                        { string: senderPkh },
                         [
                           {
                             prim: 'Pair',
@@ -51,7 +70,7 @@ export const getTransferParams$ = (
                   ]
                 }
               }
-            : contract.methods.transfer(sender.publicKeyHash, receiverPublicKeyHash, amount).toTransferParams()
+            : contract.methods.transfer(senderPkh, receiverPublicKeyHash, amount).toTransferParams()
         )
       )
     : of({
@@ -59,7 +78,7 @@ export const getTransferParams$ = (
         to: receiverPublicKeyHash,
         mutez: true
       });
-};
+}
 
 export const parseTransferParamsToParamsWithKind = (transferParams: TransferParams): ParamsWithKind[] => [
   { ...transferParams, kind: OpKind.TRANSACTION }

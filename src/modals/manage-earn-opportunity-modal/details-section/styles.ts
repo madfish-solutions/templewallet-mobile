@@ -5,8 +5,7 @@ export const useDetailsSectionStyles = createUseStylesMemoized(({ colors, typogr
   detailsTitle: {
     paddingHorizontal: formatSize(4),
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: formatSize(8)
+    alignItems: 'center'
   },
   farmTypeIconWrapper: {
     padding: formatSize(4),
