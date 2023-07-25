@@ -1,4 +1,4 @@
 export interface AttributeInfo {
-  attribute_id: number;
+  attributeId: number;
   tokens: number;
 }

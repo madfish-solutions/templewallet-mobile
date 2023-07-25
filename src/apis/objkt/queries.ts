@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-import { ADULT_CONTENT_TAGS } from './adult-tags';
-import { ADULT_ATTRIBUTE_NAME, PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
+import { fromTokenSlug } from '../../utils/from-token-slug';
+import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
 
 export const buildGetCollectiblesInfoQuery = (address: string) => gql`
   query MyQuery {
@@ -190,9 +190,98 @@ query MyQuery {
 }
 `;
 
+export const buildGetFA2AttributeCountQuery = (ids: number[]) => gql`
+  query MyQuery {
+    fa2_attribute_count(where: { attribute_id: { _in: [${ids}] } }) {
+      attribute_id
+      tokens
+    }
+  }
+`;
+
+export const buildGetGalleryAttributeCountQuery = (ids: number[]) => gql`
+  query MyQuery {
+    gallery_attribute_count(where: { attribute_id: { _in: [${ids}] } }) {
+      attribute_id
+      tokens
+    }
+  }
+`;
+
+export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) => {
+  const items = collectiblesSlugs.map(slug => fromTokenSlug(slug));
+
+  return gql`
+    query MyQuery {
+      token(where: {
+        _or: [
+          ${items
+            .map(([contract, id]) => `{ fa_contract: {_eq: "${contract}"}, token_id: {_eq: "${id}"} }`)
+            .join(',\n')}
+        ]
+      }) {
+        fa_contract
+        token_id
+        description
+        creators {
+          holder {
+            address
+            tzdomain
+          }
+        }
+        fa {
+          name
+          logo
+          items
+        }
+        metadata
+        artifact_uri
+        name
+        tags {
+          tag {
+            name
+          }
+        }
+        attributes {
+          attribute {
+            id
+            name
+            value
+          }
+        }
+        timestamp
+        royalties {
+          decimals
+          amount
+        }
+        supply
+        galleries {
+          gallery {
+            items
+            name
+          }
+        }
+        lowest_ask
+        listings_active(order_by: {price_xtz: asc}) {
+          bigmap_key
+          currency_id
+          price
+          marketplace_contract
+          id
+          currency {
+            type
+          }
+        }
+      }
+    }
+  `;
+};
+
 export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId: string) => gql`
   query MyQuery {
     token(where: { fa_contract: { _eq: "${address}" }, token_id: { _eq: "${tokenId}" } }) {
+      fa_contract
+      token_id
       description
       creators {
         holder {
@@ -241,40 +330,3 @@ export const buildGetCollectibleByAddressAndIdQuery = (address: string, tokenId:
     }
   }
 `;
-
-export const buildGetFA2AttributeCountQuery = (ids: number[]) => gql`
-  query MyQuery {
-    fa2_attribute_count(where: { attribute_id: { _in: [${ids}] } }) {
-      attribute_id
-      tokens
-    }
-  }
-`;
-
-export const buildGetGalleryAttributeCountQuery = (ids: number[]) => gql`
-  query MyQuery {
-    gallery_attribute_count(where: { attribute_id: { _in: [${ids}] } }) {
-      attribute_id
-      tokens
-    }
-  }
-`;
-
-export const buildGetUserAdultCollectiblesQuery = (address: string) => {
-  return gql`
-    query MyQuery {
-      token(
-        where: {
-          holders: { holder_address: { _eq: "${address}" } }
-          _or: [
-            { attributes: { attribute: { name: { _eq: "${ADULT_ATTRIBUTE_NAME}" } } } }
-            { tags: { tag: { name: { _in: [${ADULT_CONTENT_TAGS}] } } } }
-          ]
-        }
-      ) {
-        fa_contract
-        token_id
-      }
-    }
-  `;
-};

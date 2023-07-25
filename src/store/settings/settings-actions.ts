@@ -36,3 +36,5 @@ export const madeCloudBackupAction = createAction<void>('settings/MADE_CLOUD_BAC
 export const setOnRampPossibilityAction = createAction<boolean>('settings/SET_ON_RAMP_POSSIBILITY_ACTION');
 
 export const walletOpenedAction = createAction<void>('settings/APPLICATION_OPENED_ACTION');
+
+export const switchIsShowCollectibleInfoAction = createAction('settings/SET_IS_SHOW_COLLECTIBLE_INFO_ACTION');

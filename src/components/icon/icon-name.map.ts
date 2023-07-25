@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import ActionIcon from './assets/action.svg';
 import AlertCircleIcon from './assets/alert-circle.svg';
 import AlertMonochromeIcon from './assets/alert-monochrome.svg';
 import ShieldIcon from './assets/alert-shield.svg';
@@ -26,6 +27,8 @@ import BuyIcon from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
+import CheckboxOffIcon from './assets/checkbox-off.svg';
+import CheckboxOnIcon from './assets/checkbox-on.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
@@ -50,6 +53,7 @@ import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
+import EditNewIcon from './assets/edit-new.svg';
 import EditIcon from './assets/edit.svg';
 import EndorsementsIcon from './assets/endorsements.svg';
 import ExolixIcon from './assets/exolix.svg';
@@ -90,6 +94,7 @@ import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
 import PlentyIcon from './assets/plenty.svg';
+import PlusCircleNewIcon from './assets/plus-circle-new.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
 import PlusIcon from './assets/plus-icon.svg';
@@ -101,6 +106,7 @@ import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
 import RetryIcon from './assets/retry.svg';
+import SearchNewIcon from './assets/search-new.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -121,6 +127,7 @@ import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
 import SwapInfo from './assets/swap-info.svg';
 import SwapRouteItemBackgroundIcon from './assets/swap-route-item-background.svg';
+import SwapSettingsNewIcon from './assets/swap-settings-new.svg';
 import SwapSettings from './assets/swap-settings.svg';
 import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
@@ -152,6 +159,7 @@ import { IconNameEnum } from './icon-name.enum';
 
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Audio]: AudioIcon,
+  [IconNameEnum.Action]: ActionIcon,
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
@@ -182,11 +190,13 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
+  [IconNameEnum.PlusCircleNew]: PlusCircleNewIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
   [IconNameEnum.SwapSettings]: SwapSettings,
+  [IconNameEnum.SwapSettingsNew]: SwapSettingsNewIcon,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
   [IconNameEnum.XBold]: XBoldIcon,
@@ -259,10 +269,12 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ExternalLinkTag]: ExternalLinkTagIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.Search]: SearchIcon,
+  [IconNameEnum.SearchNew]: SearchNewIcon,
   [IconNameEnum.XSearch]: XSearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.AlertMonochrome]: AlertMonochromeIcon,
   [IconNameEnum.Edit]: EditIcon,
+  [IconNameEnum.EditNew]: EditNewIcon,
   [IconNameEnum.TouchId]: TouchIdIcon,
   [IconNameEnum.Trash]: TrashIcon,
   [IconNameEnum.LogOut]: LogOutIcon,
@@ -292,12 +304,14 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.CreditCard]: CreditCardIcon,
   [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
   [IconNameEnum.NFT]: NFT,
   [IconNameEnum.BlurLight]: BlurLight,
   [IconNameEnum.BlurDark]: BlurDark,
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
-  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
+  [IconNameEnum.NotificationDot]: NotificationDotIcon,
+  [IconNameEnum.CheckboxOn]: CheckboxOnIcon,
+  [IconNameEnum.CheckboxOff]: CheckboxOffIcon
 };

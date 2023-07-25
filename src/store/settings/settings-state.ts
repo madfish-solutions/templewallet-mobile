@@ -24,6 +24,7 @@ export interface SettingsState {
   isCloudBackupMade: boolean;
   isOnRampPossibility: boolean;
   applicationOpenCounter: number;
+  isShowCollectibleInfo: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -43,7 +44,8 @@ export const settingsInitialState: SettingsState = {
   isManualBackupMade: true,
   isCloudBackupMade: true,
   isOnRampPossibility: false,
-  applicationOpenCounter: 0
+  applicationOpenCounter: 0,
+  isShowCollectibleInfo: false
 };
 
 export interface SettingsRootState {
