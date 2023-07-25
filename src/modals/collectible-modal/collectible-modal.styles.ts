@@ -19,7 +19,7 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
     borderRadius: formatSize(6)
   },
   logoFallBack: {
-    backgroundColor: colors.orange
+    backgroundColor: colors.input
   },
   collectionName: {
     ...typography.caption13Semibold,

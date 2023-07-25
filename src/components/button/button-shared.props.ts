@@ -10,4 +10,5 @@ export interface ButtonSharedProps extends MarginProps, TestIdProps {
   iconName?: IconNameEnum;
   disabled?: boolean;
   onPress: EmptyFn;
+  isLoading?: boolean;
 }

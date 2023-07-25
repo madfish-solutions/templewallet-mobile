@@ -1,14 +1,12 @@
-import React, { FC, memo, useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import React, { FC, useMemo, useState, memo, useEffect, useCallback } from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
 import { AudioPlaceholder } from 'src/components/audio-placeholder/audio-placeholder';
-import { Icon } from 'src/components/icon/icon';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
-import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import {
   formatCollectibleObjktArtifactUri,
@@ -19,6 +17,11 @@ import {
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { useCollectibleDetailsSelector } from '../../store/collectibles/collectibles-selectors';
+import { formatSize } from '../../styles/format-size';
+import { getTokenSlug } from '../../token/utils/token.utils';
+import { isAdultCollectible } from '../../utils/collectibles.utils';
+import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { ImageBlurOverlay } from '../image-blur-overlay/image-blur-overlay';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
@@ -35,10 +38,23 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     objktArtifact,
     setScrollEnabled,
     blurLayoutTheme,
-    isTouchableBlurOverlay
+    isTouchableBlurOverlay,
+    isShowInfo = false
   }) => {
+    const collectibleDetails = useCollectibleDetailsSelector(getTokenSlug(collectible));
+
+    const isShowBlurInitialValue = useMemo(() => {
+      if (isDefined(collectibleDetails)) {
+        return isAdultCollectible(collectibleDetails.attributes, collectibleDetails.tags);
+      }
+
+      return false;
+    }, [collectibleDetails]);
+
     const [isLoading, setIsLoading] = useState(true);
-    const [isShowBlur, setIsShowBlur] = useState(collectible.isAdultContent ?? false);
+    const [isShowBlur, setIsShowBlur] = useState(isShowBlurInitialValue);
+
+    useEffect(() => void setIsShowBlur(isShowBlurInitialValue), [collectibleDetails]);
 
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
     const styles = useCollectibleIconStyles();
@@ -56,6 +72,19 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
     const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
     const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
+    const formattedImage = useMemo(() => {
+      if (isDefined(objktArtifact) && isBigIcon) {
+        return formatCollectibleObjktArtifactUri(objktArtifact);
+      }
+
+      return formatCollectibleObjktMediumUri(assetSlug);
+    }, [objktArtifact, assetSlug, isBigIcon]);
+
+    const [fastImage, setFastImage] = useState(formattedImage);
+
+    useEffect(() => {
+      setFastImage(formattedImage);
+    }, [objktArtifact]);
 
     const handleError = useCallback(() => {
       if (currentFallbackIndex < imageFallbackURLs.length - 1) {
@@ -137,8 +166,8 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
 
       return (
         <FastImage
-          style={styles.image}
-          source={{ uri: currentFallback }}
+          style={[styles.image, { height: size, width: size }]}
+          source={{ uri: fastImage }}
           onError={handleError}
           onLoad={handleLoadEnd}
         />
@@ -167,11 +196,16 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       <View
         style={{
           width: size,
-          height: size,
-          padding: formatSize(2)
+          height: size
         }}
       >
         {imageWithBlur}
+        {isShowInfo && (
+          <View style={styles.balanceContainer}>
+            <Text style={styles.balanceText}>{collectible.balance}</Text>
+            <Icon name={IconNameEnum.Action} size={formatSize(8)} />
+          </View>
+        )}
         {isLoading && !Boolean(isShowBlur) && (
           <View style={styles.loader}>
             <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />

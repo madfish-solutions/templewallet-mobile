@@ -4,7 +4,8 @@ import { catchError, EMPTY, finalize, map } from 'rxjs';
 import { fetchCollectiblesByCollection$ } from 'src/apis/objkt';
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { showErrorToast } from 'src/toast/error-toast.utils';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
+
+import { CollectibleOfferInteface } from '../token/interfaces/collectible-interfaces.interface';
 
 const ERROR_MESSAGE = 'Sorry, something went wrong..';
 
@@ -15,7 +16,7 @@ export const useCollectibleByCollectionInfo = (
   offset: number,
   galleryId?: string
 ) => {
-  const [collectibles, setCollectibles] = useState<TokenInterface[]>([]);
+  const [collectibles, setCollectibles] = useState<CollectibleOfferInteface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {

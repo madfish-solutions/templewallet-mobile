@@ -34,7 +34,7 @@ export type ModalsParamList = {
   [ModalsEnum.RevealPrivateKey]: { account: AccountInterface };
   [ModalsEnum.EnableBiometryPassword]: undefined;
   [ModalsEnum.ImportAccount]: undefined;
-  [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
+  [ModalsEnum.CollectibleModal]: { slug: string };
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.EditCustomRpc]: { url: string };
   [ModalsEnum.RemoveLiquidity]: {

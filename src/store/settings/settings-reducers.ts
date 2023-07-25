@@ -23,7 +23,8 @@ import {
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
-  setOnRampPossibilityAction
+  setOnRampPossibilityAction,
+  switchIsShowCollectibleInfoAction
 } from './settings-actions';
 import { settingsInitialState, SettingsState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -99,6 +100,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(madeCloudBackupAction, state => ({
     ...state,
     isCloudBackupMade: true
+  }));
+
+  builder.addCase(switchIsShowCollectibleInfoAction, state => ({
+    ...state,
+    isShowCollectibleInfo: !state.isShowCollectibleInfo
   }));
 
   builder.addCase(setOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {
