@@ -1,4 +1,4 @@
-import { jitsuClient } from '@jitsu/sdk-js';
+import { jitsuClient } from '@jitsu/sdk-js/packages/javascript-sdk';
 import fetch from 'cross-fetch';
 
 import { JITSU_ANALYTICS_KEY, JITSU_TRACKING_HOST } from '../env.utils';
