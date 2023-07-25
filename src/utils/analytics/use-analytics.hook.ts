@@ -26,7 +26,7 @@ export const useAnalytics = () => {
       sendWithoutAuth = false
     ) =>
       event !== undefined &&
-      (shouldSendAnalytics || sendWithoutAuth) &&
+      Boolean(shouldSendAnalytics || sendWithoutAuth) &&
       jitsu.track(category, {
         userId,
         event,
