@@ -37,7 +37,7 @@ export const MainInfo: FC = () => {
     );
   }, [stakes.data, farms]);
 
-  const { netApy, totalStakedAmountInFiat } = useUserFarmingStats();
+  const { netApr, totalStakedAmountInFiat } = useUserFarmingStats();
 
   const totalClaimableRewardsInFiat = useMemo(() => {
     let result = new BigNumber(0);
@@ -101,7 +101,7 @@ export const MainInfo: FC = () => {
       claimAllRewards={claimAllRewards}
       shouldShowClaimRewardsButton
       totalClaimableRewardsInFiat={totalClaimableRewardsInFiat}
-      netApy={netApy}
+      netApr={netApr}
       totalStakedAmountInFiat={totalStakedAmountInFiat}
       areSomeRewardsClaimable={areSomeRewardsClaimable}
     />

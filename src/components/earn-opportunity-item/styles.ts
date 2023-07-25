@@ -33,7 +33,7 @@ export const useEarnOpportunityItemStyles = createUseStylesMemoized(({ colors, t
     ...typography.numbersRegular17,
     color: colors.black
   },
-  apyText: {
+  aprText: {
     ...typography.caption13Semibold,
     color: colors.black
   },

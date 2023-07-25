@@ -20,8 +20,8 @@ interface OpportunityCategoryCardProps extends TestIdProps {
   screen: ScreensEnum.Farming | ScreensEnum.Savings;
   depositAmountInFiat: BigNumber;
   iconName: IconNameEnum;
-  netApy: BigNumber;
-  maxApy: BigNumber;
+  netApr: BigNumber;
+  maxApr: BigNumber;
 }
 
 export const OpportunityCategoryCard: FC<OpportunityCategoryCardProps> = ({
@@ -30,15 +30,15 @@ export const OpportunityCategoryCard: FC<OpportunityCategoryCardProps> = ({
   screen,
   depositAmountInFiat,
   iconName,
-  netApy,
-  maxApy
+  netApr,
+  maxApr
 }) => {
   const { navigate } = useNavigation();
   const styles = useOpportunityCategoryCardStyles();
 
   const handlePress = useCallback(() => navigate(screen), [navigate, screen]);
-  const netApyFormatted = useMemo(() => netApy.toFixed(2), [netApy]);
-  const maxApyFormatted = useMemo(() => maxApy.toFixed(2), [maxApy]);
+  const netAprFormatted = useMemo(() => netApr.toFixed(2), [netApr]);
+  const maxAprFormatted = useMemo(() => maxApr.toFixed(2), [maxApr]);
 
   return (
     <TouchableOpacity style={styles.root} onPress={handlePress}>
@@ -67,8 +67,8 @@ export const OpportunityCategoryCard: FC<OpportunityCategoryCardProps> = ({
           <Text style={styles.description}>{description}</Text>
         )}
         <View style={styles.rightStatsItem}>
-          <Text style={styles.statsItemLabel}>{depositAmountInFiat.gt(0) ? 'Net APY:' : 'Max APY:'}</Text>
-          <Text style={styles.statsItemValue}>{depositAmountInFiat.gt(0) ? netApyFormatted : maxApyFormatted}%</Text>
+          <Text style={styles.statsItemLabel}>{depositAmountInFiat.gt(0) ? 'Net APR:' : 'Max APR:'}</Text>
+          <Text style={styles.statsItemValue}>{depositAmountInFiat.gt(0) ? netAprFormatted : maxAprFormatted}%</Text>
         </View>
       </View>
     </TouchableOpacity>

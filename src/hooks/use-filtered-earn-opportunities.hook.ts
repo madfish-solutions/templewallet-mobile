@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
-import { sortByApy, sortByNewest, sortByOldest } from 'src/utils/earn.utils';
+import { sortByApr, sortByNewest, sortByOldest } from 'src/utils/earn.utils';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
 import { isString } from '../utils/is-string';
@@ -53,8 +53,8 @@ export const useFilteredEarnOpportunities = <T extends EarnOpportunity, E extend
     }
 
     switch (sortField) {
-      case EarnOpportunitiesSortFieldEnum.APY:
-        result.sort(sortByApy);
+      case EarnOpportunitiesSortFieldEnum.APR:
+        result.sort(sortByApr);
         break;
       case EarnOpportunitiesSortFieldEnum.Newest:
         result.sort(sortByNewest);

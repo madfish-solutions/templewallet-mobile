@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
-import { aprToApy } from 'src/utils/earn.utils';
 import { atomicTokenAmountToFiat } from 'src/utils/fiat.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -18,16 +17,13 @@ export const useEarnOpportunitiesStats = (
 
   return useMemo(() => {
     const result = {
-      netApy: new BigNumber(DEFAULT_AMOUNT),
+      netApr: new BigNumber(DEFAULT_AMOUNT),
       totalStakedAmountInFiat: new BigNumber(DEFAULT_AMOUNT),
       totalClaimableRewardsInFiat: new BigNumber(DEFAULT_AMOUNT),
-      maxApy: BigNumber.maximum(
-        DEFAULT_AMOUNT,
-        ...earnOpportunities.map(item => aprToApy(Number(item.apr) ?? DEFAULT_AMOUNT))
-      )
+      maxApr: BigNumber.maximum(DEFAULT_AMOUNT, ...earnOpportunities.map(item => item.apr ?? DEFAULT_AMOUNT))
     };
 
-    let totalWeightedApy = new BigNumber(DEFAULT_AMOUNT);
+    let totalWeightedApr = new BigNumber(DEFAULT_AMOUNT);
 
     Object.entries(userStakes).forEach(([address, stakeRecord]) => {
       const item = earnOpportunities.find(({ contractAddress }) => contractAddress === address);
@@ -43,8 +39,8 @@ export const useEarnOpportunitiesStats = (
         fiatToUsdRate
       );
 
-      totalWeightedApy = totalWeightedApy.plus(
-        new BigNumber(aprToApy(Number(item.apr) ?? DEFAULT_AMOUNT)).multipliedBy(depositValueInFiat)
+      totalWeightedApr = totalWeightedApr.plus(
+        new BigNumber(item.apr ?? DEFAULT_AMOUNT).multipliedBy(depositValueInFiat)
       );
       result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.plus(depositValueInFiat);
       result.totalClaimableRewardsInFiat = result.totalClaimableRewardsInFiat.plus(
@@ -58,7 +54,7 @@ export const useEarnOpportunitiesStats = (
     });
 
     if (result.totalStakedAmountInFiat.isGreaterThan(DEFAULT_AMOUNT)) {
-      result.netApy = totalWeightedApy.dividedBy(result.totalStakedAmountInFiat);
+      result.netApr = totalWeightedApr.dividedBy(result.totalStakedAmountInFiat);
     }
 
     return result;
