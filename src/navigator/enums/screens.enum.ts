@@ -1,6 +1,8 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
+import { ModalsEnum } from './modals.enum';
+
 export enum ScreensEnum {
   Welcome = 'Welcome',
   ImportAccount = 'ImportAccount',
@@ -128,7 +130,7 @@ export const walletStackScreens = [
   ScreensEnum.Notifications,
   ScreensEnum.NotificationsItem
 ];
-export const nftStackScreens = [ScreensEnum.CollectiblesHome];
+export const nftStackScreens = [ScreensEnum.CollectiblesHome, ScreensEnum.Collection, ModalsEnum.CollectibleModal];
 export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];
