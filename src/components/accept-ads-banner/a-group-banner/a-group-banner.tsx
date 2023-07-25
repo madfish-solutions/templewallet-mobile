@@ -23,7 +23,7 @@ export const AGroupBanner: FC<BannerGroupProps> = ({ onDisable, onEnable, style 
       </Text>
       <Text style={commonStyles.description}>Start earning now!</Text>
       <ButtonLargeSecondary
-        title="No thanks, I hate free money"
+        title="No thanks"
         onPress={onDisable}
         textStyle={commonStyles.buttonText}
         buttonStyle={commonStyles.button}
