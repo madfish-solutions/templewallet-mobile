@@ -135,29 +135,31 @@ export const EarnOpportunityItem: FC<Props> = ({
             }
             fiatEquivalent={itemIsFarm ? undefined : depositFiatEquivalent}
           />
-          <StatsItem
-            title="Claimable rewards:"
-            value={
-              itemIsFarm ? (
-                <FormattedAmountWithLoader
-                  isLoading={stakeIsLoading}
-                  isDollarValue
-                  amount={claimableRewardsFiatEquivalent}
-                  style={styles.attributeValue}
-                  renderLoader={renderStatsLoader}
-                />
-              ) : (
-                <FormattedAmountWithLoader
-                  isLoading={stakeIsLoading}
-                  symbol={rewardToken.symbol}
-                  amount={claimableRewardsAmount}
-                  style={styles.attributeValue}
-                  renderLoader={renderStatsLoader}
-                />
-              )
-            }
-            fiatEquivalent={itemIsFarm ? undefined : claimableRewardsFiatEquivalent}
-          />
+          {depositAmount.gt(0) && (
+            <StatsItem
+              title="Claimable rewards:"
+              value={
+                itemIsFarm ? (
+                  <FormattedAmountWithLoader
+                    isLoading={stakeIsLoading}
+                    isDollarValue
+                    amount={claimableRewardsFiatEquivalent}
+                    style={styles.attributeValue}
+                    renderLoader={renderStatsLoader}
+                  />
+                ) : (
+                  <FormattedAmountWithLoader
+                    isLoading={stakeIsLoading}
+                    symbol={rewardToken.symbol}
+                    amount={claimableRewardsAmount}
+                    style={styles.attributeValue}
+                    renderLoader={renderStatsLoader}
+                  />
+                )
+              }
+              fiatEquivalent={itemIsFarm ? undefined : claimableRewardsFiatEquivalent}
+            />
+          )}
         </View>
 
         <View style={styles.row}>
