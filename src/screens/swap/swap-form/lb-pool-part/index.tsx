@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
@@ -20,16 +21,17 @@ interface Props {
 export const LbPoolPart: FC<Props> = ({ isLbOutput, amount, totalChains }) => {
   const styles = useLbPoolPartStyles();
 
-  const advancedLbPoolItemStyles = useMemo(
-    () => ({
-      height: totalChains <= 1 ? undefined : formatSize(46 * totalChains - 8)
-    }),
-    [totalChains]
-  );
+  const advancedLbPoolItemStyles = useMemo(() => ({ height: formatSize(40 * totalChains - 8) }), [totalChains]);
 
   return (
     <View style={[styles.root, conditionalStyle(isLbOutput, styles.reverse)]}>
-      <SwapRouteAmounts alignment={isLbOutput ? 'flex-end' : 'flex-start'} amount={amount ?? '0'} baseAmount={amount} />
+      <SwapRouteAmounts
+        alignment={isLbOutput ? 'flex-end' : 'flex-start'}
+        amount={amount ?? '0'}
+        baseAmount={amount}
+        style={styles.amounts}
+      />
+      <Divider size={formatSize(4)} />
       <View style={styles.dashWrapper}>
         <Icon width={formatSize(263)} height={formatSize(16)} name={IconNameEnum.SwapRouteItemBackground} />
       </View>

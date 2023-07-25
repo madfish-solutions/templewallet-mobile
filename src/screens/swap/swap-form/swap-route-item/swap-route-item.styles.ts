@@ -1,22 +1,21 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
 
 export const useSwapRouteItem = createUseStylesMemoized(() => ({
   flex: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: 'row'
   },
   container: {
     justifyContent: 'space-between'
   },
   hopsContainer: {
     position: 'relative',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    alignItems: 'center'
   },
   iconWrapper: {
     position: 'absolute',
-    left: formatSize(0),
+    left: 0,
     overflow: 'hidden',
     width: '100%'
   }

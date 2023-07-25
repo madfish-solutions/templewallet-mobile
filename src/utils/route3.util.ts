@@ -8,10 +8,10 @@ import {
   Route3Dex,
   Route3LiquidityBakingParamsResponse,
   Route3SwapParamsRequest,
-  Route3SwapParamsResponse,
+  Route3TraditionalSwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
-import { THREE_ROUTE_SIRS_TOKEN, THREE_ROUTE_TZBTC_TOKEN } from 'src/token/data/three-route-tokens';
+import { THREE_ROUTE_SIRS_TOKEN } from 'src/token/data/three-route-tokens';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -36,7 +36,7 @@ const fetchRoute3TraditionalSwapParams = ({
   toSymbol,
   amount,
   chainsLimit = 3
-}: Route3SwapParamsRequest): Promise<Route3SwapParamsResponse> =>
+}: Route3SwapParamsRequest): Promise<Route3TraditionalSwapParamsResponse> =>
   fetch(`https://temple.3route.io/v3/swap/${fromSymbol}/${toSymbol}/${amount}?chainsLimit=${chainsLimit}`, {
     headers: {
       Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
@@ -50,28 +50,14 @@ const fetchRoute3LiquidityBakingParams = ({
   toSymbol,
   amount,
   chainsLimit = 3
-}: Route3SwapParamsRequest): Promise<Route3LiquidityBakingParamsResponse> => {
-  let queryParamsInit: Record<string, string>;
-  if ([fromSymbol, toSymbol].includes(TEZ_TOKEN_METADATA.symbol)) {
-    queryParamsInit = { xtzChainsLimit: chainsLimit.toString() };
-  } else if ([fromSymbol, toSymbol].includes(THREE_ROUTE_TZBTC_TOKEN.symbol)) {
-    queryParamsInit = { tzbtcChainsLimit: chainsLimit.toString() };
-  } else {
-    queryParamsInit = {
-      xtzChainsLimit: Math.ceil(chainsLimit / 2).toString(),
-      tzbtcChainsLimit: Math.floor(chainsLimit / 2).toString()
-    };
-  }
-  const searchParams = new URLSearchParams(queryParamsInit).toString();
-
-  return fetch(`https://temple.3route.io/v3/swap-sirs/${fromSymbol}/${toSymbol}/${amount}?${searchParams}`, {
+}: Route3SwapParamsRequest): Promise<Route3LiquidityBakingParamsResponse> =>
+  fetch(`https://temple.3route.io/v3/swap-sirs/${fromSymbol}/${toSymbol}/${amount}?chainsLimit=${chainsLimit}`, {
     headers: {
       Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
     }
   })
     .then(res => res.text())
     .then(res => parser(res));
-};
 
 export const fetchRoute3SwapParams = (params: Route3SwapParamsRequest) =>
   [params.fromSymbol, params.toSymbol].includes(THREE_ROUTE_SIRS_TOKEN.symbol)

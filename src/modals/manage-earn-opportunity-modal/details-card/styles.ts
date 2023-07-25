@@ -33,7 +33,7 @@ export const useDetailsCardStyles = createUseStylesMemoized(({ colors, typograph
     letterSpacing: formatSize(-0.08),
     color: colors.gray1
   },
-  apyLabel: {
+  aprLabel: {
     ...typography.caption13Semibold,
     letterSpacing: formatSize(-0.08),
     color: colors.black

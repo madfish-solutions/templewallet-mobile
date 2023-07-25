@@ -17,6 +17,7 @@ import {
   SELECTED_BAKER_SYNC_INTERVAL,
   NOTIFICATIONS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
+import { isIOS } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
@@ -259,20 +260,24 @@ export const MainStackScreen = () => {
               />
 
               {/** Swap stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.SwapScreen}
-                component={SwapScreen}
-                options={{
-                  ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
-                  animationEnabled: false
-                }}
-              />
+              {!isIOS && (
+                <>
+                  <MainStack.Screen
+                    name={ScreensEnum.SwapScreen}
+                    component={SwapScreen}
+                    options={{
+                      ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
+                      animationEnabled: false
+                    }}
+                  />
 
-              <MainStack.Screen
-                name={ScreensEnum.SwapSettingsScreen}
-                component={SwapSettingsScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
+                  <MainStack.Screen
+                    name={ScreensEnum.SwapSettingsScreen}
+                    component={SwapSettingsScreen}
+                    options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
+                  />
+                </>
+              )}
 
               {/** Market stack **/}
               <MainStack.Screen

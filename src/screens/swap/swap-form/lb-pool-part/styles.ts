@@ -6,11 +6,11 @@ import { generateShadow } from 'src/styles/generate-shadow';
 export const useLbPoolPartStyles = createUseStylesMemoized(({ colors }) => ({
   root: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: formatSize(8)
+    height: '100%',
+    alignItems: 'center'
   },
   dashWrapper: {
-    width: formatSize(16),
+    width: formatSize(4),
     overflow: 'hidden'
   },
   item: {
@@ -23,5 +23,8 @@ export const useLbPoolPartStyles = createUseStylesMemoized(({ colors }) => ({
   },
   reverse: {
     flexDirection: 'row-reverse'
+  },
+  amounts: {
+    width: 'auto'
   }
 }));

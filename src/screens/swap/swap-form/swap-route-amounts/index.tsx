@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
-import { Text, TextStyle, View } from 'react-native';
+import { StyleProp, Text, TextStyle, View, ViewStyle } from 'react-native';
 
 import { kFormatter } from 'src/utils/number.util';
 
@@ -10,6 +10,7 @@ interface Props {
   alignment: TextStyle['alignSelf'];
   amount: string;
   baseAmount: string | undefined;
+  style?: StyleProp<ViewStyle>;
 }
 
 const BASE = new BigNumber(100);
@@ -30,13 +31,13 @@ const calculatePercentage = (base: string | undefined, part: string) => {
   return amountToFormat.toFixed(PERCENTAGE_DECIMALS);
 };
 
-export const SwapRouteAmounts: FC<Props> = ({ alignment, amount, baseAmount }) => {
+export const SwapRouteAmounts: FC<Props> = ({ alignment, amount, baseAmount, style }) => {
   const styles = useSwapRouteAmountsStyles();
 
   const textStylesFromProps = useMemo(() => ({ alignSelf: alignment }), [alignment]);
 
   return (
-    <View style={styles.amountsContainer}>
+    <View style={[styles.amountsContainer, style]}>
       <Text style={[styles.amount, textStylesFromProps]}>
         {kFormatter(Number(new BigNumber(amount).toFixed(AMOUNT_DECIMALS)))}
       </Text>

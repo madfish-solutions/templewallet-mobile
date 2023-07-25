@@ -32,28 +32,30 @@ export interface Route3Chain {
   hops: Array<Route3Hop>;
 }
 
-export interface Route3SwapParamsResponse {
+export interface Route3TraditionalSwapParamsResponse {
   input: string | undefined;
   output: string | undefined;
   chains: Array<Route3Chain>;
 }
 
-export type Route3SwapChains = Pick<Route3SwapParamsResponse, 'chains'>;
+export type Route3SwapChains = Pick<Route3TraditionalSwapParamsResponse, 'chains'>;
 
 export interface Route3LiquidityBakingParamsResponse {
   input: string | undefined;
   output: string | undefined;
-  tzbtcChain: Route3SwapParamsResponse;
-  xtzChain: Route3SwapParamsResponse;
+  tzbtcChain: Route3TraditionalSwapParamsResponse;
+  xtzChain: Route3TraditionalSwapParamsResponse;
 }
 
 export type Route3LiquidityBakingChains = Pick<Route3LiquidityBakingParamsResponse, 'tzbtcChain' | 'xtzChain'>;
+
+export type Route3SwapParamsResponse = Route3TraditionalSwapParamsResponse | Route3LiquidityBakingParamsResponse;
 
 export const isSwapChains = (chains: Route3SwapChains | Route3LiquidityBakingChains): chains is Route3SwapChains =>
   'chains' in chains;
 
 export const isLiquidityBakingParamsResponse = (
-  response: Route3SwapParamsResponse | Route3LiquidityBakingParamsResponse
+  response: Route3SwapParamsResponse
 ): response is Route3LiquidityBakingParamsResponse => 'tzbtcChain' in response && 'xtzChain' in response;
 
 export interface Route3Token {

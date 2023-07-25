@@ -7,10 +7,13 @@ export const useSwapRouteAmountsStyles = createUseStylesMemoized(({ colors, typo
   },
   amount: {
     ...typography.caption13Regular,
-    color: colors.gray2
+    color: colors.gray2,
+    lineHeight: formatSize(18)
   },
   percentage: {
     ...typography.caption13Regular,
-    color: colors.blue
+    color: colors.blue,
+    lineHeight: formatSize(18),
+    height: formatSize(14)
   }
 }));

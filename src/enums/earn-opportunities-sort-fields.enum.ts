@@ -1,6 +1,6 @@
 export enum EarnOpportunitiesSortFieldEnum {
   Default = 'Default',
-  APY = 'APY',
+  APR = 'APR',
   Oldest = 'Oldest',
   Newest = 'Newest'
 }

@@ -6,7 +6,7 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { EarnOpportunitiesMainInfo } from 'src/components/earn-opportunities-main-info';
-import { DEFAULT_AMOUNT, DEFAULT_EXCHANGE_RATE, PENNY } from 'src/config/earn-opportunities-main-info';
+import { DEFAULT_AMOUNT, DEFAULT_EXCHANGE_RATE } from 'src/config/earn-opportunities-main-info';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -29,18 +29,18 @@ export const MainInfo: FC = () => {
   const stakesEntriesWithEndedRewards = useMemo(() => {
     const now = Date.now();
 
-    return Object.entries(stakes).filter(
+    return Object.entries(stakes.data).filter(
       ([contractAddress, stakeRecord]) =>
         new BigNumber(stakeRecord?.claimableRewards ?? 0).isGreaterThan(DEFAULT_AMOUNT) &&
         (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now &&
         farms.data.some(farm => farm.item.contractAddress === contractAddress)
     );
-  }, [stakes, farms]);
+  }, [stakes.data, farms]);
 
-  const { netApy, totalStakedAmountInFiat } = useUserFarmingStats();
+  const { netApr, totalStakedAmountInFiat } = useUserFarmingStats();
 
   const totalClaimableRewardsInFiat = useMemo(() => {
-    let result = new BigNumber(PENNY);
+    let result = new BigNumber(0);
 
     stakesEntriesWithEndedRewards.forEach(([address, stakeRecord]) => {
       const farm = farms.data.find(_farm => _farm.item.contractAddress === address);
@@ -61,7 +61,7 @@ export const MainInfo: FC = () => {
   }, [farms, stakesEntriesWithEndedRewards, fiatToUsdExchangeRate]);
 
   const areSomeRewardsClaimable = useMemo(
-    () => !isEmptyArray(stakesEntriesWithEndedRewards) && totalClaimableRewardsInFiat.isGreaterThan(PENNY),
+    () => !isEmptyArray(stakesEntriesWithEndedRewards) && totalClaimableRewardsInFiat.isGreaterThan(0),
     [stakesEntriesWithEndedRewards, totalClaimableRewardsInFiat]
   );
 
@@ -101,8 +101,9 @@ export const MainInfo: FC = () => {
       claimAllRewards={claimAllRewards}
       shouldShowClaimRewardsButton
       totalClaimableRewardsInFiat={totalClaimableRewardsInFiat}
-      netApy={netApy}
+      netApr={netApr}
       totalStakedAmountInFiat={totalStakedAmountInFiat}
+      areSomeRewardsClaimable={areSomeRewardsClaimable}
     />
   );
 };

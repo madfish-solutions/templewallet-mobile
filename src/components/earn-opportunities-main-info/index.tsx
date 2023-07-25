@@ -17,21 +17,23 @@ interface Props {
   claimAllRewards?: EmptyFn;
   shouldShowClaimRewardsButton?: boolean;
   totalClaimableRewardsInFiat?: BigNumber;
-  netApy: BigNumber;
+  netApr: BigNumber;
   totalStakedAmountInFiat: BigNumber;
+  areSomeRewardsClaimable?: boolean;
 }
 
 export const EarnOpportunitiesMainInfo: FC<Props> = ({
   claimAllRewards = noop,
   shouldShowClaimRewardsButton = false,
   totalClaimableRewardsInFiat = DEFAULT_AMOUNT,
-  netApy,
-  totalStakedAmountInFiat
+  netApr,
+  totalStakedAmountInFiat,
+  areSomeRewardsClaimable = false
 }) => {
   const styles = useEarnOpportunitiesMainInfoStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
-  const areSomeRewardsClaimable = totalClaimableRewardsInFiat.isGreaterThan(PENNY);
   const { symbol: fiatSymbol } = useCurrentFiatCurrencyMetadataSelector();
+  const roundingMode = totalClaimableRewardsInFiat?.isLessThan(PENNY) ? BigNumber.ROUND_UP : undefined;
 
   return (
     <View style={styles.root}>
@@ -42,9 +44,9 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
             <FormattedAmount isDollarValue amount={totalStakedAmountInFiat} style={styles.valueText} />
           </View>
           <Divider size={formatSize(8)} />
-          <View style={[styles.card, styles.netApy]}>
-            <Text style={styles.titleText}>NET APY</Text>
-            <Text style={styles.valueText}>{netApy.toFixed(DEFAULT_DECIMALS)}%</Text>
+          <View style={[styles.card, styles.netApr]}>
+            <Text style={styles.titleText}>NET APR</Text>
+            <Text style={styles.valueText}>{netApr.toFixed(DEFAULT_DECIMALS)}%</Text>
           </View>
         </View>
         {shouldShowClaimRewardsButton && (
@@ -54,7 +56,7 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
               styleConfig={buttonPrimaryStylesConfig}
               title={
                 areSomeRewardsClaimable
-                  ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(DEFAULT_DECIMALS)}${fiatSymbol}`
+                  ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(DEFAULT_DECIMALS, roundingMode)}${fiatSymbol}`
                   : 'EARN TO CLAIM REWARDS'
               }
               disabled={!areSomeRewardsClaimable}

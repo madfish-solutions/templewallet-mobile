@@ -4,7 +4,7 @@ import { EarnOpportunitiesMainInfo } from 'src/components/earn-opportunities-mai
 import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
 
 export const MainInfo: FC = () => {
-  const { netApy, totalStakedAmountInFiat } = useUserSavingsStats();
+  const { netApr, totalStakedAmountInFiat } = useUserSavingsStats();
 
-  return <EarnOpportunitiesMainInfo netApy={netApy} totalStakedAmountInFiat={totalStakedAmountInFiat} />;
+  return <EarnOpportunitiesMainInfo netApr={netApr} totalStakedAmountInFiat={totalStakedAmountInFiat} />;
 };

@@ -403,6 +403,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             isLbInput={isDefined(inputAssets.asset) && getTokenSlug(inputAssets.asset) === getTokenSlug(SIRS_TOKEN)}
             isLbOutput={isDefined(outputAssets.asset) && getTokenSlug(outputAssets.asset) === getTokenSlug(SIRS_TOKEN)}
             routingFeeIsTakenFromOutput={routingFeeIsTakenFromOutput}
+            outputToken={outputAssets.asset}
           />
         </View>
 

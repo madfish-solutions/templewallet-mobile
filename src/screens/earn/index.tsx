@@ -21,14 +21,14 @@ import { useEarnPageStyles } from './styles';
 export const Earn: FC = () => {
   const dispatch = useDispatch();
   const {
-    netApy: farmsNetApy,
+    netApr: farmsNetApr,
     totalStakedAmountInFiat: farmsTotalStakedAmountInFiat,
-    maxApy: farmsMaxApy
+    maxApr: farmsMaxApr
   } = useUserFarmingStats();
   const {
-    netApy: savingsNetApy,
+    netApr: savingsNetApr,
     totalStakedAmountInFiat: savingsTotalStakedAmountInFiat,
-    maxApy: savingsMaxApy
+    maxApr: savingsMaxApr
   } = useUserSavingsStats();
   const farms = useAllFarmsSelector();
   const savingsLoading = useSavingsItemsLoadingSelector();
@@ -54,8 +54,8 @@ export const Earn: FC = () => {
             screen={ScreensEnum.Savings}
             depositAmountInFiat={savingsTotalStakedAmountInFiat}
             iconName={IconNameEnum.Database}
-            netApy={savingsNetApy}
-            maxApy={savingsMaxApy}
+            netApr={savingsNetApr}
+            maxApr={savingsMaxApr}
             testID={EarnPageSelectors.SavingsCard}
           />
           <OpportunityCategoryCard
@@ -64,8 +64,8 @@ export const Earn: FC = () => {
             screen={ScreensEnum.Farming}
             depositAmountInFiat={farmsTotalStakedAmountInFiat}
             iconName={IconNameEnum.Data}
-            netApy={farmsNetApy}
-            maxApy={farmsMaxApy}
+            netApr={farmsNetApr}
+            maxApr={farmsMaxApr}
             testID={EarnPageSelectors.FarmingCard}
           />
         </>
