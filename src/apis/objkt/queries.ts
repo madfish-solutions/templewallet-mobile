@@ -140,6 +140,7 @@ query MyQuery {
         last_metadata_update
         lowest_ask
         metadata
+        mime
         name
         thumbnail_uri
         token_id

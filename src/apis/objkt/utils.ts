@@ -65,6 +65,7 @@ export const transformCollectiblesArray = (
       id: Number(token.token_id),
       visibility: VisibilityEnum.Visible,
       editions: token.supply,
+      mime: token.mime,
       holders: token.holders.map(item => ({ holderAddress: item.holder_address, quantity: item.quantity })),
       lastPrice: {
         price: lastPrice?.price,

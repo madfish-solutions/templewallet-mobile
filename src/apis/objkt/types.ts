@@ -49,6 +49,7 @@ export interface CollectibleResponse {
   name: string;
   thumbnail_uri: string;
   supply: number;
+  mime: string;
   symbol: string;
   token_id: string;
   holders: HolderInfo[];
