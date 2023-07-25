@@ -1,7 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { ROUTING_FEE_RATIO, ZERO } from 'src/config/swap';
+import { ZERO } from 'src/config/swap';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { FarmTokenStandardEnum } from 'src/enums/farm-token-standard.enum';
 import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking/liquidity-baking-storage.interface';
@@ -14,7 +14,11 @@ import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking.util';
 import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
-import { calculateSlippageRatio } from 'src/utils/swap.utils';
+import {
+  calculateFeeFromOutput,
+  calculateRoutingInputAndFeeFromInput,
+  calculateSlippageRatio
+} from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import {
@@ -107,7 +111,8 @@ export const calculateUnstakeParams = async (
   lpAmount: BigNumber,
   slippageTolerancePercentage: number
 ) => {
-  // TODO: change logic with fees as soon as https://github.com/madfish-solutions/templewallet-mobile/pull/889 is merged
+  const { swapInputMinusFeeAtomic, routingFeeFromInputAtomic } = calculateRoutingInputAndFeeFromInput(lpAmount);
+
   return Promise.all(
     outputTokenIndexes.map(async outputTokenIndex => {
       const threeRouteOutputToken = THREE_ROUTE_LB_TOKENS[outputTokenIndex];
@@ -118,7 +123,7 @@ export const calculateUnstakeParams = async (
       } = await fetchRoute3LiquidityBakingParams({
         fromSymbol: SIRS_TOKEN_METADATA.symbol,
         toSymbol: threeRouteOutputToken.symbol,
-        amount: mutezToTz(lpAmount, SIRS_TOKEN_METADATA.decimals).toFixed()
+        amount: mutezToTz(swapInputMinusFeeAtomic, SIRS_TOKEN_METADATA.decimals).toFixed()
       });
 
       if (rawOutput === ZERO.toFixed() || !isDefined(rawOutput)) {
@@ -128,10 +133,12 @@ export const calculateUnstakeParams = async (
       const outputAtomic = tzToMutez(new BigNumber(rawOutput), threeRouteOutputToken.decimals)
         .times(calculateSlippageRatio(slippageTolerancePercentage))
         .integerValue(BigNumber.ROUND_DOWN);
-      const outputAfterFeeAtomic = outputAtomic.times(ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_DOWN);
-      const routingFeeFromOutputAtomic = outputAtomic.minus(outputAfterFeeAtomic);
+      const routingFeeFromOutputAtomic = calculateFeeFromOutput(lpAmount, outputAtomic);
+      const outputAfterFeeAtomic = outputAtomic.minus(routingFeeFromOutputAtomic);
 
       return {
+        swapInputMinusFeeAtomic,
+        routingFeeFromInputAtomic,
         threeRouteOutputToken,
         outputAtomic,
         routingFeeFromOutputAtomic,

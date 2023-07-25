@@ -1,5 +1,5 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useManageFarmingPoolModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
   background: {
@@ -24,12 +24,20 @@ export const useManageFarmingPoolModalStyles = createUseStylesMemoized(({ colors
   notSupportedText: {
     color: colors.black
   },
-  detailsTitle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: formatSize(8)
+  disclaimerDescriptionText: {
+    ...typography.caption13Regular,
+    letterSpacing: formatSize(-0.08),
+    lineHeight: formatTextSize(18),
+    color: colors.black
   },
-  restContainer: {
-    flex: 1
+  emphasized: {
+    ...typography.caption13Semibold
+  },
+  farmTypeIconWrapper: {
+    padding: formatSize(4),
+    borderRadius: formatSize(4),
+    backgroundColor: colors.black,
+    border: formatSize(0.5),
+    borderColor: colors.lines
   }
 }));

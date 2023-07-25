@@ -1,8 +1,15 @@
 import { ContractMethod, ContractProvider, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 
-import { APP_ID, LIQUIDITY_BAKING_PROXY_CONTRACT, ROUTE3_CONTRACT, ROUTING_FEE_RATIO, ZERO } from 'src/config/swap';
+import {
+  APP_ID,
+  ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT,
+  LIQUIDITY_BAKING_PROXY_CONTRACT,
+  ROUTE3_CONTRACT,
+  ROUTING_FEE_RATIO,
+  ZERO
+} from 'src/config/swap';
 import {
   isSwapChains,
   Route3LiquidityBakingChains,
@@ -17,16 +24,24 @@ import { getReadOnlyContract } from './rpc/contract.utils';
 import { getTransferParams$ } from './transfer-params.utils';
 import { getTransferPermissions } from './transfer-permissions.util';
 
-export const calculateRoutingInputAndFee = (inputAmount: BigNumber | undefined) => {
+export const calculateRoutingInputAndFeeFromInput = (inputAmount: BigNumber | undefined) => {
   const swapInputAtomic = (inputAmount ?? ZERO).integerValue(BigNumber.ROUND_DOWN);
-  const swapInputMinusFeeAtomic = swapInputAtomic.times(ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_DOWN);
-  const routingFeeAtomic = swapInputAtomic.minus(swapInputMinusFeeAtomic);
+  const shouldTakeFeeFromInput = swapInputAtomic.gte(ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT);
+  const swapInputMinusFeeAtomic = shouldTakeFeeFromInput
+    ? swapInputAtomic.times(ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_DOWN)
+    : swapInputAtomic;
+  const routingFeeFromInputAtomic = swapInputAtomic.minus(swapInputMinusFeeAtomic);
 
   return {
     swapInputMinusFeeAtomic,
-    routingFeeAtomic
+    routingFeeFromInputAtomic
   };
 };
+
+export const calculateFeeFromOutput = (inputAmount: BigNumber | undefined, outputAmount: BigNumber) =>
+  (inputAmount ?? ZERO).gte(ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT)
+    ? ZERO
+    : outputAmount.times(1 - ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_UP);
 
 export const getRoutingFeeTransferParams = async (
   token: Route3Token,
@@ -35,15 +50,17 @@ export const getRoutingFeeTransferParams = async (
   routingFeeAddress: string,
   tezos: TezosToolkit
 ) =>
-  firstValueFrom(
-    getTransferParams$(
-      { address: token.contract ?? '', id: Number(token.tokenId ?? 0) },
-      tezos,
-      senderPublicKeyHash,
-      routingFeeAddress,
-      feeAmountAtomic
-    )
-  );
+  feeAmountAtomic.gt(ZERO)
+    ? firstValueFrom(
+        getTransferParams$(
+          { address: token.contract ?? '', id: Number(token.tokenId ?? 0) },
+          tezos,
+          senderPublicKeyHash,
+          routingFeeAddress,
+          feeAmountAtomic
+        ).pipe(map(params => [params]))
+      )
+    : Promise.resolve([]);
 
 export const getSwapTransferParams = async (
   fromRoute3Token: Route3Token,

@@ -8,9 +8,10 @@ import {
   Route3Dex,
   Route3LiquidityBakingParamsResponse,
   Route3SwapParamsRequest,
-  Route3SwapParamsResponse,
+  Route3TraditionalSwapParamsResponse,
   Route3Token
 } from 'src/interfaces/route3.interface';
+import { THREE_ROUTE_SIRS_TOKEN } from 'src/token/data/three-route-tokens';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -30,12 +31,12 @@ const parser = (origJSON: string): ReturnType<typeof JSON['parse']> => {
   return JSON.parse(stringedJSON);
 };
 
-export const fetchRoute3SwapParams = ({
+const fetchRoute3TraditionalSwapParams = ({
   fromSymbol,
   toSymbol,
   amount,
   chainsLimit = 3
-}: Route3SwapParamsRequest): Promise<Route3SwapParamsResponse> =>
+}: Route3SwapParamsRequest): Promise<Route3TraditionalSwapParamsResponse> =>
   fetch(`https://temple.3route.io/v3/swap/${fromSymbol}/${toSymbol}/${amount}?chainsLimit=${chainsLimit}`, {
     headers: {
       Authorization: TEMPLE_WALLET_ROUTE3_AUTH_TOKEN
@@ -57,6 +58,11 @@ export const fetchRoute3LiquidityBakingParams = ({
   })
     .then(res => res.text())
     .then(res => parser(res));
+
+export const fetchRoute3SwapParams = (params: Route3SwapParamsRequest) =>
+  [params.fromSymbol, params.toSymbol].includes(THREE_ROUTE_SIRS_TOKEN.symbol)
+    ? fetchRoute3LiquidityBakingParams(params)
+    : fetchRoute3TraditionalSwapParams(params);
 
 export const fetchRoute3Dexes$ = () =>
   from(route3Api.get<Array<Route3Dex>>('/dexes')).pipe(map(response => response.data));
