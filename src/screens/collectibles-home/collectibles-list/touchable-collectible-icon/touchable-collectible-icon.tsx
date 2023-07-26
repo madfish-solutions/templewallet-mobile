@@ -21,8 +21,7 @@ type Props = Omit<CollectibleIconProps, 'collectible'> & {
 export const TouchableCollectibleIcon: FC<Props> = ({
   collectible,
   size,
-  muted,
-  iconSize = CollectibleIconSize.BIG,
+  iconSize = CollectibleIconSize.SMALL,
   audioPlaceholderTheme,
   isShowInfo = false,
   style
@@ -55,7 +54,6 @@ export const TouchableCollectibleIcon: FC<Props> = ({
         audioPlaceholderTheme={audioPlaceholderTheme}
         size={size}
         mime={collectible.mime}
-        muted={muted}
         isTouchableBlurOverlay={false}
         isShowInfo={isShowInfo}
       />

@@ -50,7 +50,6 @@ export const CollectiblesList: FC<Props> = ({ collectibles, isShowInfo }) => {
             collectible={collectible}
             isShowInfo={isShowInfo}
             audioPlaceholderTheme={AudioPlaceholderTheme.small}
-            muted
             size={itemSize}
             style={[
               CollectiblesListStyles.collectible,

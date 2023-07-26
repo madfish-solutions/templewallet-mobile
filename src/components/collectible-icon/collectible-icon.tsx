@@ -35,7 +35,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     size,
     iconSize = CollectibleIconSize.SMALL,
     mime,
-    muted,
     objktArtifact,
     audioPlaceholderTheme,
     setScrollEnabled,
@@ -74,19 +73,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
     const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
     const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
-    const formattedImage = useMemo(() => {
-      if (isDefined(objktArtifact) && isBigIcon) {
-        return formatCollectibleObjktArtifactUri(objktArtifact);
-      }
-
-      return formatCollectibleObjktMediumUri(assetSlug);
-    }, [objktArtifact, assetSlug, isBigIcon]);
-
-    const [fastImage, setFastImage] = useState(formattedImage);
-
-    useEffect(() => {
-      setFastImage(formattedImage);
-    }, [objktArtifact]);
 
     const handleError = useCallback(() => {
       if (currentFallbackIndex < imageFallbackURLs.length - 1) {
@@ -136,7 +122,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
             <SimplePlayer
               uri={formatCollectibleObjktArtifactUri(objktArtifact)}
               size={size}
-              muted={muted}
               style={styles.image}
               onError={handleAnimatedError}
               onLoad={handleLoadEnd}
@@ -150,7 +135,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
               <SimplePlayer
                 uri={formatCollectibleObjktArtifactUri(objktArtifact)}
                 size={size}
-                muted={muted}
                 onError={handleAudioError}
                 onLoad={handleLoadEnd}
               />
@@ -171,12 +155,12 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       return (
         <FastImage
           style={[styles.image, { height: size, width: size }]}
-          source={{ uri: fastImage }}
+          source={{ uri: currentFallback }}
           onError={handleError}
           onLoad={handleLoadEnd}
         />
       );
-    }, [mime, muted, objktArtifact, currentFallback, isAnimatedRenderedOnce, audioPlaceholderTheme]);
+    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce, audioPlaceholderTheme]);
 
     const imageWithBlur = useMemo(() => {
       if (Boolean(collectible.isAdultContent) && currentFallback !== FINAL_FALLBACK) {

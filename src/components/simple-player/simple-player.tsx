@@ -10,7 +10,6 @@ export interface SimpleVideoProps {
   uri: string;
   size: number;
   posterUri?: string;
-  muted?: boolean;
   style?: ViewStyle;
   onError?: EmptyFn;
   onLoad?: EmptyFn;
@@ -21,7 +20,6 @@ const BUFFER_DURATION = 8000;
 export const SimplePlayer: FC<SimpleVideoProps> = ({
   uri,
   posterUri,
-  muted = false,
   size,
   style,
   onError = emptyFn,
@@ -36,7 +34,6 @@ export const SimplePlayer: FC<SimpleVideoProps> = ({
       source={{ uri }}
       // @ts-ignore
       style={[{ width: size, height: size }, style]}
-      muted={muted}
       paused={atBootsplash || isLocked}
       resizeMode="cover"
       bufferConfig={{
