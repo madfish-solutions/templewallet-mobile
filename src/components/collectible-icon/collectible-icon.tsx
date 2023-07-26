@@ -13,8 +13,8 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import {
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
-  formatImgUri,
-  ImageResolutionEnum,
+  //formatImgUri,
+  //ImageResolutionEnum,
   isImgUriDataUri
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -46,15 +46,15 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
 
     const imageFallbackURLs = useMemo(
       () => [
-        formatCollectibleObjktArtifactUri(collectible.artifactUri ?? ''),
-        formatCollectibleObjktMediumUri(assetSlug),
-        formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
+        //formatCollectibleObjktArtifactUri(collectible.artifactUri ?? ''),
+        formatCollectibleObjktMediumUri(assetSlug)
+        //formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
       ],
       [collectible]
     );
 
     const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
-    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
+    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
     const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
 
     const handleError = useCallback(() => {
