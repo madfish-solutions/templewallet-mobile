@@ -72,19 +72,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
     const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
     const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
-    const formattedImage = useMemo(() => {
-      if (isDefined(objktArtifact) && isBigIcon) {
-        return formatCollectibleObjktArtifactUri(objktArtifact);
-      }
-
-      return formatCollectibleObjktMediumUri(assetSlug);
-    }, [objktArtifact, assetSlug, isBigIcon]);
-
-    const [fastImage, setFastImage] = useState(formattedImage);
-
-    useEffect(() => {
-      setFastImage(formattedImage);
-    }, [objktArtifact]);
 
     const handleError = useCallback(() => {
       if (currentFallbackIndex < imageFallbackURLs.length - 1) {
@@ -167,7 +154,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       return (
         <FastImage
           style={[styles.image, { height: size, width: size }]}
-          source={{ uri: fastImage }}
+          source={{ uri: currentFallback }}
           onError={handleError}
           onLoad={handleLoadEnd}
         />
@@ -200,7 +187,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         }}
       >
         {imageWithBlur}
-        {isShowInfo && (
+        {Boolean(isShowInfo) && (
           <View style={styles.balanceContainer}>
             <Text style={styles.balanceText}>{collectible.balance}</Text>
             <Icon name={IconNameEnum.Action} size={formatSize(8)} />
