@@ -5,7 +5,6 @@ import {
   ActivityIndicator,
   FlatList,
   ListRenderItem,
-  StatusBar,
   Text,
   TouchableOpacity,
   useWindowDimensions,
@@ -76,12 +75,11 @@ export const CollectiblesHome = () => {
 
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = isTablet() ? 0 : formatSize(48) + insets.bottom;
-  const statusBar = useMemo(() => StatusBar.currentHeight ?? 0, [StatusBar.currentHeight]);
   const MARGIN_BETWEEN_COMPONENTS = formatSize(16);
   const snapPoints = useMemo(
     () => [
-      windowHeight - (headerHeight + TAB_BAR_HEIGHT + statusBar),
-      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - MARGIN_BETWEEN_COMPONENTS + statusBar)
+      windowHeight - (headerHeight + TAB_BAR_HEIGHT),
+      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - MARGIN_BETWEEN_COMPONENTS)
     ],
     [headerHeight, visibleBlockHeight, windowHeight]
   );
@@ -188,7 +186,12 @@ export const CollectiblesHome = () => {
           }}
           style={styles.profileContainer}
         >
-          <View style={styles.profileActions}>
+          <View
+            style={[
+              styles.profileActions,
+              conditionalStyle(collections.length === 0, styles.profileActionsWithoutCollections)
+            ]}
+          >
             {isDefined(alias) ? (
               <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
                 <Icon name={IconNameEnum.EditNew} size={formatSize(24)} />
