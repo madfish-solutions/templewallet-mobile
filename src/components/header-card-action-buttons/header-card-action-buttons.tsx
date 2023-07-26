@@ -13,7 +13,7 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { ButtonMedium } from '../button/button-medium/button-medium';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';

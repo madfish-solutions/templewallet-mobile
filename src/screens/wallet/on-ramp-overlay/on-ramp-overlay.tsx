@@ -11,7 +11,7 @@ import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions'
 import { useIsOnRampPossibilitySelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { OnRampOverlaySelectors } from './on-ramp-overlay.selectors';
 import { useOnRampOverlayStyles } from './on-ramp-overlay.styles';

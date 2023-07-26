@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useColors } from 'src/styles/use-colors';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { Icon } from '../icon';
 import { IconNameEnum } from '../icon-name.enum';

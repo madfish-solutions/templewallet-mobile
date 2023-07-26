@@ -12,7 +12,7 @@ import { restartExolixTopupAction, setExolixStepAction } from '../../../../../st
 import { useExolixExchangeData, useExolixStep } from '../../../../../store/exolix/exolix-selectors';
 import { formatSize } from '../../../../../styles/format-size';
 import { isDefined } from '../../../../../utils/is-defined';
-import { openUrl } from '../../../../../utils/linking.util';
+import { openUrl } from '../../../../../utils/linking';
 import { CopyRow } from '../components/copy-row';
 import { ErrorComponent } from '../components/error-component';
 import { EXOLIX_CONTACT_LINK } from '../config';

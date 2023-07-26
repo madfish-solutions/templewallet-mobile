@@ -14,7 +14,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { INITIAL_ARP_VALUE } from '../../apis/youves/constants';
 import { getDelegateText } from '../../utils/get-delegate-text.util';

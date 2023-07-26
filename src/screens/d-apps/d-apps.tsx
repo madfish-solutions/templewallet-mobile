@@ -17,7 +17,7 @@ import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
-import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { useIsPartnersPromoEnabledSelector } from '../../store/partners-promotion/partners-promotion-selectors';
@@ -68,22 +68,28 @@ export const DApps = () => {
     [tabletMode]
   );
 
-  const sortedDAppsList = useMemo(() => {
-    if (isDefined(searchQuery)) {
-      return dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    }
-
-    return dAppsList;
-  }, [searchQuery, dAppsList]);
+  const sortedDAppsList = useMemo(
+    () =>
+      isString(searchQuery)
+        ? dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        : dAppsList,
+    [searchQuery, dAppsList]
+  );
 
   return (
     <>
       <InsetSubstitute type="top" />
+
       <PromotionCarousel />
+
       <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
+
       <Divider size={formatSize(20)} />
+
       <Text style={styles.text}>Integrated</Text>
+
       <Divider size={formatSize(20)} />
+
       <View style={styles.dappBlockWrapper}>
         <IntegratedDApp
           screenName={ScreensEnum.LiquidityBakingDapp}
@@ -93,13 +99,19 @@ export const DApps = () => {
           testID={DAppsSelectors.integratedDAppButton}
         />
       </View>
+
       <Divider size={formatSize(20)} />
+
       <Text style={styles.text}>Others</Text>
+
       <Divider size={formatSize(8)} />
+
       <View style={styles.dappBlockWrapper}>
         <Disclaimer texts={texts} />
       </View>
+
       <Divider size={formatSize(16)} />
+
       <FlatList
         data={sortedDAppsList}
         renderItem={renderItem}

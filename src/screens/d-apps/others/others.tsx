@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { ListRenderItemInfo, Text } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -9,7 +9,7 @@ import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics'
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 import { getTruncatedProps } from 'src/utils/style.util';
 
 import { useOthersDAppStyles } from './others.styles';
@@ -23,12 +23,14 @@ export const OthersDApp: FC<Props> = ({ item, testID }) => {
   const styles = useOthersDAppStyles();
   const [imageLoadError, setImageLoadError] = useState(false);
 
+  const onPress = useCallback(() => openUrl(dappUrl, true), [dappUrl]);
+
   return (
     <TouchableWithAnalytics
       style={styles.container}
       testID={testID}
       testIDProperties={{ dapp: slug }}
-      onPress={() => openUrl(dappUrl)}
+      onPress={onPress}
     >
       {imageLoadError ? (
         <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />

@@ -14,7 +14,7 @@ import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
-import { tzktUrl } from '../../utils/linking.util';
+import { tzktUrl } from '../../utils/linking';
 import { hexa } from '../../utils/style.util';
 import { useToastStyles } from './toast.styles';
 
