@@ -10,12 +10,12 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { FxHashContractInterface, ObjktContractInterface } from 'src/interfaces/marketplaces.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from 'src/utils/swap-permissions.util';
 
+import { CollectibleOfferInteface } from '../../../token/interfaces/collectible-interfaces.interface';
 import { navigateToObjktForBuy } from '../utils';
 import { useCollectibleItemStyles } from './collectible-item.styles';
 
@@ -23,7 +23,7 @@ interface Props {
   isOffersExisted: boolean;
   isHolder: boolean;
   highestOffer: string;
-  item: TokenInterface;
+  item: CollectibleOfferInteface;
   selectedPublicKeyHash: string;
   selectedRpc: string;
   collectionContract: string;
@@ -42,7 +42,7 @@ export const OfferButton: FC<Props> = memo(
 
     useEffect(() => {
       tezos.contract
-        .at<ObjktContractInterface | FxHashContractInterface>(item.highestOffer?.marketplace_contract ?? OBJKT_CONTRACT)
+        .at<ObjktContractInterface | FxHashContractInterface>(item.highestOffer?.marketplaceContract ?? OBJKT_CONTRACT)
         .then(setOffer);
     }, []);
 
@@ -68,9 +68,9 @@ export const OfferButton: FC<Props> = memo(
       const getTransferParams = () => {
         if (isDefined(offer)) {
           if ('fulfill_offer' in offer?.methods) {
-            return [offer.methods.fulfill_offer(item.highestOffer?.bigmap_key ?? 1, item.id).toTransferParams()];
+            return [offer.methods.fulfill_offer(item.highestOffer?.bigmapKey ?? 1, item.id).toTransferParams()];
           } else {
-            return [offer.methods.offer_accept(item.highestOffer?.bigmap_key ?? 1).toTransferParams()];
+            return [offer.methods.offer_accept(item.highestOffer?.bigmapKey ?? 1).toTransferParams()];
           }
         }
 
@@ -90,7 +90,7 @@ export const OfferButton: FC<Props> = memo(
 
       const { approve, revoke } = await getTransferPermissions(
         tezos,
-        item.highestOffer?.marketplace_contract ?? '',
+        item.highestOffer?.marketplaceContract ?? '',
         selectedPublicKeyHash,
         token,
         new BigNumber('0')

@@ -18,6 +18,8 @@ import { bakingReducers } from './baking/baking-reducers';
 import { BakingRootState } from './baking/baking-state';
 import { buyWithCreditCardReducer } from './buy-with-credit-card/reducers';
 import { BuyWithCreditCardRootState } from './buy-with-credit-card/state';
+import { collectiblesReducers } from './collectibles/collectibles-reducers';
+import { CollectiblesRootState } from './collectibles/collectibles-state';
 import { collectionsReducer } from './collectons/collections-reducers';
 import { CollectionsRootState } from './collectons/collections-state';
 import { contactBookReducers } from './contact-book/contact-book-reducers';
@@ -63,7 +65,8 @@ export type RootState = WalletRootState &
   BuyWithCreditCardRootState &
   PartnersPromotionRootState &
   Route3RootState &
-  ABTestingRootState;
+  ABTestingRootState &
+  CollectiblesRootState;
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -98,7 +101,8 @@ const rootReducer = rootStateReducer<RootState>({
   collections: collectionsReducer,
   buyWithCreditCard: buyWithCreditCardReducer,
   partnersPromotion: partnersPromotionReducers,
-  abTesting: abTestingReducer
+  abTesting: abTestingReducer,
+  collectibles: collectiblesReducers
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

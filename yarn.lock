@@ -16364,6 +16364,11 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
+use-custom-compare@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/use-custom-compare/-/use-custom-compare-1.4.0.tgz#3b750ae0487d3c8e8c38ed2da8b633450981e4e9"
+  integrity sha512-3VyBy9aUZgOdHKMVvECAW+o5SXVF1Ly9plXIoXZNBKnkiBz395Z0unTg6Q3SdLWp2RZHyyoG9GEo3HP3obz5Cw==
+
 use-latest-callback@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/use-latest-callback/-/use-latest-callback-0.1.5.tgz#a4a836c08fa72f6608730b5b8f4bbd9c57c04f51"

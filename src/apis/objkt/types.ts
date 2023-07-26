@@ -1,21 +1,32 @@
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
-import { AttributeInfo } from 'src/interfaces/attribute.interface';
-import { CollectibleInfo, UserAdultCollectibles } from 'src/interfaces/collectible-info.interface';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
-import { HolderInfo, Listing, Offer } from 'src/token/interfaces/token-metadata.interface';
 
 import { MarketPlaceEventEnum } from './enums';
 
-export interface FA2AttributeCountQueryResponse {
-  fa2_attribute_count: AttributeInfo[];
-}
-export interface GalleryAttributeCountQueryResponse {
-  gallery_attribute_count: AttributeInfo[];
+export interface AttributeInfoResponse {
+  attribute_id: number;
+  tokens: number;
 }
 
-export interface CollectibleInfoQueryResponse {
-  token: CollectibleInfo[];
+export interface FA2AttributeCountQueryResponse {
+  fa2_attribute_count: AttributeInfoResponse[];
 }
+export interface GalleryAttributeCountQueryResponse {
+  gallery_attribute_count: AttributeInfoResponse[];
+}
+
+interface OfferResponse {
+  buyer_address: string;
+  collection_offer: string | null;
+  price: number;
+  price_xtz: number;
+  bigmap_key: number;
+  marketplace_contract: string;
+  fa_contract: string;
+  currency_id: number;
+}
+
+type HolderInfo = { holder_address: string; quantity: number };
 
 export interface CurrencyInfo {
   symbol: string;
@@ -41,14 +52,14 @@ export interface CollectibleResponse {
   symbol: string;
   token_id: string;
   holders: HolderInfo[];
-  offers_active: Offer[];
+  offers_active: OfferResponse[];
   events: {
     marketplace_event_type: MarketPlaceEventEnum;
     price_xtz: number | null;
     price: number | null;
     currency_id: number;
   }[];
-  listings_active: Listing[];
+  listings_active: ListingResponse[];
   fa: {
     items: number;
   };
@@ -85,5 +96,80 @@ export interface CollectiblesByGalleriesResponse {
 }
 
 export interface UserAdultCollectiblesQueryResponse {
-  token: UserAdultCollectibles[];
+  token: CollectibleDetailsResponse[];
+}
+
+export interface CollectibleAttributes {
+  attribute: {
+    id: number;
+    name: string;
+    value: string;
+    rarity?: number;
+  };
+}
+
+export interface CollectibleTag {
+  tag: {
+    name: string;
+  };
+}
+
+interface ListingsActiveResponse {
+  bigmap_key: number;
+  currency_id: number;
+  price: number;
+  marketplace_contract: string;
+  currency: {
+    type: string;
+  };
+}
+
+interface ListingResponse extends ListingsActiveResponse {
+  amount: number;
+  seller_address: string;
+}
+
+interface Creator {
+  holder: {
+    address: string;
+    tzdomain: string;
+  };
+}
+
+interface Fa {
+  name: string;
+  logo: string;
+  items: number;
+}
+
+interface Royalty {
+  decimals: number;
+  amount: number;
+}
+
+interface Gallery {
+  gallery: {
+    items: number;
+    name: string;
+  };
+}
+
+interface CollectibleDetailsResponse {
+  fa_contract: string;
+  token_id: string;
+  name: string;
+  description: string;
+  thumbnail_uri: string;
+  creators: Creator[];
+  fa: Fa;
+  metadata: string;
+  attributes: CollectibleAttributes[];
+  artifact_uri: string;
+  tags: CollectibleTag[];
+  timestamp: string;
+  royalties: Royalty[];
+  supply: number;
+  mime: string;
+  galleries: Gallery[];
+  listings_active: ListingsActiveResponse[];
 }
