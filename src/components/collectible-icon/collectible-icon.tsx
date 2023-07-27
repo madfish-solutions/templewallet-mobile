@@ -72,19 +72,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
     const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
     const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
-    const formattedImage = useMemo(() => {
-      if (isDefined(objktArtifact) && isBigIcon) {
-        return formatCollectibleObjktArtifactUri(objktArtifact);
-      }
-
-      return formatCollectibleObjktMediumUri(assetSlug);
-    }, [objktArtifact, assetSlug, isBigIcon]);
-
-    const [fastImage, setFastImage] = useState(formattedImage);
-
-    useEffect(() => {
-      setFastImage(formattedImage);
-    }, [objktArtifact]);
 
     const handleError = useCallback(() => {
       if (currentFallbackIndex < imageFallbackURLs.length - 1) {
@@ -167,7 +154,8 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       return (
         <FastImage
           style={[styles.image, { height: size, width: size }]}
-          source={{ uri: fastImage }}
+          source={{ uri: currentFallback }}
+          resizeMode="contain"
           onError={handleError}
           onLoad={handleLoadEnd}
         />
@@ -175,7 +163,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce]);
 
     const imageWithBlur = useMemo(() => {
-      if (Boolean(collectible.isAdultContent) && currentFallback !== FINAL_FALLBACK) {
+      if (isShowBlur && currentFallback !== FINAL_FALLBACK) {
         return (
           <ImageBlurOverlay
             theme={blurLayoutTheme}
@@ -190,7 +178,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
 
       return image;
-    }, [image, collectible.isAdultContent, isShowBlur, currentFallback]);
+    }, [image, isShowBlur, currentFallback]);
 
     return (
       <View
