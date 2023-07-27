@@ -195,7 +195,7 @@ export const isAssetSearched = ({ name, symbol, address }: Partial<TokenInterfac
   Boolean(symbol?.toLowerCase().includes(lowerCaseSearchValue)) ||
   Boolean(address?.toLowerCase().includes(lowerCaseSearchValue));
 
-export const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
+export const applySortByDollarValueDecrease: <T extends TokenInterface>(assets: T[]) => T[] = assets =>
   assets.sort((a, b) => {
     const aDollarValue = isTruthy(a.exchangeRate) ? getDollarValue(a.balance, a, a.exchangeRate) : BigNumber(0);
     const bDollarValue = isTruthy(b.exchangeRate) ? getDollarValue(b.balance, b, b.exchangeRate) : BigNumber(0);

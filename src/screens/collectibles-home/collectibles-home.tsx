@@ -122,6 +122,8 @@ export const CollectiblesHome = () => {
     return 1;
   });
 
+  const { setSearchValue, filteredAssetsList } = useFilteredAssetsList(collectibles);
+
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
@@ -243,9 +245,10 @@ export const CollectiblesHome = () => {
           />
 
           <View style={styles.icons}>
-            <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
-            <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} style={styles.offsetBetween} />
-            <TouchableIcon name={IconNameEnum.SearchNew} onPress={emptyFn} />
+            <Search onChange={setSearchValue}>
+              <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
+              <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} style={styles.offsetBetween} />
+            </Search>
           </View>
         </View>
 
@@ -254,7 +257,7 @@ export const CollectiblesHome = () => {
             <ActivityIndicator size="large" />
           </View>
         ) : (
-          <CollectiblesList collectibles={collectibles} isShowInfo={isShowCollectibleInfo} />
+          <CollectiblesList collectibles={filteredAssetsList} isShowInfo={isShowCollectibleInfo} />
         )}
       </BottomSheet>
     </>

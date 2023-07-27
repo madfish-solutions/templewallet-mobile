@@ -92,7 +92,8 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     borderColor: colors.lines,
     borderBottomWidth: formatSize(0.5),
     borderTopWidth: formatSize(0.5),
-    backgroundColor: colors.pageBG
+    backgroundColor: colors.pageBG,
+    height: formatSize(40)
   },
   icons: {
     flexDirection: 'row',
