@@ -6,6 +6,9 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
     paddingVertical: formatSize(16),
     paddingRight: formatSize(16)
   },
+  flex: {
+    flex: 1
+  },
   card: {
     marginTop: formatSize(12),
     paddingHorizontal: formatSize(12),
@@ -13,7 +16,7 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
     backgroundColor: colors.cardBG
   },
   oprationTitle: {
-    ...typography.body15Regular,
+    ...typography.numbersRegular15,
     color: colors.black
   },
   oprationSubtitle: {
@@ -23,14 +26,13 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
   detailItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingVertical: formatSize(12)
   },
   detailText: {
     color: colors.gray1
   },
   detailItemBorder: {
-    borderBottomWidth: formatSize(1),
+    borderBottomWidth: formatSize(0.5),
     borderBottomColor: colors.lines
   },
   row: {
@@ -41,5 +43,18 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
   },
   itemsStart: {
     alignItems: 'flex-start'
+  },
+  itemsEnd: {
+    alignItems: 'flex-end'
+  },
+  itemsCenter: {
+    alignItems: 'center'
+  },
+  robotBackground: {
+    backgroundColor: colors.navigation
+  },
+  ntfPrice: {
+    ...typography.numbersRegular11,
+    color: colors.gray1
   }
 }));

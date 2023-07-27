@@ -2,6 +2,8 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
+
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../store/tokens-metadata/tokens-metadata-actions';
@@ -11,10 +13,25 @@ import { isString } from '../utils/is-string';
 import { mutezToTz } from '../utils/tezos.util';
 import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 
-export const useNonZeroAmounts = (group: ActivityGroup) => {
+interface ActivityAmount {
+  symbol: string;
+  isPositive: boolean;
+  exchangeRate: number;
+  parsedAmount: BigNumber;
+}
+
+export interface ActivityNonZeroAmounts {
+  amounts: Array<ActivityAmount>;
+  dollarSums: Array<BigNumber>;
+}
+
+const DEFAULT_EXCHANGE_RATE = 1;
+
+export const useNonZeroAmounts = (group: ActivityGroup): ActivityNonZeroAmounts => {
   const dispatch = useDispatch();
   const getTokenMetadata = useTokenMetadataGetter();
   const exchangeRates = useUsdToTokenRates();
+  const fiatToUsdRate = useFiatToUsdRateSelector();
 
   return useMemo(() => {
     const amounts = [];
@@ -23,7 +40,7 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
 
     for (const { address, tokenId, amount } of group) {
       const slug = getTokenSlug({ address, id: tokenId });
-      const { decimals, symbol, name } = getTokenMetadata(slug);
+      const { decimals, symbol, name, artifactUri } = getTokenMetadata(slug);
       const exchangeRate: number | undefined = exchangeRates[slug];
       if (isString(address) && !isString(name)) {
         dispatch(loadTokenMetadataActions.submit({ address, id: Number(tokenId ?? '0') }));
@@ -33,7 +50,7 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
       const isPositive = parsedAmount.isPositive();
 
       if (isDefined(exchangeRate)) {
-        const summand = parsedAmount.multipliedBy(exchangeRate);
+        const summand = parsedAmount.multipliedBy(exchangeRate).multipliedBy(fiatToUsdRate ?? DEFAULT_EXCHANGE_RATE);
         if (isPositive) {
           positiveAmountSum = positiveAmountSum.plus(summand);
         } else {
@@ -45,7 +62,7 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
         amounts.push({
           parsedAmount,
           isPositive,
-          symbol,
+          symbol: isDefined(artifactUri) ? name : symbol,
           exchangeRate
         });
       }

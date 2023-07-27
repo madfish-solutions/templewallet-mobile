@@ -107,6 +107,11 @@ export const useCollectiblesListSelector = () => {
 
   return useMemo(() => assetsList.filter(asset => isCollectible(asset) && isNonZeroBalance(asset)), [assetsList]);
 };
+export const useCollectibleBySlugSelector = (slug: string): TokenInterface | undefined => {
+  const assetsList = useAssetsListSelector();
+
+  return useMemo(() => assetsList.find(asset => isCollectible(asset) && getTokenSlug(asset) === slug), [assetsList]);
+};
 
 export const useVisibleCollectiblesListSelector = () => {
   const collectiblesList = useCollectiblesListSelector();

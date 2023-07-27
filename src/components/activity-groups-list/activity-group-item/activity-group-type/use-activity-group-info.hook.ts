@@ -18,6 +18,16 @@ interface ActivityInfo {
   };
 }
 
+export const BAKING_REWARDS_TEXT = 'Baking rewards';
+
+const getReceiveTransactionType = (alias: string | undefined): string => {
+  if (Boolean(alias?.toLowerCase().includes('payouts'))) {
+    return BAKING_REWARDS_TEXT;
+  }
+
+  return 'Receive';
+};
+
 export const useActivityGroupInfo = (group: ActivityGroup) => {
   const colors = useColors();
   const { publicKeyHash } = useSelectedAccountSelector();
@@ -42,7 +52,7 @@ export const useActivityGroupInfo = (group: ActivityGroup) => {
       case ActivityTypeEnum.Transaction:
         if (firstActivity.source.address !== publicKeyHash) {
           return {
-            transactionType: firstActivity.source.alias ?? 'Receive',
+            transactionType: getReceiveTransactionType(firstActivity.source.alias),
             transactionSubtype: 'Received',
             transactionHash: firstActivity.hash,
             destination: {
