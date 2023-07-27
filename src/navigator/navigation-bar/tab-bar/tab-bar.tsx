@@ -9,6 +9,8 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
+import { ScreensOrModalsEnum } from '../../../interfaces/stacks.interface';
+import { isStackFocused } from '../../../utils/is-stack-focused.util';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -26,7 +28,7 @@ type RouteType = { params?: { token: TokenInterface } };
 type RouteParams = { name: string } & RouteType;
 
 interface Props {
-  currentRouteName: ScreensEnum;
+  currentRouteName: ScreensOrModalsEnum;
 }
 
 export const TabBar: FC<Props> = ({ currentRouteName }) => {
@@ -38,10 +40,10 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
 
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
-  const isStackFocused = (screensStack: ScreensEnum[]) =>
-    isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
   const disabledOnPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
+
+  const getIsFocused = (stack: ScreensOrModalsEnum[]) => isStackFocused(currentRouteName, stack);
 
   return (
     <View style={styles.container}>
@@ -51,14 +53,14 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconName={IconNameEnum.TezWallet}
           iconWidth={formatSize(28)}
           routeName={ScreensEnum.Wallet}
-          focused={isStackFocused(walletStackScreens)}
+          focused={getIsFocused(walletStackScreens)}
         />
         <TabBarButton
           label="NFT"
           iconName={IconNameEnum.NFT}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.CollectiblesHome}
-          focused={isStackFocused(nftStackScreens)}
+          focused={getIsFocused(nftStackScreens)}
           disabledOnPress={disabledOnPress}
         />
         <TabBarButton
@@ -71,7 +73,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
               ? { inputToken: route.params?.token }
               : undefined
           }
-          focused={isStackFocused(swapStackScreens)}
+          focused={getIsFocused(swapStackScreens)}
           disabled={isDcpNode}
           disabledOnPress={disabledOnPress}
         />
@@ -80,7 +82,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconName={IconNameEnum.DApps}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.DApps}
-          focused={isStackFocused(dAppsStackScreens)}
+          focused={getIsFocused(dAppsStackScreens)}
           disabled={isDcpNode}
           disabledOnPress={disabledOnPress}
         />
@@ -89,7 +91,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconName={IconNameEnum.Market}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.Market}
-          focused={isStackFocused(marketStackScreens)}
+          focused={getIsFocused(marketStackScreens)}
           disabledOnPress={disabledOnPress}
         />
       </View>

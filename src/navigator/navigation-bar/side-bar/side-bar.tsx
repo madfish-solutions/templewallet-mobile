@@ -8,8 +8,9 @@ import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-l
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { isDefined } from 'src/utils/is-defined';
 
+import { ScreensOrModalsEnum } from '../../../interfaces/stacks.interface';
+import { isStackFocused } from '../../../utils/is-stack-focused.util';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -22,7 +23,7 @@ import { SideBarButton } from './side-bar-button/side-bar-button';
 import { useSideBarStyles } from './side-bar.styles';
 
 interface Props {
-  currentRouteName: ScreensEnum;
+  currentRouteName: ScreensOrModalsEnum;
 }
 
 export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
@@ -32,10 +33,9 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
 
   const { isDcpNode } = useNetworkInfo();
 
-  const isStackFocused = (screensStack: ScreensEnum[]) =>
-    isDefined(currentRouteName) && screensStack.includes(currentRouteName);
-
   const disabledOnPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
+
+  const getIsFocused = (stack: ScreensOrModalsEnum[]) => isStackFocused(currentRouteName, stack);
 
   return (
     <View style={styles.container}>
@@ -47,20 +47,20 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             label="Wallet"
             iconName={IconNameEnum.TezWallet}
             routeName={ScreensEnum.Wallet}
-            focused={isStackFocused(walletStackScreens)}
+            focused={getIsFocused(walletStackScreens)}
           />
           <SideBarButton
             label="NFT"
             iconName={IconNameEnum.NFT}
             routeName={ScreensEnum.CollectiblesHome}
-            focused={isStackFocused(nftStackScreens)}
+            focused={getIsFocused(nftStackScreens)}
             disabledOnPress={disabledOnPress}
           />
           <SideBarButton
             label="Swap"
             iconName={IconNameEnum.Swap}
             routeName={ScreensEnum.SwapScreen}
-            focused={isStackFocused(swapStackScreens)}
+            focused={getIsFocused(swapStackScreens)}
             disabled={isDcpNode}
             disabledOnPress={disabledOnPress}
           />
@@ -68,7 +68,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             label="DApps"
             iconName={IconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
-            focused={isStackFocused(dAppsStackScreens)}
+            focused={getIsFocused(dAppsStackScreens)}
             disabled={isDcpNode}
             disabledOnPress={disabledOnPress}
           />
@@ -76,7 +76,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             label="Market"
             iconName={IconNameEnum.Market}
             routeName={ScreensEnum.Market}
-            focused={isStackFocused(marketStackScreens)}
+            focused={getIsFocused(marketStackScreens)}
           />
         </View>
 

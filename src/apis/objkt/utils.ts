@@ -1,18 +1,18 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import { groupBy, map, maxBy } from 'lodash-es';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
-import { AttributeInfo } from '../../interfaces/attribute.interface';
+import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
 import { currencyInfoById } from './constants';
 import { MarketPlaceEventEnum } from './enums';
-import { CollectibleResponse } from './types';
+import { AttributeInfoResponse, CollectibleResponse } from './types';
 
 export const transformCollectiblesArray = (
   array: CollectibleResponse[],
   selectedPublicKey: string
-): TokenInterface[] => {
+): CollectibleOfferInteface[] => {
   const collectiblesArray = array.map(token => {
     const buyEvents = isDefined(token)
       ? token.events.filter(
@@ -26,9 +26,20 @@ export const transformCollectiblesArray = (
       : [];
     const lastPrice = buyEvents.find(event => event.price_xtz !== null);
     const lastPriceCurrencyId = lastPrice?.currency_id ?? 1;
-    const correctOffers = token.offers_active.filter(offer => offer.buyer_address !== selectedPublicKey);
+    const correctOffers = token.offers_active
+      .map(item => ({
+        price: item.price,
+        buyerAddress: item.buyer_address,
+        collectionOffer: item.collection_offer,
+        priceXtz: item.price_xtz,
+        bigmapKey: item.bigmap_key,
+        marketplaceContract: item.marketplace_contract,
+        faContract: item.fa_contract,
+        currencyId: item.currency_id
+      }))
+      .filter(offer => offer.buyerAddress !== selectedPublicKey);
     const highestOffer = correctOffers[correctOffers.length - 1];
-    const currency = currencyInfoById[highestOffer?.currency_id ?? 1];
+    const currency = currencyInfoById[highestOffer?.currencyId ?? 1];
 
     const listedBySelectedUser = token.listings_active.reduce((acc, current) => {
       if (current.seller_address === selectedPublicKey) {
@@ -54,23 +65,31 @@ export const transformCollectiblesArray = (
       id: Number(token.token_id),
       visibility: VisibilityEnum.Visible,
       editions: token.supply,
-      holders: token.holders,
+      holders: token.holders.map(item => ({ holderAddress: item.holder_address, quantity: item.quantity })),
       lastPrice: {
         price: lastPrice?.price,
         symbol: currencyInfoById[lastPriceCurrencyId]?.symbol,
         decimals: currencyInfoById[lastPriceCurrencyId]?.decimals
       },
-      listedAmount: listedBySelectedUser,
+      listed: listedBySelectedUser,
       items: token.fa.items,
-      listing_active: token.listings_active
+      listingsActive: isNonEmptyArray(token.listings_active)
+        ? token.listings_active.map(item => ({
+            bigmapKey: item.bigmap_key,
+            currency: item.currency,
+            currencyId: item.currency_id,
+            marketplaceContract: item.marketplace_contract,
+            price: item.price
+          }))
+        : []
     };
   });
 
   return collectiblesArray;
 };
 
-export const getUniqueAndMaxValueAttribute = (array: AttributeInfo[]) => {
+export const getUniqueAndMaxValueAttribute = (array: AttributeInfoResponse[]) => {
   const grouped = groupBy(array, 'attribute_id');
 
-  return map(grouped, value => maxBy(value, 'tokens') as AttributeInfo);
+  return map(grouped, value => maxBy(value, 'tokens') as AttributeInfoResponse);
 };
