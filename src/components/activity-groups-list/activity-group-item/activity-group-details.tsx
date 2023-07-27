@@ -12,7 +12,10 @@ import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics'
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { ActivityNonZeroAmounts } from 'src/hooks/use-non-zero-amounts.hook';
 import { ActivityInterface } from 'src/interfaces/activity.interface';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import {
+  useCurrentFiatCurrencyMetadataSelector,
+  useSelectedRpcUrlSelector
+} from 'src/store/settings/settings-selectors';
 import { useCollectibleBySlugSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
@@ -47,6 +50,7 @@ export const ActivityDetails: FC<ActivityDetailsProps> = ({
 }) => {
   const styles = useActivityGroupItemStyles();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const { symbol } = useCurrentFiatCurrencyMetadataSelector();
 
   const [areDetailsVisible, setAreDetailsVisible] = useState(false);
   const handleOpenActivityDetailsPress = useCallback(() => setAreDetailsVisible(prevState => !prevState), []);
@@ -75,7 +79,7 @@ export const ActivityDetails: FC<ActivityDetailsProps> = ({
                 <View style={styles.itemsEnd}>
                   <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} textSize={TextSize.Small} />
                   {isCollectible ? (
-                    <Text style={styles.ntfPrice}>0.00$</Text>
+                    <Text style={styles.ntfPrice}>0.00{symbol}</Text>
                   ) : (
                     <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
                   )}
