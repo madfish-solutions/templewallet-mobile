@@ -122,7 +122,7 @@ export const createYouvesStakeTransfersParams = async (
   );
   const depositTransferParams = await getDepositTransferParams(
     earnOpportunity,
-    minimumReceivedAtomic,
+    minimumReceivedAtomic.minus(routingFeeFromOutputAtomic),
     tezos,
     accountPkh,
     stakeId

@@ -87,9 +87,8 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
     <FormikProvider value={formik}>
       <View>
         <Text style={styles.depositPrompt}>
-          {itemIsFarm
-            ? 'You can choose any asset from the provided list for your deposit. The selected asset will be automatically converted by Temple Wallet.'
-            : 'You can choose asset from the provided list for your deposit.'}
+          You can choose any asset from the provided list for your deposit. The selected asset will be automatically
+          converted by Temple Wallet.
         </Text>
         <Divider size={formatSize(24)} />
         <FormAssetAmountInput
