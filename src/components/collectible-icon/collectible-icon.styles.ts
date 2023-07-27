@@ -13,7 +13,9 @@ export const useCollectibleIconStyles = createUseStyles(({ colors, typography })
   },
   image: {
     backgroundColor: colors.blue10,
-    borderRadius: formatSize(4)
+    borderRadius: formatSize(4),
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   balanceContainer: {
     position: 'absolute',

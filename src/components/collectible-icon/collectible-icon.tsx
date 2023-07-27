@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState, memo, useEffect } from 'react';
+import React, { FC, useMemo, useState, memo, useEffect, useCallback } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -9,10 +9,10 @@ import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
 import {
-  ImageResolutionEnum,
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
   formatImgUri,
+  ImageResolutionEnum,
   isImgUriDataUri
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -26,6 +26,8 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { ImageBlurOverlay } from '../image-blur-overlay/image-blur-overlay';
 import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
+
+const FINAL_FALLBACK = 'FINAL_FALLBACK';
 
 export const CollectibleIcon: FC<CollectibleIconProps> = memo(
   ({
@@ -58,6 +60,18 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const styles = useCollectibleIconStyles();
     const assetSlug = `${collectible.address}_${collectible.id}`;
 
+    const imageFallbackURLs = useMemo(
+      () => [
+        formatCollectibleObjktArtifactUri(collectible.artifactUri ?? ''),
+        formatCollectibleObjktMediumUri(assetSlug),
+        formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
+      ],
+      [collectible]
+    );
+
+    const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
+    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
+    const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
     const formattedImage = useMemo(() => {
       if (isDefined(objktArtifact) && isBigIcon) {
         return formatCollectibleObjktArtifactUri(objktArtifact);
@@ -66,26 +80,28 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       return formatCollectibleObjktMediumUri(assetSlug);
     }, [objktArtifact, assetSlug, isBigIcon]);
 
-    const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
     const [fastImage, setFastImage] = useState(formattedImage);
 
     useEffect(() => {
       setFastImage(formattedImage);
     }, [objktArtifact]);
 
-    const handleError = () => {
-      setFastImage(
-        fastImage.endsWith('/thumb288')
-          ? formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
-          : formatCollectibleObjktMediumUri(assetSlug)
-      );
-    };
+    const handleError = useCallback(() => {
+      if (currentFallbackIndex < imageFallbackURLs.length - 1) {
+        setCurrentFallback(imageFallbackURLs[currentFallbackIndex + 1]);
+        setCurrentFallbackIndex(prevState => prevState + 1);
+      } else {
+        setCurrentFallback(FINAL_FALLBACK);
+        handleLoadEnd();
+      }
+    }, [currentFallbackIndex, imageFallbackURLs]);
 
-    const handleAnimatedError = () => {
-      setIsAnimatedRenderedOnce(true);
-      handleError();
-    };
-    const handleLoadEnd = () => void setIsLoading(false);
+    const handleAnimatedError = useCallback(() => setIsAnimatedRenderedOnce(true), []);
+    const handleLoadEnd = useCallback(() => setIsLoading(false), []);
+    const handleAudioError = useCallback(() => showErrorToast({ description: 'Invalid audio' }), []);
+
+    const finalFallbackIconWidth = useMemo(() => formatSize(isBigIcon ? 72 : 38), [isBigIcon]);
+    const finalFallbackIconHeight = useMemo(() => formatSize(isBigIcon ? 90 : 48), [isBigIcon]);
 
     const image = useMemo(() => {
       if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon) {
@@ -117,7 +133,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           return (
             <SimplePlayer
               uri={formatCollectibleObjktArtifactUri(objktArtifact)}
-              posterUri={formatCollectibleObjktMediumUri(assetSlug)}
               size={size}
               style={styles.image}
               onError={handleAnimatedError}
@@ -132,13 +147,21 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
               <SimplePlayer
                 uri={formatCollectibleObjktArtifactUri(objktArtifact)}
                 size={size}
-                onError={() => showErrorToast({ description: 'Invalid audio' })}
+                onError={handleAudioError}
                 onLoad={handleLoadEnd}
               />
               <AudioPlaceholder />
             </>
           );
         }
+      }
+
+      if (currentFallback === FINAL_FALLBACK) {
+        return (
+          <View style={styles.image}>
+            <Icon name={IconNameEnum.BrokenImage} width={finalFallbackIconWidth} height={finalFallbackIconHeight} />
+          </View>
+        );
       }
 
       return (
@@ -149,10 +172,10 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           onLoad={handleLoadEnd}
         />
       );
-    }, [mime, objktArtifact, fastImage, isAnimatedRenderedOnce]);
+    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce]);
 
     const imageWithBlur = useMemo(() => {
-      if (Boolean(isShowBlur)) {
+      if (Boolean(collectible.isAdultContent) && currentFallback !== FINAL_FALLBACK) {
         return (
           <ImageBlurOverlay
             theme={blurLayoutTheme}
@@ -167,7 +190,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
 
       return image;
-    }, [image, isShowBlur, objktArtifact, fastImage]);
+    }, [image, collectible.isAdultContent, isShowBlur, currentFallback]);
 
     return (
       <View
@@ -183,9 +206,9 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
             <Icon name={IconNameEnum.Action} size={formatSize(8)} />
           </View>
         )}
-        {isLoading && !isShowBlur && (
+        {isLoading && !Boolean(isShowBlur) && (
           <View style={styles.loader}>
-            <ActivityIndicator size={iconSize === CollectibleIconSize.SMALL ? 'small' : 'large'} />
+            <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />
           </View>
         )}
       </View>
