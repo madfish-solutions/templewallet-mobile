@@ -13,6 +13,7 @@ import { HeaderCard } from 'src/components/header-card/header-card';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
+import { useBuildIdentifierEvent } from 'src/hooks/use-build-identifier-event';
 import { useWalletOpenTacker } from 'src/hooks/use-wallet-open-tacker.hook';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -48,6 +49,7 @@ export const Wallet = () => {
   const dispatch = useDispatch();
   const { pageEvent } = useAnalytics();
   const { navigate } = useNavigation();
+  useBuildIdentifierEvent();
 
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const isOnRampPossibility = useIsOnRampPossibilitySelector();

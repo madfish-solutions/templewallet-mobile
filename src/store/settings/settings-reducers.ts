@@ -24,7 +24,8 @@ import {
   madeManualBackupAction,
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
-  setOnRampPossibilityAction
+  setOnRampPossibilityAction,
+  setIsBuildIdentifierEventFiredOnceAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -84,6 +85,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsDomainAddressShown, (state, { payload: isShownDomainName }) => ({
     ...state,
     isShownDomainName
+  }));
+
+  builder.addCase(setIsBuildIdentifierEventFiredOnceAction, (state, { payload: isBuildIdentifierEventFiredOnce }) => ({
+    ...state,
+    isBuildIdentifierEventFiredOnce
   }));
 
   builder.addCase(requestSeedPhraseBackupAction, state => ({

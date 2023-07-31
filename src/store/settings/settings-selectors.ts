@@ -41,6 +41,9 @@ export const useIsShowLoaderSelector = () => useSelector(({ settings }) => setti
 
 export const useIsEnabledAdsBannerSelector = () => useSelector(({ settings }) => settings.isEnableAdsBanner);
 
+export const useIsBuildIdentifierEventFiredOnceSelector = () =>
+  useSelector(({ settings }) => settings.isBuildIdentifierEventFiredOnce);
+
 export const useIsBackupMadeSelector = () => {
   const isManualBackupMade = useSelector(({ settings }) => settings.isManualBackupMade);
   const isCloudBackupMade = useSelector(({ settings }) => settings.isCloudBackupMade);
