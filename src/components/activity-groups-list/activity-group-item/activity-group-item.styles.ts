@@ -56,5 +56,8 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
   ntfPrice: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  chevron: {
+    padding: formatSize(4)
   }
 }));

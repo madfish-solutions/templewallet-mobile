@@ -1,11 +1,13 @@
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 
+import { AvatarImage } from 'src/components/avatar-image/avatar-image';
 import { Divider } from 'src/components/divider/divider';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { useNonZeroAmounts } from 'src/hooks/use-non-zero-amounts.hook';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
 import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
 
 import { ActivityGroupAmountChange } from './activity-group-amount-change/activity-group-amount-change';
 import { ActivityDetails } from './activity-group-details';
@@ -21,10 +23,11 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
 
   const {
+    seed,
     transactionType,
     transactionSubtype,
     transactionHash,
-    destination: { label, value, address }
+    destination: { label, value, address, bakerLogo }
   } = useActivityGroupInfo(group);
   const nonZeroAmounts = useNonZeroAmounts(group);
 
@@ -33,7 +36,11 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
   return (
     <View style={styles.root}>
       <View style={[styles.row, styles.itemsCenter]}>
-        <RobotIcon size={formatSize(36)} seed={firstActivity.reciever?.address ?? ''} style={styles.robotBackground} />
+        {isDefined(bakerLogo) ? (
+          <AvatarImage size={formatSize(36)} uri={bakerLogo} />
+        ) : (
+          <RobotIcon size={formatSize(36)} seed={seed} style={styles.robotBackground} />
+        )}
         <Divider size={formatSize(10)} />
         <View style={styles.flex}>
           <View style={[styles.row, styles.justifyBetween, styles.itemsStart]}>

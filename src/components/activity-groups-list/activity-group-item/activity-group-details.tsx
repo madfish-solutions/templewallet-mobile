@@ -24,7 +24,11 @@ import { tzktUrl } from 'src/utils/linking.util';
 import { ActivityGroupAmountChange, TextSize } from './activity-group-amount-change/activity-group-amount-change';
 import { ActivityGroupDollarAmountChange } from './activity-group-dollar-amount-change/activity-group-dollar-amount-change';
 import { useActivityGroupItemStyles } from './activity-group-item.styles';
-import { BAKING_REWARDS_TEXT } from './activity-group-type/use-activity-group-info.hook';
+import {
+  BAKING_REWARDS_TEXT,
+  DELEGATION_TEXT,
+  UNDELEGATION_TEXT
+} from './activity-group-type/use-activity-group-info.hook';
 import { ActivityStatusBadge } from './activity-status-badge/activity-status-badge';
 import { ActivityTime } from './activity-time/activity-time';
 import { ActivityGroupItemSelectors } from './selectors';
@@ -57,6 +61,29 @@ export const ActivityDetails: FC<ActivityDetailsProps> = ({
 
   const collectible = useCollectibleBySlugSelector(`${activity.address}_${activity.tokenId ?? 0}`);
   const isCollectible = useMemo(() => isDefined(collectible), [collectible]);
+  const { shouldShowTzktLink, bakerAddress } = useMemo(() => {
+    if (transactionType === BAKING_REWARDS_TEXT) {
+      return {
+        shouldShowTzktLink: true,
+        bakerAddress: activity.source.address
+      };
+    } else if (transactionType === DELEGATION_TEXT) {
+      return {
+        shouldShowTzktLink: true,
+        bakerAddress: activity.destination.address
+      };
+    } else if (transactionType === UNDELEGATION_TEXT) {
+      return {
+        shouldShowTzktLink: true,
+        bakerAddress: activity.destination.address
+      };
+    }
+
+    return {
+      shouldShowTzktLink: false,
+      bakerAddress: ''
+    };
+  }, [transactionType]);
 
   return (
     <View>
@@ -66,7 +93,11 @@ export const ActivityDetails: FC<ActivityDetailsProps> = ({
           <Divider size={formatSize(4)} />
           <ActivityTime timestamp={activity.timestamp} />
         </View>
-        <TouchableWithAnalytics testID={ActivityGroupItemSelectors.details} onPress={handleOpenActivityDetailsPress}>
+        <TouchableWithAnalytics
+          style={styles.chevron}
+          testID={ActivityGroupItemSelectors.details}
+          onPress={handleOpenActivityDetailsPress}
+        >
           <Icon name={areDetailsVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown} />
         </TouchableWithAnalytics>
       </View>
@@ -99,11 +130,11 @@ export const ActivityDetails: FC<ActivityDetailsProps> = ({
               <Text style={styles.detailText}>{label}</Text>
               <View style={styles.row}>
                 <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
-                {transactionType === BAKING_REWARDS_TEXT && (
+                {shouldShowTzktLink && (
                   <>
                     <Divider size={formatSize(4)} />
                     <ExternalLinkButton
-                      url={tzktUrl(selectedRpcUrl, activity.source.address)}
+                      url={tzktUrl(selectedRpcUrl, bakerAddress)}
                       testID={ActivityGroupItemSelectors.externalLink}
                     />
                   </>
