@@ -70,7 +70,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     );
 
     const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
-    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
+    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
     const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
 
     const handleError = useCallback(() => {
@@ -162,7 +162,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce]);
 
     const imageWithBlur = useMemo(() => {
-      if (Boolean(collectible.isAdultContent) && currentFallback !== FINAL_FALLBACK) {
+      if (isShowBlur && currentFallback !== FINAL_FALLBACK) {
         return (
           <ImageBlurOverlay
             theme={blurLayoutTheme}
@@ -177,7 +177,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
 
       return image;
-    }, [image, collectible.isAdultContent, isShowBlur, currentFallback]);
+    }, [image, isShowBlur, currentFallback]);
 
     return (
       <View
@@ -193,7 +193,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
             <Icon name={IconNameEnum.Action} size={formatSize(8)} />
           </View>
         )}
-        {isLoading && !Boolean(isShowBlur) && (
+        {isLoading && !isShowBlur && (
           <View style={styles.loader}>
             <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />
           </View>
