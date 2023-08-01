@@ -167,10 +167,10 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           onLoad={handleLoadEnd}
         />
       );
-    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce, audioPlaceholderTheme, paused]);
+    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce]);
 
     const imageWithBlur = useMemo(() => {
-      if (Boolean(collectible.isAdultContent) && currentFallback !== FINAL_FALLBACK) {
+      if (isShowBlur && currentFallback !== FINAL_FALLBACK) {
         return (
           <ImageBlurOverlay
             theme={blurLayoutTheme}
@@ -185,7 +185,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
 
       return image;
-    }, [image, collectible.isAdultContent, isShowBlur, currentFallback]);
+    }, [image, isShowBlur, currentFallback]);
 
     return (
       <View
@@ -195,7 +195,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         }}
       >
         {imageWithBlur}
-        {isShowInfo && (
+        {Boolean(isShowInfo) && (
           <View style={styles.balanceContainer}>
             <Text style={styles.balanceText}>{collectible.balance}</Text>
             <Icon name={IconNameEnum.Action} size={formatSize(8)} />
