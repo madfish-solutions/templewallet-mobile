@@ -82,7 +82,6 @@ export const CollectibleModal = memo(() => {
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
 
   const { collectible } = useCurrentCollectibleFullData(slug, isUserOwnerCurrentCollectible);
@@ -242,16 +241,21 @@ export const CollectibleModal = memo(() => {
       <ModalStatusBar />
 
       <View>
-        {isDefined(collectible) && (
+        {isDefined(collectible) && isString(artifactUri) ? (
           <CollectibleIcon
             collectible={collectible}
             mime={mime}
             objktArtifact={artifactUri}
             size={iconSize}
+            paused={false}
             iconSize={CollectibleIconSize.BIG}
             setScrollEnabled={setScrollEnabled}
             blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
           />
+        ) : (
+          <View style={[{ width: iconSize, height: iconSize }, styles.imageFallback]}>
+            <Icon name={IconNameEnum.BrokenImage} size={formatSize(90)} />
+          </View>
         )}
 
         <Divider size={formatSize(12)} />
