@@ -21,6 +21,7 @@ import BlurEyeBlack from './assets/blur-eye-black.svg';
 import BlurEyeWhite from './assets/blur-eye-white.svg';
 import BlurLight from './assets/blur-light.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import BrokenImage from './assets/broken-image.svg';
 import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
@@ -166,6 +167,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.Burn]: BurnIcon,
+  [IconNameEnum.BrokenImage]: BrokenImage,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
   [IconNameEnum.DetailsArrowRight]: DetailsArrowRightIcon,
