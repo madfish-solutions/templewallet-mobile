@@ -7,6 +7,7 @@ import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { Route3Token } from 'src/interfaces/route3.interface';
 import { ToastError } from 'src/toast/error-toast.utils';
+import { SIRS_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -83,7 +84,8 @@ export const createYouvesStakeTransfersParams = async (
   const threeRouteSwapParams = await fetchRoute3SwapParams({
     fromSymbol: fromRoute3Token.symbol,
     toSymbol: toRoute3Token.symbol,
-    amount: mutezToTz(swapInputMinusFeeAtomic, asset.decimals).toString()
+    amount: mutezToTz(swapInputMinusFeeAtomic, asset.decimals).toString(),
+    chainsLimit: fromRoute3Token.symbol === SIRS_TOKEN_METADATA.symbol ? 1 : 2
   });
 
   if (!isDefined(threeRouteSwapParams.output) || threeRouteSwapParams.output === '0') {
