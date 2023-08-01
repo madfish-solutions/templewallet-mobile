@@ -188,7 +188,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         }}
       >
         {imageWithBlur}
-        {isShowInfo && (
+        {Boolean(isShowInfo) && (
           <View style={styles.balanceContainer}>
             <Text style={styles.balanceText}>{collectible.balance}</Text>
             <Icon name={IconNameEnum.Action} size={formatSize(8)} />
