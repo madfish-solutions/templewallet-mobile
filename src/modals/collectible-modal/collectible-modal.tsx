@@ -7,6 +7,7 @@ import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
 import { SUPPORTED_CONTRACTS } from '../../apis/objkt/constants';
+import { ActivityIndicator } from '../../components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
@@ -241,7 +242,7 @@ export const CollectibleModal = memo(() => {
       <ModalStatusBar />
 
       <View>
-        {isDefined(collectible) && isString(artifactUri) ? (
+        {isDefined(collectible) && !isLoadingDetails && isDefined(artifactUri) ? (
           <CollectibleIcon
             collectible={collectible}
             mime={mime}
@@ -254,7 +255,7 @@ export const CollectibleModal = memo(() => {
           />
         ) : (
           <View style={[{ width: iconSize, height: iconSize }, styles.imageFallback]}>
-            <Icon name={IconNameEnum.BrokenImage} size={formatSize(90)} />
+            <ActivityIndicator />
           </View>
         )}
 
