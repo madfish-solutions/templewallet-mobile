@@ -7,11 +7,11 @@ import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { Route3Token } from 'src/interfaces/route3.interface';
 import { ToastError } from 'src/toast/error-toast.utils';
-import { SIRS_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { fetchRoute3SwapParams } from 'src/utils/route3.util';
+import { fetchRoute3SwapParams, getRoute3TokenSlug } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import {
   calculateFeeFromOutput,
@@ -85,7 +85,7 @@ export const createYouvesStakeTransfersParams = async (
     fromSymbol: fromRoute3Token.symbol,
     toSymbol: toRoute3Token.symbol,
     amount: mutezToTz(swapInputMinusFeeAtomic, asset.decimals).toString(),
-    chainsLimit: fromRoute3Token.symbol === SIRS_TOKEN_METADATA.symbol ? 1 : 2
+    chainsLimit: getRoute3TokenSlug(fromRoute3Token) === KNOWN_TOKENS_SLUGS.SIRS ? 1 : 2
   });
 
   if (!isDefined(threeRouteSwapParams.output) || threeRouteSwapParams.output === '0') {
