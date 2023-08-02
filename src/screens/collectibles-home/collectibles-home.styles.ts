@@ -28,6 +28,9 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     flexDirection: 'row',
     marginBottom: formatSize(16)
   },
+  profileActionsWithoutCollections: {
+    marginBottom: 0
+  },
   profileActionButton: {
     flexDirection: 'row',
     alignItems: 'center'

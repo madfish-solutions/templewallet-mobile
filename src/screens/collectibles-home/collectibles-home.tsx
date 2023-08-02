@@ -76,8 +76,8 @@ export const CollectiblesHome = () => {
 
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = isTablet() ? 0 : formatSize(48) + insets.bottom;
-  const statusBar = useMemo(() => StatusBar.currentHeight ?? 0, [StatusBar.currentHeight]);
   const MARGIN_BETWEEN_COMPONENTS = formatSize(16);
+  const statusBar = useMemo(() => (isTablet() ? StatusBar.currentHeight ?? 0 : 0), [StatusBar.currentHeight]);
   const snapPoints = useMemo(
     () => [
       windowHeight - (headerHeight + TAB_BAR_HEIGHT + statusBar),
@@ -188,7 +188,12 @@ export const CollectiblesHome = () => {
           }}
           style={styles.profileContainer}
         >
-          <View style={styles.profileActions}>
+          <View
+            style={[
+              styles.profileActions,
+              conditionalStyle(collections.length === 0, styles.profileActionsWithoutCollections)
+            ]}
+          >
             {isDefined(alias) ? (
               <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
                 <Icon name={IconNameEnum.EditNew} size={formatSize(24)} />
