@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   FlatList,
   ListRenderItem,
+  StatusBar,
   Text,
   TouchableOpacity,
   useWindowDimensions,
@@ -76,10 +77,11 @@ export const CollectiblesHome = () => {
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = isTablet() ? 0 : formatSize(48) + insets.bottom;
   const MARGIN_BETWEEN_COMPONENTS = formatSize(16);
+  const statusBar = useMemo(() => (isTablet() ? StatusBar.currentHeight ?? 0 : 0), [StatusBar.currentHeight]);
   const snapPoints = useMemo(
     () => [
-      windowHeight - (headerHeight + TAB_BAR_HEIGHT),
-      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - MARGIN_BETWEEN_COMPONENTS)
+      windowHeight - (headerHeight + TAB_BAR_HEIGHT + statusBar),
+      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - MARGIN_BETWEEN_COMPONENTS + statusBar)
     ],
     [headerHeight, visibleBlockHeight, windowHeight]
   );
