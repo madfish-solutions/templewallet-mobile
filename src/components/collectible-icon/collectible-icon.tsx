@@ -163,6 +163,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         <FastImage
           style={[styles.image, { height: size, width: size }]}
           source={{ uri: currentFallback }}
+          resizeMode="contain"
           onError={handleError}
           onLoad={handleLoadEnd}
         />
