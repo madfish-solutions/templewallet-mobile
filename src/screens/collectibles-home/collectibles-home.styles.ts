@@ -99,9 +99,6 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     flexDirection: 'row',
     justifyContent: 'space-around'
   },
-  offsetBetween: {
-    marginHorizontal: formatSize(16)
-  },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center'

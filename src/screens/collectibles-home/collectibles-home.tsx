@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
+import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -245,9 +246,10 @@ export const CollectiblesHome = () => {
           />
 
           <View style={styles.icons}>
-            <Search onChange={setSearchValue}>
+            <Search onChange={setSearchValue} dividerSize={16}>
               <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
-              <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} style={styles.offsetBetween} />
+              <Divider size={formatSize(16)} />
+              <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} />
             </Search>
           </View>
         </View>
