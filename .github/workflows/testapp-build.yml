@@ -22,6 +22,14 @@ on:
         description: Android
         default: true
         required: true
+      apk:
+        type: boolean
+        description: Upload apk to DO
+        default: false
+        required: false
+      build-identifier-event:
+        description: Build identifier event
+        required: true
 
 jobs:
   testapp-build:
@@ -58,6 +66,7 @@ jobs:
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          TEMPLE_BUILD_IDENTIFIER_EVENT: ${{ github.event.inputs.build-identifier-event }}
 
       # Android
 
@@ -88,6 +97,7 @@ jobs:
           retention-days: 30
 
       - name: Upload to DO Spaces
+        if: ${{ github.event.inputs.apk == 'true' }}
         uses: BetaHuhn/do-spaces-action@v2
         with:
           access_key: ${{ secrets.DO_ACCESS_KEY }}
