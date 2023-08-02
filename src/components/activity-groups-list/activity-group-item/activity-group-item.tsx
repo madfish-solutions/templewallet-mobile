@@ -19,6 +19,20 @@ interface Props {
   group: ActivityGroup;
 }
 
+interface GroupItem {
+  title: string;
+  subtitle: string;
+  sender: string;
+  receiver: string;
+  transactionHash: string;
+  status: string;
+  timestamp: string;
+  amounts: {
+    amountInTokens: Array<number>;
+    amountInDollars: number;
+  };
+}
+
 export const ActivityGroupItem: FC<Props> = ({ group }) => {
   const styles = useActivityGroupItemStyles();
 
