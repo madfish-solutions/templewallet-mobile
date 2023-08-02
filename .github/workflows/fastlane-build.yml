@@ -12,6 +12,14 @@ on:
         description: Github release version
         default: ''
         required: false
+      apk:
+        type: boolean
+        description: Upload apk to DO
+        default: true
+        required: false
+      build-identifier-event:
+        description: Build identifier event
+        required: true
 
 jobs:
   fastlane-build:
@@ -48,6 +56,7 @@ jobs:
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          TEMPLE_BUILD_IDENTIFIER_EVENT: ${{ github.event.inputs.build-identifier-event }}
 
       - name: Prepare changelog
         id: changelog
@@ -78,6 +87,18 @@ jobs:
         env:
           BUILD_NUMBER: ${{ github.event.inputs.build-number }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
+      - name: Upload to DO Spaces
+        if: ${{ github.event.inputs.apk == 'true' }}
+        uses: BetaHuhn/do-spaces-action@v2
+        with:
+          access_key: ${{ secrets.DO_ACCESS_KEY }}
+          secret_key: ${{ secrets.DO_SECRET_KEY }}
+          space_name: ${{ secrets.DO_SPACE_NAME }}
+          space_region: ${{ secrets.DO_SPACE_REGION }}
+          source: android/app/build/outputs/apk/release/app-release.apk
+          out_dir: apk-releases
+          versioning: true
 
       # Github release
 
