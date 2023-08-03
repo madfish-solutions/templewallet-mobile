@@ -38,7 +38,7 @@ export const ActivityGroupsList: FC<Props> = ({
       const date = new Date(firstActivity.timestamp);
 
       if (isTheSameDay(date, prevActivityDate)) {
-        result[result.length - 1].data.push(activityGroup);
+        result[result.length - 1]?.data.push(activityGroup);
       } else {
         let title = date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
 
@@ -80,7 +80,7 @@ export const ActivityGroupsList: FC<Props> = ({
             contentContainerStyle={styles.sectionListContentContainer}
             onEndReachedThreshold={0.01}
             onEndReached={handleUpdate}
-            keyExtractor={item => item[0].hash}
+            keyExtractor={(item, index) => item[0]?.hash ?? index}
             renderItem={({ item, index, section }) => (
               <>
                 <ActivityGroupItem group={item} />

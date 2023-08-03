@@ -1,3 +1,5 @@
+import { Activity } from '@temple-wallet/transactions-parser';
+
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { emptyMember, MemberInterface } from './member.interface';
@@ -18,7 +20,7 @@ export interface ActivityInterface {
   level?: number;
 }
 
-export type ActivityGroup = ActivityInterface[];
+export type ActivityGroup = Array<Activity>;
 
 export const emptyActivity: ActivityInterface = {
   type: ActivityTypeEnum.Transaction,

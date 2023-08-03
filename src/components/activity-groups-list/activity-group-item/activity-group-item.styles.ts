@@ -35,6 +35,36 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
     borderBottomWidth: formatSize(0.5),
     borderBottomColor: colors.lines
   },
+  robotBackground: {
+    backgroundColor: colors.navigation
+  }
+}));
+
+export const useActivityDetailsStyles = createUseStyles(({ colors }) => ({
+  card: {
+    marginTop: formatSize(12),
+    paddingHorizontal: formatSize(12),
+    borderRadius: formatSize(8),
+    backgroundColor: colors.cardBG
+  },
+  itemWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: formatSize(12)
+  },
+  text: {
+    color: colors.gray1
+  },
+  border: {
+    borderBottomWidth: formatSize(0.5),
+    borderBottomColor: colors.lines
+  },
+  chevron: {
+    padding: formatSize(4)
+  }
+}));
+
+export const useActivityCommonStyles = createUseStyles(() => ({
   row: {
     flexDirection: 'row'
   },
@@ -49,15 +79,5 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
   },
   itemsCenter: {
     alignItems: 'center'
-  },
-  robotBackground: {
-    backgroundColor: colors.navigation
-  },
-  ntfPrice: {
-    ...typography.numbersRegular11,
-    color: colors.gray1
-  },
-  chevron: {
-    padding: formatSize(4)
   }
 }));

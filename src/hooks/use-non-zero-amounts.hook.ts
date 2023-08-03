@@ -38,7 +38,7 @@ export const useNonZeroAmounts = (group: ActivityGroup): ActivityNonZeroAmounts 
     let positiveAmountSum = new BigNumber(0);
     let negativeAmountSum = new BigNumber(0);
 
-    for (const { address, tokenId, amount } of group) {
+    for (const { tokensDeltas } of group) {
       const slug = getTokenSlug({ address, id: tokenId });
       const { decimals, symbol, name, artifactUri } = getTokenMetadata(slug);
       const exchangeRate: number | undefined = exchangeRates[slug];

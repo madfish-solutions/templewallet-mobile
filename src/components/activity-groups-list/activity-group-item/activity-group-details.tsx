@@ -1,8 +1,8 @@
-import { isEmpty } from 'lodash-es';
-import React, { FC, useState, useCallback, useMemo } from 'react';
+import { Activity, ActivityType } from '@temple-wallet/transactions-parser';
+import { BigNumber } from 'bignumber.js';
+import React, { FC, useState, useCallback } from 'react';
 import { View, Text } from 'react-native';
 
-import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
 import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { Icon } from 'src/components/icon/icon';
@@ -10,91 +10,138 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { ActivityNonZeroAmounts } from 'src/hooks/use-non-zero-amounts.hook';
-import { ActivityInterface } from 'src/interfaces/activity.interface';
-import {
-  useCurrentFiatCurrencyMetadataSelector,
-  useSelectedRpcUrlSelector
-} from 'src/store/settings/settings-selectors';
-import { useCollectibleBySlugSelector } from 'src/store/wallet/wallet-selectors';
+import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking.util';
 
 import { ActivityGroupAmountChange, TextSize } from './activity-group-amount-change/activity-group-amount-change';
 import { ActivityGroupDollarAmountChange } from './activity-group-dollar-amount-change/activity-group-dollar-amount-change';
-import { useActivityGroupItemStyles } from './activity-group-item.styles';
-import {
-  BAKING_REWARDS_TEXT,
-  DELEGATION_TEXT,
-  UNDELEGATION_TEXT
-} from './activity-group-type/use-activity-group-info.hook';
+import { useActivityCommonStyles, useActivityDetailsStyles } from './activity-group-item.styles';
 import { ActivityStatusBadge } from './activity-status-badge/activity-status-badge';
 import { ActivityTime } from './activity-time/activity-time';
 import { ActivityGroupItemSelectors } from './selectors';
 
+const SendTokensDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address: string; hash: string }> = ({
+  nonZeroAmounts,
+  address,
+  hash
+}) => {
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const styles = useActivityDetailsStyles();
+
+  const commonStyles = useActivityCommonStyles();
+
+  return (
+    <>
+      <View style={[styles.itemWrapper, styles.border]}>
+        <Text style={styles.text}>Sent:</Text>
+        <View>
+          <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} textSize={TextSize.Small} />
+          <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
+        </View>
+      </View>
+      <View style={[styles.itemWrapper, styles.border]}>
+        <Text style={styles.text}>To:</Text>
+        <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+      </View>
+      <View style={styles.itemWrapper}>
+        <Text style={styles.text}>TxHash:</Text>
+        <View style={commonStyles.row}>
+          <PublicKeyHashText longPress publicKeyHash={hash} testID={ActivityGroupItemSelectors.operationHash} />
+          <Divider size={formatSize(4)} />
+          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, hash)} testID={ActivityGroupItemSelectors.externalLink} />
+        </View>
+      </View>
+    </>
+  );
+};
+const ReceiveTokensDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address: string; hash: string }> = ({
+  nonZeroAmounts,
+  address,
+  hash
+}) => {
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const styles = useActivityDetailsStyles();
+  const commonStyles = useActivityCommonStyles();
+
+  return (
+    <>
+      <View style={[styles.itemWrapper, styles.border]}>
+        <Text style={styles.text}>Received:</Text>
+        <View>
+          <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} textSize={TextSize.Small} />
+          <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
+        </View>
+      </View>
+      <View style={[styles.itemWrapper, styles.border]}>
+        <Text style={styles.text}>From:</Text>
+        <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+      </View>
+      <View style={styles.itemWrapper}>
+        <Text style={styles.text}>TxHash:</Text>
+        <View style={commonStyles.row}>
+          <PublicKeyHashText longPress publicKeyHash={hash} testID={ActivityGroupItemSelectors.operationHash} />
+          <Divider size={formatSize(4)} />
+          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, hash)} testID={ActivityGroupItemSelectors.externalLink} />
+        </View>
+      </View>
+    </>
+  );
+};
+const DelegateDetails: FC<{ address: string; hash: string }> = ({ address, hash }) => {
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const styles = useActivityDetailsStyles();
+  const commonStyles = useActivityCommonStyles();
+
+  return (
+    <>
+      <View style={[styles.itemWrapper, styles.border, commonStyles.itemsCenter]}>
+        <Text style={styles.text}>To:</Text>
+        <View style={commonStyles.row}>
+          <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+          <Divider size={formatSize(4)} />
+          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, address)} testID={ActivityGroupItemSelectors.externalLink} />
+        </View>
+      </View>
+      <View style={styles.itemWrapper}>
+        <Text style={styles.text}>TxHash:</Text>
+        <View style={commonStyles.row}>
+          <PublicKeyHashText longPress publicKeyHash={hash} testID={ActivityGroupItemSelectors.operationHash} />
+          <Divider size={formatSize(4)} />
+          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, hash)} testID={ActivityGroupItemSelectors.externalLink} />
+        </View>
+      </View>
+    </>
+  );
+};
+
 interface ActivityDetailsProps {
-  activity: ActivityInterface;
-  nonZeroAmounts: ActivityNonZeroAmounts;
-  label: string;
-  address: string | undefined;
-  transactionHash: string;
-  transactionType: string;
-  transactionSubtype: string;
+  activity: Activity;
 }
 
-export const ActivityDetails: FC<ActivityDetailsProps> = ({
-  activity,
-  nonZeroAmounts,
-  label,
-  address,
-  transactionHash,
-  transactionType,
-  transactionSubtype
-}) => {
-  const styles = useActivityGroupItemStyles();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const { symbol } = useCurrentFiatCurrencyMetadataSelector();
+const nonZeroAmounts = {
+  amounts: [{ parsedAmount: new BigNumber(888), isPositive: true, exchangeRate: 1.2, symbol: 'XTZ' }],
+  dollarSums: [new BigNumber(888)]
+};
+
+export const ActivityDetails: FC<ActivityDetailsProps> = ({ activity }) => {
+  const detailsStyles = useActivityDetailsStyles();
+  const commonStyles = useActivityCommonStyles();
 
   const [areDetailsVisible, setAreDetailsVisible] = useState(false);
   const handleOpenActivityDetailsPress = useCallback(() => setAreDetailsVisible(prevState => !prevState), []);
 
-  const collectible = useCollectibleBySlugSelector(`${activity.address}_${activity.tokenId ?? 0}`);
-  const isCollectible = useMemo(() => isDefined(collectible), [collectible]);
-  const { shouldShowTzktLink, bakerAddress } = useMemo(() => {
-    if (transactionType === BAKING_REWARDS_TEXT) {
-      return {
-        shouldShowTzktLink: true,
-        bakerAddress: activity.source.address
-      };
-    } else if (transactionType === DELEGATION_TEXT) {
-      return {
-        shouldShowTzktLink: true,
-        bakerAddress: activity.destination.address
-      };
-    } else if (transactionType === UNDELEGATION_TEXT) {
-      return {
-        shouldShowTzktLink: true,
-        bakerAddress: activity.destination.address
-      };
-    }
-
-    return {
-      shouldShowTzktLink: false,
-      bakerAddress: ''
-    };
-  }, [transactionType]);
-
   return (
     <View>
-      <View style={[styles.row, styles.justifyBetween]}>
-        <View style={[styles.row, styles.itemsCenter]}>
+      <View style={[commonStyles.row, commonStyles.justifyBetween]}>
+        <View style={[commonStyles.row, commonStyles.itemsCenter]}>
           <ActivityStatusBadge status={activity.status} />
           <Divider size={formatSize(4)} />
           <ActivityTime timestamp={activity.timestamp} />
         </View>
         <TouchableWithAnalytics
-          style={styles.chevron}
+          style={detailsStyles.chevron}
           testID={ActivityGroupItemSelectors.details}
           onPress={handleOpenActivityDetailsPress}
         >
@@ -102,61 +149,35 @@ export const ActivityDetails: FC<ActivityDetailsProps> = ({
         </TouchableWithAnalytics>
       </View>
       {areDetailsVisible && (
-        <View style={styles.card}>
-          {!isEmpty(nonZeroAmounts.amounts) && (
-            <View style={[styles.detailItem, styles.detailItemBorder, styles.itemsStart]}>
-              <Text style={styles.detailText}>{transactionSubtype}</Text>
-              <View style={styles.row}>
-                <View style={styles.itemsEnd}>
-                  <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} textSize={TextSize.Small} />
-                  {isCollectible ? (
-                    <Text style={styles.ntfPrice}>0.00{symbol}</Text>
-                  ) : (
-                    <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
-                  )}
-                </View>
+        <View style={detailsStyles.card}>
+          {(() => {
+            switch (activity.type) {
+              case ActivityType.Send:
+                return (
+                  <SendTokensDetails
+                    nonZeroAmounts={nonZeroAmounts}
+                    address={activity.to.address}
+                    hash={activity.hash}
+                  />
+                );
 
-                {isDefined(collectible) && (
-                  <>
-                    <Divider size={formatSize(8)} />
-                    <CollectibleIcon collectible={collectible} size={36} />
-                  </>
-                )}
-              </View>
-            </View>
-          )}
-          {isDefined(address) && (
-            <View style={[styles.detailItem, styles.detailItemBorder, styles.itemsCenter]}>
-              <Text style={styles.detailText}>{label}</Text>
-              <View style={styles.row}>
-                <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
-                {shouldShowTzktLink && (
-                  <>
-                    <Divider size={formatSize(4)} />
-                    <ExternalLinkButton
-                      url={tzktUrl(selectedRpcUrl, bakerAddress)}
-                      testID={ActivityGroupItemSelectors.externalLink}
-                    />
-                  </>
-                )}
-              </View>
-            </View>
-          )}
-          <View style={[styles.detailItem, styles.itemsCenter]}>
-            <Text style={styles.detailText}>TxHash:</Text>
-            <View style={styles.row}>
-              <PublicKeyHashText
-                longPress
-                publicKeyHash={transactionHash}
-                testID={ActivityGroupItemSelectors.operationHash}
-              />
-              <Divider size={formatSize(4)} />
-              <ExternalLinkButton
-                url={tzktUrl(selectedRpcUrl, transactionHash)}
-                testID={ActivityGroupItemSelectors.externalLink}
-              />
-            </View>
-          </View>
+              case ActivityType.Recieve:
+              case ActivityType.BakingRewards:
+                return (
+                  <ReceiveTokensDetails
+                    nonZeroAmounts={nonZeroAmounts}
+                    address={activity.from.address}
+                    hash={activity.hash}
+                  />
+                );
+
+              case ActivityType.Delegation:
+                return <DelegateDetails address={activity.to?.address ?? ''} hash={activity.hash} />;
+
+              default:
+                return null;
+            }
+          })()}
         </View>
       )}
     </View>

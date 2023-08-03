@@ -1,7 +1,12 @@
+import { Activity, TzktMemberInterface } from '@temple-wallet/transactions-parser';
 import { uniq } from 'lodash-es';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { ActivityGroup } from '../interfaces/activity.interface';
+import { ActivityInterface } from 'src/interfaces/activity.interface';
+import { loadBakersListActions } from 'src/store/baking/baking-actions';
+import { useBakersListSelector } from 'src/store/baking/baking-selectors';
+
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
@@ -9,17 +14,28 @@ import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
+  const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const bakers = useBakersListSelector();
 
   const lastActivityRef = useRef<string>('');
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
-  const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
+  const [activities, setActivities] = useState<Array<Array<Activity>>>([]);
+
+  const knownBakers = useMemo<Array<TzktMemberInterface>>(
+    () =>
+      bakers.map(baker => ({
+        address: baker.address,
+        alias: baker.name
+      })),
+    [bakers]
+  );
 
   const initialLoad = useCallback(
     async (refresh = false) => {
-      const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
+      const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers);
 
       if (activities.length === 0) {
         setIsAllLoaded(true);
@@ -39,8 +55,10 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         setActivities(activities);
       }
     },
-    [selectedRpcUrl, selectedAccount, tokenSlug]
+    [selectedRpcUrl, selectedAccount, tokenSlug, knownBakers]
   );
+
+  useEffect(() => void dispatch(loadBakersListActions.submit()), []);
 
   useEffect(() => {
     initialLoad();
@@ -61,7 +79,13 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
           lastActivityRef.current = lastItem.hash;
 
           if (isDefined(lastItem)) {
-            const newActivity = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
+            const newActivity = await loadActivity(
+              selectedRpcUrl,
+              selectedAccount,
+              tokenSlug,
+              knownBakers,
+              lastItem as unknown as ActivityInterface
+            );
 
             if (newActivity.length === 0) {
               setIsAllLoaded(true);

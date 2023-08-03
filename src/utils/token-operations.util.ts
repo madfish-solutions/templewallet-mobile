@@ -1,3 +1,6 @@
+import { Activity, TzktMemberInterface, TzktOperation, parseTransactions } from '@temple-wallet/transactions-parser';
+import { LiquidityBakingMintOrBurnInterface } from '@temple-wallet/transactions-parser/dist/types/liquidity-baking';
+import { Fa12TransferInterface, Fa2TransferInterface } from '@temple-wallet/transactions-parser/dist/types/transfers';
 import { uniq } from 'lodash-es';
 
 import { getTzktApi } from '../api.service';
@@ -5,18 +8,11 @@ import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
 import { ActivityInterface } from '../interfaces/activity.interface';
-import {
-  OperationFa12Interface,
-  OperationFa2Interface,
-  OperationInterface,
-  OperationLiquidityBakingInterface
-} from '../interfaces/operation.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { getTokenType } from '../token/utils/token.utils';
 import { isDefined } from './is-defined';
-import { mapOperationsToActivities } from './operation.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 import { sleep } from './timeouts.util';
 
@@ -51,7 +47,7 @@ const getTokenFa2Operations = (
   lastLevel?: number
 ) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<OperationFa2Interface>>('operations/transactions', {
+    .get<Array<Fa2TransferInterface>>('operations/transactions', {
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -65,7 +61,7 @@ const getTokenFa2Operations = (
 
 const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastLevel?: number) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<OperationFa12Interface>>('operations/transactions', {
+    .get<Array<Fa12TransferInterface>>('operations/transactions', {
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -79,7 +75,7 @@ const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contrac
 
 const getTezosOperations = (selectedRpcUrl: string, account: string, lastId?: number) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
+    .get<Array<TzktOperation>>(`accounts/${account}/operations`, {
       params: {
         limit: OPERATION_LIMIT,
         type: ActivityTypeEnum.Transaction,
@@ -92,7 +88,7 @@ const getTezosOperations = (selectedRpcUrl: string, account: string, lastId?: nu
 
 const getAccountOperations = (selectedRpcUrl: string, account: string, lastId?: number) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
+    .get<Array<TzktOperation>>(`accounts/${account}/operations`, {
       params: {
         limit: OPERATION_LIMIT,
         type: `${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`,
@@ -104,7 +100,7 @@ const getAccountOperations = (selectedRpcUrl: string, account: string, lastId?: 
 
 const getFa12IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<OperationFa12Interface>>('operations/transactions', {
+    .get<Array<Fa12TransferInterface>>('operations/transactions', {
       params: {
         'sender.ne': account,
         'target.ne': account,
@@ -119,7 +115,7 @@ const getFa12IncomingOperations = (selectedRpcUrl: string, account: string, lowe
 
 const getFa2IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<OperationFa2Interface>>('operations/transactions', {
+    .get<Array<Fa2TransferInterface>>('operations/transactions', {
       params: {
         'sender.ne': account,
         'target.ne': account,
@@ -136,7 +132,7 @@ const getAllOperations = async (
   selectedRpcUrl: string,
   publicKeyHash: string,
   upperId?: number
-): Promise<OperationInterface[]> => {
+): Promise<TzktOperation[]> => {
   const operations = await getAccountOperations(selectedRpcUrl, publicKeyHash, upperId);
   if (operations.length === 0) {
     return [];
@@ -162,7 +158,7 @@ const loadOperations = async (
   selectedAccount: AccountInterface,
   tokenSlug?: string,
   lastItem?: ActivityInterface
-) => {
+): Promise<Array<TzktOperation>> => {
   const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
 
   if (isDefined(tokenSlug)) {
@@ -171,7 +167,7 @@ const loadOperations = async (
     }
 
     if (tokenSlug === LIQUIDITY_BAKING_DEX_ADDRESS) {
-      return getContractOperations<OperationLiquidityBakingInterface>(
+      return getContractOperations<LiquidityBakingMintOrBurnInterface>(
         selectedRpcUrl,
         selectedAccount.publicKeyHash,
         contractAddress,
@@ -205,19 +201,22 @@ export const loadActivity = async (
   selectedRpcUrl: string,
   selectedAccount: AccountInterface,
   tokenSlug?: string,
+  knownBakers?: Array<TzktMemberInterface>,
   lastItem?: ActivityInterface
-) => {
+): Promise<Array<Array<Activity>>> => {
   const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
     .then(operations => operations.map(operation => operation.hash))
     .then(newHashes => uniq(newHashes.filter(x => x !== lastItem?.hash)));
 
-  const operationGroups = [];
+  const operationGroups: Array<Array<TzktOperation>> = [];
 
   for (const opHash of operationsHashes) {
-    const { data } = await getOperationGroupByHash<OperationInterface>(selectedRpcUrl, opHash);
+    const { data } = await getOperationGroupByHash<TzktOperation>(selectedRpcUrl, opHash);
     operationGroups.push(data);
     await sleep(100);
   }
 
-  return operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group));
+  const result = operationGroups.map(group => parseTransactions(group, selectedAccount.publicKeyHash, knownBakers));
+
+  return result;
 };
