@@ -18,6 +18,7 @@ export interface CollectibleIconProps extends Pick<SimpleVideoProps, 'paused'> {
   setScrollEnabled?: EventFn<boolean>;
   blurLayoutTheme?: ImageBlurOverlayThemesEnum;
   isTouchableBlurOverlay?: boolean;
+  isModalWindow?: boolean;
   isShowInfo?: boolean;
   style?: StyleProp<ViewStyle>;
 }

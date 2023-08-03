@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { ViewStyle } from 'react-native';
-import Video from 'react-native-video';
+import Video, { LoadError } from 'react-native-video';
 
-import { EmptyFn, emptyFn } from 'src/config/general';
+import { EmptyFn, EventFn, emptyFn } from 'src/config/general';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 
@@ -12,7 +12,7 @@ export interface SimpleVideoProps {
   posterUri?: string;
   paused?: boolean;
   style?: ViewStyle;
-  onError?: EmptyFn;
+  onError?: EventFn<LoadError>;
   onLoad?: EmptyFn;
 }
 

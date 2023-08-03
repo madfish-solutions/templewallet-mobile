@@ -36,6 +36,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     paused,
     size,
     iconSize = CollectibleIconSize.SMALL,
+    isModalWindow = false,
     mime,
     objktArtifact,
     audioPlaceholderTheme,
@@ -86,12 +87,18 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       }
     }, [currentFallbackIndex, imageFallbackURLs]);
 
-    const handleAnimatedError = useCallback(() => setIsAnimatedRenderedOnce(true), []);
-    const handleLoadEnd = useCallback(() => setIsLoading(false), []);
-    const handleAudioError = useCallback(() => {
-      showErrorToast({ description: 'Invalid audio' });
+    const handleAnimatedError = useCallback(() => {
+      showErrorToast({ description: 'Invalid video' });
+      setIsAnimatedRenderedOnce(true);
       setIsLoading(false);
     }, []);
+    const handleLoadEnd = useCallback(() => setIsLoading(false), []);
+    const handleAudioError = useCallback(() => {
+      if (isModalWindow) {
+        showErrorToast({ description: 'Invalid audio' });
+        setIsLoading(false);
+      }
+    }, [isModalWindow]);
 
     const finalFallbackIconWidth = useMemo(() => formatSize(isBigIcon ? 72 : 38), [isBigIcon]);
     const finalFallbackIconHeight = useMemo(() => formatSize(isBigIcon ? 90 : 48), [isBigIcon]);
@@ -136,12 +143,28 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         }
       }
 
-      if (isDefined(objktArtifact) && isDefined(mime) && mime.includes(NonStaticMimeTypes.AUDIO)) {
+      if (
+        isDefined(objktArtifact) &&
+        (mime === NonStaticMimeTypes.AUDIO_MPEG || mime === NonStaticMimeTypes.AUDIO_WAV)
+      ) {
+        if (!isModalWindow) {
+          return (
+            <FastImage
+              style={[styles.image, { height: size, width: size }]}
+              source={{ uri: currentFallback }}
+              resizeMode="contain"
+              onError={handleError}
+              onLoad={handleLoadEnd}
+            />
+          );
+        }
+
         return (
           <>
             <SimplePlayer
               uri={formatCollectibleObjktArtifactUri(objktArtifact)}
-              size={size}
+              // We don't need size if the NFT has mime 'audio'
+              size={0}
               paused={paused}
               onError={handleAudioError}
               onLoad={handleLoadEnd}
@@ -168,7 +191,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           onLoad={handleLoadEnd}
         />
       );
-    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce]);
+    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce, isModalWindow, isBigIcon, isLoading]);
 
     const imageWithBlur = useMemo(() => {
       if (isShowBlur && currentFallback !== FINAL_FALLBACK) {

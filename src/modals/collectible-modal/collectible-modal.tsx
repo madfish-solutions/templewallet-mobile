@@ -249,6 +249,7 @@ export const CollectibleModal = memo(() => {
             objktArtifact={artifactUri}
             size={iconSize}
             paused={false}
+            isModalWindow
             iconSize={CollectibleIconSize.BIG}
             setScrollEnabled={setScrollEnabled}
             blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}

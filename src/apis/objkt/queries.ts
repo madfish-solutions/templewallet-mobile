@@ -78,6 +78,7 @@ export const buildGetCollectiblesByCollectionQuery = (
     token_id
     supply
     symbol
+    mime
     holders {
         holder_address
         quantity
