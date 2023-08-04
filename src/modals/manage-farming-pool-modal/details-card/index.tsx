@@ -54,6 +54,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
 }) => {
   const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = farm;
+  const isLiquidityBaking = farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
   const apy = isDefined(apr) ? aprToApy(Number(apr)) : undefined;
   const [claimPending, setClaimPending] = useState(false);
@@ -164,7 +165,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
         <View style={styles.statsRow}>
           <StatsItem
             loading={false}
-            title="Your deposit & Rewards:"
+            title={isLiquidityBaking ? 'Your deposit:' : 'Your deposit & Rewards:'}
             value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
             usdEquivalent={depositUsdEquivalent}
           />
@@ -178,16 +179,22 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
               usdEquivalent={depositUsdEquivalent}
             />
-            <StatsItem
-              loading={loading}
-              title="Claimable rewards:"
-              value={
-                <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
-              }
-              usdEquivalent={claimableRewardUsdEquivalent}
-            />
+            {!isLiquidityBaking && (
+              <StatsItem
+                loading={loading}
+                title="Claimable rewards:"
+                value={
+                  <FormattedAmount
+                    amount={claimableRewardAmount}
+                    style={styles.statsValue}
+                    symbol={rewardTokenSymbol}
+                  />
+                }
+                usdEquivalent={claimableRewardUsdEquivalent}
+              />
+            )}
           </View>
-          {farm.type === FarmPoolTypeEnum.STABLESWAP && (
+          {!isLiquidityBaking && (
             <>
               <Divider size={formatSize(12)} />
               <View style={styles.statsRow}>
