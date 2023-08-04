@@ -13,6 +13,7 @@ import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filte
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
+import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
@@ -42,7 +43,11 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
   const { stakeTokens, stakedToken } = useEarnOpportunityTokens(earnOpportunityItem);
   const { filteredTokensList: savingsAssetsList } = useFilteredSwapTokensList(TokensInputsEnum.From);
   const savingsAssetsListWithFallback = useMemo(
-    () => uniqBy([stakedToken].concat(savingsAssetsList), getTokenSlug),
+    () =>
+      uniqBy(
+        [stakedToken].concat(savingsAssetsList.filter(token => getTokenSlug(token) !== KNOWN_TOKENS_SLUGS.SIRS)),
+        getTokenSlug
+      ),
     [savingsAssetsList, stakedToken]
   );
   const assetsList = itemIsFarm ? stakeTokens : savingsAssetsListWithFallback;
