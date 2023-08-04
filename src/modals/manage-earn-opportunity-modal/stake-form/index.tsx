@@ -42,6 +42,10 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
   const styles = useStakeFormStyles();
   const { stakeTokens, stakedToken } = useEarnOpportunityTokens(earnOpportunityItem);
   const { filteredTokensList: savingsAssetsList } = useFilteredSwapTokensList(TokensInputsEnum.From);
+  /**
+   * SIRS token is excluded because a batch of swapping it into the token to be staked, paying fee, and staking the
+   * output is likely to fail because of a high gas limit or issues with a swap
+   */
   const savingsAssetsListWithFallback = useMemo(
     () =>
       uniqBy(
