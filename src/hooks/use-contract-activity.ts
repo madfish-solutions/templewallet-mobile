@@ -1,9 +1,10 @@
-import { Activity, TzktMemberInterface } from '@temple-wallet/transactions-parser';
+import { TzktMemberInterface } from '@temple-wallet/transactions-parser';
 import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ActivityInterface } from 'src/interfaces/activity.interface';
+import { EVERSTAKE_PAYOUTS_BAKER } from 'src/apis/baking-bad/consts';
+import { ActivityGroup } from 'src/interfaces/activity.interface';
 import { loadBakersListActions } from 'src/store/baking/baking-actions';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 
@@ -12,6 +13,10 @@ import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors'
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
+
+const KNOWN_BAKERS: Array<TzktMemberInterface> = [
+  { address: EVERSTAKE_PAYOUTS_BAKER.address, alias: 'Everstake payouts' }
+];
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const dispatch = useDispatch();
@@ -22,14 +27,17 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   const lastActivityRef = useRef<string>('');
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
-  const [activities, setActivities] = useState<Array<Array<Activity>>>([]);
+  const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const knownBakers = useMemo<Array<TzktMemberInterface>>(
     () =>
-      bakers.map(baker => ({
-        address: baker.address,
-        alias: baker.name
-      })),
+      [
+        KNOWN_BAKERS,
+        bakers.map(({ address, name }) => ({
+          address,
+          alias: name
+        }))
+      ].flat(),
     [bakers]
   );
 
@@ -79,13 +87,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
           lastActivityRef.current = lastItem.hash;
 
           if (isDefined(lastItem)) {
-            const newActivity = await loadActivity(
-              selectedRpcUrl,
-              selectedAccount,
-              tokenSlug,
-              knownBakers,
-              lastItem as unknown as ActivityInterface
-            );
+            const newActivity = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastItem);
 
             if (newActivity.length === 0) {
               setIsAllLoaded(true);

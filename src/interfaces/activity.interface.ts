@@ -1,34 +1,17 @@
-import { Activity } from '@temple-wallet/transactions-parser';
+import { Activity, ActivityType, TzktOperationStatus } from '@temple-wallet/transactions-parser';
+import { BigNumber } from 'bignumber.js';
 
-import { ActivityStatusEnum } from '../enums/activity-status.enum';
-import { ActivityTypeEnum } from '../enums/activity-type.enum';
-import { emptyMember, MemberInterface } from './member.interface';
-
-export interface ActivityInterface {
-  type: ActivityTypeEnum;
-  status: ActivityStatusEnum;
-  hash: string;
-  amount: string;
-  address?: string;
-  id: number;
-  tokenId?: string;
-  timestamp: number;
-  entrypoint?: string;
-  source: MemberInterface;
-  destination: MemberInterface;
-  reciever?: MemberInterface;
-  level?: number;
-}
+import { emptyMember } from './member.interface';
 
 export type ActivityGroup = Array<Activity>;
 
-export const emptyActivity: ActivityInterface = {
-  type: ActivityTypeEnum.Transaction,
-  status: ActivityStatusEnum.Pending,
+export const emptyActivity: Activity = {
+  type: ActivityType.Send,
+  status: TzktOperationStatus.Applied,
   hash: '',
-  amount: '',
+  tokensDeltas: [{ atomicAmount: new BigNumber(0), tokenSlug: 'tez' }],
   id: 0,
-  timestamp: 0,
-  source: emptyMember,
-  destination: emptyMember
+  timestamp: '',
+  from: emptyMember,
+  to: emptyMember
 };

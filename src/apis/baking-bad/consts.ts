@@ -45,3 +45,9 @@ export const mockBaker: BakerInterface = {
   audit: 'Mock Audit',
   insuranceCoverage: 44
 };
+
+export const EVERSTAKE_PAYOUTS_BAKER = {
+  address: 'tz1W1en9UpMCH4ZJL8wQCh8JDKCZARyVx2co',
+  logo: 'https://services.tzkt.io/v1/avatars/tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM',
+  name: 'Everstake'
+};

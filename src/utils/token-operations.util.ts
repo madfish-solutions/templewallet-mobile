@@ -1,13 +1,12 @@
 import { Activity, TzktMemberInterface, TzktOperation, parseTransactions } from '@temple-wallet/transactions-parser';
 import { LiquidityBakingMintOrBurnInterface } from '@temple-wallet/transactions-parser/dist/types/liquidity-baking';
 import { Fa12TransferInterface, Fa2TransferInterface } from '@temple-wallet/transactions-parser/dist/types/transfers';
-import { uniq } from 'lodash-es';
+import { isEmpty, uniq } from 'lodash-es';
 
 import { getTzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
-import { ActivityInterface } from '../interfaces/activity.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
@@ -20,12 +19,7 @@ const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
   getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
 
 // LIQUIDITY BAKING ACTIVITY
-const getContractOperations = <T>(
-  selectedRpcUrl: string,
-  account: string,
-  contractAddress: string,
-  lastLevel?: number
-) =>
+const getContractOperations = <T>(selectedRpcUrl: string, account: string, contractAddress: string) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<T>>(`accounts/${contractAddress}/operations`, {
       params: {
@@ -33,19 +27,12 @@ const getContractOperations = <T>(
         limit: OPERATION_LIMIT,
         sort: '1',
         initiator: account,
-        entrypoint: 'mintOrBurn',
-        ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
+        entrypoint: 'mintOrBurn'
       }
     })
     .then(x => x.data);
 
-const getTokenFa2Operations = (
-  selectedRpcUrl: string,
-  account: string,
-  contractAddress: string,
-  tokenId = '0',
-  lastLevel?: number
-) =>
+const getTokenFa2Operations = (selectedRpcUrl: string, account: string, contractAddress: string, tokenId = '0') =>
   getTzktApi(selectedRpcUrl)
     .get<Array<Fa2TransferInterface>>('operations/transactions', {
       params: {
@@ -53,13 +40,12 @@ const getTokenFa2Operations = (
         entrypoint: 'transfer',
         'sort.desc': 'level',
         target: contractAddress,
-        'parameter.[*].in': `[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]`,
-        ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
+        'parameter.[*].in': `[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]`
       }
     })
     .then(x => x.data);
 
-const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastLevel?: number) =>
+const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<Fa12TransferInterface>>('operations/transactions', {
       params: {
@@ -67,8 +53,7 @@ const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contrac
         entrypoint: 'transfer',
         'sort.desc': 'level',
         target: contractAddress,
-        'parameter.in': `[{"from":"${account}"},{"to":"${account}"}]`,
-        ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
+        'parameter.in': `[{"from":"${account}"},{"to":"${account}"}]`
       }
     })
     .then(x => x.data);
@@ -157,7 +142,7 @@ const loadOperations = async (
   selectedRpcUrl: string,
   selectedAccount: AccountInterface,
   tokenSlug?: string,
-  lastItem?: ActivityInterface
+  lastItem?: Activity
 ): Promise<Array<TzktOperation>> => {
   const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
 
@@ -170,8 +155,7 @@ const loadOperations = async (
       return getContractOperations<LiquidityBakingMintOrBurnInterface>(
         selectedRpcUrl,
         selectedAccount.publicKeyHash,
-        contractAddress,
-        lastItem?.level
+        contractAddress
       );
     }
 
@@ -180,17 +164,11 @@ const loadOperations = async (
     const tokenType = getTokenType(contract);
 
     if (tokenType === TokenTypeEnum.FA_1_2) {
-      return getTokenFa12Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress, lastItem?.level);
+      return getTokenFa12Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress);
     }
 
     if (tokenType === TokenTypeEnum.FA_2) {
-      return getTokenFa2Operations(
-        selectedRpcUrl,
-        selectedAccount.publicKeyHash,
-        contractAddress,
-        tokenId,
-        lastItem?.level
-      );
+      return getTokenFa2Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress, tokenId);
     }
   }
 
@@ -202,7 +180,7 @@ export const loadActivity = async (
   selectedAccount: AccountInterface,
   tokenSlug?: string,
   knownBakers?: Array<TzktMemberInterface>,
-  lastItem?: ActivityInterface
+  lastItem?: Activity
 ): Promise<Array<Array<Activity>>> => {
   const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
     .then(operations => operations.map(operation => operation.hash))
@@ -216,7 +194,7 @@ export const loadActivity = async (
     await sleep(100);
   }
 
-  const result = operationGroups.map(group => parseTransactions(group, selectedAccount.publicKeyHash, knownBakers));
-
-  return result;
+  return operationGroups
+    .map(group => parseTransactions(group, selectedAccount.publicKeyHash, knownBakers))
+    .filter(group => !isEmpty(group));
 };

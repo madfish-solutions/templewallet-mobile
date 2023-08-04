@@ -1,8 +1,5 @@
-export interface MemberInterface {
-  address: string;
-  alias?: string;
-}
+import { TzktMemberInterface } from '@temple-wallet/transactions-parser';
 
-export const emptyMember: MemberInterface = {
+export const emptyMember: TzktMemberInterface = {
   address: ''
 };

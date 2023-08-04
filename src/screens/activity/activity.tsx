@@ -7,7 +7,6 @@ import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 
 export const Activity = () => {
   const { activities, handleUpdate } = useContractActivity();
-  console.log('activities: ', activities);
 
   usePageAnalytic(ScreensEnum.Activity);
 
