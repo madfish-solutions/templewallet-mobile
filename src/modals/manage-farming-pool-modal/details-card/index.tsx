@@ -45,6 +45,7 @@ const COUNTDOWN_TOKENS_BASE = [
   { unit: 'H', seconds: SECONDS_IN_HOUR },
   { unit: 'M', seconds: SECONDS_IN_MINUTE }
 ];
+const ZERO = '0';
 
 export const DetailsCard: FC<DetailsCardProps> = ({
   farm,
@@ -52,7 +53,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   stake = EMPTY_STAKE,
   shouldShowClaimRewardsButton
 }) => {
-  const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
+  const { depositAmountAtomic = ZERO, claimableRewards = ZERO, fullReward = ZERO, rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = farm;
   const isLiquidityBaking = farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING;
   const stakedTokenDecimals = stakedToken.metadata.decimals;

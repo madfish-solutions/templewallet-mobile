@@ -20,9 +20,10 @@ import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
+import { formatTimespan, MS_IN_SECOND, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { percentageToFraction } from 'src/utils/percentage.utils';
 
 import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT } from '../constants';
 import { createWithdrawOperationParams } from './create-withdraw-operation-params';
@@ -42,6 +43,9 @@ const validationSchema: SchemaOf<WithdrawFormValues> = objectSchema().shape({
   amountOptionIndex: numberSchema().required(),
   tokenOption: objectSchema().shape({}).required(makeRequiredErrorMessage('Token'))
 });
+
+const FIRST_PERCENTAGE_OPTION_INDEX = 0;
+const LAST_PERCENTAGE_OPTION_INDEX = PERCENTAGE_OPTIONS.length - 1;
 
 export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,8 +68,8 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
         isDefined(farm) &&
         farm.item.type !== FarmPoolTypeEnum.STABLESWAP &&
         depositAmountAtomic.gte(MINIMAL_DIVISIBLE_ATOMIC_AMOUNT)
-          ? 0
-          : 3,
+          ? FIRST_PERCENTAGE_OPTION_INDEX
+          : LAST_PERCENTAGE_OPTION_INDEX,
       tokenOption: {
         token: stakeTokens[0] ?? emptyTezosLikeToken
       }
@@ -102,8 +106,8 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
             slippageTolerance,
             farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING && isDefined(stake.depositAmountAtomic)
               ? new BigNumber(stake.depositAmountAtomic)
-                  .times(PERCENTAGE_OPTIONS[values.amountOptionIndex])
-                  .dividedToIntegerBy(100)
+                  .times(percentageToFraction(PERCENTAGE_OPTIONS[values.amountOptionIndex]))
+                  .integerValue(BigNumber.ROUND_DOWN)
               : undefined
           );
           dispatch(
@@ -133,7 +137,7 @@ export const useWithdrawFormik = (farmId: string, contractAddress: string) => {
         doAfterConfirmation(
           vestingPeriodSeconds > SECONDS_IN_DAY
             ? 'It is a long-term farm. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.'
-            : `It is a farm with a locked period of ${formatTimespan(vestingPeriodSeconds * 1000, {
+            : `It is a farm with a locked period of ${formatTimespan(vestingPeriodSeconds * MS_IN_SECOND, {
                 unit: vestingPeriodSeconds < secondsInHour ? 'minute' : 'hour',
                 roundingMethod: 'ceil'
               })}. Your claimable rewards will be claimed along with your withdrawal. All further rewards will be lost.`,
