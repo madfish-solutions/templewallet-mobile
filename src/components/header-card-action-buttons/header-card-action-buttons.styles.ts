@@ -1,7 +1,12 @@
-import { createUseStyles } from '../../styles/create-use-styles';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useHeaderCardActionButtonsStyles = createUseStyles(() => ({
+export const useHeaderCardActionButtonsStyles = createUseStyles(({ typography }) => ({
   buttonContainer: {
     flex: 0.4
+  },
+  actionButtonTitle: {
+    ...typography.caption13Semibold,
+    letterSpacing: formatSize(-0.08)
   }
 }));

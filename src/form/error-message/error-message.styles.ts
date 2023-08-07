@@ -1,12 +1,11 @@
-import { StyleSheet } from 'react-native';
+import { red, transparent } from 'src/config/styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
-import { red, transparent } from '../../config/styles';
-import { formatSize, formatTextSize } from '../../styles/format-size';
-
-export const ErrorMessageStyles = StyleSheet.create({
+export const useErrorMessageStyles = createUseStylesMemoized(({ typography }) => ({
   root: {
+    ...typography.caption11Regular,
     color: transparent,
-    fontSize: formatTextSize(11),
     lineHeight: formatTextSize(13),
     marginVertical: formatSize(6),
     marginLeft: formatSize(6),
@@ -15,4 +14,4 @@ export const ErrorMessageStyles = StyleSheet.create({
   rootVisible: {
     color: red
   }
-});
+}));

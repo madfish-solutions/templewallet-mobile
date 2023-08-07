@@ -9,6 +9,8 @@ export const sliceIntoChunks = <T>(array: T[], chunkSize: number) => {
   return result;
 };
 
+export const getLastElement = <T>(array: Array<T>): T | undefined => array[array.length - 1];
+
 export const filterByStringProperty = <T extends { [key in K]: string }, K extends string>(array: T[], key: K): T[] => {
   const usedKeyValues: string[] = [];
 
