@@ -59,7 +59,7 @@ export const useCollectibleModalStyles = createUseStyles(({ colors, typography }
     marginRight: formatSize(6)
   },
   segmentControl: {
-    marginBottom: formatSize(18)
+    marginBottom: formatSize(16)
   },
   burnContainer: {
     alignItems: 'center',
