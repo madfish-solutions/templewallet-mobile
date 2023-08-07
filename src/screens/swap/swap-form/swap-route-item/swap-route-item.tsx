@@ -1,44 +1,28 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Route3Chain } from 'src/interfaces/route3.interface';
 import { useSwapDexesSelector, useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
 import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { kFormatter } from 'src/utils/number.util';
 
 import { HopItem } from '../hop-item/hop-item';
+import { SwapRouteAmounts } from '../swap-route-amounts';
 import { useSwapRouteItem } from './swap-route-item.styles';
 
 interface Props {
   chain: Route3Chain;
   baseInput: string | undefined;
   baseOutput: string | undefined;
+  shouldShowInput: boolean;
+  shouldShowOutput: boolean;
 }
 
-const BASE = new BigNumber(100);
-const PERCENTAGE_DECIMALS = 1;
-const AMOUNT_DECIMALS = 2;
-
-const calculatePercentage = (base: string | undefined, part: string) => {
-  if (base === undefined) {
-    return;
-  }
-
-  const amountToFormat = BASE.multipliedBy(part).dividedBy(base);
-
-  if (amountToFormat.isGreaterThanOrEqualTo(BASE)) {
-    return BASE.toFixed();
-  }
-
-  return amountToFormat.toFixed(PERCENTAGE_DECIMALS);
-};
-
-export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
+export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput, shouldShowInput, shouldShowOutput }) => {
   const styles = useSwapRouteItem();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const { data: swapDexes } = useSwapDexesSelector();
@@ -47,14 +31,11 @@ export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
 
   return (
     <View style={[styles.flex, styles.container]}>
-      <View style={styles.amountsContainer}>
-        <Text style={[styles.amount, styles.alignStart]}>
-          {kFormatter(Number(new BigNumber(chain.input).toFixed(AMOUNT_DECIMALS)))}
-        </Text>
-        <Text style={[styles.percantage, styles.alignStart]}>{calculatePercentage(baseInput, chain.input)}%</Text>
-      </View>
+      {shouldShowInput && <SwapRouteAmounts alignment="flex-start" amount={chain.input} baseAmount={baseInput} />}
       <View style={[styles.flex, styles.hopsContainer]}>
-        <Icon width="100%" name={IconNameEnum.SwapRouteItemBackground} style={styles.icon} />
+        <View style={styles.iconWrapper}>
+          <Icon width={formatSize(263)} height={formatSize(16)} name={IconNameEnum.SwapRouteItemBackground} />
+        </View>
         {chain.hops.map((hop, index) => {
           const dex = swapDexes.find(dex => hop.dex === dex.id);
 
@@ -70,12 +51,7 @@ export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput }) => {
           return <HopItem key={index} dexType={dex?.type} aToken={aToken} bToken={bToken} />;
         })}
       </View>
-      <View style={styles.amountsContainer}>
-        <Text style={[styles.amount, styles.alignEnd]}>
-          {kFormatter(Number(new BigNumber(chain.output).toFixed(AMOUNT_DECIMALS)))}
-        </Text>
-        <Text style={[styles.percantage, styles.alignEnd]}>{calculatePercentage(baseOutput, chain.output)}%</Text>
-      </View>
+      {shouldShowOutput && <SwapRouteAmounts alignment="flex-end" amount={chain.output} baseAmount={baseOutput} />}
     </View>
   );
 };

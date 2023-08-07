@@ -1,10 +1,15 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
-export const useSwapRouteStyles = createUseStyles(({ colors, typography }) => ({
+export const useSwapRouteStyles = createUseStylesMemoized(({ colors, typography }) => ({
+  title: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: formatSize(12)
+  },
   flex: {
-    flex: 1,
-    justifyContent: 'space-between'
+    flex: 1
   },
   row: {
     flexDirection: 'row',
@@ -21,8 +26,5 @@ export const useSwapRouteStyles = createUseStyles(({ colors, typography }) => ({
   },
   mb8: {
     marginBottom: formatSize(8)
-  },
-  mb12: {
-    marginBottom: formatSize(12)
   }
 }));

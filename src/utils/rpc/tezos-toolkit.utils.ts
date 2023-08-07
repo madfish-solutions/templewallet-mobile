@@ -21,7 +21,7 @@ export const createTezosToolkit = (rpcUrl: string) => {
 };
 
 export const createReadOnlyTezosToolkit = memoize(
-  (rpcUrl: string, sender: AccountInterface) => {
+  (rpcUrl: string, sender: Pick<AccountInterface, 'publicKey' | 'publicKeyHash'>) => {
     const readOnlyTezosToolkit = createTezosToolkit(rpcUrl);
     readOnlyTezosToolkit.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
 
