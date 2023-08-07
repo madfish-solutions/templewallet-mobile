@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
 import { selectSortValueAction } from 'src/store/farms/actions';
 import { useAllFarmsSelector, useFarmSortFieldSelector, useLastStakesSelector } from 'src/store/farms/selectors';
+import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { sortByApy, sortByNewest, sortByOldest } from 'src/utils/earn.utils';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 

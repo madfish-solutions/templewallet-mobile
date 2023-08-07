@@ -3,12 +3,12 @@ import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FarmTokens } from 'src/components/farm-tokens/farm-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HorizontalBorder } from 'src/components/horizontal-border';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { useAssetAmount } from 'src/hooks/use-asset-amount.hook';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
 import { useInterval } from 'src/hooks/use-interval.hook';
@@ -19,6 +19,7 @@ import { UserStakeValueInterface } from 'src/store/farms/state';
 import { navigateAction } from 'src/store/root-state.actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import { Farm } from 'src/types/farm';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
@@ -44,6 +45,7 @@ const COUNTDOWN_TOKENS_BASE = [
   { unit: 'H', seconds: SECONDS_IN_HOUR },
   { unit: 'M', seconds: SECONDS_IN_MINUTE }
 ];
+const ZERO = '0';
 
 export const DetailsCard: FC<DetailsCardProps> = ({
   farm,
@@ -51,8 +53,9 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   stake = EMPTY_STAKE,
   shouldShowClaimRewardsButton
 }) => {
-  const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
+  const { depositAmountAtomic = ZERO, claimableRewards = ZERO, fullReward = ZERO, rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = farm;
+  const isLiquidityBaking = farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
   const apy = isDefined(apr) ? aprToApy(Number(apr)) : undefined;
   const [claimPending, setClaimPending] = useState(false);
@@ -163,7 +166,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
         <View style={styles.statsRow}>
           <StatsItem
             loading={false}
-            title="Your deposit & Rewards:"
+            title={isLiquidityBaking ? 'Your deposit:' : 'Your deposit & Rewards:'}
             value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
             usdEquivalent={depositUsdEquivalent}
           />
@@ -177,40 +180,52 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
               usdEquivalent={depositUsdEquivalent}
             />
-            <StatsItem
-              loading={loading}
-              title="Claimable rewards:"
-              value={
-                <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
-              }
-              usdEquivalent={claimableRewardUsdEquivalent}
-            />
+            {!isLiquidityBaking && (
+              <StatsItem
+                loading={loading}
+                title="Claimable rewards:"
+                value={
+                  <FormattedAmount
+                    amount={claimableRewardAmount}
+                    style={styles.statsValue}
+                    symbol={rewardTokenSymbol}
+                  />
+                }
+                usdEquivalent={claimableRewardUsdEquivalent}
+              />
+            )}
           </View>
-          <Divider size={formatSize(12)} />
-          <View style={styles.statsRow}>
-            <StatsItem
-              loading={loading}
-              title="Long-term rewards:"
-              value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
-              usdEquivalent={fullRewardUsdEquivalent}
-            />
-            <StatsItem
-              loading={loading}
-              title="Fully claimable:"
-              value={
-                <View style={styles.timespanValue}>
-                  {countdownTokens.map(({ unit, value }) => (
-                    <React.Fragment key={unit}>
-                      <Text style={styles.statsValue}>{value}</Text>
-                      <Divider size={formatSize(2)} />
-                      <Text style={styles.timespanUnit}>{unit}</Text>
-                      <Divider size={formatSize(6)} />
-                    </React.Fragment>
-                  ))}
-                </View>
-              }
-            />
-          </View>
+          {!isLiquidityBaking && (
+            <>
+              <Divider size={formatSize(12)} />
+              <View style={styles.statsRow}>
+                <StatsItem
+                  loading={loading}
+                  title="Long-term rewards:"
+                  value={
+                    <FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+                  }
+                  usdEquivalent={fullRewardUsdEquivalent}
+                />
+                <StatsItem
+                  loading={loading}
+                  title="Fully claimable:"
+                  value={
+                    <View style={styles.timespanValue}>
+                      {countdownTokens.map(({ unit, value }) => (
+                        <React.Fragment key={unit}>
+                          <Text style={styles.statsValue}>{value}</Text>
+                          <Divider size={formatSize(2)} />
+                          <Text style={styles.timespanUnit}>{unit}</Text>
+                          <Divider size={formatSize(6)} />
+                        </React.Fragment>
+                      ))}
+                    </View>
+                  }
+                />
+              </View>
+            </>
+          )}
         </>
       )}
       {shouldShowClaimRewardsButton && (
