@@ -65,7 +65,7 @@ export const Search: FC<Props> = ({ dividerSize = 24, testID, testIDProperties, 
         <>
           {children}
           <Divider size={formatSize(dividerSize)} />
-          <TouchableIcon name={IconNameEnum.Search} size={formatSize(16)} onPress={() => setIsSearchMode(true)} />
+          <TouchableIcon name={IconNameEnum.SearchNew} onPress={() => setIsSearchMode(true)} />
         </>
       )}
     </View>
