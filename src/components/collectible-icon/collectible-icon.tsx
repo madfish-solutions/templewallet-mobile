@@ -143,10 +143,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         }
       }
 
-      if (
-        isDefined(objktArtifact) &&
-        (mime === NonStaticMimeTypes.AUDIO_MPEG || mime === NonStaticMimeTypes.AUDIO_WAV)
-      ) {
+      if (isDefined(objktArtifact) && isDefined(mime) && mime.includes(NonStaticMimeTypes.AUDIO)) {
         if (!isModalWindow) {
           return (
             <FastImage
