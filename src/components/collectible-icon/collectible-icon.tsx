@@ -104,7 +104,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const finalFallbackIconHeight = useMemo(() => formatSize(isBigIcon ? 90 : 48), [isBigIcon]);
 
     const image = useMemo(() => {
-      if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon) {
+      if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon && isModalWindow) {
         if (isImgUriDataUri(objktArtifact)) {
           return (
             <AnimatedSvg
@@ -143,19 +143,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         }
       }
 
-      if (isDefined(objktArtifact) && isDefined(mime) && mime.includes(NonStaticMimeTypes.AUDIO)) {
-        if (!isModalWindow) {
-          return (
-            <FastImage
-              style={[styles.image, { height: size, width: size }]}
-              source={{ uri: currentFallback }}
-              resizeMode="contain"
-              onError={handleError}
-              onLoad={handleLoadEnd}
-            />
-          );
-        }
-
+      if (isDefined(objktArtifact) && isDefined(mime) && mime.includes(NonStaticMimeTypes.AUDIO) && isModalWindow) {
         return (
           <>
             <SimplePlayer
@@ -166,7 +154,17 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
               onError={handleAudioError}
               onLoad={handleLoadEnd}
             />
-            <AudioPlaceholder theme={audioPlaceholderTheme} />
+            {isDefined(collectible.displayUri) ? (
+              <FastImage
+                style={[styles.image, { height: size, width: size }]}
+                source={{ uri: currentFallback }}
+                resizeMode="contain"
+                onError={handleError}
+                onLoad={handleLoadEnd}
+              />
+            ) : (
+              <AudioPlaceholder theme={audioPlaceholderTheme} />
+            )}
           </>
         );
       }
@@ -188,7 +186,16 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           onLoad={handleLoadEnd}
         />
       );
-    }, [mime, objktArtifact, currentFallback, isAnimatedRenderedOnce, isModalWindow, isBigIcon, isLoading]);
+    }, [
+      mime,
+      objktArtifact,
+      currentFallback,
+      isAnimatedRenderedOnce,
+      isModalWindow,
+      isBigIcon,
+      isLoading,
+      collectible.displayUri
+    ]);
 
     const imageWithBlur = useMemo(() => {
       if (isShowBlur && currentFallback !== FINAL_FALLBACK) {

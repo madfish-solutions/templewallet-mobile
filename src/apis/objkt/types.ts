@@ -161,6 +161,7 @@ interface CollectibleDetailsResponse {
   name: string;
   description: string;
   thumbnail_uri: string;
+  display_uri: string | null;
   creators: Creator[];
   fa: Fa;
   metadata: string;

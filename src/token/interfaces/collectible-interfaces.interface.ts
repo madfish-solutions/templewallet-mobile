@@ -85,10 +85,11 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   galleries: Galleries[];
   artifactUri?: string;
   thumbnailUri?: string;
+  displayUri?: string | null;
 }
 
 export interface CollectibleInterface
   extends Omit<CollectibleDetailsInterface, 'address' | 'id' | 'name'>,
-    TokenInterface {}
+    Omit<TokenInterface, 'displayUri'> {}
 
 export interface CollectibleOfferInteface extends TokenInterface, CollectibleCommonInterface, OfferInteface {}

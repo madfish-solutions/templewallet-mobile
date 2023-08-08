@@ -111,6 +111,7 @@ export const loadAllCollectiblesDetails$ = (
           galleries: collectible.galleries,
           artifactUri: collectible.artifact_uri,
           thumbnailUri: collectible.thumbnail_uri,
+          displayUri: collectible.display_uri,
           editions: collectible.supply,
           collection: collectible.fa,
           listingsActive: isNonEmptyArray(collectible.listings_active)

@@ -239,6 +239,7 @@ export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) =>
         metadata
         artifact_uri
         thumbnail_uri
+        display_uri
         mime
         name
         tags {
