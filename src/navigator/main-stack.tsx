@@ -21,7 +21,6 @@ import { emptyFn } from 'src/config/general';
 import { isIOS } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
-import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { About } from 'src/screens/about/about';
@@ -108,7 +107,6 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
-  useFirebaseApp();
 
   const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 

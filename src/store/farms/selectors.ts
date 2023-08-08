@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
-import { PoolType } from 'src/apis/quipuswap-staking/types';
+import { poolTypesToDisplay } from 'src/config/staking';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 
 import { useSelector } from '../selector';
 
@@ -28,7 +29,8 @@ export const useAllFarmsSelector = () => {
 
   return useMemo(() => {
     const data = farms.data.filter(
-      farm => farm.item.type === PoolType.STABLESWAP && farm.item.dailyDistribution !== '0'
+      farm =>
+        poolTypesToDisplay.includes(farm.item.type ?? FarmPoolTypeEnum.DEX_TWO) && farm.item.dailyDistribution !== '0'
     );
 
     return {

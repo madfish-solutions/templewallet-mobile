@@ -2,9 +2,9 @@ import { FormikProps, FormikProvider } from 'formik';
 import React, { FC, RefObject, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { Divider } from 'src/components/divider/divider';
 import { QuestionAccordion } from 'src/components/question-accordion';
+import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { useFarmTokens } from 'src/hooks/use-farm-tokens';
@@ -13,12 +13,14 @@ import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { UserStakeValueInterface } from 'src/store/farms/state';
 import { formatSize } from 'src/styles/format-size';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { SingleFarmResponse } from 'src/types/single-farm-response';
 import { isDefined } from 'src/utils/is-defined';
 
-import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
+import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 import { DetailsSection } from '../details-section';
 import { ManageFarmingPoolModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
+import { liquidityBakingRisksPoints, quipuswapFarmsRisksPoints } from './constants';
 import { useAssetAmountInputStylesConfig, useStakeFormStyles } from './styles';
 import { StakeFormValues } from './use-stake-formik';
 
@@ -29,27 +31,21 @@ interface StakeFormProps {
   acceptRisksRef?: RefObject<View>;
 }
 
-const risksPoints = [
-  'Smart Contract Reliability: This pool operates using DEX smart contracts, farming smart contracts, QuipuSwap stable pools smart contracts and interacts with Yupana Lending protocol contracts. The safety of your assets is dependent on the reliability and security of these contracts. While external audits of smart contracts have been conducted, there is always a risk of potential vulnerabilities or unforeseen issues that could impact the safety of your assets.',
-  'Stable Token Value: Stable tokens are designed to maintain a stable value relative to a benchmark, such as a fiat currency. However, there is a risk that the value of stable tokens may not perfectly track their benchmark value. Factors such as the conversion conditions and operational mechanisms specific to each stable token can influence its value. It is important to be aware of this potential risk when using stable tokens in this pool.',
-  'Market Risk: Farming involves exposure to the performance and volatility of the assets in the liquidity pool. Fluctuations in the market value of the assets can impact the overall value of the farm and potentially lead to losses. It is essential to consider the risks associated with the specific assets and their market dynamics.',
-  'Slippage: Slippage refers to the difference between the expected and actual execution price of a trade. In fast-moving markets or with illiquid assets, slippage can be significant and impact profitability.',
-  'Regulatory and Compliance Risks: Depending on your jurisdiction, participating in farming may have legal and regulatory implications. It is important to ensure compliance with applicable laws, tax obligations, and any necessary licenses or permissions.'
-];
-
 export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisksRef }) => {
   const { setFieldTouched, setFieldValue, values } = formik;
   const { asset } = values.assetAmount;
 
   const styles = useStakeFormStyles();
   const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
-  const { stakeTokens: assetsList } = useFarmTokens(farm?.item);
+  const { stakeTokens: assetsList } = useFarmTokens(farm.item);
   const prevAssetsListRef = useRef(assetsList);
   const { filteredAssetsList, setSearchValue: setSearchValueFromTokens } = useFilteredAssetsList(
     assetsList,
     false,
     true
   );
+  const risksPoints =
+    farm.item.type === FarmPoolTypeEnum.LIQUIDITY_BAKING ? liquidityBakingRisksPoints : quipuswapFarmsRisksPoints;
 
   const stakesLoading = useStakesLoadingSelector();
 
@@ -88,7 +84,9 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
         <FormAssetAmountInput
           name="assetAmount"
           label="Amount"
-          expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
+          expectedGasExpense={
+            farm.item.type === FarmPoolTypeEnum.STABLESWAP ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE : undefined
+          }
           isSearchable
           maxButton
           assetsList={filteredAssetsList}
@@ -101,7 +99,7 @@ export const StakeForm: FC<StakeFormProps> = ({ farm, formik, stake, acceptRisks
         <DetailsSection
           farm={farm.item}
           stake={stake}
-          shouldShowClaimRewardsButton
+          shouldShowClaimRewardsButton={farm.item.type !== FarmPoolTypeEnum.LIQUIDITY_BAKING}
           loading={stakesLoading && !isDefined(stake)}
         />
         <Divider size={formatSize(16)} />

@@ -6,10 +6,10 @@ import {
   Hop,
   Route3Chain,
   Route3Dex,
+  Route3LiquidityBakingParamsResponse,
   Route3SwapParamsRequest,
   Route3TraditionalSwapParamsResponse,
-  Route3Token,
-  Route3LiquidityBakingParamsResponse
+  Route3Token
 } from 'src/interfaces/route3.interface';
 import { THREE_ROUTE_SIRS_TOKEN } from 'src/token/data/three-route-tokens';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
@@ -45,7 +45,7 @@ const fetchRoute3TraditionalSwapParams = ({
     .then(res => res.text())
     .then(res => parser(res));
 
-const fetchRoute3LiquidityBakingParams = ({
+export const fetchRoute3LiquidityBakingParams = ({
   fromSymbol,
   toSymbol,
   amount,
