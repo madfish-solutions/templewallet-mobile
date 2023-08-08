@@ -5,7 +5,7 @@ export const useInAppBrowserStyles = createUseStyles(({ colors }) => ({
   externalBtn: {
     marginHorizontal: formatSize(16)
   },
-  safeAreaView: {
+  container: {
     flex: 1
   },
   scrollViewContentContainer: {

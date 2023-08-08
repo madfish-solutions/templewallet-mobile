@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { ScrollView, BackHandler, SafeAreaView } from 'react-native';
+import { ScrollView, BackHandler } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -54,27 +54,26 @@ export const InAppBrowser: FC = () => {
   const [ptrEnabled, setPtrEnabled] = useState(true);
 
   return (
-    <SafeAreaView style={styles.safeAreaView}>
-      <ScrollView
-        alwaysBounceVertical={true}
-        contentContainerStyle={styles.scrollViewContentContainer}
-        scrollEnabled={false}
-        refreshControl={
-          <RefreshControl refreshing={false} enabled={ptrEnabled} onRefresh={() => void webViewRef.current?.reload()} />
-        }
-      >
-        <WebView
-          ref={webViewRef}
-          useWebView2={true}
-          source={{ uri }}
-          style={styles.webView}
-          onNavigationStateChange={nav => void setCurrentURL(nav.url)}
-          allowsBackForwardNavigationGestures={true}
-          pullToRefreshEnabled={false}
-          bounces={false}
-          onScroll={event => void setPtrEnabled(event.nativeEvent.contentOffset.y === 0)}
-        />
-      </ScrollView>
-    </SafeAreaView>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollViewContentContainer}
+      scrollEnabled
+      alwaysBounceVertical
+      refreshControl={
+        <RefreshControl refreshing={false} enabled={ptrEnabled} onRefresh={() => void webViewRef.current?.reload()} />
+      }
+    >
+      <WebView
+        ref={webViewRef}
+        useWebView2={true}
+        source={{ uri }}
+        style={styles.webView}
+        onNavigationStateChange={nav => void setCurrentURL(nav.url)}
+        allowsBackForwardNavigationGestures={true}
+        pullToRefreshEnabled={false}
+        bounces={false}
+        onScroll={event => void setPtrEnabled(event.nativeEvent.contentOffset.y === 0)}
+      />
+    </ScrollView>
   );
 };
