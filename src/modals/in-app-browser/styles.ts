@@ -5,6 +5,12 @@ export const useInAppBrowserStyles = createUseStyles(({ colors }) => ({
   externalBtn: {
     marginHorizontal: formatSize(16)
   },
+  safeAreaView: {
+    flex: 1
+  },
+  scrollViewContentContainer: {
+    flex: 1
+  },
   webView: {
     backgroundColor: colors.pageBG
   }
