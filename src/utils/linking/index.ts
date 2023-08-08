@@ -11,7 +11,7 @@ export const openUrl = (url: string) => Linking.canOpenURL(url).then(() => Linki
 export const useOpenUrlInAppBrowser = () => {
   const { navigate } = useNavigation();
 
-  return useCallback((uri: string) => void navigate(ModalsEnum.InAppBrowser, { uri }), []);
+  return useCallback((uri: string) => void navigate(ModalsEnum.InAppBrowser, { uri }), [navigate]);
 };
 
 export const tzktUrl = (rpcUrl: string, address: string) =>
