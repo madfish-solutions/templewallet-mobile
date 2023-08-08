@@ -1,5 +1,6 @@
 import { FormikProps, FormikProvider } from 'formik';
-import React, { FC, RefObject, useCallback, useEffect, useRef } from 'react';
+import { uniqBy } from 'lodash-es';
+import React, { FC, RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -8,10 +9,12 @@ import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asse
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { useStakesLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
-import { toTokenSlug } from 'src/token/utils/token.utils';
+import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
+import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -37,13 +40,29 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
   const { asset } = values.assetAmount;
 
   const styles = useStakeFormStyles();
-  const { stakeTokens: assetsList } = useEarnOpportunityTokens(earnOpportunityItem);
+  const { stakeTokens, stakedToken } = useEarnOpportunityTokens(earnOpportunityItem);
+  const { filteredTokensList: savingsAssetsList } = useFilteredSwapTokensList(TokensInputsEnum.From);
+  /**
+   * SIRS token is excluded because a batch of swapping it into the token to be staked, paying fee, and staking the
+   * output is likely to fail because of a high gas limit or issues with a swap
+   */
+  const savingsAssetsListWithFallback = useMemo(
+    () =>
+      uniqBy(
+        [stakedToken].concat(savingsAssetsList.filter(token => getTokenSlug(token) !== KNOWN_TOKENS_SLUGS.SIRS)),
+        getTokenSlug
+      ),
+    [savingsAssetsList, stakedToken]
+  );
+  const assetsList = itemIsFarm ? stakeTokens : savingsAssetsListWithFallback;
   const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
   const prevAssetsListRef = useRef(assetsList);
+  const leadingTokens = useMemo(() => (itemIsFarm ? undefined : [stakedToken]), [itemIsFarm, stakedToken]);
   const { filteredAssetsList, setSearchValue: setSearchValueFromTokens } = useFilteredAssetsList(
     assetsList,
     false,
-    true
+    true,
+    leadingTokens
   );
   const risksPoints = itemIsFarm ? quipuswapFarmsRisksPoints : youvesSavingsRisksPoints;
 
@@ -77,9 +96,8 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
     <FormikProvider value={formik}>
       <View>
         <Text style={styles.depositPrompt}>
-          {itemIsFarm
-            ? 'You can choose any asset from the provided list for your deposit. The selected asset will be automatically converted by Temple Wallet.'
-            : 'You can choose asset from the provided list for your deposit.'}
+          You can choose any asset from the provided list for your deposit. The selected asset will be automatically
+          converted by Temple Wallet.
         </Text>
         <Divider size={formatSize(24)} />
         <FormAssetAmountInput

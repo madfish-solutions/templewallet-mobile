@@ -158,6 +158,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
     rewardTokenDecimals,
     earnExchangeRate
   );
+  const depositTokenSymbol = tokens.stakeTokens.length === 1 ? stakedToken.metadata.symbol : 'Shares';
 
   return (
     <View style={styles.root}>
@@ -169,9 +170,9 @@ export const DetailsCard: FC<DetailsCardProps> = ({
       {depositAmount.isZero() ? (
         <View style={styles.statsRow}>
           <StatsItem
-            loading={false}
+            loading={loading}
             title="Your deposit & Rewards:"
-            value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
+            value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol={depositTokenSymbol} />}
             usdEquivalent={depositUsdEquivalent}
           />
         </View>
@@ -181,7 +182,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
             <StatsItem
               loading={loading}
               title="Your deposit:"
-              value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol="Shares" />}
+              value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol={depositTokenSymbol} />}
               usdEquivalent={depositUsdEquivalent}
             />
             <StatsItem
@@ -193,7 +194,9 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               usdEquivalent={claimableRewardUsdEquivalent}
             />
           </View>
+
           <Divider size={formatSize(12)} />
+
           <View style={styles.statsRow}>
             <StatsItem
               loading={loading}
