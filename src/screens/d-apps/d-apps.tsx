@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
@@ -24,7 +23,6 @@ import { useIsPartnersPromoEnabledSelector } from '../../store/partners-promotio
 import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
-import { IntegratedDApp } from './integrated/integrated';
 import { OthersDApp } from './others/others';
 import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
@@ -81,18 +79,6 @@ export const DApps = () => {
       <InsetSubstitute type="top" />
       <PromotionCarousel />
       <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
-      <Divider size={formatSize(20)} />
-      <Text style={styles.text}>Integrated</Text>
-      <Divider size={formatSize(20)} />
-      <View style={styles.dappBlockWrapper}>
-        <IntegratedDApp
-          screenName={ScreensEnum.LiquidityBakingDapp}
-          iconName={IconNameEnum.LbDappIcon}
-          title="Liquidity Baking"
-          description="Create XTZ/tzBTC & earn XTZ"
-          testID={DAppsSelectors.integratedDAppButton}
-        />
-      </View>
       <Divider size={formatSize(20)} />
       <Text style={styles.text}>Others</Text>
       <Divider size={formatSize(8)} />

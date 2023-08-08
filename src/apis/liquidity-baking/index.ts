@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { ZERO } from 'src/config/swap';
 import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
 import { FarmTokenStandardEnum } from 'src/enums/farm-token-standard.enum';
-import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking/liquidity-baking-storage.interface';
+import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking-storage.interface';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, SIRS_TOKEN } from 'src/token/data/token-slugs';
 import { SIRS_TOKEN_METADATA, TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
