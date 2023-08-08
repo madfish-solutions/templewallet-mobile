@@ -5,8 +5,6 @@ import { DCP_RPC } from './rpc/rpc-list';
 
 const DCP_NODE_RPC_URL = new URL(DCP_RPC.url).href;
 
-console.log('DCP_NODE_RPC_URL=', DCP_NODE_RPC_URL, 'from', DCP_RPC.url);
-
 export const isDcpNode = mem((selectedRpcUrl: string) => new URL(selectedRpcUrl).href === DCP_NODE_RPC_URL);
 
 export const getNetworkGasTokenMetadata = (selectedRpcUrl: string) =>

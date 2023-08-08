@@ -17,6 +17,7 @@ import {
   SELECTED_BAKER_SYNC_INTERVAL,
   NOTIFICATIONS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
+import { emptyFn } from 'src/config/general';
 import { isIOS } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
@@ -344,7 +345,9 @@ export const MainStackScreen = () => {
           )}
 
           {shouldShowBlankScreen && (
-            <MainStack.Screen name={ScreensEnum.Blank} component={() => null} options={{ headerShown: false }} />
+            <MainStack.Screen name={ScreensEnum.Blank} options={{ headerShown: false }}>
+              {emptyFn}
+            </MainStack.Screen>
           )}
 
           <MainStack.Screen

@@ -1,40 +1,18 @@
-import memoize from 'memoizee';
+import { useCallback } from 'react';
 import { Linking } from 'react-native';
-import InAppBrowser from 'react-native-inappbrowser-reborn';
+
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 
 import { isDcpNode } from '../network.utils';
 
-export const openUrl = async (url: string, inApp = false) => {
-  if (!inApp) {
-    await openUrlRegularly(url);
-  }
+export const openUrl = (url: string) => Linking.canOpenURL(url).then(() => Linking.openURL(url));
 
-  const isAvailable = await canOpenUrlInApp();
+export const useOpenUrlInAppBrowser = () => {
+  const { navigate } = useNavigation();
 
-  if (isAvailable === false) {
-    await openUrlRegularly(url);
-  }
-
-  await InAppBrowser.open(url, {
-    // iOS Properties
-    dismissButtonStyle: 'cancel',
-    preferredBarTintColor: 'gray',
-    preferredControlTintColor: 'white',
-    // Android Properties
-    showTitle: true,
-    toolbarColor: '#6200EE',
-    secondaryToolbarColor: 'black',
-    enableUrlBarHiding: true,
-    enableDefaultShare: true,
-    forceCloseOnRedirection: true
-  });
+  return useCallback((uri: string) => void navigate(ModalsEnum.InAppBrowser, { uri }), []);
 };
-
-const openUrlRegularly = (url: string) => Linking.canOpenURL(url).then(() => Linking.openURL(url));
 
 export const tzktUrl = (rpcUrl: string, address: string) =>
   isDcpNode(rpcUrl) ? `https://explorer.tlnt.net/${address}` : `https://tzkt.io/${address}`;
-
-const canOpenUrlInApp = memoize(() => (Boolean(InAppBrowser) ? InAppBrowser.isAvailable() : Promise.resolve(false)), {
-  promise: true
-});
