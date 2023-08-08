@@ -6,8 +6,8 @@ import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { FarmToken } from 'src/interfaces/earn.interface';
 import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
-import { getTruncatedProps } from 'src/utils/style.util';
 
+import { TruncatedText } from '../truncated-text';
 import { useFarmTokensStyles } from './farm-tokens.styles';
 
 interface Props {
@@ -39,9 +39,9 @@ export const FarmTokens: FC<Props> = ({ stakeTokens, rewardToken }) => {
         </View>
         <Divider size={formatSize(14)} />
         <View>
-          <Text {...getTruncatedProps(styles.stakeTokenSymbols)}>
+          <TruncatedText style={styles.stakeTokenSymbols}>
             {stakeTokens.map(token => token.symbol).join(TOKENS_SYMBOLS_DIVIDER)}
-          </Text>
+          </TruncatedText>
           <Text style={styles.rewardTokenSymbol}>Earn {rewardToken.symbol}</Text>
         </View>
       </View>
