@@ -19,7 +19,9 @@ import { getTokenSlug } from '../token/utils/token.utils';
 const attributesInfoInitialState: AttributeInfo[] = [
   {
     attributeId: 0,
-    tokens: 0
+    tokens: 0,
+    editions: 0,
+    faContract: ''
   }
 ];
 
@@ -28,13 +30,25 @@ export const getAttributesWithRarity = (
   collectible: CollectibleInterface
 ): CollectibleAttributes[] => {
   const isExistGallery = isNonEmptyArray(collectible.galleries);
-  const collectibleCalleryCount = isExistGallery
-    ? collectible.galleries[0].gallery.items
-    : collectible.collection.items;
+  const collectibleGalleryCount = isExistGallery
+    ? collectible.galleries[0].gallery.editions
+    : collectible.collection.editions;
+
+  const galleryPk = collectible.galleries[0].gallery.pk;
 
   return collectible.attributes.map(({ attribute }) => {
-    const attributeTokenCount = attributesInfo.find(el => el.attributeId === attribute.id)?.tokens ?? 0;
-    const rarity = Number(((attributeTokenCount / collectibleCalleryCount) * 100).toFixed(2));
+    const attributeTokenCount = attributesInfo.reduce((acc, current) => {
+      if (!isExistGallery && current.faContract === collectible.address && current.attributeId === attribute.id) {
+        acc = acc + current.editions;
+      }
+      if (isExistGallery && current.attributeId === attribute.id && current.galleryPk === galleryPk) {
+        acc = acc + current.editions;
+      }
+
+      return acc;
+    }, 0);
+
+    const rarity = Number(((attributeTokenCount / collectibleGalleryCount) * 100).toFixed(2));
 
     return {
       attribute: {
@@ -51,9 +65,11 @@ export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observabl
   if (isGallery) {
     return fetchGalleryAttributeCount$(ids).pipe(
       map(result =>
-        result.map(({ attribute_id, tokens }) => ({
+        result.map(({ attribute_id, tokens, editions, gallery_pk }) => ({
           attributeId: attribute_id,
-          tokens
+          tokens,
+          editions,
+          galleryPk: gallery_pk
         }))
       ),
       catchError(() => of(attributesInfoInitialState))
@@ -62,9 +78,11 @@ export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observabl
 
   return fetchFA2AttributeCount$(ids).pipe(
     map(result =>
-      result.map(({ attribute_id, tokens }) => ({
+      result.map(({ attribute_id, tokens, editions, fa_contract }) => ({
         attributeId: attribute_id,
-        tokens
+        tokens,
+        editions,
+        faContract: fa_contract
       }))
     ),
     catchError(() => of(attributesInfoInitialState))

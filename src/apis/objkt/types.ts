@@ -6,6 +6,9 @@ import { MarketPlaceEventEnum } from './enums';
 export interface AttributeInfoResponse {
   attribute_id: number;
   tokens: number;
+  editions: number;
+  fa_contract?: string;
+  gallery_pk?: number;
 }
 
 export interface FA2AttributeCountQueryResponse {
@@ -140,6 +143,7 @@ interface Fa {
   name: string;
   logo: string;
   items: number;
+  editions: number;
 }
 
 interface Royalty {
@@ -151,6 +155,8 @@ interface Gallery {
   gallery: {
     items: number;
     name: string;
+    editions: number;
+    pk: number;
   };
 }
 

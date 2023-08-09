@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
-import { loadCollectiblesDetailsActions, loadCollectibleDetailsActions } from './collectibles-actions';
+import { loadCollectiblesDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
 
 export const collectiblesReducers = createReducer<CollectiblesState>(collectiblesInitialState, builder => {
@@ -21,12 +21,4 @@ export const collectiblesReducers = createReducer<CollectiblesState>(collectible
   builder.addCase(loadCollectiblesDetailsActions.fail, state => {
     state.details.isLoading = false;
   });
-
-  builder.addCase(loadCollectibleDetailsActions.success, (state, { payload }) => ({
-    ...state,
-    details: createEntity({
-      ...state.details.data,
-      ...payload
-    })
-  }));
 });

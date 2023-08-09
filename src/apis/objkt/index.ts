@@ -1,4 +1,3 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { catchError, map, Observable, of } from 'rxjs';
 
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
@@ -6,10 +5,7 @@ import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
-import {
-  CollectibleDetailsInterface,
-  CollectibleOfferInteface
-} from '../../token/interfaces/collectible-interfaces.interface';
+import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
   buildGetCollectiblesByCollectionQuery,
@@ -18,8 +14,7 @@ import {
   buildGetGalleryAttributeCountQuery,
   buildGetHoldersInfoQuery,
   buildGetAllUserCollectiblesQuery,
-  buildGetCollectiblesByGalleryQuery,
-  buildGetCollectibleByAddressAndIdQuery
+  buildGetCollectiblesByGalleryQuery
 } from './queries';
 import {
   AttributeInfoResponse,
@@ -31,7 +26,7 @@ import {
   TzProfilesQueryResponse,
   UserAdultCollectiblesQueryResponse
 } from './types';
-import { getUniqueAndMaxValueAttribute, transformCollectiblesArray } from './utils';
+import { transformCollectiblesArray } from './utils';
 
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
   const request = buildGetCollectiblesInfoQuery(address);
@@ -130,7 +125,7 @@ export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfo
 
   return apolloObjktClient
     .query<FA2AttributeCountQueryResponse>(request)
-    .pipe(map(result => getUniqueAndMaxValueAttribute(result.fa2_attribute_count)));
+    .pipe(map(result => result.fa2_attribute_count));
 };
 
 export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {
@@ -138,67 +133,5 @@ export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<Attribute
 
   return apolloObjktClient
     .query<GalleryAttributeCountQueryResponse>(request)
-    .pipe(map(result => getUniqueAndMaxValueAttribute(result.gallery_attribute_count)));
-};
-
-export const fetchCollectibleDetails$ = (address: string, id: string): Observable<CollectibleDetailsInterface> => {
-  const request = buildGetCollectibleByAddressAndIdQuery(address, id);
-
-  return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request).pipe(
-    map(result => {
-      const {
-        fa_contract,
-        token_id,
-        name,
-        description,
-        thumbnail_uri,
-        artifact_uri,
-        creators,
-        fa,
-        timestamp,
-        attributes,
-        tags,
-        metadata,
-        royalties,
-        supply,
-        listings_active,
-        mime,
-        galleries
-      } = result.token[0];
-
-      return {
-        address: fa_contract,
-        id: +token_id,
-        name,
-        description,
-        thumbnailUri: thumbnail_uri,
-        artifactUri: artifact_uri,
-        creators,
-        collection: {
-          name: fa.name,
-          logo: fa.logo,
-          items: fa.items
-        },
-        metadata,
-        attributes,
-        tags,
-        timestamp,
-        royalties,
-        editions: supply,
-        galleries,
-        listingsActive: isNonEmptyArray(listings_active)
-          ? [
-              {
-                bigmapKey: listings_active[0].bigmap_key,
-                currency: listings_active[0].currency,
-                currencyId: listings_active[0].currency_id,
-                marketplaceContract: listings_active[0].marketplace_contract,
-                price: listings_active[0].price
-              }
-            ]
-          : [],
-        mime
-      };
-    })
-  );
+    .pipe(map(result => result.gallery_attribute_count));
 };
