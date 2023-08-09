@@ -283,7 +283,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.CreditCard]: CreditCardIcon,
   [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
   [IconNameEnum.NFT]: NFT,
   [IconNameEnum.QsEarnSource]: QsEarnSource,

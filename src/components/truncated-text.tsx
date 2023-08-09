@@ -1,6 +1,10 @@
 import React, { FC } from 'react';
-import { Text, TextProps } from 'react-native';
+import { StyleProp, Text, TextProps, TextStyle } from 'react-native';
 
-export const TruncatedText: FC<TextProps> = props => (
-  <Text numberOfLines={1} ellipsizeMode="tail" {...props} style={[props.style, { flexShrink: 1 }]} />
+type Props = Pick<TextProps, 'ellipsizeMode' | 'style'>;
+
+const STYLE: StyleProp<TextStyle> = { flexShrink: 1 };
+
+export const TruncatedText: FC<Props> = ({ ellipsizeMode = 'tail', style }) => (
+  <Text numberOfLines={1} ellipsizeMode={ellipsizeMode} style={[style, STYLE]} />
 );
