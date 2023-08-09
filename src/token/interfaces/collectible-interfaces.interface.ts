@@ -88,7 +88,7 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   galleries: Galleries[];
   artifactUri?: string;
   thumbnailUri?: string;
-  displayUri?: string | null;
+  displayUri?: string;
 }
 
 export interface CollectibleInterface
