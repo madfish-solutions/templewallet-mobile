@@ -4,11 +4,11 @@ import { Text, View } from 'react-native';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { EmptyFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { formatSize } from 'src/styles/format-size';
 
-import { EmptyFn } from '../../../config/general';
-import { formatSize } from '../../../styles/format-size';
 import { useIntegratedElementStyles } from './integrated-element.styles';
 
 enum IntegratedElementThemeEnum {
@@ -34,8 +34,6 @@ export const IntegratedElement: FC<Props> = ({
 }) => {
   const styles = useIntegratedElementStyles();
 
-  const handleNavigate = () => navigateFn();
-
   const themeClasses = {
     primary: {
       background: styles.backgroundPrimary,
@@ -44,11 +42,7 @@ export const IntegratedElement: FC<Props> = ({
   };
 
   return (
-    <TouchableWithAnalytics
-      onPress={handleNavigate}
-      style={[styles.root, themeClasses[theme].background]}
-      testID={testID}
-    >
+    <TouchableWithAnalytics onPress={navigateFn} style={[styles.root, themeClasses[theme].background]} testID={testID}>
       <View style={[styles.iconWrapper, themeClasses[theme].iconBackground]}>
         <Icon name={iconName} size={formatSize(24)} />
       </View>

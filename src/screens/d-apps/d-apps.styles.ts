@@ -29,10 +29,10 @@ export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.caption11Regular,
     color: colors.white
   },
-  flatListContainer: {
+  flatList: {
     marginTop: formatSize(12)
   },
-  flatListContent: {
+  flatListContentContainer: {
     marginHorizontal: formatSize(16),
     paddingBottom: formatSize(16)
   },

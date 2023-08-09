@@ -123,8 +123,8 @@ export const DApps = () => {
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         numColumns={2}
-        style={styles.flatListContainer}
-        contentContainerStyle={styles.flatListContent}
+        style={styles.flatList}
+        contentContainerStyle={styles.flatListContentContainer}
         ListEmptyComponent={ListEmptyComponent}
       />
     </>

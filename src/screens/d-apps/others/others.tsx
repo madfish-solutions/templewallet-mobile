@@ -1,5 +1,5 @@
-import React, { FC, useState } from 'react';
-import { Dimensions, ListRenderItemInfo, StyleProp, Text, ViewStyle } from 'react-native';
+import React, { FC, useEffect, useMemo, useState } from 'react';
+import { ListRenderItemInfo, StyleProp, Text, ViewStyle, useWindowDimensions } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
@@ -19,13 +19,15 @@ interface Props extends TestIdProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const offsetSize = 32;
-const elementWidth = Dimensions.get('window').width / 2 - offsetSize;
+const gridSize = 32;
 
 export const OthersDApp: FC<Props> = ({ item, style, testID }) => {
   const { name, logo, slug, dappUrl } = item.item;
   const styles = useOthersDAppStyles();
   const [imageLoadError, setImageLoadError] = useState(false);
+  const { width } = useWindowDimensions();
+
+  const elementWidth = useMemo(() => width / 2 - gridSize, [width]);
 
   return (
     <TouchableWithAnalytics
