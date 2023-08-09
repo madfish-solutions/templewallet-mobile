@@ -22,6 +22,7 @@ import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useIsPartnersPromoEnabledSelector } from '../../store/partners-promotion/partners-promotion-selectors';
 import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
+import { isString } from '../../utils/is-string';
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedElement } from './integrated-element/integrated-element';
@@ -52,7 +53,7 @@ export const DApps = () => {
 
   const dAppsList = useDAppsListSelector();
 
-  const [searchQuery, setSearchQuery] = useState<string>();
+  const [searchValue, setSearchValue] = useState<string>();
 
   usePageAnalytic(ScreensEnum.DApps);
 
@@ -67,12 +68,12 @@ export const DApps = () => {
   );
 
   const sortedDAppsList = useMemo(() => {
-    if (isDefined(searchQuery)) {
-      return dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (isDefined(searchValue)) {
+      return dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchValue.toLowerCase()));
     }
 
     return dAppsList;
-  }, [searchQuery, dAppsList]);
+  }, [searchValue, dAppsList]);
 
   const renderItem: ListRenderItem<CustomDAppInfo> = useCallback(
     item => (
@@ -93,23 +94,25 @@ export const DApps = () => {
 
       <SearchInput
         placeholder="Search Dapp"
-        onChangeText={setSearchQuery}
+        onChangeText={setSearchValue}
         style={styles.searchInput}
         testID={DAppsSelectors.searchDAppsInput}
       />
 
-      <View style={styles.wrapper}>
-        <Text style={styles.text}>Integrated</Text>
+      {!isString(searchValue) && (
+        <View style={styles.wrapper}>
+          <Text style={styles.text}>Integrated</Text>
 
-        <IntegratedElement
-          screenName={ScreensEnum.DApps}
-          iconName={IconNameEnum.TextToNft}
-          title="Text to NFT"
-          description="Turn text into AI generated NFT"
-          navigateFn={() => navigate(ScreensEnum.DApps)}
-          testID={DAppsSelectors.integratedDAppButton}
-        />
-      </View>
+          <IntegratedElement
+            screenName={ScreensEnum.DApps}
+            iconName={IconNameEnum.TextToNft}
+            title="Text to NFT"
+            description="Turn text into AI generated NFT"
+            navigateFn={() => navigate(ScreensEnum.DApps)}
+            testID={DAppsSelectors.integratedDAppButton}
+          />
+        </View>
+      )}
 
       <View style={styles.wrapper}>
         <Text style={styles.text}>Others</Text>
