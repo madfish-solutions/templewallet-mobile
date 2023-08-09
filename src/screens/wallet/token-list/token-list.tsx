@@ -162,7 +162,7 @@ export const TokensList: FC = () => {
           </Checkbox>
         </View>
 
-        <Search onChange={setSearchValue} testID={WalletSelectors.searchTokenButton}>
+        <Search onChange={setSearchValue} testID={WalletSelectors.searchTokenButton} dividerSize={20}>
           <TouchableIcon
             name={IconNameEnum.Clock}
             size={formatSize(16)}

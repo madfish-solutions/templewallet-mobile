@@ -89,6 +89,8 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
             <CollectibleIcon
               iconSize={CollectibleIconSize.BIG}
               collectible={item}
+              mime={item.mime}
+              objktArtifact={item.artifactUri}
               size={formatSize(295)}
               isTouchableBlurOverlay={false}
             />

@@ -62,6 +62,7 @@ export interface CollectibleCommonInterface {
   editions: number;
   isAdultContent?: boolean;
   listingsActive: ListingsActive[];
+  mime: string;
 }
 
 interface OfferInteface {
@@ -84,14 +85,14 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   tags: CollectibleTag[];
   timestamp: string;
   royalties: Royalties[];
-  mime: string;
   galleries: Galleries[];
   artifactUri?: string;
   thumbnailUri?: string;
+  displayUri?: string | null;
 }
 
 export interface CollectibleInterface
   extends Omit<CollectibleDetailsInterface, 'address' | 'id' | 'name'>,
-    TokenInterface {}
+    Omit<TokenInterface, 'displayUri'> {}
 
 export interface CollectibleOfferInteface extends TokenInterface, CollectibleCommonInterface, OfferInteface {}

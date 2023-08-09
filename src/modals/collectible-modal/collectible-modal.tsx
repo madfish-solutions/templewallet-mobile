@@ -7,6 +7,7 @@ import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
 import { SUPPORTED_CONTRACTS } from '../../apis/objkt/constants';
+import { ActivityIndicator } from '../../components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
@@ -53,15 +54,10 @@ import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
 enum SegmentControlNamesEnum {
   Attributes = 'Attributes',
-  Properties = 'Properties',
-  Offers = 'Offers'
+  Properties = 'Properties'
 }
 
-const SEGMENT_VALUES = [
-  SegmentControlNamesEnum.Attributes,
-  SegmentControlNamesEnum.Properties,
-  SegmentControlNamesEnum.Offers
-];
+const SEGMENT_VALUES = [SegmentControlNamesEnum.Attributes, SegmentControlNamesEnum.Properties];
 
 const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
@@ -82,7 +78,6 @@ export const CollectibleModal = memo(() => {
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
 
   const { collectible } = useCurrentCollectibleFullData(slug, isUserOwnerCurrentCollectible);
@@ -122,7 +117,7 @@ export const CollectibleModal = memo(() => {
 
   const isAttributesExist = attributes.length > 0;
 
-  const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 3);
+  const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 2);
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 
@@ -204,7 +199,6 @@ export const CollectibleModal = memo(() => {
   }, [slug, name, description, thumbnailUri]);
 
   const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
-  const disabledOffers = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Offers);
 
   const isPropertiesSelected = propertiesIndex === segmentControlIndex;
 
@@ -222,6 +216,8 @@ export const CollectibleModal = memo(() => {
 
   const isDisabled =
     (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)) || isLoadingDetails || !isSupportedContract;
+
+  const isShowSegment = segmentValues.length > 1;
 
   return (
     <ScreenContainer
@@ -242,16 +238,22 @@ export const CollectibleModal = memo(() => {
       <ModalStatusBar />
 
       <View>
-        {isDefined(collectible) && (
+        {isDefined(collectible) && !isLoadingDetails && isDefined(artifactUri) ? (
           <CollectibleIcon
             collectible={collectible}
             mime={mime}
             objktArtifact={artifactUri}
             size={iconSize}
+            paused={false}
+            isModalWindow
             iconSize={CollectibleIconSize.BIG}
             setScrollEnabled={setScrollEnabled}
             blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
           />
+        ) : (
+          <View style={[{ width: iconSize, height: iconSize }, styles.imageFallback]}>
+            <ActivityIndicator />
+          </View>
         )}
 
         <Divider size={formatSize(12)} />
@@ -305,12 +307,11 @@ export const CollectibleModal = memo(() => {
           </View>
         )}
 
-        {!isLoading && (
+        {!isLoading && isShowSegment && (
           <TextSegmentControl
             selectedIndex={segmentControlIndex}
             values={segmentValues}
             onChange={setSegmentControlIndex}
-            disabledIndexes={[disabledOffers]}
             style={styles.segmentControl}
           />
         )}
