@@ -1,4 +1,4 @@
-import { greyLight400, white } from 'src/config/styles';
+import { white } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -30,6 +30,6 @@ export const useIntegratedElementStyles = createUseStyles(({ colors, typography 
   },
   description: {
     ...typography.caption11Regular,
-    color: greyLight400
+    color: colors.gray4
   }
 }));
