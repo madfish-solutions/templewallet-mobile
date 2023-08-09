@@ -217,10 +217,6 @@ export const CollectiblesHome = () => {
           {collections.length > 0 && (
             <View style={styles.collectionsHeader}>
               <Text style={styles.collectionsLabel}>Created collections</Text>
-
-              <TouchableOpacity>
-                <Text style={styles.buttonDisabled}>See All</Text>
-              </TouchableOpacity>
             </View>
           )}
 
@@ -252,8 +248,6 @@ export const CollectiblesHome = () => {
 
           <View style={styles.icons}>
             <Search onChange={setSearchValue} dividerSize={16}>
-              <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
-              <Divider size={formatSize(16)} />
               <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} />
             </Search>
           </View>
