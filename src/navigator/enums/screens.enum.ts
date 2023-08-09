@@ -70,7 +70,7 @@ export type ScreensParamList = {
   [ScreensEnum.TezosTokenScreen]: undefined;
   [ScreensEnum.TokenScreen]: { token: TokenInterface };
   [ScreensEnum.Delegation]: undefined;
-  [ScreensEnum.ManageAssets]: undefined;
+  [ScreensEnum.ManageAssets]: { index: number };
   [ScreensEnum.Activity]: undefined;
 
   [ScreensEnum.ScanQrCode]: undefined;
