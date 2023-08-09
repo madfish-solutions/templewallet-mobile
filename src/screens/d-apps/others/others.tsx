@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { ListRenderItemInfo, Text } from 'react-native';
+import { Dimensions, ListRenderItemInfo, StyleProp, Text, ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
@@ -16,19 +16,23 @@ import { useOthersDAppStyles } from './others.styles';
 
 interface Props extends TestIdProps {
   item: ListRenderItemInfo<CustomDAppInfo>;
+  style?: StyleProp<ViewStyle>;
 }
 
-export const OthersDApp: FC<Props> = ({ item, testID }) => {
+const offsetSize = 32;
+const elementWidth = Dimensions.get('window').width / 2 - offsetSize;
+
+export const OthersDApp: FC<Props> = ({ item, style, testID }) => {
   const { name, logo, slug, dappUrl } = item.item;
   const styles = useOthersDAppStyles();
   const [imageLoadError, setImageLoadError] = useState(false);
 
   return (
     <TouchableWithAnalytics
-      style={styles.container}
       testID={testID}
       testIDProperties={{ dapp: slug }}
       onPress={() => openUrl(dappUrl)}
+      style={[styles.root, style, { width: formatSize(elementWidth) }]}
     >
       {imageLoadError ? (
         <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />

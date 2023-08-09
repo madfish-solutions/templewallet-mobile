@@ -4,16 +4,14 @@ import { formatSize } from '../../../styles/format-size';
 import { generateShadow } from '../../../styles/generate-shadow';
 
 export const useOthersDAppStyles = createUseStyles(({ colors, typography }) => ({
-  container: {
-    ...generateShadow(1, black),
-    borderRadius: formatSize(10),
-    backgroundColor: colors.cardBG,
+  root: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: formatSize(16),
-    marginRight: formatSize(16),
     marginBottom: formatSize(16),
-    width: '50%'
+    borderRadius: formatSize(10),
+    padding: formatSize(16),
+    backgroundColor: colors.cardBG,
+    ...generateShadow(1, black)
   },
   text: {
     ...typography.caption13Semibold,

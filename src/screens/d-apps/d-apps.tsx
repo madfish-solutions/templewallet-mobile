@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, ListRenderItem, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
-import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { SearchInput } from 'src/components/search-input/search-input';
@@ -20,17 +19,15 @@ import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
+import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useIsPartnersPromoEnabledSelector } from '../../store/partners-promotion/partners-promotion-selectors';
 import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
-import { IntegratedDApp } from './integrated/integrated';
+import { IntegratedElement } from './integrated-element/integrated-element';
 import { OthersDApp } from './others/others';
 import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
-const renderItem: ListRenderItem<CustomDAppInfo> = item => (
-  <OthersDApp item={item} testID={DAppsSelectors.othersDAppsItem} />
-);
 const keyExtractor = (item: CustomDAppInfo) => item.name;
 const getItemLayout = createGetItemLayout<CustomDAppInfo>(formatSize(7));
 const ListEmptyComponent = <DataPlaceholder text="No records found." />;
@@ -39,6 +36,7 @@ export const DApps = () => {
   const dispatch = useDispatch();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+  const { navigate } = useNavigation();
 
   useEffect(() => {
     dispatch(loadDAppsListActions.submit());
@@ -76,37 +74,57 @@ export const DApps = () => {
     return dAppsList;
   }, [searchQuery, dAppsList]);
 
+  const renderItem: ListRenderItem<CustomDAppInfo> = useCallback(
+    item => (
+      <OthersDApp
+        item={item}
+        style={[item.index % 2 === 0 && styles.marginRight]}
+        testID={DAppsSelectors.othersDAppsItem}
+      />
+    ),
+    []
+  );
+
   return (
     <>
       <InsetSubstitute type="top" />
+
       <PromotionCarousel />
-      <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
-      <Divider size={formatSize(20)} />
-      <Text style={styles.text}>Integrated</Text>
-      <Divider size={formatSize(20)} />
-      <View style={styles.dappBlockWrapper}>
-        <IntegratedDApp
-          screenName={ScreensEnum.LiquidityBakingDapp}
-          iconName={IconNameEnum.LbDappIcon}
-          title="Liquidity Baking"
-          description="Create XTZ/tzBTC & earn XTZ"
+
+      <SearchInput
+        placeholder="Search Dapp"
+        onChangeText={setSearchQuery}
+        style={styles.searchInput}
+        testID={DAppsSelectors.searchDAppsInput}
+      />
+
+      <View style={styles.wrapper}>
+        <Text style={styles.text}>Integrated</Text>
+
+        <IntegratedElement
+          screenName={ScreensEnum.DApps}
+          iconName={IconNameEnum.TextToNft}
+          title="Text to NFT"
+          description="Turn text into AI generated NFT"
+          navigateFn={() => navigate(ScreensEnum.DApps)}
           testID={DAppsSelectors.integratedDAppButton}
         />
       </View>
-      <Divider size={formatSize(20)} />
-      <Text style={styles.text}>Others</Text>
-      <Divider size={formatSize(8)} />
-      <View style={styles.dappBlockWrapper}>
+
+      <View style={styles.wrapper}>
+        <Text style={styles.text}>Others</Text>
+
         <Disclaimer texts={texts} />
       </View>
-      <Divider size={formatSize(16)} />
+
       <FlatList
         data={sortedDAppsList}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         numColumns={2}
-        contentContainerStyle={styles.container}
+        style={styles.flatListContainer}
+        contentContainerStyle={styles.flatListContent}
         ListEmptyComponent={ListEmptyComponent}
       />
     </>

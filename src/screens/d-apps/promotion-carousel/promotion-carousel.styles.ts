@@ -2,8 +2,9 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const usePromotionCarouselStyles = createUseStyles(({ colors }) => ({
-  container: {
-    marginVertical: formatSize(12)
+  root: {
+    marginTop: formatSize(12),
+    marginBottom: formatSize(4)
   },
   promotionItem: {
     backgroundColor: colors.pageBG,
