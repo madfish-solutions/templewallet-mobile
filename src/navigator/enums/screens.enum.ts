@@ -22,7 +22,6 @@ export enum ScreensEnum {
 
   /** DApps stack **/
   DApps = 'DApps',
-  LiquidityBakingDapp = 'LiquidityBakingDapp',
 
   /** Swap stack **/
   SwapScreen = 'SwapScreen',
@@ -88,7 +87,6 @@ export type ScreensParamList = {
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
-  [ScreensEnum.LiquidityBakingDapp]: undefined;
 
   /** Swap stack **/
   [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
@@ -136,6 +134,6 @@ export const walletStackScreens = [
   ScreensEnum.Blank
 ];
 export const nftStackScreens = [ScreensEnum.CollectiblesHome];
-export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
+export const dAppsStackScreens = [ScreensEnum.DApps];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];

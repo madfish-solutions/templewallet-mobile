@@ -12,7 +12,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { Farm } from 'src/types/farm';
 
-import { APPROXIMATE_DAYS_IN_YEAR, calculateTimeDiffInSeconds } from './date.utils';
+import { calculateTimeDiffInSeconds } from './date.utils';
 
 interface YouvesFarmRewardsStats {
   lastRewards: string; // From farm store
@@ -93,6 +93,3 @@ export const isFarm = (earnOpportunity: EarnOpportunity): earnOpportunity is Far
 
 export const getFirstAccountActivityTime = async (address: string) =>
   tzktApi.get<{ firstActivityTime: string }>(`/accounts/${address}`).then(response => response.data.firstActivityTime);
-
-export const aprToApy = (aprPercentage: number, compoundFrequency = APPROXIMATE_DAYS_IN_YEAR) =>
-  ((1 + Number(aprPercentage) / 100 / compoundFrequency) ** compoundFrequency - 1) * 100;
