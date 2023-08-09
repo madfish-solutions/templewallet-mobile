@@ -4,14 +4,14 @@ import { Text, View } from 'react-native';
 import { formatSize } from 'src/styles/format-size';
 import { getTruncatedProps } from 'src/utils/style.util';
 
-import { INITIAL_ARP_VALUE } from '../../apis/youves/constants';
+import { INITIAL_APR_VALUE } from '../../apis/youves/constants';
 import { DelegateTag } from '../delegate-tag/delegate-tag';
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
-export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_ARP_VALUE, children }) => {
+export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_APR_VALUE, children }) => {
   const styles = useTokenContainerStyles();
 
   return (

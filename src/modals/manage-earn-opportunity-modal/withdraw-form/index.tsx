@@ -16,7 +16,7 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormDropdown } from 'src/form/form-dropdown';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { useStakesLoadingSelector } from 'src/store/farms/selectors';
+import { useFarmsStakesLoadingSelector } from 'src/store/farms/selectors';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -24,6 +24,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { percentageToFraction } from 'src/utils/percentage.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
@@ -75,7 +76,10 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
     [stake?.depositAmountAtomic]
   );
   const lpAmountAtomic = useMemo(
-    () => depositAmountAtomic.times(PERCENTAGE_OPTIONS[amountOptionIndex]).dividedToIntegerBy(100),
+    () =>
+      depositAmountAtomic
+        .times(percentageToFraction(PERCENTAGE_OPTIONS[amountOptionIndex]))
+        .integerValue(BigNumber.ROUND_DOWN),
     [depositAmountAtomic, amountOptionIndex]
   );
   const tokensOptions = useTokensOptions(earnOpportunityItem, lpAmountAtomic);
@@ -87,7 +91,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
     [tokensOptions, tokenSearchValue]
   );
   const styles = useWithdrawFormStyles();
-  const stakesLoading = useStakesLoadingSelector();
+  const stakesLoading = useFarmsStakesLoadingSelector();
 
   const renderTokenOptionValue = useCallback<DropdownValueComponent<WithdrawTokenOption>>(
     ({ value }) => (
@@ -141,7 +145,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
 
   const lpToken = useMemo<TokenInterface>(
     () => ({
-      balance: stake?.depositAmountAtomic ?? '0',
+      balance: depositAmountAtomic.toFixed(),
       visibility: VisibilityEnum.Visible,
       id: stakedToken.id ?? 0,
       decimals: stakedToken.decimals,
@@ -154,7 +158,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
           ? Number(depositExchangeRate) * fiatToUsdExchangeRate
           : undefined
     }),
-    [stake?.depositAmountAtomic, stakedToken, depositExchangeRate, tokens.length]
+    [depositAmountAtomic, stakedToken, depositExchangeRate, fiatToUsdExchangeRate, tokens.length]
   );
 
   const amountInputAssetsList = useMemo<TokenInterface[]>(() => [lpToken], [lpToken]);

@@ -5,9 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
-import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
@@ -25,7 +23,6 @@ interface Props {
 const youvesSavingsTypes = [EarnOpportunityTypeEnum.YOUVES_SAVING, EarnOpportunityTypeEnum.YOUVES_STAKING];
 
 export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldShowClaimRewardsButton, loading }) => {
-  const theme = useThemeSelector();
   const styles = useDetailsSectionStyles();
   const isLiquidityBaking = earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
 
@@ -34,10 +31,12 @@ export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldSh
       <View style={styles.detailsTitle}>
         {earnOpportunityItem.type === EarnOpportunityTypeEnum.STABLESWAP && (
           <View style={styles.farmTypeIconWrapper}>
-            <Icon
-              name={theme === ThemesEnum.dark ? IconNameEnum.QuipuSwapDark : IconNameEnum.QuipuSwap}
-              size={formatSize(16)}
-            />
+            <Icon name={IconNameEnum.QuipuSwap} size={formatSize(16)} />
+          </View>
+        )}
+        {earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING && (
+          <View style={[styles.farmTypeIconWrapper, styles.liquidityBakingIconWrapper]}>
+            <Icon name={IconNameEnum.LiquidityBakingLogo} size={formatSize(16)} />
           </View>
         )}
         {youvesSavingsTypes.includes(earnOpportunityItem.type ?? EarnOpportunityTypeEnum.DEX_TWO) && (

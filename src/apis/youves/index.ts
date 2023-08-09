@@ -14,10 +14,11 @@ import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { tzktUrl } from 'src/utils/linking.util';
+import { fractionToPercentage } from 'src/utils/percentage.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { INITIAL_ARP_VALUE, PERCENTAGE_MULTIPLIER } from './constants';
+import { INITIAL_APR_VALUE } from './constants';
 import { SavingsPoolStorage } from './types';
 import {
   createEngineCache,
@@ -37,11 +38,11 @@ export const getYOUTokenApr$ = (
   const unifiedStaking = createUnifiedStaking();
 
   return from(unifiedStaking.getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)).pipe(
-    map(value => Number(value.multipliedBy(PERCENTAGE_MULTIPLIER))),
+    map(value => fractionToPercentage(value).toNumber()),
     catchError(() => {
       createUnifiedStakingCache.deleteByArgs(undefined);
 
-      return of(INITIAL_ARP_VALUE);
+      return of(INITIAL_APR_VALUE);
     })
   );
 };
@@ -50,11 +51,11 @@ export const getYouvesTokenApr$ = (token: AssetDefinition): Observable<number> =
   const youves = createEngineMemoized(token);
 
   return from(youves.getSavingsPoolV3YearlyInterestRate()).pipe(
-    map(value => Number(value.multipliedBy(PERCENTAGE_MULTIPLIER))),
+    map(value => fractionToPercentage(value).toNumber()),
     catchError(() => {
       createEngineCache.deleteByArgs(token, undefined);
 
-      return of(INITIAL_ARP_VALUE);
+      return of(INITIAL_APR_VALUE);
     })
   );
 };
@@ -99,53 +100,58 @@ const getYOUTokenSavingItem = async (youToUsdExchangeRate: BigNumber): Promise<S
   }
 };
 
+const getSavingsItemByAssetDefinition = async (
+  assetDefinition: AssetDefinition,
+  tokenUsdExchangeRates: ExchangeRateRecord
+): Promise<SavingsItem | undefined> => {
+  try {
+    const { id, token, SAVINGS_V3_POOL_ADDRESS } = assetDefinition;
+    const { decimals: tokenDecimals, contractAddress: tokenAddress, tokenId } = token;
+    const apr = await firstValueFrom(getYouvesTokenApr$(assetDefinition));
+    const savingsContract = await getReadOnlyContract(SAVINGS_V3_POOL_ADDRESS, fallbackTezosToolkit);
+    const savingsStorage = await savingsContract.storage<SavingsPoolStorage>();
+    const tvlInStakedTokenAtoms = mutezToTz(
+      savingsStorage.total_stake.times(savingsStorage.disc_factor),
+      tokenDecimals
+    ).integerValue(BigNumber.ROUND_DOWN);
+    const tvlInStakedToken = mutezToTz(tvlInStakedTokenAtoms, tokenDecimals);
+
+    const stakedToken = toEarnOpportunityToken(token);
+    const tokenExchangeRate = tokenUsdExchangeRates[toTokenSlug(tokenAddress, tokenId)]?.toString() ?? null;
+    const firstActivityTime = await getFirstAccountActivityTime(SAVINGS_V3_POOL_ADDRESS);
+
+    return {
+      id,
+      contractAddress: SAVINGS_V3_POOL_ADDRESS,
+      apr: apr.toString(),
+      depositExchangeRate: tokenExchangeRate,
+      depositTokenUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), tokenAddress),
+      discFactor: savingsStorage.disc_factor.toFixed(),
+      earnExchangeRate: tokenExchangeRate,
+      vestingPeriodSeconds: savingsStorage.max_release_period.toFixed(),
+      stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), SAVINGS_V3_POOL_ADDRESS),
+      stakedToken,
+      tokens: [stakedToken],
+      rewardToken: stakedToken,
+      staked: tvlInStakedTokenAtoms.toFixed(),
+      tvlInUsd: isDefined(tokenExchangeRate) ? tvlInStakedToken.times(tokenExchangeRate).toFixed() : null,
+      tvlInStakedToken: tvlInStakedToken.toFixed(),
+      type: EarnOpportunityTypeEnum.YOUVES_SAVING,
+      firstActivityTime
+    };
+  } catch (error) {
+    console.error(error);
+
+    return undefined;
+  }
+};
+
 export const getYouvesSavingsItems$ = (tokenUsdExchangeRates: ExchangeRateRecord) =>
   forkJoin([
     getYOUTokenSavingItem(new BigNumber(tokenUsdExchangeRates[KNOWN_TOKENS_SLUGS.YOU] ?? 1)),
     ...contracts.mainnet
       .filter(({ SAVINGS_V3_POOL_ADDRESS }) => isString(SAVINGS_V3_POOL_ADDRESS))
-      .map<Promise<SavingsItem | undefined>>(async assetDefinition => {
-        try {
-          const { id, token, SAVINGS_V3_POOL_ADDRESS } = assetDefinition;
-          const { decimals: tokenDecimals, contractAddress: tokenAddress, tokenId } = token;
-          const apr = await firstValueFrom(getYouvesTokenApr$(assetDefinition));
-          const savingsContract = await getReadOnlyContract(SAVINGS_V3_POOL_ADDRESS, fallbackTezosToolkit);
-          const savingsStorage = await savingsContract.storage<SavingsPoolStorage>();
-          const tvlInStakedTokenAtoms = mutezToTz(
-            savingsStorage.total_stake.times(savingsStorage.disc_factor),
-            tokenDecimals
-          ).integerValue(BigNumber.ROUND_DOWN);
-          const tvlInStakedToken = mutezToTz(tvlInStakedTokenAtoms, tokenDecimals);
-
-          const stakedToken = toEarnOpportunityToken(token);
-          const tokenExchangeRate = tokenUsdExchangeRates[toTokenSlug(tokenAddress, tokenId)]?.toString() ?? null;
-          const firstActivityTime = await getFirstAccountActivityTime(SAVINGS_V3_POOL_ADDRESS);
-
-          return {
-            id,
-            contractAddress: SAVINGS_V3_POOL_ADDRESS,
-            apr: apr.toString(),
-            depositExchangeRate: tokenExchangeRate,
-            depositTokenUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), tokenAddress),
-            discFactor: savingsStorage.disc_factor.toFixed(),
-            earnExchangeRate: tokenExchangeRate,
-            vestingPeriodSeconds: savingsStorage.max_release_period.toFixed(),
-            stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), SAVINGS_V3_POOL_ADDRESS),
-            stakedToken,
-            tokens: [stakedToken],
-            rewardToken: stakedToken,
-            staked: tvlInStakedTokenAtoms.toFixed(),
-            tvlInUsd: isDefined(tokenExchangeRate) ? tvlInStakedToken.times(tokenExchangeRate).toFixed() : null,
-            tvlInStakedToken: tvlInStakedToken.toFixed(),
-            type: EarnOpportunityTypeEnum.YOUVES_SAVING,
-            firstActivityTime
-          };
-        } catch (error) {
-          console.error(error);
-
-          return undefined;
-        }
-      })
+      .map(assetDefinition => getSavingsItemByAssetDefinition(assetDefinition, tokenUsdExchangeRates))
   ]).pipe(map(items => items.filter(isDefined)));
 
 export const getUserStake = async (

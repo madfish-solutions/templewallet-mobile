@@ -12,7 +12,7 @@ import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens'
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { useStakesLoadingSelector } from 'src/store/farms/selectors';
+import { useFarmsStakesLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
@@ -68,7 +68,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
   );
   const risksPoints = earnOpportunitiesRisksPoints[itemType ?? EarnOpportunityTypeEnum.DEX_TWO];
 
-  const stakesLoading = useStakesLoadingSelector();
+  const stakesLoading = useFarmsStakesLoadingSelector();
 
   const handleAssetAmountChange = useCallback(() => {
     setFieldTouched('assetAmount', true);

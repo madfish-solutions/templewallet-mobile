@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text } from 'react-native';
 
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
@@ -6,7 +6,7 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { formatSize } from 'src/styles/format-size';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
-import { formatTimespan, SECONDS_IN_DAY } from 'src/utils/date.utils';
+import { formatTimespan, SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE } from 'src/utils/date.utils';
 
 import { useVestingPeriodDisclaimersStyles } from './styles';
 
@@ -14,12 +14,27 @@ interface Props {
   earnOpportunityItem: EarnOpportunity;
 }
 
+const NEGLIGIBLE_VESTING_PERIOD_SECONDS = 15;
+
 export const VestingPeriodDisclaimers: FC<Props> = ({ earnOpportunityItem }) => {
   const vestingPeriodSeconds = Number(earnOpportunityItem.vestingPeriodSeconds);
-  const formattedVestingPeriod = formatTimespan(vestingPeriodSeconds * 1000, {
-    roundingMethod: 'ceil',
-    unit: vestingPeriodSeconds < SECONDS_IN_DAY ? 'hour' : 'day'
-  });
+  const formattedVestingPeriod = useMemo(() => {
+    let unit: 'hour' | 'day' | 'second' | 'minute';
+    if (vestingPeriodSeconds < SECONDS_IN_MINUTE) {
+      unit = 'second';
+    } else if (vestingPeriodSeconds < SECONDS_IN_HOUR) {
+      unit = 'minute';
+    } else if (vestingPeriodSeconds < SECONDS_IN_DAY) {
+      unit = 'hour';
+    } else {
+      unit = 'day';
+    }
+
+    return formatTimespan(vestingPeriodSeconds * 1000, {
+      roundingMethod: 'ceil',
+      unit
+    });
+  }, [vestingPeriodSeconds]);
   const styles = useVestingPeriodDisclaimersStyles();
 
   return (
@@ -35,7 +50,7 @@ export const VestingPeriodDisclaimers: FC<Props> = ({ earnOpportunityItem }) => 
           <Divider size={formatSize(4)} />
         </Disclaimer>
       )}
-      {vestingPeriodSeconds > 0 && vestingPeriodSeconds <= SECONDS_IN_DAY && (
+      {vestingPeriodSeconds > NEGLIGIBLE_VESTING_PERIOD_SECONDS && vestingPeriodSeconds <= SECONDS_IN_DAY && (
         <Disclaimer title="Staking pool with lock period" iconName={IconNameEnum.AlertMonochrome}>
           <Text style={styles.disclaimerDescriptionText}>
             To receive the full reward, you are required to stake your assets for{' '}
@@ -45,7 +60,7 @@ export const VestingPeriodDisclaimers: FC<Props> = ({ earnOpportunityItem }) => 
           <Divider size={formatSize(4)} />
         </Disclaimer>
       )}
-      {vestingPeriodSeconds > 0 && <Divider size={formatSize(16)} />}
+      {vestingPeriodSeconds > NEGLIGIBLE_VESTING_PERIOD_SECONDS && <Divider size={formatSize(16)} />}
     </>
   );
 };

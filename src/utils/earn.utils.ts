@@ -83,7 +83,11 @@ export const convertEarnOpportunityToken = (rawToken: EarnOpportunityToken): Tok
   };
 };
 
-const farmEarnOpportunityTypes = [EarnOpportunityTypeEnum.STABLESWAP, EarnOpportunityTypeEnum.DEX_TWO];
+const farmEarnOpportunityTypes = [
+  EarnOpportunityTypeEnum.STABLESWAP,
+  EarnOpportunityTypeEnum.DEX_TWO,
+  EarnOpportunityTypeEnum.LIQUIDITY_BAKING
+];
 export const isFarm = (earnOpportunity: EarnOpportunity): earnOpportunity is Farm =>
   farmEarnOpportunityTypes.includes(earnOpportunity.type ?? EarnOpportunityTypeEnum.DEX_TWO);
 

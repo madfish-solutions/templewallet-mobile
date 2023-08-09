@@ -7,6 +7,7 @@ import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
 import { FormattedAmountWithLoader } from 'src/components/formatted-amount-with-loader';
+import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EmptyFn } from 'src/config/general';
@@ -63,6 +64,7 @@ export const EarnOpportunityItem: FC<Props> = ({
   const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
   const { stakeTokens, rewardToken } = useEarnOpportunityTokens(item);
   const itemIsFarm = isFarm(item);
+  const isLiquidityBaking = itemType === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
   const allTokensAreStablecoins = useMemo(
     () =>
       item.tokens.every(token =>
@@ -117,15 +119,29 @@ export const EarnOpportunityItem: FC<Props> = ({
           <View>
             <Text style={styles.aprText}>APR: {formattedApr}%</Text>
             <View style={styles.earnSource}>
-              <Icon
-                style={styles.earnSourceIcon}
-                size={formatSize(12)}
-                name={itemIsFarm ? IconNameEnum.QsEarnSource : youvesIconName}
-              />
-              <Text style={styles.attributeTitle}>{itemIsFarm ? 'Quipuswap' : 'Youves'}</Text>
+              {isLiquidityBaking ? (
+                <View style={[styles.earnSourceIcon, styles.liquidityBakingIconWrapper]}>
+                  <Icon size={formatSize(6)} name={IconNameEnum.LiquidityBakingLogo} />
+                </View>
+              ) : (
+                <Icon
+                  style={styles.earnSourceIcon}
+                  size={formatSize(12)}
+                  name={itemIsFarm ? IconNameEnum.QsEarnSource : youvesIconName}
+                />
+              )}
+              <Text style={styles.attributeTitle}>
+                {isLiquidityBaking && 'Liquidity Baking'}
+                {!isLiquidityBaking && itemIsFarm && 'Quipuswap'}
+                {!itemIsFarm && 'Youves'}
+              </Text>
             </View>
           </View>
         </View>
+
+        <HorizontalBorder />
+
+        <Divider size={formatSize(8)} />
 
         <View style={[styles.row, styles.mb16]}>
           <StatsItem
@@ -151,7 +167,7 @@ export const EarnOpportunityItem: FC<Props> = ({
             }
             fiatEquivalent={itemIsFarm ? undefined : depositFiatEquivalent}
           />
-          {depositAmount.gt(0) && (
+          {!depositIsZero && !isLiquidityBaking && (
             <StatsItem
               title="Claimable rewards:"
               value={
@@ -191,7 +207,7 @@ export const EarnOpportunityItem: FC<Props> = ({
               />
             </View>
           )}
-          {!depositIsZero && itemIsFarm && (
+          {!depositIsZero && itemIsFarm && !isLiquidityBaking && (
             <>
               <Divider size={formatSize(8)} />
               <View style={styles.flex}>

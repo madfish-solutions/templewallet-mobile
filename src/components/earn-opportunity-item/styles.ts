@@ -35,7 +35,9 @@ export const useEarnOpportunityItemStyles = createUseStylesMemoized(({ colors, t
   },
   aprText: {
     ...typography.caption13Semibold,
-    color: colors.black
+    color: colors.black,
+    textAlign: 'right',
+    alignSelf: 'flex-end'
   },
   tokensContainer: {
     paddingBottom: formatSize(10)
@@ -95,7 +97,6 @@ export const useButtonPrimaryStyleConfig = createUseStylesConfig(({ typography }
 export const useButtonSecondaryStyleConfig = createUseStylesConfig(({ typography }) => ({
   ...useButtonLargeSecondaryStyleConfig(),
   containerStyle: {
-    flex: 1,
     height: formatSize(38),
     borderRadius: formatSize(10),
     borderWidth: formatSize(2)

@@ -19,7 +19,7 @@ export const useFilteredFarmings = () => {
   const farmsItems = useMemo(() => farms.data.map(({ item }) => item), [farms.data]);
 
   const { depositedOnly, filteredItemsList, setSearchValue, handleSetSortField, handleToggleDepositOnly } =
-    useFilteredEarnOpportunities(selectFarmsSortValueAction, sortField, farmsItems, stakes.data);
+    useFilteredEarnOpportunities(selectFarmsSortValueAction, sortField, farmsItems, stakes);
 
   return {
     sortField,

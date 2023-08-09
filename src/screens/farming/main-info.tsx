@@ -1,4 +1,3 @@
-import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { isEmptyArray } from 'formik';
@@ -17,6 +16,7 @@ import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors'
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
+import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
 
 export const MainInfo: FC = () => {
   const dispatch = useDispatch();
@@ -29,13 +29,13 @@ export const MainInfo: FC = () => {
   const stakesEntriesWithEndedRewards = useMemo(() => {
     const now = Date.now();
 
-    return Object.entries(stakes.data).filter(
+    return Object.entries(stakes).filter(
       ([contractAddress, stakeRecord]) =>
         new BigNumber(stakeRecord?.claimableRewards ?? 0).isGreaterThan(DEFAULT_AMOUNT) &&
         (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now &&
         farms.data.some(farm => farm.item.contractAddress === contractAddress)
     );
-  }, [stakes.data, farms]);
+  }, [stakes, farms]);
 
   const { netApr, totalStakedAmountInFiat } = useUserFarmingStats();
 
@@ -86,10 +86,7 @@ export const MainInfo: FC = () => {
       )
     );
 
-    const opParams: Array<ParamsWithKind> = claimAllRewardParams.map(transferParams => ({
-      ...transferParams,
-      kind: OpKind.TRANSACTION
-    }));
+    const opParams = claimAllRewardParams.map(parseTransferParamsToParamsWithKind).flat();
 
     if (areSomeRewardsClaimable) {
       navigateHarvestFarm(opParams);

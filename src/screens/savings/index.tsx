@@ -1,17 +1,16 @@
-import React, { FC, useCallback, useEffect } from 'react';
+import React, { FC, useCallback } from 'react';
 import { ActivityIndicator, ListRenderItem } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunitySearchPanel } from 'src/components/earn-opportunity-search-panel';
 import { HorizontalBorder } from 'src/components/horizontal-border';
-import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { useFilteredSavings } from 'src/hooks/use-filtered-savings.hook';
+import { useLoadOnEachBlock } from 'src/hooks/use-load-on-each-block.hook';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useStakesLoadingSelector } from 'src/store/farms/selectors';
+import { useFarmsStakesLoadingSelector } from 'src/store/farms/selectors';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import { useSavingsStakesSelector } from 'src/store/savings/selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -25,10 +24,8 @@ import { useSavingsStyles } from './styles';
 const keyExtractor = ({ id, contractAddress }: SavingsItem) => `${id}_${contractAddress}`;
 
 export const Savings: FC = () => {
-  const dispatch = useDispatch();
   const savingsStakes = useSavingsStakesSelector();
-  const stakesLoading = useStakesLoadingSelector();
-  const blockLevel = useBlockLevel();
+  const stakesLoading = useFarmsStakesLoadingSelector();
   const styles = useSavingsStyles();
   const {
     sortField,
@@ -41,6 +38,7 @@ export const Savings: FC = () => {
   } = useFilteredSavings();
 
   usePageAnalytic(ScreensEnum.Savings);
+  useLoadOnEachBlock(stakesLoading, loadAllSavingsAndStakesAction);
 
   const renderItem = useCallback<ListRenderItem<SavingsItem>>(
     ({ item }) => (
@@ -52,10 +50,6 @@ export const Savings: FC = () => {
     ),
     [savingsStakes, stakesLoading]
   );
-
-  useEffect(() => {
-    dispatch(loadAllSavingsAndStakesAction());
-  }, [dispatch, blockLevel]);
 
   return (
     <>
@@ -82,7 +76,11 @@ export const Savings: FC = () => {
             keyExtractor={keyExtractor}
             ListEmptyComponent={
               <DataPlaceholder
-                text={Object.keys(savingsStakes).length === 0 ? 'You have no deposited savings' : 'No records found'}
+                text={
+                  Object.keys(savingsStakes).length === 0 && depositedOnly
+                    ? 'You have no deposited savings'
+                    : 'No records found'
+                }
               />
             }
             renderItem={renderItem}
