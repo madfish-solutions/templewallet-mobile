@@ -1,5 +1,3 @@
-import { StyleSheet } from 'react-native';
-
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -34,9 +32,5 @@ export const useCollectibleIconStyles = createUseStyles(({ colors, typography })
   balanceText: {
     ...typography.numbersRegular11,
     color: basicLightColors.white
-  },
-  loader: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center'
   }
 }));

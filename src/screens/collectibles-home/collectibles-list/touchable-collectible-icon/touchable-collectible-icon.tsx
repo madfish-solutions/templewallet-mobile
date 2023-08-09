@@ -22,6 +22,7 @@ export const TouchableCollectibleIcon: FC<Props> = ({
   collectible,
   size,
   iconSize = CollectibleIconSize.SMALL,
+  audioPlaceholderTheme,
   isShowInfo = false,
   style
 }) => {
@@ -49,7 +50,10 @@ export const TouchableCollectibleIcon: FC<Props> = ({
       <CollectibleIcon
         iconSize={iconSize}
         collectible={collectible}
+        objktArtifact={collectible.artifactUri}
+        audioPlaceholderTheme={audioPlaceholderTheme}
         size={size}
+        mime={collectible.mime}
         isTouchableBlurOverlay={false}
         isShowInfo={isShowInfo}
       />

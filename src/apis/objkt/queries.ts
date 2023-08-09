@@ -78,6 +78,7 @@ export const buildGetCollectiblesByCollectionQuery = (
     token_id
     supply
     symbol
+    mime
     holders {
         holder_address
         quantity
@@ -140,6 +141,7 @@ query MyQuery {
         last_metadata_update
         lowest_ask
         metadata
+        mime
         name
         thumbnail_uri
         token_id
@@ -236,6 +238,9 @@ export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) =>
         }
         metadata
         artifact_uri
+        thumbnail_uri
+        display_uri
+        mime
         name
         tags {
           tag {

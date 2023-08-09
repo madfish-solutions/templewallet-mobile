@@ -49,6 +49,7 @@ export interface CollectibleResponse {
   name: string;
   thumbnail_uri: string;
   supply: number;
+  mime: string;
   symbol: string;
   token_id: string;
   holders: HolderInfo[];
@@ -160,6 +161,7 @@ interface CollectibleDetailsResponse {
   name: string;
   description: string;
   thumbnail_uri: string;
+  display_uri: string | null;
   creators: Creator[];
   fa: Fa;
   metadata: string;

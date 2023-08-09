@@ -7,6 +7,7 @@ import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
 import { SUPPORTED_CONTRACTS } from '../../apis/objkt/constants';
+import { ActivityIndicator } from '../../components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
 import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
@@ -77,7 +78,6 @@ export const CollectibleModal = memo(() => {
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
-
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
 
   const { collectible } = useCurrentCollectibleFullData(slug, isUserOwnerCurrentCollectible);
@@ -238,16 +238,22 @@ export const CollectibleModal = memo(() => {
       <ModalStatusBar />
 
       <View>
-        {isDefined(collectible) && (
+        {isDefined(collectible) && !isLoadingDetails && isDefined(artifactUri) ? (
           <CollectibleIcon
             collectible={collectible}
             mime={mime}
             objktArtifact={artifactUri}
             size={iconSize}
+            paused={false}
+            isModalWindow
             iconSize={CollectibleIconSize.BIG}
             setScrollEnabled={setScrollEnabled}
             blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
           />
+        ) : (
+          <View style={[{ width: iconSize, height: iconSize }, styles.imageFallback]}>
+            <ActivityIndicator />
+          </View>
         )}
 
         <Divider size={formatSize(12)} />
