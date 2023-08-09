@@ -5,6 +5,7 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
 
+import { createLiquidityBakingWithdrawTransfersParams } from './create-liquidity-baking-withdraw-transfers-params';
 import { createStableswapWithdrawTransfersParams } from './create-stableswap-withdraw-transfers-params';
 import { createYouvesWithdrawTransfersParams } from './create-youves-withdraw-transfers-params';
 
@@ -14,11 +15,22 @@ export const createWithdrawOperationParams = async (
   tezos: TezosToolkit,
   accountPkh: string,
   stake: UserStakeValueInterface,
-  percentage: number
+  percentage: number,
+  slippageTolerancePercentage: number
 ) => {
   let transfersParams: TransferParams[];
 
   switch (earnOpportunity.type) {
+    case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
+      transfersParams = await createLiquidityBakingWithdrawTransfersParams(
+        tokenIndex,
+        tezos,
+        accountPkh,
+        stake,
+        slippageTolerancePercentage,
+        percentage
+      );
+      break;
     case EarnOpportunityTypeEnum.STABLESWAP:
       transfersParams = await createStableswapWithdrawTransfersParams(
         earnOpportunity,

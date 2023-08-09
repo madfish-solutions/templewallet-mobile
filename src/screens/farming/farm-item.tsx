@@ -3,7 +3,6 @@ import React, { FC, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { getHarvestAssetsTransferParams } from 'src/apis/quipuswap-staking';
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { EarnOpportunityItem } from 'src/components/earn-opportunity-item';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -12,6 +11,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateAction } from 'src/store/root-state.actions';
+import { Farm } from 'src/types/farm';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { doAfterConfirmation } from 'src/utils/farm.utils';

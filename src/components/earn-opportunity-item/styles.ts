@@ -65,6 +65,19 @@ export const useEarnOpportunityItemStyles = createUseStylesMemoized(({ colors, t
   },
   earnSourceIcon: {
     marginRight: formatSize(2)
+  },
+  liquidityBakingIconWrapper: {
+    width: formatSize(12),
+    height: formatSize(12),
+    backgroundColor: colors.blue,
+    borderWidth: formatSize(0.5),
+    borderColor: colors.lines,
+    borderRadius: formatSize(4),
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  alignEnd: {
+    alignItems: 'flex-end'
   }
 }));
 

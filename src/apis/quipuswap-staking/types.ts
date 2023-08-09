@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { BigMap } from 'src/interfaces/big-map.interface';
+import { BlockInfo } from 'src/interfaces/block-info.interface';
 import { FarmBase } from 'src/interfaces/earn-opportunity/farm-base.interface';
 
 enum FarmVersionEnum {
@@ -28,25 +29,19 @@ export interface StableswapFarm extends QuipuswapFarmBase {
   stableswapPoolVersion: StableswapPoolVersion;
 }
 
-interface OtherFarm extends QuipuswapFarmBase {
+interface DexTwoFarm extends QuipuswapFarmBase {
   type?: EarnOpportunityTypeEnum.DEX_TWO;
 }
 
-export type Farm = StableswapFarm | OtherFarm;
+export type QuipuswapFarm = StableswapFarm | DexTwoFarm;
 
-interface BlockInfo {
-  level: number;
-  hash: string;
-  timestamp: string;
-}
-
-export interface SingleFarmResponse {
-  item: Farm;
+export interface SingleQuipuswapFarmResponse {
+  item: QuipuswapFarm;
   blockInfo: BlockInfo;
 }
 
 export interface FarmsListResponse {
-  list: SingleFarmResponse[];
+  list: SingleQuipuswapFarmResponse[];
 }
 
 export interface StableswapTokenInfo {

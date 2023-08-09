@@ -1,3 +1,4 @@
+import { black } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -24,5 +25,11 @@ export const useDetailsSectionStyles = createUseStylesMemoized(({ colors, typogr
     ...typography.body15Semibold,
     color: colors.black,
     letterSpacing: formatSize(-0.24)
+  },
+  quipuswapIconWrapper: {
+    backgroundColor: black
+  },
+  liquidityBakingIconWrapper: {
+    backgroundColor: colors.blue
   }
 }));

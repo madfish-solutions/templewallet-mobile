@@ -1,3 +1,4 @@
+import { white } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -31,5 +32,8 @@ export const useEarnOpportunityTokensStyles = createUseStyles(({ colors, typogra
   rewardTokenSymbol: {
     ...typography.caption11Regular,
     color: colors.gray1
+  },
+  whiteBg: {
+    backgroundColor: white
   }
 }));

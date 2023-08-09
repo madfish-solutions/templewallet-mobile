@@ -8,6 +8,7 @@ import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HorizontalBorder } from 'src/components/horizontal-border';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useAssetAmount } from 'src/hooks/use-asset-amount.hook';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useInterval } from 'src/hooks/use-interval.hook';
@@ -44,6 +45,7 @@ const COUNTDOWN_TOKENS_BASE = [
   { unit: 'H', seconds: SECONDS_IN_HOUR },
   { unit: 'M', seconds: SECONDS_IN_MINUTE }
 ];
+const ZERO = '0';
 
 export const DetailsCard: FC<DetailsCardProps> = ({
   earnOpportunityItem,
@@ -51,8 +53,9 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   stake = EMPTY_STAKE,
   shouldShowClaimRewardsButton
 }) => {
-  const { depositAmountAtomic = '0', claimableRewards = '0', fullReward = '0', rewardsDueDate, lastStakeId } = stake;
+  const { depositAmountAtomic = ZERO, claimableRewards = ZERO, fullReward = ZERO, rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = earnOpportunityItem;
+  const isLiquidityBaking = earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
   const stakedTokenDecimals = stakedToken.metadata.decimals;
   const aprFormatted = isDefined(apr) ? `${Number(apr).toFixed(2)}%` : '-';
   const [claimPending, setClaimPending] = useState(false);
@@ -171,7 +174,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
         <View style={styles.statsRow}>
           <StatsItem
             loading={loading}
-            title="Your deposit & Rewards:"
+            title={isLiquidityBaking ? 'Your deposit:' : 'Your deposit & Rewards:'}
             value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol={depositTokenSymbol} />}
             usdEquivalent={depositUsdEquivalent}
           />
@@ -185,42 +188,53 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol={depositTokenSymbol} />}
               usdEquivalent={depositUsdEquivalent}
             />
-            <StatsItem
-              loading={loading}
-              title="Claimable rewards:"
-              value={
-                <FormattedAmount amount={claimableRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
-              }
-              usdEquivalent={claimableRewardUsdEquivalent}
-            />
+            {!isLiquidityBaking && (
+              <StatsItem
+                loading={loading}
+                title="Claimable rewards:"
+                value={
+                  <FormattedAmount
+                    amount={claimableRewardAmount}
+                    style={styles.statsValue}
+                    symbol={rewardTokenSymbol}
+                  />
+                }
+                usdEquivalent={claimableRewardUsdEquivalent}
+              />
+            )}
           </View>
 
-          <Divider size={formatSize(12)} />
-
-          <View style={styles.statsRow}>
-            <StatsItem
-              loading={loading}
-              title="Long-term rewards:"
-              value={<FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />}
-              usdEquivalent={fullRewardUsdEquivalent}
-            />
-            <StatsItem
-              loading={loading}
-              title="Fully claimable:"
-              value={
-                <View style={styles.timespanValue}>
-                  {countdownTokens.map(({ unit, value }) => (
-                    <React.Fragment key={unit}>
-                      <Text style={styles.statsValue}>{value}</Text>
-                      <Divider size={formatSize(2)} />
-                      <Text style={styles.timespanUnit}>{unit}</Text>
-                      <Divider size={formatSize(6)} />
-                    </React.Fragment>
-                  ))}
-                </View>
-              }
-            />
-          </View>
+          {!isLiquidityBaking && (
+            <>
+              <Divider size={formatSize(12)} />
+              <View style={styles.statsRow}>
+                <StatsItem
+                  loading={loading}
+                  title="Long-term rewards:"
+                  value={
+                    <FormattedAmount amount={fullRewardAmount} style={styles.statsValue} symbol={rewardTokenSymbol} />
+                  }
+                  usdEquivalent={fullRewardUsdEquivalent}
+                />
+                <StatsItem
+                  loading={loading}
+                  title="Fully claimable:"
+                  value={
+                    <View style={styles.timespanValue}>
+                      {countdownTokens.map(({ unit, value }) => (
+                        <React.Fragment key={unit}>
+                          <Text style={styles.statsValue}>{value}</Text>
+                          <Divider size={formatSize(2)} />
+                          <Text style={styles.timespanUnit}>{unit}</Text>
+                          <Divider size={formatSize(6)} />
+                        </React.Fragment>
+                      ))}
+                    </View>
+                  }
+                />
+              </View>
+            </>
+          )}
         </>
       )}
       {shouldShowClaimRewardsButton && (

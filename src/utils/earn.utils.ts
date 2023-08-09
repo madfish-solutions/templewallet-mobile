@@ -1,7 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
 import { tzktApi } from 'src/api.service';
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
@@ -11,8 +10,9 @@ import { StakesValueInterface } from 'src/interfaces/earn.interface';
 import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { Farm } from 'src/types/farm';
 
-import { calculateTimeDiffInSeconds } from './date.utils';
+import { APPROXIMATE_DAYS_IN_YEAR, calculateTimeDiffInSeconds } from './date.utils';
 
 interface YouvesFarmRewardsStats {
   lastRewards: string; // From farm store
@@ -89,3 +89,6 @@ export const isFarm = (earnOpportunity: EarnOpportunity): earnOpportunity is Far
 
 export const getFirstAccountActivityTime = async (address: string) =>
   tzktApi.get<{ firstActivityTime: string }>(`/accounts/${address}`).then(response => response.data.firstActivityTime);
+
+export const aprToApy = (aprPercentage: number, compoundFrequency = APPROXIMATE_DAYS_IN_YEAR) =>
+  ((1 + Number(aprPercentage) / 100 / compoundFrequency) ** compoundFrequency - 1) * 100;

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -22,7 +23,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
-import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
+import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 import { createStakeOperationParams } from './create-stake-operation-params';
 
 export interface StakeFormValues {
@@ -56,10 +57,15 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const validationSchema = useMemo<SchemaOf<StakeFormValues>>(
     () =>
       objectSchema().shape({
-        assetAmount: createAssetAmountWithMaxValidation(gasToken, EXPECTED_STAKING_GAS_EXPENSE),
+        assetAmount: createAssetAmountWithMaxValidation(
+          gasToken,
+          earnOpportunity?.type === EarnOpportunityTypeEnum.STABLESWAP
+            ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE
+            : undefined
+        ),
         acceptRisks: booleanSchema().oneOf([true], 'Accept risks before depositing').required()
       }),
-    [gasToken]
+    [gasToken, earnOpportunity?.type]
   );
 
   const handleSubmit = useCallback(
@@ -96,8 +102,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         );
         trackEvent('STAKE_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
       } catch (error) {
-        console.error(error);
-        showErrorToastByError(error);
+        showErrorToastByError(error, undefined, true);
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
       }
     },

@@ -9,7 +9,9 @@ import { Loader } from 'src/components/loader/loader';
 import { useStorageMigration } from 'src/hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
+import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { usePushNotifications } from 'src/hooks/use-push-notifications';
 import { useQuickActions } from 'src/hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from 'src/hooks/use-reset-keychain-on-install.hook';
 import { useResetLoading } from 'src/hooks/use-reset-loading.hook';
@@ -74,6 +76,9 @@ export const RootStackScreen = () => {
   useQuickActions();
   useResetLoading();
   useResetKeychainOnInstall();
+
+  useFirebaseApp();
+  usePushNotifications();
 
   const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();

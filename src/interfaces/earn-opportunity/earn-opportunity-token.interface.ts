@@ -4,7 +4,7 @@ interface EarnOpportunityTokenMetadata {
   decimals: number;
   symbol: string;
   name: string;
-  thumbnailUri: string;
+  thumbnailUri?: string;
   categories?: string[];
 }
 

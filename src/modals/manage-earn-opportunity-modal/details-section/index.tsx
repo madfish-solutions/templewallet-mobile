@@ -27,6 +27,7 @@ const youvesSavingsTypes = [EarnOpportunityTypeEnum.YOUVES_SAVING, EarnOpportuni
 export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldShowClaimRewardsButton, loading }) => {
   const theme = useThemeSelector();
   const styles = useDetailsSectionStyles();
+  const isLiquidityBaking = earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
 
   return (
     <>
@@ -46,7 +47,9 @@ export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldSh
         )}
         <Divider size={formatSize(8)} />
         <Text style={styles.detailsTitleText}>
-          {isFarm(earnOpportunityItem) ? 'Quipuswap Farming Details' : 'Youves Savings Details'}
+          {isLiquidityBaking && 'Liquidity Baking Details'}
+          {!isLiquidityBaking && isFarm(earnOpportunityItem) && 'Quipuswap Farming Details'}
+          {!isFarm(earnOpportunityItem) && 'Youves Savings Details'}
         </Text>
       </View>
 

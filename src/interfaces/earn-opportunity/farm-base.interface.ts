@@ -5,5 +5,8 @@ import { EarnOpportunityBase } from './earn-opportunity-base.interface';
 export interface FarmBase extends EarnOpportunityBase {
   dailyDistribution: string;
   dailyDistributionDollarEquivalent: string;
-  type?: EarnOpportunityTypeEnum.STABLESWAP | EarnOpportunityTypeEnum.DEX_TWO;
+  type?:
+    | EarnOpportunityTypeEnum.STABLESWAP
+    | EarnOpportunityTypeEnum.DEX_TWO
+    | EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
 }

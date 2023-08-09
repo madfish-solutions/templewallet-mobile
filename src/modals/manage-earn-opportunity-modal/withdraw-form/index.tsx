@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { FormikProps, FormikProvider } from 'formik';
+import { FormikProvider, FormikProps } from 'formik';
 import { noop } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -27,10 +27,11 @@ import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
-import { PERCENTAGE_OPTIONS } from '../constants';
+import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT, PERCENTAGE_OPTIONS } from '../constants';
 import { DetailsSection } from '../details-section';
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
+import { PERCENTAGE_OPTIONS_TEXTS } from './percentage-options';
 import { useAssetAmountInputStylesConfig, useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
 import { WithdrawFormValues, WithdrawTokenOption } from './use-withdraw-formik';
@@ -40,8 +41,6 @@ interface WithdrawFormProps {
   stake?: UserStakeValueInterface;
   formik: FormikProps<WithdrawFormValues>;
 }
-
-const PERCENTAGE_OPTIONS_TEXTS = PERCENTAGE_OPTIONS.map(value => `${value}%`);
 
 const tokenOptionEqualityFn = (a: WithdrawTokenOption, b?: WithdrawTokenOption) =>
   getTokenSlug(a.token) === (b && getTokenSlug(b.token));
@@ -63,19 +62,21 @@ const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> 
 const tokenOptionTestIDPropertiesFn = (option: WithdrawTokenOption) => ({
   token: option.token.symbol
 });
+const PERCENTAGE_OPTIONS_INDICES = PERCENTAGE_OPTIONS.map((_, index) => index);
 
 export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formik, stake }) => {
   const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
-  const { depositExchangeRate, tokens } = earnOpportunityItem;
+  const { depositExchangeRate, tokens, type: itemType } = earnOpportunityItem;
   const { stakedToken } = useEarnOpportunityTokens(earnOpportunityItem);
   const { setFieldTouched, setFieldValue, values } = formik;
   const { amountOptionIndex, tokenOption } = values;
+  const depositAmountAtomic = useMemo(
+    () => new BigNumber(stake?.depositAmountAtomic ?? 0),
+    [stake?.depositAmountAtomic]
+  );
   const lpAmountAtomic = useMemo(
-    () =>
-      new BigNumber(stake?.depositAmountAtomic ?? 0)
-        .times(PERCENTAGE_OPTIONS[amountOptionIndex])
-        .dividedToIntegerBy(100),
-    [stake?.depositAmountAtomic, amountOptionIndex]
+    () => depositAmountAtomic.times(PERCENTAGE_OPTIONS[amountOptionIndex]).dividedToIntegerBy(100),
+    [depositAmountAtomic, amountOptionIndex]
   );
   const tokensOptions = useTokensOptions(earnOpportunityItem, lpAmountAtomic);
   const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
@@ -121,9 +122,22 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
   }, [setFieldValue, tokensOptions, tokenOption]);
 
   const disabledPercentageOptionsIndices = useMemo(
-    () => (earnOpportunityItem.type === EarnOpportunityTypeEnum.STABLESWAP ? [0, 1, 2] : []),
-    [earnOpportunityItem.type]
+    () =>
+      itemType === EarnOpportunityTypeEnum.STABLESWAP || depositAmountAtomic.lt(MINIMAL_DIVISIBLE_ATOMIC_AMOUNT)
+        ? [0, 1, 2]
+        : [],
+    [itemType, depositAmountAtomic]
   );
+
+  useEffect(() => {
+    if (disabledPercentageOptionsIndices.includes(amountOptionIndex)) {
+      setFieldValue(
+        'amountOptionIndex',
+        PERCENTAGE_OPTIONS_INDICES.find(index => !disabledPercentageOptionsIndices.includes(index)) ??
+          PERCENTAGE_OPTIONS.length - 1
+      );
+    }
+  }, [disabledPercentageOptionsIndices, amountOptionIndex, setFieldValue]);
 
   const lpToken = useMemo<TokenInterface>(
     () => ({

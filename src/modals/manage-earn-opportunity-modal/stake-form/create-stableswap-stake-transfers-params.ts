@@ -9,7 +9,6 @@ import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metad
 import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
@@ -40,9 +39,9 @@ export const createStableswapStakeTransfersParams = async (
     ];
   }
 
-  const tokenIndex = farm.tokens
-    .map(convertEarnOpportunityToken)
-    .findIndex(farmToken => toTokenSlug(farmToken.address, farmToken.id) === assetSlug);
+  const tokenIndex = farm.tokens.findIndex(
+    farmToken => toTokenSlug(farmToken.contractAddress, farmToken.fa2TokenId) === assetSlug
+  );
   const michelsonAmounts = new MichelsonMap<number, BigNumber>();
   michelsonAmounts.set(tokenIndex, amount);
 

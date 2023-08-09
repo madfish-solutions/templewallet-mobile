@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 
-interface LiquidityBakingStorage {
+export interface LiquidityBakingStorage {
   tokenPool: BigNumber;
   xtzPool: BigNumber;
   lqtTotal: BigNumber;

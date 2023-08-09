@@ -46,7 +46,16 @@ export const EarnOpportunityItem: FC<Props> = ({
   harvestRewards = noop,
   stakeIsLoading
 }) => {
-  const { apr, stakedToken, depositExchangeRate, earnExchangeRate, type: itemType, vestingPeriodSeconds } = item;
+  const {
+    apr,
+    stakedToken,
+    depositExchangeRate,
+    earnExchangeRate,
+    type: itemType,
+    vestingPeriodSeconds,
+    id,
+    contractAddress
+  } = item;
   const colors = useColors();
   const theme = useThemeSelector();
   const styles = useEarnOpportunityItemStyles();
@@ -79,6 +88,14 @@ export const EarnOpportunityItem: FC<Props> = ({
   );
 
   const renderStatsLoader = useCallback(() => <Text style={styles.attributeValue}>---</Text>, [styles]);
+
+  const actionButtonsTestIDProperties = useMemo(
+    () => ({
+      id,
+      contractAddress
+    }),
+    [id, contractAddress]
+  );
 
   return (
     <View style={[styles.root, styles.mb16]}>
@@ -170,6 +187,7 @@ export const EarnOpportunityItem: FC<Props> = ({
                 onPress={navigateToOpportunity}
                 styleConfig={buttonSecondaryStylesConfig}
                 testID={EarnOpportunityItemSelectors.ManageButton}
+                testIDProperties={actionButtonsTestIDProperties}
               />
             </View>
           )}
@@ -183,6 +201,7 @@ export const EarnOpportunityItem: FC<Props> = ({
                   onPress={harvestRewards}
                   styleConfig={buttonPrimaryStylesConfig}
                   testID={EarnOpportunityItemSelectors.ClaimRewardsButton}
+                  testIDProperties={actionButtonsTestIDProperties}
                 />
               </View>
             </>
@@ -194,6 +213,7 @@ export const EarnOpportunityItem: FC<Props> = ({
               onPress={navigateToOpportunity}
               styleConfig={buttonPrimaryStylesConfig}
               testID={EarnOpportunityItemSelectors.StartFarmingButton}
+              testIDProperties={actionButtonsTestIDProperties}
             />
           )}
         </View>

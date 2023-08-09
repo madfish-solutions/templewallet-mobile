@@ -77,12 +77,11 @@ export const ManageEarnOpportunityModal: FC = () => {
     getFieldMeta: getStakeFieldMeta
   } = stakeFormik;
   const stakeFormErrorsVisible = stakeFormFields.some(fieldName => hasError(getStakeFieldMeta(fieldName)));
-  const withdrawFormik = useWithdrawFormik(earnOpportunityItem, stake);
-  const {
-    errors: withdrawFormErrors,
-    submitForm: submitWithdrawForm,
-    isSubmitting: withdrawFormSubmitting
-  } = withdrawFormik;
+  const { formik: withdrawFormik, isSubmitting: withdrawFormSubmitting } = useWithdrawFormik(
+    earnOpportunityItem,
+    stake
+  );
+  const { errors: withdrawFormErrors, submitForm: submitWithdrawForm } = withdrawFormik;
 
   useEffect(() => {
     if (!isDefined(earnOpportunityItem) || prevBlockLevelRef.current !== blockLevel) {

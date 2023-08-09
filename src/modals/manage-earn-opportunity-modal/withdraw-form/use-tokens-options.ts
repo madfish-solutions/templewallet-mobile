@@ -1,13 +1,15 @@
 import { BigNumber } from 'bignumber.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { catchError, from, of } from 'rxjs';
 
-import { estimateDivestOneCoinOutputs } from 'src/apis/quipuswap-staking';
+import { calculateUnstakeParams as calculateLbUnstakeParams } from 'src/apis/liquidity-baking';
+import { estimateDivestOneCoinOutputs as estimateStableswapDivestOutputs } from 'src/apis/quipuswap-staking';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
-import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WithdrawTokenOption } from './use-withdraw-formik';
@@ -16,26 +18,46 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunityItem);
   const tezos = useReadOnlyTezosToolkit();
   const [atomicAmounts, setAtomicAmounts] = useState<(BigNumber | null | undefined)[]>();
+  const prevLpAmountRef = useRef(lpAmount);
+  const slippageTolerance = useSlippageSelector();
 
   useEffect(() => {
+    const prevLpAmount = prevLpAmountRef.current;
+    prevLpAmountRef.current = lpAmount;
+    const emptyAmounts = earnOpportunityItem.tokens.map(() => undefined);
+
     if (!isDefined(lpAmount) || lpAmount.isZero()) {
-      setAtomicAmounts(earnOpportunityItem.tokens.map(() => undefined));
+      setAtomicAmounts(emptyAmounts);
 
       return;
     }
 
-    const observable = isFarm(earnOpportunityItem)
-      ? from(
-          estimateDivestOneCoinOutputs(
-            tezos,
-            earnOpportunityItem.stakedToken.contractAddress,
-            earnOpportunityItem.tokens.map((_, index) => index),
-            lpAmount,
-            earnOpportunityItem.stakedToken.fa2TokenId ?? 0
-          )
-        )
-      : of([lpAmount]);
-    const subscription = observable
+    if (!lpAmount.isEqualTo(prevLpAmount ?? 0)) {
+      setAtomicAmounts(emptyAmounts);
+    }
+
+    let outputPromise: Promise<Array<BigNumber | nullish>>;
+    const tokensIndexes = earnOpportunityItem.tokens.map((_, index) => index);
+
+    switch (earnOpportunityItem.type) {
+      case EarnOpportunityTypeEnum.STABLESWAP:
+        outputPromise = estimateStableswapDivestOutputs(
+          tezos,
+          earnOpportunityItem.stakedToken.contractAddress,
+          tokensIndexes,
+          lpAmount,
+          earnOpportunityItem.stakedToken.fa2TokenId ?? 0
+        );
+        break;
+      case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
+        outputPromise = calculateLbUnstakeParams(tokensIndexes, lpAmount, slippageTolerance).then(params =>
+          params.map(({ outputAfterFeeAtomic }) => outputAfterFeeAtomic)
+        );
+        break;
+      default:
+        outputPromise = Promise.resolve([lpAmount]);
+    }
+    const subscription = from(outputPromise)
       .pipe(
         catchError(error => {
           showErrorToastByError(error);
@@ -46,7 +68,7 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
       .subscribe(value => setAtomicAmounts(value));
 
     return () => subscription.unsubscribe();
-  }, [earnOpportunityItem, lpAmount, tezos]);
+  }, [earnOpportunityItem, lpAmount, tezos, slippageTolerance]);
 
   const options = useMemo(() => {
     const shouldFilterOutFailingOptions = isDefined(atomicAmounts) && atomicAmounts.some(amount => amount !== null);

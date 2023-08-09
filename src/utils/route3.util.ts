@@ -45,7 +45,7 @@ const fetchRoute3TraditionalSwapParams = ({
     .then(res => res.text())
     .then(res => parser(res));
 
-const fetchRoute3LiquidityBakingParams = ({
+export const fetchRoute3LiquidityBakingParams = ({
   fromSymbol,
   toSymbol,
   amount,

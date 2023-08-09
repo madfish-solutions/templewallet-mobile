@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { QuestionAccordion } from 'src/components/question-accordion';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
@@ -19,11 +20,11 @@ import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { EXPECTED_STAKING_GAS_EXPENSE } from '../constants';
+import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 import { DetailsSection } from '../details-section';
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
-import { quipuswapFarmsRisksPoints, youvesSavingsRisksPoints } from './constants';
+import { earnOpportunitiesRisksPoints } from './constants';
 import { useAssetAmountInputStylesConfig, useStakeFormStyles } from './styles';
 import { StakeFormValues } from './use-stake-formik';
 
@@ -38,6 +39,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
   const itemIsFarm = isFarm(earnOpportunityItem);
   const { setFieldTouched, setFieldValue, values } = formik;
   const { asset } = values.assetAmount;
+  const itemType = earnOpportunityItem.type;
 
   const styles = useStakeFormStyles();
   const { stakeTokens, stakedToken } = useEarnOpportunityTokens(earnOpportunityItem);
@@ -64,7 +66,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
     true,
     leadingTokens
   );
-  const risksPoints = itemIsFarm ? quipuswapFarmsRisksPoints : youvesSavingsRisksPoints;
+  const risksPoints = earnOpportunitiesRisksPoints[itemType ?? EarnOpportunityTypeEnum.DEX_TWO];
 
   const stakesLoading = useStakesLoadingSelector();
 
@@ -103,7 +105,9 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
         <FormAssetAmountInput
           name="assetAmount"
           label="Amount"
-          expectedGasExpense={EXPECTED_STAKING_GAS_EXPENSE}
+          expectedGasExpense={
+            itemType === EarnOpportunityTypeEnum.STABLESWAP ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE : undefined
+          }
           isSearchable
           isSingleAsset={assetsList.length === 1}
           maxButton
@@ -117,7 +121,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
         <DetailsSection
           earnOpportunityItem={earnOpportunityItem}
           stake={stake}
-          shouldShowClaimRewardsButton={itemIsFarm}
+          shouldShowClaimRewardsButton={itemType !== EarnOpportunityTypeEnum.LIQUIDITY_BAKING && itemIsFarm}
           loading={stakesLoading && !isDefined(stake)}
         />
         <Divider size={formatSize(16)} />

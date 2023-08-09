@@ -1,8 +1,9 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { Farm, SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { Farm } from 'src/types/farm';
+import { SingleFarmResponse } from 'src/types/single-farm-response';
 
 import { createActions } from '../create-actions';
 

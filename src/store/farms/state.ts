@@ -1,6 +1,6 @@
-import { SingleFarmResponse } from 'src/apis/quipuswap-staking/types';
 import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { SingleFarmResponse } from 'src/types/single-farm-response';
 
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';

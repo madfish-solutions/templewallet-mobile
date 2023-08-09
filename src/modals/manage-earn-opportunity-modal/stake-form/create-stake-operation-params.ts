@@ -7,6 +7,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
 
+import { createLiquidityBakingStakeTransfersParams } from './create-liquidity-baking-stake-transfers-params';
 import { createStableswapStakeTransfersParams } from './create-stableswap-stake-transfers-params';
 import { createYouvesStakeTransfersParams } from './create-youves-stake-transfers-params';
 
@@ -23,6 +24,15 @@ export const createStakeOperationParams = async (
   let transfersParams: TransferParams[];
 
   switch (earnOpportunity.type) {
+    case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
+      transfersParams = await createLiquidityBakingStakeTransfersParams(
+        amount,
+        asset,
+        tezos,
+        accountPkh,
+        slippageTolerancePercentage
+      );
+      break;
     case EarnOpportunityTypeEnum.STABLESWAP:
       transfersParams = await createStableswapStakeTransfersParams(
         earnOpportunity,
