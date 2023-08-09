@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { ListRenderItemInfo, StyleProp, Text, ViewStyle, useWindowDimensions } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
