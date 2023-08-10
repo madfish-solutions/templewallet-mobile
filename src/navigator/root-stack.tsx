@@ -18,7 +18,6 @@ import { useResetLoading } from 'src/hooks/use-reset-loading.hook';
 import { useTokensMetadataFixtures } from 'src/hooks/use-tokens-metadata-fixtures';
 import { useWhitelist } from 'src/hooks/use-whitelist.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
-import { AddLiquidityModal } from 'src/modals/add-liquidity-modal/add-liquidity-modal';
 import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
 import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal/add-contact-modal';
@@ -31,7 +30,6 @@ import { InAppBrowser } from 'src/modals/in-app-browser';
 import { ManageFarmingPoolModal } from 'src/modals/manage-farming-pool-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
-import { RemoveLiquidityModal } from 'src/modals/remove-liquidity-modal/remove-liquidity-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
@@ -159,16 +157,6 @@ export const RootStackScreen = () => {
               name={ModalsEnum.CollectibleModal}
               component={CollectibleModal}
               options={useModalOptions('NFT Name')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.RemoveLiquidity}
-              component={RemoveLiquidityModal}
-              options={useModalOptions('Remove Liquidity')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.AddLiquidity}
-              component={AddLiquidityModal}
-              options={useModalOptions('Add Liquidity')}
             />
             <RootStack.Screen
               name={ModalsEnum.AddCustomRpc}

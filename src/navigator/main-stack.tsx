@@ -41,7 +41,6 @@ import { DelegationScreen } from 'src/screens/delegation-screen/delegation-scree
 import { Earn } from 'src/screens/earn';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
 import { ImportAccount } from 'src/screens/import-account/import-account';
-import { LiquidityBakingDapp } from 'src/screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
 import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
@@ -239,11 +238,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.DApps}
                 component={DApps}
                 options={{ animationEnabled: false, headerShown: false }}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.LiquidityBakingDapp}
-                component={LiquidityBakingDapp}
-                options={generateScreenOptions(<HeaderTitle title={'Liquidity Baking'} />)}
               />
 
               {/** Swap stack **/}

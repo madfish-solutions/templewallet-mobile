@@ -18,8 +18,6 @@ export enum ModalsEnum {
   CollectibleModal = 'CollectibleModal',
   AddCustomRpc = 'AddCustomRpc',
   EditCustomRpc = 'EditCustomRpc',
-  RemoveLiquidity = 'RemoveLiquidity',
-  AddLiquidity = 'AddLiquidity',
   AddContact = 'AddContact',
   EditContact = 'EditContact',
   ManageFarmingPool = 'ManageFarmingPool',
@@ -41,16 +39,6 @@ export type ModalsParamList = {
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.EditCustomRpc]: { url: string };
-  [ModalsEnum.RemoveLiquidity]: {
-    lpContractAddress: string;
-    aToken: TokenInterface;
-    bToken: TokenInterface;
-  };
-  [ModalsEnum.AddLiquidity]: {
-    lpContractAddress: string;
-    aToken: TokenInterface;
-    bToken: TokenInterface;
-  };
   [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
   [ModalsEnum.EditContact]: { contact: AccountBaseInterface; index: number };
   [ModalsEnum.ManageFarmingPool]: Pick<Farm, 'id' | 'contractAddress'>;
