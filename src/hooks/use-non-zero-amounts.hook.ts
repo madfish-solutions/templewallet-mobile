@@ -24,8 +24,6 @@ interface ActivityNonZeroAmounts {
   dollarSums: Array<BigNumber>;
 }
 
-const DEFAULT_EXCHANGE_RATE = 1;
-
 export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): ActivityNonZeroAmounts => {
   const dispatch = useDispatch();
   const getTokenMetadata = useTokenMetadataGetter();
@@ -48,8 +46,8 @@ export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): ActivityNonZ
       const parsedAmount = mutezToTz(atomicAmount, decimals);
       const isPositive = parsedAmount.isPositive();
 
-      if (isDefined(exchangeRate)) {
-        const summand = parsedAmount.multipliedBy(exchangeRate).multipliedBy(fiatToUsdRate ?? DEFAULT_EXCHANGE_RATE);
+      if (isDefined(exchangeRate) && isDefined(fiatToUsdRate)) {
+        const summand = parsedAmount.multipliedBy(exchangeRate).multipliedBy(fiatToUsdRate);
         if (isPositive) {
           positiveAmountSum = positiveAmountSum.plus(summand);
         } else {

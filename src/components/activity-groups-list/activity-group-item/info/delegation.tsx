@@ -11,7 +11,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { useActivityCommonStyles, useActivityGroupItemStyles } from '../activity-group-item.styles';
 
-export const DelegationInfo: FC<{ address: string | undefined }> = ({ address = '' }) => {
+export const Delegation: FC<{ address: string | undefined }> = ({ address = '' }) => {
   const styles = useActivityGroupItemStyles();
   const commonStyles = useActivityCommonStyles();
 

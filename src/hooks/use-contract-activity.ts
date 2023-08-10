@@ -31,13 +31,12 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   const knownBakers = useMemo<Array<TzktMemberInterface>>(
     () =>
-      [
-        KNOWN_BAKERS,
+      KNOWN_BAKERS.concat(
         bakers.map(({ address, name }) => ({
           address,
           alias: name
         }))
-      ].flat(),
+      ),
     [bakers]
   );
 
@@ -78,7 +77,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   const handleUpdate = async () => {
     if (activities.length > 0 && !isAllLoaded) {
-      const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
+      const lastActivityGroup = activities[activities.length - 1];
 
       if (lastActivityGroup.length > 0) {
         const lastItem = lastActivityGroup[lastActivityGroup.length - 1];

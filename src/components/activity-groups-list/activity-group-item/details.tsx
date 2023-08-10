@@ -9,7 +9,7 @@ import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics'
 import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
 import { formatSize } from 'src/styles/format-size';
 
-import { ActivityDetailsCard } from './activity-details-card/activity-details-card';
+import { ActivityDetailsCard } from './details-card/details-card';
 import { useActivityCommonStyles, useActivityDetailsStyles } from './activity-group-item.styles';
 import { ActivityStatusBadge } from './activity-status-badge/activity-status-badge';
 import { ActivityTime } from './activity-time/activity-time';
@@ -20,7 +20,7 @@ interface Props {
   nonZeroAmounts: NonZeroAmounts;
 }
 
-export const ActivityDetails: FC<Props> = ({ activity, nonZeroAmounts }) => {
+export const Details: FC<Props> = ({ activity, nonZeroAmounts }) => {
   const detailsStyles = useActivityDetailsStyles();
   const commonStyles = useActivityCommonStyles();
 

@@ -19,7 +19,12 @@ const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
   getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
 
 // LIQUIDITY BAKING ACTIVITY
-const getContractOperations = <T>(selectedRpcUrl: string, account: string, contractAddress: string) =>
+const getContractOperations = <T>(
+  selectedRpcUrl: string,
+  account: string,
+  contractAddress: string,
+  lastTimestamp?: string
+) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<T>>(`accounts/${contractAddress}/operations`, {
       params: {
@@ -27,12 +32,19 @@ const getContractOperations = <T>(selectedRpcUrl: string, account: string, contr
         limit: OPERATION_LIMIT,
         sort: '1',
         initiator: account,
-        entrypoint: 'mintOrBurn'
+        entrypoint: 'mintOrBurn',
+        ...(isDefined(lastTimestamp) ? { 'timestamp.lt': lastTimestamp } : undefined)
       }
     })
     .then(x => x.data);
 
-const getTokenFa2Operations = (selectedRpcUrl: string, account: string, contractAddress: string, tokenId = '0') =>
+const getTokenFa2Operations = (
+  selectedRpcUrl: string,
+  account: string,
+  contractAddress: string,
+  tokenId = '0',
+  lastTimestamp?: string
+) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<Fa2TransferInterface>>('operations/transactions', {
       params: {
@@ -40,12 +52,18 @@ const getTokenFa2Operations = (selectedRpcUrl: string, account: string, contract
         entrypoint: 'transfer',
         'sort.desc': 'level',
         target: contractAddress,
-        'parameter.[*].in': `[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]`
+        'parameter.[*].in': `[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]`,
+        ...(isDefined(lastTimestamp) ? { 'timestamp.lt': lastTimestamp } : undefined)
       }
     })
     .then(x => x.data);
 
-const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string) =>
+const getTokenFa12Operations = (
+  selectedRpcUrl: string,
+  account: string,
+  contractAddress: string,
+  lastTimestamp?: string
+) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<Fa12TransferInterface>>('operations/transactions', {
       params: {
@@ -53,7 +71,8 @@ const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contrac
         entrypoint: 'transfer',
         'sort.desc': 'level',
         target: contractAddress,
-        'parameter.in': `[{"from":"${account}"},{"to":"${account}"}]`
+        'parameter.in': `[{"from":"${account}"},{"to":"${account}"}]`,
+        ...(isDefined(lastTimestamp) ? { 'timestamp.lt': lastTimestamp } : undefined)
       }
     })
     .then(x => x.data);
@@ -155,7 +174,8 @@ const loadOperations = async (
       return getContractOperations<LiquidityBakingMintOrBurnInterface>(
         selectedRpcUrl,
         selectedAccount.publicKeyHash,
-        contractAddress
+        contractAddress,
+        lastItem?.timestamp
       );
     }
 
@@ -164,11 +184,22 @@ const loadOperations = async (
     const tokenType = getTokenType(contract);
 
     if (tokenType === TokenTypeEnum.FA_1_2) {
-      return getTokenFa12Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress);
+      return getTokenFa12Operations(
+        selectedRpcUrl,
+        selectedAccount.publicKeyHash,
+        contractAddress,
+        lastItem?.timestamp
+      );
     }
 
     if (tokenType === TokenTypeEnum.FA_2) {
-      return getTokenFa2Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress, tokenId);
+      return getTokenFa2Operations(
+        selectedRpcUrl,
+        selectedAccount.publicKeyHash,
+        contractAddress,
+        tokenId,
+        lastItem?.timestamp
+      );
     }
   }
 
