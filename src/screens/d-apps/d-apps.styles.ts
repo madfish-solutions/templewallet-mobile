@@ -33,8 +33,11 @@ export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
     marginTop: formatSize(12)
   },
   flatListContentContainer: {
-    marginHorizontal: formatSize(16),
+    paddingHorizontal: formatSize(16),
     paddingBottom: formatSize(16)
+  },
+  flatListColumnWrapper: {
+    justifyContent: 'space-between'
   },
   marginRight: {
     marginRight: formatSize(16)
