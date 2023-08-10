@@ -7,7 +7,7 @@ import { DelegateDetails } from './delegate';
 import { ReceiveTokensDetails } from './receive-tokens';
 import { SendTokensDetails } from './send-tokens';
 
-export const ActivityDetailsCard: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmounts }> = ({
+export const DetailsCard: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmounts }> = ({
   activity,
   nonZeroAmounts
 }) => {
