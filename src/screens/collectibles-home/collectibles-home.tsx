@@ -218,10 +218,6 @@ export const CollectiblesHome = () => {
           {collections.length > 0 && (
             <View style={styles.collectionsHeader}>
               <Text style={styles.collectionsLabel}>Created collections</Text>
-
-              <TouchableOpacity>
-                <Text style={styles.buttonDisabled}>See All</Text>
-              </TouchableOpacity>
             </View>
           )}
 
