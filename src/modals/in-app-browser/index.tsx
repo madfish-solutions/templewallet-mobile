@@ -50,7 +50,7 @@ export const InAppBrowser: FC = () => {
     return () => void backListener.remove();
   }, []);
 
-  // PRT (pull-to-refresh)
+  // PTR (pull-to-refresh)
   const [ptrEnabled, setPtrEnabled] = useState(true);
 
   return (

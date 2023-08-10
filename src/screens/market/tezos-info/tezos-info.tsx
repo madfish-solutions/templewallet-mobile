@@ -66,12 +66,12 @@ export const TezosInfo = () => {
         <View style={[styles.commonView, styles.displayCenter]}>
           <View style={styles.percentage}>
             <Text style={styles.subtitle11}>24H</Text>
-            <TruncatedText style={{ ...styles.subtitle11, color: priceChange24hColor }}>{priceChange24h}</TruncatedText>
+            <TruncatedText style={[styles.subtitle11, { color: priceChange24hColor }]}>{priceChange24h}</TruncatedText>
           </View>
 
           <View>
             <Text style={styles.subtitle11}>7D</Text>
-            <TruncatedText style={{ ...styles.subtitle11, color: priceChange7dColor }}>{priceChange7d}</TruncatedText>
+            <TruncatedText style={[styles.subtitle11, { color: priceChange7dColor }]}>{priceChange7d}</TruncatedText>
           </View>
         </View>
       </View>
