@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, ListRenderItem, Text, View } from 'react-native';
+import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -33,6 +33,8 @@ const keyExtractor = (item: CustomDAppInfo) => item.name;
 const getItemLayout = createGetItemLayout<CustomDAppInfo>(formatSize(7));
 const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
+const gridSize = formatSize(48);
+
 export const DApps = () => {
   const dispatch = useDispatch();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
@@ -54,6 +56,7 @@ export const DApps = () => {
   const dAppsList = useDAppsListSelector();
 
   const [searchValue, setSearchValue] = useState<string>();
+  const [layoutWidth, setLayoutWidth] = useState(1);
 
   usePageAnalytic(ScreensEnum.DApps);
 
@@ -75,49 +78,51 @@ export const DApps = () => {
     return dAppsList;
   }, [searchValue, dAppsList]);
 
+  const handleLayout = useCallback(({ nativeEvent }: LayoutChangeEvent) => {
+    setLayoutWidth(nativeEvent.layout.width || 1);
+  }, []);
+
+  const elementWidth = useMemo(() => (layoutWidth - gridSize) / 2, [layoutWidth]);
+
   const renderItem: ListRenderItem<CustomDAppInfo> = useCallback(
-    item => (
-      <OthersDApp
-        item={item}
-        style={[item.index % 2 === 0 && styles.marginRight]}
-        testID={DAppsSelectors.othersDAppsItem}
-      />
-    ),
-    []
+    item => <OthersDApp item={item} elementWidth={elementWidth} testID={DAppsSelectors.othersDAppsItem} />,
+    [elementWidth]
   );
 
   return (
     <>
-      <InsetSubstitute type="top" />
+      <View onLayout={handleLayout}>
+        <InsetSubstitute type="top" />
 
-      <PromotionCarousel />
+        <PromotionCarousel />
 
-      <SearchInput
-        placeholder="Search Dapp"
-        onChangeText={setSearchValue}
-        style={styles.searchInput}
-        testID={DAppsSelectors.searchDAppsInput}
-      />
+        <SearchInput
+          placeholder="Search Dapp"
+          onChangeText={setSearchValue}
+          style={styles.searchInput}
+          testID={DAppsSelectors.searchDAppsInput}
+        />
 
-      {!isString(searchValue) && (
+        {!isString(searchValue) && (
+          <View style={styles.wrapper}>
+            <Text style={styles.text}>Integrated</Text>
+
+            <IntegratedElement
+              screenName={ScreensEnum.DApps}
+              iconName={IconNameEnum.TextToNft}
+              title="Text to NFT"
+              description="Turn text into AI generated NFT"
+              navigateFn={() => navigate(ScreensEnum.DApps)}
+              testID={DAppsSelectors.integratedDAppButton}
+            />
+          </View>
+        )}
+
         <View style={styles.wrapper}>
-          <Text style={styles.text}>Integrated</Text>
+          <Text style={styles.text}>Others</Text>
 
-          <IntegratedElement
-            screenName={ScreensEnum.DApps}
-            iconName={IconNameEnum.TextToNft}
-            title="Text to NFT"
-            description="Turn text into AI generated NFT"
-            navigateFn={() => navigate(ScreensEnum.DApps)}
-            testID={DAppsSelectors.integratedDAppButton}
-          />
+          <Disclaimer texts={texts} />
         </View>
-      )}
-
-      <View style={styles.wrapper}>
-        <Text style={styles.text}>Others</Text>
-
-        <Disclaimer texts={texts} />
       </View>
 
       <FlatList
@@ -128,6 +133,7 @@ export const DApps = () => {
         numColumns={2}
         style={styles.flatList}
         contentContainerStyle={styles.flatListContentContainer}
+        columnWrapperStyle={styles.flatListColumnWrapper}
         ListEmptyComponent={ListEmptyComponent}
       />
     </>

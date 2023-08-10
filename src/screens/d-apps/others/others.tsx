@@ -1,5 +1,5 @@
-import React, { FC, useMemo, useState } from 'react';
-import { ListRenderItemInfo, StyleProp, Text, ViewStyle, useWindowDimensions } from 'react-native';
+import React, { FC, useState } from 'react';
+import { ListRenderItemInfo, StyleProp, Text, ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
@@ -16,25 +16,21 @@ import { useOthersDAppStyles } from './others.styles';
 
 interface Props extends TestIdProps {
   item: ListRenderItemInfo<CustomDAppInfo>;
+  elementWidth: number;
   style?: StyleProp<ViewStyle>;
 }
 
-const gridSize = 32;
-
-export const OthersDApp: FC<Props> = ({ item, style, testID }) => {
+export const OthersDApp: FC<Props> = ({ item, elementWidth, style, testID }) => {
   const { name, logo, slug, dappUrl } = item.item;
   const styles = useOthersDAppStyles();
   const [imageLoadError, setImageLoadError] = useState(false);
-  const { width } = useWindowDimensions();
-
-  const elementWidth = useMemo(() => width / 2 - gridSize, [width]);
 
   return (
     <TouchableWithAnalytics
       testID={testID}
       testIDProperties={{ dapp: slug }}
       onPress={() => openUrl(dappUrl)}
-      style={[styles.root, style, { width: formatSize(elementWidth) }]}
+      style={[styles.root, style, { width: elementWidth }]}
     >
       {imageLoadError ? (
         <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />
