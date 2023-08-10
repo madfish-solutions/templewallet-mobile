@@ -22,6 +22,9 @@ export const collectiblesReducers = createReducer<CollectiblesState>(collectible
     state.details.isLoading = false;
   });
 
+  builder.addCase(loadCollectibleDetailsActions.submit, state => {
+    state.details.isLoading = true;
+  });
   builder.addCase(loadCollectibleDetailsActions.success, (state, { payload }) => ({
     ...state,
     details: createEntity({
@@ -29,4 +32,7 @@ export const collectiblesReducers = createReducer<CollectiblesState>(collectible
       ...payload
     })
   }));
+  builder.addCase(loadCollectibleDetailsActions.fail, state => {
+    state.details.isLoading = false;
+  });
 });

@@ -6,21 +6,35 @@ import { isString } from 'src/utils/is-string';
 import { isNonZeroBalance } from 'src/utils/tezos.util';
 import { applySortByDollarValueDecrease, isAssetSearched } from 'src/utils/token-metadata.utils';
 
-export const useFilteredAssetsList = (
-  assetsList: TokenInterface[],
+interface useFiltredAssetsListTypes {
+  <T extends TokenInterface>(
+    assetList: T[],
+    filterZeroBalances?: boolean,
+    sortByDollarValueDecrease?: boolean,
+    leadingAsset?: T,
+    leadingAssetIsFilterable?: boolean
+  ): {
+    filteredAssetsList: T[];
+    searchValue: string | undefined;
+    setSearchValue: React.Dispatch<React.SetStateAction<string | undefined>>;
+  };
+}
+
+export const useFilteredAssetsList: useFiltredAssetsListTypes = (
+  assetsList,
   filterZeroBalances = false,
   sortByDollarValueDecrease = false,
-  leadingAsset?: TokenInterface,
+  leadingAsset?,
   leadingAssetIsFilterable = true
 ) => {
-  const sourceArray = useMemo<TokenInterface[]>(
+  const sourceArray = useMemo(
     () => (filterZeroBalances ? assetsList.filter(asset => isNonZeroBalance(asset)) : assetsList),
     [assetsList, filterZeroBalances]
   );
 
   const [searchValue, setSearchValue] = useState<string>();
 
-  const searchedAssetsList = useMemo<TokenInterface[]>(() => {
+  const searchedAssetsList = useMemo(() => {
     if (!isString(searchValue)) {
       return sortByDollarValueDecrease ? applySortByDollarValueDecrease([...sourceArray]) : sourceArray;
     }

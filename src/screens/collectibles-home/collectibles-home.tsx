@@ -17,11 +17,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
+import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { Search } from 'src/components/search/search';
 import { emptyFn } from 'src/config/general';
+import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -76,8 +79,8 @@ export const CollectiblesHome = () => {
 
   const insets = useSafeAreaInsets();
   const TAB_BAR_HEIGHT = isTablet() ? 0 : formatSize(48) + insets.bottom;
-  const statusBar = useMemo(() => StatusBar.currentHeight ?? 0, [StatusBar.currentHeight]);
   const MARGIN_BETWEEN_COMPONENTS = formatSize(16);
+  const statusBar = useMemo(() => (isTablet() ? StatusBar.currentHeight ?? 0 : 0), [StatusBar.currentHeight]);
   const snapPoints = useMemo(
     () => [
       windowHeight - (headerHeight + TAB_BAR_HEIGHT + statusBar),
@@ -119,6 +122,8 @@ export const CollectiblesHome = () => {
 
     return 1;
   });
+
+  const { setSearchValue, filteredAssetsList } = useFilteredAssetsList(collectibles);
 
   const onValueChange = (value: AccountBaseInterface | undefined) =>
     dispatch(setSelectedAccountAction(value?.publicKeyHash));
@@ -188,7 +193,12 @@ export const CollectiblesHome = () => {
           }}
           style={styles.profileContainer}
         >
-          <View style={styles.profileActions}>
+          <View
+            style={[
+              styles.profileActions,
+              conditionalStyle(collections.length === 0, styles.profileActionsWithoutCollections)
+            ]}
+          >
             {isDefined(alias) ? (
               <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
                 <Icon name={IconNameEnum.EditNew} size={formatSize(24)} />
@@ -241,9 +251,11 @@ export const CollectiblesHome = () => {
           />
 
           <View style={styles.icons}>
-            <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
-            <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} style={styles.offsetBetween} />
-            <TouchableIcon name={IconNameEnum.SearchNew} onPress={emptyFn} />
+            <Search onChange={setSearchValue} dividerSize={16}>
+              <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
+              <Divider size={formatSize(16)} />
+              <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} />
+            </Search>
           </View>
         </View>
 
@@ -252,7 +264,7 @@ export const CollectiblesHome = () => {
             <ActivityIndicator size="large" />
           </View>
         ) : (
-          <CollectiblesList collectibles={collectibles} isShowInfo={isShowCollectibleInfo} />
+          <CollectiblesList collectibles={filteredAssetsList} isShowInfo={isShowCollectibleInfo} />
         )}
       </BottomSheet>
     </>

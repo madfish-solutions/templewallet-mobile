@@ -146,6 +146,7 @@ export enum IconNameEnum {
   GoogleDrive = 'GoogleDrive',
   BlurEyeBlack = 'BlurEyeBlack',
   BlurEyeWhite = 'BlurEyeWhite',
+  BrokenImage = 'BrokenImage',
   BlurLight = 'BlurLight',
   BlurDark = 'BlurDark',
   Smile = 'Smile',
