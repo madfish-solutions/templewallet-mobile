@@ -173,7 +173,7 @@ export const TokensList: FC = () => {
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
-            onPress={() => navigate(ScreensEnum.ManageAssets, { index: TOKEN_SCREEN_INDEX })}
+            onPress={() => navigate(ScreensEnum.ManageAssets, { activeTabIndex: TOKEN_SCREEN_INDEX })}
           />
         </Search>
       </View>

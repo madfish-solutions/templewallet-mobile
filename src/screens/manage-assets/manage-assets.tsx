@@ -25,10 +25,10 @@ export const ManageAssets = () => {
   const { navigate } = useNavigation();
   const styles = useManageAssetsStyles();
   const {
-    params: { index }
+    params: { activeTabIndex }
   } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ManageAssets>>();
 
-  const [segmentedControlIndex, setSegmentedControlIndex] = useState(index);
+  const [segmentedControlIndex, setSegmentedControlIndex] = useState(activeTabIndex);
   const showManageTokens = segmentedControlIndex === manageTokensIndex;
 
   usePageAnalytic(ScreensEnum.ManageAssets);

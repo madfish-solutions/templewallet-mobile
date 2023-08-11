@@ -253,7 +253,7 @@ export const CollectiblesHome = () => {
               <Divider size={formatSize(16)} />
               <TouchableIcon
                 name={IconNameEnum.EditNew}
-                onPress={() => navigate(ScreensEnum.ManageAssets, { index: NFT_SCREEN_INDEX })}
+                onPress={() => navigate(ScreensEnum.ManageAssets, { activeTabIndex: NFT_SCREEN_INDEX })}
               />
             </Search>
           </View>
