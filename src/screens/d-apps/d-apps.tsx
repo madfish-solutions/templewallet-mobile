@@ -36,9 +36,19 @@ const gridSize = formatSize(48);
 
 export const DApps = () => {
   const dispatch = useDispatch();
+
+  const { navigate } = useNavigation();
+
+  const styles = useDAppsStyles();
+
+  const dAppsList = useDAppsListSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
-  const { navigate } = useNavigation();
+
+  const [searchQuery, setSearchQuery] = useState<string>();
+  const [layoutWidth, setLayoutWidth] = useState(1);
+
+  usePageAnalytic(ScreensEnum.DApps);
 
   useEffect(() => {
     dispatch(loadDAppsListActions.submit());
@@ -49,25 +59,6 @@ export const DApps = () => {
       dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
     }
   }, [partnersPromotionEnabled, isEnabledAdsBanner]);
-
-  const styles = useDAppsStyles();
-
-  const dAppsList = useDAppsListSelector();
-
-  const [searchQuery, setSearchQuery] = useState<string>();
-  const [layoutWidth, setLayoutWidth] = useState(1);
-
-  usePageAnalytic(ScreensEnum.DApps);
-
-  const tabletMode = isTablet();
-
-  const texts = useMemo(
-    () =>
-      tabletMode
-        ? ['Other DApps are third-party websites. They should be used at your own risk.']
-        : ['Other DApps are third-party websites.', 'They should be used at your own risk.'],
-    [tabletMode]
-  );
 
   const sortedDAppsList = useMemo(() => {
     if (isDefined(searchQuery)) {
@@ -86,6 +77,16 @@ export const DApps = () => {
   const renderItem: ListRenderItem<CustomDAppInfo> = useCallback(
     item => <OthersDApp item={item} elementWidth={elementWidth} testID={DAppsSelectors.othersDAppsItem} />,
     [elementWidth]
+  );
+
+  const tabletMode = isTablet();
+
+  const texts = useMemo(
+    () =>
+      tabletMode
+        ? ['Other DApps are third-party websites. They should be used at your own risk.']
+        : ['Other DApps are third-party websites.', 'They should be used at your own risk.'],
+    [tabletMode]
   );
 
   return (

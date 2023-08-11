@@ -1,4 +1,4 @@
-import { white } from 'src/config/styles';
+import { greyLight4, white } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -22,7 +22,7 @@ export const useIntegratedElementStyles = createUseStyles(({ colors, typography 
     borderRadius: formatSize(64)
   },
   iconBackgroundPrimary: {
-    backgroundColor: colors.white
+    backgroundColor: white
   },
   title: {
     ...typography.body15Semibold,
@@ -30,6 +30,6 @@ export const useIntegratedElementStyles = createUseStyles(({ colors, typography 
   },
   description: {
     ...typography.caption11Regular,
-    color: colors.gray4
+    color: greyLight4
   }
 }));
