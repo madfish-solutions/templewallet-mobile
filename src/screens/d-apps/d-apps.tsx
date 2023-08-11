@@ -61,8 +61,6 @@ export const DApps = () => {
     }
   }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
-  usePageAnalytic(ScreensEnum.DApps);
-
   const sortedDAppsList = useMemo(() => {
     if (isDefined(searchValue)) {
       return dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchValue.toLowerCase()));
