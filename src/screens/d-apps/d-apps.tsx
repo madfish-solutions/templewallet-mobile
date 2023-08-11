@@ -40,8 +40,14 @@ export const DApps = () => {
 
   const { navigate } = useNavigation();
 
+  const styles = useDAppsStyles();
+
+  const dAppsList = useDAppsListSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+
+  const [searchValue, setSearchValue] = useState<string>();
+  const [layoutWidth, setLayoutWidth] = useState(1);
 
   usePageAnalytic(ScreensEnum.DApps);
 
@@ -54,13 +60,6 @@ export const DApps = () => {
       dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
     }
   }, [partnersPromotionEnabled, isEnabledAdsBanner]);
-
-  const styles = useDAppsStyles();
-
-  const dAppsList = useDAppsListSelector();
-
-  const [searchValue, setSearchValue] = useState<string>();
-  const [layoutWidth, setLayoutWidth] = useState(1);
 
   usePageAnalytic(ScreensEnum.DApps);
 
