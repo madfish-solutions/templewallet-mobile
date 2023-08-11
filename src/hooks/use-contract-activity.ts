@@ -3,7 +3,7 @@ import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { EVERSTAKE_PAYOUTS_BAKER } from 'src/apis/baking-bad/consts';
+import { KNOWN_BAKERS } from 'src/apis/baking-bad/consts';
 import { ActivityGroup } from 'src/interfaces/activity.interface';
 import { loadBakersListActions } from 'src/store/baking/baking-actions';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
@@ -13,10 +13,6 @@ import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors'
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
-
-const KNOWN_BAKERS: Array<TzktMemberInterface> = [
-  { address: EVERSTAKE_PAYOUTS_BAKER.address, alias: 'Everstake payouts' }
-];
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const dispatch = useDispatch();
@@ -30,13 +26,16 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const knownBakers = useMemo<Array<TzktMemberInterface>>(
-    () =>
-      KNOWN_BAKERS.concat(
-        bakers.map(({ address, name }) => ({
-          address,
-          alias: name
-        }))
-      ),
+    () => [
+      ...KNOWN_BAKERS.map(({ address, name }) => ({
+        address,
+        alias: name
+      })),
+      ...bakers.map(({ address, name }) => ({
+        address,
+        alias: name
+      }))
+    ],
     [bakers]
   );
 

@@ -22,7 +22,7 @@ export const BakingRewards: FC<{ address: string; nonZeroAmounts: NonZeroAmounts
 
   return (
     <View style={[commonStyles.row, commonStyles.itemsCenter]}>
-      {isDefined(baker) ? (
+      {isDefined(baker) && isDefined(baker.logo) ? (
         <AvatarImage size={formatSize(36)} uri={baker.logo} />
       ) : (
         <RobotIcon size={formatSize(36)} seed={address} style={styles.robotBackground} />
