@@ -70,6 +70,7 @@ export const InAppBrowser: FC = () => {
         style={styles.webView}
         onNavigationStateChange={nav => void setCurrentURL(nav.url)}
         allowsBackForwardNavigationGestures={true}
+        mediaPlaybackRequiresUserAction={true}
         pullToRefreshEnabled={false}
         bounces={false}
         onScroll={event => void setPtrEnabled(event.nativeEvent.contentOffset.y === 0)}

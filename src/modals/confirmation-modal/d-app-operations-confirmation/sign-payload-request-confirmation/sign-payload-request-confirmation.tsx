@@ -17,10 +17,9 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { useParseSignPayload } from 'src/hooks/use-parse-sign-payload.hook';
 import { emptyAccount } from 'src/interfaces/account.interface';
-import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
-import { navigateAction } from 'src/store/root-state.actions';
+import { navigateBackAction } from 'src/store/root-state.actions';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
@@ -47,7 +46,7 @@ const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
     map(() => {
       showSuccessToast({ description: 'Successfully signed!' });
 
-      return navigateAction(StacksEnum.MainStack);
+      return navigateBackAction();
     })
   );
 
