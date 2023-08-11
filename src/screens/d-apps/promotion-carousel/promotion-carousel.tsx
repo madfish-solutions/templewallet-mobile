@@ -55,7 +55,7 @@ export const PromotionCarousel = () => {
   const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
 
   return (
-    <View onLayout={handleLayout} style={styles.container}>
+    <View onLayout={handleLayout} style={styles.root}>
       <Carousel
         data={data}
         loop={true}

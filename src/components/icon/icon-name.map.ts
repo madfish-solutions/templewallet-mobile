@@ -124,6 +124,7 @@ import TempleLogoUpIcon from './assets/temple-logo-up.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
+import TextToNftIcon from './assets/text-to-nft.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
 import FilmTokenIcon from './assets/tokens/film.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
@@ -283,12 +284,12 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.CreditCard]: CreditCardIcon,
   [IconNameEnum.Favourite]: FavoriteIcon,
   [IconNameEnum.Update]: UpdateIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
   [IconNameEnum.NFT]: NFT,
   [IconNameEnum.QsEarnSource]: QsEarnSource,
   [IconNameEnum.LiquidityBakingLogo]: LiquidityBakingLogo,
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
-  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
+  [IconNameEnum.TextToNft]: TextToNftIcon
 };

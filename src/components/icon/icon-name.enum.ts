@@ -85,6 +85,7 @@ export enum IconNameEnum {
   TempleLogoUp = 'TempleLogoUp',
   TempleLogoBottom = 'TempleLogoBottom',
   TempleLogoWithText = 'TempleLogoWithText',
+  TextToNft = 'TextToNft',
   Telegram = 'Telegram',
   Discord = 'Discord',
   Twitter = 'Twitter',
