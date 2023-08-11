@@ -37,7 +37,6 @@ import { TokenListItem } from './token-list-item/token-list-item';
 import { useTokenListStyles } from './token-list.styles';
 
 const AD_PLACEHOLDER = 'ad';
-const TOKEN_SCREEN_INDEX = 0;
 
 type FlatListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
@@ -173,7 +172,7 @@ export const TokensList: FC = () => {
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
-            onPress={() => navigate(ScreensEnum.ManageAssets, { activeTabIndex: TOKEN_SCREEN_INDEX })}
+            onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: false })}
           />
         </Search>
       </View>

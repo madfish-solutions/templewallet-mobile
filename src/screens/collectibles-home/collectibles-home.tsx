@@ -58,7 +58,6 @@ interface SocialLinksInterface {
 }
 
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
-const NFT_SCREEN_INDEX = 1;
 
 export const CollectiblesHome = () => {
   const { navigate } = useNavigation();
@@ -253,7 +252,7 @@ export const CollectiblesHome = () => {
               <Divider size={formatSize(16)} />
               <TouchableIcon
                 name={IconNameEnum.EditNew}
-                onPress={() => navigate(ScreensEnum.ManageAssets, { activeTabIndex: NFT_SCREEN_INDEX })}
+                onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: true })}
               />
             </Search>
           </View>
