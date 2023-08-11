@@ -14,5 +14,9 @@ export const useStatsItemStyles = createUseStylesMemoized(({ colors, typography 
     ...typography.numbersRegular11,
     letterSpacing: formatSize(0.07),
     color: colors.gray1
+  },
+  value: {
+    ...typography.numbersRegular17,
+    color: colors.black
   }
 }));

@@ -19,7 +19,7 @@ interface Props {
   totalClaimableRewardsInFiat?: BigNumber;
   netApr: BigNumber;
   totalStakedAmountInFiat: BigNumber;
-  areSomeRewardsClaimable?: boolean;
+  areRewardsClaimable?: boolean;
 }
 
 export const EarnOpportunitiesMainInfo: FC<Props> = ({
@@ -28,7 +28,7 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
   totalClaimableRewardsInFiat = DEFAULT_AMOUNT,
   netApr,
   totalStakedAmountInFiat,
-  areSomeRewardsClaimable = false
+  areRewardsClaimable = false
 }) => {
   const styles = useEarnOpportunitiesMainInfoStyles();
   const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
@@ -55,11 +55,11 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
             <Button
               styleConfig={buttonPrimaryStylesConfig}
               title={
-                areSomeRewardsClaimable
+                areRewardsClaimable
                   ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(DEFAULT_DECIMALS, roundingMode)}${fiatSymbol}`
                   : 'EARN TO CLAIM REWARDS'
               }
-              disabled={!areSomeRewardsClaimable}
+              disabled={!areRewardsClaimable}
               onPress={claimAllRewards}
             />
           </>

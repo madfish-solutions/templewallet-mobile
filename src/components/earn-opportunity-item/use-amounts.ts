@@ -7,6 +7,11 @@ import { mutezToTz } from 'src/utils/tezos.util';
 const DEFAULT_AMOUNT = 0;
 const DEFAULT_EXCHANGE_RATE = 1;
 
+export interface AssetAmounts {
+  amount: BigNumber;
+  fiatEquivalent: BigNumber;
+}
+
 export const useAmounts = (atomicAmount: string | nullish, decimals: number, exchangeRate: string | nullish) => {
   const fiatToUsdRate = useFiatToUsdRateSelector();
 

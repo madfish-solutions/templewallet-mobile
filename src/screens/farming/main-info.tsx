@@ -60,7 +60,7 @@ export const MainInfo: FC = () => {
     return result;
   }, [farms, stakesEntriesWithEndedRewards, fiatToUsdExchangeRate]);
 
-  const areSomeRewardsClaimable = useMemo(
+  const areRewardsClaimable = useMemo(
     () => !isEmptyArray(stakesEntriesWithEndedRewards) && totalClaimableRewardsInFiat.isGreaterThan(0),
     [stakesEntriesWithEndedRewards, totalClaimableRewardsInFiat]
   );
@@ -88,7 +88,7 @@ export const MainInfo: FC = () => {
 
     const opParams = claimAllRewardParams.map(parseTransferParamsToParamsWithKind).flat();
 
-    if (areSomeRewardsClaimable) {
+    if (areRewardsClaimable) {
       navigateHarvestFarm(opParams);
     }
   };
@@ -100,7 +100,7 @@ export const MainInfo: FC = () => {
       totalClaimableRewardsInFiat={totalClaimableRewardsInFiat}
       netApr={netApr}
       totalStakedAmountInFiat={totalStakedAmountInFiat}
-      areSomeRewardsClaimable={areSomeRewardsClaimable}
+      areRewardsClaimable={areRewardsClaimable}
     />
   );
 };

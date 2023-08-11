@@ -1,12 +1,11 @@
 import { noop } from 'lodash-es';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Bage } from 'src/components/bage/bage';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
-import { FormattedAmountWithLoader } from 'src/components/formatted-amount-with-loader';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -76,20 +75,15 @@ export const EarnOpportunityItem: FC<Props> = ({
 
   const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
 
-  const { amount: depositAmount, fiatEquivalent: depositFiatEquivalent } = useAmounts(
+  const depositAmounts = useAmounts(
     lastStakeRecord?.depositAmountAtomic,
     stakedToken.metadata.decimals,
     depositExchangeRate
   );
+  const { amount: depositAmount } = depositAmounts;
   const depositIsZero = depositAmount.isZero();
 
-  const { amount: claimableRewardsAmount, fiatEquivalent: claimableRewardsFiatEquivalent } = useAmounts(
-    lastStakeRecord?.claimableRewards,
-    rewardToken.decimals,
-    earnExchangeRate
-  );
-
-  const renderStatsLoader = useCallback(() => <Text style={styles.attributeValue}>---</Text>, [styles]);
+  const claimableRewardsAmounts = useAmounts(lastStakeRecord?.claimableRewards, rewardToken.decimals, earnExchangeRate);
 
   const actionButtonsTestIDProperties = useMemo(
     () => ({
@@ -146,50 +140,18 @@ export const EarnOpportunityItem: FC<Props> = ({
         <View style={[styles.row, styles.mb16]}>
           <StatsItem
             title="Your deposit:"
-            value={
-              itemIsFarm ? (
-                <FormattedAmountWithLoader
-                  isLoading={stakeIsLoading}
-                  isDollarValue
-                  amount={depositFiatEquivalent}
-                  style={styles.attributeValue}
-                  renderLoader={renderStatsLoader}
-                />
-              ) : (
-                <FormattedAmountWithLoader
-                  isLoading={stakeIsLoading}
-                  symbol={stakedToken.metadata.symbol}
-                  amount={depositAmount}
-                  style={styles.attributeValue}
-                  renderLoader={renderStatsLoader}
-                />
-              )
-            }
-            fiatEquivalent={itemIsFarm ? undefined : depositFiatEquivalent}
+            amounts={depositAmounts}
+            isLoading={stakeIsLoading}
+            fiatEquivalentIsMain={itemIsFarm}
+            tokenSymbol={stakedToken.metadata.symbol}
           />
           {!depositIsZero && !isLiquidityBaking && (
             <StatsItem
               title="Claimable rewards:"
-              value={
-                itemIsFarm ? (
-                  <FormattedAmountWithLoader
-                    isLoading={stakeIsLoading}
-                    isDollarValue
-                    amount={claimableRewardsFiatEquivalent}
-                    style={styles.attributeValue}
-                    renderLoader={renderStatsLoader}
-                  />
-                ) : (
-                  <FormattedAmountWithLoader
-                    isLoading={stakeIsLoading}
-                    symbol={rewardToken.symbol}
-                    amount={claimableRewardsAmount}
-                    style={styles.attributeValue}
-                    renderLoader={renderStatsLoader}
-                  />
-                )
-              }
-              fiatEquivalent={itemIsFarm ? undefined : claimableRewardsFiatEquivalent}
+              amounts={claimableRewardsAmounts}
+              isLoading={stakeIsLoading}
+              fiatEquivalentIsMain={itemIsFarm}
+              tokenSymbol={rewardToken.symbol}
             />
           )}
         </View>
