@@ -3,7 +3,8 @@ import { formatSize } from '../../styles/format-size';
 
 export const usePublicKeyHashTextStyles = createUseStyles(({ colors, typography }) => ({
   container: {
-    width: formatSize(100),
+    flexDirection: 'row',
+    alignItems: 'baseline',
     paddingHorizontal: formatSize(4),
     paddingVertical: formatSize(2),
     backgroundColor: colors.blue10,
