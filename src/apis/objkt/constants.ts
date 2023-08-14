@@ -61,6 +61,10 @@ export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
 
 export const ADULT_ATTRIBUTE_NAME = '__nsfw_';
 
+export const TECHNICAL_ATTRIBUTE_NAME = '__hazards_';
+
+export const HIDDEN_ATTRIBUTES_NAME = [ADULT_ATTRIBUTE_NAME, TECHNICAL_ATTRIBUTE_NAME];
+
 export const PAGINATION_STEP_FA = 500;
 
 export const PAGINATION_STEP_GALLERY = 15;

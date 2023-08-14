@@ -3,14 +3,15 @@ import { useEffect, useState } from 'react';
 import { EMPTY } from 'rxjs';
 import { map, tap, finalize, catchError } from 'rxjs/operators';
 
+import { HIDDEN_ATTRIBUTES_NAME } from 'src/apis/objkt/constants';
+
 import { CollectibleAttributes } from '../apis/objkt/types';
-import { BLURED_COLLECTIBLE_ATTRIBUTE_NAME } from '../modals/collectible-modal/constants';
 import { CollectibleInterface } from '../token/interfaces/collectible-interfaces.interface';
 import { getAttributesInfo$, getAttributesWithRarity } from '../utils/collectibles.utils';
 
 export const useFetchCollectibleAttributes = (collectible: CollectibleInterface) => {
   const initialAttributes = isNonEmptyArray(collectible.attributes)
-    ? collectible.attributes.filter(item => item.attribute.name !== BLURED_COLLECTIBLE_ATTRIBUTE_NAME)
+    ? collectible.attributes.filter(item => !HIDDEN_ATTRIBUTES_NAME.includes(item.attribute.name))
     : [];
 
   const [attributes, setAttributes] = useState<CollectibleAttributes[]>(initialAttributes);

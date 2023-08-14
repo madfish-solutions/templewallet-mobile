@@ -2,7 +2,7 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { Observable, catchError, map, of } from 'rxjs';
 
 import { ADULT_CONTENT_TAGS } from '../apis/objkt/adult-tags';
-import { ADULT_ATTRIBUTE_NAME } from '../apis/objkt/constants';
+import { ADULT_ATTRIBUTE_NAME, HIDDEN_ATTRIBUTES_NAME } from '../apis/objkt/constants';
 import {
   fetchGalleryAttributeCount$,
   fetchFA2AttributeCount$,
@@ -31,34 +31,36 @@ export const getAttributesWithRarity = (
 ): CollectibleAttributes[] => {
   const isExistGallery = isNonEmptyArray(collectible.galleries);
   const collectibleGalleryCount = isExistGallery
-    ? collectible.galleries[0].gallery.editions
+    ? collectible.galleries?.[0].gallery?.editions
     : collectible.collection.editions;
 
-  const galleryPk = collectible.galleries[0].gallery.pk;
+  const galleryPk = isExistGallery ? collectible.galleries?.[0].gallery?.pk : 0;
 
-  return collectible.attributes.map(({ attribute }) => {
-    const attributeTokenCount = attributesInfo.reduce((acc, current) => {
-      if (!isExistGallery && current.faContract === collectible.address && current.attributeId === attribute.id) {
-        acc = acc + current.editions;
-      }
-      if (isExistGallery && current.attributeId === attribute.id && current.galleryPk === galleryPk) {
-        acc = acc + current.editions;
-      }
+  return collectible.attributes
+    .filter(({ attribute }) => !HIDDEN_ATTRIBUTES_NAME.includes(attribute.name))
+    .map(({ attribute }) => {
+      const attributeTokenCount = attributesInfo.reduce((acc, current) => {
+        if (!isExistGallery && current.faContract === collectible.address && current.attributeId === attribute.id) {
+          acc = acc + current.editions;
+        }
+        if (isExistGallery && current.attributeId === attribute.id && current.galleryPk === galleryPk) {
+          acc = acc + current.editions;
+        }
 
-      return acc;
-    }, 0);
+        return acc;
+      }, 0);
 
-    const rarity = Number(((attributeTokenCount / collectibleGalleryCount) * 100).toFixed(2));
+      const rarity = Number(((attributeTokenCount / collectibleGalleryCount) * 100).toFixed(2));
 
-    return {
-      attribute: {
-        id: attribute.id,
-        name: attribute.name,
-        value: attribute.value,
-        rarity
-      }
-    };
-  });
+      return {
+        attribute: {
+          id: attribute.id,
+          name: attribute.name,
+          value: attribute.value,
+          rarity
+        }
+      };
+    });
 };
 
 export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observable<AttributeInfo[]> => {
