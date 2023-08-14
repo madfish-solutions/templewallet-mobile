@@ -12,8 +12,8 @@ on:
       build-number:
         description: Build number
         required: true
-      build-identifier-event:
-        description: Build identifier event
+      build-identifier:
+        description: Build identifier
         default: 'Custom APK'
         required: false
 
@@ -52,7 +52,7 @@ jobs:
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-          TEMPLE_BUILD_IDENTIFIER_EVENT: ${{ github.event.inputs.build-identifier-event }}
+          TEMPLE_BUILD_IDENTIFIER: ${{ github.event.inputs.build-identifier }}
 
       - name: Setup Java SDK
         uses: actions/setup-java@v3

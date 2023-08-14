@@ -5,7 +5,7 @@ import { setIsBuildIdentifierEventFiredOnceAction } from 'src/store/settings/set
 import { useIsBuildIdentifierEventFiredOnceSelector } from 'src/store/settings/settings-selectors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { TEMPLE_BUILD_IDENTIFIER_EVENT } from 'src/utils/env.utils';
+import { TEMPLE_BUILD_IDENTIFIER } from 'src/utils/env.utils';
 import { isString } from 'src/utils/is-string';
 
 export const useBuildIdentifierEvent = () => {
@@ -14,9 +14,9 @@ export const useBuildIdentifierEvent = () => {
   const isBuildIdentifierEventFiredOnce = useIsBuildIdentifierEventFiredOnceSelector();
 
   useEffect(() => {
-    if (!isBuildIdentifierEventFiredOnce && isString(TEMPLE_BUILD_IDENTIFIER_EVENT)) {
+    if (!isBuildIdentifierEventFiredOnce && isString(TEMPLE_BUILD_IDENTIFIER)) {
       trackEvent('BUILD_IDENTIFIER', AnalyticsEventCategory.General, {
-        buildId: TEMPLE_BUILD_IDENTIFIER_EVENT
+        buildId: TEMPLE_BUILD_IDENTIFIER
       });
       dispatch(setIsBuildIdentifierEventFiredOnceAction(true));
     }
