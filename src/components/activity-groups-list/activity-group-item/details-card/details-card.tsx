@@ -3,11 +3,11 @@ import React, { FC } from 'react';
 
 import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
 
-import { DelegateDetails } from './delegate-details';
-import { ReceiveTokensDetails } from './receive-tokens-details';
-import { SendTokensDetails } from './send-tokens-details';
+import { DelegateDetails } from './delegate';
+import { ReceiveTokensDetails } from './receive-tokens';
+import { SendTokensDetails } from './send-tokens';
 
-export const ActivityDetailsCard: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmounts }> = ({
+export const DetailsCard: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmounts }> = ({
   activity,
   nonZeroAmounts
 }) => {

@@ -3,7 +3,7 @@ import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { EVERSTAKE_PAYOUTS_BAKER } from 'src/apis/baking-bad/consts';
+import { KNOWN_BAKERS } from 'src/apis/baking-bad/consts';
 import { ActivityGroup } from 'src/interfaces/activity.interface';
 import { loadBakersListActions } from 'src/store/baking/baking-actions';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
@@ -13,10 +13,6 @@ import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors'
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
-
-const KNOWN_BAKERS: Array<TzktMemberInterface> = [
-  { address: EVERSTAKE_PAYOUTS_BAKER.address, alias: 'Everstake payouts' }
-];
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const dispatch = useDispatch();
@@ -30,14 +26,16 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
   const knownBakers = useMemo<Array<TzktMemberInterface>>(
-    () =>
-      [
-        KNOWN_BAKERS,
-        bakers.map(({ address, name }) => ({
-          address,
-          alias: name
-        }))
-      ].flat(),
+    () => [
+      ...KNOWN_BAKERS.map(({ address, name }) => ({
+        address,
+        alias: name
+      })),
+      ...bakers.map(({ address, name }) => ({
+        address,
+        alias: name
+      }))
+    ],
     [bakers]
   );
 
@@ -78,7 +76,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   const handleUpdate = async () => {
     if (activities.length > 0 && !isAllLoaded) {
-      const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
+      const lastActivityGroup = activities[activities.length - 1];
 
       if (lastActivityGroup.length > 0) {
         const lastItem = lastActivityGroup[lastActivityGroup.length - 1];

@@ -11,7 +11,7 @@ import { ActivityGroupAmountChange } from '../activity-group-amount-change/activ
 import { ActivityGroupDollarAmountChange } from '../activity-group-dollar-amount-change/activity-group-dollar-amount-change';
 import { useActivityCommonStyles, useActivityGroupItemStyles } from '../activity-group-item.styles';
 
-export const SendInfo: FC<{ address: string; nonZeroAmounts: NonZeroAmounts }> = ({ address, nonZeroAmounts }) => {
+export const Receive: FC<{ address: string; nonZeroAmounts: NonZeroAmounts }> = ({ address, nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();
   const commonStyles = useActivityCommonStyles();
 
@@ -21,11 +21,11 @@ export const SendInfo: FC<{ address: string; nonZeroAmounts: NonZeroAmounts }> =
       <Divider size={formatSize(10)} />
       <View style={styles.flex}>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationTitle}>Send</Text>
+          <Text style={styles.oprationTitle}>Receive</Text>
           <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} />
         </View>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationSubtitle}>To: {truncateLongAddress(address)}</Text>
+          <Text style={styles.oprationSubtitle}>From: {truncateLongAddress(address)}</Text>
           <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
         </View>
       </View>
