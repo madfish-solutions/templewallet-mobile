@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 
 import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
 
-import { BakingRewards } from './baking';
+import { BakingRewards } from './baking-rewards';
 import { Delegation } from './delegation';
 import { Receive } from './receive';
 import { Send } from './send';

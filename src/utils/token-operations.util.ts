@@ -163,9 +163,9 @@ const loadOperations = async (
   tokenSlug?: string,
   lastItem?: Activity
 ): Promise<Array<TzktOperation>> => {
-  const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
-
   if (isDefined(tokenSlug)) {
+    const [contractAddress, tokenId] = tokenSlug.split('_');
+
     if (tokenSlug === TEZ_TOKEN_SLUG) {
       return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
     }

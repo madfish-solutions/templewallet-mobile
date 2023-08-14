@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { shortizeSymbol } from 'src/utils/token-metadata.utils';
+
 import { NonZeroAmounts } from '../../../../interfaces/non-zero-amounts.interface';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { formatAssetAmount } from '../../../../utils/number.util';
@@ -31,7 +33,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
           ]}
         >
           {isPositive && '+'}
-          {formatAssetAmount(parsedAmount)} {symbol}
+          {formatAssetAmount(parsedAmount)} {shortizeSymbol(symbol)}
         </Text>
       ))}
     </View>

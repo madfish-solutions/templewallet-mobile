@@ -40,7 +40,12 @@ export const ReceiveTokensDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address:
       <View style={styles.itemWrapper}>
         <Text style={styles.text}>TxHash:</Text>
         <View style={commonStyles.row}>
-          <PublicKeyHashText longPress publicKeyHash={hash} testID={ActivityGroupItemSelectors.operationHash} />
+          <PublicKeyHashText
+            longPress
+            style={styles.hashHeight}
+            publicKeyHash={hash}
+            testID={ActivityGroupItemSelectors.operationHash}
+          />
           <Divider size={formatSize(4)} />
           <ExternalLinkButton url={tzktUrl(selectedRpcUrl, hash)} testID={ActivityGroupItemSelectors.externalLink} />
         </View>

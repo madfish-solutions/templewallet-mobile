@@ -15,29 +15,34 @@ import { ActivityGroupDollarAmountChange } from '../activity-group-dollar-amount
 import { useActivityCommonStyles, useActivityDetailsStyles } from '../activity-group-item.styles';
 import { ActivityGroupItemSelectors } from '../selectors';
 
-export const SendTokensDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address: string; hash: string }> = ({
+export const BakingRewardsDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address: string; hash: string }> = ({
   nonZeroAmounts,
   address,
   hash
 }) => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const styles = useActivityDetailsStyles();
-
   const commonStyles = useActivityCommonStyles();
 
   return (
     <>
       <View style={[styles.itemWrapper, styles.border]}>
-        <Text style={styles.text}>Sent:</Text>
+        <Text style={styles.text}>Received:</Text>
         <View>
           <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} textSize={TextSize.Small} />
           <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
         </View>
       </View>
       <View style={[styles.itemWrapper, styles.border]}>
-        <Text style={styles.text}>To:</Text>
-
-        <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+        <Text style={styles.text}>From:</Text>
+        <View style={commonStyles.row}>
+          <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+          <Divider size={formatSize(4)} />
+          <ExternalLinkButton
+            url={tzktUrl(selectedRpcUrl, address)}
+            testID={ActivityGroupItemSelectors.externalBakerLink}
+          />
+        </View>
       </View>
       <View style={styles.itemWrapper}>
         <Text style={styles.text}>TxHash:</Text>
