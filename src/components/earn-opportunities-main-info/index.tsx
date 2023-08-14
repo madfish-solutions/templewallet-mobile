@@ -6,7 +6,8 @@ import { View, Text } from 'react-native';
 import { Button } from 'src/components/button/button';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
-import { DEFAULT_AMOUNT, DEFAULT_DECIMALS, PENNY } from 'src/config/earn-opportunities-main-info';
+import { PERCENTAGE_DECIMALS } from 'src/config/earn-opportunities';
+import { DEFAULT_AMOUNT, PENNY } from 'src/config/earn-opportunities-main-info';
 import { EmptyFn } from 'src/config/general';
 import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -46,7 +47,7 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
           <Divider size={formatSize(8)} />
           <View style={[styles.card, styles.netApr]}>
             <Text style={styles.titleText}>NET APR</Text>
-            <Text style={styles.valueText}>{netApr.toFixed(DEFAULT_DECIMALS)}%</Text>
+            <Text style={styles.valueText}>{netApr.toFixed(PERCENTAGE_DECIMALS)}%</Text>
           </View>
         </View>
         {shouldShowClaimRewardsButton && (
@@ -56,7 +57,7 @@ export const EarnOpportunitiesMainInfo: FC<Props> = ({
               styleConfig={buttonPrimaryStylesConfig}
               title={
                 areRewardsClaimable
-                  ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(DEFAULT_DECIMALS, roundingMode)}${fiatSymbol}`
+                  ? `CLAIM ALL ≈ ${totalClaimableRewardsInFiat.toFixed(PERCENTAGE_DECIMALS, roundingMode)}${fiatSymbol}`
                   : 'EARN TO CLAIM REWARDS'
               }
               disabled={!areRewardsClaimable}

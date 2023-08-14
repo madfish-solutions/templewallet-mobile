@@ -6,3 +6,5 @@ export const earnOpportunitiesTypesToDisplay = [
   EarnOpportunityTypeEnum.YOUVES_SAVING,
   EarnOpportunityTypeEnum.YOUVES_STAKING
 ];
+
+export const PERCENTAGE_DECIMALS = 2;

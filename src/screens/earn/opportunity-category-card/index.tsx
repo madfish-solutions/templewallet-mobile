@@ -7,6 +7,7 @@ import { FormattedAmount } from 'src/components/formatted-amount';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { PERCENTAGE_DECIMALS } from 'src/config/earn-opportunities';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -37,8 +38,8 @@ export const OpportunityCategoryCard: FC<OpportunityCategoryCardProps> = ({
   const styles = useOpportunityCategoryCardStyles();
 
   const handlePress = useCallback(() => navigate(screen), [navigate, screen]);
-  const netAprFormatted = useMemo(() => netApr.toFixed(2), [netApr]);
-  const maxAprFormatted = useMemo(() => maxApr.toFixed(2), [maxApr]);
+  const netAprFormatted = useMemo(() => netApr.toFixed(PERCENTAGE_DECIMALS), [netApr]);
+  const maxAprFormatted = useMemo(() => maxApr.toFixed(PERCENTAGE_DECIMALS), [maxApr]);
 
   return (
     <TouchableOpacity style={styles.root} onPress={handlePress}>

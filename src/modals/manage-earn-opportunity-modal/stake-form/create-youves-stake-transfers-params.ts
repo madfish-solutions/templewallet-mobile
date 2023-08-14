@@ -76,8 +76,12 @@ export const createYouvesStakeTransfersParams = async (
       toTokenSlug(token.contract, token.tokenId) === toTokenSlug(stakedToken.contractAddress, stakedToken.fa2TokenId)
   );
 
-  if (!isDefined(fromRoute3Token) || !isDefined(toRoute3Token)) {
-    throw new Error('Failed to find 3route input or output token');
+  if (!isDefined(fromRoute3Token)) {
+    throw new Error('Failed to find 3route input token');
+  }
+
+  if (!isDefined(toRoute3Token)) {
+    throw new Error('Failed to find 3route output token');
   }
 
   const { swapInputMinusFeeAtomic, routingFeeFromInputAtomic } = calculateRoutingInputAndFeeFromInput(amount);

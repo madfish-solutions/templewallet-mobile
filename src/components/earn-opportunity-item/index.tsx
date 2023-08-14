@@ -9,6 +9,7 @@ import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { PERCENTAGE_DECIMALS } from 'src/config/earn-opportunities';
 import { EmptyFn } from 'src/config/general';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
@@ -36,8 +37,6 @@ interface Props {
   harvestRewards?: EmptyFn;
   stakeIsLoading: boolean;
 }
-
-const PERCENTAGE_DECIMALS = 2;
 
 export const EarnOpportunityItem: FC<Props> = ({
   item,
