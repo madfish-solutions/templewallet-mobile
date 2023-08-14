@@ -1,6 +1,6 @@
-name: TestApp build
+name: APK build
 
-run-name: TestApp build (v${{ github.event.inputs.version }} №${{ github.event.inputs.build-number }}) of ${{ github.ref_name }}
+run-name: APK build (v${{ github.event.inputs.version }} №${{ github.event.inputs.build-number }}) of ${{ github.ref_name }}
 
 on:
   workflow_dispatch:
