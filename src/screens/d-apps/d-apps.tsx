@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
@@ -31,7 +32,7 @@ import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
 const keyExtractor = (item: CustomDAppInfo) => item.name;
 const getItemLayout = createGetItemLayout<CustomDAppInfo>(formatSize(7));
-const ListEmptyComponent = <DataPlaceholder text="No records found." />;
+const ListEmptyComponent = <DataPlaceholder text="No records found" />;
 
 const gridSize = formatSize(48);
 
@@ -90,6 +91,8 @@ export const DApps = () => {
     [tabletMode]
   );
 
+  const isListNotEmpty = isNonEmptyArray(sortedDAppsList);
+
   return (
     <>
       <View onLayout={handleLayout}>
@@ -98,7 +101,7 @@ export const DApps = () => {
         <PromotionCarousel />
 
         <SearchInput
-          placeholder="Search Dapp"
+          placeholder="Search Dapps"
           onChangeText={setSearchValue}
           style={styles.searchInput}
           testID={DAppsSelectors.searchDAppsInput}
@@ -119,11 +122,13 @@ export const DApps = () => {
           </View>
         )}
 
-        <View style={styles.wrapper}>
-          <Text style={styles.text}>Others</Text>
+        {isListNotEmpty && (
+          <View style={styles.wrapper}>
+            <Text style={styles.text}>Others</Text>
 
-          <Disclaimer texts={texts} />
-        </View>
+            <Disclaimer texts={texts} />
+          </View>
+        )}
       </View>
 
       <FlatList
