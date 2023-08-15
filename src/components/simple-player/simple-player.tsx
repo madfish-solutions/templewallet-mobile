@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { FC } from 'react';
 import { ViewStyle } from 'react-native';
 import Video, { LoadError } from 'react-native-video';
@@ -30,13 +31,15 @@ export const SimplePlayer: FC<SimpleVideoProps> = ({
   const atBootsplash = useAtBootsplash();
   const { isLocked } = useAppLock();
 
+  const isFocused = useIsFocused();
+
   return (
     <Video
       repeat
       source={{ uri }}
       // @ts-ignore
       style={[{ width: size, height: size }, style]}
-      paused={atBootsplash || isLocked || paused}
+      paused={atBootsplash || isLocked || paused || !isFocused}
       resizeMode="cover"
       bufferConfig={{
         bufferForPlaybackMs: BUFFER_DURATION
