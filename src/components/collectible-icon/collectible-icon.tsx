@@ -10,15 +10,18 @@ import { formatCollectibleObjktArtifactUri, isImgUriDataUri } from 'src/utils/im
 import { isDefined } from 'src/utils/is-defined';
 
 import { EventFn } from '../../config/general';
+import { useCollectibleDetailsSelector } from '../../store/collectibles/collectibles-selectors';
 import { CollectibleCommonInterface } from '../../token/interfaces/collectible-interfaces.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
+import { getTokenSlug } from '../../token/utils/token.utils';
+import { isAdultCollectible } from '../../utils/collectibles.utils';
 import { ActivityIndicator } from '../activity-indicator/activity-indicator';
 import { AudioPlaceholderTheme } from '../audio-placeholder/audio-placeholder';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 import { AudioPlayer } from './components/audio-player/audio-player';
 import { Balance } from './components/balance/balance';
 import { BrokenImage } from './components/broken-image/broken-image';
-import { ImageBlurOverlaySizesEnum, ImageBlurOverlay } from './components/image-blur-overlay/image-blur-overlay';
+import { ImageBlurOverlay } from './components/image-blur-overlay/image-blur-overlay';
 import { COLLECTIBLE_FINAL_FALLBACK } from './constants';
 import { useCollectibleImageControl } from './hooks/use-collectible-image-control.hook';
 
@@ -33,7 +36,6 @@ export interface CollectibleIconProps {
   iconSize?: CollectibleIconSize;
   audioPlaceholderTheme?: AudioPlaceholderTheme;
   setScrollEnabled?: EventFn<boolean>;
-  blurOverlaySize?: ImageBlurOverlaySizesEnum;
   isTouchableBlurOverlay?: boolean;
   isModalWindow?: boolean;
   isShowInfo?: boolean;
@@ -46,7 +48,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     size,
     iconSize = CollectibleIconSize.SMALL,
     audioPlaceholderTheme,
-    blurOverlaySize,
     isTouchableBlurOverlay = false,
     isModalWindow = false,
     isShowInfo,
@@ -54,8 +55,17 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
   }) => {
     const styles = useCollectibleIconStyles();
 
-    // TODO: Add Blur condition to details setup data
-    const [isShowBlur, setIsShowBlur] = useState(false);
+    // TODO: Refactor this code. Add adult logic to epic.
+    const collectibleDetails = useCollectibleDetailsSelector(getTokenSlug(collectible));
+    const isShowBlurInitialValue = useMemo(() => {
+      if (isDefined(collectibleDetails)) {
+        return isAdultCollectible(collectibleDetails.attributes, collectibleDetails.tags);
+      }
+
+      return false;
+    }, [collectibleDetails]);
+    const [isShowBlur, setIsShowBlur] = useState(isShowBlurInitialValue);
+    // *
 
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
 
@@ -79,7 +89,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       if (isShowBlur) {
         return (
           <ImageBlurOverlay
-            overlaySize={blurOverlaySize}
+            overlaySize={iconSize}
             size={size}
             isShowBlur={isShowBlur}
             setIsShowBlur={setIsShowBlur}
@@ -164,7 +174,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       displayUri,
       isModalWindow,
       isShowBlur,
-      blurOverlaySize,
+      iconSize,
       isTouchableBlurOverlay
     ]);
 

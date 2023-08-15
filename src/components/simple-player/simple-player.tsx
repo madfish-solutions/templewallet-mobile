@@ -6,7 +6,7 @@ import { EmptyFn, EventFn, emptyFn } from 'src/config/general';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 
-export interface SimpleVideoProps {
+interface SimpleVideoProps {
   uri: string;
   size: number;
   posterUri?: string;

@@ -10,7 +10,6 @@ import { SUPPORTED_CONTRACTS } from '../../apis/objkt/constants';
 import { ActivityIndicator } from '../../components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon, CollectibleIconSize } from '../../components/collectible-icon/collectible-icon';
-import { ImageBlurOverlaySizesEnum } from '../../components/collectible-icon/components/image-blur-overlay/image-blur-overlay';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
@@ -243,7 +242,6 @@ export const CollectibleModal = memo(() => {
           collectible={collectible}
           size={iconSize}
           iconSize={CollectibleIconSize.BIG}
-          blurOverlaySize={ImageBlurOverlaySizesEnum.Big}
           isTouchableBlurOverlay
           isModalWindow
           setScrollEnabled={setScrollEnabled}
