@@ -5,5 +5,5 @@ export const emptyFn = () => void 0;
 export const emptyComponent = () => null;
 
 export const delegationApy = 5.6;
-export const OPERATION_LIMIT = 75;
+export const OPERATION_LIMIT = 50;
 export const UNKNOWN_TOKEN_SYMBOL = '???';

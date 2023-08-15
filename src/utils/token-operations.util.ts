@@ -19,12 +19,7 @@ const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
   getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
 
 // LIQUIDITY BAKING ACTIVITY
-const getContractOperations = <T>(
-  selectedRpcUrl: string,
-  account: string,
-  contractAddress: string,
-  lastTimestamp?: string
-) =>
+const getContractOperations = <T>(selectedRpcUrl: string, account: string, contractAddress: string, lastId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<T>>(`accounts/${contractAddress}/operations`, {
       params: {
@@ -33,7 +28,7 @@ const getContractOperations = <T>(
         sort: '1',
         initiator: account,
         entrypoint: 'mintOrBurn',
-        ...(isDefined(lastTimestamp) ? { 'timestamp.lt': lastTimestamp } : undefined)
+        ...(isDefined(lastId) ? { lastId } : undefined)
       }
     })
     .then(x => x.data);
@@ -43,7 +38,7 @@ const getTokenFa2Operations = (
   account: string,
   contractAddress: string,
   tokenId = '0',
-  lastTimestamp?: string
+  lastId?: number
 ) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<Fa2TransferInterface>>('operations/transactions', {
@@ -53,17 +48,12 @@ const getTokenFa2Operations = (
         'sort.desc': 'level',
         target: contractAddress,
         'parameter.[*].in': `[{"from_":"${account}","txs":[{"token_id":"${tokenId}"}]},{"txs":[{"to_":"${account}","token_id":"${tokenId}"}]}]`,
-        ...(isDefined(lastTimestamp) ? { 'timestamp.lt': lastTimestamp } : undefined)
+        ...(isDefined(lastId) ? { 'id.lt': lastId } : undefined)
       }
     })
     .then(x => x.data);
 
-const getTokenFa12Operations = (
-  selectedRpcUrl: string,
-  account: string,
-  contractAddress: string,
-  lastTimestamp?: string
-) =>
+const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<Fa12TransferInterface>>('operations/transactions', {
       params: {
@@ -72,7 +62,7 @@ const getTokenFa12Operations = (
         'sort.desc': 'level',
         target: contractAddress,
         'parameter.in': `[{"from":"${account}"},{"to":"${account}"}]`,
-        ...(isDefined(lastTimestamp) ? { 'timestamp.lt': lastTimestamp } : undefined)
+        ...(isDefined(lastId) ? { 'id.lt': lastId } : undefined)
       }
     })
     .then(x => x.data);
@@ -162,10 +152,10 @@ const loadOperations = async (
   selectedAccount: AccountInterface,
   tokenSlug?: string,
   lastItem?: Activity
-): Promise<Array<TzktOperation>> => {
-  if (isDefined(tokenSlug)) {
-    const [contractAddress, tokenId] = tokenSlug.split('_');
+) => {
+  const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
 
+  if (isDefined(tokenSlug)) {
     if (tokenSlug === TEZ_TOKEN_SLUG) {
       return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
     }
@@ -175,7 +165,7 @@ const loadOperations = async (
         selectedRpcUrl,
         selectedAccount.publicKeyHash,
         contractAddress,
-        lastItem?.timestamp
+        lastItem?.id
       );
     }
 
@@ -184,12 +174,7 @@ const loadOperations = async (
     const tokenType = getTokenType(contract);
 
     if (tokenType === TokenTypeEnum.FA_1_2) {
-      return getTokenFa12Operations(
-        selectedRpcUrl,
-        selectedAccount.publicKeyHash,
-        contractAddress,
-        lastItem?.timestamp
-      );
+      return getTokenFa12Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress, lastItem?.id);
     }
 
     if (tokenType === TokenTypeEnum.FA_2) {
@@ -198,7 +183,7 @@ const loadOperations = async (
         selectedAccount.publicKeyHash,
         contractAddress,
         tokenId,
-        lastItem?.timestamp
+        lastItem?.id
       );
     }
   }
