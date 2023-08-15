@@ -9,7 +9,7 @@ import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../store/tokens-metadata/tokens-metadata-actions';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
-import { mutezToTz } from '../utils/tezos.util';
+import { isCollectible, mutezToTz } from '../utils/tezos.util';
 import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 
 interface ActivityAmount {
@@ -36,7 +36,8 @@ export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): ActivityNonZ
     let negativeAmountSum = new BigNumber(0);
 
     for (const { atomicAmount, tokenSlug } of tokensDeltas) {
-      const { decimals, symbol, name, artifactUri } = getTokenMetadata(tokenSlug);
+      const metadata = getTokenMetadata(tokenSlug);
+      const { decimals, symbol, name } = metadata;
       const [address, tokenId] = tokenSlug.split('_');
       const exchangeRate: number | undefined = exchangeRates[tokenSlug];
       if (isString(address) && !isString(name)) {
@@ -59,7 +60,7 @@ export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): ActivityNonZ
         amounts.push({
           parsedAmount,
           isPositive,
-          symbol: isDefined(artifactUri) ? name : symbol,
+          symbol: isCollectible(metadata) ? name : symbol,
           exchangeRate
         });
       }
