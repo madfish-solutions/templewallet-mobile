@@ -58,20 +58,20 @@ export const ActivityGroupsList: FC<Props> = ({
     result.unshift({
       title: 'Never',
       data: [
-        {
-          type: 'Unknown',
-          status: TzktOperationStatus.Applied,
-          hash: '',
-          tokensDeltas: [{ atomicAmount: new BigNumber(888), tokenSlug: TEZ_TOKEN_SLUG }],
-          id: 0,
-          timestamp: '',
-          from: { address: 'qweqweqwe' },
-          to: { address: 'asdasdasd' }
-        }
+        [
+          {
+            type: 'Unknown',
+            status: TzktOperationStatus.Applied,
+            hash: 'oobqHGXAdHW43SWud7HJRCHqhePZmJ8JKFvPK84GD8JSpArQoc6',
+            tokensDeltas: [{ atomicAmount: new BigNumber(888), tokenSlug: TEZ_TOKEN_SLUG }],
+            id: 703070287691776,
+            timestamp: '2023-08-15T10:10:20Z',
+            from: { address: 'tz1L7QjtFG4KJBMZ8tppwMmTjMGwqxPFCSXM' },
+            to: { address: 'tz1VNvjvQPufKb38KYF6DC3PHWR8SVWEiHUW' }
+          }
+        ]
       ] as unknown as ActivityGroup[]
     });
-
-    console.log('result: ', result);
 
     return result;
   }, [activityGroups]);

@@ -7,6 +7,7 @@ import { BakingRewards } from './baking-rewards';
 import { Delegation } from './delegation';
 import { Receive } from './receive';
 import { Send } from './send';
+import { UnknownInfo } from './unknown-info';
 
 export const Info: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmounts }> = ({ activity, nonZeroAmounts }) => {
   switch (activity.type) {
@@ -20,6 +21,6 @@ export const Info: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmounts }> = 
       return <Delegation address={activity.to?.address} />;
 
     default:
-      return null;
+      return <UnknownInfo nonZeroAmounts={nonZeroAmounts} />;
   }
 };

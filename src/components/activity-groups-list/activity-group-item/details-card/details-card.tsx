@@ -7,6 +7,7 @@ import { BakingRewardsDetails } from './baking-rewards';
 import { DelegateDetails } from './delegate';
 import { ReceiveTokensDetails } from './receive-tokens';
 import { SendTokensDetails } from './send-tokens';
+import { UnknownDetails } from './unknown-details';
 
 export const DetailsCard: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmounts }> = ({
   activity,
@@ -30,6 +31,6 @@ export const DetailsCard: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmount
       return <DelegateDetails address={activity.to?.address} hash={activity.hash} />;
 
     default:
-      return null;
+      return <UnknownDetails nonZeroAmounts={nonZeroAmounts} hash={activity.hash} />;
   }
 };
