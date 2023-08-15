@@ -49,7 +49,7 @@ export const BakingRewardsDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address:
         <View style={commonStyles.row}>
           <PublicKeyHashText
             longPress
-            style={styles.hashHeight}
+            style={styles.hashChip}
             publicKeyHash={hash}
             testID={ActivityGroupItemSelectors.operationHash}
           />

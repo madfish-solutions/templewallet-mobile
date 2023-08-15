@@ -14,6 +14,8 @@ import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
 
+const OLDEST_ACTIVITY_INDEX = 0;
+
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
@@ -49,10 +51,10 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
       if (refresh === true) {
         setActivities(prev => {
           const allActivities = [...activities, ...prev];
-          const allHashes = allActivities.map(x => x[0]).map(x => x.hash);
+          const allHashes = allActivities.map(x => x[OLDEST_ACTIVITY_INDEX]).map(x => x.hash);
           const onlyUniqueHashes = uniq(allHashes);
           const onlyUniqueActivitites = onlyUniqueHashes
-            .map(x => allActivities.find(y => y[0].hash === x))
+            .map(x => allActivities.find(y => y[OLDEST_ACTIVITY_INDEX].hash === x))
             .filter(isDefined);
 
           return onlyUniqueActivitites;
@@ -79,7 +81,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
       const lastActivityGroup = activities[activities.length - 1];
 
       if (lastActivityGroup.length > 0) {
-        const lastItem = lastActivityGroup[lastActivityGroup.length - 1];
+        const lastItem = lastActivityGroup[OLDEST_ACTIVITY_INDEX];
 
         if (lastItem.hash !== lastActivityRef.current) {
           lastActivityRef.current = lastItem.hash;

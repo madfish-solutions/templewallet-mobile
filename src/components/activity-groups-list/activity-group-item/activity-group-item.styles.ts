@@ -62,7 +62,7 @@ export const useActivityDetailsStyles = createUseStyles(({ colors }) => ({
   chevron: {
     padding: formatSize(4)
   },
-  hashHeight: {
+  hashChip: {
     height: formatSize(24)
   }
 }));

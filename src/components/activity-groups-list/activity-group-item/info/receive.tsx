@@ -5,7 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
 import { formatSize } from 'src/styles/format-size';
-import { truncateLongAddress } from 'src/utils/exolix.util';
+import { truncateLongAddress } from 'src/utils/address.utils';
 
 import { ActivityGroupAmountChange } from '../activity-group-amount-change/activity-group-amount-change';
 import { ActivityGroupDollarAmountChange } from '../activity-group-dollar-amount-change/activity-group-dollar-amount-change';

@@ -44,7 +44,7 @@ export const SendTokensDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address: st
         <View style={commonStyles.row}>
           <PublicKeyHashText
             longPress
-            style={styles.hashHeight}
+            style={styles.hashChip}
             publicKeyHash={hash}
             testID={ActivityGroupItemSelectors.operationHash}
           />
