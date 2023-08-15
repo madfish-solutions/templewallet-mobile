@@ -17,10 +17,10 @@ import { restartExolixTopupAction, setExolixStepAction } from 'src/store/exolix/
 import { useExolixExchangeData, useExolixStep } from 'src/store/exolix/exolix-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { truncateLongAddress } from 'src/utils/address.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
-import { truncateLongAddress } from 'src/utils/exolix.util';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 

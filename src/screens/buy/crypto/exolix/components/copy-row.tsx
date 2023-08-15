@@ -2,11 +2,12 @@ import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 
-import { Divider } from '../../../../../components/divider/divider';
-import { formatSize } from '../../../../../styles/format-size';
-import { copyStringToClipboard } from '../../../../../utils/clipboard.utils';
-import { truncateLongAddress } from '../../../../../utils/exolix.util';
-import { isDefined } from '../../../../../utils/is-defined';
+import { Divider } from 'src/components/divider/divider';
+import { formatSize } from 'src/styles/format-size';
+import { truncateLongAddress } from 'src/utils/address.utils';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { useExolixStyles } from '../exolix.styles';
 
 interface CopyRowProps {
