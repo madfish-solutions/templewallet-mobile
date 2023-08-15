@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
@@ -22,6 +23,7 @@ import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useIsPartnersPromoEnabledSelector } from '../../store/partners-promotion/partners-promotion-selectors';
 import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
+import { isString } from '../../utils/is-string';
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedElement } from './integrated-element/integrated-element';
@@ -30,7 +32,7 @@ import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
 const keyExtractor = (item: CustomDAppInfo) => item.name;
 const getItemLayout = createGetItemLayout<CustomDAppInfo>(formatSize(7));
-const ListEmptyComponent = <DataPlaceholder text="No records found." />;
+const ListEmptyComponent = <DataPlaceholder text="No records found" />;
 
 const gridSize = formatSize(48);
 
@@ -45,7 +47,7 @@ export const DApps = () => {
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
-  const [searchQuery, setSearchQuery] = useState<string>();
+  const [searchValue, setSearchValue] = useState<string>();
   const [layoutWidth, setLayoutWidth] = useState(1);
 
   usePageAnalytic(ScreensEnum.DApps);
@@ -61,12 +63,12 @@ export const DApps = () => {
   }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
   const sortedDAppsList = useMemo(() => {
-    if (isDefined(searchQuery)) {
-      return dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (isDefined(searchValue)) {
+      return dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchValue.toLowerCase()));
     }
 
     return dAppsList;
-  }, [searchQuery, dAppsList]);
+  }, [searchValue, dAppsList]);
 
   const handleLayout = useCallback(({ nativeEvent }: LayoutChangeEvent) => {
     setLayoutWidth(nativeEvent.layout.width || 1);
@@ -89,6 +91,8 @@ export const DApps = () => {
     [tabletMode]
   );
 
+  const isListNotEmpty = isNonEmptyArray(sortedDAppsList);
+
   return (
     <>
       <View onLayout={handleLayout}>
@@ -97,31 +101,36 @@ export const DApps = () => {
         <PromotionCarousel />
 
         <SearchInput
-          placeholder="Search Dapp"
-          onChangeText={setSearchQuery}
+          placeholder="Search Dapps"
+          onChangeText={setSearchValue}
           style={styles.searchInput}
           testID={DAppsSelectors.searchDAppsInput}
         />
 
-        <View style={styles.wrapper}>
-          <Text style={styles.text}>Integrated</Text>
+        {!isString(searchValue) && (
+          <View style={styles.wrapper}>
+            <Text style={styles.text}>Integrated</Text>
 
-          <IntegratedElement
-            screenName={ScreensEnum.DApps}
-            iconName={IconNameEnum.TextToNft}
-            title="Text to NFT"
-            description="Turn text into AI generated NFT"
-            navigateFn={() => navigate(ScreensEnum.DApps)}
-            testID={DAppsSelectors.integratedDAppButton}
-          />
-        </View>
+            <IntegratedElement
+              screenName={ScreensEnum.DApps}
+              iconName={IconNameEnum.TextToNft}
+              title="Text to NFT"
+              description="Turn text into AI generated NFT"
+              navigateFn={() => navigate(ScreensEnum.DApps)}
+              testID={DAppsSelectors.integratedDAppButton}
+            />
+          </View>
+        )}
 
-        <View style={styles.wrapper}>
-          <Text style={styles.text}>Others</Text>
+        {isListNotEmpty && (
+          <View style={styles.wrapper}>
+            <Text style={styles.text}>Others</Text>
 
-          <Disclaimer texts={texts} />
-        </View>
+            <Disclaimer texts={texts} />
+          </View>
+        )}
       </View>
+
       <FlatList
         data={sortedDAppsList}
         renderItem={renderItem}
