@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { ScrollView, View } from 'react-native';
 
@@ -7,6 +8,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
 import { isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -33,6 +35,8 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
 
   const { isDcpNode } = useNetworkInfo();
 
+  const { balance } = useTotalBalance();
+
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
@@ -57,25 +61,21 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             focused={isStackFocused(nftStackScreens)}
             disabledOnPress={disabledOnPress}
           />
-
-          {!isIOS && (
-            <SideBarButton
-              label="Swap"
-              iconName={IconNameEnum.Swap}
-              routeName={ScreensEnum.SwapScreen}
-              focused={isStackFocused(swapStackScreens)}
-              disabled={isDcpNode}
-              disabledOnPress={disabledOnPress}
-            />
-          )}
-
+          <SideBarButton
+            label="Swap"
+            iconName={IconNameEnum.Swap}
+            routeName={ScreensEnum.SwapScreen}
+            focused={isStackFocused(swapStackScreens)}
+            disabled={isDcpNode}
+            disabledOnPress={disabledOnPress}
+          />
           <SideBarButton
             label="DApps"
             iconName={IconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocused(dAppsStackScreens)}
-            disabled={isDcpNode}
-            disabledOnPress={disabledOnPress}
+            disabled={isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0))}
+            disabledOnPress={isDcpNode ? disabledOnPress : undefined}
           />
           <SideBarButton
             label="Market"

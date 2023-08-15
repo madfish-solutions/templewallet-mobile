@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
@@ -5,6 +6,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -35,6 +37,8 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
 
   const { isDcpNode } = useNetworkInfo();
 
+  const { balance } = useTotalBalance();
+
   const { getState } = useNavigation();
 
   const routes = getState().routes[0].state?.routes;
@@ -62,24 +66,20 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           focused={isStackFocused(nftStackScreens)}
           disabledOnPress={disabledOnPress}
         />
-
-        {!isIOS && (
-          <TabBarButton
-            label="Swap"
-            iconName={IconNameEnum.Swap}
-            iconWidth={formatSize(32)}
-            routeName={ScreensEnum.SwapScreen}
-            params={
-              isDefined(route) && currentRouteName === ScreensEnum.TokenScreen
-                ? { inputToken: route.params?.token }
-                : undefined
-            }
-            focused={isStackFocused(swapStackScreens)}
-            disabled={isDcpNode}
-            disabledOnPress={disabledOnPress}
-          />
-        )}
-
+        <TabBarButton
+          label="Swap"
+          iconName={IconNameEnum.Swap}
+          iconWidth={formatSize(32)}
+          routeName={ScreensEnum.SwapScreen}
+          params={
+            isDefined(route) && currentRouteName === ScreensEnum.TokenScreen
+              ? { inputToken: route.params?.token }
+              : undefined
+          }
+          focused={isStackFocused(swapStackScreens)}
+          disabled={isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0))}
+          disabledOnPress={isDcpNode ? disabledOnPress : undefined}
+        />
         <TabBarButton
           label="DApps"
           iconName={IconNameEnum.DApps}
