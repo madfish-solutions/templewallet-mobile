@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { TokenInterface, emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
+import { TokenInterface, emptyToken } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isDcpNode } from 'src/utils/network.utils';
@@ -111,7 +111,7 @@ export const useCollectibleSelector = (slug: string) => {
   const collectibles = useCollectiblesListSelector();
 
   return useMemo(
-    () => collectibles.find(collectible => getTokenSlug(collectible) === slug) ?? emptyTezosLikeToken,
+    () => collectibles.find(collectible => getTokenSlug(collectible) === slug) ?? emptyToken,
     [collectibles]
   );
 };
