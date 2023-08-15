@@ -40,14 +40,14 @@ export const getAttributesWithRarity = (
     .filter(({ attribute }) => !HIDDEN_ATTRIBUTES_NAME.includes(attribute.name))
     .map(({ attribute }) => {
       const attributeTokenCount = attributesInfo.reduce((acc, current) => {
-        if (!isExistGallery && current.faContract === collectible.address && current.attributeId === attribute.id) {
-          acc = acc + current.editions;
+        if (current.attributeId !== attribute.id) {
+          return acc;
         }
-        if (isExistGallery && current.attributeId === attribute.id && current.galleryPk === galleryPk) {
-          acc = acc + current.editions;
+        if (isExistGallery) {
+          return current.galleryPk === galleryPk ? acc + current.editions : acc;
+        } else {
+          return current.faContract === collectible.address ? acc + current.editions : acc;
         }
-
-        return acc;
       }, 0);
 
       const rarity = Number(((attributeTokenCount / collectibleGalleryCount) * 100).toFixed(2));
