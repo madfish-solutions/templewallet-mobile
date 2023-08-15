@@ -2,18 +2,12 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
-import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/toast.utils';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { isDefined } from 'src/utils/is-defined';
-
-import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
-import { SwapDisclaimerOverlay } from '../../../screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -21,8 +15,15 @@ import {
   ScreensEnum,
   swapStackScreens,
   walletStackScreens
-} from '../../enums/screens.enum';
-import { useNavigation } from '../../hooks/use-navigation.hook';
+} from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { SwapDisclaimerOverlay } from 'src/screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
+import { useIsSwapDisclaimerShowingSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { isDefined } from 'src/utils/is-defined';
+
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
@@ -45,6 +46,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const { getState } = useNavigation();
 
   const swapDisclaimerOverlayController = useBottomSheetController();
+  const isSwapDisclaimerShowingSelector = useIsSwapDisclaimerShowingSelector();
 
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
@@ -82,7 +84,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           params={params}
           focused={isStackFocused(swapStackScreens)}
           disabled={isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0))}
-          onPress={() => swapDisclaimerOverlayController.open()}
+          onPress={isIOS && isSwapDisclaimerShowingSelector ? swapDisclaimerOverlayController.open : undefined}
           disabledOnPress={isDcpNode ? disabledOnPress : undefined}
         />
         <TabBarButton

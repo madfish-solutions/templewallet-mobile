@@ -24,7 +24,8 @@ import {
   madeManualBackupAction,
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
-  setOnRampPossibilityAction
+  setOnRampPossibilityAction,
+  setIsSwapDisclaimerShowingAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -109,6 +110,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
+
+  builder.addCase(setIsSwapDisclaimerShowingAction, (state, { payload: isSwapDisclaimerShowing }) => ({
+    ...state,
+    isSwapDisclaimerShowing
+  }));
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,

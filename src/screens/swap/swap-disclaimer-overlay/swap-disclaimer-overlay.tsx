@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
+import { useDispatch } from 'react-redux';
 
 import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
@@ -12,6 +13,7 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { setIsSwapDisclaimerShowingAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
@@ -22,6 +24,7 @@ interface Props extends BottomSheetControllerProps {
 }
 
 export const SwapDisclaimerOverlay: FC<Props> = ({ controller, routeParams }) => {
+  const dispatch = useDispatch();
   const [isChecked, setIsChecked] = useState(false);
   const styles = useSwapDisclaimerOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
@@ -29,6 +32,7 @@ export const SwapDisclaimerOverlay: FC<Props> = ({ controller, routeParams }) =>
 
   const handlePress = () => {
     controller.close();
+    dispatch(setIsSwapDisclaimerShowingAction(!isChecked));
     navigate(ScreensEnum.SwapScreen, routeParams);
   };
 

@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { ScrollView, View } from 'react-native';
 
+import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -9,12 +10,6 @@ import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-l
 import { isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
-import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/toast.utils';
-import { isDefined } from 'src/utils/is-defined';
-
-import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
-import { SwapDisclaimerOverlay } from '../../../screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -22,8 +17,14 @@ import {
   ScreensEnum,
   swapStackScreens,
   walletStackScreens
-} from '../../enums/screens.enum';
-import { useNavigation } from '../../hooks/use-navigation.hook';
+} from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { SwapDisclaimerOverlay } from 'src/screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
+import { useIsSwapDisclaimerShowingSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { getTokenParams, NOT_AVAILABLE_MESSAGE, RouteParams } from '../tab-bar/tab-bar';
 import { SideBarButton } from './side-bar-button/side-bar-button';
 import { useSideBarStyles } from './side-bar.styles';
@@ -42,6 +43,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const { getState } = useNavigation();
 
   const swapDisclaimerOverlayController = useBottomSheetController();
+  const isSwapDisclaimerShowingSelector = useIsSwapDisclaimerShowingSelector();
 
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
@@ -78,7 +80,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             routeName={ScreensEnum.SwapScreen}
             focused={isStackFocused(swapStackScreens)}
             disabled={isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0))}
-            onPress={() => swapDisclaimerOverlayController.open()}
+            onPress={isIOS && isSwapDisclaimerShowingSelector ? swapDisclaimerOverlayController.open : undefined}
             disabledOnPress={isDcpNode ? disabledOnPress : undefined}
           />
           <SideBarButton
