@@ -13,6 +13,8 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
+import { SwapDisclaimerOverlay } from '../../../screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -21,6 +23,8 @@ import {
   swapStackScreens,
   walletStackScreens
 } from '../../enums/screens.enum';
+import { useNavigation } from '../../hooks/use-navigation.hook';
+import { getTokenParams, NOT_AVAILABLE_MESSAGE, RouteParams } from '../tab-bar/tab-bar';
 import { SideBarButton } from './side-bar-button/side-bar-button';
 import { useSideBarStyles } from './side-bar.styles';
 
@@ -28,14 +32,21 @@ interface Props {
   currentRouteName: ScreensEnum;
 }
 
-export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
-
 export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useSideBarStyles();
 
   const { isDcpNode } = useNetworkInfo();
 
   const { balance } = useTotalBalance();
+
+  const { getState } = useNavigation();
+
+  const swapDisclaimerOverlayController = useBottomSheetController();
+
+  const routes = getState().routes[0].state?.routes;
+  const route = getTokenParams(routes as RouteParams[]);
+  const params =
+    isDefined(route) && currentRouteName === ScreensEnum.TokenScreen ? { inputToken: route.params?.token } : undefined;
 
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
@@ -66,8 +77,9 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             iconName={IconNameEnum.Swap}
             routeName={ScreensEnum.SwapScreen}
             focused={isStackFocused(swapStackScreens)}
-            disabled={isDcpNode}
-            disabledOnPress={disabledOnPress}
+            disabled={isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0))}
+            onPress={() => swapDisclaimerOverlayController.open()}
+            disabledOnPress={isDcpNode ? disabledOnPress : undefined}
           />
           <SideBarButton
             label="DApps"
@@ -91,6 +103,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
           <InsetSubstitute type="bottom" />
         </View>
       </ScrollView>
+      <SwapDisclaimerOverlay controller={swapDisclaimerOverlayController} routeParams={params} />
     </View>
   );
 };

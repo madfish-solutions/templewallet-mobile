@@ -36,6 +36,7 @@ export enum IconNameEnum {
   SwapInfo = 'SwapInfo',
   SwapSettings = 'SwapSettings',
   Swap = 'Swap',
+  LargeSwap = 'LargeSwap',
   EyeClosedBold = 'EyeClosedBold',
   EyeOpenBold = 'EyeOpenBold',
   TezWallet = 'TezWallet',

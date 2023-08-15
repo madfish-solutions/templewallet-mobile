@@ -12,6 +12,8 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
+import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
+import { SwapDisclaimerOverlay } from '../../../screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -21,12 +23,13 @@ import {
   walletStackScreens
 } from '../../enums/screens.enum';
 import { useNavigation } from '../../hooks/use-navigation.hook';
-import { NOT_AVAILABLE_MESSAGE } from '../side-bar/side-bar';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
 type RouteType = { params?: { token: TokenInterface } };
-type RouteParams = { name: string } & RouteType;
+export type RouteParams = { name: string } & RouteType;
+
+export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
 
 interface Props {
   currentRouteName: ScreensEnum;
@@ -41,8 +44,13 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
 
   const { getState } = useNavigation();
 
+  const swapDisclaimerOverlayController = useBottomSheetController();
+
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
+  const params =
+    isDefined(route) && currentRouteName === ScreensEnum.TokenScreen ? { inputToken: route.params?.token } : undefined;
+
   const isStackFocused = (screensStack: ScreensEnum[]) =>
     isDefined(currentRouteName) && screensStack.includes(currentRouteName);
 
@@ -71,13 +79,10 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconName={IconNameEnum.Swap}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.SwapScreen}
-          params={
-            isDefined(route) && currentRouteName === ScreensEnum.TokenScreen
-              ? { inputToken: route.params?.token }
-              : undefined
-          }
+          params={params}
           focused={isStackFocused(swapStackScreens)}
           disabled={isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0))}
+          onPress={() => swapDisclaimerOverlayController.open()}
           disabledOnPress={isDcpNode ? disabledOnPress : undefined}
         />
         <TabBarButton
@@ -99,11 +104,12 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
         />
       </View>
       <InsetSubstitute type="bottom" />
+      <SwapDisclaimerOverlay controller={swapDisclaimerOverlayController} routeParams={params} />
     </View>
   );
 };
 
-const getTokenParams = (routes: RouteParams[] | undefined): null | RouteType => {
+export const getTokenParams = (routes: RouteParams[] | undefined): null | RouteType => {
   let result = null;
   if (Array.isArray(routes) && isDefined(routes)) {
     for (const route of routes) {
