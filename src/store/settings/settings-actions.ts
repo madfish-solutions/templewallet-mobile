@@ -31,6 +31,8 @@ export const setIsShowLoaderAction = createAction<boolean>('settings/SET_IS_SHOW
 
 export const setIsApkBuildLaunchEventFired = createAction<boolean>('settings/SET_IS_APK_BUILD_LAUNCH_EVENT_FIRED');
 
+export const setIsPushNotificationsEventFired = createAction<boolean>('settings/SET_IS_PUSH_NOTIFICATIONS_EVENT_FIRED');
+
 export const requestSeedPhraseBackupAction = createAction<void>('settings/REQUEST_SEED_PHRASE_BACKUP_ACTION');
 export const madeManualBackupAction = createAction<void>('settings/MADE_MANUAL_BACKUP_ACTION');
 export const madeCloudBackupAction = createAction<void>('settings/MADE_CLOUD_BACKUP_ACTION');

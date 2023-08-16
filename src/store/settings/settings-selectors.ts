@@ -44,6 +44,9 @@ export const useIsEnabledAdsBannerSelector = () => useSelector(({ settings }) =>
 export const useIsApkBuildLaunchEventFiredSelector = () =>
   useSelector(({ settings }) => settings.isApkBuildLaunchEventFired);
 
+export const useIsPushNotificationsEventFiredSelector = () =>
+  useSelector(({ settings }) => settings.isPushNotificationsEventFired);
+
 export const useIsBackupMadeSelector = () => {
   const isManualBackupMade = useSelector(({ settings }) => settings.isManualBackupMade);
   const isCloudBackupMade = useSelector(({ settings }) => settings.isCloudBackupMade);
