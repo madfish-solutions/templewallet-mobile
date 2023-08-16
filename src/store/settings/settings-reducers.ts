@@ -26,7 +26,7 @@ import {
   setAdsBannerVisibilityAction,
   setOnRampPossibilityAction,
   setIsApkBuildLaunchEventFired,
-  setIsPushNotificationsEventFired
+  setIsPushNotificationsEnabledEventFired
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -93,10 +93,13 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isBuildIdentifierEventFiredOnce
   }));
 
-  builder.addCase(setIsPushNotificationsEventFired, (state, { payload: isPushNotificationsEventFired }) => ({
-    ...state,
-    isPushNotificationsEventFired
-  }));
+  builder.addCase(
+    setIsPushNotificationsEnabledEventFired,
+    (state, { payload: isPushNotificationsEnabledEventFired }) => ({
+      ...state,
+      isPushNotificationsEnabledEventFired
+    })
+  );
 
   builder.addCase(requestSeedPhraseBackupAction, state => ({
     ...state,
