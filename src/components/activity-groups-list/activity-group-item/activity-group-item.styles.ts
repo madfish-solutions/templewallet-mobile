@@ -64,6 +64,9 @@ export const useActivityDetailsStyles = createUseStyles(({ colors }) => ({
   },
   hashChip: {
     height: formatSize(24)
+  },
+  mb8: {
+    marginBottom: formatSize(8)
   }
 }));
 

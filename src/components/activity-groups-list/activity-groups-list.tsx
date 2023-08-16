@@ -1,9 +1,5 @@
-import { TzktOperationStatus } from '@temple-wallet/transactions-parser';
-import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { SectionList, Text, View } from 'react-native';
-
-import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 
 import { emptyFn } from '../../config/general';
 import { useFakeRefreshControlProps } from '../../hooks/use-fake-refresh-control-props.hook';
@@ -54,24 +50,6 @@ export const ActivityGroupsList: FC<Props> = ({
 
       prevActivityDate = date;
     }
-
-    result.unshift({
-      title: 'Never',
-      data: [
-        [
-          {
-            type: 'Unknown',
-            status: TzktOperationStatus.Applied,
-            hash: 'oobqHGXAdHW43SWud7HJRCHqhePZmJ8JKFvPK84GD8JSpArQoc6',
-            tokensDeltas: [{ atomicAmount: new BigNumber(888), tokenSlug: TEZ_TOKEN_SLUG }],
-            id: 703070287691776,
-            timestamp: '2023-08-15T10:10:20Z',
-            from: { address: 'tz1L7QjtFG4KJBMZ8tppwMmTjMGwqxPFCSXM' },
-            to: { address: 'tz1VNvjvQPufKb38KYF6DC3PHWR8SVWEiHUW' }
-          }
-        ]
-      ] as unknown as ActivityGroup[]
-    });
 
     return result;
   }, [activityGroups]);

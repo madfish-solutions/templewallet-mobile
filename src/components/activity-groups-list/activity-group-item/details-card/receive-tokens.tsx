@@ -5,9 +5,10 @@ import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
+import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { calculateDollarValue } from 'src/utils/activity.utils';
 import { tzktUrl } from 'src/utils/linking.util';
 
 import { ActivityGroupAmountChange, TextSize } from '../activity-group-amount-change/activity-group-amount-change';
@@ -15,7 +16,7 @@ import { ActivityGroupDollarAmountChange } from '../activity-group-dollar-amount
 import { useActivityCommonStyles, useActivityDetailsStyles } from '../activity-group-item.styles';
 import { ActivityGroupItemSelectors } from '../selectors';
 
-export const ReceiveTokensDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address: string; hash: string }> = ({
+export const ReceiveTokensDetails: FC<{ nonZeroAmounts: Array<ActivityAmount>; address: string; hash: string }> = ({
   nonZeroAmounts,
   address,
   hash
@@ -30,7 +31,7 @@ export const ReceiveTokensDetails: FC<{ nonZeroAmounts: NonZeroAmounts; address:
         <Text style={styles.text}>Received:</Text>
         <View>
           <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} textSize={TextSize.Small} />
-          <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
+          <ActivityGroupDollarAmountChange dollarValue={calculateDollarValue(nonZeroAmounts)} />
         </View>
       </View>
       <View style={[styles.itemWrapper, styles.border]}>

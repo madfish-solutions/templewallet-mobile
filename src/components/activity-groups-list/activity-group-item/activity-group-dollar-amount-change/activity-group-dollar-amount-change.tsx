@@ -1,22 +1,26 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { NonZeroAmounts } from '../../../../interfaces/non-zero-amounts.interface';
-import { FormattedAmount } from '../../../formatted-amount';
+import { FormattedAmount } from 'src/components/formatted-amount';
+import { ZERO } from 'src/config/swap';
+
 import { useActivityGroupDollarAmountChangeStyles } from './activity-group-dollar-amount-change.styles';
 
 interface Props {
-  nonZeroAmounts: NonZeroAmounts;
+  dollarValue: BigNumber;
 }
 
-export const ActivityGroupDollarAmountChange: FC<Props> = ({ nonZeroAmounts }) => {
+export const ActivityGroupDollarAmountChange: FC<Props> = ({ dollarValue }) => {
   const styles = useActivityGroupDollarAmountChangeStyles();
+
+  if (dollarValue.isEqualTo(ZERO)) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
-      {nonZeroAmounts.dollarSums.map((amount, index) => (
-        <FormattedAmount key={index} amount={amount} isDollarValue={true} style={styles.valueText} />
-      ))}
+      <FormattedAmount isDollarValue amount={dollarValue} style={styles.valueText} />
     </View>
   );
 };

@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
@@ -12,34 +13,31 @@ import { isString } from '../utils/is-string';
 import { isCollectible, mutezToTz } from '../utils/tezos.util';
 import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 
-interface ActivityAmount {
-  symbol: string;
-  isPositive: boolean;
-  exchangeRate: number;
-  parsedAmount: BigNumber;
-}
+const calculateFiatAmount = (
+  parsedAmount: BigNumber,
+  exchangeRate: number | undefined,
+  fiatToUsdRate: number | undefined
+) => {
+  if (isDefined(exchangeRate) && isDefined(fiatToUsdRate)) {
+    return parsedAmount.absoluteValue().multipliedBy(exchangeRate).multipliedBy(fiatToUsdRate);
+  }
+};
 
-interface ActivityNonZeroAmounts {
-  amounts: Array<ActivityAmount>;
-  dollarSums: Array<BigNumber>;
-}
-
-export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): ActivityNonZeroAmounts => {
+export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): Array<ActivityAmount> => {
   const dispatch = useDispatch();
   const getTokenMetadata = useTokenMetadataGetter();
   const exchangeRates = useUsdToTokenRates();
   const fiatToUsdRate = useFiatToUsdRateSelector();
 
   return useMemo(() => {
-    const amounts = [];
-    let positiveAmountSum = new BigNumber(0);
-    let negativeAmountSum = new BigNumber(0);
+    const amounts: Array<ActivityAmount> = [];
 
     for (const { atomicAmount, tokenSlug } of tokensDeltas) {
       const metadata = getTokenMetadata(tokenSlug);
       const { decimals, symbol, name } = metadata;
       const [address, tokenId] = tokenSlug.split('_');
       const exchangeRate: number | undefined = exchangeRates[tokenSlug];
+
       if (isString(address) && !isString(name)) {
         dispatch(loadTokenMetadataActions.submit({ address, id: Number(tokenId ?? '0') }));
       }
@@ -47,25 +45,17 @@ export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): ActivityNonZ
       const parsedAmount = mutezToTz(atomicAmount, decimals);
       const isPositive = parsedAmount.isPositive();
 
-      if (isDefined(exchangeRate) && isDefined(fiatToUsdRate)) {
-        const summand = parsedAmount.multipliedBy(exchangeRate).multipliedBy(fiatToUsdRate);
-        if (isPositive) {
-          positiveAmountSum = positiveAmountSum.plus(summand);
-        } else {
-          negativeAmountSum = negativeAmountSum.plus(summand);
-        }
-      }
-
       if (!parsedAmount.isEqualTo(0)) {
         amounts.push({
-          parsedAmount,
           isPositive,
+          parsedAmount,
+          exchangeRate,
           symbol: isCollectible(metadata) ? name : symbol,
-          exchangeRate
+          fiatAmount: calculateFiatAmount(parsedAmount, exchangeRate, fiatToUsdRate)
         });
       }
     }
 
-    return { amounts, dollarSums: [negativeAmountSum, positiveAmountSum].filter(sum => !sum.isZero()) };
+    return amounts;
   }, [tokensDeltas, getTokenMetadata, exchangeRates]);
 };

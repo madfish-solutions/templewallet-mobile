@@ -1,13 +1,14 @@
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 
-import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
+import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
+import { calculateDollarValue } from 'src/utils/activity.utils';
 
 import { ActivityGroupAmountChange } from '../activity-group-amount-change/activity-group-amount-change';
 import { ActivityGroupDollarAmountChange } from '../activity-group-dollar-amount-change/activity-group-dollar-amount-change';
 import { useActivityCommonStyles, useActivityGroupItemStyles } from '../activity-group-item.styles';
 
-export const UnknownInfo: FC<{ nonZeroAmounts: NonZeroAmounts }> = ({ nonZeroAmounts }) => {
+export const UnknownInfo: FC<{ nonZeroAmounts: Array<ActivityAmount> }> = ({ nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();
   const commonStyles = useActivityCommonStyles();
 
@@ -20,7 +21,7 @@ export const UnknownInfo: FC<{ nonZeroAmounts: NonZeroAmounts }> = ({ nonZeroAmo
         </View>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
           <Text style={styles.oprationSubtitle}>-</Text>
-          <ActivityGroupDollarAmountChange nonZeroAmounts={nonZeroAmounts} />
+          <ActivityGroupDollarAmountChange dollarValue={calculateDollarValue(nonZeroAmounts)} />
         </View>
       </View>
     </View>

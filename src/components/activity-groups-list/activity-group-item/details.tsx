@@ -6,7 +6,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
-import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
+import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
 import { formatSize } from 'src/styles/format-size';
 
 import { useActivityCommonStyles, useActivityDetailsStyles } from './activity-group-item.styles';
@@ -17,7 +17,7 @@ import { ActivityGroupItemSelectors } from './selectors';
 
 interface Props {
   activity: Activity;
-  nonZeroAmounts: NonZeroAmounts;
+  nonZeroAmounts: Array<ActivityAmount>;
 }
 
 export const Details: FC<Props> = ({ activity, nonZeroAmounts }) => {

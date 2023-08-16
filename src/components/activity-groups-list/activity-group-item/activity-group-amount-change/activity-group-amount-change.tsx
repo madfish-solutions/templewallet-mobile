@@ -1,11 +1,12 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
+import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
+import { isDoubleTokenOperation, isSingleTokenOperation } from 'src/utils/activity.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
-import { formatAssetAmount } from 'src/utils/number.util';
 import { shortizeSymbol } from 'src/utils/token-metadata.utils';
 
+import { ItemAmountChange } from '../item-amount-change/item-amount-change';
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
 
 export enum TextSize {
@@ -14,17 +15,36 @@ export enum TextSize {
 }
 interface Props {
   textSize?: TextSize;
-  nonZeroAmounts: NonZeroAmounts;
+  nonZeroAmounts: Array<ActivityAmount>;
 }
+
+const FIRST_AMOUNT_INDEX = 0;
 
 export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize = TextSize.Regular }) => {
   const styles = useActivityGroupAmountChangeStyles();
 
-  return (
-    <View style={styles.container}>
-      {nonZeroAmounts.amounts.map(({ parsedAmount, isPositive, symbol }, index) => (
+  const children = useMemo(() => {
+    const { isPositive, parsedAmount, symbol } = nonZeroAmounts[FIRST_AMOUNT_INDEX];
+
+    if (isSingleTokenOperation(nonZeroAmounts)) {
+      return (
+        <ItemAmountChange
+          amount={parsedAmount}
+          symbol={symbol}
+          textStyle={[
+            styles.amountWeight,
+            conditionalStyle(textSize === TextSize.Small, styles.amountText13),
+            conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
+          ]}
+        />
+      );
+    }
+
+    if (isDoubleTokenOperation(nonZeroAmounts)) {
+      const symbols = nonZeroAmounts.map(({ symbol }) => symbol).join(',');
+
+      return (
         <Text
-          key={index}
           style={[
             styles.amountWeight,
             conditionalStyle(textSize === TextSize.Small, styles.amountText13),
@@ -33,9 +53,25 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
           ]}
         >
           {isPositive && '+'}
-          {formatAssetAmount(parsedAmount)} {shortizeSymbol(symbol)}
+          {shortizeSymbol(symbols)}
         </Text>
-      ))}
-    </View>
-  );
+      );
+    }
+
+    return (
+      <Text
+        style={[
+          styles.amountWeight,
+          conditionalStyle(textSize === TextSize.Small, styles.amountText13),
+          conditionalStyle(textSize === TextSize.Regular, styles.amountText15),
+          conditionalStyle(isPositive, styles.positiveAmountText, styles.destructiveAmountText)
+        ]}
+      >
+        {isPositive ? '+' : '-'}
+        {shortizeSymbol(symbol)} and {nonZeroAmounts.length - 1} others
+      </Text>
+    );
+  }, [nonZeroAmounts, textSize]);
+
+  return <View style={styles.container}>{children}</View>;
 };

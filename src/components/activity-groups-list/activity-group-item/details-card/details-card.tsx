@@ -1,7 +1,7 @@
 import { Activity, ActivityType } from '@temple-wallet/transactions-parser';
 import React, { FC } from 'react';
 
-import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
+import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
 
 import { BakingRewardsDetails } from './baking-rewards';
 import { DelegateDetails } from './delegate';
@@ -9,7 +9,7 @@ import { ReceiveTokensDetails } from './receive-tokens';
 import { SendTokensDetails } from './send-tokens';
 import { UnknownDetails } from './unknown-details';
 
-export const DetailsCard: FC<{ activity: Activity; nonZeroAmounts: NonZeroAmounts }> = ({
+export const DetailsCard: FC<{ activity: Activity; nonZeroAmounts: Array<ActivityAmount> }> = ({
   activity,
   nonZeroAmounts
 }) => {
