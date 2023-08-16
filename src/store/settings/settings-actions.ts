@@ -29,9 +29,7 @@ export const showLoaderAction = createAction('settings/SHOW_LOADER_ACTION');
 export const hideLoaderAction = createAction('settings/HIDE_LOADER_ACTION');
 export const setIsShowLoaderAction = createAction<boolean>('settings/SET_IS_SHOW_LOADER_ACTION');
 
-export const setIsBuildIdentifierEventFiredOnceAction = createAction<boolean>(
-  'settings/SET_IS_BUILD_IDENTIFIER_EVENT_FIRED_ONCE_ACTION'
-);
+export const setIsApkBuildLaunchEventFired = createAction<boolean>('settings/SET_IS_APK_BUILD_LAUNCH_EVENT_FIRED');
 
 export const requestSeedPhraseBackupAction = createAction<void>('settings/REQUEST_SEED_PHRASE_BACKUP_ACTION');
 export const madeManualBackupAction = createAction<void>('settings/MADE_MANUAL_BACKUP_ACTION');

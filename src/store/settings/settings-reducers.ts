@@ -25,7 +25,7 @@ import {
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
   setOnRampPossibilityAction,
-  setIsBuildIdentifierEventFiredOnceAction
+  setIsApkBuildLaunchEventFired
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -87,7 +87,7 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShownDomainName
   }));
 
-  builder.addCase(setIsBuildIdentifierEventFiredOnceAction, (state, { payload: isBuildIdentifierEventFiredOnce }) => ({
+  builder.addCase(setIsApkBuildLaunchEventFired, (state, { payload: isBuildIdentifierEventFiredOnce }) => ({
     ...state,
     isBuildIdentifierEventFiredOnce
   }));

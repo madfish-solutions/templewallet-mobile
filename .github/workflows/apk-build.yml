@@ -52,7 +52,7 @@ jobs:
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-          TEMPLE_BUILD_IDENTIFIER: ${{ github.event.inputs.build-identifier }}
+          APK_BUILD_ID: ${{ github.event.inputs.build-identifier }}
 
       - name: Setup Java SDK
         uses: actions/setup-java@v3

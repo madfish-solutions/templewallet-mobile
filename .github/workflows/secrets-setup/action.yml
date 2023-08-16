@@ -29,7 +29,7 @@ runs:
 
         TEMPLE_WALLET_ROUTE3_AUTH_TOKEN=${{ inputs.TEMPLE_WALLET_ROUTE3_AUTH_TOKEN }}
 
-        TEMPLE_BUILD_IDENTIFIER=${{ inputs.TEMPLE_BUILD_IDENTIFIER }}
+        APK_BUILD_ID=${{ inputs.APK_BUILD_ID }}
         EOF
 
     - name: Write secrets to google-services.json
