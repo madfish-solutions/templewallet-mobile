@@ -83,7 +83,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             label="Swap"
             iconName={IconNameEnum.Swap}
             routeName={ScreensEnum.SwapScreen}
-            params={swapScreenParams}
+            swapScreenParams={swapScreenParams}
             focused={isStackFocused(swapStackScreens)}
             disabled={isSwapButtonDisabled}
             onSwapButtonPress={isIOS && isSwapDisclaimerShowing ? swapDisclaimerOverlayController.open : undefined}

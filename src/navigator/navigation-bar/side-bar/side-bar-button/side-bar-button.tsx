@@ -15,11 +15,16 @@ import { useSideBarButtonStyles } from './side-bar-button.styles';
 interface Props {
   label: string;
   iconName: IconNameEnum;
-  routeName: ScreensEnum;
+  routeName:
+    | ScreensEnum.Wallet
+    | ScreensEnum.DApps
+    | ScreensEnum.SwapScreen
+    | ScreensEnum.Market
+    | ScreensEnum.CollectiblesHome;
   focused: boolean;
   disabled?: boolean;
   showNotificationDot?: boolean;
-  params?: ScreensParamList[ScreensEnum.SwapScreen];
+  swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
   onSwapButtonPress?: EmptyFn;
   disabledOnPress?: EmptyFn;
 }
@@ -31,7 +36,7 @@ export const SideBarButton: FC<Props> = ({
   focused,
   disabled = false,
   showNotificationDot = false,
-  params,
+  swapScreenParams,
   onSwapButtonPress,
   disabledOnPress = emptyFn
 }) => {
@@ -54,8 +59,11 @@ export const SideBarButton: FC<Props> = ({
       if (onSwapButtonPress) {
         onSwapButtonPress();
       } else {
-        // @ts-ignore
-        navigate(routeName, params);
+        if (routeName === ScreensEnum.SwapScreen) {
+          navigate(routeName, swapScreenParams);
+        } else {
+          navigate(routeName);
+        }
       }
     }
   };

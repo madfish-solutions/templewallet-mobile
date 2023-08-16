@@ -86,7 +86,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconName={IconNameEnum.Swap}
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.SwapScreen}
-          params={swapScreenParams}
+          swapScreenParams={swapScreenParams}
           focused={isStackFocused(swapStackScreens)}
           disabled={isSwapButtonDisabled}
           onSwapButtonPress={isIOS && isSwapDisclaimerShowing ? swapDisclaimerOverlayController.open : undefined}

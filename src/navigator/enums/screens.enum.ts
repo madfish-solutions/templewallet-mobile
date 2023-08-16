@@ -91,9 +91,6 @@ export type ScreensParamList = {
   /** Market stack **/
   [ScreensEnum.Market]: undefined;
 
-  /** Market stack **/
-  [ScreensEnum.Market]: undefined;
-
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;
   [ScreensEnum.ManageAccounts]: undefined;
