@@ -1,4 +1,4 @@
-import { TzktMemberInterface } from '@temple-wallet/transactions-parser';
+import { TzktMemberInterface, TzktOperation } from '@temple-wallet/transactions-parser';
 import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -22,7 +22,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const bakers = useBakersListSelector();
 
-  const lastActivityRef = useRef<string>('');
+  const lastOperationRef = useRef<TzktOperation>();
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
@@ -43,9 +43,19 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   const initialLoad = useCallback(
     async (refresh = false) => {
-      const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers);
+      const { activities, reachedTheEnd, oldestOperation } = await loadActivity(
+        selectedRpcUrl,
+        selectedAccount,
+        tokenSlug,
+        knownBakers
+      );
+      console.log('activities: ', activities);
+      console.log('reachedTheEnd: ', reachedTheEnd);
+      console.log('oldestOperation: ', oldestOperation);
 
-      if (activities.length === 0) {
+      lastOperationRef.current = oldestOperation ?? lastOperationRef.current;
+
+      if (reachedTheEnd) {
         setIsAllLoaded(true);
       }
       if (refresh === true) {
@@ -78,24 +88,18 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   const handleUpdate = async () => {
     if (activities.length > 0 && !isAllLoaded) {
-      const lastActivityGroup = activities[activities.length - 1];
+      const {
+        activities: newActivity,
+        reachedTheEnd,
+        oldestOperation
+      } = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastOperationRef.current);
 
-      if (lastActivityGroup.length > 0) {
-        const lastItem = lastActivityGroup[OLDEST_ACTIVITY_INDEX];
+      lastOperationRef.current = oldestOperation ?? lastOperationRef.current;
 
-        if (lastItem.hash !== lastActivityRef.current) {
-          lastActivityRef.current = lastItem.hash;
-
-          if (isDefined(lastItem)) {
-            const newActivity = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastItem);
-
-            if (newActivity.length === 0) {
-              setIsAllLoaded(true);
-            }
-            setActivities(prev => [...prev, ...newActivity]);
-          }
-        }
+      if (reachedTheEnd) {
+        setIsAllLoaded(true);
       }
+      setActivities(prev => [...prev, ...newActivity]);
     }
   };
 

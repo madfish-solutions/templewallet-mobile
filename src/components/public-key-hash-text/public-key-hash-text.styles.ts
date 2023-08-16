@@ -5,6 +5,7 @@ export const usePublicKeyHashTextStyles = createUseStyles(({ colors, typography 
   container: {
     flexDirection: 'row',
     alignItems: 'baseline',
+    maxWidth: formatSize(100),
     paddingHorizontal: formatSize(4),
     paddingVertical: formatSize(2),
     backgroundColor: colors.blue10,
