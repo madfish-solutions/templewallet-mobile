@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react';
-import { View } from 'react-native';
+import { Pressable } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { isAndroid } from 'src/config/system';
+import { isAndroid, isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -39,64 +39,72 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       ? `You need to have ${metadata.symbol} to pay gas fee`
       : 'Balance is zero';
 
-  const disableSendAsset = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
-
   const actionButtonStylesOverrides = useMemo(
     () => ({
       titleStyle: styles.actionButtonTitle
     }),
     [styles.actionButtonTitle]
   );
-  const handleTouchStart = () => {
-    if (disableSendAsset) {
-      showErrorToast({ description: errorMessage });
-      dispatch(setOnRampPossibilityAction(true));
+
+  const emptyBalance = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
+  const disabledSendButton = emptyBalance && isIOS;
+
+  const handleSendButton = () => {
+    if (!emptyBalance) {
+      return navigate(ModalsEnum.Send, { token });
     }
+
+    showErrorToast({ description: errorMessage });
+    dispatch(setOnRampPossibilityAction(true));
   };
+
+  const fallbackSendButton = () => null;
 
   return (
     <ButtonsContainer>
-      <View style={styles.buttonContainer}>
-        <ButtonMedium
-          title="Receive"
-          iconName={IconNameEnum.ArrowDown}
-          onPress={() => navigate(ModalsEnum.Receive, { token })}
-          styleConfigOverrides={actionButtonStylesOverrides}
-        />
-      </View>
+      <ButtonMedium
+        title="Receive"
+        iconName={IconNameEnum.ArrowDown}
+        onPress={() => navigate(ModalsEnum.Receive, { token })}
+        styleConfigOverrides={actionButtonStylesOverrides}
+        style={styles.buttonContainer}
+      />
+
       {isAndroid && (
         <>
           <Divider size={formatSize(8)} />
-          <View style={styles.buttonContainer}>
-            <ButtonMedium
-              title="Buy"
-              iconName={IconNameEnum.ShoppingCard}
-              onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
-              styleConfigOverrides={actionButtonStylesOverrides}
-            />
-          </View>
+          <ButtonMedium
+            title="Buy"
+            iconName={IconNameEnum.ShoppingCard}
+            onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
+            styleConfigOverrides={actionButtonStylesOverrides}
+            style={styles.buttonContainer}
+          />
         </>
       )}
+
       <Divider size={formatSize(8)} />
-      <View style={styles.buttonContainer}>
-        <ButtonMedium
-          disabled={!isTezosNode || !isTezosMainnet}
-          title="Earn"
-          iconName={IconNameEnum.Earn}
-          onPress={() => navigate(ScreensEnum.Earn)}
-          styleConfigOverrides={actionButtonStylesOverrides}
-        />
-      </View>
+
+      <ButtonMedium
+        disabled={!isTezosNode || !isTezosMainnet}
+        title="Earn"
+        iconName={IconNameEnum.Earn}
+        onPress={() => navigate(ScreensEnum.Earn)}
+        styleConfigOverrides={actionButtonStylesOverrides}
+        style={styles.buttonContainer}
+      />
+
       <Divider size={formatSize(8)} />
-      <View style={styles.buttonContainer} onTouchStart={handleTouchStart}>
+
+      <Pressable onPress={handleSendButton} style={styles.buttonContainer}>
         <ButtonMedium
           title="Send"
-          disabled={disableSendAsset}
+          disabled={disabledSendButton}
           iconName={IconNameEnum.ArrowUp}
-          onPress={() => navigate(ModalsEnum.Send, { token })}
+          onPress={fallbackSendButton}
           styleConfigOverrides={actionButtonStylesOverrides}
         />
-      </View>
+      </Pressable>
     </ButtonsContainer>
   );
 };
