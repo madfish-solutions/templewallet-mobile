@@ -25,7 +25,11 @@ export const useSwapDisclaimerOverlayStyles = createUseStyles(({ colors, typogra
   description: {
     ...typography.body15Regular,
     color: colors.gray1,
-    textAlign: 'center'
+    textAlign: 'center',
+    height: formatSize(100)
+  },
+  tabletDescriptionHeight: {
+    height: formatSize(61)
   },
   checkboxContainer: {
     flexDirection: 'row',

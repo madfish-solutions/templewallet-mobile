@@ -37,14 +37,14 @@ export const SwapDisclaimerOverlay: FC<Props> = ({ controller, routeParams }) =>
   };
 
   return (
-    <BottomSheet contentHeight={formatSize(isTablet() ? 307 : 344)} controller={controller} isCanselButtonShown={false}>
+    <BottomSheet contentHeight={formatSize(isTablet() ? 313 : 353)} controller={controller} isCanselButtonShown={false}>
       <View style={[dropdownBottomSheetStyles.headerContainer, styles.paddingVertical]}>
         <Icon name={IconNameEnum.LargeSwap} size={formatSize(69)} />
         <Divider size={formatSize(16)} />
 
         <Text style={styles.title}>Swap tokens in-wallet</Text>
         <Divider size={formatSize(8)} />
-        <Text style={styles.description}>
+        <Text style={[styles.description, isTablet() && styles.tabletDescriptionHeight]}>
           Swap is a native Tezos blockchain feature that enables users to exchange one token for another. It operates
           through Blockchain, automating the swap without any centralized third-parties.
         </Text>
