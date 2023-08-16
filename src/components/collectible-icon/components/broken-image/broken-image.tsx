@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
+import { formatSize } from '../../../../styles/format-size';
 import { Icon } from '../../../icon/icon';
 import { IconNameEnum } from '../../../icon/icon-name.enum';
 import { getBrokenImageSize } from '../../utils/get-broken-image-size';
@@ -15,7 +16,11 @@ export const BrokenImage: FC<Props> = ({ isBigIcon, style }) => {
 
   return (
     <View style={style}>
-      <Icon name={IconNameEnum.BrokenImage} width={brokenImageSize.width} height={brokenImageSize.height} />
+      <Icon
+        name={IconNameEnum.BrokenImage}
+        width={formatSize(brokenImageSize.width)}
+        height={formatSize(brokenImageSize.height)}
+      />
     </View>
   );
 };
