@@ -49,9 +49,6 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         tokenSlug,
         knownBakers
       );
-      console.log('activities: ', activities);
-      console.log('reachedTheEnd: ', reachedTheEnd);
-      console.log('oldestOperation: ', oldestOperation);
 
       lastOperationRef.current = oldestOperation ?? lastOperationRef.current;
 
