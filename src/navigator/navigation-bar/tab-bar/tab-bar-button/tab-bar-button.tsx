@@ -20,7 +20,7 @@ interface Props {
   disabled?: boolean;
   showNotificationDot?: boolean;
   params?: ScreensParamList[ScreensEnum.SwapScreen];
-  onPress?: EmptyFn;
+  onSwapButtonPress?: EmptyFn;
   disabledOnPress?: EmptyFn;
 }
 
@@ -33,7 +33,7 @@ export const TabBarButton: FC<Props> = ({
   disabled = false,
   showNotificationDot = false,
   params,
-  onPress,
+  onSwapButtonPress,
   disabledOnPress = emptyFn
 }) => {
   const colors = useColors();
@@ -52,8 +52,8 @@ export const TabBarButton: FC<Props> = ({
     if (disabled) {
       disabledOnPress();
     } else {
-      if (onPress) {
-        onPress();
+      if (onSwapButtonPress) {
+        onSwapButtonPress();
       } else {
         // @ts-ignore
         navigate(routeName, params);

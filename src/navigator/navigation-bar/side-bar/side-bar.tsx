@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
@@ -37,23 +37,28 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useSideBarStyles();
 
   const { isDcpNode } = useNetworkInfo();
-
   const { balance } = useTotalBalance();
-
   const { getState } = useNavigation();
 
   const swapDisclaimerOverlayController = useBottomSheetController();
-  const isSwapDisclaimerShowingSelector = useIsSwapDisclaimerShowingSelector();
+  const isSwapDisclaimerShowing = useIsSwapDisclaimerShowingSelector();
 
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
-  const params =
+  const swapScreenParams =
     isDefined(route) && currentRouteName === ScreensEnum.TokenScreen ? { inputToken: route.params?.token } : undefined;
 
-  const isStackFocused = (screensStack: ScreensEnum[]) =>
-    isDefined(currentRouteName) && screensStack.includes(currentRouteName);
+  const isStackFocused = useCallback(
+    (screensStack: ScreensEnum[]) => isDefined(currentRouteName) && screensStack.includes(currentRouteName),
+    [currentRouteName]
+  );
 
-  const disabledOnPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
+  const isSwapButtonDisabled = useMemo(
+    () => isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0)),
+    [isDcpNode, balance]
+  );
+
+  const handleDisabledPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
 
   return (
     <View style={styles.container}>
@@ -72,24 +77,25 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             iconName={IconNameEnum.NFT}
             routeName={ScreensEnum.CollectiblesHome}
             focused={isStackFocused(nftStackScreens)}
-            disabledOnPress={disabledOnPress}
+            disabledOnPress={handleDisabledPress}
           />
           <SideBarButton
             label="Swap"
             iconName={IconNameEnum.Swap}
             routeName={ScreensEnum.SwapScreen}
+            params={swapScreenParams}
             focused={isStackFocused(swapStackScreens)}
-            disabled={isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0))}
-            onPress={isIOS && isSwapDisclaimerShowingSelector ? swapDisclaimerOverlayController.open : undefined}
-            disabledOnPress={isDcpNode ? disabledOnPress : undefined}
+            disabled={isSwapButtonDisabled}
+            onSwapButtonPress={isIOS && isSwapDisclaimerShowing ? swapDisclaimerOverlayController.open : undefined}
+            disabledOnPress={isDcpNode ? handleDisabledPress : undefined}
           />
           <SideBarButton
             label="DApps"
             iconName={IconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocused(dAppsStackScreens)}
-            disabled={isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0))}
-            disabledOnPress={isDcpNode ? disabledOnPress : undefined}
+            disabled={isDcpNode}
+            disabledOnPress={handleDisabledPress}
           />
           <SideBarButton
             label="Market"
@@ -105,7 +111,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
           <InsetSubstitute type="bottom" />
         </View>
       </ScrollView>
-      <SwapDisclaimerOverlay controller={swapDisclaimerOverlayController} routeParams={params} />
+      <SwapDisclaimerOverlay controller={swapDisclaimerOverlayController} routeParams={swapScreenParams} />
     </View>
   );
 };
