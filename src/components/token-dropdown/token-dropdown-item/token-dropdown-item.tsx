@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { formatSize } from '../../../styles/format-size';
@@ -33,6 +33,11 @@ export const TokenDropdownItem: FC<Props> = ({
   iconSize = formatSize(40)
 }) => {
   const styles = useTokenDropdownItemStyles();
+
+  const tokenNameTextProps = useMemo(
+    () => getTruncatedProps([styles.name, conditionalStyle(!isDefined(actionIconName), styles.fullWidthName)]),
+    [actionIconName, styles]
+  );
 
   if (tokenEqualityFn(token, emptyToken)) {
     return (
@@ -80,7 +85,7 @@ export const TokenDropdownItem: FC<Props> = ({
         </View>
 
         <View style={styles.infoRow}>
-          {isShowName && <Text {...getTruncatedProps(styles.name)}>{token.name}</Text>}
+          {isShowName && <Text {...tokenNameTextProps}>{token.name}</Text>}
 
           <View style={styles.rightContainer}>
             {isShowName && <Divider size={formatSize(4)} />}

@@ -5,6 +5,7 @@ import { ofType } from 'ts-action-operators';
 
 import { getLiquidityBakingFarm } from 'src/apis/liquidity-baking';
 import { getV3FarmsList } from 'src/apis/quipuswap-staking';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -20,7 +21,6 @@ import {
   loadAllStakesActions,
   loadSingleFarmStakeActions
 } from './actions';
-import { UserStakeValueInterface } from './state';
 import { getFarmStake, GetFarmStakeError, RawStakeValue, toUserStakeValueInterface, withExchangeRates } from './utils';
 
 const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>

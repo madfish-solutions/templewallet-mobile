@@ -1,7 +1,5 @@
 import { BigNumber } from 'bignumber.js';
 
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
-
 import { BigMap } from './big-map.interface';
 
 interface DepositTokenInterface {
@@ -32,5 +30,3 @@ export interface FarmContractStorageInterface {
   stakes_owner_lookup: BigMap<string, Array<BigNumber>>;
   total_stake: BigNumber;
 }
-
-export type FarmToken = Pick<TokenMetadataInterface, 'symbol' | 'thumbnailUri' | 'iconName' | 'address' | 'id'>;

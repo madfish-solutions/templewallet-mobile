@@ -26,7 +26,7 @@ import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-mo
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from 'src/modals/import-account-modal/import-account-modal';
-import { ManageFarmingPoolModal } from 'src/modals/manage-farming-pool-modal';
+import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
@@ -179,8 +179,13 @@ export const RootStackScreen = () => {
             />
             <RootStack.Screen
               name={ModalsEnum.ManageFarmingPool}
-              component={ManageFarmingPoolModal}
+              component={ManageEarnOpportunityModal}
               options={useModalOptions('Manage farming pool', true)}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ManageSavingsPool}
+              component={ManageEarnOpportunityModal}
+              options={useModalOptions('Manage savings pool', true)}
             />
             <RootStack.Screen
               name={ModalsEnum.Newsletter}

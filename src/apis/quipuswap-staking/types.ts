@@ -1,11 +1,10 @@
 import { MichelsonMap } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
-import { FarmTokenStandardEnum } from 'src/enums/farm-token-standard.enum';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { BigMap } from 'src/interfaces/big-map.interface';
 import { BlockInfo } from 'src/interfaces/block-info.interface';
-import { FarmBase } from 'src/interfaces/farm-base.interface';
+import { FarmBase } from 'src/interfaces/earn-opportunity/farm-base.interface';
 
 enum FarmVersionEnum {
   V1 = 'v1',
@@ -18,22 +17,6 @@ enum StableswapPoolVersion {
   V2 = 'v2'
 }
 
-interface FarmTokenMetadata {
-  decimals: number;
-  symbol: string;
-  name: string;
-  thumbnailUri?: string;
-  categories?: string[];
-}
-
-export interface FarmToken {
-  contractAddress: string;
-  fa2TokenId?: number;
-  type: FarmTokenStandardEnum;
-  isWhitelisted: boolean | null;
-  metadata: FarmTokenMetadata;
-}
-
 interface QuipuswapFarmBase extends FarmBase {
   lastRewards: string;
   discFactor: string;
@@ -41,13 +24,13 @@ interface QuipuswapFarmBase extends FarmBase {
 }
 
 export interface StableswapFarm extends QuipuswapFarmBase {
-  type: FarmPoolTypeEnum.STABLESWAP;
+  type: EarnOpportunityTypeEnum.STABLESWAP;
   stableswapPoolId: number;
   stableswapPoolVersion: StableswapPoolVersion;
 }
 
 interface DexTwoFarm extends QuipuswapFarmBase {
-  type?: FarmPoolTypeEnum.DEX_TWO;
+  type?: EarnOpportunityTypeEnum.DEX_TWO;
 }
 
 export type QuipuswapFarm = StableswapFarm | DexTwoFarm;
