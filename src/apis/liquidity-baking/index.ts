@@ -2,9 +2,9 @@ import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { ZERO } from 'src/config/swap';
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
-import { FarmTokenStandardEnum } from 'src/enums/farm-token-standard.enum';
-import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking/liquidity-baking-storage.interface';
+import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
+import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking-storage.interface';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, SIRS_TOKEN } from 'src/token/data/token-slugs';
 import { SIRS_TOKEN_METADATA, TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
@@ -37,7 +37,10 @@ const getLiquidityBakingStorage = async (tezos: TezosToolkit) => {
 
 const toFarmToken = (token: TokenMetadataInterface) => ({
   contractAddress: token.address,
-  type: token.standard === TokenStandardsEnum.Fa2 ? FarmTokenStandardEnum.Fa2 : FarmTokenStandardEnum.Fa12,
+  type:
+    token.standard === TokenStandardsEnum.Fa2
+      ? EarnOpportunityTokenStandardEnum.Fa2
+      : EarnOpportunityTokenStandardEnum.Fa12,
   isWhitelisted: true,
   metadata: {
     decimals: token.decimals,
@@ -72,7 +75,7 @@ export const getLiquidityBakingFarm = async (
 
   return {
     item: {
-      type: FarmPoolTypeEnum.LIQUIDITY_BAKING,
+      type: EarnOpportunityTypeEnum.LIQUIDITY_BAKING,
       id: liquidityBakingStakingId,
       contractAddress: LIQUIDITY_BAKING_DEX_ADDRESS,
       apr: xtzPool.plus(annualSubsidy).div(xtzPool).minus(1).div(2).times(100).toFixed(),
@@ -87,7 +90,7 @@ export const getLiquidityBakingFarm = async (
       stakeUrl: `${tzktUrl(tezos.rpc.getRpcUrl(), LIQUIDITY_BAKING_DEX_ADDRESS)}`,
       stakedToken: {
         contractAddress: SIRS_TOKEN.address,
-        type: FarmTokenStandardEnum.Fa12,
+        type: EarnOpportunityTokenStandardEnum.Fa12,
         isWhitelisted: true,
         metadata: SIRS_TOKEN_METADATA
       },

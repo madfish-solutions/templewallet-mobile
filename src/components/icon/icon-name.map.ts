@@ -35,6 +35,8 @@ import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
 import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
 import CycleStatusUnlockedIcon from './assets/cycle-status-unlocked.svg';
 import DAppsIcon from './assets/dapps.svg';
+import DataIcon from './assets/data.svg';
+import DatabaseIcon from './assets/database.svg';
 import DealIcon from './assets/deal.svg';
 import Delegate1Icon from './assets/delegate-1.svg';
 import Delegate2Icon from './assets/delegate-2.svg';
@@ -142,6 +144,9 @@ import XBoldIcon from './assets/x-bold.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
+import YouvesEarnSourceDarkIcon from './assets/youves-earn-source-dark.svg';
+import YouvesEarnSourceLargeIcon from './assets/youves-earn-source-large.svg';
+import YouvesEarnSourceIcon from './assets/youves-earn-source.svg';
 import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
 
@@ -290,5 +295,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.LiquidityBakingLogo]: LiquidityBakingLogo,
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
-  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
+  [IconNameEnum.Data]: DataIcon,
+  [IconNameEnum.Database]: DatabaseIcon,
+  [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
+  [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
+  [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon
 };
