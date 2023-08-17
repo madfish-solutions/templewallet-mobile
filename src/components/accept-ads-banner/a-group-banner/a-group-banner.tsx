@@ -22,20 +22,20 @@ export const AGroupBanner: FC<BannerGroupProps> = ({ onDisable, onEnable, style 
         sharing in settings.
       </Text>
       <Text style={commonStyles.description}>Start earning now!</Text>
-      <ButtonLargeSecondary
-        title="No thanks"
-        onPress={onDisable}
-        textStyle={commonStyles.buttonText}
-        buttonStyle={commonStyles.button}
-        testID={AcceptAdsBannerSelectors.aGroupDisable}
-      />
-      <Divider size={formatSize(8)} />
       <ButtonLargePrimary
         title="Pay me for every ad I see"
         onPress={onEnable}
         textStyle={commonStyles.buttonText}
         buttonStyle={commonStyles.button}
         testID={AcceptAdsBannerSelectors.aGroupEnable}
+      />
+      <Divider size={formatSize(8)} />
+      <ButtonLargeSecondary
+        title="No thanks"
+        onPress={onDisable}
+        textStyle={commonStyles.buttonText}
+        buttonStyle={commonStyles.button}
+        testID={AcceptAdsBannerSelectors.aGroupDisable}
       />
     </View>
   );
