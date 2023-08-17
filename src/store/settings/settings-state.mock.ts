@@ -22,5 +22,7 @@ export const mockSettingsState: SettingsState = {
   isEnableAdsBanner: true,
   isOnRampPossibility: false,
   isOnRampHasBeenShownBefore: false,
-  applicationOpenCounter: 1
+  applicationOpenCounter: 1,
+  isApkBuildLaunchEventFired: false,
+  isPushNotificationsEnabledEventFired: false
 };

@@ -6,14 +6,9 @@ import { PermissionsAndroid } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 
 import { isAndroid } from 'src/config/system';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 
-import { AnalyticsEventCategory } from '../utils/analytics/analytics-event.enum';
-
 export const usePushNotifications = () => {
-  const { trackEvent } = useAnalytics();
-
   useEffect(() => {
     requestUserPermission(getFcmToken);
     const unsubscribe = handleForegroundNotifications();
@@ -31,10 +26,8 @@ export const usePushNotifications = () => {
       if (isDefined(fcmToken)) {
         await AsyncStorage.setItem('fcmToken', fcmToken);
       }
-
-      await trackEvent('PUSH_NOTIFICATIONS_ENABLED', AnalyticsEventCategory.General);
     }
-  }, [trackEvent]);
+  }, []);
 };
 
 const requestUserPermission = async (getFcmToken: () => void) => {

@@ -26,6 +26,8 @@ export interface SettingsState {
   isOnRampHasBeenShownBefore: boolean;
   applicationOpenCounter: number;
   isEnableAdsBanner: boolean;
+  isApkBuildLaunchEventFired: boolean;
+  isPushNotificationsEnabledEventFired: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -47,5 +49,7 @@ export const settingsInitialState: SettingsState = {
   applicationOpenCounter: 0,
   isEnableAdsBanner: true,
   isOnRampPossibility: false,
-  isOnRampHasBeenShownBefore: false
+  isOnRampHasBeenShownBefore: false,
+  isApkBuildLaunchEventFired: false,
+  isPushNotificationsEnabledEventFired: false
 };
