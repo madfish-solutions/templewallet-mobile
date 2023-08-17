@@ -37,6 +37,7 @@ import { DApps } from 'src/screens/d-apps/d-apps';
 import { Debug } from 'src/screens/debug/debug';
 import { DelegationScreen } from 'src/screens/delegation-screen/delegation-screen';
 import { Earn } from 'src/screens/earn';
+import { Farming } from 'src/screens/farming';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
 import { ImportAccount } from 'src/screens/import-account/import-account';
 import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
@@ -47,6 +48,7 @@ import { NodeSettings } from 'src/screens/node-settings/node-settings';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
 import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
 import { Notifications } from 'src/screens/notifications/notifications';
+import { Savings } from 'src/screens/savings';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
@@ -220,7 +222,17 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Earn}
                 component={Earn}
+                options={generateScreenOptions(<HeaderTitle title="Earn" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Farming}
+                component={Farming}
                 options={generateScreenOptions(<HeaderTitle title="Farming" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Savings}
+                component={Savings}
+                options={generateScreenOptions(<HeaderTitle title="Savings" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />

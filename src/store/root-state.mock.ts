@@ -11,6 +11,7 @@ import { mockMarketState } from './market/market-state.mock';
 import { mockNewsletterState } from './newsletter/newsletter-state.mock';
 import { mockNotificationsState } from './notifications/notifications-state.mock';
 import { mockPartnersPromotionState } from './partners-promotion/partners-promotion-state.mock';
+import { mockSavingsState } from './savings/state.mock';
 import { mockSecurityState } from './security/security-state.mock';
 import { mockSettingsState } from './settings/settings-state.mock';
 import { mockSwapState } from './swap/swap-state.mock';
@@ -36,5 +37,6 @@ export const mockRootState: RootState = {
   partnersPromotion: mockPartnersPromotionState,
   abTesting: mockABTestingState,
   farms: mockFarmsState,
+  savings: mockSavingsState,
   newsletter: mockNewsletterState
 };

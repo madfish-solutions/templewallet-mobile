@@ -1,9 +1,9 @@
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { BlockInfo } from 'src/interfaces/block-info.interface';
-import { FarmBase } from 'src/interfaces/farm-base.interface';
+import { FarmBase } from 'src/interfaces/earn-opportunity/farm-base.interface';
 
 export interface LiquidityBakingFarm extends FarmBase {
-  type: FarmPoolTypeEnum.LIQUIDITY_BAKING;
+  type: EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
 }
 
 export interface LiquidityBakingFarmResponse {

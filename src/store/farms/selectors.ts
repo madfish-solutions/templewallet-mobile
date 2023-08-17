@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { poolTypesToDisplay } from 'src/config/staking';
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
+import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 
 import { useSelector } from '../selector';
 
@@ -22,7 +22,8 @@ export const useFarmSelector = (id: string, contractAddress: string) => {
   }, [list, id, contractAddress]);
 };
 
-export const useStakeSelector = (farmAddress: string) => useSelector(({ farms }) => farms.lastStakes.data[farmAddress]);
+export const useFarmStakeSelector = (farmAddress: string) =>
+  useSelector(({ farms }) => farms.lastStakes.data[farmAddress]);
 
 export const useAllFarmsSelector = () => {
   const farms = useSelector(({ farms }) => farms.allFarms);
@@ -30,7 +31,8 @@ export const useAllFarmsSelector = () => {
   return useMemo(() => {
     const data = farms.data.filter(
       farm =>
-        poolTypesToDisplay.includes(farm.item.type ?? FarmPoolTypeEnum.DEX_TWO) && farm.item.dailyDistribution !== '0'
+        earnOpportunitiesTypesToDisplay.includes(farm.item.type ?? EarnOpportunityTypeEnum.DEX_TWO) &&
+        farm.item.dailyDistribution !== '0'
     );
 
     return {
@@ -40,8 +42,9 @@ export const useAllFarmsSelector = () => {
     };
   }, [farms]);
 };
-export const useLastStakesSelector = () => useSelector(({ farms }) => farms.lastStakes.data);
 
-export const useStakesLoadingSelector = () => useSelector(({ farms }) => farms.lastStakes.isLoading);
+export const useLastFarmsStakesSelector = () => useSelector(({ farms }) => farms.lastStakes.data);
+
+export const useFarmsStakesLoadingSelector = () => useSelector(({ farms }) => farms.lastStakes.isLoading);
 
 export const useFarmSortFieldSelector = () => useSelector(({ farms }) => farms.sortField);
