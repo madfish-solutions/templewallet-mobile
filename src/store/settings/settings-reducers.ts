@@ -25,6 +25,7 @@ import {
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
   setOnRampPossibilityAction,
+  setIsSwapDisclaimerShowingAction,
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired
 } from './settings-actions';
@@ -124,6 +125,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
+
+  builder.addCase(setIsSwapDisclaimerShowingAction, (state, { payload: isSwapDisclaimerShowing }) => ({
+    ...state,
+    isSwapDisclaimerShowing
+  }));
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,
