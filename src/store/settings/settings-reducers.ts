@@ -26,6 +26,7 @@ import {
   setAdsBannerVisibilityAction,
   setOnRampPossibilityAction,
   setIsOnRampHasBeenShownBeforeAction,
+  setIsSwapDisclaimerShowingAction,
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired
 } from './settings-actions';
@@ -128,6 +129,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsOnRampHasBeenShownBeforeAction, (state, { payload: isOnRampHasBeenShownBefore }) => ({
     ...state,
     isOnRampHasBeenShownBefore
+  }));
+
+  builder.addCase(setIsSwapDisclaimerShowingAction, (state, { payload: isSwapDisclaimerShowing }) => ({
+    ...state,
+    isSwapDisclaimerShowing
   }));
 
   builder.addCase(walletOpenedAction, state => ({
