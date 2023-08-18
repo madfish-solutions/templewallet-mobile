@@ -92,15 +92,15 @@ export const useHandleSubmit = () => {
 
           return void alertOnExistingBackup(
             () => {
-              submit(password);
+              proceedWithSaving(password);
               trackEvent(CloudBackupSelectors.ReplaceBackup, AnalyticsEventCategory.ButtonPress);
             },
             () => {
-              proceedWithSaving(password);
+              navigate(ScreensEnum.ManualBackup);
               trackEvent(CloudBackupSelectors.BackupManually, AnalyticsEventCategory.ButtonPress);
             },
             () => {
-              navigate(ScreensEnum.ManualBackup);
+              submit(password);
               trackEvent(CloudBackupSelectors.ChangeAnAccount, AnalyticsEventCategory.ButtonPress);
             }
           );
