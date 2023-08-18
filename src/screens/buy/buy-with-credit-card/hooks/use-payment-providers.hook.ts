@@ -65,12 +65,11 @@ export const usePaymentProviders = (
       newInputAsset: TopUpInputInterface,
       newOutputAsset: TopUpInputInterface
     ) => {
-      const [moonPayOutputAmount, utorgOutputAmount, aliceBobOutputAmount] =
-        await Promise.all([
-          updateMoonPayOutputAmount(newInputAmount, newInputAsset, newOutputAsset),
-          updateUtorgOutputAmount(newInputAmount, newInputAsset, newOutputAsset),
-          updateAliceBobOutputAmount(newInputAmount, newInputAsset, newOutputAsset)
-        ]);
+      const [moonPayOutputAmount, utorgOutputAmount, aliceBobOutputAmount] = await Promise.all([
+        updateMoonPayOutputAmount(newInputAmount, newInputAsset, newOutputAsset),
+        updateUtorgOutputAmount(newInputAmount, newInputAsset, newOutputAsset),
+        updateAliceBobOutputAmount(newInputAmount, newInputAsset, newOutputAsset)
+      ]);
 
       return {
         [TopUpProviderEnum.MoonPay]: moonPayOutputAmount,
