@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Pressable } from 'react-native';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, isIOS } from 'src/config/system';
@@ -96,7 +96,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
       <Divider size={formatSize(8)} />
 
-      <Pressable onPress={handleSendButton} style={styles.buttonContainer}>
+      <View onTouchStart={handleSendButton} style={styles.buttonContainer}>
         <ButtonMedium
           title="Send"
           disabled={disabledSendButton}
@@ -104,7 +104,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
           onPress={fallbackSendButton}
           styleConfigOverrides={actionButtonStylesOverrides}
         />
-      </Pressable>
+      </View>
     </ButtonsContainer>
   );
 };
