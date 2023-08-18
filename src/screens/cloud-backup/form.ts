@@ -23,6 +23,9 @@ import {
 } from 'src/utils/cloud-backup';
 import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
 
+import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
+import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { CloudBackupSelectors } from './selectors';
 import { alertOnExistingBackup } from './utils';
 
 interface EnterCloudPasswordFormValues {
@@ -41,6 +44,7 @@ export const useHandleSubmit = () => {
   const { goBack, navigate } = useNavigation();
   const dispatch = useDispatch();
   const trackCloudError = useTrackCloudError();
+  const { trackEvent } = useAnalytics();
 
   const proceedWithSaving = useCallback(
     async (password: string) => {
@@ -87,9 +91,18 @@ export const useHandleSubmit = () => {
           dispatch(hideLoaderAction());
 
           return void alertOnExistingBackup(
-            () => void submit(password),
-            () => void proceedWithSaving(password),
-            () => void navigate(ScreensEnum.ManualBackup)
+            () => {
+              submit(password);
+              trackEvent(CloudBackupSelectors.ReplaceBackup, AnalyticsEventCategory.ButtonPress);
+            },
+            () => {
+              proceedWithSaving(password);
+              trackEvent(CloudBackupSelectors.BackupManually, AnalyticsEventCategory.ButtonPress);
+            },
+            () => {
+              navigate(ScreensEnum.ManualBackup);
+              trackEvent(CloudBackupSelectors.ChangeAnAccount, AnalyticsEventCategory.ButtonPress);
+            }
           );
         }
 

@@ -1,3 +1,4 @@
 export enum BackupYourWalletSelectors {
-  manualBackupButton = 'Backup Modal/Manual Backup Button'
+  manuallyBackupButton = "Manually Backup Button on 'Modal'",
+  cloudBackupButton = "Cloud Backup Button on 'Modal'"
 }
