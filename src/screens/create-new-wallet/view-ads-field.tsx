@@ -4,14 +4,12 @@ import { useDispatch } from 'react-redux';
 
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
-import { TextLink } from 'src/components/text-link/text-link';
-import { analyticsCollecting } from 'src/config/socials';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { setIsAnalyticsEnabled } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 
-export const AnalyticsField: FC<{ enabled: boolean; testID?: string }> = ({ enabled, testID }) => {
+export const ViewAdsField: FC<{ enabled: boolean; testID?: string }> = ({ enabled, testID }) => {
   const styles = useSetPasswordScreensCommonStyles();
 
   const dispatch = useDispatch();
@@ -21,13 +19,13 @@ export const AnalyticsField: FC<{ enabled: boolean; testID?: string }> = ({ enab
   return (
     <>
       <View style={[styles.checkboxContainer, styles.removeMargin]}>
-        <FormCheckbox name="analytics" testID={testID}>
+        <FormCheckbox name="viewAds" testID={testID}>
           <Divider size={formatSize(8)} />
-          <Text style={styles.checkboxText}>Analytics</Text>
+          <Text style={styles.checkboxText}>View Ads</Text>
         </FormCheckbox>
       </View>
       <CheckboxLabel>
-        I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
+        I agree to share data(wallet address, IP) and get cashback at Temple Keys for viewing ads
       </CheckboxLabel>
     </>
   );

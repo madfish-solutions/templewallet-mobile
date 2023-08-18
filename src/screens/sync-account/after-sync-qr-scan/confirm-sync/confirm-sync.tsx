@@ -2,6 +2,8 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { ViewAdsField } from 'src/screens/create-new-wallet/view-ads-field';
+
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../../components/checkbox-description/checkbox-label';
 import { Disclaimer } from '../../../../components/disclaimer/disclaimer';
@@ -77,6 +79,10 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               <CheckboxLabel>
                 I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
               </CheckboxLabel>
+
+              <Divider size={formatSize(24)} />
+
+              <ViewAdsField enabled={values.viewAds} testID={ConfirmSyncSelectors.viewAdsCheckbox} />
 
               {values.usePrevPassword === true && (
                 <>
