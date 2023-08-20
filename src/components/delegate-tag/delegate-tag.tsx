@@ -8,10 +8,8 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { getDelegateText } from '../../utils/get-delegate-text.util';
 import { isDefined } from '../../utils/is-defined';
-import { ABContainer } from '../ab-container/ab-container';
-import { DelegateTagA } from './components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
-import { DelegateTagB } from './components/delegate-ab-components/delegate-tag-b/delegate-tag-b';
 import { DelegateTagContainer } from './components/delegate-tag-container/delegate-tag-container';
+import { DelegateTagWithIcon } from './components/delegate-tag-with-icon/delegate-tag-with-icon';
 import { useDelegateTagStyles } from './delegate-tag.styles';
 
 interface Props {
@@ -49,12 +47,7 @@ export const DelegateTag: FC<Props> = ({ apy, token }) => {
       return apyValue;
     }
 
-    return (
-      <ABContainer
-        groupAComponent={<DelegateTagA style={styles.text} />}
-        groupBComponent={<DelegateTagB style={styles.text} />}
-      />
-    );
+    return <DelegateTagWithIcon style={styles.text} />;
   }, [isBakerSelected, isTezosToken, regularToken, apyValue]);
 
   return <DelegateTagContainer token={token}>{tag}</DelegateTagContainer>;

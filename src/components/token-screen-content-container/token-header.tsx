@@ -18,9 +18,7 @@ import { openUrl } from 'src/utils/linking.util';
 
 import { INITIAL_APR_VALUE } from '../../apis/youves/constants';
 import { getDelegateText } from '../../utils/get-delegate-text.util';
-import { ABContainer } from '../ab-container/ab-container';
-import { DelegateTagA } from '../delegate-tag/components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
-import { DelegateTagB } from '../delegate-tag/components/delegate-ab-components/delegate-tag-b/delegate-tag-b';
+import { DelegateTagWithIcon } from '../delegate-tag/components/delegate-tag-with-icon/delegate-tag-with-icon';
 import { useApyStyles } from './apy.styles';
 import { apyLinkSelectors } from './token-header.selectors';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
@@ -59,10 +57,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
         {isBakerSelected ? (
           <Text style={styles.delegateText}>Rewards & Redelegate</Text>
         ) : (
-          <ABContainer
-            groupAComponent={<DelegateTagA style={styles.delegateText} />}
-            groupBComponent={<DelegateTagB style={styles.delegateText} />}
-          />
+          <DelegateTagWithIcon style={styles.delegateText} />
         )}
       </TouchableOpacity>
     );

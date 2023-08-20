@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { formatSize } from '../../../../../styles/format-size';
+import { formatSize } from '../../../../styles/format-size';
 
 export const styles = StyleSheet.create({
   root: {
