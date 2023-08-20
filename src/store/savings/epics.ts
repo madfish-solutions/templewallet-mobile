@@ -6,7 +6,7 @@ import { ofType } from 'ts-action-operators';
 
 import { getUserStake, getYouvesSavingsItems$ } from 'src/apis/youves';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import { showErrorToast } from 'src/toast/error-toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { withSelectedAccount, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
@@ -18,6 +18,8 @@ import {
   loadSingleSavingStakeActions
 } from './actions';
 
+const DEFAULT_ERROR_MESSAGE = { description: 'Something went wrong. Please try again later.' };
+
 const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
@@ -26,7 +28,7 @@ const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Ob
       from(getUserStake(selectedAccount, savingsItem.id, savingsItem.type)).pipe(
         map(stake => loadSingleSavingStakeActions.success({ stake, contractAddress: savingsItem.contractAddress })),
         catchError(err => {
-          showErrorToastByError(err, undefined, true);
+          showErrorToast(DEFAULT_ERROR_MESSAGE);
 
           return of(
             loadSingleSavingStakeActions.fail({
@@ -45,14 +47,17 @@ const loadAllSavingsItems: Epic = (action$: Observable<Action>, state$: Observab
     withUsdToTokenRates(state$),
     switchMap(([, rates]) => getYouvesSavingsItems$(rates)),
     map(savings => loadAllSavingsActions.success(savings)),
-    catchError(err => {
-      showErrorToastByError(err, undefined, true);
+    catchError(() => {
+      showErrorToast(DEFAULT_ERROR_MESSAGE);
 
       return of(loadAllSavingsActions.fail());
     })
   );
 
-const showStakeLoadError = debounce((e: unknown) => showErrorToastByError(e), 500, { leading: true, trailing: false });
+const showStakeLoadError = debounce(() => showErrorToast(DEFAULT_ERROR_MESSAGE), 500, {
+  leading: true,
+  trailing: false
+});
 
 const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
@@ -69,9 +74,9 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
         savings.map(savingsItem =>
           getUserStake(selectedAccount, savingsItem.id, savingsItem.type)
             .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
-            .catch(e => {
+            .catch(() => {
               console.error('Error while loading farm stakes: ', savingsItem.contractAddress);
-              showStakeLoadError(e);
+              showStakeLoadError();
 
               return [savingsItem.contractAddress, undefined];
             })
@@ -85,8 +90,8 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
         mergeMap(stakes => merge(of(loadAllSavingsActions.success(savings)), of(loadAllStakesActions.success(stakes))))
       );
     }),
-    catchError(err => {
-      showErrorToastByError(err, undefined, true);
+    catchError(() => {
+      showErrorToast(DEFAULT_ERROR_MESSAGE);
 
       return of(loadAllSavingsActions.fail(), loadAllStakesActions.fail());
     })
