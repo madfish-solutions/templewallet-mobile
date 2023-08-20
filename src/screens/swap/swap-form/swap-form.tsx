@@ -130,7 +130,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     const inputAssetUsdExchangeRate = usdExchangeRates[getTokenSlug(inputAssets.asset)];
 
     const inputAmountInUsd = mutezToTz(
-      swapInputMinusFeeAtomic.plus(routingFeeFromInputAtomic).times(inputAssetUsdExchangeRate ?? ZERO),
+      swapInputMinusFeeAtomic.plus(routingFeeFromInputAtomic).times(inputAssetUsdExchangeRate),
       fromRoute3Token.decimals
     );
 
