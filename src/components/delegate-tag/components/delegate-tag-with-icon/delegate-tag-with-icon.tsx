@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
 import { StyleProp, Text, TextStyle, View } from 'react-native';
 
-import { AnimatedAlertIcon } from '../../../animated-alert-icon/animated-alert-icon';
+import { AnimatedAlertIcon } from 'src/components/animated-alert-icon/animated-alert-icon';
+
 import { styles } from './delegate-tag-with-icon.styles';
 
 interface Props {
