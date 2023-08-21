@@ -78,7 +78,7 @@ jobs:
           retention-days: 30
 
       - name: Rename APK file
-        run: mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/Temple_Wallet_v${{ github.event.inputs.version }}(${{ github.event.inputs.build-number }}).apk
+        run: mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/Temple_Wallet_v${{ github.event.inputs.version }}_${{ github.event.inputs.build-number }}.apk
 
       - name: Upload to DO Spaces
         uses: BetaHuhn/do-spaces-action@v2
@@ -87,6 +87,6 @@ jobs:
           secret_key: ${{ secrets.DO_SECRET_KEY }}
           space_name: ${{ secrets.DO_SPACE_NAME }}
           space_region: ${{ secrets.DO_SPACE_REGION }}
-          source: android/app/build/outputs/apk/release/Temple_Wallet_v${{ github.event.inputs.version }}(${{ github.event.inputs.build-number }}).apk
+          source: android/app/build/outputs/apk/release/Temple_Wallet_v${{ github.event.inputs.version }}_${{ github.event.inputs.build-number }}.apk
           out_dir: apk-releases
           versioning: true
