@@ -7,10 +7,20 @@ import { isTruthy } from 'src/utils/is-truthy';
 
 import { cloudTitle } from './index';
 
-export const useTrackCloudError = () => {
+const CLOUD_ERROR = 'CLOUD_ERROR';
+const CLOUD_SUCCESS = 'CLOUD_SUCCESS';
+
+export const useCloudResponseHandler = () => {
   const { trackEvent } = useAnalytics();
 
-  return useCallback(
+  const trackCloudSuccess = useCallback(
+    (action: string) => {
+      trackEvent(CLOUD_SUCCESS, AnalyticsEventCategory.General, { cloudTitle, action });
+    },
+    [trackEvent]
+  );
+
+  const trackCloudError = useCallback(
     (error: unknown, fallbackTitle?: string) => {
       const title = error instanceof ToastError ? error.title : fallbackTitle;
       const description = error instanceof ToastError ? error.description : undefined;
@@ -18,8 +28,10 @@ export const useTrackCloudError = () => {
       const msg = error instanceof Error ? error.message : undefined;
       const message = isTruthy(description) && isTruthy(msg?.startsWith(description)) ? undefined : msg?.slice(0, 35);
 
-      trackEvent('CLOUD_ERROR', AnalyticsEventCategory.General, { cloudTitle, title, description, message });
+      trackEvent(CLOUD_ERROR, AnalyticsEventCategory.General, { cloudTitle, title, description, message });
     },
     [trackEvent]
   );
+
+  return { trackCloudError, trackCloudSuccess };
 };

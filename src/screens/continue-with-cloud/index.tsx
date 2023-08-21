@@ -12,7 +12,7 @@ import {
   fetchCloudBackup,
   requestSignInToCloud
 } from 'src/utils/cloud-backup';
-import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
+import { useCloudResponseHandler } from 'src/utils/cloud-backup/use-track-cloud-error';
 import { isTruthy } from 'src/utils/is-truthy';
 
 import { BackupNotFound } from './backup-not-found';
@@ -23,7 +23,7 @@ export const ContinueWithCloud = () => {
 
   const { navigate, goBack } = useNavigation();
   const dispatch = useDispatch();
-  const trackCloudError = useTrackCloudError();
+  const { trackCloudError, trackCloudSuccess } = useCloudResponseHandler();
 
   const [encryptedBackup, setEncryptedBackup] = useState<EncryptedBackupObject>();
 
@@ -47,6 +47,8 @@ export const ContinueWithCloud = () => {
       if (isTruthy(backup)) {
         setEncryptedBackup(backup);
       }
+
+      trackCloudSuccess('Backup retrieval');
     } catch (error) {
       goBack();
       dispatch(hideLoaderAction());
@@ -54,7 +56,7 @@ export const ContinueWithCloud = () => {
 
       trackCloudError(error);
     }
-  }, []);
+  }, [dispatch, trackCloudSuccess, trackCloudError]);
 
   const retryBackupLoad = useCallback(async () => {
     try {
@@ -67,13 +69,15 @@ export const ContinueWithCloud = () => {
       if (isTruthy(backup)) {
         setEncryptedBackup(backup);
       }
+
+      trackCloudSuccess('Backup retrieval retry');
     } catch (error) {
       dispatch(hideLoaderAction());
       showErrorToastByError(error);
 
       trackCloudError(error);
     }
-  }, [dispatch, navigate, trackCloudError]);
+  }, [dispatch, navigate, trackCloudError, trackCloudSuccess]);
 
   useEffect(() => void initialLoad(), []);
 
