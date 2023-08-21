@@ -89,9 +89,9 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShownDomainName
   }));
 
-  builder.addCase(setIsApkBuildLaunchEventFired, (state, { payload: isBuildIdentifierEventFiredOnce }) => ({
+  builder.addCase(setIsApkBuildLaunchEventFired, (state, { payload: isApkBuildLaunchEventFired }) => ({
     ...state,
-    isBuildIdentifierEventFiredOnce
+    isApkBuildLaunchEventFired
   }));
 
   builder.addCase(
