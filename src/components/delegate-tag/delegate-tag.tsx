@@ -9,7 +9,6 @@ import { getTokenSlug } from '../../token/utils/token.utils';
 import { getDelegateText } from '../../utils/get-delegate-text.util';
 import { isDefined } from '../../utils/is-defined';
 import { DelegateTagContainer } from './components/delegate-tag-container/delegate-tag-container';
-import { DelegateTagWithIcon } from './components/delegate-tag-with-icon/delegate-tag-with-icon';
 import { useDelegateTagStyles } from './delegate-tag.styles';
 
 interface Props {
@@ -47,7 +46,7 @@ export const DelegateTag: FC<Props> = ({ apy, token }) => {
       return apyValue;
     }
 
-    return <DelegateTagWithIcon style={styles.text} />;
+    return <Text style={styles.text}>Not Delegated</Text>;
   }, [isBakerSelected, isTezosToken, regularToken, apyValue]);
 
   return <DelegateTagContainer token={token}>{tag}</DelegateTagContainer>;
