@@ -53,7 +53,7 @@ export const useAddressFieldAnalytics = <T extends string, U extends Record<T, s
             networkSlug = 'evm';
             break;
           case AddressValidationErrorEnum.BTC_NETWORK_ADDRESS:
-            networkSlug = 'Bitcoin';
+            networkSlug = 'btc';
             break;
         }
 
