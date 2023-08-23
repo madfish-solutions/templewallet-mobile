@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, memo, useMemo, useRef } from 'react';
 import { SectionList, Text, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
@@ -19,88 +19,84 @@ interface Props {
   onOptimalPromotionError?: () => void;
 }
 
-export const ActivityGroupsList: FC<Props> = ({
-  activityGroups,
-  handleUpdate = emptyFn,
-  shouldShowPromotion = false,
-  onOptimalPromotionError
-}) => {
-  const styles = useActivityGroupsListStyles();
+const renderItem = (item: ActivityGroup) => <ActivityGroupItem group={item} />;
 
-  const fakeRefreshControlProps = useFakeRefreshControlProps();
+export const ActivityGroupsList: FC<Props> = memo(
+  ({ activityGroups, handleUpdate = emptyFn, shouldShowPromotion = false, onOptimalPromotionError }) => {
+    const styles = useActivityGroupsListStyles();
 
-  const sections = useMemo(() => {
-    const result = [];
-    let prevActivityDate = new Date(-1);
+    const onEndReachedCalledDuringMomentum = useRef<boolean>(false);
 
-    for (const activityGroup of activityGroups) {
-      const firstActivity = activityGroup[0] ?? emptyActivity;
-      const date = new Date(firstActivity.timestamp);
+    const fakeRefreshControlProps = useFakeRefreshControlProps();
 
-      if (isTheSameDay(date, prevActivityDate)) {
-        result[result.length - 1]?.data.push(activityGroup);
-      } else {
-        let title = date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+    const sections = useMemo(() => {
+      const result = [];
+      let prevActivityDate = new Date(-1);
 
-        isToday(date) && (title = 'Today');
-        isYesterday(date) && (title = 'Yesterday');
+      for (const activityGroup of activityGroups) {
+        const firstActivity = activityGroup[0] ?? emptyActivity;
+        const date = new Date(firstActivity.timestamp);
 
-        result.push({ title, data: [activityGroup] });
+        if (isTheSameDay(date, prevActivityDate)) {
+          result[result.length - 1]?.data.push(activityGroup);
+        } else {
+          let title = date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+
+          isToday(date) && (title = 'Today');
+          isYesterday(date) && (title = 'Yesterday');
+
+          result.push({ title, data: [activityGroup] });
+        }
+
+        prevActivityDate = date;
       }
 
-      prevActivityDate = date;
-    }
+      return result;
+    }, [activityGroups]);
 
-    return result;
-  }, [activityGroups]);
+    const isShowPlaceholder: boolean = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
-  const isShowPlaceholder = useMemo(() => activityGroups.length === 0, [activityGroups]);
-
-  return (
-    <>
-      {isShowPlaceholder ? (
-        <>
-          {shouldShowPromotion && (
-            <View style={styles.promotionItemWrapper}>
-              <OptimalPromotionItem
-                style={[styles.promotionItem, styles.centeredItem]}
-                testID={ActivityGroupsListSelectors.promotion}
-                onImageError={onOptimalPromotionError}
-                onEmptyPromotionReceived={onOptimalPromotionError}
-              />
-            </View>
-          )}
-          <DataPlaceholder text="No Activity records were found" />
-        </>
-      ) : (
-        <>
+    return (
+      <>
+        {isShowPlaceholder ? (
+          <>
+            {shouldShowPromotion && (
+              <View style={styles.promotionItemWrapper}>
+                <OptimalPromotionItem
+                  style={[styles.promotionItem, styles.centeredItem]}
+                  testID={ActivityGroupsListSelectors.promotion}
+                  onImageError={onOptimalPromotionError}
+                  onEmptyPromotionReceived={onOptimalPromotionError}
+                />
+              </View>
+            )}
+            <DataPlaceholder text="No Activity records were found" />
+          </>
+        ) : (
           <SectionList
             sections={sections}
+            maxToRenderPerBatch={10}
+            disableVirtualization={true}
             stickySectionHeadersEnabled={true}
             contentContainerStyle={styles.sectionListContentContainer}
-            onEndReachedThreshold={0.01}
-            onEndReached={handleUpdate}
-            keyExtractor={(item, index) => item[0]?.hash ?? index}
-            renderItem={({ item, index, section }) => (
-              <>
-                <ActivityGroupItem group={item} />
-                {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
-                  <View style={styles.promotionItemWrapper}>
-                    <OptimalPromotionItem
-                      style={styles.promotionItem}
-                      testID={ActivityGroupsListSelectors.promotion}
-                      onImageError={onOptimalPromotionError}
-                      onEmptyPromotionReceived={onOptimalPromotionError}
-                    />
-                  </View>
-                )}
-              </>
-            )}
+            onEndReachedThreshold={0.5}
+            onMomentumScrollBegin={() => {
+              onEndReachedCalledDuringMomentum.current = false;
+            }}
+            onEndReached={() => {
+              if (!onEndReachedCalledDuringMomentum.current || sections.length < 10) {
+                handleUpdate();
+                onEndReachedCalledDuringMomentum.current = true;
+              }
+            }}
+            keyExtractor={item => item[0].hash}
+            bounces={false}
+            renderItem={({ item }) => renderItem(item)}
             renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
             refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
           />
-        </>
-      )}
-    </>
-  );
-};
+        )}
+      </>
+    );
+  }
+);
