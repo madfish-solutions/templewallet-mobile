@@ -62,7 +62,7 @@ export const useHandleSubmit = () => {
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
         goBack();
 
-        trackCloudSuccess(replacing ? 'Wallet backup replaced' : 'Wallet backed-up');
+        trackCloudSuccess(replacing === true ? 'Wallet backup replaced' : 'Wallet backed-up');
       } catch (error) {
         dispatch(hideLoaderAction());
         showErrorToastByError(error);
