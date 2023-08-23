@@ -17,7 +17,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
 import { keepRestoredCloudBackup, EncryptedBackupObject, decryptCloudBackup } from 'src/utils/cloud-backup';
-import { useCloudResponseHandler } from 'src/utils/cloud-backup/use-track-cloud-error';
+import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
 
 import { RestoreFromCloudFormValues, RestoreFromCloudInitialValues, RestoreFromCloudValidationSchema } from './form';
 import { RestoreFromCloudSelectors } from './selectors';
@@ -29,7 +29,7 @@ interface Props {
 export const RestoreFromCloud = ({ encryptedBackup }: Props) => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
-  const { trackCloudError, trackCloudSuccess } = useCloudResponseHandler();
+  const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
 
   const styles = useSetPasswordScreensCommonStyles();
 
@@ -48,7 +48,7 @@ export const RestoreFromCloud = ({ encryptedBackup }: Props) => {
 
         navigate(ScreensEnum.CreateAccount, { cloudBackupId });
 
-        trackCloudSuccess('Restore from cloud');
+        trackCloudSuccess('Wallet was restored');
       } catch (error) {
         dispatch(hideLoaderAction());
         showErrorToastByError(error);

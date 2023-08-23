@@ -10,7 +10,7 @@ import { cloudTitle } from './index';
 const CLOUD_ERROR = 'CLOUD_ERROR';
 const CLOUD_SUCCESS = 'CLOUD_SUCCESS';
 
-export const useCloudResponseHandler = () => {
+export const useCloudAnalytics = () => {
   const { trackEvent } = useAnalytics();
 
   const trackCloudSuccess = useCallback(

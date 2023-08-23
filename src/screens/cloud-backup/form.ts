@@ -23,7 +23,7 @@ import {
   requestSignInToCloud,
   saveCloudBackup
 } from 'src/utils/cloud-backup';
-import { useCloudResponseHandler } from 'src/utils/cloud-backup/use-track-cloud-error';
+import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
 
 import { CloudBackupSelectors } from './selectors';
 import { alertOnExistingBackup } from './utils';
@@ -43,11 +43,11 @@ export const EnterCloudPasswordInitialValues: EnterCloudPasswordFormValues = {
 export const useHandleSubmit = () => {
   const { goBack, navigate } = useNavigation();
   const dispatch = useDispatch();
-  const { trackCloudError, trackCloudSuccess } = useCloudResponseHandler();
+  const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
   const { trackEvent } = useAnalytics();
 
-  const replaceBackup = useCallback(
-    async (password: string) => {
+  const proceedWithSaving = useCallback(
+    async (password: string, replacing = false) => {
       try {
         dispatch(showLoaderAction());
 
@@ -62,7 +62,7 @@ export const useHandleSubmit = () => {
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
         goBack();
 
-        trackCloudSuccess('Replace back up to cloud');
+        trackCloudSuccess(replacing ? 'Wallet backup replaced' : 'Wallet backed-up');
       } catch (error) {
         dispatch(hideLoaderAction());
         showErrorToastByError(error);
@@ -95,21 +95,21 @@ export const useHandleSubmit = () => {
 
           return void alertOnExistingBackup(
             () => {
-              replaceBackup(password);
-              trackEvent(CloudBackupSelectors.ReplaceBackup, AnalyticsEventCategory.ButtonPress);
+              proceedWithSaving(password, true);
+              trackEvent(CloudBackupSelectors.ReplaceBackupButton, AnalyticsEventCategory.ButtonPress);
             },
             () => {
               navigate(ScreensEnum.ManualBackup);
-              trackEvent(CloudBackupSelectors.BackupManually, AnalyticsEventCategory.ButtonPress);
+              trackEvent(CloudBackupSelectors.BackupManuallyButton, AnalyticsEventCategory.ButtonPress);
             },
             () => {
               submit(password);
-              trackEvent(CloudBackupSelectors.ChangeAnAccount, AnalyticsEventCategory.ButtonPress);
+              trackEvent(CloudBackupSelectors.ChangeAnAccountButton, AnalyticsEventCategory.ButtonPress);
             }
           );
         }
 
-        return void replaceBackup(password);
+        return void proceedWithSaving(password);
       } catch (error) {
         dispatch(hideLoaderAction());
         showErrorToastByError(error);
@@ -117,7 +117,7 @@ export const useHandleSubmit = () => {
         trackCloudError(error);
       }
     },
-    [dispatch, navigate, trackCloudError, replaceBackup, trackEvent]
+    [dispatch, navigate, trackCloudError, proceedWithSaving, trackEvent]
   );
 
   return ({ password }: EnterCloudPasswordFormValues) => void submit(password);

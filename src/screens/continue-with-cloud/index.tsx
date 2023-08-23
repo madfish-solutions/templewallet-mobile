@@ -12,7 +12,7 @@ import {
   fetchCloudBackup,
   requestSignInToCloud
 } from 'src/utils/cloud-backup';
-import { useCloudResponseHandler } from 'src/utils/cloud-backup/use-track-cloud-error';
+import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
 import { isTruthy } from 'src/utils/is-truthy';
 
 import { BackupNotFound } from './backup-not-found';
@@ -23,7 +23,7 @@ export const ContinueWithCloud = () => {
 
   const { navigate, goBack } = useNavigation();
   const dispatch = useDispatch();
-  const { trackCloudError, trackCloudSuccess } = useCloudResponseHandler();
+  const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
 
   const [encryptedBackup, setEncryptedBackup] = useState<EncryptedBackupObject>();
 
