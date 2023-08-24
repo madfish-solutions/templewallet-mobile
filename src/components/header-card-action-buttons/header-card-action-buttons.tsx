@@ -1,5 +1,4 @@
 import React, { FC, useMemo } from 'react';
-import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, isIOS } from 'src/config/system';
@@ -16,6 +15,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking.util';
 
 import { ButtonMedium } from '../button/button-medium/button-medium';
+import { useButtonMediumStyleConfig } from '../button/button-medium/button-medium.styles';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { Divider } from '../divider/divider';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -33,21 +33,32 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
   const tezosToken = useSelectedAccountTezosTokenSelector();
   const styles = useHeaderCardActionButtonsStyles();
+  const defaultStyleConfig = useButtonMediumStyleConfig();
 
   const errorMessage =
     isDefined(token.address) && tezosToken.balance === emptyToken.balance
       ? `You need to have ${metadata.symbol} to pay gas fee`
       : 'Balance is zero';
 
+  const emptyBalance = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
+  const disabledSendButton = emptyBalance && isIOS;
+
   const actionButtonStylesOverrides = useMemo(
     () => ({
       titleStyle: styles.actionButtonTitle
     }),
-    [styles.actionButtonTitle]
+    []
   );
 
-  const emptyBalance = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
-  const disabledSendButton = emptyBalance && isIOS;
+  const sendButtonStylesOverrides = useMemo(
+    () => ({
+      titleStyle: styles.actionButtonTitle,
+      activeColorConfig: disabledSendButton
+        ? defaultStyleConfig.disabledColorConfig
+        : defaultStyleConfig.activeColorConfig
+    }),
+    [disabledSendButton]
+  );
 
   const handleSendButton = () => {
     if (!emptyBalance) {
@@ -57,8 +68,6 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
     showErrorToast({ description: errorMessage });
     dispatch(setOnRampPossibilityAction(true));
   };
-
-  const fallbackSendButton = () => null;
 
   return (
     <ButtonsContainer>
@@ -96,15 +105,13 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
       <Divider size={formatSize(8)} />
 
-      <View onTouchStart={handleSendButton} style={styles.buttonContainer}>
-        <ButtonMedium
-          title="Send"
-          disabled={disabledSendButton}
-          iconName={IconNameEnum.ArrowUp}
-          onPress={fallbackSendButton}
-          styleConfigOverrides={actionButtonStylesOverrides}
-        />
-      </View>
+      <ButtonMedium
+        title="Send"
+        iconName={IconNameEnum.ArrowUp}
+        onPress={handleSendButton}
+        styleConfigOverrides={sendButtonStylesOverrides}
+        style={styles.buttonContainer}
+      />
     </ButtonsContainer>
   );
 };
