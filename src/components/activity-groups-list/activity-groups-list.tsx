@@ -1,5 +1,5 @@
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
-import { SectionList, Text, View } from 'react-native';
+import { SectionList, SectionListData, SectionListRenderItemInfo, Text, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { useFakeRefreshControlProps } from '../../hooks/use-fake-refresh-control-props.hook';
@@ -12,6 +12,11 @@ import { ActivityGroupItem } from './activity-group-item/activity-group-item';
 import { ActivityGroupsListSelectors } from './activity-groups-list.selectors';
 import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
+type RenderItem = SectionListRenderItemInfo<ActivityGroup, { title: string; data: ActivityGroup[] }>;
+type RenderSectionHeader = {
+  section: SectionListData<ActivityGroup, { title: string; data: ActivityGroup[] }>;
+};
+
 interface Props {
   activityGroups: ActivityGroup[];
   shouldShowPromotion?: boolean;
@@ -19,9 +24,9 @@ interface Props {
   onOptimalPromotionError?: () => void;
 }
 
-const SECTIONS_AMOUNT_TO_RENDER = 10;
+const SECTIONS_AMOUNT_TO_RENDER_PER_BATCH = 10;
 
-const renderItem = (item: ActivityGroup) => <ActivityGroupItem group={item} />;
+const keyExtractor = (item: ActivityGroup) => item[0].hash;
 
 export const ActivityGroupsList: FC<Props> = memo(
   ({ activityGroups, handleUpdate = emptyFn, shouldShowPromotion = false, onOptimalPromotionError }) => {
@@ -59,7 +64,7 @@ export const ActivityGroupsList: FC<Props> = memo(
     const isShowPlaceholder: boolean = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
     const onEndReached = useCallback(() => {
-      if (!onEndReachedCalledDuringMomentum.current || sections.length < SECTIONS_AMOUNT_TO_RENDER) {
+      if (!onEndReachedCalledDuringMomentum.current || sections.length < SECTIONS_AMOUNT_TO_RENDER_PER_BATCH) {
         handleUpdate();
         onEndReachedCalledDuringMomentum.current = true;
       }
@@ -68,6 +73,13 @@ export const ActivityGroupsList: FC<Props> = memo(
     const onMomentumScrollBegin = useCallback(() => {
       onEndReachedCalledDuringMomentum.current = false;
     }, []);
+
+    const renderItem = useCallback(({ item }: RenderItem) => <ActivityGroupItem group={item} />, []);
+
+    const renderSectionHeader = useCallback(
+      ({ section: { title } }: RenderSectionHeader) => <Text style={styles.sectionHeaderText}>{title}</Text>,
+      []
+    );
 
     return (
       <>
@@ -88,17 +100,17 @@ export const ActivityGroupsList: FC<Props> = memo(
         ) : (
           <SectionList
             sections={sections}
-            maxToRenderPerBatch={SECTIONS_AMOUNT_TO_RENDER}
+            maxToRenderPerBatch={SECTIONS_AMOUNT_TO_RENDER_PER_BATCH}
             disableVirtualization={true}
             stickySectionHeadersEnabled={true}
             contentContainerStyle={styles.sectionListContentContainer}
             onEndReachedThreshold={0.5}
             onMomentumScrollBegin={onMomentumScrollBegin}
             onEndReached={onEndReached}
-            keyExtractor={item => item[0].hash}
+            keyExtractor={keyExtractor}
             bounces={false}
-            renderItem={({ item }) => renderItem(item)}
-            renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+            renderItem={renderItem}
+            renderSectionHeader={renderSectionHeader}
             refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
           />
         )}
