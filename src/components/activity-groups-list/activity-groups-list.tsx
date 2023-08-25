@@ -1,4 +1,4 @@
-import React, { FC, memo, useMemo, useRef } from 'react';
+import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { SectionList, Text, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
@@ -18,6 +18,8 @@ interface Props {
   handleUpdate?: () => void;
   onOptimalPromotionError?: () => void;
 }
+
+const SECTIONS_AMOUNT_TO_RENDER = 10;
 
 const renderItem = (item: ActivityGroup) => <ActivityGroupItem group={item} />;
 
@@ -56,6 +58,17 @@ export const ActivityGroupsList: FC<Props> = memo(
 
     const isShowPlaceholder: boolean = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
+    const onEndReached = useCallback(() => {
+      if (!onEndReachedCalledDuringMomentum.current || sections.length < SECTIONS_AMOUNT_TO_RENDER) {
+        handleUpdate();
+        onEndReachedCalledDuringMomentum.current = true;
+      }
+    }, [handleUpdate, sections]);
+
+    const onMomentumScrollBegin = useCallback(() => {
+      onEndReachedCalledDuringMomentum.current = false;
+    }, []);
+
     return (
       <>
         {isShowPlaceholder ? (
@@ -75,20 +88,13 @@ export const ActivityGroupsList: FC<Props> = memo(
         ) : (
           <SectionList
             sections={sections}
-            maxToRenderPerBatch={10}
+            maxToRenderPerBatch={SECTIONS_AMOUNT_TO_RENDER}
             disableVirtualization={true}
             stickySectionHeadersEnabled={true}
             contentContainerStyle={styles.sectionListContentContainer}
             onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={() => {
-              onEndReachedCalledDuringMomentum.current = false;
-            }}
-            onEndReached={() => {
-              if (!onEndReachedCalledDuringMomentum.current || sections.length < 10) {
-                handleUpdate();
-                onEndReachedCalledDuringMomentum.current = true;
-              }
-            }}
+            onMomentumScrollBegin={onMomentumScrollBegin}
+            onEndReached={onEndReached}
             keyExtractor={item => item[0].hash}
             bounces={false}
             renderItem={({ item }) => renderItem(item)}
