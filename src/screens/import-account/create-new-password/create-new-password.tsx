@@ -3,9 +3,10 @@ import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AnalyticsField } from 'src/screens/create-new-wallet/AnalyticsField';
-import { ViewAdsField } from 'src/screens/create-new-wallet/view-ads-field';
+import { AnalyticsField } from 'src/components/fields/analytics-field';
+import { ViewAdsField } from 'src/components/fields/view-ads-field';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { scrollToField } from 'src/utils/form.utils';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
@@ -47,7 +48,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
   const refScrollView = useRef<ScrollView>(null);
   const [fieldsPositions, setFieldsPositions] = useState({
     password: 0,
-    analytics: 0
+    acceptTerms: 0
   });
 
   const handleSubmit = ({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
@@ -95,17 +96,19 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
       validationSchema={createNewPasswordValidationSchema}
       onSubmit={handleSubmit}
     >
-      {({ submitForm, isValid, values, errors }) => (
+      {({ submitForm, errors, setFieldTouched, isValid }) => (
         <>
           <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true}>
-            <View style={styles.mb40}>
+            <View style={styles.mb40} onLayout={event => handleLayoutChange('password', event.nativeEvent.layout.y)}>
               <Divider size={formatSize(12)} />
-              <Label label="Password" description="A password is used to protect the wallet." />
-              <FormPasswordInput
-                isShowPasswordStrengthIndicator
-                name="password"
-                testID={CreateNewPasswordSelectors.passwordInput}
-              />
+              <View>
+                <Label label="Password" description="A password is used to protect the wallet." />
+                <FormPasswordInput
+                  isShowPasswordStrengthIndicator
+                  name="password"
+                  testID={CreateNewPasswordSelectors.passwordInput}
+                />
+              </View>
 
               <Label label="Repeat Password" description="Please enter the password again." />
               <FormPasswordInput name="passwordConfirmation" testID={CreateNewPasswordSelectors.repeatPasswordInput} />
@@ -114,16 +117,13 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
                 <FormBiometryCheckbox name="useBiometry" />
               </View>
 
-              <AnalyticsField enabled={values.analytics} testID={CreateNewPasswordSelectors.analyticsCheckbox} />
+              <AnalyticsField name="analytics" testID={CreateNewPasswordSelectors.analyticsCheckbox} />
               <Divider size={formatSize(24)} />
-              <ViewAdsField enabled={values.viewAds} testID={CreateNewPasswordSelectors.viewAdsCheckbox} />
+              <ViewAdsField name="viewAds" testID={CreateNewPasswordSelectors.viewAdsCheckbox} />
             </View>
 
-            <View>
-              <View
-                onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}
-                style={styles.checkboxContainer}
-              >
+            <View onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}>
+              <View style={styles.checkboxContainer}>
                 <FormCheckbox name="acceptTerms" testID={CreateNewPasswordSelectors.acceptTermsCheckbox}>
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Accept terms</Text>
@@ -139,20 +139,12 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
             <ButtonLargePrimary
               title="Create"
               onPress={() => {
-                if (Boolean(errors.acceptTerms)) {
-                  refScrollView.current?.scrollTo({
-                    x: 0,
-                    y: fieldsPositions.analytics,
-                    animated: true
-                  });
-                }
-                if (Boolean(errors.password)) {
-                  refScrollView.current?.scrollTo({
-                    x: 0,
-                    y: fieldsPositions.password,
-                    animated: true
-                  });
-                }
+                setFieldTouched('password', true, true);
+                setFieldTouched('passwordConfirmation', true, true);
+                setFieldTouched('acceptTerms', true, true);
+
+                scrollToField(refScrollView, errors, fieldsPositions);
+
                 if (isValid) {
                   submitForm();
                 }

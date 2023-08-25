@@ -2,7 +2,7 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { ViewAdsField } from 'src/screens/create-new-wallet/view-ads-field';
+import { ViewAdsField } from 'src/components/fields/view-ads-field';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../../components/checkbox-description/checkbox-label';
@@ -82,7 +82,7 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
 
               <Divider size={formatSize(24)} />
 
-              <ViewAdsField enabled={values.viewAds} testID={ConfirmSyncSelectors.viewAdsCheckbox} />
+              <ViewAdsField name="viewAds" testID={ConfirmSyncSelectors.viewAdsCheckbox} />
 
               {values.usePrevPassword === true && (
                 <>

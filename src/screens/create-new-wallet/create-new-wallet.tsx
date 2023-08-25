@@ -6,6 +6,8 @@ import { ScrollView, Text, View } from 'react-native';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
+import { AnalyticsField } from 'src/components/fields/analytics-field';
+import { ViewAdsField } from 'src/components/fields/view-ads-field';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -20,9 +22,9 @@ import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum'
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
+import { scrollToField } from 'src/utils/form.utils';
 import { isString } from 'src/utils/is-string';
 
-import { AnalyticsField } from './AnalyticsField';
 import {
   BackupFlow,
   createNewPasswordInitialValues,
@@ -30,7 +32,6 @@ import {
   useHandleSubmit
 } from './create-new-wallet.form';
 import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
-import { ViewAdsField } from './view-ads-field';
 
 export const CreateNewWallet = () => {
   const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
@@ -82,7 +83,7 @@ export const CreateNewWallet = () => {
 
   return (
     <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>
-      {({ submitForm, isValid, values, errors }) => (
+      {({ submitForm, setFieldTouched, isValid, errors }) => (
         <>
           <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true}>
             <View style={styles.mb40}>
@@ -118,9 +119,9 @@ export const CreateNewWallet = () => {
                 <FormBiometryCheckbox name="useBiometry" />
               </View>
 
-              <AnalyticsField enabled={values.analytics} testID={CreateNewWalletSelectors.analyticsCheckbox} />
+              <AnalyticsField name="analytics" testID={CreateNewWalletSelectors.analyticsCheckbox} />
               <Divider size={formatSize(24)} />
-              <ViewAdsField enabled={values.viewAds} testID={CreateNewWalletSelectors.viewAdsCheckbox} />
+              <ViewAdsField name="viewAds" testID={CreateNewWalletSelectors.viewAdsCheckbox} />
             </View>
 
             <View onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}>
@@ -140,20 +141,12 @@ export const CreateNewWallet = () => {
             <ButtonLargePrimary
               title="Create"
               onPress={() => {
-                if (Boolean(errors.password)) {
-                  refScrollView.current?.scrollTo({
-                    x: 0,
-                    y: fieldsPositions.password,
-                    animated: true
-                  });
-                }
-                if (Boolean(errors.acceptTerms)) {
-                  refScrollView.current?.scrollTo({
-                    x: 0,
-                    y: fieldsPositions.acceptTerms,
-                    animated: true
-                  });
-                }
+                setFieldTouched('password', true, true);
+                setFieldTouched('passwordConfirmation', true, true);
+                setFieldTouched('acceptTerms', true, true);
+
+                scrollToField(refScrollView, errors, fieldsPositions);
+
                 if (isValid) {
                   submitForm();
                 }
