@@ -172,7 +172,7 @@ export const TokensList: FC = () => {
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
-            onPress={() => navigate(ScreensEnum.ManageAssets)}
+            onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: false })}
           />
         </Search>
       </View>

@@ -17,13 +17,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
-import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { Search } from 'src/components/search/search';
-import { emptyFn } from 'src/config/general';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -217,10 +215,6 @@ export const CollectiblesHome = () => {
           {collections.length > 0 && (
             <View style={styles.collectionsHeader}>
               <Text style={styles.collectionsLabel}>Created collections</Text>
-
-              <TouchableOpacity>
-                <Text style={styles.buttonDisabled}>See All</Text>
-              </TouchableOpacity>
             </View>
           )}
 
@@ -252,9 +246,10 @@ export const CollectiblesHome = () => {
 
           <View style={styles.icons}>
             <Search onChange={setSearchValue} dividerSize={16}>
-              <TouchableIcon name={IconNameEnum.SwapSettingsNew} onPress={emptyFn} disabled color={colors.disabled} />
-              <Divider size={formatSize(16)} />
-              <TouchableIcon name={IconNameEnum.EditNew} onPress={emptyFn} />
+              <TouchableIcon
+                name={IconNameEnum.EditNew}
+                onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: true })}
+              />
             </Search>
           </View>
         </View>
