@@ -74,7 +74,24 @@ export const ActivityGroupsList: FC<Props> = memo(
       onEndReachedCalledDuringMomentum.current = false;
     }, []);
 
-    const renderItem = useCallback(({ item }: RenderItem) => <ActivityGroupItem group={item} />, []);
+    const renderItem = useCallback(
+      ({ item, index, section }: RenderItem) => (
+        <>
+          <ActivityGroupItem group={item} />
+          {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
+            <View style={styles.promotionItemWrapper}>
+              <OptimalPromotionItem
+                style={styles.promotionItem}
+                testID={ActivityGroupsListSelectors.promotion}
+                onImageError={onOptimalPromotionError}
+                onEmptyPromotionReceived={onOptimalPromotionError}
+              />
+            </View>
+          )}
+        </>
+      ),
+      [sections]
+    );
 
     const renderSectionHeader = useCallback(
       ({ section: { title } }: RenderSectionHeader) => <Text style={styles.sectionHeaderText}>{title}</Text>,
