@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { ScrollView, BackHandler } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { WebView, WebViewNavigation } from 'react-native-webview';
 
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
@@ -20,10 +20,13 @@ export const InAppBrowser: FC = () => {
 
   usePageAnalytic(ModalsEnum.InAppBrowser);
 
-  const [currentURL, setCurrentURL] = useState(uri);
+  const [navState, setNavState] = useState<WebViewNavigation>();
 
   const styles = useInAppBrowserStyles();
   const { goBack } = useNavigation();
+
+  const currentURL = navState?.url ?? uri;
+  const canGoBack = navState?.canGoBack ?? false;
 
   useNavigationSetOptions(
     {
@@ -41,14 +44,19 @@ export const InAppBrowser: FC = () => {
     }
 
     const backListener = BackHandler.addEventListener('hardwareBackPress', () => {
-      webViewRef.current?.goBack();
+      // Return `true` to prevent default behavior (app navigation/exit)
 
-      // prevent default behavior (exit app)
-      return true;
+      if (canGoBack) {
+        webViewRef.current?.goBack();
+
+        return true;
+      }
+
+      return false;
     });
 
     return () => void backListener.remove();
-  }, []);
+  }, [canGoBack]);
 
   // PTR (pull-to-refresh)
   const [ptrEnabled, setPtrEnabled] = useState(true);
@@ -67,7 +75,7 @@ export const InAppBrowser: FC = () => {
         ref={webViewRef}
         source={{ uri }}
         style={styles.webView}
-        onNavigationStateChange={nav => void setCurrentURL(nav.url)}
+        onNavigationStateChange={setNavState}
         setSupportMultipleWindows={false}
         allowsBackForwardNavigationGestures={true}
         mediaPlaybackRequiresUserAction={true}
