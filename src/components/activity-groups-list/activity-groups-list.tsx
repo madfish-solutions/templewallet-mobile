@@ -1,4 +1,4 @@
-import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
+import React, { FC, memo, useCallback, useMemo } from 'react';
 import { SectionList, SectionListData, SectionListRenderItemInfo, Text, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
@@ -32,8 +32,6 @@ export const ActivityGroupsList: FC<Props> = memo(
   ({ activityGroups, handleUpdate = emptyFn, shouldShowPromotion = false, onOptimalPromotionError }) => {
     const styles = useActivityGroupsListStyles();
 
-    const onEndReachedCalledDuringMomentum = useRef<boolean>(false);
-
     const fakeRefreshControlProps = useFakeRefreshControlProps();
 
     const sections = useMemo(() => {
@@ -62,17 +60,6 @@ export const ActivityGroupsList: FC<Props> = memo(
     }, [activityGroups]);
 
     const isShowPlaceholder: boolean = useMemo(() => activityGroups.length === 0, [activityGroups]);
-
-    const onEndReached = useCallback(() => {
-      if (!onEndReachedCalledDuringMomentum.current || sections.length < SECTIONS_AMOUNT_TO_RENDER_PER_BATCH) {
-        handleUpdate();
-        onEndReachedCalledDuringMomentum.current = true;
-      }
-    }, [handleUpdate, sections]);
-
-    const onMomentumScrollBegin = useCallback(() => {
-      onEndReachedCalledDuringMomentum.current = false;
-    }, []);
 
     const renderItem = useCallback(
       ({ item, index, section }: RenderItem) => (
@@ -122,8 +109,7 @@ export const ActivityGroupsList: FC<Props> = memo(
             stickySectionHeadersEnabled={true}
             contentContainerStyle={styles.sectionListContentContainer}
             onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={onMomentumScrollBegin}
-            onEndReached={onEndReached}
+            onEndReached={handleUpdate}
             keyExtractor={keyExtractor}
             bounces={false}
             renderItem={renderItem}

@@ -1,5 +1,4 @@
 import { TzktMemberInterface, TzktOperation } from '@temple-wallet/transactions-parser';
-import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -11,20 +10,7 @@ import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
-
-const OLDEST_ACTIVITY_INDEX = 0;
-
-const getUniqActivities = (activityGroups: Array<ActivityGroup>) => {
-  const allHashes = activityGroups.map(x => x[OLDEST_ACTIVITY_INDEX]).map(x => x.hash);
-  const onlyUniqueHashes = uniq(allHashes);
-  const onlyUniqueActivitites = onlyUniqueHashes
-    .map(x => activityGroups.find(y => y[OLDEST_ACTIVITY_INDEX].hash === x))
-    .filter(isDefined);
-
-  return onlyUniqueActivitites;
-};
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const dispatch = useDispatch();
@@ -66,7 +52,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         setIsAllLoaded(true);
       }
       if (refresh === true) {
-        setActivities(prev => getUniqActivities([...prev, ...newActivity]));
+        setActivities(prev => [...prev, ...newActivity]);
       } else {
         setActivities(newActivity);
       }
@@ -97,7 +83,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
         lastOperationRef.current = oldestOperation;
 
-        setActivities(prev => getUniqActivities([...prev, ...newActivity]));
+        setActivities(prev => [...prev, ...newActivity]);
 
         if (reachedTheEnd) {
           setIsAllLoaded(true);
