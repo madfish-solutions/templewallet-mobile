@@ -65,10 +65,10 @@ export const InAppBrowser: FC = () => {
     >
       <WebView
         ref={webViewRef}
-        useWebView2={true}
         source={{ uri }}
         style={styles.webView}
         onNavigationStateChange={nav => void setCurrentURL(nav.url)}
+        setSupportMultipleWindows={false}
         allowsBackForwardNavigationGestures={true}
         mediaPlaybackRequiresUserAction={true}
         pullToRefreshEnabled={false}
