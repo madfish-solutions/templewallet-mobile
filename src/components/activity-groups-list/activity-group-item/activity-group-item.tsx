@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -14,7 +14,7 @@ interface Props {
   group: ActivityGroup;
 }
 
-export const ActivityGroupItem: FC<Props> = ({ group }) => {
+export const ActivityGroupItem: FC<Props> = memo(({ group }) => {
   const styles = useActivityGroupItemStyles();
   const firstActivity = group[0] ?? emptyActivity;
   const nonZeroAmounts = useNonZeroAmounts(firstActivity.tokensDeltas);
@@ -26,4 +26,4 @@ export const ActivityGroupItem: FC<Props> = ({ group }) => {
       <Details activity={firstActivity} nonZeroAmounts={nonZeroAmounts} />
     </View>
   );
-};
+});

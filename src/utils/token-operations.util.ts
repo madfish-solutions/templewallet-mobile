@@ -151,13 +151,13 @@ const loadOperations = async (
   selectedRpcUrl: string,
   selectedAccount: AccountInterface,
   tokenSlug?: string,
-  lastItem?: Activity
+  oldestOperation?: TzktOperation
 ) => {
   const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
 
   if (isDefined(tokenSlug)) {
     if (tokenSlug === TEZ_TOKEN_SLUG) {
-      return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
+      return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, oldestOperation?.id);
     }
 
     if (tokenSlug === LIQUIDITY_BAKING_DEX_ADDRESS) {
@@ -165,7 +165,7 @@ const loadOperations = async (
         selectedRpcUrl,
         selectedAccount.publicKeyHash,
         contractAddress,
-        lastItem?.id
+        oldestOperation?.id
       );
     }
 
@@ -174,7 +174,12 @@ const loadOperations = async (
     const tokenType = getTokenType(contract);
 
     if (tokenType === TokenTypeEnum.FA_1_2) {
-      return getTokenFa12Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress, lastItem?.id);
+      return getTokenFa12Operations(
+        selectedRpcUrl,
+        selectedAccount.publicKeyHash,
+        contractAddress,
+        oldestOperation?.id
+      );
     }
 
     if (tokenType === TokenTypeEnum.FA_2) {
@@ -183,12 +188,12 @@ const loadOperations = async (
         selectedAccount.publicKeyHash,
         contractAddress,
         tokenId,
-        lastItem?.id
+        oldestOperation?.id
       );
     }
   }
 
-  return getAllOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
+  return getAllOperations(selectedRpcUrl, selectedAccount.publicKeyHash, oldestOperation?.id);
 };
 
 export const loadActivity = async (
@@ -196,21 +201,37 @@ export const loadActivity = async (
   selectedAccount: AccountInterface,
   tokenSlug?: string,
   knownBakers?: Array<TzktMemberInterface>,
-  lastItem?: Activity
-): Promise<Array<Array<Activity>>> => {
-  const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
-    .then(operations => operations.map(operation => operation.hash))
-    .then(newHashes => uniq(newHashes.filter(x => x !== lastItem?.hash)));
+  oldestOperation?: TzktOperation
+): Promise<{ activities: Array<Array<Activity>>; reachedTheEnd: boolean; oldestOperation?: TzktOperation }> => {
+  const operationsHashesRaw = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, oldestOperation).then(
+    operations => operations.map(operation => operation.hash)
+  );
+
+  const operationsHashesUniq = uniq(operationsHashesRaw.filter(x => x !== oldestOperation?.hash));
 
   const operationGroups: Array<Array<TzktOperation>> = [];
 
-  for (const opHash of operationsHashes) {
+  for (const opHash of operationsHashesUniq) {
     const { data } = await getOperationGroupByHash<TzktOperation>(selectedRpcUrl, opHash);
     operationGroups.push(data);
     await sleep(100);
   }
 
-  return operationGroups
+  const reachedTheEnd = operationGroups.length === 0;
+
+  if (reachedTheEnd) {
+    return { activities: [], reachedTheEnd };
+  }
+
+  const oldestOperationNew = operationGroups[operationGroups.length - 1]?.[0];
+
+  const activities = operationGroups
     .map(group => parseTransactions(group, selectedAccount.publicKeyHash, knownBakers))
     .filter(group => !isEmpty(group));
+
+  if (activities.length === 0) {
+    return loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, oldestOperationNew);
+  }
+
+  return { activities, reachedTheEnd, oldestOperation: oldestOperationNew };
 };
