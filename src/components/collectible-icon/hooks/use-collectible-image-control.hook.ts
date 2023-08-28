@@ -28,18 +28,17 @@ export const useCollectibleImageControl = (collectible: TokenInterface, isBigIco
   const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
   const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
 
+  const handleLoadEnd = useCallback(() => setIsLoading(false), []);
+
   const handleError = useCallback(() => {
     if (currentFallbackIndex < imageFallbackURLs.length - 1) {
       setCurrentFallback(imageFallbackURLs[currentFallbackIndex + 1]);
       setCurrentFallbackIndex(prevState => prevState + 1);
     } else {
       setCurrentFallback(COLLECTIBLE_FINAL_FALLBACK);
+      handleLoadEnd();
     }
-
-    handleLoadEnd();
-  }, [currentFallbackIndex, imageFallbackURLs]);
-
-  const handleLoadEnd = useCallback(() => setIsLoading(false), []);
+  }, [currentFallbackIndex, imageFallbackURLs, handleLoadEnd]);
 
   const handleAnimatedError = useCallback(() => {
     showErrorToast({ description: 'Invalid video' });
