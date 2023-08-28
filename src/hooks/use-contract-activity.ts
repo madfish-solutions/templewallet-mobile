@@ -104,7 +104,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         }
       }
     } catch (error) {
-      console.error('handleUpdate Error: ', error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
