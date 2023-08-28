@@ -17,8 +17,10 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadDAppsListActions } from 'src/store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from 'src/store/d-apps/d-apps-selectors';
+import { useAllFarmsSelector } from 'src/store/farms/selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useSavingsItemsLoadingSelector } from 'src/store/savings/selectors';
 import { useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -45,11 +47,14 @@ export const DApps = () => {
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
+  const { isLoading: isFarmsLoading } = useAllFarmsSelector();
+  const isSavingsLoading = useSavingsItemsLoadingSelector();
+
   const { maxApr: farmsMaxApr } = useUserFarmingStats();
   const { maxApr: savingsMaxApr } = useUserSavingsStats();
 
-  const totalApr = useMemo(
-    () => farmsMaxApr.plus(savingsMaxApr).toFixed(PERCENTAGE_DECIMALS),
+  const biggestApr = useMemo(
+    () => (farmsMaxApr.gt(savingsMaxApr) ? farmsMaxApr : savingsMaxApr).toFixed(PERCENTAGE_DECIMALS),
     [farmsMaxApr, savingsMaxApr]
   );
 
@@ -99,7 +104,7 @@ export const DApps = () => {
       <Divider size={formatSize(12)} />
       <IntegratedDApp
         iconName={IconNameEnum.EarnDapp}
-        title={`Earn up to ${totalApr}% APR`}
+        title={`Earn up to ${isFarmsLoading || isSavingsLoading ? '---' : biggestApr}% APR`}
         description="Unlock on-chain earning potential"
         onPress={() => navigate(ScreensEnum.Earn)}
       />
