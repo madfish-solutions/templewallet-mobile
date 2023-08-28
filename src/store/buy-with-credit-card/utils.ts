@@ -1,7 +1,3 @@
-import { BigNumber } from 'bignumber.js';
-import { binanceCryptoIcons } from 'binance-icons';
-import CurrenciesCodes from 'currency-codes';
-
 import { PairInfoResponse as AliceBobPairInfoResponse } from 'src/apis/alice-bob/types';
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
 import {
@@ -10,18 +6,10 @@ import {
   FiatCurrency as MoonPayFiatCurrency,
   Currency
 } from 'src/apis/moonpay/types';
-import { GetBinanceConnectCurrenciesResponse } from 'src/apis/temple-static';
 import { UTORG_CRYPTO_ICONS_BASE_URL, UTORG_FIAT_ICONS_BASE_URL } from 'src/apis/utorg/consts';
 import { CurrencyInfoType as UtorgCurrencyType, UtorgCurrencyInfo } from 'src/apis/utorg/types';
-import { KNOWN_MAINNET_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { filterByStringProperty } from 'src/utils/array.utils';
-import { SVG_DATA_URI_UTF8_PREFIX } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { isString } from 'src/utils/is-string';
-import { isTruthy } from 'src/utils/is-truthy';
-
-import { TopUpProviderCurrencies } from './state';
 
 const knownUtorgFiatCurrenciesNames: Record<string, string> = {
   PHP: 'Philippine Peso',
@@ -108,55 +96,3 @@ export const mapAliceBobProviderCurrencies = ({ minAmount, maxAmount }: AliceBob
   ],
   crypto: [aliceBobTezos]
 });
-
-export const mapBinanceConnectProviderCurrencies = (
-  data: GetBinanceConnectCurrenciesResponse
-): TopUpProviderCurrencies => {
-  const fiat = filterByStringProperty(data.pairs, 'fiatCurrency').map(item => {
-    const code = item.fiatCurrency;
-
-    return {
-      name: CurrenciesCodes.code(code)?.currency ?? code,
-      code,
-      icon: `${UTORG_FIAT_ICONS_BASE_URL}${code.slice(0, -1)}.svg`,
-      /** Assumed */
-      precision: 2,
-      minAmount: item.minLimit,
-      maxAmount: item.maxLimit
-    };
-  });
-
-  const crypto = data.assets.map(asset => {
-    const { contractAddress, cryptoCurrency: code, withdrawIntegerMultiple } = asset;
-
-    const precision =
-      withdrawIntegerMultiple && Number.isFinite(withdrawIntegerMultiple)
-        ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          new BigNumber(withdrawIntegerMultiple).decimalPlaces()!
-        : 0;
-
-    const iconSvgString = binanceCryptoIcons.get(code.toLowerCase());
-    const icon = isString(iconSvgString) ? `${SVG_DATA_URI_UTF8_PREFIX}${encodeURIComponent(iconSvgString)}` : '';
-
-    return {
-      /** No token id available */
-      slug: isString(contractAddress) ? toTokenSlug(contractAddress) : '',
-      name: getBinanceConnectCryptoCurrencyName(code, contractAddress),
-      code,
-      icon,
-      precision,
-      minAmount: asset.withdrawMin,
-      maxAmount: asset.withdrawMax
-    };
-  });
-
-  return { fiat, crypto };
-};
-
-const getBinanceConnectCryptoCurrencyName = (code: string, address: string | null) => {
-  if (!isTruthy(address) || code === 'XTZ') {
-    return 'Tezos';
-  }
-
-  return KNOWN_MAINNET_TOKENS_METADATA.find(m => m.address === address && m.id === 0)?.name ?? code;
-};

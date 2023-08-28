@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 
 import { getTezUahPairEstimation } from 'src/apis/alice-bob';
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
-import { estimateBinanceConnectOutput } from 'src/apis/temple-static';
 import { convertFiatAmountToCrypto } from 'src/apis/utorg';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
@@ -60,9 +59,7 @@ const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunctio
   },
   [TopUpProviderEnum.Utorg]: (inputAmount, inputAsset, outputAsset) =>
     convertFiatAmountToCrypto(inputAsset.code, outputAsset.code, inputAmount.toNumber()),
-  [TopUpProviderEnum.AliceBob]: inputAmount => getTezUahPairEstimation(inputAmount.toNumber()),
-  [TopUpProviderEnum.BinanceConnect]: (inputAmount, inputAsset, outputAsset) =>
-    estimateBinanceConnectOutput(inputAsset.code, outputAsset.code, String(inputAmount))
+  [TopUpProviderEnum.AliceBob]: inputAmount => getTezUahPairEstimation(inputAmount.toNumber())
 };
 
 const initialPaymentProvidersData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
@@ -83,12 +80,6 @@ const initialPaymentProvidersData: Record<TopUpProviderEnum, PaymentProviderInit
     id: TopUpProviderEnum.AliceBob,
     iconName: IconNameEnum.AliceBob,
     kycRequired: false
-  },
-  [TopUpProviderEnum.BinanceConnect]: {
-    name: 'Binance Connect',
-    id: TopUpProviderEnum.BinanceConnect,
-    iconName: IconNameEnum.Binance,
-    kycRequired: true
   }
 };
 
