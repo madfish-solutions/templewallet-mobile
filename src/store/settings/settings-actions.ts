@@ -40,6 +40,9 @@ export const madeManualBackupAction = createAction<void>('settings/MADE_MANUAL_B
 export const madeCloudBackupAction = createAction<void>('settings/MADE_CLOUD_BACKUP_ACTION');
 
 export const setOnRampPossibilityAction = createAction<boolean>('settings/SET_ON_RAMP_POSSIBILITY_ACTION');
+export const setIsOnRampHasBeenShownBeforeAction = createAction<boolean>(
+  'settings/SET_IS_ON_RAMP_HAS_BEEN_SHOWN_BEFORE_ACTION'
+);
 
 export const setIsSwapDisclaimerShowingAction = createAction<boolean>('settings/SET_IS_SWAP_DISCLAIMER_SHOWING_ACTION');
 

@@ -25,6 +25,7 @@ import {
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
   setOnRampPossibilityAction,
+  setIsOnRampHasBeenShownBeforeAction,
   setIsSwapDisclaimerShowingAction,
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired
@@ -125,6 +126,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
+  builder.addCase(setIsOnRampHasBeenShownBeforeAction, (state, { payload: isOnRampHasBeenShownBefore }) => ({
+    ...state,
+    isOnRampHasBeenShownBefore
+  }));
 
   builder.addCase(setIsSwapDisclaimerShowingAction, (state, { payload: isSwapDisclaimerShowing }) => ({
     ...state,

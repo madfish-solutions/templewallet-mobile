@@ -11,17 +11,13 @@ export const useCryptoCurrencies = () => {
   const moonpayCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.MoonPay);
   const utorgCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.Utorg);
   const aliceBobCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.AliceBob);
-  const binanceConnectCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.BinanceConnect);
 
   const allCryptoCurrencies = useMemo(
     () =>
       Object.values(
-        [
-          ...moonpayCryptoCurrencies,
-          ...utorgCryptoCurrencies,
-          ...aliceBobCryptoCurrencies,
-          ...binanceConnectCryptoCurrencies
-        ].reduce<Record<string, TopUpInputInterface>>((acc, currency) => {
+        [...moonpayCryptoCurrencies, ...utorgCryptoCurrencies, ...aliceBobCryptoCurrencies].reduce<
+          Record<string, TopUpInputInterface>
+        >((acc, currency) => {
           if (!isDefined(acc[currency.code])) {
             acc[currency.code] = currency;
           }
@@ -29,7 +25,7 @@ export const useCryptoCurrencies = () => {
           return acc;
         }, {})
       ).sort(({ code: aCode }, { code: bCode }) => aCode.localeCompare(bCode)),
-    [moonpayCryptoCurrencies, utorgCryptoCurrencies, aliceBobCryptoCurrencies, binanceConnectCryptoCurrencies]
+    [moonpayCryptoCurrencies, utorgCryptoCurrencies, aliceBobCryptoCurrencies]
   );
 
   const filtered = useFilteredCurrencies(allCryptoCurrencies);
