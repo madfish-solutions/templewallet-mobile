@@ -92,4 +92,6 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
     })
   );
 
+const loadKordFiItems: Epic = (action$: Observable<Action>) => action$.pipe();
+
 export const savingsEpics = combineEpics(loadSingleSavingLastStake, loadAllSavingsItems, loadAllSavingsItemsAndStakes);
