@@ -1,13 +1,11 @@
 import React, { FC, ReactNode } from 'react';
 import { View, Text } from 'react-native';
 
-import { analyticsCollecting } from 'src/config/socials';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { formatSize } from 'src/styles/format-size';
 
 import { CheckboxLabel } from '../checkbox-description/checkbox-label';
 import { Divider } from '../divider/divider';
-import { TextLink } from '../text-link/text-link';
 import { useAbstractFieldStyles } from './abstract-field.styles';
 import { FieldProps } from './field.props';
 
@@ -26,9 +24,7 @@ export const AbstractField: FC<Props> = ({ name, title, description, testID }) =
           <Text style={styles.checkboxText}>{title}</Text>
         </FormCheckbox>
       </View>
-      <CheckboxLabel>
-        {description}I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
-      </CheckboxLabel>
+      <CheckboxLabel>{description}</CheckboxLabel>
     </>
   );
 };
