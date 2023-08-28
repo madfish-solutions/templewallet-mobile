@@ -100,6 +100,11 @@ Example:
     * Toggle: 
 
        <img width="292" alt="image" src="https://user-images.githubusercontent.com/95026747/222757440-e83296b5-b804-4f08-80ae-454b736b4d3d.png">
+       
+    * Text: 
+
+       <img width="568" alt="image" src="https://github.com/madfish-solutions/templewallet-mobile/assets/95026747/bd13f43d-30ab-45f4-8213-078a36c1225e">
+
  
 
 

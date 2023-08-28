@@ -34,6 +34,8 @@ export enum ScreensEnum {
 
   /** Earn stack **/
   Earn = 'Earn',
+  Farming = 'Farming',
+  Savings = 'Savings',
 
   /** Market stack **/
   Market = 'Market',
@@ -80,6 +82,8 @@ export type ScreensParamList = {
   [ScreensEnum.Exolix]: undefined;
 
   [ScreensEnum.Earn]: undefined;
+  [ScreensEnum.Farming]: undefined;
+  [ScreensEnum.Savings]: undefined;
 
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
@@ -87,9 +91,6 @@ export type ScreensParamList = {
   /** Swap stack **/
   [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
   [ScreensEnum.SwapSettingsScreen]: undefined;
-
-  /** Market stack **/
-  [ScreensEnum.Market]: undefined;
 
   /** Market stack **/
   [ScreensEnum.Market]: undefined;
@@ -122,6 +123,8 @@ export const walletStackScreens = [
   ScreensEnum.Buy,
   ScreensEnum.BuyWithCreditCard,
   ScreensEnum.Earn,
+  ScreensEnum.Farming,
+  ScreensEnum.Savings,
   ScreensEnum.Exolix,
   ScreensEnum.Notifications,
   ScreensEnum.NotificationsItem,

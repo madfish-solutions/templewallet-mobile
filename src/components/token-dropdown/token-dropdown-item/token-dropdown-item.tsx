@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { TruncatedText } from 'src/components/truncated-text';
@@ -34,6 +34,11 @@ export const TokenDropdownItem: FC<Props> = ({
   iconSize = formatSize(40)
 }) => {
   const styles = useTokenDropdownItemStyles();
+
+  const tokenNameTextStyle = useMemo(
+    () => [styles.name, conditionalStyle(!isDefined(actionIconName), styles.fullWidthName)],
+    [actionIconName, styles]
+  );
 
   if (tokenEqualityFn(token, emptyToken)) {
     return (
@@ -81,7 +86,7 @@ export const TokenDropdownItem: FC<Props> = ({
         </View>
 
         <View style={styles.infoRow}>
-          {isShowName && <TruncatedText style={styles.name}>{token.name}</TruncatedText>}
+          {isShowName && <TruncatedText style={tokenNameTextStyle}>{token.name}</TruncatedText>}
 
           <View style={styles.rightContainer}>
             {isShowName && <Divider size={formatSize(4)} />}

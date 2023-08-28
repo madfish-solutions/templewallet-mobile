@@ -3,17 +3,11 @@ import { useDispatch } from 'react-redux';
 import { firstValueFrom } from 'rxjs';
 import { object, SchemaOf } from 'yup';
 
-import { isAndroid } from 'src/config/system';
 import { passwordValidation } from 'src/form/validation/password';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
-import {
-  hideLoaderAction,
-  madeCloudBackupAction,
-  setOnRampPossibilityAction,
-  showLoaderAction
-} from 'src/store/settings/settings-actions';
+import { hideLoaderAction, madeCloudBackupAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
 import {
   FAILED_TO_LOGIN_ERR_TITLE,
@@ -55,7 +49,6 @@ export const useHandleSubmit = () => {
         dispatch(madeCloudBackupAction());
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
         goBack();
-        isAndroid && dispatch(setOnRampPossibilityAction(true));
       } catch (error) {
         dispatch(hideLoaderAction());
         showErrorToastByError(error);

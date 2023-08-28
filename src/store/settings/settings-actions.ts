@@ -29,11 +29,22 @@ export const showLoaderAction = createAction('settings/SHOW_LOADER_ACTION');
 export const hideLoaderAction = createAction('settings/HIDE_LOADER_ACTION');
 export const setIsShowLoaderAction = createAction<boolean>('settings/SET_IS_SHOW_LOADER_ACTION');
 
+export const setIsApkBuildLaunchEventFired = createAction<boolean>('settings/SET_IS_APK_BUILD_LAUNCH_EVENT_FIRED');
+
+export const setIsPushNotificationsEnabledEventFired = createAction<boolean>(
+  'settings/SET_IS_PUSH_NOTIFICATIONS_ENABLED_EVENT_FIRED'
+);
+
 export const requestSeedPhraseBackupAction = createAction<void>('settings/REQUEST_SEED_PHRASE_BACKUP_ACTION');
 export const madeManualBackupAction = createAction<void>('settings/MADE_MANUAL_BACKUP_ACTION');
 export const madeCloudBackupAction = createAction<void>('settings/MADE_CLOUD_BACKUP_ACTION');
 
 export const setOnRampPossibilityAction = createAction<boolean>('settings/SET_ON_RAMP_POSSIBILITY_ACTION');
+export const setIsOnRampHasBeenShownBeforeAction = createAction<boolean>(
+  'settings/SET_IS_ON_RAMP_HAS_BEEN_SHOWN_BEFORE_ACTION'
+);
+
+export const setIsSwapDisclaimerShowingAction = createAction<boolean>('settings/SET_IS_SWAP_DISCLAIMER_SHOWING_ACTION');
 
 export const walletOpenedAction = createAction<void>('settings/APPLICATION_OPENED_ACTION');
 

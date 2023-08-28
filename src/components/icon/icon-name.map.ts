@@ -14,7 +14,6 @@ import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import BellIcon from './assets/bell.svg';
-import BinanceIcon from './assets/binance.svg';
 import BookOpenIcon from './assets/book-open.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
@@ -35,6 +34,8 @@ import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
 import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
 import CycleStatusUnlockedIcon from './assets/cycle-status-unlocked.svg';
 import DAppsIcon from './assets/dapps.svg';
+import DataIcon from './assets/data.svg';
+import DatabaseIcon from './assets/database.svg';
 import DealIcon from './assets/deal.svg';
 import Delegate1Icon from './assets/delegate-1.svg';
 import Delegate2Icon from './assets/delegate-2.svg';
@@ -68,6 +69,7 @@ import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import LargeSwapIcon from './assets/large-swap.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
@@ -142,6 +144,9 @@ import XBoldIcon from './assets/x-bold.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
+import YouvesEarnSourceDarkIcon from './assets/youves-earn-source-dark.svg';
+import YouvesEarnSourceLargeIcon from './assets/youves-earn-source-large.svg';
+import YouvesEarnSourceIcon from './assets/youves-earn-source.svg';
 import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
 
@@ -180,6 +185,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
+  [IconNameEnum.LargeSwap]: LargeSwapIcon,
   [IconNameEnum.SwapSettings]: SwapSettings,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
@@ -212,7 +218,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.AliceBob]: AliceBobIcon,
   [IconNameEnum.Utorg]: UtorgIcon,
-  [IconNameEnum.Binance]: BinanceIcon,
   [IconNameEnum.Ramp]: RampIcon,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
@@ -289,5 +294,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.LiquidityBakingLogo]: LiquidityBakingLogo,
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
-  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon
+  [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
+  [IconNameEnum.Data]: DataIcon,
+  [IconNameEnum.Database]: DatabaseIcon,
+  [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
+  [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
+  [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon
 };

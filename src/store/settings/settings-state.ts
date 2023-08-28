@@ -23,8 +23,12 @@ export interface SettingsState {
   isManualBackupMade: boolean;
   isCloudBackupMade: boolean;
   isOnRampPossibility: boolean;
+  isOnRampHasBeenShownBefore: boolean;
   applicationOpenCounter: number;
   isEnableAdsBanner: boolean;
+  isSwapDisclaimerShowing: boolean;
+  isApkBuildLaunchEventFired: boolean;
+  isPushNotificationsEnabledEventFired: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -45,5 +49,9 @@ export const settingsInitialState: SettingsState = {
   isCloudBackupMade: true,
   applicationOpenCounter: 0,
   isEnableAdsBanner: true,
-  isOnRampPossibility: false
+  isOnRampPossibility: false,
+  isOnRampHasBeenShownBefore: false,
+  isSwapDisclaimerShowing: true,
+  isApkBuildLaunchEventFired: false,
+  isPushNotificationsEnabledEventFired: false
 };

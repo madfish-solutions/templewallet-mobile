@@ -2,7 +2,7 @@ import { AccountInterface, AccountBaseInterface } from 'src/interfaces/account.i
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { Farm } from 'src/types/farm';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 
 export enum ModalsEnum {
   Receive = 'Receive',
@@ -22,7 +22,8 @@ export enum ModalsEnum {
   EditContact = 'EditContact',
   ManageFarmingPool = 'ManageFarmingPool',
   Newsletter = 'Newsletter',
-  InAppBrowser = 'InAppBrowser'
+  InAppBrowser = 'InAppBrowser',
+  ManageSavingsPool = 'ManageSavingsPool'
 }
 
 export type ModalsParamList = {
@@ -41,7 +42,8 @@ export type ModalsParamList = {
   [ModalsEnum.EditCustomRpc]: { url: string };
   [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
   [ModalsEnum.EditContact]: { contact: AccountBaseInterface; index: number };
-  [ModalsEnum.ManageFarmingPool]: Pick<Farm, 'id' | 'contractAddress'>;
+  [ModalsEnum.ManageFarmingPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
+  [ModalsEnum.ManageSavingsPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
   [ModalsEnum.Newsletter]: undefined;
   [ModalsEnum.InAppBrowser]: { uri: string };
 };

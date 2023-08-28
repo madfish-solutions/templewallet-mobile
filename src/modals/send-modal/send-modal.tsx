@@ -32,7 +32,6 @@ import {
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
-import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -64,17 +63,22 @@ export const SendModal: FC = () => {
   const isTransferDisabled = filteredReceiversList.length === 0;
   const recipient = filteredReceiversList[0]?.data[0];
 
+  const inputInitialValue = useMemo(
+    () => assetsList.find(item => tokenEqualityFn(item, initialToken)) ?? tezosToken,
+    [assetsList, initialToken, tezosToken]
+  );
+
   const sendModalInitialValues = useMemo<SendModalFormValues>(
     () => ({
       assetAmount: {
-        asset: filteredAssetsList.find(item => tokenEqualityFn(item, initialToken)) ?? emptyTezosLikeToken,
+        asset: inputInitialValue,
         amount: undefined
       },
       receiverPublicKeyHash: initialRecieverPublicKeyHash,
       recipient,
       transferBetweenOwnAccounts: false
     }),
-    [filteredAssetsList]
+    [inputInitialValue]
   );
 
   const onSubmit = useCallback(
@@ -117,6 +121,7 @@ export const SendModal: FC = () => {
     onSubmit,
     enableReinitialize: true
   });
+
   const { errors, values, submitForm } = formik;
 
   usePageAnalytic(ModalsEnum.Send);

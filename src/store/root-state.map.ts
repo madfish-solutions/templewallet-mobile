@@ -11,6 +11,7 @@ import { marketReducers } from './market/market-reducers';
 import { newsletterReducers } from './newsletter/newsletter-reducers';
 import { notificationsReducers } from './notifications/notifications-reducers';
 import { partnersPromotionReducers } from './partners-promotion/partners-promotion-reducers';
+import { savingsReducer } from './savings/reducers';
 import { securityReducers } from './security/security-reducers';
 import { settingsReducers } from './settings/settings-reducers';
 import { swapReducer } from './swap/swap-reducers';
@@ -35,5 +36,6 @@ export const rootStateReducersMap = {
   partnersPromotion: partnersPromotionReducers,
   abTesting: abTestingReducer,
   farms: farmsReducer,
+  savings: savingsReducer,
   newsletter: newsletterReducers
 };

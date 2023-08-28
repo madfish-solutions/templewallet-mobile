@@ -8,6 +8,7 @@ import { formatAssetAmount } from '../utils/number.util';
 
 export interface FormattedAmountProps {
   amount: BigNumber;
+  hideApproximateSign?: boolean;
   isDollarValue?: boolean;
   showAllDecimalPlaces?: boolean;
   showMinusSign?: boolean;
@@ -21,6 +22,7 @@ const MAX_NEGATIVE_AMOUNT_VALUE = new BigNumber(-0.01);
 
 export const FormattedAmount: FC<FormattedAmountProps> = ({
   amount,
+  hideApproximateSign = false,
   isDollarValue = false,
   showMinusSign = false,
   showPlusSign = false,
@@ -60,7 +62,7 @@ export const FormattedAmount: FC<FormattedAmountProps> = ({
 
   return (
     <Text style={style}>
-      {isDollarValue && !isLessThan && '≈ '}
+      {isDollarValue && !isLessThan && !hideApproximateSign && '≈ '}
       {amountSignStr && `${amountSignStr} `}
       {formattedAmount}
       {isDollarValue ? fiatSymbol : formattedSymbol}

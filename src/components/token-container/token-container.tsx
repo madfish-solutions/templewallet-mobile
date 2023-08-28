@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { INITIAL_ARP_VALUE } from 'src/apis/youves/constants';
+import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
 import { formatSize } from 'src/styles/format-size';
 
 import { DelegateTag } from '../delegate-tag/delegate-tag';
@@ -11,7 +11,7 @@ import { TruncatedText } from '../truncated-text';
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
-export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_ARP_VALUE, children }) => {
+export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_APR_VALUE, children }) => {
   const styles = useTokenContainerStyles();
 
   return (
