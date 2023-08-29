@@ -1,5 +1,7 @@
 import { object, SchemaOf } from 'yup';
 
+import { viewAdsValidation } from 'src/form/validation/view-ads';
+
 import { acceptTermsValidation } from '../../../form/validation/accept-terms';
 import { analyticsValidation } from '../../../form/validation/analytics';
 import { passwordConfirmationValidation, passwordValidation } from '../../../form/validation/password';
@@ -11,6 +13,7 @@ export type CreateNewPasswordFormValues = {
   useBiometry?: boolean;
   acceptTerms: boolean;
   analytics: boolean;
+  viewAds: boolean;
 };
 
 export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormValues> = object().shape({
@@ -18,5 +21,6 @@ export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormVa
   passwordConfirmation: passwordConfirmationValidation,
   useBiometry: useBiometryValidation,
   acceptTerms: acceptTermsValidation,
-  analytics: analyticsValidation
+  analytics: analyticsValidation,
+  viewAds: viewAdsValidation
 });

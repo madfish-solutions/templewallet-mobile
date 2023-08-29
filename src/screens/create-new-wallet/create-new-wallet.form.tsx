@@ -6,11 +6,14 @@ import { acceptTermsValidation } from 'src/form/validation/accept-terms';
 import { analyticsValidation } from 'src/form/validation/analytics';
 import { passwordConfirmationValidation, passwordValidation } from 'src/form/validation/password';
 import { useBiometryValidation } from 'src/form/validation/use-biometry';
+import { viewAdsValidation } from 'src/form/validation/view-ads';
 import { useShelter } from 'src/shelter/use-shelter.hook';
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import {
   hideLoaderAction,
   madeCloudBackupAction,
   requestSeedPhraseBackupAction,
+  setAdsBannerVisibilityAction,
   setIsAnalyticsEnabled,
   showLoaderAction
 } from 'src/store/settings/settings-actions';
@@ -25,6 +28,7 @@ type CreateNewPasswordFormValues = {
   useBiometry?: boolean;
   acceptTerms: boolean;
   analytics: boolean;
+  viewAds: boolean;
 };
 
 export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormValues> = object().shape({
@@ -32,14 +36,16 @@ export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormVa
   passwordConfirmation: passwordConfirmationValidation,
   useBiometry: useBiometryValidation,
   acceptTerms: acceptTermsValidation,
-  analytics: analyticsValidation
+  analytics: analyticsValidation,
+  viewAds: viewAdsValidation
 });
 
 export const createNewPasswordInitialValues: CreateNewPasswordFormValues = {
   password: '',
   passwordConfirmation: '',
   acceptTerms: false,
-  analytics: true
+  analytics: true,
+  viewAds: true
 };
 
 export type BackupFlow =
@@ -85,8 +91,12 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
   );
 
   return useCallback(
-    async ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
+    async ({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
       try {
+        if (viewAds) {
+          dispatch(togglePartnersPromotionAction(true));
+          dispatch(setAdsBannerVisibilityAction(false));
+        }
         dispatch(showLoaderAction());
         dispatch(setIsAnalyticsEnabled(analytics));
 
