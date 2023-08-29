@@ -12,4 +12,5 @@ export interface ButtonSharedProps extends MarginProps, TestIdProps {
   disabled?: boolean;
   onPress: EmptyFn;
   buttonStyle?: StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
 }
