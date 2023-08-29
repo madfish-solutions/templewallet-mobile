@@ -17,7 +17,6 @@ import {
   SELECTED_BAKER_SYNC_INTERVAL,
   NOTIFICATIONS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
-import { isIOS } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
@@ -38,9 +37,9 @@ import { DApps } from 'src/screens/d-apps/d-apps';
 import { Debug } from 'src/screens/debug/debug';
 import { DelegationScreen } from 'src/screens/delegation-screen/delegation-screen';
 import { Earn } from 'src/screens/earn';
+import { Farming } from 'src/screens/farming';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
 import { ImportAccount } from 'src/screens/import-account/import-account';
-import { LiquidityBakingDapp } from 'src/screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
 import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
@@ -49,6 +48,7 @@ import { NodeSettings } from 'src/screens/node-settings/node-settings';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
 import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
 import { Notifications } from 'src/screens/notifications/notifications';
+import { Savings } from 'src/screens/savings';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
@@ -222,7 +222,17 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Earn}
                 component={Earn}
+                options={generateScreenOptions(<HeaderTitle title="Earn" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Farming}
+                component={Farming}
                 options={generateScreenOptions(<HeaderTitle title="Farming" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Savings}
+                component={Savings}
+                options={generateScreenOptions(<HeaderTitle title="Savings" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
@@ -239,31 +249,22 @@ export const MainStackScreen = () => {
                 component={DApps}
                 options={{ animationEnabled: false, headerShown: false }}
               />
-              <MainStack.Screen
-                name={ScreensEnum.LiquidityBakingDapp}
-                component={LiquidityBakingDapp}
-                options={generateScreenOptions(<HeaderTitle title={'Liquidity Baking'} />)}
-              />
 
               {/** Swap stack **/}
-              {!isIOS && (
-                <>
-                  <MainStack.Screen
-                    name={ScreensEnum.SwapScreen}
-                    component={SwapScreen}
-                    options={{
-                      ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
-                      animationEnabled: false
-                    }}
-                  />
+              <MainStack.Screen
+                name={ScreensEnum.SwapScreen}
+                component={SwapScreen}
+                options={{
+                  ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
+                  animationEnabled: false
+                }}
+              />
 
-                  <MainStack.Screen
-                    name={ScreensEnum.SwapSettingsScreen}
-                    component={SwapSettingsScreen}
-                    options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-                  />
-                </>
-              )}
+              <MainStack.Screen
+                name={ScreensEnum.SwapSettingsScreen}
+                component={SwapSettingsScreen}
+                options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
+              />
 
               {/** Market stack **/}
               <MainStack.Screen

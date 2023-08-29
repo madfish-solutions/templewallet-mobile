@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { omit } from 'lodash-es';
 
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
@@ -10,9 +11,9 @@ import {
   loadAllFarmsAndStakesAction,
   loadAllStakesActions,
   loadSingleFarmStakeActions,
-  selectSortValueAction
+  selectFarmsSortValueAction
 } from './actions';
-import { farmsInitialState, FarmsState, LastUserStakeInterface, UserStakeValueInterface } from './state';
+import { farmsInitialState, FarmsState, LastUserStakeInterface } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
   builder.addCase(loadSingleFarmStakeActions.submit, state => ({
@@ -85,7 +86,7 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     ...state,
     lastStakes: farmsInitialState.lastStakes
   }));
-  builder.addCase(selectSortValueAction, (state, { payload }) => ({
+  builder.addCase(selectFarmsSortValueAction, (state, { payload }) => ({
     ...state,
     sortField: payload
   }));

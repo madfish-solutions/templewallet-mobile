@@ -3,7 +3,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useHeaderCardActionButtonsStyles = createUseStyles(({ typography }) => ({
   buttonContainer: {
-    flex: 0.4
+    flex: 1
   },
   actionButtonTitle: {
     ...typography.caption13Semibold,

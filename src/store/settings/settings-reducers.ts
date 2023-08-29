@@ -24,7 +24,11 @@ import {
   madeManualBackupAction,
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
-  setOnRampPossibilityAction
+  setOnRampPossibilityAction,
+  setIsOnRampHasBeenShownBeforeAction,
+  setIsSwapDisclaimerShowingAction,
+  setIsApkBuildLaunchEventFired,
+  setIsPushNotificationsEnabledEventFired
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -86,6 +90,19 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShownDomainName
   }));
 
+  builder.addCase(setIsApkBuildLaunchEventFired, (state, { payload: isBuildIdentifierEventFiredOnce }) => ({
+    ...state,
+    isBuildIdentifierEventFiredOnce
+  }));
+
+  builder.addCase(
+    setIsPushNotificationsEnabledEventFired,
+    (state, { payload: isPushNotificationsEnabledEventFired }) => ({
+      ...state,
+      isPushNotificationsEnabledEventFired
+    })
+  );
+
   builder.addCase(requestSeedPhraseBackupAction, state => ({
     ...state,
     isManualBackupMade: false,
@@ -109,6 +126,15 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
+  builder.addCase(setIsOnRampHasBeenShownBeforeAction, (state, { payload: isOnRampHasBeenShownBefore }) => ({
+    ...state,
+    isOnRampHasBeenShownBefore
+  }));
+
+  builder.addCase(setIsSwapDisclaimerShowingAction, (state, { payload: isSwapDisclaimerShowing }) => ({
+    ...state,
+    isSwapDisclaimerShowing
+  }));
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,

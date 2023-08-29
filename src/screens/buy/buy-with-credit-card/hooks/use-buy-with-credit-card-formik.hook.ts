@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 
 import { createOrder as createAliceBobOrder } from 'src/apis/alice-bob';
 import { getSignedMoonPayUrl } from 'src/apis/moonpay';
-import { createBinanceConnectTradeOrder } from 'src/apis/temple-static';
 import { createOrder as createUtorgOrder } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useUserIdSelector } from 'src/store/settings/settings-selectors';
@@ -86,14 +85,6 @@ export const useBuyWithCreditCardFormik = () => {
             break;
           case TopUpProviderEnum.Utorg:
             urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, publicKeyHash, outputSymbol);
-            break;
-          case TopUpProviderEnum.BinanceConnect:
-            urlToOpen = await createBinanceConnectTradeOrder(
-              inputSymbol,
-              outputSymbol,
-              inputAmount.toFixed(),
-              publicKeyHash
-            );
             break;
           default:
             const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
