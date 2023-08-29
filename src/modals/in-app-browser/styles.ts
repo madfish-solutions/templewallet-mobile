@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useInAppBrowserStyles = createUseStyles(({ colors }) => ({
+export const useInAppBrowserStyles = createUseStylesMemoized(({ colors }) => ({
   externalBtn: {
     marginHorizontal: formatSize(16)
   },

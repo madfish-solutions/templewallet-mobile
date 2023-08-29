@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { ComponentProps, FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, BackHandler } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 
@@ -15,8 +15,9 @@ import { getUrlHostname } from 'src/utils/url.utils';
 
 import { useInAppBrowserStyles } from './styles';
 
-export const InAppBrowser: FC = () => {
+export const InAppBrowser: FC = memo(() => {
   const { uri } = useRoute<RouteProp<ModalsParamList, ModalsEnum.InAppBrowser>>().params;
+  const source = useMemo(() => ({ uri }), [uri]);
 
   usePageAnalytic(ModalsEnum.InAppBrowser);
 
@@ -61,19 +62,25 @@ export const InAppBrowser: FC = () => {
   // PTR (pull-to-refresh)
   const [ptrEnabled, setPtrEnabled] = useState(true);
 
+  const onScroll: ComponentProps<typeof WebView>['onScroll'] = useCallback(
+    event => void setPtrEnabled(event.nativeEvent.contentOffset.y === 0),
+    []
+  );
+
+  const onRefresh = useCallback(() => void webViewRef.current?.reload(), []);
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.scrollViewContentContainer}
       scrollEnabled
       alwaysBounceVertical
-      refreshControl={
-        <RefreshControl refreshing={false} enabled={ptrEnabled} onRefresh={() => void webViewRef.current?.reload()} />
-      }
+      refreshControl={<RefreshControl refreshing={false} enabled={ptrEnabled} onRefresh={onRefresh} />}
     >
       <WebView
         ref={webViewRef}
-        source={{ uri }}
+        useWebView2
+        source={source}
         style={styles.webView}
         onNavigationStateChange={setNavState}
         setSupportMultipleWindows={false}
@@ -81,8 +88,8 @@ export const InAppBrowser: FC = () => {
         mediaPlaybackRequiresUserAction={true}
         pullToRefreshEnabled={false}
         bounces={false}
-        onScroll={event => void setPtrEnabled(event.nativeEvent.contentOffset.y === 0)}
+        onScroll={onScroll}
       />
     </ScrollView>
   );
-};
+});
