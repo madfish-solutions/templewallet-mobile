@@ -11,6 +11,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { PERCENTAGE_DECIMALS } from 'src/config/earn-opportunities';
+import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
@@ -53,6 +54,8 @@ export const DApps = () => {
 
   const { maxApr: farmsMaxApr } = useUserFarmingStats();
   const { maxApr: savingsMaxApr } = useUserSavingsStats();
+
+  const { balance } = useTotalBalance();
 
   const maxRoundedApr = useMemo(
     () => BigNumber.max(farmsMaxApr, savingsMaxApr).toFixed(PERCENTAGE_DECIMALS),
@@ -108,6 +111,10 @@ export const DApps = () => {
         title={`Earn up to ${isFarmsLoading || isSavingsLoading ? '---' : maxRoundedApr}% APR`}
         description="Unlock on-chain earning potential"
         onPress={() => navigate(ScreensEnum.Earn)}
+        testID={DAppsSelectors.earnButton}
+        testIDProperties={{
+          isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)
+        }}
       />
       <Divider size={formatSize(20)} />
       <Text style={styles.text}>Others</Text>
