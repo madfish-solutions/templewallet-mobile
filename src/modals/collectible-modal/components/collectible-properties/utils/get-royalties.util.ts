@@ -13,7 +13,7 @@ export const getRoyalties = (royalties: { amount: number; decimals: number }[]) 
     0
   );
 
-  const result = `${(royaltiesSum * 100).toFixed()}%`;
+  const result = `${royaltiesSum * 100}%`;
 
   return result;
 };

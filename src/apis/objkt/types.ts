@@ -161,7 +161,7 @@ interface Gallery {
   };
 }
 
-interface CollectibleDetailsResponse {
+export interface CollectibleDetailsResponse {
   fa_contract: string;
   token_id: string;
   name: string;

@@ -1,5 +1,6 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
-import { Observable, catchError, map, of } from 'rxjs';
+import { chunk } from 'lodash-es';
+import { Observable, catchError, map, of, forkJoin } from 'rxjs';
 
 import { ADULT_CONTENT_TAGS } from '../apis/objkt/adult-tags';
 import { ADULT_ATTRIBUTE_NAME, HIDDEN_ATTRIBUTES_NAME } from '../apis/objkt/constants';
@@ -8,7 +9,7 @@ import {
   fetchFA2AttributeCount$,
   fetchAllCollectiblesDetails$
 } from '../apis/objkt/index';
-import { CollectibleAttributes, CollectibleTag } from '../apis/objkt/types';
+import { CollectibleAttributes, CollectibleDetailsResponse, CollectibleTag } from '../apis/objkt/types';
 import { AttributeInfo } from '../interfaces/attribute.interface';
 import {
   CollectibleDetailsInterface,
@@ -24,6 +25,8 @@ const attributesInfoInitialState: AttributeInfo[] = [
     faContract: ''
   }
 ];
+
+const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
 
 export const getAttributesWithRarity = (
   attributesInfo: AttributeInfo[],
@@ -109,11 +112,18 @@ export const isAdultCollectible = (attributes?: CollectibleAttributes[], tags?: 
 export const loadAllCollectiblesDetails$ = (
   collectiblesSlugs: string[]
 ): Observable<Record<string, CollectibleDetailsInterface>> =>
-  fetchAllCollectiblesDetails$(collectiblesSlugs).pipe(
-    map(collectiblesDetails => {
+  forkJoin(
+    chunk(collectiblesSlugs, MAX_OBJKT_QUERY_RESPONSE_ITEMS).map(slugsChunk => fetchAllCollectiblesDetails$(slugsChunk))
+  ).pipe(
+    map(collectiblesDetailsArray => {
+      const collectiblesDetails = collectiblesDetailsArray.reduce<CollectibleDetailsResponse[]>(
+        (acc, current) => acc.concat(current.token),
+        []
+      );
+
       const collectitblesDetailsRecord: Record<string, CollectibleDetailsInterface> = {};
 
-      for (const collectible of collectiblesDetails.token) {
+      for (const collectible of collectiblesDetails) {
         const collectibleSlug = getTokenSlug({ address: collectible.fa_contract, id: collectible.token_id });
 
         collectitblesDetailsRecord[collectibleSlug] = {
