@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, ListRenderItem, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
@@ -53,8 +54,8 @@ export const DApps = () => {
   const { maxApr: farmsMaxApr } = useUserFarmingStats();
   const { maxApr: savingsMaxApr } = useUserSavingsStats();
 
-  const biggestApr = useMemo(
-    () => (farmsMaxApr.gt(savingsMaxApr) ? farmsMaxApr : savingsMaxApr).toFixed(PERCENTAGE_DECIMALS),
+  const maxRoundedApr = useMemo(
+    () => BigNumber.max(farmsMaxApr, savingsMaxApr).toFixed(PERCENTAGE_DECIMALS),
     [farmsMaxApr, savingsMaxApr]
   );
 
@@ -104,7 +105,7 @@ export const DApps = () => {
       <Divider size={formatSize(12)} />
       <IntegratedDApp
         iconName={IconNameEnum.EarnDapp}
-        title={`Earn up to ${isFarmsLoading || isSavingsLoading ? '---' : biggestApr}% APR`}
+        title={`Earn up to ${isFarmsLoading || isSavingsLoading ? '---' : maxRoundedApr}% APR`}
         description="Unlock on-chain earning potential"
         onPress={() => navigate(ScreensEnum.Earn)}
       />
