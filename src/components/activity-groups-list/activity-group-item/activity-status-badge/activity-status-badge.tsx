@@ -1,3 +1,4 @@
+import { TzktOperationStatus } from '@temple-wallet/transactions-parser';
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -6,7 +7,7 @@ import { useColors } from '../../../../styles/use-colors';
 import { useActivityStatusBadgeStyles } from './activity-status-badge.styles';
 
 interface Props {
-  status: ActivityStatusEnum;
+  status: ActivityStatusEnum | TzktOperationStatus;
 }
 
 export const ActivityStatusBadge: FC<Props> = ({ status }) => {
@@ -16,8 +17,8 @@ export const ActivityStatusBadge: FC<Props> = ({ status }) => {
   const backgroundColor = useMemo(() => {
     let result = colors.destructive;
 
-    status === ActivityStatusEnum.Pending && (result = colors.gray2);
-    status === ActivityStatusEnum.Applied && (result = colors.adding);
+    (status === ActivityStatusEnum.Pending || status === TzktOperationStatus.Pending) && (result = colors.gray2);
+    (status === ActivityStatusEnum.Applied || status === TzktOperationStatus.Applied) && (result = colors.adding);
 
     return result;
   }, [status, colors]);

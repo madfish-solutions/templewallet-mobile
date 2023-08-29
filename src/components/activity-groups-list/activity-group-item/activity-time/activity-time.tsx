@@ -4,7 +4,7 @@ import { Text } from 'react-native';
 import { useActivityTimeStyles } from './activity-time.styles';
 
 interface Props {
-  timestamp: number;
+  timestamp: string;
 }
 
 export const ActivityTime: FC<Props> = ({ timestamp }) => {
