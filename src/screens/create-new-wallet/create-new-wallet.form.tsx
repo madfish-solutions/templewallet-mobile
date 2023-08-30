@@ -19,7 +19,7 @@ import {
 } from 'src/store/settings/settings-actions';
 import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { doesCloudBackupExist, saveCloudBackup } from 'src/utils/cloud-backup';
-import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
+import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
 import { generateSeed } from 'src/utils/keys.util';
 
 type CreateNewPasswordFormValues = {
@@ -62,7 +62,7 @@ interface DoBackupValues {
 
 export const useHandleSubmit = (backupFlow?: BackupFlow) => {
   const dispatch = useDispatch();
-  const trackCloudError = useTrackCloudError();
+  const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
 
   const { importWallet } = useShelter();
 
@@ -79,7 +79,10 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
         await saveCloudBackup(seedPhrase, password);
 
         dispatch(madeCloudBackupAction());
+
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+
+        trackCloudSuccess('Wallet was backed-up');
       } catch (error) {
         const errorTitle = 'Failed to back up to cloud';
         showErrorToastByError(error, errorTitle, true);
@@ -87,7 +90,7 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
         trackCloudError(error, errorTitle);
       }
     },
-    [dispatch, trackCloudError]
+    [dispatch, trackCloudError, trackCloudSuccess]
   );
 
   return useCallback(

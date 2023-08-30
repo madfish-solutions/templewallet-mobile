@@ -46,13 +46,14 @@ const OverlayComponent = () => {
             title={`Backup to ${cloudTitle}`}
             disabled={!cloudIsAvailable}
             onPress={() => navigate(ScreensEnum.CloudBackup)}
+            testID={BackupYourWalletSelectors.cloudBackupButton}
           />
 
           <BottomSheetActionButton
             title="Backup manually"
             style={styles.manualBackupButton}
             onPress={() => navigate(ScreensEnum.ManualBackup)}
-            testID={BackupYourWalletSelectors.manualBackupButton}
+            testID={BackupYourWalletSelectors.manuallyBackupButton}
           />
         </View>
       </View>
