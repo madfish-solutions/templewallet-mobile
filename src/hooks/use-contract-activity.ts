@@ -40,21 +40,25 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   const initialLoad = useCallback(
     async (refresh = false) => {
-      const {
-        activities: newActivity,
-        reachedTheEnd,
-        oldestOperation
-      } = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastOperationRef.current);
+      try {
+        const {
+          activities: newActivity,
+          reachedTheEnd,
+          oldestOperation
+        } = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastOperationRef.current);
 
-      lastOperationRef.current = oldestOperation;
+        lastOperationRef.current = oldestOperation;
 
-      if (reachedTheEnd) {
-        setIsAllLoaded(true);
-      }
-      if (refresh === true) {
-        setActivities(prev => [...prev, ...newActivity]);
-      } else {
-        setActivities(newActivity);
+        if (reachedTheEnd) {
+          setIsAllLoaded(true);
+        }
+        if (refresh === true) {
+          setActivities(prev => [...prev, ...newActivity]);
+        } else {
+          setActivities(newActivity);
+        }
+      } catch (error) {
+        console.error(error);
       }
     },
     [selectedRpcUrl, selectedAccount, tokenSlug, knownBakers]
@@ -95,6 +99,8 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
       setIsLoading(false);
     }
   }, [selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, isLoading]);
+
+  console.log('activities: ', activities);
 
   return {
     handleUpdate,
