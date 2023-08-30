@@ -1,5 +1,5 @@
 export enum DAppsSelectors {
-  integratedDAppButton = 'DApps/Integrated DApp Button',
+  earnButton = 'DApps/Earn Button',
   othersDAppsItem = 'DApps/Other DApps Item',
   searchDAppsInput = 'DApps/Search DApps Input'
 }

@@ -1,11 +1,14 @@
+import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -32,6 +35,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
   const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const { balance } = useTotalBalance();
   const styles = useHeaderCardActionButtonsStyles();
   const defaultStyleConfig = useButtonMediumStyleConfig();
 
@@ -77,6 +81,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         onPress={() => navigate(ModalsEnum.Receive, { token })}
         styleConfigOverrides={actionButtonStylesOverrides}
         style={styles.buttonContainer}
+        testID={WalletSelectors.receiveButton}
       />
 
       {isAndroid && (
@@ -88,6 +93,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
             onPress={() => (isTezosNode ? navigate(ScreensEnum.Buy) : openUrl(CHAINBITS_URL))}
             styleConfigOverrides={actionButtonStylesOverrides}
             style={styles.buttonContainer}
+            testID={WalletSelectors.buyButton}
           />
         </>
       )}
@@ -101,6 +107,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         onPress={() => navigate(ScreensEnum.Earn)}
         styleConfigOverrides={actionButtonStylesOverrides}
         style={styles.buttonContainer}
+        testID={WalletSelectors.earnButton}
+        testIDProperties={{
+          isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)
+        }}
       />
 
       <Divider size={formatSize(8)} />
@@ -111,6 +121,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         onPress={handleSendButton}
         styleConfigOverrides={sendButtonStylesOverrides}
         style={styles.buttonContainer}
+        testID={WalletSelectors.sendButton}
       />
     </ButtonsContainer>
   );

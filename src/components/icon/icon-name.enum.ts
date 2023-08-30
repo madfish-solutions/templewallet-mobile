@@ -127,6 +127,7 @@ export enum IconNameEnum {
   NotificationDot = 'NotificationDot',
   Market = 'Market',
   Earn = 'Earn',
+  EarnDapp = 'EarnDapp',
   Buy = 'Buy',
   BuyWithCrypto = 'BuyWithCrypto',
   CreditCard = 'CreditCard',
