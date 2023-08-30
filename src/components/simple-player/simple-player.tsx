@@ -53,6 +53,7 @@ export const SimplePlayer: FC<SimpleVideoProps> = ({
       posterResizeMode="cover"
       onError={onError}
       onLoad={onLoad}
+      controls
     />
   );
 };
