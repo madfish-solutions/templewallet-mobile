@@ -1,11 +1,8 @@
-import { useIsFocused } from '@react-navigation/native';
-import React, { FC } from 'react';
-import { ViewStyle } from 'react-native';
+import React, { FC, useEffect, useState } from 'react';
+import { AppState, ViewStyle } from 'react-native';
 import Video, { LoadError } from 'react-native-video';
 
 import { EmptyFn, EventFn, emptyFn } from 'src/config/general';
-import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
-import { useAppLock } from 'src/shelter/app-lock/app-lock';
 
 export interface SimpleVideoProps {
   uri: string;
@@ -22,16 +19,24 @@ const BUFFER_DURATION = 8000;
 export const SimplePlayer: FC<SimpleVideoProps> = ({
   uri,
   posterUri,
-  paused = true,
   size,
   style,
   onError = emptyFn,
   onLoad = emptyFn
 }) => {
-  const atBootsplash = useAtBootsplash();
-  const { isLocked } = useAppLock();
+  const [paused, setPaused] = useState(false);
 
-  const isFocused = useIsFocused();
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState !== 'active') {
+        setPaused(true);
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   return (
     <Video
@@ -39,7 +44,7 @@ export const SimplePlayer: FC<SimpleVideoProps> = ({
       source={{ uri }}
       // @ts-ignore
       style={[{ width: size, height: size }, style]}
-      paused={atBootsplash || isLocked || paused || !isFocused}
+      paused={paused}
       resizeMode="cover"
       bufferConfig={{
         bufferForPlaybackMs: BUFFER_DURATION
