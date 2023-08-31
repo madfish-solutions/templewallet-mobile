@@ -5,7 +5,12 @@ import { TokenIcon } from '../../../../components/token-icon/token-icon';
 import { useUsdToTokenRates } from '../../../../store/currency/currency-selectors';
 import { MarketToken } from '../../../../store/market/market.interfaces';
 import { useColors } from '../../../../styles/use-colors';
-import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../../utils/market.util';
+import {
+  formatPriceChange,
+  getPriceChangeColor,
+  formatPrice,
+  formatRegularValue
+} from '../../../../utils/market.utils';
 import { getTruncatedProps } from '../../../../utils/style.util';
 import { useRowStyles } from './row.styles';
 

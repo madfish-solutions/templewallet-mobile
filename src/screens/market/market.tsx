@@ -5,7 +5,7 @@ import { HeaderCard } from 'src/components/header-card/header-card';
 import { MARKET_SYNC_INTERVAL, PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { loadMarketTokensSlugsActions, loadMarketTopTokenActions } from 'src/store/market/market-actions';
+import { loadMarketTokensSlugsActions } from 'src/store/market/market-actions';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
@@ -20,10 +20,7 @@ export const Market = () => {
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
-  useAuthorisedInterval(() => {
-    dispatch(loadMarketTopTokenActions.submit());
-    dispatch(loadMarketTokensSlugsActions.submit());
-  }, MARKET_SYNC_INTERVAL);
+  useAuthorisedInterval(() => dispatch(loadMarketTokensSlugsActions.submit()), MARKET_SYNC_INTERVAL);
 
   useAuthorisedInterval(
     () => {

@@ -9,7 +9,7 @@ import { useTokenMetadataSelector } from '../../../store/tokens-metadata/tokens-
 import { formatSize } from '../../../styles/format-size';
 import { useColors } from '../../../styles/use-colors';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
-import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../utils/market.util';
+import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../utils/market.utils';
 import { getTruncatedProps } from '../../../utils/style.util';
 import { MarketSelectors } from '../market.selectors';
 import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
