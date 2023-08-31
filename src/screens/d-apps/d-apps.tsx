@@ -59,11 +59,12 @@ export const DApps = () => {
   const [searchValue, setSearchValue] = useState<string>();
   const [layoutWidth, setLayoutWidth] = useState(1);
 
-  const { balance } = useTotalBalance();
+  usePageAnalytic(ScreensEnum.DApps);
+
   const { maxApr: farmsMaxApr } = useUserFarmingStats();
   const { maxApr: savingsMaxApr } = useUserSavingsStats();
 
-  usePageAnalytic(ScreensEnum.DApps);
+  const { balance } = useTotalBalance();
 
   const maxRoundedApr = useMemo(
     () => BigNumber.max(farmsMaxApr, savingsMaxApr).toFixed(PERCENTAGE_DECIMALS),
