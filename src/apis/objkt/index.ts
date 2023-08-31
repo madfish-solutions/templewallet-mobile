@@ -1,4 +1,5 @@
-import { catchError, map, Observable, of } from 'rxjs';
+import { chunk } from 'lodash-es';
+import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
@@ -27,6 +28,8 @@ import {
   UserAdultCollectiblesQueryResponse
 } from './types';
 import { transformCollectiblesArray } from './utils';
+
+const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
 
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
   const request = buildGetCollectiblesInfoQuery(address);
@@ -114,10 +117,12 @@ export const fetchCollectiblesByCollection$ = (
 
 export const fetchAllCollectiblesDetails$ = (
   collectiblesSlugs: string[]
-): Observable<UserAdultCollectiblesQueryResponse> => {
-  const request = buildGetAllUserCollectiblesQuery(collectiblesSlugs);
+): Observable<UserAdultCollectiblesQueryResponse[]> => {
+  const request = chunk(collectiblesSlugs, MAX_OBJKT_QUERY_RESPONSE_ITEMS).map(slugsChunk =>
+    buildGetAllUserCollectiblesQuery(slugsChunk)
+  );
 
-  return apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(request);
+  return forkJoin(request.map(r => apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(r)));
 };
 
 export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {

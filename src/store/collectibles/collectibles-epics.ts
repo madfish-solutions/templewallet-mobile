@@ -15,7 +15,11 @@ const loadCollectiblesDetailsEpic = (action$: Observable<Action>) =>
     switchMap(collectiblesSlugs =>
       loadAllCollectiblesDetails$(collectiblesSlugs).pipe(
         map(collectiblesDetails => loadCollectiblesDetailsActions.success(collectiblesDetails)),
-        catchError(err => of(loadCollectiblesDetailsActions.fail(err.message)))
+        catchError(err => {
+          console.log(err);
+
+          return of(loadCollectiblesDetailsActions.fail(err.message));
+        })
       )
     )
   );

@@ -1,21 +1,21 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
-import { chunk } from 'lodash-es';
-import { Observable, catchError, map, of, forkJoin } from 'rxjs';
+import { pick } from 'lodash-es';
+import { Observable, catchError, map, of } from 'rxjs';
 
-import { ADULT_CONTENT_TAGS } from '../apis/objkt/adult-tags';
-import { ADULT_ATTRIBUTE_NAME, HIDDEN_ATTRIBUTES_NAME } from '../apis/objkt/constants';
+import { ADULT_CONTENT_TAGS } from 'src/apis/objkt/adult-tags';
+import { ADULT_ATTRIBUTE_NAME, HIDDEN_ATTRIBUTES_NAME } from 'src/apis/objkt/constants';
 import {
   fetchGalleryAttributeCount$,
   fetchFA2AttributeCount$,
   fetchAllCollectiblesDetails$
-} from '../apis/objkt/index';
-import { CollectibleAttributes, CollectibleDetailsResponse, CollectibleTag } from '../apis/objkt/types';
-import { AttributeInfo } from '../interfaces/attribute.interface';
+} from 'src/apis/objkt/index';
+import { CollectibleAttributes, CollectibleDetailsResponse, CollectibleTag } from 'src/apis/objkt/types';
+import { AttributeInfo } from 'src/interfaces/attribute.interface';
 import {
   CollectibleDetailsInterface,
   CollectibleInterface
-} from '../token/interfaces/collectible-interfaces.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
+} from 'src/token/interfaces/collectible-interfaces.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
 
 const attributesInfoInitialState: AttributeInfo[] = [
   {
@@ -25,8 +25,6 @@ const attributesInfoInitialState: AttributeInfo[] = [
     faContract: ''
   }
 ];
-
-const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
 
 export const getAttributesWithRarity = (
   attributesInfo: AttributeInfo[],
@@ -112,9 +110,7 @@ export const isAdultCollectible = (attributes?: CollectibleAttributes[], tags?: 
 export const loadAllCollectiblesDetails$ = (
   collectiblesSlugs: string[]
 ): Observable<Record<string, CollectibleDetailsInterface>> =>
-  forkJoin(
-    chunk(collectiblesSlugs, MAX_OBJKT_QUERY_RESPONSE_ITEMS).map(slugsChunk => fetchAllCollectiblesDetails$(slugsChunk))
-  ).pipe(
+  fetchAllCollectiblesDetails$(collectiblesSlugs).pipe(
     map(collectiblesDetailsArray => {
       const collectiblesDetails = collectiblesDetailsArray.reduce<CollectibleDetailsResponse[]>(
         (acc, current) => acc.concat(current.token),
@@ -127,18 +123,21 @@ export const loadAllCollectiblesDetails$ = (
         const collectibleSlug = getTokenSlug({ address: collectible.fa_contract, id: collectible.token_id });
 
         collectitblesDetailsRecord[collectibleSlug] = {
+          ...pick(
+            collectible,
+            'name',
+            'description',
+            'creators',
+            'metadata',
+            'attributes',
+            'tags',
+            'timestamp',
+            'royalties',
+            'mime',
+            'galleries'
+          ),
           address: collectible.fa_contract,
           id: +collectible.token_id,
-          name: collectible.name,
-          description: collectible.description,
-          creators: collectible.creators,
-          metadata: collectible.metadata,
-          attributes: collectible.attributes,
-          tags: collectible.tags,
-          timestamp: collectible.timestamp,
-          royalties: collectible.royalties,
-          mime: collectible.mime,
-          galleries: collectible.galleries,
           artifactUri: collectible.artifact_uri,
           thumbnailUri: collectible.thumbnail_uri,
           displayUri: collectible.display_uri,
