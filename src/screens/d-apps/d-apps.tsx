@@ -1,9 +1,8 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
+import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View, ScrollView } from 'react-native';
 import { isTablet } from 'react-native-device-info';
-import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
