@@ -12,6 +12,8 @@ export const useInAppBrowserStyles = createUseStylesMemoized(({ colors }) => ({
     flex: 1
   },
   webView: {
-    backgroundColor: colors.pageBG
+    flex: 1,
+    backgroundColor: colors.pageBG,
+    opacity: 0.99
   }
 }));
