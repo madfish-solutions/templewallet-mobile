@@ -15,19 +15,14 @@ export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
     color: colors.black,
     ...typography.body15Semibold
   },
-  dappIcon: {
-    marginLeft: formatSize(24)
+  marginBottom: {
+    marginBottom: formatSize(16)
   },
-  textWrapper: {
-    marginLeft: formatSize(16)
+  blue: {
+    backgroundColor: colors.blue
   },
-  headingText: {
-    ...typography.body15Semibold,
-    color: colors.white
-  },
-  descriptionText: {
-    ...typography.caption11Regular,
-    color: colors.white
+  green: {
+    backgroundColor: colors.kolibriGreen
   },
   flatList: {
     marginTop: formatSize(12)
@@ -38,8 +33,5 @@ export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
   },
   flatListColumnWrapper: {
     justifyContent: 'space-between'
-  },
-  marginRight: {
-    marginRight: formatSize(16)
   }
 }));
