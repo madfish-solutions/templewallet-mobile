@@ -52,6 +52,9 @@ export const useAddressFieldAnalytics = <T extends string, U extends Record<T, s
           case AddressValidationErrorEnum.EVM_NETWORK_ADDRESS:
             networkSlug = 'evm';
             break;
+          case AddressValidationErrorEnum.BTC_NETWORK_ADDRESS:
+            networkSlug = 'btc';
+            break;
         }
 
         if (isDefined(networkSlug)) {

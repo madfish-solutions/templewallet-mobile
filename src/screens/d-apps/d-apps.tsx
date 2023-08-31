@@ -11,18 +11,18 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { SearchInput } from 'src/components/search-input/search-input';
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadDAppsListActions } from 'src/store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
+import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useIsPartnersPromoEnabledSelector } from '../../store/partners-promotion/partners-promotion-selectors';
-import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
 import { isString } from '../../utils/is-string';
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';

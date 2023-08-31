@@ -1,11 +1,11 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { FarmsSortFieldEnum } from 'src/enums/farms-sort-fields.enum';
+import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { Farm } from 'src/types/farm';
 import { SingleFarmResponse } from 'src/types/single-farm-response';
 
 import { createActions } from '../create-actions';
-import { UserStakeValueInterface } from './state';
 
 export const loadSingleFarmStakeActions = createActions<
   Farm,
@@ -27,4 +27,4 @@ export const loadAllStakesActions = createActions<
   void
 >('farms/LOAD_ALL_STAKES');
 
-export const selectSortValueAction = createAction<FarmsSortFieldEnum>('farms/SELECT_SORT_VALUE');
+export const selectFarmsSortValueAction = createAction<EarnOpportunitiesSortFieldEnum>('farms/SELECT_SORT_VALUE');

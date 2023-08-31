@@ -6,17 +6,20 @@ import { acceptTermsValidation } from 'src/form/validation/accept-terms';
 import { analyticsValidation } from 'src/form/validation/analytics';
 import { passwordConfirmationValidation, passwordValidation } from 'src/form/validation/password';
 import { useBiometryValidation } from 'src/form/validation/use-biometry';
+import { viewAdsValidation } from 'src/form/validation/view-ads';
 import { useShelter } from 'src/shelter/use-shelter.hook';
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import {
   hideLoaderAction,
   madeCloudBackupAction,
   requestSeedPhraseBackupAction,
+  setAdsBannerVisibilityAction,
   setIsAnalyticsEnabled,
   showLoaderAction
 } from 'src/store/settings/settings-actions';
 import { showSuccessToast, showErrorToastByError } from 'src/toast/toast.utils';
 import { doesCloudBackupExist, saveCloudBackup } from 'src/utils/cloud-backup';
-import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
+import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
 import { generateSeed } from 'src/utils/keys.util';
 
 type CreateNewPasswordFormValues = {
@@ -25,6 +28,7 @@ type CreateNewPasswordFormValues = {
   useBiometry?: boolean;
   acceptTerms: boolean;
   analytics: boolean;
+  viewAds: boolean;
 };
 
 export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormValues> = object().shape({
@@ -32,14 +36,16 @@ export const createNewPasswordValidationSchema: SchemaOf<CreateNewPasswordFormVa
   passwordConfirmation: passwordConfirmationValidation,
   useBiometry: useBiometryValidation,
   acceptTerms: acceptTermsValidation,
-  analytics: analyticsValidation
+  analytics: analyticsValidation,
+  viewAds: viewAdsValidation
 });
 
 export const createNewPasswordInitialValues: CreateNewPasswordFormValues = {
   password: '',
   passwordConfirmation: '',
   acceptTerms: false,
-  analytics: true
+  analytics: true,
+  viewAds: true
 };
 
 export type BackupFlow =
@@ -56,7 +62,7 @@ interface DoBackupValues {
 
 export const useHandleSubmit = (backupFlow?: BackupFlow) => {
   const dispatch = useDispatch();
-  const trackCloudError = useTrackCloudError();
+  const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
 
   const { importWallet } = useShelter();
 
@@ -73,7 +79,10 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
         await saveCloudBackup(seedPhrase, password);
 
         dispatch(madeCloudBackupAction());
+
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
+
+        trackCloudSuccess('Wallet was backed-up');
       } catch (error) {
         const errorTitle = 'Failed to back up to cloud';
         showErrorToastByError(error, errorTitle, true);
@@ -81,12 +90,16 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
         trackCloudError(error, errorTitle);
       }
     },
-    [dispatch, trackCloudError]
+    [dispatch, trackCloudError, trackCloudSuccess]
   );
 
   return useCallback(
-    async ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
+    async ({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
       try {
+        if (viewAds) {
+          dispatch(togglePartnersPromotionAction(true));
+          dispatch(setAdsBannerVisibilityAction(false));
+        }
         dispatch(showLoaderAction());
         dispatch(setIsAnalyticsEnabled(analytics));
 

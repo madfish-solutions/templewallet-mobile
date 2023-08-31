@@ -7,7 +7,7 @@ import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-shee
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { setIsOnRampHasBeenShownBeforeAction, setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampPossibilitySelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -22,7 +22,7 @@ import { getWertLink } from './utils/get-wert-link.util';
 export const OnRampOverlay: FC = () => {
   const isOnRampPossibility = useIsOnRampPossibilitySelector();
 
-  return Boolean(isOnRampPossibility) ? <OverlayComponent /> : null;
+  return isOnRampPossibility ? <OverlayComponent /> : null;
 };
 
 const OverlayComponent = () => {
@@ -33,6 +33,7 @@ const OverlayComponent = () => {
 
   const handleOnRampButtonPress = (amount = 0) => {
     dispatch(setOnRampPossibilityAction(false));
+    dispatch(setIsOnRampHasBeenShownBeforeAction(true));
     openUrl(getWertLink(publicKeyHash, amount));
   };
 

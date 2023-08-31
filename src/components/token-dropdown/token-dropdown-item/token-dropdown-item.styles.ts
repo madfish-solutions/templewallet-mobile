@@ -27,6 +27,9 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     ...typography.numbersRegular11,
     color: colors.gray1
   },
+  fullWidthName: {
+    flexGrow: 1
+  },
   balance: {
     ...typography.numbersRegular15,
     color: colors.black,

@@ -36,6 +36,7 @@ export enum IconNameEnum {
   SwapInfo = 'SwapInfo',
   SwapSettings = 'SwapSettings',
   Swap = 'Swap',
+  LargeSwap = 'LargeSwap',
   EyeClosedBold = 'EyeClosedBold',
   EyeOpenBold = 'EyeOpenBold',
   TezWallet = 'TezWallet',
@@ -66,7 +67,6 @@ export enum IconNameEnum {
   Exolix = 'Exolix',
   AliceBob = 'AliceBob',
   Utorg = 'Utorg',
-  Binance = 'Binance',
   Uah = 'Uah',
   Ramp = 'Ramp',
   Check = 'Check',
@@ -128,6 +128,7 @@ export enum IconNameEnum {
   NotificationDot = 'NotificationDot',
   Market = 'Market',
   Earn = 'Earn',
+  EarnDapp = 'EarnDapp',
   Buy = 'Buy',
   BuyWithCrypto = 'BuyWithCrypto',
   CreditCard = 'CreditCard',
@@ -141,5 +142,10 @@ export enum IconNameEnum {
   LiquidityBakingLogo = 'LiquidityBakingLogo',
   Smile = 'Smile',
   SmileWithGlasses = 'SmileWithGlasses',
-  SmileWithDollar = 'SmileWithDollar'
+  SmileWithDollar = 'SmileWithDollar',
+  Data = 'Data',
+  Database = 'Database',
+  YouvesEarnSource = 'YouvesEarnSource',
+  YouvesEarnSourceDark = 'YouvesEarnSourceDark',
+  YouvesEarnSourceLarge = 'YouvesEarnSourceLarge'
 }

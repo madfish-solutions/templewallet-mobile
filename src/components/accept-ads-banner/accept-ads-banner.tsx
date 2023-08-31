@@ -39,20 +39,20 @@ export const AcceptAdsBanner: FC<BannerProps> = ({ style }) => {
         sharing in settings.
       </Text>
       <Text style={commonStyles.description}>Start earning now!</Text>
-      <ButtonLargeSecondary
-        title="No thanks"
-        onPress={handleDisableBannerButton}
-        textStyle={commonStyles.buttonText}
-        buttonStyle={commonStyles.button}
-        testID={AcceptAdsBannerSelectors.aGroupDisable}
-      />
-      <Divider size={formatSize(8)} />
       <ButtonLargePrimary
         title="Pay me for every ad I see"
         onPress={handleEnableBannerButton}
         textStyle={commonStyles.buttonText}
         buttonStyle={commonStyles.button}
         testID={AcceptAdsBannerSelectors.aGroupEnable}
+      />
+      <Divider size={formatSize(8)} />
+      <ButtonLargeSecondary
+        title="No thanks"
+        onPress={handleDisableBannerButton}
+        textStyle={commonStyles.buttonText}
+        buttonStyle={commonStyles.button}
+        testID={AcceptAdsBannerSelectors.aGroupDisable}
       />
     </View>
   );

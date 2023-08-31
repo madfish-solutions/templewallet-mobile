@@ -18,9 +18,8 @@ export const useCurrenciesLoadingSelector = () => {
   const moonPayLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.MoonPay);
   const utorgLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.Utorg);
   const aliceBobLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.AliceBob);
-  const binanceConnectLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.BinanceConnect);
 
-  return moonPayLoading || utorgLoading || aliceBobLoading || binanceConnectLoading;
+  return moonPayLoading || utorgLoading || aliceBobLoading;
 };
 export const useProviderCurrenciesErrorSelector = (topUpProvider: TopUpProviderEnum) =>
   useSelector(({ buyWithCreditCard }) => buyWithCreditCard.currencies[topUpProvider].error);

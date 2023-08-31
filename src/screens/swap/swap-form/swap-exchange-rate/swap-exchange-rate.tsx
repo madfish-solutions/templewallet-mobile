@@ -70,7 +70,7 @@ export const SwapExchangeRate: FC<Props> = ({
   const cashbackAlert = () =>
     Alert.alert(
       'Cashback',
-      'Swap more than 10$ and receive 0.175% from the swapped amount in the TKEY token as a cashback',
+      `Swap more than 10$ and receive ${CASHBACK_PERCENT}% from the swapped amount in the TKEY token as a cashback`,
       [
         {
           text: 'Ok',

@@ -1,8 +1,9 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { Observable, withLatestFrom } from 'rxjs';
 
-import { FarmPoolTypeEnum } from 'src/enums/farm-pool-type.enum';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { FarmContractStorageInterface } from 'src/interfaces/earn.interface';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { Farm } from 'src/types/farm';
 import { getLastElement } from 'src/utils/array.utils';
 import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
@@ -12,7 +13,6 @@ import { getBalance } from 'src/utils/token-balance.utils';
 
 import { ExchangeRateRecord } from '../currency/currency-state';
 import { RootState } from '../types';
-import { UserStakeValueInterface } from './state';
 
 export interface RawStakeValue {
   lastStakeId: string;
@@ -41,7 +41,7 @@ export const toUserStakeValueInterface = (
 };
 
 export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: string) => {
-  if (farm.type === FarmPoolTypeEnum.LIQUIDITY_BAKING) {
+  if (farm.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING) {
     const sirsTokenContract = await getReadOnlyContract(farm.stakedToken.contractAddress, tezos);
     const depositAmountAtomic = await getBalance(sirsTokenContract, accountPkh, farm.stakedToken.fa2TokenId);
 
