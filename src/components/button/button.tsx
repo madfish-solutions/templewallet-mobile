@@ -16,7 +16,6 @@ interface Props extends ButtonSharedProps {
   styleConfig: ButtonStyleConfig;
   isFullWidth?: boolean;
   textStyle?: StyleProp<ViewStyle>;
-  style?: StyleProp<ViewStyle>;
 }
 
 export const Button: FC<Props> = ({

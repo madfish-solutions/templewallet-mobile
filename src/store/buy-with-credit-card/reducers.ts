@@ -14,7 +14,6 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
       state.currencies[TopUpProviderEnum.MoonPay].isLoading = true;
       state.currencies[TopUpProviderEnum.Utorg].isLoading = true;
       state.currencies[TopUpProviderEnum.AliceBob].isLoading = true;
-      state.currencies[TopUpProviderEnum.BinanceConnect].isLoading = true;
     });
 
     builder.addCase(loadAllCurrenciesActions.success, (state, { payload: currencies }) => ({
@@ -27,12 +26,7 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
       currencies: {
         [TopUpProviderEnum.MoonPay]: createEntity(state.currencies[TopUpProviderEnum.MoonPay].data, false, error),
         [TopUpProviderEnum.Utorg]: createEntity(state.currencies[TopUpProviderEnum.Utorg].data, false, error),
-        [TopUpProviderEnum.AliceBob]: createEntity(state.currencies[TopUpProviderEnum.AliceBob].data, false, error),
-        [TopUpProviderEnum.BinanceConnect]: createEntity(
-          state.currencies[TopUpProviderEnum.BinanceConnect].data,
-          false,
-          error
-        )
+        [TopUpProviderEnum.AliceBob]: createEntity(state.currencies[TopUpProviderEnum.AliceBob].data, false, error)
       }
     }));
 
@@ -52,13 +46,11 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
         updatePerProvider(TopUpProviderEnum.MoonPay);
         updatePerProvider(TopUpProviderEnum.Utorg);
         updatePerProvider(TopUpProviderEnum.AliceBob);
-        updatePerProvider(TopUpProviderEnum.BinanceConnect);
       } else {
         dataPerFiat[cryptoSymbol] = {
           [TopUpProviderEnum.MoonPay]: createEntity(undefined, true),
           [TopUpProviderEnum.Utorg]: createEntity(undefined, true),
-          [TopUpProviderEnum.AliceBob]: createEntity(undefined, true),
-          [TopUpProviderEnum.BinanceConnect]: createEntity(undefined, true)
+          [TopUpProviderEnum.AliceBob]: createEntity(undefined, true)
         };
       }
     });
@@ -92,11 +84,6 @@ export const buyWithCreditCardReducer = createReducer<BuyWithCreditCardState>(
               [TopUpProviderEnum.Utorg]: createEntity(previousEntities?.[TopUpProviderEnum.Utorg]?.data, false, error),
               [TopUpProviderEnum.AliceBob]: createEntity(
                 previousEntities?.[TopUpProviderEnum.AliceBob]?.data,
-                false,
-                error
-              ),
-              [TopUpProviderEnum.BinanceConnect]: createEntity(
-                previousEntities?.[TopUpProviderEnum.BinanceConnect]?.data,
                 false,
                 error
               )

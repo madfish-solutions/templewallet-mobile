@@ -1,15 +1,13 @@
-import React, { FC } from 'react';
+import { BigNumber } from 'bignumber.js';
+import React, { FC, useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 
+import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/toast.utils';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { isDefined } from 'src/utils/is-defined';
-
+import { useTotalBalance } from 'src/hooks/use-total-balance';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -17,14 +15,22 @@ import {
   ScreensEnum,
   swapStackScreens,
   walletStackScreens
-} from '../../enums/screens.enum';
-import { useNavigation } from '../../hooks/use-navigation.hook';
-import { NOT_AVAILABLE_MESSAGE } from '../side-bar/side-bar';
+} from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { SwapDisclaimerOverlay } from 'src/screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
+import { useIsSwapDisclaimerShowingSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { isDefined } from 'src/utils/is-defined';
+
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
 
 type RouteType = { params?: { token: TokenInterface } };
-type RouteParams = { name: string } & RouteType;
+export type RouteParams = { name: string } & RouteType;
+
+export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
 
 interface Props {
   currentRouteName: ScreensEnum;
@@ -34,15 +40,28 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useTabBarStyles();
 
   const { isDcpNode } = useNetworkInfo();
-
+  const { balance } = useTotalBalance();
   const { getState } = useNavigation();
+
+  const swapDisclaimerOverlayController = useBottomSheetController();
+  const isSwapDisclaimerShowing = useIsSwapDisclaimerShowingSelector();
 
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
-  const isStackFocused = (screensStack: ScreensEnum[]) =>
-    isDefined(currentRouteName) && screensStack.includes(currentRouteName);
+  const swapScreenParams =
+    isDefined(route) && currentRouteName === ScreensEnum.TokenScreen ? { inputToken: route.params?.token } : undefined;
 
-  const disabledOnPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
+  const isStackFocused = useCallback(
+    (screensStack: ScreensEnum[]) => isDefined(currentRouteName) && screensStack.includes(currentRouteName),
+    [currentRouteName]
+  );
+
+  const isSwapButtonDisabled = useMemo(
+    () => isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0)),
+    [isDcpNode, balance]
+  );
+
+  const handleDisabledPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
 
   return (
     <View style={styles.container}>
@@ -60,26 +79,19 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.CollectiblesHome}
           focused={isStackFocused(nftStackScreens)}
-          disabledOnPress={disabledOnPress}
+          disabledOnPress={handleDisabledPress}
         />
-
-        {!isIOS && (
-          <TabBarButton
-            label="Swap"
-            iconName={IconNameEnum.Swap}
-            iconWidth={formatSize(32)}
-            routeName={ScreensEnum.SwapScreen}
-            params={
-              isDefined(route) && currentRouteName === ScreensEnum.TokenScreen
-                ? { inputToken: route.params?.token }
-                : undefined
-            }
-            focused={isStackFocused(swapStackScreens)}
-            disabled={isDcpNode}
-            disabledOnPress={disabledOnPress}
-          />
-        )}
-
+        <TabBarButton
+          label="Swap"
+          iconName={IconNameEnum.Swap}
+          iconWidth={formatSize(32)}
+          routeName={ScreensEnum.SwapScreen}
+          swapScreenParams={swapScreenParams}
+          focused={isStackFocused(swapStackScreens)}
+          disabled={isSwapButtonDisabled}
+          onSwapButtonPress={isIOS && isSwapDisclaimerShowing ? swapDisclaimerOverlayController.open : undefined}
+          disabledOnPress={isDcpNode ? handleDisabledPress : undefined}
+        />
         <TabBarButton
           label="DApps"
           iconName={IconNameEnum.DApps}
@@ -87,7 +99,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           routeName={ScreensEnum.DApps}
           focused={isStackFocused(dAppsStackScreens)}
           disabled={isDcpNode}
-          disabledOnPress={disabledOnPress}
+          disabledOnPress={handleDisabledPress}
         />
         <TabBarButton
           label="Market"
@@ -95,15 +107,16 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           iconWidth={formatSize(32)}
           routeName={ScreensEnum.Market}
           focused={isStackFocused(marketStackScreens)}
-          disabledOnPress={disabledOnPress}
+          disabledOnPress={handleDisabledPress}
         />
       </View>
       <InsetSubstitute type="bottom" />
+      <SwapDisclaimerOverlay controller={swapDisclaimerOverlayController} routeParams={swapScreenParams} />
     </View>
   );
 };
 
-const getTokenParams = (routes: RouteParams[] | undefined): null | RouteType => {
+export const getTokenParams = (routes: RouteParams[] | undefined): null | RouteType => {
   let result = null;
   if (Array.isArray(routes) && isDefined(routes)) {
     for (const route of routes) {

@@ -12,7 +12,6 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
   const moonpayFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.MoonPay);
   const utorgFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.Utorg);
   const aliceBobFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.AliceBob);
-  const binanceConnectFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.BinanceConnect);
 
   const pairLimitsByProviders = usePairLimitsByProvidersSelector(inputCurrencySymbol, outputTokenSymbol);
 
@@ -21,12 +20,9 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
   const noPairLimitsFiatCurrencies = useMemo(
     () =>
       Object.values(
-        [
-          ...moonpayFiatCurrencies,
-          ...utorgFiatCurrencies,
-          ...aliceBobFiatCurrencies,
-          ...binanceConnectFiatCurrencies
-        ].reduce<Record<string, TopUpInputInterface>>((acc, currency) => {
+        [...moonpayFiatCurrencies, ...utorgFiatCurrencies, ...aliceBobFiatCurrencies].reduce<
+          Record<string, TopUpInputInterface>
+        >((acc, currency) => {
           if (isDefined(acc[currency.code])) {
             const newTopUpCurrency = { ...acc[currency.code] };
             if (isDefined(currency.minAmount)) {
@@ -43,7 +39,7 @@ export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSy
           return acc;
         }, {})
       ).sort(({ code: aCode }, { code: bCode }) => aCode.localeCompare(bCode)),
-    [moonpayFiatCurrencies, utorgFiatCurrencies, aliceBobFiatCurrencies, binanceConnectFiatCurrencies]
+    [moonpayFiatCurrencies, utorgFiatCurrencies, aliceBobFiatCurrencies]
   );
 
   const currenciesWithPairLimits = useMemo(() => {

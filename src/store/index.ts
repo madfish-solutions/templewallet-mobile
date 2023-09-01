@@ -13,6 +13,7 @@ import { migrationEpics } from './migration/migration-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
 import { partnersPromotionEpics } from './partners-promotion/partners-promotion-epics';
 import { rootStateEpics } from './root-state.epics';
+import { savingsEpics } from './savings/epics';
 import { securityEpics } from './security/security-epics';
 import { settingsEpic } from './settings/settings-epic';
 import { swapEpics } from './swap/swap-epics';
@@ -38,5 +39,6 @@ export const { store, persistor } = createStore(
   buyWithCreditCardEpics,
   partnersPromotionEpics,
   abTestingEpics,
-  farmsEpics
+  farmsEpics,
+  savingsEpics
 );

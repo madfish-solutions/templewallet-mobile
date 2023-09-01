@@ -5,7 +5,6 @@ import { ofType } from 'ts-action-operators';
 
 import { getTezUahPairInfo } from 'src/apis/alice-bob';
 import { getMoonPayCurrencies } from 'src/apis/moonpay';
-import { getBinanceConnectCurrencies } from 'src/apis/temple-static';
 import { getCurrenciesInfo as getUtorgCurrenciesInfo } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -18,12 +17,7 @@ import { createEntity } from '../create-entity';
 import type { RootState } from '../types';
 import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
 import { TopUpProviderCurrencies } from './state';
-import {
-  mapAliceBobProviderCurrencies,
-  mapBinanceConnectProviderCurrencies,
-  mapMoonPayProviderCurrencies,
-  mapUtorgProviderCurrencies
-} from './utils';
+import { mapAliceBobProviderCurrencies, mapMoonPayProviderCurrencies, mapUtorgProviderCurrencies } from './utils';
 
 const getCurrencies$ = <T>(
   fetchFn: () => Promise<T>,
@@ -42,12 +36,7 @@ const getCurrencies$ = <T>(
     })
   );
 
-const allTopUpProviderEnums = [
-  TopUpProviderEnum.MoonPay,
-  TopUpProviderEnum.Utorg,
-  TopUpProviderEnum.AliceBob,
-  TopUpProviderEnum.BinanceConnect
-];
+const allTopUpProviderEnums = [TopUpProviderEnum.MoonPay, TopUpProviderEnum.Utorg, TopUpProviderEnum.AliceBob];
 
 const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -57,15 +46,13 @@ const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
         getCurrencies$(getMoonPayCurrencies, mapMoonPayProviderCurrencies),
         getCurrencies$(getUtorgCurrenciesInfo, mapUtorgProviderCurrencies),
         // TODO: return showing error toast as soon as Alice&Bob API starts working
-        getCurrencies$(getTezUahPairInfo, mapAliceBobProviderCurrencies, false),
-        getCurrencies$(getBinanceConnectCurrencies, mapBinanceConnectProviderCurrencies)
+        getCurrencies$(getTezUahPairInfo, mapAliceBobProviderCurrencies, false)
       ]).pipe(
-        map(([moonpayCurrencies, utorgCurrencies, tezUahPairInfo, binanceConnectCurrencies]) =>
+        map(([moonpayCurrencies, utorgCurrencies, tezUahPairInfo]) =>
           loadAllCurrenciesActions.success({
             [TopUpProviderEnum.MoonPay]: moonpayCurrencies,
             [TopUpProviderEnum.Utorg]: utorgCurrencies,
-            [TopUpProviderEnum.AliceBob]: tezUahPairInfo,
-            [TopUpProviderEnum.BinanceConnect]: binanceConnectCurrencies
+            [TopUpProviderEnum.AliceBob]: tezUahPairInfo
           })
         )
       )
@@ -104,15 +91,14 @@ const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<Ro
           return of(createEntity(undefined, false, PAIR_NOT_FOUND_MESSAGE));
         })
       ).pipe(
-        map(([moonPayData, utorgData, aliceBobData, binanceConnectData]) =>
+        map(([moonPayData, utorgData, aliceBobData]) =>
           updatePairLimitsActions.success({
             fiatSymbol,
             cryptoSymbol,
             limits: {
               [TopUpProviderEnum.MoonPay]: moonPayData,
               [TopUpProviderEnum.Utorg]: utorgData,
-              [TopUpProviderEnum.AliceBob]: aliceBobData,
-              [TopUpProviderEnum.BinanceConnect]: binanceConnectData
+              [TopUpProviderEnum.AliceBob]: aliceBobData
             }
           })
         )
