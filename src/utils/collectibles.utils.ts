@@ -20,7 +20,6 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 const attributesInfoInitialState: AttributeInfo[] = [
   {
     attributeId: 0,
-    tokens: 0,
     editions: 0,
     faContract: ''
   }
@@ -68,9 +67,8 @@ export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observabl
   if (isGallery) {
     return fetchGalleryAttributeCount$(ids).pipe(
       map(result =>
-        result.map(({ attribute_id, tokens, editions, gallery_pk }) => ({
+        result.map(({ attribute_id, editions, gallery_pk }) => ({
           attributeId: attribute_id,
-          tokens,
           editions,
           galleryPk: gallery_pk
         }))
@@ -81,9 +79,8 @@ export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observabl
 
   return fetchFA2AttributeCount$(ids).pipe(
     map(result =>
-      result.map(({ attribute_id, tokens, editions, fa_contract }) => ({
+      result.map(({ attribute_id, editions, fa_contract }) => ({
         attributeId: attribute_id,
-        tokens,
         editions,
         faContract: fa_contract
       }))

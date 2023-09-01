@@ -199,7 +199,6 @@ export const buildGetFA2AttributeCountQuery = (ids: number[]) => gql`
   query MyQuery {
     fa2_attribute_count(where: { attribute_id: { _in: [${ids}] } }) {
       attribute_id
-      tokens
       editions
       fa_contract
     }

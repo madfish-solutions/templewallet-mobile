@@ -5,7 +5,6 @@ import { MarketPlaceEventEnum } from './enums';
 
 export interface AttributeInfoResponse {
   attribute_id: number;
-  tokens: number;
   editions: number;
   fa_contract?: string;
   gallery_pk?: number;
