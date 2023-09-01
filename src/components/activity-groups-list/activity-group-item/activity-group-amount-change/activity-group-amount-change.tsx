@@ -25,8 +25,9 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
 
   const children = useMemo(() => {
     if (nonZeroAmounts.length === 0) {
-      return <Text>No amount</Text>;
+      return null;
     }
+
     const { isPositive, parsedAmount, symbol } = nonZeroAmounts[FIRST_AMOUNT_INDEX];
 
     if (isSingleTokenOperation(nonZeroAmounts)) {

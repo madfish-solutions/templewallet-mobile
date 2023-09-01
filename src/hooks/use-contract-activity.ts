@@ -100,8 +100,6 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     }
   }, [selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, isLoading]);
 
-  console.log('activities: ', activities);
-
   return {
     handleUpdate,
     handleRefresh,

@@ -1,27 +1,28 @@
-import { Activity } from '@temple-wallet/transactions-parser';
+import { ActivityType } from '@temple-wallet/transactions-parser';
 import React, { FC } from 'react';
-import { View } from 'react-native';
 
-import { Divider } from 'src/components/divider/divider';
-import { useNonZeroAmounts } from 'src/hooks/use-non-zero-amounts.hook';
-import { formatSize } from 'src/styles/format-size';
+import { BakingRewards } from './baking-rewards';
+import { Delegate } from './delegate';
+import { Interaction } from './interaction';
+import { ActivityItemProps } from './item.props';
+import { Receive } from './receive';
+import { Send } from './send';
+import { Unknown } from './unknown';
 
-import { Details } from '../details';
-import { Info } from '../info/info';
+export const ActivityItem: FC<ActivityItemProps> = ({ activity }) => {
+  switch (activity.type) {
+    case ActivityType.Send:
+      return <Send activity={activity} />;
+    case ActivityType.Recieve:
+      return <Receive activity={activity} />;
+    case ActivityType.BakingRewards:
+      return <BakingRewards activity={activity} />;
+    case ActivityType.Delegation:
+      return <Delegate activity={activity} />;
+    case ActivityType.Interaction:
+      return <Interaction activity={activity} />;
 
-interface Props {
-  activity: Activity;
-}
-
-export const ActivityItem: FC<Props> = ({ activity }) => {
-  const nonZeroAmounts = useNonZeroAmounts(activity.tokensDeltas);
-  console.log('nonZeroAmounts: ', nonZeroAmounts);
-
-  return (
-    <View>
-      <Info activity={activity} nonZeroAmounts={nonZeroAmounts} />
-      <Divider size={formatSize(12)} />
-      <Details activity={activity} nonZeroAmounts={nonZeroAmounts} />
-    </View>
-  );
+    default:
+      return <Unknown activity={activity} />;
+  }
 };
