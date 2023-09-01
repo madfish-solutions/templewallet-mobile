@@ -213,7 +213,7 @@ export const loadActivity = async (
 
   for (const opHash of operationsHashesUniq) {
     const { data } = await getOperationGroupByHash<TzktOperation>(selectedRpcUrl, opHash);
-    operationGroups.push(data);
+    operationGroups.push(data.sort((a, b) => b.id - a.id));
     await sleep(100);
   }
 
