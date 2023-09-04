@@ -5,7 +5,14 @@ import { useContractActivity } from '../../../hooks/use-contract-activity';
 import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
 
 export const TezosTokenHistory = () => {
-  const { activities, handleUpdate } = useContractActivity(TEZ_TOKEN_SLUG);
+  const { activities, handleUpdate, isInitialLoading, isAdditionalLoading } = useContractActivity(TEZ_TOKEN_SLUG);
 
-  return <ActivityGroupsList handleUpdate={handleUpdate} activityGroups={activities} />;
+  return (
+    <ActivityGroupsList
+      handleUpdate={handleUpdate}
+      activityGroups={activities}
+      isInitialLoading={isInitialLoading}
+      isAdditionalLoading={isAdditionalLoading}
+    />
+  );
 };

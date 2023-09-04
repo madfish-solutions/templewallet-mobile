@@ -65,7 +65,9 @@ export const TokenScreen = () => {
     }
   }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
-  const { activities, handleUpdate } = useContractActivity(getTokenSlug(initialToken));
+  const { activities, handleUpdate, isInitialLoading, isAdditionalLoading } = useContractActivity(
+    getTokenSlug(initialToken)
+  );
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
@@ -88,6 +90,8 @@ export const TokenScreen = () => {
             activityGroups={activities}
             shouldShowPromotion={partnersPromotionEnabled && !promotionErrorOccurred}
             onOptimalPromotionError={() => setPromotionErrorOccurred(true)}
+            isInitialLoading={isInitialLoading}
+            isAdditionalLoading={isAdditionalLoading}
           />
         }
         infoComponent={<TokenInfo token={token} />}

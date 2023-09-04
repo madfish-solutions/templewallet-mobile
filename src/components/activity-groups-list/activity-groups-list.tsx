@@ -1,5 +1,5 @@
-import React, { FC, useMemo } from 'react';
-import { SectionList, Text, View } from 'react-native';
+import React, { FC, useCallback, useMemo } from 'react';
+import { ActivityIndicator, SectionList, Text, View } from 'react-native';
 
 import { emptyFn } from '../../config/general';
 import { useFakeRefreshControlProps } from '../../hooks/use-fake-refresh-control-props.hook';
@@ -15,12 +15,16 @@ import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 interface Props {
   activityGroups: ActivityGroup[];
   shouldShowPromotion?: boolean;
+  isInitialLoading?: boolean;
+  isAdditionalLoading?: boolean;
   handleUpdate?: () => void;
   onOptimalPromotionError?: () => void;
 }
 
 export const ActivityGroupsList: FC<Props> = ({
   activityGroups,
+  isInitialLoading = false,
+  isAdditionalLoading = false,
   handleUpdate = emptyFn,
   shouldShowPromotion = false,
   onOptimalPromotionError
@@ -56,6 +60,15 @@ export const ActivityGroupsList: FC<Props> = ({
 
   const isShowPlaceholder = useMemo(() => activityGroups.length === 0, [activityGroups]);
 
+  const renderAdditionalLoader = useCallback(
+    () => (isAdditionalLoading ? <ActivityIndicator style={styles.additionalLoader} size="large" /> : null),
+    [isAdditionalLoading]
+  );
+
+  if (isInitialLoading) {
+    return <ActivityIndicator style={styles.initialLoader} size="large" />;
+  }
+
   return isShowPlaceholder ? (
     <>
       {shouldShowPromotion && (
@@ -71,32 +84,31 @@ export const ActivityGroupsList: FC<Props> = ({
       <DataPlaceholder text="No Activity records were found" />
     </>
   ) : (
-    <>
-      <SectionList
-        sections={sections}
-        stickySectionHeadersEnabled={true}
-        contentContainerStyle={styles.sectionListContentContainer}
-        onEndReachedThreshold={0.01}
-        onEndReached={handleUpdate}
-        keyExtractor={item => item[0].hash}
-        renderItem={({ item, index, section }) => (
-          <>
-            <ActivityGroupItem group={item} />
-            {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
-              <View style={styles.promotionItemWrapper}>
-                <OptimalPromotionItem
-                  style={styles.promotionItem}
-                  testID={ActivityGroupsListSelectors.promotion}
-                  onImageError={onOptimalPromotionError}
-                  onEmptyPromotionReceived={onOptimalPromotionError}
-                />
-              </View>
-            )}
-          </>
-        )}
-        renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
-        refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
-      />
-    </>
+    <SectionList
+      sections={sections}
+      stickySectionHeadersEnabled={true}
+      contentContainerStyle={styles.sectionListContentContainer}
+      onEndReachedThreshold={0.01}
+      onEndReached={handleUpdate}
+      keyExtractor={item => item[0].hash}
+      renderItem={({ item, index, section }) => (
+        <>
+          <ActivityGroupItem group={item} />
+          {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
+            <View style={styles.promotionItemWrapper}>
+              <OptimalPromotionItem
+                style={styles.promotionItem}
+                testID={ActivityGroupsListSelectors.promotion}
+                onImageError={onOptimalPromotionError}
+                onEmptyPromotionReceived={onOptimalPromotionError}
+              />
+            </View>
+          )}
+        </>
+      )}
+      ListFooterComponent={renderAdditionalLoader}
+      renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+      refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
+    />
   );
 };
