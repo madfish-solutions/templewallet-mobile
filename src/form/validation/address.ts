@@ -16,6 +16,11 @@ const otherNetworks = [
     slug: 'eth',
     name: 'EVM',
     errorType: AddressValidationErrorEnum.EVM_NETWORK_ADDRESS
+  },
+  {
+    slug: 'btc',
+    name: 'Bitcoin',
+    errorType: AddressValidationErrorEnum.BTC_NETWORK_ADDRESS
   }
 ];
 const invalidWalletAddressError = 'Invalid address';
