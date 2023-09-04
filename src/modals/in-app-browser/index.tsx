@@ -1,6 +1,6 @@
 /*
   Be mindful when tweaking rendering parameters here.
-  App crashes, as it wakes up (from background) locked.
+  App used to crash, as it woke up (from background) locked.
   Regarding solution, see:
   https://lonelycpp.github.io/react-native-youtube-iframe/navigation-crash/#2-tweak-webview-props
 */
@@ -79,18 +79,16 @@ export const InAppBrowser: FC = memo(() => {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={styles.scrollViewContentContainer}
+      contentContainerStyle={styles.container}
       scrollEnabled
       alwaysBounceVertical
       refreshControl={<RefreshControl refreshing={false} enabled={ptrEnabled} onRefresh={onRefresh} />}
-      renderToHardwareTextureAndroid={true}
     >
       <WebView
         ref={webViewRef}
         source={source}
-        style={styles.webView}
-        renderToHardwareTextureAndroid={true}
-        androidLayerType="hardware"
+        style={styles.container}
+        containerStyle={styles.container}
         onNavigationStateChange={setNavState}
         setSupportMultipleWindows={false}
         allowsBackForwardNavigationGestures={true}

@@ -6,14 +6,7 @@ export const useInAppBrowserStyles = createUseStylesMemoized(({ colors }) => ({
     marginHorizontal: formatSize(16)
   },
   container: {
-    flex: 1
-  },
-  scrollViewContentContainer: {
-    flex: 1
-  },
-  webView: {
     flex: 1,
-    backgroundColor: colors.pageBG,
-    opacity: 0.99
+    backgroundColor: colors.pageBG
   }
 }));
