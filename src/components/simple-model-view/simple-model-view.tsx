@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import { EmptyFn, emptyFn, EventFn } from 'src/config/general';
@@ -31,7 +31,7 @@ const getHTML = (uri: string) =>
 interface SimpleModelViewProps {
   uri: string;
   isBinary: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   onError?: EmptyFn;
   onLoadEnd?: EmptyFn;
   setScrollEnabled?: EventFn<boolean>;

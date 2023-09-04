@@ -2,12 +2,15 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { CollectibleIconProps, CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon.props';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { isDefined } from 'src/utils/is-defined';
 
-import { CollectibleIcon } from '../../../../components/collectible-icon/collectible-icon';
+import {
+  CollectibleIcon,
+  CollectibleIconProps,
+  CollectibleIconSize
+} from '../../../../components/collectible-icon/collectible-icon';
 import { CollectibleInterface } from '../../../../token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { formatNumber } from '../../../../utils/format-price';
@@ -22,7 +25,6 @@ export const TouchableCollectibleIcon: FC<Props> = ({
   collectible,
   size,
   iconSize = CollectibleIconSize.SMALL,
-  audioPlaceholderTheme,
   isShowInfo = false,
   style
 }) => {
@@ -47,21 +49,14 @@ export const TouchableCollectibleIcon: FC<Props> = ({
 
   return isDefined(collectible) ? (
     <TouchableOpacity activeOpacity={1} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
-      <CollectibleIcon
-        iconSize={iconSize}
-        collectible={collectible}
-        objktArtifact={collectible.artifactUri}
-        audioPlaceholderTheme={audioPlaceholderTheme}
-        size={size}
-        mime={collectible.mime}
-        isTouchableBlurOverlay={false}
-        isShowInfo={isShowInfo}
-      />
+      <CollectibleIcon iconSize={iconSize} collectible={collectible} size={size} isShowInfo={isShowInfo} />
+
       {isShowInfo && (
         <View style={styles.description}>
           <Text numberOfLines={1} lineBreakMode="tail" style={styles.name}>
             {collectible.name}
           </Text>
+
           <Text style={styles.price}>{priceTitle}</Text>
         </View>
       )}

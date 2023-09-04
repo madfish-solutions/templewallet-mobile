@@ -1,52 +1,62 @@
-import React, { FC, useMemo, useState, memo, useEffect, useCallback } from 'react';
-import { Text, View } from 'react-native';
+import React, { FC, useMemo, useState, memo } from 'react';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
-import { AudioPlaceholder } from 'src/components/audio-placeholder/audio-placeholder';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
-import { showErrorToast } from 'src/toast/toast.utils';
-import {
-  formatCollectibleObjktArtifactUri,
-  formatCollectibleObjktMediumUri,
-  formatImgUri,
-  ImageResolutionEnum,
-  isImgUriDataUri
-} from 'src/utils/image.utils';
+import { formatCollectibleObjktArtifactUri, isImgUriDataUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { EventFn } from '../../config/general';
 import { useCollectibleDetailsSelector } from '../../store/collectibles/collectibles-selectors';
-import { formatSize } from '../../styles/format-size';
+import { CollectibleCommonInterface } from '../../token/interfaces/collectible-interfaces.interface';
+import { TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { isAdultCollectible } from '../../utils/collectibles.utils';
 import { ActivityIndicator } from '../activity-indicator/activity-indicator';
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { ImageBlurOverlay } from '../image-blur-overlay/image-blur-overlay';
-import { CollectibleIconProps, CollectibleIconSize } from './collectible-icon.props';
+import { AudioPlaceholderTheme } from '../audio-placeholder/audio-placeholder';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
+import { AudioPlayer } from './components/audio-player/audio-player';
+import { Balance } from './components/balance/balance';
+import { BrokenImage } from './components/broken-image/broken-image';
+import { ImageBlurOverlay } from './components/image-blur-overlay/image-blur-overlay';
+import { COLLECTIBLE_FINAL_FALLBACK } from './constants';
+import { useCollectibleImageControl } from './hooks/use-collectible-image-control.hook';
 
-const FINAL_FALLBACK = 'FINAL_FALLBACK';
+export enum CollectibleIconSize {
+  SMALL = 'small',
+  BIG = 'big'
+}
+
+export interface CollectibleIconProps {
+  collectible: TokenInterface & Pick<CollectibleCommonInterface, 'isAdultContent' | 'mime'>;
+  size: number;
+  iconSize?: CollectibleIconSize;
+  audioPlaceholderTheme?: AudioPlaceholderTheme;
+  setScrollEnabled?: EventFn<boolean>;
+  isTouchableBlurOverlay?: boolean;
+  isModalWindow?: boolean;
+  isShowInfo?: boolean;
+  style?: StyleProp<ViewStyle>;
+}
 
 export const CollectibleIcon: FC<CollectibleIconProps> = memo(
   ({
     collectible,
-    paused,
     size,
     iconSize = CollectibleIconSize.SMALL,
-    isModalWindow = false,
-    mime,
-    objktArtifact,
     audioPlaceholderTheme,
-    setScrollEnabled,
-    blurLayoutTheme,
-    isTouchableBlurOverlay,
-    isShowInfo = false
+    isTouchableBlurOverlay = false,
+    isModalWindow = false,
+    isShowInfo,
+    setScrollEnabled
   }) => {
-    const collectibleDetails = useCollectibleDetailsSelector(getTokenSlug(collectible));
+    const styles = useCollectibleIconStyles();
 
+    // TODO: Refactor this code. Add adult logic to epic.
+    const collectibleDetails = useCollectibleDetailsSelector(getTokenSlug(collectible));
     const isShowBlurInitialValue = useMemo(() => {
       if (isDefined(collectibleDetails)) {
         return isAdultCollectible(collectibleDetails.attributes, collectibleDetails.tags);
@@ -54,62 +64,46 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
 
       return false;
     }, [collectibleDetails]);
-
-    const [isLoading, setIsLoading] = useState(true);
     const [isShowBlur, setIsShowBlur] = useState(isShowBlurInitialValue);
-
-    useEffect(() => void setIsShowBlur(isShowBlurInitialValue), [collectibleDetails]);
+    // *
 
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
-    const styles = useCollectibleIconStyles();
-    const assetSlug = `${collectible.address}_${collectible.id}`;
 
-    const imageFallbackURLs = useMemo(
-      () => [
-        formatCollectibleObjktArtifactUri(collectible.artifactUri ?? ''),
-        formatCollectibleObjktMediumUri(assetSlug),
-        formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
-      ],
-      [collectible]
-    );
+    const { artifactUri, mime, displayUri } = collectible;
 
-    const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
-    const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);
-    const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
+    const {
+      currentFallback,
+      isLoading,
+      isAnimatedRenderedOnce,
+      handleAnimatedError,
+      handleAudioError,
+      handleError,
+      handleLoadEnd
+    } = useCollectibleImageControl(collectible, isBigIcon);
 
-    const handleError = useCallback(() => {
-      if (currentFallbackIndex < imageFallbackURLs.length - 1) {
-        setCurrentFallback(imageFallbackURLs[currentFallbackIndex + 1]);
-        setCurrentFallbackIndex(prevState => prevState + 1);
-      } else {
-        setCurrentFallback(FINAL_FALLBACK);
-        handleLoadEnd();
+    const finalImage = useMemo(() => {
+      if (currentFallback === COLLECTIBLE_FINAL_FALLBACK) {
+        return <BrokenImage isBigIcon={isBigIcon} style={styles.image} />;
       }
-    }, [currentFallbackIndex, imageFallbackURLs]);
 
-    const handleAnimatedError = useCallback(() => {
-      showErrorToast({ description: 'Invalid video' });
-      setIsAnimatedRenderedOnce(true);
-      setIsLoading(false);
-    }, []);
-    const handleLoadEnd = useCallback(() => setIsLoading(false), []);
-    const handleAudioError = useCallback(() => {
-      if (isModalWindow) {
-        showErrorToast({ description: 'Invalid audio' });
-        setIsLoading(false);
+      if (isShowBlur) {
+        return (
+          <ImageBlurOverlay
+            overlaySize={iconSize}
+            size={size}
+            isShowBlur={isShowBlur}
+            setIsShowBlur={setIsShowBlur}
+            isTouchableOverlay={isTouchableBlurOverlay}
+          />
+        );
       }
-    }, [isModalWindow]);
 
-    const finalFallbackIconWidth = useMemo(() => formatSize(isBigIcon ? 72 : 38), [isBigIcon]);
-    const finalFallbackIconHeight = useMemo(() => formatSize(isBigIcon ? 90 : 48), [isBigIcon]);
-
-    const image = useMemo(() => {
-      if (!isAnimatedRenderedOnce && isDefined(objktArtifact) && isBigIcon && isModalWindow) {
-        if (isImgUriDataUri(objktArtifact)) {
+      if (!isAnimatedRenderedOnce && isDefined(artifactUri) && isModalWindow) {
+        if (isImgUriDataUri(artifactUri)) {
           return (
             <AnimatedSvg
               style={styles.image}
-              dataUri={objktArtifact}
+              dataUri={artifactUri}
               onError={handleAnimatedError}
               onLoadEnd={handleLoadEnd}
             />
@@ -119,7 +113,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         if (mime === NonStaticMimeTypes.MODEL || mime === NonStaticMimeTypes.INTERACTIVE) {
           return (
             <SimpleModelView
-              uri={formatCollectibleObjktArtifactUri(objktArtifact)}
+              uri={formatCollectibleObjktArtifactUri(artifactUri)}
               isBinary={mime === NonStaticMimeTypes.MODEL}
               style={styles.image}
               onError={handleAnimatedError}
@@ -132,29 +126,24 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         if (mime === NonStaticMimeTypes.VIDEO) {
           return (
             <SimplePlayer
-              uri={formatCollectibleObjktArtifactUri(objktArtifact)}
+              uri={formatCollectibleObjktArtifactUri(artifactUri)}
               size={size}
-              paused={paused}
               style={styles.image}
               onError={handleAnimatedError}
               onLoad={handleLoadEnd}
             />
           );
         }
-      }
 
-      if (isDefined(objktArtifact) && isDefined(mime) && mime.includes(NonStaticMimeTypes.AUDIO) && isModalWindow) {
-        return (
-          <>
-            <SimplePlayer
-              uri={formatCollectibleObjktArtifactUri(objktArtifact)}
-              // We don't need size if the NFT has mime 'audio'
-              size={0}
-              paused={paused}
-              onError={handleAudioError}
-              onLoad={handleLoadEnd}
-            />
-            {isDefined(collectible.displayUri) ? (
+        if (isDefined(mime) && mime.includes(NonStaticMimeTypes.AUDIO)) {
+          return (
+            <AudioPlayer
+              artifactUri={artifactUri}
+              displayUri={displayUri}
+              audioPlaceholderTheme={audioPlaceholderTheme}
+              handleAudioError={handleAudioError}
+              handleLoadEnd={handleLoadEnd}
+            >
               <FastImage
                 style={[styles.image, { height: size, width: size }]}
                 source={{ uri: currentFallback }}
@@ -162,19 +151,9 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
                 onError={handleError}
                 onLoad={handleLoadEnd}
               />
-            ) : (
-              <AudioPlaceholder theme={audioPlaceholderTheme} />
-            )}
-          </>
-        );
-      }
-
-      if (currentFallback === FINAL_FALLBACK) {
-        return (
-          <View style={styles.image}>
-            <Icon name={IconNameEnum.BrokenImage} width={finalFallbackIconWidth} height={finalFallbackIconHeight} />
-          </View>
-        );
+            </AudioPlayer>
+          );
+        }
       }
 
       return (
@@ -188,47 +167,31 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       );
     }, [
       mime,
-      objktArtifact,
+      artifactUri,
       currentFallback,
       isAnimatedRenderedOnce,
-      isModalWindow,
-      isBigIcon,
       isLoading,
-      collectible.displayUri
+      displayUri,
+      isModalWindow,
+      isShowBlur,
+      iconSize,
+      isTouchableBlurOverlay
     ]);
-
-    const imageWithBlur = useMemo(() => {
-      if (isShowBlur && currentFallback !== FINAL_FALLBACK) {
-        return (
-          <ImageBlurOverlay
-            theme={blurLayoutTheme}
-            size={size}
-            isShowBlur={isShowBlur}
-            setIsShowBlur={setIsShowBlur}
-            isTouchableOverlay={isTouchableBlurOverlay}
-          >
-            {image}
-          </ImageBlurOverlay>
-        );
-      }
-
-      return image;
-    }, [image, isShowBlur, currentFallback]);
 
     return (
       <View
-        style={{
-          width: size,
-          height: size
-        }}
+        style={[
+          styles.root,
+          {
+            width: size,
+            height: size
+          }
+        ]}
       >
-        {imageWithBlur}
-        {Boolean(isShowInfo) && (
-          <View style={styles.balanceContainer}>
-            <Text style={styles.balanceText}>{collectible.balance}</Text>
-            <Icon name={IconNameEnum.Action} size={formatSize(8)} />
-          </View>
-        )}
+        {finalImage}
+
+        {Boolean(isShowInfo) && <Balance balance={collectible.balance} />}
+
         {isLoading && !Boolean(isShowBlur) && <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />}
       </View>
     );

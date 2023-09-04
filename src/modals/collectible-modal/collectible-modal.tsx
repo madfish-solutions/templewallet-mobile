@@ -9,12 +9,10 @@ import { useDispatch } from 'react-redux';
 import { SUPPORTED_CONTRACTS } from '../../apis/objkt/constants';
 import { ActivityIndicator } from '../../components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { CollectibleIcon } from '../../components/collectible-icon/collectible-icon';
-import { CollectibleIconSize } from '../../components/collectible-icon/collectible-icon.props';
+import { CollectibleIcon, CollectibleIconSize } from '../../components/collectible-icon/collectible-icon';
 import { Divider } from '../../components/divider/divider';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { ImageBlurOverlayThemesEnum } from '../../components/image-blur-overlay/image-blur-overlay';
 import { LinkWithIcon } from '../../components/link-with-icon/link-with-icon';
 import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
@@ -98,10 +96,8 @@ export const CollectibleModal = memo(() => {
     editions,
     galleries,
     listingsActive,
-    mime,
     name,
-    thumbnailUri,
-    artifactUri
+    thumbnailUri
   } = collectible;
 
   useInterval(
@@ -219,6 +215,10 @@ export const CollectibleModal = memo(() => {
 
   const isShowSegment = segmentValues.length > 1;
 
+  if (!isString(collectible.address)) {
+    return <ActivityIndicator size="large" />;
+  }
+
   return (
     <ScreenContainer
       fixedFooterContainer={{
@@ -238,23 +238,14 @@ export const CollectibleModal = memo(() => {
       <ModalStatusBar />
 
       <View>
-        {isDefined(collectible) && !isLoadingDetails && isDefined(artifactUri) ? (
-          <CollectibleIcon
-            collectible={collectible}
-            mime={mime}
-            objktArtifact={artifactUri}
-            size={iconSize}
-            paused={false}
-            isModalWindow
-            iconSize={CollectibleIconSize.BIG}
-            setScrollEnabled={setScrollEnabled}
-            blurLayoutTheme={ImageBlurOverlayThemesEnum.fullView}
-          />
-        ) : (
-          <View style={[{ width: iconSize, height: iconSize }, styles.imageFallback]}>
-            <ActivityIndicator />
-          </View>
-        )}
+        <CollectibleIcon
+          collectible={collectible}
+          size={iconSize}
+          iconSize={CollectibleIconSize.BIG}
+          isTouchableBlurOverlay
+          isModalWindow
+          setScrollEnabled={setScrollEnabled}
+        />
 
         <Divider size={formatSize(12)} />
 

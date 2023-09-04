@@ -8,8 +8,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { CollectibleIcon } from '../../../components/collectible-icon/collectible-icon';
-import { CollectibleIconSize } from '../../../components/collectible-icon/collectible-icon.props';
+import { CollectibleIcon, CollectibleIconSize } from '../../../components/collectible-icon/collectible-icon';
 import { useBuyCollectible } from '../../../hooks/use-buy-collectible.hook';
 import { ModalsEnum } from '../../../navigator/enums/modals.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
@@ -86,14 +85,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
       <View style={styles.collectible}>
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
-            <CollectibleIcon
-              iconSize={CollectibleIconSize.BIG}
-              collectible={item}
-              mime={item.mime}
-              objktArtifact={item.artifactUri}
-              size={formatSize(295)}
-              isTouchableBlurOverlay={false}
-            />
+            <CollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(295)} />
           </TouchableOpacity>
 
           <Text style={styles.collectibleName} numberOfLines={1}>
