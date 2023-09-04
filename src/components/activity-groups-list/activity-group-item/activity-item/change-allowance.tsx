@@ -1,5 +1,5 @@
 import { AllowanceInteractionActivity } from '@temple-wallet/transactions-parser';
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -22,11 +22,13 @@ import { AbstractItem } from './abstract-item';
 
 const AMOUNT_INDEX = 0;
 
-export const ChangeAllowance: FC<{ activity: AllowanceInteractionActivity }> = ({ activity }) => {
+export const ChangeAllowance: FC<{ activity: AllowanceInteractionActivity }> = memo(({ activity }) => {
   const getTokenMetadata = useTokenMetadataGetter();
 
-  const metadata = getTokenMetadata(activity.allowanceChanges[AMOUNT_INDEX].tokenSlug);
-  const isRevoke = activity.allowanceChanges[AMOUNT_INDEX].atomicAmount.isZero();
+  const firstChange = activity.allowanceChanges[AMOUNT_INDEX];
+
+  const metadata = getTokenMetadata(firstChange.tokenSlug);
+  const isRevoke = firstChange.atomicAmount.isZero();
 
   if (isRevoke) {
     return (
@@ -47,9 +49,9 @@ export const ChangeAllowance: FC<{ activity: AllowanceInteractionActivity }> = (
       details={<ApproveDetails address={activity.to.address} symbol={metadata.symbol} hash={activity.hash} />}
     />
   );
-};
+});
 
-const ApproveFace: FC<{ address: string; symbol: string }> = ({ address, symbol }) => {
+const ApproveFace: FC<{ address: string; symbol: string }> = memo(({ address, symbol }) => {
   const styles = useActivityGroupItemStyles();
   const commonStyles = useActivityCommonStyles();
 
@@ -66,8 +68,8 @@ const ApproveFace: FC<{ address: string; symbol: string }> = ({ address, symbol 
       </View>
     </View>
   );
-};
-const RevokeFace: FC<{ address: string; symbol: string }> = ({ address, symbol }) => {
+});
+const RevokeFace: FC<{ address: string; symbol: string }> = memo(({ address, symbol }) => {
   const styles = useActivityGroupItemStyles();
   const commonStyles = useActivityCommonStyles();
 
@@ -84,9 +86,9 @@ const RevokeFace: FC<{ address: string; symbol: string }> = ({ address, symbol }
       </View>
     </View>
   );
-};
+});
 
-const ApproveDetails: FC<{ address: string; symbol: string; hash: string }> = ({ address, symbol, hash }) => {
+const ApproveDetails: FC<{ address: string; symbol: string; hash: string }> = memo(({ address, symbol, hash }) => {
   const styles = useActivityDetailsStyles();
   const commonStyles = useActivityCommonStyles();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -121,8 +123,8 @@ const ApproveDetails: FC<{ address: string; symbol: string; hash: string }> = ({
       </View>
     </>
   );
-};
-const RevokeDetails: FC<{ address: string; symbol: string; hash: string }> = ({ address, symbol, hash }) => {
+});
+const RevokeDetails: FC<{ address: string; symbol: string; hash: string }> = memo(({ address, symbol, hash }) => {
   const styles = useActivityDetailsStyles();
   const commonStyles = useActivityCommonStyles();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -157,4 +159,4 @@ const RevokeDetails: FC<{ address: string; symbol: string; hash: string }> = ({ 
       </View>
     </>
   );
-};
+});

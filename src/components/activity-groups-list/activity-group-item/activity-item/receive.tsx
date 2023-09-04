@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -25,7 +25,7 @@ import { ActivityGroupItemSelectors } from '../selectors';
 import { AbstractItem } from './abstract-item';
 import { ActivityItemProps } from './item.props';
 
-export const Receive: FC<ActivityItemProps> = ({ activity }) => {
+export const Receive: FC<ActivityItemProps> = memo(({ activity }) => {
   const nonZeroAmounts = useNonZeroAmounts(activity.tokensDeltas);
 
   return (
@@ -36,7 +36,7 @@ export const Receive: FC<ActivityItemProps> = ({ activity }) => {
       timestamp={activity.timestamp}
     />
   );
-};
+});
 
 const Face: FC<{ address: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ address, nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();

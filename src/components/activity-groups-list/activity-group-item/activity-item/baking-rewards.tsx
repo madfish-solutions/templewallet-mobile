@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { AvatarImage } from 'src/components/avatar-image/avatar-image';
@@ -28,7 +28,7 @@ import { ActivityGroupItemSelectors } from '../selectors';
 import { AbstractItem } from './abstract-item';
 import { ActivityItemProps } from './item.props';
 
-export const BakingRewards: FC<ActivityItemProps> = ({ activity }) => {
+export const BakingRewards: FC<ActivityItemProps> = memo(({ activity }) => {
   const nonZeroAmounts = useNonZeroAmounts(activity.tokensDeltas);
 
   return (
@@ -39,7 +39,7 @@ export const BakingRewards: FC<ActivityItemProps> = ({ activity }) => {
       timestamp={activity.timestamp}
     />
   );
-};
+});
 
 const Face: FC<{ address: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ address, nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();

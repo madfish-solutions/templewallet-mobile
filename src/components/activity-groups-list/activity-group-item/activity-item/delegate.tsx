@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { AvatarImage } from 'src/components/avatar-image/avatar-image';
@@ -23,7 +23,7 @@ import { ActivityGroupItemSelectors } from '../selectors';
 import { AbstractItem } from './abstract-item';
 import { ActivityItemProps } from './item.props';
 
-export const Delegate: FC<ActivityItemProps> = ({ activity }) => {
+export const Delegate: FC<ActivityItemProps> = memo(({ activity }) => {
   return (
     <AbstractItem
       face={<Face address={activity.from.address} />}
@@ -32,7 +32,7 @@ export const Delegate: FC<ActivityItemProps> = ({ activity }) => {
       timestamp={activity.timestamp}
     />
   );
-};
+});
 
 const Face: FC<{ address: string }> = ({ address }) => {
   const styles = useActivityGroupItemStyles();

@@ -18,3 +18,18 @@ export const calculateDollarValue = (amounts: Array<ActivityAmount>) =>
 
     return accum;
   }, ZERO);
+
+export const separateAmountsBySign = (nonZeroAmounts: Array<ActivityAmount>) => {
+  const positiveAmounts: Array<ActivityAmount> = [];
+  const negativeAmounts: Array<ActivityAmount> = [];
+
+  for (const amount of nonZeroAmounts) {
+    if (amount.isPositive) {
+      positiveAmounts.push(amount);
+    } else {
+      negativeAmounts.push(amount);
+    }
+  }
+
+  return { positiveAmounts, negativeAmounts };
+};

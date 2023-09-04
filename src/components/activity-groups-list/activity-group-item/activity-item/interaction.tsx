@@ -1,6 +1,6 @@
 import { ActivitySubtype, AllowanceInteractionActivity, InteractionActivity } from '@temple-wallet/transactions-parser';
 import { isEmpty } from 'lodash-es';
-import React, { FC, useMemo } from 'react';
+import React, { FC, memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -10,7 +10,7 @@ import { useNonZeroAmounts } from 'src/hooks/use-non-zero-amounts.hook';
 import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { calculateDollarValue } from 'src/utils/activity.utils';
+import { calculateDollarValue, separateAmountsBySign } from 'src/utils/activity.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking.util';
 
@@ -27,7 +27,7 @@ import { AbstractItem } from './abstract-item';
 import { ChangeAllowance } from './change-allowance';
 import { ActivityItemProps } from './item.props';
 
-export const Interaction: FC<ActivityItemProps> = ({ activity }) => {
+export const Interaction: FC<ActivityItemProps> = memo(({ activity }) => {
   const nonZeroAmounts = useNonZeroAmounts(activity.tokensDeltas);
 
   switch ((activity as InteractionActivity).subtype) {
@@ -44,7 +44,7 @@ export const Interaction: FC<ActivityItemProps> = ({ activity }) => {
         />
       );
   }
-};
+});
 
 const Face: FC<{ nonZeroAmounts: Array<ActivityAmount> }> = ({ nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();
@@ -72,20 +72,7 @@ const Details: FC<{ hash: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ 
 
   const commonStyles = useActivityCommonStyles();
 
-  const { positiveAmounts, negativeAmounts } = useMemo(() => {
-    const positiveAmounts: Array<ActivityAmount> = [];
-    const negativeAmounts: Array<ActivityAmount> = [];
-
-    for (const amount of nonZeroAmounts) {
-      if (amount.isPositive) {
-        positiveAmounts.push(amount);
-      } else {
-        negativeAmounts.push(amount);
-      }
-    }
-
-    return { positiveAmounts, negativeAmounts };
-  }, [nonZeroAmounts]);
+  const { positiveAmounts, negativeAmounts } = separateAmountsBySign(nonZeroAmounts);
 
   return (
     <>
