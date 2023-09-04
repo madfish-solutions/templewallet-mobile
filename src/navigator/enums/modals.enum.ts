@@ -21,8 +21,9 @@ export enum ModalsEnum {
   AddContact = 'AddContact',
   EditContact = 'EditContact',
   ManageFarmingPool = 'ManageFarmingPool',
-  ManageSavingsPool = 'ManageSavingsPool',
-  Newsletter = 'Newsletter'
+  Newsletter = 'Newsletter',
+  InAppBrowser = 'InAppBrowser',
+  ManageSavingsPool = 'ManageSavingsPool'
 }
 
 export type ModalsParamList = {
@@ -44,4 +45,5 @@ export type ModalsParamList = {
   [ModalsEnum.ManageFarmingPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
   [ModalsEnum.ManageSavingsPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
   [ModalsEnum.Newsletter]: undefined;
+  [ModalsEnum.InAppBrowser]: { uri: string };
 };

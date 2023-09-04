@@ -6,7 +6,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { useSocialButtonStyles } from './social-button.styles';
 

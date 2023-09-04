@@ -1,14 +1,14 @@
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { TruncatedText } from 'src/components/truncated-text';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
+import { useTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { isDefined } from 'src/utils/is-defined';
 
-import { AccountBaseInterface, emptyAccountBase } from '../../../interfaces/account.interface';
-import { useTezosTokenSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { conditionalStyle } from '../../../utils/conditional-style';
-import { isDefined } from '../../../utils/is-defined';
-import { getTruncatedProps } from '../../../utils/style.util';
 import { AssetValueText } from '../../asset-value-text/asset-value-text';
 import { DropdownListItemComponent } from '../../dropdown/dropdown';
 import { HideBalance } from '../../hide-balance/hide-balance';
@@ -34,7 +34,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
       <RobotIcon seed={account.publicKeyHash} />
       <View style={styles.infoContainer}>
         <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
-          <Text {...getTruncatedProps(styles.name)}>{account.name}</Text>
+          <TruncatedText style={styles.name}>{account.name}</TruncatedText>
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>
