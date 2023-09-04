@@ -1,4 +1,5 @@
 import { AllowanceInteractionActivity } from '@temple-wallet/transactions-parser';
+import { isEqual } from 'lodash-es';
 import React, { FC, memo } from 'react';
 import { View, Text } from 'react-native';
 
@@ -6,8 +7,8 @@ import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { useTokenMetadataGetter } from 'src/hooks/use-token-metadata-getter.hook';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useTokenMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { truncateLongAddress } from 'src/utils/address.utils';
 import { tzktUrl } from 'src/utils/linking.util';
@@ -23,11 +24,9 @@ import { AbstractItem } from './abstract-item';
 const AMOUNT_INDEX = 0;
 
 export const ChangeAllowance: FC<{ activity: AllowanceInteractionActivity }> = memo(({ activity }) => {
-  const getTokenMetadata = useTokenMetadataGetter();
-
   const firstChange = activity.allowanceChanges[AMOUNT_INDEX];
 
-  const metadata = getTokenMetadata(firstChange.tokenSlug);
+  const metadata = useTokenMetadataSelector(firstChange.tokenSlug);
   const isRevoke = firstChange.atomicAmount.isZero();
 
   if (isRevoke) {
@@ -49,7 +48,7 @@ export const ChangeAllowance: FC<{ activity: AllowanceInteractionActivity }> = m
       details={<ApproveDetails address={activity.to.address} symbol={metadata.symbol} hash={activity.hash} />}
     />
   );
-});
+}, isEqual);
 
 const ApproveFace: FC<{ address: string; symbol: string }> = memo(({ address, symbol }) => {
   const styles = useActivityGroupItemStyles();

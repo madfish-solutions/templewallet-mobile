@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash-es';
 import React, { FC, memo } from 'react';
 import { View, Text } from 'react-native';
 
@@ -36,7 +37,7 @@ export const Receive: FC<ActivityItemProps> = memo(({ activity }) => {
       timestamp={activity.timestamp}
     />
   );
-});
+}, isEqual);
 
 const Face: FC<{ address: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ address, nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();
