@@ -1,7 +1,7 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
+import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View, ScrollView } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -125,7 +125,9 @@ export const DApps = () => {
           style={styles.searchInput}
           testID={DAppsSelectors.searchDAppsInput}
         />
+      </View>
 
+      <ScrollView>
         {!isString(searchValue) && (
           <View style={styles.wrapper}>
             <Text style={styles.text}>Integrated</Text>
@@ -161,19 +163,19 @@ export const DApps = () => {
             <Disclaimer texts={texts} />
           </View>
         )}
-      </View>
 
-      <FlatList
-        data={sortedDAppsList}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        numColumns={2}
-        style={styles.flatList}
-        contentContainerStyle={styles.flatListContentContainer}
-        columnWrapperStyle={styles.flatListColumnWrapper}
-        ListEmptyComponent={ListEmptyComponent}
-      />
+        <FlatList
+          data={sortedDAppsList}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          getItemLayout={getItemLayout}
+          numColumns={2}
+          scrollEnabled={false}
+          contentContainerStyle={styles.flatListContentContainer}
+          columnWrapperStyle={styles.flatListColumnWrapper}
+          ListEmptyComponent={ListEmptyComponent}
+        />
+      </ScrollView>
     </>
   );
 };

@@ -4,10 +4,11 @@ import { formatSize } from '../../styles/format-size';
 export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
   searchInput: {
     marginTop: formatSize(12),
-    marginBottom: formatSize(4)
+    marginBottom: formatSize(12)
   },
   wrapper: {
-    marginTop: formatSize(20),
+    marginTop: formatSize(12),
+    marginBottom: formatSize(12),
     paddingHorizontal: formatSize(16)
   },
   text: {
@@ -23,9 +24,6 @@ export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
   },
   green: {
     backgroundColor: colors.kolibriGreen
-  },
-  flatList: {
-    marginTop: formatSize(12)
   },
   flatListContentContainer: {
     paddingHorizontal: formatSize(16),
