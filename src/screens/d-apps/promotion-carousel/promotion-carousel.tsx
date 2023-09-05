@@ -1,15 +1,20 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
+import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
+import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
+import { useDispatch } from 'react-redux';
 
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
+import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
-import { useIsEnabledAdsBannerSelector } from '../../../store/settings/settings-selectors';
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { COMMON_PROMOTION_CAROUSEL_DATA } from './promotion-carousel.data';
 import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
@@ -21,6 +26,14 @@ export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
+    }
+  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -51,27 +64,39 @@ export const PromotionCarousel = () => {
     return result;
   }, [activePromotion, partnersPromotionEnabled, promotionErrorOccurred, styles, isEnabledAdsBanner]);
 
+  const height = formatSize(112);
   const { layoutWidth, handleLayout } = useLayoutSizes();
-  const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
+  const flooredWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
+
+  const modeConfig = useMemo<ILayoutConfig>(
+    () => ({
+      parallaxScrollingOffset: 24,
+      parallaxScrollingScale: 1,
+      parallaxAdjacentItemScale: 1
+    }),
+    []
+  );
+
+  const renderItem = useCallback((info: CarouselRenderItemInfo<JSX.Element>) => info.item, []);
+
+  const style = useMemo(() => [styles.container, { height }], [styles.container, height]);
 
   return (
-    <View onLayout={handleLayout} style={styles.container}>
-      <Carousel
-        data={data}
-        loop={true}
-        autoPlay={true}
-        autoPlayInterval={3000}
-        mode="parallax"
-        modeConfig={{
-          parallaxScrollingOffset: 24,
-          parallaxScrollingScale: 1,
-          parallaxAdjacentItemScale: 1
-        }}
-        width={flooredLayoutWidth}
-        height={formatSize(112)}
-        scrollAnimationDuration={1200}
-        renderItem={renderItem => renderItem.item}
-      />
+    <View onLayout={handleLayout} style={style}>
+      {flooredWidth > 0 ? (
+        <Carousel
+          data={data}
+          loop={true}
+          autoPlay={true}
+          autoPlayInterval={3000}
+          mode="parallax"
+          modeConfig={modeConfig}
+          width={flooredWidth}
+          height={height}
+          scrollAnimationDuration={1200}
+          renderItem={renderItem}
+        />
+      ) : null}
     </View>
   );
 };

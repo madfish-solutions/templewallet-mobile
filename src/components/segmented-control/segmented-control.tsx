@@ -50,14 +50,15 @@ export const SegmentedControl = <T extends unknown>({
   const translateX = useRef(new Animated.Value(selectedIndex * tileWidth)).current;
 
   useEffect(
-    () =>
-      Animated.spring(translateX, {
+    () => {
+      if (tileWidth > 0) Animated.spring(translateX, {
         toValue: selectedIndex * tileWidth,
         stiffness: 150,
         damping: 20,
         mass: 1,
         useNativeDriver: true
-      }).start(),
+      }).start();
+    },
     [selectedIndex, tileWidth]
   );
 

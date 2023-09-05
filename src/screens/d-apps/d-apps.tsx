@@ -20,15 +20,11 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadDAppsListActions } from 'src/store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from 'src/store/d-apps/d-apps-selectors';
 import { useAllFarmsSelector } from 'src/store/farms/selectors';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
-import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { useSavingsItemsLoadingSelector } from 'src/store/savings/selectors';
-import { useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isString } from 'src/utils/is-string';
-import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
@@ -46,8 +42,6 @@ const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 export const DApps = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
-  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
   const { isLoading: isFarmsLoading } = useAllFarmsSelector();
   const isSavingsLoading = useSavingsItemsLoadingSelector();
@@ -65,12 +59,6 @@ export const DApps = () => {
   useEffect(() => {
     dispatch(loadDAppsListActions.submit());
   }, []);
-
-  useEffect(() => {
-    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
-    }
-  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
   const styles = useDAppsStyles();
 
@@ -106,7 +94,7 @@ export const DApps = () => {
 
       <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
 
-      <Divider size={formatSize(24)} />
+      <Divider size={formatSize(12)} />
 
       <Text style={styles.text}>Integrated</Text>
 
