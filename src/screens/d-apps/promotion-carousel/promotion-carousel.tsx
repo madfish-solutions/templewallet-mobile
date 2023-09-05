@@ -1,19 +1,15 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
 import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
-import { useDispatch } from 'react-redux';
 
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
+import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
-import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
-import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { COMMON_PROMOTION_CAROUSEL_DATA } from './promotion-carousel.data';
@@ -22,18 +18,11 @@ import { usePromotionCarouselStyles } from './promotion-carousel.styles';
 
 export const PromotionCarousel = () => {
   const activePromotion = useActivePromotionSelector();
-  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const styles = usePromotionCarouselStyles();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
-  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+  const partnersPromoShown = useIsPartnersPromoShown();
 
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
-    }
-  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
+  usePartnersPromoLoad();
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -49,7 +38,7 @@ export const PromotionCarousel = () => {
       );
     }
 
-    if (partnersPromotionEnabled && !promotionErrorOccurred && !isEnabledAdsBanner) {
+    if (partnersPromoShown && !promotionErrorOccurred) {
       result.unshift(
         <OptimalPromotionItem
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
@@ -62,7 +51,7 @@ export const PromotionCarousel = () => {
     }
 
     return result;
-  }, [activePromotion, partnersPromotionEnabled, promotionErrorOccurred, styles, isEnabledAdsBanner]);
+  }, [activePromotion, partnersPromoShown, promotionErrorOccurred, styles]);
 
   const height = formatSize(112);
   const { layoutWidth, handleLayout } = useLayoutSizes();

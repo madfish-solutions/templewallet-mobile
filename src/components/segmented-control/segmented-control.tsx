@@ -49,18 +49,17 @@ export const SegmentedControl = <T extends unknown>({
   const tileWidth = ((width ?? layoutWidth) - 2 * tileMargin) / (values.length || 1);
   const translateX = useRef(new Animated.Value(selectedIndex * tileWidth)).current;
 
-  useEffect(
-    () => {
-      if (tileWidth > 0) Animated.spring(translateX, {
+  useEffect(() => {
+    if (tileWidth > 0) {
+      Animated.spring(translateX, {
         toValue: selectedIndex * tileWidth,
         stiffness: 150,
         damping: 20,
         mass: 1,
         useNativeDriver: true
       }).start();
-    },
-    [selectedIndex, tileWidth]
-  );
+    }
+  }, [selectedIndex, tileWidth]);
 
   const renderOption = useCallback(
     (item: T, index: number) => {
