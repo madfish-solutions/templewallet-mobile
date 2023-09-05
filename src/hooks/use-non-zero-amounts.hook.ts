@@ -11,7 +11,7 @@ import { loadTokenMetadataActions } from '../store/tokens-metadata/tokens-metada
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
 import { isCollectible, mutezToTz } from '../utils/tezos.util';
-import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
+import { useTokenMetadataGetterNew } from './use-token-metadata-getter.hook';
 
 const calculateFiatAmount = (
   parsedAmount: BigNumber,
@@ -25,7 +25,7 @@ const calculateFiatAmount = (
 
 export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): Array<ActivityAmount> => {
   const dispatch = useDispatch();
-  const getTokenMetadata = useTokenMetadataGetter();
+  const getTokenMetadata = useTokenMetadataGetterNew();
   const exchangeRates = useUsdToTokenRates();
   const fiatToUsdRate = useFiatToUsdRateSelector();
 
@@ -34,24 +34,34 @@ export const useNonZeroAmounts = (tokensDeltas: Array<TokenDelta>): Array<Activi
 
     for (const { atomicAmount, tokenSlug } of tokensDeltas) {
       const metadata = getTokenMetadata(tokenSlug);
-      const { decimals, symbol, name } = metadata;
       const [address, tokenId] = tokenSlug.split('_');
-      const exchangeRate: number | undefined = exchangeRates[tokenSlug];
 
-      if (isString(address) && !isString(name)) {
-        dispatch(loadTokenMetadataActions.submit({ address, id: Number(tokenId ?? '0') }));
-      }
+      const isPositive = atomicAmount.isPositive();
 
-      const parsedAmount = mutezToTz(atomicAmount, decimals);
-      const isPositive = parsedAmount.isPositive();
+      if (isDefined(metadata)) {
+        const { name, symbol, decimals, exchangeRate } = metadata;
+        if (isString(address) && !isString(metadata.name)) {
+          dispatch(loadTokenMetadataActions.submit({ address, id: Number(tokenId ?? '0') }));
+        }
 
-      if (!parsedAmount.isEqualTo(0)) {
+        const parsedAmount = mutezToTz(atomicAmount, decimals);
+
+        if (!parsedAmount.isEqualTo(0)) {
+          amounts.push({
+            isPositive,
+            parsedAmount,
+            exchangeRate,
+            symbol: isCollectible(metadata) ? name : symbol,
+            fiatAmount: calculateFiatAmount(parsedAmount, metadata.exchangeRate, fiatToUsdRate)
+          });
+        }
+      } else {
         amounts.push({
           isPositive,
-          parsedAmount,
-          exchangeRate,
-          symbol: isCollectible(metadata) ? name : symbol,
-          fiatAmount: calculateFiatAmount(parsedAmount, exchangeRate, fiatToUsdRate)
+          parsedAmount: undefined,
+          exchangeRate: undefined,
+          symbol: '---',
+          fiatAmount: undefined
         });
       }
     }

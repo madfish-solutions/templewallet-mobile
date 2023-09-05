@@ -1,5 +1,5 @@
 import { ActivitySubtype, AllowanceInteractionActivity, InteractionActivity } from '@temple-wallet/transactions-parser';
-import { isEmpty, isEqual } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 import React, { FC, memo, useMemo } from 'react';
 import { View, Text } from 'react-native';
 
@@ -11,7 +11,6 @@ import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { calculateDollarValue, separateAmountsBySign } from 'src/utils/activity.utils';
-import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking.util';
 
 import { ActivityGroupAmountChange } from '../activity-group-amount-change/activity-group-amount-change';
@@ -44,7 +43,7 @@ export const Interaction: FC<ActivityItemProps> = memo(({ activity }) => {
         />
       );
   }
-}, isEqual);
+});
 
 const Face: FC<{ nonZeroAmounts: Array<ActivityAmount> }> = ({ nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();
@@ -82,8 +81,8 @@ const Details: FC<{ hash: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ 
           <View>
             {positiveAmounts.map((amount, index) => (
               <View style={styles.mb8} key={index}>
-                <ItemAmountChange amount={amount.parsedAmount} symbol={amount.symbol} />
-                {isDefined(amount.fiatAmount) && <ActivityGroupDollarAmountChange dollarValue={amount.fiatAmount} />}
+                <ItemAmountChange amount={amount.parsedAmount} isPositive={amount.isPositive} symbol={amount.symbol} />
+                <ActivityGroupDollarAmountChange dollarValue={amount.fiatAmount} />
               </View>
             ))}
           </View>
@@ -95,8 +94,8 @@ const Details: FC<{ hash: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ 
           <View>
             {negativeAmounts.map((amount, index) => (
               <View style={styles.mb8} key={index}>
-                <ItemAmountChange amount={amount.parsedAmount} symbol={amount.symbol} />
-                {isDefined(amount.fiatAmount) && <ActivityGroupDollarAmountChange dollarValue={amount.fiatAmount} />}
+                <ItemAmountChange amount={amount.parsedAmount} isPositive={amount.isPositive} symbol={amount.symbol} />
+                <ActivityGroupDollarAmountChange dollarValue={amount.fiatAmount} />
               </View>
             ))}
           </View>

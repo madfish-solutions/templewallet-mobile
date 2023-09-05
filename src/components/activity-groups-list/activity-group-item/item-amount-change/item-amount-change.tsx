@@ -9,15 +9,22 @@ import { shortizeSymbol } from 'src/utils/token-metadata.utils';
 import { useActivityGroupDollarAmountChangeStyles } from './item-amount-change.styles';
 
 interface Props {
-  amount: BigNumber;
+  amount: BigNumber | undefined;
+  isPositive: boolean;
   symbol: string;
   textStyle?: StyleProp<TextStyle>;
 }
 
-export const ItemAmountChange: FC<Props> = ({ symbol, amount, textStyle }) => {
+export const ItemAmountChange: FC<Props> = ({ symbol, amount, isPositive, textStyle }) => {
   const styles = useActivityGroupDollarAmountChangeStyles();
 
-  const isPositive = amount.isPositive();
+  if (amount === undefined) {
+    return (
+      <View style={styles.container}>
+        <Text style={textStyle}>---</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

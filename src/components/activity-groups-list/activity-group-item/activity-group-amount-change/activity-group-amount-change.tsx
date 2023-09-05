@@ -25,7 +25,17 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
 
   const children = useMemo(() => {
     if (nonZeroAmounts.length === 0) {
-      return null;
+      return (
+        <Text
+          style={[
+            styles.amountWeight,
+            conditionalStyle(textSize === TextSize.Small, styles.amountText13),
+            conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
+          ]}
+        >
+          ---
+        </Text>
+      );
     }
 
     const { isPositive, parsedAmount, symbol } = nonZeroAmounts[FIRST_AMOUNT_INDEX];
@@ -34,6 +44,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
       return (
         <ItemAmountChange
           amount={parsedAmount}
+          isPositive={isPositive}
           symbol={symbol}
           textStyle={[
             styles.amountWeight,

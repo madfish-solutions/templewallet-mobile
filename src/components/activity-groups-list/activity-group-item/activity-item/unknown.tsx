@@ -1,4 +1,4 @@
-import { isEmpty, isEqual } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 import React, { FC, memo, useMemo } from 'react';
 import { View, Text } from 'react-native';
 
@@ -36,7 +36,7 @@ export const Unknown: FC<ActivityItemProps> = memo(({ activity }) => {
       details={<Details hash={activity.hash} nonZeroAmounts={nonZeroAmounts} />}
     />
   );
-}, isEqual);
+});
 
 const Face: FC<{ nonZeroAmounts: Array<ActivityAmount> }> = ({ nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();
@@ -74,7 +74,7 @@ const Details: FC<{ hash: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ 
           <View>
             {positiveAmounts.map((amount, index) => (
               <View style={styles.mb8} key={index}>
-                <ItemAmountChange amount={amount.parsedAmount} symbol={amount.symbol} />
+                <ItemAmountChange amount={amount.parsedAmount} isPositive={amount.isPositive} symbol={amount.symbol} />
                 {isDefined(amount.fiatAmount) && <ActivityGroupDollarAmountChange dollarValue={amount.fiatAmount} />}
               </View>
             ))}
@@ -87,7 +87,7 @@ const Details: FC<{ hash: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ 
           <View>
             {negativeAmounts.map((amount, index) => (
               <View style={styles.mb8} key={index}>
-                <ItemAmountChange amount={amount.parsedAmount} symbol={amount.symbol} />
+                <ItemAmountChange amount={amount.parsedAmount} isPositive={amount.isPositive} symbol={amount.symbol} />
                 {isDefined(amount.fiatAmount) && <ActivityGroupDollarAmountChange dollarValue={amount.fiatAmount} />}
               </View>
             ))}

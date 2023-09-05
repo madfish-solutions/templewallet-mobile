@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, memo } from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { ZERO } from 'src/config/swap';
@@ -8,15 +8,19 @@ import { ZERO } from 'src/config/swap';
 import { useActivityGroupDollarAmountChangeStyles } from './activity-group-dollar-amount-change.styles';
 
 interface Props {
-  dollarValue: BigNumber;
+  dollarValue: BigNumber | undefined;
 }
 
 export const ActivityGroupDollarAmountChange: FC<Props> = memo(
   ({ dollarValue }) => {
     const styles = useActivityGroupDollarAmountChangeStyles();
 
-    if (dollarValue.isEqualTo(ZERO)) {
-      return null;
+    if (dollarValue === undefined || dollarValue.isEqualTo(ZERO)) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.valueText}>---</Text>
+        </View>
+      );
     }
 
     return (
@@ -25,5 +29,5 @@ export const ActivityGroupDollarAmountChange: FC<Props> = memo(
       </View>
     );
   },
-  (prevProps, nextProps) => prevProps.dollarValue.toFixed() === nextProps.dollarValue.toFixed()
+  (prevProps, nextProps) => prevProps.dollarValue?.toFixed() === nextProps.dollarValue?.toFixed()
 );

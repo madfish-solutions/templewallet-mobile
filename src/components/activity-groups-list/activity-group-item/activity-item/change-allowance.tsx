@@ -1,5 +1,4 @@
 import { AllowanceInteractionActivity } from '@temple-wallet/transactions-parser';
-import { isEqual } from 'lodash-es';
 import React, { FC, memo } from 'react';
 import { View, Text } from 'react-native';
 
@@ -48,7 +47,7 @@ export const ChangeAllowance: FC<{ activity: AllowanceInteractionActivity }> = m
       details={<ApproveDetails address={activity.to.address} symbol={metadata.symbol} hash={activity.hash} />}
     />
   );
-}, isEqual);
+});
 
 const ApproveFace: FC<{ address: string; symbol: string }> = memo(({ address, symbol }) => {
   const styles = useActivityGroupItemStyles();
