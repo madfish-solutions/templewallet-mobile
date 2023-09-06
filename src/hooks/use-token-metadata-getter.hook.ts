@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 
-import { isDefined } from 'src/utils/is-defined';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useTokensMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { normalizeTokenMetadata, normalizeTokenMetadataNew } from '../utils/token-metadata.utils';
+import { normalizeTokenMetadata } from '../utils/token-metadata.utils';
 import { useTokenExchangeRateGetter } from './use-token-exchange-rate-getter.hook';
 
 export const useTokenMetadataGetter = () => {
@@ -34,16 +35,12 @@ export const useTokenMetadataGetterNew = () => {
 
   return useCallback(
     (slug: string): TokenMetadataInterface | undefined => {
-      const tokenMetadata = normalizeTokenMetadataNew(selectedRpcUrl, slug, tokensMetadata[slug]);
-      const exchangeRate = getTokenExchangeRate(slug);
-
-      if (isDefined(tokenMetadata)) {
-        return {
-          ...tokenMetadata,
-          exchangeRate
-        };
+      if (slug === TEZ_TOKEN_SLUG) {
+        return getNetworkGasTokenMetadata(selectedRpcUrl);
       }
+
+      return tokensMetadata[slug];
     },
-    [tokensMetadata, getTokenExchangeRate]
+    [tokensMetadata, selectedRpcUrl, getTokenExchangeRate]
   );
 };

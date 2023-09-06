@@ -97,16 +97,6 @@ export const normalizeTokenMetadata = (
       };
 };
 
-export const normalizeTokenMetadataNew = (
-  selectedRpcUrl: string,
-  slug: string,
-  rawMetadata?: TokenMetadataInterface
-): TokenMetadataInterface | undefined => {
-  const gasTokenMetadata = getNetworkGasTokenMetadata(selectedRpcUrl);
-
-  return slug === TEZ_TOKEN_SLUG ? gasTokenMetadata : rawMetadata;
-};
-
 export const getFiatToUsdRate = (state: RootState) => {
   const fiatExchangeRates = state.currency.fiatToTezosRates.data;
   const fiatCurrency = state.settings.fiatCurrency;
