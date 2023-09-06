@@ -1,5 +1,5 @@
 import { ActivityType } from '@temple-wallet/transactions-parser';
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 
 import { BakingRewards } from './baking-rewards';
 import { Delegate } from './delegate';
@@ -9,7 +9,7 @@ import { Receive } from './receive';
 import { Send } from './send';
 import { Unknown } from './unknown';
 
-export const ActivityItem: FC<ActivityItemProps> = ({ activity }) => {
+export const ActivityItem: FC<ActivityItemProps> = memo(({ activity }) => {
   switch (activity.type) {
     case ActivityType.Send:
       return <Send activity={activity} />;
@@ -25,4 +25,4 @@ export const ActivityItem: FC<ActivityItemProps> = ({ activity }) => {
     default:
       return <Unknown activity={activity} />;
   }
-};
+});
