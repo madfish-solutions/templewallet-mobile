@@ -8,9 +8,6 @@ pod 'GoogleUtilities', :modular_headers => true
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 
-# See: https://github.com/software-mansion/react-native-reanimated/issues/4562
-ENV['USE_HERMES'] = '0'
-
 target 'TempleWallet' do
   config = use_native_modules!
 
@@ -22,7 +19,7 @@ target 'TempleWallet' do
     # Hermes is now enabled by default. Disable by setting this flag to false.
     # Upcoming versions of React Native may rely on get_default_flags(), but
     # we make it explicit here to aid in the React Native upgrade process.
-    :hermes_enabled => false,
+    :hermes_enabled => true,
     :fabric_enabled => flags[:fabric_enabled],
     # Enables Flipper.
     #
