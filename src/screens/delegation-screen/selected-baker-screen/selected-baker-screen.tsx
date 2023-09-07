@@ -50,7 +50,9 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
             )}
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
-              <Text style={styles.nameText}>{bakerName}</Text>
+              <Text style={styles.nameText} numberOfLines={1}>
+                {bakerName}
+              </Text>
               <Divider size={formatSize(2)} />
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText style={styles.accountPkh} publicKeyHash={baker.address} />
