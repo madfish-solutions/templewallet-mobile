@@ -1,50 +1,157 @@
 import axios from 'axios';
-import { Observable, from, map } from 'rxjs';
+import { BigNumber } from 'bignumber.js';
+import { Observable, catchError, from, map, of } from 'rxjs';
 
-import { KordFiLendStats, KordFiLendUserInfo } from 'src/interfaces/earn-opportunity/savings-item.interface';
+import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
+import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
+import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { ExchangeRateRecord } from 'src/store/currency/currency-state';
+import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { tzktUrl } from 'src/utils/linking.util';
+import { tzToMutez } from 'src/utils/tezos.util';
 
-import { KordFiStatsResponse, KordFiUserDepositsResponse } from './types';
+import { fallbackTezosToolkit } from '../youves/utils';
+import { KordFiLendStats, KordFiStatsResponse, KordFiUserDepositsResponse } from './types';
 
 const kordFiApi = axios.create({
   baseURL: 'https://back-llb-beta.kord.fi'
 });
 
-export const getKordFiStats$ = (address: string): Observable<KordFiLendStats> =>
-  from(kordFiApi.post<KordFiStatsResponse>('/llb-api/lend-stats/', { address })).pipe(
+const TEZOS_CONTRACT_ADDRESS = 'KT19qWdPBRtkWrsQnDvVfsqJgJB19keBhhMX';
+const TZBTC_CONTRACT_ADDRESS = 'KT1WL6sHt8syFT2ts7NCmb5gPcS2tyfRxSyi';
+const TEZOS_TOKEN: EarnOpportunityToken = {
+  type: EarnOpportunityTokenStandardEnum.Fa12,
+  fa2TokenId: TEZ_TOKEN_METADATA.id,
+  isWhitelisted: true,
+  contractAddress: TEZ_TOKEN_METADATA.address,
+  metadata: {
+    decimals: TEZ_TOKEN_METADATA.decimals,
+    symbol: TEZ_TOKEN_METADATA.symbol,
+    name: TEZ_TOKEN_METADATA.name,
+    thumbnailUri: TEZ_TOKEN_METADATA.thumbnailUri,
+    categories: ['tez']
+  }
+};
+const TZBTC_TOKEN: EarnOpportunityToken = {
+  type: EarnOpportunityTokenStandardEnum.Fa12,
+  fa2TokenId: TZBTC_TOKEN_METADATA.id,
+  isWhitelisted: true,
+  contractAddress: TZBTC_TOKEN_METADATA.address,
+  metadata: {
+    decimals: TZBTC_TOKEN_METADATA.decimals,
+    symbol: TZBTC_TOKEN_METADATA.symbol,
+    name: TZBTC_TOKEN_METADATA.name,
+    thumbnailUri: TZBTC_TOKEN_METADATA.thumbnailUri,
+    categories: ['tzbtc']
+  }
+};
+
+const getKordFiStats$ = (): Observable<KordFiLendStats> =>
+  from(kordFiApi.get<KordFiStatsResponse>('/llb-api/lend-stats/')).pipe(
     map(
       ({
         data: {
-          xtz_apy,
+          xtz_apr,
           xtz_total_supply_usd,
           xtz_total_borrow_usd,
-          xtz_tvl_usd,
-          tzbtc_apy,
+          tzbtc_apr,
           tzbtc_total_supply_usd,
           tzbtc_total_borrow_usd,
-          tzbtc_tvl_usd,
           tvl_usd
         }
       }) => ({
-        xtzApy: xtz_apy,
+        xtzApr: xtz_apr,
         xtzTotalSupplyUsd: xtz_total_supply_usd,
         xtzTotalBorrowUsd: xtz_total_borrow_usd,
-        xtzTvlUsd: xtz_tvl_usd,
-        tzbtcApy: tzbtc_apy,
+        tzbtcApr: tzbtc_apr,
         tzbtcTotalSupplyUsd: tzbtc_total_supply_usd,
         tzbtcTotalBorrowUsd: tzbtc_total_borrow_usd,
-        tzbtcTvlUsd: tzbtc_tvl_usd,
         tvlUsd: tvl_usd
       })
     )
   );
 
-export const getKordFiUserDeposits$ = (address: string): Observable<KordFiLendUserInfo> =>
-  from(kordFiApi.post<KordFiUserDepositsResponse>('/llb-api/lend-stats/', { address })).pipe(
-    map(({ data: { xtz_deposit, xtz_deposit_usd, tzbtc_deposit, tzbtc_deposit_usd, current_savings_amount } }) => ({
-      xtzDeposit: xtz_deposit,
-      xtzDepositUsd: xtz_deposit_usd,
-      tzbtcDeposit: tzbtc_deposit,
-      tzbtcDepositUsd: tzbtc_deposit_usd,
-      currentSavingsAmount: current_savings_amount
-    }))
+export const getKordFiUserDeposits$ = (address: string): Observable<{ [key: string]: UserStakeValueInterface }> =>
+  from(kordFiApi.post<KordFiUserDepositsResponse>('/llb-api/user-deposits/', { address })).pipe(
+    map(({ data: { xtz_deposit, tzbtc_deposit } }) => {
+      const tezosDepositAmountAtomic = tzToMutez(new BigNumber(xtz_deposit), TEZ_TOKEN_METADATA.decimals).toFixed();
+      const tezosStake: UserStakeValueInterface = {
+        lastStakeId: '0',
+        depositAmountAtomic: tezosDepositAmountAtomic,
+        claimableRewards: tezosDepositAmountAtomic,
+        fullReward: tezosDepositAmountAtomic,
+        rewardsDueDate: 0
+      };
+
+      const tzbtcDepositAmountAtomic = tzToMutez(new BigNumber(tzbtc_deposit), TZBTC_TOKEN_METADATA.decimals).toFixed();
+      const tzbtcStake: UserStakeValueInterface = {
+        lastStakeId: '0',
+        depositAmountAtomic: tzbtcDepositAmountAtomic,
+        claimableRewards: tzbtcDepositAmountAtomic,
+        fullReward: tzbtcDepositAmountAtomic,
+        rewardsDueDate: 0
+      };
+
+      return {
+        [TEZOS_CONTRACT_ADDRESS]: tezosStake,
+        [TZBTC_CONTRACT_ADDRESS]: tzbtcStake
+      };
+    }),
+    catchError(error => {
+      console.error('error: ', error);
+
+      return of({});
+    })
+  );
+
+export const getKordFiItems$ = (rates: ExchangeRateRecord): Observable<Array<SavingsItem>> =>
+  getKordFiStats$().pipe(
+    map(kordFiStats => {
+      const tezExchangeRate = rates[TEZ_TOKEN_SLUG] ?? 1;
+      const tzbtcExchangeRate = rates[getTokenSlug(TZBTC_TOKEN_METADATA)] ?? 1;
+
+      const tezosInfo: SavingsItem = {
+        id: '0',
+        contractAddress: TEZOS_CONTRACT_ADDRESS,
+        apr: kordFiStats.xtzApr?.toString(),
+        depositExchangeRate: tezExchangeRate?.toFixed(),
+        depositTokenUrl: '',
+        discFactor: '0',
+        earnExchangeRate: tezExchangeRate?.toFixed(),
+        vestingPeriodSeconds: '0',
+        stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), TEZOS_CONTRACT_ADDRESS),
+        stakedToken: TEZOS_TOKEN,
+        tokens: [TEZOS_TOKEN],
+        rewardToken: TEZOS_TOKEN,
+        staked: new BigNumber(kordFiStats.xtzTotalSupplyUsd / tezExchangeRate)?.toFixed(),
+        tvlInUsd: kordFiStats.xtzTotalSupplyUsd?.toFixed(),
+        tvlInStakedToken: kordFiStats.xtzTotalSupplyUsd?.toFixed(),
+        type: EarnOpportunityTypeEnum.KORD_FI_SAVING,
+        firstActivityTime: '0'
+      };
+      const tzbtcInfo: SavingsItem = {
+        id: '0',
+        contractAddress: TZBTC_CONTRACT_ADDRESS,
+        apr: kordFiStats.tzbtcApr?.toString(),
+        depositExchangeRate: tzbtcExchangeRate?.toFixed(),
+        depositTokenUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), TZBTC_TOKEN_METADATA.address),
+        discFactor: '0',
+        earnExchangeRate: tzbtcExchangeRate?.toFixed(),
+        vestingPeriodSeconds: '0',
+        stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), TZBTC_CONTRACT_ADDRESS),
+        stakedToken: TZBTC_TOKEN,
+        tokens: [TZBTC_TOKEN],
+        rewardToken: TZBTC_TOKEN,
+        staked: (kordFiStats.tzbtcTotalSupplyUsd / tzbtcExchangeRate)?.toFixed(),
+        tvlInUsd: kordFiStats.tzbtcTotalSupplyUsd?.toFixed(),
+        tvlInStakedToken: kordFiStats.tzbtcTotalSupplyUsd?.toFixed(),
+        type: EarnOpportunityTypeEnum.KORD_FI_SAVING,
+        firstActivityTime: '0'
+      };
+
+      return [tezosInfo, tzbtcInfo];
+    })
   );

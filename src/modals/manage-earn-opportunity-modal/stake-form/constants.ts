@@ -28,5 +28,6 @@ export const earnOpportunitiesRisksPoints: Record<EarnOpportunityTypeEnum, strin
   [EarnOpportunityTypeEnum.YOUVES_STAKING]: youvesSavingsRisksPoints,
   [EarnOpportunityTypeEnum.DEX_TWO]: quipuswapFarmsRisksPoints,
   [EarnOpportunityTypeEnum.STABLESWAP]: quipuswapFarmsRisksPoints,
-  [EarnOpportunityTypeEnum.LIQUIDITY_BAKING]: liquidityBakingRisksPoints
+  [EarnOpportunityTypeEnum.LIQUIDITY_BAKING]: liquidityBakingRisksPoints,
+  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: [''] // Add warning text
 };

@@ -21,3 +21,5 @@ export const useSavingsItemsSelector = () => useSelector(({ savings }) => saving
 export const useSavingsStakesSelector = () => useSelector(({ savings }) => savings.stakes.data);
 
 export const useSavingsSortFieldSelector = () => useSelector(({ savings }) => savings.sortField);
+
+export const useSavingsStakesLoadingSelector = () => useSelector(({ savings }) => savings.stakes.isLoading);
