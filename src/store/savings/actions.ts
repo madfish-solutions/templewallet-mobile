@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
 import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
-import { KordFiItem, SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
+import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 
 import { createActions } from '../create-actions';
@@ -20,7 +20,5 @@ export const loadSingleSavingStakeActions = createActions<
   { stake: UserStakeValueInterface | undefined; contractAddress: string },
   { contractAddress: string; error: string }
 >('savings/LOAD_SINGLE_SAVING_STAKE');
-
-export const loadKordFiItemsActions = createActions<void, KordFiItem>('savings/LOAD_KORD_FI');
 
 export const selectSavingsSortValueAction = createAction<EarnOpportunitiesSortFieldEnum>('savings/SELECT_SORT_VALUE');
