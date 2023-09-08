@@ -13,7 +13,7 @@ import { getLastElement } from 'src/utils/array.utils';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
-import { tzktUrl } from 'src/utils/linking.util';
+import { tzktUrl } from 'src/utils/linking';
 import { fractionToPercentage } from 'src/utils/percentage.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { mutezToTz } from 'src/utils/tezos.util';

@@ -1,11 +1,13 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { createRef, useState } from 'react';
+import { BigNumber } from 'bignumber.js';
+import React, { createRef, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
+import { isAndroid } from 'src/config/system';
 import { useStorageMigration } from 'src/hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
@@ -26,6 +28,7 @@ import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-mo
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from 'src/modals/import-account-modal/import-account-modal';
+import { InAppBrowser } from 'src/modals/in-app-browser';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
@@ -42,8 +45,9 @@ import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
-import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
+import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
@@ -66,6 +70,9 @@ export const RootStackScreen = () => {
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
   const { isDcpNode } = useNetworkInfo();
+
+  const { balance } = useSelectedAccountTezosTokenSelector();
+  const isOnRampHasBeenShownBefore = useIsOnRampHasBeenShownBeforeSelector();
 
   useStorageMigration();
 
@@ -91,7 +98,12 @@ export const RootStackScreen = () => {
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
 
-  const beforeRemove = () => dispatch(shouldShowNewsletterModalAction(false));
+  const beforeRemove = useCallback(() => {
+    dispatch(shouldShowNewsletterModalAction(false));
+    if (isAndroid && !isOnRampHasBeenShownBefore && new BigNumber(balance).isEqualTo(0)) {
+      dispatch(setOnRampPossibilityAction(true));
+    }
+  }, [isOnRampHasBeenShownBefore, balance]);
 
   return (
     <NavigationContainer
@@ -192,6 +204,11 @@ export const RootStackScreen = () => {
               component={Newsletter}
               options={useModalOptions('Newsletter')}
               listeners={{ beforeRemove }}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.InAppBrowser}
+              component={InAppBrowser}
+              options={useModalOptions('In-App Browser')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

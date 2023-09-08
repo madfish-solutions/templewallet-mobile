@@ -4,5 +4,6 @@ export enum CreateNewPasswordSelectors {
   acceptTermsCheckbox = 'Create a new password/Accept Terms Check Box',
   analyticsCheckbox = 'Create a new password/Analytics Check Box',
   useBiometricsToUnlockCheckBox = 'Create a new password/Use Biometrics to unlock the app Check Box',
-  createButton = 'Create a new password/Create Button'
+  createButton = 'Create a new password/Create Button',
+  viewAdsCheckbox = 'Create a new password/View Ads Check Box'
 }

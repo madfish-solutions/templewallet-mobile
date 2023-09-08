@@ -465,6 +465,8 @@ PODS:
     - React-Core
   - react-native-themis (0.14.7):
     - React-Core
+  - react-native-webview (13.3.1):
+    - React-Core
   - React-perflogger (0.70.9)
   - React-RCTActionSheet (0.70.9):
     - React-Core/RCTActionSheetHeaders (= 0.70.9)
@@ -693,6 +695,7 @@ DEPENDENCIES:
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-themis (from `../node_modules/react-native-themis`)
+  - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -837,6 +840,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/slider"
   react-native-themis:
     :path: "../node_modules/react-native-themis"
+  react-native-webview:
+    :path: "../node_modules/react-native-webview"
   React-perflogger:
     :path: "../node_modules/react-native/ReactCommon/reactperflogger"
   React-RCTActionSheet:
@@ -980,6 +985,7 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: 99b24a0c5acd0d5dcac2b1a7f18c49ea317be99a
   react-native-slider: d3ae4270cf8a8cc45a69912db0cc42b151560d5a
   react-native-themis: 3af762b1873825e0e55ac65b7c02ecc11010a0de
+  react-native-webview: c2b70afb1d910cdd8810375aecc6c2894e2ba061
   React-perflogger: cce000b5caa4bcecbb29ee9cfdb47f26202d2599
   React-RCTActionSheet: ba29f52a82d970e2aba5804490ecaea587c7a751
   React-RCTAnimation: 36efe35933875c9aeea612f7d2c0394fa22552c1

@@ -21,7 +21,7 @@ jobs:
   testapp-build:
     name: Create new Android build
     runs-on: macos-latest
-    environment: testapp
+    environment: fastlane
     steps:
       - name: Clone repository
         uses: actions/checkout@v2
@@ -43,7 +43,6 @@ jobs:
           TEMPLE_WALLET_UTORG_SID: ${{ secrets.TEMPLE_WALLET_UTORG_SID }}
           TEMPLE_WALLET_API_URL: ${{ vars.TEMPLE_WALLET_API_URL }}
           TEMPLE_WALLET_STAKING_API_URL: ${{ vars.TEMPLE_WALLET_STAKING_API_URL }}
-          TEMPLE_WALLET_STATIC_API_URL: ${{ vars.TEMPLE_WALLET_STATIC_API_URL }}
           TEZOS_METADATA_API_URL: ${{ vars.TEZOS_METADATA_API_URL }}
           TEZOS_DEXES_API_URL: ${{ vars.TEZOS_DEXES_API_URL }}
           FIREBASE_GOOGLE_SERVICE_ANDROID: ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
@@ -77,6 +76,9 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+      - name: Rename APK file
+        run: mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/Temple_Wallet_v${{ github.event.inputs.version }}_${{ github.event.inputs.build-number }}.apk
+
       - name: Upload to DO Spaces
         uses: BetaHuhn/do-spaces-action@v2
         with:
@@ -84,6 +86,6 @@ jobs:
           secret_key: ${{ secrets.DO_SECRET_KEY }}
           space_name: ${{ secrets.DO_SPACE_NAME }}
           space_region: ${{ secrets.DO_SPACE_REGION }}
-          source: android/app/build/outputs/apk/release/app-release.apk
+          source: android/app/build/outputs/apk/release/Temple_Wallet_v${{ github.event.inputs.version }}_${{ github.event.inputs.build-number }}.apk
           out_dir: apk-releases
           versioning: true

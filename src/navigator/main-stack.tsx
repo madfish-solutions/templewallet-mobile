@@ -15,8 +15,10 @@ import {
   BALANCES_SYNC_INTERVAL,
   RATES_SYNC_INTERVAL,
   SELECTED_BAKER_SYNC_INTERVAL,
-  NOTIFICATIONS_SYNC_INTERVAL
+  NOTIFICATIONS_SYNC_INTERVAL,
+  APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
+import { emptyFn } from 'src/config/general';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
@@ -76,7 +78,9 @@ import { cloudTitle } from 'src/utils/cloud-backup';
 
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
+import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
 import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
+import { loadAllSavingsAndStakesAction } from '../store/savings/actions';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
@@ -124,6 +128,11 @@ export const MainStackScreen = () => {
   useAuthorisedInterval(() => dispatch(loadNotificationsAction.submit()), NOTIFICATIONS_SYNC_INTERVAL, [
     selectedAccountPkh
   ]);
+
+  useAuthorisedInterval(() => {
+    dispatch(loadAllFarmsAndStakesAction());
+    dispatch(loadAllSavingsAndStakesAction());
+  }, APR_REFRESH_INTERVAL);
 
   const shouldShowUnauthorizedScreens = !isAuthorised;
   const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
@@ -343,7 +352,9 @@ export const MainStackScreen = () => {
           )}
 
           {shouldShowBlankScreen && (
-            <MainStack.Screen name={ScreensEnum.Blank} component={() => null} options={{ headerShown: false }} />
+            <MainStack.Screen name={ScreensEnum.Blank} options={{ headerShown: false }}>
+              {emptyFn}
+            </MainStack.Screen>
           )}
 
           <MainStack.Screen

@@ -31,6 +31,7 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { isLiquidityBakingParamsResponse } from 'src/interfaces/route3.interface';
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { loadSwapParamsAction } from 'src/store/swap/swap-actions';
@@ -83,6 +84,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const blockLevel = useBlockLevel();
   const { isLoading } = useSwapTokensMetadataSelector();
   const { publicKeyHash } = useSelectedAccountSelector();
+  const usdExchangeRates = useUsdToTokenRates();
 
   const swapParams = useSwapParamsSelector();
   const prevOutputRef = useRef(swapParams.data.output);
@@ -125,10 +127,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       swapParams.data
     );
 
+    const inputAssetUsdExchangeRate = usdExchangeRates[getTokenSlug(inputAssets.asset)];
+
     const inputAmountInUsd = mutezToTz(
-      swapInputMinusFeeAtomic.plus(routingFeeFromInputAtomic).times(inputAssets.asset.exchangeRate ?? ZERO),
+      swapInputMinusFeeAtomic.plus(routingFeeFromInputAtomic).times(inputAssetUsdExchangeRate),
       fromRoute3Token.decimals
     );
+
     const isInputTokenTempleToken = isInputTokenEqualToTempleToken(inputAssetSlug);
     const isSwapAmountMoreThreshold = inputAmountInUsd.isGreaterThanOrEqualTo(SWAP_THRESHOLD_TO_GET_CASHBACK);
 

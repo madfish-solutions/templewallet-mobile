@@ -24,7 +24,7 @@
     "no-void": "off",
     "no-shadow": "off",
     "no-extra-boolean-cast": "off",
-    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/exhaustive-deps": "warn",
     "import/no-duplicates": "error",
     "import/no-self-import": "error",
     "import/no-cycle": "error",
@@ -46,7 +46,7 @@
         "newlines-between": "always"
       }
     ],
-    "@typescript-eslint/strict-boolean-expressions": "error",
+    "@typescript-eslint/strict-boolean-expressions": "warn",
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-unnecessary-type-constraint": "off",

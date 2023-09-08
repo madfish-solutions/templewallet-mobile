@@ -25,6 +25,7 @@ import {
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
   setOnRampPossibilityAction,
+  setIsOnRampHasBeenShownBeforeAction,
   setIsSwapDisclaimerShowingAction,
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired
@@ -89,9 +90,9 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShownDomainName
   }));
 
-  builder.addCase(setIsApkBuildLaunchEventFired, (state, { payload: isBuildIdentifierEventFiredOnce }) => ({
+  builder.addCase(setIsApkBuildLaunchEventFired, (state, { payload: isApkBuildLaunchEventFired }) => ({
     ...state,
-    isBuildIdentifierEventFiredOnce
+    isApkBuildLaunchEventFired
   }));
 
   builder.addCase(
@@ -125,6 +126,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
+  builder.addCase(setIsOnRampHasBeenShownBeforeAction, (state, { payload: isOnRampHasBeenShownBefore }) => ({
+    ...state,
+    isOnRampHasBeenShownBefore
+  }));
 
   builder.addCase(setIsSwapDisclaimerShowingAction, (state, { payload: isSwapDisclaimerShowing }) => ({
     ...state,

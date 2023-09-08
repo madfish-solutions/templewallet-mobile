@@ -7,6 +7,7 @@ import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { TruncatedText } from 'src/components/truncated-text';
 import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -16,10 +17,9 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { HELP_UKRAINE_BAKER_ADDRESS, RECOMMENDED_BAKER_ADDRESS } from 'src/utils/known-bakers';
-import { tzktUrl } from 'src/utils/linking.util';
+import { tzktUrl } from 'src/utils/linking';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
-import { getTruncatedProps } from 'src/utils/style.util';
 
 import { useSelectBakerItemStyles } from './select-baker-item.styles';
 
@@ -59,7 +59,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
             <RobotIcon size={formatSize(32)} seed={baker.address} />
           )}
           <Divider size={formatSize(10)} />
-          <Text {...getTruncatedProps(styles.nameText)}>{baker.name}</Text>
+          <TruncatedText style={styles.nameText}>{baker.name}</TruncatedText>
         </View>
 
         <View style={styles.actionsContainer}>

@@ -58,5 +58,7 @@ export const useIsAnyBackupMadeSelector = () =>
   useSelector(({ settings }) => settings.isManualBackupMade || settings.isCloudBackupMade);
 
 export const useIsOnRampPossibilitySelector = () => useSelector(({ settings }) => settings.isOnRampPossibility);
+export const useIsOnRampHasBeenShownBeforeSelector = () =>
+  useSelector(({ settings }) => settings.isOnRampHasBeenShownBefore);
 
 export const useIsSwapDisclaimerShowingSelector = () => useSelector(({ settings }) => settings.isSwapDisclaimerShowing);

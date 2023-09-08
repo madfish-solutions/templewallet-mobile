@@ -4,9 +4,9 @@ import { isAndroid } from 'src/config/system';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
 export const alertOnExistingBackup = (
-  onChangeAccountPress: () => void,
   onReplaceBackupPress: () => void,
-  onBackupManuallyPress: () => void
+  onBackupManuallyPress: () => void,
+  onChangeAccountPress: () => void
 ) => {
   const title = `Your ${cloudTitle} account already has a wallet backup.`;
 
