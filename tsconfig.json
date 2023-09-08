@@ -1,5 +1,6 @@
 
 {
+  "extends": "@tsconfig/react-native/tsconfig.json",
   "exclude": [
     "node_modules",
     "e2e",
