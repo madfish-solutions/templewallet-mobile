@@ -10,7 +10,8 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 import { ExchangeRateRecord } from 'src/store/currency/currency-state';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { tzktUrl } from 'src/utils/linking.util';
+import { toEarnOpportunityToken } from 'src/utils/earn.utils';
+import { tzktUrl } from 'src/utils/linking';
 import { tzToMutez } from 'src/utils/tezos.util';
 
 import { fallbackTezosToolkit } from '../youves/utils';
@@ -22,32 +23,18 @@ const kordFiApi = axios.create({
 
 const TEZOS_CONTRACT_ADDRESS = 'KT19qWdPBRtkWrsQnDvVfsqJgJB19keBhhMX';
 const TZBTC_CONTRACT_ADDRESS = 'KT1WL6sHt8syFT2ts7NCmb5gPcS2tyfRxSyi';
-const TEZOS_TOKEN: EarnOpportunityToken = {
-  type: EarnOpportunityTokenStandardEnum.Fa12,
-  fa2TokenId: TEZ_TOKEN_METADATA.id,
-  isWhitelisted: true,
-  contractAddress: TEZ_TOKEN_METADATA.address,
-  metadata: {
-    decimals: TEZ_TOKEN_METADATA.decimals,
-    symbol: TEZ_TOKEN_METADATA.symbol,
-    name: TEZ_TOKEN_METADATA.name,
-    thumbnailUri: TEZ_TOKEN_METADATA.thumbnailUri,
-    categories: ['tez']
-  }
-};
-const TZBTC_TOKEN: EarnOpportunityToken = {
-  type: EarnOpportunityTokenStandardEnum.Fa12,
-  fa2TokenId: TZBTC_TOKEN_METADATA.id,
-  isWhitelisted: true,
-  contractAddress: TZBTC_TOKEN_METADATA.address,
-  metadata: {
-    decimals: TZBTC_TOKEN_METADATA.decimals,
-    symbol: TZBTC_TOKEN_METADATA.symbol,
-    name: TZBTC_TOKEN_METADATA.name,
-    thumbnailUri: TZBTC_TOKEN_METADATA.thumbnailUri,
-    categories: ['tzbtc']
-  }
-};
+const TEZOS_TOKEN: EarnOpportunityToken = toEarnOpportunityToken(
+  TEZ_TOKEN_METADATA,
+  EarnOpportunityTokenStandardEnum.Fa12,
+  true,
+  ['tez']
+);
+const TZBTC_TOKEN: EarnOpportunityToken = toEarnOpportunityToken(
+  TZBTC_TOKEN_METADATA,
+  EarnOpportunityTokenStandardEnum.Fa12,
+  true,
+  ['tzbtc']
+);
 
 const getKordFiStats$ = (): Observable<KordFiLendStats> =>
   from(kordFiApi.get<KordFiStatsResponse>('/llb-api/lend-stats/')).pipe(

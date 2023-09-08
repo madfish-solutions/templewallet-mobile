@@ -81,14 +81,12 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
         ),
         getKordFiUserDeposits$(selectedAccount.publicKeyHash)
       ]).pipe(
-        map(([youvesStakesEntries, kordFiStakesEntries]) => {
-          return {
-            ...Object.fromEntries(
-              youvesStakesEntries.filter((entry): entry is [string, UserStakeValueInterface] => isDefined(entry[1]))
-            ),
-            ...kordFiStakesEntries
-          };
-        }),
+        map(([youvesStakesEntries, kordFiStakesEntries]) => ({
+          ...Object.fromEntries(
+            youvesStakesEntries.filter((entry): entry is [string, UserStakeValueInterface] => isDefined(entry[1]))
+          ),
+          ...kordFiStakesEntries
+        })),
         mergeMap(stakes =>
           merge(
             of(loadAllSavingsActions.success([...youvesSavings, ...kordFiSavings])),
