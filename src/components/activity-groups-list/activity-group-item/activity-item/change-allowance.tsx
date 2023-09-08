@@ -103,7 +103,11 @@ const ApproveDetails: FC<{ address: string; symbol: string; hash: string }> = me
       <View style={[styles.itemWrapper, styles.border]}>
         <Text style={styles.text}>To:</Text>
 
-        <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+        <View style={commonStyles.row}>
+          <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+          <Divider size={formatSize(4)} />
+          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, address)} testID={ActivityGroupItemSelectors.externalLink} />
+        </View>
       </View>
 
       <View style={styles.itemWrapper}>
@@ -138,8 +142,11 @@ const RevokeDetails: FC<{ address: string; symbol: string; hash: string }> = mem
 
       <View style={[styles.itemWrapper, styles.border]}>
         <Text style={styles.text}>From:</Text>
-
-        <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+        <View style={commonStyles.row}>
+          <WalletAddress isLocalDomainNameShowing publicKeyHash={address} />
+          <Divider size={formatSize(4)} />
+          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, address)} testID={ActivityGroupItemSelectors.externalLink} />
+        </View>
       </View>
 
       <View style={styles.itemWrapper}>

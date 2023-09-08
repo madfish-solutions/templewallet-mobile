@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
-import { isDoubleTokenOperation, isSingleTokenOperation } from 'src/utils/activity.utils';
+import { isSingleTokenOperation, separateAmountsBySign } from 'src/utils/activity.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { shortizeSymbol } from 'src/utils/token-metadata.utils';
 
@@ -38,9 +38,9 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
       );
     }
 
-    const { isPositive, parsedAmount, symbol } = nonZeroAmounts[FIRST_AMOUNT_INDEX];
-
     if (isSingleTokenOperation(nonZeroAmounts)) {
+      const { isPositive, parsedAmount, symbol } = nonZeroAmounts[FIRST_AMOUNT_INDEX];
+
       return (
         <ItemAmountChange
           amount={parsedAmount}
@@ -55,37 +55,105 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
       );
     }
 
-    if (isDoubleTokenOperation(nonZeroAmounts)) {
-      const symbols = nonZeroAmounts.map(({ symbol }) => symbol).join(',');
+    const { positiveAmounts, negativeAmounts } = separateAmountsBySign(nonZeroAmounts);
+
+    if (positiveAmounts.length === 0) {
+      if (negativeAmounts.length === 0) {
+        return null;
+      }
+      const { symbol, parsedAmount } = negativeAmounts[FIRST_AMOUNT_INDEX];
+      if (negativeAmounts.length === 1) {
+        return (
+          <ItemAmountChange
+            amount={parsedAmount}
+            isPositive={false}
+            symbol={symbol}
+            textStyle={[
+              styles.amountWeight,
+              conditionalStyle(textSize === TextSize.Small, styles.amountText13),
+              conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
+            ]}
+          />
+        );
+      }
+      if (negativeAmounts.length === 2) {
+        const symbols = negativeAmounts.map(({ symbol }) => symbol).join(',');
+
+        return (
+          <Text
+            style={[
+              styles.amountWeight,
+              styles.destructiveAmountText,
+              conditionalStyle(textSize === TextSize.Small, styles.amountText13),
+              conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
+            ]}
+          >
+            -{shortizeSymbol(symbols)}
+          </Text>
+        );
+      }
 
       return (
         <Text
           style={[
             styles.amountWeight,
+            styles.destructiveAmountText,
             conditionalStyle(textSize === TextSize.Small, styles.amountText13),
-            conditionalStyle(textSize === TextSize.Regular, styles.amountText15),
-            conditionalStyle(isPositive, styles.positiveAmountText, styles.destructiveAmountText)
+            conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
           ]}
         >
-          {isPositive && '+'}
-          {shortizeSymbol(symbols)}
+          -{shortizeSymbol(symbol)} and {negativeAmounts.length - 1} others
+        </Text>
+      );
+    } else {
+      if (positiveAmounts.length === 0) {
+        return null;
+      }
+      const { symbol, parsedAmount } = positiveAmounts[FIRST_AMOUNT_INDEX];
+      if (positiveAmounts.length === 1) {
+        return (
+          <ItemAmountChange
+            amount={parsedAmount}
+            isPositive
+            symbol={symbol}
+            textStyle={[
+              styles.amountWeight,
+              conditionalStyle(textSize === TextSize.Small, styles.amountText13),
+              conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
+            ]}
+          />
+        );
+      }
+      if (positiveAmounts.length === 2) {
+        const symbols = positiveAmounts.map(({ symbol }) => symbol).join(',');
+
+        return (
+          <Text
+            style={[
+              styles.amountWeight,
+              styles.destructiveAmountText,
+              conditionalStyle(textSize === TextSize.Small, styles.amountText13),
+              conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
+            ]}
+          >
+            +{shortizeSymbol(symbols)}
+          </Text>
+        );
+      }
+
+      return (
+        <Text
+          style={[
+            styles.amountWeight,
+            styles.positiveAmountText,
+            conditionalStyle(textSize === TextSize.Small, styles.amountText13),
+            conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
+          ]}
+        >
+          +{shortizeSymbol(symbol)} and {positiveAmounts.length - 1} others
         </Text>
       );
     }
-
-    return (
-      <Text
-        style={[
-          styles.amountWeight,
-          conditionalStyle(textSize === TextSize.Small, styles.amountText13),
-          conditionalStyle(textSize === TextSize.Regular, styles.amountText15),
-          conditionalStyle(isPositive, styles.positiveAmountText, styles.destructiveAmountText)
-        ]}
-      >
-        {isPositive ? '+' : '-'}
-        {shortizeSymbol(symbol)} and {nonZeroAmounts.length - 1} others
-      </Text>
-    );
   }, [nonZeroAmounts, textSize]);
 
   return <View style={styles.container}>{children}</View>;

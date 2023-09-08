@@ -6,8 +6,6 @@ import { isDefined } from './is-defined';
 
 export const isSingleTokenOperation = (amounts: Array<ActivityAmount>) => amounts.length === 1;
 
-export const isDoubleTokenOperation = (amounts: Array<ActivityAmount>) => amounts.length === 2;
-
 const ZERO = new BigNumber(0);
 
 export const calculateDollarValue = (amounts: Array<ActivityAmount>) =>

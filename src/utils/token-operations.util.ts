@@ -223,7 +223,8 @@ export const loadActivity = async (
     return { activities: [], reachedTheEnd };
   }
 
-  const oldestOperationNew = operationGroups[operationGroups.length - 1]?.[0];
+  const lastGroup = operationGroups[operationGroups.length - 1];
+  const oldestOperationNew = lastGroup[lastGroup.length - 1];
 
   const activities = operationGroups
     .map(group => parseOperations(group, selectedAccount.publicKeyHash, knownBakers))
