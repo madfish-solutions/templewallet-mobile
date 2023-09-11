@@ -48,6 +48,7 @@ import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions'
 import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 
+import { ConfirmSignModal } from '../modals/confirm-sign-modal/confirm-sign-modal';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -55,7 +56,6 @@ import { StacksEnum } from './enums/stacks.enum';
 import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
 import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
-import { ConfirmSignModal } from '../modals/confirm-sign-modal/confirm-sign-modal';
 
 export const globalNavigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
 
