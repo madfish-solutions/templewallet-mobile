@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`mapBeaconToTaquitoParams should map origination params correctly 1`] = `
-Object {
+{
   "balance": "0",
   "code": "mockCode",
   "counter": "100000",
@@ -16,8 +16,8 @@ Object {
 `;
 
 exports[`mapBeaconToTaquitoParams should map params of other kinds correctly 1`] = `
-Array [
-  Object {
+[
+  {
     "fee": 1,
     "gasLimit": 2,
     "kind": "activate_account",
@@ -25,7 +25,7 @@ Array [
     "secret": "mockSecret",
     "storageLimit": 3,
   },
-  Object {
+  {
     "ballot": "yay",
     "fee": 1,
     "gasLimit": 2,
@@ -35,38 +35,38 @@ Array [
     "source": "account1",
     "storageLimit": 3,
   },
-  Object {
+  {
     "delegate": "mockDelegate",
     "fee": 1,
     "gasLimit": 2,
     "kind": "delegation",
     "storageLimit": 3,
   },
-  Object {
+  {
     "fee": 1,
     "gasLimit": 2,
     "kind": "endorsement",
     "level": "666",
     "storageLimit": 3,
   },
-  Object {
+  {
     "fee": 1,
     "gasLimit": 2,
     "kind": "proposals",
     "period": "4",
-    "proposals": Array [
+    "proposals": [
       "mockProposal",
     ],
     "storageLimit": 3,
   },
-  Object {
+  {
     "fee": 1,
     "gasLimit": 2,
     "kind": "reveal",
     "public_key": "mockPublicKey",
     "storageLimit": 3,
   },
-  Object {
+  {
     "fee": undefined,
     "gasLimit": undefined,
     "kind": "seed_nonce_revelation",
@@ -78,16 +78,16 @@ Array [
 `;
 
 exports[`mapBeaconToTaquitoParams should map transaction params correctly 1`] = `
-Object {
+{
   "amount": 0,
   "counter": "100000",
   "fee": 1,
   "gasLimit": 2,
   "kind": "transaction",
   "mutez": true,
-  "parameter": Object {
+  "parameter": {
     "entrypoint": "mockEntrypoint",
-    "value": Object {
+    "value": {
       "int": "3",
     },
   },

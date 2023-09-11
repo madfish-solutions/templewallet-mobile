@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`getParamPreview should parse approval of FA1.2 token expense 1`] = `
-Object {
+{
   "amount": "20",
   "approveTo": "contractAddress1",
-  "asset": Object {
+  "asset": {
     "contract": "fa12TokenAddress",
   },
   "type": "FA1_2Approve",
@@ -12,18 +12,18 @@ Object {
 `;
 
 exports[`getParamPreview should parse delegation operation 1`] = `
-Object {
+{
   "baker": "delegate1",
   "type": "Delegate",
 }
 `;
 
 exports[`getParamPreview should parse transfer of FA1.2 token 1`] = `
-Object {
-  "transfers": Array [
-    Object {
+{
+  "transfers": [
+    {
       "amount": "20",
-      "asset": Object {
+      "asset": {
         "contract": "fa12TokenAddress",
       },
       "recipient": "address2",
@@ -34,11 +34,11 @@ Object {
 `;
 
 exports[`getParamPreview should parse transfer of FA2 token 1`] = `
-Object {
-  "transfers": Array [
-    Object {
+{
+  "transfers": [
+    {
       "amount": "1000",
-      "asset": Object {
+      "asset": {
         "contract": "fa2TokenAddress",
         "id": 10,
       },
@@ -50,9 +50,9 @@ Object {
 `;
 
 exports[`getParamPreview should parse transfer of TEZ 1`] = `
-Object {
-  "transfers": Array [
-    Object {
+{
+  "transfers": [
+    {
       "amount": "10",
       "asset": "tez",
       "recipient": "address2",
@@ -63,7 +63,7 @@ Object {
 `;
 
 exports[`getParamPreview should provide a fallback for contract calls 1`] = `
-Object {
+{
   "amount": "0",
   "contract": "contractAddress1",
   "entrypoint": "foo",
@@ -72,7 +72,7 @@ Object {
 `;
 
 exports[`getParamPreview should provide a fallback for other operations 1`] = `
-Object {
+{
   "opKind": "origination",
   "type": "Other",
 }
