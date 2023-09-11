@@ -11,4 +11,6 @@
 - Minimal iOS version
 - Upgrade `appium` & `@sentry`
 - `@typescript-eslint/no-floating-promises`
+- Remove `implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'` ?
+- Set up/speed up react-native-bootsplash https://github.com/zoontek/react-native-bootsplash
 -
