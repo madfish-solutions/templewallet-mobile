@@ -705,7 +705,7 @@ PODS:
     - RNFBApp
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.7.1):
+  - RNGestureHandler (2.12.1):
     - React-Core
   - RNGoogleSignin (9.0.2):
     - GoogleSignIn (~> 6.2)
@@ -1178,7 +1178,7 @@ SPEC CHECKSUMS:
   RNFBAppCheck: eafc9fee71a6c68a1c0dd4b510818bc7ea447b54
   RNFBMessaging: 4b8cb1215465bacca36d0fcfc2f51e7e2aa1bc91
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: b7a872907ee289ada902127f2554fa1d2c076122
+  RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
   RNGoogleSignin: 22e468a9474dbcb8618d8847205ad4f0b2575d13
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
@@ -1198,6 +1198,6 @@ SPEC CHECKSUMS:
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 520f370fb2d669e64508e15f73c9457027fb29bb
+PODFILE CHECKSUM: 69ff836f45ec8367c159318deba477a581ef86ef
 
 COCOAPODS: 1.12.1
