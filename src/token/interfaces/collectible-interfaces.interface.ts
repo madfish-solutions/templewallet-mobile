@@ -28,6 +28,7 @@ interface Collection {
   name: string;
   logo: string;
   items: number;
+  editions: number;
 }
 
 interface Royalties {
@@ -39,6 +40,8 @@ interface Galleries {
   gallery: {
     items: number;
     name: string;
+    editions: number;
+    pk: number;
   };
 }
 

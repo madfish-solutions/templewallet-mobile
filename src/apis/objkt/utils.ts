@@ -1,5 +1,4 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
-import { groupBy, map, maxBy } from 'lodash-es';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { isDefined } from 'src/utils/is-defined';
@@ -7,7 +6,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
 import { currencyInfoById } from './constants';
 import { MarketPlaceEventEnum } from './enums';
-import { AttributeInfoResponse, CollectibleResponse } from './types';
+import { CollectibleResponse } from './types';
 
 export const transformCollectiblesArray = (
   array: CollectibleResponse[],
@@ -87,10 +86,4 @@ export const transformCollectiblesArray = (
   });
 
   return collectiblesArray;
-};
-
-export const getUniqueAndMaxValueAttribute = (array: AttributeInfoResponse[]) => {
-  const grouped = groupBy(array, 'attribute_id');
-
-  return map(grouped, value => maxBy(value, 'tokens') as AttributeInfoResponse);
 };

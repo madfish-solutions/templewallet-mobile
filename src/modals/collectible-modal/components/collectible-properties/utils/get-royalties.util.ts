@@ -8,11 +8,12 @@ export const getRoyalties = (royalties: { amount: number; decimals: number }[]) 
     return null;
   }
 
-  const { amount, decimals } = royalties[0];
+  const royaltiesSum = royalties.reduce(
+    (acc, { amount, decimals }) => acc + mutezToTz(new BigNumber(amount ?? 0), decimals).toNumber(),
+    0
+  );
 
-  const amountBN = new BigNumber(amount ?? 0);
-
-  const result = `${mutezToTz(amountBN, decimals).multipliedBy(100).toFixed()}%`;
+  const result = `${royaltiesSum * 100}%`;
 
   return result;
 };

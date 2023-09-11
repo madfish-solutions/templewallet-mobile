@@ -1,25 +1,27 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
+import { pick } from 'lodash-es';
 import { Observable, catchError, map, of } from 'rxjs';
 
-import { ADULT_CONTENT_TAGS } from '../apis/objkt/adult-tags';
-import { ADULT_ATTRIBUTE_NAME } from '../apis/objkt/constants';
+import { ADULT_CONTENT_TAGS } from 'src/apis/objkt/adult-tags';
+import { ADULT_ATTRIBUTE_NAME, HIDDEN_ATTRIBUTES_NAME } from 'src/apis/objkt/constants';
 import {
   fetchGalleryAttributeCount$,
   fetchFA2AttributeCount$,
   fetchAllCollectiblesDetails$
-} from '../apis/objkt/index';
-import { CollectibleAttributes, CollectibleTag } from '../apis/objkt/types';
-import { AttributeInfo } from '../interfaces/attribute.interface';
+} from 'src/apis/objkt/index';
+import { CollectibleAttributes, CollectibleDetailsResponse, CollectibleTag } from 'src/apis/objkt/types';
+import { AttributeInfo } from 'src/interfaces/attribute.interface';
 import {
   CollectibleDetailsInterface,
   CollectibleInterface
-} from '../token/interfaces/collectible-interfaces.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
+} from 'src/token/interfaces/collectible-interfaces.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
 
 const attributesInfoInitialState: AttributeInfo[] = [
   {
     attributeId: 0,
-    tokens: 0
+    editions: 0,
+    faContract: ''
   }
 ];
 
@@ -28,32 +30,47 @@ export const getAttributesWithRarity = (
   collectible: CollectibleInterface
 ): CollectibleAttributes[] => {
   const isExistGallery = isNonEmptyArray(collectible.galleries);
-  const collectibleCalleryCount = isExistGallery
-    ? collectible.galleries[0].gallery.items
-    : collectible.collection.items;
+  const collectibleGalleryCount = isExistGallery
+    ? collectible.galleries?.[0].gallery?.editions
+    : collectible.collection.editions;
 
-  return collectible.attributes.map(({ attribute }) => {
-    const attributeTokenCount = attributesInfo.find(el => el.attributeId === attribute.id)?.tokens ?? 0;
-    const rarity = Number(((attributeTokenCount / collectibleCalleryCount) * 100).toFixed(2));
+  const galleryPk = isExistGallery ? collectible.galleries?.[0].gallery?.pk : 0;
 
-    return {
-      attribute: {
-        id: attribute.id,
-        name: attribute.name,
-        value: attribute.value,
-        rarity
-      }
-    };
-  });
+  return collectible.attributes
+    .filter(({ attribute }) => !HIDDEN_ATTRIBUTES_NAME.includes(attribute.name))
+    .map(({ attribute }) => {
+      const attributeTokenCount = attributesInfo.reduce((acc, current) => {
+        if (current.attributeId !== attribute.id) {
+          return acc;
+        }
+        if (isExistGallery) {
+          return current.galleryPk === galleryPk ? acc + current.editions : acc;
+        } else {
+          return current.faContract === collectible.address ? acc + current.editions : acc;
+        }
+      }, 0);
+
+      const rarity = Number(((attributeTokenCount / collectibleGalleryCount) * 100).toFixed(2));
+
+      return {
+        attribute: {
+          id: attribute.id,
+          name: attribute.name,
+          value: attribute.value,
+          rarity
+        }
+      };
+    });
 };
 
 export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observable<AttributeInfo[]> => {
   if (isGallery) {
     return fetchGalleryAttributeCount$(ids).pipe(
       map(result =>
-        result.map(({ attribute_id, tokens }) => ({
+        result.map(({ attribute_id, editions, gallery_pk }) => ({
           attributeId: attribute_id,
-          tokens
+          editions,
+          galleryPk: gallery_pk
         }))
       ),
       catchError(() => of(attributesInfoInitialState))
@@ -62,9 +79,10 @@ export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observabl
 
   return fetchFA2AttributeCount$(ids).pipe(
     map(result =>
-      result.map(({ attribute_id, tokens }) => ({
+      result.map(({ attribute_id, editions, fa_contract }) => ({
         attributeId: attribute_id,
-        tokens
+        editions,
+        faContract: fa_contract
       }))
     ),
     catchError(() => of(attributesInfoInitialState))
@@ -90,25 +108,33 @@ export const loadAllCollectiblesDetails$ = (
   collectiblesSlugs: string[]
 ): Observable<Record<string, CollectibleDetailsInterface>> =>
   fetchAllCollectiblesDetails$(collectiblesSlugs).pipe(
-    map(collectiblesDetails => {
+    map(collectiblesDetailsArray => {
+      const collectiblesDetails = collectiblesDetailsArray.reduce<CollectibleDetailsResponse[]>(
+        (acc, current) => acc.concat(current.token),
+        []
+      );
+
       const collectitblesDetailsRecord: Record<string, CollectibleDetailsInterface> = {};
 
-      for (const collectible of collectiblesDetails.token) {
+      for (const collectible of collectiblesDetails) {
         const collectibleSlug = getTokenSlug({ address: collectible.fa_contract, id: collectible.token_id });
 
         collectitblesDetailsRecord[collectibleSlug] = {
+          ...pick(
+            collectible,
+            'name',
+            'description',
+            'creators',
+            'metadata',
+            'attributes',
+            'tags',
+            'timestamp',
+            'royalties',
+            'mime',
+            'galleries'
+          ),
           address: collectible.fa_contract,
           id: +collectible.token_id,
-          name: collectible.name,
-          description: collectible.description,
-          creators: collectible.creators,
-          metadata: collectible.metadata,
-          attributes: collectible.attributes,
-          tags: collectible.tags,
-          timestamp: collectible.timestamp,
-          royalties: collectible.royalties,
-          mime: collectible.mime,
-          galleries: collectible.galleries,
           artifactUri: collectible.artifact_uri,
           thumbnailUri: collectible.thumbnail_uri,
           displayUri: collectible.display_uri,

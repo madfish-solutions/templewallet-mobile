@@ -6,9 +6,3 @@ export const loadCollectiblesDetailsActions = createActions<
   Record<string, CollectibleDetailsInterface>,
   string
 >('collectibles/LOAD_COLLECTIBLES_DETAILS');
-
-export const loadCollectibleDetailsActions = createActions<
-  { address: string; id: string },
-  Record<string, CollectibleDetailsInterface>,
-  string
->('collectibles/LOAD_COLLECTIBLE_DETAILS');
