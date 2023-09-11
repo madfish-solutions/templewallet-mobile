@@ -36,12 +36,14 @@ const basicDarkColors: typeof basicLightColors = {
 const basicLightAlphaColors = {
   black10: hexa(basicLightColors.black, 0.1),
   black16: hexa(basicLightColors.black, 0.16),
+  black40: hexa(basicLightColors.black, 0.4),
   peach10: hexa(accentColors.peach, 0.1)
 };
 
 const basicDarkAlphaColors: typeof basicLightAlphaColors = {
   black10: hexa(basicDarkColors.black, 0.1),
   black16: hexa(basicDarkColors.black, 0.16),
+  black40: hexa(basicLightColors.black, 0.4),
   peach10: hexa(accentColors.peach, 0.1)
 };
 

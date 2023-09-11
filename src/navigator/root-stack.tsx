@@ -55,6 +55,7 @@ import { StacksEnum } from './enums/stacks.enum';
 import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
 import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
+import { ConfirmSignModal } from '../modals/confirm-sign-modal/confirm-sign-modal';
 
 export const globalNavigationRef = createRef<NavigationContainerRef<RootStackParamList>>();
 
@@ -203,6 +204,11 @@ export const RootStackScreen = () => {
               component={Newsletter}
               options={useModalOptions('Newsletter')}
               listeners={{ beforeRemove }}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ConfirmSign}
+              component={ConfirmSignModal}
+              options={useModalOptions('Confirm Sign')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

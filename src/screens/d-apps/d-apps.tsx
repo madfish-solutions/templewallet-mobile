@@ -149,7 +149,7 @@ export const DApps = () => {
               iconName={IconNameEnum.TextToNft}
               title="Text to NFT"
               description="Turn text into AI generated NFT"
-              navigateFn={() => navigate(ScreensEnum.DApps)}
+              navigateFn={() => navigate(ScreensEnum.GenerateArt)}
               backgroundColorStyle={styles.blue}
               testID={DAppsSelectors.integratedDAppButton}
             />

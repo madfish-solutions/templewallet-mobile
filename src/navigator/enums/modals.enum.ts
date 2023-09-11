@@ -4,6 +4,8 @@ import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.inte
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 
+import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create-nft/create-nft.form';
+
 export enum ModalsEnum {
   Receive = 'Receive',
   Send = 'Send',
@@ -22,7 +24,8 @@ export enum ModalsEnum {
   EditContact = 'EditContact',
   ManageFarmingPool = 'ManageFarmingPool',
   ManageSavingsPool = 'ManageSavingsPool',
-  Newsletter = 'Newsletter'
+  Newsletter = 'Newsletter',
+  ConfirmSign = 'ConfirmSign'
 }
 
 export type ModalsParamList = {
@@ -44,4 +47,5 @@ export type ModalsParamList = {
   [ModalsEnum.ManageFarmingPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
   [ModalsEnum.ManageSavingsPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
   [ModalsEnum.Newsletter]: undefined;
+  [ModalsEnum.ConfirmSign]: CreateNftFormValues;
 };
