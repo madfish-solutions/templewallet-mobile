@@ -20,15 +20,11 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadDAppsListActions } from 'src/store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from 'src/store/d-apps/d-apps-selectors';
 import { useAllFarmsSelector } from 'src/store/farms/selectors';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
-import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { useSavingsItemsLoadingSelector } from 'src/store/savings/selectors';
-import { useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
-import { isDefined } from 'src/utils/is-defined';
-import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
+import { isString } from 'src/utils/is-string';
 
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
@@ -46,8 +42,6 @@ const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 export const DApps = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
-  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
-  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
   const { isLoading: isFarmsLoading } = useAllFarmsSelector();
   const isSavingsLoading = useSavingsItemsLoadingSelector();
@@ -65,12 +59,6 @@ export const DApps = () => {
   useEffect(() => {
     dispatch(loadDAppsListActions.submit());
   }, []);
-
-  useEffect(() => {
-    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
-    }
-  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
 
   const styles = useDAppsStyles();
 
@@ -90,22 +78,28 @@ export const DApps = () => {
     [tabletMode]
   );
 
-  const sortedDAppsList = useMemo(() => {
-    if (isDefined(searchQuery)) {
-      return dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    }
-
-    return dAppsList;
-  }, [searchQuery, dAppsList]);
+  const sortedDAppsList = useMemo(
+    () =>
+      isString(searchQuery)
+        ? dAppsList.filter(dapp => dapp.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        : dAppsList,
+    [searchQuery, dAppsList]
+  );
 
   return (
     <>
       <InsetSubstitute type="top" />
+
       <PromotionCarousel />
+
       <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
-      <Divider size={formatSize(24)} />
-      <Text style={styles.text}>Integrated</Text>
+
       <Divider size={formatSize(12)} />
+
+      <Text style={styles.text}>Integrated</Text>
+
+      <Divider size={formatSize(12)} />
+
       <IntegratedDApp
         iconName={IconNameEnum.EarnDapp}
         title={`Earn up to ${isFarmsLoading || isSavingsLoading ? '---' : maxRoundedApr}% APR`}
@@ -116,13 +110,19 @@ export const DApps = () => {
           isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)
         }}
       />
+
       <Divider size={formatSize(20)} />
+
       <Text style={styles.text}>Others</Text>
+
       <Divider size={formatSize(12)} />
+
       <View style={styles.dappBlockWrapper}>
         <Disclaimer texts={texts} />
       </View>
+
       <Divider size={formatSize(12)} />
+
       <FlatList
         data={sortedDAppsList}
         renderItem={renderItem}

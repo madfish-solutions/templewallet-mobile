@@ -2,7 +2,7 @@ import { Alert } from 'react-native';
 import { securitySettings } from 'react-native-android-open-settings';
 
 import { isAndroid } from '../config/system';
-import { openUrl } from '../utils/linking.util';
+import { openUrl } from '../utils/linking';
 
 export const openSecuritySettings = () =>
   Alert.alert(

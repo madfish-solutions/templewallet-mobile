@@ -13,3 +13,11 @@ export const concatUrlPath = (baseUrl: string, path: string) => {
 };
 
 export const getUrlQueryParams = (url: string) => new URL(url).searchParams;
+
+export const getUrlHostname = (url: string) => {
+  try {
+    return new URL(url).hostname;
+  } catch (error) {
+    console.error(error);
+  }
+};

@@ -11,8 +11,8 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { useContractActivity } from 'src/hooks/use-contract-activity';
+import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
 import {
@@ -24,9 +24,7 @@ import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
-import { useIsEnabledAdsBannerSelector } from '../../store/settings/settings-selectors';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
@@ -36,9 +34,8 @@ export const TokenScreen = () => {
   const selectedAccount = useSelectedAccountSelector();
   const tokensList = useTokensListSelector();
   const tezosToken = useSelectedAccountTezosTokenSelector();
-  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
-
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
+
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const token = useMemo(() => {
@@ -59,11 +56,7 @@ export const TokenScreen = () => {
     );
   }, []);
 
-  useEffect(() => {
-    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
-    }
-  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
+  usePartnersPromoLoad();
 
   const { activities, handleUpdate, isInitialLoading, isAdditionalLoading } = useContractActivity(
     getTokenSlug(initialToken)

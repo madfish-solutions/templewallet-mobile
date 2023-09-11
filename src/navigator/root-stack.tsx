@@ -28,6 +28,7 @@ import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-mo
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from 'src/modals/import-account-modal/import-account-modal';
+import { InAppBrowser } from 'src/modals/in-app-browser';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
@@ -203,6 +204,11 @@ export const RootStackScreen = () => {
               component={Newsletter}
               options={useModalOptions('Newsletter')}
               listeners={{ beforeRemove }}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.InAppBrowser}
+              component={InAppBrowser}
+              options={useModalOptions('In-App Browser')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

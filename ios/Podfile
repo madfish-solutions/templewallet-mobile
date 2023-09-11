@@ -8,6 +8,9 @@ pod 'GoogleUtilities', :modular_headers => true
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
 
+# See: https://github.com/software-mansion/react-native-reanimated/issues/4562
+ENV['USE_HERMES'] = '0'
+
 target 'TempleWallet' do
   config = use_native_modules!
 

@@ -18,6 +18,7 @@ import {
   NOTIFICATIONS_SYNC_INTERVAL,
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
+import { emptyFn } from 'src/config/general';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
@@ -351,7 +352,9 @@ export const MainStackScreen = () => {
           )}
 
           {shouldShowBlankScreen && (
-            <MainStack.Screen name={ScreensEnum.Blank} component={() => null} options={{ headerShown: false }} />
+            <MainStack.Screen name={ScreensEnum.Blank} options={{ headerShown: false }}>
+              {emptyFn}
+            </MainStack.Screen>
           )}
 
           <MainStack.Screen

@@ -1,6 +1,6 @@
-import { mockLinking } from '../mocks/react-native.mock';
-import { openUrl, tzktUrl } from './linking.util';
-import { DCP_RPC } from './rpc/rpc-list';
+import { mockLinking } from '../../mocks/react-native.mock';
+import { DCP_RPC } from '../rpc/rpc-list';
+import { openUrl, tzktUrl } from './index';
 
 describe('tzktUrl', () => {
   it('should return tzkt link with passed non-empty address path', () => {

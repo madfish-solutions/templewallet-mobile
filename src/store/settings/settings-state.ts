@@ -25,6 +25,7 @@ export interface SettingsState {
   isOnRampPossibility: boolean;
   isOnRampHasBeenShownBefore: boolean;
   applicationOpenCounter: number;
+  /** `true` if need to prompt user for ads showing */
   isEnableAdsBanner: boolean;
   isSwapDisclaimerShowing: boolean;
   isApkBuildLaunchEventFired: boolean;
