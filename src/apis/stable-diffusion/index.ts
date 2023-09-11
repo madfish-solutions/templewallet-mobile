@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { SignInParams, SignInResponse } from './types';
 
-export const stableDiffusionApi = axios.create({
+const stableDiffusionApi = axios.create({
   baseURL: 'https://stable-diffusion-nft-backend.stage.madfish.xyz/api/v1'
 });
 

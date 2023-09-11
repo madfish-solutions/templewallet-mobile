@@ -34,21 +34,21 @@ export const ConfirmSignModal: FC = () => {
 
   return (
     <>
-      <ScreenContainer>
-        <Divider size={formatSize(8)} />
+      <ScreenContainer contentContainerStyle={styles.root}>
+        <Label label="Account" style={[styles.label, styles.grid]} />
 
-        <Label label="Account" />
+        <View style={styles.line} />
 
-        <Divider size={formatSize(8)} />
+        <View style={styles.grid}>
+          <AccountDropdownItem account={account} />
+        </View>
 
-        <AccountDropdownItem account={account} />
+        <Divider size={formatSize(32)} />
 
-        <Divider />
-
-        <View style={styles.segmentControl}>
+        <View style={[styles.segmentControl, styles.grid]}>
           <Text style={styles.segmentTitle}>Payload to sign</Text>
           <TextSegmentControl
-            width={formatSize(181)}
+            width={formatSize(140)}
             selectedIndex={payloadTypeIndex}
             values={['Preview', 'Bytes']}
             onChange={setPayloadTypeIndex}
@@ -57,7 +57,7 @@ export const ConfirmSignModal: FC = () => {
 
         <Divider size={formatSize(16)} />
 
-        <Text style={styles.payload}>{isPayloadPreviewType ? messagePreview : messageBytes}</Text>
+        <Text style={[styles.payload, styles.grid]}>{isPayloadPreviewType ? messagePreview : messageBytes}</Text>
       </ScreenContainer>
 
       <ModalButtonsContainer>
