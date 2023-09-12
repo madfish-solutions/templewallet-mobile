@@ -46,7 +46,8 @@ export const withTokensIdsToSlugs =
       withLatestFrom(state$, (value, { market }): [T, Record<string, string>] => [value, market.tokensIdsToSlugs.data])
     );
 
-export const getMarketTokensIds = (tokensIdsToSlugs: Record<string, string>) => Object.keys(tokensIdsToSlugs).join(',');
+export const getMarketTokensIds = (tokensIdsToSlugs: Record<string, string>) =>
+  Object.keys(tokensIdsToSlugs).join(',').concat(',tezos');
 
 export const fetchMarketTokensSlugs = () =>
   templeWalletApi.get<Record<string, string>>('/top-coins').then(value => value.data);
