@@ -96,7 +96,7 @@ const ApproveDetails: FC<{ address: string; symbol: string; hash: string }> = me
       <View style={[styles.itemWrapper, styles.border]}>
         <Text style={styles.text}>Approved:</Text>
         <View>
-          <Text>{symbol}</Text>
+          <Text style={styles.symbolText}>{symbol}</Text>
         </View>
       </View>
 
@@ -136,7 +136,7 @@ const RevokeDetails: FC<{ address: string; symbol: string; hash: string }> = mem
       <View style={[styles.itemWrapper, styles.border]}>
         <Text style={styles.text}>Revoked:</Text>
         <View>
-          <Text>{symbol}</Text>
+          <Text style={styles.symbolText}>{symbol}</Text>
         </View>
       </View>
 

@@ -49,7 +49,7 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
   }
 }));
 
-export const useActivityDetailsStyles = createUseStyles(({ colors }) => ({
+export const useActivityDetailsStyles = createUseStyles(({ colors, typography }) => ({
   itemWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -67,6 +67,10 @@ export const useActivityDetailsStyles = createUseStyles(({ colors }) => ({
   },
   mb8: {
     marginBottom: formatSize(8)
+  },
+  symbolText: {
+    ...typography.numbersRegular13,
+    color: colors.black
   }
 }));
 
