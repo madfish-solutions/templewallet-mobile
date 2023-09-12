@@ -754,9 +754,9 @@ PODS:
     - React-RCTImage
   - RNScrypt (1.2.1):
     - React
-  - RNSentry (4.3.1):
+  - RNSentry (5.9.1):
     - React-Core
-    - Sentry (= 7.24.1)
+    - Sentry/HybridSDK (= 8.10.0)
   - RNSha256 (1.4.8):
     - React-Core
   - RNSVG (12.4.4):
@@ -767,9 +767,9 @@ PODS:
   - SDWebImageWebPCoder (0.8.5):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - Sentry (7.24.1):
-    - Sentry/Core (= 7.24.1)
-  - Sentry/Core (7.24.1)
+  - Sentry/HybridSDK (8.10.0):
+    - SentryPrivate (= 8.10.0)
+  - SentryPrivate (8.10.0)
   - SocketRocket (0.6.1)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -918,6 +918,7 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
+    - SentryPrivate
     - SocketRocket
     - YogaKit
 
@@ -1188,12 +1189,13 @@ SPEC CHECKSUMS:
   RNReanimated: 9f7068e43b9358a46a688d94a5a3adb258139457
   RNScreens: 34cc502acf1b916c582c60003dc3089fa01dc66d
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
-  RNSentry: 1cd4360f7c668f4d7e8f860e41da884f00e7d814
+  RNSentry: 0a1daa8ee81e2776f977ae8c66e67c8d85587828
   RNSha256: 80bea5b2e7005f813f6438cb41e573b3d531146c
   RNSVG: ecd661f380a07ba690c9c5929c475a44f432d674
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
-  Sentry: 1ed2d3f2973658bf6ab7ed43857c8e321a1625dd
+  Sentry: 71cd4427146ac56eab6e70401ac7a24384c3d3b5
+  SentryPrivate: 9334613897c85a9e30f2c9d7a331af8aaa4fe71f
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
