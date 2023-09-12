@@ -1,17 +1,13 @@
 import React, { FC } from 'react';
 import { View, Text } from 'react-native';
 
-import { TokenIcon } from '../../../../components/token-icon/token-icon';
-import { useUsdToTokenRates } from '../../../../store/currency/currency-selectors';
-import { MarketToken } from '../../../../store/market/market.interfaces';
-import { useColors } from '../../../../styles/use-colors';
-import {
-  formatPriceChange,
-  getPriceChangeColor,
-  formatPrice,
-  formatRegularValue
-} from '../../../../utils/market.utils';
-import { getTruncatedProps } from '../../../../utils/style.util';
+import { TokenIcon } from 'src/components/token-icon/token-icon';
+import { TruncatedText } from 'src/components/truncated-text';
+import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
+import { MarketToken } from 'src/store/market/market.interfaces';
+import { useColors } from 'src/styles/use-colors';
+import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from 'src/utils/market.util';
+
 import { useRowStyles } from './row.styles';
 
 export const Row: FC<MarketToken> = ({ priceChange24h, price, imageUrl, symbol, volume24h }) => {
@@ -31,7 +27,7 @@ export const Row: FC<MarketToken> = ({ priceChange24h, price, imageUrl, symbol, 
     <View style={styles.container}>
       <View style={[styles.coinContainer, styles.basis25]}>
         <TokenIcon thumbnailUri={imageUrl} />
-        <Text {...getTruncatedProps(styles.regularText)}>{symbol}</Text>
+        <TruncatedText style={styles.regularText}>{symbol}</TruncatedText>
       </View>
       <View style={[styles.digits, styles.basis25]}>
         <Text style={styles.regularText}>{priceFormatted} $</Text>

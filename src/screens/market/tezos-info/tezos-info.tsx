@@ -1,16 +1,17 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../../components/icon/touchable-icon/touchable-icon';
-import { TokenIcon } from '../../../components/token-icon/token-icon';
-import { useTezosMarketTokenSelector } from '../../../store/market/market-selectors';
-import { useTokenMetadataSelector } from '../../../store/tokens-metadata/tokens-metadata-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
-import { TEZ_TOKEN_SLUG } from '../../../token/data/tokens-metadata';
-import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from '../../../utils/market.utils';
-import { getTruncatedProps } from '../../../utils/style.util';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { TokenIcon } from 'src/components/token-icon/token-icon';
+import { TruncatedText } from 'src/components/truncated-text';
+import { useTezosMarketTokenSelector } from 'src/store/market/market-selectors';
+import { useTokenMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from 'src/utils/market.util';
+
 import { MarketSelectors } from '../market.selectors';
 import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
@@ -65,12 +66,12 @@ export const TezosInfo = () => {
         <View style={[styles.commonView, styles.displayCenter]}>
           <View style={styles.percentage}>
             <Text style={styles.subtitle11}>24H</Text>
-            <Text {...getTruncatedProps({ ...styles.subtitle11, color: priceChange24hColor })}>{priceChange24h}</Text>
+            <TruncatedText style={[styles.subtitle11, { color: priceChange24hColor }]}>{priceChange24h}</TruncatedText>
           </View>
 
           <View>
             <Text style={styles.subtitle11}>7D</Text>
-            <Text {...getTruncatedProps({ ...styles.subtitle11, color: priceChange7dColor })}>{priceChange7d}</Text>
+            <TruncatedText style={[styles.subtitle11, { color: priceChange7dColor }]}>{priceChange7d}</TruncatedText>
           </View>
         </View>
       </View>

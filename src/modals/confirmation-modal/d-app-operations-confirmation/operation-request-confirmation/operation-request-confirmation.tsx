@@ -8,8 +8,7 @@ import { Divider } from 'src/components/divider/divider';
 import { ApproveOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-operation-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { emptyAccount } from 'src/interfaces/account.interface';
-import { StacksEnum } from 'src/navigator/enums/stacks.enum';
-import { navigateAction } from 'src/store/root-state.actions';
+import { navigateBackAction } from 'src/store/root-state.actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
@@ -47,7 +46,7 @@ const approveOperationRequest = ({
         title: 'Success!'
       });
 
-      return [waitForOperationCompletionAction({ opHash, sender }), navigateAction(StacksEnum.MainStack)];
+      return [waitForOperationCompletionAction({ opHash, sender }), navigateBackAction()];
     })
   );
 

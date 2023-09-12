@@ -17,3 +17,5 @@ export const untypedNavigateAction =
 export const navigateAction = <RouteName extends keyof NavigationParamList>(
   ...navigationArgs: NavigationArgsType<NavigationParamList, RouteName>
 ) => createAction<NavigationArgsType<NavigationParamList, RouteName>>('navigation/NAVIGATE')(navigationArgs);
+
+export const navigateBackAction = createAction('navigation/NAVIGATE_BACK');

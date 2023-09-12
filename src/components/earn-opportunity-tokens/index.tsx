@@ -8,8 +8,8 @@ import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
-import { getTruncatedProps } from 'src/utils/style.util';
 
+import { TruncatedText } from '../truncated-text';
 import { useEarnOpportunityTokensStyles } from './styles';
 
 interface Props {
@@ -44,10 +44,10 @@ export const EarnOpportunityTokens: FC<Props> = ({ stakeTokens, rewardToken }) =
         </View>
         <Divider size={formatSize(14)} />
         <View>
-          <Text {...getTruncatedProps(styles.stakeTokenSymbols)}>
+          <TruncatedText style={styles.stakeTokenSymbols}>
             {stakeTokens.length === 1 ? 'Deposit ' : ''}
             {stakeTokens.map(token => token.symbol).join(TOKENS_SYMBOLS_DIVIDER)}
-          </Text>
+          </TruncatedText>
           <Text style={styles.rewardTokenSymbol}>Earn {rewardToken.symbol}</Text>
         </View>
       </View>

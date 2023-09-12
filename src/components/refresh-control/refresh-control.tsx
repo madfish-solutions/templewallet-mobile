@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { RefreshControl as RNRefreshControl, RefreshControlProps } from 'react-native';
 
-import { useColors } from '../../styles/use-colors';
+import { useColors } from 'src/styles/use-colors';
 
 export const RefreshControl: FC<RefreshControlProps> = props => {
   const { gray2 } = useColors();
