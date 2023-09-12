@@ -3,7 +3,6 @@
   "extends": "@tsconfig/react-native/tsconfig.json",
   "exclude": [
     "node_modules",
-    "e2e",
     "babel.config.js",
     "metro.config.js",
     "jest.config.js",
