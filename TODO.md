@@ -1,3 +1,0 @@
-- Clean `yarn` `resolutions`
-- Upgrade `appium`
--

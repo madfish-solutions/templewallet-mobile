@@ -22,3 +22,14 @@ search_string="parentProcess.on('unhandledRejection', uncaught);"
 replace_string="parentProcess.on('unhandledRejection', reason => void console.warn('process.on.unhandledRejection:', reason?.stack || reason));"
 
 sed -i ${sed_mac_arg:+""} "s/$search_string/$replace_string/" node_modules/jest-circus/build/globalErrorHandlers.js
+
+# Patch for `@airgap/beacon-sdk`. Removing redundant sub-dependencies
+
+search_string="__exportStar(require(\"@airgap/beacon-dapp\"), exports);"
+replace_string=""
+
+sed -i ${sed_mac_arg:+""} "s|$search_string|$replace_string|" node_modules/@airgap/beacon-sdk/dist/cjs/index.js
+
+search_string="export \* from '@airgap/beacon-dapp';"
+
+sed -i ${sed_mac_arg:+""} "s|$search_string|$replace_string|" node_modules/@airgap/beacon-sdk/dist/cjs/index.d.ts
