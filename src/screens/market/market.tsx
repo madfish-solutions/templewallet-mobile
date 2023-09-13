@@ -6,7 +6,7 @@ import { MARKET_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
 import { usePartnersPromoSync } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { loadMarketTokensSlugsActions, loadMarketTopTokenActions } from 'src/store/market/market-actions';
+import { loadMarketTokensSlugsActions } from 'src/store/market/market-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { TezosInfo } from './tezos-info/tezos-info';
@@ -15,10 +15,7 @@ import { TopTokensTable } from './top-coins-table/top-tokens-table';
 export const Market = () => {
   const dispatch = useDispatch();
 
-  useAuthorisedInterval(() => {
-    dispatch(loadMarketTopTokenActions.submit());
-    dispatch(loadMarketTokensSlugsActions.submit());
-  }, MARKET_SYNC_INTERVAL);
+  useAuthorisedInterval(() => dispatch(loadMarketTokensSlugsActions.submit()), MARKET_SYNC_INTERVAL);
 
   usePartnersPromoSync();
 

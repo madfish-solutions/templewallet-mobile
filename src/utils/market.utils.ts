@@ -1,18 +1,22 @@
+import { Observable } from 'rxjs';
+import { withLatestFrom } from 'rxjs/operators';
+
 import { coingeckoApi, templeWalletApi } from '../api.service';
 import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enum';
 import { MarketToken, MarketTokenRaw } from '../store/market/market.interfaces';
+import { RootState } from '../store/types';
 import { Colors } from '../styles/colors';
 import { kFormatter } from './number.util';
 
 const MINIMUM_AMOUNT = 0.01;
 const MINIMUM_AMOUNT_DISPLAY = '<0.01';
 
-export const fetchMarketTopTokens = () =>
+export const fetchMarketTokens = (ids: string) =>
   coingeckoApi
     .get<Array<MarketTokenRaw>>('coins/markets', {
       params: {
+        ids,
         vs_currency: 'usd',
-        category: 'tezos-ecosystem',
         order: 'market_cap_desc',
         per_page: '100',
         page: '1',
@@ -34,6 +38,16 @@ export const fetchMarketTopTokens = () =>
         marketCap: coinInfo.market_cap
       }))
     );
+
+export const withTokensIdsToSlugs =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { market }): [T, Record<string, string>] => [value, market.tokensIdsToSlugs.data])
+    );
+
+export const getMarketTokensIds = (tokensIdsToSlugs: Record<string, string>) =>
+  Object.keys(tokensIdsToSlugs).join(',').concat(',tezos');
 
 export const fetchMarketTokensSlugs = () =>
   templeWalletApi.get<Record<string, string>>('/top-coins').then(value => value.data);

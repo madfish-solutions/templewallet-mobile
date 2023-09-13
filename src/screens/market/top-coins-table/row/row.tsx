@@ -6,7 +6,7 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { MarketToken } from 'src/store/market/market.interfaces';
 import { useColors } from 'src/styles/use-colors';
-import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from 'src/utils/market.util';
+import { formatPrice, formatPriceChange, formatRegularValue, getPriceChangeColor } from 'src/utils/market.utils';
 
 import { useRowStyles } from './row.styles';
 
