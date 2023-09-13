@@ -10,7 +10,7 @@ import { useTokenMetadataSelector } from 'src/store/tokens-metadata/tokens-metad
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from 'src/utils/market.util';
+import { formatPrice, formatPriceChange, formatRegularValue, getPriceChangeColor } from 'src/utils/market.utils';
 
 import { MarketSelectors } from '../market.selectors';
 import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
