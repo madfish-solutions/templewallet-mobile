@@ -23,11 +23,17 @@ const liquidityBakingRisksPoints = [
   "Counterparty Risk: tzBTC, being a highly centralized asset, carries the risk of being influenced quickly. While it provides significant liquidity to the Tezos ecosystem, it's important to consider the potential impact of any actions or decisions made by the centralized party on the value and availability of tzBTC."
 ];
 
+const kordFiRisksPoints = [
+  'Liquidity providers consider the risk of impermanent loss through market volatility, however, due to the highly-correlated asset pairs, such risks are much lower than on constant product market maker (CPMM) DEXs with uncorrelated pairs.',
+  'There is a smart contract risk in terms of its technical security. However, these risks have been significantly reduced by KordFi through a strong focus on security measures and a thorough security audit.',
+  'The assets that are used in liquidity provision supported by assets from other protocols, so the liquidity providers consider tzBTC counterparty risk. However, with the conversion right and the constant control of stakeholders, this risk is very low.'
+];
+
 export const earnOpportunitiesRisksPoints: Record<EarnOpportunityTypeEnum, string[]> = {
   [EarnOpportunityTypeEnum.YOUVES_SAVING]: youvesSavingsRisksPoints,
   [EarnOpportunityTypeEnum.YOUVES_STAKING]: youvesSavingsRisksPoints,
   [EarnOpportunityTypeEnum.DEX_TWO]: quipuswapFarmsRisksPoints,
   [EarnOpportunityTypeEnum.STABLESWAP]: quipuswapFarmsRisksPoints,
   [EarnOpportunityTypeEnum.LIQUIDITY_BAKING]: liquidityBakingRisksPoints,
-  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: [''] // Add warning text
+  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: kordFiRisksPoints
 };

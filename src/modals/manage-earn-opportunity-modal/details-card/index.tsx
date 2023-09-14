@@ -37,6 +37,7 @@ interface DetailsCardProps {
   loading: boolean;
   stake?: UserStakeValueInterface;
   shouldShowClaimRewardsButton: boolean;
+  isNeedToShowMoreDetails?: boolean;
 }
 
 const EMPTY_STAKE: UserStakeValueInterface = {};
@@ -51,7 +52,8 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   earnOpportunityItem,
   loading,
   stake = EMPTY_STAKE,
-  shouldShowClaimRewardsButton
+  shouldShowClaimRewardsButton,
+  isNeedToShowMoreDetails = true
 }) => {
   const { depositAmountAtomic = ZERO, claimableRewards = ZERO, fullReward = ZERO, rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = earnOpportunityItem;
@@ -188,7 +190,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
               value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol={depositTokenSymbol} />}
               usdEquivalent={depositUsdEquivalent}
             />
-            {!isLiquidityBaking && (
+            {!isLiquidityBaking && isNeedToShowMoreDetails && (
               <StatsItem
                 loading={loading}
                 title="Claimable rewards:"
@@ -204,7 +206,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
             )}
           </View>
 
-          {!isLiquidityBaking && (
+          {!isLiquidityBaking && isNeedToShowMoreDetails && (
             <>
               <Divider size={formatSize(12)} />
               <View style={styles.statsRow}>
