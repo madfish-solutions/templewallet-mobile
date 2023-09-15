@@ -27,14 +27,26 @@ export const FormTextArea: FC<Props> = ({ name, placeholder, testID }) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
 
+  const touchField = () => {
+    helpers.setTouched(true);
+  };
+
   const handlePaste = async () => {
     inputRef.current?.focus();
+    touchField();
 
     const clipboardValue = await Clipboard.getString();
     helpers.setValue(clipboardValue);
-    helpers.setTouched(true);
 
     trackEvent(GenerateArtSelectors.pasteButton, AnalyticsEventCategory.ButtonPress);
+  };
+
+  const handleChangeText = (value: string) => {
+    field.onChange(name)(value);
+
+    if (isString(value)) {
+      helpers.setTouched(true, false);
+    }
   };
 
   return (
@@ -48,7 +60,8 @@ export const FormTextArea: FC<Props> = ({ name, placeholder, testID }) => {
           autoCapitalize="none"
           isError={isError}
           isShowCleanButton={true}
-          onChangeText={field.onChange(name)}
+          onBlur={touchField}
+          onChangeText={handleChangeText}
           style={styles.textArea}
           testID={testID}
         />

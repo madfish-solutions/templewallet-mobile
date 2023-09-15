@@ -27,7 +27,7 @@ export const ArtStyle: FC<Props> = ({ title, width, active = false, disabled = f
   const [, , helpers] = useField<string>('artStyle');
 
   const handlePress = () => {
-    helpers.setValue(title);
+    helpers.setValue(title, false);
     onPress?.();
   };
 

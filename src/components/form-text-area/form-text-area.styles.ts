@@ -7,7 +7,8 @@ export const styles = StyleSheet.create({
     position: 'relative'
   },
   textArea: {
-    height: formatSize(124)
+    height: formatSize(124),
+    textAlignVertical: 'top'
   },
   buttonsContainer: {
     position: 'absolute',

@@ -46,6 +46,9 @@ export const useCreateNftStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.numbersRegular13,
     color: colors.black
   },
+  boldText: {
+    ...typography.caption13Semibold
+  },
   align: {
     flexDirection: 'row',
     alignItems: 'center'
