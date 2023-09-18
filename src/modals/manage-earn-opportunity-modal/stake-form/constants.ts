@@ -26,7 +26,7 @@ const liquidityBakingRisksPoints = [
 const kordFiRisksPoints = [
   'Liquidity providers consider the risk of impermanent loss through market volatility, however, due to the highly-correlated asset pairs, such risks are much lower than on constant product market maker (CPMM) DEXs with uncorrelated pairs.',
   'There is a smart contract risk in terms of its technical security. However, these risks have been significantly reduced by KordFi through a strong focus on security measures and a thorough security audit.',
-  'The assets that are used in liquidity provision supported by assets from other protocols, so the liquidity providers consider tzBTC counterparty risk. However, with the conversion right and the constant control of stakeholders, this risk is very low.'
+  'The assets that are used in liquidity provision supported by assets from other protocols, so the liquidity providers consider counterparty risk. However, with the conversion right and the constant control of stakeholders, this risk is very low.'
 ];
 
 export const earnOpportunitiesRisksPoints: Record<EarnOpportunityTypeEnum, string[]> = {

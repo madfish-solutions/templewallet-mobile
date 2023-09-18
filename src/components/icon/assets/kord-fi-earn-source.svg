@@ -2,7 +2,6 @@
 <g clip-path="url(#clip0_15055_302917)">
 <rect width="24" height="24" fill="url(#pattern0)"/>
 </g>
-<rect x="0.25" y="0.25" width="23.5" height="23.5" rx="5.75" stroke="#E4E4E4" stroke-width="0.5"/>
 <defs>
 <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0_15055_302917" transform="scale(0.0015625)"/>
