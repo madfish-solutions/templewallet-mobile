@@ -13,7 +13,7 @@ export const ART_STYLE_ITEMS: ArtStyleItem[] = [
   {
     id: 2,
     title: 'Cubism',
-    disabled: false
+    disabled: true
   },
   {
     id: 3,

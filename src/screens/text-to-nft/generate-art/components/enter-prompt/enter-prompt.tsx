@@ -23,7 +23,7 @@ export const EnterPrompt: FC<Props> = ({ title, name, placeholder, style }) => {
       <View style={styles.root}>
         <Text style={styles.title}>{title}</Text>
 
-        <Text style={styles.counter}>{`${field.value.trim().length}/2000`}</Text>
+        <Text style={styles.counter}>{`${field.value.length}/2000`}</Text>
       </View>
 
       <FormTextArea name={name} placeholder={placeholder} />
