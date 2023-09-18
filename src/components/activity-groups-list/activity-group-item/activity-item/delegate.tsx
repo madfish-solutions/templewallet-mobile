@@ -26,15 +26,15 @@ import { ActivityItemProps } from './item.props';
 export const Delegate: FC<ActivityItemProps> = memo(({ activity }) => {
   return (
     <AbstractItem
-      face={<Face address={activity.from.address} />}
-      details={<Details hash={activity.hash} address={activity.from.address} />}
+      face={<Face address={activity.to?.address} />}
+      details={<Details hash={activity.hash} address={activity.to?.address} />}
       status={activity.status}
       timestamp={activity.timestamp}
     />
   );
 });
 
-const Face: FC<{ address: string }> = ({ address }) => {
+const Face: FC<{ address: string | undefined }> = ({ address = '' }) => {
   const styles = useActivityGroupItemStyles();
   const commonStyles = useActivityCommonStyles();
 
@@ -61,7 +61,7 @@ const Face: FC<{ address: string }> = ({ address }) => {
   );
 };
 
-const Details: FC<{ hash: string; address: string }> = ({ hash, address }) => {
+const Details: FC<{ hash: string; address: string | undefined }> = ({ hash, address = '' }) => {
   const styles = useActivityDetailsStyles();
   const commonStyles = useActivityCommonStyles();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
