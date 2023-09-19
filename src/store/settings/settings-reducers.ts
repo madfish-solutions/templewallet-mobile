@@ -162,7 +162,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
   builder.addCase(changeTempleRpc, state => {
     const oldTempleRpc = state.rpcList.find(rpc => OLD_TEMPLE_RPC_URLS.includes(rpc.url));
-    const newRpcList = [TEMPLE_RPC, ...state.rpcList.filter(rpc => rpc.name !== TEMPLE_RPC.name)];
+    const newRpcList = [
+      TEMPLE_RPC,
+      ...state.rpcList.filter(rpc => rpc.name !== TEMPLE_RPC.name && rpc.url !== TEMPLE_RPC.url)
+    ];
 
     if (oldTempleRpc) {
       if (OLD_TEMPLE_RPC_URLS.includes(state.selectedRpcUrl)) {
