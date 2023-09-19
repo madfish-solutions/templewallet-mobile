@@ -1,0 +1,37 @@
+diff --git a/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesCbc.java b/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesCbc.java
+index 7dbcc8b..07674e1 100644
+--- a/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesCbc.java
++++ b/node_modules/react-native-keychain/android/src/main/java/com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesCbc.java
+@@ -142,9 +142,30 @@ public class CipherStorageKeystoreAesCbc extends CipherStorageBase {
+     try {
+       final Key key = extractGeneratedKey(safeAlias, level, retries);
+ 
++      final String decryptedUsername = decryptBytes(key, username);
++
++      // The fix for Pixel devices not being able to decrypt data (only if it's 288 bytes long).
++      // Adding 16 empty bytes to the encrypted payload, and then removing first 16 symbols from the decrypted string fixes the issue.
++      // Read more at: https://github.com/oblador/react-native-keychain/issues/567
++      if (password.length == 288 && Build.MANUFACTURER.equals("Google")) {
++        Log.w(LOG_TAG, "Trying to decrypt data using Pixel hack");
++
++        final byte[] copyBytes = new byte[304];
++        System.arraycopy(password, 0, copyBytes, 16, 288);
++
++        final String decryptedPassword = decryptBytes(key, copyBytes).substring(15);
++
++        return new DecryptionResult(
++          decryptedUsername,
++          decryptedPassword,
++          getSecurityLevel(key));
++      }
++
++      final String decryptedPassword = decryptBytes(key, password);
++
+       return new DecryptionResult(
+-        decryptBytes(key, username),
+-        decryptBytes(key, password),
++        decryptedUsername,
++        decryptedPassword,
+         getSecurityLevel(key));
+     } catch (GeneralSecurityException e) {
+       throw new CryptoFailedException("Could not decrypt data with alias: " + alias, e);
