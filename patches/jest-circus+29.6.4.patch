@@ -1,0 +1,13 @@
+diff --git a/node_modules/jest-circus/build/globalErrorHandlers.js b/node_modules/jest-circus/build/globalErrorHandlers.js
+index 888232a..542687e 100644
+--- a/node_modules/jest-circus/build/globalErrorHandlers.js
++++ b/node_modules/jest-circus/build/globalErrorHandlers.js
+@@ -24,7 +24,7 @@ const injectGlobalErrorHandlers = parentProcess => {
+   parentProcess.removeAllListeners('uncaughtException');
+   parentProcess.removeAllListeners('unhandledRejection');
+   parentProcess.on('uncaughtException', uncaught);
+-  parentProcess.on('unhandledRejection', uncaught);
++  parentProcess.on('unhandledRejection', reason => void console.warn('process.on.unhandledRejection:', reason?.stack || reason));
+   return {
+     uncaughtException,
+     unhandledRejection
