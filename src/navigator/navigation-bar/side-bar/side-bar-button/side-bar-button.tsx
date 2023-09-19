@@ -56,7 +56,7 @@ export const SideBarButton: FC<Props> = ({
     if (disabled) {
       disabledOnPress();
     } else {
-      if (onSwapButtonPress) {
+      if (onSwapButtonPress && !focused) {
         onSwapButtonPress();
       } else {
         if (routeName === ScreensEnum.SwapScreen) {

@@ -31,22 +31,25 @@ describe.skip('useAppLock', () => {
   });
 
   describe('password authentication', () => {
-    it('should unlock if a correct password is given', () => {
+    jest.useFakeTimers();
+    afterAll(() => void jest.useRealTimers());
+
+    it('should unlock if a correct password is given', async () => {
       const { result } = renderHook(() => useAppLock());
 
       act(() => result.current.unlock(mockCorrectPassword));
-      jest.runAllTimers();
+      await jest.runAllTimersAsync();
 
       expect(result.current.isLocked).toEqual(false);
       expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectPassword);
     });
 
-    it('should show error toast if an incorrect password is given', () => {
+    it('should show error toast if an incorrect password is given', async () => {
       const mockIncorrectPassword = 'mockIncorrectPassword';
       const { result } = renderHook(() => useAppLock());
 
       act(() => result.current.unlock(mockIncorrectPassword));
-      jest.runAllTimers();
+      await jest.runAllTimersAsync();
 
       expect(result.current.isLocked).toEqual(true);
       expect(mockShelter.unlockApp$).toBeCalledWith(mockIncorrectPassword);
@@ -55,11 +58,14 @@ describe.skip('useAppLock', () => {
   });
 
   describe('biometry authentication', () => {
+    jest.useFakeTimers();
+    afterAll(() => void jest.useRealTimers());
+
     it('should unlock if biometry authentication passes', async () => {
       const { result } = renderHook(() => useAppLock());
 
       await act(() => result.current.unlockWithBiometry());
-      jest.runAllTimers();
+      await jest.runAllTimersAsync();
 
       expect(mockShelter.getBiometryPassword).toBeCalled();
       expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue);
@@ -70,7 +76,7 @@ describe.skip('useAppLock', () => {
       const { result } = renderHook(() => useAppLock());
 
       await act(() => result.current.unlockWithBiometry());
-      jest.runAllTimers();
+      await jest.runAllTimersAsync();
 
       expect(mockShelter.getBiometryPassword).toBeCalled();
       expect(mockShelter.unlockApp$).not.toBeCalled();

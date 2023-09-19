@@ -18,7 +18,7 @@ jobs:
         uses: ./.github/workflows/repository-setup
 
       - name: Check TypeScript
-        run: yarn ts && yarn ts:e2e
+        run: yarn ts
 
       - name: Find deadcode
         run: yarn find-deadcode

@@ -5,7 +5,7 @@
     "project": "./tsconfig.eslint.json"
   },
   "extends": [
-    "@react-native-community",
+    "@react-native",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
@@ -51,7 +51,8 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-unnecessary-type-constraint": "off",
     "@typescript-eslint/ban-ts-comment": "off",
-    "jest/no-done-callback": "off"
+    "jest/no-done-callback": "off",
+    "jest/no-alias-methods": "off"
   },
   "globals": {
     "localStorage": true

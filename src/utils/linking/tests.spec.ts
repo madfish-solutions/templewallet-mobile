@@ -21,24 +21,29 @@ describe('tzktUrl', () => {
 });
 
 describe('openUrl', () => {
+  jest.useFakeTimers();
+  afterAll(() => void jest.useRealTimers());
+
   beforeEach(() => {
     mockLinking.openURL.mockReset();
   });
 
-  it('should open valid link', () => {
+  it('should open valid link', async () => {
     const mockValidUrl = 'https://tzkt.io/';
 
     openUrl(mockValidUrl);
 
-    jest.runAllTimers();
+    await jest.runAllTimersAsync();
+
     expect(mockLinking.openURL).toHaveBeenCalledWith(mockValidUrl);
   });
 
-  it('should not open invalid link', () => {
+  it('should not open invalid link', async () => {
     mockLinking.canOpenURL.mockReturnValue(Promise.reject());
     openUrl('invalid_link');
 
-    jest.runAllTimers();
+    await jest.runAllTimersAsync();
+
     expect(mockLinking.openURL).not.toHaveBeenCalled();
   });
 });

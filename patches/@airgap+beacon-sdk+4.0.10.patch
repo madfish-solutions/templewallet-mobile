@@ -1,0 +1,26 @@
+diff --git a/node_modules/@airgap/beacon-sdk/dist/cjs/index.d.ts b/node_modules/@airgap/beacon-sdk/dist/cjs/index.d.ts
+index 9c032b0..d67b2d2 100644
+--- a/node_modules/@airgap/beacon-sdk/dist/cjs/index.d.ts
++++ b/node_modules/@airgap/beacon-sdk/dist/cjs/index.d.ts
+@@ -1,7 +1,7 @@
+ export * from '@airgap/beacon-blockchain-substrate';
+ export * from '@airgap/beacon-blockchain-tezos';
+ export * from '@airgap/beacon-core';
+-export * from '@airgap/beacon-dapp';
++
+ export * from '@airgap/beacon-transport-matrix';
+ export * from '@airgap/beacon-transport-postmessage';
+ export * from '@airgap/beacon-transport-walletconnect';
+diff --git a/node_modules/@airgap/beacon-sdk/dist/cjs/index.js b/node_modules/@airgap/beacon-sdk/dist/cjs/index.js
+index e74bc5e..5db2368 100644
+--- a/node_modules/@airgap/beacon-sdk/dist/cjs/index.js
++++ b/node_modules/@airgap/beacon-sdk/dist/cjs/index.js
+@@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ __exportStar(require("@airgap/beacon-blockchain-substrate"), exports);
+ __exportStar(require("@airgap/beacon-blockchain-tezos"), exports);
+ __exportStar(require("@airgap/beacon-core"), exports);
+-__exportStar(require("@airgap/beacon-dapp"), exports);
++
+ __exportStar(require("@airgap/beacon-transport-matrix"), exports);
+ __exportStar(require("@airgap/beacon-transport-postmessage"), exports);
+ __exportStar(require("@airgap/beacon-transport-walletconnect"), exports);
