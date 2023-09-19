@@ -33,10 +33,11 @@ export const FormTextArea: FC<Props> = ({ name, placeholder, testID }) => {
 
   const handlePaste = async () => {
     inputRef.current?.focus();
-    touchField();
 
     const clipboardValue = await Clipboard.getString();
     helpers.setValue(clipboardValue);
+
+    touchField();
 
     trackEvent(GenerateArtSelectors.pasteButton, AnalyticsEventCategory.ButtonPress);
   };
