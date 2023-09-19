@@ -186,7 +186,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
           <View style={styles.statsRow}>
             <StatsItem
               loading={loading}
-              title={isLiquidityBaking ? 'Your deposit:' : 'Your deposit & Rewards:'}
+              title={isNeedToShowMoreDetails ? 'Your deposit:' : 'Your deposit & Rewards:'}
               value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol={depositTokenSymbol} />}
               usdEquivalent={depositUsdEquivalent}
             />
