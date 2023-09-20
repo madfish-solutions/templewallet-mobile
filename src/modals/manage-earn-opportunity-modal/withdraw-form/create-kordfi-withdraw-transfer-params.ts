@@ -20,5 +20,5 @@ export const getKordFiWithdrawTransferParams = async (
 
   const contract = await getReadOnlyContract(earnOpportunity.contractAddress, tezos);
 
-  return [contract.methods.redeemLending(+amount, deadline).toTransferParams()];
+  return [contract.methods.redeemLending(amount, deadline).toTransferParams()];
 };
