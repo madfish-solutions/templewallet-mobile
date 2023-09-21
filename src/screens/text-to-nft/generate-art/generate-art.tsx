@@ -1,8 +1,10 @@
 import React, { FC, useState } from 'react';
 import { View } from 'react-native';
 
-import { Banner } from '../../../components/banner/banner';
-import { TextSegmentControl } from '../../../components/segmented-control/text-segment-control/text-segment-control';
+import { Banner } from 'src/components/banner/banner';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { History } from 'src/screens/text-to-nft/generate-art/tabs/history/history';
+
 import { useGenerateArtStyles } from './generate-art.styles';
 import { GenerateArtSelectors } from './selectors';
 import { CreateNft } from './tabs/create-nft/create-nft';
@@ -14,6 +16,7 @@ export const GenerateArtScreen: FC = () => {
   const styles = useGenerateArtStyles();
 
   const [tabIndex, setTabIndex] = useState(0);
+  const isCreateNftTabSelected = tabIndex === 0;
 
   return (
     <>
@@ -25,7 +28,6 @@ export const GenerateArtScreen: FC = () => {
         />
 
         <TextSegmentControl
-          disabledValuesIndices={[1]}
           selectedIndex={tabIndex}
           values={tabs}
           onChange={setTabIndex}
@@ -35,7 +37,7 @@ export const GenerateArtScreen: FC = () => {
         />
       </View>
 
-      <CreateNft />
+      {isCreateNftTabSelected ? <CreateNft /> : <History />}
     </>
   );
 };
