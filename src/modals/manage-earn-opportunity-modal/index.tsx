@@ -126,7 +126,11 @@ export const ManageEarnOpportunityModal: FC = () => {
 
   usePageAnalytic(route.name, undefined, route.params);
 
-  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
+  const amountToWithdraw = isDefined(stake.fullReward) && +stake.fullReward > 0;
+  const disabledTabSwitcherIndices = useMemo(
+    () => (isDefined(stake?.lastStakeId) && amountToWithdraw ? [] : [1]),
+    [stake, amountToWithdraw]
+  );
 
   return (
     <>
