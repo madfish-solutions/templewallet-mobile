@@ -1,4 +1,4 @@
-import { OrderStatus, PanoramaEnum, StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
+import { OrderStatus, StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
 
 // TODO: Remove this later or use for tests
 export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
@@ -16,7 +16,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '2',
@@ -32,7 +32,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '3',
@@ -48,7 +48,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '4',
@@ -64,7 +64,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '5',
@@ -80,7 +80,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '6',
@@ -96,7 +96,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '7',
@@ -108,7 +108,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '8',
@@ -120,7 +120,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '9',
@@ -136,7 +136,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '10',
@@ -148,7 +148,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '11',
@@ -164,7 +164,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '12',
@@ -176,7 +176,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '13',
@@ -188,7 +188,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '14',
@@ -204,7 +204,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '15',
@@ -216,7 +216,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '16',
@@ -228,7 +228,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '17',
@@ -244,7 +244,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     ],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '18',
@@ -256,7 +256,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '19',
@@ -268,7 +268,7 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   },
   {
     id: '20',
@@ -280,6 +280,6 @@ export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [
     variants: ['broken-uri', 'broken-uri', 'broken-uri'],
     width: 150,
     height: 150,
-    panorama: PanoramaEnum.No
+    panorama: 'no'
   }
 ];

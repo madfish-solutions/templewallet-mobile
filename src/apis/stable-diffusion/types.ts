@@ -14,10 +14,7 @@ export enum OrderStatus {
   Failed = 'failed'
 }
 
-export enum PanoramaEnum {
-  Yes = 'yes',
-  No = 'no'
-}
+type PanoramaUnionType = 'yes' | 'no';
 
 /**
  * @param id - uuid;
@@ -35,5 +32,5 @@ export interface StableDiffusionOrder {
   variants: string[] | null;
   width: number;
   height: number;
-  panorama: PanoramaEnum;
+  panorama: PanoramaUnionType;
 }
