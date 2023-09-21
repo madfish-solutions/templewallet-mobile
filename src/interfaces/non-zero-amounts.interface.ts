@@ -1,11 +1,8 @@
 import { BigNumber } from 'bignumber.js';
-
-export interface NonZeroAmounts {
-  amounts: {
-    parsedAmount: BigNumber;
-    isPositive: boolean;
-    symbol: string;
-    exchangeRate: number;
-  }[];
-  dollarSums: BigNumber[];
+export interface ActivityAmount {
+  symbol: string;
+  isPositive: boolean;
+  exchangeRate: number | undefined;
+  parsedAmount: BigNumber | undefined;
+  fiatAmount: BigNumber | undefined;
 }

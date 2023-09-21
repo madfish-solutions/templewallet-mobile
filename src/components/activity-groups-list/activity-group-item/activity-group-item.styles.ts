@@ -9,12 +9,6 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
   flex: {
     flex: 1
   },
-  card: {
-    marginTop: formatSize(12),
-    paddingHorizontal: formatSize(12),
-    borderRadius: formatSize(8),
-    backgroundColor: colors.cardBG
-  },
   oprationTitle: {
     ...typography.numbersRegular15,
     color: colors.black
@@ -37,16 +31,25 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
   },
   robotBackground: {
     backgroundColor: colors.navigation
-  }
-}));
-
-export const useActivityDetailsStyles = createUseStyles(({ colors }) => ({
+  },
+  red: {
+    backgroundColor: 'red'
+  },
+  green: {
+    backgroundColor: 'green'
+  },
+  chevron: {
+    padding: formatSize(4)
+  },
   card: {
     marginTop: formatSize(12),
     paddingHorizontal: formatSize(12),
     borderRadius: formatSize(8),
     backgroundColor: colors.cardBG
-  },
+  }
+}));
+
+export const useActivityDetailsStyles = createUseStyles(({ colors, typography }) => ({
   itemWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -59,11 +62,15 @@ export const useActivityDetailsStyles = createUseStyles(({ colors }) => ({
     borderBottomWidth: formatSize(0.5),
     borderBottomColor: colors.lines
   },
-  chevron: {
-    padding: formatSize(4)
-  },
   hashChip: {
     height: formatSize(24)
+  },
+  mb8: {
+    marginBottom: formatSize(8)
+  },
+  symbolText: {
+    ...typography.numbersRegular13,
+    color: colors.black
   }
 }));
 

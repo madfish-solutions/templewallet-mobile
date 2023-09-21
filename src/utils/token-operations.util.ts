@@ -1,4 +1,4 @@
-import { Activity, TzktMemberInterface, TzktOperation, parseTransactions } from '@temple-wallet/transactions-parser';
+import { Activity, TzktMemberInterface, TzktOperation, parseOperations } from '@temple-wallet/transactions-parser';
 import { LiquidityBakingMintOrBurnInterface } from '@temple-wallet/transactions-parser/dist/types/liquidity-baking';
 import { Fa12TransferInterface, Fa2TransferInterface } from '@temple-wallet/transactions-parser/dist/types/transfers';
 import { isEmpty, uniq } from 'lodash-es';
@@ -213,7 +213,7 @@ export const loadActivity = async (
 
   for (const opHash of operationsHashesUniq) {
     const { data } = await getOperationGroupByHash<TzktOperation>(selectedRpcUrl, opHash);
-    operationGroups.push(data);
+    operationGroups.push(data.sort((a, b) => b.id - a.id));
     await sleep(100);
   }
 
@@ -223,10 +223,11 @@ export const loadActivity = async (
     return { activities: [], reachedTheEnd };
   }
 
-  const oldestOperationNew = operationGroups[operationGroups.length - 1]?.[0];
+  const lastGroup = operationGroups[operationGroups.length - 1];
+  const oldestOperationNew = lastGroup[lastGroup.length - 1];
 
   const activities = operationGroups
-    .map(group => parseTransactions(group, selectedAccount.publicKeyHash, knownBakers))
+    .map(group => parseOperations(group, selectedAccount.publicKeyHash, knownBakers))
     .filter(group => !isEmpty(group));
 
   if (activities.length === 0) {

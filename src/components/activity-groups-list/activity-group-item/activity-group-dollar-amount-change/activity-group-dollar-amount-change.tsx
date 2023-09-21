@@ -1,22 +1,33 @@
-import React, { FC } from 'react';
-import { View } from 'react-native';
+import { BigNumber } from 'bignumber.js';
+import React, { FC, memo } from 'react';
+import { View, Text } from 'react-native';
 
-import { NonZeroAmounts } from '../../../../interfaces/non-zero-amounts.interface';
-import { FormattedAmount } from '../../../formatted-amount';
+import { FormattedAmount } from 'src/components/formatted-amount';
+import { ZERO } from 'src/config/swap';
+
 import { useActivityGroupDollarAmountChangeStyles } from './activity-group-dollar-amount-change.styles';
 
 interface Props {
-  nonZeroAmounts: NonZeroAmounts;
+  dollarValue: BigNumber | undefined;
 }
 
-export const ActivityGroupDollarAmountChange: FC<Props> = ({ nonZeroAmounts }) => {
-  const styles = useActivityGroupDollarAmountChangeStyles();
+export const ActivityGroupDollarAmountChange: FC<Props> = memo(
+  ({ dollarValue }) => {
+    const styles = useActivityGroupDollarAmountChangeStyles();
 
-  return (
-    <View style={styles.container}>
-      {nonZeroAmounts.dollarSums.map((amount, index) => (
-        <FormattedAmount key={index} amount={amount} isDollarValue={true} style={styles.valueText} />
-      ))}
-    </View>
-  );
-};
+    if (dollarValue === undefined || dollarValue.isEqualTo(ZERO)) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.valueText}>---</Text>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.container}>
+        <FormattedAmount isDollarValue amount={dollarValue} style={styles.valueText} />
+      </View>
+    );
+  },
+  (prevProps, nextProps) => prevProps.dollarValue?.toFixed() === nextProps.dollarValue?.toFixed()
+);
