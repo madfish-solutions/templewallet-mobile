@@ -146,5 +146,6 @@ export enum IconNameEnum {
   Database = 'Database',
   YouvesEarnSource = 'YouvesEarnSource',
   YouvesEarnSourceDark = 'YouvesEarnSourceDark',
-  YouvesEarnSourceLarge = 'YouvesEarnSourceLarge'
+  YouvesEarnSourceLarge = 'YouvesEarnSourceLarge',
+  Route3 = 'Route3'
 }
