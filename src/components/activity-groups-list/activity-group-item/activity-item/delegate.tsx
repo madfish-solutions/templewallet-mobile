@@ -12,7 +12,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { formatSize } from 'src/styles/format-size';
 import { truncateLongAddress } from 'src/utils/address.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { tzktUrl } from 'src/utils/linking.util';
+import { tzktUrl } from 'src/utils/linking';
 
 import {
   useActivityCommonStyles,

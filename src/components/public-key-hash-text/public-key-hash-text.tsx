@@ -4,7 +4,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { MarginProps } from 'src/interfaces/margin.props';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { truncateLongAddress } from 'src/utils/address.utils';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 
 import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from '../touchable-with-analytics';
@@ -48,7 +47,7 @@ export const PublicKeyHashText: FC<Props> = ({
       testIDProperties={testIDProperties}
     >
       <TruncatedText ellipsizeMode="middle" style={styles.publicKeyHashText}>
-        {truncateLongAddress(publicKeyHash)}
+        {publicKeyHash}
       </TruncatedText>
     </TouchableWithAnalytics>
   );

@@ -10,7 +10,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { useTokenMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { truncateLongAddress } from 'src/utils/address.utils';
-import { tzktUrl } from 'src/utils/linking.util';
+import { tzktUrl } from 'src/utils/linking';
 
 import {
   useActivityCommonStyles,

@@ -11,7 +11,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { formatSize } from 'src/styles/format-size';
 import { calculateDollarValue, separateAmountsBySign } from 'src/utils/activity.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { tzktUrl } from 'src/utils/linking.util';
+import { tzktUrl } from 'src/utils/linking';
 
 import { ActivityGroupAmountChange } from '../activity-group-amount-change/activity-group-amount-change';
 import { ActivityGroupDollarAmountChange } from '../activity-group-dollar-amount-change/activity-group-dollar-amount-change';
