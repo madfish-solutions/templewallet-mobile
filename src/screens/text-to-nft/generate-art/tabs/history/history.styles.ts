@@ -5,9 +5,7 @@ export const useHistoryStyles = createUseStyles(({ colors }) => ({
   root: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: formatSize(16),
-    paddingHorizontal: formatSize(16)
+    alignItems: 'center'
   },
   row: {
     flexDirection: 'row'
@@ -19,6 +17,10 @@ export const useHistoryStyles = createUseStyles(({ colors }) => ({
     flexGrow: 1,
     flexShrink: 1,
     backgroundColor: colors.pageBG
+  },
+  contentContainer: {
+    paddingHorizontal: formatSize(16),
+    paddingBottom: formatSize(16)
   },
   collectible: {
     marginBottom: formatSize(4)

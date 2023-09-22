@@ -70,6 +70,7 @@ export const History: FC = () => {
           keyExtractor={keyExtractor}
           getItemLayout={getItemLayout}
           style={styles.scrollView}
+          contentContainerStyle={styles.contentContainer}
           ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
         />
       )}
