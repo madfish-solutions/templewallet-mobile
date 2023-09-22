@@ -5,25 +5,25 @@ import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { BeaconHandler } from '../../../../beacon/beacon-handler';
-import { AccountFormDropdown } from '../../../../components/account-dropdown/account-form-dropdown';
-import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from '../../../../components/divider/divider';
-import { HeaderTitle } from '../../../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
-import { Label } from '../../../../components/label/label';
-import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
-import { ScreenContainer } from '../../../../components/screen-container/screen-container';
-import { ApprovePermissionRequestActionPayloadInterface } from '../../../../hooks/request-confirmation/approve-permission-request-action-payload.interface';
-import { useDappRequestConfirmation } from '../../../../hooks/request-confirmation/use-dapp-request-confirmation.hook';
-import { StacksEnum } from '../../../../navigator/enums/stacks.enum';
-import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
-import { navigateAction } from '../../../../store/root-state.actions';
-import { setSelectedAccountAction } from '../../../../store/wallet/wallet-actions';
-import { useAccountsListSelector, useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../../styles/format-size';
-import { showSuccessToast } from '../../../../toast/toast.utils';
+import { BeaconHandler } from 'src/beacon/beacon-handler';
+import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { Divider } from 'src/components/divider/divider';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { Label } from 'src/components/label/label';
+import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { ApprovePermissionRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-permission-request-action-payload.interface';
+import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { navigateBackAction } from 'src/store/root-state.actions';
+import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { useAccountsListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showSuccessToast } from 'src/toast/toast.utils';
+
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
   PermissionRequestConfirmationFormValues,
@@ -48,7 +48,7 @@ const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionReque
     map(() => {
       showSuccessToast({ description: 'Successfully approved!' });
 
-      return navigateAction(StacksEnum.MainStack);
+      return navigateBackAction();
     })
   );
 

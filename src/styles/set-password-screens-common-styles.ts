@@ -22,5 +22,8 @@ export const useSetPasswordScreensCommonStyles = createUseStyles(({ colors, typo
   checkboxText: {
     ...typography.body15Semibold,
     color: colors.black
+  },
+  mb40: {
+    marginBottom: formatSize(40)
   }
 }));

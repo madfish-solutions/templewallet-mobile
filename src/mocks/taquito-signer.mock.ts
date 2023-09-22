@@ -6,8 +6,8 @@ export const mockInMemorySigner = {
   publicKeyHash: jest.fn(() => Promise.resolve(mockAccountCredentials.publicKeyHash))
 };
 
-jest.mock('@taquito/signer', () => ({
-  InMemorySigner: class {
+jest.mock('@taquito/signer', () => {
+  class InMemorySigner {
     static fromSecretKey = jest.fn(privateKey => {
       return privateKey === mockInvalidPrivateKey
         ? Promise.reject('wrong private key')
@@ -17,4 +17,6 @@ jest.mock('@taquito/signer', () => ({
     publicKey = jest.fn(() => Promise.resolve(mockAccountCredentials.publicKey));
     publicKeyHash = jest.fn(() => Promise.resolve(mockAccountCredentials.publicKeyHash));
   }
-}));
+
+  return { InMemorySigner };
+});

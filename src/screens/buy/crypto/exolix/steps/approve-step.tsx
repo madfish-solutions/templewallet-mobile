@@ -22,7 +22,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { Countdown } from '../../../components/countdown/countdown';
 import { ErrorComponent } from '../components/error-component';

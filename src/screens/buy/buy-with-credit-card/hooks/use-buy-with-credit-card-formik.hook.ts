@@ -12,7 +12,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from '../form';
 

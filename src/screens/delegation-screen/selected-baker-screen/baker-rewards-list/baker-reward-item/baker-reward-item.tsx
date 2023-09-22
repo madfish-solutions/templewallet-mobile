@@ -15,7 +15,7 @@ import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isTruthy } from 'src/utils/is-truthy';
-import { tzktUrl } from 'src/utils/linking.util';
+import { tzktUrl } from 'src/utils/linking';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
