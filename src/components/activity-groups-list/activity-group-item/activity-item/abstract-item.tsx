@@ -13,35 +13,39 @@ import { ActivityStatusBadge } from '../activity-status-badge/activity-status-ba
 import { ActivityTime } from '../activity-time/activity-time';
 import { ActivityGroupItemSelectors } from '../selectors';
 
-export const AbstractItem: FC<{ status: TzktOperationStatus; timestamp: string; face: ReactNode; details: ReactNode }> =
-  ({ status, timestamp, face, details }) => {
-    const styles = useActivityGroupItemStyles();
-    const commonStyles = useActivityCommonStyles();
+export const AbstractItem: FC<{
+  status: TzktOperationStatus;
+  timestamp: string;
+  face: ReactNode;
+  details: ReactNode;
+}> = ({ status, timestamp, face, details }) => {
+  const styles = useActivityGroupItemStyles();
+  const commonStyles = useActivityCommonStyles();
 
-    const [areDetailsVisible, setAreDetailsVisible] = useState(false);
-    const handleOpenActivityDetailsPress = useCallback(() => setAreDetailsVisible(prevState => !prevState), []);
+  const [areDetailsVisible, setAreDetailsVisible] = useState(false);
+  const handleOpenActivityDetailsPress = useCallback(() => setAreDetailsVisible(prevState => !prevState), []);
 
-    return (
+  return (
+    <View>
+      <View style={[commonStyles.row, commonStyles.itemsCenter]}>{face}</View>
+      <Divider size={formatSize(12)} />
       <View>
-        <View style={[commonStyles.row, commonStyles.itemsCenter]}>{face}</View>
-        <Divider size={formatSize(12)} />
-        <View>
-          <View style={[commonStyles.row, commonStyles.justifyBetween]}>
-            <View style={[commonStyles.row, commonStyles.itemsCenter]}>
-              <ActivityStatusBadge status={status} />
-              <Divider size={formatSize(4)} />
-              <ActivityTime timestamp={timestamp} />
-            </View>
-            <TouchableWithAnalytics
-              style={styles.chevron}
-              testID={ActivityGroupItemSelectors.details}
-              onPress={handleOpenActivityDetailsPress}
-            >
-              <Icon name={areDetailsVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown} />
-            </TouchableWithAnalytics>
+        <View style={[commonStyles.row, commonStyles.justifyBetween]}>
+          <View style={[commonStyles.row, commonStyles.itemsCenter]}>
+            <ActivityStatusBadge status={status} />
+            <Divider size={formatSize(4)} />
+            <ActivityTime timestamp={timestamp} />
           </View>
-          {areDetailsVisible && <View style={styles.card}>{details}</View>}
+          <TouchableWithAnalytics
+            style={styles.chevron}
+            testID={ActivityGroupItemSelectors.details}
+            onPress={handleOpenActivityDetailsPress}
+          >
+            <Icon name={areDetailsVisible ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown} />
+          </TouchableWithAnalytics>
         </View>
+        {areDetailsVisible && <View style={styles.card}>{details}</View>}
       </View>
-    );
-  };
+    </View>
+  );
+};
