@@ -4,7 +4,7 @@ import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.inte
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 
-import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create-nft/create-nft.form';
+import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create/create.form';
 
 export enum ModalsEnum {
   Receive = 'Receive',

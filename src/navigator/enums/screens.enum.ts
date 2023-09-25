@@ -1,6 +1,5 @@
+import { StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-
-import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create-nft/create-nft.form';
 
 export enum ScreensEnum {
   Welcome = 'Welcome',
@@ -103,7 +102,7 @@ export type ScreensParamList = {
 
   /** Text to NFT stack **/
   [ScreensEnum.GenerateArt]: undefined;
-  [ScreensEnum.Preview]: { formValues: CreateNftFormValues; accessToken: string };
+  [ScreensEnum.Preview]: { order: StableDiffusionOrder };
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;

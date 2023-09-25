@@ -3,6 +3,7 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useButtonsFloatingContainerStyles = createUseStyles(({ colors }) => ({
   container: {
+    marginTop: 'auto',
     borderTopWidth: formatSize(0.5),
     borderColor: colors.lines,
     paddingTop: formatSize(8),

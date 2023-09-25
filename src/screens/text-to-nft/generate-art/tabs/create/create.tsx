@@ -24,12 +24,12 @@ import { EnterPrompt } from '../../components/enter-prompt/enter-prompt';
 import { GenerateArtSelectors } from '../../selectors';
 import { generatingFeeAlert, removeFromImageAlert } from './alerts';
 import { ART_STYLE_ITEMS, INSUFFICIENT_TEZOS_BALANCE_ERROR } from './constants';
-import { CreateNftFormValues, createNftInitialValues, createNftValidationSchema } from './create-nft.form';
-import { useCreateNftStyles } from './create-nft.styles';
+import { CreateNftFormValues, createNftInitialValues, createNftValidationSchema } from './create.form';
+import { useCreateNftStyles } from './create.styles';
 
 const gridSize = formatSize(8);
 
-export const CreateNft: FC = () => {
+export const Create: FC = () => {
   const styles = useCreateNftStyles();
   const { navigate } = useNavigation();
 
@@ -46,7 +46,7 @@ export const CreateNft: FC = () => {
   const elementWidth = useMemo(() => (layoutWidth - gridSize) / 2, [layoutWidth]);
 
   const insufficientTezosBalance = useMemo(
-    () => mutezToTz(new BigNumber(tezosToken.balance), tezosToken.decimals).lte(10),
+    () => mutezToTz(new BigNumber(tezosToken.balance), tezosToken.decimals).lte(1),
     [tezosToken.balance]
   );
 

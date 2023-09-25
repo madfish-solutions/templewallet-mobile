@@ -3,9 +3,18 @@ export interface SignInParams {
   timestamp: string;
   sig: string;
 }
-
 export interface SignInResponse {
   accessToken: string;
+}
+
+export interface GenerateArtParams {
+  accessToken: string;
+  positivePrompt: string;
+  negativePrompt?: string;
+  artStyle: string;
+}
+export interface GenerateArtResponse {
+  order: StableDiffusionOrder;
 }
 
 export enum OrderStatus {

@@ -65,7 +65,7 @@ export const ConfirmSignModal: FC = () => {
 
         <Divider size={formatSize(16)} />
 
-        <ButtonLargePrimary title="Sign" disabled={isLoading} onPress={signMessage} />
+        <ButtonLargePrimary title="Sign" disabled={isLoading} isLoading={isLoading} onPress={signMessage} />
       </ModalButtonsContainer>
     </>
   );

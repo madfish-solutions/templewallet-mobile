@@ -1,12 +1,15 @@
 import { packDataBytes } from '@taquito/michel-codec';
 import { delay } from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
-import { EMPTY, Subject, catchError, map, switchMap, tap } from 'rxjs';
+import { EMPTY, Subject, catchError, from, map, switchMap, tap } from 'rxjs';
+import { delay as rxDelay } from 'rxjs/operators';
 
-import { fetchStableDiffusionSignIn } from '../../apis/stable-diffusion';
+import { isDefined } from 'src/utils/is-defined';
+
+import { fetchStableDiffusionGenerateArt, fetchStableDiffusionSignIn } from '../../apis/stable-diffusion';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create-nft/create-nft.form';
+import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create/create.form';
 import { Shelter } from '../../shelter/shelter';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
@@ -40,7 +43,6 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
             })
           )
         ),
-        tap(() => setIsLoading(false)),
         catchError(err => {
           setIsLoading(false);
 
@@ -58,16 +60,23 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
 
   useEffect(() => {
     if (isString(signature)) {
-      fetchStableDiffusionSignIn({
-        timestamp,
-        pk: account.publicKey,
-        sig: signature
-      }).then(accessToken => {
-        if (isString(accessToken)) {
-          delay(() => navigate(ScreensEnum.Preview, { formValues, accessToken }), 500);
-          goBack();
-        }
-      });
+      from(fetchStableDiffusionSignIn({ timestamp, pk: account.publicKey, sig: signature }))
+        .pipe(
+          switchMap(accessToken =>
+            from(fetchStableDiffusionGenerateArt({ accessToken, ...formValues })).pipe(
+              // TODO: Remove this imitation of Generate art
+              rxDelay(2000),
+              map(order => order),
+              tap(() => setIsLoading(false))
+            )
+          )
+        )
+        .subscribe(order => {
+          if (isDefined(order)) {
+            delay(() => navigate(ScreensEnum.Preview, { order }), 500);
+            goBack();
+          }
+        });
     }
   }, [signature]);
 

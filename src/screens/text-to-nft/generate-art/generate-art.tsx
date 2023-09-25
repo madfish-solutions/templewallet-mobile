@@ -7,7 +7,7 @@ import { History } from 'src/screens/text-to-nft/generate-art/tabs/history/histo
 
 import { useGenerateArtStyles } from './generate-art.styles';
 import { GenerateArtSelectors } from './selectors';
-import { CreateNft } from './tabs/create-nft/create-nft';
+import { Create } from './tabs/create/create';
 
 const tabs = ['Create', 'History'];
 const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
@@ -37,7 +37,7 @@ export const GenerateArtScreen: FC = () => {
         />
       </View>
 
-      {isCreateNftTabSelected ? <CreateNft /> : <History />}
+      {isCreateNftTabSelected ? <Create /> : <History />}
     </>
   );
 };

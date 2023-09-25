@@ -2,11 +2,15 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, ListRenderItem, View, useWindowDimensions } from 'react-native';
 import { isTablet } from 'react-native-device-info';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { SIDEBAR_WIDTH } from 'src/config/styles';
-import { CollectibleHistoryIcon } from 'src/screens/text-to-nft/generate-art/components/collectible-history-icon/collectible-history-icon';
+import { SIDEBAR_MARGINS, TABBAR_MARGINS } from 'src/constants/main-sizes';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { CollectibleImage } from 'src/screens/text-to-nft/components/collectible-image/collectible-image';
 import { useHistoryStyles } from 'src/screens/text-to-nft/generate-art/tabs/history/history.styles';
 import { HISTORY_MOCK_DATA } from 'src/screens/text-to-nft/generate-art/tabs/history/mock-data';
 import { formatSize } from 'src/styles/format-size';
@@ -16,13 +20,12 @@ import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 const ITEMS_PER_ROW = 3;
-const TABBAR_MARGINS = formatSize(32);
-const SIDEBAR_MARGINS = formatSize(51);
 const OFFSET_BETWEEN_ICONS = formatSize(4);
 
 const keyExtractor = (item: StableDiffusionOrder[]) => item.map(({ id }) => id).join('/');
 
 export const History: FC = () => {
+  const { navigate } = useNavigation();
   const styles = useHistoryStyles();
 
   // TODO: Remove fake loading state
@@ -43,17 +46,22 @@ export const History: FC = () => {
 
   const getItemLayout = createGetItemLayout<StableDiffusionOrder[]>(itemSize);
 
+  const handleCollectiblePress = (order: StableDiffusionOrder) => {
+    navigate(ScreensEnum.Preview, { order });
+  };
+
   const renderItem: ListRenderItem<StableDiffusionOrder[]> = useCallback(
     ({ item }) => (
       <View style={styles.row}>
-        {item.map((collectible, i) =>
-          isDefined(collectible.variants) && isNonEmptyArray(collectible.variants) ? (
-            <CollectibleHistoryIcon
-              key={collectible.id}
-              uri={collectible.variants[0]}
-              size={itemSize}
-              style={[styles.collectible, conditionalStyle((i + 1) % 3 !== 0, styles.marginRight)]}
-            />
+        {item.map((order, i) =>
+          isDefined(order.variants) && isNonEmptyArray(order.variants) ? (
+            <TouchableOpacity key={order.id} onPress={() => handleCollectiblePress(order)}>
+              <CollectibleImage
+                uri={order.variants[0]}
+                size={itemSize}
+                style={[styles.collectible, conditionalStyle((i + 1) % 3 !== 0, styles.marginRight)]}
+              />
+            </TouchableOpacity>
           ) : null
         )}
       </View>
