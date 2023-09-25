@@ -1,4 +1,5 @@
 import { uniq } from 'lodash-es';
+import { stringify } from 'qs';
 
 import { getTzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
@@ -52,6 +53,7 @@ const getTokenFa2Operations = (
 ) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa2Interface>>('operations/transactions', {
+      paramsSerializer: stringify,
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -66,6 +68,7 @@ const getTokenFa2Operations = (
 const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastLevel?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa12Interface>>('operations/transactions', {
+      paramsSerializer: stringify,
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
