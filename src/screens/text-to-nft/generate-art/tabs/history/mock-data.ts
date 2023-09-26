@@ -1,4 +1,4 @@
-import { OrderStatus, StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
+import { StableDiffusionOrder, OrderStatus } from 'src/apis/stable-diffusion/types';
 
 // TODO: Remove this later or use for tests
 export const HISTORY_MOCK_DATA: StableDiffusionOrder[] = [

@@ -3,6 +3,8 @@ import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { ConfirmSignSelectors } from 'src/modals/confirm-sign-modal/selectors';
+import { useSignMessage } from 'src/modals/confirm-sign-modal/use-sign-message.hook';
+import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 
 import { AccountDropdownItem } from '../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
@@ -12,12 +14,10 @@ import { Label } from '../../components/label/label';
 import { ModalButtonsContainer } from '../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useConfirmSignModalStyles } from './confirm-sign-modal.styles';
-import { useSignMessage } from './use-sign-message.hook';
 
 const PAYLOAD_PREVIEW_TYPE_INDEX = 0;
 
