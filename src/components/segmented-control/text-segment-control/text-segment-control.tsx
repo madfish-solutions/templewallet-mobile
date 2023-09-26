@@ -10,6 +10,7 @@ export const TextSegmentControl: FC<SegmentedControlProps<string>> = ({
   width,
   optionAnalyticsPropertiesFn,
   onChange,
+  style,
   testID,
   testIDProperties
 }) => (
@@ -21,6 +22,7 @@ export const TextSegmentControl: FC<SegmentedControlProps<string>> = ({
     width={width}
     optionAnalyticsPropertiesFn={optionAnalyticsPropertiesFn}
     onChange={onChange}
+    style={style}
     testID={testID}
     testIDProperties={testIDProperties}
   />

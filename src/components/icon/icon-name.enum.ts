@@ -3,6 +3,7 @@ export enum IconNameEnum {
   ArrowDown = 'ArrowDown',
   ArrowRight = 'ArrowRight',
   ArrowLeft = 'ArrowLeft',
+  ArtStyle = 'ArtStyle',
   Bell = 'Bell',
   DetailsArrowUp = 'DetailsArrowUp',
   DetailsArrowDown = 'DetailsArrowDown',

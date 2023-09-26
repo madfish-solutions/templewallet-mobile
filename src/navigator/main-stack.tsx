@@ -75,6 +75,9 @@ import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/w
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
+import { HeaderProgress } from '../components/header/header-progress/header-progress';
+import { GenerateArtScreen } from '../screens/text-to-nft/generate-art/generate-art';
+import { PreviewScreen } from '../screens/text-to-nft/preview/preview';
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
 import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
@@ -279,6 +282,25 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Market}
                 component={Market}
                 options={{ animationEnabled: false, headerShown: false }}
+              />
+
+              {/** Text to NFT stack **/}
+              <MainStack.Screen
+                name={ScreensEnum.GenerateArt}
+                component={GenerateArtScreen}
+                options={{
+                  ...generateScreenOptions(
+                    <HeaderTitle title="Text to NFT" />,
+                    <HeaderProgress current={1} total={3} />
+                  )
+                }}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Preview}
+                component={PreviewScreen}
+                options={{
+                  ...generateScreenOptions(<HeaderTitle title="Preview" />, <HeaderProgress current={2} total={3} />)
+                }}
               />
 
               {/** Settings stack **/}

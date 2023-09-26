@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, PropsWithChildren, useCallback, useEffect, useRef } from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, StyleProp, View, ViewStyle } from 'react-native';
 
 import { EventFn } from 'src/config/general';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
@@ -18,6 +18,7 @@ export interface SegmentedControlProps<T> extends TestIdProps {
   width?: number;
   onChange: EventFn<number>;
   optionAnalyticsPropertiesFn?: (value: T, index: number) => object | undefined;
+  style?: StyleProp<ViewStyle>;
 }
 
 interface Props<T> extends SegmentedControlProps<T> {
@@ -38,6 +39,7 @@ export const SegmentedControl = <T extends unknown>({
   values,
   renderValue,
   width,
+  style,
   testID,
   testIDProperties,
   optionAnalyticsPropertiesFn = defaultOptionAnalyticsPropertiesFn,
@@ -108,7 +110,7 @@ export const SegmentedControl = <T extends unknown>({
   );
 
   return (
-    <View style={[styles.container, { width }]} onLayout={handleLayout}>
+    <View style={[styles.container, { width }, style]} onLayout={handleLayout}>
       <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }] }]} />
 
       <View style={styles.contentContainer}>{values.map(renderOption)}</View>
