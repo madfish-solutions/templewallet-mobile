@@ -11,6 +11,7 @@ import { SIDEBAR_MARGINS, TABBAR_MARGINS } from 'src/constants/main-sizes';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { CollectibleImage } from 'src/screens/text-to-nft/components/collectible-image/collectible-image';
+import { GenerateArtSelectors } from 'src/screens/text-to-nft/generate-art/selectors';
 import { useHistoryStyles } from 'src/screens/text-to-nft/generate-art/tabs/history/history.styles';
 import { HISTORY_MOCK_DATA } from 'src/screens/text-to-nft/generate-art/tabs/history/mock-data';
 import { formatSize } from 'src/styles/format-size';
@@ -55,7 +56,11 @@ export const History: FC = () => {
       <View style={styles.row}>
         {item.map((order, i) =>
           isDefined(order.variants) && isNonEmptyArray(order.variants) ? (
-            <TouchableOpacity key={order.id} onPress={() => handleCollectiblePress(order)}>
+            <TouchableOpacity
+              key={order.id}
+              onPress={() => handleCollectiblePress(order)}
+              testID={GenerateArtSelectors.historyItem}
+            >
               <CollectibleImage
                 uri={order.variants[0]}
                 size={itemSize}

@@ -2,6 +2,8 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { ConfirmSignSelectors } from 'src/modals/confirm-sign-modal/selectors';
+
 import { AccountDropdownItem } from '../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
@@ -61,11 +63,22 @@ export const ConfirmSignModal: FC = () => {
       </ScreenContainer>
 
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
+        <ButtonLargeSecondary
+          title="Cancel"
+          disabled={isLoading}
+          onPress={goBack}
+          testID={ConfirmSignSelectors.cancelButton}
+        />
 
         <Divider size={formatSize(16)} />
 
-        <ButtonLargePrimary title="Sign" disabled={isLoading} isLoading={isLoading} onPress={signMessage} />
+        <ButtonLargePrimary
+          title="Sign"
+          disabled={isLoading}
+          isLoading={isLoading}
+          onPress={signMessage}
+          testID={ConfirmSignSelectors.signButton}
+        />
       </ModalButtonsContainer>
     </>
   );

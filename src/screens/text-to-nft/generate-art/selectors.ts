@@ -6,5 +6,6 @@ export enum GenerateArtSelectors {
   removeFromImageCheckboxOff = 'Generate art screen/Press "Remove From Image" Checkbox Off',
   generatingFeeAlert = 'Generate art screen/Press "Generating Fee" Alert',
   pasteButton = 'Generate art screen/Press "Paste" Button',
-  pressArtStyle = 'Generate art screen/Press "Art Style" Button'
+  pressArtStyle = 'Generate art screen/Press "Art Style" Button',
+  historyItem = 'Generate art screen/History Tab/Press NFT item'
 }

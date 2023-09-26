@@ -52,7 +52,12 @@ export const PreviewScreen: FC = () => {
 
           <View style={styles.row}>
             {order.variants.map((uri, index) => (
-              <TouchableOpacity key={uri + index} onPress={() => setActiveIndex(index)} style={styles.imageContainer}>
+              <TouchableOpacity
+                key={uri + index}
+                onPress={() => setActiveIndex(index)}
+                style={styles.imageContainer}
+                testID={CreateNftSelectors.otherVariant}
+              >
                 <CollectibleImage
                   uri={uri}
                   size={collectibleSize}
