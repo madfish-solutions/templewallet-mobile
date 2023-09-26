@@ -74,6 +74,6 @@ export const getQuipuswapSubtitle = (subtype: ActivitySubtype) => {
       return 'Harvest from dividents';
 
     default:
-      return null;
+      return '-';
   }
 };
