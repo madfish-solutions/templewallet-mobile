@@ -46,7 +46,7 @@ export const Create: FC = () => {
   const elementWidth = useMemo(() => (layoutWidth - gridSize) / 2, [layoutWidth]);
 
   const insufficientTezosBalance = useMemo(
-    () => mutezToTz(new BigNumber(tezosToken.balance), tezosToken.decimals).lte(1),
+    () => mutezToTz(new BigNumber(tezosToken.balance), tezosToken.decimals).lte(10),
     [tezosToken.balance]
   );
 
