@@ -13,6 +13,7 @@ import { HeaderCard } from 'src/components/header-card/header-card';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
+import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { useWalletOpenTacker } from 'src/hooks/use-wallet-open-tacker.hook';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -24,6 +25,8 @@ import {
   useContactsAddressesSelector,
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
+import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
+import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import {
   useAccountsListSelector,
@@ -34,6 +37,7 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
+import { usePushNotificationsEvent } from '../../hooks/use-push-notifications-event';
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
 import { OnRampOverlay } from './on-ramp-overlay/on-ramp-overlay';
@@ -47,6 +51,7 @@ export const Wallet = () => {
   const { pageEvent } = useAnalytics();
   const { navigate } = useNavigation();
 
+  const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const account = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
@@ -55,6 +60,10 @@ export const Wallet = () => {
   const ignoredAddresses = useIgnoredAddressesSelector();
   const contactsAddresses = useContactsAddressesSelector();
   const bottomSheetController = useBottomSheetController();
+  const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
+
+  useApkBuildIdEvent();
+  usePushNotificationsEvent();
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
   const handleDropdownValueChange = (value: AccountBaseInterface | undefined) =>
@@ -69,6 +78,12 @@ export const Wallet = () => {
       bottomSheetController.open();
     }
   }, [contactCandidateAddress]);
+
+  useEffect(() => {
+    if (shouldShowNewsletterModal && isAnyBackupMade) {
+      navigate(ModalsEnum.Newsletter);
+    }
+  }, [shouldShowNewsletterModal, isAnyBackupMade]);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');

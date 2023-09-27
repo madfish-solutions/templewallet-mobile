@@ -23,10 +23,15 @@ import {
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
+  setAdsBannerVisibilityAction,
   setOnRampPossibilityAction,
+  setIsOnRampHasBeenShownBeforeAction,
+  setIsSwapDisclaimerShowingAction,
+  setIsApkBuildLaunchEventFired,
+  setIsPushNotificationsEnabledEventFired,
   switchIsShowCollectibleInfoAction
 } from './settings-actions';
-import { settingsInitialState, SettingsState } from './settings-state';
+import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
 
 export const settingsReducers = createReducer<SettingsState>(settingsInitialState, builder => {
@@ -86,6 +91,19 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShownDomainName
   }));
 
+  builder.addCase(setIsApkBuildLaunchEventFired, (state, { payload: isApkBuildLaunchEventFired }) => ({
+    ...state,
+    isApkBuildLaunchEventFired
+  }));
+
+  builder.addCase(
+    setIsPushNotificationsEnabledEventFired,
+    (state, { payload: isPushNotificationsEnabledEventFired }) => ({
+      ...state,
+      isPushNotificationsEnabledEventFired
+    })
+  );
+
   builder.addCase(requestSeedPhraseBackupAction, state => ({
     ...state,
     isManualBackupMade: false,
@@ -114,10 +132,24 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
+  builder.addCase(setIsOnRampHasBeenShownBeforeAction, (state, { payload: isOnRampHasBeenShownBefore }) => ({
+    ...state,
+    isOnRampHasBeenShownBefore
+  }));
+
+  builder.addCase(setIsSwapDisclaimerShowingAction, (state, { payload: isSwapDisclaimerShowing }) => ({
+    ...state,
+    isSwapDisclaimerShowing
+  }));
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,
     applicationOpenCounter: (state.applicationOpenCounter ?? 0) + 1
+  }));
+
+  builder.addCase(setAdsBannerVisibilityAction, (state, { payload }) => ({
+    ...state,
+    isEnableAdsBanner: payload
   }));
 
   // MIGRATIONS

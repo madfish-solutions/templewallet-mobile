@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
@@ -15,12 +15,12 @@ import {
   BALANCES_SYNC_INTERVAL,
   RATES_SYNC_INTERVAL,
   SELECTED_BAKER_SYNC_INTERVAL,
-  NOTIFICATIONS_SYNC_INTERVAL
+  NOTIFICATIONS_SYNC_INTERVAL,
+  APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
+import { emptyFn } from 'src/config/general';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
-import { useAdvertising } from 'src/hooks/use-advertising.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
-import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNFTDynamicLinks } from 'src/hooks/use-nft-dynamic-links.hook';
@@ -40,9 +40,10 @@ import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
 import { DApps } from 'src/screens/d-apps/d-apps';
 import { Debug } from 'src/screens/debug/debug';
 import { DelegationScreen } from 'src/screens/delegation-screen/delegation-screen';
+import { Earn } from 'src/screens/earn';
+import { Farming } from 'src/screens/farming';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
 import { ImportAccount } from 'src/screens/import-account/import-account';
-import { LiquidityBakingDapp } from 'src/screens/liquidity-baking-dapp/liquidity-baking-dapp';
 import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
 import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
@@ -51,6 +52,7 @@ import { NodeSettings } from 'src/screens/node-settings/node-settings';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
 import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
 import { Notifications } from 'src/screens/notifications/notifications';
+import { Savings } from 'src/screens/savings';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
@@ -62,10 +64,11 @@ import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-scr
 import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
 import { Welcome } from 'src/screens/welcome/welcome';
+import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import {
   loadTokensActions,
   loadTezosBalanceActions,
@@ -77,6 +80,9 @@ import { cloudTitle } from 'src/utils/cloud-backup';
 
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
+import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
+import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
+import { loadAllSavingsAndStakesAction } from '../store/savings/actions';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
@@ -88,18 +94,25 @@ export const MainStackScreen = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const styleScreenOptions = useStackNavigatorStyleOptions();
+  const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();
+  const { isLocked } = useAppLock();
 
   const blockSubscription = useBlockSubscription();
 
+  const styleScreenOptions = useStackNavigatorStyleOptions();
+
   const { metadata } = useNetworkInfo();
+
+  useEffect(() => {
+    if (isEnableAdsBanner) {
+      dispatch(togglePartnersPromotionAction(false));
+    }
+  }, [isEnableAdsBanner]);
 
   useAppLockTimer();
   useBeaconHandler();
-  useFirebaseApp();
   useNFTDynamicLinks();
-  useAdvertising();
 
   const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
 
@@ -119,13 +132,22 @@ export const MainStackScreen = () => {
     selectedAccountPkh
   ]);
 
+  useAuthorisedInterval(() => {
+    dispatch(loadAllFarmsAndStakesAction());
+    dispatch(loadAllSavingsAndStakesAction());
+  }, APR_REFRESH_INTERVAL);
+
+  const shouldShowUnauthorizedScreens = !isAuthorised;
+  const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
+  const shouldShowBlankScreen = isAuthorised && isLocked;
+
   return (
     <PortalProvider>
       <ScreenStatusBar />
 
       <NavigationBar>
         <MainStack.Navigator screenOptions={styleScreenOptions}>
-          {!isAuthorised ? (
+          {shouldShowUnauthorizedScreens && (
             <>
               <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
               <MainStack.Screen
@@ -154,7 +176,8 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
               />
             </>
-          ) : (
+          )}
+          {shouldShowAuthorizedScreens && (
             <>
               {/** Wallet stack **/}
               <MainStack.Screen
@@ -208,6 +231,22 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
               />
 
+              <MainStack.Screen
+                name={ScreensEnum.Earn}
+                component={Earn}
+                options={generateScreenOptions(<HeaderTitle title="Earn" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Farming}
+                component={Farming}
+                options={generateScreenOptions(<HeaderTitle title="Farming" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Savings}
+                component={Savings}
+                options={generateScreenOptions(<HeaderTitle title="Savings" />)}
+              />
+
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
 
               <MainStack.Screen
@@ -228,11 +267,6 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.DApps}
                 component={DApps}
                 options={{ animationEnabled: false, headerShown: false }}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.LiquidityBakingDapp}
-                component={LiquidityBakingDapp}
-                options={generateScreenOptions(<HeaderTitle title={'Liquidity Baking'} />)}
               />
 
               {/** Swap stack **/}
@@ -326,6 +360,13 @@ export const MainStackScreen = () => {
               />
             </>
           )}
+
+          {shouldShowBlankScreen && (
+            <MainStack.Screen name={ScreensEnum.Blank} options={{ headerShown: false }}>
+              {emptyFn}
+            </MainStack.Screen>
+          )}
+
           <MainStack.Screen
             name={ScreensEnum.ScanQrCode}
             component={ScanQrCode}

@@ -10,12 +10,12 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { FxHashContractInterface, ObjktContractInterface } from 'src/interfaces/marketplaces.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
+import { CollectibleOfferInteface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
-import { getTransferPermissions } from 'src/utils/swap-permissions.util';
+import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
-import { CollectibleOfferInteface } from '../../../token/interfaces/collectible-interfaces.interface';
 import { navigateToObjktForBuy } from '../utils';
 import { useCollectibleItemStyles } from './collectible-item.styles';
 

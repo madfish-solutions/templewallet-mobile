@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
-import { version as appVersion } from '../package.json';
+import { concatUrlPath } from 'src/utils/url.utils';
+
 import {
+  APP_VERSION,
   TEMPLE_WALLET_API_URL,
   TEMPLE_WALLET_EVERSTAKE_API_KEY,
   TEMPLE_WALLET_EXOLIX_API_KEY,
@@ -10,12 +12,12 @@ import {
 } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
 
-const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
+export const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
 const dcpTzktApi = axios.create({ baseURL: 'https://explorer-api.tlnt.net/v1' });
 
 export const getTzktApi = (selectedRpcUrl: string) => (isDcpNode(selectedRpcUrl) ? dcpTzktApi : tzktApi);
 
-export const templeWalletApi = axios.create({ baseURL: TEMPLE_WALLET_API_URL + '/api' });
+export const templeWalletApi = axios.create({ baseURL: concatUrlPath(TEMPLE_WALLET_API_URL, '/api') });
 
 export const tezosMetadataApi = axios.create({ baseURL: TEZOS_METADATA_API_URL });
 
@@ -43,6 +45,6 @@ export const everstakeApi = axios.create({
 export const optimalApi = axios.create({
   baseURL: 'https://i.useoptimal.xyz',
   headers: {
-    'User-Agent': `TempleWallet-${Platform.OS}/${appVersion}`
+    'User-Agent': `TempleWallet-${Platform.OS}/${APP_VERSION}`
   }
 });

@@ -1,6 +1,8 @@
+import { uniqBy } from 'lodash-es';
 import { useMemo, useState } from 'react';
 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { isNonZeroBalance } from 'src/utils/tezos.util';
@@ -11,8 +13,8 @@ interface useFiltredAssetsListTypes {
     assetList: T[],
     filterZeroBalances?: boolean,
     sortByDollarValueDecrease?: boolean,
-    leadingAsset?: T,
-    leadingAssetIsFilterable?: boolean
+    leadingAssets?: T[],
+    leadingAssetsAreFilterable?: boolean
   ): {
     filteredAssetsList: T[];
     searchValue: string | undefined;
@@ -24,8 +26,8 @@ export const useFilteredAssetsList: useFiltredAssetsListTypes = (
   assetsList,
   filterZeroBalances = false,
   sortByDollarValueDecrease = false,
-  leadingAsset?,
-  leadingAssetIsFilterable = true
+  leadingAssets,
+  leadingAssetsAreFilterable = true
 ) => {
   const sourceArray = useMemo(
     () => (filterZeroBalances ? assetsList.filter(asset => isNonZeroBalance(asset)) : assetsList),
@@ -47,21 +49,25 @@ export const useFilteredAssetsList: useFiltredAssetsListTypes = (
   }, [searchValue, sourceArray, sortByDollarValueDecrease]);
 
   const filteredAssetsList = useMemo(() => {
-    if (!isDefined(leadingAsset)) {
+    if (!isDefined(leadingAssets)) {
       return searchedAssetsList;
     }
 
-    if (leadingAssetIsFilterable) {
-      if (filterZeroBalances && !isNonZeroBalance(leadingAsset)) {
+    if (leadingAssetsAreFilterable) {
+      if (filterZeroBalances && leadingAssets.every(asset => !isNonZeroBalance(asset))) {
         return searchedAssetsList;
       }
-      if (isString(searchValue) && !isAssetSearched(leadingAsset, searchValue.toLowerCase())) {
+      const searchValueLowercased = searchValue?.toLowerCase();
+      if (
+        isString(searchValueLowercased) &&
+        leadingAssets.every(asset => !isAssetSearched(asset, searchValueLowercased))
+      ) {
         return searchedAssetsList;
       }
     }
 
-    return [leadingAsset, ...searchedAssetsList];
-  }, [searchedAssetsList, searchValue, filterZeroBalances, leadingAsset, leadingAssetIsFilterable]);
+    return uniqBy([...leadingAssets, ...searchedAssetsList], getTokenSlug);
+  }, [searchedAssetsList, searchValue, filterZeroBalances, leadingAssets, leadingAssetsAreFilterable]);
 
   return {
     filteredAssetsList,

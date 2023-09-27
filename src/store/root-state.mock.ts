@@ -5,17 +5,20 @@ import { mockBuyWithCreditCardState } from './buy-with-credit-card/state.mock';
 import { mockCollectiblesState } from './collectibles/collectibles-state.mock';
 import { collectionsMockState } from './collectons/collections-state.mock';
 import { mockContactBookState } from './contact-book/contact-book-state.mock';
-import { RootState } from './create-store';
 import { mockCurrencyState } from './currency/currency-state.mock';
 import { mockDAppsState } from './d-apps/d-apps-state.mock';
 import { mockExolixState } from './exolix/exolix-state.mock';
+import { mockFarmsState } from './farms/state.mock';
 import { mockMarketState } from './market/market-state.mock';
+import { mockNewsletterState } from './newsletter/newsletter-state.mock';
 import { mockNotificationsState } from './notifications/notifications-state.mock';
 import { mockPartnersPromotionState } from './partners-promotion/partners-promotion-state.mock';
+import { mockSavingsState } from './savings/state.mock';
 import { mockSecurityState } from './security/security-state.mock';
 import { mockSettingsState } from './settings/settings-state.mock';
 import { mockSwapState } from './swap/swap-state.mock';
 import { mockTokensMetadataState } from './tokens-metadata/tokens-metadata-state.mock';
+import type { RootState } from './types';
 import { mockWalletState } from './wallet/wallet-state.mock';
 
 export const mockRootState: RootState = {
@@ -36,5 +39,8 @@ export const mockRootState: RootState = {
   buyWithCreditCard: mockBuyWithCreditCardState,
   partnersPromotion: mockPartnersPromotionState,
   abTesting: mockABTestingState,
-  collectibles: mockCollectiblesState
+  collectibles: mockCollectiblesState,
+  farms: mockFarmsState,
+  savings: mockSavingsState,
+  newsletter: mockNewsletterState
 };

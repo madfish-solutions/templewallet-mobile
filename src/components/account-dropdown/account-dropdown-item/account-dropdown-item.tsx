@@ -8,6 +8,7 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
@@ -21,7 +22,6 @@ import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { getTruncatedProps } from 'src/utils/style.util';
 
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
@@ -65,9 +65,9 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
             conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
           ]}
         >
-          <Text {...getTruncatedProps(styles.name)}>
+          <TruncatedText style={styles.name}>
             {isDefined(alias) && isCollectibleScreen ? alias : account.name}
-          </Text>
+          </TruncatedText>
           {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
         </View>
         <View style={styles.lowerContainer}>

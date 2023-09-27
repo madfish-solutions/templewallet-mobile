@@ -14,13 +14,10 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
-import { INITIAL_ARP_VALUE } from '../../apis/youves/constants';
+import { INITIAL_APR_VALUE } from '../../apis/youves/constants';
 import { getDelegateText } from '../../utils/get-delegate-text.util';
-import { ABContainer } from '../ab-container/ab-container';
-import { DelegateTagA } from '../delegate-tag/components/delegate-ab-components/delegate-tag-a/delegate-tag-a';
-import { DelegateTagB } from '../delegate-tag/components/delegate-ab-components/delegate-tag-b/delegate-tag-b';
 import { useApyStyles } from './apy.styles';
 import { apyLinkSelectors } from './token-header.selectors';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
@@ -46,7 +43,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
     isDcpNode && !isBakerSelected ? navigate(ModalsEnum.SelectBaker) : navigate(ScreensEnum.Delegation);
   };
 
-  const { rate: apyRate = INITIAL_ARP_VALUE, link: apyLink } = useTokenApyInfo(tokenSlug);
+  const { rate: apyRate = INITIAL_APR_VALUE, link: apyLink } = useTokenApyInfo(tokenSlug);
 
   const apyRateValue = useMemo(
     () => new BigNumber(apyRate).decimalPlaces(DECIMAL_VALUE).toFixed(DECIMAL_VALUE),
@@ -56,14 +53,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   if (showHistoryComponent && isTezos) {
     return (
       <TouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
-        {isBakerSelected ? (
-          <Text style={styles.delegateText}>Rewards & Redelegate</Text>
-        ) : (
-          <ABContainer
-            groupAComponent={<DelegateTagA style={styles.delegateText} />}
-            groupBComponent={<DelegateTagB style={styles.delegateText} />}
-          />
-        )}
+        <Text style={styles.delegateText}>{isBakerSelected ? 'Rewards & Redelegate' : 'Not Delegated'}</Text>
       </TouchableOpacity>
     );
   }

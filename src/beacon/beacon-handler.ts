@@ -7,7 +7,7 @@ import {
   PeerInfo,
   WalletClient
 } from '@airgap/beacon-sdk';
-import { ExtendedP2PPairingResponse } from '@airgap/beacon-types';
+import type { ExtendedP2PPairingResponse } from '@airgap/beacon-types';
 
 import { EventFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';

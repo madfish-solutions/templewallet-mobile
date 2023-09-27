@@ -21,9 +21,9 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
+import { HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { tzToMutez } from 'src/utils/tezos.util';
 
-import { HELP_UKRAINE_BAKER_ADDRESS } from '../../select-baker-modal/select-baker-modal';
 import { ConfirmationModalSelectors } from '../confirmation-modal.selectors';
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
@@ -82,7 +82,7 @@ export const OperationsConfirmation: FC<Props> = ({
     gasFeeSum = gasFeeSum?.minus(revealGasFee);
 
     const params = opParamsWithEstimations.map((opParam, index) => {
-      if (opParam.kind === OpKind.ACTIVATION) {
+      if (opParam.kind === OpKind.ACTIVATION || opParam.kind === OpKind.FAILING_NOOP) {
         return opParam;
       }
 

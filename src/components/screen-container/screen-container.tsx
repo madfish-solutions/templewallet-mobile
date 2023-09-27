@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, RefObject } from 'react';
 import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
@@ -10,13 +10,14 @@ import {
   ViewStyle
 } from 'react-native';
 
-import { isAndroid } from '../../config/system';
-import { useHeaderHeight } from '../../hooks/use-header-height.hook';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { formatSize } from '../../styles/format-size';
-import { conditionalStyle } from '../../utils/conditional-style';
-import { isDefined } from '../../utils/is-defined';
-import { setTestID } from '../../utils/test-id.utils';
+import { isAndroid } from 'src/config/system';
+import { useHeaderHeight } from 'src/hooks/use-header-height.hook';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { isDefined } from 'src/utils/is-defined';
+import { setTestID } from 'src/utils/test-id.utils';
+
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { Divider } from '../divider/divider';
 import { InsetSubstitute } from '../inset-substitute/inset-substitute';
@@ -30,6 +31,7 @@ interface Props extends TestIdProps {
     cancelButton?: JSX.Element;
     submitButton?: JSX.Element;
   };
+  scrollViewRef?: RefObject<ScrollView>;
   style?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
   scrollEnabled?: boolean;
@@ -39,6 +41,7 @@ export const ScreenContainer: FC<Props> = ({
   keyboardBehavior = isAndroid ? 'height' : 'padding',
   scrollViewRefreshControl,
   isFullScreenMode = false,
+  scrollViewRef,
   style,
   contentContainerStyle,
   fixedFooterContainer,
@@ -69,6 +72,7 @@ export const ScreenContainer: FC<Props> = ({
         ]}
         keyboardShouldPersistTaps="handled"
         refreshControl={scrollViewRefreshControl}
+        ref={scrollViewRef}
         {...setTestID(testID)}
       >
         {children}

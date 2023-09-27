@@ -31,6 +31,7 @@ import CheckIcon from './assets/check.svg';
 import CheckboxOffIcon from './assets/checkbox-off.svg';
 import CheckboxOnIcon from './assets/checkbox-on.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
+import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
@@ -43,6 +44,8 @@ import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
 import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
 import CycleStatusUnlockedIcon from './assets/cycle-status-unlocked.svg';
 import DAppsIcon from './assets/dapps.svg';
+import DataIcon from './assets/data.svg';
+import DatabaseIcon from './assets/database.svg';
 import DealIcon from './assets/deal.svg';
 import Delegate1Icon from './assets/delegate-1.svg';
 import Delegate2Icon from './assets/delegate-2.svg';
@@ -54,6 +57,8 @@ import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
+import EarnDappIcon from './assets/earn-dapp.svg';
+import EarnIcon from './assets/earn.svg';
 import EditNewIcon from './assets/edit-new.svg';
 import EditIcon from './assets/edit.svg';
 import EndorsementsIcon from './assets/endorsements.svg';
@@ -70,16 +75,18 @@ import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
 import GoogleDriveIcon from './assets/google-drive.svg';
+import HelpCircleIcon from './assets/help-circle.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import LargeSwapIcon from './assets/large-swap.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
-import LiquidityBakingIcon from './assets/liquidity-baking.svg';
+import LiquidityBakingLogo from './assets/liquidity-baking-logo.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import MarketIcon from './assets/market.svg';
@@ -102,6 +109,7 @@ import PlusIcon from './assets/plus-icon.svg';
 import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerBoldIcon from './assets/qr-scanner-bold.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
+import QsEarnSource from './assets/qs-earn-source.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
@@ -155,6 +163,9 @@ import XBoldIcon from './assets/x-bold.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
 import XIcon from './assets/x.svg';
+import YouvesEarnSourceDarkIcon from './assets/youves-earn-source-dark.svg';
+import YouvesEarnSourceLargeIcon from './assets/youves-earn-source-large.svg';
+import YouvesEarnSourceIcon from './assets/youves-earn-source.svg';
 import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
 
@@ -193,10 +204,12 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.PlusCircleNew]: PlusCircleNewIcon,
+  [IconNameEnum.HelpCircle]: HelpCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
+  [IconNameEnum.LargeSwap]: LargeSwapIcon,
   [IconNameEnum.SwapSettings]: SwapSettings,
   [IconNameEnum.SwapSettingsNew]: SwapSettingsNewIcon,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
@@ -208,7 +221,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
   [IconNameEnum.Settings]: SettingsIcon,
-  [IconNameEnum.LiquidityBaking]: LiquidityBakingIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
   [IconNameEnum.Spicy]: SpicyIcon,
   [IconNameEnum.Youves]: YouvesIcon,
@@ -256,6 +268,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.Info]: InfoIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
+  [IconNameEnum.ChevronUp]: ChevronUpIcon,
   [IconNameEnum.NoResult]: NoResultIcon,
   [IconNameEnum.News]: NewsIcon,
   [IconNameEnum.TempleLogo]: TempleLogoIcon,
@@ -301,6 +314,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.UkraineIcon]: UkraineIcon,
   [IconNameEnum.Market]: MarketIcon,
+  [IconNameEnum.Earn]: EarnIcon,
+  [IconNameEnum.EarnDapp]: EarnDappIcon,
   [IconNameEnum.Buy]: BuyIcon,
   [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,
   [IconNameEnum.CreditCard]: CreditCardIcon,
@@ -310,10 +325,17 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.NFT]: NFT,
   [IconNameEnum.BlurLight]: BlurLight,
   [IconNameEnum.BlurDark]: BlurDark,
+  [IconNameEnum.NotificationDot]: NotificationDotIcon,
+  [IconNameEnum.CheckboxOn]: CheckboxOnIcon,
+  [IconNameEnum.CheckboxOff]: CheckboxOffIcon,
+  [IconNameEnum.QsEarnSource]: QsEarnSource,
+  [IconNameEnum.LiquidityBakingLogo]: LiquidityBakingLogo,
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
   [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon,
-  [IconNameEnum.CheckboxOn]: CheckboxOnIcon,
-  [IconNameEnum.CheckboxOff]: CheckboxOffIcon
+  [IconNameEnum.Data]: DataIcon,
+  [IconNameEnum.Database]: DatabaseIcon,
+  [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
+  [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
+  [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon
 };

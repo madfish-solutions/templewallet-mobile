@@ -12,10 +12,13 @@ import { Dropdown } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
 import { useInterval } from 'src/hooks/use-interval.hook';
-import { PaymentProviderInterface, TopUpInputInterface } from 'src/interfaces/topup.interface';
+import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { loadAllCurrenciesActions } from 'src/store/buy-with-credit-card/actions';
+import { loadAllCurrenciesActions, updatePairLimitsActions } from 'src/store/buy-with-credit-card/actions';
+import { useCurrenciesLoadingSelector } from 'src/store/buy-with-credit-card/selectors';
+import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -25,13 +28,13 @@ import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { renderPaymentProviderOption } from '../components/payment-provider';
 import { renderSelectedPaymentProvider } from '../components/selected-payment-provider';
-import { TopUpAssetAmountInterface } from '../components/top-up-asset-amount-input/types';
-import { TopUpFormAssetAmountInput } from '../components/top-up-form-asset-amount-input';
 import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
+import { useCryptoCurrencies } from './hooks/use-crypto-currencies-list.hook';
 import { useFiatCurrenciesList } from './hooks/use-fiat-currencies-list.hook';
-import { useFilteredCryptoCurrencies } from './hooks/use-filtered-crypto-currencies.hook';
 import { useFormInputsCallbacks } from './hooks/use-form-inputs-callbacks';
+import { usePairLimitsAreLoading } from './hooks/use-input-limits.hook';
 import { usePaymentProviders } from './hooks/use-payment-providers.hook';
+import { useUpdateCurrentProvider } from './hooks/use-update-current-provider.hook';
 import { BuyWithCreditCardSelectors } from './selectors';
 import { useBuyWithCreditCardStyles } from './styles';
 
@@ -52,7 +55,7 @@ export const BuyWithCreditCard: FC = () => {
   const dispatch = useDispatch();
   const colors = useColors();
   const styles = useBuyWithCreditCardStyles();
-  const [isLoading, setIsLoading] = useState(false);
+  const [formIsLoading, setFormIsLoading] = useState(false);
 
   usePageAnalytic(ScreensEnum.BuyWithCreditCard);
 
@@ -62,25 +65,37 @@ export const BuyWithCreditCard: FC = () => {
   const { errors, touched, values, submitForm, setFieldValue, isValid, submitCount } = formik;
   const { asset: inputAsset, amount: inputAmount } = values.sendInput;
   const { asset: outputAsset, amount: outputAmount } = values.getOutput;
+
+  const currenciesLoading = useCurrenciesLoadingSelector();
+
   const {
+    noPairLimitsFiatCurrencies,
     currenciesWithPairLimits,
     filteredCurrencies: filteredFiatCurrencies,
     setSearchValue: setInputSearchValue
   } = useFiatCurrenciesList(inputAsset.code, outputAsset.code);
-  const { filteredCurrencies: filteredCryptoCurrencies, setSearchValue: setOutputSearchValue } =
-    useFilteredCryptoCurrencies();
 
-  const paymentProviders = usePaymentProviders(inputAmount, inputAsset, outputAsset);
-  const { paymentProvidersToDisplay } = paymentProviders;
   const {
-    switchPaymentProvider,
+    allCryptoCurrencies,
+    filteredCurrencies: filteredCryptoCurrencies,
+    setSearchValue: setOutputSearchValue
+  } = useCryptoCurrencies();
+
+  const { paymentProvidersToDisplay, updateOutputAmounts } = usePaymentProviders(inputAmount, inputAsset, outputAsset);
+
+  const {
     handleInputValueChange,
     handleOutputValueChange,
     handlePaymentProviderChange,
     handleSendInputBlur,
     handleGetOutputBlur,
-    refreshForm
-  } = useFormInputsCallbacks(formik, paymentProviders, isLoading, setIsLoading);
+    refreshForm,
+    setPaymentProvider,
+    manuallySelectedProviderIdRef
+  } = useFormInputsCallbacks(formik, updateOutputAmounts, formIsLoading, setFormIsLoading);
+
+  const pairLimitsLoading = usePairLimitsAreLoading(inputAsset.code, outputAsset.code);
+
   const isPaymentProviderError =
     isDefined(errors.paymentProvider) &&
     (isTruthy(touched.paymentProvider) || submitCount > 0) &&
@@ -95,15 +110,6 @@ export const BuyWithCreditCard: FC = () => {
     }
   }, [values.sendInput, currenciesWithPairLimits, setFieldValue]);
 
-  useEffect(() => {
-    const currentPaymentProvider = values.paymentProvider;
-    const newPaymentProvider = paymentProvidersToDisplay.find(({ id }) => id === currentPaymentProvider?.id);
-
-    if (isDefined(newPaymentProvider) && !jsonEqualityFn(newPaymentProvider, currentPaymentProvider)) {
-      switchPaymentProvider(newPaymentProvider);
-    }
-  }, [values.paymentProvider, paymentProvidersToDisplay, switchPaymentProvider]);
-
   const exchangeRate = useMemo(() => {
     if (isDefined(inputAmount) && inputAmount.gt(0) && isDefined(outputAmount) && outputAmount.gt(0)) {
       return outputAmount.div(inputAmount).decimalPlaces(6);
@@ -112,13 +118,31 @@ export const BuyWithCreditCard: FC = () => {
     return undefined;
   }, [inputAmount, outputAmount]);
 
+  const isLoading = formIsLoading || currenciesLoading || pairLimitsLoading;
+
+  useEffect(() => {
+    dispatch(updatePairLimitsActions.submit({ fiatSymbol: inputAsset.code, cryptoSymbol: outputAsset.code }));
+  }, [dispatch, inputAsset.code, outputAsset.code, noPairLimitsFiatCurrencies.length, allCryptoCurrencies.length]);
+
+  useUpdateCurrentProvider(
+    paymentProvidersToDisplay,
+    values.paymentProvider,
+    manuallySelectedProviderIdRef,
+    setPaymentProvider,
+    isLoading
+  );
+
   useInterval(refreshForm, 10000, [refreshForm], false);
+
+  const someErrorOccured = Object.keys(errors).length > 0;
+  const submitDisabled = (submitCount !== 0 && !isValid) || isLoading || someErrorOccured;
 
   return (
     <>
       <ScreenContainer isFullScreenMode>
         <View>
           <Divider size={formatSize(16)} />
+
           <FormikProvider value={formik}>
             <TopUpFormAssetAmountInput
               name="sendInput"
@@ -135,11 +159,15 @@ export const BuyWithCreditCard: FC = () => {
               onBlur={handleSendInputBlur}
               setSearchValue={setInputSearchValue}
             />
+
             <Divider size={formatSize(8)} />
+
             <View style={styles.arrowContainer}>
               <Icon size={formatSize(24)} name={IconNameEnum.ArrowDown} color={colors.peach} />
             </View>
+
             <Divider size={formatSize(12)} />
+
             <TopUpFormAssetAmountInput
               name="getOutput"
               label="Get"
@@ -155,7 +183,9 @@ export const BuyWithCreditCard: FC = () => {
               setSearchValue={setOutputSearchValue}
             />
           </FormikProvider>
+
           <Divider size={formatSize(16)} />
+
           <View style={styles.paymentProviderDropdownContainer}>
             <Dropdown
               value={values.paymentProvider}
@@ -172,27 +202,33 @@ export const BuyWithCreditCard: FC = () => {
               onValueChange={handlePaymentProviderChange}
             />
           </View>
+
           {isPaymentProviderError && <Text style={styles.errorText}>Please select payment provider</Text>}
+
           <Divider size={formatSize(16)} />
+
           <View style={styles.exchangeContainer}>
             <Text style={styles.exchangeRate}>Exchange Rate</Text>
             <Text style={styles.exchangeRateValue}>
-              {isDefined(exchangeRate) && isDefined(inputAsset.code) && !isLoading
+              {isDefined(exchangeRate) && isDefined(inputAsset.code) && !formIsLoading
                 ? `1 ${inputAsset.code} = ${exchangeRate} ${outputAsset.codeToDisplay ?? outputAsset.code}`
                 : '---'}
             </Text>
           </View>
+
           <Divider size={formatSize(18)} />
+
           <Disclaimer
             title="Disclaimer"
-            texts={['Temple integrated third-party solutions to buy TEZ or USDT with crypto or a Debit/Credit card.']}
+            texts={['Temple integrated third-party solutions to buy TEZ or other tokens with a Debit/Credit card.']}
           />
         </View>
       </ScreenContainer>
+
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
-          title={isLoading ? 'Loading...' : 'Top Up'}
-          disabled={(submitCount !== 0 && !isValid) || isLoading}
+          title={formIsLoading ? 'Loading...' : 'Top Up'}
+          disabled={submitDisabled}
           testID={BuyWithCreditCardSelectors.submitButton}
           onPress={submitForm}
         />

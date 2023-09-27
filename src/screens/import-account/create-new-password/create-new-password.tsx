@@ -1,7 +1,12 @@
 import { Formik } from 'formik';
-import React, { FC, useEffect, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
+
+import { AnalyticsField } from 'src/components/fields/analytics-field';
+import { ViewAdsField } from 'src/components/fields/view-ads-field';
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { scrollToField } from 'src/utils/form.utils';
 
 import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
@@ -15,12 +20,12 @@ import { Label } from '../../../components/label/label';
 import { ScreenContainer } from '../../../components/screen-container/screen-container';
 import { TextLink } from '../../../components/text-link/text-link';
 import { EmptyFn } from '../../../config/general';
-import { analyticsCollecting, privacyPolicy, termsOfUse } from '../../../config/socials';
+import { privacyPolicy, termsOfUse } from '../../../config/socials';
 import { FormBiometryCheckbox } from '../../../form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from '../../../form/form-checkbox';
 import { FormPasswordInput } from '../../../form/form-password-input';
 import { useShelter } from '../../../shelter/use-shelter.hook';
-import { setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
+import { setAdsBannerVisibilityAction, setIsAnalyticsEnabled } from '../../../store/settings/settings-actions';
 import { formatSize } from '../../../styles/format-size';
 import { useSetPasswordScreensCommonStyles } from '../../../styles/set-password-screens-common-styles';
 import { showWarningToast } from '../../../toast/toast.utils';
@@ -40,7 +45,17 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
 
-  const handleSubmit = ({ password, useBiometry, analytics }: CreateNewPasswordFormValues) => {
+  const refScrollView = useRef<ScrollView>(null);
+  const [fieldsPositions, setFieldsPositions] = useState({
+    password: 0,
+    acceptTerms: 0
+  });
+
+  const handleSubmit = ({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
+    if (viewAds) {
+      dispatch(togglePartnersPromotionAction(true));
+      dispatch(setAdsBannerVisibilityAction(false));
+    }
     dispatch(setIsAnalyticsEnabled(analytics));
     importWallet({ seedPhrase, password, useBiometry });
   };
@@ -66,10 +81,14 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
       password: initialPassword,
       passwordConfirmation: initialPassword,
       acceptTerms: false,
-      analytics: true
+      analytics: true,
+      viewAds: true
     }),
     [initialPassword]
   );
+
+  const handleLayoutChange = (name: string, value: number) =>
+    setFieldsPositions(prevState => ({ ...prevState, [name]: value }));
 
   return (
     <Formik
@@ -77,17 +96,19 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
       validationSchema={createNewPasswordValidationSchema}
       onSubmit={handleSubmit}
     >
-      {({ submitForm, isValid }) => (
+      {({ submitForm, errors, setFieldTouched, isValid }) => (
         <>
-          <ScreenContainer isFullScreenMode={true}>
-            <View>
+          <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true}>
+            <View style={styles.mb40} onLayout={event => handleLayoutChange('password', event.nativeEvent.layout.y)}>
               <Divider size={formatSize(12)} />
-              <Label label="Password" description="A password is used to protect the wallet." />
-              <FormPasswordInput
-                isShowPasswordStrengthIndicator
-                name="password"
-                testID={CreateNewPasswordSelectors.passwordInput}
-              />
+              <View>
+                <Label label="Password" description="A password is used to protect the wallet." />
+                <FormPasswordInput
+                  isShowPasswordStrengthIndicator
+                  name="password"
+                  testID={CreateNewPasswordSelectors.passwordInput}
+                />
+              </View>
 
               <Label label="Repeat Password" description="Please enter the password again." />
               <FormPasswordInput name="passwordConfirmation" testID={CreateNewPasswordSelectors.repeatPasswordInput} />
@@ -96,19 +117,12 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
                 <FormBiometryCheckbox name="useBiometry" />
               </View>
 
-              <View style={[styles.checkboxContainer, styles.removeMargin]}>
-                <FormCheckbox name="analytics" testID={CreateNewPasswordSelectors.analyticsCheckbox}>
-                  <Divider size={formatSize(8)} />
-                  <Text style={styles.checkboxText}>Analytics</Text>
-                </FormCheckbox>
-              </View>
-              <CheckboxLabel>
-                I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
-              </CheckboxLabel>
+              <AnalyticsField name="analytics" testID={CreateNewPasswordSelectors.analyticsCheckbox} />
+              <Divider size={formatSize(24)} />
+              <ViewAdsField name="viewAds" testID={CreateNewPasswordSelectors.viewAdsCheckbox} />
             </View>
-            <Divider />
 
-            <View>
+            <View onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}>
               <View style={styles.checkboxContainer}>
                 <FormCheckbox name="acceptTerms" testID={CreateNewPasswordSelectors.acceptTermsCheckbox}>
                   <Divider size={formatSize(8)} />
@@ -124,8 +138,17 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
           <View style={styles.fixedButtonContainer}>
             <ButtonLargePrimary
               title="Create"
-              disabled={!isValid}
-              onPress={submitForm}
+              onPress={() => {
+                setFieldTouched('password', true, true);
+                setFieldTouched('passwordConfirmation', true, true);
+                setFieldTouched('acceptTerms', true, true);
+
+                scrollToField(refScrollView, errors, fieldsPositions);
+
+                if (isValid) {
+                  submitForm();
+                }
+              }}
               testID={CreateNewPasswordSelectors.createButton}
             />
             <InsetSubstitute type="bottom" />

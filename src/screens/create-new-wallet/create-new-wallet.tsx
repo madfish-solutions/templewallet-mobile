@@ -1,11 +1,13 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { Formik } from 'formik';
-import React, { useMemo } from 'react';
-import { Text, View } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
+import { AnalyticsField } from 'src/components/fields/analytics-field';
+import { ViewAdsField } from 'src/components/fields/view-ads-field';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -20,9 +22,9 @@ import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum'
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
+import { scrollToField } from 'src/utils/form.utils';
 import { isString } from 'src/utils/is-string';
 
-import { AnalyticsField } from './AnalyticsField';
 import {
   BackupFlow,
   createNewPasswordInitialValues,
@@ -57,6 +59,12 @@ export const CreateNewWallet = () => {
 
   const styles = useSetPasswordScreensCommonStyles();
 
+  const refScrollView = useRef<ScrollView>(null);
+  const [fieldsPositions, setFieldsPositions] = useState({
+    password: 0,
+    acceptTerms: 0
+  });
+
   const initialValues = useMemo(
     () =>
       isString(cloudBackupPassword)
@@ -70,47 +78,53 @@ export const CreateNewWallet = () => {
   );
 
   const handleSubmit = useHandleSubmit(backupFlow);
+  const handleLayoutChange = (name: string, value: number) =>
+    setFieldsPositions(prevState => ({ ...prevState, [name]: value }));
 
   return (
     <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>
-      {({ submitForm, isValid, values }) => (
+      {({ submitForm, setFieldTouched, isValid, errors }) => (
         <>
-          <ScreenContainer isFullScreenMode={true}>
-            <View>
+          <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true}>
+            <View style={styles.mb40}>
               <Divider size={formatSize(12)} />
-              <Label
-                label="Password"
-                description={
-                  backupFlow?.type === 'AUTO_BACKUP'
-                    ? [
-                        { text: 'A password is used to' },
-                        { text: ' protect', bold: true },
-                        { text: ' and' },
-                        { text: ' backup', bold: true },
-                        { text: ' the wallet.' }
-                      ]
-                    : 'A password is used to protect the wallet.'
-                }
-              />
-              <FormPasswordInput
-                isShowPasswordStrengthIndicator
-                name="password"
-                testID={CreateNewWalletSelectors.passwordInput}
-              />
+              <View onLayout={event => handleLayoutChange('password', event.nativeEvent.layout.y)}>
+                <Label
+                  label="Password"
+                  description={
+                    backupFlow?.type === 'AUTO_BACKUP'
+                      ? [
+                          { text: 'A password is used to' },
+                          { text: ' protect', bold: true },
+                          { text: ' and' },
+                          { text: ' backup', bold: true },
+                          { text: ' the wallet.' }
+                        ]
+                      : 'A password is used to protect the wallet.'
+                  }
+                />
+                <FormPasswordInput
+                  isShowPasswordStrengthIndicator
+                  name="password"
+                  testID={CreateNewWalletSelectors.passwordInput}
+                />
+              </View>
 
-              <Label label="Repeat Password" description="Please enter the password again." />
-              <FormPasswordInput name="passwordConfirmation" testID={CreateNewWalletSelectors.repeatPasswordInput} />
+              <View>
+                <Label label="Repeat Password" description="Please enter the password again." />
+                <FormPasswordInput name="passwordConfirmation" testID={CreateNewWalletSelectors.repeatPasswordInput} />
+              </View>
 
               <View style={styles.checkboxContainer} testID={CreateNewWalletSelectors.useBiometricsToUnlockCheckBox}>
                 <FormBiometryCheckbox name="useBiometry" />
               </View>
 
-              <AnalyticsField enabled={values.analytics} />
+              <AnalyticsField name="analytics" testID={CreateNewWalletSelectors.analyticsCheckbox} />
+              <Divider size={formatSize(24)} />
+              <ViewAdsField name="viewAds" testID={CreateNewWalletSelectors.viewAdsCheckbox} />
             </View>
 
-            <Divider />
-
-            <View>
+            <View onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}>
               <View style={styles.checkboxContainer}>
                 <FormCheckbox name="acceptTerms" testID={CreateNewWalletSelectors.acceptTermsCheckbox}>
                   <Divider size={formatSize(8)} />
@@ -126,8 +140,17 @@ export const CreateNewWallet = () => {
           <View style={styles.fixedButtonContainer}>
             <ButtonLargePrimary
               title="Create"
-              disabled={!isValid}
-              onPress={submitForm}
+              onPress={() => {
+                setFieldTouched('password', true, true);
+                setFieldTouched('passwordConfirmation', true, true);
+                setFieldTouched('acceptTerms', true, true);
+
+                scrollToField(refScrollView, errors, fieldsPositions);
+
+                if (isValid) {
+                  submitForm();
+                }
+              }}
               testID={CreateNewWalletSelectors.createButton}
             />
             <InsetSubstitute type="bottom" />

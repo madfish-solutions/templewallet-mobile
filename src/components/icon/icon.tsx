@@ -9,7 +9,7 @@ import { iconNameMap } from './icon-name.map';
 
 export interface IconProps extends TestIdProps, SvgProps {
   name: IconNameEnum;
-  size?: number | string;
+  size?: number;
   color?: string;
   style?: StyleProp<ViewStyle>;
 }

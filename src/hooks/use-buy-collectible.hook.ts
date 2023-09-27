@@ -4,6 +4,8 @@ import { BigNumber } from 'bignumber.js';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
+
 import { Route3TokenStandardEnum } from '../enums/route3.enum';
 import {
   FxHashBuyCollectibleContractInterface,
@@ -22,7 +24,6 @@ import { getTokenSlug } from '../token/utils/token.utils';
 import { getPurchaseCurrency } from '../utils/get-pusrchase-currency.util';
 import { isDefined } from '../utils/is-defined';
 import { createTezosToolkit } from '../utils/rpc/tezos-toolkit.utils';
-import { getTransferPermissions } from '../utils/swap-permissions.util';
 import { useCollectibleOwnerCheck } from './use-check-is-user-collectible-owner.hook';
 
 const OBJKT_BUY_METHOD = 'fulfill_ask';

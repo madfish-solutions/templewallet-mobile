@@ -2,9 +2,12 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { optimalFetchEnableAds } from 'src/apis/optimal';
+import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
+import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
@@ -14,14 +17,20 @@ import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
-import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
-import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from 'src/store/wallet/wallet-selectors';
+import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
+import {
+  useSelectedAccountSelector,
+  useSelectedAccountTezosTokenSelector,
+  useSelectedAccountTkeyTokenSelector,
+  useVisibleTokensListSelector
+} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
@@ -41,7 +50,7 @@ const AD_PLACEHOLDER = 'ad';
 type FlatListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
-// padding size + icon size
+/** padding size + icon size */
 const ITEM_HEIGHT = formatSize(24) + formatSize(32);
 const keyExtractor = (item: FlatListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
@@ -59,29 +68,54 @@ export const TokensList: FC = () => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tkeyToken = useSelectedAccountTkeyTokenSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
-  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
+  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+  const partnersPromoShown = useIsPartnersPromoShown();
+
+  const { publicKeyHash } = useSelectedAccountSelector();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
     trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
   }, []);
 
+  useEffect(() => {
+    const listener = () => {
+      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
+      setPromotionErrorOccurred(false);
+    };
+
+    if (partnersPromoShown) {
+      addNavigationListener('focus', listener);
+    }
+
+    return () => {
+      removeNavigationListener('focus', listener);
+    };
+  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromoShown]);
+
+  useEffect(() => {
+    if (partnersPromoShown) {
+      dispatch(loadAdvertisingPromotionActions.submit());
+      optimalFetchEnableAds(publicKeyHash);
+    }
+  }, [partnersPromoShown]);
+
+  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,
     true,
-    tezosToken
+    leadingAssets
   );
 
   const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
 
   const renderData = useMemo(() => {
     const shouldHidePromotion =
-      (isHideZeroBalance && filteredAssetsList.length === 0) ||
-      (searchValue?.length ?? 0) > 0 ||
-      !partnersPromotionEnabled;
+      (isHideZeroBalance && filteredAssetsList.length === 0) || (searchValue?.length ?? 0) > 0 || !partnersPromoShown;
 
     const assetsListWithPromotion: FlatListItem[] = [...filteredAssetsList];
     if (!shouldHidePromotion && !promotionErrorOccurred) {
@@ -93,22 +127,10 @@ export const TokensList: FC = () => {
     filteredAssetsList,
     screenFillingItemsCount,
     isHideZeroBalance,
-    partnersPromotionEnabled,
+    partnersPromoShown,
     promotionErrorOccurred,
     searchValue
   ]);
-
-  useEffect(() => {
-    const listener = () => {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
-      setPromotionErrorOccurred(false);
-    };
-    addNavigationListener('focus', listener);
-
-    return () => {
-      removeNavigationListener('focus', listener);
-    };
-  }, [dispatch, addNavigationListener, removeNavigationListener]);
 
   const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
 
@@ -126,7 +148,7 @@ export const TokensList: FC = () => {
                 onImageError={() => setPromotionErrorOccurred(true)}
               />
             </View>
-            <View style={isAndroid ? styles.promotionItemBorderAndroid : styles.promotionItemBorderIOS} />
+            <HorizontalBorder style={styles.promotionItemBorder} />
           </View>
         );
       }
@@ -176,6 +198,8 @@ export const TokensList: FC = () => {
           />
         </Search>
       </View>
+
+      {isEnabledAdsBanner && <AcceptAdsBanner style={styles.banner} />}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlatList

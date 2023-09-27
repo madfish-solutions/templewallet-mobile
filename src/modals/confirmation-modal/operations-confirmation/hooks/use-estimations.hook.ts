@@ -11,7 +11,6 @@ import { EstimationInterface } from 'src/interfaces/estimation.interface';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { isTruthy } from 'src/utils/is-truthy';
 
 /** From @taquito/taquito */
 const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
@@ -57,9 +56,10 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
 
 const getSuggestedFeeMutez = (estimate: Estimate, opParam?: ParamsWithKind) => {
   if (
-    !isDefined(opParam) ||
+    !(opParam && opParam.kind) ||
     opParam.kind === OpKind.ACTIVATION ||
-    !isTruthy(opParam.gasLimit) ||
+    opParam.kind === OpKind.FAILING_NOOP ||
+    !isDefined(opParam.gasLimit) ||
     opParam.gasLimit <= estimate.gasLimit
   ) {
     return estimate.suggestedFeeMutez;

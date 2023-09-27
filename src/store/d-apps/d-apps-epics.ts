@@ -1,18 +1,18 @@
 import { BeaconErrorType, BeaconMessageType, getSenderId } from '@airgap/beacon-sdk';
-import { combineEpics } from 'redux-observable';
+import { Epic, combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { templeWalletApi } from '../../api.service';
-import { BeaconHandler } from '../../beacon/beacon-handler';
-import { CustomDAppsInfo } from '../../interfaces/custom-dapps-info.interface';
-import { StacksEnum } from '../../navigator/enums/stacks.enum';
-import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
-import { withUsdToTokenRates } from '../../utils/wallet.utils';
-import { RootState } from '../create-store';
-import { navigateAction } from '../root-state.actions';
+import { templeWalletApi } from 'src/api.service';
+import { BeaconHandler } from 'src/beacon/beacon-handler';
+import { CustomDAppsInfo } from 'src/interfaces/custom-dapps-info.interface';
+import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { withUsdToTokenRates } from 'src/utils/wallet.utils';
+
+import { emptyAction } from '../root-state.actions';
+import type { RootState } from '../types';
 import {
   loadTokensApyActions,
   abortRequestAction,
@@ -22,7 +22,7 @@ import {
 } from './d-apps-actions';
 import { fetchUSDTApy$, fetchKUSDApy$, fetchTzBtcApy$, fetchUBTCApr$, fetchUUSDCApr$, fetchYOUApr$ } from './utils';
 
-const loadPermissionsEpic = (action$: Observable<Action>) =>
+const loadPermissionsEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadPermissionsActions.submit),
     switchMap(() =>
@@ -33,7 +33,7 @@ const loadPermissionsEpic = (action$: Observable<Action>) =>
     )
   );
 
-const removePermissionEpic = (action$: Observable<Action>) =>
+const removePermissionEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(removePermissionAction),
     toPayload(),
@@ -68,7 +68,7 @@ const removePermissionEpic = (action$: Observable<Action>) =>
     )
   );
 
-const abortRequestEpic = (action$: Observable<Action>) =>
+const abortRequestEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(abortRequestAction),
     toPayload(),
@@ -83,7 +83,7 @@ const abortRequestEpic = (action$: Observable<Action>) =>
         map(() => {
           showSuccessToast({ description: 'Request aborted!' });
 
-          return navigateAction(StacksEnum.MainStack);
+          return emptyAction;
         }),
         catchError(err => {
           showErrorToast({ description: err.message });
@@ -94,7 +94,7 @@ const abortRequestEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadDAppsListEpic = (action$: Observable<Action>) =>
+const loadDAppsListEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
     ofType(loadDAppsListActions.submit),
     switchMap(() =>
@@ -105,7 +105,7 @@ const loadDAppsListEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokensApyEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensApyEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokensApyActions.submit),
     withUsdToTokenRates(state$),

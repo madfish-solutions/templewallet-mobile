@@ -26,7 +26,6 @@ export enum ScreensEnum {
 
   /** DApps stack **/
   DApps = 'DApps',
-  LiquidityBakingDapp = 'LiquidityBakingDapp',
 
   /** Swap stack **/
   SwapScreen = 'SwapScreen',
@@ -36,6 +35,11 @@ export enum ScreensEnum {
   Buy = 'Buy',
   BuyWithCreditCard = 'BuyWithCreditCard',
   Exolix = 'Exolix',
+
+  /** Earn stack **/
+  Earn = 'Earn',
+  Farming = 'Farming',
+  Savings = 'Savings',
 
   /** Market stack **/
   Market = 'Market',
@@ -53,7 +57,8 @@ export enum ScreensEnum {
   ManualBackup = 'ManualBackup',
   CloudBackup = 'CloudBackup',
   NotificationsSettings = 'NotificationsSettings',
-  Debug = 'Debug'
+  Debug = 'Debug',
+  Blank = 'Blank'
 }
 
 export type ScreensParamList = {
@@ -86,16 +91,16 @@ export type ScreensParamList = {
     galleryId: string | undefined;
   };
 
+  [ScreensEnum.Earn]: undefined;
+  [ScreensEnum.Farming]: undefined;
+  [ScreensEnum.Savings]: undefined;
+
   /** DApps stack **/
   [ScreensEnum.DApps]: undefined;
-  [ScreensEnum.LiquidityBakingDapp]: undefined;
 
   /** Swap stack **/
   [ScreensEnum.SwapScreen]?: { inputToken?: TokenInterface; outputToken?: TokenInterface };
   [ScreensEnum.SwapSettingsScreen]: undefined;
-
-  /** Market stack **/
-  [ScreensEnum.Market]: undefined;
 
   /** Market stack **/
   [ScreensEnum.Market]: undefined;
@@ -114,6 +119,7 @@ export type ScreensParamList = {
   [ScreensEnum.CloudBackup]: undefined;
   [ScreensEnum.NotificationsSettings]: undefined;
   [ScreensEnum.Debug]: undefined;
+  [ScreensEnum.Blank]: undefined;
 };
 
 export const walletStackScreens = [
@@ -126,11 +132,15 @@ export const walletStackScreens = [
   ScreensEnum.ScanQrCode,
   ScreensEnum.Buy,
   ScreensEnum.BuyWithCreditCard,
+  ScreensEnum.Earn,
+  ScreensEnum.Farming,
+  ScreensEnum.Savings,
   ScreensEnum.Exolix,
   ScreensEnum.Notifications,
-  ScreensEnum.NotificationsItem
+  ScreensEnum.NotificationsItem,
+  ScreensEnum.Blank
 ];
 export const nftStackScreens = [ScreensEnum.CollectiblesHome, ScreensEnum.Collection, ModalsEnum.CollectibleModal];
-export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.LiquidityBakingDapp];
+export const dAppsStackScreens = [ScreensEnum.DApps];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];

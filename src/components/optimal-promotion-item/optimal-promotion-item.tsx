@@ -1,16 +1,16 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
 import { PromotionItem } from 'src/components/promotion-item/promotion-item';
 import { EmptyFn } from 'src/config/general';
-import { useDisablePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
+import { usePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import {
   useIsPartnersPromoEnabledSelector,
   usePartnersPromoLoadingSelector,
   usePartnersPromoSelector
 } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { isEmptyPromotion } from 'src/utils/optimal.utils';
+import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
 
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
@@ -34,15 +34,17 @@ export const OptimalPromotionItem: FC<Props> = ({
   const partnersPromotion = usePartnersPromoSelector();
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
-  const disablePromotionAfterConfirmation = useDisablePromotionAfterConfirmation();
+  const { disablePromotion } = usePromotionAfterConfirmation();
 
-  if (!partnersPromotionEnabled) {
-    return null;
-  }
+  const promotionIsEmpty = useIsEmptyPromotion(partnersPromotion);
 
-  if (isEmptyPromotion(partnersPromotion)) {
-    onEmptyPromotionReceived?.();
+  useEffect(() => {
+    if (partnersPromotionEnabled && onEmptyPromotionReceived && promotionIsEmpty) {
+      onEmptyPromotionReceived();
+    }
+  }, [partnersPromotionEnabled, onEmptyPromotionReceived, promotionIsEmpty]);
 
+  if (!partnersPromotionEnabled || promotionIsEmpty) {
     return null;
   }
 
@@ -57,7 +59,7 @@ export const OptimalPromotionItem: FC<Props> = ({
         loading={partnersPromotionLoading}
         shouldShowCloseButton={shouldShowCloseButton}
         style={style}
-        onClose={disablePromotionAfterConfirmation}
+        onClose={disablePromotion}
         onImageError={onImageError}
       />
     );
@@ -72,7 +74,7 @@ export const OptimalPromotionItem: FC<Props> = ({
       shouldShowAdBage
       shouldShowCloseButton={shouldShowCloseButton}
       style={style}
-      onCloseButtonClick={disablePromotionAfterConfirmation}
+      onCloseButtonClick={disablePromotion}
       onImageError={onImageError}
     />
   );

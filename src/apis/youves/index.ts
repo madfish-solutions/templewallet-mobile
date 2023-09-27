@@ -1,63 +1,203 @@
-import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { catchError, from, map, Observable, of } from 'rxjs';
-import { contracts, AssetDefinition, createEngine, Storage, StorageKey, StorageKeyReturnType } from 'youves-sdk';
-import { mainnetTokens, mainnetNetworkConstants } from 'youves-sdk/dist/networks.mainnet';
-import { UnifiedStaking } from 'youves-sdk/dist/staking/unified-staking';
+import { catchError, firstValueFrom, forkJoin, from, map, Observable, of } from 'rxjs';
+import { contracts, AssetDefinition } from 'youves-sdk';
+import { UnifiedStakeExtendedItem } from 'youves-sdk/dist/staking/unified-staking';
 
-import { getFastRpcClient } from '../../utils/rpc/fast-rpc';
-import { INITIAL_ARP_VALUE, MAINNET_SMARTPY_RPC, YOUVES_INDEXER_URL } from './constants';
+import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
+import { AccountInterface } from 'src/interfaces/account.interface';
+import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
+import { ExchangeRateRecord } from 'src/store/currency/currency-state';
+import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
+import { toTokenSlug } from 'src/token/utils/token.utils';
+import { getLastElement } from 'src/utils/array.utils';
+import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
+import { tzktUrl } from 'src/utils/linking';
+import { fractionToPercentage } from 'src/utils/percentage.utils';
+import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
+import { mutezToTz } from 'src/utils/tezos.util';
 
-const toolkit = new TezosToolkit(getFastRpcClient(MAINNET_SMARTPY_RPC));
-const indexerConfig = { url: YOUVES_INDEXER_URL, headCheckUrl: '' };
-const MULTIPLIER = 100;
-
-class MemoryStorage implements Storage {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  public storage: Map<string, any>;
-
-  constructor() {
-    this.storage = new Map();
-  }
-  public async set<K extends StorageKey>(key: K, value: StorageKeyReturnType[K]): Promise<void> {
-    this.storage.set(key, value);
-  }
-  public async get<K extends StorageKey>(key: K): Promise<StorageKeyReturnType[K]> {
-    return this.storage.get(key);
-  }
-  public async delete<K extends StorageKey>(key: K): Promise<void> {
-    this.storage.delete(key);
-  }
-  public async clear() {
-    this.storage.clear();
-  }
-}
+import { INITIAL_APR_VALUE } from './constants';
+import { SavingsPoolStorage } from './types';
+import {
+  createEngineCache,
+  createEngineMemoized,
+  createUnifiedSavings,
+  createUnifiedSavingsCache,
+  createUnifiedStaking,
+  createUnifiedStakingCache,
+  fallbackTezosToolkit,
+  toEarnOpportunityToken
+} from './utils';
 
 export const getYOUTokenApr$ = (
   assetToUsdExchangeRate: BigNumber,
   governanceToUsdExchangeRate: BigNumber
 ): Observable<number> => {
-  const unifiedStaking = new UnifiedStaking(toolkit, indexerConfig, mainnetNetworkConstants);
+  const unifiedStaking = createUnifiedStaking();
 
   return from(unifiedStaking.getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)).pipe(
-    map(value => Number(value.multipliedBy(MULTIPLIER))),
-    catchError(() => of(INITIAL_ARP_VALUE))
+    map(value => fractionToPercentage(value).toNumber()),
+    catchError(() => {
+      createUnifiedStakingCache.deleteByArgs(undefined);
+
+      return of(INITIAL_APR_VALUE);
+    })
   );
 };
 
 export const getYouvesTokenApr$ = (token: AssetDefinition): Observable<number> => {
-  const youves = createEngine({
-    tezos: toolkit,
-    contracts: token,
-    storage: new MemoryStorage(),
-    indexerConfig,
-    tokens: mainnetTokens,
-    activeCollateral: contracts.mainnet[0].collateralOptions[0],
-    networkConstants: mainnetNetworkConstants
-  });
+  const youves = createEngineMemoized(token);
 
   return from(youves.getSavingsPoolV3YearlyInterestRate()).pipe(
-    map(value => Number(value.multipliedBy(MULTIPLIER))),
-    catchError(() => of(INITIAL_ARP_VALUE))
+    map(value => fractionToPercentage(value).toNumber()),
+    catchError(() => {
+      createEngineCache.deleteByArgs(token, undefined);
+
+      return of(INITIAL_APR_VALUE);
+    })
+  );
+};
+
+const getYOUTokenSavingItem = async (youToUsdExchangeRate: BigNumber): Promise<SavingsItem | undefined> => {
+  try {
+    const unifiedStaking = createUnifiedStaking();
+    const apr = await firstValueFrom(getYOUTokenApr$(youToUsdExchangeRate, youToUsdExchangeRate));
+    const savingsContract = await getReadOnlyContract(unifiedStaking.stakingContract, fallbackTezosToolkit);
+    const savingsStorage = await savingsContract.storage<SavingsPoolStorage>();
+    const stakedToken = toEarnOpportunityToken(unifiedStaking.stakeToken);
+    const tvlInStakedTokenAtoms = mutezToTz(
+      savingsStorage.total_stake.times(savingsStorage.disc_factor),
+      unifiedStaking.stakeToken.decimals
+    ).integerValue(BigNumber.ROUND_DOWN);
+    const tvlInStakedToken = mutezToTz(tvlInStakedTokenAtoms, unifiedStaking.stakeToken.decimals);
+    const firstActivityTime = await getFirstAccountActivityTime(unifiedStaking.stakingContract);
+
+    return {
+      id: unifiedStaking.stakeToken.id,
+      contractAddress: unifiedStaking.stakingContract,
+      apr: apr.toString(),
+      depositExchangeRate: youToUsdExchangeRate.toFixed(),
+      depositTokenUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), unifiedStaking.stakeToken.contractAddress),
+      discFactor: savingsStorage.disc_factor.toFixed(),
+      earnExchangeRate: youToUsdExchangeRate.toFixed(),
+      vestingPeriodSeconds: savingsStorage.max_release_period.toFixed(),
+      stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), unifiedStaking.stakingContract),
+      stakedToken,
+      tokens: [stakedToken],
+      rewardToken: stakedToken,
+      staked: tvlInStakedTokenAtoms.toFixed(),
+      tvlInUsd: tvlInStakedToken.times(youToUsdExchangeRate).toFixed(),
+      tvlInStakedToken: tvlInStakedToken.toFixed(),
+      type: EarnOpportunityTypeEnum.YOUVES_STAKING,
+      firstActivityTime
+    };
+  } catch (error) {
+    console.error(error);
+
+    return undefined;
+  }
+};
+
+const getSavingsItemByAssetDefinition = async (
+  assetDefinition: AssetDefinition,
+  tokenUsdExchangeRates: ExchangeRateRecord
+): Promise<SavingsItem | undefined> => {
+  try {
+    const { id, token, SAVINGS_V3_POOL_ADDRESS } = assetDefinition;
+    const { decimals: tokenDecimals, contractAddress: tokenAddress, tokenId } = token;
+    const apr = await firstValueFrom(getYouvesTokenApr$(assetDefinition));
+    const savingsContract = await getReadOnlyContract(SAVINGS_V3_POOL_ADDRESS, fallbackTezosToolkit);
+    const savingsStorage = await savingsContract.storage<SavingsPoolStorage>();
+    const tvlInStakedTokenAtoms = mutezToTz(
+      savingsStorage.total_stake.times(savingsStorage.disc_factor),
+      tokenDecimals
+    ).integerValue(BigNumber.ROUND_DOWN);
+    const tvlInStakedToken = mutezToTz(tvlInStakedTokenAtoms, tokenDecimals);
+
+    const stakedToken = toEarnOpportunityToken(token);
+    const tokenExchangeRate = tokenUsdExchangeRates[toTokenSlug(tokenAddress, tokenId)]?.toString() ?? null;
+    const firstActivityTime = await getFirstAccountActivityTime(SAVINGS_V3_POOL_ADDRESS);
+
+    return {
+      id,
+      contractAddress: SAVINGS_V3_POOL_ADDRESS,
+      apr: apr.toString(),
+      depositExchangeRate: tokenExchangeRate,
+      depositTokenUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), tokenAddress),
+      discFactor: savingsStorage.disc_factor.toFixed(),
+      earnExchangeRate: tokenExchangeRate,
+      vestingPeriodSeconds: savingsStorage.max_release_period.toFixed(),
+      stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), SAVINGS_V3_POOL_ADDRESS),
+      stakedToken,
+      tokens: [stakedToken],
+      rewardToken: stakedToken,
+      staked: tvlInStakedTokenAtoms.toFixed(),
+      tvlInUsd: isDefined(tokenExchangeRate) ? tvlInStakedToken.times(tokenExchangeRate).toFixed() : null,
+      tvlInStakedToken: tvlInStakedToken.toFixed(),
+      type: EarnOpportunityTypeEnum.YOUVES_SAVING,
+      firstActivityTime
+    };
+  } catch (error) {
+    console.error(error);
+
+    return undefined;
+  }
+};
+
+export const getYouvesSavingsItems$ = (tokenUsdExchangeRates: ExchangeRateRecord) =>
+  forkJoin([
+    getYOUTokenSavingItem(new BigNumber(tokenUsdExchangeRates[KNOWN_TOKENS_SLUGS.YOU] ?? 1)),
+    ...contracts.mainnet
+      .filter(({ SAVINGS_V3_POOL_ADDRESS, token }) => isString(SAVINGS_V3_POOL_ADDRESS) && token.id !== 'uXTZ')
+      .map(assetDefinition => getSavingsItemByAssetDefinition(assetDefinition, tokenUsdExchangeRates))
+  ]).pipe(map(items => items.filter(isDefined)));
+
+export const getUserStake = async (
+  account: AccountInterface,
+  stakingOrSavingId: string,
+  type: EarnOpportunityTypeEnum
+) => {
+  const assetDefinition = contracts.mainnet.find(({ id }) => id === stakingOrSavingId);
+  let lastStake: UnifiedStakeExtendedItem | undefined;
+
+  switch (type) {
+    case EarnOpportunityTypeEnum.YOUVES_STAKING:
+      try {
+        const unifiedStaking = createUnifiedStaking(account);
+        lastStake = getLastElement(await unifiedStaking.getOwnStakesWithExtraInfo());
+      } catch (e) {
+        createUnifiedStakingCache.deleteByArgs(account);
+
+        throw e;
+      }
+      break;
+    case EarnOpportunityTypeEnum.YOUVES_SAVING:
+      if (!isDefined(assetDefinition)) {
+        throw new Error(`Unknown saving with id ${stakingOrSavingId}`);
+      }
+
+      try {
+        const savings = createUnifiedSavings(assetDefinition, account);
+        lastStake = getLastElement(await savings.getOwnStakesWithExtraInfo());
+      } catch (e) {
+        createUnifiedSavingsCache.deleteByArgs(assetDefinition, account);
+
+        throw e;
+      }
+      break;
+    default:
+      throw new Error('Unsupported savings type');
+  }
+
+  return (
+    lastStake && {
+      lastStakeId: lastStake.id.toFixed(),
+      depositAmountAtomic: lastStake.token_amount.toFixed(),
+      claimableRewards: lastStake.rewardNow.toFixed(),
+      fullReward: lastStake.rewardTotal.toFixed(),
+      rewardsDueDate: new Date(lastStake.endTimestamp).getTime()
+    }
   );
 };

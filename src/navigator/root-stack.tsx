@@ -1,22 +1,25 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { createRef, useState } from 'react';
+import { BigNumber } from 'bignumber.js';
+import React, { createRef, useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
-import { isIOS } from 'src/config/system';
+import { isAndroid, isIOS } from 'src/config/system';
 import { useStorageMigration } from 'src/hooks/migration/useStorageMigration.hook';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
+import { useFirebaseApp } from 'src/hooks/use-firebase-app.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { usePushNotifications } from 'src/hooks/use-push-notifications';
 import { useQuickActions } from 'src/hooks/use-quick-actions.hook';
 import { useResetKeychainOnInstall } from 'src/hooks/use-reset-keychain-on-install.hook';
 import { useResetLoading } from 'src/hooks/use-reset-loading.hook';
 import { useTokensMetadataFixtures } from 'src/hooks/use-tokens-metadata-fixtures';
 import { useWhitelist } from 'src/hooks/use-whitelist.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
-import { AddLiquidityModal } from 'src/modals/add-liquidity-modal/add-liquidity-modal';
 import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
 import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal/add-contact-modal';
@@ -25,8 +28,10 @@ import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-mo
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from 'src/modals/import-account-modal/import-account-modal';
+import { InAppBrowser } from 'src/modals/in-app-browser';
+import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
+import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
-import { RemoveLiquidityModal } from 'src/modals/remove-liquidity-modal/remove-liquidity-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
@@ -38,9 +43,11 @@ import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
-import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
+import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
@@ -57,10 +64,15 @@ type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
+  const dispatch = useDispatch();
+
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
   const { isDcpNode } = useNetworkInfo();
+
+  const { balance } = useSelectedAccountTezosTokenSelector();
+  const isOnRampHasBeenShownBefore = useIsOnRampHasBeenShownBeforeSelector();
 
   useStorageMigration();
 
@@ -69,6 +81,9 @@ export const RootStackScreen = () => {
   useQuickActions();
   useResetLoading();
   useResetKeychainOnInstall();
+
+  useFirebaseApp();
+  usePushNotifications();
 
   const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
@@ -82,6 +97,13 @@ export const RootStackScreen = () => {
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+
+  const beforeRemove = useCallback(() => {
+    dispatch(shouldShowNewsletterModalAction(false));
+    if (isAndroid && !isOnRampHasBeenShownBefore && new BigNumber(balance).isEqualTo(0)) {
+      dispatch(setOnRampPossibilityAction(true));
+    }
+  }, [isOnRampHasBeenShownBefore, balance]);
 
   return (
     <NavigationContainer
@@ -115,7 +137,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
               component={SelectBakerModal}
-              options={{ ...useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`), gestureEnabled: isIOS }}
+              options={useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`, true)}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}
@@ -148,16 +170,6 @@ export const RootStackScreen = () => {
               options={{ ...useModalOptions(), gestureEnabled: isIOS }}
             />
             <RootStack.Screen
-              name={ModalsEnum.RemoveLiquidity}
-              component={RemoveLiquidityModal}
-              options={useModalOptions('Remove Liquidity')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.AddLiquidity}
-              component={AddLiquidityModal}
-              options={useModalOptions('Add Liquidity')}
-            />
-            <RootStack.Screen
               name={ModalsEnum.AddCustomRpc}
               component={AddCustomRpcModal}
               options={useModalOptions('Add RPC')}
@@ -176,6 +188,27 @@ export const RootStackScreen = () => {
               name={ModalsEnum.EditContact}
               component={EditContactModal}
               options={useModalOptions('Edit contact')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ManageFarmingPool}
+              component={ManageEarnOpportunityModal}
+              options={useModalOptions('Manage farming pool', true)}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ManageSavingsPool}
+              component={ManageEarnOpportunityModal}
+              options={useModalOptions('Manage savings pool', true)}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.Newsletter}
+              component={Newsletter}
+              options={useModalOptions('Newsletter')}
+              listeners={{ beforeRemove }}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.InAppBrowser}
+              component={InAppBrowser}
+              options={useModalOptions('In-App Browser')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

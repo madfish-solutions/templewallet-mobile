@@ -1,11 +1,12 @@
 import React, { FC } from 'react';
-import { Alert, Text, View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -14,7 +15,6 @@ import { deleteContactAction } from 'src/store/contact-book/contact-book-actions
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { getTruncatedProps } from 'src/utils/style.util';
 
 import { ContactItemAnalyticsEvents } from './analytics-events';
 import { useContactItemStyles } from './contact-item.styles';
@@ -55,7 +55,7 @@ export const ContactItem: FC<Props> = ({ contact, index }) => {
       <View style={styles.accountContainer}>
         <RobotIcon seed={contact.publicKeyHash} />
         <View style={styles.accountContainerData}>
-          <Text {...getTruncatedProps(styles.name)}>{contact.name}</Text>
+          <TruncatedText style={styles.name}>{contact.name}</TruncatedText>
           <WalletAddress isLocalDomainNameShowing publicKeyHash={contact.publicKeyHash} />
         </View>
       </View>

@@ -1,4 +1,6 @@
-/** From lodash */
-type Truthy<T> = T extends null | undefined | void | false | '' | 0 | 0n ? never : T;
+/** `NaN` is not a type, but is considered a 'falsy' too */
+type AllFalsyTypes = null | undefined | void | false | '' | 0 | 0n;
 
-export const isTruthy = <T>(value: T): value is Truthy<T> => Boolean(value);
+type IsTruthy<T> = T extends AllFalsyTypes ? never : T;
+
+export const isTruthy = <T>(value: T): value is IsTruthy<T> => Boolean(value);

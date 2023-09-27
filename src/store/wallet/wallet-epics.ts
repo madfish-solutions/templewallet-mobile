@@ -28,9 +28,9 @@ import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } fro
 import { BURN_ADDRESS } from '../../hooks/use-burn-collectible.hook';
 import { withMetadataSlugs } from '../../utils/token-metadata.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
-import { RootState } from '../create-store';
 import { navigateAction } from '../root-state.actions';
 import { loadTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
+import type { RootState } from '../types';
 import {
   addTokenAction,
   highPriorityLoadTokenBalanceAction,

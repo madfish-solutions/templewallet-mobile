@@ -8,7 +8,7 @@ import { EmptyFn, emptyFn } from '../../../../config/general';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
-import { ScreensEnum } from '../../../enums/screens.enum';
+import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
 import { useNavigation } from '../../../hooks/use-navigation.hook';
 import { useSideBarButtonStyles } from './side-bar-button.styles';
 
@@ -24,6 +24,8 @@ interface Props {
   focused: boolean;
   disabled?: boolean;
   showNotificationDot?: boolean;
+  swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
+  onSwapButtonPress?: EmptyFn;
   disabledOnPress?: EmptyFn;
 }
 
@@ -34,6 +36,8 @@ export const SideBarButton: FC<Props> = ({
   focused,
   disabled = false,
   showNotificationDot = false,
+  swapScreenParams,
+  onSwapButtonPress,
   disabledOnPress = emptyFn
 }) => {
   const colors = useColors();
@@ -52,7 +56,15 @@ export const SideBarButton: FC<Props> = ({
     if (disabled) {
       disabledOnPress();
     } else {
-      navigate(routeName);
+      if (onSwapButtonPress && !focused) {
+        onSwapButtonPress();
+      } else {
+        if (routeName === ScreensEnum.SwapScreen) {
+          navigate(routeName, swapScreenParams);
+        } else {
+          navigate(routeName);
+        }
+      }
     }
   };
 

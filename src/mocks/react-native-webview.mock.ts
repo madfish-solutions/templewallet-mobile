@@ -1,5 +1,9 @@
-export const mockReactNativeWebView = {
-  default: () => jest.fn()
-};
+export {};
 
-jest.mock('react-native-webview', () => mockReactNativeWebView);
+jest.mock('react-native-webview', () => {
+  const { View } = jest.requireActual('react-native');
+
+  return {
+    WebView: View
+  };
+});

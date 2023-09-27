@@ -14,7 +14,7 @@ import { useExolixExchangeData } from '../../../../../store/exolix/exolix-select
 import { formatSize } from '../../../../../styles/format-size';
 import { usePageAnalytic } from '../../../../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../../../../utils/is-defined';
-import { openUrl } from '../../../../../utils/linking.util';
+import { openUrl } from '../../../../../utils/linking';
 import { EXOLIX_CONTACT_LINK } from '../config';
 import { ExolixSelectors } from '../exolix.selectors';
 import { useExolixStyles } from '../exolix.styles';

@@ -1,0 +1,91 @@
+name: APK build
+
+run-name: APK build (v${{ github.event.inputs.version }} №${{ github.event.inputs.build-number }}) of ${{ github.ref_name }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version
+        default: 1.17
+        required: true
+      build-number:
+        description: Build number
+        required: true
+      build-identifier:
+        description: Build identifier
+        default: 'Custom APK'
+        required: false
+
+jobs:
+  testapp-build:
+    name: Create new Android build
+    runs-on: macos-latest
+    environment: fastlane
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+
+      - name: Repository setup
+        uses: ./.github/workflows/repository-setup
+
+      - name: Secrets setup
+        uses: ./.github/workflows/secrets-setup
+        with:
+          READ_ONLY_SIGNER_PUBLIC_KEY: ${{ vars.READ_ONLY_SIGNER_PUBLIC_KEY }}
+          READ_ONLY_SIGNER_PUBLIC_KEY_HASH: ${{ vars.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
+          JITSU_ANALYTICS_KEY: ${{ vars.JITSU_ANALYTICS_KEY }}
+          JITSU_TRACKING_HOST: ${{ vars.JITSU_TRACKING_HOST }}
+          TEMPLE_WALLET_ROUTE3_AUTH_TOKEN: ${{ vars.TEMPLE_WALLET_ROUTE3_AUTH_TOKEN }}
+          TEMPLE_WALLET_EXOLIX_API_KEY: ${{ secrets.TEMPLE_WALLET_EXOLIX_API_KEY }}
+          TEMPLE_WALLET_EVERSTAKE_API_KEY: ${{ secrets.TEMPLE_WALLET_EVERSTAKE_API_KEY }}
+          TEMPLE_WALLET_EVERSTAKE_LINK_ID: ${{ secrets.TEMPLE_WALLET_EVERSTAKE_LINK_ID }}
+          TEMPLE_WALLET_UTORG_SID: ${{ secrets.TEMPLE_WALLET_UTORG_SID }}
+          TEMPLE_WALLET_API_URL: ${{ vars.TEMPLE_WALLET_API_URL }}
+          TEMPLE_WALLET_STAKING_API_URL: ${{ vars.TEMPLE_WALLET_STAKING_API_URL }}
+          TEZOS_METADATA_API_URL: ${{ vars.TEZOS_METADATA_API_URL }}
+          TEZOS_DEXES_API_URL: ${{ vars.TEZOS_DEXES_API_URL }}
+          FIREBASE_GOOGLE_SERVICE_ANDROID: ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
+          FIREBASE_GOOGLE_SERVICE_IOS: ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }}
+          APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
+          GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
+          KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          APK_BUILD_ID: ${{ github.event.inputs.build-identifier }}
+
+      - name: Setup Java SDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Update Android version
+        uses: damienaicheh/update-android-version-gradle-action@v1.0.0
+        with:
+          build-gradle-path: android/app/build.gradle
+          version-name: ${{ github.event.inputs.version }}
+          version-code: ${{ github.event.inputs.build-number }}
+
+      - name: Build Android
+        run: yarn android:release:apk
+
+      - name: Retain Android artifact
+        uses: actions/upload-artifact@v2
+        with:
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Rename APK file
+        run: mv android/app/build/outputs/apk/release/app-release.apk android/app/build/outputs/apk/release/Temple_Wallet_v${{ github.event.inputs.version }}_${{ github.event.inputs.build-number }}.apk
+
+      - name: Upload to DO Spaces
+        uses: BetaHuhn/do-spaces-action@v2
+        with:
+          access_key: ${{ secrets.DO_ACCESS_KEY }}
+          secret_key: ${{ secrets.DO_SECRET_KEY }}
+          space_name: ${{ secrets.DO_SPACE_NAME }}
+          space_region: ${{ secrets.DO_SPACE_REGION }}
+          source: android/app/build/outputs/apk/release/Temple_Wallet_v${{ github.event.inputs.version }}_${{ github.event.inputs.build-number }}.apk
+          out_dir: apk-releases
+          versioning: true

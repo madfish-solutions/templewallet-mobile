@@ -1,5 +1,5 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, PropsWithChildren, useEffect, useRef } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import { Animated, StyleProp, View, ViewStyle } from 'react-native';
 
 import { EventFn } from 'src/config/general';
@@ -12,12 +12,13 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
 export interface SegmentedControlProps<T> extends TestIdProps {
+  disabledIndexes?: number[];
   selectedIndex: number;
   values: T[];
   width?: number;
   onChange: EventFn<number>;
-  disabledIndexes?: number[];
   style?: StyleProp<ViewStyle>;
+  optionAnalyticsPropertiesFn?: (value: T, index: number) => object | undefined;
 }
 
 interface Props<T> extends SegmentedControlProps<T> {
@@ -26,21 +27,23 @@ interface Props<T> extends SegmentedControlProps<T> {
 
 export type SegmentedControlValueComponent<T> = FC<{
   item: T;
+  isDisabled: boolean;
   isSelected: boolean;
-  index: number;
-  disabledIndexes?: number[];
 }>;
 
+const defaultOptionAnalyticsPropertiesFn = (_: unknown, index: number) => ({ index });
+
 export const SegmentedControl = <T extends unknown>({
+  disabledIndexes,
   selectedIndex,
   values,
   renderValue,
   width,
-  onChange,
-  disabledIndexes,
   style,
   testID,
-  testIDProperties
+  testIDProperties,
+  optionAnalyticsPropertiesFn = defaultOptionAnalyticsPropertiesFn,
+  onChange
 }: PropsWithChildren<Props<T>>) => {
   const { trackEvent } = useAnalytics();
   const styles = useSegmentedControlStyles();
@@ -48,43 +51,65 @@ export const SegmentedControl = <T extends unknown>({
   const tileWidth = ((width ?? layoutWidth) - 2 * tileMargin) / (values.length || 1);
   const translateX = useRef(new Animated.Value(selectedIndex * tileWidth)).current;
 
-  useEffect(
-    () =>
+  useEffect(() => {
+    if (tileWidth > 0) {
       Animated.spring(translateX, {
         toValue: selectedIndex * tileWidth,
         stiffness: 150,
         damping: 20,
         mass: 1,
         useNativeDriver: true
-      }).start(),
-    [selectedIndex, tileWidth]
+      }).start();
+    }
+  }, [selectedIndex, tileWidth]);
+
+  const renderOption = useCallback(
+    (item: T, index: number) => {
+      const isDisabled = disabledIndexes?.includes(index) ?? false;
+
+      return (
+        <TouchableOpacity
+          disabled={isDisabled}
+          key={index}
+          style={[styles.itemContainer, { width: tileWidth }]}
+          hitSlop={{
+            ...(index === 0 && { left: formatSize(12) }),
+            top: formatSize(12),
+            ...(index === values.length - 1 && { right: formatSize(12) }),
+            bottom: formatSize(8)
+          }}
+          onPress={() => {
+            trackEvent(testID, AnalyticsEventCategory.FormChange, {
+              ...testIDProperties,
+              ...optionAnalyticsPropertiesFn(item, index)
+            });
+            onChange(index);
+          }}
+        >
+          {renderValue({ item, isDisabled, isSelected: index === selectedIndex })}
+        </TouchableOpacity>
+      );
+    },
+    [
+      disabledIndexes,
+      styles,
+      tileWidth,
+      trackEvent,
+      testID,
+      testIDProperties,
+      onChange,
+      renderValue,
+      selectedIndex,
+      values,
+      optionAnalyticsPropertiesFn
+    ]
   );
 
   return (
     <View style={[styles.container, { width }, style]} onLayout={handleLayout}>
       <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }] }]} />
 
-      <View style={styles.contentContainer}>
-        {values.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            hitSlop={{
-              ...(index === 0 && { left: formatSize(12) }),
-              top: formatSize(12),
-              ...(index === values.length - 1 && { right: formatSize(12) }),
-              bottom: formatSize(8)
-            }}
-            onPress={() => {
-              trackEvent(testID, AnalyticsEventCategory.FormChange, { ...testIDProperties, index });
-              onChange(index);
-            }}
-            disabled={disabledIndexes?.includes(index) ?? false}
-            style={[styles.itemContainer, { width: tileWidth }]}
-          >
-            {renderValue({ item, isSelected: index === selectedIndex, disabledIndexes, index })}
-          </TouchableOpacity>
-        ))}
-      </View>
+      <View style={styles.contentContainer}>{values.map(renderOption)}</View>
     </View>
   );
 };

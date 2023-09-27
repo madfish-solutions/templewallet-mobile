@@ -38,7 +38,7 @@ import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { CheckboxIcon } from '../../components/checkbox-icon/checkbox-icon';
 import { useCollectiblesWithFullData } from '../../hooks/use-collectibles-with-full-data.hook';

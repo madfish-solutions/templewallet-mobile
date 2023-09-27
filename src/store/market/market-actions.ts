@@ -4,10 +4,10 @@ import { MarketTokensSortFieldEnum } from '../../enums/market-tokens-sort-field.
 import { createActions } from '../create-actions';
 import { MarketToken } from './market.interfaces';
 
-export const loadMarketTopTokenActions = createActions<void, Array<MarketToken>, string>('market/MARKET_TOP_TOKENS');
+export const loadMarketTokensActions = createActions<void, Array<MarketToken>, string>('market/MARKET_TOKENS');
 
 export const loadMarketTokensSlugsActions = createActions<void, Record<string, string>, string>(
-  'market/MARKET_TOP_TOKENS_SLUGS'
+  'market/MARKET_TOKENS_SLUGS'
 );
 
 export const selectSortValue = createAction<MarketTokensSortFieldEnum>('market/SELECT_SORT_VALUE');

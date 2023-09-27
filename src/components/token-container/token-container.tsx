@@ -1,17 +1,17 @@
 import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
 import { formatSize } from 'src/styles/format-size';
-import { getTruncatedProps } from 'src/utils/style.util';
 
-import { INITIAL_ARP_VALUE } from '../../apis/youves/constants';
 import { DelegateTag } from '../delegate-tag/delegate-tag';
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
+import { TruncatedText } from '../truncated-text';
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
-export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_ARP_VALUE, children }) => {
+export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_APR_VALUE, children }) => {
   const styles = useTokenContainerStyles();
 
   return (
@@ -21,10 +21,10 @@ export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_A
         <Divider size={formatSize(8)} />
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
-            <Text {...getTruncatedProps(styles.symbolText)}>{token.symbol}</Text>
+            <TruncatedText style={styles.symbolText}>{token.symbol}</TruncatedText>
             <DelegateTag token={token} apy={apy} />
           </View>
-          <Text {...getTruncatedProps(styles.nameText)}>{token.name}</Text>
+          <TruncatedText style={styles.nameText}>{token.name}</TruncatedText>
         </View>
         <Divider size={formatSize(8)} />
       </View>

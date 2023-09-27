@@ -22,13 +22,10 @@ import { AudioPlayer } from './components/audio-player/audio-player';
 import { Balance } from './components/balance/balance';
 import { BrokenImage } from './components/broken-image/broken-image';
 import { ImageBlurOverlay } from './components/image-blur-overlay/image-blur-overlay';
-import { COLLECTIBLE_FINAL_FALLBACK } from './constants';
+import { COLLECTIBLE_FINAL_FALLBACK, CollectibleIconSize } from './constants';
 import { useCollectibleImageControl } from './hooks/use-collectible-image-control.hook';
 
-export enum CollectibleIconSize {
-  SMALL = 'small',
-  BIG = 'big'
-}
+export { CollectibleIconSize };
 
 export interface CollectibleIconProps {
   collectible: TokenInterface & Pick<CollectibleCommonInterface, 'isAdultContent' | 'mime'>;

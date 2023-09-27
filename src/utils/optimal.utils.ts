@@ -1,3 +1,8 @@
+import { isEqual } from 'lodash-es';
+import { useMemo } from 'react';
+
+import { mockPartnersPromotion } from 'src/store/partners-promotion/partners-promotion-state.mock';
+
 import { optimalApi } from '../api.service';
 
 export enum OptimalPromotionAdType {
@@ -28,8 +33,13 @@ type NormalPromotion = {
 
 export type OptimalPromotionType = EmptyPromotion | NormalPromotion;
 
-export function isEmptyPromotion(promotion: OptimalPromotionType): promotion is EmptyPromotion {
-  return !('link' in promotion && 'image' in promotion && 'copy' in promotion);
+export function useIsEmptyPromotion(promotion: OptimalPromotionType): promotion is EmptyPromotion {
+  return useMemo(
+    () =>
+      !('link' in promotion && 'image' in promotion && 'copy' in promotion) ||
+      isEqual(mockPartnersPromotion, promotion),
+    [promotion]
+  );
 }
 
 function assertIsObject(likelyAnObject: unknown): void {

@@ -39,6 +39,14 @@ export const useHideZeroBalancesSelector = () => useSelector(({ settings }) => s
 
 export const useIsShowLoaderSelector = () => useSelector(({ settings }) => settings.isShowLoader);
 
+export const useIsEnabledAdsBannerSelector = () => useSelector(({ settings }) => settings.isEnableAdsBanner);
+
+export const useIsApkBuildLaunchEventFiredSelector = () =>
+  useSelector(({ settings }) => settings.isApkBuildLaunchEventFired);
+
+export const useIsPushNotificationsEnabledEventFiredSelector = () =>
+  useSelector(({ settings }) => settings.isPushNotificationsEnabledEventFired);
+
 export const useIsBackupMadeSelector = () => {
   const isManualBackupMade = useSelector(({ settings }) => settings.isManualBackupMade);
   const isCloudBackupMade = useSelector(({ settings }) => settings.isCloudBackupMade);
@@ -52,3 +60,8 @@ export const useIsAnyBackupMadeSelector = () =>
 export const useIsOnRampPossibilitySelector = () => useSelector(({ settings }) => settings.isOnRampPossibility);
 
 export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings }) => settings.isShowCollectibleInfo);
+
+export const useIsOnRampHasBeenShownBeforeSelector = () =>
+  useSelector(({ settings }) => settings.isOnRampHasBeenShownBefore);
+
+export const useIsSwapDisclaimerShowingSelector = () => useSelector(({ settings }) => settings.isSwapDisclaimerShowing);

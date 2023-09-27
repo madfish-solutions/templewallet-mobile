@@ -3,19 +3,19 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import type { RootState } from 'src/store/types';
+
 import { AccountStateInterface, emptyAccountState } from '../interfaces/account-state.interface';
 import { AccountInterface, emptyAccount } from '../interfaces/account.interface';
 import { Shelter } from '../shelter/shelter';
-import { CurrencyRootState, ExchangeRateRecord } from '../store/currency/currency-state';
-import { SettingsRootState } from '../store/settings/settings-state';
+import { ExchangeRateRecord } from '../store/currency/currency-state';
 import { useTokenMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
-import { WalletRootState } from '../store/wallet/wallet-state';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { emptyToken } from '../token/interfaces/token.interface';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const withSelectedAccount =
-  <T>(state$: Observable<WalletRootState>) =>
+  <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { wallet }): [T, AccountInterface] => {
@@ -28,7 +28,7 @@ export const withSelectedAccount =
     );
 
 export const withSelectedAccountState =
-  <T>(state$: Observable<WalletRootState>) =>
+  <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { wallet }): [T, AccountStateInterface] => {
@@ -40,12 +40,12 @@ export const withSelectedAccountState =
     );
 
 export const withSelectedRpcUrl =
-  <T>(state$: Observable<SettingsRootState>) =>
+  <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(withLatestFrom(state$, (value, { settings }): [T, string] => [value, settings.selectedRpcUrl]));
 
 export const withUsdToTokenRates =
-  <T>(state$: Observable<CurrencyRootState>) =>
+  <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { currency }): [T, ExchangeRateRecord] => [value, currency.usdToTokenRates.data])

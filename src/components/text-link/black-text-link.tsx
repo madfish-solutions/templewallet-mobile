@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Text } from 'react-native';
 
-import { openUrl } from '../../utils/linking.util';
+import { openUrl } from '../../utils/linking';
 import { useTextLinkStyles } from './text-link.styles';
 
 interface Props {

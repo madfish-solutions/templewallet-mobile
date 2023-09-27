@@ -15,10 +15,10 @@ type ButtonColorConfig = {
   borderColor?: string;
 };
 
-export type ButtonStyleConfig = {
+export interface ButtonStyleConfig {
   containerStyle: ButtonContainerStyle;
   titleStyle?: ButtonTitleStyle;
   iconStyle?: ButtonIconStyle;
   activeColorConfig: ButtonColorConfig;
   disabledColorConfig?: ButtonColorConfig;
-};
+}

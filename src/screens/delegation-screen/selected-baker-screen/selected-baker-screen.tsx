@@ -15,7 +15,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
-import { tzktUrl } from 'src/utils/linking.util';
+import { tzktUrl } from 'src/utils/linking';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
 
@@ -50,7 +50,9 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
             )}
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
-              <Text style={styles.nameText}>{bakerName}</Text>
+              <Text style={styles.nameText} numberOfLines={1}>
+                {bakerName}
+              </Text>
               <Divider size={formatSize(2)} />
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText style={styles.accountPkh} publicKeyHash={baker.address} />

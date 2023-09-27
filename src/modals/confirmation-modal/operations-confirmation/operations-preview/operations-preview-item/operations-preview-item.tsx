@@ -1,19 +1,20 @@
 import React, { FC, Fragment, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import { AssetValueText } from '../../../../../components/asset-value-text/asset-value-text';
-import { Divider } from '../../../../../components/divider/divider';
-import { PublicKeyHashText } from '../../../../../components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from '../../../../../components/robot-icon/robot-icon';
-import { ParamPreviewTypeEnum } from '../../../../../enums/param-preview-type.enum';
-import { useTokenMetadataGetter } from '../../../../../hooks/use-token-metadata-getter.hook';
-import { Asset, ParamPreviewInterface } from '../../../../../interfaces/param-preview.interface';
-import { formatSize } from '../../../../../styles/format-size';
-import { TokenMetadataInterface } from '../../../../../token/interfaces/token-metadata.interface';
-import { getTokenSlug } from '../../../../../token/utils/token.utils';
-import { isDefined } from '../../../../../utils/is-defined';
-import { getTruncatedProps } from '../../../../../utils/style.util';
-import { isCollectible } from '../../../../../utils/tezos.util';
+import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { Divider } from 'src/components/divider/divider';
+import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
+import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { TruncatedText } from 'src/components/truncated-text';
+import { ParamPreviewTypeEnum } from 'src/enums/param-preview-type.enum';
+import { useTokenMetadataGetter } from 'src/hooks/use-token-metadata-getter.hook';
+import { Asset, ParamPreviewInterface } from 'src/interfaces/param-preview.interface';
+import { formatSize } from 'src/styles/format-size';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isCollectible } from 'src/utils/tezos.util';
+
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
 
 interface Props {
@@ -106,7 +107,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
               <View style={styles.infoContainer}>
                 <RobotIcon seed={iconSeed} size={formatSize(32)} />
                 <Divider size={formatSize(10)} />
-                <Text {...getTruncatedProps(styles.description)}>{description}</Text>
+                <TruncatedText style={styles.description}>{description}</TruncatedText>
               </View>
               {isDefined(hash) && (
                 <View style={styles.hashContainer}>

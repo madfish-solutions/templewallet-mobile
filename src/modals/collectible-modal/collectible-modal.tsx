@@ -6,43 +6,44 @@ import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
-import { SUPPORTED_CONTRACTS } from '../../apis/objkt/constants';
-import { ActivityIndicator } from '../../components/activity-indicator/activity-indicator';
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { CollectibleIcon, CollectibleIconSize } from '../../components/collectible-icon/collectible-icon';
-import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { LinkWithIcon } from '../../components/link-with-icon/link-with-icon';
-import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { TouchableWithAnalytics } from '../../components/touchable-with-analytics';
-import { ONE_MINUTE } from '../../config/fixed-times';
-import { useBurnCollectible } from '../../hooks/use-burn-collectible.hook';
-import { useBuyCollectible } from '../../hooks/use-buy-collectible.hook';
-import { useCollectibleOwnerCheck } from '../../hooks/use-check-is-user-collectible-owner.hook';
-import { useCurrentCollectibleFullData } from '../../hooks/use-current-collectible-full-data.hook';
-import { useFetchCollectibleAttributes } from '../../hooks/use-fetch-collectible-attributes.hook';
-import { useInterval } from '../../hooks/use-interval.hook';
-import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { loadCollectiblesDetailsActions } from '../../store/collectibles/collectibles-actions';
-import { useCollectibleDetailsLoadingSelector } from '../../store/collectibles/collectibles-selectors';
-import { formatSize } from '../../styles/format-size';
-import { showErrorToast } from '../../toast/error-toast.utils';
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { usePageAnalytic, useAnalytics } from '../../utils/analytics/use-analytics.hook';
-import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { conditionalStyle } from '../../utils/conditional-style';
-import { formatNumber } from '../../utils/format-price';
-import { fromTokenSlug } from '../../utils/from-token-slug';
-import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
-import { ImageResolutionEnum, formatImgUri } from '../../utils/image.utils';
-import { isDefined } from '../../utils/is-defined';
-import { isString } from '../../utils/is-string';
-import { openUrl } from '../../utils/linking.util';
-import { objktCollectionUrl } from '../../utils/objkt-collection-url.util';
-import { getTruncatedProps } from '../../utils/style.util';
+import { SUPPORTED_CONTRACTS } from 'src/apis/objkt/constants';
+import { ActivityIndicator } from 'src/components/activity-indicator/activity-indicator';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { CollectibleIcon, CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { LinkWithIcon } from 'src/components/link-with-icon/link-with-icon';
+import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { TruncatedText } from 'src/components/truncated-text';
+import { ONE_MINUTE } from 'src/config/fixed-times';
+import { useBurnCollectible } from 'src/hooks/use-burn-collectible.hook';
+import { useBuyCollectible } from 'src/hooks/use-buy-collectible.hook';
+import { useCollectibleOwnerCheck } from 'src/hooks/use-check-is-user-collectible-owner.hook';
+import { useCurrentCollectibleFullData } from 'src/hooks/use-current-collectible-full-data.hook';
+import { useFetchCollectibleAttributes } from 'src/hooks/use-fetch-collectible-attributes.hook';
+import { useInterval } from 'src/hooks/use-interval.hook';
+import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
+import { useCollectibleDetailsLoadingSelector } from 'src/store/collectibles/collectibles-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/error-toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { formatNumber } from 'src/utils/format-price';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
+import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
+import { ImageResolutionEnum, formatImgUri } from 'src/utils/image.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
+import { openUrl } from 'src/utils/linking';
+import { objktCollectionUrl } from 'src/utils/objkt-collection-url.util';
+
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
@@ -257,9 +258,7 @@ export const CollectibleModal = memo(() => {
               <View style={[styles.collectionLogo, styles.logoFallBack]} />
             )}
 
-            <Text numberOfLines={1} {...getTruncatedProps(styles.collectionName)}>
-              {collectionName}
-            </Text>
+            <TruncatedText style={styles.collectionName}>{collectionName}</TruncatedText>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.shareButton} onPress={handleShare}>

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { Text } from 'react-native';
 
+import { TruncatedText } from 'src/components/truncated-text';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { useHeaderTitleStyles } from './header-title.styles';
@@ -13,9 +13,5 @@ interface Props {
 export const HeaderTitle: FC<Props> = ({ title, isWhite = false }) => {
   const styles = useHeaderTitleStyles();
 
-  return (
-    <Text style={[styles.title, conditionalStyle(isWhite, styles.whiteColor)]} numberOfLines={1}>
-      {title}
-    </Text>
-  );
+  return <TruncatedText style={[styles.title, conditionalStyle(isWhite, styles.whiteColor)]}>{title}</TruncatedText>;
 };
