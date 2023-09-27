@@ -9,7 +9,3 @@ export interface CollectiblesState {
 export const collectiblesInitialState: CollectiblesState = {
   details: createEntity({})
 };
-
-export interface CollectiblesRootState {
-  collectibles: CollectiblesState;
-}

@@ -9,10 +9,6 @@ export interface Collection {
   galleryId?: string;
 }
 
-export interface CollectionsRootState {
-  collections: CollectionState;
-}
-
 export interface CollectionState {
   created: Record<string, Collection[]>;
 }
