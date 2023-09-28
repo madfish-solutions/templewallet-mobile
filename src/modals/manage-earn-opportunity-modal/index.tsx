@@ -126,7 +126,19 @@ export const ManageEarnOpportunityModal: FC = () => {
 
   usePageAnalytic(route.name, undefined, route.params);
 
-  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
+  const isKordFi = earnOpportunityItem?.type === EarnOpportunityTypeEnum.KORD_FI_SAVING ?? false;
+  const amountToWithdraw = isDefined(stake) && isDefined(stake.fullReward) && +stake.fullReward > 0;
+  const disabledTabSwitcherIndices = useMemo(() => {
+    if (isDefined(stake)) {
+      if (isKordFi && amountToWithdraw) {
+        return [];
+      } else if (!isKordFi && isDefined(stake.lastStakeId)) {
+        return [];
+      }
+    }
+
+    return [1];
+  }, [isKordFi, amountToWithdraw, stake]);
 
   return (
     <>
