@@ -21,7 +21,7 @@ const kordFiApi = axios.create({
   baseURL: 'https://back-llb-beta.kord.fi'
 });
 
-const TEZOS_CONTRACT_ADDRESS = 'KT19qWdPBRtkWrsQnDvVfsqJgJB19keBhhMX';
+export const KORDFI_TEZOS_CONTRACT_ADDRESS = 'KT19qWdPBRtkWrsQnDvVfsqJgJB19keBhhMX';
 const TZBTC_CONTRACT_ADDRESS = 'KT1WL6sHt8syFT2ts7NCmb5gPcS2tyfRxSyi';
 const TEZOS_TOKEN: EarnOpportunityToken = toEarnOpportunityToken(
   TEZ_TOKEN_METADATA,
@@ -83,7 +83,7 @@ export const getKordFiUserDeposits$ = (address: string): Observable<{ [key: stri
       };
 
       return {
-        [TEZOS_CONTRACT_ADDRESS]: tezosStake,
+        [KORDFI_TEZOS_CONTRACT_ADDRESS]: tezosStake,
         [TZBTC_CONTRACT_ADDRESS]: tzbtcStake
       };
     }),
@@ -102,14 +102,14 @@ export const getKordFiItems$ = (rates: ExchangeRateRecord): Observable<Array<Sav
 
       const tezosInfo: SavingsItem = {
         id: '0',
-        contractAddress: TEZOS_CONTRACT_ADDRESS,
+        contractAddress: KORDFI_TEZOS_CONTRACT_ADDRESS,
         apr: kordFiStats.xtzApr?.toString(),
         depositExchangeRate: tezExchangeRate?.toFixed(),
         depositTokenUrl: '',
         discFactor: '0',
         earnExchangeRate: tezExchangeRate?.toFixed(),
         vestingPeriodSeconds: '0',
-        stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), TEZOS_CONTRACT_ADDRESS),
+        stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), KORDFI_TEZOS_CONTRACT_ADDRESS),
         stakedToken: TEZOS_TOKEN,
         tokens: [TEZOS_TOKEN],
         rewardToken: TEZOS_TOKEN,

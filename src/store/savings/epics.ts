@@ -1,6 +1,6 @@
 import { debounce } from 'lodash-es';
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -18,13 +18,14 @@ import {
   loadAllStakesActions,
   loadSingleSavingStakeActions
 } from './actions';
+import { loadSingleSavingStake$ } from './utils';
 
 const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
     withSelectedAccount(state$),
     switchMap(([{ payload: savingsItem }, selectedAccount]) =>
-      from(getUserStake(selectedAccount, savingsItem.id, savingsItem.type)).pipe(
+      loadSingleSavingStake$(savingsItem, selectedAccount).pipe(
         map(stake => loadSingleSavingStakeActions.success({ stake, contractAddress: savingsItem.contractAddress })),
         catchError(err => {
           showErrorToastByError(err, undefined, true);

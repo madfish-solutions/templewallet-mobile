@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { Route3Token } from 'src/interfaces/route3.interface';
+import { isString } from 'src/utils/is-string';
 
 export const getTransferPermissions = async (
   tezos: TezosToolkit,
@@ -16,7 +17,7 @@ export const getTransferPermissions = async (
     revoke: []
   };
 
-  if (tokenToSpend.contract === null) {
+  if (tokenToSpend.contract === null || !isString(tokenToSpend.contract)) {
     return permissions;
   }
 
