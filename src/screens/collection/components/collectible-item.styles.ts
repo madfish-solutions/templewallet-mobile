@@ -118,5 +118,17 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
   },
   listButtonActiveText: {
     color: colors.white
+  },
+  nameBlock: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  shareButtonText: {
+    ...typography.tagline13Tag,
+    color: colors.peach
   }
 }));

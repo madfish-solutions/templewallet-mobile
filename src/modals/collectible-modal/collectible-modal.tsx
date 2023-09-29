@@ -63,7 +63,7 @@ enum SegmentControlNamesEnum {
 
 const SEGMENT_VALUES = [SegmentControlNamesEnum.Attributes, SegmentControlNamesEnum.Properties];
 
-const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
+export const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = memo(() => {
   const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;

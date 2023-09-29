@@ -1,9 +1,20 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, memo, useMemo } from 'react';
-import { TouchableOpacity, View, Text } from 'react-native';
+import React, { FC, memo, useCallback, useMemo } from 'react';
+import { TouchableOpacity, View, Text, Share } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SHARE_NFT_CONTENT } from 'src/modals/collectible-modal/collectible-modal';
+import { CollectibleModalSelectors } from 'src/modals/collectible-modal/collectible-modal.selectors';
+import { showErrorToast } from 'src/toast/error-toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
+import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
+import { formatImgUri, ImageResolutionEnum } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -29,6 +40,8 @@ interface Props {
 export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, selectedRpc, selectedPublicKeyHash }) => {
   const styles = useCollectibleItemStyles();
   const { navigate } = useNavigation();
+
+  const { trackEvent } = useAnalytics();
 
   const lastPrice = useMemo(() => {
     if (isDefined(item.lastPrice) && isDefined(item.lastPrice.price)) {
@@ -73,6 +86,38 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
     return 'Not listed';
   }, [purchaseCurrency.price]);
 
+  const handleShare = useCallback(async () => {
+    // Max link length: 7168 symbols, so we need to reduce the amount of data we send
+    const urlEncodedData = encodeURIComponent(JSON.stringify(`${item.address}_${item.id}`));
+
+    if (urlEncodedData.length > 7168) {
+      return void showErrorToast({ title: 'Cannot share', description: 'Data isa too large' });
+    }
+
+    try {
+      const dynamicLink = await getTempleDynamicLink(`/nft?jsonData=${urlEncodedData}`, {
+        title: item.name,
+        descriptionText: item.description,
+        imageUrl: isDefined(item.thumbnailUri) ? formatImgUri(item.thumbnailUri, ImageResolutionEnum.MEDIUM) : undefined
+      });
+
+      await Share.share({
+        message: SHARE_NFT_CONTENT + dynamicLink
+      });
+
+      await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);
+    } catch (e: any) {
+      showErrorToast({
+        description: e.message,
+        isCopyButtonVisible: true,
+        onPress: () => copyStringToClipboard(e.message)
+      });
+      await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, {
+        errorMessage: e.message
+      });
+    }
+  }, [item, trackEvent]);
+
   const navigateToCollectibleModal = () => navigate(ModalsEnum.CollectibleModal, { slug: getTokenSlug(item) });
 
   return (
@@ -88,9 +133,16 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
             <CollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(295)} />
           </TouchableOpacity>
 
-          <Text style={styles.collectibleName} numberOfLines={1}>
-            {item.name}
-          </Text>
+          <View style={styles.nameBlock}>
+            <Text style={styles.collectibleName} numberOfLines={1}>
+              {item.name}
+            </Text>
+            <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+              <Icon name={IconNameEnum.Share} />
+              <Divider size={formatSize(4)} />
+              <Text style={styles.shareButtonText}>Share</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.collectibleDescription} numberOfLines={3}>
             {item.description}
           </Text>
