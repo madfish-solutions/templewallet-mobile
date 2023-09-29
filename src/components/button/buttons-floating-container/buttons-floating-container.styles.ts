@@ -8,7 +8,7 @@ export const useButtonsFloatingContainerStyles = createUseStyles(({ colors }) =>
     borderColor: colors.lines,
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),
-    paddingHorizontal: formatSize(8),
-    backgroundColor: colors.pageBG
+    paddingHorizontal: formatSize(16),
+    backgroundColor: colors.navigation
   }
 }));

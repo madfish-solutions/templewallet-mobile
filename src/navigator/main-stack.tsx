@@ -1,6 +1,8 @@
 import { PortalProvider } from '@gorhom/portal';
+import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect } from 'react';
+import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
@@ -91,6 +93,7 @@ const MainStack = createStackNavigator<ScreensParamList>();
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
+  const { goBack } = useNavigation();
   const isAuthorised = useIsAuthorisedSelector();
   const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -139,6 +142,19 @@ export const MainStackScreen = () => {
   const shouldShowUnauthorizedScreens = !isAuthorised;
   const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
   const shouldShowBlankScreen = isAuthorised && isLocked;
+
+  const handlePreviewBackButton = () =>
+    Alert.alert(
+      'Art will be saved in History',
+      'You can always continue creating NFT of generated art. Find your variations in History',
+      [
+        {
+          text: 'Ok',
+          onPress: goBack,
+          style: 'default'
+        }
+      ]
+    );
 
   return (
     <PortalProvider>
@@ -299,7 +315,12 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Preview}
                 component={PreviewScreen}
                 options={{
-                  ...generateScreenOptions(<HeaderTitle title="Preview" />, <HeaderProgress current={2} total={3} />)
+                  ...generateScreenOptions(
+                    <HeaderTitle title="Preview" />,
+                    <HeaderProgress current={2} total={3} />,
+                    true,
+                    handlePreviewBackButton
+                  )
                 }}
               />
 

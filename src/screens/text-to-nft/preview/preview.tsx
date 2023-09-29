@@ -40,38 +40,40 @@ export const PreviewScreen: FC = () => {
   };
 
   return (
-    <View style={styles.root}>
-      {isDefined(order.variants) && (
-        <>
-          <CollectibleImage
-            uri={order.variants[activeIndex]}
-            size={mainCollectibleSize}
-            iconSizeType={CollectibleIconSize.BIG}
-            style={[styles.borderRadius, styles.marginBottom]}
-          />
+    <>
+      <View style={styles.root}>
+        {isDefined(order.variants) && (
+          <>
+            <CollectibleImage
+              uri={order.variants[activeIndex]}
+              size={mainCollectibleSize}
+              iconSizeType={CollectibleIconSize.BIG}
+              style={[styles.borderRadius, styles.marginBottom]}
+            />
 
-          <View style={styles.row}>
-            {order.variants.map((uri, index) => (
-              <TouchableOpacity
-                key={uri + index}
-                onPress={() => setActiveIndex(index)}
-                style={styles.imageContainer}
-                testID={CreateNftSelectors.otherVariant}
-              >
-                <CollectibleImage
-                  uri={uri}
-                  size={collectibleSize}
-                  style={[styles.image, styles.borderRadius, conditionalStyle(index === activeIndex, styles.active)]}
-                />
+            <View style={styles.row}>
+              {order.variants.map((uri, index) => (
+                <TouchableOpacity
+                  key={uri + index}
+                  onPress={() => setActiveIndex(index)}
+                  style={styles.imageContainer}
+                  testID={CreateNftSelectors.otherVariant}
+                >
+                  <CollectibleImage
+                    uri={uri}
+                    size={collectibleSize}
+                    style={[styles.image, styles.borderRadius, conditionalStyle(index === activeIndex, styles.active)]}
+                  />
 
-                <Text style={[styles.text, conditionalStyle(index === activeIndex, styles.activeText)]}>{`Variant ${
-                  index + 1
-                }`}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </>
-      )}
+                  <Text style={[styles.text, conditionalStyle(index === activeIndex, styles.activeText)]}>{`Variant ${
+                    index + 1
+                  }`}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
+      </View>
 
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
@@ -82,6 +84,6 @@ export const PreviewScreen: FC = () => {
           testID={CreateNftSelectors.submitButtonCreateNft}
         />
       </ButtonsFloatingContainer>
-    </View>
+    </>
   );
 };

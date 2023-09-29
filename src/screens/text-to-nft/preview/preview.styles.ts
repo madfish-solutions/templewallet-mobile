@@ -30,6 +30,7 @@ export const usePreviewStyles = createUseStyles(({ colors, typography }) => ({
   },
   text: {
     marginTop: formatSize(4),
+    color: colors.black,
     ...typography.caption13Regular
   },
   activeText: {

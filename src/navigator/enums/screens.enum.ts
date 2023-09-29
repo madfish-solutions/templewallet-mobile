@@ -140,6 +140,6 @@ export const walletStackScreens = [
   ScreensEnum.Blank
 ];
 export const nftStackScreens = [ScreensEnum.CollectiblesHome];
-export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.GenerateArt];
+export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.GenerateArt, ScreensEnum.Preview];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];
