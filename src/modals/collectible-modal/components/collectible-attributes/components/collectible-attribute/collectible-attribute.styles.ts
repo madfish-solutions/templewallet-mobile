@@ -21,6 +21,7 @@ export const useCollectibleAttributeStyles = createUseStyles(({ typography, colo
   },
   value: {
     marginBottom: formatSize(4),
+    alignItems: 'center',
     ...typography.body15Semibold,
     color: colors.black
   },
