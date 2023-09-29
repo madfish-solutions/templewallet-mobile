@@ -250,6 +250,7 @@ export const CollectiblesHome = () => {
 
 const CollectionLogo: FC<CollectionProps> = ({ item }) => {
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
 
   const { navigate } = useNavigation();
 
@@ -264,22 +265,30 @@ const CollectionLogo: FC<CollectionProps> = ({ item }) => {
   const styles = useCollectiblesHomeStyles();
 
   return (
-    <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
-      {item.logo && !isError ? (
-        <FastImage
-          source={{ uri: formatImgUri(item.logo) }}
-          style={styles.collection}
-          onError={() => setIsError(true)}
-        />
+    <>
+      {isLoading ? (
+        <ActivityIndicator />
       ) : (
-        <View style={[styles.collection, styles.brokenImage]}>
-          <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
-        </View>
-      )}
+        <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
+          {item.logo && !isError ? (
+            <FastImage
+              source={{ uri: formatImgUri(item.logo) }}
+              style={styles.collection}
+              onError={() => setIsError(true)}
+              onLoadStart={() => setIsloading(true)}
+              onLoadEnd={() => setIsloading(false)}
+            />
+          ) : (
+            <View style={[styles.collection, styles.brokenImage]}>
+              <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
+            </View>
+          )}
 
-      <Text numberOfLines={1} style={styles.collectionName}>
-        {item.name}
-      </Text>
-    </TouchableOpacity>
+          <Text numberOfLines={1} style={styles.collectionName}>
+            {item.name}
+          </Text>
+        </TouchableOpacity>
+      )}
+    </>
   );
 };

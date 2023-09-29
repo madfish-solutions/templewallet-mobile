@@ -11,6 +11,8 @@ export const formatNumber = (number: number) => {
       compactDisplay: 'short',
       maximumSignificantDigits: 3
     }).format(number);
+  } else if (number < 0.01) {
+    return '< 0.01';
   }
 
   return number.toFixed(2);
