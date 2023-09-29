@@ -31,6 +31,11 @@ import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectib
 import { useCollectibleDetailsLoadingSelector } from 'src/store/collectibles/collectibles-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
+import {
+  CollectibleCommonInterface,
+  CollectibleInterface
+} from 'src/token/interfaces/collectible-interfaces.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
@@ -81,9 +86,9 @@ export const CollectibleModal = memo(() => {
 
   const { collectible } = useCurrentCollectibleFullData(slug, isUserOwnerCurrentCollectible);
 
-  const burnCollectible = useBurnCollectible(collectible);
-  const { attributes, isLoading } = useFetchCollectibleAttributes(collectible);
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectible);
+  const burnCollectible = useBurnCollectible(collectible as unknown as CollectibleInterface);
+  const { attributes, isLoading } = useFetchCollectibleAttributes(collectible as unknown as CollectibleInterface);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectible as unknown as CollectibleInterface);
 
   const isLoadingDetails = useCollectibleDetailsLoadingSelector();
 
@@ -240,7 +245,9 @@ export const CollectibleModal = memo(() => {
 
       <View>
         <CollectibleIcon
-          collectible={collectible}
+          collectible={
+            collectible as unknown as TokenInterface & Pick<CollectibleCommonInterface, 'isAdultContent' | 'mime'>
+          }
           size={iconSize}
           iconSize={CollectibleIconSize.BIG}
           isTouchableBlurOverlay

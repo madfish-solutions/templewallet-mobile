@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import BottomSheet from '@gorhom/bottom-sheet';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -53,6 +53,10 @@ import { CollectiblesList } from './collectibles-list/collectibles-list';
 interface SocialLinksInterface {
   url: string | undefined;
   icon: IconNameEnum;
+}
+
+interface CollectionProps {
+  item: Collection;
 }
 
 const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
@@ -140,29 +144,7 @@ export const CollectiblesHome = () => {
   );
 
   const renderItemCollections: ListRenderItem<Collection> = ({ item }) => {
-    const handleCollectionPress = () =>
-      navigate(ScreensEnum.Collection, {
-        collectionContract: item.contract,
-        collectionName: item.name,
-        type: item.type,
-        galleryId: item.galleryId
-      });
-
-    return (
-      <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
-        {item.logo ? (
-          <FastImage source={{ uri: formatImgUri(item.logo) }} style={styles.collection} />
-        ) : (
-          <View style={[styles.collection, styles.brokenImage]}>
-            <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
-          </View>
-        )}
-
-        <Text numberOfLines={1} style={styles.collectionName}>
-          {item.name}
-        </Text>
-      </TouchableOpacity>
-    );
+    return <CollectionLogo item={item} />;
   };
 
   return (
@@ -263,5 +245,41 @@ export const CollectiblesHome = () => {
         )}
       </BottomSheet>
     </>
+  );
+};
+
+const CollectionLogo: FC<CollectionProps> = ({ item }) => {
+  const [isError, setIsError] = useState(false);
+
+  const { navigate } = useNavigation();
+
+  const handleCollectionPress = () =>
+    navigate(ScreensEnum.Collection, {
+      collectionContract: item.contract,
+      collectionName: item.name,
+      type: item.type,
+      galleryId: item.galleryId
+    });
+
+  const styles = useCollectiblesHomeStyles();
+
+  return (
+    <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
+      {item.logo && !isError ? (
+        <FastImage
+          source={{ uri: formatImgUri(item.logo) }}
+          style={styles.collection}
+          onError={() => setIsError(true)}
+        />
+      ) : (
+        <View style={[styles.collection, styles.brokenImage]}>
+          <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
+        </View>
+      )}
+
+      <Text numberOfLines={1} style={styles.collectionName}>
+        {item.name}
+      </Text>
+    </TouchableOpacity>
   );
 };

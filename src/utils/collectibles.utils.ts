@@ -134,7 +134,7 @@ export const loadAllCollectiblesDetails$ = (
             'galleries'
           ),
           address: collectible.fa_contract,
-          id: +collectible.token_id,
+          id: collectible.token_id,
           artifactUri: collectible.artifact_uri,
           thumbnailUri: collectible.thumbnail_uri,
           displayUri: collectible.display_uri,
