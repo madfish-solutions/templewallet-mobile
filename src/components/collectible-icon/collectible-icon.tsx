@@ -6,7 +6,11 @@ import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
-import { formatCollectibleObjktArtifactUri, isImgUriDataUri } from 'src/utils/image.utils';
+import {
+  formatCollectibleObjktArtifactUri,
+  formatCollectibleObjktDisplayUri,
+  isImgUriDataUri
+} from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { EventFn } from '../../config/general';
@@ -107,7 +111,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
           );
         }
 
-        if (mime === NonStaticMimeTypes.MODEL || mime === NonStaticMimeTypes.INTERACTIVE) {
+        if (mime === NonStaticMimeTypes.MODEL) {
           return (
             <SimpleModelView
               uri={formatCollectibleObjktArtifactUri(artifactUri)}
@@ -118,6 +122,17 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
               setScrollEnabled={setScrollEnabled}
             />
           );
+        }
+
+        if (mime === NonStaticMimeTypes.INTERACTIVE) {
+          <SimpleModelView
+            uri={formatCollectibleObjktDisplayUri(displayUri ?? artifactUri)}
+            isBinary={false}
+            style={styles.image}
+            onError={handleAnimatedError}
+            onLoadEnd={handleLoadEnd}
+            setScrollEnabled={setScrollEnabled}
+          />;
         }
 
         if (mime === NonStaticMimeTypes.VIDEO) {

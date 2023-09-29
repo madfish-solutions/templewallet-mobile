@@ -85,3 +85,14 @@ export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
 
   return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact`;
 };
+
+export const formatCollectibleObjktDisplayUri = (displayUri: string) => {
+  if (displayUri.startsWith('data:image')) {
+    return displayUri;
+  }
+
+  const url = new URL(displayUri);
+  const urlPath = `${url.protocol}${url.hostname}`;
+
+  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/display`;
+};
