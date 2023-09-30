@@ -81,7 +81,11 @@ export const ManageEarnOpportunityModal: FC = () => {
     earnOpportunityItem,
     stake
   );
-  const { errors: withdrawFormErrors, submitForm: submitWithdrawForm } = withdrawFormik;
+  const {
+    errors: withdrawFormErrors,
+    submitForm: submitWithdrawForm,
+    getFieldMeta: getWithdrawFieldMeta
+  } = withdrawFormik;
 
   useEffect(() => {
     if (!isDefined(earnOpportunityItem) || prevBlockLevelRef.current !== blockLevel) {
@@ -121,8 +125,12 @@ export const ManageEarnOpportunityModal: FC = () => {
         noop
       );
     }
+
     submitStakeForm();
   }, [submitStakeForm, stakeFormErrors]);
+
+  const stakedTokenData = getStakeFieldMeta('assetAmount');
+  const withdrawTokenData = getWithdrawFieldMeta('tokenOption');
 
   usePageAnalytic(route.name, undefined, route.params);
 
@@ -187,6 +195,12 @@ export const ManageEarnOpportunityModal: FC = () => {
             disabled={pageIsLoading || !earnOpportunityIsSupported || stakeFormErrorsVisible || stakeFormSubmitting}
             onPress={handleDepositClick}
             testID={ManageEarnOpportunityModalSelectors.depositButton}
+            testIDProperties={{
+              ...(stakeFormSubmitting && {
+                name: stakedTokenData.value.asset.symbol,
+                value: +stakedTokenData.value.amount
+              })
+            }}
           />
         ) : (
           <ButtonLargePrimary
@@ -199,6 +213,12 @@ export const ManageEarnOpportunityModal: FC = () => {
             }
             onPress={submitWithdrawForm}
             testID={ManageEarnOpportunityModalSelectors.withdrawButton}
+            testIDProperties={{
+              ...(withdrawFormSubmitting && {
+                name: withdrawTokenData.value.asset.symbol,
+                value: +withdrawTokenData.value.amount
+              })
+            }}
           />
         )}
       </ModalButtonsContainer>
