@@ -10,7 +10,7 @@ import { isDefined } from '../utils/is-defined';
 import { isCollectible, mutezToTz } from '../utils/tezos.util';
 import { useTokenMetadataGetterNew } from './use-token-metadata-getter.hook';
 
-const calculateFiatAmount = (
+export const calculateFiatAmount = (
   parsedAmount: BigNumber,
   exchangeRate: number | undefined,
   fiatToUsdRate: number | undefined
