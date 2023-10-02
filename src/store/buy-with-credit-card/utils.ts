@@ -121,7 +121,6 @@ export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => (
 
 export const mapAliceBobProviderCurrencies = ({ pairsInfo }: AliceBobPairsInfoResponse) => ({
   fiat: pairsInfo.map(pair => {
-    console.log(pair);
     const [minAmountString, code] = pair.minamount.split(' ');
     const minAmount = Number(minAmountString);
     const maxAmount = Number(pair.maxamount.split(' ')[0]);
