@@ -199,8 +199,8 @@ export const ManageEarnOpportunityModal: FC = () => {
             testID={ManageEarnOpportunityModalSelectors.depositButton}
             testIDProperties={{
               ...(!stakeFormErrorsPresent && {
-                name: stakedTokenData.value.asset.symbol,
-                value: +stakedTokenData.value.amount
+                name: stakedTokenData.value.asset?.symbol,
+                value: stakedTokenData.value.amount?.toNumber()
               })
             }}
           />
@@ -214,8 +214,8 @@ export const ManageEarnOpportunityModal: FC = () => {
             testID={ManageEarnOpportunityModalSelectors.withdrawButton}
             testIDProperties={{
               ...(!withdrawFormErrorsPresent && {
-                name: withdrawTokenData.value.token.symbol,
-                value: +(withdrawTokenData.value.amount ?? 0)
+                name: withdrawTokenData.value.token?.symbol,
+                value: withdrawTokenData.value.amount?.toNumber()
               })
             }}
           />
