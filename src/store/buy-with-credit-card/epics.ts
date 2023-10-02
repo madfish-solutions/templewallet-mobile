@@ -29,7 +29,6 @@ const getCurrencies$ = <T>(
     catchError(err => {
       const errorMessage = getAxiosQueryErrorMessage(err);
       if (shouldShowErrorToast) {
-        console.log(errorMessage, 'err');
         showErrorToast({ description: errorMessage });
       }
 
