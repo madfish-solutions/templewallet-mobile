@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { BiometryType } from 'react-native-biometrics';
+import type { BiometryType } from 'react-native-biometrics';
 
 interface BiometricAvailabilityContextValues {
   isHardwareAvailable: boolean;

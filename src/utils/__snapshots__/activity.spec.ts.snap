@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`groupActivitiesByHash should push operations and transfers with the same hash into one group and not mutate activities 1`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "amount": "1",
-      "destination": Object {
+      "destination": {
         "address": "address3",
         "alias": "alias3",
       },
       "entrypoint": "",
       "hash": "hash2",
       "id": 1,
-      "source": Object {
+      "source": {
         "address": "address2",
         "alias": "alias2",
       },
@@ -21,16 +21,16 @@ Array [
       "type": "transaction",
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "amount": "0",
-      "destination": Object {
+      "destination": {
         "address": "address3",
         "alias": "alias3",
       },
       "hash": "hash3",
       "id": 2,
-      "source": Object {
+      "source": {
         "address": "address2",
         "alias": "alias2",
       },
@@ -39,18 +39,18 @@ Array [
       "type": "delegation",
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "address": "address1",
       "amount": "0",
-      "destination": Object {
+      "destination": {
         "address": "address1",
         "alias": "alias1",
       },
       "entrypoint": "transfer",
       "hash": "hash1",
       "id": 0,
-      "source": Object {
+      "source": {
         "address": "address2",
         "alias": "alias2",
       },
@@ -63,18 +63,18 @@ Array [
 `;
 
 exports[`groupActivitiesByHash should sort operations and transfers by timestamp in descending order 1`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "amount": "1",
-      "destination": Object {
+      "destination": {
         "address": "address3",
         "alias": "alias3",
       },
       "entrypoint": "",
       "hash": "hash2",
       "id": 1,
-      "source": Object {
+      "source": {
         "address": "address2",
         "alias": "alias2",
       },
@@ -83,16 +83,16 @@ Array [
       "type": "transaction",
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "amount": "0",
-      "destination": Object {
+      "destination": {
         "address": "address3",
         "alias": "alias3",
       },
       "hash": "hash3",
       "id": 2,
-      "source": Object {
+      "source": {
         "address": "address2",
         "alias": "alias2",
       },
@@ -101,18 +101,18 @@ Array [
       "type": "delegation",
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "address": "address1",
       "amount": "0",
-      "destination": Object {
+      "destination": {
         "address": "address1",
         "alias": "alias1",
       },
       "entrypoint": "transfer",
       "hash": "hash1",
       "id": 0,
-      "source": Object {
+      "source": {
         "address": "address2",
         "alias": "alias2",
       },
