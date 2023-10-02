@@ -20,7 +20,7 @@ interface AliceBobFiatCurrency {
   precision: number;
 }
 
-export const getCurrencyNameByCode = (code: string) => {
+const getCurrencyNameByCode = (code: string) => {
   const customCurrencyNames: Record<string, string> = {
     UAH: 'Ukrainian Hryvnia',
     KZT: 'Kazakhstani Tenge'
@@ -35,7 +35,7 @@ export const getCurrencyNameByCode = (code: string) => {
   return isDefined(currencyInfo) ? currencyInfo.currency : '???';
 };
 
-export const knownAliceBobFiatCurrencies: Record<string, AliceBobFiatCurrency> = {
+const knownAliceBobFiatCurrencies: Record<string, AliceBobFiatCurrency> = {
   UAH: {
     name: getCurrencyNameByCode('UAH'),
     code: 'UAH',
