@@ -12,7 +12,7 @@ import {
 } from '../store/market/market-selectors';
 import { MarketToken } from '../store/market/market.interfaces';
 import { isString } from '../utils/is-string';
-import { sortMarketTokens } from '../utils/market.util';
+import { sortMarketTokens } from '../utils/market.utils';
 
 export const useFilteredMarketTokens = () => {
   const dispatch = useDispatch();
