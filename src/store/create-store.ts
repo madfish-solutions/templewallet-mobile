@@ -32,7 +32,7 @@ export const createStore = (...epics: Epic[]) => {
           warnAfter: 300
         },
         immutableCheck: {
-          warnAfter: 300
+          warnAfter: 600
         }
       }).concat(middlewares);
     }
