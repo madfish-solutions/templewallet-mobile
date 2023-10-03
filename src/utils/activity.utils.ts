@@ -61,9 +61,9 @@ export const getQuipuswapSubtitle = (subtype: ActivitySubtype) => {
     case ActivitySubtype.QuipuswapRemoveLiquidityStableswap:
       return 'Divest from stableswap';
     case ActivitySubtype.QuipuswapInvestInDividents:
-      return 'Invest in dividents';
+      return 'Invest in dividends';
     case ActivitySubtype.QuipuswapDivestFromDividents:
-      return 'Divest from dividents';
+      return 'Divest from dividends';
     case ActivitySubtype.QuipuswapInvestInFarm:
       return 'Invest in farm';
     case ActivitySubtype.QuipuswapDivestFromFarm:
@@ -71,7 +71,7 @@ export const getQuipuswapSubtitle = (subtype: ActivitySubtype) => {
     case ActivitySubtype.QuipuswapHarvestFromFarm:
       return 'Harvest from farm';
     case ActivitySubtype.QuipuswapHarvestFromDividents:
-      return 'Harvest from dividents';
+      return 'Harvest from dividends';
 
     default:
       return '-';
