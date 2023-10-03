@@ -1,38 +1,54 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback } from 'react';
+import { useEffect } from 'react';
 
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { useTimeout } from 'src/utils/hooks';
 import { calculateStringSizeInBytes } from 'src/utils/string.utils';
 
 export const useStorageAnalytics = () => {
   const { trackEvent } = useAnalytics();
 
-  const measureAndSend = useCallback(
+  useEffect(
     () =>
-      getAsyncStorageUsageDetails().then(asyncStorage =>
-        trackEvent('STORAGES_STATE', AnalyticsEventCategory.General, { asyncStorage })
+      void getAsyncStorageUsageDetails().then(details =>
+        trackEvent('STORAGES_STATE', AnalyticsEventCategory.General, { asyncStorage: details })
       ),
     [trackEvent]
   );
-
-  // Delaying to not throttle initial app load
-  useTimeout(measureAndSend, 10000);
 };
 
 const getAsyncStorageUsageDetails = async () => {
   const keys = await AsyncStorage.getAllKeys();
-  const values = await AsyncStorage.multiGet(keys);
+
+  const records = await Promise.all(
+    keys.map(key =>
+      AsyncStorage.getItem(key).then(
+        val => [key, val] as const,
+        error => {
+          console.error(error);
+
+          return [key, Symbol()] as const;
+        }
+      )
+    )
+  );
 
   const sizesByKey: Record<string, number> = {};
+  const oversizeForKeys: string[] = [];
   let totalValuesSize = 0;
 
-  for (const [key, value] of values) {
+  for (const [key, value] of records) {
+    if (typeof value === 'symbol') {
+      oversizeForKeys.push(key);
+      continue;
+    }
+
     const size = value ? calculateStringSizeInBytes(value) : 0;
     totalValuesSize += size;
     sizesByKey[key] = size;
   }
 
-  return { totalValuesSize, sizesByKey };
+  const result = { totalValuesSize, sizesByKey, oversizeForKeys };
+
+  return oversizeForKeys.length ? { ...result, oversizeForKeys } : result;
 };
