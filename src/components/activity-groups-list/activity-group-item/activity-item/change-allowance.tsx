@@ -57,11 +57,11 @@ const ApproveFace: FC<{ address: string; symbol: string }> = memo(({ address, sy
     <View style={[commonStyles.row, commonStyles.itemsCenter]}>
       <View style={styles.flex}>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationTitle}>Approve</Text>
-          <Text style={styles.oprationTitle}>{symbol}</Text>
+          <Text style={styles.operationTitle}>Approve</Text>
+          <Text style={styles.operationTitle}>{symbol}</Text>
         </View>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationSubtitle}>To: {truncateLongAddress(address)}</Text>
+          <Text style={styles.operationSubtitle}>To: {truncateLongAddress(address)}</Text>
         </View>
       </View>
     </View>
@@ -75,11 +75,11 @@ const RevokeFace: FC<{ address: string; symbol: string }> = memo(({ address, sym
     <View style={[commonStyles.row, commonStyles.itemsCenter]}>
       <View style={styles.flex}>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationTitle}>Revoke</Text>
-          <Text style={styles.oprationTitle}>{symbol}</Text>
+          <Text style={styles.operationTitle}>Revoke</Text>
+          <Text style={styles.operationTitle}>{symbol}</Text>
         </View>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationSubtitle}>From: {truncateLongAddress(address)}</Text>
+          <Text style={styles.operationSubtitle}>From: {truncateLongAddress(address)}</Text>
         </View>
       </View>
     </View>

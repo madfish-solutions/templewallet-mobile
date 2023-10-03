@@ -48,11 +48,11 @@ const Face: FC<{ address: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ 
       <Divider size={formatSize(10)} />
       <View style={styles.flex}>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationTitle}>Send</Text>
+          <Text style={styles.operationTitle}>Send</Text>
           <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} />
         </View>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationSubtitle}>To: {truncateLongAddress(address)}</Text>
+          <Text style={styles.operationSubtitle}>To: {truncateLongAddress(address)}</Text>
           <ActivityGroupDollarAmountChange dollarValue={calculateDollarValue(nonZeroAmounts)} />
         </View>
       </View>

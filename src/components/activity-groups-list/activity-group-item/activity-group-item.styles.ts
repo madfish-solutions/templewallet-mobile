@@ -9,11 +9,11 @@ export const useActivityGroupItemStyles = createUseStyles(({ colors, typography 
   flex: {
     flex: 1
   },
-  oprationTitle: {
+  operationTitle: {
     ...typography.numbersRegular15,
     color: colors.black
   },
-  oprationSubtitle: {
+  operationSubtitle: {
     ...typography.numbersRegular11,
     color: colors.gray1
   },

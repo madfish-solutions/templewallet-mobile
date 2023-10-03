@@ -29,6 +29,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
         <Text
           style={[
             styles.amountWeight,
+            styles.black,
             conditionalStyle(textSize === TextSize.Small, styles.amountText13),
             conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
           ]}

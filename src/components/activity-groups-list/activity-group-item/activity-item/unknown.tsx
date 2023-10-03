@@ -46,11 +46,11 @@ const Face: FC<{ nonZeroAmounts: Array<ActivityAmount> }> = ({ nonZeroAmounts })
     <View style={[commonStyles.row, commonStyles.itemsCenter]}>
       <View style={styles.flex}>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationTitle}>Interaction</Text>
+          <Text style={styles.operationTitle}>Interaction</Text>
           <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} />
         </View>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationSubtitle}>-</Text>
+          <Text style={styles.operationSubtitle}>-</Text>
           <ActivityGroupDollarAmountChange dollarValue={calculateDollarValue(nonZeroAmounts)} />
         </View>
       </View>
