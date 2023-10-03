@@ -38,6 +38,8 @@ import { useUpdateCurrentProvider } from './hooks/use-update-current-provider.ho
 import { BuyWithCreditCardSelectors } from './selectors';
 import { useBuyWithCreditCardStyles } from './styles';
 
+const FORM_REFRESH_INTERVAL = 20000;
+
 const newTopUpAssetAmountFn = (
   _: TopUpAssetAmountInterface,
   newAsset: TopUpInputInterface,
@@ -132,7 +134,7 @@ export const BuyWithCreditCard: FC = () => {
     isLoading
   );
 
-  useInterval(refreshForm, 10000, [refreshForm], false);
+  useInterval(refreshForm, FORM_REFRESH_INTERVAL, [refreshForm], false);
 
   const someErrorOccured = Object.keys(errors).length > 0;
   const submitDisabled = (submitCount !== 0 && !isValid) || isLoading || someErrorOccured;
