@@ -107,7 +107,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
             ]}
           >
             {isPositiveAmount ? '+' : '-'}
-            {shortizeSymbol(symbol)} and {negativeAmounts.length - 1} others
+            {shortizeSymbol(symbol)} and {source.length - 1} others
           </Text>
         );
     }
