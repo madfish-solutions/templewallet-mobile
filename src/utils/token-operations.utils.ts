@@ -2,6 +2,7 @@ import { Activity, TzktMemberInterface, TzktOperation, parseOperations } from '@
 import { LiquidityBakingMintOrBurnInterface } from '@temple-wallet/transactions-parser/dist/types/liquidity-baking';
 import { Fa12TransferInterface, Fa2TransferInterface } from '@temple-wallet/transactions-parser/dist/types/transfers';
 import { isEmpty, uniq } from 'lodash-es';
+import { stringify } from 'qs';
 
 import { getTzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
@@ -42,6 +43,7 @@ const getTokenFa2Operations = (
 ) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<Fa2TransferInterface>>('operations/transactions', {
+      paramsSerializer: stringify,
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -56,6 +58,7 @@ const getTokenFa2Operations = (
 const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastId?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<Fa12TransferInterface>>('operations/transactions', {
+      paramsSerializer: stringify,
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
