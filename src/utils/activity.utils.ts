@@ -67,7 +67,7 @@ export const getQuipuswapSubtitle = (subtype: ActivitySubtype) => {
     case ActivitySubtype.QuipuswapInvestInFarm:
       return 'Invest in farm';
     case ActivitySubtype.QuipuswapDivestFromFarm:
-      return 'Divest in farm';
+      return 'Divest from farm';
     case ActivitySubtype.QuipuswapHarvestFromFarm:
       return 'Harvest from farm';
     case ActivitySubtype.QuipuswapHarvestFromDividents:
