@@ -12,10 +12,15 @@ export const jitsu = jitsuClient({
   fetch
 });
 
+interface UserAnalyticsId {
+  userId?: string;
+  ABTestingCategory?: string;
+}
+
 export const sendAnalyticsEvent = (
   event: string,
   category: AnalyticsEventCategory = AnalyticsEventCategory.General,
-  userId?: string,
+  { userId, ABTestingCategory }: UserAnalyticsId = {},
   additionalProperties: AnalyticsEventProperties = {}
 ) =>
   jitsu.track(category, {
@@ -25,6 +30,7 @@ export const sendAnalyticsEvent = (
     properties: {
       event,
       category,
+      ABTestingCategory,
       ...additionalProperties
     }
   });
