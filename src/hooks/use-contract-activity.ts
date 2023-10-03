@@ -10,7 +10,7 @@ import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { loadActivity } from '../utils/token-operations.util';
+import { loadActivity } from '../utils/token-operations.utils';
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const dispatch = useDispatch();
