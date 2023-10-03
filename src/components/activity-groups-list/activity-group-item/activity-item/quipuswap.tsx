@@ -8,6 +8,7 @@ import { ExternalLinkButton } from 'src/components/icon/external-link-button/ext
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
+import { useRobotIconStyles } from 'src/components/robot-icon/robot-icon.styles';
 import { ActivityAmount } from 'src/interfaces/non-zero-amounts.interface';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -42,12 +43,16 @@ export const Quipuswap: FC<{ activity: QuipuswapActivity; nonZeroAmounts: Array<
 
 const Face: FC<{ subtype: ActivitySubtype; nonZeroAmounts: Array<ActivityAmount> }> = ({ subtype, nonZeroAmounts }) => {
   const styles = useActivityGroupItemStyles();
+  const iconStyles = useRobotIconStyles();
   const commonStyles = useActivityCommonStyles();
+
   const subtitle = getQuipuswapSubtitle(subtype);
 
   return (
     <>
-      <Icon name={IconNameEnum.QuipuswapActivity} size={formatSize(36)} />
+      <View style={iconStyles.root}>
+        <Icon name={IconNameEnum.QuipuswapActivity} size={formatSize(36)} />
+      </View>
       <Divider size={formatSize(10)} />
       <View style={styles.flex}>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
