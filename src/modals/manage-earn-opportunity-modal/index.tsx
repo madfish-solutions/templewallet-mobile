@@ -76,6 +76,7 @@ export const ManageEarnOpportunityModal: FC = () => {
     isSubmitting: stakeFormSubmitting,
     getFieldMeta: getStakeFieldMeta
   } = stakeFormik;
+  const stakeFormErrorsPresent = Object.keys(stakeFormErrors).length > 0;
   const stakeFormErrorsVisible = stakeFormFields.some(fieldName => hasError(getStakeFieldMeta(fieldName)));
   const { formik: withdrawFormik, isSubmitting: withdrawFormSubmitting } = useWithdrawFormik(
     earnOpportunityItem,
@@ -86,6 +87,7 @@ export const ManageEarnOpportunityModal: FC = () => {
     submitForm: submitWithdrawForm,
     getFieldMeta: getWithdrawFieldMeta
   } = withdrawFormik;
+  const withdrawFormErrorsPresent = Object.keys(withdrawFormErrors).length > 0;
 
   useEffect(() => {
     if (!isDefined(earnOpportunityItem) || prevBlockLevelRef.current !== blockLevel) {
@@ -196,9 +198,9 @@ export const ManageEarnOpportunityModal: FC = () => {
             onPress={handleDepositClick}
             testID={ManageEarnOpportunityModalSelectors.depositButton}
             testIDProperties={{
-              ...(stakeFormSubmitting && {
-                name: stakedTokenData.value.asset.symbol,
-                value: +stakedTokenData.value.amount
+              ...(!stakeFormErrorsPresent && {
+                name: stakedTokenData.value.asset?.symbol,
+                value: stakedTokenData.value.amount?.toNumber()
               })
             }}
           />
@@ -206,17 +208,14 @@ export const ManageEarnOpportunityModal: FC = () => {
           <ButtonLargePrimary
             title="Withdraw & Claim rewards"
             disabled={
-              pageIsLoading ||
-              !earnOpportunityIsSupported ||
-              Object.keys(withdrawFormErrors).length > 0 ||
-              withdrawFormSubmitting
+              pageIsLoading || !earnOpportunityIsSupported || withdrawFormErrorsPresent || withdrawFormSubmitting
             }
             onPress={submitWithdrawForm}
             testID={ManageEarnOpportunityModalSelectors.withdrawButton}
             testIDProperties={{
-              ...(withdrawFormSubmitting && {
-                name: withdrawTokenData.value.asset.symbol,
-                value: +withdrawTokenData.value.amount
+              ...(!withdrawFormErrorsPresent && {
+                name: withdrawTokenData.value.token?.symbol,
+                value: withdrawTokenData.value.amount?.toNumber()
               })
             }}
           />
