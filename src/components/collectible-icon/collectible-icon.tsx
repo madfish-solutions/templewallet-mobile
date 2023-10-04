@@ -5,7 +5,12 @@ import FastImage from 'react-native-fast-image';
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
+import { EventFn } from 'src/config/general';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
+import { useCollectibleDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { isAdultCollectible } from 'src/utils/collectibles.utils';
 import {
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktDisplayUri,
@@ -13,12 +18,6 @@ import {
 } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { EventFn } from '../../config/general';
-import { useCollectibleDetailsSelector } from '../../store/collectibles/collectibles-selectors';
-import { CollectibleCommonInterface } from '../../token/interfaces/collectible-interfaces.interface';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { isAdultCollectible } from '../../utils/collectibles.utils';
 import { ActivityIndicator } from '../activity-indicator/activity-indicator';
 import { AudioPlaceholderTheme } from '../audio-placeholder/audio-placeholder';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
@@ -32,7 +31,8 @@ import { useCollectibleImageControl } from './hooks/use-collectible-image-contro
 export { CollectibleIconSize };
 
 export interface CollectibleIconProps {
-  collectible: TokenInterface & Pick<CollectibleCommonInterface, 'isAdultContent' | 'mime'>;
+  collectible: TokenInterface;
+  mime: string;
   size: number;
   iconSize?: CollectibleIconSize;
   audioPlaceholderTheme?: AudioPlaceholderTheme;
@@ -46,6 +46,7 @@ export interface CollectibleIconProps {
 export const CollectibleIcon: FC<CollectibleIconProps> = memo(
   ({
     collectible,
+    mime,
     size,
     iconSize = CollectibleIconSize.SMALL,
     audioPlaceholderTheme,
@@ -70,7 +71,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
 
     const isBigIcon = iconSize === CollectibleIconSize.BIG;
 
-    const { artifactUri, mime, displayUri } = collectible;
+    const { artifactUri, displayUri } = collectible;
 
     const {
       currentFallback,

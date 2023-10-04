@@ -48,6 +48,7 @@ export const CollectiblesList: FC<Props> = ({ collectibles, isShowInfo }) => {
           <TouchableCollectibleIcon
             key={getTokenSlug(collectible)}
             collectible={collectible}
+            mime={collectible.mime}
             isShowInfo={isShowInfo}
             audioPlaceholderTheme={AudioPlaceholderTheme.small}
             size={itemSize}

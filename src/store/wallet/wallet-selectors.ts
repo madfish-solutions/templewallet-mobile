@@ -4,7 +4,7 @@ import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { TEMPLE_TOKEN } from 'src/token/data/tokens-metadata';
-import { TokenInterface, emptyToken } from 'src/token/interfaces/token.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isDcpNode } from 'src/utils/network.utils';
@@ -46,6 +46,7 @@ export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getS
 
 export const useAssetsListSelector = (): TokenInterface[] =>
   useSelector(state => {
+    console.log('This better not be called every time Redux state changes');
     const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
     const isTezosNode = !isDcpNode(state.settings.selectedRpcUrl);
 
@@ -111,10 +112,7 @@ export const useCollectiblesListSelector = () => {
 export const useCollectibleSelector = (slug: string) => {
   const collectibles = useCollectiblesListSelector();
 
-  return useMemo(
-    () => collectibles.find(collectible => getTokenSlug(collectible) === slug) ?? emptyToken,
-    [collectibles]
-  );
+  return useMemo(() => collectibles.find(collectible => getTokenSlug(collectible) === slug), [slug, collectibles]);
 };
 
 // ts-prune-ignore-next-line

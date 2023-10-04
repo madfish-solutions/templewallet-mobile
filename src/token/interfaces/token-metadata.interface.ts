@@ -21,6 +21,7 @@ export interface TokenMetadataInterface {
   exchangeRate?: number;
 }
 
+/** @deprecated // BAD PRACTICE !!! */
 export const emptyTokenMetadata: TokenMetadataInterface = {
   id: 0,
   address: '',

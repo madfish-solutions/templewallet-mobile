@@ -11,10 +11,7 @@ import {
 } from 'src/apis/objkt/index';
 import { CollectibleAttributes, CollectibleDetailsResponse, CollectibleTag } from 'src/apis/objkt/types';
 import { AttributeInfo } from 'src/interfaces/attribute.interface';
-import {
-  CollectibleDetailsInterface,
-  CollectibleInterface
-} from 'src/token/interfaces/collectible-interfaces.interface';
+import { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
 const attributesInfoInitialState: AttributeInfo[] = [
@@ -27,7 +24,7 @@ const attributesInfoInitialState: AttributeInfo[] = [
 
 export const getAttributesWithRarity = (
   attributesInfo: AttributeInfo[],
-  collectible: CollectibleInterface
+  collectible: CollectibleDetailsInterface
 ): CollectibleAttributes[] => {
   const isExistGallery = isNonEmptyArray(collectible.galleries);
   const collectibleGalleryCount = isExistGallery

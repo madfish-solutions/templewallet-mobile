@@ -1,9 +1,7 @@
-import { CollectibleInterface } from 'src/token/interfaces/collectible-interfaces.interface';
-
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 
 export interface SendAssetActionPayloadInterface {
-  asset: TokenMetadataInterface | CollectibleInterface;
+  asset: TokenMetadataInterface;
   receiverPublicKeyHash: string;
   amount: number;
 }

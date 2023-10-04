@@ -95,4 +95,5 @@ export interface CollectibleInterface
   extends Omit<CollectibleDetailsInterface, 'address' | 'id' | 'name'>,
     Omit<TokenInterface, 'displayUri'> {}
 
+/** @deprecated // What is this creature ?!) */
 export interface CollectibleOfferInteface extends TokenInterface, CollectibleCommonInterface, OfferInteface {}

@@ -2,19 +2,19 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { isDefined } from 'src/utils/is-defined';
-
 import {
   CollectibleIcon,
   CollectibleIconProps,
   CollectibleIconSize
-} from '../../../../components/collectible-icon/collectible-icon';
-import { CollectibleInterface } from '../../../../token/interfaces/collectible-interfaces.interface';
-import { getTokenSlug } from '../../../../token/utils/token.utils';
-import { formatNumber } from '../../../../utils/format-price';
-import { getPurchaseCurrency } from '../../../../utils/get-pusrchase-currency.util';
+} from 'src/components/collectible-icon/collectible-icon';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { CollectibleInterface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { formatNumber } from 'src/utils/format-price';
+import { getPurchaseCurrency } from 'src/utils/get-pusrchase-currency.util';
+import { isDefined } from 'src/utils/is-defined';
+
 import { useTouchableCollectibleIconStyles } from './touchable-collectible-icon.styles';
 
 type Props = Omit<CollectibleIconProps, 'collectible'> & {
@@ -49,7 +49,13 @@ export const TouchableCollectibleIcon: FC<Props> = ({
 
   return isDefined(collectible) ? (
     <TouchableOpacity activeOpacity={1} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
-      <CollectibleIcon iconSize={iconSize} collectible={collectible} size={size} isShowInfo={isShowInfo} />
+      <CollectibleIcon
+        iconSize={iconSize}
+        collectible={collectible}
+        mime={collectible.mime}
+        size={size}
+        isShowInfo={isShowInfo}
+      />
 
       {isShowInfo && (
         <View style={styles.description}>

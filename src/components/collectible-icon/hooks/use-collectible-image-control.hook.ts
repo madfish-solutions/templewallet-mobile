@@ -1,20 +1,22 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { showErrorToast } from '../../../toast/error-toast.utils';
-import { TokenInterface } from '../../../token/interfaces/token.interface';
+import { showErrorToast } from 'src/toast/error-toast.utils';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { toTokenSlug } from 'src/token/utils/token.utils';
 import {
   ImageResolutionEnum,
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktMediumUri,
   formatImgUri
-} from '../../../utils/image.utils';
+} from 'src/utils/image.utils';
+
 import { COLLECTIBLE_FINAL_FALLBACK } from '../constants';
 
 export const useCollectibleImageControl = (collectible: TokenInterface, isBigIcon: boolean) => {
   const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const assetSlug = `${collectible.address}_${collectible.id}`;
+  const assetSlug = toTokenSlug(collectible.address, collectible.id);
 
   const imageFallbackURLs = useMemo(
     () => [
@@ -22,7 +24,7 @@ export const useCollectibleImageControl = (collectible: TokenInterface, isBigIco
       formatCollectibleObjktMediumUri(assetSlug),
       formatImgUri(collectible.artifactUri, ImageResolutionEnum.MEDIUM)
     ],
-    [collectible]
+    [assetSlug, collectible.artifactUri]
   );
 
   const [currentFallbackIndex, setCurrentFallbackIndex] = useState(isBigIcon ? 0 : 1);

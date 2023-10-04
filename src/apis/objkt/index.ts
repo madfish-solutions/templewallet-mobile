@@ -34,7 +34,7 @@ const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
 export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]> => {
   const request = buildGetCollectiblesInfoQuery(address);
 
-  return apolloObjktClient.query<QueryResponse>(request).pipe(
+  return apolloObjktClient.fetch$<QueryResponse>(request).pipe(
     map(result => {
       const fa = result.fa
         .filter(item => !HIDDEN_CONTRACTS.includes(item.contract))
@@ -63,22 +63,24 @@ export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]>
 export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => {
   const request = buildGetHoldersInfoQuery(address);
 
-  return apolloObjktClient.query<TzProfilesQueryResponse>(request, undefined, { nextFetchPolicy: 'no-cache' }).pipe(
-    map(result => {
-      const { alias, discord, github, logo, twitter, tzdomain, website } = result.holder_by_pk;
+  return apolloObjktClient
+    .fetch$<TzProfilesQueryResponse>(request, undefined, { nextFetchPolicy: 'no-cache' } as any) // TODO: Figure-out, what `nextFetchPolicy` was intended to do
+    .pipe(
+      map(result => {
+        const { alias, discord, github, logo, twitter, tzdomain, website } = result.holder_by_pk;
 
-      //check for nullable value
-      return {
-        alias: isDefined(alias) ? alias : undefined,
-        discord: isDefined(discord) ? discord : undefined,
-        github: isDefined(github) ? github : undefined,
-        logo: isDefined(logo) ? logo : undefined,
-        twitter: isDefined(twitter) ? twitter : undefined,
-        tzdomain: isDefined(tzdomain) ? tzdomain : undefined,
-        website: isDefined(website) ? website : undefined
-      };
-    })
-  );
+        //check for nullable value
+        return {
+          alias: isDefined(alias) ? alias : undefined,
+          discord: isDefined(discord) ? discord : undefined,
+          github: isDefined(github) ? github : undefined,
+          logo: isDefined(logo) ? logo : undefined,
+          twitter: isDefined(twitter) ? twitter : undefined,
+          tzdomain: isDefined(tzdomain) ? tzdomain : undefined,
+          website: isDefined(website) ? website : undefined
+        };
+      })
+    );
 };
 
 export const fetchCollectiblesByCollection$ = (
@@ -93,7 +95,7 @@ export const fetchCollectiblesByCollection$ = (
       ? buildGetCollectiblesByCollectionQuery(contract, selectedPublicKey, offset)
       : buildGetCollectiblesByGalleryQuery(selectedPublicKey, offset);
 
-  return apolloObjktClient.query<CollectiblesByCollectionResponse | CollectiblesByGalleriesResponse>(request).pipe(
+  return apolloObjktClient.fetch$<CollectiblesByCollectionResponse | CollectiblesByGalleriesResponse>(request).pipe(
     map(result => {
       if ('token' in result) {
         const collectibles = transformCollectiblesArray(result.token, selectedPublicKey);
@@ -122,14 +124,14 @@ export const fetchAllCollectiblesDetails$ = (
     buildGetAllUserCollectiblesQuery(slugsChunk)
   );
 
-  return forkJoin(request.map(r => apolloObjktClient.query<UserAdultCollectiblesQueryResponse>(r)));
+  return forkJoin(request.map(r => apolloObjktClient.fetch$<UserAdultCollectiblesQueryResponse>(r)));
 };
 
 export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {
   const request = buildGetFA2AttributeCountQuery(ids);
 
   return apolloObjktClient
-    .query<FA2AttributeCountQueryResponse>(request)
+    .fetch$<FA2AttributeCountQueryResponse>(request)
     .pipe(map(result => result.fa2_attribute_count));
 };
 
@@ -137,6 +139,6 @@ export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<Attribute
   const request = buildGetGalleryAttributeCountQuery(ids);
 
   return apolloObjktClient
-    .query<GalleryAttributeCountQueryResponse>(request)
+    .fetch$<GalleryAttributeCountQueryResponse>(request)
     .pipe(map(result => result.gallery_attribute_count));
 };

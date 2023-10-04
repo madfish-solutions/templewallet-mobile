@@ -69,7 +69,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
   const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
 
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(item);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(item, item);
 
   const fxHashListed = item?.listingsActive?.find(listing => listing.sellerAddress === selectedPublicKeyHash);
 
@@ -130,22 +130,30 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
       <View style={styles.collectible}>
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
-            <CollectibleIcon iconSize={CollectibleIconSize.BIG} collectible={item} size={formatSize(295)} />
+            <CollectibleIcon
+              iconSize={CollectibleIconSize.BIG}
+              collectible={item}
+              mime={item.mime}
+              size={formatSize(295)}
+            />
           </TouchableOpacity>
 
           <View style={styles.nameBlock}>
             <Text style={styles.collectibleName} numberOfLines={1}>
               {item.name}
             </Text>
+
             <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
               <Icon name={IconNameEnum.Share} />
               <Divider size={formatSize(4)} />
               <Text style={styles.shareButtonText}>Share</Text>
             </TouchableOpacity>
           </View>
+
           <Text style={styles.collectibleDescription} numberOfLines={3}>
             {item.description}
           </Text>
+
           <View style={styles.infoContainer}>
             <View style={styles.containerRight}>
               <View style={styles.smallContainer}>

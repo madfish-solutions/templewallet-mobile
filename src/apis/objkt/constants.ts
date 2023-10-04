@@ -1,4 +1,4 @@
-import { getApolloConfigurableClient } from 'src/apollo/utils/get-apollo-configurable-client.util';
+import { buildApolloClient } from 'src/utils/apollo';
 
 import { CurrencyInfo } from './types';
 
@@ -9,7 +9,7 @@ const FXHASH_CONTRACT = 'KT1M1NyU9X4usEimt2f3kDaijZnDMNBu42Ja';
 
 export const SUPPORTED_CONTRACTS = [OBJKT_CONTRACT, FXHASH_CONTRACT];
 
-export const apolloObjktClient = getApolloConfigurableClient(OBJKT_API);
+export const apolloObjktClient = buildApolloClient(OBJKT_API);
 
 /**
  * These contracts are hidden because we don't show fxhash and rarible contracts as collection

@@ -4,33 +4,33 @@ import { BigNumber } from 'bignumber.js';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
-
-import { Route3TokenStandardEnum } from '../enums/route3.enum';
+import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import {
   FxHashBuyCollectibleContractInterface,
   ObjktBuyCollectibleContractInterface
-} from '../interfaces/buy-collectible.interface';
-import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
-import { OBJKT_MARKETPLACE_CONTRACT } from '../modals/collectible-modal/constants';
-import { ModalsEnum } from '../navigator/enums/modals.enum';
-import { useNavigation } from '../navigator/hooks/use-navigation.hook';
-import { navigateAction } from '../store/root-state.actions';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { CollectibleCommonInterface } from '../token/interfaces/collectible-interfaces.interface';
-import { TokenInterface } from '../token/interfaces/token.interface';
-import { getTokenSlug } from '../token/utils/token.utils';
-import { getPurchaseCurrency } from '../utils/get-pusrchase-currency.util';
-import { isDefined } from '../utils/is-defined';
-import { createTezosToolkit } from '../utils/rpc/tezos-toolkit.utils';
+} from 'src/interfaces/buy-collectible.interface';
+import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { OBJKT_MARKETPLACE_CONTRACT } from 'src/modals/collectible-modal/constants';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { navigateAction } from 'src/store/root-state.actions';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { CollectibleCommonInterface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { getPurchaseCurrency } from 'src/utils/get-pusrchase-currency.util';
+import { isDefined } from 'src/utils/is-defined';
+import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
+import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
+
 import { useCollectibleOwnerCheck } from './use-check-is-user-collectible-owner.hook';
 
 const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (collectible: CollectibleCommonInterface & TokenInterface) => {
+export const useBuyCollectible = (collectible: TokenInterface, details: CollectibleCommonInterface) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
@@ -39,8 +39,7 @@ export const useBuyCollectible = (collectible: CollectibleCommonInterface & Toke
 
   const selectedAccount = useSelectedAccountSelector();
 
-  const listingsActive =
-    isDefined(collectible) && isNonEmptyArray(collectible.listingsActive) ? collectible.listingsActive : [];
+  const listingsActive = details.listingsActive;
 
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(getTokenSlug(collectible));
 
@@ -56,7 +55,7 @@ export const useBuyCollectible = (collectible: CollectibleCommonInterface & Toke
     tezos.contract
       .at<ObjktBuyCollectibleContractInterface | FxHashBuyCollectibleContractInterface>(marketplace)
       .then(setMarketplaceContract);
-  }, [marketplace]);
+  }, [marketplace, tezos.contract]);
 
   const purchaseCurrency = getPurchaseCurrency(listingsActive);
 

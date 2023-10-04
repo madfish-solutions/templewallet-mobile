@@ -23,19 +23,18 @@ import { ONE_MINUTE } from 'src/config/fixed-times';
 import { useBurnCollectible } from 'src/hooks/use-burn-collectible.hook';
 import { useBuyCollectible } from 'src/hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from 'src/hooks/use-check-is-user-collectible-owner.hook';
-import { useCurrentCollectibleFullData } from 'src/hooks/use-current-collectible-full-data.hook';
 import { useFetchCollectibleAttributes } from 'src/hooks/use-fetch-collectible-attributes.hook';
 import { useInterval } from 'src/hooks/use-interval.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
-import { useCollectibleDetailsLoadingSelector } from 'src/store/collectibles/collectibles-selectors';
+import {
+  useCollectibleDetailsLoadingSelector,
+  useCollectibleDetailsSelector
+} from 'src/store/collectibles/collectibles-selectors';
+import { useCollectibleSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
-import {
-  CollectibleCommonInterface,
-  CollectibleInterface
-} from 'src/token/interfaces/collectible-interfaces.interface';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { emptyToken } from 'src/token/interfaces/token.interface';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
@@ -84,11 +83,12 @@ export const CollectibleModal = memo(() => {
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
 
-  const { collectible } = useCurrentCollectibleFullData(slug, isUserOwnerCurrentCollectible);
+  const collectible = useCollectibleSelector(slug) ?? emptyToken;
+  const details = useCollectibleDetailsSelector(slug)!;
 
-  const burnCollectible = useBurnCollectible(collectible as unknown as CollectibleInterface);
-  const { attributes, isLoading } = useFetchCollectibleAttributes(collectible as unknown as CollectibleInterface);
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectible as unknown as CollectibleInterface);
+  const burnCollectible = useBurnCollectible(collectible);
+  const { attributes, isLoading } = useFetchCollectibleAttributes(details);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectible, details);
 
   const isLoadingDetails = useCollectibleDetailsLoadingSelector();
 
@@ -104,7 +104,7 @@ export const CollectibleModal = memo(() => {
     listingsActive,
     name,
     thumbnailUri
-  } = collectible;
+  } = details;
 
   useInterval(
     () => {
@@ -114,7 +114,7 @@ export const CollectibleModal = memo(() => {
     },
     ONE_MINUTE,
     [slug, isUserOwnerCurrentCollectible],
-    false
+    true
   );
 
   const isAttributesExist = attributes.length > 0;
@@ -134,7 +134,7 @@ export const CollectibleModal = memo(() => {
       return 'Buy';
     }
 
-    if ((isLoadingDetails && !isUserOwnerCurrentCollectible) || isLoadingDetails) {
+    if (isLoadingDetails) {
       return '';
     }
 
@@ -166,7 +166,7 @@ export const CollectibleModal = memo(() => {
     }
 
     return null;
-  }, [collection]);
+  }, [collection, styles.collectionLogo]);
 
   const handleShare = useCallback(async () => {
     // Max link length: 7168 symbols, so we need to reduce the amount of data we send
@@ -194,11 +194,12 @@ export const CollectibleModal = memo(() => {
         isCopyButtonVisible: true,
         onPress: () => copyStringToClipboard(e.message)
       });
+
       await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, {
         errorMessage: e.message
       });
     }
-  }, [slug, name, description, thumbnailUri]);
+  }, [slug, name, description, thumbnailUri, trackEvent]);
 
   const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
 
@@ -245,9 +246,8 @@ export const CollectibleModal = memo(() => {
 
       <View>
         <CollectibleIcon
-          collectible={
-            collectible as unknown as TokenInterface & Pick<CollectibleCommonInterface, 'isAdultContent' | 'mime'>
-          }
+          collectible={collectible}
+          mime={details.mime}
           size={iconSize}
           iconSize={CollectibleIconSize.BIG}
           isTouchableBlurOverlay
