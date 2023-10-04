@@ -1,6 +1,14 @@
-import { Activity, TzktMemberInterface, TzktOperation, parseOperations } from '@temple-wallet/transactions-parser';
+import {
+  Activity,
+  TzktMemberInterface,
+  TzktOperation,
+  parseOperations,
+  TzktTokenTransfer,
+  TzktOperationType
+} from '@temple-wallet/transactions-parser';
 import { LiquidityBakingMintOrBurnInterface } from '@temple-wallet/transactions-parser/dist/types/liquidity-baking';
 import { Fa12TransferInterface, Fa2TransferInterface } from '@temple-wallet/transactions-parser/dist/types/transfers';
+import { AxiosError } from 'axios';
 import { isEmpty, uniq } from 'lodash-es';
 import { stringify } from 'qs';
 
@@ -16,8 +24,48 @@ import { isDefined } from './is-defined';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 import { sleep } from './timeouts.util';
 
-const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
-  getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
+const TZKT_FETCH_QUERY_SIZE = 300;
+
+interface OperationsGroup {
+  hash: string;
+  operations: TzktOperation[];
+  tokensTransfers: TzktTokenTransfer[];
+}
+
+const getOperationGroupByHash = (selectedRpcUrl: string, hash: string) =>
+  getTzktApi(selectedRpcUrl)
+    .get<TzktOperation[]>(`operations/${hash}`)
+    .then(x => x.data);
+
+const getTokensTransfersByTxIds = async (
+  selectedRpcUrl: string,
+  transactionsIds: number[],
+  lastId?: number
+): Promise<TzktTokenTransfer[]> => {
+  if (transactionsIds.length === 0) {
+    return [];
+  }
+
+  const newTransfers = await getTzktApi(selectedRpcUrl)
+    .get<TzktTokenTransfer[]>('/tokens/transfers', {
+      params: {
+        'transactionId.in': transactionsIds.join(','),
+        limit: TZKT_FETCH_QUERY_SIZE,
+        select: 'id,from,to,transactionId,amount,token.contract,token.tokenId',
+        'sort.desc': 'id',
+        ...(isDefined(lastId) ? { 'id.lt': lastId } : {})
+      }
+    })
+    .then(x => x.data);
+
+  if (newTransfers.length < TZKT_FETCH_QUERY_SIZE) {
+    return newTransfers;
+  }
+
+  return newTransfers.concat(
+    await getTokensTransfersByTxIds(selectedRpcUrl, transactionsIds, newTransfers[newTransfers.length - 1].id)
+  );
+};
 
 // LIQUIDITY BAKING ACTIVITY
 const getContractOperations = <T>(selectedRpcUrl: string, account: string, contractAddress: string, lastId?: number) =>
@@ -199,6 +247,60 @@ const loadOperations = async (
   return getAllOperations(selectedRpcUrl, selectedAccount.publicKeyHash, oldestOperation?.id);
 };
 
+const refetchOnce429 = async <R>(fetcher: () => Promise<R>, delayAroundInMS = 1000) => {
+  try {
+    return await fetcher();
+  } catch (err: any) {
+    if (err.isAxiosError) {
+      const error: AxiosError = err;
+      if (error.response?.status === 429) {
+        await sleep(delayAroundInMS);
+        const res = await fetcher();
+        await sleep(delayAroundInMS);
+
+        return res;
+      }
+    }
+
+    throw err;
+  }
+};
+
+const fetchOperGroupsForOperations = async (
+  selectedRpcUrl: string,
+  operations: TzktOperation[],
+  olderThan?: TzktOperation
+) => {
+  const uniqueHashes = uniq(operations.map(d => d.hash));
+
+  if (olderThan && uniqueHashes[0] === olderThan.hash) {
+    uniqueHashes.splice(1);
+  }
+
+  const groups: OperationsGroup[] = [];
+  for (const hash of uniqueHashes) {
+    const operations = await refetchOnce429(() => getOperationGroupByHash(selectedRpcUrl, hash), 1000);
+    const tokensTransfers = await refetchOnce429(
+      () =>
+        getTokensTransfersByTxIds(
+          selectedRpcUrl,
+          operations
+            .filter(op => op.type === TzktOperationType.Transaction && (op.tokenTransfersCount ?? 0) > 0)
+            .map(({ id }) => id)
+        ),
+      1000
+    );
+    operations.sort((b, a) => a.id - b.id);
+    groups.push({
+      hash,
+      operations,
+      tokensTransfers
+    });
+  }
+
+  return groups;
+};
+
 export const loadActivity = async (
   selectedRpcUrl: string,
   selectedAccount: AccountInterface,
@@ -206,31 +308,23 @@ export const loadActivity = async (
   knownBakers?: Array<TzktMemberInterface>,
   oldestOperation?: TzktOperation
 ): Promise<{ activities: Array<Array<Activity>>; reachedTheEnd: boolean; oldestOperation?: TzktOperation }> => {
-  const operationsHashesRaw = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, oldestOperation).then(
-    operations => operations.map(operation => operation.hash)
-  );
+  const operations = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, oldestOperation);
 
-  const operationsHashesUniq = uniq(operationsHashesRaw.filter(x => x !== oldestOperation?.hash));
+  const groups = await fetchOperGroupsForOperations(selectedRpcUrl, operations, oldestOperation);
 
-  const operationGroups: Array<Array<TzktOperation>> = [];
-
-  for (const opHash of operationsHashesUniq) {
-    const { data } = await getOperationGroupByHash<TzktOperation>(selectedRpcUrl, opHash);
-    operationGroups.push(data.sort((a, b) => b.id - a.id));
-    await sleep(100);
-  }
-
-  const reachedTheEnd = operationGroups.length === 0;
+  const reachedTheEnd = groups.length === 0;
 
   if (reachedTheEnd) {
     return { activities: [], reachedTheEnd };
   }
 
-  const lastGroup = operationGroups[operationGroups.length - 1];
-  const oldestOperationNew = lastGroup[lastGroup.length - 1];
+  const lastGroup = groups[groups.length - 1];
+  const oldestOperationNew = lastGroup.operations[lastGroup.operations.length - 1];
 
-  const activities = operationGroups
-    .map(group => parseOperations(group, selectedAccount.publicKeyHash, knownBakers))
+  const activities = groups
+    .map(({ operations, tokensTransfers }) =>
+      parseOperations(operations, selectedAccount.publicKeyHash, knownBakers, tokensTransfers)
+    )
     .filter(group => !isEmpty(group));
 
   if (activities.length === 0) {

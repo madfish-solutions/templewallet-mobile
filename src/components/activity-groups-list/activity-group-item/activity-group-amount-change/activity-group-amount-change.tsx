@@ -81,7 +81,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
           />
         );
       case 2:
-        const symbols = source.map(({ symbol }) => symbol).join(',');
+        const symbols = source.map(({ symbol }) => symbol).join(', ');
 
         return (
           <Text
