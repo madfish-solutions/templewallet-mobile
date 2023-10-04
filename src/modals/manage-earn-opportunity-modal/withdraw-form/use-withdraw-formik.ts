@@ -83,7 +83,6 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
 
       const { tokenOption, amountOptionIndex } = values;
       const { token } = tokenOption;
-      // TODO: disable this event for all earn opportunities at the next tasks
       if (earnOpportunity.type !== EarnOpportunityTypeEnum.KORD_FI_SAVING) {
         trackEvent('WITHDRAW_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
           farmAddress: earnOpportunity.contractAddress,

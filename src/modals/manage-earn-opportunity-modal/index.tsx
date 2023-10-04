@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { noop } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, findNodeHandle, ScrollView, Text, View } from 'react-native';
@@ -30,6 +30,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isFarm } from 'src/utils/earn.utils';
 import { hasError } from 'src/utils/has-error';
 import { isDefined } from 'src/utils/is-defined';
+import { ZERO } from 'src/utils/number.util';
 import { percentageToFraction } from 'src/utils/percentage.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -52,8 +53,6 @@ const stakeButtonTestIds: Partial<Record<EarnOpportunityTypeEnum, string>> = {
 const withdrawButtonTestIds: Partial<Record<EarnOpportunityTypeEnum, string>> = {
   [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiWithdrawButton
 };
-
-const ZERO = new BigNumber(0);
 
 export const ManageEarnOpportunityModal: FC = () => {
   const route = useRoute<RouteProp<ModalsParamList, ModalsEnum.ManageFarmingPool | ModalsEnum.ManageSavingsPool>>();

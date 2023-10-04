@@ -76,7 +76,6 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         return;
       }
 
-      // TODO: disable this event for all earn opportunities at the next tasks
       if (earnOpportunity.type !== EarnOpportunityTypeEnum.KORD_FI_SAVING) {
         trackEvent('STAKE_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
           farmAddress: earnOpportunity.contractAddress,

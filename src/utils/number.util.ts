@@ -73,3 +73,5 @@ const numberWithSpaces = (amount: string) => {
 
   return parts.join('.');
 };
+
+export const ZERO = new BigNumber(0);
