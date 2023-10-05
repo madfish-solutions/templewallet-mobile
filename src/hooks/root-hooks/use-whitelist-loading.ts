@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { loadWhitelistAction } from '../store/tokens-metadata/tokens-metadata-actions';
+import { loadWhitelistAction } from '../../store/tokens-metadata/tokens-metadata-actions';
 
-export const useWhitelist = () => {
+export const useWhitelistLoading = () => {
   const dispatch = useDispatch();
 
   useEffect(() => void dispatch(loadWhitelistAction.submit()), []);

@@ -11,7 +11,7 @@ import {
   addDcpTokensMetadata,
   changeTempleRpc,
   updateSirsTokenAction
-} from '../../store/migration/migration-actions';
+} from 'src/store/migration/migration-actions';
 
 export const useStorageMigration = () => {
   const dispatch = useDispatch();
