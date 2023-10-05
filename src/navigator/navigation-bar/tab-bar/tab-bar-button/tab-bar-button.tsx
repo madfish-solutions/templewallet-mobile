@@ -15,11 +15,17 @@ interface Props {
   label: string;
   iconName: IconNameEnum;
   iconWidth: number;
-  routeName: ScreensEnum;
+  routeName:
+    | ScreensEnum.Wallet
+    | ScreensEnum.DApps
+    | ScreensEnum.SwapScreen
+    | ScreensEnum.Market
+    | ScreensEnum.CollectiblesHome;
   focused: boolean;
   disabled?: boolean;
   showNotificationDot?: boolean;
-  params?: ScreensParamList[ScreensEnum.SwapScreen];
+  swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
+  onSwapButtonPress?: EmptyFn;
   disabledOnPress?: EmptyFn;
 }
 
@@ -31,7 +37,8 @@ export const TabBarButton: FC<Props> = ({
   focused,
   disabled = false,
   showNotificationDot = false,
-  params,
+  swapScreenParams,
+  onSwapButtonPress,
   disabledOnPress = emptyFn
 }) => {
   const colors = useColors();
@@ -50,8 +57,15 @@ export const TabBarButton: FC<Props> = ({
     if (disabled) {
       disabledOnPress();
     } else {
-      // @ts-ignore
-      navigate(routeName, params);
+      if (onSwapButtonPress && !focused) {
+        onSwapButtonPress();
+      } else {
+        if (routeName === ScreensEnum.SwapScreen) {
+          navigate(routeName, swapScreenParams);
+        } else {
+          navigate(routeName);
+        }
+      }
     }
   };
 

@@ -27,6 +27,7 @@ export const FormAssetAmountInput: FC<Props> = ({
   toUsdToggle = true,
   isLoading = false,
   isSearchable = false,
+  isSingleAsset,
   selectionOptions = undefined,
   maxButton = false,
   expectedGasExpense,
@@ -63,6 +64,7 @@ export const FormAssetAmountInput: FC<Props> = ({
         isError={isError}
         isLoading={isLoading}
         isSearchable={isSearchable}
+        isSingleAsset={isSingleAsset}
         editable={editable}
         toUsdToggle={toUsdToggle}
         selectionOptions={selectionOptions}

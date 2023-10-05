@@ -2,10 +2,17 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
+
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { useShelter } from '../../../shelter/use-shelter.hook';
 import { enterPassword } from '../../../store/security/security-actions';
-import { hideLoaderAction, setIsAnalyticsEnabled, showLoaderAction } from '../../../store/settings/settings-actions';
+import {
+  hideLoaderAction,
+  setAdsBannerVisibilityAction,
+  setIsAnalyticsEnabled,
+  showLoaderAction
+} from '../../../store/settings/settings-actions';
 import { showErrorToast } from '../../../toast/toast.utils';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from '../../../utils/sync.utils';
@@ -29,8 +36,13 @@ export const AfterSyncQRScan = () => {
     usePrevPassword,
     password,
     analytics,
+    viewAds,
     useBiometry: useBiometryValue
   }: ConfirmSyncFormValues) => {
+    if (viewAds) {
+      dispatch(togglePartnersPromotionAction(true));
+      dispatch(setAdsBannerVisibilityAction(false));
+    }
     dispatch(setIsAnalyticsEnabled(analytics));
     dispatch(showLoaderAction());
 

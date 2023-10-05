@@ -1,5 +1,7 @@
 import { object, SchemaOf } from 'yup';
 
+import { viewAdsValidation } from 'src/form/validation/view-ads';
+
 import { acceptTermsValidation } from '../../../../form/validation/accept-terms';
 import { analyticsValidation } from '../../../../form/validation/analytics';
 import { passwordValidation } from '../../../../form/validation/password';
@@ -12,6 +14,7 @@ export type ConfirmSyncFormValues = {
   usePrevPassword?: boolean;
   acceptTerms: boolean;
   analytics: boolean;
+  viewAds: boolean;
 };
 
 export const ConfirmSyncValidationSchema: SchemaOf<ConfirmSyncFormValues> = object().shape({
@@ -19,11 +22,13 @@ export const ConfirmSyncValidationSchema: SchemaOf<ConfirmSyncFormValues> = obje
   useBiometry: useBiometryValidation,
   usePrevPassword: usePrevPasswordValidation,
   acceptTerms: acceptTermsValidation,
-  analytics: analyticsValidation
+  analytics: analyticsValidation,
+  viewAds: viewAdsValidation
 });
 
 export const ConfirmSyncInitialValues: ConfirmSyncFormValues = {
   password: '',
   acceptTerms: false,
-  analytics: true
+  analytics: true,
+  viewAds: true
 };

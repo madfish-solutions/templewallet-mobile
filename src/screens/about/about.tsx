@@ -23,7 +23,7 @@ import {
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { openUrl } from '../../utils/linking.util';
+import { openUrl } from '../../utils/linking';
 import { useAboutStyles } from './about.styles';
 import { AboutPageSelectors } from './selectors';
 

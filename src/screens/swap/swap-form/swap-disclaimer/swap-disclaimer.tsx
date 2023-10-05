@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { formatSize } from 'src/styles/format-size';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { useSwapDisclaimerStyles } from './swap-desclaimer.styles';
 

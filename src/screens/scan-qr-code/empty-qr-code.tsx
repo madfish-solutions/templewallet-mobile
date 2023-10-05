@@ -8,7 +8,7 @@ import { Disclaimer } from '../../components/disclaimer/disclaimer';
 import { Divider } from '../../components/divider/divider';
 import { isAndroid } from '../../config/system';
 import { formatSize } from '../../styles/format-size';
-import { openUrl } from '../../utils/linking.util';
+import { openUrl } from '../../utils/linking';
 import { useScanQrCodeStyles } from './scan-qr-code.styles';
 
 export const EmptyQrCode = () => {

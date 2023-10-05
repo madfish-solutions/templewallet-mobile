@@ -4,5 +4,6 @@ export enum ConfirmSyncSelectors {
   acceptTermsCheckbox = 'Confirm Sync/Accept Terms Check Box',
   analyticsCheckbox = 'Confirm Sync/Analytics Check Box',
   syncButton = 'Confirm Sync/Sync Button',
-  nextButton = 'Confirm Sync/Next Button'
+  nextButton = 'Confirm Sync/Next Button',
+  viewAdsCheckbox = 'Confirm Sync/Veiw Ads Check Box'
 }

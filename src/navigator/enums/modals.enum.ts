@@ -1,8 +1,8 @@
-import { Farm } from 'src/apis/quipuswap-staking/types';
 import { AccountInterface, AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 
 export enum ModalsEnum {
   Receive = 'Receive',
@@ -18,12 +18,12 @@ export enum ModalsEnum {
   CollectibleModal = 'CollectibleModal',
   AddCustomRpc = 'AddCustomRpc',
   EditCustomRpc = 'EditCustomRpc',
-  RemoveLiquidity = 'RemoveLiquidity',
-  AddLiquidity = 'AddLiquidity',
   AddContact = 'AddContact',
   EditContact = 'EditContact',
   ManageFarmingPool = 'ManageFarmingPool',
-  Newsletter = 'Newsletter'
+  Newsletter = 'Newsletter',
+  InAppBrowser = 'InAppBrowser',
+  ManageSavingsPool = 'ManageSavingsPool'
 }
 
 export type ModalsParamList = {
@@ -40,18 +40,10 @@ export type ModalsParamList = {
   [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.EditCustomRpc]: { url: string };
-  [ModalsEnum.RemoveLiquidity]: {
-    lpContractAddress: string;
-    aToken: TokenInterface;
-    bToken: TokenInterface;
-  };
-  [ModalsEnum.AddLiquidity]: {
-    lpContractAddress: string;
-    aToken: TokenInterface;
-    bToken: TokenInterface;
-  };
   [ModalsEnum.AddContact]: AccountBaseInterface | undefined;
   [ModalsEnum.EditContact]: { contact: AccountBaseInterface; index: number };
-  [ModalsEnum.ManageFarmingPool]: Pick<Farm, 'id' | 'contractAddress'>;
+  [ModalsEnum.ManageFarmingPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
+  [ModalsEnum.ManageSavingsPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
   [ModalsEnum.Newsletter]: undefined;
+  [ModalsEnum.InAppBrowser]: { uri: string };
 };

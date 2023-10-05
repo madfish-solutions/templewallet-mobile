@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { DCP_RPC, OLD_TEMPLE_RPC_URL, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
+import { DCP_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
 import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
@@ -24,7 +24,11 @@ import {
   madeManualBackupAction,
   madeCloudBackupAction,
   setAdsBannerVisibilityAction,
-  setOnRampPossibilityAction
+  setOnRampPossibilityAction,
+  setIsOnRampHasBeenShownBeforeAction,
+  setIsSwapDisclaimerShowingAction,
+  setIsApkBuildLaunchEventFired,
+  setIsPushNotificationsEnabledEventFired
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -86,6 +90,19 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShownDomainName
   }));
 
+  builder.addCase(setIsApkBuildLaunchEventFired, (state, { payload: isApkBuildLaunchEventFired }) => ({
+    ...state,
+    isApkBuildLaunchEventFired
+  }));
+
+  builder.addCase(
+    setIsPushNotificationsEnabledEventFired,
+    (state, { payload: isPushNotificationsEnabledEventFired }) => ({
+      ...state,
+      isPushNotificationsEnabledEventFired
+    })
+  );
+
   builder.addCase(requestSeedPhraseBackupAction, state => ({
     ...state,
     isManualBackupMade: false,
@@ -109,6 +126,15 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
+  builder.addCase(setIsOnRampHasBeenShownBeforeAction, (state, { payload: isOnRampHasBeenShownBefore }) => ({
+    ...state,
+    isOnRampHasBeenShownBefore
+  }));
+
+  builder.addCase(setIsSwapDisclaimerShowingAction, (state, { payload: isSwapDisclaimerShowing }) => ({
+    ...state,
+    isSwapDisclaimerShowing
+  }));
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,
@@ -135,11 +161,14 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   });
 
   builder.addCase(changeTempleRpc, state => {
-    const oldTempleRpc = state.rpcList.find(rpc => rpc.url === OLD_TEMPLE_RPC_URL);
-    const newRpcList = [TEMPLE_RPC, ...state.rpcList.filter(rpc => rpc.url !== OLD_TEMPLE_RPC_URL)];
+    const oldTempleRpc = state.rpcList.find(rpc => OLD_TEMPLE_RPC_URLS.includes(rpc.url));
+    const newRpcList = [
+      TEMPLE_RPC,
+      ...state.rpcList.filter(rpc => rpc.name !== TEMPLE_RPC.name && rpc.url !== TEMPLE_RPC.url)
+    ];
 
     if (oldTempleRpc) {
-      if (state.selectedRpcUrl === OLD_TEMPLE_RPC_URL) {
+      if (OLD_TEMPLE_RPC_URLS.includes(state.selectedRpcUrl)) {
         return {
           ...state,
           rpcList: newRpcList,

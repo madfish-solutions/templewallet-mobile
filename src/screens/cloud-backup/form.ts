@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { firstValueFrom } from 'rxjs';
 import { object, SchemaOf } from 'yup';
 
-import { isAndroid } from 'src/config/system';
 import { passwordValidation } from 'src/form/validation/password';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -15,14 +14,18 @@ import {
   showLoaderAction
 } from 'src/store/settings/settings-actions';
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import {
   FAILED_TO_LOGIN_ERR_TITLE,
   doesCloudBackupExist,
   requestSignInToCloud,
   saveCloudBackup
 } from 'src/utils/cloud-backup';
-import { useTrackCloudError } from 'src/utils/cloud-backup/use-track-cloud-error';
+import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
 
+import { isAndroid } from '../../config/system';
+import { CloudBackupSelectors } from './selectors';
 import { alertOnExistingBackup } from './utils';
 
 interface EnterCloudPasswordFormValues {
@@ -40,10 +43,11 @@ export const EnterCloudPasswordInitialValues: EnterCloudPasswordFormValues = {
 export const useHandleSubmit = () => {
   const { goBack, navigate } = useNavigation();
   const dispatch = useDispatch();
-  const trackCloudError = useTrackCloudError();
+  const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
+  const { trackEvent } = useAnalytics();
 
   const proceedWithSaving = useCallback(
-    async (password: string) => {
+    async (password: string, replacing = false) => {
       try {
         dispatch(showLoaderAction());
 
@@ -53,9 +57,12 @@ export const useHandleSubmit = () => {
 
         dispatch(hideLoaderAction());
         dispatch(madeCloudBackupAction());
+        isAndroid && dispatch(setOnRampPossibilityAction(true));
+
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
         goBack();
-        isAndroid && dispatch(setOnRampPossibilityAction(true));
+
+        trackCloudSuccess(replacing === true ? 'Wallet backup replaced' : 'Wallet backed-up');
       } catch (error) {
         dispatch(hideLoaderAction());
         showErrorToastByError(error);
@@ -63,7 +70,7 @@ export const useHandleSubmit = () => {
         trackCloudError(error);
       }
     },
-    [dispatch, goBack, trackCloudError]
+    [dispatch, goBack, trackCloudError, trackCloudSuccess]
   );
 
   const submit: (password: string) => Promise<void> = useCallback(
@@ -87,9 +94,18 @@ export const useHandleSubmit = () => {
           dispatch(hideLoaderAction());
 
           return void alertOnExistingBackup(
-            () => void submit(password),
-            () => void proceedWithSaving(password),
-            () => void navigate(ScreensEnum.ManualBackup)
+            () => {
+              proceedWithSaving(password, true);
+              trackEvent(CloudBackupSelectors.ReplaceBackupButton, AnalyticsEventCategory.ButtonPress);
+            },
+            () => {
+              navigate(ScreensEnum.ManualBackup);
+              trackEvent(CloudBackupSelectors.BackupManuallyButton, AnalyticsEventCategory.ButtonPress);
+            },
+            () => {
+              submit(password);
+              trackEvent(CloudBackupSelectors.ChangeAnAccountButton, AnalyticsEventCategory.ButtonPress);
+            }
           );
         }
 
@@ -101,7 +117,7 @@ export const useHandleSubmit = () => {
         trackCloudError(error);
       }
     },
-    [dispatch, navigate, trackCloudError, proceedWithSaving]
+    [dispatch, navigate, trackCloudError, proceedWithSaving, trackEvent]
   );
 
   return ({ password }: EnterCloudPasswordFormValues) => void submit(password);

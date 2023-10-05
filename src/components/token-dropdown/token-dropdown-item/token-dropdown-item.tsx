@@ -1,11 +1,12 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { formatSize } from '../../../styles/format-size';
-import { emptyToken, TokenInterface } from '../../../token/interfaces/token.interface';
-import { conditionalStyle } from '../../../utils/conditional-style';
-import { isDefined } from '../../../utils/is-defined';
-import { getTruncatedProps } from '../../../utils/style.util';
+import { TruncatedText } from 'src/components/truncated-text';
+import { formatSize } from 'src/styles/format-size';
+import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { isDefined } from 'src/utils/is-defined';
+
 import { AssetValueText } from '../../asset-value-text/asset-value-text';
 import { Divider } from '../../divider/divider';
 import { HideBalance } from '../../hide-balance/hide-balance';
@@ -33,6 +34,11 @@ export const TokenDropdownItem: FC<Props> = ({
   iconSize = formatSize(40)
 }) => {
   const styles = useTokenDropdownItemStyles();
+
+  const tokenNameTextStyle = useMemo(
+    () => [styles.name, conditionalStyle(!isDefined(actionIconName), styles.fullWidthName)],
+    [actionIconName, styles]
+  );
 
   if (tokenEqualityFn(token, emptyToken)) {
     return (
@@ -63,7 +69,7 @@ export const TokenDropdownItem: FC<Props> = ({
 
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
-          <Text {...getTruncatedProps(styles.symbol)}>{token.symbol}</Text>
+          <TruncatedText style={styles.symbol}>{token.symbol}</TruncatedText>
           <View style={styles.rightContainer}>
             <Divider size={formatSize(4)} />
             {isShowBalance && (
@@ -80,7 +86,7 @@ export const TokenDropdownItem: FC<Props> = ({
         </View>
 
         <View style={styles.infoRow}>
-          {isShowName && <Text {...getTruncatedProps(styles.name)}>{token.name}</Text>}
+          {isShowName && <TruncatedText style={tokenNameTextStyle}>{token.name}</TruncatedText>}
 
           <View style={styles.rightContainer}>
             {isShowName && <Divider size={formatSize(4)} />}

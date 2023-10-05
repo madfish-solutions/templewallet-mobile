@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 
 import { createOrder as createAliceBobOrder } from 'src/apis/alice-bob';
 import { getSignedMoonPayUrl } from 'src/apis/moonpay';
-import { createBinanceConnectTradeOrder } from 'src/apis/temple-static';
 import { createOrder as createUtorgOrder } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useUserIdSelector } from 'src/store/settings/settings-selectors';
@@ -13,7 +12,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from '../form';
 
@@ -87,16 +86,14 @@ export const useBuyWithCreditCardFormik = () => {
           case TopUpProviderEnum.Utorg:
             urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, publicKeyHash, outputSymbol);
             break;
-          case TopUpProviderEnum.BinanceConnect:
-            urlToOpen = await createBinanceConnectTradeOrder(
+          default:
+            const { payUrl } = await createAliceBobOrder(
+              inputAmount.toFixed(),
               inputSymbol,
               outputSymbol,
-              inputAmount.toFixed(),
+              userId,
               publicKeyHash
             );
-            break;
-          default:
-            const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
             urlToOpen = payUrl;
         }
         openUrl(urlToOpen);
@@ -104,7 +101,7 @@ export const useBuyWithCreditCardFormik = () => {
         showErrorToast({ description: getAxiosQueryErrorMessage(error) });
       }
     },
-    [trackEvent]
+    [publicKeyHash, trackEvent, userId]
   );
 
   return useFormik<BuyWithCreditCardFormValues>({
