@@ -1,4 +1,3 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
@@ -19,7 +18,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TruncatedText } from 'src/components/truncated-text';
-import { ONE_MINUTE } from 'src/config/fixed-times';
+import { BLOCK_DURATION } from 'src/config/fixed-times';
 import { useBurnCollectible } from 'src/hooks/use-burn-collectible.hook';
 import { useBuyCollectible } from 'src/hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from 'src/hooks/use-check-is-user-collectible-owner.hook';
@@ -50,17 +49,17 @@ import { objktCollectionUrl } from 'src/utils/objkt-collection-url.util';
 
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
-import { CollectibleAttributes } from './components/collectible-attributes/collectible-attributes';
-import { CollectibleProperties } from './components/collectible-properties/collectible-properties';
+import { CollectibleAttributes } from './components/collectible-attributes';
+import { CollectibleProperties } from './components/collectible-properties';
 import { COLLECTION_ICON_SIZE } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 
-enum SegmentControlNamesEnum {
-  Attributes = 'Attributes',
-  Properties = 'Properties'
-}
+const DETAILS_SYNC_INTERVAL = 4 * BLOCK_DURATION;
 
-const SEGMENT_VALUES = [SegmentControlNamesEnum.Attributes, SegmentControlNamesEnum.Properties];
+enum SegmentControlNamesEnum {
+  attributes = 'Attributes',
+  properties = 'Properties'
+}
 
 export const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
@@ -79,12 +78,11 @@ export const CollectibleModal = memo(() => {
 
   const styles = useCollectibleModalStyles();
 
-  const [segmentControlIndex, setSegmentControlIndex] = useState(0);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
 
-  const collectible = useCollectibleSelector(slug) ?? emptyToken;
-  const details = useCollectibleDetailsSelector(slug)!;
+  const collectible = useCollectibleSelector(slug) ?? emptyToken; // TODO: handle nullish
+  const details = useCollectibleDetailsSelector(slug)!; // TODO: handle nullish
 
   const burnCollectible = useBurnCollectible(collectible);
   const { attributes, isLoading } = useFetchCollectibleAttributes(details);
@@ -112,20 +110,15 @@ export const CollectibleModal = memo(() => {
         dispatch(loadCollectiblesDetailsActions.submit([slug]));
       }
     },
-    ONE_MINUTE,
+    DETAILS_SYNC_INTERVAL,
     [slug, isUserOwnerCurrentCollectible],
     true
   );
 
-  const isAttributesExist = attributes.length > 0;
-
-  const segmentValues = isAttributesExist ? SEGMENT_VALUES : SEGMENT_VALUES.slice(1, 2);
-
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 
   const isSupportedContract = useMemo(
-    () =>
-      isNonEmptyArray(listingsActive) ? SUPPORTED_CONTRACTS.includes(listingsActive[0].marketplaceContract) : true,
+    () => (listingsActive.length ? SUPPORTED_CONTRACTS.includes(listingsActive[0].marketplaceContract) : true),
     [listingsActive]
   );
 
@@ -142,7 +135,7 @@ export const CollectibleModal = memo(() => {
       return 'Send';
     }
 
-    if (!isNonEmptyArray(listingsActive)) {
+    if (!listingsActive.length) {
       return 'Not listed';
     }
 
@@ -201,12 +194,21 @@ export const CollectibleModal = memo(() => {
     }
   }, [slug, name, description, thumbnailUri, trackEvent]);
 
-  const propertiesIndex = segmentValues.findIndex(item => item === SegmentControlNamesEnum.Properties);
+  const [segmentControlIndex, setSegmentControlIndex] = useState(0);
 
-  const isPropertiesSelected = propertiesIndex === segmentControlIndex;
+  const segments = useMemo<{ values: string[]; current: keyof typeof SegmentControlNamesEnum }>(
+    () =>
+      attributes.length
+        ? {
+            values: [SegmentControlNamesEnum.attributes, SegmentControlNamesEnum.properties],
+            current: segmentControlIndex === 1 ? 'properties' : 'attributes'
+          }
+        : { values: [SegmentControlNamesEnum.properties], current: 'properties' },
+    [attributes.length, segmentControlIndex]
+  );
 
   const collectionName = useMemo(() => {
-    if (isNonEmptyArray(galleries)) {
+    if (galleries.length) {
       return galleries[0].gallery.name;
     }
 
@@ -218,9 +220,7 @@ export const CollectibleModal = memo(() => {
   }, [galleries, collection]);
 
   const isDisabled =
-    (!isUserOwnerCurrentCollectible && !isNonEmptyArray(listingsActive)) || isLoadingDetails || !isSupportedContract;
-
-  const isShowSegment = segmentValues.length > 1;
+    (!isUserOwnerCurrentCollectible && !listingsActive.length) || isLoadingDetails || !isSupportedContract;
 
   if (!isString(collectible.address)) {
     return <ActivityIndicator size="large" />;
@@ -285,7 +285,7 @@ export const CollectibleModal = memo(() => {
           </View>
         )}
 
-        {isNonEmptyArray(creators) && (
+        {creators.length && (
           <View style={styles.creatorsContainer}>
             <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
 
@@ -304,16 +304,16 @@ export const CollectibleModal = memo(() => {
           </View>
         )}
 
-        {!isLoading && isShowSegment && (
+        {!isLoading && segments.values.length && (
           <TextSegmentControl
             selectedIndex={segmentControlIndex}
-            values={segmentValues}
+            values={segments.values}
             onChange={setSegmentControlIndex}
             style={styles.segmentControl}
           />
         )}
 
-        {!isLoading && isPropertiesSelected && (
+        {!isLoading && segments.current === 'properties' && (
           <CollectibleProperties
             contract={address}
             tokenId={Number(id)}
@@ -325,7 +325,7 @@ export const CollectibleModal = memo(() => {
           />
         )}
 
-        {!isLoading && !isPropertiesSelected && isAttributesExist && <CollectibleAttributes attributes={attributes} />}
+        {!isLoading && segments.current === 'attributes' && <CollectibleAttributes attributes={attributes} />}
 
         {isUserOwnerCurrentCollectible && (
           <View style={styles.burnContainer}>

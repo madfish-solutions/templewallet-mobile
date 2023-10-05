@@ -22,14 +22,14 @@ export interface SegmentedControlProps<T> extends TestIdProps {
 }
 
 interface Props<T> extends SegmentedControlProps<T> {
-  renderValue: SegmentedControlValueComponent<T>;
+  renderValue: FC<SegmentedControlValueComponentProps<T>>;
 }
 
-export type SegmentedControlValueComponent<T> = FC<{
+export interface SegmentedControlValueComponentProps<T> {
   item: T;
   isDisabled: boolean;
   isSelected: boolean;
-}>;
+}
 
 const defaultOptionAnalyticsPropertiesFn = (_: unknown, index: number) => ({ index });
 

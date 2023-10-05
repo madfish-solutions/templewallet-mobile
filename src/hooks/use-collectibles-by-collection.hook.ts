@@ -21,6 +21,7 @@ export const useCollectibleByCollectionInfo = (
 
   useEffect(() => {
     setIsLoading(true);
+
     const subscription = fetchCollectiblesByCollection$(contract, selectedPublicKey, type, offset, galleryId)
       .pipe(
         map(result => result),

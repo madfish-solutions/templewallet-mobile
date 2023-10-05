@@ -1,6 +1,18 @@
-import { createUseStyles } from '../../../../../../styles/create-use-styles';
-import { formatSize } from '../../../../../../styles/format-size';
-import { COLLECTIBLE_WIDTH } from '../../../../constants';
+import { StyleSheet } from 'react-native';
+
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
+
+import { COLLECTIBLE_WIDTH } from '../../constants';
+
+export const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between'
+  }
+});
 
 export const useCollectibleAttributeStyles = createUseStyles(({ typography, colors }) => ({
   root: {

@@ -1,6 +1,6 @@
 /* (!) Numeric Separators (underscores, as in `1_000`) are not supported */
 
-const BLOCK_DURATION = 15000;
+export const BLOCK_DURATION = 15000;
 
 const METADATA_SYNC_INTERVAL = 4 * BLOCK_DURATION;
 
