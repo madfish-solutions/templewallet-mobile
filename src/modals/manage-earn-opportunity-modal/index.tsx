@@ -173,7 +173,7 @@ export const ManageEarnOpportunityModal: FC = () => {
 
     const { tokenOption, amountOptionIndex } = withdrawFormValues;
     const percentage = PERCENTAGE_OPTIONS[amountOptionIndex];
-    const atomicAmount = new BigNumber(stake.depositAmountAtomic ?? 0)
+    const atomicAmount = new BigNumber(stake?.depositAmountAtomic ?? 0)
       .times(percentageToFraction(percentage))
       .integerValue(BigNumber.ROUND_DOWN);
 
@@ -181,7 +181,7 @@ export const ManageEarnOpportunityModal: FC = () => {
       name: tokenOption.token.symbol,
       value: mutezToTz(atomicAmount, tokenOption.token.decimals ?? 0).toNumber()
     };
-  }, [withdrawFormValues, stake.depositAmountAtomic, withdrawFormErrorsPresent]);
+  }, [withdrawFormValues, stake?.depositAmountAtomic, withdrawFormErrorsPresent]);
 
   return (
     <>
