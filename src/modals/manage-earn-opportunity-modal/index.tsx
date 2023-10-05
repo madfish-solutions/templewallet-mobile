@@ -157,7 +157,9 @@ export const ManageEarnOpportunityModal: FC = () => {
   }, [isKordFi, amountToWithdraw, stake]);
 
   const stakeButtonTestIdProperties = useMemo(() => {
-    if (!stakeFormErrorsPresent) return;
+    if (stakeFormErrorsPresent) {
+      return;
+    }
 
     const { asset, amount: atomicAmount = ZERO } = stakeFormValues.assetAmount;
 
@@ -165,7 +167,9 @@ export const ManageEarnOpportunityModal: FC = () => {
   }, [stakeFormValues, stakeFormErrorsPresent]);
 
   const withdrawButtonTestIdProperties = useMemo(() => {
-    if (!withdrawFormErrorsPresent) return;
+    if (withdrawFormErrorsPresent) {
+      return;
+    }
 
     const { tokenOption, amountOptionIndex } = withdrawFormValues;
     const percentage = PERCENTAGE_OPTIONS[amountOptionIndex];
@@ -173,7 +177,10 @@ export const ManageEarnOpportunityModal: FC = () => {
       .times(percentageToFraction(percentage))
       .integerValue(BigNumber.ROUND_DOWN);
 
-    return { name: tokenOption.token.symbol, value: mutezToTz(atomicAmount, tokenOption.token.decimals ?? 0).toNumber() };
+    return {
+      name: tokenOption.token.symbol,
+      value: mutezToTz(atomicAmount, tokenOption.token.decimals ?? 0).toNumber()
+    };
   }, [withdrawFormValues, stake.depositAmountAtomic, withdrawFormErrorsPresent]);
 
   return (
