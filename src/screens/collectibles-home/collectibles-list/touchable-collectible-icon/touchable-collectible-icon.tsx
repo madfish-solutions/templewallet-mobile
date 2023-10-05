@@ -2,38 +2,31 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import {
-  CollectibleIcon,
-  CollectibleIconProps,
-  CollectibleIconSize
-} from 'src/components/collectible-icon/collectible-icon';
+import { CollectibleIcon, CollectibleIconProps } from 'src/components/collectible-icon/collectible-icon';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { CollectibleInterface } from 'src/token/interfaces/collectible-interfaces.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
 import { formatNumber } from 'src/utils/format-price';
 import { getPurchaseCurrency } from 'src/utils/get-pusrchase-currency.util';
 import { isDefined } from 'src/utils/is-defined';
 
 import { useTouchableCollectibleIconStyles } from './touchable-collectible-icon.styles';
 
-type Props = Omit<CollectibleIconProps, 'collectible'> & {
+type Props = Omit<CollectibleIconProps, 'collectible' | 'artifactUri' | 'displayUri'> & {
   collectible: CollectibleInterface;
 };
 
 export const TouchableCollectibleIcon: FC<Props> = ({
+  slug,
   collectible,
   size,
-  iconSize = CollectibleIconSize.SMALL,
+  isBigIcon,
   isShowInfo = false,
   style
 }) => {
   const { navigate } = useNavigation();
 
-  const handleNavigate = () =>
-    navigate(ModalsEnum.CollectibleModal, {
-      slug: getTokenSlug(collectible)
-    });
+  const handleNavigate = () => navigate(ModalsEnum.CollectibleModal, { slug });
 
   const styles = useTouchableCollectibleIconStyles();
 
@@ -50,11 +43,14 @@ export const TouchableCollectibleIcon: FC<Props> = ({
   return isDefined(collectible) ? (
     <TouchableOpacity activeOpacity={1} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
       <CollectibleIcon
-        iconSize={iconSize}
-        collectible={collectible}
+        isBigIcon={isBigIcon}
+        slug={slug}
+        artifactUri={collectible.artifactUri}
+        displayUri={collectible.displayUri}
         mime={collectible.mime}
         size={size}
         isShowInfo={isShowInfo}
+        balance={collectible.balance}
       />
 
       {isShowInfo && (

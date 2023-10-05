@@ -1,10 +1,11 @@
 import { buildApolloClient } from 'src/utils/apollo';
 
-import { CurrencyInfo } from './types';
+import { ObjktCurrencyInfo } from './types';
 
 const OBJKT_API = 'https://data.objkt.com/v3/graphql/';
 
 export const OBJKT_CONTRACT = 'KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC';
+
 const FXHASH_CONTRACT = 'KT1M1NyU9X4usEimt2f3kDaijZnDMNBu42Ja';
 
 export const SUPPORTED_CONTRACTS = [OBJKT_CONTRACT, FXHASH_CONTRACT];
@@ -24,9 +25,7 @@ export const HIDDEN_CONTRACTS = [
   'KT1KEa8z6vWXDJrVqtMrAeDVzsvxat3kHaCE'
 ];
 
-type CurrencyIdFromApi = number;
-
-export const currencyInfoById: Record<CurrencyIdFromApi, CurrencyInfo> = {
+export const objktCurrencies: Record<number, ObjktCurrencyInfo> = {
   2537: {
     symbol: 'uUSD',
     decimals: 12,

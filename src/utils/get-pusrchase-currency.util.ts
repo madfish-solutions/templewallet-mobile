@@ -1,8 +1,9 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 
-import { currencyInfoById } from '../apis/objkt/constants';
-import { ListingsActive } from '../token/interfaces/collectible-interfaces.interface';
+import { objktCurrencies } from 'src/apis/objkt';
+import { ListingActive } from 'src/token/interfaces/collectible-interfaces.interface';
+
 import { mutezToTz } from './tezos.util';
 
 const initialCurrencyValue = {
@@ -14,10 +15,10 @@ const initialCurrencyValue = {
   priceToDisplay: 0
 };
 
-export const getPurchaseCurrency = (listingsActive: ListingsActive[]) => {
+export const getPurchaseCurrency = (listingsActive: ListingActive[]) => {
   if (isNonEmptyArray(listingsActive)) {
-    const { price, currencyId } = listingsActive[0];
-    const currentCurrency = currencyInfoById[currencyId];
+    const { price, currency_id } = listingsActive[0];
+    const currentCurrency = objktCurrencies[currency_id];
     const priceToDisplay = +mutezToTz(new BigNumber(price), currentCurrency.decimals);
 
     return { price, priceToDisplay, ...currentCurrency };

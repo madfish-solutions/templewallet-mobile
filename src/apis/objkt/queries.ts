@@ -74,7 +74,7 @@ export const buildGetCollectiblesByCollectionQuery = (
     lowest_ask
     metadata
     name
-    thumbnail_uri  
+    thumbnail_uri
     token_id
     supply
     symbol
@@ -85,8 +85,6 @@ export const buildGetCollectiblesByCollectionQuery = (
       }
     offers_active(distinct_on: price_xtz) {
         buyer_address
-        collection_offer
-        price_xtz
         price
         bigmap_key
         marketplace_contract
@@ -154,8 +152,6 @@ query MyQuery {
         }
         offers_active(distinct_on: price_xtz) {
           buyer_address
-          collection_offer
-          price_xtz
           price
           bigmap_key
           marketplace_contract
@@ -276,11 +272,12 @@ export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) =>
         }
         lowest_ask
         listings_active(order_by: {price_xtz: asc}) {
+          amount
+          seller_address
           bigmap_key
           currency_id
-          price
           marketplace_contract
-          id
+          price
           currency {
             type
           }
@@ -289,3 +286,18 @@ export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) =>
     }
   `;
 };
+
+export const buildGetCollectibleExtraQuery = () => gql`
+  query CollectiblesExtraQuery($where: token_bool_exp) {
+    token(where: $where) {
+      offers_active(order_by: { price_xtz: desc }) {
+        buyer_address
+        price
+        currency_id
+        bigmap_key
+        marketplace_contract
+        fa_contract
+      }
+    }
+  }
+`;

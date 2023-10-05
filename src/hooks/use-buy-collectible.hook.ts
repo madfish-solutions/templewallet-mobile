@@ -15,10 +15,9 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { CollectibleCommonInterface } from 'src/token/interfaces/collectible-interfaces.interface';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
 import { getPurchaseCurrency } from 'src/utils/get-pusrchase-currency.util';
 import { isDefined } from 'src/utils/is-defined';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
@@ -30,21 +29,24 @@ const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (collectible: TokenInterface, details: CollectibleCommonInterface) => {
+export const useBuyCollectible = (slug: string, details: CollectibleCommonInterface) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
   const selectedRpc = useSelectedRpcUrlSelector();
   const tezos = createTezosToolkit(selectedRpc);
 
+  const allMetadatas = useTokensMetadataSelector();
+  const metadata = allMetadatas[slug];
+
   const selectedAccount = useSelectedAccountSelector();
 
   const listingsActive = details.listingsActive;
 
-  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(getTokenSlug(collectible));
+  const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
 
   const marketplace = isNonEmptyArray(listingsActive)
-    ? listingsActive[0].marketplaceContract
+    ? listingsActive[0].marketplace_contract
     : OBJKT_MARKETPLACE_CONTRACT;
 
   const [marketplaceContract, setMarketplaceContract] = useState<
@@ -61,20 +63,22 @@ export const useBuyCollectible = (collectible: TokenInterface, details: Collecti
 
   const buyCollectible = async () => {
     if (isUserOwnerCurrentCollectible) {
-      return navigate(ModalsEnum.Send, { token: collectible });
+      if (metadata) {
+        return navigate(ModalsEnum.Send, { token: metadata });
+      }
     }
 
     const getTransferParams = () => {
       if (isDefined(marketplaceContract) && isNonEmptyArray(listingsActive)) {
-        const isTezosCurrency = listingsActive[0].currencyId === TEZOS_ID_OBJKT;
+        const isTezosCurrency = listingsActive[0].currency_id === TEZOS_ID_OBJKT;
         const params = isTezosCurrency
           ? { amount: purchaseCurrency.price, mutez: true, source: selectedAccount.publicKeyHash }
           : {};
 
         if (OBJKT_BUY_METHOD in marketplaceContract?.methods) {
-          return [marketplaceContract.methods.fulfill_ask(listingsActive[0].bigmapKey).toTransferParams(params)];
+          return [marketplaceContract.methods.fulfill_ask(listingsActive[0].bigmap_key).toTransferParams(params)];
         } else {
-          return [marketplaceContract.methods.listing_accept(listingsActive[0].bigmapKey, 1).toTransferParams(params)];
+          return [marketplaceContract.methods.listing_accept(listingsActive[0].bigmap_key, 1).toTransferParams(params)];
         }
       }
 

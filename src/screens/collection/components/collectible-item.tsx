@@ -2,13 +2,23 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, memo, useCallback, useMemo } from 'react';
 import { TouchableOpacity, View, Text, Share } from 'react-native';
+import useSWR from 'swr';
 
+import { fetchCollectibleExtraDetails } from 'src/apis/objkt';
+import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { BLOCK_DURATION } from 'src/config/fixed-times';
+import { useBuyCollectible } from 'src/hooks/use-buy-collectible.hook';
 import { SHARE_NFT_CONTENT } from 'src/modals/collectible-modal/collectible-modal';
 import { CollectibleModalSelectors } from 'src/modals/collectible-modal/collectible-modal.selectors';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
+import { CollectibleOfferInteface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
@@ -19,16 +29,11 @@ import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { CollectibleIcon, CollectibleIconSize } from '../../../components/collectible-icon/collectible-icon';
-import { useBuyCollectible } from '../../../hooks/use-buy-collectible.hook';
-import { ModalsEnum } from '../../../navigator/enums/modals.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { formatSize } from '../../../styles/format-size';
-import { CollectibleOfferInteface } from '../../../token/interfaces/collectible-interfaces.interface';
-import { getTokenSlug } from '../../../token/utils/token.utils';
 import { navigateToObjktForBuy } from '../utils';
 import { useCollectibleItemStyles } from './collectible-item.styles';
 import { OfferButton } from './offer-button';
+
+const DETAILS_SYNC_INTERVAL = 4 * BLOCK_DURATION;
 
 interface Props {
   item: CollectibleOfferInteface;
@@ -38,6 +43,8 @@ interface Props {
 }
 
 export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, selectedRpc, selectedPublicKeyHash }) => {
+  const slug = getTokenSlug(item);
+
   const styles = useCollectibleItemStyles();
   const { navigate } = useNavigation();
 
@@ -53,15 +60,35 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
     return '---';
   }, [item]);
 
-  const highestOffer = isDefined(item.highestOffer)
-    ? `${mutezToTz(BigNumber(item.highestOffer.price), item.decimals)} ${item.symbol}`
-    : 'No offers yet';
+  const { data: extraDetails } = useSWR(
+    ['fetchCollectibleExtraDetails', item.address, item.id],
+    () => fetchCollectibleExtraDetails(item.address, item.id),
+    {
+      errorRetryCount: 2,
+      refreshInterval: DETAILS_SYNC_INTERVAL
+    }
+  );
+
+  const highestOffer = useMemo(() => {
+    const filtered = extraDetails?.offers_active.filter(o => o.buyer_address !== selectedPublicKeyHash);
+
+    return filtered && filtered[filtered.length - 1];
+  }, [extraDetails, selectedPublicKeyHash]);
 
   const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holderAddress) ?? [];
   const isHolder = useMemo(() => holders.includes(selectedPublicKeyHash), [selectedPublicKeyHash]);
-  const isOffersExisted = isDefined(item.highestOffer);
 
-  const listedByUser = item.listed ?? 0;
+  const listedByUser = useMemo(() => {
+    if (!item) {
+      return 0;
+    }
+
+    return item.listingsActive.reduce(
+      (acc, curr) => (curr.seller_address === selectedPublicKeyHash ? (acc += curr.amount) : acc),
+      0
+    );
+  }, []);
+
   const quantityByUser = useMemo(
     () => item?.holders?.find(holder => holder.holderAddress === selectedPublicKeyHash)?.quantity ?? 0,
     [selectedPublicKeyHash, item]
@@ -69,9 +96,9 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
   const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
 
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(item, item);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(slug, item);
 
-  const fxHashListed = item?.listingsActive?.find(listing => listing.sellerAddress === selectedPublicKeyHash);
+  const fxHashListed = item?.listingsActive?.find(listing => listing.seller_address === selectedPublicKeyHash);
 
   const isAbleToList = quantityByUser > listedByUser && purchaseCurrency.price > 0;
   const isListed = isNonEmptyArray(item.listingsActive);
@@ -118,7 +145,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
     }
   }, [item, trackEvent]);
 
-  const navigateToCollectibleModal = () => navigate(ModalsEnum.CollectibleModal, { slug: getTokenSlug(item) });
+  const navigateToCollectibleModal = () => navigate(ModalsEnum.CollectibleModal, { slug });
 
   return (
     <View style={styles.collectibleContainer}>
@@ -131,8 +158,10 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
             <CollectibleIcon
-              iconSize={CollectibleIconSize.BIG}
-              collectible={item}
+              isBigIcon={true}
+              slug={slug}
+              artifactUri={item.artifactUri}
+              displayUri={item.displayUri}
               mime={item.mime}
               size={formatSize(295)}
             />
@@ -173,13 +202,13 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
         <View style={styles.buttonContainer}>
           <OfferButton
             isHolder={isHolder}
-            isOffersExisted={isOffersExisted}
-            highestOffer={highestOffer}
+            objktOffer={highestOffer}
             item={item}
             selectedPublicKeyHash={selectedPublicKeyHash}
             selectedRpc={selectedRpc}
             collectionContract={collectionContract}
           />
+
           <View>
             {isHolder || !!fxHashListed ? (
               <TouchableOpacity

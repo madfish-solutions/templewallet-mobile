@@ -8,8 +8,6 @@ import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { EventFn } from 'src/config/general';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
 import { useCollectibleDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isAdultCollectible } from 'src/utils/collectibles.utils';
 import {
   formatCollectibleObjktArtifactUri,
@@ -25,16 +23,17 @@ import { AudioPlayer } from './components/audio-player/audio-player';
 import { Balance } from './components/balance/balance';
 import { BrokenImage } from './components/broken-image/broken-image';
 import { ImageBlurOverlay } from './components/image-blur-overlay/image-blur-overlay';
-import { COLLECTIBLE_FINAL_FALLBACK, CollectibleIconSize } from './constants';
+import { COLLECTIBLE_FINAL_FALLBACK } from './constants';
 import { useCollectibleImageControl } from './hooks/use-collectible-image-control.hook';
 
-export { CollectibleIconSize };
-
 export interface CollectibleIconProps {
-  collectible: TokenInterface;
+  slug: string;
+  artifactUri?: string;
+  displayUri?: string;
   mime: string;
   size: number;
-  iconSize?: CollectibleIconSize;
+  balance?: string;
+  isBigIcon?: boolean;
   audioPlaceholderTheme?: AudioPlaceholderTheme;
   setScrollEnabled?: EventFn<boolean>;
   isTouchableBlurOverlay?: boolean;
@@ -45,20 +44,23 @@ export interface CollectibleIconProps {
 
 export const CollectibleIcon: FC<CollectibleIconProps> = memo(
   ({
-    collectible,
+    slug,
+    artifactUri,
+    displayUri,
     mime,
     size,
-    iconSize = CollectibleIconSize.SMALL,
+    isBigIcon = false,
     audioPlaceholderTheme,
     isTouchableBlurOverlay = false,
     isModalWindow = false,
     isShowInfo,
+    balance,
     setScrollEnabled
   }) => {
     const styles = useCollectibleIconStyles();
 
     // TODO: Refactor this code. Add adult logic to epic.
-    const collectibleDetails = useCollectibleDetailsSelector(getTokenSlug(collectible));
+    const collectibleDetails = useCollectibleDetailsSelector(slug);
     const isShowBlurInitialValue = useMemo(() => {
       if (isDefined(collectibleDetails)) {
         return isAdultCollectible(collectibleDetails.attributes, collectibleDetails.tags);
@@ -69,10 +71,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     const [isShowBlur, setIsShowBlur] = useState(isShowBlurInitialValue);
     // *
 
-    const isBigIcon = iconSize === CollectibleIconSize.BIG;
-
-    const { artifactUri, displayUri } = collectible;
-
     const {
       currentFallback,
       isLoading,
@@ -81,7 +79,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       handleAudioError,
       handleError,
       handleLoadEnd
-    } = useCollectibleImageControl(collectible, isBigIcon);
+    } = useCollectibleImageControl(slug, artifactUri, isBigIcon);
 
     const finalImage = useMemo(() => {
       if (currentFallback === COLLECTIBLE_FINAL_FALLBACK) {
@@ -91,7 +89,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       if (isShowBlur) {
         return (
           <ImageBlurOverlay
-            overlaySize={iconSize}
+            isBigIcon={isBigIcon}
             size={size}
             isShowBlur={isShowBlur}
             setIsShowBlur={setIsShowBlur}
@@ -187,7 +185,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       displayUri,
       isModalWindow,
       isShowBlur,
-      iconSize,
+      isBigIcon,
       isTouchableBlurOverlay
     ]);
 
@@ -203,7 +201,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
       >
         {finalImage}
 
-        {Boolean(isShowInfo) && <Balance balance={collectible.balance} />}
+        {isShowInfo && isDefined(balance) && <Balance balance={balance} />}
 
         {isLoading && !Boolean(isShowBlur) && <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />}
       </View>

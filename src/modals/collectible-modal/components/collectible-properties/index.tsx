@@ -84,7 +84,7 @@ interface CollectiblePropertyProps {
   value: JSX.Element | number | string | null;
 }
 
-export const CollectibleProperty: FC<CollectiblePropertyProps> = ({ name, value }) => {
+const CollectibleProperty: FC<CollectiblePropertyProps> = ({ name, value }) => {
   const styles = useCollectiblePropertyStyles();
 
   return (

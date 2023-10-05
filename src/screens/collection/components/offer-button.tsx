@@ -1,28 +1,27 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, memo, useMemo } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { OBJKT_CONTRACT } from 'src/apis/objkt/constants';
+import { ObjktOffer, getObjktMarketplaceContract, objktCurrencies } from 'src/apis/objkt';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
-import { FxHashContractInterface, ObjktContractInterface } from 'src/interfaces/marketplaces.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { CollectibleOfferInteface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
+import { mutezToTz } from 'src/utils/tezos.util';
 import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
 import { navigateToObjktForBuy } from '../utils';
 import { useCollectibleItemStyles } from './collectible-item.styles';
 
 interface Props {
-  isOffersExisted: boolean;
   isHolder: boolean;
-  highestOffer: string;
+  objktOffer?: ObjktOffer;
   item: CollectibleOfferInteface;
   selectedPublicKeyHash: string;
   selectedRpc: string;
@@ -32,45 +31,51 @@ interface Props {
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 
 export const OfferButton: FC<Props> = memo(
-  ({ isOffersExisted, isHolder, highestOffer, item, selectedPublicKeyHash, selectedRpc, collectionContract }) => {
+  ({ isHolder, objktOffer, item, selectedPublicKeyHash, selectedRpc, collectionContract }) => {
     const styles = useCollectibleItemStyles();
 
-    const [offer, setOffer] = useState<ObjktContractInterface | FxHashContractInterface>();
     const dispatch = useDispatch();
 
     const tezos = useMemo(() => createTezosToolkit(selectedRpc), [selectedRpc]);
 
-    useEffect(() => {
-      tezos.contract
-        .at<ObjktContractInterface | FxHashContractInterface>(item.highestOffer?.marketplaceContract ?? OBJKT_CONTRACT)
-        .then(setOffer);
-    }, []);
+    const isOffersExisted = isDefined(objktOffer);
+
+    const currency = objktCurrencies[objktOffer?.currency_id ?? 1];
+    const decimals = currency?.decimals;
+    const symbol = currency?.symbol ?? '???';
+    const offerStr = isDefined(objktOffer)
+      ? `${isDefined(decimals) ? mutezToTz(BigNumber(objktOffer.price), currency.decimals) : '???'} ${symbol}`
+      : 'No offers yet';
 
     const buttonText = useMemo(() => {
       if (isOffersExisted) {
         if (isHolder) {
-          return `Sell for ${highestOffer}`;
+          return `Sell for ${offerStr}`;
         } else {
           return 'Make offer';
         }
       } else {
         return 'No offers yet';
       }
-    }, [isOffersExisted, isHolder, highestOffer]);
+    }, [isOffersExisted, isHolder, offerStr]);
 
     const isListed = item.lowestAsk !== null;
 
-    const handlePress = useCallback(async () => {
+    const handlePress = async () => {
       if (!isHolder && isListed) {
         return navigateToObjktForBuy(collectionContract, item.id);
       }
 
+      const offer = await getObjktMarketplaceContract(tezos, objktOffer?.marketplace_contract).catch(error => {
+        console.error(error);
+      });
+
       const getTransferParams = () => {
         if (isDefined(offer)) {
-          if ('fulfill_offer' in offer?.methods) {
-            return [offer.methods.fulfill_offer(item.highestOffer?.bigmapKey ?? 1, item.id).toTransferParams()];
+          if ('fulfill_offer' in offer.methods) {
+            return [offer.methods.fulfill_offer(objktOffer?.bigmap_key ?? 1, item.id).toTransferParams()];
           } else {
-            return [offer.methods.offer_accept(item.highestOffer?.bigmapKey ?? 1).toTransferParams()];
+            return [offer.methods.offer_accept(objktOffer?.bigmap_key ?? 1).toTransferParams()];
           }
         }
 
@@ -81,16 +86,16 @@ export const OfferButton: FC<Props> = memo(
 
       const token = {
         id: item.id,
-        symbol: item.symbol,
+        symbol,
         standard: Route3TokenStandardEnum.fa2,
         contract: collectionContract,
         tokenId: `${item.id}`,
-        decimals: item.decimals
+        decimals
       };
 
       const { approve, revoke } = await getTransferPermissions(
         tezos,
-        item.highestOffer?.marketplaceContract ?? '',
+        objktOffer?.marketplace_contract ?? '',
         selectedPublicKeyHash,
         token,
         new BigNumber('0')
@@ -109,7 +114,7 @@ export const OfferButton: FC<Props> = memo(
           opParams: updatedTransferParams as ParamsWithKind[]
         })
       );
-    }, []);
+    };
 
     return (
       <TouchableOpacity

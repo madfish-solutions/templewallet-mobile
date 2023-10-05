@@ -37,4 +37,6 @@
 ### TODO:
 
 - DRY `Share.share` & Dynamic links creation
+- Blacklist `collections` slice
+- Persist adultery flags
 -

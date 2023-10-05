@@ -12,7 +12,7 @@ import {
 import { CollectibleAttributes, CollectibleDetailsResponse, CollectibleTag } from 'src/apis/objkt/types';
 import { AttributeInfo } from 'src/interfaces/attribute.interface';
 import { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-interfaces.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { toTokenSlug } from 'src/token/utils/token.utils';
 
 const attributesInfoInitialState: AttributeInfo[] = [
   {
@@ -114,7 +114,7 @@ export const loadAllCollectiblesDetails$ = (
       const collectitblesDetailsRecord: Record<string, CollectibleDetailsInterface> = {};
 
       for (const collectible of collectiblesDetails) {
-        const collectibleSlug = getTokenSlug({ address: collectible.fa_contract, id: collectible.token_id });
+        const collectibleSlug = toTokenSlug(collectible.fa_contract, collectible.token_id);
 
         collectitblesDetailsRecord[collectibleSlug] = {
           ...pick(
@@ -137,17 +137,7 @@ export const loadAllCollectiblesDetails$ = (
           displayUri: collectible.display_uri,
           editions: collectible.supply,
           collection: collectible.fa,
-          listingsActive: isNonEmptyArray(collectible.listings_active)
-            ? [
-                {
-                  bigmapKey: collectible.listings_active[0].bigmap_key,
-                  currencyId: collectible.listings_active[0].currency_id,
-                  marketplaceContract: collectible.listings_active[0].marketplace_contract,
-                  currency: collectible.listings_active[0].currency,
-                  price: collectible.listings_active[0].price
-                }
-              ]
-            : []
+          listingsActive: collectible.listings_active.slice(0, 1)
         };
       }
 

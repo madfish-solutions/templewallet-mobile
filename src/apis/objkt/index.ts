@@ -1,3 +1,10 @@
+/**
+ * Docs: https://public-api-v3-20221206.objkt.com/docs
+ * Explore: https://public-api-v3-20221206.objkt.com/explore
+ */
+
+import { TezosToolkit } from '@taquito/taquito';
+import BigNumber from 'bignumber.js';
 import { chunk } from 'lodash-es';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
@@ -7,7 +14,7 @@ import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
 import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
-import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
+import { apolloObjktClient, HIDDEN_CONTRACTS, OBJKT_CONTRACT } from './constants';
 import {
   buildGetCollectiblesByCollectionQuery,
   buildGetCollectiblesInfoQuery,
@@ -15,19 +22,26 @@ import {
   buildGetGalleryAttributeCountQuery,
   buildGetHoldersInfoQuery,
   buildGetAllUserCollectiblesQuery,
-  buildGetCollectiblesByGalleryQuery
+  buildGetCollectiblesByGalleryQuery,
+  buildGetCollectibleExtraQuery
 } from './queries';
 import {
   AttributeInfoResponse,
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
   FA2AttributeCountQueryResponse,
+  FxHashContractInterface,
   GalleryAttributeCountQueryResponse,
+  ObjktCollectibleExtra,
+  ObjktContractInterface,
   QueryResponse,
   TzProfilesQueryResponse,
   UserAdultCollectiblesQueryResponse
 } from './types';
 import { transformCollectiblesArray } from './utils';
+
+export type { ObjktOffer } from './types';
+export { objktCurrencies } from './constants';
 
 const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
 
@@ -98,7 +112,7 @@ export const fetchCollectiblesByCollection$ = (
   return apolloObjktClient.fetch$<CollectiblesByCollectionResponse | CollectiblesByGalleriesResponse>(request).pipe(
     map(result => {
       if ('token' in result) {
-        const collectibles = transformCollectiblesArray(result.token, selectedPublicKey);
+        const collectibles = transformCollectiblesArray(result.token);
 
         return collectibles;
       } else {
@@ -109,7 +123,7 @@ export const fetchCollectiblesByCollection$ = (
 
             return { ...token.token, fa: { items } };
           }) ?? [];
-        const collectibles = transformCollectiblesArray(tokens, selectedPublicKey);
+        const collectibles = transformCollectiblesArray(tokens);
 
         return collectibles;
       }
@@ -142,3 +156,13 @@ export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<Attribute
     .fetch$<GalleryAttributeCountQueryResponse>(request)
     .pipe(map(result => result.gallery_attribute_count));
 };
+
+export const fetchCollectibleExtraDetails = (contract: string, id: BigNumber.Value) =>
+  apolloObjktClient
+    .fetch<{ token: [ObjktCollectibleExtra] | [] }>(buildGetCollectibleExtraQuery(), {
+      where: { fa_contract: { _eq: contract }, token_id: { _eq: String(id) } }
+    })
+    .then(data => data?.token[0] ?? null);
+
+export const getObjktMarketplaceContract = (tezos: TezosToolkit, address?: string) =>
+  tezos.contract.at<ObjktContractInterface | FxHashContractInterface>(address ?? OBJKT_CONTRACT);

@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
 
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useTokensMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { normalizeTokenMetadata } from '../utils/token-metadata.utils';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { normalizeTokenMetadata } from 'src/utils/token-metadata.utils';
+
 import { useTokenExchangeRateGetter } from './use-token-exchange-rate-getter.hook';
 
 export const useTokenMetadataGetter = () => {

@@ -1,3 +1,5 @@
+import type { ContractAbstraction, ContractMethod, ContractProvider } from '@taquito/taquito';
+
 import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 
@@ -17,20 +19,19 @@ export interface GalleryAttributeCountQueryResponse {
   gallery_attribute_count: AttributeInfoResponse[];
 }
 
-interface OfferResponse {
+export interface ObjktOffer {
   buyer_address: string;
-  collection_offer: string | null;
   price: number;
-  price_xtz: number;
+  currency_id: number;
   bigmap_key: number;
   marketplace_contract: string;
   fa_contract: string;
-  currency_id: number;
+  __typename: 'offer_active';
 }
 
 type HolderInfo = { holder_address: string; quantity: number };
 
-export interface CurrencyInfo {
+export interface ObjktCurrencyInfo {
   symbol: string;
   decimals: number;
   contract: string | null;
@@ -55,14 +56,14 @@ export interface CollectibleResponse {
   symbol: string;
   token_id: string;
   holders: HolderInfo[];
-  offers_active: OfferResponse[];
+  offers_active: ObjktOffer[];
   events: {
     marketplace_event_type: MarketPlaceEventEnum;
     price_xtz: number | null;
     price: number | null;
     currency_id: number;
   }[];
-  listings_active: ListingResponse[];
+  listings_active: ObjktListing[];
   fa: {
     items: number;
   };
@@ -117,7 +118,9 @@ export interface CollectibleTag {
   };
 }
 
-interface ListingsActiveResponse {
+export interface ObjktListing {
+  amount: number;
+  seller_address: string;
   bigmap_key: number;
   currency_id: number;
   price: number;
@@ -125,11 +128,6 @@ interface ListingsActiveResponse {
   currency: {
     type: string;
   };
-}
-
-interface ListingResponse extends ListingsActiveResponse {
-  amount: number;
-  seller_address: string;
 }
 
 interface Creator {
@@ -178,5 +176,21 @@ export interface CollectibleDetailsResponse {
   supply: number;
   mime: string;
   galleries: Gallery[];
-  listings_active: ListingsActiveResponse[];
+  listings_active: ObjktListing[];
+}
+
+export interface ObjktCollectibleExtra {
+  offers_active: ObjktOffer[];
+}
+
+export interface ObjktContractInterface extends ContractAbstraction<ContractProvider> {
+  methods: {
+    fulfill_offer: (offer_id: number, token_id: number) => ContractMethod<ContractProvider>;
+  };
+}
+
+export interface FxHashContractInterface extends ContractAbstraction<ContractProvider> {
+  methods: {
+    offer_accept: (offer_id: number) => ContractMethod<ContractProvider>;
+  };
 }

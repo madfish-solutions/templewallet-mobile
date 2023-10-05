@@ -1,16 +1,6 @@
-import { CollectibleAttributes, CollectibleTag, CurrencyInfo } from '../../apis/objkt/types';
-import { TokenInterface } from './token.interface';
+import { CollectibleAttributes, CollectibleTag, ObjktCurrencyInfo, ObjktListing } from 'src/apis/objkt/types';
 
-interface Offer {
-  buyerAddress: string;
-  collectionOffer: string | null;
-  price: number;
-  priceXtz: number;
-  bigmapKey: number;
-  marketplaceContract: string;
-  faContract: string;
-  currencyId: number;
-}
+import { TokenInterface } from './token.interface';
 
 interface HolderInfo {
   holderAddress: string;
@@ -45,32 +35,20 @@ interface Galleries {
   };
 }
 
-export interface ListingsActive {
-  amount?: number;
-  sellerAddress?: string;
-  bigmapKey: number;
-  currencyId: number;
-  price: number;
-  marketplaceContract: string;
-  currency: {
-    type: string;
-  };
-}
+export type ListingActive = ObjktListing;
 
 export interface CollectibleCommonInterface {
   description: string;
   editions: number;
   isAdultContent?: boolean;
-  listingsActive: ListingsActive[];
+  listingsActive: ListingActive[];
   mime: string;
 }
 
 interface OfferInteface {
-  highestOffer: Offer;
   lowestAsk: number | null;
   holders: HolderInfo[];
-  listed: number;
-  lastPrice: { price: number | null | undefined } & Omit<CurrencyInfo, 'contract' | 'id'>;
+  lastPrice: { price: number | null | undefined } & Omit<ObjktCurrencyInfo, 'contract' | 'id'>;
   items: number;
 }
 
@@ -96,4 +74,7 @@ export interface CollectibleInterface
     Omit<TokenInterface, 'displayUri'> {}
 
 /** @deprecated // What is this creature ?!) */
-export interface CollectibleOfferInteface extends TokenInterface, CollectibleCommonInterface, OfferInteface {}
+export interface CollectibleOfferInteface
+  extends Omit<TokenInterface, 'balance' | 'visibility' | 'decimals' | 'symbol'>,
+    CollectibleCommonInterface,
+    OfferInteface {}

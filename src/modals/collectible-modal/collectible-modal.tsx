@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { SUPPORTED_CONTRACTS } from 'src/apis/objkt/constants';
 import { ActivityIndicator } from 'src/components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { CollectibleIcon, CollectibleIconSize } from 'src/components/collectible-icon/collectible-icon';
+import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -86,7 +86,7 @@ export const CollectibleModal = memo(() => {
 
   const burnCollectible = useBurnCollectible(collectible);
   const { attributes, isLoading } = useFetchCollectibleAttributes(details);
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(collectible, details);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(slug, details);
 
   const isLoadingDetails = useCollectibleDetailsLoadingSelector();
 
@@ -94,7 +94,7 @@ export const CollectibleModal = memo(() => {
     collection,
     creators,
     description,
-    metadata,
+    metadata: metadataURI,
     timestamp,
     royalties,
     editions,
@@ -118,7 +118,7 @@ export const CollectibleModal = memo(() => {
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 
   const isSupportedContract = useMemo(
-    () => (listingsActive.length ? SUPPORTED_CONTRACTS.includes(listingsActive[0].marketplaceContract) : true),
+    () => (listingsActive.length ? SUPPORTED_CONTRACTS.includes(listingsActive[0].marketplace_contract) : true),
     [listingsActive]
   );
 
@@ -246,10 +246,12 @@ export const CollectibleModal = memo(() => {
 
       <View>
         <CollectibleIcon
-          collectible={collectible}
+          slug={slug}
+          artifactUri={collectible.artifactUri}
+          displayUri={collectible.displayUri}
           mime={details.mime}
           size={iconSize}
-          iconSize={CollectibleIconSize.BIG}
+          isBigIcon={true}
           isTouchableBlurOverlay
           isModalWindow
           setScrollEnabled={setScrollEnabled}
@@ -318,7 +320,7 @@ export const CollectibleModal = memo(() => {
             contract={address}
             tokenId={Number(id)}
             editions={editions}
-            metadata={metadata}
+            metadata={metadataURI}
             minted={timestamp}
             owned={collectible.balance ?? '0'}
             royalties={royalties}

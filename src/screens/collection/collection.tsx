@@ -26,7 +26,7 @@ const VIEWABILITY_CONFIG = {
   minimumViewTime: 0
 };
 
-const keyExtractor = (item: TokenInterface) => `${item.address}_${item.id}`;
+const keyExtractor = (item: Pick<TokenInterface, 'address' | 'id'>) => `${item.address}_${item.id}`;
 
 export const Collection = () => {
   const styles = useCollectionStyles();
