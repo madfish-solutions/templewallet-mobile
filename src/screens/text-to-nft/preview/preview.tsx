@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useState } from 'react';
-import { Text, View, useWindowDimensions } from 'react-native';
+import { Text, View, useWindowDimensions, ScrollView } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -14,6 +14,7 @@ import { CreateNftSelectors } from 'src/screens/text-to-nft/preview/selectors';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
+import { Divider } from '../../../components/divider/divider';
 import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
 import { usePreviewStyles } from './preview.styles';
 
@@ -41,7 +42,7 @@ export const PreviewScreen: FC = () => {
 
   return (
     <>
-      <View style={styles.root}>
+      <ScrollView style={styles.root}>
         {isDefined(order.variants) && (
           <>
             <CollectibleImage
@@ -73,7 +74,8 @@ export const PreviewScreen: FC = () => {
             </View>
           </>
         )}
-      </View>
+        <Divider />
+      </ScrollView>
 
       <ButtonsFloatingContainer>
         <ButtonLargePrimary
