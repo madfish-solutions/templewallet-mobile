@@ -4,8 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { ONE_MINUTE } from 'src/config/fixed-times';
 import { checkApp } from 'src/store/security/security-actions';
-
-import { useInterval } from './use-interval.hook';
+import { useInterval } from 'src/utils/hooks';
 
 const APP_CHECK_INTERVAL = 60 * ONE_MINUTE;
 

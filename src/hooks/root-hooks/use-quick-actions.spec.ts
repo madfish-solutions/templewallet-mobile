@@ -1,8 +1,9 @@
 import { renderHook } from '@testing-library/react-hooks';
 
-import { mockReactNativeQuickActions } from '../mocks/react-native-quick-actions.mock';
-import { mockDeviceEventEmitter, mockDeviceEventEmitterInstance } from '../mocks/react-native.mock';
-import { useQuickActions } from './use-quick-actions.hook';
+import { mockReactNativeQuickActions } from 'src/mocks/react-native-quick-actions.mock';
+import { mockDeviceEventEmitter, mockDeviceEventEmitterInstance } from 'src/mocks/react-native.mock';
+
+import { useQuickActions } from './use-quick-actions';
 
 describe('useQuickActions', () => {
   it('should set shortcut items and add quick action shortcut listener on start', () => {

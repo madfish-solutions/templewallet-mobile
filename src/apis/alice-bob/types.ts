@@ -49,9 +49,23 @@ export interface AliceBobOrderInfoInterface {
   orderExpirationTimetamp: number;
 }
 
-export interface PairInfoResponse {
-  minAmount: number;
-  maxAmount: number;
+interface PairsInfo {
+  from: string;
+  to: string;
+  fromnetwork: string | null;
+  tonetwork: string | null;
+  in: string;
+  out: string;
+  ratetype: string;
+  amount: string;
+  tofee: string;
+  fromfee: string;
+  minamount: string;
+  maxamount: string;
+}
+
+export interface PairsInfoResponse {
+  pairsInfo: PairsInfo[];
 }
 
 export interface OutputEstimationResponse {

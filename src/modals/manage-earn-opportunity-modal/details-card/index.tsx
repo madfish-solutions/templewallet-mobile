@@ -11,7 +11,6 @@ import { HorizontalBorder } from 'src/components/horizontal-border';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useAssetAmount } from 'src/hooks/use-asset-amount.hook';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
-import { useInterval } from 'src/hooks/use-interval.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
@@ -25,6 +24,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
 import { isFarm } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
+import { useInterval } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
