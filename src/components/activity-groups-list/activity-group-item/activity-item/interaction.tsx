@@ -60,6 +60,8 @@ export const Interaction: FC<ActivityItemProps> = memo(({ activity }) => {
     case ActivitySubtype.QuipuswapDivestFromFarm:
     case ActivitySubtype.QuipuswapHarvestFromFarm:
     case ActivitySubtype.QuipuswapHarvestFromDividents:
+    case ActivitySubtype.QuipuswapSend:
+    case ActivitySubtype.QuipuswapReceive:
       return <Quipuswap activity={activity as QuipuswapActivity} nonZeroAmounts={nonZeroAmounts} />;
 
     default:

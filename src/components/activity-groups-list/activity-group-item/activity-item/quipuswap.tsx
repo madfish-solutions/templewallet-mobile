@@ -1,6 +1,6 @@
-import { ActivitySubtype, QuipuswapActivity } from '@temple-wallet/transactions-parser';
+import { ActivitySubtype, isQuipuswapSendParameter, QuipuswapActivity } from '@temple-wallet/transactions-parser';
 import { isEmpty } from 'lodash-es';
-import React, { useMemo, type FC } from 'react';
+import React, { type FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -16,6 +16,7 @@ import { calculateDollarValue, getQuipuswapSubtitle, separateAmountsBySign } fro
 import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking';
 
+import { WalletAddress } from '../../../wallet-address/wallet-address';
 import { ActivityGroupAmountChange } from '../activity-group-amount-change/activity-group-amount-change';
 import { ActivityGroupDollarAmountChange } from '../activity-group-dollar-amount-change/activity-group-dollar-amount-change';
 import {
@@ -36,7 +37,7 @@ export const Quipuswap: FC<{ activity: QuipuswapActivity; nonZeroAmounts: Array<
       status={activity.status}
       timestamp={activity.timestamp}
       face={<Face subtype={activity.subtype} nonZeroAmounts={nonZeroAmounts} />}
-      details={<Details nonZeroAmounts={nonZeroAmounts} hash={activity.hash} />}
+      details={<Details activity={activity} nonZeroAmounts={nonZeroAmounts} hash={activity.hash} />}
     />
   );
 };
@@ -68,10 +69,26 @@ const Face: FC<{ subtype: ActivitySubtype; nonZeroAmounts: Array<ActivityAmount>
   );
 };
 
-const Details: FC<{ hash: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ hash, nonZeroAmounts }) => {
+const Details: FC<{ activity: QuipuswapActivity; hash: string; nonZeroAmounts: Array<ActivityAmount> }> = ({
+  activity,
+  hash,
+  nonZeroAmounts
+}) => {
   const styles = useActivityDetailsStyles();
   const commonStyles = useActivityCommonStyles();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const isQuipuswapSend = activity.subtype === ActivitySubtype.QuipuswapSend;
+  const isQuipuswapReceive = activity.subtype === ActivitySubtype.QuipuswapReceive;
+
+  const sendReceivePkh = useMemo(() => {
+    if (isQuipuswapSend && isQuipuswapSendParameter(activity.parameter)) {
+      return activity.parameter.value.receiver;
+    }
+
+    if (isQuipuswapReceive) {
+      return activity.initiator!.address;
+    }
+  }, [activity, isQuipuswapSend, isQuipuswapReceive]);
 
   const { positiveAmounts, negativeAmounts } = useMemo(() => separateAmountsBySign(nonZeroAmounts), [nonZeroAmounts]);
 
@@ -101,6 +118,14 @@ const Details: FC<{ hash: string; nonZeroAmounts: Array<ActivityAmount> }> = ({ 
               </View>
             ))}
           </View>
+        </View>
+      )}
+
+      {isDefined(sendReceivePkh) && (
+        <View style={[styles.itemWrapper, styles.border]}>
+          <Text style={styles.text}>{isQuipuswapSend ? 'To:' : 'From:'}</Text>
+
+          <WalletAddress isLocalDomainNameShowing publicKeyHash={sendReceivePkh} />
         </View>
       )}
 

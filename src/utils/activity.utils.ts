@@ -72,6 +72,10 @@ export const getQuipuswapSubtitle = (subtype: ActivitySubtype) => {
       return 'Harvest from farm';
     case ActivitySubtype.QuipuswapHarvestFromDividents:
       return 'Harvest from dividends';
+    case ActivitySubtype.QuipuswapSend:
+      return 'Swap and Send';
+    case ActivitySubtype.QuipuswapReceive:
+      return 'Receive from swap';
 
     default:
       return '-';
