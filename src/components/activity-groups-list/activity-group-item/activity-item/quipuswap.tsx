@@ -85,8 +85,8 @@ const Details: FC<{ activity: QuipuswapActivity; hash: string; nonZeroAmounts: A
       return activity.parameter.value.receiver;
     }
 
-    if (isQuipuswapReceive) {
-      return activity.initiator!.address;
+    if (isQuipuswapReceive && isDefined(activity.initiator)) {
+      return activity.initiator.address;
     }
   }, [activity, isQuipuswapSend, isQuipuswapReceive]);
 
