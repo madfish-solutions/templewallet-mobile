@@ -4,12 +4,17 @@ import { catchError, concatMap, filter, map, mapTo, switchMap, withLatestFrom } 
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { globalNavigationRef } from 'src/navigator/root-stack';
+import { globalNavigationRef } from 'src/navigator/global-nav-ref';
 import { Shelter } from 'src/shelter/shelter';
 import { resetBeacon$ } from 'src/utils/beacon.utils';
 import { resetKeychain$ } from 'src/utils/keychain.utils';
 
-import { resetApplicationAction, resetKeychainOnInstallAction, untypedNavigateAction } from './root-state.actions';
+import {
+  resetApplicationAction,
+  resetKeychainOnInstallAction,
+  untypedNavigateAction,
+  navigateBackAction
+} from './root-state.actions';
 import type { RootState } from './types';
 
 const resetKeychainOnInstallEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
@@ -55,9 +60,20 @@ const navigateEpic = (action$: Observable<Action>) =>
     })
   );
 
+const navigateBackEpic = (action$: Observable<Action>) =>
+  action$.pipe(
+    ofType(navigateBackAction),
+    concatMap(() => {
+      globalNavigationRef.current?.goBack();
+
+      return EMPTY;
+    })
+  );
+
 export const rootStateEpics = combineEpics(
   resetApplicationSubmitEpic,
   resetApplicationSuccessEpic,
   navigateEpic,
+  navigateBackEpic,
   resetKeychainOnInstallEpic
 );

@@ -6,7 +6,7 @@ import { useNonZeroAmounts } from '../../../hooks/use-non-zero-amounts.hook';
 import { ActivityGroup, emptyActivity } from '../../../interfaces/activity.interface';
 import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
 import { formatSize } from '../../../styles/format-size';
-import { tzktUrl } from '../../../utils/linking.util';
+import { tzktUrl } from '../../../utils/linking';
 import { Divider } from '../../divider/divider';
 import { ExternalLinkButton } from '../../icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';

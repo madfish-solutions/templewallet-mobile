@@ -25,7 +25,8 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
   },
   nameText: {
     ...typography.caption13Semibold,
-    color: colors.black
+    color: colors.black,
+    maxWidth: formatSize(140)
   },
   actionsContainer: {
     flexDirection: 'row',

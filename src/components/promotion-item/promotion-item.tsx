@@ -10,7 +10,7 @@ import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics'
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { openUrl } from 'src/utils/linking.util';
+import { openUrl } from 'src/utils/linking';
 
 import { PromotionItemSelectors } from './promotion-item.selectors';
 import { usePromotionItemStyles } from './promotion-item.styles';

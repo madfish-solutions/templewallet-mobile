@@ -1,15 +1,16 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
+import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
+import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
+import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
-import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
-import { useIsEnabledAdsBannerSelector } from '../../../store/settings/settings-selectors';
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { COMMON_PROMOTION_CAROUSEL_DATA } from './promotion-carousel.data';
 import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
@@ -17,10 +18,11 @@ import { usePromotionCarouselStyles } from './promotion-carousel.styles';
 
 export const PromotionCarousel = () => {
   const activePromotion = useActivePromotionSelector();
-  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const styles = usePromotionCarouselStyles();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
-  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+  const partnersPromoShown = useIsPartnersPromoShown();
+
+  usePartnersPromoLoad();
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -36,7 +38,7 @@ export const PromotionCarousel = () => {
       );
     }
 
-    if (partnersPromotionEnabled && !promotionErrorOccurred && !isEnabledAdsBanner) {
+    if (partnersPromoShown && !promotionErrorOccurred) {
       result.unshift(
         <OptimalPromotionItem
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
@@ -49,29 +51,41 @@ export const PromotionCarousel = () => {
     }
 
     return result;
-  }, [activePromotion, partnersPromotionEnabled, promotionErrorOccurred, styles, isEnabledAdsBanner]);
+  }, [activePromotion, partnersPromoShown, promotionErrorOccurred, styles]);
 
+  const height = formatSize(112);
   const { layoutWidth, handleLayout } = useLayoutSizes();
-  const flooredLayoutWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
+  const flooredWidth = useMemo(() => Math.floor(layoutWidth), [layoutWidth]);
+
+  const modeConfig = useMemo<ILayoutConfig>(
+    () => ({
+      parallaxScrollingOffset: 24,
+      parallaxScrollingScale: 1,
+      parallaxAdjacentItemScale: 1
+    }),
+    []
+  );
+
+  const renderItem = useCallback((info: CarouselRenderItemInfo<JSX.Element>) => info.item, []);
+
+  const style = useMemo(() => [styles.root, { height }], [styles.root, height]);
 
   return (
-    <View onLayout={handleLayout} style={styles.root}>
-      <Carousel
-        data={data}
-        loop={true}
-        autoPlay={true}
-        autoPlayInterval={3000}
-        mode="parallax"
-        modeConfig={{
-          parallaxScrollingOffset: 24,
-          parallaxScrollingScale: 1,
-          parallaxAdjacentItemScale: 1
-        }}
-        width={flooredLayoutWidth}
-        height={formatSize(112)}
-        scrollAnimationDuration={1200}
-        renderItem={renderItem => renderItem.item}
-      />
+    <View onLayout={handleLayout} style={style}>
+      {flooredWidth > 0 ? (
+        <Carousel
+          data={data}
+          loop={true}
+          autoPlay={true}
+          autoPlayInterval={3000}
+          mode="parallax"
+          modeConfig={modeConfig}
+          width={flooredWidth}
+          height={height}
+          scrollAnimationDuration={1200}
+          renderItem={renderItem}
+        />
+      ) : null}
     </View>
   );
 };

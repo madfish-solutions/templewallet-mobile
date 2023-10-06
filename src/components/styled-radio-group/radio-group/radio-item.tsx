@@ -1,11 +1,11 @@
 import React from 'react';
-import { PixelRatio, Pressable, Text, View } from 'react-native';
+import { PixelRatio, Pressable, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
+import { TruncatedText } from 'src/components/truncated-text';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { getTruncatedProps } from 'src/utils/style.util';
 import { setTestID } from 'src/utils/test-id.utils';
 
 import { itemStyles } from './styles';
@@ -65,7 +65,7 @@ export const RadioItem: React.FC<RadioItemProps> = ({
         </>
       )}
 
-      <Text {...getTruncatedProps(labelStyle)}>{label}</Text>
+      <TruncatedText style={labelStyle}>{label}</TruncatedText>
     </Pressable>
   );
 };

@@ -1,13 +1,13 @@
 import React, { FC } from 'react';
-import { Text, ViewStyle } from 'react-native';
+import { ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { MarginProps } from 'src/interfaces/margin.props';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
-import { getTruncatedProps } from 'src/utils/style.util';
 
 import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from '../touchable-with-analytics';
+import { TruncatedText } from '../truncated-text';
 import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
 interface Props extends MarginProps, TestIdProps {
@@ -46,9 +46,9 @@ export const PublicKeyHashText: FC<Props> = ({
       testID={testID}
       testIDProperties={testIDProperties}
     >
-      <Text {...getTruncatedProps(styles.publicKeyHashText, 'middle')} style={styles.publicKeyHashText}>
+      <TruncatedText ellipsizeMode="middle" style={styles.publicKeyHashText}>
         {publicKeyHash}
-      </Text>
+      </TruncatedText>
     </TouchableWithAnalytics>
   );
 };
