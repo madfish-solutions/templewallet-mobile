@@ -1,7 +1,7 @@
+import { Action } from 'redux';
 import { combineEpics, Epic } from 'redux-observable';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
-import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from '../../utils/token-metadata.utils';
@@ -15,7 +15,7 @@ import {
   loadWhitelistAction
 } from './tokens-metadata-actions';
 
-const loadWhitelistEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadWhitelistEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadWhitelistAction.submit),
     withSelectedRpcUrl(state$),
@@ -27,7 +27,7 @@ const loadWhitelistEpic: Epic = (action$: Observable<Action>, state$: Observable
     )
   );
 
-const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
+const loadTokenSuggestionEpic: Epic = action$ =>
   action$.pipe(
     ofType(loadTokenSuggestionActions.submit),
     toPayload(),
@@ -46,7 +46,7 @@ const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokenMetadataEpic = (action$: Observable<Action>) =>
+const loadTokenMetadataEpic: Epic = action$ =>
   action$.pipe(
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
@@ -61,7 +61,7 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokensMetadataEpic = (action$: Observable<Action>) =>
+const loadTokensMetadataEpic: Epic = action$ =>
   action$.pipe(
     ofType(loadTokensMetadataAction),
     toPayload(),

@@ -1,12 +1,16 @@
+import { isEqual } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
+import { AccountStateInterface } from 'src/interfaces/account-state.interface';
 import { TEMPLE_TOKEN } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible, isNonZeroBalance } from 'src/utils/tezos.util';
@@ -15,6 +19,7 @@ import { getAccountState, getSelectedAccount } from 'src/utils/wallet-account-st
 import { useTezosToken } from 'src/utils/wallet.utils';
 
 import { useSelector } from '../selector';
+import { useTokensMetadataSelector } from '../tokens-metadata/tokens-metadata-selectors';
 
 export const useAccountsListSelector = () => useSelector(({ wallet }) => wallet.accounts);
 
@@ -42,15 +47,24 @@ export const useIsAuthorisedSelector = () => {
   return useMemo(() => accounts.length > 0, [accounts.length]);
 };
 
+export const useIsCurrentNodeOfDcp = () => useSelector(state => isDcpNode(state.settings.selectedRpcUrl));
+
+export const useSelectedAccountPKH = () => useSelector(state => state.wallet.selectedAccountPublicKeyHash);
+
+export const useRawCurrentAccountSelector = (): AccountStateInterface | undefined =>
+  useSelector(state => state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash]);
+
+/** @deprecated // Too heavy */
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
+/** @deprecated // Too heavy */
 export const useAssetsListSelector = (): TokenInterface[] =>
   useSelector(state => {
     console.log('This better not be called every time Redux state changes');
     const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
-    const isTezosNode = !isDcpNode(state.settings.selectedRpcUrl);
+    const nodeIsDcp = isDcpNode(state.settings.selectedRpcUrl);
 
-    const tokensList = isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList;
+    const tokensList = nodeIsDcp ? selectedAccountState.dcpTokensList : selectedAccountState.tokensList;
 
     return tokensList
       .filter(token => selectedAccountState.removedTokensList.indexOf(token.slug) === -1)
@@ -101,6 +115,53 @@ export const useVisibleTokensListSelector = () => {
       ),
     [tokensList]
   );
+};
+
+export const useAllCurrentAccountStoredAssetsSelector = () =>
+  useSelector(
+    state => {
+      const account = state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash];
+
+      if (!account) {
+        return null;
+      }
+
+      const isDcp = isDcpNode(state.settings.selectedRpcUrl);
+
+      return {
+        removed: account.removedTokensList,
+        stored: isDcp ? account.dcpTokensList : account.tokensList
+      };
+    },
+    (state1, state2) => state1?.stored === state2?.stored && state1?.removed === state2?.removed
+  );
+
+export const useAllCurrentAccountStoredCollectiblesSelector = () => {
+  const assets = useAllCurrentAccountStoredAssetsSelector();
+  const allMetadatas = useTokensMetadataSelector();
+
+  return useMemoWithCompare(
+    () => {
+      if (!assets) {
+        return { stored: [], removed: [] };
+      }
+      const stored = assets.stored.filter(asset => {
+        const metadata = allMetadatas[asset.slug];
+
+        return isTruthy(metadata) && isCollectible(metadata);
+      });
+
+      return { stored, removed: assets.removed };
+    },
+    [assets, allMetadatas],
+    isEqual
+  );
+};
+
+export const useCurrentAccountCollectiblesSelector = () => {
+  const assetsList = useAssetsListSelector();
+
+  return useMemo(() => assetsList.filter(asset => isCollectible(asset)), [assetsList]);
 };
 
 export const useCollectiblesListSelector = () => {

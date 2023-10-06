@@ -104,16 +104,7 @@ export const CollectibleModal = memo(() => {
     thumbnailUri
   } = details;
 
-  useInterval(
-    () => {
-      if (!isUserOwnerCurrentCollectible) {
-        dispatch(loadCollectiblesDetailsActions.submit([slug]));
-      }
-    },
-    DETAILS_SYNC_INTERVAL,
-    [slug, isUserOwnerCurrentCollectible],
-    true
-  );
+  useInterval(() => void dispatch(loadCollectiblesDetailsActions.submit([slug])), DETAILS_SYNC_INTERVAL, [slug], true);
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 

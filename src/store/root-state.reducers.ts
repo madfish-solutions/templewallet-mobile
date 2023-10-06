@@ -33,7 +33,14 @@ const buildRootStateReducer = <S, A extends Action = AnyAction>(
 
 const rootReducer = buildRootStateReducer(rootStateReducersMap);
 
-const persistRootBlacklist: (keyof RootState)[] = ['buyWithCreditCard', 'exolix', 'farms', 'savings', 'collections'];
+const persistRootBlacklist: (keyof RootState)[] = [
+  'buyWithCreditCard',
+  'exolix',
+  'farms',
+  'savings',
+  'collectibles',
+  'collections'
+];
 
 const PersistBlacklistTransform = createTransform(
   () => void 0,

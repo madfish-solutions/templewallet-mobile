@@ -1,10 +1,10 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
-import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { Action } from 'redux';
+import { Epic, combineEpics } from 'redux-observable';
+import { EMPTY, from, of } from 'rxjs';
 import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
-import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { fetchTzProfilesInfo$ } from 'src/apis/objkt';
@@ -48,7 +48,7 @@ const updateDataActions = () => [
   loadSelectedBakerActions.submit()
 ];
 
-const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(highPriorityLoadTokenBalanceAction),
     toPayload(),
@@ -68,7 +68,7 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
     )
   );
 
-const loadTokensBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensBalancesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadTokensBalancesArrayActions.submit),
     withSelectedAccount(state$),
@@ -89,7 +89,7 @@ const loadTokensBalancesEpic = (action$: Observable<Action>, state$: Observable<
     )
   );
 
-const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensWithBalancesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadTokensActions.submit),
     withSelectedAccount(state$),
@@ -127,7 +127,7 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
     )
   );
 
-const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTezosBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     withSelectedAccount(state$),
@@ -140,7 +140,7 @@ const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
     )
   );
 
-const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const sendAssetEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
@@ -164,7 +164,7 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState
 
 const BCD_INDEXING_DELAY = 15000;
 
-const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const waitForOperationCompletionEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(waitForOperationCompletionAction),
     toPayload(),
@@ -189,10 +189,9 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
       )
     )
   );
-const addTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
+const addTokenMetadataEpic: Epic = action$ => action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
-const loadTzProfileInfoEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTzProfileInfoEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadTzProfileIfoAction.submit),
     withSelectedAccount(state$),

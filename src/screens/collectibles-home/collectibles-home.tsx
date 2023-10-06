@@ -17,18 +17,23 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
+import { CheckboxIcon } from 'src/components/checkbox-icon/checkbox-icon';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { Search } from 'src/components/search/search';
+import { useCollectiblesWithFullData } from 'src/hooks/use-collectibles-with-full-data.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useCollectibleDetailsLoadingSelector } from 'src/store/collectibles/collectibles-selectors';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
+import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-actions';
+import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
 import { loadTzProfileIfoAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -40,12 +45,6 @@ import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
 
-import { CheckboxIcon } from '../../components/checkbox-icon/checkbox-icon';
-import { useCollectiblesWithFullData } from '../../hooks/use-collectibles-with-full-data.hook';
-import { useLoadCollectiblesDetails } from '../../hooks/use-load-collectibles-details.hook';
-import { useCollectibleDetailsLoadingSelector } from '../../store/collectibles/collectibles-selectors';
-import { switchIsShowCollectibleInfoAction } from '../../store/settings/settings-actions';
-import { useIsShowCollectibleInfoSelector } from '../../store/settings/settings-selectors';
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
@@ -94,8 +93,6 @@ export const CollectiblesHome = () => {
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
   usePageAnalytic(ScreensEnum.CollectiblesHome);
-
-  useLoadCollectiblesDetails();
 
   useEffect(() => {
     dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash));

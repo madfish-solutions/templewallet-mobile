@@ -3,6 +3,7 @@ import { DependencyList, useEffect } from 'react';
 import { EmptyFn } from 'src/config/general';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
+/** (!) Callback is called immidiately too */
 export const useAuthorisedInterval = (callback: EmptyFn, refreshInterval: number, deps: DependencyList = []) => {
   const isAuthorised = useIsAuthorisedSelector();
 

@@ -1,14 +1,13 @@
-import { combineEpics } from 'redux-observable';
-import { Observable, of } from 'rxjs';
+import { Epic, combineEpics } from 'redux-observable';
+import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { loadAllCollectiblesDetails$ } from 'src/utils/collectibles.utils';
 
 import { loadCollectiblesDetailsActions } from './collectibles-actions';
 
-const loadCollectiblesDetailsEpic = (action$: Observable<Action>) =>
+const loadCollectiblesDetailsEpic: Epic = action$ =>
   action$.pipe(
     ofType(loadCollectiblesDetailsActions.submit),
     toPayload(),
