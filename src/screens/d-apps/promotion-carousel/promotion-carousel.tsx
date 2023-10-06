@@ -68,7 +68,7 @@ export const PromotionCarousel = () => {
 
   const renderItem = useCallback((info: CarouselRenderItemInfo<JSX.Element>) => info.item, []);
 
-  const style = useMemo(() => [styles.root, { height }], [styles.container, height]);
+  const style = useMemo(() => [styles.root, { height }], [styles.root, height]);
 
   return (
     <View onLayout={handleLayout} style={style}>
