@@ -12,7 +12,7 @@ import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { openUrl } from '../../utils/linking.util';
+import { openUrl } from '../../utils/linking';
 import { useForceUpdateStyles } from './force-update.styles';
 
 const APP_STORE_LINK = 'https://apps.apple.com/us/app/temple-wallet-mobile/id1610108763';

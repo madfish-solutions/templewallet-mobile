@@ -11,7 +11,7 @@ import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces
 import { APPROXIMATE_DAYS_IN_YEAR, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { tzktUrl } from 'src/utils/linking.util';
+import { tzktUrl } from 'src/utils/linking';
 import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import {

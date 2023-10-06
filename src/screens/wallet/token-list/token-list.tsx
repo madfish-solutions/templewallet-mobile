@@ -2,6 +2,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { optimalFetchEnableAds } from 'src/apis/optimal';
 import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -16,11 +17,12 @@ import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
-import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
@@ -38,8 +40,6 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
-import { optimalFetchEnableAds } from '../../../apis/optimal';
-import { loadAdvertisingPromotionActions } from '../../../store/advertising/advertising-actions';
 import { WalletSelectors } from '../wallet.selectors';
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
@@ -50,7 +50,7 @@ const AD_PLACEHOLDER = 'ad';
 type FlatListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
-// padding size + icon size
+/** padding size + icon size */
 const ITEM_HEIGHT = formatSize(24) + formatSize(32);
 const keyExtractor = (item: FlatListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
@@ -71,11 +71,10 @@ export const TokensList: FC = () => {
   const tkeyToken = useSelectedAccountTkeyTokenSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
-  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
+  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+  const partnersPromoShown = useIsPartnersPromoShown();
 
   const { publicKeyHash } = useSelectedAccountSelector();
-
-  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
@@ -88,21 +87,21 @@ export const TokensList: FC = () => {
       setPromotionErrorOccurred(false);
     };
 
-    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+    if (partnersPromoShown) {
       addNavigationListener('focus', listener);
     }
 
     return () => {
       removeNavigationListener('focus', listener);
     };
-  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromotionEnabled, isEnabledAdsBanner]);
+  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromoShown]);
 
   useEffect(() => {
-    if (partnersPromotionEnabled && !isEnabledAdsBanner) {
+    if (partnersPromoShown) {
       dispatch(loadAdvertisingPromotionActions.submit());
       optimalFetchEnableAds(publicKeyHash);
     }
-  }, [partnersPromotionEnabled, isEnabledAdsBanner]);
+  }, [partnersPromoShown]);
 
   const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
@@ -116,9 +115,7 @@ export const TokensList: FC = () => {
 
   const renderData = useMemo(() => {
     const shouldHidePromotion =
-      (isHideZeroBalance && filteredAssetsList.length === 0) ||
-      (searchValue?.length ?? 0) > 0 ||
-      !partnersPromotionEnabled;
+      (isHideZeroBalance && filteredAssetsList.length === 0) || (searchValue?.length ?? 0) > 0 || !partnersPromoShown;
 
     const assetsListWithPromotion: FlatListItem[] = [...filteredAssetsList];
     if (!shouldHidePromotion && !promotionErrorOccurred) {
@@ -130,7 +127,7 @@ export const TokensList: FC = () => {
     filteredAssetsList,
     screenFillingItemsCount,
     isHideZeroBalance,
-    partnersPromotionEnabled,
+    partnersPromoShown,
     promotionErrorOccurred,
     searchValue
   ]);

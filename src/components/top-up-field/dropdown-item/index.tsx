@@ -1,5 +1,5 @@
 import React, { FC, memo, useMemo } from 'react';
-import { ImageRequireSource, Text, View } from 'react-native';
+import { ImageRequireSource, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
@@ -7,12 +7,12 @@ import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { StaticTokenIcon } from 'src/components/static-token-icon/static-token-icon';
+import { TruncatedText } from 'src/components/truncated-text';
 import { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { jsonEqualityFn } from 'src/utils/store.utils';
-import { getTruncatedProps } from 'src/utils/style.util';
 import { getProperNetworkFullName } from 'src/utils/topup';
 
 import { useTopUpTokenDropdownItemStyles } from './styles';
@@ -26,7 +26,8 @@ const preloadedTokensIcons: Record<string, ImageRequireSource> = {
   KRW: require('../fiat-icons/krw.png'),
   KWD: require('../fiat-icons/kwd.png'),
   PHP: require('../fiat-icons/php.png'),
-  ZAR: require('../fiat-icons/zar.png')
+  ZAR: require('../fiat-icons/zar.png'),
+  KZT: require('../fiat-icons/kzt.png')
 };
 
 interface Props {
@@ -74,19 +75,19 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
 
         <View style={styles.infoContainer}>
           <View style={[styles.row, styles.justifySpaceBetween]}>
-            <Text {...getTruncatedProps(token?.name === '' ? styles.textRegular17 : styles.textRegular15)}>
+            <TruncatedText style={token?.name === '' ? styles.textRegular17 : styles.textRegular15}>
               {tokenCodeToDisplay}
-            </Text>
+            </TruncatedText>
 
             <Divider size={formatSize(8)} />
 
-            {isTruthy(sideTitle) ? <Text {...getTruncatedProps(styles.textRegular11)}>{sideTitle}</Text> : null}
+            {isTruthy(sideTitle) ? <TruncatedText style={styles.textRegular11}>{sideTitle}</TruncatedText> : null}
 
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
           </View>
 
           <View style={styles.row}>
-            <Text {...getTruncatedProps(styles.textRegular13)}>{bottomTitle}</Text>
+            <TruncatedText style={styles.textRegular13}>{bottomTitle}</TruncatedText>
 
             <Divider size={formatSize(4)} />
           </View>

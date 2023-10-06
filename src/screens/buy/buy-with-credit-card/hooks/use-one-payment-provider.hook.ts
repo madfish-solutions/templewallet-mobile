@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { getTezUahPairEstimation } from 'src/apis/alice-bob';
+import { estimateAliceBobOutput } from 'src/apis/alice-bob';
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
 import { convertFiatAmountToCrypto } from 'src/apis/utorg';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -59,7 +59,8 @@ const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunctio
   },
   [TopUpProviderEnum.Utorg]: (inputAmount, inputAsset, outputAsset) =>
     convertFiatAmountToCrypto(inputAsset.code, outputAsset.code, inputAmount.toNumber()),
-  [TopUpProviderEnum.AliceBob]: inputAmount => getTezUahPairEstimation(inputAmount.toNumber())
+  [TopUpProviderEnum.AliceBob]: (inputAmount, inputAsset, outputAsset) =>
+    estimateAliceBobOutput(inputAmount.toString(), inputAsset.code, outputAsset.code)
 };
 
 const initialPaymentProvidersData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {

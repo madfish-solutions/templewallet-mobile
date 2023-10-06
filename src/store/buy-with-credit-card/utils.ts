@@ -1,4 +1,6 @@
-import { PairInfoResponse as AliceBobPairInfoResponse } from 'src/apis/alice-bob/types';
+import FiatCurrencyInfo from 'currency-codes';
+
+import { PairsInfoResponse as AliceBobPairsInfoResponse } from 'src/apis/alice-bob/types';
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
 import {
   CurrencyType as MoonPayCurrencyType,
@@ -11,16 +13,47 @@ import { CurrencyInfoType as UtorgCurrencyType, UtorgCurrencyInfo } from 'src/ap
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-const knownUtorgFiatCurrenciesNames: Record<string, string> = {
-  PHP: 'Philippine Peso',
-  INR: 'Indian Rupee'
+interface AliceBobFiatCurrency {
+  name: string;
+  code: string;
+  icon: string;
+  precision: number;
+}
+
+const getCurrencyNameByCode = (code: string) => {
+  const customCurrencyNames: Record<string, string> = {
+    UAH: 'Ukrainian Hryvnia',
+    KZT: 'Kazakhstani Tenge'
+  };
+
+  if (isDefined(customCurrencyNames[code])) {
+    return customCurrencyNames[code];
+  }
+
+  const currencyInfo = FiatCurrencyInfo.code(code);
+
+  return isDefined(currencyInfo) ? currencyInfo.currency : '???';
 };
 
-const aliceBobHryvnia = {
-  name: 'Ukrainian Hryvnia',
-  code: 'UAH',
-  icon: '',
-  precision: 2
+const knownAliceBobFiatCurrencies: Record<string, AliceBobFiatCurrency> = {
+  UAH: {
+    name: getCurrencyNameByCode('UAH'),
+    code: 'UAH',
+    icon: '',
+    precision: 2
+  },
+  MYR: {
+    name: getCurrencyNameByCode('MYR'),
+    code: 'MYR',
+    icon: `${UTORG_FIAT_ICONS_BASE_URL}MY.svg`,
+    precision: 2
+  },
+  KZT: {
+    name: getCurrencyNameByCode('KZT'),
+    code: 'KZT',
+    icon: '',
+    precision: 2
+  }
 };
 
 const aliceBobTezos = {
@@ -65,11 +98,11 @@ export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
 export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => ({
   fiat: currencies
     .filter(({ type, depositMax }) => type === UtorgCurrencyType.FIAT && depositMax > 0)
-    .map(({ display, symbol, depositMin, depositMax, precision }) => ({
-      name: knownUtorgFiatCurrenciesNames[symbol] ?? '',
-      code: symbol,
+    .map(({ display, symbol: code, depositMin, depositMax, precision }) => ({
+      name: getCurrencyNameByCode(code),
+      code,
       codeToDisplay: display,
-      icon: `${UTORG_FIAT_ICONS_BASE_URL}${symbol.slice(0, -1)}.svg`,
+      icon: `${UTORG_FIAT_ICONS_BASE_URL}${code.slice(0, -1)}.svg`,
       precision,
       minAmount: depositMin,
       maxAmount: depositMax
@@ -86,13 +119,28 @@ export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => (
     }))
 });
 
-export const mapAliceBobProviderCurrencies = ({ minAmount, maxAmount }: AliceBobPairInfoResponse) => ({
-  fiat: [
-    {
-      ...aliceBobHryvnia,
-      minAmount: minAmount,
-      maxAmount: maxAmount
+export const mapAliceBobProviderCurrencies = ({ pairsInfo }: AliceBobPairsInfoResponse) => ({
+  fiat: pairsInfo.map(pair => {
+    const [minAmountString, code] = pair.minamount.split(' ');
+    const minAmount = Number(minAmountString);
+    const maxAmount = Number(pair.maxamount.split(' ')[0]);
+
+    if (isDefined(knownAliceBobFiatCurrencies[code])) {
+      return {
+        ...knownAliceBobFiatCurrencies[code],
+        minAmount,
+        maxAmount
+      };
     }
-  ],
+
+    return {
+      name: getCurrencyNameByCode(code),
+      code,
+      icon: `https://static.moonpay.com/widget/currencies/${code.toLowerCase()}.svg`,
+      precision: 2,
+      minAmount,
+      maxAmount
+    };
+  }),
   crypto: [aliceBobTezos]
 });
