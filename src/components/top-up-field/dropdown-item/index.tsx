@@ -26,7 +26,8 @@ const preloadedTokensIcons: Record<string, ImageRequireSource> = {
   KRW: require('../fiat-icons/krw.png'),
   KWD: require('../fiat-icons/kwd.png'),
   PHP: require('../fiat-icons/php.png'),
-  ZAR: require('../fiat-icons/zar.png')
+  ZAR: require('../fiat-icons/zar.png'),
+  KZT: require('../fiat-icons/kzt.png')
 };
 
 interface Props {

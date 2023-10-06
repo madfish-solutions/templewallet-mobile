@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import QuickActions, { ShortcutItem } from 'react-native-quick-actions';
 
-import { isDefined } from '../utils/is-defined';
-import { useHideBalance } from './hide-balance/hide-balance.hook';
+import { isDefined } from 'src/utils/is-defined';
+
+import { useHideBalance } from '../hide-balance/hide-balance.hook';
 
 interface QuickActionParams {
   data: ShortcutItem;

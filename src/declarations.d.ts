@@ -1,5 +1,7 @@
 type nullish = null | undefined;
 
+type EmptyFn = () => void;
+
 declare module '*.svg' {
   import React from 'react';
   import { SvgProps } from 'react-native-svg';

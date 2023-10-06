@@ -1,17 +1,23 @@
 import { templeWalletApi } from 'src/api.service';
 
-import { AliceBobOrderInfoInterface, OutputEstimationResponse, PairInfoResponse } from './types';
+import { AliceBobOrderInfoInterface, OutputEstimationResponse, PairsInfoResponse } from './types';
 
-export const getTezUahPairInfo = async () => {
-  const { data } = await templeWalletApi.get<PairInfoResponse>('/alice-bob/get-pair-info');
+export const getAliceBobPairsInfo = async () => {
+  const { data } = await templeWalletApi.get<PairsInfoResponse>('/alice-bob/get-pairs-info', {
+    params: {
+      isWithdraw: false
+    }
+  });
 
   return data;
 };
 
-export const getTezUahPairEstimation = async (uahAmount: number) => {
-  const { data } = await templeWalletApi.post<OutputEstimationResponse>('/alice-bob/estimate-amount', {
+export const estimateAliceBobOutput = async (amount: string, inputAssetCode: string, outputAssetCode: string) => {
+  const { data } = await templeWalletApi.post<OutputEstimationResponse>('/alice-bob/estimate-amount', null, {
     params: {
-      amount: uahAmount
+      amount,
+      from: getFromToParam(inputAssetCode),
+      to: getFromToParam(outputAssetCode)
     }
   });
 
@@ -19,8 +25,9 @@ export const getTezUahPairEstimation = async (uahAmount: number) => {
 };
 
 export const createOrder = async (
-  isWithdraw: boolean,
   amount: string,
+  inputAssetCode: string,
+  outputAssetCode: string,
   userId: string,
   walletAddress?: string,
   cardNumber?: string
@@ -30,8 +37,9 @@ export const createOrder = async (
     null,
     {
       params: {
-        isWithdraw,
         amount,
+        from: getFromToParam(inputAssetCode),
+        to: getFromToParam(outputAssetCode),
         userId,
         walletAddress,
         cardNumber
@@ -41,3 +49,5 @@ export const createOrder = async (
 
   return data.orderInfo;
 };
+
+const getFromToParam = (code: string) => (code === 'XTZ' ? 'TEZ' : `CARD${code}`);

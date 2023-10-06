@@ -4,7 +4,7 @@ import { catchError, concatMap, filter, map, mapTo, switchMap, withLatestFrom } 
 import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { globalNavigationRef } from 'src/navigator/root-stack';
+import { globalNavigationRef } from 'src/navigator/global-nav-ref';
 import { Shelter } from 'src/shelter/shelter';
 import { resetBeacon$ } from 'src/utils/beacon.utils';
 import { resetKeychain$ } from 'src/utils/keychain.utils';
