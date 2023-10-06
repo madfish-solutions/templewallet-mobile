@@ -23,7 +23,6 @@ import { useBurnCollectible } from 'src/hooks/use-burn-collectible.hook';
 import { useBuyCollectible } from 'src/hooks/use-buy-collectible.hook';
 import { useCollectibleOwnerCheck } from 'src/hooks/use-check-is-user-collectible-owner.hook';
 import { useFetchCollectibleAttributes } from 'src/hooks/use-fetch-collectible-attributes.hook';
-import { useInterval } from 'src/hooks/use-interval.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
 import {
@@ -41,6 +40,7 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
+import { useInterval } from 'src/utils/hooks';
 import { ImageResolutionEnum, formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
