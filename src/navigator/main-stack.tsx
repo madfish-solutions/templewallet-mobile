@@ -86,6 +86,8 @@ import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
 import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
 import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
 import { loadAllSavingsAndStakesAction } from '../store/savings/actions';
+import { setIsHistoryBackButtonAlertShowedOnceAction } from '../store/text-to-nft/text-to-nft-actions';
+import { useIsHistoryBackButtonAlertShowedOnceSelector } from '../store/text-to-nft/text-to-nft-selectors';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
@@ -101,6 +103,7 @@ export const MainStackScreen = () => {
   const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();
   const { isLocked } = useAppLock();
+  const isHistoryBackButtonAlertShowedOnce = useIsHistoryBackButtonAlertShowedOnceSelector();
 
   const blockSubscription = useBlockSubscription();
 
@@ -144,18 +147,23 @@ export const MainStackScreen = () => {
   const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
   const shouldShowBlankScreen = isAuthorised && isLocked;
 
-  const handlePreviewBackButton = () =>
-    Alert.alert(
-      'Art will be saved in History',
-      'You can always continue creating NFT of generated art. Find your variations in History',
-      [
-        {
-          text: 'Ok',
-          onPress: goBack,
-          style: 'default'
-        }
-      ]
-    );
+  const handlePreviewBackButton = isHistoryBackButtonAlertShowedOnce
+    ? undefined
+    : () =>
+        Alert.alert(
+          'Art will be saved in History',
+          'You can always continue creating NFT of generated art. Find your variations in History',
+          [
+            {
+              text: 'Ok',
+              onPress: () => {
+                dispatch(setIsHistoryBackButtonAlertShowedOnceAction(true));
+                goBack();
+              },
+              style: 'default'
+            }
+          ]
+        );
 
   return (
     <PortalProvider>
