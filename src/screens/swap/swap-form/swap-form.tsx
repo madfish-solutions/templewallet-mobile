@@ -40,7 +40,7 @@ import {
   useSwapTokenBySlugSelector,
   useSwapTokensMetadataSelector
 } from 'src/store/swap/swap-selectors';
-import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { SIRS_TOKEN } from 'src/token/data/token-slugs';
@@ -57,6 +57,7 @@ import {
   getRoutingFeeTransferParams
 } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { SwapAssetsButton } from './swap-assets-button/swap-assets-button';
 import { SwapDisclaimer } from './swap-disclaimer/swap-disclaimer';
@@ -78,12 +79,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezosToken = useTezosTokenOfCurrentAccount();
+  const publicKeyHash = useCurrentAccountPkhSelector();
+  const tezos = useReadOnlyTezosToolkit();
   const blockLevel = useBlockLevel();
   const { isLoading } = useSwapTokensMetadataSelector();
-  const { publicKeyHash } = useSelectedAccountSelector();
   const usdExchangeRates = useUsdToTokenRates();
 
   const swapParams = useSwapParamsSelector();

@@ -16,7 +16,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { CollectibleCommonInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { getPurchaseCurrency } from 'src/utils/get-pusrchase-currency.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -39,7 +39,7 @@ export const useBuyCollectible = (slug: string, details: CollectibleCommonInterf
   const allMetadatas = useTokensMetadataSelector();
   const metadata = allMetadatas[slug];
 
-  const selectedAccount = useSelectedAccountSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
 
   const listingsActive = details.listingsActive;
 
@@ -71,9 +71,7 @@ export const useBuyCollectible = (slug: string, details: CollectibleCommonInterf
     const getTransferParams = () => {
       if (isDefined(marketplaceContract) && isNonEmptyArray(listingsActive)) {
         const isTezosCurrency = listingsActive[0].currency_id === TEZOS_ID_OBJKT;
-        const params = isTezosCurrency
-          ? { amount: purchaseCurrency.price, mutez: true, source: selectedAccount.publicKeyHash }
-          : {};
+        const params = isTezosCurrency ? { amount: purchaseCurrency.price, mutez: true, source: accountPkh } : {};
 
         if (OBJKT_BUY_METHOD in marketplaceContract?.methods) {
           return [marketplaceContract.methods.fulfill_ask(listingsActive[0].bigmap_key).toTransferParams(params)];
@@ -103,7 +101,7 @@ export const useBuyCollectible = (slug: string, details: CollectibleCommonInterf
     const { approve, revoke } = await getTransferPermissions(
       tezos,
       marketplace,
-      selectedAccount.publicKeyHash,
+      accountPkh,
       tokenToSpend,
       new BigNumber(purchaseCurrency.price)
     );

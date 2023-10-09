@@ -2,11 +2,11 @@ import { isEqual } from 'lodash-es';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
-import { useAllCurrentAccountStoredCollectiblesSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
 import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 
 export const useAccountCollectibles = () => {
-  const collectibles = useAllCurrentAccountStoredCollectiblesSelector();
+  const collectibles = useCurrentAccountStoredAssetsSelector('collectibles');
 
   return useMemoWithCompare(
     () =>

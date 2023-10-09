@@ -2,17 +2,17 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
-import { useSelectedAccountTezosTokenSelector, useVisibleTokensListSelector } from '../store/wallet/wallet-selectors';
+import { useVisibleTokensListSelector } from '../store/wallet/wallet-selectors';
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { getDollarValue } from '../utils/balance.utils';
 import { tzToMutez } from '../utils/tezos.util';
-import { useTezosToken } from '../utils/wallet.utils';
+import { useTezosToken, useTezosTokenOfCurrentAccount } from '../utils/wallet.utils';
 
 export const useTotalBalance = () => {
   const exchangeRates = useUsdToTokenRates();
   const visibleTokens = useVisibleTokensListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
 
   const totalBalance = useMemo(() => {
     let dollarValue = new BigNumber(0);

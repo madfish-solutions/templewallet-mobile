@@ -15,15 +15,12 @@ import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
-import {
-  useSelectedAccountSelector,
-  useSelectedAccountTezosTokenSelector,
-  useTokensListSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector, useTokensListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { TokenInfo } from './token-info/token-info';
 
@@ -31,9 +28,9 @@ export const TokenScreen = () => {
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
 
   const dispatch = useDispatch();
-  const selectedAccount = useSelectedAccountSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
   const tokensList = useTokensListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
 
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
@@ -50,7 +47,7 @@ export const TokenScreen = () => {
   useEffect(() => {
     dispatch(
       highPriorityLoadTokenBalanceAction({
-        publicKeyHash: selectedAccount.publicKeyHash,
+        publicKeyHash: accountPkh,
         slug: getTokenSlug(token)
       })
     );
@@ -69,7 +66,7 @@ export const TokenScreen = () => {
       <HeaderCard>
         <TokenEquityValue token={token} />
 
-        <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
+        <PublicKeyHashText publicKeyHash={accountPkh} marginBottom={formatSize(16)} />
 
         <HeaderCardActionButtons token={token} />
       </HeaderCard>

@@ -17,14 +17,14 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountTezosBalance, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
+import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { RECOMMENDED_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
-import { isDefined } from '../../../utils/is-defined';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
 
@@ -61,7 +61,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
-  const { balance: tezBalance } = useSelectedAccountTezosTokenSelector();
+  const tezBalance = useCurrentAccountTezosBalance();
 
   const { confirmRequest, isLoading } = useRequestConfirmation(approveInternalOperationRequest);
 

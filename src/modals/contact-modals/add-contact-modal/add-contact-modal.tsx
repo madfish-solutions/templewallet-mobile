@@ -19,7 +19,6 @@ import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
@@ -34,8 +33,7 @@ export const AddContactModal: FC = () => {
   const { goBack } = useNavigation();
   const { params } = useRoute<RouteProp<ModalsParamList, ModalsEnum.AddContact>>();
   const validationSchema = useAddContactFormValidationSchema();
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
   const resolver = tezosDomainsResolver(tezos);
 
   const formik = useRef<FormikProps<AccountBaseInterface>>(null);

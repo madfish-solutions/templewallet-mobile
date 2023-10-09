@@ -11,7 +11,7 @@ import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-co
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -30,14 +30,14 @@ const keyExtractor = (item: Pick<TokenInterface, 'address' | 'id'>) => `${item.a
 
 export const Collection = () => {
   const styles = useCollectionStyles();
-  const selectedAccount = useSelectedAccountSelector();
+  const publicKeyHash = useCurrentAccountPkhSelector();
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
   const [offset, setOffset] = useState<number>(0);
   const selectedRpc = useSelectedRpcUrlSelector();
 
   const { collectibles, isLoading } = useCollectibleByCollectionInfo(
     params.collectionContract,
-    selectedAccount.publicKeyHash,
+    publicKeyHash,
     params.type,
     offset,
     params.galleryId
@@ -72,7 +72,7 @@ export const Collection = () => {
         item={item}
         collectionContract={params.collectionContract}
         selectedRpc={selectedRpc}
-        selectedPublicKeyHash={selectedAccount.publicKeyHash}
+        selectedPublicKeyHash={publicKeyHash}
       />
     ),
     []

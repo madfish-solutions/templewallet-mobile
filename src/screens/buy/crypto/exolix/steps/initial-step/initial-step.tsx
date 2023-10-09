@@ -14,7 +14,7 @@ import { BlackTextLink } from 'src/components/text-link/black-text-link';
 import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
@@ -38,7 +38,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const styles = useInitialStepStyles();
 
   const { filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
-  const { publicKeyHash } = useSelectedAccountSelector();
+  const publicKeyHash = useCurrentAccountPkhSelector();
   const tokenUsdExchangeRates = useUsdToTokenRates();
 
   const handleSubmit = () => {

@@ -9,7 +9,7 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { setIsOnRampHasBeenShownBeforeAction, setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampPossibilitySelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { openUrl } from 'src/utils/linking';
 
@@ -27,7 +27,7 @@ export const OnRampOverlay: FC = () => {
 
 const OverlayComponent = () => {
   const dispatch = useDispatch();
-  const { publicKeyHash } = useSelectedAccountSelector();
+  const publicKeyHash = useCurrentAccountPkhSelector();
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
 

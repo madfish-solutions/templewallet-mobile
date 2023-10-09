@@ -10,19 +10,18 @@ import { TEMPLE_TOKEN } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { isTruthy } from 'src/utils/is-truthy';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible, isNonZeroBalance } from 'src/utils/tezos.util';
 import { getTokenMetadata } from 'src/utils/token-metadata.utils';
 import { getAccountState, getSelectedAccount } from 'src/utils/wallet-account-state.utils';
-import { useTezosToken } from 'src/utils/wallet.utils';
 
 import { useSelector } from '../selector';
 import { useTokensMetadataSelector } from '../tokens-metadata/tokens-metadata-selectors';
 
 export const useAccountsListSelector = () => useSelector(({ wallet }) => wallet.accounts);
 
+/** @deprecated // Too heavy */
 export const useVisibleAccountsListSelector = () =>
   useSelector(
     ({ wallet }) => wallet.accounts.filter(account => getAccountState(wallet, account.publicKeyHash).isVisible),
@@ -49,18 +48,25 @@ export const useIsAuthorisedSelector = () => {
 
 export const useIsCurrentNodeOfDcp = () => useSelector(state => isDcpNode(state.settings.selectedRpcUrl));
 
-export const useSelectedAccountPKH = () => useSelector(state => state.wallet.selectedAccountPublicKeyHash);
+export const useCurrentAccountPkhSelector = () => useSelector(state => state.wallet.selectedAccountPublicKeyHash);
 
-export const useRawCurrentAccountSelector = (): AccountStateInterface | undefined =>
+export const useRawCurrentAccountSelector = () =>
+  useSelector(state => {
+    const pkh = state.wallet.selectedAccountPublicKeyHash;
+
+    return state.wallet.accounts.find(acc => acc.publicKeyHash === pkh);
+  });
+
+export const useRawCurrentAccountStateSelector = (): AccountStateInterface | undefined =>
   useSelector(state => state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash]);
 
 /** @deprecated // Too heavy */
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
-/** @deprecated // Too heavy */
+/** @deprecated // Too heavy !!! */
 export const useAssetsListSelector = (): TokenInterface[] =>
   useSelector(state => {
-    console.log('This better not be called every time Redux state changes');
+    console.log('This better not be called every time Redux state changes!');
     const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
     const nodeIsDcp = isDcpNode(state.settings.selectedRpcUrl);
 
@@ -100,7 +106,7 @@ export const useTokenSelector = (tokenSlug: string) => {
   const tokensList = useTokensListSelector();
 
   return useMemo(
-    () => tokensList.find(({ address, id }) => getTokenSlug({ address, id }) === tokenSlug),
+    () => tokensList.find(({ address, id }) => toTokenSlug(address, id) === tokenSlug),
     [tokensList, tokenSlug]
   );
 };
@@ -136,7 +142,7 @@ export const useAllCurrentAccountStoredAssetsSelector = () =>
     (state1, state2) => state1?.stored === state2?.stored && state1?.removed === state2?.removed
   );
 
-export const useAllCurrentAccountStoredCollectiblesSelector = () => {
+export const useCurrentAccountStoredAssetsSelector = (type: 'tokens' | 'collectibles') => {
   const assets = useAllCurrentAccountStoredAssetsSelector();
   const allMetadatas = useTokensMetadataSelector();
 
@@ -147,13 +153,18 @@ export const useAllCurrentAccountStoredCollectiblesSelector = () => {
       }
       const stored = assets.stored.filter(asset => {
         const metadata = allMetadatas[asset.slug];
+        if (!metadata) {
+          return false;
+        }
 
-        return isTruthy(metadata) && isCollectible(metadata);
+        const assetIsCollectible = isCollectible(metadata);
+
+        return type === 'collectibles' ? assetIsCollectible : assetIsCollectible === false;
       });
 
       return { stored, removed: assets.removed };
     },
-    [assets, allMetadatas],
+    [assets, allMetadatas, type],
     isEqual
   );
 };
@@ -176,16 +187,6 @@ export const useCollectibleSelector = (slug: string) => {
   return useMemo(() => collectibles.find(collectible => getTokenSlug(collectible) === slug), [slug, collectibles]);
 };
 
-// ts-prune-ignore-next-line
-export const useVisibleCollectiblesListSelector = () => {
-  const collectiblesList = useCollectiblesListSelector();
-
-  return useMemo(
-    () => collectiblesList.filter(({ visibility }) => visibility === VisibilityEnum.Visible),
-    [collectiblesList]
-  );
-};
-
 export const useIsVisibleSelector = (publicKeyHash: string) =>
   useSelector(({ wallet }) => {
     const accountState = getAccountState(wallet, publicKeyHash);
@@ -193,25 +194,19 @@ export const useIsVisibleSelector = (publicKeyHash: string) =>
     return accountState.isVisible;
   });
 
-export const useTezosTokenSelector = (publicKeyHash: string) => {
-  const tezosBalance = useSelector(state => {
-    if (state.wallet.accounts.find(account => account.publicKeyHash === publicKeyHash)) {
-      const accountState = getAccountState(state.wallet, publicKeyHash);
+export const useCurrentAccountTezosBalance = () =>
+  useSelector(
+    state => state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash]?.tezosBalance ?? '0'
+  );
 
-      return accountState.tezosBalance;
+export const useTezosBalanceOfKnownAccountSelector = (publicKeyHash: string) =>
+  useSelector(state => {
+    if (state.wallet.accounts.find(account => account.publicKeyHash === publicKeyHash)) {
+      return state.wallet.accountsStateRecord[publicKeyHash]?.tezosBalance ?? '0';
     }
 
     return state.contactBook.contactsStateRecord[publicKeyHash]?.tezosBalance ?? '0';
   });
-
-  return useTezosToken(tezosBalance);
-};
-
-export const useSelectedAccountTezosTokenSelector = (): TokenInterface => {
-  const selectedAccountPublicKeyHash = useSelector(({ wallet }) => wallet.selectedAccountPublicKeyHash);
-
-  return useTezosTokenSelector(selectedAccountPublicKeyHash);
-};
 
 export const useSelectedAccountTkeyTokenSelector = (): TokenInterface => {
   const tkey = useTokenSelector(toTokenSlug(TEMPLE_TOKEN.address, TEMPLE_TOKEN.id));

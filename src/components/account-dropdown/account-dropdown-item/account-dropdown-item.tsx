@@ -13,15 +13,12 @@ import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import {
-  useCollectiblesListSelector,
-  useSelectedAccountSelector,
-  useTezosTokenSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useCollectiblesListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
@@ -36,7 +33,7 @@ export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
   isCollectibleScreen = false
 }) => {
   const styles = useAccountDropdownItemStyles();
-  const tezos = useTezosTokenSelector(account.publicKeyHash);
+  const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
   const collectibles = useCollectiblesListSelector();
   const contacts = useContactsSelector();
   const { metadata } = useNetworkInfo();

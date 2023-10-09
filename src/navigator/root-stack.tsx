@@ -40,7 +40,7 @@ import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountTezosBalance, useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
@@ -61,7 +61,7 @@ export const RootStackScreen = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const { isDcpNode } = useNetworkInfo();
 
-  const { balance } = useSelectedAccountTezosTokenSelector();
+  const balance = useCurrentAccountTezosBalance();
   const isOnRampHasBeenShownBefore = useIsOnRampHasBeenShownBeforeSelector();
 
   useRootHooks();

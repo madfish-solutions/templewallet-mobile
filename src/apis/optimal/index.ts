@@ -1,4 +1,4 @@
-import { optimalApi } from '../../api.service';
+import { optimalApi } from 'src/api.service';
 
 export const optimalFetchEnableAds = async (address: string) => {
   const url = '/api/v1/decision/';

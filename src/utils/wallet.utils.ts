@@ -3,15 +3,19 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { AccountStateInterface, emptyAccountState } from 'src/interfaces/account-state.interface';
+import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
+import { Shelter } from 'src/shelter/shelter';
+import { ExchangeRateRecord } from 'src/store/currency/currency-state';
+import { useTokenMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import type { RootState } from 'src/store/types';
+import {
+  useCurrentAccountTezosBalance,
+  useTezosBalanceOfKnownAccountSelector
+} from 'src/store/wallet/wallet-selectors';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { emptyToken } from 'src/token/interfaces/token.interface';
 
-import { AccountStateInterface, emptyAccountState } from '../interfaces/account-state.interface';
-import { AccountInterface, emptyAccount } from '../interfaces/account.interface';
-import { Shelter } from '../shelter/shelter';
-import { ExchangeRateRecord } from '../store/currency/currency-state';
-import { useTokenMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
-import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
-import { emptyToken } from '../token/interfaces/token.interface';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const withSelectedAccount =
@@ -78,4 +82,16 @@ export const useTezosToken = (balance: string) => {
     }),
     [metadata, balance]
   );
+};
+
+export const useTezosTokenOfCurrentAccount = () => {
+  const balance = useCurrentAccountTezosBalance();
+
+  return useTezosToken(balance);
+};
+
+export const useTezosTokenOfKnownAccount = (publicKeyHash: string) => {
+  const balance = useTezosBalanceOfKnownAccountSelector(publicKeyHash);
+
+  return useTezosToken(balance);
 };

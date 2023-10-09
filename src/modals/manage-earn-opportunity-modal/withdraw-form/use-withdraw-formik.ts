@@ -14,7 +14,7 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -49,7 +49,7 @@ const LAST_PERCENTAGE_OPTION_INDEX = PERCENTAGE_OPTIONS.length - 1;
 
 export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: UserStakeValueInterface) => {
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunity);
-  const { publicKeyHash } = useSelectedAccountSelector();
+  const publicKeyHash = useCurrentAccountPkhSelector();
   const tezos = useReadOnlyTezosToolkit();
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();

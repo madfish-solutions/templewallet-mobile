@@ -26,8 +26,7 @@ import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
-  useSelectedAccountSelector,
-  useSelectedAccountTezosTokenSelector,
+  useCurrentAccountPkhSelector,
   useSelectedAccountTkeyTokenSelector,
   useVisibleTokensListSelector
 } from 'src/store/wallet/wallet-selectors';
@@ -39,6 +38,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { WalletSelectors } from '../wallet.selectors';
 import { TezosToken } from './token-list-item/tezos-token';
@@ -67,14 +67,14 @@ export const TokensList: FC = () => {
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const tkeyToken = useSelectedAccountTkeyTokenSelector();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useVisibleTokensListSelector();
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
 
-  const { publicKeyHash } = useSelectedAccountSelector();
+  const publicKeyHash = useCurrentAccountPkhSelector();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));

@@ -6,7 +6,7 @@ import { getSignedMoonPayUrl } from 'src/apis/moonpay';
 import { createOrder as createUtorgOrder } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useUserIdSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -49,7 +49,7 @@ const initialValues: BuyWithCreditCardFormValues = {
 
 export const useBuyWithCreditCardFormik = () => {
   const { trackEvent } = useAnalytics();
-  const { publicKeyHash } = useSelectedAccountSelector();
+  const publicKeyHash = useCurrentAccountPkhSelector();
   const userId = useUserIdSelector();
 
   const handleSubmit = useCallback(

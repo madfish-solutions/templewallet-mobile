@@ -16,7 +16,7 @@ import { useDomainName } from 'src/hooks/use-domain-name.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { toggleDomainAddressShown } from 'src/store/settings/settings-actions';
 import { useIsShownDomainNameSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -30,7 +30,7 @@ import { useReceiveModalStyles } from './receive-modal.styles';
 export const ReceiveModal: FC = () => {
   const colors = useColors();
   const styles = useReceiveModalStyles();
-  const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
+  const publicKeyHash = useCurrentAccountPkhSelector();
   const { token } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Receive>>().params;
 
   const { name, symbol } = token;

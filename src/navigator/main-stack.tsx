@@ -74,7 +74,7 @@ import {
   loadTezosBalanceActions,
   loadTokensBalancesArrayActions
 } from 'src/store/wallet/wallet-actions';
-import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useIsAuthorisedSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
@@ -92,7 +92,7 @@ const MainStack = createStackNavigator<ScreensParamList>();
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
-  const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
+  const selectedAccountPkh = useCurrentAccountPkhSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();

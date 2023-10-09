@@ -13,8 +13,9 @@ export interface AccountBaseInterface {
 export interface AccountInterface extends AccountBaseInterface {
   type: AccountTypeEnum;
   publicKey: string;
-  tzProfile?: TzProfile;
 
+  /** @deprecated */
+  tzProfile?: TzProfile;
   /** @deprecated */
   isVisible?: boolean;
   /** @deprecated */
@@ -36,6 +37,7 @@ export const initialAccount: AccountInterface = {
   publicKeyHash: EMPTY_PUBLIC_KEY_HASH
 };
 
+/** @deprecated // BAD PRACTICE */
 export const emptyAccount: AccountInterface = {
   name: '',
   type: AccountTypeEnum.HD_ACCOUNT,
@@ -43,6 +45,7 @@ export const emptyAccount: AccountInterface = {
   publicKeyHash: EMPTY_PUBLIC_KEY_HASH
 };
 
+/** @deprecated // BAD PRACTICE */
 export const emptyAccountBase: AccountBaseInterface = {
   name: '',
   publicKeyHash: EMPTY_PUBLIC_KEY_HASH

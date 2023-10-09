@@ -17,9 +17,10 @@ import { AccountInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { setAccountVisibility } from 'src/store/wallet/wallet-actions';
-import { useIsVisibleSelector, useTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useIsVisibleSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast } from 'src/toast/toast.utils';
+import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { ManageAccountItemSelectors } from './manage-account-item.selectors';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
@@ -34,7 +35,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const styles = useManageAccountItemStyles();
-  const tezosToken = useTezosTokenSelector(account.publicKeyHash);
+  const tezosToken = useTezosTokenOfKnownAccount(account.publicKeyHash);
   const isVisible = useIsVisibleSelector(account.publicKeyHash);
 
   const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;

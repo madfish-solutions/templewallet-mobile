@@ -31,11 +31,11 @@ import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import {
   useAccountsListSelector,
   useSelectedAccountSelector,
-  useSelectedAccountTezosTokenSelector,
   useVisibleAccountsListSelector
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { usePushNotificationsEvent } from '../../hooks/use-push-notifications-event';
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
@@ -55,7 +55,7 @@ export const Wallet = () => {
   const account = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const contactCandidateAddress = useContactCandidateAddressSelector();
   const ignoredAddresses = useIgnoredAddressesSelector();
   const contactsAddresses = useContactsAddressesSelector();

@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
-import { useSelectedAccountTezosTokenSelector, useTokensListSelector } from 'src/store/wallet/wallet-selectors';
+import { useTokensListSelector } from 'src/store/wallet/wallet-selectors';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { applySortByDollarValueDecrease, isAssetSearched } from 'src/utils/token-metadata.utils';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
@@ -21,7 +22,7 @@ export const useFilteredSwapTokensList = (
 ) => {
   const { data: swapTokensMetadata } = useSwapTokensMetadataSelector();
   const userTokens = useTokensListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const getTokenExchangeRate = useTokenExchangeRateGetter();
 
   const balances = useMemo<Record<string, string>>(() => {

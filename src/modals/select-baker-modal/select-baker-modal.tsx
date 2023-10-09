@@ -19,7 +19,7 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector, useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -59,7 +59,7 @@ export const SelectBakerModal: FC = () => {
 
   const { trackEvent } = useAnalytics();
 
-  const selectedAccount = useSelectedAccountSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
 
   const bakersList = useBakersListSelector();
   const activeBakers = useMemo(() => bakersList.filter(baker => baker.serviceHealth === 'active'), [bakersList]);
@@ -113,9 +113,7 @@ export const SelectBakerModal: FC = () => {
       } else {
         navigate(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
-          opParams: [
-            { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
-          ],
+          opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: accountPkh }],
           ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
           ...(isHelpUkraineBakerSelected && { testID: 'HELP_UKRAINE_BAKER_DELEGATION' }),
           ...(Boolean(selectedBaker.isUnknownBaker) && !isDcpNode && { disclaimerMessage: DISCLAIMER_MESSAGE })
@@ -183,9 +181,7 @@ export const SelectBakerModal: FC = () => {
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
           {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
-          {searchValue === selectedAccount.publicKeyHash && (
-            <Text style={styles.errorText}>You can not delegate to yourself</Text>
-          )}
+          {searchValue === accountPkh && <Text style={styles.errorText}>You can not delegate to yourself</Text>}
         </View>
         {isTezosNode && (
           <View style={styles.upperContainer}>
@@ -218,7 +214,7 @@ export const SelectBakerModal: FC = () => {
           style={styles.flatList}
           windowSize={10}
           ListEmptyComponent={
-            searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() ? (
+            searchValue?.toLowerCase() !== accountPkh.toLowerCase() ? (
               <BakerListItem
                 item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
                 onPress={setSelectedBaker}
@@ -229,18 +225,16 @@ export const SelectBakerModal: FC = () => {
         />
       )}
 
-      {isDcpNode &&
-        isValidAddress(searchValue ?? '') &&
-        searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() && (
-          <View style={styles.dcpBaker}>
-            <Divider size={formatSize(16)} />
-            <BakerListItem
-              item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
-              onPress={setSelectedBaker}
-              selected={searchValue === selectedBaker?.address}
-            />
-          </View>
-        )}
+      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue?.toLowerCase() !== accountPkh.toLowerCase() && (
+        <View style={styles.dcpBaker}>
+          <Divider size={formatSize(16)} />
+          <BakerListItem
+            item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
+            onPress={setSelectedBaker}
+            selected={searchValue === selectedBaker?.address}
+          />
+        </View>
+      )}
 
       <View style={isDcpNode && styles.buttons}>
         <ModalButtonsContainer>

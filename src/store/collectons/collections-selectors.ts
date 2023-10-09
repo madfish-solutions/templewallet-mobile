@@ -1,14 +1,12 @@
-import { jsonEqualityFn } from 'src/utils/store.utils';
+import { useMemo } from 'react';
 
 import { useSelector } from '../selector';
-import { useSelectedAccountSelector } from '../wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from '../wallet/wallet-selectors';
 import { Collection } from './collections-state';
 
-const useCollectionsSelector = () => useSelector(state => state.collections.created, jsonEqualityFn);
-
 export const useCreatedCollectionsSelector = (): Collection[] => {
-  const selectedAccount = useSelectedAccountSelector();
-  const createdCollections = useCollectionsSelector();
+  const accountPKH = useCurrentAccountPkhSelector();
+  const createdCollections = useSelector(state => state.collections.created);
 
-  return createdCollections[selectedAccount.publicKeyHash] ?? [];
+  return useMemo(() => createdCollections[accountPKH] ?? [], [createdCollections, accountPKH]);
 };
