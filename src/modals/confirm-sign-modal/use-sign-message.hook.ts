@@ -1,18 +1,18 @@
 import { packDataBytes } from '@taquito/michel-codec';
-import { delay } from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { EMPTY, Subject, catchError, from, map, switchMap, tap } from 'rxjs';
-import { delay as rxDelay } from 'rxjs/operators';
 
 import { isDefined } from 'src/utils/is-defined';
 
-import { fetchStableDiffusionGenerateArt, fetchStableDiffusionSignIn } from '../../apis/stable-diffusion';
+import { createStableDiffusionOrder, getStableDiffusionAccessToken } from '../../apis/stable-diffusion';
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create/create.form';
 import { Shelter } from '../../shelter/shelter';
+import { setAccessTokenAction } from '../../store/text-to-nft/text-to-nft-actions';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
-import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
+import { showErrorToast, showSuccessToast, showWarningToast } from '../../toast/toast.utils';
 import { isString } from '../../utils/is-string';
 
 const timestamp = new Date().toISOString();
@@ -20,7 +20,8 @@ const message = `Tezos Signed Message: To authenticate on Temple NFT service and
 const messageBytes = packDataBytes({ string: message }).bytes;
 
 export const useSignMessage = (formValues: CreateNftFormValues) => {
-  const { goBack, navigate } = useNavigation();
+  const dispatch = useDispatch();
+  const { navigate } = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -60,23 +61,30 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
 
   useEffect(() => {
     if (isString(signature)) {
-      from(fetchStableDiffusionSignIn({ timestamp, pk: account.publicKey, sig: signature }))
+      const subscription = from(getStableDiffusionAccessToken({ timestamp, pk: account.publicKey, sig: signature }))
         .pipe(
           switchMap(accessToken =>
-            from(fetchStableDiffusionGenerateArt({ accessToken, ...formValues })).pipe(
-              // TODO: Remove this imitation of Generate art
-              rxDelay(2000),
+            from(createStableDiffusionOrder(accessToken, formValues)).pipe(
               map(order => order),
-              tap(() => setIsLoading(false))
+              tap(() => {
+                dispatch(setAccessTokenAction(accessToken));
+                setIsLoading(false);
+              })
             )
-          )
+          ),
+          catchError(() => {
+            showWarningToast({ description: 'Ooops, something went wrong.\nPlease, try again later.' });
+
+            return EMPTY;
+          })
         )
         .subscribe(order => {
           if (isDefined(order)) {
-            delay(() => navigate(ScreensEnum.Preview, { order }), 500);
-            goBack();
+            navigate(ScreensEnum.Preview, { orderId: order.id });
           }
         });
+
+      return () => subscription.unsubscribe();
     }
   }, [signature]);
 

@@ -16,12 +16,11 @@ interface Props extends TestIdProps {
   title: string;
   width: number;
   active?: boolean;
-  disabled?: boolean;
   onPress?: EmptyFn;
   style?: StyleProp<ViewStyle>;
 }
 
-export const ArtStyle: FC<Props> = ({ title, width, active = false, disabled = false, onPress, style, testID }) => {
+export const ArtStyle: FC<Props> = ({ title, width, active = false, onPress, style, testID }) => {
   const styles = useArtStyles();
 
   const [, , helpers] = useField<string>('artStyle');
@@ -34,23 +33,14 @@ export const ArtStyle: FC<Props> = ({ title, width, active = false, disabled = f
   return (
     <TouchableOpacity
       onPress={handlePress}
-      disabled={disabled}
       style={[styles.root, conditionalStyle(active, styles.active, styles.inactive), { width }, style]}
       testID={testID}
     >
       <View style={styles.iconContainer}>
         <Icon name={IconNameEnum.ArtStyle} size={formatSize(48)} />
-
-        {disabled && (
-          <View style={styles.overlay}>
-            <View style={styles.label}>
-              <Text style={styles.labelText}>Soon</Text>
-            </View>
-          </View>
-        )}
       </View>
 
-      <Text style={[styles.title, conditionalStyle(disabled, styles.disabledTitle)]}>{title}</Text>
+      <Text style={styles.title}>{title}</Text>
     </TouchableOpacity>
   );
 };

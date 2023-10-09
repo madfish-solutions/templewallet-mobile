@@ -17,6 +17,7 @@ import { savingsEpics } from './savings/epics';
 import { securityEpics } from './security/security-epics';
 import { settingsEpic } from './settings/settings-epic';
 import { swapEpics } from './swap/swap-epics';
+import { textToNftEpics } from './text-to-nft/text-to-nft-epics';
 import { tokensMetadataEpics } from './tokens-metadata/tokens-metadata-epics';
 import { walletEpics } from './wallet/wallet-epics';
 
@@ -40,5 +41,6 @@ export const { store, persistor } = createStore(
   partnersPromotionEpics,
   abTestingEpics,
   farmsEpics,
-  savingsEpics
+  savingsEpics,
+  textToNftEpics
 );

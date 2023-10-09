@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 
 import { EmptyFn } from 'src/config/general';
 import { isDefined } from 'src/utils/is-defined';
@@ -14,13 +14,13 @@ interface Props {
 export const HeaderBackButton: FC<Props> = ({ onPress }) => {
   const { goBack } = useNavigation();
 
-  const handleNavigate = () => {
+  const handleNavigate = useCallback(() => {
     if (isDefined(onPress)) {
       return onPress();
     }
 
     goBack();
-  };
+  }, [goBack, onPress]);
 
   return <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={handleNavigate} />;
 };

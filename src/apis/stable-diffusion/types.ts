@@ -7,14 +7,17 @@ export interface SignInResponse {
   accessToken: string;
 }
 
-export interface GenerateArtParams {
-  accessToken: string;
+export enum OrderPanoramaParam {
+  YES = 'yes',
+  NO = 'no'
+}
+
+export interface OrderCreationParams {
   positivePrompt: string;
   negativePrompt?: string;
-  artStyle: string;
-}
-export interface GenerateArtResponse {
-  order: StableDiffusionOrder;
+  width?: number;
+  height?: number;
+  panorama?: OrderPanoramaParam;
 }
 
 export enum OrderStatus {
@@ -22,8 +25,6 @@ export enum OrderStatus {
   Ready = 'ready',
   Failed = 'failed'
 }
-
-type PanoramaUnionType = 'yes' | 'no';
 
 /**
  * @param id - uuid;
@@ -41,5 +42,5 @@ export interface StableDiffusionOrder {
   variants: string[] | null;
   width: number;
   height: number;
-  panorama: PanoramaUnionType;
+  panorama: OrderPanoramaParam;
 }

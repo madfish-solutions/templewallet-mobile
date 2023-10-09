@@ -1,4 +1,3 @@
-import { StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 export enum ScreensEnum {
@@ -102,7 +101,7 @@ export type ScreensParamList = {
 
   /** Text to NFT stack **/
   [ScreensEnum.GenerateArt]: undefined;
-  [ScreensEnum.Preview]: { order: StableDiffusionOrder };
+  [ScreensEnum.Preview]: { orderId: string };
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;

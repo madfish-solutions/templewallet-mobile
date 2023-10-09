@@ -12,11 +12,18 @@ import { getBrokenImageSize } from 'src/utils/get-broken-image-size';
 interface Props {
   uri: string;
   size: number;
+  showLoader?: boolean;
   iconSizeType?: CollectibleIconSize;
   style?: StyleProp<ViewStyle>;
 }
 
-export const CollectibleImage: FC<Props> = ({ size, uri, iconSizeType = CollectibleIconSize.SMALL, style }) => {
+export const CollectibleImage: FC<Props> = ({
+  size,
+  uri,
+  showLoader = false,
+  iconSizeType = CollectibleIconSize.SMALL,
+  style
+}) => {
   const styles = useCollectibleHistoryIconStyles();
 
   const [isImageLoading, setIsImageLoading] = useState(true);
@@ -34,6 +41,7 @@ export const CollectibleImage: FC<Props> = ({ size, uri, iconSizeType = Collecti
   }, [uri]);
 
   const isBigIcon = iconSizeType === CollectibleIconSize.BIG;
+  const isLoading = showLoader || isImageLoading;
 
   const collectibleImage = useMemo(() => {
     if (isLoadingError) {
@@ -72,9 +80,7 @@ export const CollectibleImage: FC<Props> = ({ size, uri, iconSizeType = Collecti
         style
       ]}
     >
-      {collectibleImage}
-
-      {isImageLoading && <ActivityIndicator size={isBigIcon ? 'large' : 'small'} style={styles.loader} />}
+      {isLoading ? <ActivityIndicator size={isBigIcon ? 'large' : 'small'} style={styles.loader} /> : collectibleImage}
     </View>
   );
 };

@@ -1,7 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
 import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -147,23 +147,26 @@ export const MainStackScreen = () => {
   const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
   const shouldShowBlankScreen = isAuthorised && isLocked;
 
-  const handlePreviewBackButton = isHistoryBackButtonAlertShowedOnce
-    ? undefined
-    : () =>
-        Alert.alert(
-          'Art will be saved in History',
-          'You can always continue creating NFT of generated art. Find your variations in History',
-          [
-            {
-              text: 'Ok',
-              onPress: () => {
-                dispatch(setIsHistoryBackButtonAlertShowedOnceAction(true));
-                goBack();
-              },
-              style: 'default'
-            }
-          ]
-        );
+  const showPreviewAlert = useCallback(
+    () =>
+      Alert.alert(
+        'Art will be saved in History',
+        'You can always continue creating NFT of generated art. Find your variations in History',
+        [
+          {
+            text: 'Ok',
+            onPress: () => {
+              dispatch(setIsHistoryBackButtonAlertShowedOnceAction(true));
+              goBack();
+            },
+            style: 'default'
+          }
+        ]
+      ),
+    []
+  );
+
+  const handlePreviewBackButton = isHistoryBackButtonAlertShowedOnce ? undefined : showPreviewAlert;
 
   return (
     <PortalProvider>
