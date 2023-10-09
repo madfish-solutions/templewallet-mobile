@@ -4,7 +4,7 @@ import { useSelector } from '../selector';
 
 export const useCollectiblesDetailsSelector = () => useSelector(state => state.collectibles.details.data);
 
-export const useCollectibleDetailsSelector = (slug: string): CollectibleDetailsInterface | undefined =>
+export const useCollectibleDetailsSelector = (slug: string): CollectibleDetailsInterface | nullish =>
   useSelector(state => state.collectibles.details.data[slug]);
 
 export const useCollectibleDetailsLoadingSelector = () => useSelector(state => state.collectibles.details.isLoading);

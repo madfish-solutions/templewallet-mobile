@@ -1,8 +1,6 @@
-import { CollectibleDetailsInterface } from '../../token/interfaces/collectible-interfaces.interface';
 import { createActions } from '../create-actions';
+import type { CollectibleDetailsRecord } from './collectibles-state';
 
-export const loadCollectiblesDetailsActions = createActions<
-  string[],
-  Record<string, CollectibleDetailsInterface>,
-  string
->('collectibles/LOAD_COLLECTIBLES_DETAILS');
+export const loadCollectiblesDetailsActions = createActions<string[], CollectibleDetailsRecord, string>(
+  'collectibles/LOAD_COLLECTIBLES_DETAILS'
+);

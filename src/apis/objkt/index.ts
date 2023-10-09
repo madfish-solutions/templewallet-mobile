@@ -27,6 +27,7 @@ import {
 } from './queries';
 import {
   AttributeInfoResponse,
+  ObjktCollectibleDetails,
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
   FA2AttributeCountQueryResponse,
@@ -131,15 +132,13 @@ export const fetchCollectiblesByCollection$ = (
   );
 };
 
-export const fetchAllCollectiblesDetails$ = (
-  collectiblesSlugs: string[]
-): Observable<UserAdultCollectiblesQueryResponse[]> => {
-  const request = chunk(collectiblesSlugs, MAX_OBJKT_QUERY_RESPONSE_ITEMS).map(slugsChunk =>
-    buildGetAllUserCollectiblesQuery(slugsChunk)
-  );
+export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]) =>
+  forkJoin(
+    chunk(slugs, MAX_OBJKT_QUERY_RESPONSE_ITEMS).map(slugsChunk => fetchObjktCollectiblesBySlugsChunk$(slugsChunk))
+  ).pipe(map(res => res.reduce<ObjktCollectibleDetails[]>((acc, curr) => acc.concat(curr.token), [])));
 
-  return forkJoin(request.map(r => apolloObjktClient.fetch$<UserAdultCollectiblesQueryResponse>(r)));
-};
+const fetchObjktCollectiblesBySlugsChunk$ = (slugs: string[]) =>
+  apolloObjktClient.fetch$<UserAdultCollectiblesQueryResponse>(buildGetAllUserCollectiblesQuery(slugs));
 
 export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {
   const request = buildGetFA2AttributeCountQuery(ids);

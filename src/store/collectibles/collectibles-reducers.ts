@@ -8,16 +8,17 @@ export const collectiblesReducers = createReducer<CollectiblesState>(collectible
   builder.addCase(loadCollectiblesDetailsActions.submit, state => {
     state.details.isLoading = true;
   });
-  builder.addCase(loadCollectiblesDetailsActions.success, (state, { payload: detailsFromObjkt }) => ({
-    ...state,
-    details: createEntity(
+
+  builder.addCase(loadCollectiblesDetailsActions.success, (state, { payload }) => {
+    state.details = createEntity(
       {
         ...state.details.data,
-        ...detailsFromObjkt
+        ...payload
       },
       false
-    )
-  }));
+    );
+  });
+
   builder.addCase(loadCollectiblesDetailsActions.fail, state => {
     state.details.isLoading = false;
   });

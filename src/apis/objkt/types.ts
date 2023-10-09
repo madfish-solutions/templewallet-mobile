@@ -100,7 +100,7 @@ export interface CollectiblesByGalleriesResponse {
 }
 
 export interface UserAdultCollectiblesQueryResponse {
-  token: CollectibleDetailsResponse[];
+  token: ObjktCollectibleDetails[];
 }
 
 export interface CollectibleAttributes {
@@ -158,7 +158,7 @@ interface Gallery {
   };
 }
 
-export interface CollectibleDetailsResponse {
+export interface ObjktCollectibleDetails {
   fa_contract: string;
   token_id: string;
   name: string;

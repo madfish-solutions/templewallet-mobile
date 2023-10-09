@@ -2,8 +2,10 @@ import { CollectibleDetailsInterface } from '../../token/interfaces/collectible-
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
+export type CollectibleDetailsRecord = Record<string, CollectibleDetailsInterface | null>;
+
 export interface CollectiblesState {
-  details: LoadableEntityState<Record<string, CollectibleDetailsInterface>>;
+  details: LoadableEntityState<CollectibleDetailsRecord>;
 }
 
 export const collectiblesInitialState: CollectiblesState = {

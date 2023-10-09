@@ -1,18 +1,12 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
-import { pick } from 'lodash-es';
 import { Observable, catchError, map, of } from 'rxjs';
 
 import { ADULT_CONTENT_TAGS } from 'src/apis/objkt/adult-tags';
 import { ADULT_ATTRIBUTE_NAME, HIDDEN_ATTRIBUTES_NAME } from 'src/apis/objkt/constants';
-import {
-  fetchGalleryAttributeCount$,
-  fetchFA2AttributeCount$,
-  fetchAllCollectiblesDetails$
-} from 'src/apis/objkt/index';
-import { CollectibleAttributes, CollectibleDetailsResponse, CollectibleTag } from 'src/apis/objkt/types';
+import { fetchGalleryAttributeCount$, fetchFA2AttributeCount$ } from 'src/apis/objkt/index';
+import { CollectibleAttributes, CollectibleTag } from 'src/apis/objkt/types';
 import { AttributeInfo } from 'src/interfaces/attribute.interface';
 import { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-interfaces.interface';
-import { toTokenSlug } from 'src/token/utils/token.utils';
 
 const attributesInfoInitialState: AttributeInfo[] = [
   {
@@ -100,47 +94,3 @@ export const isAdultCollectible = (attributes?: CollectibleAttributes[], tags?: 
 
   return includesAdultAttributes || includesAdultTags;
 };
-
-export const loadAllCollectiblesDetails$ = (
-  collectiblesSlugs: string[]
-): Observable<Record<string, CollectibleDetailsInterface>> =>
-  fetchAllCollectiblesDetails$(collectiblesSlugs).pipe(
-    map(collectiblesDetailsArray => {
-      const collectiblesDetails = collectiblesDetailsArray.reduce<CollectibleDetailsResponse[]>(
-        (acc, current) => acc.concat(current.token),
-        []
-      );
-
-      const collectitblesDetailsRecord: Record<string, CollectibleDetailsInterface> = {};
-
-      for (const collectible of collectiblesDetails) {
-        const collectibleSlug = toTokenSlug(collectible.fa_contract, collectible.token_id);
-
-        collectitblesDetailsRecord[collectibleSlug] = {
-          ...pick(
-            collectible,
-            'name',
-            'description',
-            'creators',
-            'metadata',
-            'attributes',
-            'tags',
-            'timestamp',
-            'royalties',
-            'mime',
-            'galleries'
-          ),
-          address: collectible.fa_contract,
-          id: collectible.token_id,
-          artifactUri: collectible.artifact_uri,
-          thumbnailUri: collectible.thumbnail_uri,
-          displayUri: collectible.display_uri,
-          editions: collectible.supply,
-          collection: collectible.fa,
-          listingsActive: collectible.listings_active.slice(0, 1)
-        };
-      }
-
-      return collectitblesDetailsRecord;
-    })
-  );
