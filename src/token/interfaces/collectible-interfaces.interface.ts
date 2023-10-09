@@ -1,4 +1,4 @@
-import { CollectibleAttributes, CollectibleTag, ObjktCurrencyInfo, ObjktListing } from 'src/apis/objkt/types';
+import { ObjktAttribute, ObjktTag, ObjktCurrencyInfo, ObjktListing } from 'src/apis/objkt/types';
 
 import { TokenInterface } from './token.interface';
 
@@ -59,14 +59,15 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   creators: Creators[];
   collection: Collection;
   metadata: string;
-  attributes: CollectibleAttributes[];
-  tags: CollectibleTag[];
+  attributes: ObjktAttribute[];
+  tags: ObjktTag[];
   timestamp: string;
   royalties: Royalties[];
   galleries: Galleries[];
   artifactUri?: string;
   thumbnailUri?: string;
   displayUri?: string;
+  isAdultContent: boolean;
 }
 
 export interface CollectibleInterface

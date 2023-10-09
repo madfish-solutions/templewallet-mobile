@@ -7,6 +7,7 @@ import { useCollectiblesListSelector } from '../store/wallet/wallet-selectors';
 import { CollectibleInterface } from '../token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from '../token/utils/token.utils';
 
+/** @deprecated // Flawed logic ! */
 export const useCollectiblesWithFullData = (): CollectibleInterface[] => {
   const collectiblesFromStore = useCollectiblesListSelector();
   const collectiblesDetails = useCollectiblesDetailsSelector();
@@ -19,7 +20,7 @@ export const useCollectiblesWithFullData = (): CollectibleInterface[] => {
           const collectibleSlug = getTokenSlug({ address: collectibleFromStore.address, id: collectibleFromStore.id });
 
           return {
-            ...collectiblesDetails[collectibleSlug],
+            ...collectiblesDetails[collectibleSlug]!,
             ...collectibleFromStore
           };
         }),

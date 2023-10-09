@@ -1,4 +1,3 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import BottomSheet from '@gorhom/bottom-sheet';
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -233,7 +232,7 @@ export const CollectiblesHome = () => {
           </View>
         </View>
 
-        {isDetailsLoading && !isNonEmptyArray(collectibles) ? (
+        {isDetailsLoading && !collectibles.length ? (
           <View style={styles.loader}>
             <ActivityIndicator size="large" />
           </View>

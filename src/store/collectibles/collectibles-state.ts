@@ -6,8 +6,16 @@ export type CollectibleDetailsRecord = Record<string, CollectibleDetailsInterfac
 
 export interface CollectiblesState {
   details: LoadableEntityState<CollectibleDetailsRecord>;
+  adultFlags: Record<string, AdultFlag>;
+}
+
+interface AdultFlag {
+  val: boolean;
+  /** Timestamp in seconds */
+  ts: number;
 }
 
 export const collectiblesInitialState: CollectiblesState = {
-  details: createEntity({})
+  details: createEntity({}),
+  adultFlags: {}
 };

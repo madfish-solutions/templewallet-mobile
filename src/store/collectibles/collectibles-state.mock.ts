@@ -1,6 +1,9 @@
-import { createEntity } from '../create-entity';
-import { CollectiblesState } from './collectibles-state';
+import { mockPersistedState } from 'src/utils/redux';
 
-export const mockCollectiblesState: CollectiblesState = {
-  details: createEntity({})
-};
+import { createEntity } from '../create-entity';
+import type { CollectiblesState } from './collectibles-state';
+
+export const mockCollectiblesState = mockPersistedState<CollectiblesState>({
+  details: createEntity({}),
+  adultFlags: {}
+});

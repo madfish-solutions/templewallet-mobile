@@ -7,8 +7,7 @@ import { SimpleModelView } from 'src/components/simple-model-view/simple-model-v
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { EventFn } from 'src/config/general';
 import { NonStaticMimeTypes } from 'src/enums/animated-mime-types.enum';
-import { useCollectibleDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
-import { isAdultCollectible } from 'src/utils/collectibles.utils';
+import { useCollectibleIsAdultSelector } from 'src/store/collectibles/collectibles-selectors';
 import {
   formatCollectibleObjktArtifactUri,
   formatCollectibleObjktDisplayUri,
@@ -59,17 +58,11 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
   }) => {
     const styles = useCollectibleIconStyles();
 
-    // TODO: Refactor this code. Add adult logic to epic.
-    const collectibleDetails = useCollectibleDetailsSelector(slug);
-    const isShowBlurInitialValue = useMemo(() => {
-      if (isDefined(collectibleDetails)) {
-        return isAdultCollectible(collectibleDetails.attributes, collectibleDetails.tags);
-      }
+    const isAdultStoredFlag = useCollectibleIsAdultSelector(slug);
 
-      return false;
-    }, [collectibleDetails]);
+    const isShowBlurInitialValue = isAdultStoredFlag ?? false;
+
     const [isShowBlur, setIsShowBlur] = useState(isShowBlurInitialValue);
-    // *
 
     const {
       currentFallback,

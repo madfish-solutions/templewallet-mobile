@@ -8,3 +8,6 @@ export const useCollectibleDetailsSelector = (slug: string): CollectibleDetailsI
   useSelector(state => state.collectibles.details.data[slug]);
 
 export const useCollectibleDetailsLoadingSelector = () => useSelector(state => state.collectibles.details.isLoading);
+
+export const useCollectibleIsAdultSelector = (slug: string): boolean | undefined =>
+  useSelector(state => state.collectibles.adultFlags[slug]?.val);

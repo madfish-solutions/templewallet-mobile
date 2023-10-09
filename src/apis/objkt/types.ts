@@ -103,7 +103,7 @@ export interface UserAdultCollectiblesQueryResponse {
   token: ObjktCollectibleDetails[];
 }
 
-export interface CollectibleAttributes {
+export interface ObjktAttribute {
   attribute: {
     id: number;
     name: string;
@@ -112,7 +112,7 @@ export interface CollectibleAttributes {
   };
 }
 
-export interface CollectibleTag {
+export interface ObjktTag {
   tag: {
     name: string;
   };
@@ -168,9 +168,9 @@ export interface ObjktCollectibleDetails {
   creators: Creator[];
   fa: Fa;
   metadata: string;
-  attributes: CollectibleAttributes[];
+  attributes: ObjktAttribute[];
   artifact_uri: string;
-  tags: CollectibleTag[];
+  tags: ObjktTag[];
   timestamp: string;
   royalties: Royalty[];
   supply: number;

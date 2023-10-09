@@ -33,7 +33,7 @@ const loadCollectiblesDetailsEpic: Epic = action$ =>
 
           const details: CollectibleDetailsRecord = Object.fromEntries(entries);
 
-          return loadCollectiblesDetailsActions.success(details);
+          return loadCollectiblesDetailsActions.success({ details, timestamp: Date.now() });
         }),
         catchError(err => {
           console.error(err);

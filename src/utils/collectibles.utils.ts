@@ -1,10 +1,8 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { Observable, catchError, map, of } from 'rxjs';
 
-import { ADULT_CONTENT_TAGS } from 'src/apis/objkt/adult-tags';
-import { ADULT_ATTRIBUTE_NAME, HIDDEN_ATTRIBUTES_NAME } from 'src/apis/objkt/constants';
+import { HIDDEN_ATTRIBUTES_NAME } from 'src/apis/objkt/constants';
 import { fetchGalleryAttributeCount$, fetchFA2AttributeCount$ } from 'src/apis/objkt/index';
-import { CollectibleAttributes, CollectibleTag } from 'src/apis/objkt/types';
+import { ObjktAttribute } from 'src/apis/objkt/types';
 import { AttributeInfo } from 'src/interfaces/attribute.interface';
 import { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 
@@ -19,8 +17,8 @@ const attributesInfoInitialState: AttributeInfo[] = [
 export const getAttributesWithRarity = (
   attributesInfo: AttributeInfo[],
   collectible: CollectibleDetailsInterface
-): CollectibleAttributes[] => {
-  const isExistGallery = isNonEmptyArray(collectible.galleries);
+): ObjktAttribute[] => {
+  const isExistGallery = collectible.galleries.length > 0;
   const collectibleGalleryCount = isExistGallery
     ? collectible.galleries?.[0].gallery?.editions
     : collectible.collection.editions;
@@ -78,19 +76,4 @@ export const getAttributesInfo$ = (ids: number[], isGallery: boolean): Observabl
     ),
     catchError(() => of(attributesInfoInitialState))
   );
-};
-
-export const isAdultCollectible = (attributes?: CollectibleAttributes[], tags?: CollectibleTag[]) => {
-  let includesAdultAttributes = false;
-  let includesAdultTags = false;
-
-  if (isNonEmptyArray(attributes)) {
-    includesAdultAttributes = attributes.some(({ attribute }) => attribute.name === ADULT_ATTRIBUTE_NAME);
-  }
-
-  if (isNonEmptyArray(tags)) {
-    includesAdultTags = tags.some(({ tag }) => ADULT_CONTENT_TAGS.includes(tag.name));
-  }
-
-  return includesAdultAttributes || includesAdultTags;
 };

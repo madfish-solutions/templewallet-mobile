@@ -5,7 +5,7 @@ import { map, tap, finalize, catchError } from 'rxjs/operators';
 
 import { HIDDEN_ATTRIBUTES_NAME } from 'src/apis/objkt/constants';
 
-import { CollectibleAttributes } from '../apis/objkt/types';
+import { ObjktAttribute } from '../apis/objkt/types';
 import { CollectibleDetailsInterface } from '../token/interfaces/collectible-interfaces.interface';
 import { getAttributesInfo$, getAttributesWithRarity } from '../utils/collectibles.utils';
 
@@ -14,7 +14,7 @@ export const useFetchCollectibleAttributes = (details: CollectibleDetailsInterfa
     ? details.attributes.filter(item => !HIDDEN_ATTRIBUTES_NAME.includes(item.attribute.name))
     : [];
 
-  const [attributes, setAttributes] = useState<CollectibleAttributes[]>(initialAttributes);
+  const [attributes, setAttributes] = useState<ObjktAttribute[]>(initialAttributes);
   const [isLoading, setIsLoading] = useState(false);
 
   const attributeIds = initialAttributes.map(({ attribute }) => attribute.id);
