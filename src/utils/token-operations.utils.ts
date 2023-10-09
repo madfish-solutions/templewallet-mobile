@@ -24,7 +24,7 @@ import { isDefined } from './is-defined';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 import { sleep } from './timeouts.util';
 
-const TZKT_FETCH_QUERY_SIZE = 300;
+const TZKT_FETCH_QUERY_SIZE = 10000;
 
 interface OperationsGroup {
   hash: string;
@@ -268,37 +268,37 @@ const refetchOnce429 = async <R>(fetcher: () => Promise<R>, delayAroundInMS = 10
 
 const fetchOperGroupsForOperations = async (
   selectedRpcUrl: string,
-  operations: TzktOperation[],
-  olderThan?: TzktOperation
-) => {
+  operations: TzktOperation[]
+): Promise<OperationsGroup[]> => {
   const uniqueHashes = uniq(operations.map(d => d.hash));
 
-  if (olderThan && uniqueHashes[0] === olderThan.hash) {
-    uniqueHashes.splice(1);
-  }
+  const groupsPromises: Promise<OperationsGroup>[] = [];
 
-  const groups: OperationsGroup[] = [];
   for (const hash of uniqueHashes) {
-    const operations = await refetchOnce429(() => getOperationGroupByHash(selectedRpcUrl, hash), 1000);
-    const tokensTransfers = await refetchOnce429(
-      () =>
-        getTokensTransfersByTxIds(
-          selectedRpcUrl,
-          operations
-            .filter(op => op.type === TzktOperationType.Transaction && (op.tokenTransfersCount ?? 0) > 0)
-            .map(({ id }) => id)
-        ),
-      1000
-    );
-    operations.sort((b, a) => a.id - b.id);
-    groups.push({
-      hash,
-      operations,
-      tokensTransfers
-    });
+    const groupPromise = (async () => {
+      const operations = await refetchOnce429(() => getOperationGroupByHash(selectedRpcUrl, hash), 1000);
+      const tokensTransfers = await refetchOnce429(
+        () =>
+          getTokensTransfersByTxIds(
+            selectedRpcUrl,
+            operations
+              .filter(op => op.type === TzktOperationType.Transaction && (op.tokenTransfersCount ?? 0) > 0)
+              .map(({ id }) => id)
+          ),
+        1000
+      );
+      operations.sort((b, a) => a.id - b.id);
+
+      return {
+        hash,
+        operations,
+        tokensTransfers
+      };
+    })();
+    groupsPromises.push(groupPromise);
   }
 
-  return groups;
+  return Promise.all(groupsPromises);
 };
 
 export const loadActivity = async (
@@ -310,7 +310,7 @@ export const loadActivity = async (
 ): Promise<{ activities: Array<Array<Activity>>; reachedTheEnd: boolean; oldestOperation?: TzktOperation }> => {
   const operations = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, oldestOperation);
 
-  const groups = await fetchOperGroupsForOperations(selectedRpcUrl, operations, oldestOperation);
+  const groups = await fetchOperGroupsForOperations(selectedRpcUrl, operations);
 
   const reachedTheEnd = groups.length === 0;
 
