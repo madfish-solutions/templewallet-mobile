@@ -18,6 +18,7 @@ const themeStyles = {
   }
 };
 
+/** @deprecated */
 export enum AudioPlaceholderTheme {
   small = 'small',
   big = 'big'

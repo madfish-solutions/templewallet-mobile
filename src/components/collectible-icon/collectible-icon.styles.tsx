@@ -1,10 +1,7 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useCollectibleIconStyles = createUseStyles(({ colors }) => ({
-  root: {
-    backgroundColor: colors.blue10
-  },
+export const useCollectibleIconStyles = createUseStyles(() => ({
   container: {
     borderRadius: formatSize(4),
     overflow: 'hidden'

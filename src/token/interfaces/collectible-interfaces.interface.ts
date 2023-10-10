@@ -70,10 +70,6 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   isAdultContent: boolean;
 }
 
-export interface CollectibleInterface
-  extends Omit<CollectibleDetailsInterface, 'address' | 'id' | 'name'>,
-    Omit<TokenInterface, 'displayUri'> {}
-
 /** @deprecated // What is this creature ?!) */
 export interface CollectibleOfferInteface
   extends Omit<TokenInterface, 'balance' | 'visibility' | 'decimals' | 'symbol'>,

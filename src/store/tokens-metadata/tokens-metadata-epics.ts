@@ -4,8 +4,9 @@ import { of } from 'rxjs';
 import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from '../../utils/token-metadata.utils';
-import { withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from 'src/utils/token-metadata.utils';
+import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
+
 import type { RootState } from '../types';
 import {
   addTokensMetadataAction,

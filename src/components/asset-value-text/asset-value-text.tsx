@@ -31,7 +31,7 @@ export const AssetValueText: FC<Props> = ({
 
   const hideText = convertToDollar && (!isDefined(asset.exchangeRate) || isDcpNode);
 
-  const visibleAmount = getDollarValue(amount, asset, convertToDollar ? asset.exchangeRate : 1);
+  const visibleAmount = getDollarValue(amount, asset.decimals, convertToDollar ? asset.exchangeRate : 1);
   const isBurnReceiverAddress = receiver === BURN_ADDRESS;
   const visibleSymbol = showSymbol ? (isBurnReceiverAddress ? asset.name : asset.symbol) : undefined;
 

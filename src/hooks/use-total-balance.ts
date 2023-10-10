@@ -19,11 +19,11 @@ export const useTotalBalance = () => {
 
     for (const token of visibleTokens) {
       const exchangeRate = exchangeRates[getTokenSlug(token)];
-      const tokenDollarValue = getDollarValue(token.balance, token, exchangeRate);
+      const tokenDollarValue = getDollarValue(token.balance, token.decimals, exchangeRate);
       dollarValue = dollarValue.plus(tokenDollarValue);
     }
 
-    const tezosDollarValue = getDollarValue(tezosToken.balance, tezosToken, exchangeRates.tez);
+    const tezosDollarValue = getDollarValue(tezosToken.balance, tezosToken.decimals, exchangeRates.tez);
     dollarValue = dollarValue.plus(tezosDollarValue);
 
     return tzToMutez(dollarValue.dividedBy(exchangeRates.tez), TEZ_TOKEN_METADATA.decimals);

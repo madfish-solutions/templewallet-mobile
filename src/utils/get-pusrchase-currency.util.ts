@@ -6,6 +6,7 @@ import { ListingActive } from 'src/token/interfaces/collectible-interfaces.inter
 
 import { mutezToTz } from './tezos.util';
 
+/** @deprecated */
 const initialCurrencyValue = {
   price: 0,
   contract: null,

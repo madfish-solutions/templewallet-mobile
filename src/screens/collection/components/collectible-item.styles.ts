@@ -12,6 +12,9 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
     marginHorizontal: formatSize(4),
     position: 'relative'
   },
+  imageWrap: {
+    backgroundColor: colors.blue10
+  },
   listed: {
     position: 'absolute',
     borderTopLeftRadius: formatSize(10),

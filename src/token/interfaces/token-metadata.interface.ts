@@ -1,4 +1,4 @@
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
+import type { IconNameEnum } from 'src/components/icon/icon-name.enum';
 
 export enum TokenStandardsEnum {
   Fa2 = 'fa2',
@@ -17,7 +17,7 @@ export interface TokenMetadataInterface {
   artifactUri?: string;
   standard?: TokenStandardsEnum | null;
 
-  // Stored as separate Record
+  /** @deprecated Stored as separate Record */
   exchangeRate?: number;
 }
 

@@ -1,5 +1,4 @@
-import React, { FC, useMemo, useState, memo } from 'react';
-import { StyleProp, View, ViewStyle } from 'react-native';
+import React, { useMemo, useState, memo } from 'react';
 import FastImage from 'react-native-fast-image';
 
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
@@ -17,11 +16,10 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { ActivityIndicator } from '../activity-indicator/activity-indicator';
 import { AudioPlaceholderTheme } from '../audio-placeholder/audio-placeholder';
+import { ImageBlurOverlay } from '../image-blur-overlay';
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 import { AudioPlayer } from './components/audio-player/audio-player';
-import { Balance } from './components/balance/balance';
 import { BrokenImage } from './components/broken-image/broken-image';
-import { ImageBlurOverlay } from './components/image-blur-overlay/image-blur-overlay';
 import { COLLECTIBLE_FINAL_FALLBACK } from './constants';
 import { useCollectibleImageControl } from './hooks/use-collectible-image-control.hook';
 
@@ -31,17 +29,15 @@ export interface CollectibleIconProps {
   displayUri?: string;
   mime: string;
   size: number;
-  balance?: string;
   isBigIcon?: boolean;
   audioPlaceholderTheme?: AudioPlaceholderTheme;
   setScrollEnabled?: EventFn<boolean>;
   isTouchableBlurOverlay?: boolean;
+  /** @deprecated */
   isModalWindow?: boolean;
-  isShowInfo?: boolean;
-  style?: StyleProp<ViewStyle>;
 }
 
-export const CollectibleIcon: FC<CollectibleIconProps> = memo(
+export const CollectibleIcon = memo<CollectibleIconProps>(
   ({
     slug,
     artifactUri,
@@ -52,8 +48,6 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     audioPlaceholderTheme,
     isTouchableBlurOverlay = false,
     isModalWindow = false,
-    isShowInfo,
-    balance,
     setScrollEnabled
   }) => {
     const styles = useCollectibleIconStyles();
@@ -91,7 +85,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
         );
       }
 
-      if (!isAnimatedRenderedOnce && isDefined(artifactUri) && isModalWindow) {
+      if (isModalWindow && !isAnimatedRenderedOnce && isDefined(artifactUri)) {
         if (isImgUriDataUri(artifactUri)) {
           return (
             <AnimatedSvg
@@ -183,21 +177,11 @@ export const CollectibleIcon: FC<CollectibleIconProps> = memo(
     ]);
 
     return (
-      <View
-        style={[
-          styles.root,
-          {
-            width: size,
-            height: size
-          }
-        ]}
-      >
+      <>
         {finalImage}
 
-        {isShowInfo && isDefined(balance) && <Balance balance={balance} />}
-
         {isLoading && !Boolean(isShowBlur) && <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />}
-      </View>
+      </>
     );
   }
 );

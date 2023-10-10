@@ -69,7 +69,7 @@ export const CollectibleModal = memo(() => {
   const [address, id] = fromTokenSlug(slug);
 
   const { width } = Dimensions.get('window');
-  const iconSize = width - formatSize(32);
+  const imageSize = width - formatSize(32);
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
@@ -236,17 +236,19 @@ export const CollectibleModal = memo(() => {
       <ModalStatusBar />
 
       <View>
-        <CollectibleIcon
-          slug={slug}
-          artifactUri={collectible.artifactUri}
-          displayUri={collectible.displayUri}
-          mime={details.mime}
-          size={iconSize}
-          isBigIcon={true}
-          isTouchableBlurOverlay
-          isModalWindow
-          setScrollEnabled={setScrollEnabled}
-        />
+        <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
+          <CollectibleIcon
+            slug={slug}
+            artifactUri={collectible.artifactUri}
+            displayUri={collectible.displayUri}
+            mime={details.mime}
+            size={imageSize}
+            isBigIcon={true}
+            isTouchableBlurOverlay
+            isModalWindow
+            setScrollEnabled={setScrollEnabled}
+          />
+        </View>
 
         <Divider size={formatSize(12)} />
 

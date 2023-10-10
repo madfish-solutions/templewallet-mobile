@@ -147,6 +147,8 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
   const navigateToCollectibleModal = () => navigate(ModalsEnum.CollectibleModal, { slug });
 
+  const imageSize = formatSize(295);
+
   return (
     <View style={styles.collectibleContainer}>
       {isDefined(item.lowestAsk) && (
@@ -157,14 +159,16 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
       <View style={styles.collectible}>
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
-            <CollectibleIcon
-              isBigIcon={true}
-              slug={slug}
-              artifactUri={item.artifactUri}
-              displayUri={item.displayUri}
-              mime={item.mime}
-              size={formatSize(295)}
-            />
+            <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
+              <CollectibleIcon
+                isBigIcon={true}
+                slug={slug}
+                artifactUri={item.artifactUri}
+                displayUri={item.displayUri}
+                mime={item.mime}
+                size={imageSize}
+              />
+            </View>
           </TouchableOpacity>
 
           <View style={styles.nameBlock}>

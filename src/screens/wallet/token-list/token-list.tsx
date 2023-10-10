@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -55,7 +55,7 @@ const ITEM_HEIGHT = formatSize(24) + formatSize(32);
 const keyExtractor = (item: FlatListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
 
-export const TokensList: FC = () => {
+export const TokensList = memo(() => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
@@ -216,7 +216,7 @@ export const TokensList: FC = () => {
       </View>
     </>
   );
-};
+});
 
 const addPlaceholdersForAndroid = (flatListData: FlatListItem[], screenFillingItemsCount: number) =>
   isAndroid && screenFillingItemsCount > flatListData.length

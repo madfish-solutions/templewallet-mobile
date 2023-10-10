@@ -25,6 +25,6 @@ export const isCollectible = <T extends TokenMetadataInterface>(asset: T) => isD
 
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;
 
-export const isNonZeroBalance = (asset: TokenInterface) => asset.balance !== '0';
+export const isNonZeroBalance = (asset: Pick<TokenInterface, 'balance'>) => asset.balance !== '0';
 
 export const isKTAddress = (address: string) => address.startsWith('KT');

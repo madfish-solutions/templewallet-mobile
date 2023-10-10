@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+
 import { createActions } from '../create-actions';
 
 export const addKnownSvg = createAction<string>('assets/ADD_KNOWN_SVG');

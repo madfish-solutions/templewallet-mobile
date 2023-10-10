@@ -6,6 +6,7 @@ import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
 import { AccountStateInterface } from 'src/interfaces/account-state.interface';
+import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEMPLE_TOKEN } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
@@ -209,7 +210,7 @@ export const useTezosBalanceOfKnownAccountSelector = (publicKeyHash: string) =>
   });
 
 export const useSelectedAccountTkeyTokenSelector = (): TokenInterface => {
-  const tkey = useTokenSelector(toTokenSlug(TEMPLE_TOKEN.address, TEMPLE_TOKEN.id));
+  const tkey = useTokenSelector(TEMPLE_TOKEN_SLUG);
 
   return tkey ?? TEMPLE_TOKEN;
 };

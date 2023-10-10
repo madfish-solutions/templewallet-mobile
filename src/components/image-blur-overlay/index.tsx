@@ -1,16 +1,16 @@
-import React, { FC, memo } from 'react';
+import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EventFn } from 'src/config/general';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
-import { Icon } from '../../../icon/icon';
-import { IconNameEnum } from '../../../icon/icon-name.enum';
-import { useBlurStyles } from './image-blur-overlay.styles';
+import { useBlurStyles } from './styles';
 
 const ICON_SIZE_BIG = 40;
 const ICON_SIZE_SMALL = 24;
@@ -23,7 +23,7 @@ interface Props {
   isTouchableOverlay?: boolean;
 }
 
-export const ImageBlurOverlay: FC<Props> = memo(
+export const ImageBlurOverlay = memo<Props>(
   ({ size, isShowBlur, isBigIcon, setIsShowBlur, isTouchableOverlay = false }) => {
     const styles = useBlurStyles();
     const deviceTheme = useThemeSelector();

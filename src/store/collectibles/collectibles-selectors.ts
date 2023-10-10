@@ -2,8 +2,6 @@ import { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-in
 
 import { useSelector } from '../selector';
 
-export const useCollectiblesDetailsSelector = () => useSelector(state => state.collectibles.details.data);
-
 export const useCollectibleDetailsSelector = (slug: string): CollectibleDetailsInterface | nullish =>
   useSelector(state => state.collectibles.details.data[slug]);
 

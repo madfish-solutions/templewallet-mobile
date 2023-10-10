@@ -190,15 +190,24 @@ export const loadTokensMetadata$ = memoize(
     )
 );
 
-export const isAssetSearched = ({ name, symbol, address }: Partial<TokenInterface>, lowerCaseSearchValue: string) =>
+export const isAssetSearched = (
+  { name, symbol, address }: Pick<TokenInterface, 'address' | 'name' | 'symbol'>,
+  lowerCaseSearchValue: string
+) =>
   Boolean(name?.toLowerCase().includes(lowerCaseSearchValue)) ||
   Boolean(symbol?.toLowerCase().includes(lowerCaseSearchValue)) ||
   Boolean(address?.toLowerCase().includes(lowerCaseSearchValue));
 
-export const applySortByDollarValueDecrease: <T extends TokenInterface>(assets: T[]) => T[] = assets =>
+type SortableByDollarAsset = Pick<TokenInterface, 'decimals' | 'balance' | 'exchangeRate'>;
+
+export const applySortByDollarValueDecrease: <T extends SortableByDollarAsset>(assets: T[]) => T[] = assets =>
   assets.sort((a, b) => {
-    const aDollarValue = isTruthy(a.exchangeRate) ? getDollarValue(a.balance, a, a.exchangeRate) : BigNumber(0);
-    const bDollarValue = isTruthy(b.exchangeRate) ? getDollarValue(b.balance, b, b.exchangeRate) : BigNumber(0);
+    const aDollarValue = isTruthy(a.exchangeRate)
+      ? getDollarValue(a.balance, a.decimals, a.exchangeRate)
+      : BigNumber(0);
+    const bDollarValue = isTruthy(b.exchangeRate)
+      ? getDollarValue(b.balance, b.decimals, b.exchangeRate)
+      : BigNumber(0);
 
     return bDollarValue.minus(aDollarValue).toNumber();
   });

@@ -22,7 +22,6 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { Search } from 'src/components/search/search';
-import { useCollectiblesWithFullData } from 'src/hooks/use-collectibles-with-full-data.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -38,6 +37,7 @@ import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { useEnabledAccountCollectibles } from 'src/utils/assets/hooks';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
@@ -45,8 +45,8 @@ import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
 
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
-import { useCollectiblesHomeStyles } from './collectibles-home.styles';
-import { CollectiblesList } from './collectibles-list/collectibles-list';
+import { CollectiblesList } from './collectibles-list';
+import { useCollectiblesHomeStyles } from './styles';
 
 interface SocialLinksInterface {
   url: string | undefined;
@@ -64,11 +64,11 @@ export const CollectiblesHome = () => {
   const dispatch = useDispatch();
 
   const collections = useCreatedCollectionsSelector();
-  const collectibles = useCollectiblesWithFullData();
+  const collectibles = useEnabledAccountCollectibles();
   const selectedAccount = useSelectedAccountSelector();
   const visibleAccounts = useVisibleAccountsListSelector();
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
-  const isDetailsLoading = useCollectibleDetailsLoadingSelector();
+  const areDetailsLoading = useCollectibleDetailsLoadingSelector();
 
   const styles = useCollectiblesHomeStyles();
   const colors = useColors();
@@ -78,16 +78,17 @@ export const CollectiblesHome = () => {
   const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
 
   const insets = useSafeAreaInsets();
-  const TAB_BAR_HEIGHT = isTablet() ? 0 : formatSize(48) + insets.bottom;
-  const MARGIN_BETWEEN_COMPONENTS = formatSize(16);
-  const statusBar = useMemo(() => (isTablet() ? StatusBar.currentHeight ?? 0 : 0), [StatusBar.currentHeight]);
-  const snapPoints = useMemo(
-    () => [
-      windowHeight - (headerHeight + TAB_BAR_HEIGHT + statusBar),
-      windowHeight - (headerHeight - visibleBlockHeight + TAB_BAR_HEIGHT - MARGIN_BETWEEN_COMPONENTS + statusBar)
-    ],
-    [headerHeight, visibleBlockHeight, windowHeight]
-  );
+
+  const snapPoints = useMemo(() => {
+    const TAB_BAR_HEIGHT = isTablet() ? 0 : formatSize(48) + insets.bottom;
+    const MARGIN_BETWEEN_COMPONENTS = formatSize(16);
+
+    const statusBar = isTablet() ? StatusBar.currentHeight ?? 0 : 0;
+
+    const firstSnapPoint = windowHeight - (headerHeight + TAB_BAR_HEIGHT + statusBar);
+
+    return [firstSnapPoint, firstSnapPoint + visibleBlockHeight + MARGIN_BETWEEN_COMPONENTS];
+  }, [headerHeight, visibleBlockHeight, windowHeight, insets.bottom, StatusBar.currentHeight]);
 
   const openTzProfiles = () => openUrl('https://tzprofiles.com/');
 
@@ -232,7 +233,7 @@ export const CollectiblesHome = () => {
           </View>
         </View>
 
-        {isDetailsLoading && !collectibles.length ? (
+        {areDetailsLoading && !collectibles.length ? (
           <View style={styles.loader}>
             <ActivityIndicator size="large" />
           </View>
