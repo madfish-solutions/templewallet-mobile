@@ -1,11 +1,12 @@
 import React, { FC } from 'react';
 import { StyleProp, TextStyle, Text } from 'react-native';
 
-import { BURN_ADDRESS } from '../../hooks/use-burn-collectible.hook';
-import { useNetworkInfo } from '../../hooks/use-network-info.hook';
-import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
-import { getDollarValue } from '../../utils/balance.utils';
-import { isDefined } from '../../utils/is-defined';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { getDollarValue } from 'src/utils/balance.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { BURN_ADDRESS } from 'src/utils/known-addresses';
+
 import { FormattedAmount } from '../formatted-amount';
 
 interface Props {

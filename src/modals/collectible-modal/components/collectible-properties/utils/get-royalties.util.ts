@@ -1,7 +1,7 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
 
-import { mutezToTz } from '../../../../../utils/tezos.util';
+import { mutezToTz } from 'src/utils/tezos.util';
 
 export const getRoyalties = (royalties: { amount: number; decimals: number }[]) => {
   if (!isNonEmptyArray(royalties)) {

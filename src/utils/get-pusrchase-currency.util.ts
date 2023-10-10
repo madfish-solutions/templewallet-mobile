@@ -16,7 +16,7 @@ const initialCurrencyValue = {
   priceToDisplay: 0
 };
 
-export const getPurchaseCurrency = (listingsActive: ListingActive[]) => {
+export const getPurchaseCurrency = (listingsActive?: ListingActive[]) => {
   if (isNonEmptyArray(listingsActive)) {
     const { price, currency_id } = listingsActive[0];
     const currentCurrency = objktCurrencies[currency_id];

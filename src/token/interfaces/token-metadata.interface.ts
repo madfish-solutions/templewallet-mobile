@@ -13,6 +13,7 @@ export interface TokenMetadataInterface {
   decimals: number;
   iconName?: IconNameEnum;
   thumbnailUri?: string;
+  /** @deprecated // Lost in Redux at the moment */
   displayUri?: string;
   artifactUri?: string;
   standard?: TokenStandardsEnum | null;

@@ -96,7 +96,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
   const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
 
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(slug, item);
+  const { buyCollectible, purchaseCurrency } = useBuyCollectible(slug, item.listingsActive);
 
   const fxHashListed = item?.listingsActive?.find(listing => listing.seller_address === selectedPublicKeyHash);
 

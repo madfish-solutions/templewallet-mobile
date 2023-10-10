@@ -11,7 +11,7 @@
 7. -
 8. +
 9. -
-10. -
+10. +
 11. -
 12. -
 13. +
@@ -26,7 +26,7 @@
 22. -
 23. -
 24. -
-25. -
+25. +- // Fixed in modal
 26. ?
 27. +
 28. -
@@ -37,6 +37,6 @@
 ### TODO:
 
 - DRY `Share.share` & Dynamic links creation
-- Blacklist `collections` slice
-- Persist adultery flags
+- Persist adultery flags (for collections now)
+- `displayUri` in metadata
 -

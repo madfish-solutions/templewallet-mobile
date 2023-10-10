@@ -1,17 +1,11 @@
 import React, { FC, memo } from 'react';
 import { Text, View } from 'react-native';
 
+import { CollectibleAttribute } from '../../types';
 import { styles, useCollectibleAttributeStyles } from './styles';
 
 interface Props {
-  attributes: {
-    attribute: {
-      id: number;
-      name: string;
-      value: string;
-      rarity?: number;
-    };
-  }[];
+  attributes: CollectibleAttribute[];
 }
 
 export const CollectibleAttributes = memo<Props>(({ attributes }) => (

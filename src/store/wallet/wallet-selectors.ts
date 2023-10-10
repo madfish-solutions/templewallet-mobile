@@ -9,7 +9,7 @@ import { AccountStateInterface } from 'src/interfaces/account-state.interface';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEMPLE_TOKEN } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
+import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
@@ -143,6 +143,12 @@ export const useAllCurrentAccountStoredAssetsSelector = () =>
     (state1, state2) => state1?.stored === state2?.stored && state1?.removed === state2?.removed
   );
 
+export const useAssetBalanceSelector = (slug: string) => {
+  const data = useAllCurrentAccountStoredAssetsSelector();
+
+  return data?.stored.find(a => a.slug === slug)?.balance;
+};
+
 export const useCurrentAccountStoredAssetsSelector = (type: 'tokens' | 'collectibles') => {
   const assets = useAllCurrentAccountStoredAssetsSelector();
   const allMetadatas = useTokensMetadataSelector();
@@ -180,12 +186,6 @@ export const useCollectiblesListSelector = () => {
   const assetsList = useAssetsListSelector();
 
   return useMemo(() => assetsList.filter(asset => isCollectible(asset) && isNonZeroBalance(asset)), [assetsList]);
-};
-
-export const useCollectibleSelector = (slug: string) => {
-  const collectibles = useCollectiblesListSelector();
-
-  return useMemo(() => collectibles.find(collectible => getTokenSlug(collectible) === slug), [slug, collectibles]);
 };
 
 export const useIsVisibleSelector = (publicKeyHash: string) =>

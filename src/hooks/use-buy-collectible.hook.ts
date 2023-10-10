@@ -1,7 +1,7 @@
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
@@ -17,7 +17,7 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
-import { CollectibleCommonInterface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { ListingActive } from 'src/token/interfaces/collectible-interfaces.interface';
 import { getPurchaseCurrency } from 'src/utils/get-pusrchase-currency.util';
 import { isDefined } from 'src/utils/is-defined';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
@@ -29,7 +29,7 @@ const OBJKT_BUY_METHOD = 'fulfill_ask';
 const DEFAULT_OBJKT_STORAGE_LIMIT = 350;
 const TEZOS_ID_OBJKT = 1;
 
-export const useBuyCollectible = (slug: string, details: CollectibleCommonInterface) => {
+export const useBuyCollectible = (slug: string, listingsActive?: ListingActive[]) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
@@ -40,8 +40,6 @@ export const useBuyCollectible = (slug: string, details: CollectibleCommonInterf
   const metadata = allMetadatas[slug];
 
   const accountPkh = useCurrentAccountPkhSelector();
-
-  const listingsActive = details.listingsActive;
 
   const isUserOwnerCurrentCollectible = useCollectibleOwnerCheck(slug);
 
@@ -59,7 +57,7 @@ export const useBuyCollectible = (slug: string, details: CollectibleCommonInterf
       .then(setMarketplaceContract);
   }, [marketplace, tezos.contract]);
 
-  const purchaseCurrency = getPurchaseCurrency(listingsActive);
+  const purchaseCurrency = useMemo(() => getPurchaseCurrency(listingsActive), [listingsActive]);
 
   const buyCollectible = async () => {
     if (isUserOwnerCurrentCollectible) {

@@ -14,6 +14,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { BURN_ADDRESS } from 'src/utils/known-addresses';
 import { isDcpNode } from 'src/utils/network.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import {
@@ -22,11 +23,10 @@ import {
   loadTezosBalance$,
   loadTokensWithBalance$
 } from 'src/utils/token-balance.utils';
+import { withMetadataSlugs } from 'src/utils/token-metadata.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import { BURN_ADDRESS } from '../../hooks/use-burn-collectible.hook';
-import { withMetadataSlugs } from '../../utils/token-metadata.utils';
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
 import { loadTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';

@@ -108,7 +108,6 @@ export interface ObjktAttribute {
     id: number;
     name: string;
     value: string;
-    rarity?: number;
   };
 }
 

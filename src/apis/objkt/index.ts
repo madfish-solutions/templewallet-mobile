@@ -26,7 +26,6 @@ import {
   buildGetCollectibleExtraQuery
 } from './queries';
 import {
-  AttributeInfoResponse,
   ObjktCollectibleDetails,
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
@@ -140,21 +139,14 @@ export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]) =>
 const fetchObjktCollectiblesBySlugsChunk$ = (slugs: string[]) =>
   apolloObjktClient.fetch$<UserAdultCollectiblesQueryResponse>(buildGetAllUserCollectiblesQuery(slugs));
 
-export const fetchFA2AttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {
-  const request = buildGetFA2AttributeCountQuery(ids);
-
-  return apolloObjktClient
-    .fetch$<FA2AttributeCountQueryResponse>(request)
-    .pipe(map(result => result.fa2_attribute_count));
-};
-
-export const fetchGalleryAttributeCount$ = (ids: number[]): Observable<AttributeInfoResponse[]> => {
-  const request = buildGetGalleryAttributeCountQuery(ids);
-
-  return apolloObjktClient
-    .fetch$<GalleryAttributeCountQueryResponse>(request)
-    .pipe(map(result => result.gallery_attribute_count));
-};
+export const fetchAttributesCounts = (ids: number[], isGallery: boolean) =>
+  isGallery
+    ? apolloObjktClient
+        .fetch<GalleryAttributeCountQueryResponse>(buildGetGalleryAttributeCountQuery(ids))
+        .then(data => data?.gallery_attribute_count)
+    : apolloObjktClient
+        .fetch<FA2AttributeCountQueryResponse>(buildGetFA2AttributeCountQuery(ids))
+        .then(data => data?.fa2_attribute_count);
 
 export const fetchCollectibleExtraDetails = (contract: string, id: BigNumber.Value) =>
   apolloObjktClient
