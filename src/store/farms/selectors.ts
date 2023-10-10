@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 
 import { useSelector } from '../selector';
 
@@ -22,14 +23,14 @@ export const useFarmSelector = (id: string, contractAddress: string) => {
   }, [list, id, contractAddress]);
 };
 
-export const useFarmStakeSelector = (farmAddress: string) =>
+export const useFarmStakeSelector = (farmAddress: string): UserStakeValueInterface | undefined =>
   useSelector(({ farms }) => farms.lastStakes.data[farmAddress]);
 
 export const useAllFarmsSelector = () => {
-  const farms = useSelector(({ farms }) => farms.allFarms);
+  const allFarms = useSelector(({ farms }) => farms.allFarms);
 
   return useMemo(() => {
-    const data = farms.data.filter(
+    const data = allFarms.data.filter(
       farm =>
         earnOpportunitiesTypesToDisplay.includes(farm.item.type ?? EarnOpportunityTypeEnum.DEX_TWO) &&
         farm.item.dailyDistribution !== '0'
@@ -37,10 +38,10 @@ export const useAllFarmsSelector = () => {
 
     return {
       data,
-      isLoading: farms.isLoading,
-      error: farms.error
+      isLoading: allFarms.isLoading,
+      error: allFarms.error
     };
-  }, [farms]);
+  }, [allFarms]);
 };
 
 export const useLastFarmsStakesSelector = () => useSelector(({ farms }) => farms.lastStakes.data);
