@@ -1,32 +1,34 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { TouchableOpacity, View, Text, Share } from 'react-native';
 import useSWR from 'swr';
 
-import { fetchCollectibleExtraDetails } from 'src/apis/objkt';
+import { fetchCollectibleExtraDetails, objktCurrencies } from 'src/apis/objkt';
+import { SUPPORTED_CONTRACTS } from 'src/apis/objkt/constants';
 import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { BLOCK_DURATION } from 'src/config/fixed-times';
-import { useBuyCollectible } from 'src/hooks/use-buy-collectible.hook';
+import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { SHARE_NFT_CONTENT } from 'src/modals/collectible-modal/collectible-modal';
 import { CollectibleModalSelectors } from 'src/modals/collectible-modal/collectible-modal.selectors';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+// import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
-import { CollectibleOfferInteface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
-import { conditionalStyle } from 'src/utils/conditional-style';
+import { buildBuyCollectibleParams } from 'src/utils/collectibles';
 import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
 import { formatImgUri, ImageResolutionEnum } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
+import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { navigateToObjktForBuy } from '../utils';
@@ -36,13 +38,13 @@ import { OfferButton } from './offer-button';
 const DETAILS_SYNC_INTERVAL = 4 * BLOCK_DURATION;
 
 interface Props {
-  item: CollectibleOfferInteface;
+  item: CollectionItemInterface;
   collectionContract: string;
   selectedRpc: string;
-  selectedPublicKeyHash: string;
+  accountPkh: string;
 }
 
-export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, selectedRpc, selectedPublicKeyHash }) => {
+export const CollectibleItem = memo<Props>(({ item, collectionContract, selectedRpc, accountPkh }) => {
   const slug = getTokenSlug(item);
 
   const styles = useCollectibleItemStyles();
@@ -50,14 +52,21 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
   const { trackEvent } = useAnalytics();
 
-  const lastPrice = useMemo(() => {
-    if (isDefined(item.lastPrice) && isDefined(item.lastPrice.price)) {
-      const price = formatAssetAmount(mutezToTz(BigNumber(item.lastPrice?.price), item.lastPrice?.decimals));
+  // const balance = useAssetBalanceSelector(slug);
 
-      return `${price} ${item.lastPrice.symbol}`;
+  const lastPrice = useMemo(() => {
+    if (item.lastDeal?.price == null) {
+      return '---';
     }
 
-    return '---';
+    const currency = objktCurrencies[item.lastDeal.currency_id];
+    if (!currency) {
+      return '---';
+    }
+
+    const price = formatAssetAmount(mutezToTz(BigNumber(item.lastDeal.price), currency.decimals));
+
+    return `${price} ${currency.symbol}`;
   }, [item]);
 
   const { data: extraDetails } = useSWR(
@@ -70,55 +79,89 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
   );
 
   const highestOffer = useMemo(() => {
-    const filtered = extraDetails?.offers_active.filter(o => o.buyer_address !== selectedPublicKeyHash);
+    const filtered = extraDetails?.offers_active.filter(o => o.buyer_address !== accountPkh);
 
     return filtered && filtered[filtered.length - 1];
-  }, [extraDetails, selectedPublicKeyHash]);
+  }, [extraDetails, accountPkh]);
 
-  const holders = item?.holders?.filter(holder => holder.quantity > 0).map(holder => holder.holderAddress) ?? [];
-  const isHolder = useMemo(() => holders.includes(selectedPublicKeyHash), [selectedPublicKeyHash]);
-
-  const listedByUser = useMemo(() => {
-    if (!item) {
-      return 0;
-    }
-
-    return item.listingsActive.reduce(
-      (acc, curr) => (curr.seller_address === selectedPublicKeyHash ? (acc += curr.amount) : acc),
-      0
-    );
-  }, []);
-
-  const quantityByUser = useMemo(
-    () => item?.holders?.find(holder => holder.holderAddress === selectedPublicKeyHash)?.quantity ?? 0,
-    [selectedPublicKeyHash, item]
+  const isAccountHolder = useMemo(
+    () => item.holders.some(h => h.holder_address === accountPkh && h.quantity > 0),
+    [item.holders, accountPkh]
   );
 
-  const handleList = () => navigateToObjktForBuy(collectionContract, item.id);
+  const secondButton = useMemo(() => {
+    if (isAccountHolder) {
+      const holdingAmount = item.holders.reduce(
+        (acc, curr) => (curr.holder_address === accountPkh ? acc + curr.quantity : acc),
+        0
+      );
+      const listedAmount = item.listingsActive.reduce(
+        (acc, curr) => (curr.seller_address === accountPkh ? acc + curr.amount : acc),
+        0
+      );
 
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(slug, item.listingsActive);
+      if (listedAmount < holdingAmount) {
+        return {
+          title: 'List',
+          onPress: () => navigateToObjktForBuy(collectionContract, item.id)
+        };
+      }
 
-  const fxHashListed = item?.listingsActive?.find(listing => listing.seller_address === selectedPublicKeyHash);
-
-  const isAbleToList = quantityByUser > listedByUser && purchaseCurrency.price > 0;
-  const isListed = isNonEmptyArray(item.listingsActive);
-
-  const buttonText = useMemo(() => {
-    if (isListed) {
-      const price = mutezToTz(new BigNumber(purchaseCurrency.price), purchaseCurrency.decimals);
-
-      return `Buy for ${price} ${purchaseCurrency.symbol}`;
+      return {
+        title: 'Listed',
+        disabled: true
+      };
     }
 
-    return 'Not listed';
-  }, [purchaseCurrency.price]);
+    const listing = item.listingsActive[0];
+
+    if (!listing) {
+      return {
+        title: 'Not listed',
+        disabled: true
+      };
+    }
+
+    const isSupportedContract = SUPPORTED_CONTRACTS.includes(listing.marketplace_contract);
+    const purchaseCurrency = objktCurrencies[listing.currency_id];
+
+    if (!isSupportedContract || !purchaseCurrency) {
+      return {
+        title: 'Buy',
+        disabled: true
+      };
+    }
+
+    const priceToDisplay = mutezToTz(new BigNumber(listing.price), purchaseCurrency.decimals);
+
+    return {
+      title: `Buy for ${priceToDisplay} ${purchaseCurrency.symbol}`,
+      onPress: () =>
+        void buildBuyCollectibleParams(createTezosToolkit(selectedRpc), accountPkh, listing, purchaseCurrency).then(
+          opParams =>
+            navigate(ModalsEnum.Confirmation, {
+              type: ConfirmationTypeEnum.InternalOperations,
+              opParams
+            })
+        )
+    };
+  }, [
+    accountPkh,
+    selectedRpc,
+    isAccountHolder,
+    collectionContract,
+    item.id,
+    item.holders,
+    item.listingsActive,
+    navigate
+  ]);
 
   const handleShare = useCallback(async () => {
     // Max link length: 7168 symbols, so we need to reduce the amount of data we send
     const urlEncodedData = encodeURIComponent(JSON.stringify(`${item.address}_${item.id}`));
 
     if (urlEncodedData.length > 7168) {
-      return void showErrorToast({ title: 'Cannot share', description: 'Data isa too large' });
+      return void showErrorToast({ title: 'Cannot share', description: 'Data is too large' });
     }
 
     try {
@@ -156,6 +199,7 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
           <Text style={styles.listedText}>LISTED</Text>
         </View>
       )}
+
       <View style={styles.collectible}>
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
@@ -205,53 +249,28 @@ export const CollectibleItem: FC<Props> = memo(({ item, collectionContract, sele
 
         <View style={styles.buttonContainer}>
           <OfferButton
-            isHolder={isHolder}
+            isHolder={isAccountHolder}
             objktOffer={highestOffer}
             item={item}
-            selectedPublicKeyHash={selectedPublicKeyHash}
+            selectedPublicKeyHash={accountPkh}
             selectedRpc={selectedRpc}
             collectionContract={collectionContract}
           />
 
-          <View>
-            {isHolder || !!fxHashListed ? (
-              <TouchableOpacity
-                onPress={handleList}
-                style={[
-                  styles.sellButton,
-                  conditionalStyle(!isAbleToList, styles.listButtonNotListed, styles.listButtonActive)
-                ]}
-                disabled={!isAbleToList}
-              >
-                <Text
-                  style={[
-                    styles.sellButtonText,
-                    conditionalStyle(!isAbleToList, styles.listButtonDisabled, styles.listButtonActiveText)
-                  ]}
-                >
-                  {!isAbleToList ? 'Listed' : 'List'}
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={[
-                  styles.sellButton,
-                  conditionalStyle(isListed, styles.listButtonActive, styles.listButtonNotListed)
-                ]}
-                onPress={buyCollectible}
-                disabled={!isListed}
-              >
-                <Text
-                  style={[
-                    styles.sellButtonText,
-                    conditionalStyle(isListed, styles.listButtonActiveText, styles.listButtonDisabled)
-                  ]}
-                >
-                  {buttonText}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
+          <TouchableOpacity
+            onPress={secondButton.onPress}
+            style={[styles.sellButton, secondButton.disabled ? styles.listButtonNotListed : styles.listButtonActive]}
+            disabled={secondButton.disabled}
+          >
+            <Text
+              style={[
+                styles.sellButtonText,
+                secondButton.disabled ? styles.listButtonDisabled : styles.listButtonActiveText
+              ]}
+            >
+              {secondButton.title}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

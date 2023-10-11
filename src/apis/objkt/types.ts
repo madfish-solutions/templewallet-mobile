@@ -1,6 +1,5 @@
 import type { ContractAbstraction, ContractMethod, ContractProvider } from '@taquito/taquito';
 
-import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 
 import { MarketPlaceEventEnum } from './enums';
@@ -29,7 +28,7 @@ export interface ObjktOffer {
   __typename: 'offer_active';
 }
 
-type HolderInfo = { holder_address: string; quantity: number };
+export type ObjktHolder = { holder_address: string; quantity: number };
 
 export interface ObjktCurrencyInfo {
   symbol: string;
@@ -48,15 +47,13 @@ export interface CollectibleResponse {
   last_listed: string;
   last_metadata_update: string;
   lowest_ask: number;
-  metadata: string;
   name: string;
   thumbnail_uri: string;
   supply: number;
   mime: string;
   symbol: string;
   token_id: string;
-  holders: HolderInfo[];
-  offers_active: ObjktOffer[];
+  holders: ObjktHolder[];
   events: {
     marketplace_event_type: MarketPlaceEventEnum;
     price_xtz: number | null;
@@ -69,6 +66,8 @@ export interface CollectibleResponse {
   };
 }
 
+export type ObjktCollectionType = 'fa' | 'gallery';
+
 export interface QueryResponse {
   fa: {
     name: string;
@@ -76,14 +75,14 @@ export interface QueryResponse {
     creator_address: string;
     contract: string;
     tokens: { display_uri: string }[];
-    __typename: ObjktTypeEnum;
+    __typename: ObjktCollectionType;
   }[];
   gallery: {
     name: string;
     logo: string;
     gallery_id: string;
     tokens: { fa_contract: string }[];
-    __typename: ObjktTypeEnum;
+    __typename: ObjktCollectionType;
   }[];
 }
 
@@ -123,8 +122,10 @@ export interface ObjktListing {
   bigmap_key: number;
   currency_id: number;
   price: number;
+  /** E.g. `KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC` */
   marketplace_contract: string;
   currency: {
+    /** Known values: 'xtz' | 'fa2' | 'fa12' */
     type: string;
   };
 }

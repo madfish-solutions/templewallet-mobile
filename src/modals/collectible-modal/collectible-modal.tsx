@@ -1,11 +1,12 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
+import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
-import { SUPPORTED_CONTRACTS } from 'src/apis/objkt/constants';
+import { SUPPORTED_CONTRACTS, objktCurrencies } from 'src/apis/objkt/constants';
 // import { ActivityIndicator } from 'src/components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
@@ -20,7 +21,7 @@ import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics'
 import { TruncatedText } from 'src/components/truncated-text';
 import { BLOCK_DURATION } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
-import { useBuyCollectible } from 'src/hooks/use-buy-collectible.hook';
+import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
@@ -28,13 +29,15 @@ import {
   useCollectibleDetailsLoadingSelector,
   useCollectibleDetailsSelector
 } from 'src/store/collectibles/collectibles-selectors';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
+import { useAssetBalanceSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { buildBuyCollectibleParams } from 'src/utils/collectibles';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
@@ -44,6 +47,8 @@ import { ImageResolutionEnum, formatImgUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 import { openUrl } from 'src/utils/linking';
 import { objktCollectionUrl } from 'src/utils/objkt-collection-url.util';
+import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
+import { mutezToTz } from 'src/utils/tezos.util';
 
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
@@ -67,6 +72,8 @@ export const CollectibleModal = memo(() => {
   const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const [address, id] = fromTokenSlug(slug);
+  const accountPkh = useCurrentAccountPkhSelector();
+  const selectedRpc = useSelectedRpcUrlSelector();
 
   const { width } = Dimensions.get('window');
   const imageSize = width - formatSize(32);
@@ -89,10 +96,8 @@ export const CollectibleModal = memo(() => {
   const attributes = useAttributesWithRarity(details);
 
   const burnCollectible = useBurnCollectible(metadata);
-  const { buyCollectible, purchaseCurrency } = useBuyCollectible(slug, details?.listingsActive);
 
   const creators = details?.creators;
-  const listingsActive = details?.listingsActive;
 
   useInterval(() => void dispatch(loadCollectiblesDetailsActions.submit([slug])), DETAILS_SYNC_INTERVAL, [slug], true);
 
@@ -100,16 +105,18 @@ export const CollectibleModal = memo(() => {
 
   const { navigate } = useNavigation();
 
-  const button = useMemo<{ title: string; disabled?: boolean; loading?: boolean; onPress?: EmptyFn }>(() => {
+  const button = useMemo(() => {
     if (isAccountHolder) {
       return {
         title: 'Send',
-        disabled: Boolean(metadata),
-        onPress: () => void (metadata && navigate(ModalsEnum.Send, { token: metadata }))
+        disabled: !metadata,
+        onPress: metadata ? () => navigate(ModalsEnum.Send, { token: metadata }) : undefined
       };
     }
 
-    if (!listingsActive?.length) {
+    const listing = details?.listingsActive[0] ?? null;
+
+    if (!listing) {
       return {
         title: 'Not listed',
         disabled: true,
@@ -117,22 +124,30 @@ export const CollectibleModal = memo(() => {
       };
     }
 
-    const isSupportedContract = listingsActive?.length
-      ? SUPPORTED_CONTRACTS.includes(listingsActive[0].marketplace_contract)
-      : true;
+    const isSupportedContract = SUPPORTED_CONTRACTS.includes(listing.marketplace_contract);
+    const purchaseCurrency = objktCurrencies[listing.currency_id];
 
-    if (!isSupportedContract || purchaseCurrency.id === null) {
+    if (!isSupportedContract || !purchaseCurrency) {
       return {
         title: 'Buy',
         disabled: true
       };
     }
 
+    const priceToDisplay = +mutezToTz(new BigNumber(listing.price), purchaseCurrency.decimals);
+
     return {
-      title: `Buy for ${formatNumber(purchaseCurrency.priceToDisplay)} ${purchaseCurrency.symbol}`,
-      onPress: () => void buyCollectible()
+      title: `Buy for ${formatNumber(priceToDisplay)} ${purchaseCurrency.symbol}`,
+      onPress: () =>
+        void buildBuyCollectibleParams(createTezosToolkit(selectedRpc), accountPkh, listing, purchaseCurrency).then(
+          opParams =>
+            navigate(ModalsEnum.Confirmation, {
+              type: ConfirmationTypeEnum.InternalOperations,
+              opParams
+            })
+        )
     };
-  }, [isAccountHolder, listingsActive, areDetailsLoading, navigate, metadata, purchaseCurrency, buyCollectible]);
+  }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, accountPkh, selectedRpc, navigate]);
 
   const name = metadata?.name ?? details?.name;
   const artifactUri = metadata?.artifactUri ?? details?.artifactUri;

@@ -1,4 +1,4 @@
-import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
+import { ObjktCollectionType } from 'src/apis/objkt/types';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { ModalsEnum } from './modals.enum';
@@ -87,7 +87,7 @@ export type ScreensParamList = {
   [ScreensEnum.Collection]: {
     collectionContract: string;
     collectionName: string;
-    type: ObjktTypeEnum;
+    type: ObjktCollectionType;
     galleryId: string | undefined;
   };
 

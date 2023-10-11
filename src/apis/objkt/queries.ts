@@ -72,7 +72,6 @@ export const buildGetCollectiblesByCollectionQuery = (
     last_listed
     last_metadata_update
     lowest_ask
-    metadata
     name
     thumbnail_uri
     token_id
@@ -80,17 +79,9 @@ export const buildGetCollectiblesByCollectionQuery = (
     symbol
     mime
     holders {
-        holder_address
-        quantity
-      }
-    offers_active(distinct_on: price_xtz) {
-        buyer_address
-        price
-        bigmap_key
-        marketplace_contract
-        fa_contract
-        currency_id
-      }
+      holder_address
+      quantity
+    }
     events(order_by: {timestamp: desc}) {
       event_type
       marketplace_event_type
@@ -139,7 +130,6 @@ query MyQuery {
         last_listed
         last_metadata_update
         lowest_ask
-        metadata
         mime
         name
         thumbnail_uri
@@ -149,14 +139,6 @@ query MyQuery {
         holders {
           holder_address
           quantity
-        }
-        offers_active(distinct_on: price_xtz) {
-          buyer_address
-          price
-          bigmap_key
-          marketplace_contract
-          fa_contract
-          currency_id
         }
         events(order_by: {timestamp: desc}) {
           event_type

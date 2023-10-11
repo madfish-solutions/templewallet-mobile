@@ -1,24 +1,21 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from 'src/apis/objkt/constants';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
-import { useCollectibleByCollectionInfo } from 'src/hooks/use-collectibles-by-collection.hook';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { isDefined } from 'src/utils/is-defined';
 
-import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
-import { TokenInterface } from '../../token/interfaces/token.interface';
 import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
+import { useCollectionItemsLoading } from './utils/use-collection-items-loading.hook';
 
 const COLLECTIBLE_SIZE = 327;
 const VIEWABILITY_CONFIG = {
@@ -26,39 +23,36 @@ const VIEWABILITY_CONFIG = {
   minimumViewTime: 0
 };
 
-const keyExtractor = (item: Pick<TokenInterface, 'address' | 'id'>) => `${item.address}_${item.id}`;
+const keyExtractor = (item: CollectionItemInterface) => `${item.address}_${item.id}`;
 
-export const Collection = () => {
+export const Collection = memo(() => {
   const styles = useCollectionStyles();
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
   const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
   const [offset, setOffset] = useState<number>(0);
   const selectedRpc = useSelectedRpcUrlSelector();
 
-  const { collectibles, isLoading } = useCollectibleByCollectionInfo(
+  const { collectibles, isLoading } = useCollectionItemsLoading(
     params.collectionContract,
-    publicKeyHash,
+    accountPkh,
     params.type,
     offset,
     params.galleryId
   );
 
-  const PAGINATION_STEP = useMemo(
-    () => (params.type === ObjktTypeEnum.faContract ? PAGINATION_STEP_FA : PAGINATION_STEP_GALLERY),
-    []
-  );
+  const PAGINATION_STEP = useMemo(() => (params.type === 'fa' ? PAGINATION_STEP_FA : PAGINATION_STEP_GALLERY), []);
 
   const screenProgressAmount = useMemo(
-    () =>
-      params.type === ObjktTypeEnum.gallery ? collectibles?.[0]?.items ?? collectibles.length : collectibles.length,
-    [collectibles]
+    () => (params.type === 'gallery' ? collectibles?.[0]?.items ?? collectibles.length : collectibles.length),
+    [collectibles, params.type]
   );
 
   const { setInnerScreenIndex } = useInnerScreenProgress(screenProgressAmount);
 
   const handleChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
-    if (isNonEmptyArray(info.viewableItems) && isDefined(info.viewableItems[0].index)) {
-      setInnerScreenIndex(info.viewableItems[0].index);
+    const item = info.viewableItems[0];
+    if (isDefined(item?.index)) {
+      setInnerScreenIndex(item.index);
     }
   }, []);
 
@@ -66,13 +60,13 @@ export const Collection = () => {
     return formatSize(COLLECTIBLE_SIZE) + formatSize(4) + formatSize(4);
   }, []);
 
-  const renderItem: ListRenderItem<CollectibleOfferInteface> = useCallback(
+  const renderItem: ListRenderItem<CollectionItemInterface> = useCallback(
     ({ item }) => (
       <CollectibleItem
         item={item}
         collectionContract={params.collectionContract}
         selectedRpc={selectedRpc}
-        selectedPublicKeyHash={publicKeyHash}
+        accountPkh={accountPkh}
       />
     ),
     []
@@ -128,4 +122,4 @@ export const Collection = () => {
       )}
     </ScrollView>
   );
-};
+});

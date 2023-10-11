@@ -190,10 +190,11 @@ export const loadTokensMetadata$ = memoize(
     )
 );
 
-export const isAssetSearched = (
-  { name, symbol, address }: Pick<TokenInterface, 'address' | 'name' | 'symbol'>,
-  lowerCaseSearchValue: string
-) =>
+interface SearchableAsset extends Pick<TokenInterface, 'name' | 'symbol'> {
+  address?: string;
+}
+
+export const isAssetSearched = ({ name, symbol, address }: SearchableAsset, lowerCaseSearchValue: string) =>
   Boolean(name?.toLowerCase().includes(lowerCaseSearchValue)) ||
   Boolean(symbol?.toLowerCase().includes(lowerCaseSearchValue)) ||
   Boolean(address?.toLowerCase().includes(lowerCaseSearchValue));

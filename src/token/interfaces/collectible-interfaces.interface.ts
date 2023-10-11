@@ -1,11 +1,4 @@
-import { ObjktAttribute, ObjktTag, ObjktCurrencyInfo, ObjktListing } from 'src/apis/objkt/types';
-
-import { TokenInterface } from './token.interface';
-
-interface HolderInfo {
-  holderAddress: string;
-  quantity: number;
-}
+import type { ObjktAttribute, ObjktTag, ObjktListing, ObjktHolder } from 'src/apis/objkt/types';
 
 interface Creators {
   holder: {
@@ -35,27 +28,20 @@ interface Galleries {
   };
 }
 
-export type ListingActive = ObjktListing;
-
-export interface CollectibleCommonInterface {
-  description: string;
-  editions: number;
-  isAdultContent?: boolean;
-  listingsActive: ListingActive[];
-  mime: string;
-}
-
-interface OfferInteface {
-  lowestAsk: number | null;
-  holders: HolderInfo[];
-  lastPrice: { price: number | null | undefined } & Omit<ObjktCurrencyInfo, 'contract' | 'id'>;
-  items: number;
-}
-
-export interface CollectibleDetailsInterface extends CollectibleCommonInterface {
+interface CollectibleCommonInterface {
   address: string;
   id: string;
   name: string;
+  description: string;
+  editions: number;
+  listingsActive: ObjktListing[];
+  mime: string;
+  artifactUri?: string;
+  thumbnailUri?: string;
+  displayUri?: string;
+}
+
+export interface CollectibleDetailsInterface extends CollectibleCommonInterface {
   creators: Creators[];
   collection: Collection;
   metadata: string;
@@ -64,14 +50,15 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   timestamp: string;
   royalties: Royalties[];
   galleries: Galleries[];
-  artifactUri?: string;
-  thumbnailUri?: string;
-  displayUri?: string;
   isAdultContent: boolean;
 }
 
-/** @deprecated // What is this creature ?!) */
-export interface CollectibleOfferInteface
-  extends Omit<TokenInterface, 'balance' | 'visibility' | 'decimals' | 'symbol'>,
-    CollectibleCommonInterface,
-    OfferInteface {}
+export interface CollectionItemInterface extends CollectibleCommonInterface {
+  lowestAsk: number | null;
+  holders: ObjktHolder[];
+  items: number;
+  lastDeal?: {
+    price: number | null;
+    currency_id: number;
+  };
+}

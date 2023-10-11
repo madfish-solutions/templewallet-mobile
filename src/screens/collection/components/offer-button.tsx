@@ -9,7 +9,7 @@ import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
-import { CollectibleOfferInteface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
@@ -22,7 +22,7 @@ import { useCollectibleItemStyles } from './collectible-item.styles';
 interface Props {
   isHolder: boolean;
   objktOffer?: ObjktOffer;
-  item: CollectibleOfferInteface;
+  item: CollectionItemInterface;
   selectedPublicKeyHash: string;
   selectedRpc: string;
   collectionContract: string;
@@ -73,7 +73,7 @@ export const OfferButton: FC<Props> = memo(
       const getTransferParams = () => {
         if (isDefined(offer)) {
           if ('fulfill_offer' in offer.methods) {
-            return [offer.methods.fulfill_offer(objktOffer?.bigmap_key ?? 1, item.id).toTransferParams()];
+            return [offer.methods.fulfill_offer(objktOffer?.bigmap_key ?? 1, Number(item.id)).toTransferParams()];
           } else {
             return [offer.methods.offer_accept(objktOffer?.bigmap_key ?? 1).toTransferParams()];
           }

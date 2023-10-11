@@ -1,28 +1,27 @@
 import { useEffect, useState } from 'react';
 import { catchError, EMPTY, finalize, map } from 'rxjs';
 
-import { fetchCollectiblesByCollection$ } from 'src/apis/objkt';
-import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
+import { fetchCollectiblesOfCollection$ } from 'src/apis/objkt';
+import { ObjktCollectionType } from 'src/apis/objkt/types';
 import { showErrorToast } from 'src/toast/error-toast.utils';
-
-import { CollectibleOfferInteface } from '../token/interfaces/collectible-interfaces.interface';
+import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 
 const ERROR_MESSAGE = 'Sorry, something went wrong..';
 
-export const useCollectibleByCollectionInfo = (
+export const useCollectionItemsLoading = (
   contract: string,
   selectedPublicKey: string,
-  type: ObjktTypeEnum,
+  type: ObjktCollectionType,
   offset: number,
   galleryId?: string
 ) => {
-  const [collectibles, setCollectibles] = useState<CollectibleOfferInteface[]>([]);
+  const [collectibles, setCollectibles] = useState<CollectionItemInterface[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
 
-    const subscription = fetchCollectiblesByCollection$(contract, selectedPublicKey, type, offset, galleryId)
+    const subscription = fetchCollectiblesOfCollection$(contract, selectedPublicKey, type, offset, galleryId)
       .pipe(
         map(result => result),
         catchError(() => {

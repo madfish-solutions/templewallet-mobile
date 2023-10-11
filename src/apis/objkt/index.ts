@@ -8,12 +8,10 @@ import BigNumber from 'bignumber.js';
 import { chunk } from 'lodash-es';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
-import { ObjktTypeEnum } from 'src/enums/objkt-type.enum';
 import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
-import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
 import { apolloObjktClient, HIDDEN_CONTRACTS, OBJKT_CONTRACT } from './constants';
 import {
   buildGetCollectiblesByCollectionQuery,
@@ -36,9 +34,10 @@ import {
   ObjktContractInterface,
   QueryResponse,
   TzProfilesQueryResponse,
-  UserAdultCollectiblesQueryResponse
+  UserAdultCollectiblesQueryResponse,
+  ObjktCollectionType
 } from './types';
-import { transformCollectiblesArray } from './utils';
+import { transformObjktCollectionItem } from './utils';
 
 export type { ObjktOffer } from './types';
 export { objktCurrencies } from './constants';
@@ -97,38 +96,34 @@ export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => 
     );
 };
 
-export const fetchCollectiblesByCollection$ = (
+export const fetchCollectiblesOfCollection$ = (
   contract: string,
-  selectedPublicKey: string,
-  type: ObjktTypeEnum,
+  creatorPkh: string,
+  type: ObjktCollectionType,
   offset: number,
   galleryId?: string
-): Observable<CollectibleOfferInteface[]> => {
-  const request =
-    type === ObjktTypeEnum.faContract
-      ? buildGetCollectiblesByCollectionQuery(contract, selectedPublicKey, offset)
-      : buildGetCollectiblesByGalleryQuery(selectedPublicKey, offset);
+) => {
+  if (type === 'fa') {
+    return apolloObjktClient
+      .fetch$<CollectiblesByCollectionResponse>(buildGetCollectiblesByCollectionQuery(contract, creatorPkh, offset))
+      .pipe(map(result => result.token.map(transformObjktCollectionItem)));
+  }
 
-  return apolloObjktClient.fetch$<CollectiblesByCollectionResponse | CollectiblesByGalleriesResponse>(request).pipe(
-    map(result => {
-      if ('token' in result) {
-        const collectibles = transformCollectiblesArray(result.token);
-
-        return collectibles;
-      } else {
+  return apolloObjktClient
+    .fetch$<CollectiblesByGalleriesResponse>(buildGetCollectiblesByGalleryQuery(creatorPkh, offset))
+    .pipe(
+      map(result => {
         const currentGallery = result.gallery.find(gallery => gallery.gallery_id === galleryId);
-        const tokens =
+
+        return (
           currentGallery?.tokens.map(token => {
             const items = token.gallery.items;
 
-            return { ...token.token, fa: { items } };
-          }) ?? [];
-        const collectibles = transformCollectiblesArray(tokens);
-
-        return collectibles;
-      }
-    })
-  );
+            return transformObjktCollectionItem({ ...token.token, fa: { items } });
+          }) ?? []
+        );
+      })
+    );
 };
 
 export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]) =>

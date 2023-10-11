@@ -1,44 +1,33 @@
-import { CollectibleOfferInteface } from 'src/token/interfaces/collectible-interfaces.interface';
-import { isDefined } from 'src/utils/is-defined';
+import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 
-import { objktCurrencies } from './constants';
 import { MarketPlaceEventEnum } from './enums';
 import { CollectibleResponse } from './types';
 
-export const transformCollectiblesArray = (array: CollectibleResponse[]) =>
-  array.map<CollectibleOfferInteface>(token => {
-    const buyEvents = isDefined(token)
-      ? token.events.filter(
-          ({ marketplace_event_type }) =>
-            marketplace_event_type === MarketPlaceEventEnum.dutchAuctionBuy ||
-            marketplace_event_type === MarketPlaceEventEnum.listBuy ||
-            marketplace_event_type === MarketPlaceEventEnum.offerAccept ||
-            marketplace_event_type === MarketPlaceEventEnum.offerFloorAccept ||
-            marketplace_event_type === MarketPlaceEventEnum.englishAuctionSettle
-        )
-      : [];
-    const lastPrice = buyEvents.find(event => event.price_xtz !== null);
-    const lastPriceCurrencyId = lastPrice?.currency_id ?? 1;
+export const transformObjktCollectionItem = (token: CollectibleResponse): CollectionItemInterface => {
+  const buyEvents = token.events.filter(
+    ({ marketplace_event_type }) =>
+      marketplace_event_type === MarketPlaceEventEnum.dutchAuctionBuy ||
+      marketplace_event_type === MarketPlaceEventEnum.listBuy ||
+      marketplace_event_type === MarketPlaceEventEnum.offerAccept ||
+      marketplace_event_type === MarketPlaceEventEnum.offerFloorAccept ||
+      marketplace_event_type === MarketPlaceEventEnum.englishAuctionSettle
+  );
+  const lastDeal = buyEvents.find(event => event.price_xtz !== null);
 
-    return {
-      artifactUri: token.artifact_uri,
-      description: token.description,
-      displayUri: token.display_uri,
-      address: token.fa_contract,
-      name: token.name,
-      metadata: token.metadata,
-      lowestAsk: token.lowest_ask,
-      thumbnailUri: token.thumbnail_uri,
-      id: Number(token.token_id),
-      editions: token.supply,
-      mime: token.mime,
-      holders: token.holders.map(item => ({ holderAddress: item.holder_address, quantity: item.quantity })),
-      lastPrice: {
-        price: lastPrice?.price,
-        symbol: objktCurrencies[lastPriceCurrencyId]?.symbol,
-        decimals: objktCurrencies[lastPriceCurrencyId]?.decimals
-      },
-      items: token.fa.items,
-      listingsActive: token.listings_active
-    };
-  });
+  return {
+    id: token.token_id,
+    address: token.fa_contract,
+    name: token.name,
+    description: token.description,
+    artifactUri: token.artifact_uri,
+    displayUri: token.display_uri,
+    thumbnailUri: token.thumbnail_uri,
+    lowestAsk: token.lowest_ask,
+    editions: token.supply,
+    mime: token.mime,
+    holders: token.holders,
+    lastDeal: lastDeal && { price: lastDeal.price, currency_id: lastDeal.currency_id },
+    items: token.fa.items,
+    listingsActive: token.listings_active
+  };
+};
