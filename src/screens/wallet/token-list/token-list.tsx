@@ -199,7 +199,7 @@ export const TokensList = memo(() => {
         </Search>
       </View>
 
-      {isEnabledAdsBanner && <AcceptAdsBanner style={styles.banner} />}
+      {isEnabledAdsBanner ? <AcceptAdsBanner style={styles.banner} /> : null}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlatList

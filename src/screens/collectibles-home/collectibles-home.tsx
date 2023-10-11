@@ -133,7 +133,7 @@ export const CollectiblesHome = () => {
     <SocialButton
       iconName={item.icon}
       url={item.url ?? ''}
-      style={[styles.socialsIcon, conditionalStyle(!isDefined(item.url), styles.socialIconsBgColor)]}
+      style={[styles.socialsIcon, undefined]}
       color={isDefined(item.url) ? colors.orange : colors.disabled}
       size={SMALL_SOCIAL_ICON_SIZE}
       onPress={item.url === discord ? () => copyStringToClipboard(item.url) : undefined}

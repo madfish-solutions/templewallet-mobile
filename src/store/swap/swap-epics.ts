@@ -59,7 +59,7 @@ const loadSwapTokensEpic: Epic = (action$: Observable<Action>) =>
             of(loadSwapTokensAction.success(tokens)),
             loadTokensMetadata$(filteredTokensSlugs).pipe(
               map(tokens => {
-                const tokensMapped: Array<TokenInterface> = tokens.map(tokenMetadata => ({
+                const tokensMapped: TokenInterface[] = tokens.map(tokenMetadata => ({
                   ...tokenMetadata,
                   balance: '0',
                   visibility: VisibilityEnum.Visible

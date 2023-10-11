@@ -82,44 +82,48 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
     marginTop: formatSize(8),
     ...typography.numbersMedium17
   },
+
   buttonContainer: {
     marginTop: formatSize(8),
     justifyContent: 'flex-end'
   },
-  sellButton: {
+  actionButton: {
     marginTop: formatSize(8),
     borderWidth: formatSize(2),
     borderRadius: formatSize(10),
     alignItems: 'center'
   },
-  sellButtonActive: {
+  actionButtonText: {
+    paddingVertical: formatSize(13),
+    ...typography.body17Semibold
+  },
+
+  firstButtonActive: {
     borderColor: colors.peach,
     color: colors.peach
   },
-  listButtonActive: {
+  firstButtonDisabled: {
+    borderColor: colors.disabled,
+    color: colors.disabled
+  },
+
+  secondButtonActive: {
     borderColor: colors.peach,
     color: colors.white,
     backgroundColor: colors.peach
   },
-  sellButtonDisabled: {
-    borderColor: colors.disabled,
-    color: colors.disabled
-  },
-  listButtonDisabled: {
-    color: colors.white
-  },
-  listButtonNotListed: {
+  secondButtonDisabled: {
     backgroundColor: colors.disabled,
     borderColor: colors.disabled
   },
-  sellButtonText: {
-    paddingVertical: formatSize(13),
-    ...typography.body17Semibold
+  secondButtonTextDisabled: {
+    color: colors.white
   },
+
   topContainer: {
     flex: 1
   },
-  listButtonActiveText: {
+  secondButtonTextActive: {
     color: colors.white
   },
   nameBlock: {

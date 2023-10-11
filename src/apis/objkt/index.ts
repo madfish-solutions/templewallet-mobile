@@ -36,7 +36,6 @@ import {
 } from './types';
 import { transformObjktCollectionItem } from './utils';
 
-export type { ObjktOffer } from './types';
 export { objktCurrencies } from './constants';
 
 const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;

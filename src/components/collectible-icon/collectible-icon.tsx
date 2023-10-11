@@ -23,7 +23,7 @@ import { BrokenImage } from './components/broken-image/broken-image';
 import { COLLECTIBLE_FINAL_FALLBACK } from './constants';
 import { useCollectibleImageControl } from './hooks/use-collectible-image-control.hook';
 
-export interface CollectibleIconProps {
+interface Props {
   slug: string;
   artifactUri?: string;
   displayUri?: string;
@@ -37,7 +37,7 @@ export interface CollectibleIconProps {
   isModalWindow?: boolean;
 }
 
-export const CollectibleIcon = memo<CollectibleIconProps>(
+export const CollectibleIcon = memo<Props>(
   ({
     slug,
     artifactUri,
@@ -180,7 +180,7 @@ export const CollectibleIcon = memo<CollectibleIconProps>(
       <>
         {finalImage}
 
-        {isLoading && !Boolean(isShowBlur) && <ActivityIndicator size={isBigIcon ? 'large' : 'small'} />}
+        {isLoading && !isShowBlur ? <ActivityIndicator size={isBigIcon ? 'large' : 'small'} /> : null}
       </>
     );
   }

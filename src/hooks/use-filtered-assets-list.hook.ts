@@ -8,7 +8,7 @@ import { isString } from 'src/utils/is-string';
 import { isNonZeroBalance } from 'src/utils/tezos.util';
 import { applySortByDollarValueDecrease, isAssetSearched } from 'src/utils/token-metadata.utils';
 
-export type FilterableAsset = Pick<
+type FilterableAsset = Pick<
   TokenInterface,
   'address' | 'id' | 'decimals' | 'symbol' | 'name' | 'balance' | 'exchangeRate'
 >;

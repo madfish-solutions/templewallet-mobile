@@ -67,7 +67,7 @@ export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getS
 /** @deprecated // Too heavy !!! */
 export const useAssetsListSelector = (): TokenInterface[] =>
   useSelector(state => {
-    console.log('This better not be called every time Redux state changes!');
+    // console.log('This better not be called every time Redux state changes!');
     const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
     const nodeIsDcp = isDcpNode(state.settings.selectedRpcUrl);
 

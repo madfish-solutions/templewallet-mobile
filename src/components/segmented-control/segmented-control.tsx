@@ -22,7 +22,7 @@ export interface SegmentedControlProps<T> extends TestIdProps {
 }
 
 interface Props<T> extends SegmentedControlProps<T> {
-  renderValue: FC<SegmentedControlValueComponentProps<T>>;
+  ValueComponent: FC<SegmentedControlValueComponentProps<T>>;
 }
 
 export interface SegmentedControlValueComponentProps<T> {
@@ -37,7 +37,7 @@ export const SegmentedControl = <T extends unknown>({
   disabledIndexes,
   selectedIndex,
   values,
-  renderValue,
+  ValueComponent,
   width,
   style,
   testID,
@@ -86,7 +86,7 @@ export const SegmentedControl = <T extends unknown>({
             onChange(index);
           }}
         >
-          {renderValue({ item, isDisabled, isSelected: index === selectedIndex })}
+          <ValueComponent item={item} isDisabled={isDisabled} isSelected={index === selectedIndex} />
         </TouchableOpacity>
       );
     },
@@ -98,7 +98,7 @@ export const SegmentedControl = <T extends unknown>({
       testID,
       testIDProperties,
       onChange,
-      renderValue,
+      ValueComponent,
       selectedIndex,
       values,
       optionAnalyticsPropertiesFn

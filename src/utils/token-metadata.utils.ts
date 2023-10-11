@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
+import { chunk } from 'lodash-es';
 import memoize from 'mem';
-import { from, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { tezosMetadataApi, whitelistApi } from 'src/api.service';
@@ -55,20 +56,25 @@ interface TokenListItem {
   type: 'FA2' | 'FA12';
 }
 
-const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, address: string, id: number) =>
-  !isDefined(token)
-    ? null
-    : {
-        id,
-        address,
-        decimals: token.decimals,
-        symbol: token.symbol ?? token.name?.substring(0, 8) ?? '???',
-        name: token.name ?? token.symbol ?? 'Unknown Token',
-        thumbnailUri: token.thumbnailUri,
-        artifactUri: token.artifactUri
-      };
+const transformDataToTokenMetadata = (
+  token: TokenMetadataResponse,
+  address: string,
+  id: number
+): TokenMetadataInterface => ({
+  id,
+  address,
+  decimals: token.decimals,
+  symbol: token.symbol ?? token.name?.substring(0, 8) ?? '???',
+  name: token.name ?? token.symbol ?? 'Unknown Token',
+  thumbnailUri: token.thumbnailUri,
+  artifactUri: token.artifactUri
+});
 
-const transformWhitelistToTokenMetadata = (token: TokenListItem, address: string, id: number) => ({
+const transformWhitelistToTokenMetadata = (
+  token: TokenListItem,
+  address: string,
+  id: number
+): TokenMetadataInterface => ({
   id,
   address,
   decimals: token.metadata.decimals,
@@ -172,21 +178,37 @@ export const loadTokenMetadata$ = memoize(
   { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
 );
 
-export const loadTokensMetadata$ = memoize(
-  (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
-    from(tezosMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
-      map(({ data }) =>
-        data
-          .map((token, index) => {
-            const [address, id] = slugs[index].split('_');
-            const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
-              token => token.address === address && token.id === Number(id)
-            );
+const METADATA_CHUNK_SIZE = 100;
 
-            return overridenTokenMetadata ?? transformDataToTokenMetadata(token, address, Number(id));
-          })
-          .filter(isDefined)
+export const loadTokensMetadata$ = memoize(
+  (slugs: string[]): Observable<TokenMetadataInterface[]> =>
+    forkJoin(
+      // Parallelizing
+      chunk(slugs, METADATA_CHUNK_SIZE).map(slugsChunk =>
+        tezosMetadataApi.post<(TokenMetadataResponse | null)[]>('/', slugsChunk).then(({ data }) => data)
       )
+    ).pipe(
+      map(datas =>
+        datas.map((data, i) =>
+          data
+            .map((token, j) => {
+              const index = i * METADATA_CHUNK_SIZE + j;
+              const slug = slugs[index]!;
+              const [address, id] = slug.split('_');
+              const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
+                token => token.address === address && token.id === Number(id)
+              );
+
+              if (overridenTokenMetadata) {
+                return overridenTokenMetadata;
+              }
+
+              return token && transformDataToTokenMetadata(token, address, Number(id));
+            })
+            .filter(isDefined)
+        )
+      ),
+      map(datas => datas.flat())
     )
 );
 

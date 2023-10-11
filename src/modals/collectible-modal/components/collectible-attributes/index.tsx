@@ -11,7 +11,7 @@ interface Props {
 export const CollectibleAttributes = memo<Props>(({ attributes }) => (
   <View style={styles.root}>
     {attributes.map(({ attribute }) => (
-      <CollectibleAttribute
+      <CollectibleAttributeView
         key={attribute.name}
         name={attribute.name}
         value={attribute.value}
@@ -27,7 +27,7 @@ interface CollectibleAttributeProps {
   rarity: number;
 }
 
-const CollectibleAttribute: FC<CollectibleAttributeProps> = ({ name, value, rarity }) => {
+const CollectibleAttributeView: FC<CollectibleAttributeProps> = ({ name, value, rarity }) => {
   const styles = useCollectibleAttributeStyles();
 
   return (

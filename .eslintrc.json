@@ -25,6 +25,7 @@
     "no-shadow": "off",
     "no-extra-boolean-cast": "off",
     "react-hooks/exhaustive-deps": "warn",
+    "react/jsx-no-leaked-render": "warn",
     "import/no-duplicates": "error",
     "import/no-self-import": "error",
     "import/no-cycle": "error",

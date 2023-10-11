@@ -292,12 +292,12 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
           <TouchableOpacity
             onPress={firstButton.onPress}
             disabled={firstButton.disabled}
-            style={[styles.sellButton, firstButton.disabled ? styles.sellButtonDisabled : styles.sellButtonActive]}
+            style={[styles.actionButton, firstButton.disabled ? styles.firstButtonDisabled : styles.firstButtonActive]}
           >
             <Text
               style={[
-                styles.sellButtonText,
-                firstButton.disabled ? styles.sellButtonDisabled : styles.sellButtonActive
+                styles.actionButtonText,
+                firstButton.disabled ? styles.firstButtonDisabled : styles.firstButtonActive
               ]}
             >
               {firstButton.title}
@@ -306,13 +306,16 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
 
           <TouchableOpacity
             onPress={secondButton.onPress}
-            style={[styles.sellButton, secondButton.disabled ? styles.listButtonNotListed : styles.listButtonActive]}
+            style={[
+              styles.actionButton,
+              secondButton.disabled ? styles.secondButtonDisabled : styles.secondButtonActive
+            ]}
             disabled={secondButton.disabled}
           >
             <Text
               style={[
-                styles.sellButtonText,
-                secondButton.disabled ? styles.listButtonDisabled : styles.listButtonActiveText
+                styles.actionButtonText,
+                secondButton.disabled ? styles.secondButtonTextDisabled : styles.secondButtonTextActive
               ]}
             >
               {secondButton.title}

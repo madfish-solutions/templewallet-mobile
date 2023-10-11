@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { GestureResponderEvent, ViewStyle } from 'react-native';
+import { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -16,7 +16,7 @@ interface Props extends TestIdProps {
   iconName: IconNameEnum;
   url: string;
   onPress?: (event: GestureResponderEvent) => void;
-  style?: ViewStyle | ViewStyle[];
+  style?: StyleProp<ViewStyle>;
   color?: string;
   size?: number;
 }

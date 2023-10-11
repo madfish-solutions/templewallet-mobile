@@ -48,7 +48,7 @@ export const useNFTDynamicLinks = () => {
 
     if (isAvailable) {
       const initialLink = await dynamicLinks().getInitialLink();
-      await handleDynamicLinks(initialLink);
+      handleDynamicLinks(initialLink);
     }
   };
 

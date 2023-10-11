@@ -41,7 +41,7 @@ export const ImageBlurOverlay = memo<Props>(
 
     return (
       <TouchableOpacity activeOpacity={1} onPress={handleLayoutPress} style={styles.root}>
-        {isShowBlur && (
+        {isShowBlur ? (
           <View style={[styles.blurContainer]}>
             <Icon name={blurIcon} size={size} />
 
@@ -51,10 +51,10 @@ export const ImageBlurOverlay = memo<Props>(
                 size={formatSize(iconSize)}
                 style={[conditionalStyle(isTouchableOverlay, styles.marginBottom)]}
               />
-              {isTouchableOverlay && <Text style={styles.text}>Tap to reveal</Text>}
+              {isTouchableOverlay ? <Text style={styles.text}>Tap to reveal</Text> : null}
             </View>
           </View>
-        )}
+        ) : null}
       </TouchableOpacity>
     );
   }

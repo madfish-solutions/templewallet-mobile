@@ -69,10 +69,10 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
           areDetailsLoading={areDetailsLoading && details === undefined}
         />
 
-        {isShowInfo && isDefined(balance) && <Balance balance={balance} />}
+        {isShowInfo && isDefined(balance) ? <Balance balance={balance} /> : null}
       </View>
 
-      {isShowInfo && (
+      {isShowInfo ? (
         <View style={styles.description}>
           <Text numberOfLines={1} lineBreakMode="tail" style={styles.name}>
             {collectible.name}
@@ -82,7 +82,7 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
             {listing ? `Floor: ${listing.floorPriceDisplayed} ${listing.symbol}` : 'Not listed'}
           </Text>
         </View>
-      )}
+      ) : null}
     </TouchableOpacity>
   );
 });

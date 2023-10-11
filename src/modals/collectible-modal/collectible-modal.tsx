@@ -70,6 +70,7 @@ export const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = memo(() => {
   const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
+  console.log('slug:', slug);
 
   const [address, id] = fromTokenSlug(slug);
   const accountPkh = useCurrentAccountPkhSelector();
@@ -110,7 +111,7 @@ export const CollectibleModal = memo(() => {
       return {
         title: 'Send',
         disabled: !metadata,
-        onPress: metadata ? () => navigate(ModalsEnum.Send, { token: metadata }) : undefined
+        onPress: metadata ? (): void => navigate(ModalsEnum.Send, { token: metadata }) : undefined
       };
     }
 
@@ -206,13 +207,7 @@ export const CollectibleModal = memo(() => {
     }
     const { collection, galleries } = details;
 
-    const title = (() => {
-      if (galleries.length) {
-        return galleries[0]!.gallery.name;
-      }
-
-      return collection && collection.name;
-    })();
+    const title = galleries[0]?.gallery.name ?? collection?.name;
 
     const logo = (() => {
       if (!collection.logo) {
@@ -257,6 +252,8 @@ export const CollectibleModal = memo(() => {
     >
       <ModalStatusBar />
 
+      {/* <View>{'abc'}</View> */}
+
       <View>
         <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
           <CollectibleIcon
@@ -292,13 +289,13 @@ export const CollectibleModal = memo(() => {
           <Text style={styles.name}>{name ?? '---'}</Text>
         </View>
 
-        {details?.description && (
+        {details?.description ? (
           <View style={styles.descriptionContainer}>
             <Text style={styles.description}>{details.description}</Text>
           </View>
-        )}
+        ) : null}
 
-        {creators?.length && (
+        {creators?.length ? (
           <View style={styles.creatorsContainer}>
             <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
 
@@ -315,24 +312,24 @@ export const CollectibleModal = memo(() => {
               />
             ))}
           </View>
-        )}
+        ) : null}
 
-        {segments.values.length && (
+        {segments.values.length ? (
           <TextSegmentControl
             selectedIndex={segmentControlIndex}
             values={segments.values}
             onChange={setSegmentControlIndex}
             style={styles.segmentControl}
           />
-        )}
+        ) : null}
 
-        {segments.current === 'properties' && (
+        {segments.current === 'properties' ? (
           <CollectibleProperties contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
-        )}
+        ) : null}
 
-        {segments.current === 'attributes' && <CollectibleAttributes attributes={attributes!} />}
+        {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
 
-        {isAccountHolder && (
+        {isAccountHolder ? (
           <View style={styles.burnContainer}>
             <TouchableWithAnalytics
               Component={TouchableOpacity}
@@ -344,7 +341,7 @@ export const CollectibleModal = memo(() => {
               <Icon name={IconNameEnum.Burn} />
             </TouchableWithAnalytics>
           </View>
-        )}
+        ) : null}
       </View>
     </ScreenContainer>
   );
