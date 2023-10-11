@@ -5,7 +5,7 @@ export const useHistoryStyles = createUseStyles(({ colors }) => ({
   root: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'flex-start'
+    alignItems: 'center'
   },
   row: {
     flexDirection: 'row'

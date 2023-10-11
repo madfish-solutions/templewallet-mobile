@@ -72,7 +72,8 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
               })
             )
           ),
-          catchError(() => {
+          catchError(e => {
+            console.error(e);
             showWarningToast({ description: 'Ooops, something went wrong.\nPlease, try again later.' });
 
             return EMPTY;

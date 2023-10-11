@@ -10,9 +10,11 @@ export const useUserGenerationQuota = () => {
 
   useEffect(() => {
     if (isDefined(accessToken)) {
-      getStableDiffusionUserQuota(accessToken).then(({ data }) => setQuota(data));
+      getStableDiffusionUserQuota(accessToken)
+        .then(({ data }) => setQuota(data))
+        .catch(() => null);
     } else {
-      setQuota(1);
+      setQuota(100);
     }
   }, [accessToken]);
 

@@ -40,6 +40,8 @@ export const Create: FC = () => {
 
   const quota = useUserGenerationQuota();
   const accessToken = useAccessTokenSelector();
+  console.log(quota, 'quota');
+  console.log(accessToken, 'accessToken');
 
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [activeArtStyleId, setActiveArtStyleId] = useState(1);
@@ -72,9 +74,9 @@ export const Create: FC = () => {
     }
 
     if (isDefined(accessToken)) {
-      createStableDiffusionOrder(accessToken, value).then(order =>
-        navigate(ScreensEnum.Preview, { orderId: order.id })
-      );
+      createStableDiffusionOrder(accessToken, value)
+        .then(order => navigate(ScreensEnum.Preview, { orderId: order.id }))
+        .catch(() => showErrorToast({ description: 'Ooops, something went wrong.\nPlease, try again later.' }));
     } else {
       navigate(ModalsEnum.ConfirmSign, value);
     }
