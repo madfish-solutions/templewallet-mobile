@@ -3,7 +3,6 @@
  * Explore: https://public-api-v3-20221206.objkt.com/explore
  */
 
-import { TezosToolkit } from '@taquito/taquito';
 import BigNumber from 'bignumber.js';
 import { chunk } from 'lodash-es';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
@@ -12,7 +11,7 @@ import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
-import { apolloObjktClient, HIDDEN_CONTRACTS, OBJKT_CONTRACT } from './constants';
+import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
   buildGetCollectiblesByCollectionQuery,
   buildGetCollectiblesInfoQuery,
@@ -28,10 +27,8 @@ import {
   CollectiblesByCollectionResponse,
   CollectiblesByGalleriesResponse,
   FA2AttributeCountQueryResponse,
-  FxHashContractInterface,
   GalleryAttributeCountQueryResponse,
   ObjktCollectibleExtra,
-  ObjktContractInterface,
   QueryResponse,
   TzProfilesQueryResponse,
   UserAdultCollectiblesQueryResponse,
@@ -149,6 +146,3 @@ export const fetchCollectibleExtraDetails = (contract: string, id: BigNumber.Val
       where: { fa_contract: { _eq: contract }, token_id: { _eq: String(id) } }
     })
     .then(data => data?.token[0] ?? null);
-
-export const getObjktMarketplaceContract = (tezos: TezosToolkit, address?: string) =>
-  tezos.contract.at<ObjktContractInterface | FxHashContractInterface>(address ?? OBJKT_CONTRACT);

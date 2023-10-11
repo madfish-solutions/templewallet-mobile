@@ -4,7 +4,6 @@ import { TouchableOpacity, View, Text, Share } from 'react-native';
 import useSWR from 'swr';
 
 import { fetchCollectibleExtraDetails, objktCurrencies } from 'src/apis/objkt';
-import { SUPPORTED_CONTRACTS } from 'src/apis/objkt/constants';
 import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
@@ -23,17 +22,16 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
-import { buildBuyCollectibleParams } from 'src/utils/collectibles';
 import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
 import { formatImgUri, ImageResolutionEnum } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
+import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams, buildSellCollectibleParams } from 'src/utils/objkt';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { navigateToObjktForBuy } from '../utils';
 import { useCollectibleItemStyles } from './collectible-item.styles';
-import { OfferButton } from './offer-button';
 
 const DETAILS_SYNC_INTERVAL = 4 * BLOCK_DURATION;
 
@@ -78,16 +76,59 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
     }
   );
 
-  const highestOffer = useMemo(() => {
-    const filtered = extraDetails?.offers_active.filter(o => o.buyer_address !== accountPkh);
-
-    return filtered && filtered[filtered.length - 1];
-  }, [extraDetails, accountPkh]);
-
   const isAccountHolder = useMemo(
     () => item.holders.some(h => h.holder_address === accountPkh && h.quantity > 0),
     [item.holders, accountPkh]
   );
+
+  const firstButton = useMemo(() => {
+    if (!isAccountHolder) {
+      return {
+        title: 'Make offer',
+        // disabled: !isDefined(item.lowestAsk),
+        onPress: () => navigateToObjktForBuy(collectionContract, item.id)
+      };
+    }
+
+    const takableOffers = extraDetails?.offers_active.filter(o => o.buyer_address !== accountPkh);
+    const highestOffer = takableOffers?.length ? takableOffers[takableOffers.length - 1] : null;
+
+    if (!highestOffer) {
+      return {
+        title: 'No offers yet',
+        disabled: true
+      };
+    }
+
+    const currency = objktCurrencies[highestOffer.currency_id];
+
+    if (!currency) {
+      return {
+        title: 'Sell',
+        disabled: true
+      };
+    }
+
+    const priceToDisplay = mutezToTz(BigNumber(highestOffer.price), currency.decimals);
+
+    return {
+      title: `Sell for ${priceToDisplay} ${currency.symbol}`,
+      onPress: () =>
+        void buildSellCollectibleParams(
+          createTezosToolkit(selectedRpc),
+          accountPkh,
+          collectionContract,
+          item.id,
+          highestOffer,
+          currency
+        ).then(opParams =>
+          navigate(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams
+          })
+        )
+    };
+  }, [accountPkh, selectedRpc, isAccountHolder, collectionContract, item.id, extraDetails?.offers_active, navigate]);
 
   const secondButton = useMemo(() => {
     if (isAccountHolder) {
@@ -248,14 +289,20 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
         </View>
 
         <View style={styles.buttonContainer}>
-          <OfferButton
-            isHolder={isAccountHolder}
-            objktOffer={highestOffer}
-            item={item}
-            selectedPublicKeyHash={accountPkh}
-            selectedRpc={selectedRpc}
-            collectionContract={collectionContract}
-          />
+          <TouchableOpacity
+            onPress={firstButton.onPress}
+            disabled={firstButton.disabled}
+            style={[styles.sellButton, firstButton.disabled ? styles.sellButtonDisabled : styles.sellButtonActive]}
+          >
+            <Text
+              style={[
+                styles.sellButtonText,
+                firstButton.disabled ? styles.sellButtonDisabled : styles.sellButtonActive
+              ]}
+            >
+              {firstButton.title}
+            </Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={secondButton.onPress}
