@@ -15,6 +15,7 @@ import { GenerateArtSelectors } from 'src/screens/text-to-nft/generate-art/selec
 import { useHistoryStyles } from 'src/screens/text-to-nft/generate-art/tabs/history/history.styles';
 import { loadTextToNftOrdersActions } from 'src/store/text-to-nft/text-to-nft-actions';
 import { useTextToNftOrdersSelector } from 'src/store/text-to-nft/text-to-nft-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { sliceIntoChunks } from 'src/utils/array.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -28,13 +29,13 @@ const keyExtractor = (item: StableDiffusionOrder[]) => item.map(({ id }) => id).
 
 export const History: FC = () => {
   const dispatch = useDispatch();
-
+  const { publicKeyHash } = useSelectedAccountSelector();
   const { navigate } = useNavigation();
   const styles = useHistoryStyles();
 
-  const orders = useTextToNftOrdersSelector();
+  const orders = useTextToNftOrdersSelector(publicKeyHash);
 
-  useEffect(() => void dispatch(loadTextToNftOrdersActions.submit()), []);
+  useEffect(() => void dispatch(loadTextToNftOrdersActions.submit(publicKeyHash)), [publicKeyHash]);
 
   const windowWidth = useWindowDimensions().width;
   const itemSize =

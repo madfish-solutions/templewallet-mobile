@@ -1,5 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { isDefined } from '../../utils/is-defined';
 import { createEntity } from '../create-entity';
 import {
   loadTextToNftOrdersActions,
@@ -15,18 +16,42 @@ export const textToNftReducer = createReducer<TextToNftState>(textToNftInitialSt
   }));
   builder.addCase(setAccessTokenAction, (state, { payload }) => ({
     ...state,
-    accessToken: payload
+    accountsStateRecord: {
+      ...state.accountsStateRecord,
+      [payload.accountPkh]: { accessToken: payload.accessToken, orders: createEntity([]) }
+    }
   }));
-  builder.addCase(loadTextToNftOrdersActions.submit, state => ({
+  builder.addCase(loadTextToNftOrdersActions.submit, (state, { payload: accountPkh }) => ({
     ...state,
-    orders: createEntity(state.orders.data, true)
+    accountsStateRecord: {
+      ...state.accountsStateRecord,
+      [accountPkh]: {
+        ...state.accountsStateRecord[accountPkh],
+        orders: createEntity(
+          isDefined(state.accountsStateRecord[accountPkh]) ? state.accountsStateRecord[accountPkh].orders.data : [],
+          true
+        )
+      }
+    }
   }));
-  builder.addCase(loadTextToNftOrdersActions.success, (state, { payload: orders }) => ({
+  builder.addCase(loadTextToNftOrdersActions.success, (state, { payload }) => ({
     ...state,
-    orders: createEntity(orders, false)
+    accountsStateRecord: {
+      ...state.accountsStateRecord,
+      [payload.accountPkh]: {
+        ...state.accountsStateRecord[payload.accountPkh],
+        orders: createEntity(payload.orders, false)
+      }
+    }
   }));
-  builder.addCase(loadTextToNftOrdersActions.fail, (state, { payload: error }) => ({
+  builder.addCase(loadTextToNftOrdersActions.fail, (state, { payload }) => ({
     ...state,
-    orders: createEntity([], false, error)
+    accountsStateRecord: {
+      ...state.accountsStateRecord,
+      [payload.accountPkh]: {
+        ...state.accountsStateRecord[payload.accountPkh],
+        orders: createEntity([], false, payload.error)
+      }
+    }
   }));
 });

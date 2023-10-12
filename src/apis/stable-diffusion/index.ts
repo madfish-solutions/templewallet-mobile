@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create/create.form';
-import { isDefined } from '../../utils/is-defined';
+import { CreateNftFormValues } from 'src/screens/text-to-nft/generate-art/tabs/create/create.form';
+import { isDefined } from 'src/utils/is-defined';
+
 import { OrderCreationParams, SignInParams, SignInResponse, StableDiffusionOrder } from './types';
 
 const stableDiffusionApi = axios.create({
@@ -19,7 +20,7 @@ export const createStableDiffusionOrder = (accessToken: string, formValues: Crea
   const { positivePrompt, negativePrompt, artStyle } = formValues;
 
   const params: OrderCreationParams = {
-    positivePrompt: `${artStyle} ${positivePrompt}`,
+    positivePrompt: isDefined(artStyle) ? `${artStyle} ${positivePrompt}` : positivePrompt,
     negativePrompt
   };
 

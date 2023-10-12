@@ -16,7 +16,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useAccessTokenSelector } from 'src/store/text-to-nft/text-to-nft-selectors';
-import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -35,16 +35,15 @@ import { useUserGenerationQuota } from './hooks/use-user-generation-quota';
 const gridSize = formatSize(8);
 
 export const Create: FC = () => {
+  const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useCreateNftStyles();
   const { navigate } = useNavigation();
 
   const quota = useUserGenerationQuota();
-  const accessToken = useAccessTokenSelector();
-  console.log(quota, 'quota');
-  console.log(accessToken, 'accessToken');
+  const accessToken = useAccessTokenSelector(publicKeyHash);
 
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
-  const [activeArtStyleId, setActiveArtStyleId] = useState(1);
+  const [activeArtStyleId, setActiveArtStyleId] = useState<number>();
   const [layoutWidth, setLayoutWidth] = useState(1);
 
   const tezosToken = useSelectedAccountTezosTokenSelector();

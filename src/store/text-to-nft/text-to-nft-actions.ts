@@ -8,8 +8,12 @@ export const setIsHistoryBackButtonAlertShowedOnceAction = createAction<boolean>
   'textToNft/SET_IS_HISTORY_BACK_BUTTON_ALERT_SHOWED_ONCE'
 );
 
-export const loadTextToNftOrdersActions = createActions<void, StableDiffusionOrder[], string>(
-  'textToNft/LOAD_TEXT_TO_NFT_ORDERS'
-);
+export const loadTextToNftOrdersActions = createActions<
+  string,
+  { accountPkh: string; orders: StableDiffusionOrder[] },
+  { accountPkh: string; error: string }
+>('textToNft/LOAD_TEXT_TO_NFT_ORDERS');
 
-export const setAccessTokenAction = createAction<string>('textToNft/SET_ACCESS_TOKEN');
+export const setAccessTokenAction = createAction<{ accountPkh: string; accessToken: string }>(
+  'textToNft/SET_ACCESS_TOKEN'
+);

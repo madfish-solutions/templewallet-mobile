@@ -3,9 +3,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useHistoryStyles = createUseStyles(({ colors }) => ({
   root: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    flex: 1
   },
   row: {
     flexDirection: 'row'

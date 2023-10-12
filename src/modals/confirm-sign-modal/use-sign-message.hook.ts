@@ -67,7 +67,7 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
             from(createStableDiffusionOrder(accessToken, formValues)).pipe(
               map(order => order),
               tap(() => {
-                dispatch(setAccessTokenAction(accessToken));
+                dispatch(setAccessTokenAction({ accountPkh: account.publicKeyHash, accessToken }));
                 setIsLoading(false);
               })
             )

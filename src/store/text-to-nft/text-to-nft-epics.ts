@@ -6,6 +6,7 @@ import { ofType } from 'ts-action-operators';
 
 import { getStableDiffusionOrders } from 'src/apis/stable-diffusion';
 
+import { withSelectedAccount } from '../../utils/wallet.utils';
 import { RootState } from '../types';
 import { loadTextToNftOrdersActions } from './text-to-nft-actions';
 import { withAccessToken } from './text-to-nft-state.utils';
@@ -13,11 +14,14 @@ import { withAccessToken } from './text-to-nft-state.utils';
 const loadTextToNftOrdersEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTextToNftOrdersActions.submit),
+    withSelectedAccount(state$),
     withAccessToken(state$),
-    switchMap(([, accessToken]) =>
+    switchMap(([[, account], accessToken]) =>
       from(getStableDiffusionOrders(accessToken)).pipe(
-        map(orders => loadTextToNftOrdersActions.success(orders)),
-        catchError(error => of(loadTextToNftOrdersActions.fail(error.message)))
+        map(orders => loadTextToNftOrdersActions.success({ accountPkh: account.publicKeyHash, orders })),
+        catchError(error =>
+          of(loadTextToNftOrdersActions.fail({ accountPkh: account.publicKeyHash, error: error.message }))
+        )
       )
     )
   );

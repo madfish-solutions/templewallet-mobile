@@ -80,7 +80,8 @@ export const CollectibleImage: FC<Props> = ({
         style
       ]}
     >
-      {isLoading ? <ActivityIndicator size={isBigIcon ? 'large' : 'small'} style={styles.loader} /> : collectibleImage}
+      {!showLoader && collectibleImage}
+      {isLoading && <ActivityIndicator size={isBigIcon ? 'large' : 'small'} style={styles.loader} />}
     </View>
   );
 };

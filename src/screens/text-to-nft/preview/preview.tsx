@@ -22,7 +22,7 @@ import { useOrderPreview } from '../generate-art/tabs/history/hooks/use-order-pr
 import { usePreviewStyles } from './preview.styles';
 
 const ITEMS_PER_ROW = 4;
-const LOADING_STATE_ORDER_VARIANTS = ['', '', '', ''];
+const LOADING_STATE_ORDER_VARIANTS = Array<string>(4).fill('');
 
 export const PreviewScreen: FC = () => {
   const { orderId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Preview>>().params;
