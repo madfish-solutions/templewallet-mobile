@@ -85,6 +85,7 @@ const CollectibleProperty: FC<CollectiblePropertyProps> = ({ name, value }) => {
   return (
     <View style={styles.root}>
       <Text style={styles.name}>{name}</Text>
+      {/* TODO: Tune type system to forbid falsy nodes */}
       {isValidElement(value) ? value : <Text style={styles.value}>{value}</Text>}
     </View>
   );

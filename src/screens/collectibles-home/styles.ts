@@ -24,33 +24,10 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   profileContainer: {
     marginHorizontal: formatSize(16)
   },
-  profileActions: {
-    flexDirection: 'row',
-    marginBottom: formatSize(16)
-  },
-  profileActionsWithoutCollections: {
-    marginBottom: 0
-  },
-  profileActionButton: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  profileText: {
-    ...typography.tagline13Tag,
-    color: colors.orange,
-    marginLeft: formatSize(4),
-    marginRight: formatSize(24)
-  },
-  socialsIcon: {
-    width: formatSize(24),
-    height: formatSize(24)
-  },
-  socialIconsBgColor: {
-    backgroundColor: colors.gray4
-  },
   collectionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: formatSize(16),
     marginBottom: formatSize(12)
   },
   collectionsLabel: {
@@ -109,9 +86,6 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   handleStyle: {
     display: 'none'
   },
-  socialLinks: {
-    flexDirection: 'row'
-  },
   bottomSheet: {
     backgroundColor: colors.pageBG
   },
@@ -119,5 +93,26 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     width: '100%',
     alignItems: 'center',
     marginTop: formatSize(12)
+  }
+}));
+
+export const useCollectiblesHomeProfileStyles = createUseStyles(({ colors, typography }) => ({
+  profileActions: {
+    flexDirection: 'row',
+    marginBottom: formatSize(16)
+  },
+  profileActionButton: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  profileText: {
+    ...typography.tagline13Tag,
+    color: colors.orange,
+    marginLeft: formatSize(4),
+    marginRight: formatSize(24)
+  },
+  socialsIcon: {
+    width: formatSize(24),
+    height: formatSize(24)
   }
 }));

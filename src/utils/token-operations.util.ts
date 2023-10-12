@@ -206,6 +206,7 @@ const loadOperations = async (
 
 export const loadActivity = async (
   selectedRpcUrl: string,
+  /** @deprecated // Wanna pass PKH only */
   selectedAccount: AccountInterface,
   tokenSlug?: string,
   lastItem?: ActivityInterface

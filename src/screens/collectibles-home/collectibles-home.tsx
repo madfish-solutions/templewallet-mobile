@@ -1,5 +1,5 @@
 import BottomSheet from '@gorhom/bottom-sheet';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -23,7 +23,6 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { Search } from 'src/components/search/search';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useCollectibleDetailsLoadingSelector } from 'src/store/collectibles/collectibles-selectors';
@@ -32,46 +31,28 @@ import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-
 import { Collection } from 'src/store/collectons/collections-state';
 import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
-import { loadTzProfileIfoAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { loadTzProfileIfoAction } from 'src/store/wallet/wallet-actions';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useEnabledAccountCollectibles } from 'src/utils/assets/hooks';
-import { copyStringToClipboard } from 'src/utils/clipboard.utils';
-import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
-import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking';
 
-import { SocialButton } from '../settings/settings-header/social-button/social-button';
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles } from './styles';
+import { TzProfileView } from './tz-profile';
 
-interface SocialLinksInterface {
-  url: string | undefined;
-  icon: IconNameEnum;
-}
-
-interface CollectionProps {
-  item: Collection;
-}
-
-const SMALL_SOCIAL_ICON_SIZE = formatSize(15);
-
-export const CollectiblesHome = () => {
+export const CollectiblesHome = memo(() => {
   const { navigate } = useNavigation();
   const dispatch = useDispatch();
 
   const collections = useCreatedCollectionsSelector();
   const collectibles = useEnabledAccountCollectibles();
-  const selectedAccount = useSelectedAccountSelector();
-  const visibleAccounts = useVisibleAccountsListSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
   const areDetailsLoading = useCollectibleDetailsLoadingSelector();
 
   const styles = useCollectiblesHomeStyles();
-  const colors = useColors();
   const { height: windowHeight } = useWindowDimensions();
 
   const [headerHeight, setHeaderHeight] = useState(1);
@@ -90,59 +71,23 @@ export const CollectiblesHome = () => {
     return [firstSnapPoint, firstSnapPoint + visibleBlockHeight + MARGIN_BETWEEN_COMPONENTS];
   }, [headerHeight, visibleBlockHeight, windowHeight, insets.bottom, StatusBar.currentHeight]);
 
-  const openTzProfiles = () => openUrl('https://tzprofiles.com/');
-
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
   useEffect(() => {
-    dispatch(loadCollectionsActions.submit(selectedAccount.publicKeyHash));
+    dispatch(loadCollectionsActions.submit(accountPkh));
     dispatch(loadTzProfileIfoAction.submit());
-  }, [selectedAccount.publicKeyHash]);
+  }, [accountPkh, dispatch]);
 
   const sheetRef = useRef<BottomSheet>(null);
 
-  const { alias, twitter, discord, website, github } = selectedAccount.tzProfile || {};
-
-  const socialLinks: SocialLinksInterface[] = [
-    { url: twitter, icon: IconNameEnum.Twitter },
-    { url: discord, icon: IconNameEnum.Discord },
-    { url: website, icon: IconNameEnum.Website },
-    { url: github, icon: IconNameEnum.Github }
-  ].sort((a, b) => {
-    if (isDefined(a.url) && isDefined(b.url)) {
-      return 0;
-    }
-    if (!isDefined(a.url)) {
-      return 1;
-    }
-    if (!isDefined(b.url)) {
-      return -1;
-    }
-
-    return 1;
-  });
-
   const { setSearchValue, filteredAssetsList } = useFilteredAssetsList(collectibles);
-
-  const onValueChange = (value: AccountBaseInterface | undefined) =>
-    dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
   const handleSwitchShowInfo = () => void dispatch(switchIsShowCollectibleInfoAction());
 
-  const renderItemSocialLinks: ListRenderItem<SocialLinksInterface> = ({ item }) => (
-    <SocialButton
-      iconName={item.icon}
-      url={item.url ?? ''}
-      style={[styles.socialsIcon, undefined]}
-      color={isDefined(item.url) ? colors.orange : colors.disabled}
-      size={SMALL_SOCIAL_ICON_SIZE}
-      onPress={item.url === discord ? () => copyStringToClipboard(item.url) : undefined}
-    />
+  const renderItemCollections: ListRenderItem<Collection> = useCallback(
+    ({ item }) => <CollectionLogo item={item} />,
+    []
   );
-
-  const renderItemCollections: ListRenderItem<Collection> = ({ item }) => {
-    return <CollectionLogo item={item} />;
-  };
 
   return (
     <>
@@ -155,12 +100,7 @@ export const CollectiblesHome = () => {
         }}
       >
         <View style={styles.accountContainer}>
-          <CurrentAccountDropdown
-            value={selectedAccount}
-            list={visibleAccounts}
-            onValueChange={onValueChange}
-            isCollectibleScreen
-          />
+          <CurrentAccountDropdown isCollectibleScreen />
         </View>
 
         <View
@@ -170,26 +110,7 @@ export const CollectiblesHome = () => {
           }}
           style={styles.profileContainer}
         >
-          <View
-            style={[
-              styles.profileActions,
-              conditionalStyle(collections.length === 0, styles.profileActionsWithoutCollections)
-            ]}
-          >
-            {isDefined(alias) ? (
-              <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
-                <Icon name={IconNameEnum.EditNew} size={formatSize(24)} />
-                <Text style={styles.profileText}>EDIT PROFILE</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={openTzProfiles} style={styles.profileActionButton}>
-                <Icon name={IconNameEnum.PlusCircleNew} size={formatSize(24)} />
-                <Text style={styles.profileText}>CREATE PROFILE</Text>
-              </TouchableOpacity>
-            )}
-
-            <FlatList data={socialLinks} renderItem={renderItemSocialLinks} horizontal={true} />
-          </View>
+          <TzProfileView accountPkh={accountPkh} />
 
           {collections.length > 0 && (
             <View style={styles.collectionsHeader}>
@@ -243,9 +164,13 @@ export const CollectiblesHome = () => {
       </BottomSheet>
     </>
   );
-};
+});
 
-const CollectionLogo: FC<CollectionProps> = ({ item }) => {
+interface CollectionLogoProps {
+  item: Collection;
+}
+
+const CollectionLogo = memo<CollectionLogoProps>(({ item }) => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsloading] = useState(false);
 
@@ -288,4 +213,4 @@ const CollectionLogo: FC<CollectionProps> = ({ item }) => {
       )}
     </>
   );
-};
+});

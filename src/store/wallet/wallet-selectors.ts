@@ -64,10 +64,12 @@ export const useRawCurrentAccountStateSelector = (): AccountStateInterface | und
 /** @deprecated // Too heavy */
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
+export const useAccountTzProfile = (publicKeyHash: string) =>
+  useSelector(state => state.wallet.accounts.find(a => a.publicKeyHash === publicKeyHash)?.tzProfile);
+
 /** @deprecated // Too heavy !!! */
 export const useAssetsListSelector = (): TokenInterface[] =>
   useSelector(state => {
-    // console.log('This better not be called every time Redux state changes!');
     const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
     const nodeIsDcp = isDcpNode(state.settings.selectedRpcUrl);
 

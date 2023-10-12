@@ -1,10 +1,13 @@
-import React, { FC } from 'react';
+import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
+import { isAndroid } from 'src/config/system';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 
-import { isAndroid } from '../../config/system';
-import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { AccountDropdownBase } from './account-dropdown-base';
@@ -21,24 +24,31 @@ const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ valu
   />
 );
 
-export const CurrentAccountDropdown: FC<DropdownValueProps<AccountBaseInterface> & TestIdProps> = ({
-  value,
-  list,
-  onValueChange,
-  testID,
-  testIDProperties,
-  isCollectibleScreen
-}) => (
-  <View style={CurrentAccountDropdownStyles.root}>
-    <AccountDropdownBase
-      value={value}
-      list={list}
-      renderValue={renderAccountValue}
-      renderAccountListItem={renderAccountListItem}
-      onValueChange={onValueChange}
-      testID={testID}
-      testIDProperties={testIDProperties}
-      isCollectibleScreen={isCollectibleScreen}
-    />
-  </View>
-);
+type Props = Omit<DropdownValueProps<AccountBaseInterface>, 'list' | 'value' | 'onValueChange'> & TestIdProps;
+
+export const CurrentAccountDropdown = memo<Props>(({ testID, testIDProperties, isCollectibleScreen }) => {
+  const selectedAccount = useSelectedAccountSelector();
+  const visibleAccounts = useVisibleAccountsListSelector();
+
+  const dispatch = useDispatch();
+
+  const onValueChange = useCallback(
+    (value: AccountBaseInterface | undefined) => dispatch(setSelectedAccountAction(value?.publicKeyHash)),
+    []
+  );
+
+  return (
+    <View style={CurrentAccountDropdownStyles.root}>
+      <AccountDropdownBase
+        value={selectedAccount}
+        list={visibleAccounts}
+        renderValue={renderAccountValue}
+        renderAccountListItem={renderAccountListItem}
+        onValueChange={onValueChange}
+        testID={testID}
+        testIDProperties={testIDProperties}
+        isCollectibleScreen={isCollectibleScreen}
+      />
+    </View>
+  );
+});
