@@ -1,5 +1,5 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { isIOS } from 'src/config/system';
 import { formatSize } from 'src/styles/format-size';
@@ -12,7 +12,7 @@ import { HeaderTitle } from './header-title/header-title';
 export const useModalOptions = (title?: string, disableAndroidGestures = false): StackNavigationOptions => {
   const colors = useColors();
 
-  return {
+  return useMemo(() => ({
     headerTitleAlign: 'center',
     headerStatusBarHeight: 0,
     headerStyle: {
@@ -27,5 +27,5 @@ export const useModalOptions = (title?: string, disableAndroidGestures = false):
     headerLeft: () => null,
     headerTitle: () => (isDefined(title) ? <HeaderTitle title={title} /> : null),
     headerRight: () => <HeaderCloseButton />
-  };
+  }), [title, disableAndroidGestures, colors.lines, colors.navigation]);
 };

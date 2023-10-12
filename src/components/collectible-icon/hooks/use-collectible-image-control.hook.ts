@@ -7,6 +7,7 @@ import {
   formatCollectibleObjktMediumUri,
   formatImgUri
 } from 'src/utils/image.utils';
+import { isTruthy } from 'src/utils/is-truthy';
 
 import { COLLECTIBLE_FINAL_FALLBACK } from '../constants';
 
@@ -15,11 +16,12 @@ export const useCollectibleImageControl = (assetSlug: string, artifactUri: strin
   const [isLoading, setIsLoading] = useState(true);
 
   const imageFallbackURLs = useMemo(
-    () => [
-      formatCollectibleObjktArtifactUri(artifactUri ?? ''),
-      formatCollectibleObjktMediumUri(assetSlug),
-      formatImgUri(artifactUri, ImageResolutionEnum.MEDIUM)
-    ],
+    () =>
+      [
+        artifactUri && formatCollectibleObjktArtifactUri(artifactUri),
+        formatCollectibleObjktMediumUri(assetSlug),
+        formatImgUri(artifactUri, ImageResolutionEnum.MEDIUM)
+      ].filter(isTruthy),
     [assetSlug, artifactUri]
   );
 

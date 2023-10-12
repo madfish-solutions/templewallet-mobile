@@ -15,7 +15,6 @@ import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
-import { useWalletOpenTacker } from 'src/hooks/use-wallet-open-tacker.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -32,6 +31,7 @@ import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
+import { walletOpenedAction } from 'src/store/settings/settings-actions';
 
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
@@ -88,7 +88,7 @@ export const Wallet = memo(() => {
 
   useFocusEffect(trackPageOpened);
 
-  useWalletOpenTacker();
+  useEffect(() => void dispatch(walletOpenedAction()), []);
 
   return (
     <>

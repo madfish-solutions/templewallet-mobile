@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
@@ -19,7 +19,7 @@ import {
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
-import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
+// import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -89,7 +89,7 @@ import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-export const MainStackScreen = () => {
+export const MainStackScreen = memo(() => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
   const selectedAccountPkh = useCurrentAccountPkhSelector();
@@ -98,7 +98,7 @@ export const MainStackScreen = () => {
   const exchangeRates = useUsdToTokenRates();
   const { isLocked } = useAppLock();
 
-  const blockSubscription = useBlockSubscription();
+  // const blockSubscription = useBlockSubscription();
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
@@ -114,7 +114,11 @@ export const MainStackScreen = () => {
   useBeaconHandler();
   useNFTDynamicLinks();
 
-  const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
+  const refreshDeps = [
+    // blockSubscription.block.header,
+    selectedAccountPkh,
+    selectedRpcUrl
+  ];
 
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
   useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
@@ -147,7 +151,7 @@ export const MainStackScreen = () => {
 
       <NavigationBar>
         <MainStack.Navigator screenOptions={styleScreenOptions}>
-          {shouldShowUnauthorizedScreens && (
+          {shouldShowUnauthorizedScreens ? (
             <>
               <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
               <MainStack.Screen
@@ -176,8 +180,8 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
               />
             </>
-          )}
-          {shouldShowAuthorizedScreens && (
+          ) : null}
+          {shouldShowAuthorizedScreens ? (
             <>
               {/** Wallet stack **/}
               <MainStack.Screen
@@ -359,13 +363,13 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title="Debugging" />)}
               />
             </>
-          )}
+          ) : null}
 
-          {shouldShowBlankScreen && (
+          {shouldShowBlankScreen ? (
             <MainStack.Screen name={ScreensEnum.Blank} options={{ headerShown: false }}>
               {emptyFn}
             </MainStack.Screen>
-          )}
+          ) : null}
 
           <MainStack.Screen
             name={ScreensEnum.ScanQrCode}
@@ -376,4 +380,4 @@ export const MainStackScreen = () => {
       </NavigationBar>
     </PortalProvider>
   );
-};
+});

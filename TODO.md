@@ -39,4 +39,8 @@
 - DRY `Share.share` & Dynamic links creation
 - Persist adultery flags (for collections now)
 - `displayUri` in metadata
+- Disable Flipper in CI pipeline. See: https://reactnative.dev/docs/next/speeding-ci-builds
+- - `NO_FLIPPER` for iOS
+- - ? Android
+- Task for `@react-navigation/native-stack`
 -

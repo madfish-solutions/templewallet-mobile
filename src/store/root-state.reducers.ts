@@ -20,6 +20,7 @@ const buildRootStateReducer = <S, A extends Action = AnyAction>(
   const combinedReducers = combineReducers(reducers);
 
   return (appState, action) => {
+    console.log('Action:', action.type);
     const rootReducer = reducer(
       appState,
       on(resetApplicationAction.success, _ => undefined)

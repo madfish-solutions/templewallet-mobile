@@ -1,7 +1,7 @@
 import { StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import { useMemo } from 'react';
 
-import { useColors } from '../../styles/use-colors';
+import { useColors } from 'src/styles/use-colors';
 
 export const useStackNavigationOptions = () => {
   const colors = useColors();

@@ -54,6 +54,7 @@ export const TabBarButton: FC<Props> = ({
   }, [colors, focused, disabled]);
 
   const handlePress = () => {
+    console.log('PRESS');
     if (disabled) {
       disabledOnPress();
     } else {

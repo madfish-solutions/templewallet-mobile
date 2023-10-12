@@ -27,7 +27,7 @@ export const loadTokensBalancesArrayActions = createActions<
   void,
   { publicKeyHash: string; data: TokenBalanceResponse[]; selectedRpcUrl: string },
   string
->('assets/LOAD_TOKEN_BALANCE');
+>('assets/LOAD_TOKENS_BALANCES');
 
 export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');

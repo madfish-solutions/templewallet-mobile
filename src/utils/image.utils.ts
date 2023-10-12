@@ -76,14 +76,20 @@ export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
     return artifactUri;
   }
 
-  const url = new URL(artifactUri);
-  const urlPath = `${url.protocol}${url.hostname}`;
+  try {
+    const url = new URL(artifactUri); // Throws `TypeError: Invalid URL`
+    const urlPath = `${url.protocol}${url.hostname}`;
 
-  if (url.searchParams.get('fxhash') !== null) {
-    return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact/index.html${url.search}`;
+    if (url.searchParams.get('fxhash') !== null) {
+      return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact/index.html${url.search}`;
+    }
+
+    return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact`;
+  } catch (error) {
+    console.error(error);
+
+    return '';
   }
-
-  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact`;
 };
 
 export const formatCollectibleObjktDisplayUri = (displayUri: string) => {

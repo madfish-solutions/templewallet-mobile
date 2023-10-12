@@ -172,7 +172,7 @@ interface CollectionLogoProps {
 
 const CollectionLogo = memo<CollectionLogoProps>(({ item }) => {
   const [isError, setIsError] = useState(false);
-  const [isLoading, setIsloading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { navigate } = useNavigation();
 
@@ -186,31 +186,34 @@ const CollectionLogo = memo<CollectionLogoProps>(({ item }) => {
 
   const styles = useCollectiblesHomeStyles();
 
-  return (
-    <>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
-          {item.logo && !isError ? (
-            <FastImage
-              source={{ uri: formatImgUri(item.logo) }}
-              style={styles.collection}
-              onError={() => setIsError(true)}
-              onLoadStart={() => setIsloading(true)}
-              onLoadEnd={() => setIsloading(false)}
-            />
-          ) : (
-            <View style={[styles.collection, styles.brokenImage]}>
-              <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
-            </View>
-          )}
+  // TODO: Use `react-native-image-progress`
+  // if (isLoading) {
+  //   return <ActivityIndicator />;
+  // }
 
-          <Text numberOfLines={1} style={styles.collectionName}>
-            {item.name}
-          </Text>
-        </TouchableOpacity>
+  return (
+    <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
+      {item.logo && !isError ? (
+        <FastImage
+          source={{ uri: formatImgUri(item.logo) }}
+          style={styles.collection}
+          onError={() => {
+            setIsLoading(false);
+            setIsError(true);
+          }}
+          onLoadStart={() => setIsLoading(true)}
+          onLoadEnd={() => setIsLoading(false)}
+
+        />
+      ) : (
+        <View style={[styles.collection, styles.brokenImage]}>
+          <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
+        </View>
       )}
-    </>
+
+      <Text numberOfLines={1} style={styles.collectionName}>
+        {item.name}
+      </Text>
+    </TouchableOpacity>
   );
 });
