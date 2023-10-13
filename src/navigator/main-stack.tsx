@@ -19,7 +19,7 @@ import {
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
-import { isIOS } from 'src/config/system';
+import { isAndroid } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
@@ -261,7 +261,7 @@ export const MainStackScreen = () => {
               />
 
               {/** Swap stack **/}
-              {!isIOS && (
+              {isAndroid && (
                 <>
                   <MainStack.Screen
                     name={ScreensEnum.SwapScreen}

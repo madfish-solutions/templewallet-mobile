@@ -5,7 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
-import { isIOS } from 'src/config/system';
+import { isAndroid } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import {
   dAppsStackScreens,
@@ -65,7 +65,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             focused={isStackFocused(nftStackScreens)}
             disabledOnPress={handleDisabledPress}
           />
-          {!isIOS && (
+          {isAndroid && (
             <SideBarButton
               label="Swap"
               iconName={IconNameEnum.Swap}

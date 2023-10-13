@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
-import { isIOS } from 'src/config/system';
+import { isAndroid } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import {
   dAppsStackScreens,
@@ -67,7 +67,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           focused={isStackFocused(nftStackScreens)}
           disabledOnPress={handleDisabledPress}
         />
-        {!isIOS && (
+        {isAndroid && (
           <TabBarButton
             label="Swap"
             iconName={IconNameEnum.Swap}
