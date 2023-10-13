@@ -3,17 +3,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { EMPTY, Subject, catchError, from, map, switchMap, tap } from 'rxjs';
 
+import { createStableDiffusionOrder, getStableDiffusionAccessToken } from 'src/apis/stable-diffusion';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { CreateNftFormValues } from 'src/screens/text-to-nft/generate-art/tabs/create/create.form';
+import { Shelter } from 'src/shelter/shelter';
+import { setAccessTokenAction } from 'src/store/text-to-nft/text-to-nft-actions';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
+import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
-
-import { createStableDiffusionOrder, getStableDiffusionAccessToken } from '../../apis/stable-diffusion';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create/create.form';
-import { Shelter } from '../../shelter/shelter';
-import { setAccessTokenAction } from '../../store/text-to-nft/text-to-nft-actions';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
-import { showErrorToast, showSuccessToast, showWarningToast } from '../../toast/toast.utils';
-import { isString } from '../../utils/is-string';
+import { isString } from 'src/utils/is-string';
 
 const timestamp = new Date().toISOString();
 const message = `Tezos Signed Message: To authenticate on Temple NFT service and verify that I am the owner of the connected wallet, I am signing this message ${timestamp}.`;
@@ -72,8 +72,8 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
               })
             )
           ),
-          catchError(() => {
-            showWarningToast({ description: 'Ooops, something went wrong.\nPlease, try again later.' });
+          catchError(e => {
+            showWarningToast({ description: getAxiosQueryErrorMessage(e) });
 
             return EMPTY;
           })

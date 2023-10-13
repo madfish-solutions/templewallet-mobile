@@ -5,6 +5,7 @@ import { OrderPanoramaParam, OrderStatus, StableDiffusionOrder } from 'src/apis/
 import { useAccessTokenSelector } from 'src/store/text-to-nft/text-to-nft-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { useInterval } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -36,7 +37,7 @@ export const useOrderPreview = (id: string) => {
       if (isDefined(accessToken)) {
         getStableDiffusionOrderById(accessToken, id)
           .then(({ data }) => setOrder(data))
-          .catch(() => showErrorToast({ description: DEFAULT_ERROR_MESSAGE }));
+          .catch(e => showErrorToast({ description: getAxiosQueryErrorMessage(e) }));
       } else {
         showErrorToast({ description: DEFAULT_ERROR_MESSAGE });
       }

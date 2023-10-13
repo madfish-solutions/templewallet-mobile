@@ -4,7 +4,7 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import { createStableDiffusionOrder } from 'src/apis/stable-diffusion';
+import { createStableDiffusionOrder, getStableDiffusionUserQuota } from 'src/apis/stable-diffusion';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Checkbox } from 'src/components/checkbox/checkbox';
@@ -19,6 +19,7 @@ import { useAccessTokenSelector } from 'src/store/text-to-nft/text-to-nft-select
 import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
+import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -30,7 +31,6 @@ import { generatingFeeAlert, removeFromImageAlert } from './alerts';
 import { ART_STYLE_ITEMS, DAILY_GENERATION_LIMIT_REACHED_ERROR, INSUFFICIENT_TEZOS_BALANCE_ERROR } from './constants';
 import { CreateNftFormValues, createNftInitialValues, createNftValidationSchema } from './create.form';
 import { useCreateNftStyles } from './create.styles';
-import { useUserGenerationQuota } from './hooks/use-user-generation-quota';
 
 const gridSize = formatSize(8);
 
@@ -39,7 +39,6 @@ export const Create: FC = () => {
   const styles = useCreateNftStyles();
   const { navigate } = useNavigation();
 
-  const quota = useUserGenerationQuota();
   const accessToken = useAccessTokenSelector(publicKeyHash);
 
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
@@ -59,23 +58,27 @@ export const Create: FC = () => {
     [tezosToken.balance]
   );
 
-  const handleSubmit = (value: CreateNftFormValues) => {
+  const handleSubmit = async (value: CreateNftFormValues) => {
     if (insufficientTezosBalance) {
       return showErrorToast({
         description: INSUFFICIENT_TEZOS_BALANCE_ERROR
       });
     }
 
-    if (quota === 0) {
-      return showErrorToast({
-        description: DAILY_GENERATION_LIMIT_REACHED_ERROR
-      });
-    }
-
     if (isDefined(accessToken)) {
-      createStableDiffusionOrder(accessToken, value)
-        .then(order => navigate(ScreensEnum.Preview, { orderId: order.id }))
-        .catch(() => showErrorToast({ description: 'Ooops, something went wrong.\nPlease, try again later.' }));
+      try {
+        const quota = await getStableDiffusionUserQuota(accessToken);
+        if (quota === 0) {
+          return showErrorToast({
+            description: DAILY_GENERATION_LIMIT_REACHED_ERROR
+          });
+        }
+
+        const order = await createStableDiffusionOrder(accessToken, value);
+        navigate(ScreensEnum.Preview, { orderId: order.id });
+      } catch (e) {
+        showErrorToast({ description: getAxiosQueryErrorMessage(e) });
+      }
     } else {
       navigate(ModalsEnum.ConfirmSign, value);
     }

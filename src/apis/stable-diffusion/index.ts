@@ -9,14 +9,14 @@ const stableDiffusionApi = axios.create({
   baseURL: 'https://stable-diffusion-nft-backend.stage.madfish.xyz/api/v1'
 });
 
-export const getStableDiffusionAccessToken = (params: SignInParams) =>
+export const getStableDiffusionAccessToken = async (params: SignInParams) =>
   stableDiffusionApi
     .post<SignInResponse>('/signin', {
       ...params
     })
     .then(({ data }) => data.accessToken);
 
-export const createStableDiffusionOrder = (accessToken: string, formValues: CreateNftFormValues) => {
+export const createStableDiffusionOrder = async (accessToken: string, formValues: CreateNftFormValues) => {
   const { positivePrompt, negativePrompt, artStyle } = formValues;
 
   const params: OrderCreationParams = {
@@ -29,15 +29,13 @@ export const createStableDiffusionOrder = (accessToken: string, formValues: Crea
       '/orders',
       { ...params },
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
+        headers: getRequestHeaders(accessToken)
       }
     )
     .then(({ data }) => data);
 };
 
-export const getStableDiffusionOrders = (accessToken: string | null) =>
+export const getStableDiffusionOrders = async (accessToken: string | null) =>
   isDefined(accessToken)
     ? stableDiffusionApi
         .get<StableDiffusionOrder[]>('/orders', {
@@ -46,15 +44,17 @@ export const getStableDiffusionOrders = (accessToken: string | null) =>
         .then(({ data }) => data)
     : [];
 
-export const getStableDiffusionOrderById = (accessToken: string, id: string) =>
+export const getStableDiffusionOrderById = async (accessToken: string, id: string) =>
   stableDiffusionApi.get<StableDiffusionOrder>(`/orders/${id}`, {
     headers: getRequestHeaders(accessToken)
   });
 
-export const getStableDiffusionUserQuota = (accessToken: string) =>
-  stableDiffusionApi.get<number>('/quota', {
-    headers: getRequestHeaders(accessToken)
-  });
+export const getStableDiffusionUserQuota = async (accessToken: string) =>
+  stableDiffusionApi
+    .get<number>('/quota', {
+      headers: getRequestHeaders(accessToken)
+    })
+    .then(({ data }) => data);
 
 const getRequestHeaders = (accessToken: string) => ({
   Authorization: `Bearer ${accessToken}`
