@@ -1,15 +1,12 @@
-import { BigNumber } from 'bignumber.js';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 
-import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
-import { isIOS } from 'src/config/system';
+import { isAndroid } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useTotalBalance } from 'src/hooks/use-total-balance';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -19,8 +16,6 @@ import {
   walletStackScreens
 } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { SwapDisclaimerOverlay } from 'src/screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
-import { useIsSwapDisclaimerShowingSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -37,11 +32,7 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useSideBarStyles();
 
   const { isDcpNode } = useNetworkInfo();
-  const { balance } = useTotalBalance();
   const { getState } = useNavigation();
-
-  const swapDisclaimerOverlayController = useBottomSheetController();
-  const isSwapDisclaimerShowing = useIsSwapDisclaimerShowingSelector();
 
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
@@ -51,11 +42,6 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
   const isStackFocused = useCallback(
     (screensStack: ScreensEnum[]) => isDefined(currentRouteName) && screensStack.includes(currentRouteName),
     [currentRouteName]
-  );
-
-  const isSwapButtonDisabled = useMemo(
-    () => isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0)),
-    [isDcpNode, balance]
   );
 
   const handleDisabledPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
@@ -79,16 +65,17 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
             focused={isStackFocused(nftStackScreens)}
             disabledOnPress={handleDisabledPress}
           />
-          <SideBarButton
-            label="Swap"
-            iconName={IconNameEnum.Swap}
-            routeName={ScreensEnum.SwapScreen}
-            swapScreenParams={swapScreenParams}
-            focused={isStackFocused(swapStackScreens)}
-            disabled={isSwapButtonDisabled}
-            onSwapButtonPress={isIOS && isSwapDisclaimerShowing ? swapDisclaimerOverlayController.open : undefined}
-            disabledOnPress={isDcpNode ? handleDisabledPress : undefined}
-          />
+          {isAndroid && (
+            <SideBarButton
+              label="Swap"
+              iconName={IconNameEnum.Swap}
+              routeName={ScreensEnum.SwapScreen}
+              swapScreenParams={swapScreenParams}
+              focused={isStackFocused(swapStackScreens)}
+              disabled={isDcpNode}
+              disabledOnPress={isDcpNode ? handleDisabledPress : undefined}
+            />
+          )}
           <SideBarButton
             label="DApps"
             iconName={IconNameEnum.DApps}
@@ -111,7 +98,6 @@ export const SideBar: FC<Props> = ({ currentRouteName }) => {
           <InsetSubstitute type="bottom" />
         </View>
       </ScrollView>
-      <SwapDisclaimerOverlay controller={swapDisclaimerOverlayController} routeParams={swapScreenParams} />
     </View>
   );
 };
