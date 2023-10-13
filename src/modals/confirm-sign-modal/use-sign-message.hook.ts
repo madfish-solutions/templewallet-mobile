@@ -3,7 +3,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { EMPTY, Subject, catchError, from, map, switchMap, tap } from 'rxjs';
 
-import { createStableDiffusionOrder, getStableDiffusionAccessToken } from 'src/apis/stable-diffusion';
+import {
+  createStableDiffusionOrder,
+  getStableDiffusionAccessToken,
+  handleStableDiffusionError
+} from 'src/apis/stable-diffusion';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { CreateNftFormValues } from 'src/screens/text-to-nft/generate-art/tabs/create/create.form';
@@ -72,7 +76,7 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
             )
           ),
           catchError(e => {
-            showErrorToast({ description: e.message, isCopyButtonVisible: true });
+            handleStableDiffusionError(e);
 
             return EMPTY;
           })

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { getStableDiffusionOrderById } from 'src/apis/stable-diffusion';
+import { getStableDiffusionOrderById, handleStableDiffusionError } from 'src/apis/stable-diffusion';
 import { OrderPanoramaParam, OrderStatus, StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
 import { useAccessTokenSelector } from 'src/store/text-to-nft/text-to-nft-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
@@ -36,7 +36,7 @@ export const useOrderPreview = (id: string) => {
       if (isDefined(accessToken)) {
         getStableDiffusionOrderById(accessToken, id)
           .then(({ data }) => setOrder(data))
-          .catch(e => showErrorToast({ description: e.message, isCopyButtonVisible: true }));
+          .catch(handleStableDiffusionError);
       } else {
         showErrorToast({ description: DEFAULT_ERROR_MESSAGE });
       }

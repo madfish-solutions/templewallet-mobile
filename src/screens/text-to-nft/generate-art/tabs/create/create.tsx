@@ -4,7 +4,11 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import { createStableDiffusionOrder, getStableDiffusionUserQuota } from 'src/apis/stable-diffusion';
+import {
+  createStableDiffusionOrder,
+  getStableDiffusionUserQuota,
+  handleStableDiffusionError
+} from 'src/apis/stable-diffusion';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Checkbox } from 'src/components/checkbox/checkbox';
@@ -76,7 +80,7 @@ export const Create: FC = () => {
         const order = await createStableDiffusionOrder(accessToken, value);
         navigate(ScreensEnum.Preview, { orderId: order.id });
       } catch (e) {
-        showErrorToast({ description: (e as Error).message, isCopyButtonVisible: true });
+        handleStableDiffusionError(e);
       }
     } else {
       navigate(ModalsEnum.ConfirmSign, value);

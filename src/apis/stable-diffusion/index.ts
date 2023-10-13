@@ -1,6 +1,9 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 import { CreateNftFormValues } from 'src/screens/text-to-nft/generate-art/tabs/create/create.form';
+import { showErrorToast } from 'src/toast/error-toast.utils';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 
 import { OrderCreationParams, SignInParams, SignInResponse, StableDiffusionOrder } from './types';
@@ -59,3 +62,25 @@ export const getStableDiffusionUserQuota = async (accessToken: string) =>
 const getRequestHeaders = (accessToken: string) => ({
   Authorization: `Bearer ${accessToken}`
 });
+
+export const handleStableDiffusionError = (e: any) => {
+  let description: string, contentToCopy: string;
+  description = contentToCopy = getAxiosQueryErrorMessage(e);
+
+  if (e instanceof AxiosError) {
+    const responseStatus = e.response?.status;
+    const responseData = e.response?.data;
+    const responseMessage = responseData?.message ?? responseData?.error;
+    if (responseStatus === 500) {
+      contentToCopy = responseMessage;
+    } else if (isDefined(responseStatus) && responseStatus >= 400 && responseStatus <= 499) {
+      description = responseMessage;
+      contentToCopy = responseMessage;
+    }
+  }
+  showErrorToast({
+    description,
+    isCopyButtonVisible: true,
+    onPress: () => copyStringToClipboard(contentToCopy)
+  });
+};
