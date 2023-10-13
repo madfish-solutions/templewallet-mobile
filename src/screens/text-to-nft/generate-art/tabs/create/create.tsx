@@ -19,7 +19,6 @@ import { useAccessTokenSelector } from 'src/store/text-to-nft/text-to-nft-select
 import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
-import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -77,7 +76,7 @@ export const Create: FC = () => {
         const order = await createStableDiffusionOrder(accessToken, value);
         navigate(ScreensEnum.Preview, { orderId: order.id });
       } catch (e) {
-        showErrorToast({ description: getAxiosQueryErrorMessage(e) });
+        showErrorToast({ description: (e as Error).message, isCopyButtonVisible: true });
       }
     } else {
       navigate(ModalsEnum.ConfirmSign, value);

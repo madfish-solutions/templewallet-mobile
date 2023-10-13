@@ -11,7 +11,6 @@ import { Shelter } from 'src/shelter/shelter';
 import { setAccessTokenAction } from 'src/store/text-to-nft/text-to-nft-actions';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
-import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
@@ -73,7 +72,7 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
             )
           ),
           catchError(e => {
-            showErrorToast({ description: getAxiosQueryErrorMessage(e) });
+            showErrorToast({ description: e.message, isCopyButtonVisible: true });
 
             return EMPTY;
           })
