@@ -9,7 +9,6 @@ import { useDispatch } from 'react-redux';
 import { objktCurrencies } from 'src/apis/objkt/constants';
 // import { ActivityIndicator } from 'src/components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -53,6 +52,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes';
+import { CollectibleImage } from './components/collectible-image';
 import { CollectibleProperties } from './components/collectible-properties';
 import { COLLECTION_ICON_SIZE } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
@@ -252,19 +252,15 @@ export const CollectibleModal = memo(() => {
     >
       <ModalStatusBar />
 
-      {/* <View>{'abc'}</View> */}
-
       <View>
         <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
-          <CollectibleIcon
+          <CollectibleImage
             slug={slug}
             artifactUri={artifactUri}
             displayUri={displayUri}
             mime={details?.mime || ''}
             size={imageSize}
-            isBigIcon={true}
-            isTouchableBlurOverlay
-            isModalWindow
+            areDetailsLoading={areDetailsLoading && details === undefined}
             setScrollEnabled={setScrollEnabled}
           />
         </View>

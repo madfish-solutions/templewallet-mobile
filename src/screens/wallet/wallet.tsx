@@ -26,12 +26,12 @@ import {
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
 import { useSelector } from 'src/store/selector';
+import { walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
-import { walletOpenedAction } from 'src/store/settings/settings-actions';
 
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';

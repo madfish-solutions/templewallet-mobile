@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { memo } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import Video, { LoadError } from 'react-native-video';
 
-import { EmptyFn, EventFn, emptyFn } from 'src/config/general';
+import { EventFn, emptyFn } from 'src/config/general';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 
@@ -17,32 +17,26 @@ interface SimpleVideoProps {
 
 const BUFFER_DURATION = 8000;
 
-export const SimplePlayer: FC<SimpleVideoProps> = ({
-  uri,
-  posterUri,
-  size,
-  style,
-  onError = emptyFn,
-  onLoad = emptyFn
-}) => {
-  const atBootsplash = useAtBootsplash();
-  const { isLocked } = useAppLock();
+export const SimplePlayer = memo<SimpleVideoProps>(
+  ({ uri, posterUri, size, style, onError = emptyFn, onLoad = emptyFn }) => {
+    const atBootsplash = useAtBootsplash();
+    const { isLocked } = useAppLock();
 
-  return (
-    <Video
-      repeat
-      source={{ uri }}
-      // @ts-ignore
-      style={[{ width: size, height: size }, style]}
-      paused={atBootsplash || isLocked}
-      resizeMode="cover"
-      bufferConfig={{
-        bufferForPlaybackMs: BUFFER_DURATION
-      }}
-      poster={posterUri}
-      posterResizeMode="cover"
-      onError={onError}
-      onLoad={onLoad}
-    />
-  );
-};
+    return (
+      <Video
+        repeat
+        source={{ uri }}
+        style={[{ width: size, height: size }, style]}
+        paused={atBootsplash || isLocked}
+        resizeMode="cover"
+        bufferConfig={{
+          bufferForPlaybackMs: BUFFER_DURATION
+        }}
+        poster={posterUri}
+        posterResizeMode="cover"
+        onError={onError}
+        onLoad={onLoad}
+      />
+    );
+  }
+);

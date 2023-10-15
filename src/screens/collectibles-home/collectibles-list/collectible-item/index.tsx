@@ -15,7 +15,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { Balance } from './balance';
-import { CollectibleItemImage } from './collectible-item-image';
+import { CollectibleItemImage } from './item-image';
 import { useCollectibleItemStyles } from './styles';
 
 interface Props {
@@ -64,8 +64,8 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
           slug={slug}
           size={size}
           artifactUri={collectible.artifactUri}
-          displayUri={collectible.displayUri ?? details?.displayUri}
-          mime={details?.mime}
+          // displayUri={collectible.displayUri ?? details?.displayUri}
+          // mime={details?.mime}
           areDetailsLoading={areDetailsLoading && details === undefined}
         />
 

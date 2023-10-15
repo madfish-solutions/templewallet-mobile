@@ -4,7 +4,7 @@ import { TouchableOpacity, View, Text, Share } from 'react-native';
 import useSWR from 'swr';
 
 import { fetchCollectibleExtraDetails, objktCurrencies } from 'src/apis/objkt';
-import { CollectibleIcon } from 'src/components/collectible-icon/collectible-icon';
+import { StaticCollectibleImage } from 'src/components/collectible-icon/collectible-icon';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -245,14 +245,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
             <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
-              <CollectibleIcon
-                isBigIcon={true}
-                slug={slug}
-                artifactUri={item.artifactUri}
-                displayUri={item.displayUri}
-                mime={item.mime}
-                size={imageSize}
-              />
+              <StaticCollectibleImage isBigIcon={true} slug={slug} artifactUri={item.artifactUri} size={imageSize} />
             </View>
           </TouchableOpacity>
 

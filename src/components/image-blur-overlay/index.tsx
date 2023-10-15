@@ -4,7 +4,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { EventFn } from 'src/config/general';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -17,45 +16,36 @@ const ICON_SIZE_SMALL = 24;
 
 interface Props {
   size: number;
-  isShowBlur: boolean;
-  setIsShowBlur: EventFn<boolean>;
-  isBigIcon: boolean;
-  isTouchableOverlay?: boolean;
+  isBigIcon?: boolean;
+  isTouchable?: boolean;
+  onPress?: EmptyFn;
 }
 
-export const ImageBlurOverlay = memo<Props>(
-  ({ size, isShowBlur, isBigIcon, setIsShowBlur, isTouchableOverlay = false }) => {
-    const styles = useBlurStyles();
-    const deviceTheme = useThemeSelector();
+export const ImageBlurOverlay = memo<Props>(({ size, isBigIcon = false, onPress }) => {
+  const styles = useBlurStyles();
+  const deviceTheme = useThemeSelector();
 
-    const isLightTheme = deviceTheme === ThemesEnum.light;
-    const iconSize = isBigIcon ? ICON_SIZE_BIG : ICON_SIZE_SMALL;
-    const iconName = isLightTheme ? IconNameEnum.BlurEyeBlack : IconNameEnum.BlurEyeWhite;
-    const blurIcon = isLightTheme ? IconNameEnum.BlurLight : IconNameEnum.BlurDark;
+  const isLightTheme = deviceTheme === ThemesEnum.light;
+  const iconSize = isBigIcon ? ICON_SIZE_BIG : ICON_SIZE_SMALL;
+  const iconName = isLightTheme ? IconNameEnum.BlurEyeBlack : IconNameEnum.BlurEyeWhite;
+  const blurIcon = isLightTheme ? IconNameEnum.BlurLight : IconNameEnum.BlurDark;
 
-    const handleLayoutPress = () => {
-      if (isTouchableOverlay) {
-        setIsShowBlur(false);
-      }
-    };
+  const handleLayoutPress = () => void onPress?.();
 
-    return (
-      <TouchableOpacity activeOpacity={1} onPress={handleLayoutPress} style={styles.root}>
-        {isShowBlur ? (
-          <View style={[styles.blurContainer]}>
-            <Icon name={blurIcon} size={size} />
+  return (
+    <TouchableOpacity activeOpacity={1} onPress={handleLayoutPress} style={styles.root}>
+      <View style={[styles.blurContainer]}>
+        <Icon name={blurIcon} size={size} />
 
-            <View style={styles.container}>
-              <Icon
-                name={iconName}
-                size={formatSize(iconSize)}
-                style={[conditionalStyle(isTouchableOverlay, styles.marginBottom)]}
-              />
-              {isTouchableOverlay ? <Text style={styles.text}>Tap to reveal</Text> : null}
-            </View>
-          </View>
-        ) : null}
-      </TouchableOpacity>
-    );
-  }
-);
+        <View style={styles.container}>
+          <Icon
+            name={iconName}
+            size={formatSize(iconSize)}
+            style={[conditionalStyle(!!onPress, styles.marginBottom)]}
+          />
+          {onPress ? <Text style={styles.text}>Tap to reveal</Text> : null}
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+});

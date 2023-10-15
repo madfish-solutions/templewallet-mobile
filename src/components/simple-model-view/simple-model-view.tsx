@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 
@@ -37,52 +37,47 @@ interface SimpleModelViewProps {
   setScrollEnabled?: EventFn<boolean>;
 }
 
-export const SimpleModelView: FC<SimpleModelViewProps> = ({
-  uri,
-  isBinary,
-  style,
-  onError = emptyFn,
-  onLoadEnd = emptyFn,
-  setScrollEnabled = emptyFn
-}) => {
-  const styles = useSimpleModelViewStyles();
-  const source = useMemo(() => {
-    if (isBinary) {
-      return { html: getHTML(uri) };
-    }
+export const SimpleModelView = memo<SimpleModelViewProps>(
+  ({ uri, isBinary, style, onError = emptyFn, onLoadEnd = emptyFn, setScrollEnabled = emptyFn }) => {
+    const styles = useSimpleModelViewStyles();
+    const source = useMemo(() => {
+      if (isBinary) {
+        return { html: getHTML(uri) };
+      }
 
-    if (uri.includes('fxhash')) {
-      return { uri };
-    }
+      if (uri.includes('fxhash')) {
+        return { uri };
+      }
 
-    return { uri: uri + '/index.html' };
-  }, [uri]);
+      return { uri: uri + '/index.html' };
+    }, [uri]);
 
-  const injectedJs = useMemo(
-    () => `
+    const injectedJs = useMemo(
+      () => `
         window.onerror = function(message) {
           window.ReactNativeWebView.postMessage(JSON.stringify(message));
           return true;
         };
         true;
       `,
-    []
-  );
+      []
+    );
 
-  const handleTouchStart = () => setScrollEnabled(false);
-  const handleTouchEnd = () => setScrollEnabled(true);
+    const handleTouchStart = () => setScrollEnabled(false);
+    const handleTouchEnd = () => setScrollEnabled(true);
 
-  return (
-    <WebView
-      source={source}
-      style={[styles.loverOpacity, style]}
-      onError={onError}
-      onMessage={onError}
-      onLoadEnd={onLoadEnd}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
-      injectedJavaScriptBeforeContentLoaded={injectedJs}
-    />
-  );
-};
+    return (
+      <WebView
+        source={source}
+        style={[styles.loverOpacity, style]}
+        onError={onError}
+        onMessage={onError}
+        onLoadEnd={onLoadEnd}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
+        injectedJavaScriptBeforeContentLoaded={injectedJs}
+      />
+    );
+  }
+);

@@ -12,7 +12,7 @@
     "plugin:import/typescript",
     "plugin:jest/recommended"
   ],
-  "plugins": ["@typescript-eslint", "import", "no-type-assertion", "jest"],
+  "plugins": ["@typescript-eslint", "import", "no-type-assertion", "jest", "jsx-expressions"],
   "settings": {
     "import/resolver": {
       "typescript": {}
@@ -25,7 +25,7 @@
     "no-shadow": "off",
     "no-extra-boolean-cast": "off",
     "react-hooks/exhaustive-deps": "warn",
-    "react/jsx-no-leaked-render": "warn",
+    "jsx-expressions/strict-logical-expressions": "warn",
     "import/no-duplicates": "error",
     "import/no-self-import": "error",
     "import/no-cycle": "error",

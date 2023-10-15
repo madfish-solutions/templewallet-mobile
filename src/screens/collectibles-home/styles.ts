@@ -37,32 +37,9 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   collectionsContainer: {
     marginLeft: formatSize(4)
   },
-  collection: {
-    borderRadius: formatSize(10),
-    borderWidth: formatSize(1),
-    borderColor: colors.lines,
-    width: formatSize(56),
-    height: formatSize(56),
-    marginBottom: formatSize(4)
-  },
-  collectionBlock: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: formatSize(12)
-  },
   buttonDisabled: {
     ...typography.caption13Semibold,
     color: colors.disabled
-  },
-  collectionName: {
-    width: formatSize(56),
-    textAlign: 'center',
-    color: colors.black,
-    ...typography.caption10Regular
-  },
-  brokenImage: {
-    alignItems: 'center',
-    justifyContent: 'center'
   },
   infoContainer: {
     flexDirection: 'row',
@@ -93,6 +70,38 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     width: '100%',
     alignItems: 'center',
     marginTop: formatSize(12)
+  }
+}));
+
+export const useCollectionButtonStyles = createUseStyles(({ colors, typography }) => ({
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: formatSize(12)
+  },
+  logo: {
+    width: formatSize(56),
+    height: formatSize(56),
+    marginBottom: formatSize(4)
+  },
+  image: {
+    borderRadius: formatSize(10),
+    borderWidth: formatSize(1),
+    borderColor: colors.lines,
+    width: formatSize(56),
+    height: formatSize(56)
+    // backgroundColor: 'red'
+    // marginBottom: formatSize(4)
+  },
+  brokenImage: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  title: {
+    width: formatSize(56),
+    textAlign: 'center',
+    color: colors.black,
+    ...typography.caption10Regular
   }
 }));
 

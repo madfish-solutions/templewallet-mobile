@@ -40,7 +40,6 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
   },
   collectibleName: {
     color: colors.black,
-    marginTop: formatSize(12),
     maxWidth: formatSize(200),
     ...typography.body20Bold
   },
@@ -128,7 +127,9 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
   },
   nameBlock: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: formatSize(12)
   },
   shareButton: {
     flexDirection: 'row',

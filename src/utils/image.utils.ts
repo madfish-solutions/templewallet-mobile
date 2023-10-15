@@ -66,7 +66,7 @@ export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
 };
 
 const cutIpfsPrefix = (artifactUri: string) => {
-  const url = new URL(artifactUri);
+  const url = new URL(artifactUri); // Throws `TypeError: Invalid URL`
 
   return url.protocol === 'ipfs:' ? artifactUri.substring(IPFS_PROTOCOL.length) : artifactUri;
 };

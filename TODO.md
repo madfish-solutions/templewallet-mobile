@@ -12,8 +12,8 @@
 8. +
 9. ?
 10. +
-11. -
-12. -
+11. ?
+12. +
 13. +
 14. +
 15. +
@@ -29,9 +29,9 @@
 25. +
 26. ?
 27. +
-28. -
-29. -
-30. -
+28. +
+29. Check Android
+30. Check Android
 
 
 ### TODO:
@@ -42,5 +42,5 @@
 - Disable Flipper in CI pipeline. See: https://reactnative.dev/docs/next/speeding-ci-builds
 - - `NO_FLIPPER` for iOS
 - - ? Android
-- Task for `@react-navigation/native-stack`
+- Task for `@react-navigation/native-stack`. See: https://reactnavigation.org/docs/native-stack-navigator
 -

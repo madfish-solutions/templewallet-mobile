@@ -11,7 +11,6 @@ import {
   View
 } from 'react-native';
 import { isTablet } from 'react-native-device-info';
-import FastImage from 'react-native-fast-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 
@@ -21,6 +20,7 @@ import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { ImageWithIndicator } from 'src/components/image';
 import { Search } from 'src/components/search/search';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -39,7 +39,7 @@ import { useEnabledAccountCollectibles } from 'src/utils/assets/hooks';
 import { formatImgUri } from 'src/utils/image.utils';
 
 import { CollectiblesList } from './collectibles-list';
-import { useCollectiblesHomeStyles } from './styles';
+import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
 import { TzProfileView } from './tz-profile';
 
 export const CollectiblesHome = memo(() => {
@@ -85,7 +85,7 @@ export const CollectiblesHome = memo(() => {
   const handleSwitchShowInfo = () => void dispatch(switchIsShowCollectibleInfoAction());
 
   const renderItemCollections: ListRenderItem<Collection> = useCallback(
-    ({ item }) => <CollectionLogo item={item} />,
+    ({ item }) => <CollectionButton item={item} />,
     []
   );
 
@@ -170,10 +170,7 @@ interface CollectionLogoProps {
   item: Collection;
 }
 
-const CollectionLogo = memo<CollectionLogoProps>(({ item }) => {
-  const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
+const CollectionButton = memo<CollectionLogoProps>(({ item }) => {
   const { navigate } = useNavigation();
 
   const handleCollectionPress = () =>
@@ -184,34 +181,23 @@ const CollectionLogo = memo<CollectionLogoProps>(({ item }) => {
       galleryId: item.galleryId
     });
 
-  const styles = useCollectiblesHomeStyles();
-
-  // TODO: Use `react-native-image-progress`
-  // if (isLoading) {
-  //   return <ActivityIndicator />;
-  // }
+  const styles = useCollectionButtonStyles();
 
   return (
-    <TouchableOpacity style={styles.collectionBlock} onPress={handleCollectionPress}>
-      {item.logo && !isError ? (
-        <FastImage
-          source={{ uri: formatImgUri(item.logo) }}
-          style={styles.collection}
-          onError={() => {
-            setIsLoading(false);
-            setIsError(true);
-          }}
-          onLoadStart={() => setIsLoading(true)}
-          onLoadEnd={() => setIsLoading(false)}
+    <TouchableOpacity style={styles.button} onPress={handleCollectionPress}>
+      <ImageWithIndicator
+        source={{ uri: formatImgUri(item.logo) }}
+        style={styles.logo}
+        imageStyle={styles.image}
+        indicator={ActivityIndicator}
+        renderError={() => (
+          <View style={[styles.image, styles.brokenImage]}>
+            <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
+          </View>
+        )}
+      />
 
-        />
-      ) : (
-        <View style={[styles.collection, styles.brokenImage]}>
-          <Icon name={IconNameEnum.NFTCollection} size={formatSize(31)} />
-        </View>
-      )}
-
-      <Text numberOfLines={1} style={styles.collectionName}>
+      <Text numberOfLines={1} style={styles.title}>
         {item.name}
       </Text>
     </TouchableOpacity>
