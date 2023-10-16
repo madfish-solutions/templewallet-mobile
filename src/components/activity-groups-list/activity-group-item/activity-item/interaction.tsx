@@ -54,12 +54,12 @@ export const Interaction: FC<ActivityItemProps> = memo(({ activity }) => {
     case ActivitySubtype.QuipuswapRemoveLiquidityV3:
     case ActivitySubtype.QuipuswapAddLiquidityStableswap:
     case ActivitySubtype.QuipuswapRemoveLiquidityStableswap:
-    case ActivitySubtype.QuipuswapInvestInDividents:
-    case ActivitySubtype.QuipuswapDivestFromDividents:
+    case ActivitySubtype.QuipuswapInvestInDividends:
+    case ActivitySubtype.QuipuswapDivestFromDividends:
     case ActivitySubtype.QuipuswapInvestInFarm:
     case ActivitySubtype.QuipuswapDivestFromFarm:
     case ActivitySubtype.QuipuswapHarvestFromFarm:
-    case ActivitySubtype.QuipuswapHarvestFromDividents:
+    case ActivitySubtype.QuipuswapHarvestFromDividends:
     case ActivitySubtype.QuipuswapSend:
     case ActivitySubtype.QuipuswapReceive:
       return <Quipuswap activity={activity as QuipuswapActivity} nonZeroAmounts={nonZeroAmounts} />;
