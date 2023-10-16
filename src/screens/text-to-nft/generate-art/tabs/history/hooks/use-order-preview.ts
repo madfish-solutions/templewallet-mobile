@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { getStableDiffusionOrderById, handleStableDiffusionError } from 'src/apis/stable-diffusion';
-import { OrderPanoramaParam, OrderStatus, StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
+import { OrderStatus, StableDiffusionOrder } from 'src/apis/stable-diffusion/types';
 import { useAccessTokenSelector } from 'src/store/text-to-nft/text-to-nft-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -24,7 +24,7 @@ export const useOrderPreview = (id: string) => {
     variants: null,
     width: 0,
     height: 0,
-    panorama: 'no' as OrderPanoramaParam
+    panorama: 'no' as const
   };
 
   const [order, setOrder] = useState<StableDiffusionOrder>(initialOrder);
