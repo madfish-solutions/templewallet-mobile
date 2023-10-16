@@ -2,8 +2,13 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }) => ({
+  screen: {
+    flex: 1,
+    flexDirection: 'column'
+  },
   headerCard: {
-    paddingHorizontal: 0
+    paddingHorizontal: 0,
+    paddingBottom: formatSize(4)
   },
   headerContainer: {
     flexDirection: 'row',
@@ -18,10 +23,10 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: formatSize(16),
-    marginBottom: formatSize(12)
+    marginLeft: formatSize(16)
   },
   profileContainer: {
+    paddingVertical: formatSize(12),
     marginHorizontal: formatSize(16)
   },
   collectionsHeader: {
@@ -90,8 +95,6 @@ export const useCollectionButtonStyles = createUseStyles(({ colors, typography }
     borderColor: colors.lines,
     width: formatSize(56),
     height: formatSize(56)
-    // backgroundColor: 'red'
-    // marginBottom: formatSize(4)
   },
   brokenImage: {
     alignItems: 'center',
@@ -107,8 +110,7 @@ export const useCollectionButtonStyles = createUseStyles(({ colors, typography }
 
 export const useCollectiblesHomeProfileStyles = createUseStyles(({ colors, typography }) => ({
   profileActions: {
-    flexDirection: 'row',
-    marginBottom: formatSize(16)
+    flexDirection: 'row'
   },
   profileActionButton: {
     flexDirection: 'row',

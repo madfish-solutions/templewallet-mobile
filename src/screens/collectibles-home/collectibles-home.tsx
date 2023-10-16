@@ -1,17 +1,7 @@
 import BottomSheet from '@gorhom/bottom-sheet';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  ListRenderItem,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  useWindowDimensions,
-  View
-} from 'react-native';
-import { isTablet } from 'react-native-device-info';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
@@ -44,6 +34,8 @@ import { TzProfileView } from './tz-profile';
 
 export const CollectiblesHome = memo(() => {
   const { navigate } = useNavigation();
+  usePageAnalytic(ScreensEnum.CollectiblesHome);
+
   const dispatch = useDispatch();
 
   const collections = useCreatedCollectionsSelector();
@@ -53,32 +45,26 @@ export const CollectiblesHome = memo(() => {
   const areDetailsLoading = useCollectibleDetailsLoadingSelector();
 
   const styles = useCollectiblesHomeStyles();
-  const { height: windowHeight } = useWindowDimensions();
 
-  const [headerHeight, setHeaderHeight] = useState(1);
-  const [visibleBlockHeight, setVisibleBlockHeight] = useState(1);
-
-  const insets = useSafeAreaInsets();
+  const [screenHeight, setScreenHeight] = useState(0);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const [profileHeight, setProfileHeight] = useState(0);
 
   const snapPoints = useMemo(() => {
-    const TAB_BAR_HEIGHT = isTablet() ? 0 : formatSize(48) + insets.bottom;
-    const MARGIN_BETWEEN_COMPONENTS = formatSize(16);
+    const firstSnapPoint = screenHeight - headerHeight;
+    if (firstSnapPoint < 1) {
+      return null;
+    }
 
-    const statusBar = isTablet() ? StatusBar.currentHeight ?? 0 : 0;
+    const secondSnapPoint = firstSnapPoint + profileHeight;
 
-    const firstSnapPoint = windowHeight - (headerHeight + TAB_BAR_HEIGHT + statusBar);
-
-    return [firstSnapPoint, firstSnapPoint + visibleBlockHeight + MARGIN_BETWEEN_COMPONENTS];
-  }, [headerHeight, visibleBlockHeight, windowHeight, insets.bottom, StatusBar.currentHeight]);
-
-  usePageAnalytic(ScreensEnum.CollectiblesHome);
+    return firstSnapPoint === secondSnapPoint ? [firstSnapPoint] : [firstSnapPoint, secondSnapPoint];
+  }, [screenHeight, headerHeight, profileHeight]);
 
   useEffect(() => {
     dispatch(loadCollectionsActions.submit(accountPkh));
     dispatch(loadTzProfileIfoAction.submit());
   }, [accountPkh, dispatch]);
-
-  const sheetRef = useRef<BottomSheet>(null);
 
   const { setSearchValue, filteredAssetsList } = useFilteredAssetsList(collectibles);
 
@@ -90,79 +76,76 @@ export const CollectiblesHome = memo(() => {
   );
 
   return (
-    <>
+    <View style={styles.screen} onLayout={event => void setScreenHeight(event.nativeEvent.layout.height)}>
       <HeaderCard
         hasInsetTop={true}
         style={styles.headerCard}
-        onLayout={event => {
-          const { height } = event.nativeEvent.layout;
-          setHeaderHeight(height);
-        }}
+        onLayout={event => void setHeaderHeight(event.nativeEvent.layout.height)}
       >
         <View style={styles.accountContainer}>
           <CurrentAccountDropdown isCollectibleScreen />
         </View>
 
         <View
-          onLayout={event => {
-            const { height } = event.nativeEvent.layout;
-            setVisibleBlockHeight(height);
-          }}
+          onLayout={event => void setProfileHeight(event.nativeEvent.layout.height)}
           style={styles.profileContainer}
         >
           <TzProfileView accountPkh={accountPkh} />
 
-          {collections.length > 0 && (
-            <View style={styles.collectionsHeader}>
-              <Text style={styles.collectionsLabel}>Created collections</Text>
-            </View>
-          )}
+          {collections.length > 0 ? (
+            <>
+              <View style={styles.collectionsHeader}>
+                <Text style={styles.collectionsLabel}>Created collections</Text>
+              </View>
 
-          <FlatList
-            data={collections}
-            renderItem={renderItemCollections}
-            keyExtractor={(collection, id) => `${collection.logo}_${collection.name}+${id}`}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.collectionsContainer}
-          />
+              <FlatList
+                data={collections}
+                renderItem={renderItemCollections}
+                keyExtractor={(collection, id) => `${collection.logo}_${collection.name}+${id}`}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.collectionsContainer}
+              />
+            </>
+          ) : null}
         </View>
       </HeaderCard>
 
-      <BottomSheet
-        ref={sheetRef}
-        snapPoints={snapPoints}
-        handleStyle={styles.handleStyle}
-        style={styles.bottomSheet}
-        backgroundStyle={styles.bottomSheet}
-      >
-        <View style={styles.infoContainer}>
-          <CheckboxIcon
-            text="Show info"
-            initialState={isShowCollectibleInfo}
-            onActive={handleSwitchShowInfo}
-            onDisactive={handleSwitchShowInfo}
-          />
+      {snapPoints ? (
+        <BottomSheet
+          snapPoints={snapPoints}
+          handleStyle={styles.handleStyle}
+          style={styles.bottomSheet}
+          backgroundStyle={styles.bottomSheet}
+        >
+          <View style={styles.infoContainer}>
+            <CheckboxIcon
+              text="Show info"
+              initialState={isShowCollectibleInfo}
+              onActive={handleSwitchShowInfo}
+              onDisactive={handleSwitchShowInfo}
+            />
 
-          <View style={styles.icons}>
-            <Search onChange={setSearchValue} dividerSize={16}>
-              <TouchableIcon
-                name={IconNameEnum.EditNew}
-                onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: true })}
-              />
-            </Search>
+            <View style={styles.icons}>
+              <Search onChange={setSearchValue} dividerSize={16}>
+                <TouchableIcon
+                  name={IconNameEnum.EditNew}
+                  onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: true })}
+                />
+              </Search>
+            </View>
           </View>
-        </View>
 
-        {areDetailsLoading && !collectibles.length ? (
-          <View style={styles.loader}>
-            <ActivityIndicator size="large" />
-          </View>
-        ) : (
-          <CollectiblesList collectibles={filteredAssetsList} isShowInfo={isShowCollectibleInfo} />
-        )}
-      </BottomSheet>
-    </>
+          {areDetailsLoading && !collectibles.length ? (
+            <View style={styles.loader}>
+              <ActivityIndicator size="large" />
+            </View>
+          ) : (
+            <CollectiblesList collectibles={filteredAssetsList} isShowInfo={isShowCollectibleInfo} />
+          )}
+        </BottomSheet>
+      ) : null}
+    </View>
   );
 });
 
