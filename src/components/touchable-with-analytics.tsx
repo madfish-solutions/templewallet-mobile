@@ -1,10 +1,11 @@
 import React, { ComponentType, FC, useCallback } from 'react';
-import { GestureResponderEvent, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { GestureResponderEvent, TouchableOpacityProps, TouchableOpacity as RNTouchableOpacity } from 'react-native';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
+/** @deprecated */
 export type OriginalTouchableOpacityComponentType = ComponentType<TouchableOpacityProps>;
 
 interface Props extends TouchableOpacityProps, TestIdProps {
@@ -20,7 +21,7 @@ export const TouchableWithAnalytics: FC<Props> = ({
   shouldTrackShortPress = true,
   onPress,
   onLongPress,
-  Component = TouchableOpacity,
+  Component = RNTouchableOpacity,
   ...restProps
 }) => {
   const { trackEvent } = useAnalytics();

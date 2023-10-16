@@ -1,8 +1,7 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { EmptyFn } from '../../config/general';
 import { useCopiedToastStyles } from './copied-toast.styles';
 
 interface Props {

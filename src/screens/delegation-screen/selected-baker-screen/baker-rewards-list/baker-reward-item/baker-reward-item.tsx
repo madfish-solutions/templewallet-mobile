@@ -1,7 +1,7 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { AvatarImage } from 'src/components/avatar-image/avatar-image';
 import { Divider } from 'src/components/divider/divider';

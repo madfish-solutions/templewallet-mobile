@@ -1,7 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
 import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
@@ -16,7 +15,7 @@ import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
-import { TouchableWithAnalytics } from '../touchable-with-analytics';
+import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from '../touchable-with-analytics';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
@@ -108,7 +107,7 @@ const DropdownComponent = <T extends unknown>({
 
       return (
         <TouchableWithAnalytics
-          Component={TouchableOpacity}
+          Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
           key={index}
           onPress={handlePress}
           testID={DropdownSelectors.option}

@@ -1,7 +1,7 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import QRCode from 'react-native-qrcode-svg';
 import { useDispatch } from 'react-redux';
 

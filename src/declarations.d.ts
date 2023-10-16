@@ -1,6 +1,8 @@
 type nullish = null | undefined;
 
 type EmptyFn = () => void;
+type SyncFn<T, R = void> = (arg: T) => R;
+type AsyncFn<T, R = void> = (arg: T) => Promise<R>;
 
 declare module '*.svg' {
   import React from 'react';

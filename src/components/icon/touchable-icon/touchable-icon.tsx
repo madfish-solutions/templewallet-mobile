@@ -1,9 +1,9 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { GestureResponderEvent } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
-import { EmptyFn, EventFn } from 'src/config/general';
+import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { EventFn } from 'src/config/general';
 import { isAndroid } from 'src/config/system';
 import { formatSize } from 'src/styles/format-size';
 import { generateHitSlop } from 'src/styles/generate-hit-slop';
@@ -27,7 +27,7 @@ export const TouchableIcon: FC<Props> = ({
   onPress
 }) => (
   <TouchableWithAnalytics
-    Component={TouchableOpacity}
+    Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
     style={[TouchableIconStyles.container, { width: size, height: size }, style]}
     disabled={disabled}
     hitSlop={generateHitSlop(formatSize(4))}

@@ -1,10 +1,9 @@
 import React, { FC, memo, useMemo } from 'react';
 
-import { EmptyFn } from '../../../../config/general';
-import { formatCollectibleObjktArtifactUri } from '../../../../utils/image.utils';
-import { isDefined } from '../../../../utils/is-defined';
-import { AudioPlaceholder, AudioPlaceholderTheme } from '../../../audio-placeholder/audio-placeholder';
-import { SimplePlayer } from '../../../simple-player/simple-player';
+import { AudioPlaceholder, AudioPlaceholderTheme } from 'src/components/audio-placeholder/audio-placeholder';
+import { SimplePlayer } from 'src/components/simple-player/simple-player';
+import { formatCollectibleObjktArtifactUri } from 'src/utils/image.utils';
+import { isDefined } from 'src/utils/is-defined';
 
 interface Props {
   artifactUri: string;

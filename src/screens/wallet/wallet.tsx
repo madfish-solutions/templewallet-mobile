@@ -103,9 +103,13 @@ export const Wallet = memo(() => {
             onPress={() => navigate(ScreensEnum.ScanQrCode)}
             testID={WalletSelectors.scanQRButton}
           />
+
           <Divider size={formatSize(24)} />
+
           <NotificationsBell />
+
           <Divider size={formatSize(24)} />
+
           <Settings />
         </View>
 

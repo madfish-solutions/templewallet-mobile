@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';

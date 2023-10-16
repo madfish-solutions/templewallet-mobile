@@ -1,8 +1,8 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import type { EmptyFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useColors } from 'src/styles/use-colors';
@@ -24,7 +24,7 @@ export const ExternalLinkButton: FC<Props> = ({ url, testID, style, onPress }) =
 
   return (
     <TouchableWithAnalytics
-      Component={TouchableOpacity}
+      Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
       style={[styles.container, style]}
       testID={testID}
       onPress={() => {

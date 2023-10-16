@@ -1,11 +1,11 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useCallback, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { ANIMATION_DURATION } from 'src/config/animation';
 import { useAnimationInterpolate } from 'src/hooks/use-animation-interpolate.hook';
 import { useAnimationRef } from 'src/hooks/use-animation-ref.hook';
@@ -34,7 +34,7 @@ export const QuestionAccordion: FC<Props> = ({ question, children, testID, testI
   return (
     <View style={styles.container}>
       <TouchableWithAnalytics
-        Component={TouchableOpacity}
+        Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
         testID={testID}
         testIDProperties={testIDProperties}
         style={styles.switcher}

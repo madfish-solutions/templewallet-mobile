@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import { Animated, StyleProp, View, ViewStyle } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { EventFn } from 'src/config/general';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';

@@ -1,4 +1,5 @@
-import { AccountBaseInterface } from '../../../interfaces/account.interface';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
+
 import { IconNameEnum } from '../../icon/icon-name.enum';
 
 export interface AccountDropdownItemProps {

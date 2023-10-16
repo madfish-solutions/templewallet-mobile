@@ -1,10 +1,10 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
@@ -34,7 +34,7 @@ export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = fo
 
   return (
     <TouchableWithAnalytics
-      Component={TouchableOpacity}
+      Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
       style={[styles.container, style]}
       onPress={handleOnPress}
       testID={testID}

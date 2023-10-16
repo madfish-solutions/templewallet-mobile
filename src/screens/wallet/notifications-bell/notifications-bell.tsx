@@ -1,5 +1,5 @@
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import React, { memo } from 'react';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -12,7 +12,7 @@ import { useColors } from 'src/styles/use-colors';
 import { WalletSelectors } from '../wallet.selectors';
 import { NotificationsBellStyles } from './notifications-bell.styles';
 
-export const NotificationsBell = () => {
+export const NotificationsBell = memo(() => {
   const colors = useColors();
   const { navigate } = useNavigation();
 
@@ -36,4 +36,4 @@ export const NotificationsBell = () => {
       <Icon name={IconNameEnum.Bell} size={formatSize(24)} />
     </TouchableOpacity>
   );
-};
+});
