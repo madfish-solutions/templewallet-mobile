@@ -7,7 +7,7 @@ export interface SignInResponse {
   accessToken: string;
 }
 
-export type OrderPanoramaParam = 'yes' | 'no';
+type OrderPanoramaParam = 'yes' | 'no';
 
 export interface OrderCreationParams {
   positivePrompt: string;
