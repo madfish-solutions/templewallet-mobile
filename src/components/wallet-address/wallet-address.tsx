@@ -14,7 +14,7 @@ import { isString } from 'src/utils/is-string';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text';
-import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from '../touchable-with-analytics';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { WalletAddressSelectors } from './selectors';
 import { useWalletAddressStyles } from './wallet-address.styles';
 
@@ -54,7 +54,7 @@ export const WalletAddress: FC<Props> = ({
     <View style={styles.pkhWrapper}>
       {isShownDomainName && isString(domainName) ? (
         <TouchableWithAnalytics
-          Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
+          Component={TouchableOpacity}
           style={styles.domainNameContainer}
           {...(isAndroid && { disallowInterruption: true })}
           disabled={disabled}

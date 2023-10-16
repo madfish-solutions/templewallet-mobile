@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { ROUTING_FEE_RATIO } from 'src/config/swap';
 import { isSwapChains, Route3Chain } from 'src/interfaces/route3.interface';
 import { useSwapParamsSelector } from 'src/store/swap/swap-selectors';
@@ -103,7 +103,7 @@ export const SwapRoute: FC<Props> = ({ isLbInput, isLbOutput, routingFeeIsTakenF
   return (
     <View>
       <TouchableWithAnalytics
-        Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
+        Component={TouchableOpacity}
         style={styles.title}
         onPress={toggleRoutePress}
         disabled={!Boolean(output)}

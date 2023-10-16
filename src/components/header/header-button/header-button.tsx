@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 
-import { EmptyFn } from '../../../config/general';
 import { TestIdProps } from '../../../interfaces/test-id.props';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TouchableIcon } from '../../icon/touchable-icon/touchable-icon';

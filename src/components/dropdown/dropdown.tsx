@@ -15,7 +15,7 @@ import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
-import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from '../touchable-with-analytics';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
@@ -107,7 +107,7 @@ const DropdownComponent = <T extends unknown>({
 
       return (
         <TouchableWithAnalytics
-          Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
+          Component={TouchableOpacity}
           key={index}
           onPress={handlePress}
           testID={DropdownSelectors.option}

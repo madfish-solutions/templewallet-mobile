@@ -1,9 +1,7 @@
 import React, { FC } from 'react';
-import { GestureResponderEvent } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
-import { EventFn } from 'src/config/general';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { isAndroid } from 'src/config/system';
 import { formatSize } from 'src/styles/format-size';
 import { generateHitSlop } from 'src/styles/generate-hit-slop';
@@ -13,7 +11,7 @@ import { TouchableIconStyles } from './touchable-icon.styles';
 
 interface Props extends IconProps {
   disabled?: boolean;
-  onPress: EmptyFn | EventFn<GestureResponderEvent>;
+  onPress: EmptyFn;
 }
 
 export const TouchableIcon: FC<Props> = ({
@@ -27,7 +25,7 @@ export const TouchableIcon: FC<Props> = ({
   onPress
 }) => (
   <TouchableWithAnalytics
-    Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
+    Component={TouchableOpacity}
     style={[TouchableIconStyles.container, { width: size, height: size }, style]}
     disabled={disabled}
     hitSlop={generateHitSlop(formatSize(4))}

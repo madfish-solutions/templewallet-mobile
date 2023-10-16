@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
-import { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
@@ -15,7 +15,7 @@ import { useSocialButtonStyles } from './social-button.styles';
 interface Props extends TestIdProps {
   iconName: IconNameEnum;
   url: string;
-  onPress?: (event: GestureResponderEvent) => void;
+  onPress?: () => void;
   style?: StyleProp<ViewStyle>;
   color?: string;
   size?: number;
@@ -24,9 +24,9 @@ interface Props extends TestIdProps {
 export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = formatSize(24), testID, onPress }) => {
   const styles = useSocialButtonStyles();
 
-  const handleOnPress = (e: GestureResponderEvent) => {
+  const handleOnPress = () => {
     if (isDefined(onPress)) {
-      return onPress(e);
+      return onPress();
     } else {
       return url ? openUrl(url) : undefined;
     }
@@ -34,7 +34,7 @@ export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = fo
 
   return (
     <TouchableWithAnalytics
-      Component={TouchableOpacity as OriginalTouchableOpacityComponentType}
+      Component={TouchableOpacity}
       style={[styles.container, style]}
       onPress={handleOnPress}
       testID={testID}
