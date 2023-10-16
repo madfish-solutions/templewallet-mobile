@@ -2,18 +2,17 @@ import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import { Divider } from 'src/components/divider/divider';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { isIOS } from 'src/config/system';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { addFavouriteToken, deleteFavouriteToken } from 'src/store/market/market-actions';
+import { useFavouriteTokensIdsSelector, useMarketTokenSlugSelector } from 'src/store/market/market-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { useAccountTokenBySlug } from 'src/utils/assets/hooks';
 
-import { Divider } from '../../../../components/divider/divider';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { EmptyFn } from '../../../../config/general';
-import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
-import { addFavouriteToken, deleteFavouriteToken } from '../../../../store/market/market-actions';
-import { useFavouriteTokensIdsSelector, useMarketTokenSlugSelector } from '../../../../store/market/market-selectors';
-import { useTokenSelector } from '../../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../../styles/format-size';
-import { useColors } from '../../../../styles/use-colors';
 import { HiddenButton } from '../hidden-button/hidden-button';
 import { RightSwipeViewSelectors } from './right-swipe-view.selectors';
 import { useRightSwipeViewStyles } from './right-swipe-view.styles';
@@ -28,7 +27,7 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
   const favouriteTokensIds = useFavouriteTokensIdsSelector();
 
   const marketCoinSlug = useMarketTokenSlugSelector(id);
-  const outputToken = useTokenSelector(marketCoinSlug);
+  const outputToken = useAccountTokenBySlug(marketCoinSlug);
 
   const dispatch = useDispatch();
   const { navigate } = useNavigation();

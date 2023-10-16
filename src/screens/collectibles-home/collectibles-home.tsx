@@ -25,7 +25,7 @@ import { loadTzProfileIfoAction } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { useEnabledAccountCollectibles } from 'src/utils/assets/hooks';
+import { useAvailableAccountCollectibles } from 'src/utils/assets/hooks';
 import { formatImgUri } from 'src/utils/image.utils';
 
 import { CollectiblesList } from './collectibles-list';
@@ -39,7 +39,7 @@ export const CollectiblesHome = memo(() => {
   const dispatch = useDispatch();
 
   const collections = useCreatedCollectionsSelector();
-  const collectibles = useEnabledAccountCollectibles();
+  const collectibles = useAvailableAccountCollectibles(true);
   const accountPkh = useCurrentAccountPkhSelector();
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
   const areDetailsLoading = useCollectibleDetailsLoadingSelector();

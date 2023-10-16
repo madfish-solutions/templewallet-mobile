@@ -6,9 +6,9 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useTokensListSelector } from 'src/store/wallet/wallet-selectors';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
-import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { useAvailableAccountTokens } from 'src/utils/assets/hooks';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
@@ -18,11 +18,8 @@ export const ManageTokens = () => {
 
   const { isTezosNode } = useNetworkInfo();
 
-  const tokensList = useTokensListSelector();
-  const tokensWithoutTkey = useMemo(
-    () => tokensList.filter(token => toTokenSlug(token.address, token.id) !== TEMPLE_TOKEN_SLUG),
-    [tokensList]
-  );
+  const tokensList = useAvailableAccountTokens();
+  const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensWithoutTkey, false, true);
 
   return (

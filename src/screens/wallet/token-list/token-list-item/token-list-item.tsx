@@ -5,7 +5,6 @@ import { AssetValueText } from 'src/components/asset-value-text/asset-value-text
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { TokenContainer } from 'src/components/token-container/token-container';
 import { TokenContainerProps } from 'src/components/token-container/token-container.props';
-import { EmptyFn } from 'src/config/general';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { jsonEqualityFn } from 'src/utils/store.utils';

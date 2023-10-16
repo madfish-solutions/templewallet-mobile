@@ -30,6 +30,7 @@ export interface AccountInterface extends AccountBaseInterface {
   pendingActivities?: ActivityGroup[];
 }
 
+/** @deprecated // BAD PRACTICE */
 export const initialAccount: AccountInterface = {
   name: '',
   type: AccountTypeEnum.HD_ACCOUNT,

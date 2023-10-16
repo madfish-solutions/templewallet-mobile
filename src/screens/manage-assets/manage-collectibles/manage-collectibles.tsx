@@ -6,8 +6,8 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useCollectiblesListSelector } from 'src/store/wallet/wallet-selectors';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+import { useAvailableAccountCollectibles } from 'src/utils/assets/hooks';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
@@ -17,7 +17,7 @@ export const ManageCollectibles = () => {
 
   const { isTezosNode } = useNetworkInfo();
 
-  const collectiblesList = useCollectiblesListSelector();
+  const collectiblesList = useAvailableAccountCollectibles();
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectiblesList);
 
   return (

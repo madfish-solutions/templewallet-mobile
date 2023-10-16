@@ -1,8 +1,10 @@
 import { VisibilityEnum } from '../../enums/visibility.enum';
-import { AccountTokenInterface } from './account-token.interface';
 import { TokenMetadataInterface, emptyTokenMetadata } from './token-metadata.interface';
 
-export type TokenInterface = Omit<AccountTokenInterface, 'slug'> & TokenMetadataInterface;
+export interface TokenInterface extends TokenMetadataInterface {
+  balance: string;
+  visibility: VisibilityEnum;
+}
 
 /** @deprecated // BAD PRACTICE !!! */
 export const emptyToken: TokenInterface = {

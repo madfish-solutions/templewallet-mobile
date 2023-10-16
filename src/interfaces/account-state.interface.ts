@@ -11,7 +11,6 @@ export interface AccountStateInterface {
   removedTokensList: string[];
 }
 
-/** @deprecated // BAD PRACTICE */
 export const initialAccountState: AccountStateInterface = {
   isVisible: true,
   tezosBalance: '0',

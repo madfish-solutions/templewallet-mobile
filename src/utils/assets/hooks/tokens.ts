@@ -9,12 +9,12 @@ import { AccountTokenInterface } from 'src/token/interfaces/account-token.interf
 
 import { UsableAccountAsset } from './utils';
 
-export const useAccountCollectibles = () => {
-  const collectibles = useCurrentAccountStoredAssetsSelector('collectibles');
+export const useAccountTokens = () => {
+  const tokens = useCurrentAccountStoredAssetsSelector('tokens');
 
   return useMemoWithCompare(
     () =>
-      collectibles.map<AccountTokenInterface>(asset => {
+      tokens.map<AccountTokenInterface>(asset => {
         const visibility =
           asset.visibility === VisibilityEnum.InitiallyHidden && Number(asset.balance) > 0
             ? VisibilityEnum.Visible
@@ -25,18 +25,18 @@ export const useAccountCollectibles = () => {
           visibility
         };
       }),
-    [collectibles],
+    [tokens],
     isEqual
   );
 };
 
-export const useAvailableAccountCollectibles = (enabledOnly = false) => {
-  const accountCollectibles = useAccountCollectibles();
+export const useAvailableAccountTokens = (enabledOnly = false) => {
+  const accountTokens = useAccountTokens();
   const allMetadatas = useTokensMetadataSelector();
 
   return useMemo(
     () =>
-      accountCollectibles.reduce<UsableAccountAsset[]>((acc, { slug, balance, visibility }) => {
+      accountTokens.reduce<UsableAccountAsset[]>((acc, { slug, balance, visibility }) => {
         const metadata = allMetadatas[slug]!; // `accountCollectibles` r already filtered for metadata presence
 
         const asset: UsableAccountAsset = {
@@ -52,12 +52,12 @@ export const useAvailableAccountCollectibles = (enabledOnly = false) => {
 
         return acc.concat(asset);
       }, []),
-    [accountCollectibles, allMetadatas, enabledOnly]
+    [accountTokens, allMetadatas, enabledOnly]
   );
 };
 
-export const useCurrentAccountCollectiblesWithPositiveBalance = () => {
-  const collectibles = useCurrentAccountStoredAssetsSelector('collectibles');
+export const useAccountTokenBySlug = (slug: string) => {
+  const accountTokens = useAvailableAccountTokens();
 
-  return useMemo(() => collectibles.filter(c => Number(c.balance) > 0), [collectibles]);
+  return useMemo(() => accountTokens.find(t => t.slug === slug), [accountTokens, slug]);
 };

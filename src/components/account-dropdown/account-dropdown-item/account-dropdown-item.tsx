@@ -13,8 +13,9 @@ import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useCollectiblesListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -35,7 +36,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
   }) => {
     const styles = useAccountDropdownItemStyles();
     const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
-    const collectibles = useCollectiblesListSelector();
+    const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
     const contacts = useContactsSelector();
     const { metadata } = useNetworkInfo();
     const selectedAccount = useSelectedAccountSelector();
