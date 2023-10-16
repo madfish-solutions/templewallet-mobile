@@ -25,10 +25,10 @@ import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
-import { useVisibleAssetListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { useAvailableAccountCollectibles, useAvailableAccountTokens } from 'src/utils/assets/hooks';
 import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isValidAddress } from 'src/utils/tezos.util';
@@ -46,11 +46,14 @@ export const SendModal: FC = () => {
   const { goBack } = useNavigation();
 
   const styles = useSendModalStyles();
-  const assetsList = useVisibleAssetListSelector();
+
+  const tokens = useAvailableAccountTokens(true);
+  const collectibles = useAvailableAccountCollectibles(true);
+  const assets = useMemo(() => tokens.concat(collectibles), [tokens, collectibles]);
   const tezosToken = useTezosTokenOfCurrentAccount();
   const leadingAssets = useMemo(() => [tezosToken], [tezosToken]);
 
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true, leadingAssets);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, true, true, leadingAssets);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
   const tezos = useReadOnlyTezosToolkit();
@@ -60,8 +63,8 @@ export const SendModal: FC = () => {
   const recipient = filteredReceiversList[0]?.data[0];
 
   const inputInitialValue = useMemo(
-    () => assetsList.find(item => tokenEqualityFn(item, initialToken)) ?? tezosToken,
-    [assetsList, initialToken, tezosToken]
+    () => assets.find(item => tokenEqualityFn(item, initialToken)) ?? tezosToken,
+    [assets, initialToken, tezosToken]
   );
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(

@@ -3,28 +3,27 @@ import { useCallback, useMemo } from 'react';
 import { TEZOS_CONTRACT_ADDRESS } from 'src/apis/quipuswap-staking/consts';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
-import { useAssetsListSelector } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { useAvailableAccountCollectibles, useAvailableAccountTokens } from 'src/utils/assets/hooks';
 import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 export const useEarnOpportunityTokens = (earnOpportunity?: EarnOpportunity) => {
   const getExchangeRate = useTokenExchangeRateGetter();
-  const accountAssetsList = useAssetsListSelector();
+  const tokens = useAvailableAccountTokens();
+  const collectibles = useAvailableAccountCollectibles();
+  const assets = useMemo(() => tokens.concat(collectibles), [tokens, collectibles]);
   const tezToken = useTezosTokenOfCurrentAccount();
 
   const convertToken = useCallback(
     (token: EarnOpportunityToken) => {
       const tokenAddress = token.contractAddress === TEZOS_CONTRACT_ADDRESS ? undefined : token.contractAddress;
       const tokenSlug = toTokenSlug(tokenAddress, token.fa2TokenId);
-      const accountAsset =
-        tokenSlug === TEZ_TOKEN_SLUG
-          ? tezToken
-          : accountAssetsList.find(({ address, id }) => toTokenSlug(address, id) === tokenSlug);
+      const accountAsset = tokenSlug === TEZ_TOKEN_SLUG ? tezToken : assets.find(({ slug }) => slug === tokenSlug);
 
       return (
         accountAsset ?? {
@@ -34,7 +33,7 @@ export const useEarnOpportunityTokens = (earnOpportunity?: EarnOpportunity) => {
         }
       );
     },
-    [getExchangeRate, accountAssetsList, tezToken]
+    [getExchangeRate, assets, tezToken]
   );
 
   return useMemo(

@@ -2,14 +2,11 @@ import { isEqual } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
-import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
 import { AccountStateInterface } from 'src/interfaces/account-state.interface';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible } from 'src/utils/tezos.util';
-import { getTokenMetadata } from 'src/utils/token-metadata.utils';
 import { getAccountState, getSelectedAccount } from 'src/utils/wallet-account-state.utils';
 
 import { useSelector } from '../selector';
@@ -17,7 +14,7 @@ import { useTokensMetadataSelector } from '../tokens-metadata/tokens-metadata-se
 
 export const useAccountsListSelector = () => useSelector(({ wallet }) => wallet.accounts);
 
-/** @deprecated // Too heavy */
+/** @deprecated */
 export const useVisibleAccountsListSelector = () =>
   useSelector(
     ({ wallet }) => wallet.accounts.filter(account => getAccountState(wallet, account.publicKeyHash).isVisible),
@@ -59,44 +56,11 @@ export const useRawCurrentAccountSelector = () =>
 export const useRawCurrentAccountStateSelector = (): AccountStateInterface | undefined =>
   useSelector(state => state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash]);
 
-/** @deprecated // Too heavy */
+/** @deprecated */
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
 export const useAccountTzProfile = (publicKeyHash: string) =>
   useSelector(state => state.wallet.accounts.find(a => a.publicKeyHash === publicKeyHash)?.tzProfile);
-
-/** @deprecated // Too heavy !!! */
-export const useAssetsListSelector = (): TokenInterface[] =>
-  useSelector(state => {
-    const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
-    const nodeIsDcp = isDcpNode(state.settings.selectedRpcUrl);
-
-    const tokensList = nodeIsDcp ? selectedAccountState.dcpTokensList : selectedAccountState.tokensList;
-
-    return tokensList
-      .filter(token => selectedAccountState.removedTokensList.indexOf(token.slug) === -1)
-      .map(token => {
-        const visibility =
-          token.visibility === VisibilityEnum.InitiallyHidden && Number(token.balance) > 0
-            ? VisibilityEnum.Visible
-            : token.visibility;
-
-        const metadata = getTokenMetadata(state, token.slug);
-
-        return {
-          ...metadata,
-          visibility,
-          balance: token.balance
-        };
-      });
-  }, jsonEqualityFn);
-
-/** @deprecated // Wrong logic of visibility */
-export const useVisibleAssetListSelector = () => {
-  const tokensList = useAssetsListSelector();
-
-  return useMemo(() => tokensList.filter(({ visibility }) => visibility === VisibilityEnum.Visible), [tokensList]);
-};
 
 export const useAllCurrentAccountAssetsSelector = () =>
   useSelector(
@@ -159,9 +123,7 @@ export const useCurrentAccountStoredAssetsSelector = (type: 'tokens' | 'collecti
 };
 
 export const useCurrentAccountTezosBalance = () =>
-  useSelector(
-    state => state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash]?.tezosBalance ?? '0'
-  );
+  useSelector(({ wallet }) => wallet.accountsStateRecord[wallet.selectedAccountPublicKeyHash]?.tezosBalance ?? '0');
 
 export const useTezosBalanceOfKnownAccountSelector = (publicKeyHash: string) =>
   useSelector(state => {
