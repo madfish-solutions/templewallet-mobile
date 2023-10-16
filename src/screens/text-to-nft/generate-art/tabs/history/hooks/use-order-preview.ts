@@ -24,7 +24,7 @@ export const useOrderPreview = (id: string) => {
     variants: null,
     width: 0,
     height: 0,
-    panorama: OrderPanoramaParam.NO
+    panorama: 'no' as OrderPanoramaParam
   };
 
   const [order, setOrder] = useState<StableDiffusionOrder>(initialOrder);

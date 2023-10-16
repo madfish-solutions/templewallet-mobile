@@ -1,10 +1,9 @@
 import { AccountInterface, AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
+import { CreateNftFormValues } from 'src/screens/text-to-nft/generate-art/tabs/create/create.form';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
-
-import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create/create.form';
 
 export enum ModalsEnum {
   Receive = 'Receive',

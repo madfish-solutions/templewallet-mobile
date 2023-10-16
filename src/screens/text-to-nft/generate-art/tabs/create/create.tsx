@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -37,7 +37,7 @@ import { useCreateNftStyles } from './create.styles';
 
 const gridSize = formatSize(8);
 
-export const Create: FC = () => {
+export const Create = memo(() => {
   const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useCreateNftStyles();
   const { navigate } = useNavigation();
@@ -214,4 +214,4 @@ export const Create: FC = () => {
       }}
     </Formik>
   );
-};
+});

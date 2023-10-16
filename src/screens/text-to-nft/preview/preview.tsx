@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { FC, useMemo, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -24,7 +24,7 @@ import { usePreviewStyles } from './preview.styles';
 const ITEMS_PER_ROW = 4;
 const LOADING_STATE_ORDER_VARIANTS = Array<string>(4).fill('');
 
-export const PreviewScreen: FC = () => {
+export const PreviewScreen = memo(() => {
   const { orderId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Preview>>().params;
   const styles = usePreviewStyles();
 
@@ -96,4 +96,4 @@ export const PreviewScreen: FC = () => {
       </ButtonsFloatingContainer>
     </>
   );
-};
+});

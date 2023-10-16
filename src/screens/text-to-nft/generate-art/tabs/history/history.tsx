@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
 import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -27,7 +27,7 @@ const OFFSET_BETWEEN_ICONS = formatSize(4);
 
 const keyExtractor = (item: StableDiffusionOrder[]) => item.map(({ id }) => id).join('/');
 
-export const History: FC = () => {
+export const History = memo(() => {
   const dispatch = useDispatch();
   const { publicKeyHash } = useSelectedAccountSelector();
   const { navigate } = useNavigation();
@@ -85,4 +85,4 @@ export const History: FC = () => {
       />
     </View>
   );
-};
+});

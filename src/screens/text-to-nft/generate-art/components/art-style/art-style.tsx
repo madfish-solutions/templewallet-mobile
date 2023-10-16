@@ -1,15 +1,14 @@
 import { useField } from 'formik';
-import React, { FC } from 'react';
+import React, { memo } from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
-import { EmptyFn } from '../../../../../config/general';
-import { TestIdProps } from '../../../../../interfaces/test-id.props';
 import { useArtStyles } from './art-style.styles';
 
 interface Props extends TestIdProps {
@@ -20,7 +19,7 @@ interface Props extends TestIdProps {
   style?: StyleProp<ViewStyle>;
 }
 
-export const ArtStyle: FC<Props> = ({ title, width, active = false, onPress, style, testID }) => {
+export const ArtStyle = memo<Props>(({ title, width, active = false, onPress, style, testID }) => {
   const styles = useArtStyles();
 
   const [, , helpers] = useField<string>('artStyle');
@@ -43,4 +42,4 @@ export const ArtStyle: FC<Props> = ({ title, width, active = false, onPress, sty
       <Text style={styles.title}>{title}</Text>
     </TouchableOpacity>
   );
-};
+});
