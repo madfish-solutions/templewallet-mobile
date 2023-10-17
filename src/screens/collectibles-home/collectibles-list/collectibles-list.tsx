@@ -2,6 +2,8 @@ import React, { FC, useCallback, useMemo } from 'react';
 import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
+import { SIDEBAR_MARGINS, TABBAR_MARGINS } from 'src/constants/main-sizes';
+
 import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
 import { useScreenContainerStyles } from '../../../components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from '../../../config/styles';
@@ -19,9 +21,6 @@ interface Props {
 const ITEMS_PER_ROW = 3;
 
 const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
-
-const TABBAR_MARGINS = 32;
-const SIDEBAR_MARGINS = 51;
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const styles = useScreenContainerStyles();

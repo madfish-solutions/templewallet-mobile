@@ -2,6 +2,10 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useState } from 'react';
 import { Text, View } from 'react-native';
 
+import { ConfirmSignSelectors } from 'src/modals/confirm-sign-modal/selectors';
+import { useSignMessage } from 'src/modals/confirm-sign-modal/use-sign-message.hook';
+import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+
 import { AccountDropdownItem } from '../../components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../../components/button/button-large/button-large-secondary/button-large-secondary';
@@ -10,12 +14,10 @@ import { Label } from '../../components/label/label';
 import { ModalButtonsContainer } from '../../components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
 import { TextSegmentControl } from '../../components/segmented-control/text-segment-control/text-segment-control';
-import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { useConfirmSignModalStyles } from './confirm-sign-modal.styles';
-import { useSignMessage } from './use-sign-message.hook';
 
 const PAYLOAD_PREVIEW_TYPE_INDEX = 0;
 
@@ -61,11 +63,22 @@ export const ConfirmSignModal: FC = () => {
       </ScreenContainer>
 
       <ModalButtonsContainer>
-        <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={goBack} />
+        <ButtonLargeSecondary
+          title="Cancel"
+          disabled={isLoading}
+          onPress={goBack}
+          testID={ConfirmSignSelectors.cancelButton}
+        />
 
         <Divider size={formatSize(16)} />
 
-        <ButtonLargePrimary title="Sign" disabled={isLoading} onPress={signMessage} />
+        <ButtonLargePrimary
+          title="Sign"
+          disabled={isLoading}
+          isLoading={isLoading}
+          onPress={signMessage}
+          testID={ConfirmSignSelectors.signButton}
+        />
       </ModalButtonsContainer>
     </>
   );

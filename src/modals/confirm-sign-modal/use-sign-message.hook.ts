@@ -1,23 +1,30 @@
 import { packDataBytes } from '@taquito/michel-codec';
-import { delay } from 'lodash-es';
 import { useEffect, useMemo, useState } from 'react';
-import { EMPTY, Subject, catchError, map, switchMap, tap } from 'rxjs';
+import { useDispatch } from 'react-redux';
+import { EMPTY, Subject, catchError, from, map, switchMap, tap } from 'rxjs';
 
-import { fetchStableDiffusionSignIn } from '../../apis/stable-diffusion';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create-nft/create-nft.form';
-import { Shelter } from '../../shelter/shelter';
-import { useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
-import { showErrorToast, showSuccessToast } from '../../toast/toast.utils';
-import { isString } from '../../utils/is-string';
+import {
+  createStableDiffusionOrder,
+  getStableDiffusionAccessToken,
+  handleStableDiffusionError
+} from 'src/apis/stable-diffusion';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { CreateNftFormValues } from 'src/screens/text-to-nft/generate-art/tabs/create/create.form';
+import { Shelter } from 'src/shelter/shelter';
+import { setAccessTokenAction } from 'src/store/text-to-nft/text-to-nft-actions';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
 
 const timestamp = new Date().toISOString();
 const message = `Tezos Signed Message: To authenticate on Temple NFT service and verify that I am the owner of the connected wallet, I am signing this message ${timestamp}.`;
 const messageBytes = packDataBytes({ string: message }).bytes;
 
 export const useSignMessage = (formValues: CreateNftFormValues) => {
-  const { goBack, navigate } = useNavigation();
+  const dispatch = useDispatch();
+  const { navigate } = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,7 +47,6 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
             })
           )
         ),
-        tap(() => setIsLoading(false)),
         catchError(err => {
           setIsLoading(false);
 
@@ -58,16 +64,30 @@ export const useSignMessage = (formValues: CreateNftFormValues) => {
 
   useEffect(() => {
     if (isString(signature)) {
-      fetchStableDiffusionSignIn({
-        timestamp,
-        pk: account.publicKey,
-        sig: signature
-      }).then(accessToken => {
-        if (isString(accessToken)) {
-          delay(() => navigate(ScreensEnum.Preview, { formValues, accessToken }), 500);
-          goBack();
-        }
-      });
+      const subscription = from(getStableDiffusionAccessToken({ timestamp, pk: account.publicKey, sig: signature }))
+        .pipe(
+          switchMap(accessToken =>
+            from(createStableDiffusionOrder(accessToken, formValues)).pipe(
+              map(order => order),
+              tap(() => {
+                dispatch(setAccessTokenAction({ accountPkh: account.publicKeyHash, accessToken }));
+                setIsLoading(false);
+              })
+            )
+          ),
+          catchError(e => {
+            handleStableDiffusionError(e);
+
+            return EMPTY;
+          })
+        )
+        .subscribe(order => {
+          if (isDefined(order)) {
+            navigate(ScreensEnum.Preview, { orderId: order.id });
+          }
+        });
+
+      return () => subscription.unsubscribe();
     }
   }, [signature]);
 

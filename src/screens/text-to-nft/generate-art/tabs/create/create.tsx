@@ -1,9 +1,14 @@
 import { BigNumber } from 'bignumber.js';
 import { Formik } from 'formik';
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
+import {
+  createStableDiffusionOrder,
+  getStableDiffusionUserQuota,
+  handleStableDiffusionError
+} from 'src/apis/stable-diffusion';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Checkbox } from 'src/components/checkbox/checkbox';
@@ -12,10 +17,13 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccessTokenSelector } from 'src/store/text-to-nft/text-to-nft-selectors';
+import { useSelectedAccountSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
+import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -23,18 +31,21 @@ import { ArtStyle } from '../../components/art-style/art-style';
 import { EnterPrompt } from '../../components/enter-prompt/enter-prompt';
 import { GenerateArtSelectors } from '../../selectors';
 import { generatingFeeAlert, removeFromImageAlert } from './alerts';
-import { ART_STYLE_ITEMS, INSUFFICIENT_TEZOS_BALANCE_ERROR } from './constants';
-import { CreateNftFormValues, createNftInitialValues, createNftValidationSchema } from './create-nft.form';
-import { useCreateNftStyles } from './create-nft.styles';
+import { ART_STYLE_ITEMS, DAILY_GENERATION_LIMIT_REACHED_ERROR, INSUFFICIENT_TEZOS_BALANCE_ERROR } from './constants';
+import { CreateNftFormValues, createNftInitialValues, createNftValidationSchema } from './create.form';
+import { useCreateNftStyles } from './create.styles';
 
 const gridSize = formatSize(8);
 
-export const CreateNft: FC = () => {
+export const Create = memo(() => {
+  const { publicKeyHash } = useSelectedAccountSelector();
   const styles = useCreateNftStyles();
   const { navigate } = useNavigation();
 
+  const accessToken = useAccessTokenSelector(publicKeyHash);
+
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
-  const [activeArtStyleId, setActiveArtStyleId] = useState(1);
+  const [activeArtStyleId, setActiveArtStyleId] = useState<number>();
   const [layoutWidth, setLayoutWidth] = useState(1);
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -50,16 +61,30 @@ export const CreateNft: FC = () => {
     [tezosToken.balance]
   );
 
-  const handleSubmit = (value: CreateNftFormValues) => {
+  const handleSubmit = async (value: CreateNftFormValues) => {
     if (insufficientTezosBalance) {
       return showErrorToast({
         description: INSUFFICIENT_TEZOS_BALANCE_ERROR
       });
     }
 
-    // TODO: Add error toast to limit 100 nft
+    if (isDefined(accessToken)) {
+      try {
+        const quota = await getStableDiffusionUserQuota(accessToken);
+        if (quota === 0) {
+          return showErrorToast({
+            description: DAILY_GENERATION_LIMIT_REACHED_ERROR
+          });
+        }
 
-    navigate(ModalsEnum.ConfirmSign, value);
+        const order = await createStableDiffusionOrder(accessToken, value);
+        navigate(ScreensEnum.Preview, { orderId: order.id });
+      } catch (e) {
+        handleStableDiffusionError(e);
+      }
+    } else {
+      navigate(ModalsEnum.ConfirmSign, value);
+    }
   };
 
   return (
@@ -121,13 +146,12 @@ export const CreateNft: FC = () => {
                 <Text style={styles.title}>Art Style</Text>
 
                 <View style={styles.artStyles}>
-                  {ART_STYLE_ITEMS.map(({ id, title, disabled }) => (
+                  {ART_STYLE_ITEMS.map(({ id, title }) => (
                     <ArtStyle
                       key={id}
                       title={title}
                       width={elementWidth}
                       active={activeArtStyleId === id}
-                      disabled={disabled}
                       onPress={() => setActiveArtStyleId(id)}
                       style={styles.artStyle}
                       testID={`${GenerateArtSelectors.pressArtStyle} ${title}`}
@@ -190,4 +214,4 @@ export const CreateNft: FC = () => {
       }}
     </Formik>
   );
-};
+});

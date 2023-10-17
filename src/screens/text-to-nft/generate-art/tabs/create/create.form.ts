@@ -12,7 +12,7 @@ enum ArtStyleEnum {
 export interface CreateNftFormValues {
   positivePrompt: string;
   negativePrompt?: string;
-  artStyle: ArtStyleEnum;
+  artStyle?: ArtStyleEnum;
 }
 
 export const createNftValidationSchema: SchemaOf<Omit<CreateNftFormValues, 'artStyle'>> = object().shape({
@@ -22,6 +22,5 @@ export const createNftValidationSchema: SchemaOf<Omit<CreateNftFormValues, 'artS
 
 export const createNftInitialValues: CreateNftFormValues = {
   positivePrompt: '',
-  negativePrompt: '',
-  artStyle: ArtStyleEnum.PopArt
+  negativePrompt: ''
 };

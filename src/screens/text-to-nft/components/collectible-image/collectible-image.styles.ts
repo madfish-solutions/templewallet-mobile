@@ -7,13 +7,13 @@ export const useCollectibleHistoryIconStyles = createUseStyles(({ colors }) => (
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.blue10,
-    borderRadius: formatSize(4)
+    borderRadius: formatSize(4),
+    overflow: 'hidden'
   },
   image: {
     width: '100%',
     height: '100%',
     backgroundColor: 'transparent',
-    borderRadius: formatSize(4),
     justifyContent: 'center',
     alignItems: 'center'
   },

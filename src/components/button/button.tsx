@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { StyleProp, Text, View, ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleProp, Text, View, ViewStyle } from 'react-native';
 
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
@@ -35,6 +35,8 @@ export const Button: FC<Props> = ({
   marginLeft,
 
   onPress,
+
+  isLoading = false,
 
   testID,
   testIDProperties
@@ -84,7 +86,11 @@ export const Button: FC<Props> = ({
           />
         )}
 
-        <Text style={[titleStyle, { color: titleColor }, textStyle]}>{title}</Text>
+        {isLoading ? (
+          <ActivityIndicator size="small" />
+        ) : (
+          <Text style={[titleStyle, { color: titleColor }, textStyle]}>{title}</Text>
+        )}
       </TouchableOpacity>
     </View>
   );

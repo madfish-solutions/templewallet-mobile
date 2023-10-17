@@ -3,9 +3,18 @@ export interface SignInParams {
   timestamp: string;
   sig: string;
 }
-
 export interface SignInResponse {
   accessToken: string;
+}
+
+type OrderPanoramaParam = 'yes' | 'no';
+
+export interface OrderCreationParams {
+  positivePrompt: string;
+  negativePrompt?: string;
+  width?: number;
+  height?: number;
+  panorama?: OrderPanoramaParam;
 }
 
 export enum OrderStatus {
@@ -13,8 +22,6 @@ export enum OrderStatus {
   Ready = 'ready',
   Failed = 'failed'
 }
-
-type PanoramaUnionType = 'yes' | 'no';
 
 /**
  * @param id - uuid;
@@ -32,5 +39,5 @@ export interface StableDiffusionOrder {
   variants: string[] | null;
   width: number;
   height: number;
-  panorama: PanoramaUnionType;
+  panorama: OrderPanoramaParam;
 }

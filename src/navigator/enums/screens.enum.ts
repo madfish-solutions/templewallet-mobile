@@ -1,7 +1,5 @@
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
-import { CreateNftFormValues } from '../../screens/text-to-nft/generate-art/tabs/create-nft/create-nft.form';
-
 export enum ScreensEnum {
   Welcome = 'Welcome',
   ImportAccount = 'ImportAccount',
@@ -103,7 +101,7 @@ export type ScreensParamList = {
 
   /** Text to NFT stack **/
   [ScreensEnum.GenerateArt]: undefined;
-  [ScreensEnum.Preview]: { formValues: CreateNftFormValues; accessToken: string };
+  [ScreensEnum.Preview]: { orderId: string };
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;
@@ -141,6 +139,6 @@ export const walletStackScreens = [
   ScreensEnum.Blank
 ];
 export const nftStackScreens = [ScreensEnum.CollectiblesHome];
-export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.GenerateArt];
+export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.GenerateArt, ScreensEnum.Preview];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];

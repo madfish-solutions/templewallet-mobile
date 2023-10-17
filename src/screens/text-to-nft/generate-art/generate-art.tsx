@@ -1,13 +1,16 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useMemo, useState } from 'react';
 import { View } from 'react-native';
 
 import { Banner } from 'src/components/banner/banner';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { History } from 'src/screens/text-to-nft/generate-art/tabs/history/history';
+import { useAccessTokenSelector } from 'src/store/text-to-nft/text-to-nft-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { isDefined } from 'src/utils/is-defined';
 
 import { useGenerateArtStyles } from './generate-art.styles';
 import { GenerateArtSelectors } from './selectors';
-import { CreateNft } from './tabs/create-nft/create-nft';
+import { Create } from './tabs/create/create';
 
 const tabs = ['Create', 'History'];
 const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
@@ -15,8 +18,13 @@ const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
 export const GenerateArtScreen: FC = () => {
   const styles = useGenerateArtStyles();
 
+  const { publicKeyHash } = useSelectedAccountSelector();
+  const accessToken = useAccessTokenSelector(publicKeyHash);
+
   const [tabIndex, setTabIndex] = useState(0);
   const isCreateNftTabSelected = tabIndex === 0;
+
+  const disabledTabSwitcherIndices = useMemo(() => (isDefined(accessToken) ? [] : [1]), [accessToken]);
 
   return (
     <>
@@ -30,6 +38,7 @@ export const GenerateArtScreen: FC = () => {
         <TextSegmentControl
           selectedIndex={tabIndex}
           values={tabs}
+          disabledValuesIndices={disabledTabSwitcherIndices}
           onChange={setTabIndex}
           optionAnalyticsPropertiesFn={tabAnalyticsPropertiesFn}
           style={styles.marginBottom}
@@ -37,7 +46,7 @@ export const GenerateArtScreen: FC = () => {
         />
       </View>
 
-      {isCreateNftTabSelected ? <CreateNft /> : <History />}
+      {isCreateNftTabSelected ? <Create /> : <History />}
     </>
   );
 };
