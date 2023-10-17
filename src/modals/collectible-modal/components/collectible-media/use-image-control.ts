@@ -8,20 +8,16 @@ export const COLLECTIBLE_FINAL_FALLBACK = 'FINAL_FALLBACK';
 
 export const useCollectibleImageControl = (
   assetSlug: string,
-  artifactUri: string | undefined,
-  displayUri: string | undefined
+  artifactUri?: string,
+  displayUri?: string,
+  thumbnailUri?: string
 ) => {
   const [isAnimatedRenderedOnce, setIsAnimatedRenderedOnce] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const imageFallbackURLs = useMemo(
-    () => buildCollectibleImagesStack(assetSlug, artifactUri, displayUri, true).filter(isTruthy),
-    // [
-    //   artifactUri && formatCollectibleObjktArtifactUri(artifactUri),
-    //   formatCollectibleObjktMediumUri(assetSlug),
-    //   formatImgUri(artifactUri, 'medium')
-    // ].filter(isTruthy),
-    [assetSlug, artifactUri, displayUri]
+    () => buildCollectibleImagesStack(assetSlug, { artifactUri, displayUri, thumbnailUri }, true).filter(isTruthy),
+    [assetSlug, artifactUri, displayUri, thumbnailUri]
   );
 
   const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);

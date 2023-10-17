@@ -1,11 +1,12 @@
 import 'react-native-url-polyfill/auto';
 
+import { AssetMediaURIs } from './assets/types';
 import { isString } from './is-string';
 
 const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
 const IPFS_GATE = 'https://cloudflare-ipfs.com/ipfs';
-const MEDIA_HOST = 'https://static.tcinfra.net';
+const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
 type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
 type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
@@ -14,8 +15,7 @@ const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
 export const buildCollectibleImagesStack = (
   slug: string,
-  artifactUri?: string,
-  displayUri?: string,
+  { artifactUri, displayUri, thumbnailUri }: AssetMediaURIs,
   fullView = false
 ) => {
   const [address, id] = slug.split('_');
@@ -34,7 +34,7 @@ export const buildCollectibleImagesStack = (
         ...dataUriStack,
         buildObjktMediaURI(artifactUri, 'display'),
         buildObjktMediaURI(displayUri, 'display'),
-        // buildObjktMediaURI(thumbnailUri, 'display')
+        buildObjktMediaURI(thumbnailUri, 'display'),
         buildIpfsMediaURI(displayUri, 'raw'),
         buildIpfsMediaURI(displayUri, 'large'),
         buildIpfsMediaURI(displayUri, 'medium'),
@@ -49,11 +49,11 @@ export const buildCollectibleImagesStack = (
         ...dataUriStack,
         buildObjktMediaURI(artifactUri, 'thumb288'),
         buildObjktMediaURI(displayUri, 'thumb288'),
-        // buildObjktMediaURI(thumbnailUri, 'thumb288'),
+        buildObjktMediaURI(thumbnailUri, 'thumb288'),
         // Some image of video asset (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) only available through this option:
         buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288'),
-        // buildIpfsMediaURI(thumbnailUri, 'medium'),
-        // buildIpfsMediaURI(thumbnailUri, 'small'),
+        buildIpfsMediaURI(thumbnailUri, 'medium'),
+        buildIpfsMediaURI(thumbnailUri, 'small'),
         buildIpfsMediaURI(displayUri, 'medium'),
         buildIpfsMediaURI(displayUri, 'small'),
         buildIpfsMediaURI(artifactUri, 'medium'),
@@ -72,7 +72,7 @@ const getIpfsItemInfo = (uri: string) => {
   return {
     id,
     /** With leading `?` */
-    search: search && `?${search}`
+    search: search ? `?${search}` : ''
   };
 };
 
@@ -105,12 +105,12 @@ const buildIpfsMediaURI = (uri?: string, size: TcInfraMediaSize = DEFAULT_MEDIA_
 
   if (ipfsInfo) {
     return useMediaHost
-      ? `${MEDIA_HOST}/media/${size}/ipfs/${ipfsInfo.id}${ipfsInfo.search}`
+      ? `${MEDIA_HOST}/${size}/ipfs/${ipfsInfo.id}${ipfsInfo.search}`
       : `${IPFS_GATE}/${ipfsInfo.id}${ipfsInfo.search}`;
   }
 
   if (useMediaHost && uri.startsWith('http')) {
-    return `${MEDIA_HOST}/media/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
+    return `${MEDIA_HOST}/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
   }
 
   return;

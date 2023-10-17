@@ -6,13 +6,15 @@ import { isTruthy } from 'src/utils/is-truthy';
 
 export const useCollectibleImagesStack = (
   assetSlug: string,
-  artifactUri: string | undefined,
-  displayUri: string | undefined,
-  isFullView: boolean
+  artifactUri?: string,
+  displayUri?: string,
+  thumbnailUri?: string,
+  isFullView?: boolean
 ) => {
   const sourcesStack = useMemo(
-    () => buildCollectibleImagesStack(assetSlug, artifactUri, displayUri, isFullView).filter(isTruthy),
-    [assetSlug, artifactUri, displayUri, isFullView]
+    () =>
+      buildCollectibleImagesStack(assetSlug, { artifactUri, displayUri, thumbnailUri }, isFullView).filter(isTruthy),
+    [assetSlug, artifactUri, displayUri, thumbnailUri, isFullView]
   );
 
   const emptyStack = sourcesStack.length < 1;

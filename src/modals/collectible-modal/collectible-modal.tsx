@@ -258,6 +258,7 @@ export const CollectibleModal = memo(() => {
             slug={slug}
             artifactUri={artifactUri}
             displayUri={displayUri}
+            thumbnailUri={thumbnailUri}
             mime={details?.mime || ''}
             size={imageSize}
             areDetailsLoading={areDetailsLoading && details === undefined}

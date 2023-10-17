@@ -245,7 +245,14 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
             <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
-              <CollectibleImage isFullView={true} slug={slug} artifactUri={item.artifactUri} size={imageSize} />
+              <CollectibleImage
+                isFullView={true}
+                slug={slug}
+                artifactUri={item.artifactUri}
+                displayUri={item.displayUri}
+                thumbnailUri={item.thumbnailUri}
+                size={imageSize}
+              />
             </View>
           </TouchableOpacity>
 

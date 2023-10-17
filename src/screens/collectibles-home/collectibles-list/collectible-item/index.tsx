@@ -64,9 +64,9 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
         <CollectibleItemImage
           slug={slug}
           size={size}
-          artifactUri={collectible.artifactUri}
-          // displayUri={collectible.displayUri ?? details?.displayUri}
-          // mime={details?.mime}
+          artifactUri={collectible.artifactUri ?? details?.artifactUri}
+          displayUri={collectible.displayUri ?? details?.displayUri}
+          thumbnailUri={collectible.thumbnailUri ?? details?.thumbnailUri}
           areDetailsLoading={areDetailsLoading && details === undefined}
         />
 

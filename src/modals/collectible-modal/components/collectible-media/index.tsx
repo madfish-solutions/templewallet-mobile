@@ -7,16 +7,15 @@ import { AudioPlaceholderTheme } from 'src/components/audio-placeholder';
 import { BrokenImage } from 'src/components/broken-image';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
+import { AssetMediaURIs } from 'src/utils/assets/types';
 import { formatCollectibleObjktArtifactUri, isImgUriDataUri } from 'src/utils/image.utils';
 
 import { AudioPlayer } from './audio-player';
 import { useCollectibleIconStyles } from './styles';
 import { COLLECTIBLE_FINAL_FALLBACK, useCollectibleImageControl } from './use-image-control';
 
-interface Props {
+interface Props extends AssetMediaURIs {
   slug: string;
-  artifactUri?: string;
-  displayUri?: string;
   size: number;
   mime?: string;
   audioPlaceholderTheme?: AudioPlaceholderTheme;
@@ -24,7 +23,7 @@ interface Props {
 }
 
 export const CollectibleMedia = memo<Props>(
-  ({ slug, artifactUri, displayUri, mime, size, audioPlaceholderTheme, setScrollEnabled }) => {
+  ({ slug, artifactUri, displayUri, thumbnailUri, mime, size, audioPlaceholderTheme, setScrollEnabled }) => {
     const styles = useCollectibleIconStyles();
 
     const {
@@ -35,7 +34,7 @@ export const CollectibleMedia = memo<Props>(
       handleAudioError,
       handleError,
       handleLoadEnd
-    } = useCollectibleImageControl(slug, artifactUri, displayUri);
+    } = useCollectibleImageControl(slug, artifactUri, displayUri, thumbnailUri);
 
     const finalImage = useMemo(() => {
       if (currentFallback === COLLECTIBLE_FINAL_FALLBACK) {
