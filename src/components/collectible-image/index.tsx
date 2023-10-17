@@ -2,8 +2,10 @@ import React, { memo } from 'react';
 import FastImage from 'react-native-fast-image';
 
 import { AssetMediaURIs } from 'src/utils/assets/types';
+import { isImgUriDataUri } from 'src/utils/image.utils';
 
 import { ActivityIndicator } from '../activity-indicator';
+import { AnimatedSvg } from '../animated-svg';
 import { BrokenImage } from '../broken-image';
 import { useCollectibleImageStyles } from './styles';
 import { useCollectibleImagesStack } from './use-images-stack';
@@ -30,11 +32,15 @@ export const CollectibleImage = memo<Props>(
       return <BrokenImage isBigIcon={isFullView} style={styles.brokenImage} />;
     }
 
+    if (src && isImgUriDataUri(src)) {
+      return <AnimatedSvg style={styles.image} dataUri={src} onError={onFail} onLoadEnd={onSuccess} />;
+    }
+
     return (
       <>
         <FastImage
           style={[styles.image, { height: size, width: size }]}
-          source={{ uri: src }}
+          source={{ uri: undefined }}
           resizeMode="contain"
           onError={onFail}
           onLoad={onSuccess}

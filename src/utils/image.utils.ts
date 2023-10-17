@@ -69,12 +69,24 @@ const getIpfsItemInfo = (uri: string) => {
 
   const [id, search] = uri.slice(IPFS_PROTOCOL.length).split('?');
 
+  if (id === INVALID_IPFS_ID) {
+    return null;
+  }
+
   return {
     id,
     /** With leading `?` */
     search: search ? `?${search}` : ''
   };
 };
+
+/** Black circle in `thumbnailUri`
+ * See:
+ * - KT1M2JnD1wsg7w2B4UXJXtKQPuDUpU2L7cJH_79
+ * - KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_19484
+ * - KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_3312
+ */
+const INVALID_IPFS_ID = 'QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc';
 
 const buildObjktMediaURI = (uri: string | undefined, tail: ObjktMediaTail) => {
   if (!uri) {

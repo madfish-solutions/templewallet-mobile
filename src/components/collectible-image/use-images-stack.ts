@@ -32,7 +32,7 @@ export const useCollectibleImagesStack = (
 
   const [index, setIndex] = useState(emptyStack ? -1 : 0);
 
-  const src = sourcesStack[index];
+  const src = sourcesStack[index] as string | undefined;
 
   const onSuccess = useCallback(() => void setIsLoading(false), []);
 

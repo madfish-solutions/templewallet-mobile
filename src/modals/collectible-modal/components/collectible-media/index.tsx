@@ -2,7 +2,7 @@ import React, { useMemo, memo } from 'react';
 import FastImage from 'react-native-fast-image';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
-import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
+import { AnimatedSvg } from 'src/components/animated-svg';
 import { AudioPlaceholderTheme } from 'src/components/audio-placeholder';
 import { BrokenImage } from 'src/components/broken-image';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';

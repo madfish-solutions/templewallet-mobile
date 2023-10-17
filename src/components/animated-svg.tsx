@@ -1,8 +1,7 @@
-import React, { FC, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { emptyFn } from 'src/config/general';
 import { fixSvgXml, getXmlFromSvgDataUriInUtf8Encoding } from 'src/utils/image.utils';
 
 const getHTML = (svgContent: string) =>
@@ -45,8 +44,8 @@ interface AnimatedSvgProps {
   onLoadEnd?: () => void;
 }
 
-export const AnimatedSvg: FC<AnimatedSvgProps> = ({ dataUri, style, onError = emptyFn, onLoadEnd = emptyFn }) => {
+export const AnimatedSvg = memo<AnimatedSvgProps>(({ dataUri, style, onError, onLoadEnd }) => {
   const source = useMemo(() => ({ html: getHTML(fixSvgXml(getXmlFromSvgDataUriInUtf8Encoding(dataUri))) }), [dataUri]);
 
   return <WebView source={source} style={style} onError={onError} onLoadEnd={onLoadEnd} />;
-};
+});
