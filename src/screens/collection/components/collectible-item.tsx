@@ -4,7 +4,7 @@ import { TouchableOpacity, View, Text, Share } from 'react-native';
 import useSWR from 'swr';
 
 import { fetchCollectibleExtraDetails, objktCurrencies } from 'src/apis/objkt';
-import { StaticCollectibleImage } from 'src/components/collectible-icon/collectible-icon';
+import { CollectibleImage } from 'src/components/collectible-image';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -23,7 +23,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
-import { formatImgUri, ImageResolutionEnum } from 'src/utils/image.utils';
+import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams, buildSellCollectibleParams } from 'src/utils/objkt';
@@ -209,7 +209,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
       const dynamicLink = await getTempleDynamicLink(`/nft?jsonData=${urlEncodedData}`, {
         title: item.name,
         descriptionText: item.description,
-        imageUrl: isDefined(item.thumbnailUri) ? formatImgUri(item.thumbnailUri, ImageResolutionEnum.MEDIUM) : undefined
+        imageUrl: isDefined(item.thumbnailUri) ? formatImgUri(item.thumbnailUri, 'medium') : undefined
       });
 
       await Share.share({
@@ -245,7 +245,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
             <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
-              <StaticCollectibleImage isBigIcon={true} slug={slug} artifactUri={item.artifactUri} size={imageSize} />
+              <CollectibleImage isFullView={true} slug={slug} artifactUri={item.artifactUri} size={imageSize} />
             </View>
           </TouchableOpacity>
 

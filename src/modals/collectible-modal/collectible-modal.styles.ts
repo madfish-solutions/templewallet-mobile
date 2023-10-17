@@ -3,11 +3,6 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useCollectibleModalStyles = createUseStyles(({ colors, typography }) => ({
   imageWrap: {
-    backgroundColor: colors.blue10
-  },
-  imageFallback: {
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: colors.blue10,
     borderRadius: formatSize(4)
   },

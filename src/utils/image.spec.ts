@@ -16,6 +16,7 @@ describe('image utils', () => {
       expect(formatImgUri(mockIpfsUri)).toEqual(mockHttpsUri);
     });
   });
+
   describe('is image svg', () => {
     it('should return true for img address with .svg', () => {
       expect(isImgUriSvg('https://facebook.com/favicon.svg')).toEqual(true);
@@ -24,6 +25,7 @@ describe('image utils', () => {
       expect(isImgUriSvg('https://facebook.com/favicon.png')).toEqual(false);
     });
   });
+
   describe('formatCollectibleObjktMediumUri', () => {
     it('should convert asset KT and id to objkt.com URL for that asset', () => {
       const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 464017 };

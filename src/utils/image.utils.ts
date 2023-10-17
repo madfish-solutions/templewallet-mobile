@@ -1,31 +1,123 @@
-import { isString } from './is-string';
 import 'react-native-url-polyfill/auto';
 
-const IPFS_PROTOCOL = 'ipfs:';
-const OBJKT_ORIGIN = 'https://assets.objkt.media/file';
-const OBJKT_RESIZE_3 = 'assets-003';
+import { isString } from './is-string';
 
+const IPFS_PROTOCOL = 'ipfs://';
+const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
 const IPFS_GATE = 'https://cloudflare-ipfs.com/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net';
 
-export enum ImageResolutionEnum {
-  SMALL = 'small',
-  MEDIUM = 'medium'
-}
+type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
+type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
-export const formatImgUri = (origin = '', resolution = ImageResolutionEnum.SMALL, shouldUseMediaHost = true) => {
-  if (origin.startsWith('ipfs://')) {
-    const ipfsId = origin.substring(7);
+const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
-    return shouldUseMediaHost ? `${MEDIA_HOST}/media/${resolution}/ipfs/${ipfsId}` : `${IPFS_GATE}/${ipfsId}`;
-  }
+export const buildCollectibleImagesStack = (
+  slug: string,
+  artifactUri?: string,
+  displayUri?: string,
+  fullView = false
+) => {
+  const [address, id] = slug.split('_');
 
-  if (origin.startsWith('http') && shouldUseMediaHost) {
-    return `${MEDIA_HOST}/media/${resolution}/web/${origin.replace(/^https?:\/\//, '')}`;
-  }
+  const dataUriStack = [
+    artifactUri?.startsWith('data:image/') ? artifactUri : undefined,
+    displayUri?.startsWith('data:image/') ? displayUri : undefined
+  ];
+  const httpStack = [
+    artifactUri?.startsWith('http') ? artifactUri : undefined,
+    displayUri?.startsWith('http') ? displayUri : undefined
+  ];
 
-  return origin;
+  return fullView
+    ? [
+        ...dataUriStack,
+        buildObjktMediaURI(artifactUri, 'display'),
+        buildObjktMediaURI(displayUri, 'display'),
+        // buildObjktMediaURI(thumbnailUri, 'display')
+        buildIpfsMediaURI(displayUri, 'raw'),
+        buildIpfsMediaURI(displayUri, 'large'),
+        buildIpfsMediaURI(displayUri, 'medium'),
+        buildIpfsMediaURI(displayUri, 'small'),
+        buildIpfsMediaURI(artifactUri, 'raw'),
+        buildIpfsMediaURI(artifactUri, 'large'),
+        buildIpfsMediaURI(artifactUri, 'medium'),
+        buildIpfsMediaURI(artifactUri, 'small'),
+        ...httpStack
+      ]
+    : [
+        ...dataUriStack,
+        buildObjktMediaURI(artifactUri, 'thumb288'),
+        buildObjktMediaURI(displayUri, 'thumb288'),
+        // buildObjktMediaURI(thumbnailUri, 'thumb288'),
+        // Some image of video asset (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) only available through this option:
+        buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288'),
+        // buildIpfsMediaURI(thumbnailUri, 'medium'),
+        // buildIpfsMediaURI(thumbnailUri, 'small'),
+        buildIpfsMediaURI(displayUri, 'medium'),
+        buildIpfsMediaURI(displayUri, 'small'),
+        buildIpfsMediaURI(artifactUri, 'medium'),
+        buildIpfsMediaURI(artifactUri, 'small'),
+        ...httpStack
+      ];
 };
+
+const getIpfsItemInfo = (uri: string) => {
+  if (!uri.startsWith(IPFS_PROTOCOL)) {
+    return null;
+  }
+
+  const [id, search] = uri.slice(IPFS_PROTOCOL.length).split('?');
+
+  return {
+    id,
+    /** With leading `?` */
+    search: search && `?${search}`
+  };
+};
+
+const buildObjktMediaURI = (uri: string | undefined, tail: ObjktMediaTail) => {
+  if (!uri) {
+    return;
+  }
+
+  const ipfsInfo = getIpfsItemInfo(uri);
+  if (!ipfsInfo) {
+    return;
+  }
+
+  let result = buildObjktMediaUriForItemPath(ipfsInfo.id, tail);
+  if (ipfsInfo.search) {
+    result += `/index.html${ipfsInfo.search}`;
+  }
+
+  return result;
+};
+
+const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
+
+const buildIpfsMediaURI = (uri?: string, size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) => {
+  if (!uri) {
+    return;
+  }
+
+  const ipfsInfo = getIpfsItemInfo(uri);
+
+  if (ipfsInfo) {
+    return useMediaHost
+      ? `${MEDIA_HOST}/media/${size}/ipfs/${ipfsInfo.id}${ipfsInfo.search}`
+      : `${IPFS_GATE}/${ipfsInfo.id}${ipfsInfo.search}`;
+  }
+
+  if (useMediaHost && uri.startsWith('http')) {
+    return `${MEDIA_HOST}/media/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
+  }
+
+  return;
+};
+
+export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) =>
+  buildIpfsMediaURI(uri, size, useMediaHost) ?? uri;
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 
@@ -62,13 +154,7 @@ export const fixSvgXml = (xml: string) => xml.replace(/(\d*\.?\d+)-(\d*)/g, '$1 
 export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
   const [address, id] = assetSlug.split('_');
 
-  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${address}/${id}/thumb288`;
-};
-
-const cutIpfsPrefix = (artifactUri: string) => {
-  const url = new URL(artifactUri); // Throws `TypeError: Invalid URL`
-
-  return url.protocol === 'ipfs:' ? artifactUri.substring(IPFS_PROTOCOL.length) : artifactUri;
+  return buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288');
 };
 
 export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
@@ -76,29 +162,5 @@ export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
     return artifactUri;
   }
 
-  try {
-    const url = new URL(artifactUri); // Throws `TypeError: Invalid URL`
-    const urlPath = `${url.protocol}${url.hostname}`;
-
-    if (url.searchParams.get('fxhash') !== null) {
-      return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact/index.html${url.search}`;
-    }
-
-    return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/artifact`;
-  } catch (error) {
-    console.error(error);
-
-    return '';
-  }
-};
-
-export const formatCollectibleObjktDisplayUri = (displayUri: string) => {
-  if (displayUri.startsWith('data:image')) {
-    return displayUri;
-  }
-
-  const url = new URL(displayUri);
-  const urlPath = `${url.protocol}${url.hostname}`;
-
-  return `${OBJKT_ORIGIN}/${OBJKT_RESIZE_3}/${cutIpfsPrefix(urlPath)}/display`;
+  return buildObjktMediaURI(artifactUri, 'artifact') ?? '';
 };

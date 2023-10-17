@@ -1,17 +1,17 @@
 import React, { useMemo, memo } from 'react';
 import FastImage from 'react-native-fast-image';
 
+import { ActivityIndicator } from 'src/components/activity-indicator';
 import { AnimatedSvg } from 'src/components/animated-svg/animated-svg';
+import { AudioPlaceholderTheme } from 'src/components/audio-placeholder';
+import { BrokenImage } from 'src/components/broken-image';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { formatCollectibleObjktArtifactUri, isImgUriDataUri } from 'src/utils/image.utils';
 
-import { ActivityIndicator } from '../activity-indicator';
-import { AudioPlaceholderTheme } from '../audio-placeholder';
-import { BrokenImage } from '../broken-image';
-import { useCollectibleIconStyles } from './collectible-icon.styles';
-import { AudioPlayer } from './components/audio-player/audio-player';
-import { COLLECTIBLE_FINAL_FALLBACK, useCollectibleImageControl } from './hooks/use-collectible-image-control.hook';
+import { AudioPlayer } from './audio-player';
+import { useCollectibleIconStyles } from './styles';
+import { COLLECTIBLE_FINAL_FALLBACK, useCollectibleImageControl } from './use-image-control';
 
 interface Props {
   slug: string;
@@ -23,7 +23,7 @@ interface Props {
   setScrollEnabled?: SyncFn<boolean>;
 }
 
-export const CollectibleMediaImage = memo<Props>(
+export const CollectibleMedia = memo<Props>(
   ({ slug, artifactUri, displayUri, mime, size, audioPlaceholderTheme, setScrollEnabled }) => {
     const styles = useCollectibleIconStyles();
 

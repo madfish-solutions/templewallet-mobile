@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import React, { memo, useMemo } from 'react';
-import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, View, ViewStyle } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { objktCurrencies } from 'src/apis/objkt';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -58,7 +59,7 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
   }, [details]);
 
   return (
-    <TouchableOpacity activeOpacity={1} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
+    <TouchableOpacity activeOpacity={0.7} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
       <View style={[styles.image, { width: size, height: size }]}>
         <CollectibleItemImage
           slug={slug}

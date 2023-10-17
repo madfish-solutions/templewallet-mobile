@@ -5,8 +5,8 @@
 1. +
 2. ? // Not repro, but another found - scroll jumps
 3. -
-4. -
-5. -
+4. +
+5. ? // Get back to with player task
 6. -
 7. -
 8. +

@@ -1,8 +1,8 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import FastImage, { Source } from 'react-native-fast-image';
 
-import { emptyFn, EmptyFn } from 'src/config/general';
-import { formatImgUri, ImageResolutionEnum } from 'src/utils/image.utils';
+import { emptyFn } from 'src/config/general';
+import { formatImgUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 
 import { Icon } from '../icon/icon';
@@ -28,7 +28,7 @@ export const LoadableTokenIconImage: FC<Props> = ({ uri, size, onError = emptyFn
   );
 
   const source = useMemo<Source>(
-    () => (isString(uri) ? { uri: formatImgUri(uri, ImageResolutionEnum.SMALL, !useOriginal) } : {}),
+    () => (isString(uri) ? { uri: formatImgUri(uri, 'small', !useOriginal) } : {}),
     [uri, useOriginal]
   );
 

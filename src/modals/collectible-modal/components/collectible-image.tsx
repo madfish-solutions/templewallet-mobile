@@ -1,11 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
 
-import { ActivityIndicator } from 'src/components/activity-indicator/activity-indicator';
-import { CollectibleMediaImage } from 'src/components/collectible-icon/collectible-icon';
+import { ActivityIndicator } from 'src/components/activity-indicator';
 import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
-import { EventFn } from 'src/config/general';
 import { useCollectibleIsAdultSelector } from 'src/store/collectibles/collectibles-selectors';
 import { isDefined } from 'src/utils/is-defined';
+
+import { CollectibleMedia } from './collectible-media';
 
 interface Props {
   slug: string;
@@ -14,7 +14,7 @@ interface Props {
   displayUri?: string;
   mime?: string;
   areDetailsLoading: boolean;
-  setScrollEnabled?: EventFn<boolean>;
+  setScrollEnabled?: SyncFn<boolean>;
 }
 
 export const CollectibleImage = memo<Props>(
@@ -35,13 +35,12 @@ export const CollectibleImage = memo<Props>(
     }
 
     return (
-      <CollectibleMediaImage
+      <CollectibleMedia
         slug={slug}
         artifactUri={artifactUri}
         displayUri={displayUri}
         mime={mime}
         size={size}
-        isBigIcon={true}
         setScrollEnabled={setScrollEnabled}
       />
     );

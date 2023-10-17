@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { formatSize } from 'src/styles/format-size';
 
-import { formatSize } from '../../styles/format-size';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { useAudioPlaceholderStyles } from './audio-placeholder.styles';
+import { useAudioPlaceholderStyles } from './styles';
 
 const themeStyles = {
   small: {

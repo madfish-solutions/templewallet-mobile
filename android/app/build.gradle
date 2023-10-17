@@ -122,6 +122,10 @@ android {
 
 }
 
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 dependencies {
     implementation project(':react-native-keychain')
 
@@ -146,6 +150,10 @@ dependencies {
       See: https://stackoverflow.com/a/60492942/9371122
     */
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+
+    // Animated WEBP support. See: https://github.com/DylanVann/react-native-fast-image/issues/92#issuecomment-1680704556
+    def glideVersion = safeExtGet('glideVersion', '4.12.0')
+    implementation "com.github.zjupure:webpdecoder:2.2.${glideVersion}"
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

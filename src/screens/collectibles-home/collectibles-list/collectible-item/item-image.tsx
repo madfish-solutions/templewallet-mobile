@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
-import { ActivityIndicator } from 'src/components/activity-indicator/activity-indicator';
-import { StaticCollectibleImage } from 'src/components/collectible-icon/collectible-icon';
+import { ActivityIndicator } from 'src/components/activity-indicator';
+import { CollectibleImage } from 'src/components/collectible-image';
 import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
 import { useCollectibleIsAdultSelector } from 'src/store/collectibles/collectibles-selectors';
 import { isDefined } from 'src/utils/is-defined';
@@ -24,5 +24,5 @@ export const CollectibleItemImage = memo<Props>(({ slug, size, artifactUri, areD
     return <ActivityIndicator size="small" />;
   }
 
-  return <StaticCollectibleImage slug={slug} artifactUri={artifactUri} size={size} />;
+  return <CollectibleImage slug={slug} artifactUri={artifactUri} size={size} />;
 });

@@ -12,7 +12,8 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
     marginBottom: GRID_GAP
   },
   image: {
-    backgroundColor: colors.blue10
+    backgroundColor: colors.blue10,
+    borderRadius: formatSize(4)
   },
   description: {
     paddingHorizontal: formatSize(4),

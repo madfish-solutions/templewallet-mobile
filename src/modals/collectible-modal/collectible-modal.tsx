@@ -41,7 +41,7 @@ import { formatNumber } from 'src/utils/format-price';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
 import { useInterval } from 'src/utils/hooks';
-import { ImageResolutionEnum, formatImgUri } from 'src/utils/image.utils';
+import { formatImgUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 import { openUrl } from 'src/utils/linking';
 import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams } from 'src/utils/objkt';
@@ -167,7 +167,7 @@ export const CollectibleModal = memo(() => {
       const dynamicLink = await getTempleDynamicLink(`/nft?jsonData=${urlEncodedData}`, {
         title: name,
         descriptionText: details?.description,
-        imageUrl: thumbnailUri ? formatImgUri(thumbnailUri, ImageResolutionEnum.MEDIUM) : undefined
+        imageUrl: thumbnailUri ? formatImgUri(thumbnailUri, 'medium') : undefined
       });
 
       await Share.share({
