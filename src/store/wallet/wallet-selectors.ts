@@ -59,10 +59,7 @@ export const useRawCurrentAccountStateSelector = (): AccountStateInterface | und
 /** @deprecated */
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
-export const useAccountTzProfile = (publicKeyHash: string) =>
-  useSelector(state => state.wallet.accounts.find(a => a.publicKeyHash === publicKeyHash)?.tzProfile);
-
-export const useAllCurrentAccountAssetsSelector = () =>
+const useAllCurrentAccountAssetsSelector = () =>
   useSelector(
     state => {
       const account = state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash];
@@ -87,12 +84,7 @@ export const useCurrentAccountStoredAssetsListSelector = () => {
   return useMemo(() => allAssets?.stored.filter(a => !allAssets.removed.some(slug => slug === a.slug)), [allAssets]);
 };
 
-export const useAssetBalanceSelector = (slug: string) => {
-  const data = useAllCurrentAccountAssetsSelector();
-
-  return useMemo(() => data?.stored.find(a => a.slug === slug)?.balance, [data?.stored]);
-};
-
+/** @todo Store tokens & collectibles separately */
 export const useCurrentAccountStoredAssetsSelector = (type: 'tokens' | 'collectibles') => {
   const assets = useAllCurrentAccountAssetsSelector();
   const allMetadatas = useTokensMetadataSelector();
@@ -120,6 +112,12 @@ export const useCurrentAccountStoredAssetsSelector = (type: 'tokens' | 'collecti
     [assets, allMetadatas, type],
     isEqual
   );
+};
+
+export const useAssetBalanceSelector = (slug: string) => {
+  const data = useAllCurrentAccountAssetsSelector();
+
+  return useMemo(() => data?.stored.find(a => a.slug === slug)?.balance, [data?.stored]);
 };
 
 export const useCurrentAccountTezosBalance = () =>

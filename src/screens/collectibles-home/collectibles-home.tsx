@@ -21,11 +21,10 @@ import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-
 import { Collection } from 'src/store/collectons/collections-state';
 import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
-import { loadTzProfileIfoAction } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { useAvailableAccountCollectibles } from 'src/utils/assets/hooks';
+import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
 import { formatImgUri } from 'src/utils/image.utils';
 
 import { CollectiblesList } from './collectibles-list';
@@ -39,7 +38,7 @@ export const CollectiblesHome = memo(() => {
   const dispatch = useDispatch();
 
   const collections = useCreatedCollectionsSelector();
-  const collectibles = useAvailableAccountCollectibles(true);
+  const collectibles = useCurrentAccountCollectibles(true);
   const accountPkh = useCurrentAccountPkhSelector();
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
   const areDetailsLoading = useCollectibleDetailsLoadingSelector();
@@ -63,7 +62,6 @@ export const CollectiblesHome = memo(() => {
 
   useEffect(() => {
     dispatch(loadCollectionsActions.submit(accountPkh));
-    dispatch(loadTzProfileIfoAction.submit());
   }, [accountPkh, dispatch]);
 
   const { setSearchValue, filteredAssetsList } = useFilteredAssetsList(collectibles);

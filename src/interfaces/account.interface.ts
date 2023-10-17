@@ -3,7 +3,6 @@ import { AccountTypeEnum } from '../enums/account-type.enum';
 import { LoadableEntityState } from '../store/types';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
 import { ActivityGroup } from './activity.interface';
-import { TzProfile } from './tzProfile.interface';
 
 export interface AccountBaseInterface {
   name: string;
@@ -14,8 +13,6 @@ export interface AccountInterface extends AccountBaseInterface {
   type: AccountTypeEnum;
   publicKey: string;
 
-  /** @deprecated */
-  tzProfile?: TzProfile;
   /** @deprecated */
   isVisible?: boolean;
   /** @deprecated */

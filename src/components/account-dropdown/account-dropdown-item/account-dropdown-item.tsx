@@ -13,12 +13,13 @@ import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { useTzProfile } from 'src/utils/tz-profiles';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
@@ -39,11 +40,11 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
     const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
     const contacts = useContactsSelector();
     const { metadata } = useNetworkInfo();
-    const selectedAccount = useSelectedAccountSelector();
-    const { alias } = selectedAccount.tzProfile ?? {};
-    const [userLogo, setUserLogo] = useState(selectedAccount.tzProfile?.logo);
+    const selectedAccountPkh = useCurrentAccountPkhSelector();
+    const tzProfile = useTzProfile(selectedAccountPkh);
+    const [userLogo, setUserLogo] = useState(tzProfile?.logo);
 
-    useEffect(() => setUserLogo(selectedAccount.tzProfile?.logo), [selectedAccount.tzProfile]);
+    useEffect(() => setUserLogo(tzProfile?.logo), [tzProfile]);
 
     return (
       <View style={styles.root}>
@@ -68,7 +69,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
             ]}
           >
             <TruncatedText style={styles.name}>
-              {isDefined(alias) && isCollectibleScreen ? alias : account.name}
+              {isCollectibleScreen && tzProfile?.alias ? tzProfile.alias : account.name}
             </TruncatedText>
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
           </View>

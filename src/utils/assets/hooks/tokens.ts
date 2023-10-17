@@ -1,43 +1,23 @@
-import { isEqual } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
-import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 
 import { UsableAccountAsset } from './utils';
 
-export const useAccountTokens = () => {
-  const tokens = useCurrentAccountStoredAssetsSelector('tokens');
-
-  return useMemoWithCompare(
-    () =>
-      tokens.map<AccountTokenInterface>(asset => {
-        const visibility =
-          asset.visibility === VisibilityEnum.InitiallyHidden && Number(asset.balance) > 0
-            ? VisibilityEnum.Visible
-            : asset.visibility;
-
-        return {
-          ...asset,
-          visibility
-        };
-      }),
-    [tokens],
-    isEqual
-  );
-};
-
-export const useAvailableAccountTokens = (enabledOnly = false) => {
-  const accountTokens = useAccountTokens();
+export const useCurrentAccountTokens = (enabledOnly = false) => {
+  const accountTokens = useCurrentAccountStoredAssetsSelector('tokens');
   const allMetadatas = useTokensMetadataSelector();
 
   return useMemo(
     () =>
       accountTokens.reduce<UsableAccountAsset[]>((acc, { slug, balance, visibility }) => {
         const metadata = allMetadatas[slug]!; // `accountCollectibles` r already filtered for metadata presence
+
+        if (visibility === VisibilityEnum.InitiallyHidden && Number(balance) > 0) {
+          visibility = VisibilityEnum.Visible;
+        }
 
         const asset: UsableAccountAsset = {
           slug,
@@ -57,7 +37,16 @@ export const useAvailableAccountTokens = (enabledOnly = false) => {
 };
 
 export const useAccountTokenBySlug = (slug: string) => {
-  const accountTokens = useAvailableAccountTokens();
+  const accountTokens = useCurrentAccountTokens();
 
   return useMemo(() => accountTokens.find(t => t.slug === slug), [accountTokens, slug]);
+};
+
+export const useAccountTokensBalancesRecord = () => {
+  const tokens = useCurrentAccountStoredAssetsSelector('tokens');
+
+  return useMemo(
+    () => tokens.reduce<Record<string, string>>((acc, curr) => ({ ...acc, [curr.slug]: curr.balance }), {}),
+    [tokens]
+  );
 };

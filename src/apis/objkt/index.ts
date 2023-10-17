@@ -7,9 +7,7 @@ import BigNumber from 'bignumber.js';
 import { chunk } from 'lodash-es';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
-import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { Collection } from 'src/store/collectons/collections-state';
-import { isDefined } from 'src/utils/is-defined';
 
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
@@ -69,28 +67,17 @@ export const fetchCollectionsLogo$ = (address: string): Observable<Collection[]>
   );
 };
 
-export const fetchTzProfilesInfo$ = (address: string): Observable<TzProfile> => {
-  const request = buildGetHoldersInfoQuery(address);
+export const fetchTzProfilesInfo = (address: string) =>
+  apolloObjktClient
+    .fetch<TzProfilesQueryResponse>(buildGetHoldersInfoQuery(address), undefined, {
+      // @ts-ignore // TODO: Figure-out, what `nextFetchPolicy` was intended to do
+      nextFetchPolicy: 'no-cache'
+    })
+    .then(data => {
+      if (!data) throw new Error('No data');
 
-  return apolloObjktClient
-    .fetch$<TzProfilesQueryResponse>(request, undefined, { nextFetchPolicy: 'no-cache' } as any) // TODO: Figure-out, what `nextFetchPolicy` was intended to do
-    .pipe(
-      map(result => {
-        const { alias, discord, github, logo, twitter, tzdomain, website } = result.holder_by_pk;
-
-        //check for nullable value
-        return {
-          alias: isDefined(alias) ? alias : undefined,
-          discord: isDefined(discord) ? discord : undefined,
-          github: isDefined(github) ? github : undefined,
-          logo: isDefined(logo) ? logo : undefined,
-          twitter: isDefined(twitter) ? twitter : undefined,
-          tzdomain: isDefined(tzdomain) ? tzdomain : undefined,
-          website: isDefined(website) ? website : undefined
-        };
-      })
-    );
-};
+      return data.holder_by_pk;
+    });
 
 export const fetchCollectiblesOfCollection$ = (
   contract: string,

@@ -4,12 +4,12 @@ import { FlatList, ListRenderItem, Text, TouchableOpacity, View } from 'react-na
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { SocialButton } from 'src/screens/settings/settings-header/social-button/social-button';
-import { useAccountTzProfile } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
+import { useTzProfile } from 'src/utils/tz-profiles';
 
 import { useCollectiblesHomeProfileStyles } from './styles';
 
@@ -18,12 +18,12 @@ interface Props {
 }
 
 interface SocialLinksInterface {
-  url: string | undefined;
+  url: string | nullish;
   icon: IconNameEnum;
 }
 
 export const TzProfileView = memo<Props>(({ accountPkh }) => {
-  const tzProfile = useAccountTzProfile(accountPkh);
+  const tzProfile = useTzProfile(accountPkh);
 
   const styles = useCollectiblesHomeProfileStyles();
   const colors = useColors();
@@ -58,7 +58,11 @@ export const TzProfileView = memo<Props>(({ accountPkh }) => {
         style={[styles.socialsIcon, undefined]}
         color={isDefined(item.url) ? colors.orange : colors.disabled}
         size={formatSize(15)}
-        onPress={item.url === tzProfile?.discord ? () => copyStringToClipboard(item.url) : undefined}
+        onPress={() => {
+          if (item.url && item.url === tzProfile?.discord) {
+            copyStringToClipboard(item.url);
+          }
+        }}
       />
     ),
     [colors, tzProfile?.discord, styles.socialsIcon]

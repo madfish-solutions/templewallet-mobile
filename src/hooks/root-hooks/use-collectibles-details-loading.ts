@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 
 import { COLLECTIBLES_DETAILS_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
-import { useAccountCollectibles } from 'src/utils/assets/hooks';
+import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
 
 import { useAuthorisedInterval } from '../use-authed-interval';
 import { useMemoWithCompare } from '../use-memo-with-compare';
 
 export const useCollectiblesDetailsLoading = () => {
-  const collectibles = useAccountCollectibles();
+  const collectibles = useCurrentAccountStoredAssetsSelector('collectibles');
 
   const slugs = useMemoWithCompare(() => collectibles.map(({ slug }) => slug).sort(), [collectibles], isEqual);
 

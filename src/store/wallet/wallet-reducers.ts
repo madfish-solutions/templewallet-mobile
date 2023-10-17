@@ -7,7 +7,6 @@ import { AccountInterface } from 'src/interfaces/account.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isDcpNode } from 'src/utils/network.utils';
-import { getSelectedAccount } from 'src/utils/wallet-account-state.utils';
 
 import {
   deleteOldIsShownDomainName,
@@ -27,8 +26,7 @@ import {
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadTokensBalancesArrayActions,
-  loadTzProfileIfoAction
+  loadTokensBalancesArrayActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -147,17 +145,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
             dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
           }
     );
-  });
-
-  builder.addCase(loadTzProfileIfoAction.success, (state, { payload }) => {
-    const selectedAccount = getSelectedAccount(state);
-
-    return {
-      ...state,
-      accounts: state.accounts.map(item =>
-        item.publicKeyHash === selectedAccount.publicKeyHash ? { ...item, tzProfile: { ...payload } } : item
-      )
-    };
   });
 
   // MIGRATIONS

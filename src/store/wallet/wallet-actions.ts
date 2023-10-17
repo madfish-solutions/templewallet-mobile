@@ -3,7 +3,6 @@ import { createAction } from '@reduxjs/toolkit';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { SendAssetActionPayloadInterface } from 'src/interfaces/send-asset-action-payload.interface';
 import { TokenBalanceResponse } from 'src/interfaces/token-balance-response.interface';
-import { TzProfile } from 'src/interfaces/tzProfile.interface';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 
 import { createActions } from '../create-actions';
@@ -41,5 +40,3 @@ export const waitForOperationCompletionAction = createAction<{
   opHash: string;
   sender: AccountInterface;
 }>('d-apps/WAIT_FOR_OPERATION_COMPLETION');
-
-export const loadTzProfileIfoAction = createActions<void, TzProfile, string>('wallet/LOAD_TZPROFILE');

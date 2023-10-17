@@ -1,5 +1,3 @@
-import { TzProfile } from 'src/interfaces/tzProfile.interface';
-
 import { MarketPlaceEventEnum } from './enums';
 
 export interface AttributeInfoResponse {
@@ -82,6 +80,16 @@ export interface QueryResponse {
     tokens: { fa_contract: string }[];
     __typename: ObjktCollectionType;
   }[];
+}
+
+export interface TzProfile {
+  alias?: string | nullish;
+  discord?: string | nullish;
+  github?: string | nullish;
+  logo?: string | nullish;
+  twitter?: string | nullish;
+  tzdomain?: string | nullish;
+  website?: string | nullish;
 }
 
 export interface TzProfilesQueryResponse {

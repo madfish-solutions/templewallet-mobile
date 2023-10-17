@@ -8,7 +8,7 @@ import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { useAvailableAccountTokens } from 'src/utils/assets/hooks';
+import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
@@ -18,7 +18,7 @@ export const ManageTokens = () => {
 
   const { isTezosNode } = useNetworkInfo();
 
-  const tokensList = useAvailableAccountTokens();
+  const tokensList = useCurrentAccountTokens();
   const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensWithoutTkey, false, true);
 

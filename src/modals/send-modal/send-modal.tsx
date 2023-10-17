@@ -28,7 +28,7 @@ import { sendAssetActions } from 'src/store/wallet/wallet-actions';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { useAvailableAccountCollectibles, useAvailableAccountTokens } from 'src/utils/assets/hooks';
+import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isValidAddress } from 'src/utils/tezos.util';
@@ -47,8 +47,8 @@ export const SendModal: FC = () => {
 
   const styles = useSendModalStyles();
 
-  const tokens = useAvailableAccountTokens(true);
-  const collectibles = useAvailableAccountCollectibles(true);
+  const tokens = useCurrentAccountTokens(true);
+  const collectibles = useCurrentAccountCollectibles(true);
   const assets = useMemo(() => tokens.concat(collectibles), [tokens, collectibles]);
   const tezosToken = useTezosTokenOfCurrentAccount();
   const leadingAssets = useMemo(() => [tezosToken], [tezosToken]);

@@ -7,15 +7,15 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
-import { useAvailableAccountCollectibles, useAvailableAccountTokens } from 'src/utils/assets/hooks';
+import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 export const useEarnOpportunityTokens = (earnOpportunity?: EarnOpportunity) => {
   const getExchangeRate = useTokenExchangeRateGetter();
-  const tokens = useAvailableAccountTokens();
-  const collectibles = useAvailableAccountCollectibles();
+  const tokens = useCurrentAccountTokens();
+  const collectibles = useCurrentAccountCollectibles();
   const assets = useMemo(() => tokens.concat(collectibles), [tokens, collectibles]);
   const tezToken = useTezosTokenOfCurrentAccount();
 

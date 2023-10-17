@@ -33,7 +33,7 @@ import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { useAccountTokenBySlug, useAvailableAccountTokens } from 'src/utils/assets/hooks';
+import { useAccountTokenBySlug, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
@@ -68,7 +68,7 @@ export const TokensList = memo(() => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const tkeyToken = useAccountTokenBySlug(TEMPLE_TOKEN_SLUG) ?? TEMPLE_TOKEN;
   const isHideZeroBalance = useHideZeroBalancesSelector();
-  const visibleTokensList = useAvailableAccountTokens(true);
+  const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
 

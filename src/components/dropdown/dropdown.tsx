@@ -2,7 +2,7 @@ import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
-import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
+import { emptyComponent, emptyFn, EventFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';

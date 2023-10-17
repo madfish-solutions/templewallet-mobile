@@ -20,7 +20,7 @@ import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { useAvailableAccountTokens } from 'src/utils/assets/hooks';
+import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { TokenInfo } from './token-info/token-info';
@@ -30,7 +30,7 @@ export const TokenScreen = () => {
 
   const dispatch = useDispatch();
   const accountPkh = useCurrentAccountPkhSelector();
-  const tokensList = useAvailableAccountTokens();
+  const tokensList = useCurrentAccountTokens();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
 

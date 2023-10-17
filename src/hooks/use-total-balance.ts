@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
-import { useAvailableAccountTokens } from 'src/utils/assets/hooks';
+import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
@@ -12,7 +12,7 @@ import { useTezosToken, useTezosTokenOfCurrentAccount } from '../utils/wallet.ut
 
 export const useTotalBalance = () => {
   const exchangeRates = useUsdToTokenRates();
-  const visibleTokens = useAvailableAccountTokens(true);
+  const visibleTokens = useCurrentAccountTokens(true);
   const tezosToken = useTezosTokenOfCurrentAccount();
 
   const totalBalance = useMemo(() => {
