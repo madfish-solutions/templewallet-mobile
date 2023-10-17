@@ -41,77 +41,70 @@ export const CollectibleMedia = memo<Props>(
         return <BrokenImage isBigIcon={true} style={styles.brokenImage} />;
       }
 
-      if (!isAnimatedRenderedOnce && artifactUri) {
-        if (isImgUriDataUri(artifactUri)) {
+      if (!isAnimatedRenderedOnce && mime && artifactUri) {
+        if (mime === 'model/gltf-binary') {
           return (
-            <AnimatedSvg
+            <SimpleModelView
+              uri={formatCollectibleObjktArtifactUri(artifactUri)}
+              isBinary={true}
               style={styles.image}
-              dataUri={artifactUri}
               onError={handleAnimatedError}
               onLoadEnd={handleLoadEnd}
+              setScrollEnabled={setScrollEnabled}
             />
           );
         }
 
-        if (mime) {
-          if (mime === 'model/gltf-binary') {
-            return (
-              <SimpleModelView
-                uri={formatCollectibleObjktArtifactUri(artifactUri)}
-                isBinary={true}
-                style={styles.image}
-                onError={handleAnimatedError}
-                onLoadEnd={handleLoadEnd}
-                setScrollEnabled={setScrollEnabled}
-              />
-            );
-          }
+        if (mime === 'application/x-directory') {
+          return (
+            <SimpleModelView
+              uri={formatCollectibleObjktArtifactUri(artifactUri)}
+              isBinary={false}
+              style={styles.image}
+              onError={handleAnimatedError}
+              onLoadEnd={handleLoadEnd}
+              setScrollEnabled={setScrollEnabled}
+            />
+          );
+        }
 
-          if (mime === 'application/x-directory') {
-            return (
-              <SimpleModelView
-                uri={formatCollectibleObjktArtifactUri(artifactUri)}
-                isBinary={false}
-                style={styles.image}
-                onError={handleAnimatedError}
-                onLoadEnd={handleLoadEnd}
-                setScrollEnabled={setScrollEnabled}
-              />
-            );
-          }
+        if (mime.startsWith('video/')) {
+          return (
+            <SimplePlayer
+              uri={formatCollectibleObjktArtifactUri(artifactUri)}
+              size={size}
+              style={styles.image}
+              onError={handleAnimatedError}
+              onLoad={handleLoadEnd}
+            />
+          );
+        }
 
-          if (mime.startsWith('video/')) {
-            return (
-              <SimplePlayer
-                uri={formatCollectibleObjktArtifactUri(artifactUri)}
-                size={size}
-                style={styles.image}
-                onError={handleAnimatedError}
+        if (mime.startsWith('audio/')) {
+          return (
+            <AudioPlayer
+              artifactUri={artifactUri}
+              displayUri={displayUri}
+              audioPlaceholderTheme={audioPlaceholderTheme}
+              handleAudioError={handleAudioError}
+              handleLoadEnd={handleLoadEnd}
+            >
+              <FastImage
+                style={[styles.image, { height: size, width: size }]}
+                source={{ uri: currentFallback }}
+                resizeMode="contain"
+                onError={handleError}
                 onLoad={handleLoadEnd}
               />
-            );
-          }
-
-          if (mime.startsWith('audio/')) {
-            return (
-              <AudioPlayer
-                artifactUri={artifactUri}
-                displayUri={displayUri}
-                audioPlaceholderTheme={audioPlaceholderTheme}
-                handleAudioError={handleAudioError}
-                handleLoadEnd={handleLoadEnd}
-              >
-                <FastImage
-                  style={[styles.image, { height: size, width: size }]}
-                  source={{ uri: currentFallback }}
-                  resizeMode="contain"
-                  onError={handleError}
-                  onLoad={handleLoadEnd}
-                />
-              </AudioPlayer>
-            );
-          }
+            </AudioPlayer>
+          );
         }
+      }
+
+      if (isImgUriDataUri(currentFallback)) {
+        return (
+          <AnimatedSvg style={styles.image} dataUri={currentFallback} onError={handleError} onLoadEnd={handleLoadEnd} />
+        );
       }
 
       return (

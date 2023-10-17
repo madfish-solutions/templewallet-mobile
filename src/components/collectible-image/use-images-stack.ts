@@ -1,3 +1,4 @@
+import { uniq } from 'lodash-es';
 import { useCallback, useMemo, useState } from 'react';
 
 import { useDidUpdate } from 'src/utils/hooks';
@@ -13,7 +14,9 @@ export const useCollectibleImagesStack = (
 ) => {
   const sourcesStack = useMemo(
     () =>
-      buildCollectibleImagesStack(assetSlug, { artifactUri, displayUri, thumbnailUri }, isFullView).filter(isTruthy),
+      uniq(
+        buildCollectibleImagesStack(assetSlug, { artifactUri, displayUri, thumbnailUri }, isFullView).filter(isTruthy)
+      ),
     [assetSlug, artifactUri, displayUri, thumbnailUri, isFullView]
   );
 

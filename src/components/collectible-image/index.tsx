@@ -40,7 +40,7 @@ export const CollectibleImage = memo<Props>(
       <>
         <FastImage
           style={[styles.image, { height: size, width: size }]}
-          source={{ uri: undefined }}
+          source={{ uri: src }}
           resizeMode="contain"
           onError={onFail}
           onLoad={onSuccess}

@@ -67,7 +67,8 @@ const getIpfsItemInfo = (uri: string) => {
     return null;
   }
 
-  const [id, search] = uri.slice(IPFS_PROTOCOL.length).split('?');
+  const [path, search] = uri.slice(IPFS_PROTOCOL.length).split('?');
+  const id = path.split('/')[0];
 
   if (id === INVALID_IPFS_ID) {
     return null;
@@ -75,6 +76,7 @@ const getIpfsItemInfo = (uri: string) => {
 
   return {
     id,
+    path,
     /** With leading `?` */
     search: search ? `?${search}` : ''
   };
@@ -117,8 +119,8 @@ const buildIpfsMediaURI = (uri?: string, size: TcInfraMediaSize = DEFAULT_MEDIA_
 
   if (ipfsInfo) {
     return useMediaHost
-      ? `${MEDIA_HOST}/${size}/ipfs/${ipfsInfo.id}${ipfsInfo.search}`
-      : `${IPFS_GATE}/${ipfsInfo.id}${ipfsInfo.search}`;
+      ? `${MEDIA_HOST}/${size}/ipfs/${ipfsInfo.path}${ipfsInfo.search}`
+      : `${IPFS_GATE}/${ipfsInfo.path}${ipfsInfo.search}`;
   }
 
   if (useMediaHost && uri.startsWith('http')) {
