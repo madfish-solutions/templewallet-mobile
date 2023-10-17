@@ -66,7 +66,7 @@ export const TokensList = memo(() => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const tkeyToken = useAccountTokenBySlug(TEMPLE_TOKEN_SLUG) ?? TEMPLE_TOKEN;
+  const tkeyToken = useAccountTokenBySlug(TEMPLE_TOKEN_SLUG);
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
@@ -101,7 +101,7 @@ export const TokensList = memo(() => {
     }
   }, [partnersPromoShown]);
 
-  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
+  const leadingAssets = useMemo(() => [tezosToken, tkeyToken ?? TEMPLE_TOKEN], [tezosToken, tkeyToken]);
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,

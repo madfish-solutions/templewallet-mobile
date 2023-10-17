@@ -14,7 +14,7 @@ import {
   useTezosBalanceOfKnownAccountSelector
 } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import { emptyToken } from 'src/token/interfaces/token.interface';
+import { TokenInterface, emptyToken } from 'src/token/interfaces/token.interface';
 
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
@@ -74,7 +74,7 @@ export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opPar
 export const useTezosToken = (balance: string) => {
   const metadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
 
-  return useMemo(
+  return useMemo<TokenInterface>(
     () => ({
       ...emptyToken,
       ...metadata,

@@ -4,7 +4,7 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
 
-import { UsableAccountAsset } from './utils';
+import { UsableAccountAsset, buildUsableAccountAsset } from './utils';
 
 export const useCurrentAccountCollectibles = (enabledOnly = false) => {
   const accountCollectibles = useCurrentAccountStoredAssetsSelector('collectibles');
@@ -12,25 +12,17 @@ export const useCurrentAccountCollectibles = (enabledOnly = false) => {
 
   return useMemo(
     () =>
-      accountCollectibles.reduce<UsableAccountAsset[]>((acc, { slug, balance, visibility }) => {
-        const metadata = allMetadatas[slug]!; // `accountCollectibles` r already filtered for metadata presence
-
-        if (visibility === VisibilityEnum.InitiallyHidden && Number(balance) > 0) {
-          visibility = VisibilityEnum.Visible;
-        }
-
-        const asset: UsableAccountAsset = {
-          slug,
-          visibility,
-          balance,
-          ...metadata
-        };
+      accountCollectibles.reduce<UsableAccountAsset[]>((acc, curr) => {
+        const collectible = buildUsableAccountAsset(
+          curr,
+          allMetadatas[curr.slug]! // `accountCollectibles` r already filtered for metadata presence
+        );
 
         if (enabledOnly) {
-          return visibility === VisibilityEnum.Visible ? acc.concat(asset) : acc;
+          return collectible.visibility === VisibilityEnum.Visible ? acc.concat(collectible) : acc;
         }
 
-        return acc.concat(asset);
+        return acc.concat(collectible);
       }, []),
     [accountCollectibles, allMetadatas, enabledOnly]
   );

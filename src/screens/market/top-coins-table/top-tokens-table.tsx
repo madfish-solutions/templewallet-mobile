@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
@@ -43,7 +43,7 @@ export const TopTokensTable = () => {
       />
     );
 
-  const closeAllOpenRows = () => ref.current?.closeAllOpenRows();
+  const closeAllOpenRows = useCallback(() => ref.current?.closeAllOpenRows(), []);
 
   const handleSelectorChangeAndSwipeClose = (index: number) => {
     handleSelectorChange(index);

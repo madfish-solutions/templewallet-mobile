@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -21,7 +21,8 @@ interface Props {
   id: string;
   onPress: EmptyFn;
 }
-export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
+
+export const RightSwipeView = memo<Props>(({ id, onPress }) => {
   const colors = useColors();
   const styles = useRightSwipeViewStyles();
   const favouriteTokensIds = useFavouriteTokensIdsSelector();
@@ -49,7 +50,7 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
   const handleFavoritePress = isFavourite ? handleDeleteFromFavourites : handleAddToFavourites;
 
   const handleBuyPress = () => {
-    navigate(ScreensEnum.SwapScreen, { outputToken });
+    navigate(ScreensEnum.SwapScreen, { outputToken: outputToken });
   };
 
   return (
@@ -83,4 +84,4 @@ export const RightSwipeView: FC<Props> = ({ id, onPress }) => {
       />
     </View>
   );
-};
+});
