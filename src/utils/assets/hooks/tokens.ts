@@ -6,7 +6,8 @@ import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
 
-import { UsableAccountAsset, buildUsableAccountAsset } from './utils';
+import { UsableAccountAsset } from '../types';
+import { buildUsableAccountAsset } from './utils';
 
 export const useCurrentAccountTokens = (enabledOnly = false) => {
   const accountTokens = useCurrentAccountStoredAssetsSelector('tokens');

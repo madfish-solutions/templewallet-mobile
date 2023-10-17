@@ -40,7 +40,7 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
     color: colors.black
   },
   collectionsContainer: {
-    marginLeft: formatSize(4)
+    paddingLeft: formatSize(4)
   },
   buttonDisabled: {
     ...typography.caption13Semibold,

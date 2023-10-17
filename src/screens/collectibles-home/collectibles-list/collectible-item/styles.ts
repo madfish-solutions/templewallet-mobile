@@ -3,17 +3,18 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { hexa } from 'src/utils/style.util';
 
+import { GRID_GAP } from '../styles';
+
 export const useCollectibleItemStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     backgroundColor: colors.cardBG,
     borderRadius: formatSize(4),
-    marginBottom: formatSize(4)
+    marginBottom: GRID_GAP
   },
   image: {
     backgroundColor: colors.blue10
   },
   description: {
-    width: formatSize(112),
     paddingHorizontal: formatSize(4),
     paddingTop: formatSize(4),
     paddingBottom: formatSize(6)

@@ -3,7 +3,7 @@
 ### CHECKLIST
 
 1. +
-2. -
+2. ? // Not repro, but another found - scroll jumps
 3. -
 4. -
 5. -

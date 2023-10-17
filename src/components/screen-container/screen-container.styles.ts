@@ -1,5 +1,7 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
+
+export const SCREEN_HORIZONTAL_PADDING = formatSize(16);
 
 export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
   scrollView: {
@@ -9,8 +11,8 @@ export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
   },
   scrollViewContentContainer: {
     paddingTop: formatSize(8),
-    paddingBottom: formatSize(16),
-    paddingHorizontal: formatSize(16)
+    paddingBottom: SCREEN_HORIZONTAL_PADDING,
+    paddingHorizontal: SCREEN_HORIZONTAL_PADDING
   },
   fullScreenMode: {
     flexGrow: 1,
@@ -21,7 +23,7 @@ export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
     borderColor: colors.lines,
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),
-    paddingHorizontal: formatSize(16),
+    paddingHorizontal: SCREEN_HORIZONTAL_PADDING,
     backgroundColor: colors.navigation
   }
 }));

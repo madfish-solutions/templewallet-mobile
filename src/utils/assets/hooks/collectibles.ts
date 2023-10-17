@@ -4,7 +4,8 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
 
-import { UsableAccountAsset, buildUsableAccountAsset } from './utils';
+import { UsableAccountAsset } from '../types';
+import { buildUsableAccountAsset } from './utils';
 
 export const useCurrentAccountCollectibles = (enabledOnly = false) => {
   const accountCollectibles = useCurrentAccountStoredAssetsSelector('collectibles');

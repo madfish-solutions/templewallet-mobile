@@ -99,7 +99,7 @@ export const CollectiblesHome = memo(() => {
               <FlatList
                 data={collections}
                 renderItem={renderItemCollections}
-                keyExtractor={(collection, id) => `${collection.logo}_${collection.name}+${id}`}
+                keyExtractor={({ type, contract, galleryId }) => `${type}/${contract}/${galleryId}`}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 style={styles.collectionsContainer}

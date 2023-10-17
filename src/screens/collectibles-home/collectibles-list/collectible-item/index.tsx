@@ -9,7 +9,7 @@ import {
   useCollectibleDetailsLoadingSelector,
   useCollectibleDetailsSelector
 } from 'src/store/collectibles/collectibles-selectors';
-import { UsableAccountAsset } from 'src/utils/assets/hooks';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { formatNumber } from 'src/utils/format-price';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -20,7 +20,7 @@ import { useCollectibleItemStyles } from './styles';
 
 interface Props {
   slug: string;
-  collectible: UsableAccountAsset;
+  collectible: TokenInterface;
   size: number;
   isShowInfo?: boolean;
   style?: StyleProp<ViewStyle>;

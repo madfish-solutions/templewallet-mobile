@@ -1,11 +1,8 @@
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 
-export interface UsableAccountAsset extends TokenInterface {
-  slug: string;
-}
+import { UsableAccountAsset } from '../types';
 
 export const buildUsableAccountAsset = (
   asset: AccountTokenInterface,
