@@ -1,14 +1,15 @@
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import React, { FC, useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, useWindowDimensions, View } from 'react-native';
+import { useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
-import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
-import { useScreenContainerStyles } from '../../../components/screen-container/screen-container.styles';
-import { SIDEBAR_WIDTH } from '../../../config/styles';
-import { TokenInterface } from '../../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../../token/utils/token.utils';
-import { sliceIntoChunks } from '../../../utils/array.utils';
-import { createGetItemLayout } from '../../../utils/flat-list.utils';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { useScreenContainerStyles } from 'src/components/screen-container/screen-container.styles';
+import { SIDEBAR_WIDTH } from 'src/config/styles';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { sliceIntoChunks } from 'src/utils/array.utils';
+
 import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
 
@@ -31,8 +32,6 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
 
   const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
 
-  const getItemLayout = createGetItemLayout<TokenInterface[]>(itemSize);
-
   const renderItem: ListRenderItem<TokenInterface[]> = useCallback(
     ({ item }) => (
       <View style={CollectiblesListStyles.rowContainer}>
@@ -44,15 +43,16 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
     [itemSize]
   );
 
+  const ListEmptyComponent = useMemo(() => <DataPlaceholder text="Not found any NFT" />, []);
+
   return (
-    <FlatList
+    <FlashList
       data={data}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      getItemLayout={getItemLayout}
-      style={styles.scrollView}
+      estimatedItemSize={Math.floor(itemSize)}
       contentContainerStyle={styles.scrollViewContentContainer}
-      ListEmptyComponent={<DataPlaceholder text="Not found any NFT" />}
+      ListEmptyComponent={ListEmptyComponent}
     />
   );
 };

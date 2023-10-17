@@ -11,9 +11,7 @@ export const useOthersDAppStyles = createUseStyles(({ colors, typography }) => (
     flexDirection: 'row',
     alignItems: 'center',
     padding: formatSize(16),
-    marginRight: formatSize(16),
-    marginBottom: formatSize(16),
-    width: '50%'
+    marginBottom: formatSize(16)
   },
   text: {
     ...typography.caption13Semibold,

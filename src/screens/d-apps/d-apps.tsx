@@ -1,6 +1,7 @@
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
 import React, { useEffect, useMemo, useState } from 'react';
-import { FlatList, ListRenderItem, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -23,7 +24,6 @@ import { useAllFarmsSelector } from 'src/store/farms/selectors';
 import { useSavingsItemsLoadingSelector } from 'src/store/savings/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isString } from 'src/utils/is-string';
 
 import { DAppsSelectors } from './d-apps.selectors';
@@ -32,11 +32,10 @@ import { IntegratedDApp } from './integrated/integrated';
 import { OthersDApp } from './others/others';
 import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
-const renderItem: ListRenderItem<CustomDAppInfo> = item => (
+const renderItem: ListRenderItem<CustomDAppInfo> = ({ item }) => (
   <OthersDApp item={item} testID={DAppsSelectors.othersDAppsItem} />
 );
 const keyExtractor = (item: CustomDAppInfo) => item.name;
-const getItemLayout = createGetItemLayout<CustomDAppInfo>(formatSize(7));
 const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
 export const DApps = () => {
@@ -121,15 +120,14 @@ export const DApps = () => {
         <Disclaimer texts={texts} />
       </View>
 
-      <Divider size={formatSize(12)} />
+      <Divider size={formatSize(20)} />
 
-      <FlatList
+      <FlashList
         data={sortedDAppsList}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
         numColumns={2}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={styles.contentContainer}
         ListEmptyComponent={ListEmptyComponent}
       />
     </>

@@ -2,11 +2,9 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
-  container: {
-    paddingLeft: formatSize(20),
-    paddingRight: formatSize(36),
-    paddingBottom: formatSize(16),
-    paddingTop: formatSize(8)
+  contentContainer: {
+    paddingHorizontal: formatSize(20),
+    paddingBottom: formatSize(16)
   },
   text: {
     ...typography.body15Semibold,

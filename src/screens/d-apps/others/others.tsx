@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useState } from 'react';
-import { ListRenderItemInfo } from 'react-native';
+import React, { FC, useCallback, useMemo, useState } from 'react';
+import { useWindowDimensions } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
@@ -15,20 +15,27 @@ import { useOpenUrlInAppBrowser } from 'src/utils/linking';
 import { useOthersDAppStyles } from './others.styles';
 
 interface Props extends TestIdProps {
-  item: ListRenderItemInfo<CustomDAppInfo>;
+  item: CustomDAppInfo;
 }
 
+const HALF_COLUMN_GAP = formatSize(8);
+const LIST_HORIZONTAL_PADDING_SUM = formatSize(80);
+
 export const OthersDApp: FC<Props> = ({ item, testID }) => {
-  const { name, logo, slug, dappUrl } = item.item;
-  const styles = useOthersDAppStyles();
+  const { name, logo, slug, dappUrl } = item;
   const [imageLoadError, setImageLoadError] = useState(false);
 
+  const styles = useOthersDAppStyles();
   const openUrl = useOpenUrlInAppBrowser();
+
+  const windowWidth = useWindowDimensions().width;
+  const itemWidth = useMemo(() => (windowWidth - HALF_COLUMN_GAP - LIST_HORIZONTAL_PADDING_SUM) / 2, [windowWidth]);
+
   const onPress = useCallback(() => openUrl(dappUrl), [openUrl, dappUrl]);
 
   return (
     <TouchableWithAnalytics
-      style={styles.container}
+      style={[styles.container, { width: itemWidth }]}
       testID={testID}
       testIDProperties={{ dapp: slug }}
       onPress={onPress}

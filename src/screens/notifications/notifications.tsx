@@ -1,18 +1,19 @@
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import React, { useEffect } from 'react';
-import { FlatList, ListRenderItem } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { DataPlaceholder } from '../../components/data-placeholder/data-placeholder';
-import { useScreenContainerStyles } from '../../components/screen-container/screen-container.styles';
-import { NotificationInterface } from '../../interfaces/notification.interface';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { viewAllNotificationsAction } from '../../store/notifications/notifications-actions';
-import { useNotificationsSelector } from '../../store/notifications/notifications-selectors';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { NotificationInterface } from 'src/interfaces/notification.interface';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { viewAllNotificationsAction } from 'src/store/notifications/notifications-actions';
+import { useNotificationsSelector } from 'src/store/notifications/notifications-selectors';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+
 import { NotificationPreviewItem } from './notification-preview-item/notification-preview-item';
 import { NotificationsStyles } from './notifications.styles';
 
 const VIEW_ALL_NOTIFICATIONS_TIMEOUT = 5 * 1000;
+const AVERAGE_NOTIFICATION_ITEM_HEIGHT = 127;
 
 const keyExtractor = (item: NotificationInterface) => item.id.toString();
 
@@ -23,7 +24,6 @@ const renderItem: ListRenderItem<NotificationInterface> = ({ item }) => (
 const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
 
 export const Notifications = () => {
-  const styles = useScreenContainerStyles();
   const notifications = useNotificationsSelector();
   const dispatch = useDispatch();
 
@@ -36,12 +36,12 @@ export const Notifications = () => {
   usePageAnalytic(ScreensEnum.Notifications);
 
   return (
-    <FlatList
+    <FlashList
       data={notifications}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      style={styles.scrollView}
-      contentContainerStyle={[styles.scrollViewContentContainer, NotificationsStyles.scrollViewContentContainer]}
+      estimatedItemSize={AVERAGE_NOTIFICATION_ITEM_HEIGHT}
+      contentContainerStyle={NotificationsStyles.contentContainer}
       ListEmptyComponent={ListEmptyComponent}
     />
   );
