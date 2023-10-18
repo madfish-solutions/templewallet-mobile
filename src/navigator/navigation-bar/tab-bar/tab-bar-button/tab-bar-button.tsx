@@ -4,7 +4,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { emptyFn } from 'src/config/general';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -27,7 +26,6 @@ interface Props {
   disabled?: boolean;
   showNotificationDot?: boolean;
   swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
-  onSwapButtonPress?: EmptyFn;
   disabledOnPress?: EmptyFn;
 }
 
@@ -41,8 +39,7 @@ export const TabBarButton = memo<Props>(
     disabled = false,
     showNotificationDot = false,
     swapScreenParams,
-    onSwapButtonPress,
-    disabledOnPress = emptyFn
+    disabledOnPress
   }) => {
     const colors = useColors();
     const styles = useTabBarButtonStyles();
@@ -57,18 +54,13 @@ export const TabBarButton = memo<Props>(
     }, [colors, focused, disabled]);
 
     const handlePress = () => {
-      console.log('PRESS');
       if (disabled) {
-        disabledOnPress();
+        disabledOnPress?.();
       } else {
-        if (onSwapButtonPress && !focused) {
-          onSwapButtonPress();
+        if (routeName === ScreensEnum.SwapScreen) {
+          navigate(routeName, swapScreenParams);
         } else {
-          if (routeName === ScreensEnum.SwapScreen) {
-            navigate(routeName, swapScreenParams);
-          } else {
-            navigate(routeName);
-          }
+          navigate(routeName);
         }
       }
     };

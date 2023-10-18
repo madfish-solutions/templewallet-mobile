@@ -63,5 +63,3 @@ export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings })
 
 export const useIsOnRampHasBeenShownBeforeSelector = () =>
   useSelector(({ settings }) => settings.isOnRampHasBeenShownBefore);
-
-export const useIsSwapDisclaimerShowingSelector = () => useSelector(({ settings }) => settings.isSwapDisclaimerShowing);
