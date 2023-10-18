@@ -23,10 +23,8 @@ export const CollectibleImage = memo<Props>(
     const [shouldShowBlur, setShouldShowBlur] = useState(isAdultContent ?? true);
     useEffect(() => void (isDefined(isAdultContent) && setShouldShowBlur(isAdultContent)), [isAdultContent]);
 
-    if (isDefined(isAdultContent)) {
-      if (shouldShowBlur) {
-        return <ImageBlurOverlay size={size} isBigIcon={true} onPress={() => setShouldShowBlur(false)} />;
-      }
+    if (isDefined(isAdultContent) && shouldShowBlur) {
+      return <ImageBlurOverlay size={size} isBigIcon={true} onPress={() => setShouldShowBlur(false)} />;
     }
 
     if (areDetailsLoading) {

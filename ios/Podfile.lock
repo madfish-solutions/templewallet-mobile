@@ -514,7 +514,7 @@ PODS:
     - React-Core
   - react-native-document-picker (8.1.1):
     - React-Core
-  - react-native-flipper (0.212.0):
+  - react-native-flipper (0.182.0):
     - React-Core
   - react-native-orientation-locker (1.5.0):
     - React-Core
@@ -1115,7 +1115,7 @@ SPEC CHECKSUMS:
   react-native-cloud-fs: cd21282c5cecaf285225e447dd7f3cf2f9015496
   react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
   react-native-document-picker: f68191637788994baed5f57d12994aa32cf8bf88
-  react-native-flipper: 9c1957af24b76493ba74f46d000a5c1d485e7731
+  react-native-flipper: 6e4e344a0104a34a4e189a9ef2b3b5634b516dc8
   react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-restart: 45c8dca02491980f2958595333cbccd6877cb57e

@@ -73,5 +73,3 @@ api-*.json
 
 #VSCode
 .vscode
-
-eslint

@@ -2,7 +2,6 @@
 /* eslint-disable */
 
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
 import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -20,21 +19,7 @@ const getSourceKey = (source) => (source && source.uri) || String(source);
 // ts-prune-ignore-next
 export const createImageProgress = (ImageComponent) =>
   class ImageProgress extends Component {
-    /*
-    static propTypes = {
-      children: PropTypes.node,
-      errorContainerStyle: PropTypes.any,
-      indicator: PropTypes.func,
-      indicatorContainerStyle: PropTypes.any,
-      indicatorProps: PropTypes.object,
-      renderIndicator: PropTypes.func,
-      renderError: PropTypes.func,
-      source: PropTypes.any,
-      style: PropTypes.any,
-      imageStyle: PropTypes.any,
-      threshold: PropTypes.number,
-    };
-    */
+    /* static propTypes = { *CUSTOM* }; */
 
     static defaultProps = {
       indicatorContainerStyle: styles.centered,

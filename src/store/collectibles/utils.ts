@@ -34,6 +34,4 @@ export const convertCollectibleObjktInfoToStateDetailsType = (
 
 const checkForAdultery = (attributes: ObjktAttribute[], tags: ObjktTag[]) =>
   attributes.some(({ attribute }) => attribute.name === ADULT_ATTRIBUTE_NAME) ||
-  tags.some(({ tag }) => {
-    return ADULT_CONTENT_TAGS.includes(tag.name);
-  });
+  tags.some(({ tag }) => ADULT_CONTENT_TAGS.includes(tag.name));

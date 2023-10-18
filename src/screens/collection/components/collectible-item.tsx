@@ -14,7 +14,6 @@ import { SHARE_NFT_CONTENT } from 'src/modals/collectible-modal/collectible-moda
 import { CollectibleModalSelectors } from 'src/modals/collectible-modal/collectible-modal.selectors';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-// import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
@@ -50,8 +49,6 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
 
   const { trackEvent } = useAnalytics();
 
-  // const balance = useAssetBalanceSelector(slug);
-
   const lastPrice = useMemo(() => {
     if (item.lastDeal?.price == null) {
       return '---';
@@ -85,7 +82,6 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
     if (!isAccountHolder) {
       return {
         title: 'Make offer',
-        // disabled: !isDefined(item.lowestAsk),
         onPress: () => navigateToObjktForBuy(collectionContract, item.id)
       };
     }

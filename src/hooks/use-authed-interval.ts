@@ -1,6 +1,7 @@
-import { DependencyList, useEffect, useRef } from 'react';
+import { DependencyList, useEffect } from 'react';
 
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { useCallbackRef } from 'src/utils/hooks';
 
 export const useAuthorisedInterval = (
   callback: EmptyFn,
@@ -9,11 +10,7 @@ export const useAuthorisedInterval = (
   callImmediately = true
 ) => {
   const isAuthorised = useIsAuthorisedSelector();
-  const callbackRef = useRef(callback);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
+  const callbackRef = useCallbackRef(callback);
 
   useEffect(() => {
     if (!isAuthorised) {
