@@ -28,7 +28,7 @@ import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } fro
 
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
-import { loadTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
+import { loadTokensMetadataActions } from '../tokens-metadata/tokens-metadata-actions';
 import type { RootState } from '../types';
 import {
   addTokenAction,
@@ -116,7 +116,9 @@ const loadTokensWithBalancesEpic: Epic<Action, Action, RootState> = (action$, st
 
           return [
             loadTokensActions.success(tokensWithBalancesSlugs),
-            loadTokensMetadataAction(assetWithoutMetadataSlugs),
+            assetWithoutMetadataSlugs.length
+              ? loadTokensMetadataActions.submit(assetWithoutMetadataSlugs)
+              : loadTokensMetadataActions.success(),
             loadTokensBalancesArrayActions.submit()
           ];
         }),

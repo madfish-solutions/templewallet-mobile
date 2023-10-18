@@ -12,14 +12,13 @@ import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
 import {
   TOKENS_SYNC_INTERVAL,
-  BALANCES_SYNC_INTERVAL,
   RATES_SYNC_INTERVAL,
   SELECTED_BAKER_SYNC_INTERVAL,
   NOTIFICATIONS_SYNC_INTERVAL,
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
-// import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
+import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -98,8 +97,6 @@ export const MainStackScreen = memo(() => {
   const exchangeRates = useUsdToTokenRates();
   const { isLocked } = useAppLock();
 
-  // const blockSubscription = useBlockSubscription();
-
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
   const { metadata } = useNetworkInfo();
@@ -114,23 +111,23 @@ export const MainStackScreen = memo(() => {
   useBeaconHandler();
   useNFTDynamicLinks();
 
-  const refreshDeps = [
-    // blockSubscription.block.header,
-    selectedAccountPkh,
-    selectedRpcUrl
-  ];
+  const blockSubscription = useBlockSubscription();
+
+  useEffect(() => {
+    dispatch(loadTezosBalanceActions.submit());
+    dispatch(loadTokensBalancesArrayActions.submit());
+  }, [blockSubscription.block.header.level]);
 
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
-  useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
-  useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, refreshDeps);
-  useAuthorisedInterval(
-    () => {
-      dispatch(loadTezosBalanceActions.submit());
-      dispatch(loadTokensBalancesArrayActions.submit());
-    },
-    BALANCES_SYNC_INTERVAL,
-    refreshDeps
-  );
+  useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, [
+    selectedAccountPkh,
+    selectedRpcUrl
+  ]);
+  useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, [
+    selectedAccountPkh,
+    selectedRpcUrl
+  ]);
+
   useAuthorisedInterval(() => dispatch(loadExchangeRates.submit()), RATES_SYNC_INTERVAL);
   useAuthorisedInterval(() => dispatch(loadNotificationsAction.submit()), NOTIFICATIONS_SYNC_INTERVAL, [
     selectedAccountPkh

@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
-import { AccountStateInterface } from 'src/interfaces/account-state.interface';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible } from 'src/utils/tezos.util';
@@ -39,8 +38,6 @@ export const useIsAuthorisedSelector = () => {
   return useMemo(() => accounts.length > 0, [accounts.length]);
 };
 
-export const useIsCurrentNodeOfDcp = () => useSelector(state => isDcpNode(state.settings.selectedRpcUrl));
-
 export const useCurrentAccountPkhSelector = () => useSelector(state => state.wallet.selectedAccountPublicKeyHash);
 
 export const useIsAccountVisibleSelector = (publicKeyHash: string): boolean | undefined =>
@@ -52,9 +49,6 @@ export const useRawCurrentAccountSelector = () =>
 
     return state.wallet.accounts.find(acc => acc.publicKeyHash === pkh);
   });
-
-export const useRawCurrentAccountStateSelector = (): AccountStateInterface | undefined =>
-  useSelector(state => state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash]);
 
 /** @deprecated */
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
@@ -70,9 +64,10 @@ const useAllCurrentAccountAssetsSelector = () =>
 
       const isDcp = isDcpNode(state.settings.selectedRpcUrl);
 
+      // (!) Somehow, after wallet reset, witnessed `account.removedTokensList` & `account.dcpTokensList` be `undefined`
       return {
-        removed: account.removedTokensList,
-        stored: isDcp ? account.dcpTokensList : account.tokensList
+        removed: account.removedTokensList ?? [],
+        stored: (isDcp ? account.dcpTokensList : account.tokensList) ?? []
       };
     },
     (state1, state2) => state1?.stored === state2?.stored && state1?.removed === state2?.removed

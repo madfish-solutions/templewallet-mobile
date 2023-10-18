@@ -70,11 +70,14 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   },
   bottomSheet: {
     backgroundColor: colors.pageBG
-  },
+  }
+}));
+
+export const useCollectiblesGridStyles = createUseStyles(() => ({
   loader: {
     width: '100%',
     alignItems: 'center',
-    marginTop: formatSize(12)
+    marginTop: formatSize(16)
   }
 }));
 

@@ -82,7 +82,7 @@ export interface QueryResponse {
   }[];
 }
 
-export interface TzProfile {
+interface TzProfile {
   alias?: string | nullish;
   discord?: string | nullish;
   github?: string | nullish;

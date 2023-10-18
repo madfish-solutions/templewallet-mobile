@@ -15,7 +15,6 @@ import { Search } from 'src/components/search/search';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { useCollectibleDetailsLoadingSelector } from 'src/store/collectibles/collectibles-selectors';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
@@ -41,7 +40,6 @@ export const CollectiblesHome = memo(() => {
   const collectibles = useCurrentAccountCollectibles(true);
   const accountPkh = useCurrentAccountPkhSelector();
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
-  const areDetailsLoading = useCollectibleDetailsLoadingSelector();
 
   const styles = useCollectiblesHomeStyles();
 
@@ -134,13 +132,7 @@ export const CollectiblesHome = memo(() => {
             </View>
           </View>
 
-          {areDetailsLoading && !collectibles.length ? (
-            <View style={styles.loader}>
-              <ActivityIndicator size="large" />
-            </View>
-          ) : (
-            <CollectiblesList collectibles={filteredAssetsList} isShowInfo={isShowCollectibleInfo} />
-          )}
+          <CollectiblesList collectibles={filteredAssetsList} isShowInfo={isShowCollectibleInfo} />
         </BottomSheet>
       ) : null}
     </View>

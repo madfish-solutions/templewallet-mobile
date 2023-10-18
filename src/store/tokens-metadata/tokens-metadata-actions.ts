@@ -10,7 +10,7 @@ export const removeKnownSvg = createAction<string>('assets/REMOVE_KNOWN_SVG');
 
 export const addTokensMetadataAction = createAction<TokenMetadataInterface[]>('assets/ADD_TOKENS_METADATA');
 
-export const loadTokensMetadataAction = createAction<string[]>('assets/LOAD_TOKENS_METADATA');
+export const loadTokensMetadataActions = createActions<string[]>('assets/LOAD_TOKENS_METADATA');
 
 export const loadWhitelistAction = createActions<void, Array<TokenMetadataInterface>>('assets/LOAD_WHITELIST_METADATA');
 

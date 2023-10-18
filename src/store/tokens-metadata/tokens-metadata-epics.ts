@@ -1,7 +1,7 @@
 import { Action } from 'redux';
 import { combineEpics, Epic } from 'redux-observable';
 import { of } from 'rxjs';
-import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, switchMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from 'src/utils/token-metadata.utils';
@@ -11,7 +11,7 @@ import type { RootState } from '../types';
 import {
   addTokensMetadataAction,
   loadTokenMetadataActions,
-  loadTokensMetadataAction,
+  loadTokensMetadataActions,
   loadTokenSuggestionActions,
   loadWhitelistAction
 } from './tokens-metadata-actions';
@@ -64,12 +64,12 @@ const loadTokenMetadataEpic: Epic = action$ =>
 
 const loadTokensMetadataEpic: Epic = action$ =>
   action$.pipe(
-    ofType(loadTokensMetadataAction),
+    ofType(loadTokensMetadataActions.submit),
     toPayload(),
     switchMap(slugs =>
       loadTokensMetadata$(slugs).pipe(
-        map(tokensMetadata => addTokensMetadataAction(tokensMetadata)),
-        catchError(err => of(loadTokenMetadataActions.fail(err.message)))
+        concatMap(tokensMetadata => [addTokensMetadataAction(tokensMetadata), loadTokensMetadataActions.success()]),
+        catchError(err => of(loadTokensMetadataActions.fail(err.message)))
       )
     )
   );
