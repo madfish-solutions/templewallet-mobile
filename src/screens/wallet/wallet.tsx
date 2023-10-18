@@ -25,7 +25,6 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
-import { useSelector } from 'src/store/selector';
 import { walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
@@ -42,12 +41,6 @@ import { WalletSelectors } from './wallet.selectors';
 import { WalletStyles } from './wallet.styles';
 
 export const Wallet = memo(() => {
-  useSelector(state => {
-    console.log('useSelector() called');
-
-    return state;
-  });
-
   const dispatch = useDispatch();
   const { pageEvent } = useAnalytics();
   const { navigate } = useNavigation();

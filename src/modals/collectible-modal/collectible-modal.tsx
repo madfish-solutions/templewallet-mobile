@@ -7,7 +7,6 @@ import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
-// import { ActivityIndicator } from 'src/components/activity-indicator/activity-indicator';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
@@ -70,7 +69,6 @@ export const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
 
 export const CollectibleModal = memo(() => {
   const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
-  console.log('slug:', slug);
 
   const [address, id] = fromTokenSlug(slug);
   const accountPkh = useCurrentAccountPkhSelector();
@@ -229,10 +227,6 @@ export const CollectibleModal = memo(() => {
 
     return { title, logo };
   }, [details, styles.collectionLogo]);
-
-  // if (!isString(collectible?.address)) {
-  //   return <ActivityIndicator size="large" />;
-  // }
 
   return (
     <ScreenContainer
