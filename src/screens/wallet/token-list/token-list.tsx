@@ -208,7 +208,6 @@ export const TokensList: FC = () => {
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlashList
-          scrollEnabled
           data={renderData}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
