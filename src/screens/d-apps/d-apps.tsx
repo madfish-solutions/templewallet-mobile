@@ -101,8 +101,8 @@ export const DApps = () => {
   const renderItem: ListRenderItem<CustomDAppInfo[]> = useCallback(
     ({ item }) => (
       <View style={styles.rowContainer}>
-        {item.map(dapp => (
-          <OthersDApp key={dapp.name} item={dapp} itemWidth={itemWidth} testID={DAppsSelectors.othersDAppsItem} />
+        {item.map((dapp, index) => (
+          <OthersDApp key={index} item={dapp} itemWidth={itemWidth} testID={DAppsSelectors.othersDAppsItem} />
         ))}
       </View>
     ),

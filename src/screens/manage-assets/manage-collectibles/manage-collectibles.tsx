@@ -18,9 +18,7 @@ import { useManageAssetsStyles } from '../manage-assets.styles';
 const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(24) * 2);
 
 const keyExtractor = (item: TokenInterface) => getTokenSlug(item);
-const renderItem: ListRenderItem<TokenInterface> = ({ item }) => (
-  <ManageAssetsItem key={getTokenSlug(item)} asset={item} />
-);
+const renderItem: ListRenderItem<TokenInterface> = ({ item }) => <ManageAssetsItem asset={item} />;
 
 const ListEmptyComponent = <DataPlaceholder text="No collectibles matching search criteria were found" />;
 

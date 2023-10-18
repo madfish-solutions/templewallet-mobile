@@ -24,6 +24,8 @@ const allRewardsPerEventKeys: (keyof RewardsPerEventHistoryItem)[] = [
   'rewardPerFutureEndorsement'
 ];
 
+const AVERAGE_ITEM_HEIGHT = 280;
+
 interface Props {
   bakerRewards: BakerRewardInterface[];
 }
@@ -98,7 +100,6 @@ export const BakerRewardsList: FC<Props> = ({ bakerRewards }) => {
     ({ item, index }) => (
       <BakerRewardItem
         currentCycle={currentCycle}
-        key={`${item.cycle},${item.baker.address}`}
         reward={item}
         fallbackRewardPerEndorsement={fallbackRewardsPerEvents[index].rewardPerEndorsement}
         fallbackRewardPerFutureBlock={fallbackRewardsPerEvents[index].rewardPerFutureBlock}
@@ -122,6 +123,7 @@ export const BakerRewardsList: FC<Props> = ({ bakerRewards }) => {
         contentContainerStyle={styles.flatListContentContainer}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        estimatedItemSize={AVERAGE_ITEM_HEIGHT}
         ListEmptyComponent={ListEmptyComponent}
       />
     </>

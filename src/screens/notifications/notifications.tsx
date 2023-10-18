@@ -17,9 +17,7 @@ const AVERAGE_NOTIFICATION_ITEM_HEIGHT = 127;
 
 const keyExtractor = (item: NotificationInterface) => item.id.toString();
 
-const renderItem: ListRenderItem<NotificationInterface> = ({ item }) => (
-  <NotificationPreviewItem key={item.id} notification={item} />
-);
+const renderItem: ListRenderItem<NotificationInterface> = ({ item }) => <NotificationPreviewItem notification={item} />;
 
 const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
 

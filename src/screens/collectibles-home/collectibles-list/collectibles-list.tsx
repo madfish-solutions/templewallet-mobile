@@ -5,11 +5,11 @@ import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { SIDEBAR_WIDTH } from 'src/config/styles';
+import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { sliceIntoChunks } from 'src/utils/array.utils';
 
-import { formatSize } from '../../../styles/format-size';
 import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
 
@@ -37,8 +37,8 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const renderItem: ListRenderItem<TokenInterface[]> = useCallback(
     ({ item }) => (
       <View style={CollectiblesListStyles.rowContainer}>
-        {item.map(collectible => (
-          <TouchableCollectibleIcon key={getTokenSlug(collectible)} collectible={collectible} size={itemSize} />
+        {item.map((collectible, index) => (
+          <TouchableCollectibleIcon key={index} collectible={collectible} size={itemSize} />
         ))}
       </View>
     ),
