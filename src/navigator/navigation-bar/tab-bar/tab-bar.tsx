@@ -1,13 +1,10 @@
-import { BigNumber } from 'bignumber.js';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback } from 'react';
 import { View } from 'react-native';
 
-import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
-import { isIOS } from 'src/config/system';
+import { isAndroid } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { ScreensOrModalsEnum } from 'src/interfaces/stacks.interface';
 import {
   dAppsStackScreens,
@@ -18,8 +15,6 @@ import {
   walletStackScreens
 } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { SwapDisclaimerOverlay } from 'src/screens/swap/swap-disclaimer-overlay/swap-disclaimer-overlay';
-import { useIsSwapDisclaimerShowingSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -42,11 +37,7 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const styles = useTabBarStyles();
 
   const { isDcpNode } = useNetworkInfo();
-  const { balance } = useTotalBalance();
   const { getState } = useNavigation();
-
-  const swapDisclaimerOverlayController = useBottomSheetController();
-  const isSwapDisclaimerShowing = useIsSwapDisclaimerShowingSelector();
 
   const routes = getState().routes[0].state?.routes;
   const route = getTokenParams(routes as RouteParams[]);
@@ -57,11 +48,6 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
   const isStackFocusedMemo = useCallback(
     (screensStack: ScreensOrModalsEnum[]) => isStackFocused(currentRouteName, screensStack),
     [currentRouteName]
-  );
-
-  const isSwapButtonDisabled = useMemo(
-    () => isDcpNode || (isIOS && new BigNumber(balance).isLessThanOrEqualTo(0)),
-    [isDcpNode, balance]
   );
 
   const handleDisabledPress = useCallback(() => showErrorToast({ description: NOT_AVAILABLE_MESSAGE }), []);
@@ -84,17 +70,18 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
           focused={isStackFocusedMemo(nftStackScreens)}
           disabledOnPress={handleDisabledPress}
         />
-        <TabBarButton
-          label="Swap"
-          iconName={IconNameEnum.Swap}
-          iconWidth={formatSize(32)}
-          routeName={ScreensEnum.SwapScreen}
-          swapScreenParams={swapScreenParams}
-          focused={isStackFocusedMemo(swapStackScreens)}
-          disabled={isSwapButtonDisabled}
-          onSwapButtonPress={isIOS && isSwapDisclaimerShowing ? swapDisclaimerOverlayController.open : undefined}
-          disabledOnPress={handleDisabledPress}
-        />
+        {isAndroid && (
+          <TabBarButton
+            label="Swap"
+            iconName={IconNameEnum.Swap}
+            iconWidth={formatSize(32)}
+            routeName={ScreensEnum.SwapScreen}
+            swapScreenParams={swapScreenParams}
+            focused={isStackFocusedMemo(swapStackScreens)}
+            disabled={isDcpNode}
+            disabledOnPress={handleDisabledPress}
+          />
+        )}
         <TabBarButton
           label="DApps"
           iconName={IconNameEnum.DApps}
@@ -113,7 +100,6 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
         />
       </View>
       <InsetSubstitute type="bottom" />
-      <SwapDisclaimerOverlay controller={swapDisclaimerOverlayController} routeParams={swapScreenParams} />
     </View>
   );
 };

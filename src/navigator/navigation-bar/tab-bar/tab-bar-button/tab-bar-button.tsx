@@ -3,7 +3,6 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { EmptyFn, emptyFn } from '../../../../config/general';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
@@ -25,7 +24,6 @@ interface Props {
   disabled?: boolean;
   showNotificationDot?: boolean;
   swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
-  onSwapButtonPress?: EmptyFn;
   disabledOnPress?: EmptyFn;
 }
 
@@ -38,8 +36,7 @@ export const TabBarButton: FC<Props> = ({
   disabled = false,
   showNotificationDot = false,
   swapScreenParams,
-  onSwapButtonPress,
-  disabledOnPress = emptyFn
+  disabledOnPress
 }) => {
   const colors = useColors();
   const styles = useTabBarButtonStyles();
@@ -55,16 +52,12 @@ export const TabBarButton: FC<Props> = ({
 
   const handlePress = () => {
     if (disabled) {
-      disabledOnPress();
+      disabledOnPress?.();
     } else {
-      if (onSwapButtonPress && !focused) {
-        onSwapButtonPress();
+      if (routeName === ScreensEnum.SwapScreen) {
+        navigate(routeName, swapScreenParams);
       } else {
-        if (routeName === ScreensEnum.SwapScreen) {
-          navigate(routeName, swapScreenParams);
-        } else {
-          navigate(routeName);
-        }
+        navigate(routeName);
       }
     }
   };

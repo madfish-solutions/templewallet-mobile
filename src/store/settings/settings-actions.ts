@@ -44,8 +44,6 @@ export const setIsOnRampHasBeenShownBeforeAction = createAction<boolean>(
   'settings/SET_IS_ON_RAMP_HAS_BEEN_SHOWN_BEFORE_ACTION'
 );
 
-export const setIsSwapDisclaimerShowingAction = createAction<boolean>('settings/SET_IS_SWAP_DISCLAIMER_SHOWING_ACTION');
-
 export const walletOpenedAction = createAction<void>('settings/APPLICATION_OPENED_ACTION');
 
 export const switchIsShowCollectibleInfoAction = createAction('settings/SET_IS_SHOW_COLLECTIBLE_INFO_ACTION');
