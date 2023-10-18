@@ -150,7 +150,7 @@ interface Fa {
   editions: number;
 }
 
-interface Royalty {
+export interface ObjktRoyalty {
   decimals: number;
   amount: number;
 }
@@ -178,7 +178,7 @@ export interface ObjktCollectibleDetails {
   artifact_uri: string;
   tags: ObjktTag[];
   timestamp: string;
-  royalties: Royalty[];
+  royalties: ObjktRoyalty[];
   supply: number;
   mime: string;
   galleries: Gallery[];

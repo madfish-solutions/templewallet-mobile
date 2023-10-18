@@ -6,8 +6,8 @@ import { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-in
 import { isDefined } from 'src/utils/is-defined';
 
 import { useCollectiblePropertiesStyles, useCollectiblePropertyStyles } from './styles';
-import { getRoyalties } from './utils/get-royalties.util';
 import { getTzktContractLink } from './utils/get-tzkt-contract-link.util';
+import { reduceRoyalties } from './utils/royalties';
 
 interface Props {
   contract: string;
@@ -48,7 +48,7 @@ export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, 
       },
       {
         name: 'Royalties',
-        value: royalties ? getRoyalties(royalties) : null
+        value: royalties ? reduceRoyalties(royalties) : null
       },
       {
         name: 'Contract',

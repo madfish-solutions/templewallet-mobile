@@ -156,7 +156,7 @@
     "eslint-plugin-jest": "^26.5.3",
     "metro-react-native-babel-preset": "0.76.8",
     "node-libs-react-native": "^1.2.1",
-    "react-native-flipper": "0.182.0",
+    "react-native-flipper": "0.164.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-test-renderer": "18.2.0",
     "redux-flipper": "^2.0.2",

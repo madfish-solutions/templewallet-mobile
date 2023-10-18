@@ -1,4 +1,4 @@
-import type { ObjktAttribute, ObjktTag, ObjktListing, ObjktHolder } from 'src/apis/objkt/types';
+import type { ObjktAttribute, ObjktTag, ObjktListing, ObjktHolder, ObjktRoyalty } from 'src/apis/objkt/types';
 
 interface Creators {
   holder: {
@@ -12,11 +12,6 @@ interface Collection {
   logo: string;
   items: number;
   editions: number;
-}
-
-interface Royalties {
-  decimals: number;
-  amount: number;
 }
 
 interface Galleries {
@@ -48,7 +43,7 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   attributes: ObjktAttribute[];
   tags: ObjktTag[];
   timestamp: string;
-  royalties: Royalties[];
+  royalties: ObjktRoyalty[];
   galleries: Galleries[];
   isAdultContent: boolean;
 }
