@@ -10,8 +10,7 @@ export const useOthersDAppStyles = createUseStyles(({ colors, typography }) => (
     backgroundColor: colors.cardBG,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: formatSize(16),
-    marginBottom: formatSize(16)
+    padding: formatSize(16)
   },
   text: {
     ...typography.caption13Semibold,

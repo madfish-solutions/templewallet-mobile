@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
-import { useWindowDimensions } from 'react-native';
+import React, { FC, useCallback, useState } from 'react';
+import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
@@ -16,37 +16,37 @@ import { useOthersDAppStyles } from './others.styles';
 
 interface Props extends TestIdProps {
   item: CustomDAppInfo;
+  itemWidth?: number;
 }
 
-const HALF_COLUMN_GAP = formatSize(8);
-const LIST_HORIZONTAL_PADDING_SUM = formatSize(80);
-
-export const OthersDApp: FC<Props> = ({ item, testID }) => {
+export const OthersDApp: FC<Props> = ({ item, itemWidth, testID }) => {
   const { name, logo, slug, dappUrl } = item;
   const [imageLoadError, setImageLoadError] = useState(false);
 
   const styles = useOthersDAppStyles();
   const openUrl = useOpenUrlInAppBrowser();
 
-  const windowWidth = useWindowDimensions().width;
-  const itemWidth = useMemo(() => (windowWidth - HALF_COLUMN_GAP - LIST_HORIZONTAL_PADDING_SUM) / 2, [windowWidth]);
-
   const onPress = useCallback(() => openUrl(dappUrl), [openUrl, dappUrl]);
 
   return (
     <TouchableWithAnalytics
-      style={[styles.container, { width: itemWidth }]}
+      style={{
+        width: itemWidth,
+        padding: formatSize(8)
+      }}
       testID={testID}
       testIDProperties={{ dapp: slug }}
       onPress={onPress}
     >
-      {imageLoadError ? (
-        <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />
-      ) : (
-        <FastImage style={styles.logo} source={{ uri: logo }} onError={() => setImageLoadError(true)} />
-      )}
-      <Divider size={formatSize(8)} />
-      <TruncatedText style={styles.text}>{name}</TruncatedText>
+      <View style={styles.container}>
+        {imageLoadError ? (
+          <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />
+        ) : (
+          <FastImage style={styles.logo} source={{ uri: logo }} onError={() => setImageLoadError(true)} />
+        )}
+        <Divider size={formatSize(8)} />
+        <TruncatedText style={styles.text}>{name}</TruncatedText>
+      </View>
     </TouchableWithAnalytics>
   );
 };

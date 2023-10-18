@@ -1,7 +1,7 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Text, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -12,6 +12,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { PERCENTAGE_DECIMALS } from 'src/config/earn-opportunities';
+import { SIDEBAR_WIDTH } from 'src/config/styles';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
@@ -26,21 +27,28 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isString } from 'src/utils/is-string';
 
+import { sliceIntoChunks } from '../../utils/array.utils';
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
 import { OthersDApp } from './others/others';
 import { PromotionCarousel } from './promotion-carousel/promotion-carousel';
 
-const renderItem: ListRenderItem<CustomDAppInfo> = ({ item }) => (
-  <OthersDApp item={item} testID={DAppsSelectors.othersDAppsItem} />
-);
-const keyExtractor = (item: CustomDAppInfo) => item.name;
+const ITEMS_PER_ROW = 2;
+const TABBAR_MARGINS = formatSize(16);
+const SIDEBAR_MARGINS = formatSize(51);
+
+/** item padding + icon size + container padding */
+const ITEM_HEIGHT = Math.floor(formatSize(24) + formatSize(32) + formatSize(16));
+
+const keyExtractor = (item: CustomDAppInfo[]) => item.map(dapp => dapp.name).join('/');
 const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
 export const DApps = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
+
+  const windowWidth = useWindowDimensions().width;
 
   const { isLoading: isFarmsLoading } = useAllFarmsSelector();
   const isSavingsLoading = useSavingsItemsLoadingSelector();
@@ -85,6 +93,22 @@ export const DApps = () => {
     [searchQuery, dAppsList]
   );
 
+  const itemWidth =
+    (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW;
+
+  const data = useMemo(() => sliceIntoChunks(sortedDAppsList, ITEMS_PER_ROW), [sortedDAppsList]);
+
+  const renderItem: ListRenderItem<CustomDAppInfo[]> = useCallback(
+    ({ item }) => (
+      <View style={styles.rowContainer}>
+        {item.map(dapp => (
+          <OthersDApp key={dapp.name} item={dapp} itemWidth={itemWidth} testID={DAppsSelectors.othersDAppsItem} />
+        ))}
+      </View>
+    ),
+    [itemWidth]
+  );
+
   return (
     <>
       <InsetSubstitute type="top" />
@@ -120,13 +144,13 @@ export const DApps = () => {
         <Disclaimer texts={texts} />
       </View>
 
-      <Divider size={formatSize(20)} />
+      <Divider size={formatSize(12)} />
 
       <FlashList
-        data={sortedDAppsList}
+        data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        numColumns={2}
+        estimatedItemSize={ITEM_HEIGHT}
         contentContainerStyle={styles.contentContainer}
         ListEmptyComponent={ListEmptyComponent}
       />

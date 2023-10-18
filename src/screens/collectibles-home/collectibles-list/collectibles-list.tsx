@@ -4,12 +4,12 @@ import { useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { useScreenContainerStyles } from 'src/components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from 'src/config/styles';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { sliceIntoChunks } from 'src/utils/array.utils';
 
+import { formatSize } from '../../../styles/format-size';
 import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
 
@@ -21,11 +21,10 @@ const ITEMS_PER_ROW = 3;
 
 const keyExtractor = (item: TokenInterface[]) => item.map(collectible => getTokenSlug(collectible)).join('/');
 
-const TABBAR_MARGINS = 32;
-const SIDEBAR_MARGINS = 51;
+const TABBAR_MARGINS = formatSize(24);
+const SIDEBAR_MARGINS = formatSize(51);
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
-  const styles = useScreenContainerStyles();
   const windowWidth = useWindowDimensions().width;
   const itemSize =
     (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW;
@@ -43,6 +42,8 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
     [itemSize]
   );
 
+  const estimatedItemSize = useMemo(() => Math.floor(itemSize + formatSize(8)), [itemSize]);
+
   const ListEmptyComponent = useMemo(() => <DataPlaceholder text="Not found any NFT" />, []);
 
   return (
@@ -50,8 +51,8 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
       data={data}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      estimatedItemSize={Math.floor(itemSize)}
-      contentContainerStyle={styles.scrollViewContentContainer}
+      estimatedItemSize={estimatedItemSize}
+      contentContainerStyle={CollectiblesListStyles.contentContainer}
       ListEmptyComponent={ListEmptyComponent}
     />
   );

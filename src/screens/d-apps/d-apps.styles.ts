@@ -2,8 +2,11 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
+  rowContainer: {
+    flexDirection: 'row'
+  },
   contentContainer: {
-    paddingHorizontal: formatSize(20),
+    paddingHorizontal: formatSize(8),
     paddingBottom: formatSize(16)
   },
   text: {
@@ -12,7 +15,7 @@ export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
     paddingHorizontal: formatSize(16)
   },
   dappBlockWrapper: {
-    paddingHorizontal: formatSize(20)
+    paddingHorizontal: formatSize(16)
   },
   dappIcon: {
     marginLeft: formatSize(24)
