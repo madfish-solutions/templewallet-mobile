@@ -16,7 +16,7 @@ import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
 
 /** padding + icon size **/
-const ITEM_HEIGHT = formatSize(24) * 2;
+const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(24) * 2);
 
 const keyExtractor = (item: TokenInterface) => getTokenSlug(item);
 const renderItem: ListRenderItem<TokenInterface> = ({ item }) => (
@@ -47,7 +47,7 @@ export const ManageTokens = () => {
         data={filteredAssetsList}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        estimatedItemSize={ITEM_HEIGHT}
+        estimatedItemSize={FLOORED_ITEM_HEIGHT}
         contentContainerStyle={styles.contentContainerStyle}
         ListEmptyComponent={ListEmptyComponent}
       />

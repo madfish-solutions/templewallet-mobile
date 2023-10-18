@@ -38,8 +38,8 @@ const ITEMS_PER_ROW = 2;
 const TABBAR_MARGINS = formatSize(16);
 const SIDEBAR_MARGINS = formatSize(51);
 
-/** item padding + icon size + container padding */
-const ITEM_HEIGHT = Math.floor(formatSize(24) + formatSize(32) + formatSize(16));
+/** item padding + icon size + item container padding */
+const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(24) + formatSize(32) + formatSize(16));
 
 const keyExtractor = (item: CustomDAppInfo[]) => item.map(dapp => dapp.name).join('/');
 const ListEmptyComponent = <DataPlaceholder text="No records found." />;
@@ -150,7 +150,7 @@ export const DApps = () => {
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        estimatedItemSize={ITEM_HEIGHT}
+        estimatedItemSize={FLOORED_ITEM_HEIGHT}
         contentContainerStyle={styles.contentContainer}
         ListEmptyComponent={ListEmptyComponent}
       />

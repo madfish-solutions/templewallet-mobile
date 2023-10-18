@@ -14,8 +14,10 @@ import { ActivityGroupItem } from './activity-group-item/activity-group-item';
 import { ActivityGroupsListSelectors } from './activity-groups-list.selectors';
 import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
-const keyExtractor = (item: string | ActivityGroup) => (typeof item === 'string' ? item : item[0].hash);
-const getItemType = (item: string | ActivityGroup) => (typeof item === 'string' ? 'sectionHeader' : 'row');
+type ListItem = string | ActivityGroup;
+
+const keyExtractor = (item: ListItem) => (typeof item === 'string' ? item : item[0].hash);
+const getItemType = (item: ListItem) => (typeof item === 'string' ? 'sectionHeader' : 'row');
 
 const ListEmptyComponent = <DataPlaceholder text="No Activity records were found" />;
 
@@ -39,7 +41,7 @@ export const ActivityGroupsList: FC<Props> = ({
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const sections = useMemo(() => {
-    const result: (string | ActivityGroup)[] = [];
+    const result: ListItem[] = [];
     let prevActivityDate = new Date(-1);
 
     for (const activityGroup of activityGroups) {

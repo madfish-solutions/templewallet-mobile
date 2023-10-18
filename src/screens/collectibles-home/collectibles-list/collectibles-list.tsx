@@ -26,8 +26,11 @@ const SIDEBAR_MARGINS = formatSize(51);
 
 export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
   const windowWidth = useWindowDimensions().width;
-  const itemSize =
-    (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW;
+  const itemSize = useMemo(
+    () => (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW,
+    [windowWidth]
+  );
+  const flooredItemSize = useMemo(() => Math.floor(itemSize), [itemSize]);
 
   const data = useMemo(() => sliceIntoChunks(collectiblesList, ITEMS_PER_ROW), [collectiblesList]);
 
@@ -42,8 +45,6 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
     [itemSize]
   );
 
-  const estimatedItemSize = useMemo(() => Math.floor(itemSize + formatSize(8)), [itemSize]);
-
   const ListEmptyComponent = useMemo(() => <DataPlaceholder text="Not found any NFT" />, []);
 
   return (
@@ -51,7 +52,7 @@ export const CollectiblesList: FC<Props> = ({ collectiblesList }) => {
       data={data}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      estimatedItemSize={estimatedItemSize}
+      estimatedItemSize={flooredItemSize}
       contentContainerStyle={CollectiblesListStyles.contentContainer}
       ListEmptyComponent={ListEmptyComponent}
     />

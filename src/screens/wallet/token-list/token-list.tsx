@@ -52,6 +52,8 @@ type ListItem = TokenInterface | typeof AD_PLACEHOLDER;
 const ITEMS_BEFORE_AD = 4;
 /** padding size + icon size */
 const ITEM_HEIGHT = formatSize(24) + formatSize(32);
+const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
+
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 
 export const TokensList: FC = () => {
@@ -210,7 +212,7 @@ export const TokensList: FC = () => {
           data={renderData}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          estimatedItemSize={Math.floor(ITEM_HEIGHT)}
+          estimatedItemSize={FLOORED_ITEM_HEIGHT}
           ListEmptyComponent={ListEmptyComponent}
           refreshControl={refreshControl}
         />

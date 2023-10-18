@@ -17,7 +17,7 @@ import { ContactItem } from './contact-item/contact-item';
 import { ContactsSelectors } from './contacts.selectors';
 
 /** padding size + robot icon size */
-const ITEM_HEIGHT = formatSize(20) + formatSize(44);
+const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(20) + formatSize(44));
 
 const keyExtractor = (item: AccountBaseInterface) => item.publicKeyHash;
 
@@ -49,7 +49,7 @@ export const Contacts = () => {
       data={contacts}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
-      estimatedItemSize={Math.floor(ITEM_HEIGHT)}
+      estimatedItemSize={FLOORED_ITEM_HEIGHT}
       ListEmptyComponent={ListEmptyComponent}
       testID={ContactsSelectors.contactItem}
     />
