@@ -1,16 +1,28 @@
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import React from 'react';
 import { Text } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useCollectiblesListSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
+
+/** padding + icon size **/
+const ITEM_HEIGHT = formatSize(24) * 2;
+
+const keyExtractor = (item: TokenInterface) => getTokenSlug(item);
+const renderItem: ListRenderItem<TokenInterface> = ({ item }) => (
+  <ManageAssetsItem key={getTokenSlug(item)} asset={item} />
+);
+
+const ListEmptyComponent = <DataPlaceholder text="No collectibles matching search criteria were found" />;
 
 export const ManageCollectibles = () => {
   const styles = useManageAssetsStyles();
@@ -26,15 +38,14 @@ export const ManageCollectibles = () => {
 
       <Text style={styles.descriptionText}>Show{isTezosNode && ', remove'} and hide collectibles.</Text>
 
-      <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
-        {filteredAssetsList.length === 0 ? (
-          <DataPlaceholder text="No collectibles matching search criteria were found" />
-        ) : (
-          filteredAssetsList.map(collectible => (
-            <ManageAssetsItem key={getTokenSlug(collectible)} asset={collectible} />
-          ))
-        )}
-      </ScreenContainer>
+      <FlashList
+        data={filteredAssetsList}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        estimatedItemSize={ITEM_HEIGHT}
+        contentContainerStyle={styles.contentContainerStyle}
+        ListEmptyComponent={ListEmptyComponent}
+      />
     </>
   );
 };
