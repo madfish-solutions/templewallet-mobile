@@ -55,6 +55,7 @@ const ITEM_HEIGHT = formatSize(24) + formatSize(32);
 const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
 
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
+const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
 export const TokensList: FC = () => {
   const dispatch = useDispatch();
@@ -211,6 +212,7 @@ export const TokensList: FC = () => {
           data={renderData}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
+          getItemType={getItemType}
           estimatedItemSize={FLOORED_ITEM_HEIGHT}
           ListEmptyComponent={ListEmptyComponent}
           refreshControl={refreshControl}

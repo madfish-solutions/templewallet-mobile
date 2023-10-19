@@ -28,7 +28,7 @@ export const TokenListItem: FC<Props> = memo(
         return;
       }
       navigate(ScreensEnum.TokenScreen, { token });
-    }, [onPress]);
+    }, [navigate, onPress, token]);
 
     return (
       <TouchableOpacity onPress={handleOnPress} style={styles.container}>
