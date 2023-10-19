@@ -8,7 +8,7 @@ import { BrokenImage } from 'src/components/broken-image';
 import { SimpleModelView } from 'src/components/simple-model-view/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player/simple-player';
 import { AssetMediaURIs } from 'src/utils/assets/types';
-import { formatCollectibleObjktArtifactUri, isImgUriDataUri } from 'src/utils/image.utils';
+import { formatCollectibleArtifactUri, isImgUriDataUri } from 'src/utils/image.utils';
 
 import { AudioPlayer } from './audio-player';
 import { useCollectibleIconStyles } from './styles';
@@ -45,7 +45,7 @@ export const CollectibleMedia = memo<Props>(
         if (mime === 'model/gltf-binary') {
           return (
             <SimpleModelView
-              uri={formatCollectibleObjktArtifactUri(artifactUri)}
+              uri={formatCollectibleArtifactUri(artifactUri)}
               isBinary={true}
               style={styles.image}
               onError={handleAnimatedError}
@@ -58,7 +58,7 @@ export const CollectibleMedia = memo<Props>(
         if (mime === 'application/x-directory') {
           return (
             <SimpleModelView
-              uri={formatCollectibleObjktArtifactUri(artifactUri)}
+              uri={formatCollectibleArtifactUri(artifactUri)}
               isBinary={false}
               style={styles.image}
               onError={handleAnimatedError}
@@ -71,7 +71,7 @@ export const CollectibleMedia = memo<Props>(
         if (mime.startsWith('video/')) {
           return (
             <SimplePlayer
-              uri={formatCollectibleObjktArtifactUri(artifactUri)}
+              uri={formatCollectibleArtifactUri(artifactUri)}
               size={size}
               style={styles.image}
               onError={handleAnimatedError}

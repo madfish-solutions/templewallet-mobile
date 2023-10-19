@@ -1,9 +1,7 @@
-import { uniq } from 'lodash-es';
 import { useCallback, useMemo, useState } from 'react';
 
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { buildCollectibleImagesStack } from 'src/utils/image.utils';
-import { isTruthy } from 'src/utils/is-truthy';
 
 export const COLLECTIBLE_FINAL_FALLBACK = 'FINAL_FALLBACK';
 
@@ -17,8 +15,7 @@ export const useCollectibleImageControl = (
   const [isLoading, setIsLoading] = useState(true);
 
   const imageFallbackURLs = useMemo(
-    () =>
-      uniq(buildCollectibleImagesStack(assetSlug, { artifactUri, displayUri, thumbnailUri }, true).filter(isTruthy)),
+    () => buildCollectibleImagesStack(assetSlug, { artifactUri, displayUri, thumbnailUri }, true),
     [assetSlug, artifactUri, displayUri, thumbnailUri]
   );
 

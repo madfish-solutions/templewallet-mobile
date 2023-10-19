@@ -1,5 +1,4 @@
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import { chunk } from 'lodash-es';
 import React, { memo, useCallback, useMemo } from 'react';
 import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
@@ -29,7 +28,7 @@ interface Props {
 const ITEMS_PER_ROW = 3;
 const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
-const keyExtractor = (item: UsableAccountAsset[]) => item.map(({ slug }) => slug).join('/');
+const keyExtractor = (item: UsableAccountAsset) => item.slug;
 
 export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
   const screenStyles = useScreenContainerStyles();
@@ -48,11 +47,9 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
     return (gridWidth - GRID_GAPS_TOTAL_WIDTH) / ITEMS_PER_ROW;
   }, [windowWidth]);
 
-  const data = useMemo(() => chunk(collectibles, ITEMS_PER_ROW), [collectibles]);
-
   const getItemLayout = useMemo(
     () =>
-      createGetItemLayout<UsableAccountAsset[]>(
+      createGetItemLayout<UsableAccountAsset>(
         isShowInfo
           ? itemSize +
               itemStyles.description.paddingTop +
@@ -65,20 +62,16 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
     [isShowInfo, itemSize, itemStyles]
   );
 
-  const renderItem: ListRenderItem<UsableAccountAsset[]> = useCallback(
-    ({ item }) => (
-      <View style={CollectiblesListStyles.rowContainer}>
-        {item.map((collectible, i) => (
-          <CollectibleItem
-            key={collectible.slug}
-            slug={collectible.slug}
-            collectible={collectible}
-            isShowInfo={isShowInfo}
-            size={itemSize}
-            style={(i + 1) % 3 !== 0 ? CollectiblesListStyles.marginRight : undefined}
-          />
-        ))}
-      </View>
+  const renderItem: ListRenderItem<UsableAccountAsset> = useCallback(
+    ({ item: collectible, index }) => (
+      <CollectibleItem
+        key={collectible.slug}
+        slug={collectible.slug}
+        collectible={collectible}
+        isShowInfo={isShowInfo}
+        size={itemSize}
+        style={(index + 1) % ITEMS_PER_ROW !== 0 ? CollectiblesListStyles.marginRight : undefined}
+      />
     ),
     [itemSize, isShowInfo]
   );
@@ -86,7 +79,9 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
   return (
     <>
       <BottomSheetFlatList
-        data={data}
+        data={collectibles}
+        numColumns={ITEMS_PER_ROW}
+        initialNumToRender={ITEMS_PER_ROW * 15}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}

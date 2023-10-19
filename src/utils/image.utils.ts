@@ -1,7 +1,10 @@
 import 'react-native-url-polyfill/auto';
 
+import { uniq } from 'lodash-es';
+
 import { AssetMediaURIs } from './assets/types';
 import { isString } from './is-string';
+import { isTruthy } from './is-truthy';
 
 const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
@@ -17,52 +20,76 @@ export const buildCollectibleImagesStack = (
   slug: string,
   { artifactUri, displayUri, thumbnailUri }: AssetMediaURIs,
   fullView = false
-) => {
+): string[] => {
   const [address, id] = slug.split('_');
 
-  const dataUriStack = [
-    artifactUri?.startsWith('data:image/') ? artifactUri : undefined,
-    displayUri?.startsWith('data:image/') ? displayUri : undefined
-  ];
-  const httpStack = [
-    artifactUri?.startsWith('http') ? artifactUri : undefined,
-    displayUri?.startsWith('http') ? displayUri : undefined
-  ];
+  const artifactInfo = getMediaUriInfo(artifactUri);
+  const displayInfo = getMediaUriInfo(displayUri);
+  const thumbnailInfo = getMediaUriInfo(thumbnailUri);
 
-  return fullView
+  const stack = fullView
     ? [
-        ...dataUriStack,
-        buildObjktMediaURI(artifactUri, 'display'),
-        buildObjktMediaURI(displayUri, 'display'),
-        buildObjktMediaURI(thumbnailUri, 'display'),
-        buildIpfsMediaURI(displayUri, 'raw'),
-        buildIpfsMediaURI(displayUri, 'large'),
-        buildIpfsMediaURI(displayUri, 'medium'),
-        buildIpfsMediaURI(displayUri, 'small'),
-        buildIpfsMediaURI(artifactUri, 'raw'),
-        buildIpfsMediaURI(artifactUri, 'large'),
-        buildIpfsMediaURI(artifactUri, 'medium'),
-        buildIpfsMediaURI(artifactUri, 'small'),
-        ...httpStack
+        assureGetDataUriImage(artifactUri),
+        assureGetDataUriImage(displayUri),
+
+        buildObjktMediaURI(artifactInfo.ipfs, 'display'),
+        buildObjktMediaURI(displayInfo.ipfs, 'display'),
+        buildObjktMediaURI(thumbnailInfo.ipfs, 'display'),
+
+        buildIpfsMediaUriByInfo(displayInfo, 'raw'),
+        buildIpfsMediaUriByInfo(displayInfo, 'large'),
+        buildIpfsMediaUriByInfo(displayInfo, 'medium'),
+        buildIpfsMediaUriByInfo(displayInfo, 'small'),
+
+        buildIpfsMediaUriByInfo(artifactInfo, 'raw'),
+        buildIpfsMediaUriByInfo(artifactInfo, 'large'),
+        buildIpfsMediaUriByInfo(artifactInfo, 'medium'),
+        buildIpfsMediaUriByInfo(artifactInfo, 'small'),
+
+        assureGetDataUriImage(thumbnailUri)
       ]
     : [
-        ...dataUriStack,
-        buildObjktMediaURI(artifactUri, 'thumb288'),
-        buildObjktMediaURI(displayUri, 'thumb288'),
-        buildObjktMediaURI(thumbnailUri, 'thumb288'),
+        assureGetDataUriImage(thumbnailUri),
+        assureGetDataUriImage(displayUri),
+        assureGetDataUriImage(artifactUri),
+
+        buildObjktMediaURI(artifactInfo.ipfs, 'thumb288'),
+        buildObjktMediaURI(displayInfo.ipfs, 'thumb288'),
+        buildObjktMediaURI(thumbnailInfo.ipfs, 'thumb288'),
         // Some image of video asset (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) only available through this option:
         buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288'),
-        buildIpfsMediaURI(thumbnailUri, 'medium'),
-        buildIpfsMediaURI(thumbnailUri, 'small'),
-        buildIpfsMediaURI(displayUri, 'medium'),
-        buildIpfsMediaURI(displayUri, 'small'),
-        buildIpfsMediaURI(artifactUri, 'medium'),
-        buildIpfsMediaURI(artifactUri, 'small'),
-        ...httpStack
+
+        buildIpfsMediaUriByInfo(thumbnailInfo, 'medium'),
+        buildIpfsMediaUriByInfo(thumbnailInfo, 'small'),
+
+        buildIpfsMediaUriByInfo(displayInfo, 'medium'),
+        buildIpfsMediaUriByInfo(displayInfo, 'small'),
+
+        buildIpfsMediaUriByInfo(artifactInfo, 'medium'),
+        buildIpfsMediaUriByInfo(artifactInfo, 'small')
       ];
+
+  return uniq(stack.filter(isTruthy));
 };
 
-const getIpfsItemInfo = (uri: string) => {
+interface MediaUriInfo {
+  uri?: string;
+  ipfs: IpfsUriInfo | nullish;
+}
+
+const getMediaUriInfo = (uri?: string): MediaUriInfo => ({
+  uri,
+  ipfs: uri ? getIpfsItemInfo(uri) : null
+});
+
+interface IpfsUriInfo {
+  id: string;
+  path: string;
+  /** With leading `?` if applicable */
+  search: '' | `?${string}`;
+}
+
+const getIpfsItemInfo = (uri: string): IpfsUriInfo | null => {
   if (!uri.startsWith(IPFS_PROTOCOL)) {
     return null;
   }
@@ -77,7 +104,6 @@ const getIpfsItemInfo = (uri: string) => {
   return {
     id,
     path,
-    /** With leading `?` */
     search: search ? `?${search}` : ''
   };
 };
@@ -90,12 +116,7 @@ const getIpfsItemInfo = (uri: string) => {
  */
 const INVALID_IPFS_ID = 'QmNrhZHUaEqxhyLfqoq1mtHSipkWHeT31LNHb1QEbDHgnc';
 
-const buildObjktMediaURI = (uri: string | undefined, tail: ObjktMediaTail) => {
-  if (!uri) {
-    return;
-  }
-
-  const ipfsInfo = getIpfsItemInfo(uri);
+const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTail) => {
   if (!ipfsInfo) {
     return;
   }
@@ -110,12 +131,14 @@ const buildObjktMediaURI = (uri: string | undefined, tail: ObjktMediaTail) => {
 
 const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
-const buildIpfsMediaURI = (uri?: string, size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) => {
+const buildIpfsMediaUriByInfo = (
+  { uri, ipfs: ipfsInfo }: MediaUriInfo,
+  size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE,
+  useMediaHost = true
+) => {
   if (!uri) {
     return;
   }
-
-  const ipfsInfo = getIpfsItemInfo(uri);
 
   if (ipfsInfo) {
     return useMediaHost
@@ -124,18 +147,19 @@ const buildIpfsMediaURI = (uri?: string, size: TcInfraMediaSize = DEFAULT_MEDIA_
   }
 
   if (useMediaHost && uri.startsWith('http')) {
+    // This option also serves as a proxy for any `http` source
     return `${MEDIA_HOST}/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
   }
-
-  return;
 };
 
 export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) =>
-  buildIpfsMediaURI(uri, size, useMediaHost) ?? uri;
+  buildIpfsMediaUriByInfo(getMediaUriInfo(uri), size, useMediaHost) ?? uri;
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 
 const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
+
+const assureGetDataUriImage = (uri?: string) => (uri?.startsWith('data:image/') ? uri : undefined);
 
 export const isImgUriDataUri = (uri: string) => isSvgDataUriInUtf8Encoding(uri);
 
@@ -171,10 +195,5 @@ export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
   return buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288');
 };
 
-export const formatCollectibleObjktArtifactUri = (artifactUri: string) => {
-  if (artifactUri.startsWith('data:image')) {
-    return artifactUri;
-  }
-
-  return buildObjktMediaURI(artifactUri, 'artifact') ?? '';
-};
+export const formatCollectibleArtifactUri = (artifactUri: string) =>
+  assureGetDataUriImage(artifactUri) || buildObjktMediaURI(getIpfsItemInfo(artifactUri), 'artifact') || '';
