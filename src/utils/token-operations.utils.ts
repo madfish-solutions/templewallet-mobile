@@ -251,6 +251,7 @@ const refetchOnce429 = async <R>(fetcher: () => Promise<R>, delayAroundInMS = 10
   try {
     return await fetcher();
   } catch (err: any) {
+    console.log(err, 'refetch');
     if (err.isAxiosError) {
       const error: AxiosError = err;
       if (error.response?.status === 429) {
@@ -272,33 +273,28 @@ const fetchOperGroupsForOperations = async (
 ): Promise<OperationsGroup[]> => {
   const uniqueHashes = uniq(operations.map(d => d.hash));
 
-  const groupsPromises: Promise<OperationsGroup>[] = [];
+  const groups: OperationsGroup[] = [];
 
   for (const hash of uniqueHashes) {
-    const groupPromise = (async () => {
-      const operations = await refetchOnce429(() => getOperationGroupByHash(selectedRpcUrl, hash), 1000);
-      const tokensTransfers = await refetchOnce429(
-        () =>
-          getTokensTransfersByTxIds(
-            selectedRpcUrl,
-            operations
-              .filter(op => op.type === TzktOperationType.Transaction && (op.tokenTransfersCount ?? 0) > 0)
-              .map(({ id }) => id)
-          ),
-        1000
-      );
-      operations.sort((b, a) => a.id - b.id);
+    const operations = await refetchOnce429(() => getOperationGroupByHash(selectedRpcUrl, hash));
+    const tokensTransfers = await refetchOnce429(() =>
+      getTokensTransfersByTxIds(
+        selectedRpcUrl,
+        operations
+          .filter(op => op.type === TzktOperationType.Transaction && (op.tokenTransfersCount ?? 0) > 0)
+          .map(({ id }) => id)
+      )
+    );
+    operations.sort((b, a) => a.id - b.id);
 
-      return {
-        hash,
-        operations,
-        tokensTransfers
-      };
-    })();
-    groupsPromises.push(groupPromise);
+    groups.push({
+      hash,
+      operations,
+      tokensTransfers
+    });
   }
 
-  return Promise.all(groupsPromises);
+  return groups;
 };
 
 export const loadActivity = async (
