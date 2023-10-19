@@ -251,7 +251,6 @@ const refetchOnce429 = async <R>(fetcher: () => Promise<R>, delayAroundInMS = 10
   try {
     return await fetcher();
   } catch (err: any) {
-    console.log(err, 'refetch');
     if (err.isAxiosError) {
       const error: AxiosError = err;
       if (error.response?.status === 429) {
