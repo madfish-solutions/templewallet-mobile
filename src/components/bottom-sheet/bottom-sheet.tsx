@@ -19,8 +19,7 @@ import { BottomSheetControllerProps } from './use-bottom-sheet-controller';
 
 interface Props extends BottomSheetControllerProps {
   title?: string;
-  description?: string;
-  isCanselButtonShown?: boolean;
+  description: string;
   cancelButtonText?: string;
   onCancelButtonPress?: EmptyFn;
   contentHeight: number;
@@ -29,7 +28,6 @@ interface Props extends BottomSheetControllerProps {
 export const BottomSheet: FC<Props> = ({
   title,
   description,
-  isCanselButtonShown = true,
   cancelButtonText = 'Cancel',
   onCancelButtonPress = emptyFn,
   contentHeight,
@@ -96,20 +94,16 @@ export const BottomSheet: FC<Props> = ({
           onChange={handleChange}
         >
           <View style={styles.root}>
-            {(isDefined(title) || isDefined(description)) && (
-              <View style={styles.headerContainer}>
-                {isDefined(title) && <Text style={styles.title}>{title}</Text>}
-                {isDefined(description) && <Text style={styles.description}>{description}</Text>}
-              </View>
-            )}
+            <View style={styles.headerContainer}>
+              {isDefined(title) && <Text style={styles.title}>{title}</Text>}
+              <Text style={styles.description}>{description}</Text>
+            </View>
 
             {children}
 
-            {isCanselButtonShown && (
-              <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
-                <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
+              <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
+            </TouchableOpacity>
           </View>
         </GorhomBottomSheet>
       )}

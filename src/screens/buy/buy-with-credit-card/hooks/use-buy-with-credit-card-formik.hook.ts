@@ -87,7 +87,13 @@ export const useBuyWithCreditCardFormik = () => {
             urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, publicKeyHash, outputSymbol);
             break;
           default:
-            const { payUrl } = await createAliceBobOrder(false, inputAmount.toFixed(), userId, publicKeyHash);
+            const { payUrl } = await createAliceBobOrder(
+              inputAmount.toFixed(),
+              inputSymbol,
+              outputSymbol,
+              userId,
+              publicKeyHash
+            );
             urlToOpen = payUrl;
         }
         openUrl(urlToOpen);
@@ -95,7 +101,7 @@ export const useBuyWithCreditCardFormik = () => {
         showErrorToast({ description: getAxiosQueryErrorMessage(error) });
       }
     },
-    [trackEvent]
+    [publicKeyHash, trackEvent, userId]
   );
 
   return useFormik<BuyWithCreditCardFormValues>({

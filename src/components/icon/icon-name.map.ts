@@ -187,7 +187,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
-  [IconNameEnum.LargeSwap]: LargeSwapIcon,
   [IconNameEnum.SwapSettings]: SwapSettings,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
@@ -303,5 +302,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
   [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
   [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon,
-  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource
+  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource,
+  [IconNameEnum.LargeSwap]: LargeSwapIcon
 };
