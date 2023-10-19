@@ -1,5 +1,6 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
+import { chunk } from 'lodash-es';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
@@ -27,7 +28,6 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isString } from 'src/utils/is-string';
 
-import { sliceIntoChunks } from '../../utils/array.utils';
 import { DAppsSelectors } from './d-apps.selectors';
 import { useDAppsStyles } from './d-apps.styles';
 import { IntegratedDApp } from './integrated/integrated';
@@ -48,7 +48,7 @@ export const DApps = () => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
-  const windowWidth = useWindowDimensions().width;
+  const { width: windowWidth } = useWindowDimensions();
 
   const { isLoading: isFarmsLoading } = useAllFarmsSelector();
   const isSavingsLoading = useSavingsItemsLoadingSelector();
@@ -93,10 +93,12 @@ export const DApps = () => {
     [searchQuery, dAppsList]
   );
 
-  const itemWidth =
-    (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW;
+  const itemWidth = useMemo(
+    () => (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW,
+    [windowWidth]
+  );
 
-  const data = useMemo(() => sliceIntoChunks(sortedDAppsList, ITEMS_PER_ROW), [sortedDAppsList]);
+  const data = useMemo(() => chunk(sortedDAppsList, ITEMS_PER_ROW), [sortedDAppsList]);
 
   const renderItem: ListRenderItem<CustomDAppInfo[]> = useCallback(
     ({ item }) => (

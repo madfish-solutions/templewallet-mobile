@@ -1,6 +1,6 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -32,7 +32,7 @@ interface Props {
 
 const keyExtractor = (item: BakerRewardInterface) => item.cycle.toString();
 
-export const BakerRewardsList: FC<Props> = ({ bakerRewards }) => {
+export const BakerRewardsList = memo<Props>(({ bakerRewards }) => {
   const styles = useBakerRewardsListStyles();
 
   const rewardsPerEventHistory = useMemo(
@@ -128,4 +128,4 @@ export const BakerRewardsList: FC<Props> = ({ bakerRewards }) => {
       />
     </>
   );
-};
+});

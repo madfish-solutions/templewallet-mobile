@@ -1,6 +1,6 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { ListRenderItem, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -49,7 +49,7 @@ const bakersSortFieldsOptions = [
 
 const keyExtractor = (item: BakerInterface) => item.address;
 
-export const SelectBakerModal: FC = () => {
+export const SelectBakerModal = memo(() => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
   const [currentBaker] = useSelectedBakerSelector();
@@ -267,4 +267,4 @@ export const SelectBakerModal: FC = () => {
       </View>
     </>
   );
-};
+});

@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
@@ -21,7 +21,7 @@ const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(20) + formatSize(44));
 
 const keyExtractor = (item: AccountBaseInterface) => item.publicKeyHash;
 
-export const Contacts = () => {
+export const Contacts = memo(() => {
   const { navigate } = useNavigation();
   const contacts = useContactsSelector();
 
@@ -54,4 +54,4 @@ export const Contacts = () => {
       testID={ContactsSelectors.contactItem}
     />
   );
-};
+});
