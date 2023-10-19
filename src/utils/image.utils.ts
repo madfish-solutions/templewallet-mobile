@@ -1,5 +1,3 @@
-import 'react-native-url-polyfill/auto';
-
 import { uniq } from 'lodash-es';
 
 import { AssetMediaURIs } from './assets/types';
