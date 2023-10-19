@@ -47,11 +47,13 @@ const tabs = ['Deposit', 'Withdraw'];
 const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
 
 const stakeButtonTestIds: Partial<Record<EarnOpportunityTypeEnum, string>> = {
-  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiDepositButton
+  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiDepositButton,
+  [EarnOpportunityTypeEnum.YOUVES_SAVING]: ManageEarnOpportunityModalSelectors.youvesSavingsDepositButton
 };
 
 const withdrawButtonTestIds: Partial<Record<EarnOpportunityTypeEnum, string>> = {
-  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiWithdrawButton
+  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiWithdrawButton,
+  [EarnOpportunityTypeEnum.YOUVES_SAVING]: ManageEarnOpportunityModalSelectors.youvesSavingsWithdrawButton
 };
 
 export const ManageEarnOpportunityModal: FC = () => {
