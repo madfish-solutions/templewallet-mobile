@@ -47,10 +47,9 @@ export const ActivityGroupsList: FC<Props> = ({
     for (const activityGroup of activityGroups) {
       const firstActivity = activityGroup[0] ?? emptyActivity;
       const date = new Date(firstActivity.timestamp);
-      const lastActivityGroup = result[result.length - 1];
 
-      if (isTheSameDay(date, prevActivityDate) && Array.isArray(lastActivityGroup)) {
-        lastActivityGroup.concat(activityGroup);
+      if (isTheSameDay(date, prevActivityDate)) {
+        result.push(activityGroup);
       } else {
         let title = date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
 
@@ -96,13 +95,7 @@ export const ActivityGroupsList: FC<Props> = ({
   const stickyHeaderIndices = useMemo(
     () =>
       sections
-        .map((item, index) => {
-          if (typeof item === 'string') {
-            return index;
-          } else {
-            return null;
-          }
-        })
+        .map((item, index) => (typeof item === 'string' ? index : null))
         .filter(item => item !== null) as number[],
     [sections]
   );

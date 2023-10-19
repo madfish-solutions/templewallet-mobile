@@ -30,10 +30,7 @@ export const OthersDApp: FC<Props> = ({ item, itemWidth, testID }) => {
 
   return (
     <TouchableWithAnalytics
-      style={{
-        width: itemWidth,
-        padding: formatSize(8)
-      }}
+      style={[styles.root, { width: itemWidth }]}
       testID={testID}
       testIDProperties={{ dapp: slug }}
       onPress={onPress}
