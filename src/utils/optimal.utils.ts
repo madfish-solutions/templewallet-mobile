@@ -51,13 +51,14 @@ function assertIsObject(likelyAnObject: unknown): void {
   }
 }
 
-export const getOptimalPromotion = (adType: OptimalPromotionAdType) =>
+export const getOptimalPromotion = (adType: OptimalPromotionAdType, address: string) =>
   optimalApi
     .get<OptimalPromotionType>('api/v1/decision', {
       params: {
         publisher: 'templewallet', // your-publisher-slug
         ad_types: adType,
-        div_ids: 'ad'
+        div_ids: 'ad',
+        wallets: `1729:${address}`
       }
     })
     .then(response => {
