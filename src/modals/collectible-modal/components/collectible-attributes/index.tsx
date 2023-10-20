@@ -34,7 +34,7 @@ const CollectibleAttributeView: FC<CollectibleAttributeProps> = ({ name, value, 
     <View style={styles.root}>
       <Text style={styles.name}>{name}</Text>
       <Text style={styles.value}>{value}</Text>
-      <Text style={styles.rarity}>{`${rarity}%`}</Text>
+      <Text style={styles.rarity}>{`${rarity.toFixed(2)}%`}</Text>
     </View>
   );
 };

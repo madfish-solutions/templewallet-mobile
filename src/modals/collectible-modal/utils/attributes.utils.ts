@@ -1,6 +1,7 @@
 import { HIDDEN_ATTRIBUTES_NAME } from 'src/apis/objkt/constants';
 import { AttributeInfoResponse } from 'src/apis/objkt/types';
 import { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { fractionToPercentage } from 'src/utils/percentage.utils';
 
 import { CollectibleAttribute } from '../types';
 
@@ -29,7 +30,7 @@ export const getAttributesWithRarity = (
         }
       }, 0);
 
-      const rarity = Number(((attributeTokenCount / collectibleGalleryCount) * 100).toFixed(2));
+      const rarity = fractionToPercentage(attributeTokenCount / collectibleGalleryCount).toNumber();
 
       return {
         attribute: {

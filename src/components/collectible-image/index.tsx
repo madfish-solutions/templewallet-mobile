@@ -36,13 +36,6 @@ export const CollectibleImage = memo<Props>(
       return <AnimatedSvg style={styles.image} dataUri={src} onError={onFail} onLoadEnd={onSuccess} />;
     }
 
-    if (slug === 'KT18kkvmUoefkdok5mrjU6fxsm7xmumy1NEw_5171') {
-      console.log('artifactUri:', artifactUri);
-      console.log('displayUri:', displayUri);
-      console.log('thumbnailUri:', thumbnailUri);
-      console.log('SRC:', src);
-    }
-
     return (
       <>
         <FastImage
