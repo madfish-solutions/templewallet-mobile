@@ -29,8 +29,9 @@ export const MainInfo: FC = () => {
 
     return Object.entries(stakes).filter(
       ([contractAddress, stakeRecord]) =>
-        new BigNumber(stakeRecord?.claimableRewards ?? 0).isGreaterThan(DEFAULT_AMOUNT) &&
-        (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now && // TODO: Author, check this code, please
+        stakeRecord?.claimableRewards &&
+        new BigNumber(stakeRecord.claimableRewards).isGreaterThan(DEFAULT_AMOUNT) &&
+        (!stakeRecord.rewardsDueDate || stakeRecord.rewardsDueDate < now) &&
         farms.data.some(farm => farm.item.contractAddress === contractAddress)
     );
   }, [stakes, farms]);

@@ -8,12 +8,12 @@ export const getAttributesWithRarity = (
   attributesInfo: AttributeInfoResponse[],
   collectible: CollectibleDetailsInterface
 ): CollectibleAttribute[] => {
-  const isExistGallery = collectible.galleries.length > 0;
-  const collectibleGalleryCount = isExistGallery
+  const someGalleryExists = collectible.galleries.length > 0;
+  const collectibleGalleryCount = someGalleryExists
     ? collectible.galleries?.[0].gallery?.editions
     : collectible.collection.editions;
 
-  const galleryPk = isExistGallery ? collectible.galleries?.[0].gallery?.pk : 0;
+  const galleryPk = someGalleryExists ? collectible.galleries?.[0].gallery?.pk : 0;
 
   return collectible.attributes
     .filter(({ attribute }) => !HIDDEN_ATTRIBUTES_NAME.includes(attribute.name))
@@ -22,7 +22,7 @@ export const getAttributesWithRarity = (
         if (current.attribute_id !== attribute.id) {
           return acc;
         }
-        if (isExistGallery) {
+        if (someGalleryExists) {
           return current.gallery_pk === galleryPk ? acc + current.editions : acc;
         } else {
           return current.fa_contract === collectible.address ? acc + current.editions : acc;

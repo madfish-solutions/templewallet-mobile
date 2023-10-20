@@ -185,27 +185,23 @@ export const loadTokensMetadata$ = memoize(
         tezosMetadataApi.post<(TokenMetadataResponse | null)[]>('/', slugsChunk).then(({ data }) => data)
       )
     ).pipe(
-      map(datas =>
-        datas.map((data, i) =>
-          data
-            .map((token, j) => {
-              const index = i * METADATA_CHUNK_SIZE + j;
-              const slug = slugs[index]!;
-              const [address, id] = slug.split('_');
-              const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
-                token => token.address === address && token.id === Number(id)
-              );
+      map(tokensChunks => tokensChunks.flat()),
+      map(tokens =>
+        tokens.map((token, index) => {
+          const slug = slugs[index]!;
+          const [address, id] = slug.split('_');
+          const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
+            token => token.address === address && token.id === Number(id)
+          );
 
-              if (overridenTokenMetadata) {
-                return overridenTokenMetadata;
-              }
+          if (overridenTokenMetadata) {
+            return overridenTokenMetadata;
+          }
 
-              return token && transformDataToTokenMetadata(token, address, Number(id));
-            })
-            .filter(isDefined)
-        )
+          return token && transformDataToTokenMetadata(token, address, Number(id));
+        })
       ),
-      map(datas => datas.flat())
+      map(tokens => tokens.filter(isDefined))
     )
 );
 

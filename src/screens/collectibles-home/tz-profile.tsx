@@ -55,7 +55,7 @@ export const TzProfileView = memo<Props>(({ accountPkh }) => {
       <SocialButton
         iconName={item.icon}
         url={item.url ?? ''}
-        style={[styles.socialsIcon, undefined]}
+        style={styles.socialsIcon}
         color={isDefined(item.url) ? colors.orange : colors.disabled}
         size={formatSize(15)}
         onPress={() => {

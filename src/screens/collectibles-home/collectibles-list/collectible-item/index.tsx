@@ -52,7 +52,7 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
       return null;
     }
 
-    const floorPrice = +mutezToTz(new BigNumber(price), currency.decimals);
+    const floorPrice = mutezToTz(new BigNumber(price), currency.decimals).toNumber();
     const floorPriceDisplayed = formatNumber(floorPrice);
 
     return { floorPriceDisplayed, symbol: currency.symbol };
