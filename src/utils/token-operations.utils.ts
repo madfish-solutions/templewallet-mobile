@@ -32,6 +32,12 @@ interface OperationsGroup {
   tokensTransfers: TzktTokenTransfer[];
 }
 
+interface LoadActivityReturnValue {
+  activities: Activity[][];
+  reachedTheEnd: boolean;
+  oldestOperation?: TzktOperation;
+}
+
 const getOperationGroupByHash = (selectedRpcUrl: string, hash: string) =>
   getTzktApi(selectedRpcUrl)
     .get<TzktOperation[]>(`operations/${hash}`)
@@ -187,10 +193,13 @@ const getAllOperations = async (
     return [];
   }
   const lowerId = localLastItem.id;
-  const [operationsFa12, operationsFa2] = await Promise.all([
-    getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId),
+
+  const operationsFa12 = await refetchOnce429(() =>
+    getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId)
+  );
+  const operationsFa2 = await refetchOnce429(() =>
     getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId)
-  ]);
+  );
 
   return operations
     .concat(operationsFa12)
@@ -247,25 +256,6 @@ const loadOperations = async (
   return getAllOperations(selectedRpcUrl, selectedAccount.publicKeyHash, oldestOperation?.id);
 };
 
-const refetchOnce429 = async <R>(fetcher: () => Promise<R>, delayAroundInMS = 1000) => {
-  try {
-    return await fetcher();
-  } catch (err: any) {
-    if (err.isAxiosError) {
-      const error: AxiosError = err;
-      if (error.response?.status === 429) {
-        await sleep(delayAroundInMS);
-        const res = await fetcher();
-        await sleep(delayAroundInMS);
-
-        return res;
-      }
-    }
-
-    throw err;
-  }
-};
-
 const fetchOperGroupsForOperations = async (
   selectedRpcUrl: string,
   operations: TzktOperation[]
@@ -302,7 +292,7 @@ export const loadActivity = async (
   tokenSlug?: string,
   knownBakers?: Array<TzktMemberInterface>,
   oldestOperation?: TzktOperation
-): Promise<{ activities: Array<Array<Activity>>; reachedTheEnd: boolean; oldestOperation?: TzktOperation }> => {
+): Promise<LoadActivityReturnValue> => {
   const operations = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, oldestOperation);
 
   const groups = await fetchOperGroupsForOperations(selectedRpcUrl, operations);
@@ -327,4 +317,23 @@ export const loadActivity = async (
   }
 
   return { activities, reachedTheEnd, oldestOperation: oldestOperationNew };
+};
+
+const refetchOnce429 = async <R>(fetcher: () => Promise<R>, delayAroundInMS = 1000) => {
+  try {
+    return await fetcher();
+  } catch (err: any) {
+    if (err.isAxiosError) {
+      const error: AxiosError = err;
+      if (error.response?.status === 429) {
+        await sleep(delayAroundInMS);
+        const res = await fetcher();
+        await sleep(delayAroundInMS);
+
+        return res;
+      }
+    }
+
+    throw err;
+  }
 };
