@@ -1,5 +1,6 @@
 export enum ManageEarnOpportunityModalSelectors {
   kordFiDepositButton = 'KordFi/Deposit button',
+  youvesSavingsDepositButton = 'Youves/Deposit button',
   depositButton = 'Manage earn opportunity/Deposit button',
   tabSwitch = 'Manage earn opportunity/Tab switch',
   amountInput = 'Manage earn opportunity/Amount input',
@@ -7,6 +8,7 @@ export enum ManageEarnOpportunityModalSelectors {
   acceptRisksCheckbox = 'Manage earn opportunity/Accept risks checkbox',
   claimRewardsButton = 'Manage earn opportunity/Claim rewards button',
   kordFiWithdrawButton = 'KordFi/Withdraw button',
+  youvesSavingsWithdrawButton = 'Youves/Withdraw button',
   withdrawButton = 'Manage earn opportunity/Withdraw button',
   sharesAmountInput = 'Manage earn opportunity/Shares amount input',
   amountPercentageSwitcher = 'Manage earn opportunity/Amount percentage switcher',

@@ -71,7 +71,6 @@ import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
 import KordFiEarnSource from './assets/kord-fi-earn-source.svg';
-import LargeSwapIcon from './assets/large-swap.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
@@ -302,6 +301,5 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
   [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
   [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon,
-  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource,
-  [IconNameEnum.LargeSwap]: LargeSwapIcon
+  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource
 };
