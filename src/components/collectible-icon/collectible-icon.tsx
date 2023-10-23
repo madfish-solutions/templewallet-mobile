@@ -94,6 +94,7 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
   const styles = useCollectibleIconStyles();
 
   const isSmallIcon = iconSize === CollectibleIconSize.SMALL;
+  const assetSlug = `${collectible?.address}_${collectible?.id}`;
 
   const actualLoadingStrategy = useMemo(
     () => (isSmallIcon ? collectibleThumbnailLoadStrategy : collectibleBigLoadStrategy),
@@ -105,15 +106,13 @@ export const CollectibleIcon: FC<CollectibleIconProps> = ({
     [isSmallIcon]
   );
 
-  const lastItemId = useRef(collectible.name);
+  const lastItemId = useRef(assetSlug);
 
   const [isLoadingFailed, setIsLoadingFailed] = useState<InitialLoadingState>(actualInitialLoadingState);
-  if (collectible.name !== lastItemId.current) {
-    lastItemId.current = collectible.name;
+  if (assetSlug !== lastItemId.current) {
+    lastItemId.current = assetSlug;
     setIsLoadingFailed(actualInitialLoadingState);
   }
-
-  const assetSlug = `${collectible?.address}_${collectible?.id}`;
 
   const imageRequestObject = { ...collectible, assetSlug };
   const currentFallback = getFirstFallback(actualLoadingStrategy, isLoadingFailed, imageRequestObject);
