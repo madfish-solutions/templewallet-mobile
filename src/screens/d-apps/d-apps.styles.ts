@@ -2,32 +2,34 @@ import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
 export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
-  container: {
-    paddingLeft: formatSize(20),
-    paddingRight: formatSize(36),
-    paddingBottom: formatSize(16),
-    paddingTop: formatSize(8)
+  searchInput: {
+    marginTop: formatSize(12),
+    marginBottom: formatSize(12)
   },
-  text: {
-    ...typography.body15Semibold,
-    color: colors.black,
+  wrapper: {
+    marginTop: formatSize(12),
+    marginBottom: formatSize(12),
     paddingHorizontal: formatSize(16)
   },
-  dappBlockWrapper: {
-    paddingHorizontal: formatSize(20)
+  text: {
+    marginBottom: formatSize(12),
+    color: colors.black,
+    ...typography.body15Semibold
   },
-  dappIcon: {
-    marginLeft: formatSize(24)
+  marginBottom: {
+    marginBottom: formatSize(16)
   },
-  textWrapper: {
-    marginLeft: formatSize(16)
+  blue: {
+    backgroundColor: colors.blue
   },
-  headingText: {
-    ...typography.body15Semibold,
-    color: colors.white
+  green: {
+    backgroundColor: colors.kolibriGreen
   },
-  descriptionText: {
-    ...typography.caption11Regular,
-    color: colors.white
+  flatListContentContainer: {
+    paddingHorizontal: formatSize(16),
+    paddingBottom: formatSize(16)
+  },
+  flatListColumnWrapper: {
+    justifyContent: 'space-between'
   }
 }));

@@ -1,3 +1,4 @@
+import { isString } from 'lodash-es';
 import React, { FC, ReactNode } from 'react';
 import { Text } from 'react-native';
 
@@ -7,9 +8,10 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { useDisclaimerStyles } from './disclaimer.styles';
 
 interface Props {
-  texts?: Array<string>;
+  texts?: Array<string | ReactNode>;
   children?: ReactNode;
   title?: string;
+  boldText?: string;
   iconName?: IconNameEnum;
 }
 
@@ -20,8 +22,8 @@ export const Disclaimer: FC<Props> = ({ title, texts, children, iconName }) => {
     <AttentionMessage title={title} iconName={iconName}>
       {isDefined(children)
         ? children
-        : texts?.map(text => (
-            <Text key={text} style={styles.description}>
+        : texts?.map((text, index) => (
+            <Text key={isString(text) ? text : index} style={styles.description}>
               {text}
             </Text>
           ))}

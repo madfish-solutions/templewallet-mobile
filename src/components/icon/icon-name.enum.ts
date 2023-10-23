@@ -3,6 +3,7 @@ export enum IconNameEnum {
   ArrowDown = 'ArrowDown',
   ArrowRight = 'ArrowRight',
   ArrowLeft = 'ArrowLeft',
+  ArtStyle = 'ArtStyle',
   Bell = 'Bell',
   DetailsArrowUp = 'DetailsArrowUp',
   DetailsArrowDown = 'DetailsArrowDown',
@@ -84,6 +85,7 @@ export enum IconNameEnum {
   TempleLogoUp = 'TempleLogoUp',
   TempleLogoBottom = 'TempleLogoBottom',
   TempleLogoWithText = 'TempleLogoWithText',
+  TextToNft = 'TextToNft',
   Telegram = 'Telegram',
   Discord = 'Discord',
   Twitter = 'Twitter',
@@ -145,5 +147,6 @@ export enum IconNameEnum {
   Database = 'Database',
   YouvesEarnSource = 'YouvesEarnSource',
   YouvesEarnSourceDark = 'YouvesEarnSourceDark',
-  YouvesEarnSourceLarge = 'YouvesEarnSourceLarge'
+  YouvesEarnSourceLarge = 'YouvesEarnSourceLarge',
+  BrokenImage = 'BrokenImage'
 }

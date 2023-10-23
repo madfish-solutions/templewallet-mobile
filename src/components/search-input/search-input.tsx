@@ -1,6 +1,6 @@
 import { debounce } from 'lodash-es';
 import React, { FC, useMemo } from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import { StyleProp, TextInput, TextInputProps, View, ViewStyle } from 'react-native';
 
 import { emptyFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -14,9 +14,17 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { useSearchInputStyles } from './search-input.styles';
 
-type Props = Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText' | 'onBlur' | 'testID'> & TestIdProps;
+type Props = Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText' | 'onBlur' | 'testID'> &
+  TestIdProps & { style?: StyleProp<ViewStyle> };
 
-export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = emptyFn, onBlur = emptyFn, testID }) => {
+export const SearchInput: FC<Props> = ({
+  value,
+  placeholder,
+  onChangeText = emptyFn,
+  onBlur = emptyFn,
+  style,
+  testID
+}) => {
   const colors = useColors();
   const styles = useSearchInputStyles();
 
@@ -32,7 +40,7 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = empt
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={styles.iconContainer}>
         <Icon name={IconNameEnum.IosSearch} size={formatSize(14)} color={colors.gray2} />
       </View>

@@ -1,11 +1,26 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
+
+import { EmptyFn } from 'src/config/general';
+import { isDefined } from 'src/utils/is-defined';
 
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { HeaderButton } from '../header-button/header-button';
 
-export const HeaderBackButton: FC = () => {
+interface Props {
+  onPress?: EmptyFn;
+}
+
+export const HeaderBackButton: FC<Props> = ({ onPress }) => {
   const { goBack } = useNavigation();
 
-  return <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={goBack} />;
+  const handleNavigate = useCallback(() => {
+    if (isDefined(onPress)) {
+      return onPress();
+    }
+
+    goBack();
+  }, [goBack, onPress]);
+
+  return <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={handleNavigate} />;
 };

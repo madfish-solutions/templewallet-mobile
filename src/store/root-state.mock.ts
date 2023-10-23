@@ -15,6 +15,7 @@ import { mockSavingsState } from './savings/state.mock';
 import { mockSecurityState } from './security/security-state.mock';
 import { mockSettingsState } from './settings/settings-state.mock';
 import { mockSwapState } from './swap/swap-state.mock';
+import { mockTextToNftState } from './text-to-nft/text-to-nft-state.mock';
 import { mockTokensMetadataState } from './tokens-metadata/tokens-metadata-state.mock';
 import type { RootState } from './types';
 import { mockWalletState } from './wallet/wallet-state.mock';
@@ -38,5 +39,6 @@ export const mockRootState: RootState = {
   abTesting: mockABTestingState,
   farms: mockFarmsState,
   savings: mockSavingsState,
-  newsletter: mockNewsletterState
+  newsletter: mockNewsletterState,
+  textToNft: mockTextToNftState
 };

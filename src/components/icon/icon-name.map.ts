@@ -13,8 +13,10 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
+import ArtStyle from './assets/art-style.svg';
 import BellIcon from './assets/bell.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import BrokenImage from './assets/broken-image.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
@@ -126,6 +128,7 @@ import TempleLogoUpIcon from './assets/temple-logo-up.svg';
 import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
+import TextToNftIcon from './assets/text-to-nft.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
 import FilmTokenIcon from './assets/tokens/film.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
@@ -155,6 +158,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
   [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
+  [IconNameEnum.ArtStyle]: ArtStyle,
   [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
@@ -295,9 +299,11 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Smile]: SmileIcon,
   [IconNameEnum.SmileWithGlasses]: SmileWithGlassesIcon,
   [IconNameEnum.SmileWithDollar]: SmileWithDollarIcon,
+  [IconNameEnum.TextToNft]: TextToNftIcon,
   [IconNameEnum.Data]: DataIcon,
   [IconNameEnum.Database]: DatabaseIcon,
   [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
   [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
-  [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon
+  [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon,
+  [IconNameEnum.BrokenImage]: BrokenImage
 };

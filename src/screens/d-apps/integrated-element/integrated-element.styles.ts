@@ -2,15 +2,22 @@ import { greyLight400, white } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useIntegratedDAppStyles = createUseStyles(({ colors, typography }) => ({
-  container: {
+export const useIntegratedElementStyles = createUseStyles(({ typography }) => ({
+  root: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: formatSize(10),
-    marginHorizontal: formatSize(16),
     paddingHorizontal: formatSize(24),
-    paddingVertical: formatSize(20),
-    backgroundColor: colors.kolibriGreen
+    paddingVertical: formatSize(20)
+  },
+  iconWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: formatSize(48),
+    height: formatSize(48),
+    marginRight: formatSize(16),
+    borderRadius: formatSize(64),
+    backgroundColor: white
   },
   title: {
     ...typography.body15Semibold,

@@ -42,6 +42,7 @@ import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions'
 import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 
+import { ConfirmSignModal } from '../modals/confirm-sign-modal/confirm-sign-modal';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
@@ -192,6 +193,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.InAppBrowser}
               component={InAppBrowser}
               options={useModalOptions('In-App Browser')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ConfirmSign}
+              component={ConfirmSignModal}
+              options={useModalOptions('Confirm Sign')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

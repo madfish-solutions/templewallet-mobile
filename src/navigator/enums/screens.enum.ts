@@ -40,6 +40,10 @@ export enum ScreensEnum {
   /** Market stack **/
   Market = 'Market',
 
+  /** Text to NFT stack **/
+  GenerateArt = 'GenerateArt',
+  Preview = 'Preview',
+
   /** Settings stack **/
   Settings = 'Settings',
   ManageAccounts = 'ManageAccounts',
@@ -95,6 +99,10 @@ export type ScreensParamList = {
   /** Market stack **/
   [ScreensEnum.Market]: undefined;
 
+  /** Text to NFT stack **/
+  [ScreensEnum.GenerateArt]: undefined;
+  [ScreensEnum.Preview]: { orderId: string };
+
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;
   [ScreensEnum.ManageAccounts]: undefined;
@@ -131,6 +139,6 @@ export const walletStackScreens = [
   ScreensEnum.Blank
 ];
 export const nftStackScreens = [ScreensEnum.CollectiblesHome];
-export const dAppsStackScreens = [ScreensEnum.DApps];
+export const dAppsStackScreens = [ScreensEnum.DApps, ScreensEnum.GenerateArt, ScreensEnum.Preview];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];

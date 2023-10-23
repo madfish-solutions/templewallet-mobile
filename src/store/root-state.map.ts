@@ -15,6 +15,7 @@ import { savingsReducer } from './savings/reducers';
 import { securityReducers } from './security/security-reducers';
 import { settingsReducers } from './settings/settings-reducers';
 import { swapReducer } from './swap/swap-reducers';
+import { textToNftReducer } from './text-to-nft/text-to-nft-reducers';
 import { tokensMetadataReducers } from './tokens-metadata/tokens-metadata-reducers';
 import { walletReducers } from './wallet/wallet-reducers';
 
@@ -37,5 +38,6 @@ export const rootStateReducersMap = {
   abTesting: abTestingReducer,
   farms: farmsReducer,
   savings: savingsReducer,
-  newsletter: newsletterReducers
+  newsletter: newsletterReducers,
+  textToNft: textToNftReducer
 };

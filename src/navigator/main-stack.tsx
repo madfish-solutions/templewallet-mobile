@@ -1,6 +1,8 @@
 import { PortalProvider } from '@gorhom/portal';
+import { useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
@@ -77,11 +79,16 @@ import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/w
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
+import { HeaderProgress } from '../components/header/header-progress/header-progress';
+import { GenerateArtScreen } from '../screens/text-to-nft/generate-art/generate-art';
+import { PreviewScreen } from '../screens/text-to-nft/preview/preview';
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
 import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
 import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
 import { loadAllSavingsAndStakesAction } from '../store/savings/actions';
+import { setIsHistoryBackButtonAlertShowedOnceAction } from '../store/text-to-nft/text-to-nft-actions';
+import { useIsHistoryBackButtonAlertShowedOnceSelector } from '../store/text-to-nft/text-to-nft-selectors';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
@@ -90,12 +97,14 @@ const MainStack = createStackNavigator<ScreensParamList>();
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
+  const { goBack } = useNavigation();
   const isAuthorised = useIsAuthorisedSelector();
   const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();
   const { isLocked } = useAppLock();
+  const isHistoryBackButtonAlertShowedOnce = useIsHistoryBackButtonAlertShowedOnceSelector();
 
   const blockSubscription = useBlockSubscription();
 
@@ -138,6 +147,27 @@ export const MainStackScreen = () => {
   const shouldShowUnauthorizedScreens = !isAuthorised;
   const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
   const shouldShowBlankScreen = isAuthorised && isLocked;
+
+  const showPreviewAlert = useCallback(
+    () =>
+      Alert.alert(
+        'Art will be saved in History',
+        'You can always continue creating NFT of generated art. Find your variations in History',
+        [
+          {
+            text: 'Ok',
+            onPress: () => {
+              dispatch(setIsHistoryBackButtonAlertShowedOnceAction(true));
+              goBack();
+            },
+            style: 'default'
+          }
+        ]
+      ),
+    []
+  );
+
+  const handlePreviewBackButton = isHistoryBackButtonAlertShowedOnce ? undefined : showPreviewAlert;
 
   return (
     <PortalProvider>
@@ -285,6 +315,30 @@ export const MainStackScreen = () => {
                 name={ScreensEnum.Market}
                 component={Market}
                 options={{ animationEnabled: false, headerShown: false }}
+              />
+
+              {/** Text to NFT stack **/}
+              <MainStack.Screen
+                name={ScreensEnum.GenerateArt}
+                component={GenerateArtScreen}
+                options={{
+                  ...generateScreenOptions(
+                    <HeaderTitle title="Text to NFT" />,
+                    <HeaderProgress current={1} total={3} />
+                  )
+                }}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.Preview}
+                component={PreviewScreen}
+                options={{
+                  ...generateScreenOptions(
+                    <HeaderTitle title="Preview" />,
+                    <HeaderProgress current={2} total={3} />,
+                    true,
+                    handlePreviewBackButton
+                  )
+                }}
               />
 
               {/** Settings stack **/}
