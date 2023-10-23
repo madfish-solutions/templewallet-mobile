@@ -25,7 +25,6 @@ interface Props {
   disabled?: boolean;
   showNotificationDot?: boolean;
   swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
-  onSwapButtonPress?: EmptyFn;
   disabledOnPress?: EmptyFn;
 }
 
@@ -38,7 +37,6 @@ export const TabBarButton: FC<Props> = ({
   disabled = false,
   showNotificationDot = false,
   swapScreenParams,
-  onSwapButtonPress,
   disabledOnPress = emptyFn
 }) => {
   const colors = useColors();
@@ -57,14 +55,10 @@ export const TabBarButton: FC<Props> = ({
     if (disabled) {
       disabledOnPress();
     } else {
-      if (onSwapButtonPress && !focused) {
-        onSwapButtonPress();
+      if (routeName === ScreensEnum.SwapScreen) {
+        navigate(routeName, swapScreenParams);
       } else {
-        if (routeName === ScreensEnum.SwapScreen) {
-          navigate(routeName, swapScreenParams);
-        } else {
-          navigate(routeName);
-        }
+        navigate(routeName);
       }
     }
   };
