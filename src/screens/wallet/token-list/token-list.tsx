@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -67,6 +67,9 @@ export const TokensList: FC = () => {
 
   const [listHeight, setListHeight] = useState(0);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
+
+  const flashListRef = useRef<FlashList<ListItem>>(null);
+
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useSelectedAccountTezosTokenSelector();
@@ -104,6 +107,8 @@ export const TokensList: FC = () => {
       optimalFetchEnableAds(publicKeyHash);
     }
   }, [partnersPromoShown]);
+
+  useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
 
   const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
@@ -209,6 +214,7 @@ export const TokensList: FC = () => {
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlashList
+          ref={flashListRef}
           data={renderData}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
