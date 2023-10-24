@@ -4,15 +4,15 @@ import { fromTokenSlug } from 'src/utils/from-token-slug';
 
 import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
 
-export const buildGetCollectiblesInfoQuery = (address: string) => gql`
+export const buildGetCollectionsQuery = (creatorPkh: string) => gql`
   query MyQuery {
     fa(
       where: {
         _or: [
-          { creator_address: { _eq: "${address}" } }
+          { creator_address: { _eq: "${creatorPkh}" } }
           {
             tokens: {
-              creators: { creator_address: { _eq: "${address}" }, verified: { _eq: true } }
+              creators: { creator_address: { _eq: "${creatorPkh}" }, verified: { _eq: true } }
             }
           }
         ]
@@ -24,13 +24,13 @@ export const buildGetCollectiblesInfoQuery = (address: string) => gql`
       contract
     }
     gallery(
-      where: { curators: { curator_address: { _eq: "${address}" } }, max_items: { _gt: 0 } }
+      where: { curators: { curator_address: { _eq: "${creatorPkh}" } }, max_items: { _gt: 0 } }
       order_by: { inserted_at: asc }
     ) {
       __typename
+      pk
       name
       logo
-      gallery_id
       tokens(limit: 1) {
         fa_contract
         __typename
@@ -116,18 +116,15 @@ export const buildGetCollectiblesByCollectionQuery = (
     }
     fa {
       items
-      editions
     }
   }
 }`;
 
-export const buildGetCollectiblesByGalleryQuery = (address: string, offset: number) => gql`
+export const buildGetCollectiblesByGalleryQuery = (galleryPk: number, offset: number) => gql`
 query MyQuery {
   gallery(
-    where: {curators: {curator_address: {_eq: "${address}"}}, max_items: {_gt: 0}}
-    order_by: {inserted_at: asc}
+    where: { pk: { _eq: "${galleryPk}"} }
   ) {
-    gallery_id
     tokens(
       limit: ${PAGINATION_STEP_GALLERY}
       offset: ${offset}
@@ -186,12 +183,10 @@ query MyQuery {
         }
         fa {
           items
-          editions
         }
       }
       gallery {
-        items
-        editions
+        max_items
       }
     }
   }
@@ -271,7 +266,6 @@ export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) =>
         supply
         galleries {
           gallery {
-            items
             name
             editions
             pk

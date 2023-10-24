@@ -78,7 +78,7 @@ export interface QueryResponse {
   gallery: {
     name: string;
     logo: string;
-    gallery_id: string;
+    pk: number;
     tokens: { fa_contract: string }[];
     __typename: ObjktCollectionType;
   }[];
@@ -103,19 +103,31 @@ export interface CollectiblesByCollectionResponse {
 }
 
 export interface CollectiblesByGalleriesResponse {
-  gallery: { tokens: { token: ObjktCollectionItem; gallery: { items: number } }[]; gallery_id: string }[];
+  gallery: { tokens: { token: ObjktCollectionItem; gallery: { max_items: number } }[] }[];
 }
 
 export interface UserAdultCollectiblesQueryResponse {
   token: ObjktCollectibleDetails[];
 }
 
+export interface ObjktGallery {
+  gallery: ObjktGalleryValue;
+}
+
+interface ObjktGalleryValue {
+  name: string;
+  editions: number;
+  pk: number;
+}
+
 export interface ObjktAttribute {
-  attribute: {
-    id: number;
-    name: string;
-    value: string;
-  };
+  attribute: ObjktAttributeValue;
+}
+
+interface ObjktAttributeValue {
+  id: number;
+  name: string;
+  value: string;
 }
 
 export interface ObjktTag {

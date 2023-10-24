@@ -35,15 +35,14 @@ export const Collection = memo(() => {
   const { collectibles, isLoading } = useCollectionItemsLoading(
     params.collectionContract,
     accountPkh,
-    params.type,
     offset,
-    params.galleryId
+    params.galleryPk
   );
 
   const PAGINATION_STEP = useMemo(() => (params.type === 'fa' ? PAGINATION_STEP_FA : PAGINATION_STEP_GALLERY), []);
 
   const screenProgressAmount = useMemo(
-    () => (params.type === 'gallery' ? collectibles?.[0]?.items ?? collectibles.length : collectibles.length),
+    () => (params.type === 'gallery' ? collectibles[0]?.collectionSize ?? collectibles.length : collectibles.length),
     [collectibles, params.type]
   );
 

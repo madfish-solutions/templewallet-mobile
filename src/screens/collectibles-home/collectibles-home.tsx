@@ -103,7 +103,7 @@ export const CollectiblesHome = memo(() => {
                 ref={collectionsFlatListRef}
                 data={collections}
                 renderItem={renderItemCollections}
-                keyExtractor={({ type, contract, galleryId }) => `${type}/${contract}/${galleryId}`}
+                keyExtractor={({ type, contract, galleryPk }) => `${type}/${contract}/${galleryPk}`}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 style={styles.collectionsContainer}
@@ -157,7 +157,7 @@ const CollectionButton = memo<CollectionLogoProps>(({ item }) => {
       collectionContract: item.contract,
       collectionName: item.name,
       type: item.type,
-      galleryId: item.galleryId
+      galleryPk: item.galleryPk
     });
 
   const styles = useCollectionButtonStyles();

@@ -1,4 +1,11 @@
-import type { ObjktAttribute, ObjktTag, ObjktListing, ObjktHolder, ObjktRoyalty } from 'src/apis/objkt/types';
+import type {
+  ObjktGallery,
+  ObjktAttribute,
+  ObjktTag,
+  ObjktListing,
+  ObjktHolder,
+  ObjktRoyalty
+} from 'src/apis/objkt/types';
 
 interface Creators {
   holder: {
@@ -12,15 +19,6 @@ interface Collection {
   logo: string;
   items: number;
   editions: number;
-}
-
-interface Galleries {
-  gallery: {
-    items: number;
-    name: string;
-    editions: number;
-    pk: number;
-  };
 }
 
 interface CollectibleCommonInterface {
@@ -45,13 +43,13 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   tags: ObjktTag[];
   timestamp: string;
   royalties: ObjktRoyalty[];
-  galleries: Galleries[];
+  galleries: ObjktGallery[];
 }
 
 export interface CollectionItemInterface extends CollectibleCommonInterface {
   lowestAsk: number | null;
   holders: ObjktHolder[];
-  items: number;
+  collectionSize: number;
   lastDeal?: {
     price: number | null;
     currency_id: number;

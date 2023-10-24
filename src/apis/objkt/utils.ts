@@ -5,7 +5,10 @@ import { ADULT_ATTRIBUTE_NAME } from './constants';
 import { MarketPlaceEventEnum } from './enums';
 import { ObjktCollectionItem, ObjktAttribute, ObjktTag } from './types';
 
-export const transformObjktCollectionItem = (token: ObjktCollectionItem): CollectionItemInterface => {
+export const transformObjktCollectionItem = (
+  token: ObjktCollectionItem,
+  collectionSize: number
+): CollectionItemInterface => {
   const buyEvents = token.events.filter(
     ({ marketplace_event_type }) =>
       marketplace_event_type === MarketPlaceEventEnum.dutchAuctionBuy ||
@@ -29,7 +32,7 @@ export const transformObjktCollectionItem = (token: ObjktCollectionItem): Collec
     mime: token.mime,
     holders: token.holders,
     lastDeal: lastDeal && { price: lastDeal.price, currency_id: lastDeal.currency_id },
-    items: token.fa.items,
+    collectionSize,
     listingsActive: token.listings_active,
     isAdultContent: checkForAdultery(token.attributes, token.tags)
   };

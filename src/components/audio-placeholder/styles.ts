@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useAudioPlaceholderStyles = createUseStyles(({ colors }) => ({
   root: {

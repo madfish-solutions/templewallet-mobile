@@ -6,7 +6,7 @@ export interface Collection {
   creator: string;
   contract: string;
   type: ObjktCollectionType;
-  galleryId?: string;
+  galleryPk?: number;
 }
 
 export interface CollectionState {
