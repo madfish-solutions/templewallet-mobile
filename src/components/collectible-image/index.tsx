@@ -32,7 +32,11 @@ export const CollectibleImage = memo<Props>(
       return <BrokenImage isBigIcon={isFullView} style={styles.brokenImage} />;
     }
 
-    if (src && isImgUriDataUri(src)) {
+    if (
+      isFullView && // Performance issues in NFTs grid
+      src &&
+      isImgUriDataUri(src)
+    ) {
       return <AnimatedSvg style={styles.image} dataUri={src} onError={onFail} onLoadEnd={onSuccess} />;
     }
 

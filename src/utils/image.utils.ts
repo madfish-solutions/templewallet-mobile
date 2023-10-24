@@ -187,11 +187,9 @@ export const getXmlFromSvgDataUriInUtf8Encoding = (uri: string) =>
 
 export const fixSvgXml = (xml: string) => xml.replace(/(\d*\.?\d+)-(\d*)/g, '$1 -$2');
 
-export const formatCollectibleObjktMediumUri = (assetSlug: string) => {
-  const [address, id] = assetSlug.split('_');
+export const formatCollectibleArtifactUri = (artifactUri: string) => formatObjktMediaUri(artifactUri, 'artifact') || '';
 
-  return buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288');
-};
+export const formatObjktLogoUri = (logoUri: string) => formatObjktMediaUri(logoUri, 'thumb288');
 
-export const formatCollectibleArtifactUri = (artifactUri: string) =>
-  assureGetDataUriImage(artifactUri) || buildObjktMediaURI(getIpfsItemInfo(artifactUri), 'artifact') || '';
+const formatObjktMediaUri = (mediaUri: string, tail: ObjktMediaTail) =>
+  assureGetDataUriImage(mediaUri) || buildObjktMediaURI(getIpfsItemInfo(mediaUri), tail);

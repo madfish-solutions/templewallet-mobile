@@ -1,5 +1,5 @@
 import BottomSheet from '@gorhom/bottom-sheet';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
@@ -24,7 +24,8 @@ import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors'
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
-import { formatImgUri } from 'src/utils/image.utils';
+import { useDidUpdate } from 'src/utils/hooks';
+import { formatObjktLogoUri } from 'src/utils/image.utils';
 
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
@@ -71,6 +72,10 @@ export const CollectiblesHome = memo(() => {
     []
   );
 
+  const collectionsFlatListRef = useRef<FlatList<Collection>>(null);
+  // On collections number decrease scroll might not reposition & items remain off-view
+  useDidUpdate(() => void collectionsFlatListRef.current?.scrollToOffset({ offset: 0 }), [accountPkh]);
+
   return (
     <View style={styles.screen} onLayout={event => void setScreenHeight(event.nativeEvent.layout.height)}>
       <HeaderCard
@@ -95,6 +100,7 @@ export const CollectiblesHome = memo(() => {
               </View>
 
               <FlatList
+                ref={collectionsFlatListRef}
                 data={collections}
                 renderItem={renderItemCollections}
                 keyExtractor={({ type, contract, galleryId }) => `${type}/${contract}/${galleryId}`}
@@ -159,7 +165,7 @@ const CollectionButton = memo<CollectionLogoProps>(({ item }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={handleCollectionPress}>
       <ImageWithIndicator
-        source={{ uri: formatImgUri(item.logo) }}
+        source={{ uri: formatObjktLogoUri(item.logo) }}
         style={styles.logo}
         imageStyle={styles.image}
         indicator={ActivityIndicator}

@@ -216,7 +216,7 @@ export const CollectibleModal = memo(() => {
             artifactUri={artifactUri}
             displayUri={displayUri}
             thumbnailUri={thumbnailUri}
-            mime={details?.mime || ''}
+            mime={details?.mime}
             size={imageSize}
             areDetailsLoading={areDetailsLoading && details === undefined}
             setScrollEnabled={setScrollEnabled}

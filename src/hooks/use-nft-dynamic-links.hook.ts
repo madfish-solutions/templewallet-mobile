@@ -6,14 +6,14 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/error-toast.utils';
-import { parseCollectibleDynamicLinkSlug } from 'src/utils/nft-dynamic-links';
+import { isCollectibleDynamicLink, parseCollectibleDynamicLinkSlug } from 'src/utils/nft-dynamic-links';
 
 export const useNFTDynamicLinks = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const { navigate } = useNavigation();
 
   const handleDynamicLinks = (link: FirebaseDynamicLinksTypes.DynamicLink | null) => {
-    if (!link) {
+    if (!link || !isCollectibleDynamicLink(link.url)) {
       return;
     }
 

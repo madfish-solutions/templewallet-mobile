@@ -5,6 +5,17 @@
 
 import { URL } from 'react-native-url-polyfill';
 
+export function buildSafeURL(input: string): URL | null;
+export function buildSafeURL(input: string, base: string | URL): URL | null;
+export function buildSafeURL(input: string, base?: string | URL) {
+  try {
+    // Throws on invalid URL
+    return new URL(input, base);
+  } catch {
+    return null;
+  }
+}
+
 export const concatUrlPath = (baseUrl: string, path: string) => {
   baseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, baseUrl.length - 1) : baseUrl;
   path = path.startsWith('/') ? path.slice(1) : path;

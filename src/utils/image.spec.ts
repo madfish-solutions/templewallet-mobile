@@ -1,4 +1,4 @@
-import { formatImgUri, isImgUriSvg, formatCollectibleObjktMediumUri } from './image.utils';
+import { formatImgUri, isImgUriSvg } from './image.utils';
 
 describe('image utils', () => {
   describe('formatImgUri', () => {
@@ -23,16 +23,6 @@ describe('image utils', () => {
     });
     it('should return false for img address with .png', () => {
       expect(isImgUriSvg('https://facebook.com/favicon.png')).toEqual(false);
-    });
-  });
-
-  describe('formatCollectibleObjktMediumUri', () => {
-    it('should convert asset KT and id to objkt.com URL for that asset', () => {
-      const collectible = { address: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton', id: 464017 };
-      const assetSlug = `${collectible.address}_${collectible.id}`;
-      expect(formatCollectibleObjktMediumUri(assetSlug)).toEqual(
-        `https://assets.objkt.media/file/assets-003/KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton/464017/thumb288`
-      );
     });
   });
 });
