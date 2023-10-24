@@ -30,7 +30,7 @@ export const createStore = (...epics: Epic[]) => {
       return getDefaultMiddleware({
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-          warnAfter: 300
+          warnAfter: 400
         },
         immutableCheck: {
           warnAfter: 600

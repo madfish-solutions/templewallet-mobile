@@ -24,8 +24,6 @@
     "no-void": "off",
     "no-shadow": "off",
     "no-extra-boolean-cast": "off",
-    "react-hooks/exhaustive-deps": "warn",
-    "jsx-expressions/strict-logical-expressions": "warn",
     "import/no-duplicates": "error",
     "import/no-self-import": "error",
     "import/no-cycle": "error",
@@ -53,6 +51,10 @@
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-unnecessary-type-constraint": "warn",
     "@typescript-eslint/ban-ts-comment": "warn",
+    "react-hooks/exhaustive-deps": ["warn", {
+      "additionalHooks": "(useMemoWithCompare|useDidUpdate)"
+    }],
+    "jsx-expressions/strict-logical-expressions": "warn",
     "jest/no-done-callback": "off",
     "jest/no-alias-methods": "off"
   },

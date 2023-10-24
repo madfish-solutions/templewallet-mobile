@@ -1,10 +1,9 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
 import { useCollectibleIsAdultSelector } from 'src/store/collectibles/collectibles-selectors';
 import { AssetMediaURIs } from 'src/utils/assets/types';
-import { isDefined } from 'src/utils/is-defined';
 
 import { CollectibleMedia } from './collectible-media';
 
@@ -20,10 +19,9 @@ export const CollectibleImage = memo<Props>(
   ({ slug, size, artifactUri, displayUri, thumbnailUri, mime, areDetailsLoading, setScrollEnabled }) => {
     const isAdultContent = useCollectibleIsAdultSelector(slug);
 
-    const [shouldShowBlur, setShouldShowBlur] = useState(isAdultContent ?? true);
-    useEffect(() => void (isDefined(isAdultContent) && setShouldShowBlur(isAdultContent)), [isAdultContent]);
+    const [shouldShowBlur = isAdultContent, setShouldShowBlur] = useState<boolean>();
 
-    if (isDefined(isAdultContent) && shouldShowBlur) {
+    if (isAdultContent && shouldShowBlur) {
       return <ImageBlurOverlay size={size} isBigIcon={true} onPress={() => setShouldShowBlur(false)} />;
     }
 

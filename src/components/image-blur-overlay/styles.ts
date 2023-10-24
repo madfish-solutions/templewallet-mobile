@@ -3,27 +3,26 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useBlurStyles = createUseStyles(({ colors, typography }) => ({
   root: {
-    position: 'relative',
     overflow: 'hidden',
     borderRadius: formatSize(4),
     width: '100%',
-    height: '100%'
-  },
-  blurContainer: {
-    position: 'absolute'
-  },
-  container: {
-    position: 'absolute',
-    width: '100%',
     height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  marginBottom: {
-    marginBottom: formatSize(12)
+  blur: {
+    position: 'absolute',
+    top: 0,
+    left: 0
+  },
+  content: {
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center'
   },
   text: {
     ...typography.body17Semibold,
-    color: colors.black
+    color: colors.black,
+    marginTop: formatSize(12)
   }
 }));

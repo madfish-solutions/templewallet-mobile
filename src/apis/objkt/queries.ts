@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 
-import { fromTokenSlug } from '../../utils/from-token-slug';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
+
 import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
 
 export const buildGetCollectiblesInfoQuery = (address: string) => gql`
@@ -82,6 +83,18 @@ export const buildGetCollectiblesByCollectionQuery = (
       holder_address
       quantity
     }
+    tags {
+      tag {
+        name
+      }
+    }
+    attributes {
+      attribute {
+        id
+        name
+        value
+      }
+    }
     events(order_by: {timestamp: desc}) {
       event_type
       marketplace_event_type
@@ -91,7 +104,7 @@ export const buildGetCollectiblesByCollectionQuery = (
       timestamp
     }
     listings_active(order_by: {price_xtz: asc}) {
-      amount
+      amount_left
       seller_address
       bigmap_key
       currency_id
@@ -140,6 +153,18 @@ query MyQuery {
           holder_address
           quantity
         }
+        tags {
+          tag {
+            name
+          }
+        }
+        attributes {
+          attribute {
+            id
+            name
+            value
+          }
+        }
         events(order_by: {timestamp: desc}) {
           event_type
           marketplace_event_type
@@ -149,7 +174,7 @@ query MyQuery {
           timestamp
         }
         listings_active(order_by: {price_xtz: asc}) {
-          amount
+          amount_left
           seller_address
           bigmap_key
           currency_id
@@ -254,7 +279,7 @@ export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) =>
         }
         lowest_ask
         listings_active(order_by: {price_xtz: asc}) {
-          amount
+          amount_left
           seller_address
           bigmap_key
           currency_id

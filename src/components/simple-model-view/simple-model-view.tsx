@@ -2,9 +2,60 @@ import React, { memo, useMemo } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { EmptyFn, emptyFn, EventFn } from 'src/config/general';
-
 import { useSimpleModelViewStyles } from './simple-model-view.styles';
+
+interface Props {
+  uri: string;
+  isBinary: boolean;
+  style?: StyleProp<ViewStyle>;
+  onError?: EmptyFn;
+  onLoadEnd?: EmptyFn;
+  setScrollEnabled?: SyncFn<boolean>;
+}
+
+export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onError, onLoadEnd, setScrollEnabled }) => {
+  const styles = useSimpleModelViewStyles();
+
+  const source = useMemo(() => {
+    if (isBinary) {
+      return { html: getHTML(uri) };
+    }
+
+    if (uri.includes('fxhash')) {
+      return { uri };
+    }
+
+    return { uri: uri + '/index.html' };
+  }, [uri]);
+
+  const injectedJs = useMemo(
+    () => `
+        window.onerror = function(message) {
+          window.ReactNativeWebView.postMessage(JSON.stringify(message));
+          return true;
+        };
+        true;
+      `,
+    []
+  );
+
+  const handleTouchStart = () => setScrollEnabled?.(false);
+  const handleTouchEnd = () => setScrollEnabled?.(true);
+
+  return (
+    <WebView
+      source={source}
+      style={[styles.loverOpacity, style]}
+      onError={onError}
+      onMessage={onError}
+      onLoadEnd={onLoadEnd}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      injectedJavaScriptBeforeContentLoaded={injectedJs}
+    />
+  );
+});
 
 const getHTML = (uri: string) =>
   `
@@ -27,57 +78,3 @@ const getHTML = (uri: string) =>
     </model-viewer>
   </body>
 </html>`;
-
-interface SimpleModelViewProps {
-  uri: string;
-  isBinary: boolean;
-  style?: StyleProp<ViewStyle>;
-  onError?: EmptyFn;
-  onLoadEnd?: EmptyFn;
-  setScrollEnabled?: EventFn<boolean>;
-}
-
-export const SimpleModelView = memo<SimpleModelViewProps>(
-  ({ uri, isBinary, style, onError = emptyFn, onLoadEnd = emptyFn, setScrollEnabled = emptyFn }) => {
-    const styles = useSimpleModelViewStyles();
-    const source = useMemo(() => {
-      if (isBinary) {
-        return { html: getHTML(uri) };
-      }
-
-      if (uri.includes('fxhash')) {
-        return { uri };
-      }
-
-      return { uri: uri + '/index.html' };
-    }, [uri]);
-
-    const injectedJs = useMemo(
-      () => `
-        window.onerror = function(message) {
-          window.ReactNativeWebView.postMessage(JSON.stringify(message));
-          return true;
-        };
-        true;
-      `,
-      []
-    );
-
-    const handleTouchStart = () => setScrollEnabled(false);
-    const handleTouchEnd = () => setScrollEnabled(true);
-
-    return (
-      <WebView
-        source={source}
-        style={[styles.loverOpacity, style]}
-        onError={onError}
-        onMessage={onError}
-        onLoadEnd={onLoadEnd}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
-        injectedJavaScriptBeforeContentLoaded={injectedJs}
-      />
-    );
-  }
-);

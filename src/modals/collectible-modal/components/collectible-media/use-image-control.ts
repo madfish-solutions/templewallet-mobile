@@ -20,7 +20,7 @@ export const useCollectibleImageControl = (
   );
 
   const [currentFallbackIndex, setCurrentFallbackIndex] = useState(0);
-  const [currentFallback, setCurrentFallback] = useState(imageFallbackURLs[currentFallbackIndex]);
+  const [currentFallback, setCurrentFallback] = useState<string | undefined>(imageFallbackURLs[currentFallbackIndex]);
 
   const handleLoadEnd = useCallback(() => setIsLoading(false), []);
 
@@ -35,7 +35,7 @@ export const useCollectibleImageControl = (
   }, [currentFallbackIndex, imageFallbackURLs, handleLoadEnd]);
 
   const handleAnimatedError = useCallback(() => {
-    showErrorToast({ description: 'Invalid video' });
+    showErrorToast({ description: 'Invalid media' });
     setIsAnimatedRenderedOnce(true);
     setIsLoading(false);
   }, []);

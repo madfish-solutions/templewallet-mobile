@@ -7,7 +7,6 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { useBlurStyles } from './styles';
 
@@ -18,6 +17,7 @@ interface Props {
   size: number;
   isBigIcon?: boolean;
   isTouchable?: boolean;
+  /** Not allowed if descendant of <TouchableOpacity /> */
   onPress?: EmptyFn;
 }
 
@@ -26,26 +26,28 @@ export const ImageBlurOverlay = memo<Props>(({ size, isBigIcon = false, onPress 
   const deviceTheme = useThemeSelector();
 
   const isLightTheme = deviceTheme === ThemesEnum.light;
-  const iconSize = isBigIcon ? ICON_SIZE_BIG : ICON_SIZE_SMALL;
+  const iconSize = formatSize(isBigIcon ? ICON_SIZE_BIG : ICON_SIZE_SMALL);
   const iconName = isLightTheme ? IconNameEnum.BlurEyeBlack : IconNameEnum.BlurEyeWhite;
   const blurIcon = isLightTheme ? IconNameEnum.BlurLight : IconNameEnum.BlurDark;
 
-  const handleLayoutPress = () => void onPress?.();
+  const children = (
+    <>
+      <Icon name={blurIcon} size={size} style={styles.blur} />
 
-  return (
-    <TouchableOpacity activeOpacity={1} onPress={handleLayoutPress} style={styles.root}>
-      <View style={[styles.blurContainer]}>
-        <Icon name={blurIcon} size={size} />
-
-        <View style={styles.container}>
-          <Icon
-            name={iconName}
-            size={formatSize(iconSize)}
-            style={[conditionalStyle(!!onPress, styles.marginBottom)]}
-          />
-          {onPress ? <Text style={styles.text}>Tap to reveal</Text> : null}
-        </View>
+      <View style={styles.content}>
+        <Icon name={iconName} size={iconSize} />
+        {onPress ? <Text style={styles.text}>Tap to reveal</Text> : null}
       </View>
-    </TouchableOpacity>
+    </>
   );
+
+  if (onPress) {
+    return (
+      <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={styles.root}>
+        {children}
+      </TouchableOpacity>
+    );
+  }
+
+  return <View style={styles.root}>{children}</View>;
 });

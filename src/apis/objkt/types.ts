@@ -33,23 +33,25 @@ export interface ObjktCurrencyInfo {
   id: string | null;
 }
 
-export interface CollectibleResponse {
-  artifact_uri: string;
+export interface ObjktCollectionItem {
   description: string;
   decimals: number;
-  display_uri: string;
   fa_contract: string;
   highest_offer: number;
   last_listed: string;
   last_metadata_update: string;
   lowest_ask: number;
   name: string;
+  artifact_uri: string;
+  display_uri: string;
   thumbnail_uri: string;
   supply: number;
   mime: string;
   symbol: string;
   token_id: string;
   holders: ObjktHolder[];
+  attributes: ObjktAttribute[];
+  tags: ObjktTag[];
   events: {
     marketplace_event_type: MarketPlaceEventEnum;
     price_xtz: number | null;
@@ -97,11 +99,11 @@ export interface TzProfilesQueryResponse {
 }
 
 export interface CollectiblesByCollectionResponse {
-  token: CollectibleResponse[];
+  token: ObjktCollectionItem[];
 }
 
 export interface CollectiblesByGalleriesResponse {
-  gallery: { tokens: { token: CollectibleResponse; gallery: { items: number } }[]; gallery_id: string }[];
+  gallery: { tokens: { token: ObjktCollectionItem; gallery: { items: number } }[]; gallery_id: string }[];
 }
 
 export interface UserAdultCollectiblesQueryResponse {
@@ -123,7 +125,7 @@ export interface ObjktTag {
 }
 
 export interface ObjktListing {
-  amount: number;
+  amount_left: number;
   seller_address: string;
   bigmap_key: number;
   currency_id: number;
@@ -169,14 +171,14 @@ export interface ObjktCollectibleDetails {
   token_id: string;
   name: string;
   description: string;
-  thumbnail_uri: string;
-  display_uri: string;
   creators: Creator[];
   fa: Fa;
   metadata: string;
   attributes: ObjktAttribute[];
-  artifact_uri: string;
   tags: ObjktTag[];
+  artifact_uri: string;
+  display_uri: string;
+  thumbnail_uri: string;
   timestamp: string;
   royalties: ObjktRoyalty[];
   supply: number;

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -30,8 +30,6 @@ interface Props {
 export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInfo = false, style }) => {
   const { navigate } = useNavigation();
 
-  const handleNavigate = () => navigate(ModalsEnum.CollectibleModal, { slug });
-
   const styles = useCollectibleItemStyles();
 
   const areDetailsLoading = useCollectibleDetailsLoadingSelector();
@@ -57,6 +55,8 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
 
     return { floorPriceDisplayed, symbol: currency.symbol };
   }, [details]);
+
+  const handleNavigate = useCallback(() => navigate(ModalsEnum.CollectibleModal, { slug }), [slug, navigate]);
 
   return (
     <TouchableOpacity activeOpacity={0.7} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>

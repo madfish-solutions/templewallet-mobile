@@ -1,7 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import BigNumber from 'bignumber.js';
-import React, { memo, useCallback, useMemo, useState } from 'react';
-import { Dimensions, Share, Text, TouchableOpacity, View } from 'react-native';
+import React, { memo, useMemo, useState } from 'react';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
@@ -19,6 +19,7 @@ import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics'
 import { TruncatedText } from 'src/components/truncated-text';
 import { BLOCK_DURATION } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
+import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -31,14 +32,10 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useAssetBalanceSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/error-toast.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
-import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
 import { useInterval } from 'src/utils/hooks';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
@@ -65,8 +62,6 @@ enum SegmentControlNamesEnum {
   properties = 'Properties'
 }
 
-export const SHARE_NFT_CONTENT = 'View NFT with Temple Wallet mobile: ';
-
 export const CollectibleModal = memo(() => {
   const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
@@ -79,7 +74,6 @@ export const CollectibleModal = memo(() => {
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
 
-  const { trackEvent } = useAnalytics();
   const dispatch = useDispatch();
 
   const styles = useCollectibleModalStyles();
@@ -153,38 +147,7 @@ export const CollectibleModal = memo(() => {
   const thumbnailUri = metadata?.thumbnailUri ?? details?.thumbnailUri;
   const displayUri = metadata?.displayUri ?? details?.displayUri;
 
-  const handleShare = useCallback(async () => {
-    // Max link length: 7168 symbols, so we need to reduce the amount of data we send
-    const urlEncodedData = encodeURIComponent(JSON.stringify({ slug }));
-
-    if (urlEncodedData.length > 7168) {
-      return void showErrorToast({ title: 'Cannot share', description: 'Data is too large' });
-    }
-
-    try {
-      const dynamicLink = await getTempleDynamicLink(`/nft?jsonData=${urlEncodedData}`, {
-        title: name,
-        descriptionText: details?.description,
-        imageUrl: thumbnailUri ? formatImgUri(thumbnailUri, 'medium') : undefined
-      });
-
-      await Share.share({
-        message: SHARE_NFT_CONTENT + dynamicLink
-      });
-
-      await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);
-    } catch (e: any) {
-      showErrorToast({
-        description: e.message,
-        isCopyButtonVisible: true,
-        onPress: () => copyStringToClipboard(e.message)
-      });
-
-      await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, {
-        errorMessage: e.message
-      });
-    }
-  }, [slug, name, details?.description, thumbnailUri, trackEvent]);
+  const handleShare = useShareNFT(slug, thumbnailUri, name, details?.description);
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
 

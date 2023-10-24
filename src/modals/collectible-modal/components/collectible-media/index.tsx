@@ -101,7 +101,7 @@ export const CollectibleMedia = memo<Props>(
         }
       }
 
-      if (isImgUriDataUri(currentFallback)) {
+      if (currentFallback && isImgUriDataUri(currentFallback)) {
         return (
           <AnimatedSvg style={styles.image} dataUri={currentFallback} onError={handleError} onLoadEnd={handleLoadEnd} />
         );

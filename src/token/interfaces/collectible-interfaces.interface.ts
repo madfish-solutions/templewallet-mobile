@@ -34,6 +34,7 @@ interface CollectibleCommonInterface {
   artifactUri?: string;
   thumbnailUri?: string;
   displayUri?: string;
+  isAdultContent: boolean;
 }
 
 export interface CollectibleDetailsInterface extends CollectibleCommonInterface {
@@ -45,7 +46,6 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
   timestamp: string;
   royalties: ObjktRoyalty[];
   galleries: Galleries[];
-  isAdultContent: boolean;
 }
 
 export interface CollectionItemInterface extends CollectibleCommonInterface {

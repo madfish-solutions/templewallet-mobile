@@ -36,7 +36,7 @@ import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics
 
 import { showErrorToast } from '../../toast/toast.utils';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { getTempleDynamicLink } from '../../utils/get-temple-dynamic-link.util';
+import { getTempleDynamicLink } from '../../utils/dynamic-links';
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
 import { useSettingsStyles } from './settings.styles';

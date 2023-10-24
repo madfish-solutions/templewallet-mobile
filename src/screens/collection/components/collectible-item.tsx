@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
-import React, { memo, useCallback, useMemo } from 'react';
-import { TouchableOpacity, View, Text, Share } from 'react-native';
+import React, { memo, useMemo } from 'react';
+import { TouchableOpacity, View, Text } from 'react-native';
 import useSWR from 'swr';
 
 import { fetchCollectibleExtraDetails, objktCurrencies } from 'src/apis/objkt';
@@ -8,21 +8,15 @@ import { CollectibleImage } from 'src/components/collectible-image';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
 import { BLOCK_DURATION } from 'src/config/fixed-times';
+import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
-import { SHARE_NFT_CONTENT } from 'src/modals/collectible-modal/collectible-modal';
-import { CollectibleModalSelectors } from 'src/modals/collectible-modal/collectible-modal.selectors';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/error-toast.utils';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { copyStringToClipboard } from 'src/utils/clipboard.utils';
-import { getTempleDynamicLink } from 'src/utils/get-temple-dynamic-link.util';
-import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams, buildSellCollectibleParams } from 'src/utils/objkt';
@@ -46,8 +40,6 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
 
   const styles = useCollectibleItemStyles();
   const { navigate } = useNavigation();
-
-  const { trackEvent } = useAnalytics();
 
   const lastPrice = useMemo(() => {
     if (item.lastDeal?.price == null) {
@@ -133,7 +125,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
         0
       );
       const listedAmount = item.listingsActive.reduce(
-        (acc, curr) => (curr.seller_address === accountPkh ? acc + curr.amount : acc),
+        (acc, curr) => (curr.seller_address === accountPkh ? acc + curr.amount_left : acc),
         0
       );
 
@@ -183,6 +175,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
         )
     };
   }, [
+    slug,
     accountPkh,
     selectedRpc,
     isAccountHolder,
@@ -193,37 +186,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
     navigate
   ]);
 
-  const handleShare = useCallback(async () => {
-    // Max link length: 7168 symbols, so we need to reduce the amount of data we send
-    const urlEncodedData = encodeURIComponent(JSON.stringify(`${item.address}_${item.id}`));
-
-    if (urlEncodedData.length > 7168) {
-      return void showErrorToast({ title: 'Cannot share', description: 'Data is too large' });
-    }
-
-    try {
-      const dynamicLink = await getTempleDynamicLink(`/nft?jsonData=${urlEncodedData}`, {
-        title: item.name,
-        descriptionText: item.description,
-        imageUrl: isDefined(item.thumbnailUri) ? formatImgUri(item.thumbnailUri, 'medium') : undefined
-      });
-
-      await Share.share({
-        message: SHARE_NFT_CONTENT + dynamicLink
-      });
-
-      await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);
-    } catch (e: any) {
-      showErrorToast({
-        description: e.message,
-        isCopyButtonVisible: true,
-        onPress: () => copyStringToClipboard(e.message)
-      });
-      await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, {
-        errorMessage: e.message
-      });
-    }
-  }, [item, trackEvent]);
+  const handleShare = useShareNFT(slug, item.thumbnailUri, item.name, item.description);
 
   const navigateToCollectibleModal = () => navigate(ModalsEnum.CollectibleModal, { slug });
 
@@ -239,16 +202,20 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, selected
 
       <View style={styles.collectible}>
         <View style={styles.topContainer}>
-          <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={1}>
+          <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={0.7}>
             <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
-              <CollectibleImage
-                isFullView={true}
-                slug={slug}
-                artifactUri={item.artifactUri}
-                displayUri={item.displayUri}
-                thumbnailUri={item.thumbnailUri}
-                size={imageSize}
-              />
+              {item.isAdultContent ? (
+                <ImageBlurOverlay size={imageSize} isBigIcon={true} />
+              ) : (
+                <CollectibleImage
+                  isFullView={true}
+                  slug={slug}
+                  artifactUri={item.artifactUri}
+                  displayUri={item.displayUri}
+                  thumbnailUri={item.thumbnailUri}
+                  size={imageSize}
+                />
+              )}
             </View>
           </TouchableOpacity>
 

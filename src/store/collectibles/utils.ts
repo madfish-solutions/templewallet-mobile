@@ -1,8 +1,7 @@
 import { pick } from 'lodash-es';
 
-import { ADULT_CONTENT_TAGS } from 'src/apis/objkt/adult-tags';
-import { ADULT_ATTRIBUTE_NAME } from 'src/apis/objkt/constants';
-import type { ObjktAttribute, ObjktCollectibleDetails, ObjktTag } from 'src/apis/objkt/types';
+import type { ObjktCollectibleDetails } from 'src/apis/objkt/types';
+import { checkForAdultery } from 'src/apis/objkt/utils';
 import type { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 
 export const convertCollectibleObjktInfoToStateDetailsType = (
@@ -31,7 +30,3 @@ export const convertCollectibleObjktInfoToStateDetailsType = (
   listingsActive: info.listings_active,
   isAdultContent: checkForAdultery(info.attributes, info.tags)
 });
-
-const checkForAdultery = (attributes: ObjktAttribute[], tags: ObjktTag[]) =>
-  attributes.some(({ attribute }) => attribute.name === ADULT_ATTRIBUTE_NAME) ||
-  tags.some(({ tag }) => ADULT_CONTENT_TAGS.includes(tag.name));
