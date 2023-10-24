@@ -12,7 +12,7 @@
 8. +- // Retest
 9.
 10. +
-11.
+11. + // Should be fixed. Retest
 12. +
 13. + // Disabled Plenty NFTs animation in grid
 14. - // Marketplace contract is not supported (yet). Only 2 are supported at the moment

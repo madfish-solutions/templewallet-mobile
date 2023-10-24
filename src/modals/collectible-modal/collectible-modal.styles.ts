@@ -2,9 +2,10 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useCollectibleModalStyles = createUseStyles(({ colors, typography }) => ({
-  imageWrap: {
+  mediaContainer: {
     backgroundColor: colors.blue10,
-    borderRadius: formatSize(4)
+    borderRadius: formatSize(4),
+    overflow: 'hidden'
   },
   collectionContainer: {
     flexDirection: 'row',

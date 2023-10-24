@@ -1,19 +1,21 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-import { useSimpleModelViewStyles } from './simple-model-view.styles';
+import { useWillUnmount } from 'src/utils/hooks/use-will-unmount';
+
+import { ActivityIndicator } from '../activity-indicator';
+import { useSimpleModelViewStyles } from './styles';
 
 interface Props {
   uri: string;
   isBinary: boolean;
   style?: StyleProp<ViewStyle>;
-  onError?: EmptyFn;
-  onLoadEnd?: EmptyFn;
+  onFail?: EmptyFn;
   setScrollEnabled?: SyncFn<boolean>;
 }
 
-export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onError, onLoadEnd, setScrollEnabled }) => {
+export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onFail, setScrollEnabled }) => {
   const styles = useSimpleModelViewStyles();
 
   const source = useMemo(() => {
@@ -28,32 +30,30 @@ export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onError, onL
     return { uri: uri + '/index.html' };
   }, [uri]);
 
-  const injectedJs = useMemo(
-    () => `
-        window.onerror = function(message) {
-          window.ReactNativeWebView.postMessage(JSON.stringify(message));
-          return true;
-        };
-        true;
-      `,
-    []
-  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  useWillUnmount(() => setScrollEnabled?.(true));
 
   const handleTouchStart = () => setScrollEnabled?.(false);
   const handleTouchEnd = () => setScrollEnabled?.(true);
 
   return (
-    <WebView
-      source={source}
-      style={[styles.loverOpacity, style]}
-      onError={onError}
-      onMessage={onError}
-      onLoadEnd={onLoadEnd}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
-      injectedJavaScriptBeforeContentLoaded={injectedJs}
-    />
+    <>
+      <WebView
+        source={source}
+        style={[styles.loverOpacity, style]}
+        onError={onFail}
+        onMessage={onFail}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
+        injectedJavaScriptBeforeContentLoaded={injectedJavaScriptBeforeContentLoaded}
+      />
+
+      {isLoading ? <ActivityIndicator size="large" /> : null}
+    </>
   );
 });
 
@@ -78,3 +78,11 @@ const getHTML = (uri: string) =>
     </model-viewer>
   </body>
 </html>`;
+
+const injectedJavaScriptBeforeContentLoaded = `
+  window.onerror = function(message) {
+    window.ReactNativeWebView.postMessage(JSON.stringify(message));
+    return true;
+  };
+  true;
+`;

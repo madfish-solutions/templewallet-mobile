@@ -7,33 +7,19 @@ import { formatSize } from 'src/styles/format-size';
 
 import { useAudioPlaceholderStyles } from './styles';
 
-const themeStyles = {
-  small: {
-    width: formatSize(32),
-    height: formatSize(40)
-  },
-  big: {
-    width: formatSize(80),
-    height: formatSize(100)
-  }
-};
-
-/** @deprecated // Simplify to `boolean` flag */
-export enum AudioPlaceholderTheme {
-  small = 'small',
-  big = 'big'
-}
-
 interface Props {
-  theme?: AudioPlaceholderTheme;
+  large?: boolean;
 }
 
-export const AudioPlaceholder: FC<Props> = ({ theme = AudioPlaceholderTheme.big }) => {
+export const AudioPlaceholder: FC<Props> = ({ large = true }) => {
   const styles = useAudioPlaceholderStyles();
+
+  const width = large ? formatSize(80) : formatSize(32);
+  const height = large ? formatSize(100) : formatSize(40);
 
   return (
     <View style={styles.root}>
-      <Icon name={IconNameEnum.Audio} width={themeStyles[theme].width} height={themeStyles[theme].height} />
+      <Icon name={IconNameEnum.Audio} width={width} height={height} />
     </View>
   );
 };

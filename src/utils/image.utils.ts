@@ -187,7 +187,7 @@ export const getXmlFromSvgDataUriInUtf8Encoding = (uri: string) =>
 
 export const fixSvgXml = (xml: string) => xml.replace(/(\d*\.?\d+)-(\d*)/g, '$1 -$2');
 
-export const formatCollectibleArtifactUri = (artifactUri: string) => formatObjktMediaUri(artifactUri, 'artifact') || '';
+export const formatCollectibleArtifactUri = (artifactUri: string) => formatObjktMediaUri(artifactUri, 'artifact');
 
 export const formatObjktLogoUri = (logoUri: string) => formatObjktMediaUri(logoUri, 'thumb288');
 

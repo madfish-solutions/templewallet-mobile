@@ -1,17 +1,9 @@
 import { createUseStyles } from 'src/styles/create-use-styles';
-import { formatSize } from 'src/styles/format-size';
 
-export const useCollectibleIconStyles = createUseStyles(() => ({
-  image: {
+export const useCollectibleMediaStyles = createUseStyles(() => ({
+  container: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'transparent',
-    borderRadius: formatSize(4),
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  brokenImage: {
-    width: '100%',
-    height: '100%'
+    backgroundColor: 'transparent'
   }
 }));

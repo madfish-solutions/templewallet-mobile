@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ComponentType, memo } from 'react';
 import FastImage from 'react-native-fast-image';
 
 import { AssetMediaURIs } from 'src/utils/assets/types';
@@ -14,10 +14,11 @@ interface Props extends AssetMediaURIs {
   slug: string;
   size: number;
   isFullView?: boolean;
+  Fallback?: ComponentType<{ isFullView?: boolean }>;
 }
 
 export const CollectibleImage = memo<Props>(
-  ({ slug, artifactUri, displayUri, thumbnailUri, size, isFullView = false }) => {
+  ({ slug, artifactUri, displayUri, thumbnailUri, size, isFullView = false, Fallback }) => {
     const styles = useCollectibleImageStyles();
 
     const { src, isStackFailed, isLoading, onSuccess, onFail } = useCollectibleImagesStack(
@@ -29,7 +30,11 @@ export const CollectibleImage = memo<Props>(
     );
 
     if (isStackFailed) {
-      return <BrokenImage isBigIcon={isFullView} style={styles.brokenImage} />;
+      return Fallback ? (
+        <Fallback isFullView={isFullView} />
+      ) : (
+        <BrokenImage isBigIcon={isFullView} style={styles.brokenImage} />
+      );
     }
 
     if (

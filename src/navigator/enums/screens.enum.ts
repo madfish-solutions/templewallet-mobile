@@ -88,7 +88,7 @@ export type ScreensParamList = {
     collectionContract: string;
     collectionName: string;
     type: ObjktCollectionType;
-    galleryId: string | undefined;
+    galleryPk: number | undefined;
   };
 
   [ScreensEnum.Earn]: undefined;

@@ -48,7 +48,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes';
-import { CollectibleImage } from './components/collectible-image';
+import { CollectibleMedia } from './components/collectible-media';
 import { CollectibleProperties } from './components/collectible-properties';
 import { COLLECTION_ICON_SIZE } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
@@ -210,8 +210,8 @@ export const CollectibleModal = memo(() => {
       <ModalStatusBar />
 
       <View>
-        <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
-          <CollectibleImage
+        <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
+          <CollectibleMedia
             slug={slug}
             artifactUri={artifactUri}
             displayUri={displayUri}
