@@ -43,6 +43,7 @@ export enum ScreensEnum {
   /** Text to NFT stack **/
   GenerateArt = 'GenerateArt',
   Preview = 'Preview',
+  MintNft = 'MintNft',
 
   /** Settings stack **/
   Settings = 'Settings',
@@ -102,6 +103,7 @@ export type ScreensParamList = {
   /** Text to NFT stack **/
   [ScreensEnum.GenerateArt]: undefined;
   [ScreensEnum.Preview]: { orderId: string };
+  [ScreensEnum.MintNft]: { imageUrl: string };
 
   /** Settings stack **/
   [ScreensEnum.Settings]: undefined;

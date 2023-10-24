@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -12,9 +12,9 @@ import { Divider } from 'src/components/divider/divider';
 import { SIDEBAR_WIDTH } from 'src/config/styles';
 import { OFFSET_BETWEEN_ICONS, SIDEBAR_MARGINS, TABBAR_MARGINS } from 'src/constants/main-sizes';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { CollectibleImage } from 'src/screens/text-to-nft/components/collectible-image/collectible-image';
 import { CreateNftSelectors } from 'src/screens/text-to-nft/preview/selectors';
-import { showSuccessToast } from 'src/toast/toast.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -26,6 +26,7 @@ const LOADING_STATE_ORDER_VARIANTS = Array<string>(4).fill('');
 
 export const PreviewScreen = memo(() => {
   const { orderId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Preview>>().params;
+  const { navigate } = useNavigation();
   const styles = usePreviewStyles();
 
   const order = useOrderPreview(orderId);
@@ -38,18 +39,23 @@ export const PreviewScreen = memo(() => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const windowWidth = useWindowDimensions().width;
-  const mainCollectibleSize = isTablet()
-    ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS)
-    : windowWidth - TABBAR_MARGINS;
+  const { width: windowWidth } = useWindowDimensions();
+  const mainCollectibleSize = useMemo(
+    () => (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS),
+    [windowWidth]
+  );
 
-  const collectibleSize =
-    (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW -
-    OFFSET_BETWEEN_ICONS;
+  const collectibleSize = useMemo(
+    () =>
+      (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW -
+      OFFSET_BETWEEN_ICONS,
+    [windowWidth]
+  );
 
-  const handleCreateNft = () => {
-    showSuccessToast({ description: 'Step 3 ahead :)' });
-  };
+  const handleCreateNft = useCallback(
+    () => navigate(ScreensEnum.MintNft, { imageUrl: orderVariants[activeIndex] }),
+    [activeIndex, navigate, orderVariants]
+  );
 
   return (
     <>

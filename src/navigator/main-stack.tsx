@@ -9,6 +9,7 @@ import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
 import { HeaderAction } from 'src/components/header/header-action/header-actions';
+import { HeaderProgress } from 'src/components/header/header-progress/header-progress';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
@@ -61,6 +62,7 @@ import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
 import { SwapScreen } from 'src/screens/swap/swap';
 import { AfterSyncQRScan } from 'src/screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
 import { SyncInstructions } from 'src/screens/sync-account/sync-instructions/sync-instructions';
+import { MintNftScreen } from 'src/screens/text-to-nft/mint-nft/mint-nft';
 import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
@@ -70,6 +72,7 @@ import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { setIsHistoryBackButtonAlertShowedOnceAction } from 'src/store/text-to-nft/text-to-nft-actions';
 import {
   loadTokensActions,
   loadTezosBalanceActions,
@@ -78,17 +81,15 @@ import {
 import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
+import { GenerateArtScreen } from 'src/screens/text-to-nft/generate-art/generate-art';
+import { PreviewScreen } from 'src/screens/text-to-nft/preview/preview';
+import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
+import { loadTokensApyActions } from 'src/store/d-apps/d-apps-actions';
+import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
+import { useIsHistoryBackButtonAlertShowedOnceSelector } from 'src/store/text-to-nft/text-to-nft-selectors';
 
-import { HeaderProgress } from '../components/header/header-progress/header-progress';
-import { GenerateArtScreen } from '../screens/text-to-nft/generate-art/generate-art';
-import { PreviewScreen } from '../screens/text-to-nft/preview/preview';
-import { useUsdToTokenRates } from '../store/currency/currency-selectors';
-import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
-import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
-import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
-import { loadAllSavingsAndStakesAction } from '../store/savings/actions';
-import { setIsHistoryBackButtonAlertShowedOnceAction } from '../store/text-to-nft/text-to-nft-actions';
-import { useIsHistoryBackButtonAlertShowedOnceSelector } from '../store/text-to-nft/text-to-nft-selectors';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
@@ -338,6 +339,13 @@ export const MainStackScreen = () => {
                     true,
                     handlePreviewBackButton
                   )
+                }}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.MintNft}
+                component={MintNftScreen}
+                options={{
+                  ...generateScreenOptions(<HeaderTitle title="Create NFT" />, <HeaderProgress current={3} total={3} />)
                 }}
               />
 

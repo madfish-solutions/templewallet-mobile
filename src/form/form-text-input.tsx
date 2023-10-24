@@ -8,9 +8,7 @@ import { autocorrectDisableProps } from '../utils/autocorrect-disable.utils';
 import { hasError } from '../utils/has-error';
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props
-  extends Pick<StyledTextInputProps, 'editable' | 'placeholder' | 'isShowCleanButton' | 'autoCapitalize'>,
-    TestIdProps {
+interface Props extends StyledTextInputProps, TestIdProps {
   name: string;
 }
 
@@ -20,7 +18,8 @@ export const FormTextInput: FC<Props> = ({
   placeholder,
   isShowCleanButton,
   autoCapitalize,
-  testID
+  testID,
+  ...rest
 }) => {
   const [field, meta, helpers] = useField<string>(name);
   const isError = hasError(meta);
@@ -38,6 +37,7 @@ export const FormTextInput: FC<Props> = ({
         onBlur={() => helpers.setTouched(true)}
         onChangeText={field.onChange(name)}
         testID={testID}
+        {...rest}
       />
       <ErrorMessage meta={meta} />
     </>
