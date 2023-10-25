@@ -16,5 +16,6 @@ export const emptyActivity: Activity = {
   timestamp: '',
   from: emptyMember,
   to: emptyMember,
-  _isSecondary: false
+  _isSecondary: false,
+  parameter: undefined
 };

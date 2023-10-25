@@ -2,6 +2,7 @@ import {
   ActivitySubtype,
   AllowanceInteractionActivity,
   InteractionActivity,
+  QuipuswapActivity,
   Route3Activity
 } from '@temple-wallet/transactions-parser';
 import { isEmpty } from 'lodash-es';
@@ -30,6 +31,7 @@ import { ActivityGroupItemSelectors } from '../selectors';
 import { AbstractItem } from './abstract-item';
 import { ChangeAllowance } from './change-allowance';
 import { ActivityItemProps } from './item.props';
+import { Quipuswap } from './quipuswap';
 import { Route3 } from './route3';
 
 export const Interaction: FC<ActivityItemProps> = memo(({ activity }) => {
@@ -41,6 +43,26 @@ export const Interaction: FC<ActivityItemProps> = memo(({ activity }) => {
 
     case ActivitySubtype.Route3:
       return <Route3 activity={activity as Route3Activity} />;
+
+    case ActivitySubtype.QuipuswapCoinflipBet:
+    case ActivitySubtype.QuipuswapCoinflipWin:
+    case ActivitySubtype.QuipuswapAddLiqiudityV1:
+    case ActivitySubtype.QuipuswapRemoveLiquidityV1:
+    case ActivitySubtype.QuipuswapAddLiqiudityV2:
+    case ActivitySubtype.QuipuswapRemoveLiquidityV2:
+    case ActivitySubtype.QuipuswapAddLiqiudityV3:
+    case ActivitySubtype.QuipuswapRemoveLiquidityV3:
+    case ActivitySubtype.QuipuswapAddLiquidityStableswap:
+    case ActivitySubtype.QuipuswapRemoveLiquidityStableswap:
+    case ActivitySubtype.QuipuswapInvestInDividends:
+    case ActivitySubtype.QuipuswapDivestFromDividends:
+    case ActivitySubtype.QuipuswapInvestInFarm:
+    case ActivitySubtype.QuipuswapDivestFromFarm:
+    case ActivitySubtype.QuipuswapHarvestFromFarm:
+    case ActivitySubtype.QuipuswapHarvestFromDividends:
+    case ActivitySubtype.QuipuswapSend:
+    case ActivitySubtype.QuipuswapReceive:
+      return <Quipuswap activity={activity as QuipuswapActivity} nonZeroAmounts={nonZeroAmounts} />;
 
     default:
       return (
@@ -62,11 +84,11 @@ const Face: FC<{ nonZeroAmounts: Array<ActivityAmount> }> = ({ nonZeroAmounts })
     <View style={[commonStyles.row, commonStyles.itemsCenter]}>
       <View style={styles.flex}>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationTitle}>Interaction</Text>
+          <Text style={styles.operationTitle}>Interaction</Text>
           <ActivityGroupAmountChange nonZeroAmounts={nonZeroAmounts} />
         </View>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationSubtitle}>-</Text>
+          <Text style={styles.operationSubtitle}>-</Text>
           <ActivityGroupDollarAmountChange dollarValue={calculateDollarValue(nonZeroAmounts)} />
         </View>
       </View>

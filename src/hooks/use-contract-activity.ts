@@ -1,4 +1,4 @@
-import { TzktMemberInterface, TzktOperation } from '@temple-wallet/transactions-parser';
+import { Activity, TzktMemberInterface, TzktOperation } from '@temple-wallet/transactions-parser';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -6,13 +6,11 @@ import { KNOWN_BAKERS } from 'src/apis/baking-bad/consts';
 import { ActivityGroup } from 'src/interfaces/activity.interface';
 import { loadBakersListActions } from 'src/store/baking/baking-actions';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { loadActivity } from 'src/utils/token-operations.utils';
 
-import { UseActivityInterface } from '../interfaces/use-activity.interface';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { loadActivity } from '../utils/token-operations.utils';
-
-export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
+export const useContractActivity = (tokenSlug?: string) => {
   const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -38,71 +36,60 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     [bakers]
   );
 
-  const initialLoad = useCallback(
-    async (refresh = false) => {
-      try {
-        const {
-          activities: newActivity,
-          reachedTheEnd,
-          oldestOperation
-        } = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastOperationRef.current);
+  const load = useCallback(
+    async (isInitialLoad: boolean) => {
+      const allNewActivities: Activity[][] = [];
 
-        lastOperationRef.current = oldestOperation;
+      // Loading 10+ items first (initially) & 3+ for the following calls
+      const minGroupsCount = isInitialLoad ? 10 : 3;
 
-        if (reachedTheEnd) {
-          setIsAllLoaded(true);
+      let newActivities: Activity[][];
+      let newReachedTheEnd = false;
+      let newOldestOperation: TzktOperation | undefined;
+
+      while (allNewActivities.length < minGroupsCount) {
+        if (newReachedTheEnd) {
+          break;
         }
-        if (refresh === true) {
-          setActivities(prev => [...prev, ...newActivity]);
-        } else {
-          setActivities(newActivity);
+
+        try {
+          setIsLoading(true);
+
+          ({
+            activities: newActivities,
+            reachedTheEnd: newReachedTheEnd,
+            oldestOperation: newOldestOperation
+          } = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastOperationRef.current));
+
+          lastOperationRef.current = newOldestOperation ?? lastOperationRef.current;
+
+          allNewActivities.push(...newActivities);
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
+
+      setActivities(activities.concat(allNewActivities));
+      setIsLoading(false);
+      setIsAllLoaded(newReachedTheEnd);
     },
-    [selectedRpcUrl, selectedAccount, tokenSlug, knownBakers]
+    [activities, selectedRpcUrl, selectedAccount, tokenSlug, knownBakers]
   );
+
+  const handleUpdate = useCallback(async () => {
+    if (isAllLoaded || isLoading) {
+      return;
+    }
+
+    await load(false);
+  }, [isAllLoaded, isLoading, load]);
 
   useEffect(() => void dispatch(loadBakersListActions.submit()), []);
 
-  useEffect(() => {
-    initialLoad();
-  }, [initialLoad]);
-
-  const handleRefresh = () => {
-    initialLoad(true);
-  };
-
-  const handleUpdate = useCallback(async () => {
-    try {
-      if (!isAllLoaded && !isLoading) {
-        setIsLoading(true);
-
-        const {
-          activities: newActivity,
-          reachedTheEnd,
-          oldestOperation
-        } = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastOperationRef.current);
-
-        lastOperationRef.current = oldestOperation;
-
-        setActivities(prev => [...prev, ...newActivity]);
-
-        if (reachedTheEnd) {
-          setIsAllLoaded(true);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, isLoading]);
+  useEffect(() => void load(true), [load]);
 
   return {
     handleUpdate,
-    handleRefresh,
     activities
   };
 };

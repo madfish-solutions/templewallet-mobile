@@ -96,6 +96,7 @@ import PlusSquareIcon from './assets/plus-square.svg';
 import QrScannerBoldIcon from './assets/qr-scanner-bold.svg';
 import QrScannerIcon from './assets/qr-scanner.svg';
 import QsEarnSource from './assets/qs-earn-source.svg';
+import QuipuswapActivityIcon from './assets/quipuswap-activity.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
@@ -303,5 +304,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
   [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
   [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon,
+  [IconNameEnum.QuipuswapActivity]: QuipuswapActivityIcon,
   [IconNameEnum.Route3]: Route3Icon
 };

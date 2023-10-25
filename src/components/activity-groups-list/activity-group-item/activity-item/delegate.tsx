@@ -51,10 +51,10 @@ const Face: FC<{ address: string | undefined }> = ({ address = '' }) => {
       <Divider size={formatSize(10)} />
       <View style={styles.flex}>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationTitle}>Delegate</Text>
+          <Text style={styles.operationTitle}>Delegate</Text>
         </View>
         <View style={[commonStyles.row, commonStyles.justifyBetween, commonStyles.itemsStart]}>
-          <Text style={styles.oprationSubtitle}>To: {baker?.name ?? truncateLongAddress(address)}</Text>
+          <Text style={styles.operationSubtitle}>To: {baker?.name ?? truncateLongAddress(address)}</Text>
         </View>
       </View>
     </View>

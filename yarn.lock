@@ -3907,10 +3907,10 @@
     elliptic "^6.5.4"
     typedarray-to-buffer "^4.0.0"
 
-"@temple-wallet/transactions-parser@^4.1.1":
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/@temple-wallet/transactions-parser/-/transactions-parser-4.1.1.tgz#837bc6f28a221856d91c87dd572696f0ba85b7be"
-  integrity sha512-AvrKVABAWzh5oLFKrIlrvWFzYVgJO4lCefKICUY6cRsDLZzbzQ2Vl5eovzPRA3KmjlNHCayw9RBhLYUBUWCKLg==
+"@temple-wallet/transactions-parser@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@temple-wallet/transactions-parser/-/transactions-parser-6.0.0.tgz#ef94c3aa20027a5477b1ecc2e296ebfd1fdd537a"
+  integrity sha512-PmVbFzE8sHr6OD2J3HcERvhcVVhycuCyDOjfX08/3iT+8NNh8rcvEXYLoNBfYjol/foS4LkO5srAF8KZTuNQDA==
   dependencies:
     bignumber.js "^9.1.0"
 

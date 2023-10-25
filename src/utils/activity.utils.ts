@@ -1,3 +1,4 @@
+import { ActivitySubtype } from '@temple-wallet/transactions-parser';
 import { BigNumber } from 'bignumber.js';
 import { isEmpty } from 'lodash-es';
 
@@ -36,4 +37,47 @@ export const calculateDollarValue = (amounts: Array<ActivityAmount>) => {
 
     return accum;
   }, ZERO);
+};
+
+export const getQuipuswapSubtitle = (subtype: ActivitySubtype) => {
+  switch (subtype) {
+    case ActivitySubtype.QuipuswapCoinflipBet:
+    case ActivitySubtype.QuipuswapCoinflipWin:
+      return 'Coin flip';
+    case ActivitySubtype.QuipuswapAddLiqiudityV1:
+      return 'Invest in V1';
+    case ActivitySubtype.QuipuswapRemoveLiquidityV1:
+      return 'Divest from V1';
+    case ActivitySubtype.QuipuswapAddLiqiudityV2:
+      return 'Invest in V2';
+    case ActivitySubtype.QuipuswapRemoveLiquidityV2:
+      return 'Divest from V2';
+    case ActivitySubtype.QuipuswapAddLiqiudityV3:
+      return 'Invest in V3';
+    case ActivitySubtype.QuipuswapRemoveLiquidityV3:
+      return 'Divest from V3';
+    case ActivitySubtype.QuipuswapAddLiquidityStableswap:
+      return 'Invest in stableswap';
+    case ActivitySubtype.QuipuswapRemoveLiquidityStableswap:
+      return 'Divest from stableswap';
+    case ActivitySubtype.QuipuswapInvestInDividends:
+      return 'Invest in dividends';
+    case ActivitySubtype.QuipuswapDivestFromDividends:
+      return 'Divest from dividends';
+    case ActivitySubtype.QuipuswapInvestInFarm:
+      return 'Stake to farm';
+    case ActivitySubtype.QuipuswapDivestFromFarm:
+      return 'Unstake from farm';
+    case ActivitySubtype.QuipuswapHarvestFromFarm:
+      return 'Claim Rewards';
+    case ActivitySubtype.QuipuswapHarvestFromDividends:
+      return 'Harvest from dividends';
+    case ActivitySubtype.QuipuswapSend:
+      return 'Swap and Send';
+    case ActivitySubtype.QuipuswapReceive:
+      return 'Receive from swap';
+
+    default:
+      return '-';
+  }
 };

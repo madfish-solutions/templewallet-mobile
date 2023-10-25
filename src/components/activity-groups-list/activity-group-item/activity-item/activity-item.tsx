@@ -13,7 +13,7 @@ export const ActivityItem: FC<ActivityItemProps> = memo(({ activity }) => {
   switch (activity.type) {
     case ActivityType.Send:
       return <Send activity={activity} />;
-    case ActivityType.Recieve:
+    case ActivityType.Receive:
       return <Receive activity={activity} />;
     case ActivityType.BakingRewards:
       return <BakingRewards activity={activity} />;

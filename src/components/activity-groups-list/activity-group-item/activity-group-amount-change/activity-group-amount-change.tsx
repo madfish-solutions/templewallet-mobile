@@ -29,6 +29,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
         <Text
           style={[
             styles.amountWeight,
+            styles.black,
             conditionalStyle(textSize === TextSize.Small, styles.amountText13),
             conditionalStyle(textSize === TextSize.Regular, styles.amountText15)
           ]}
@@ -80,7 +81,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
           />
         );
       case 2:
-        const symbols = source.map(({ symbol }) => symbol).join(',');
+        const symbols = source.map(({ symbol }) => symbol).join(', ');
 
         return (
           <Text
@@ -107,7 +108,7 @@ export const ActivityGroupAmountChange: FC<Props> = ({ nonZeroAmounts, textSize 
             ]}
           >
             {isPositiveAmount ? '+' : '-'}
-            {shortizeSymbol(symbol)} and {negativeAmounts.length - 1} others
+            {shortizeSymbol(symbol)} and {source.length - 1} others
           </Text>
         );
     }
