@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 const size = formatSize(40);
 
@@ -12,5 +12,11 @@ export const useSocialButtonStyles = createUseStyles(({ colors }) => ({
     marginHorizontal: formatSize(6),
     borderRadius: formatSize(8),
     backgroundColor: colors.orange10
+  },
+  enabledColor: {
+    color: colors.orange
+  },
+  disabledColor: {
+    color: colors.disabled
   }
 }));

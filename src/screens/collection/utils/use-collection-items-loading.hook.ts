@@ -21,7 +21,8 @@ export const useCollectionItemsLoading = (
 
     const subscription = fetchCollectiblesOfCollection$(contract, selectedPublicKey, offset, galleryPk)
       .pipe(
-        catchError(() => {
+        catchError(error => {
+          console.error(error);
           showErrorToast({ description: ERROR_MESSAGE });
 
           return EMPTY;

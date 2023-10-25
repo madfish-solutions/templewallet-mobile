@@ -77,7 +77,8 @@ export const useCollectiblesGridStyles = createUseStyles(() => ({
   loader: {
     width: '100%',
     alignItems: 'center',
-    marginTop: formatSize(16)
+    marginTop: formatSize(4),
+    height: formatSize(36)
   }
 }));
 

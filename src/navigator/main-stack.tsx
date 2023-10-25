@@ -117,7 +117,7 @@ export const MainStackScreen = memo(() => {
   useEffect(() => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensBalancesArrayActions.submit());
-  }, [blockSubscription.block.header.level]);
+  }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl]);
 
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
   useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, [

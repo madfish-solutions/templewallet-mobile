@@ -1,16 +1,16 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { ButtonDelegatePrimary } from '../../../components/button/button-large/button-delegate-primary/button-delegate-primary';
-import { ButtonsFloatingContainer } from '../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Divider } from '../../../components/divider/divider';
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { EmptyFn } from '../../../config/general';
-import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../../config/socials';
-import { formatSize } from '../../../styles/format-size';
-import { SocialButton } from '../../settings/settings-header/social-button/social-button';
+import { ButtonDelegatePrimary } from 'src/components/button/button-large/button-delegate-primary/button-delegate-primary';
+import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { SocialButton } from 'src/components/social-button';
+import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from 'src/config/socials';
+import { formatSize } from 'src/styles/format-size';
+
 import { AboutDelegationScreenSelectors } from './about-delegation-screen.selectors';
 import { useAboutDelegationScreenStyles } from './about-delegation-screen.styles';
 

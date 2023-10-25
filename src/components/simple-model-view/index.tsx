@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useState } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
 import { useWillUnmount } from 'src/utils/hooks/use-will-unmount';
 
@@ -23,11 +23,11 @@ export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onFail, setS
       return { html: getHTML(uri) };
     }
 
-    if (uri.includes('fxhash')) {
-      return { uri };
+    if (!uri.includes('/index.html')) {
+      uri += '/index.html';
     }
 
-    return { uri: uri + '/index.html' };
+    return { uri };
   }, [uri]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,7 @@ export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onFail, setS
         source={source}
         style={[styles.loverOpacity, style]}
         onError={onFail}
-        onMessage={onFail}
+        onMessage={onErrorMessage}
         onLoadStart={() => setIsLoading(true)}
         onLoadEnd={() => setIsLoading(false)}
         onTouchStart={handleTouchStart}
@@ -79,6 +79,10 @@ const getHTML = (uri: string) =>
   </body>
 </html>`;
 
+/**
+ * Some media throws error, while still renders correctly.
+ * See: `KT1EfsNuqwLAWDd3o4pvfUx1CAh5GMdTrRvr_60667`
+ */
 const injectedJavaScriptBeforeContentLoaded = `
   window.onerror = function(message) {
     window.ReactNativeWebView.postMessage(JSON.stringify(message));
@@ -86,3 +90,6 @@ const injectedJavaScriptBeforeContentLoaded = `
   };
   true;
 `;
+
+const onErrorMessage = (event: WebViewMessageEvent) =>
+  console.error('WebView embeded page error:', event.nativeEvent.data);

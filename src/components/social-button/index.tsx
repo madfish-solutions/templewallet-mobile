@@ -7,28 +7,35 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
-import { isDefined } from 'src/utils/is-defined';
+import { useColors } from 'src/styles/use-colors';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { openUrl } from 'src/utils/linking';
 
-import { useSocialButtonStyles } from './social-button.styles';
+import { useSocialButtonStyles } from './styles';
 
 interface Props extends TestIdProps {
   iconName: IconNameEnum;
-  url: string;
-  onPress?: () => void;
+  url?: string | nullish;
+  copyOnPress?: boolean;
   style?: StyleProp<ViewStyle>;
-  color?: string;
   size?: number;
 }
 
-export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = formatSize(24), testID, onPress }) => {
+export const SocialButton: FC<Props> = ({ iconName, url, style, size = formatSize(24), copyOnPress, testID }) => {
   const styles = useSocialButtonStyles();
+  const colors = useColors();
+
+  const disabled = !url;
 
   const handleOnPress = () => {
-    if (isDefined(onPress)) {
-      return onPress();
+    if (disabled) {
+      return;
+    }
+
+    if (copyOnPress) {
+      copyStringToClipboard(url);
     } else {
-      return url ? openUrl(url) : undefined;
+      openUrl(url);
     }
   };
 
@@ -39,7 +46,7 @@ export const SocialButton: FC<Props> = ({ iconName, url, style, color, size = fo
       onPress={handleOnPress}
       testID={testID}
     >
-      <Icon name={iconName} size={size} color={color} />
+      <Icon name={iconName} size={size} color={disabled ? colors.disabled : colors.orange} />
     </TouchableWithAnalytics>
   );
 };

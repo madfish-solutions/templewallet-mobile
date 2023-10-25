@@ -1,5 +1,5 @@
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { FC, memo, useCallback, useMemo } from 'react';
 import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
@@ -87,20 +87,26 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
         getItemLayout={getItemLayout}
         style={screenStyles.scrollView}
         contentContainerStyle={screenStyles.scrollViewContentContainer}
-        ListEmptyComponent={isSyncing ? <Spinner /> : <DataPlaceholder text="Not found any NFT" />}
+        ListFooterComponent={<ListFooterComponent empty={collectibles.length < 1} isSyncing={isSyncing} />}
       />
-
-      {isSyncing && !!collectibles.length && <Spinner />}
     </>
   );
 });
+
+const ListFooterComponent: FC<{ empty: boolean; isSyncing: boolean }> = ({ empty, isSyncing }) => {
+  if (empty) {
+    return isSyncing ? <Spinner /> : <DataPlaceholder text="Not found any NFT" />;
+  }
+
+  return isSyncing ? <Spinner /> : null;
+};
 
 const Spinner = () => {
   const styles = useCollectiblesGridStyles();
 
   return (
     <View style={styles.loader}>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size="large" style={styles.loader} />
     </View>
   );
 };
