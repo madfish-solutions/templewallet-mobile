@@ -8,6 +8,7 @@ import { chunk } from 'lodash-es';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
 
 import { Collection } from 'src/store/collectons/collections-state';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
@@ -17,7 +18,7 @@ import {
   buildGetFA2AttributeCountQuery,
   buildGetGalleryAttributeCountQuery,
   buildGetHoldersInfoQuery,
-  buildGetAllUserCollectiblesQuery,
+  buildGetCollectiblesQuery,
   buildGetCollectiblesByGalleryQuery,
   buildGetCollectibleExtraQuery
 } from './queries';
@@ -30,7 +31,7 @@ import {
   ObjktCollectibleExtra,
   QueryResponse,
   TzProfilesQueryResponse,
-  UserAdultCollectiblesQueryResponse
+  CollectiblesBySlugsResponse
 } from './types';
 import { transformObjktCollectionItem } from './utils';
 
@@ -109,7 +110,15 @@ export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]) =>
   ).pipe(map(res => res.reduce<ObjktCollectibleDetails[]>((acc, curr) => acc.concat(curr.token), [])));
 
 const fetchObjktCollectiblesBySlugsChunk$ = (slugs: string[]) =>
-  apolloObjktClient.fetch$<UserAdultCollectiblesQueryResponse>(buildGetAllUserCollectiblesQuery(slugs));
+  apolloObjktClient.fetch$<CollectiblesBySlugsResponse>(buildGetCollectiblesQuery(), {
+    where: {
+      _or: slugs.map(slug => {
+        const [contract, id] = fromTokenSlug(slug);
+
+        return { fa_contract: { _eq: contract }, token_id: { _eq: String(id) } };
+      })
+    }
+  });
 
 export const fetchAttributesCounts = (ids: number[], isGallery: boolean) =>
   isGallery

@@ -33,35 +33,35 @@ export interface ObjktCurrencyInfo {
   id: string | null;
 }
 
-export interface ObjktCollectionItem {
-  description: string;
-  decimals: number;
+interface CommonTokenInterface {
   fa_contract: string;
-  highest_offer: number;
-  last_listed: string;
-  last_metadata_update: string;
-  lowest_ask: number;
+  token_id: string;
+  decimals: number;
   name: string;
+  symbol: string;
+  description: string;
+  mime: string;
   artifact_uri: string;
   display_uri: string;
   thumbnail_uri: string;
   supply: number;
-  mime: string;
-  symbol: string;
-  token_id: string;
-  holders: ObjktHolder[];
-  attributes: ObjktAttribute[];
+  lowest_ask: number;
   tags: ObjktTag[];
+  attributes: ObjktAttribute[];
+  listings_active: ObjktListing[];
+}
+
+export interface ObjktCollectionItem extends CommonTokenInterface {
+  fa: {
+    items: number;
+  };
+  holders: ObjktHolder[];
   events: {
     marketplace_event_type: MarketPlaceEventEnum;
     price_xtz: number | null;
     price: number | null;
     currency_id: number;
   }[];
-  listings_active: ObjktListing[];
-  fa: {
-    items: number;
-  };
 }
 
 export type ObjktCollectionType = 'fa' | 'gallery';
@@ -106,7 +106,7 @@ export interface CollectiblesByGalleriesResponse {
   gallery: { tokens: { token: ObjktCollectionItem; gallery: { max_items: number } }[] }[];
 }
 
-export interface UserAdultCollectiblesQueryResponse {
+export interface CollectiblesBySlugsResponse {
   token: ObjktCollectibleDetails[];
 }
 
@@ -178,25 +178,13 @@ interface Gallery {
   };
 }
 
-export interface ObjktCollectibleDetails {
-  fa_contract: string;
-  token_id: string;
-  name: string;
-  description: string;
-  creators: Creator[];
+export interface ObjktCollectibleDetails extends CommonTokenInterface {
   fa: Fa;
+  creators: Creator[];
   metadata: string;
-  attributes: ObjktAttribute[];
-  tags: ObjktTag[];
-  artifact_uri: string;
-  display_uri: string;
-  thumbnail_uri: string;
   timestamp: string;
   royalties: ObjktRoyalty[];
-  supply: number;
-  mime: string;
   galleries: Gallery[];
-  listings_active: ObjktListing[];
 }
 
 export interface ObjktCollectibleExtra {

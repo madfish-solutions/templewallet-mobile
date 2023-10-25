@@ -1,7 +1,5 @@
 import { gql } from '@apollo/client';
 
-import { fromTokenSlug } from 'src/utils/from-token-slug';
-
 import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
 
 export const buildGetCollectionsQuery = (creatorPkh: string) => gql`
@@ -53,144 +51,71 @@ export const buildGetHoldersInfoQuery = (address: string) => gql`
   }
 `;
 
-export const buildGetCollectiblesByCollectionQuery = (
-  contract: string,
-  address: string,
-  offset: number
-) => gql`query MyQuery {
-  token(
-    where: {fa_contract: {_eq: "${contract}"}, supply: {_gt: "0"}, creators: {creator_address: {_eq: "${address}"}}}
-    limit: ${PAGINATION_STEP_FA}
-    offset: ${offset}
-    order_by: {token_id: asc}) {
-    artifact_uri
-    description
-    display_uri
-    decimals
-    fa_contract
-    highest_offer
-    is_boolean_amount
-    last_listed
-    last_metadata_update
-    lowest_ask
-    name
-    thumbnail_uri
-    token_id
-    supply
-    symbol
-    mime
-    holders {
-      holder_address
-      quantity
-    }
-    tags {
-      tag {
-        name
+export const buildGetCollectiblesByCollectionQuery = (contract: string, address: string, offset: number) => gql`
+  query MyQuery {
+    token(
+      where: {
+        fa_contract: { _eq: "${contract}" },
+        supply: { _gt: "0" },
+        creators: { creator_address: {_eq: "${address}"} }
       }
-    }
-    attributes {
-      attribute {
-        id
-        name
-        value
+      limit: ${PAGINATION_STEP_FA}
+      offset: ${offset}
+      order_by: { token_id: asc }
+    ) {
+      ${commonTokenQuery}
+      fa {
+        items
       }
-    }
-    events(order_by: {timestamp: desc}) {
-      event_type
-      marketplace_event_type
-      price_xtz
-      price
-      currency_id
-      timestamp
-    }
-    listings_active(order_by: {price_xtz: asc}) {
-      amount_left
-      seller_address
-      bigmap_key
-      currency_id
-      marketplace_contract
-      price
-      currency {
-        type
+      holders {
+        holder_address
+        quantity
       }
-    }
-    fa {
-      items
+      events(order_by: {timestamp: desc}) {
+        event_type
+        marketplace_event_type
+        price_xtz
+        price
+        currency_id
+        timestamp
+      }
     }
   }
-}`;
+`;
 
 export const buildGetCollectiblesByGalleryQuery = (galleryPk: number, offset: number) => gql`
-query MyQuery {
-  gallery(
-    where: { pk: { _eq: "${galleryPk}"} }
-  ) {
-    tokens(
-      limit: ${PAGINATION_STEP_GALLERY}
-      offset: ${offset}
+  query MyQuery {
+    gallery(
+      where: { pk: { _eq: "${galleryPk}"} }
     ) {
-      token {
-        artifact_uri
-        display_uri
-        decimals
-        description
-        fa_contract
-        highest_offer
-        is_boolean_amount
-        last_listed
-        last_metadata_update
-        lowest_ask
-        mime
-        name
-        thumbnail_uri
-        token_id
-        supply
-        symbol
-        holders {
-          holder_address
-          quantity
-        }
-        tags {
-          tag {
-            name
+      tokens(
+        limit: ${PAGINATION_STEP_GALLERY}
+        offset: ${offset}
+      ) {
+        token {
+          ${commonTokenQuery}
+          fa {
+            items
+          }
+          holders {
+            holder_address
+            quantity
+          }
+          events(order_by: {timestamp: desc}) {
+            event_type
+            marketplace_event_type
+            price_xtz
+            price
+            currency_id
+            timestamp
           }
         }
-        attributes {
-          attribute {
-            id
-            name
-            value
-          }
+        gallery {
+          max_items
         }
-        events(order_by: {timestamp: desc}) {
-          event_type
-          marketplace_event_type
-          price_xtz
-          price
-          currency_id
-          timestamp
-        }
-        listings_active(order_by: {price_xtz: asc}) {
-          amount_left
-          seller_address
-          bigmap_key
-          currency_id
-          marketplace_contract
-          price
-          currency {
-            type
-          }
-        }
-        fa {
-          items
-        }
-      }
-      gallery {
-        max_items
       }
     }
   }
-}
 `;
 
 export const buildGetFA2AttributeCountQuery = (ids: number[]) => gql`
@@ -213,80 +138,76 @@ export const buildGetGalleryAttributeCountQuery = (ids: number[]) => gql`
   }
 `;
 
-export const buildGetAllUserCollectiblesQuery = (collectiblesSlugs: string[]) => {
-  const items = collectiblesSlugs.map(slug => fromTokenSlug(slug));
-
-  return gql`
-    query MyQuery {
-      token(where: {
-        _or: [
-          ${items
-            .map(([contract, id]) => `{ fa_contract: {_eq: "${contract}"}, token_id: {_eq: "${id}"} }`)
-            .join(',\n')}
-        ]
-      }) {
-        fa_contract
-        token_id
-        description
-        creators {
-          holder {
-            address
-            tzdomain
-          }
-        }
-        fa {
-          name
-          logo
-          items
-          editions
-        }
-        metadata
-        artifact_uri
-        thumbnail_uri
-        display_uri
-        mime
+export const buildGetCollectiblesQuery = () => gql`
+  query CollectiblesQuery($where: token_bool_exp) {
+    token(where: $where) {
+      ${commonTokenQuery}
+      metadata
+      timestamp
+      fa {
         name
-        tags {
-          tag {
-            name
-          }
+        logo
+        items
+        editions
+      }
+      creators {
+        holder {
+          address
+          tzdomain
         }
-        attributes {
-          attribute {
-            id
-            name
-            value
-          }
-        }
-        timestamp
-        royalties {
-          decimals
-          amount
-        }
-        supply
-        galleries {
-          gallery {
-            name
-            editions
-            pk
-          }
-        }
-        lowest_ask
-        listings_active(order_by: {price_xtz: asc}) {
-          amount_left
-          seller_address
-          bigmap_key
-          currency_id
-          marketplace_contract
-          price
-          currency {
-            type
-          }
+      }
+      royalties {
+        decimals
+        amount
+      }
+      galleries {
+        gallery {
+          name
+          editions
+          pk
         }
       }
     }
-  `;
-};
+  }
+`;
+
+const commonTokenQuery = `
+  fa_contract
+  token_id
+  decimals
+  name
+  symbol
+  description
+  mime
+  artifact_uri
+  display_uri
+  thumbnail_uri
+  supply
+  lowest_ask
+  tags {
+    tag {
+      name
+    }
+  }
+  attributes {
+    attribute {
+      id
+      name
+      value
+    }
+  }
+  listings_active(order_by: {price_xtz: asc}) {
+    amount_left
+    seller_address
+    bigmap_key
+    currency_id
+    marketplace_contract
+    price
+    currency {
+      type
+    }
+  }
+`;
 
 export const buildGetCollectibleExtraQuery = () => gql`
   query CollectiblesExtraQuery($where: token_bool_exp) {
