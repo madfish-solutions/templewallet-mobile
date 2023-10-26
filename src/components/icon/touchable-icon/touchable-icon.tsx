@@ -9,6 +9,7 @@ import { formatSize } from 'src/styles/format-size';
 import { generateHitSlop } from 'src/styles/generate-hit-slop';
 
 import { Icon, IconProps } from '../icon';
+
 import { TouchableIconStyles } from './touchable-icon.styles';
 
 interface Props extends IconProps {

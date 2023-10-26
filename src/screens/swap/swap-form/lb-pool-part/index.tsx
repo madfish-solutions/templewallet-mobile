@@ -10,6 +10,7 @@ import { SIRS_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { SwapRouteAmounts } from '../swap-route-amounts';
+
 import { useLbPoolPartStyles } from './styles';
 
 interface Props {

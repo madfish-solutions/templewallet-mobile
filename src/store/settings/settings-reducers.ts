@@ -4,6 +4,7 @@ import { DCP_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list
 
 import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
+
 import {
   addCustomRpc,
   editCustomRpc,

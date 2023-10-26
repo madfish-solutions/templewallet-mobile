@@ -10,6 +10,7 @@ import { conditionalStyle } from '../../../../utils/conditional-style';
 import { Icon } from '../../../icon/icon';
 import { IconNameEnum } from '../../../icon/icon-name.enum';
 import { CollectibleIconSize } from '../../constants';
+
 import { useBlurStyles } from './image-blur-overlay.styles';
 
 const ICON_SIZE_BIG = 40;

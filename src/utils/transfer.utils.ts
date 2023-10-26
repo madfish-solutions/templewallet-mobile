@@ -2,6 +2,7 @@ import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import { MemberInterface } from '../interfaces/member.interface';
 import { TransferInterface } from '../interfaces/transfer.interface';
+
 import { isDefined } from './is-defined';
 import { stringToActivityStatusEnum } from './string-to-activity-status-enum.util';
 

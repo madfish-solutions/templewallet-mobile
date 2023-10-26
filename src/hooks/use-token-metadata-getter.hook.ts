@@ -4,6 +4,7 @@ import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors'
 import { useTokensMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { normalizeTokenMetadata } from '../utils/token-metadata.utils';
+
 import { useTokenExchangeRateGetter } from './use-token-exchange-rate-getter.hook';
 
 export const useTokenMetadataGetter = () => {

@@ -18,6 +18,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { updateAccountAction } from '../../store/wallet/wallet-actions';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import { RenameAccountModalFormValues, renameAccountModalValidationSchema } from './rename-account-modal.form';
 import { RenameAccountModalSelectors } from './rename-account-modal.selectors';
 

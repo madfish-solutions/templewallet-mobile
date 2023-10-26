@@ -14,6 +14,7 @@ import { Divider } from '../divider/divider';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
+
 import { useTokenEquityValueStyles } from './token-equity-value.styles';
 
 const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });

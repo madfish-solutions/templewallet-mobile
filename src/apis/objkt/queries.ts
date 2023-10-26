@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 
 import { fromTokenSlug } from '../../utils/from-token-slug';
+
 import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
 
 export const buildGetCollectiblesInfoQuery = (address: string) => gql`

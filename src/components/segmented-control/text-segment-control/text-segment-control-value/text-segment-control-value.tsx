@@ -5,6 +5,7 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { SegmentedControlValueComponent } from '../../segmented-control';
 import { useSegmentedControlColor } from '../../use-segmented-control-color.hook';
+
 import { useTextSegmentControlValueStyles } from './text-segment-control-value.styles';
 
 export const TextSegmentControlValue: SegmentedControlValueComponent<string> = ({ item, isDisabled, isSelected }) => {

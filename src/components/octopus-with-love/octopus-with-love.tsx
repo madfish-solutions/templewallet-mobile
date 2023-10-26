@@ -3,6 +3,7 @@ import React from 'react';
 
 import { website } from '../../config/socials';
 import { openUrl } from '../../utils/linking';
+
 import OctopusLogo from './octopus-logo.svg';
 import { OctopusWithLoveStyles } from './octopus-with-love.styles';
 

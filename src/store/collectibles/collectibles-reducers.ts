@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
+
 import { loadCollectiblesDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
 

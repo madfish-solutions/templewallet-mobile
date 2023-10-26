@@ -5,6 +5,7 @@ import { EmptyFn } from '../../config/general';
 import { formatSize } from '../../styles/format-size';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { useCheckboxIconStyles } from './checkbox-icon.styles';
 
 interface Props {

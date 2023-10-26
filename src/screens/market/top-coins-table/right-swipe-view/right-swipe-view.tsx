@@ -15,6 +15,7 @@ import { useTokenSelector } from '../../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { HiddenButton } from '../hidden-button/hidden-button';
+
 import { RightSwipeViewSelectors } from './right-swipe-view.selectors';
 import { useRightSwipeViewStyles } from './right-swipe-view.styles';
 

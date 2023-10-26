@@ -15,6 +15,7 @@ import { CollectibleInterface } from '../../../../token/interfaces/collectible-i
 import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { formatNumber } from '../../../../utils/format-price';
 import { getPurchaseCurrency } from '../../../../utils/get-pusrchase-currency.util';
+
 import { useTouchableCollectibleIconStyles } from './touchable-collectible-icon.styles';
 
 type Props = Omit<CollectibleIconProps, 'collectible'> & {

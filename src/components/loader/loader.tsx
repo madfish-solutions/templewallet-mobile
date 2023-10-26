@@ -6,6 +6,7 @@ import Animated, { Easing, useSharedValue, withRepeat, withTiming } from 'react-
 import { formatSize } from '../../styles/format-size';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { LoaderLines, VECTOR_SIZE } from './loader-lines';
 import { useLoaderStyles } from './loader.styles';
 

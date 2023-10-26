@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
+
 import { mutezToTz } from './tezos.util';
 
 export const getDollarValue = (balance: string, token: TokenMetadataInterface, exchangeRate = 0) => {

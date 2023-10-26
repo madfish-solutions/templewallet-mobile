@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import { formatSize } from '../../../../styles/format-size';
 import { Icon } from '../../../icon/icon';
 import { IconNameEnum } from '../../../icon/icon-name.enum';
+
 import { useBalanceStyles } from './balance.styles';
 
 interface Props {

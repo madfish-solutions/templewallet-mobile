@@ -11,6 +11,7 @@ import { EmptyFn } from '../../../config/general';
 import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../../config/socials';
 import { formatSize } from '../../../styles/format-size';
 import { SocialButton } from '../../settings/settings-header/social-button/social-button';
+
 import { AboutDelegationScreenSelectors } from './about-delegation-screen.selectors';
 import { useAboutDelegationScreenStyles } from './about-delegation-screen.styles';
 

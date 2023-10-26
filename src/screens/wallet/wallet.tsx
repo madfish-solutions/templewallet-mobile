@@ -8,8 +8,8 @@ import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from 'src/components/divider/divider';
-import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from 'src/components/header-card/header-card';
+import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
@@ -38,6 +38,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { usePushNotificationsEvent } from '../../hooks/use-push-notifications-event';
+
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
 import { OnRampOverlay } from './on-ramp-overlay/on-ramp-overlay';

@@ -4,6 +4,7 @@ import { SvgProps } from 'react-native-svg';
 
 import { TestIdProps } from '../../interfaces/test-id.props';
 import { formatSize } from '../../styles/format-size';
+
 import { IconNameEnum } from './icon-name.enum';
 import { iconNameMap } from './icon-name.map';
 

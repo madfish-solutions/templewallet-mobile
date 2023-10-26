@@ -6,6 +6,7 @@ import { ScreensEnum } from '../../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from '../../../../store/baking/baking-selectors';
 import { useSelectedAccountTezosTokenSelector } from '../../../../store/wallet/wallet-selectors';
+
 import { TokenListItem } from './token-list-item';
 
 export const TezosToken: FC = () => {

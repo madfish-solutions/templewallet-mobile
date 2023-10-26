@@ -10,6 +10,7 @@ import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../../styles/format-size';
 import { isDefined } from '../../../../utils/is-defined';
+
 import { useOnRampTextButtonStyles } from './on-ramp-text-button.styles';
 
 interface Props extends Pick<TouchableWithoutFeedbackProps, 'onPress'>, TestIdProps {

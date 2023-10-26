@@ -3,6 +3,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import { emptyBaker } from 'src/apis/baking-bad';
 
 import { createEntity } from '../create-entity';
+
 import { loadBakerRewardsListActions, loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 import { bakingInitialState, BakingState } from './baking-state';
 

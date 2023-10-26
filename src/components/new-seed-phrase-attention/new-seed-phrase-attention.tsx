@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View } from 'react-native';
 
 import { AttentionMessage } from '../attention-message/attention-message';
+
 import { useSeedPhraseAttentionStyles } from './new-seed-phrase-attention.styles';
 
 export const NewSeedPhraseAttention = () => {

@@ -15,6 +15,7 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from '../public-key-hash-text/public-key-hash-text';
 import { OriginalTouchableOpacityComponentType, TouchableWithAnalytics } from '../touchable-with-analytics';
+
 import { WalletAddressSelectors } from './selectors';
 import { useWalletAddressStyles } from './wallet-address.styles';
 

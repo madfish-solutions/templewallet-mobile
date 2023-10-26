@@ -17,6 +17,7 @@ import { FormCheckbox } from '../../../form/form-checkbox';
 import { RevealSeedPhraseView } from '../../../modals/reveal-seed-phrase-modal/reveal-seed-phrase-form-content/reveal-seed-phrase-view/reveal-seed-phrase-view';
 import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
+
 import {
   createNewWalletValidationSchema,
   CreateNewWalletFormValues,

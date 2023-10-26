@@ -17,6 +17,7 @@ import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
 import { navigateToObjktForBuy } from '../utils';
+
 import { useCollectibleItemStyles } from './collectible-item.styles';
 
 interface Props {

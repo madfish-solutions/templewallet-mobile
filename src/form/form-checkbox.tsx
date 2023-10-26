@@ -7,6 +7,7 @@ import { TestIdProps } from '../interfaces/test-id.props';
 import { AnalyticsEventCategory } from '../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../utils/analytics/use-analytics.hook';
 import { isDefined } from '../utils/is-defined';
+
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID'>, TestIdProps {

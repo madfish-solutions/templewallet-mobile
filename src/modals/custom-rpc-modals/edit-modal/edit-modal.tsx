@@ -8,8 +8,8 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { Divider } from 'src/components/divider/divider';
-import { IconTitleNoBg } from 'src/components/icon-title-no-bg/icon-title-no-bg';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconTitleNoBg } from 'src/components/icon-title-no-bg/icon-title-no-bg';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
@@ -26,6 +26,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
+
 import { EditModalSelectors } from './edit-modal.selectors';
 
 export const EditCustomRpcModal: FC = () => {

@@ -38,7 +38,7 @@
             "position": "before"
           }
         ],
-        "groups": [["external", "builtin"], "internal", ["parent", "sibling", "index"]],
+        "groups": [["external", "builtin"], "internal", "parent", "sibling", "index"],
         "alphabetize": {
           "order": "asc",
           "caseInsensitive": true

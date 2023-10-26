@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { currencyInfoById } from '../apis/objkt/constants';
 import { ListingsActive } from '../token/interfaces/collectible-interfaces.interface';
+
 import { mutezToTz } from './tezos.util';
 
 const initialCurrencyValue = {

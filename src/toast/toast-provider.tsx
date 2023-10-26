@@ -6,6 +6,7 @@ import { EmptyFn } from '../config/general';
 import { isIOS } from '../config/system';
 import { ToastTypeEnum } from '../enums/toast-type.enum';
 import { formatSize } from '../styles/format-size';
+
 import { CopiedToast } from './copied-toast/copied-toast';
 import { CustomToast } from './toast/custom-toast';
 

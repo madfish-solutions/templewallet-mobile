@@ -10,6 +10,7 @@ import { openUrl } from 'src/utils/linking';
 
 import { Icon } from '../icon';
 import { IconNameEnum } from '../icon-name.enum';
+
 import { useExternalLinkButtonStyles } from './external-link-button.styles';
 
 interface Props extends TestIdProps {

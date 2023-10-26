@@ -27,6 +27,7 @@ import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT, PERCENTAGE_OPTIONS } from '../constants';
+
 import { createWithdrawOperationParams } from './create-withdraw-operation-params';
 
 export interface WithdrawTokenOption {

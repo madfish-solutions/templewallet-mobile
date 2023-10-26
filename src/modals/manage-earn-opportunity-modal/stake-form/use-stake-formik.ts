@@ -24,6 +24,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
 import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
+
 import { createStakeOperationParams } from './create-stake-operation-params';
 
 export interface StakeFormValues {

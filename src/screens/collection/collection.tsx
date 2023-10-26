@@ -17,6 +17,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
 import { TokenInterface } from '../../token/interfaces/token.interface';
+
 import { useCollectionStyles } from './collection.styles';
 import { CollectibleItem } from './components/collectible-item';
 

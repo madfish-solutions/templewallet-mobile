@@ -17,6 +17,7 @@ import { getTokenSlug } from '../../token/utils/token.utils';
 import { isAdultCollectible } from '../../utils/collectibles.utils';
 import { ActivityIndicator } from '../activity-indicator/activity-indicator';
 import { AudioPlaceholderTheme } from '../audio-placeholder/audio-placeholder';
+
 import { useCollectibleIconStyles } from './collectible-icon.styles';
 import { AudioPlayer } from './components/audio-player/audio-player';
 import { Balance } from './components/balance/balance';

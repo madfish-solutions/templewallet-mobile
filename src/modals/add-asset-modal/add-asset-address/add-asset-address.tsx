@@ -19,6 +19,7 @@ import { useAssetsListSelector, useSelectedAccountSelector } from '../../../stor
 import { formatSize } from '../../../styles/format-size';
 import { showErrorToast, showWarningToast } from '../../../toast/toast.utils';
 import { getTokenSlug, isValidTokenContract } from '../../../token/utils/token.utils';
+
 import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,

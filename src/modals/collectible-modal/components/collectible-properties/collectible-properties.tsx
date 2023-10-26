@@ -3,6 +3,7 @@ import { StyleProp, View, ViewStyle } from 'react-native';
 
 import { LinkWithIcon } from '../../../../components/link-with-icon/link-with-icon';
 import { isDefined } from '../../../../utils/is-defined';
+
 import { useCollectiblePropertiesStyles } from './collectible-properties.styles';
 import { CollectibleProperty } from './components/collectible-property/collectible-property';
 import { getRoyalties } from './utils/get-royalties.util';

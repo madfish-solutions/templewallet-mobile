@@ -7,6 +7,7 @@ import {
   mockOriginationParams,
   mockTezosTransferParams
 } from '../interfaces/op-params.interface.mock';
+
 import { getParamPreview } from './param-preview.utils';
 
 describe('getParamPreview', () => {

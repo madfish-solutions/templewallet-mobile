@@ -7,6 +7,7 @@ import { Collection } from 'src/store/collectons/collections-state';
 import { isDefined } from 'src/utils/is-defined';
 
 import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
+
 import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
 import {
   buildGetCollectiblesByCollectionQuery,

@@ -12,6 +12,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { Divider } from '../divider/divider';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
+
 import { useSearchStyles } from './search.styles';
 
 interface Props extends TestIdProps {

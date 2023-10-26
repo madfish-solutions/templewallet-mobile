@@ -4,6 +4,7 @@ import { emptyFn } from '../../config/general';
 import { useNetworkInfo } from '../../hooks/use-network-info.hook';
 import { useNumericInput } from '../../hooks/use-numeric-input.hook';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
+
 import { StyledNumericInputProps } from './styled-numeric-input.props';
 
 export const StyledNumericInput: FC<StyledNumericInputProps> = ({

@@ -4,6 +4,7 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { isDefined } from 'src/utils/is-defined';
 
 import { CollectibleOfferInteface } from '../../token/interfaces/collectible-interfaces.interface';
+
 import { currencyInfoById } from './constants';
 import { MarketPlaceEventEnum } from './enums';
 import { CollectibleResponse } from './types';

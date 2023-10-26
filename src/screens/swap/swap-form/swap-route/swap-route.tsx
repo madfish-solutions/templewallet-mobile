@@ -17,6 +17,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { LbPoolPart } from '../lb-pool-part';
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
+
 import { SwapRouteSelectors } from './selectors';
 import { useSwapRouteStyles } from './swap-route.styles';
 

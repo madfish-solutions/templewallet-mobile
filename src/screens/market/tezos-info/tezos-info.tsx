@@ -13,6 +13,7 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { formatPrice, formatPriceChange, formatRegularValue, getPriceChangeColor } from 'src/utils/market.utils';
 
 import { MarketSelectors } from '../market.selectors';
+
 import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 

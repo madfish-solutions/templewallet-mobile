@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native';
 
 import { InsetSubstitute } from '../inset-substitute/inset-substitute';
+
 import { useHeaderCardStyles } from './header-card.styles';
 
 interface Props {

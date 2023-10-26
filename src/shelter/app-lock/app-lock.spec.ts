@@ -4,6 +4,7 @@ import { act } from 'react-test-renderer';
 import { mockCorrectPassword, mockCorrectUserCredentialsValue } from '../../mocks/react-native-keychain.mock';
 import { mockReactNativeToastMessage } from '../../mocks/react-native-toast-message.mock';
 import { mockShelter } from '../shelter.mock';
+
 import { useAppLock } from './app-lock';
 
 // TODO: figure out how to test ContextProvider value

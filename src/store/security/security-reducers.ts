@@ -2,6 +2,7 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { INITIAL_ENTER_WRONG_PASSWORD_ATTEMPTS, MAX_PASSWORD_ATTEMPTS } from '../../config/security';
 import { createEntity } from '../create-entity';
+
 import { checkApp, enterPassword } from './security-actions';
 import { securityInitialState, SecurityState } from './security-state';
 

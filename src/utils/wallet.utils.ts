@@ -12,6 +12,7 @@ import { ExchangeRateRecord } from '../store/currency/currency-state';
 import { useTokenMetadataSelector } from '../store/tokens-metadata/tokens-metadata-selectors';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { emptyToken } from '../token/interfaces/token.interface';
+
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const withSelectedAccount =

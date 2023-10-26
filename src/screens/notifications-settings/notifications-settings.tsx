@@ -16,6 +16,7 @@ import { setIsNewsEnabledAction } from '../../store/notifications/notifications-
 import { useIsNewsEnabledSelector } from '../../store/notifications/notifications-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import { NotificationsSettingsSelectors } from './notifications-settings.selectors';
 
 export const NotificationsSettings = () => {

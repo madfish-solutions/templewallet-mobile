@@ -11,6 +11,7 @@ import { isValidAddress } from 'src/utils/tezos.util';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TruncatedText } from '../truncated-text';
+
 import { useLinkWithIconStyles } from './link-with-icon.styles';
 
 interface Props {

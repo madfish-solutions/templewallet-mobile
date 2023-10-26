@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { getTokenType } from '../token/utils/token.utils';
+
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 
 export const useTokenType = (address: string) => {

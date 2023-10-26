@@ -9,6 +9,7 @@ import { Divider } from '../../components/divider/divider';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { ErrorMessage } from '../error-message/error-message';
+
 import { useFormBiometryCheckboxStyles } from './form-biometry-checkbox.styles';
 
 interface Props {

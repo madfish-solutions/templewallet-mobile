@@ -26,6 +26,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { tezosDomainsResolver } from '../../../utils/dns.utils';
 import { handleContactSubmission } from '../utils/handle-contact-submission.util';
 import { useEditContactFormValidationSchema } from '../validation-schema';
+
 import { EditContactModalSelectors } from './edit-contact-modal.selectors';
 
 export const EditContactModal: FC = () => {

@@ -5,6 +5,7 @@ import { Icon } from 'src/components/icon/icon';
 
 import { formatSize } from '../../styles/format-size';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { useAudioPlaceholderStyles } from './audio-placeholder.styles';
 
 const themeStyles = {

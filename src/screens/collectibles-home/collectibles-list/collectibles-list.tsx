@@ -14,6 +14,7 @@ import { CollectibleInterface } from '../../../token/interfaces/collectible-inte
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { createGetItemLayout } from '../../../utils/flat-list.utils';
+
 import { CollectiblesListStyles } from './collectibles-list.styles';
 import { TouchableCollectibleIcon } from './touchable-collectible-icon/touchable-collectible-icon';
 

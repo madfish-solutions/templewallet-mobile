@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 
 import { formatSize } from '../../../styles/format-size';
 import { Divider } from '../../divider/divider';
+
 import { useHeaderProgressStyles } from './header-progress.styles';
 
 const progressContainerWidth = formatSize(48);

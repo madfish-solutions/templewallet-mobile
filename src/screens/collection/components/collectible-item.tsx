@@ -16,6 +16,7 @@ import { formatSize } from '../../../styles/format-size';
 import { CollectibleOfferInteface } from '../../../token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
 import { navigateToObjktForBuy } from '../utils';
+
 import { useCollectibleItemStyles } from './collectible-item.styles';
 import { OfferButton } from './offer-button';
 

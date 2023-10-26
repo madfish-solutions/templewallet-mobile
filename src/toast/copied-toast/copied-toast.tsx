@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { Text } from 'react-native';
 
 import { EmptyFn } from '../../config/general';
+
 import { useCopiedToastStyles } from './copied-toast.styles';
 
 interface Props {

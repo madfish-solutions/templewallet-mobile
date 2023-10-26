@@ -47,6 +47,7 @@ import { useCollectibleDetailsLoadingSelector } from '../../store/collectibles/c
 import { switchIsShowCollectibleInfoAction } from '../../store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from '../../store/settings/settings-selectors';
 import { SocialButton } from '../settings/settings-header/social-button/social-button';
+
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
 

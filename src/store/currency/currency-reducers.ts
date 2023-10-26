@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
+
 import { loadExchangeRates } from './currency-actions';
 import { currencyInitialState, CurrencyState } from './currency-state';
 

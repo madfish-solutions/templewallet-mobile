@@ -10,6 +10,7 @@ import { MarketToken } from 'src/store/market/market.interfaces';
 import { formatSize } from 'src/styles/format-size';
 
 import { MarketSelectors } from '../market.selectors';
+
 import { Filters } from './filters/filters';
 import { RightSwipeView } from './right-swipe-view/right-swipe-view';
 import { Row } from './row/row';

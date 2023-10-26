@@ -8,6 +8,7 @@ import { applySortByDollarValueDecrease, isAssetSearched } from 'src/utils/token
 import { TokenInterface } from '../token/interfaces/token.interface';
 import { isString } from '../utils/is-string';
 import { isNonZeroBalance } from '../utils/tezos.util';
+
 import { useTokenExchangeRateGetter } from './use-token-exchange-rate-getter.hook';
 
 export enum TokensInputsEnum {

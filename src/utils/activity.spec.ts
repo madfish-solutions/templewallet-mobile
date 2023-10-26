@@ -1,4 +1,5 @@
 import { mockOperations, mockTransfers } from '../interfaces/activity.interface.mock';
+
 import { groupActivitiesByHash } from './activity.utils';
 
 describe('groupActivitiesByHash', () => {

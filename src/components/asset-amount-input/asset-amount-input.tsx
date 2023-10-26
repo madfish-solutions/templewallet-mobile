@@ -28,6 +28,7 @@ import { TextSegmentControl } from '../segmented-control/text-segment-control/te
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
+
 import { AssetAmountInputProps, AssetAmountInputStylesConfig } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';

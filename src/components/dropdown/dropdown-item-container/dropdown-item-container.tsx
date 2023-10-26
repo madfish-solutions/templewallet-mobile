@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
 import { conditionalStyle } from '../../../utils/conditional-style';
+
 import { useDropdownItemContainerStyles } from './dropdown-item-container.styles';
 
 interface Props {

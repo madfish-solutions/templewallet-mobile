@@ -32,6 +32,7 @@ import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT, PERCENTAGE_OPTIONS } from '../constant
 import { DetailsSection } from '../details-section';
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
+
 import { PERCENTAGE_OPTIONS_TEXTS } from './percentage-options';
 import { useAssetAmountInputStylesConfig, useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';

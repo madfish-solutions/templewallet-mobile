@@ -12,6 +12,7 @@ import { toTokenSlug } from 'src/token/utils/token.utils';
 
 import { HopItem } from '../hop-item/hop-item';
 import { SwapRouteAmounts } from '../swap-route-amounts';
+
 import { useSwapRouteItem } from './swap-route-item.styles';
 
 interface Props {

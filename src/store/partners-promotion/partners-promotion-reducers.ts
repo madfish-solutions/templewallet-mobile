@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
+
 import { loadPartnersPromoActions, togglePartnersPromotionAction } from './partners-promotion-actions';
 import { partnersPromotionInitialState } from './partners-promotion-state';
 

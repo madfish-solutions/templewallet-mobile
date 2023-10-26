@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../token/interfaces/token.interface';
+
 import { isDefined } from './is-defined';
 
 export const mutezToTz = (bigNum: BigNumber, decimals: number) => {

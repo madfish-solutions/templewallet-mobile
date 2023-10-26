@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { Icon } from '../../components/icon/icon';
 import { IconNameEnum } from '../../components/icon/icon-name.enum';
 import { ScreenContainer } from '../../components/screen-container/screen-container';
+
 import { useSplashModalStyles } from './splash-modal.styles';
 
 export const SplashModal: FC = () => {

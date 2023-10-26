@@ -3,6 +3,7 @@ import { RefreshControlProps } from 'react-native';
 
 import { CurrentRouteNameContext } from '../navigator/current-route-name.context';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+
 import { useActiveTimer } from './use-active-timer.hook';
 
 const FIXED_TIME = 1000;

@@ -9,6 +9,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { setTestID } from 'src/utils/test-id.utils';
 
 import { Icon } from '../icon/icon';
+
 import { ButtonSharedProps } from './button-shared.props';
 import { ButtonStyleConfig } from './button-style.config';
 import { ButtonStyles } from './button.styles';

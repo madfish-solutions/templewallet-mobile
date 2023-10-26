@@ -7,6 +7,7 @@ import { Icon } from '../../../components/icon/icon';
 import { IconNameEnum } from '../../../components/icon/icon-name.enum';
 import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../../config/socials';
 import { formatSize } from '../../../styles/format-size';
+
 import { SettingsHeaderSelectors } from './selectors';
 import { useSettingsHeaderStyles } from './settings-header.styles';
 import { SocialButton } from './social-button/social-button';
