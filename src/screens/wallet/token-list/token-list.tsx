@@ -1,8 +1,8 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, LayoutChangeEvent, ListRenderItem, Text, View } from 'react-native';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { optimalFetchEnableAds } from 'src/apis/optimal';
 import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -34,7 +34,6 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useAccountTokenBySlug, useCurrentAccountTokens } from 'src/utils/assets/hooks';
-import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
@@ -45,13 +44,15 @@ import { useTokenListStyles } from './token-list.styles';
 
 const AD_PLACEHOLDER = 'ad';
 
-type FlatListItem = TokenInterface | typeof AD_PLACEHOLDER;
+type ListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
 /** padding size + icon size */
 const ITEM_HEIGHT = formatSize(24) + formatSize(32);
-const keyExtractor = (item: FlatListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
-const getItemLayout = createGetItemLayout<FlatListItem>(ITEM_HEIGHT);
+const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
+
+const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
+const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
 export const TokensList = memo(() => {
   const dispatch = useDispatch();
@@ -61,8 +62,11 @@ export const TokensList = memo(() => {
 
   const apyRates = useTokensApyRatesSelector();
 
-  const [flatlistHeight, setFlatlistHeight] = useState(0);
+  const [listHeight, setListHeight] = useState(0);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
+
+  const flashListRef = useRef<FlashList<ListItem>>(null);
+
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useTezosTokenOfCurrentAccount();
@@ -97,11 +101,11 @@ export const TokensList = memo(() => {
   useEffect(() => {
     if (partnersPromoShown) {
       dispatch(loadAdvertisingPromotionActions.submit());
-      optimalFetchEnableAds(publicKeyHash);
     }
   }, [partnersPromoShown]);
 
   const leadingAssets = useMemo(() => [tezosToken, tkeyToken ?? TEMPLE_TOKEN], [tezosToken, tkeyToken]);
+
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,
@@ -109,13 +113,13 @@ export const TokensList = memo(() => {
     leadingAssets
   );
 
-  const screenFillingItemsCount = useMemo(() => flatlistHeight / ITEM_HEIGHT, [flatlistHeight]);
+  const screenFillingItemsCount = useMemo(() => listHeight / ITEM_HEIGHT, [listHeight]);
 
   const renderData = useMemo(() => {
     const shouldHidePromotion =
       (isHideZeroBalance && filteredAssetsList.length === 0) || (searchValue?.length ?? 0) > 0 || !partnersPromoShown;
 
-    const assetsListWithPromotion: FlatListItem[] = [...filteredAssetsList];
+    const assetsListWithPromotion: ListItem[] = [...filteredAssetsList];
     if (!shouldHidePromotion && !promotionErrorOccurred) {
       assetsListWithPromotion.splice(ITEMS_BEFORE_AD, 0, AD_PLACEHOLDER);
     }
@@ -130,9 +134,9 @@ export const TokensList = memo(() => {
     searchValue
   ]);
 
-  const handleLayout = (event: LayoutChangeEvent) => setFlatlistHeight(event.nativeEvent.layout.height);
+  const handleLayout = useCallback((event: LayoutChangeEvent) => setListHeight(event.nativeEvent.layout.height), []);
 
-  const renderItem: ListRenderItem<FlatListItem> = useCallback(
+  const renderItem: ListRenderItem<ListItem> = useCallback(
     ({ item }) => {
       if (item === AD_PLACEHOLDER) {
         return (
@@ -157,7 +161,7 @@ export const TokensList = memo(() => {
         return <TezosToken />;
       }
 
-      if (item.address.startsWith('filler') === true) {
+      if (item.address.startsWith('filler')) {
         return <View style={{ height: ITEM_HEIGHT }} />;
       }
 
@@ -165,6 +169,12 @@ export const TokensList = memo(() => {
     },
     [apyRates, styles]
   );
+
+  useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
+
+  const ListEmptyComponent = useMemo(() => <DataPlaceholder text="No records found." />, []);
+
+  const refreshControl = useMemo(() => <RefreshControl {...fakeRefreshControlProps} />, [fakeRefreshControlProps]);
 
   return (
     <>
@@ -200,27 +210,26 @@ export const TokensList = memo(() => {
       {isEnabledAdsBanner ? <AcceptAdsBanner style={styles.banner} /> : null}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
-        <FlatList
-          scrollEnabled
+        <FlashList
+          ref={flashListRef}
           data={renderData}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          getItemLayout={getItemLayout}
-          ListEmptyComponent={<DataPlaceholder text="No records found." />}
-          windowSize={11}
-          updateCellsBatchingPeriod={150}
-          refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
+          getItemType={getItemType}
+          estimatedItemSize={FLOORED_ITEM_HEIGHT}
+          ListEmptyComponent={ListEmptyComponent}
+          refreshControl={refreshControl}
         />
       </View>
     </>
   );
 });
 
-const addPlaceholdersForAndroid = (flatListData: FlatListItem[], screenFillingItemsCount: number) =>
-  isAndroid && screenFillingItemsCount > flatListData.length
-    ? flatListData.concat(
-        Array(Math.ceil(screenFillingItemsCount - flatListData.length))
+const addPlaceholdersForAndroid = (listData: ListItem[], screenFillingItemsCount: number) =>
+  isAndroid && screenFillingItemsCount > listData.length
+    ? listData.concat(
+        Array(Math.ceil(screenFillingItemsCount - listData.length))
           .fill(emptyToken)
           .map((token, index) => ({ ...token, address: `filler${index}` }))
       )
-    : flatListData;
+    : listData;

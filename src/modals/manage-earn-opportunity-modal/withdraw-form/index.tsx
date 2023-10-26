@@ -153,6 +153,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
       symbol: tokens.length === 1 ? stakedToken.symbol : 'Shares',
       name: stakedToken.name,
       thumbnailUri: stakedToken.thumbnailUri,
+      iconName: stakedToken.iconName,
       address: stakedToken.address,
       exchangeRate:
         isDefined(depositExchangeRate) && isDefined(fiatToUsdExchangeRate)

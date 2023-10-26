@@ -1,4 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { BigNumber } from 'bignumber.js';
 import { noop } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, findNodeHandle, ScrollView, Text, View } from 'react-native';
@@ -29,7 +30,11 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isFarm } from 'src/utils/earn.utils';
 import { hasError } from 'src/utils/has-error';
 import { isDefined } from 'src/utils/is-defined';
+import { ZERO } from 'src/utils/number.util';
+import { percentageToFraction } from 'src/utils/percentage.utils';
+import { mutezToTz } from 'src/utils/tezos.util';
 
+import { PERCENTAGE_OPTIONS } from './constants';
 import { ManageEarnOpportunityModalSelectors } from './selectors';
 import { StakeForm } from './stake-form';
 import { StakeFormValues, useStakeFormik } from './stake-form/use-stake-formik';
@@ -40,6 +45,16 @@ import { useWithdrawFormik } from './withdraw-form/use-withdraw-formik';
 const stakeFormFields: Array<keyof StakeFormValues> = ['assetAmount', 'acceptRisks'];
 const tabs = ['Deposit', 'Withdraw'];
 const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
+
+const stakeButtonTestIds: Partial<Record<EarnOpportunityTypeEnum, string>> = {
+  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiDepositButton,
+  [EarnOpportunityTypeEnum.YOUVES_SAVING]: ManageEarnOpportunityModalSelectors.youvesSavingsDepositButton
+};
+
+const withdrawButtonTestIds: Partial<Record<EarnOpportunityTypeEnum, string>> = {
+  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiWithdrawButton,
+  [EarnOpportunityTypeEnum.YOUVES_SAVING]: ManageEarnOpportunityModalSelectors.youvesSavingsWithdrawButton
+};
 
 export const ManageEarnOpportunityModal: FC = () => {
   const route = useRoute<RouteProp<ModalsParamList, ModalsEnum.ManageFarmingPool | ModalsEnum.ManageSavingsPool>>();
@@ -56,9 +71,8 @@ export const ManageEarnOpportunityModal: FC = () => {
   const farmStake = useFarmStakeSelector(contractAddress);
   const savingsStake = useSavingsItemStakeSelector(contractAddress);
   const stake = isFarmingPool ? farmStake : savingsStake;
-  const earnOpportunityIsSupported = earnOpportunitiesTypesToDisplay.includes(
-    earnOpportunityItem?.type ?? EarnOpportunityTypeEnum.DEX_TWO
-  );
+  const earnOpportunityType = earnOpportunityItem?.type ?? EarnOpportunityTypeEnum.DEX_TWO;
+  const earnOpportunityIsSupported = earnOpportunitiesTypesToDisplay.includes(earnOpportunityType);
 
   const styles = useEarnOpportunityModalStyles();
   const blockLevel = useBlockLevel();
@@ -74,14 +88,17 @@ export const ManageEarnOpportunityModal: FC = () => {
     errors: stakeFormErrors,
     submitForm: submitStakeForm,
     isSubmitting: stakeFormSubmitting,
-    getFieldMeta: getStakeFieldMeta
+    getFieldMeta: getStakeFieldMeta,
+    values: stakeFormValues
   } = stakeFormik;
+  const stakeFormErrorsPresent = Object.keys(stakeFormErrors).length > 0;
   const stakeFormErrorsVisible = stakeFormFields.some(fieldName => hasError(getStakeFieldMeta(fieldName)));
   const { formik: withdrawFormik, isSubmitting: withdrawFormSubmitting } = useWithdrawFormik(
     earnOpportunityItem,
     stake
   );
-  const { errors: withdrawFormErrors, submitForm: submitWithdrawForm } = withdrawFormik;
+  const { errors: withdrawFormErrors, submitForm: submitWithdrawForm, values: withdrawFormValues } = withdrawFormik;
+  const withdrawFormErrorsPresent = Object.keys(withdrawFormErrors).length > 0;
 
   useEffect(() => {
     if (!isDefined(earnOpportunityItem) || prevBlockLevelRef.current !== blockLevel) {
@@ -121,12 +138,52 @@ export const ManageEarnOpportunityModal: FC = () => {
         noop
       );
     }
+
     submitStakeForm();
   }, [submitStakeForm, stakeFormErrors]);
 
   usePageAnalytic(route.name, undefined, route.params);
 
-  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
+  const isKordFi = earnOpportunityItem?.type === EarnOpportunityTypeEnum.KORD_FI_SAVING ?? false;
+  const amountToWithdraw = isDefined(stake) && isDefined(stake.fullReward) && +stake.fullReward > 0;
+  const disabledTabSwitcherIndices = useMemo(() => {
+    if (isDefined(stake)) {
+      if (isKordFi && amountToWithdraw) {
+        return [];
+      } else if (!isKordFi && isDefined(stake.lastStakeId)) {
+        return [];
+      }
+    }
+
+    return [1];
+  }, [isKordFi, amountToWithdraw, stake]);
+
+  const stakeButtonTestIdProperties = useMemo(() => {
+    if (stakeFormErrorsPresent) {
+      return;
+    }
+
+    const { asset, amount: atomicAmount = ZERO } = stakeFormValues.assetAmount;
+
+    return { name: asset.symbol, value: mutezToTz(atomicAmount, asset.decimals ?? 0).toNumber() };
+  }, [stakeFormValues, stakeFormErrorsPresent]);
+
+  const withdrawButtonTestIdProperties = useMemo(() => {
+    if (withdrawFormErrorsPresent) {
+      return;
+    }
+
+    const { tokenOption, amountOptionIndex } = withdrawFormValues;
+    const percentage = PERCENTAGE_OPTIONS[amountOptionIndex];
+    const atomicAmount = new BigNumber(stake?.depositAmountAtomic ?? 0)
+      .times(percentageToFraction(percentage))
+      .integerValue(BigNumber.ROUND_DOWN);
+
+    return {
+      name: tokenOption.token.symbol,
+      value: mutezToTz(atomicAmount, tokenOption.token.decimals ?? 0).toNumber()
+    };
+  }, [withdrawFormValues, stake?.depositAmountAtomic, withdrawFormErrorsPresent]);
 
   return (
     <>
@@ -174,19 +231,18 @@ export const ManageEarnOpportunityModal: FC = () => {
             title="Deposit"
             disabled={pageIsLoading || !earnOpportunityIsSupported || stakeFormErrorsVisible || stakeFormSubmitting}
             onPress={handleDepositClick}
-            testID={ManageEarnOpportunityModalSelectors.depositButton}
+            testID={stakeButtonTestIds[earnOpportunityType] ?? ManageEarnOpportunityModalSelectors.depositButton}
+            testIDProperties={stakeButtonTestIdProperties}
           />
         ) : (
           <ButtonLargePrimary
             title="Withdraw & Claim rewards"
             disabled={
-              pageIsLoading ||
-              !earnOpportunityIsSupported ||
-              Object.keys(withdrawFormErrors).length > 0 ||
-              withdrawFormSubmitting
+              pageIsLoading || !earnOpportunityIsSupported || withdrawFormErrorsPresent || withdrawFormSubmitting
             }
             onPress={submitWithdrawForm}
-            testID={ManageEarnOpportunityModalSelectors.withdrawButton}
+            testID={withdrawButtonTestIds[earnOpportunityType] ?? ManageEarnOpportunityModalSelectors.withdrawButton}
+            testIDProperties={withdrawButtonTestIdProperties}
           />
         )}
       </ModalButtonsContainer>

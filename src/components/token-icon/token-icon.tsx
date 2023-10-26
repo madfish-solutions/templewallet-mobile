@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
@@ -49,7 +49,14 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
   const colors = useColors();
   const dispatch = useDispatch();
   const isKnownSvg = useIsKnownSvgSelector(thumbnailUri ?? '');
+
+  const lastItemId = useRef(thumbnailUri);
+
   const [svgFailed, setSvgFailed] = useState(false);
+  if (thumbnailUri !== lastItemId.current) {
+    lastItemId.current = thumbnailUri;
+    setSvgFailed(false);
+  }
 
   const { metadata } = useNetworkInfo();
 
@@ -65,8 +72,6 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
       dispatch(removeKnownSvg(thumbnailUri ?? ''));
     }
   }, [thumbnailUri, mayBeUnknownSvg, dispatch]);
-
-  useEffect(() => setSvgFailed(false), [thumbnailUri]);
 
   if (isDefined(iconName)) {
     return <Icon name={iconName} color={metadata.iconName === iconName ? colors.black : undefined} size={size} />;

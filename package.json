@@ -49,6 +49,7 @@
     "@react-navigation/stack": "6.3.18",
     "@reduxjs/toolkit": "^1.8.5",
     "@sentry/react-native": "5.9.1",
+    "@shopify/flash-list": "^1.6.1",
     "@taquito/local-forging": "17.3.0",
     "@taquito/rpc": "17.3.0",
     "@taquito/signer": "17.3.0",

@@ -31,6 +31,11 @@ export interface StakeFormValues {
   acceptRisks: boolean;
 }
 
+const forbidSubmitEventEarnOpportunityTypes: Array<EarnOpportunityTypeEnum | undefined> = [
+  EarnOpportunityTypeEnum.KORD_FI_SAVING,
+  EarnOpportunityTypeEnum.YOUVES_SAVING
+];
+
 export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserStakeValueInterface) => {
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunity);
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -75,11 +80,13 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         return;
       }
 
-      trackEvent('STAKE_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
-        farmAddress: earnOpportunity.contractAddress,
-        token: asset.symbol,
-        atomicAmount: amount.toFixed()
-      });
+      if (!forbidSubmitEventEarnOpportunityTypes.includes(earnOpportunity.type)) {
+        trackEvent('STAKE_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+          farmAddress: earnOpportunity.contractAddress,
+          token: asset.symbol,
+          atomicAmount: amount.toFixed()
+        });
+      }
       try {
         const opParams = await createStakeOperationParams(
           earnOpportunity,

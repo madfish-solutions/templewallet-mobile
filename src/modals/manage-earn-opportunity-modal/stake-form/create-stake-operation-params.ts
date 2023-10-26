@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { Route3Token } from 'src/interfaces/route3.interface';
+import { createKordFiStakeTransfersParams } from 'src/modals/manage-earn-opportunity-modal/stake-form/create-kord-fi-deposit-tranfer-params';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
@@ -41,6 +42,17 @@ export const createStakeOperationParams = async (
         tezos,
         accountPkh,
         stakeId
+      );
+      break;
+    case EarnOpportunityTypeEnum.KORD_FI_SAVING:
+      transfersParams = await createKordFiStakeTransfersParams(
+        earnOpportunity,
+        amount,
+        asset,
+        tezos,
+        accountPkh,
+        threeRouteTokens,
+        slippageTolerancePercentage
       );
       break;
     case EarnOpportunityTypeEnum.YOUVES_SAVING:

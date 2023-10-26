@@ -2,7 +2,8 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useActivityGroupsListStyles = createUseStyles(({ colors, typography }) => ({
-  sectionListContentContainer: {
+  contentContainer: {
+    flex: 1,
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),
     paddingLeft: formatSize(16)

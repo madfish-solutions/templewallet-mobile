@@ -1,4 +1,5 @@
-import { VisibilityEnum } from '../../enums/visibility.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
+
 import { TokenMetadataInterface, emptyTokenMetadata } from './token-metadata.interface';
 
 export interface TokenInterface extends TokenMetadataInterface {
