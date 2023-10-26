@@ -1,8 +1,6 @@
 import { EMPTY_PUBLIC_KEY_HASH } from '../config/system';
 import { AccountTypeEnum } from '../enums/account-type.enum';
-import { LoadableEntityState } from '../store/types';
 import { AccountTokenInterface } from '../token/interfaces/account-token.interface';
-import { ActivityGroup } from './activity.interface';
 
 export interface AccountBaseInterface {
   name: string;
@@ -21,10 +19,6 @@ export interface AccountInterface extends AccountBaseInterface {
   tokensList?: AccountTokenInterface[];
   /** @deprecated */
   removedTokensList?: string[];
-  /** @deprecated */
-  activityGroups?: LoadableEntityState<ActivityGroup[]>;
-  /** @deprecated */
-  pendingActivities?: ActivityGroup[];
 }
 
 export const initialAccount: AccountInterface = {

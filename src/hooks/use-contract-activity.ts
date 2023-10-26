@@ -1,81 +1,95 @@
-import { uniq } from 'lodash-es';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Activity, TzktMemberInterface, TzktOperation } from '@temple-wallet/transactions-parser';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { ActivityGroup } from '../interfaces/activity.interface';
-import { UseActivityInterface } from '../interfaces/use-activity.interface';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { isDefined } from '../utils/is-defined';
-import { loadActivity } from '../utils/token-operations.util';
+import { KNOWN_BAKERS } from 'src/apis/baking-bad/consts';
+import { ActivityGroup } from 'src/interfaces/activity.interface';
+import { loadBakersListActions } from 'src/store/baking/baking-actions';
+import { useBakersListSelector } from 'src/store/baking/baking-selectors';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { loadActivity } from 'src/utils/token-operations.utils';
 
-export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
+export const useContractActivity = (tokenSlug?: string) => {
+  const dispatch = useDispatch();
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const bakers = useBakersListSelector();
 
-  const lastActivityRef = useRef<string>('');
+  const lastOperationRef = useRef<TzktOperation>();
 
   const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
 
-  const initialLoad = useCallback(
-    async (refresh = false) => {
-      const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
-
-      if (activities.length === 0) {
-        setIsAllLoaded(true);
-      }
-      if (refresh === true) {
-        setActivities(prev => {
-          const allActivities = [...activities, ...prev];
-          const allHashes = allActivities.map(x => x[0]).map(x => x.hash);
-          const onlyUniqueHashes = uniq(allHashes);
-          const onlyUniqueActivitites = onlyUniqueHashes
-            .map(x => allActivities.find(y => y[0].hash === x))
-            .filter(isDefined);
-
-          return onlyUniqueActivitites;
-        });
-      } else {
-        setActivities(activities);
-      }
-    },
-    [selectedRpcUrl, selectedAccount, tokenSlug]
+  const knownBakers = useMemo<Array<TzktMemberInterface>>(
+    () => [
+      ...KNOWN_BAKERS.map(({ address, name }) => ({
+        address,
+        alias: name
+      })),
+      ...bakers.map(({ address, name }) => ({
+        address,
+        alias: name
+      }))
+    ],
+    [bakers]
   );
 
-  useEffect(() => {
-    initialLoad();
-  }, [initialLoad]);
+  const load = useCallback(
+    async (isInitialLoad: boolean) => {
+      const allNewActivities: Activity[][] = [];
 
-  const handleRefresh = () => {
-    initialLoad(true);
-  };
+      // Loading 10+ items first (initially) & 3+ for the following calls
+      const minGroupsCount = isInitialLoad ? 10 : 3;
 
-  const handleUpdate = async () => {
-    if (activities.length > 0 && !isAllLoaded) {
-      const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
+      let newActivities: Activity[][];
+      let newReachedTheEnd = false;
+      let newOldestOperation: TzktOperation | undefined;
 
-      if (lastActivityGroup.length > 0) {
-        const lastItem = lastActivityGroup[lastActivityGroup.length - 1];
+      while (allNewActivities.length < minGroupsCount) {
+        if (newReachedTheEnd) {
+          break;
+        }
 
-        if (lastItem.hash !== lastActivityRef.current) {
-          lastActivityRef.current = lastItem.hash;
+        try {
+          setIsLoading(true);
 
-          if (isDefined(lastItem)) {
-            const newActivity = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
+          ({
+            activities: newActivities,
+            reachedTheEnd: newReachedTheEnd,
+            oldestOperation: newOldestOperation
+          } = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, knownBakers, lastOperationRef.current));
 
-            if (newActivity.length === 0) {
-              setIsAllLoaded(true);
-            }
-            setActivities(prev => [...prev, ...newActivity]);
-          }
+          lastOperationRef.current = newOldestOperation ?? lastOperationRef.current;
+
+          allNewActivities.push(...newActivities);
+        } catch (error) {
+          console.error(error);
         }
       }
+
+      setActivities(activities.concat(allNewActivities));
+      setIsLoading(false);
+      setIsAllLoaded(newReachedTheEnd);
+    },
+    [activities, selectedRpcUrl, selectedAccount, tokenSlug, knownBakers]
+  );
+
+  const handleUpdate = useCallback(async () => {
+    if (isAllLoaded || isLoading) {
+      return;
     }
-  };
+
+    await load(false);
+  }, [isAllLoaded, isLoading, load]);
+
+  useEffect(() => void dispatch(loadBakersListActions.submit()), []);
+
+  useEffect(() => void load(true), [load]);
 
   return {
     handleUpdate,
-    handleRefresh,
     activities
   };
 };

@@ -193,9 +193,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
           isVisible: undefined,
           tezosBalance: undefined,
           tokensList: undefined,
-          removedTokensList: undefined,
-          activityGroups: undefined,
-          pendingActivities: undefined
+          removedTokensList: undefined
         });
       }
 

@@ -44,7 +44,7 @@ import { useSendModalStyles } from './send-modal.styles';
 export const SendModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const { token: initialToken, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
+  const { token: initialToken, receiverPublicKeyHash: initialReceiverPublicKeyHash = '' } =
     useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack } = useNavigation();
 
@@ -74,7 +74,7 @@ export const SendModal: FC = () => {
         asset: inputInitialValue,
         amount: undefined
       },
-      receiverPublicKeyHash: initialRecieverPublicKeyHash,
+      receiverPublicKeyHash: initialReceiverPublicKeyHash,
       recipient,
       transferBetweenOwnAccounts: false
     }),

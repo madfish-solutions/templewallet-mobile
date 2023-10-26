@@ -212,3 +212,11 @@ export const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
 
     return bDollarValue.minus(aDollarValue).toNumber();
   });
+
+export const shortizeSymbol = (symbol: string): string => {
+  if (symbol.length > 15) {
+    return symbol.slice(0, 12) + '...';
+  }
+
+  return symbol;
+};
