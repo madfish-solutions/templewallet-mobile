@@ -4,6 +4,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export const HeaderButtonStyles = StyleSheet.create({
   icon: {
-    marginHorizontal: formatSize(16)
+    //marginHorizontal: formatSize(16)
+    marginTop: formatSize(4)
   }
 });

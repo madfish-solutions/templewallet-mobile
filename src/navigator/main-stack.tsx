@@ -1,5 +1,5 @@
 import { PortalProvider } from '@gorhom/portal';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -86,7 +86,7 @@ import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
 
-const MainStack = createStackNavigator<ScreensParamList>();
+const MainStack = createNativeStackNavigator<ScreensParamList>();
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -181,12 +181,12 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Wallet}
                 component={Wallet}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.CollectiblesHome}
                 component={CollectiblesHome}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
@@ -257,7 +257,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.DApps}
                 component={DApps}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
 
               {/** Swap stack **/}
@@ -268,7 +268,7 @@ export const MainStackScreen = () => {
                     component={SwapScreen}
                     options={{
                       ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
-                      animationEnabled: false
+                      animation: 'none'
                     }}
                   />
 
@@ -284,14 +284,14 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Market}
                 component={Market}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
 
               {/** Settings stack **/}
               <MainStack.Screen
                 name={ScreensEnum.Settings}
                 component={Settings}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.ManageAccounts}
