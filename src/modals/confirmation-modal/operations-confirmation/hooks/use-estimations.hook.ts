@@ -62,9 +62,6 @@ const getSuggestedFeeMutez = (estimate: Estimate, opParam?: ParamsWithKind) => {
     !isDefined(opParam.gasLimit) ||
     opParam.gasLimit <= estimate.gasLimit
   ) {
-    console.log(1);
-    console.log(estimate.suggestedFeeMutez, 'suugested111');
-
     return estimate.suggestedFeeMutez;
   }
 
