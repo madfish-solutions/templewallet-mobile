@@ -1,7 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { MAX_ROUTING_FEE_CHAINS, ROUTING_FEE_ADDRESS, ZERO } from 'src/config/swap';
+import { MAX_ROUTING_FEE_CHAINS, ROUTING_FEE_ADDRESS } from 'src/config/swap';
 import {
   THREE_ROUTE_SIRS_TOKEN,
   THREE_ROUTE_TZBTC_TOKEN,
@@ -11,6 +11,7 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { ZERO } from 'src/utils/number.util';
 import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
 import {
   calculateRoutingInputAndFeeFromInput,

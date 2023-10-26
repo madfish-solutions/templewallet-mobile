@@ -10,9 +10,8 @@ import { useFilteredSavings } from 'src/hooks/use-filtered-savings.hook';
 import { useLoadOnEachBlock } from 'src/hooks/use-load-on-each-block.hook';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useFarmsStakesLoadingSelector } from 'src/store/farms/selectors';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
-import { useSavingsStakesSelector } from 'src/store/savings/selectors';
+import { useSavingsStakesLoadingSelector, useSavingsStakesSelector } from 'src/store/savings/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -25,7 +24,7 @@ const keyExtractor = ({ id, contractAddress }: SavingsItem) => `${id}_${contract
 
 export const Savings: FC = () => {
   const savingsStakes = useSavingsStakesSelector();
-  const stakesLoading = useFarmsStakesLoadingSelector();
+  const stakesLoading = useSavingsStakesLoadingSelector();
   const styles = useSavingsStyles();
   const {
     sortField,

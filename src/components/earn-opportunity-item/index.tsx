@@ -63,6 +63,7 @@ export const EarnOpportunityItem: FC<Props> = ({
   const { stakeTokens, rewardToken } = useEarnOpportunityTokens(item);
   const itemIsFarm = isFarm(item);
   const isLiquidityBaking = itemType === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
+  const isKordFi = itemType === EarnOpportunityTypeEnum.KORD_FI_SAVING;
   const allTokensAreStablecoins = useMemo(
     () =>
       item.tokens.every(token =>
@@ -70,7 +71,32 @@ export const EarnOpportunityItem: FC<Props> = ({
       ),
     [item.tokens]
   );
-  const youvesIconName = theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
+  const earnSourceText = useMemo(() => {
+    switch (item.type) {
+      case EarnOpportunityTypeEnum.YOUVES_SAVING:
+      case EarnOpportunityTypeEnum.YOUVES_STAKING:
+        return 'Youves';
+      case EarnOpportunityTypeEnum.KORD_FI_SAVING:
+        return 'Kord.Fi';
+      case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
+        return 'Liquidity Baking';
+
+      default:
+        return null;
+    }
+  }, [item]);
+  const earnSourceIcon = useMemo(() => {
+    switch (item.type) {
+      case EarnOpportunityTypeEnum.YOUVES_SAVING:
+      case EarnOpportunityTypeEnum.YOUVES_STAKING:
+        return theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
+      case EarnOpportunityTypeEnum.KORD_FI_SAVING:
+        return IconNameEnum.KordFiEarnSource;
+
+      default:
+        return IconNameEnum.QsEarnSource;
+    }
+  }, [theme, item]);
 
   const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
 
@@ -117,17 +143,9 @@ export const EarnOpportunityItem: FC<Props> = ({
                   <Icon size={formatSize(6)} name={IconNameEnum.LiquidityBakingLogo} />
                 </View>
               ) : (
-                <Icon
-                  style={styles.earnSourceIcon}
-                  size={formatSize(12)}
-                  name={itemIsFarm ? IconNameEnum.QsEarnSource : youvesIconName}
-                />
+                <Icon style={styles.earnSourceIcon} size={formatSize(12)} name={earnSourceIcon} />
               )}
-              <Text style={styles.attributeTitle}>
-                {isLiquidityBaking && 'Liquidity Baking'}
-                {!isLiquidityBaking && itemIsFarm && 'Quipuswap'}
-                {!itemIsFarm && 'Youves'}
-              </Text>
+              <Text style={styles.attributeTitle}>{earnSourceText}</Text>
             </View>
           </View>
         </View>
@@ -138,13 +156,13 @@ export const EarnOpportunityItem: FC<Props> = ({
 
         <View style={[styles.row, styles.mb16]}>
           <StatsItem
-            title="Your deposit:"
+            title={isKordFi ? 'Your deposit & Rewards:' : 'Your deposit:'}
             amounts={depositAmounts}
             isLoading={stakeIsLoading}
             fiatEquivalentIsMain={itemIsFarm}
             tokenSymbol={stakedToken.metadata.symbol}
           />
-          {!depositIsZero && !isLiquidityBaking && (
+          {!depositIsZero && !isLiquidityBaking && !isKordFi && (
             <StatsItem
               title="Claimable rewards:"
               amounts={claimableRewardsAmounts}
