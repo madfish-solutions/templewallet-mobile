@@ -44,7 +44,6 @@
     "@react-native-firebase/app-check": "^17.5.0",
     "@react-native-firebase/messaging": "^17.5.0",
     "@react-native-google-signin/google-signin": "9.0.2",
-    "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
     "@reduxjs/toolkit": "^1.8.5",

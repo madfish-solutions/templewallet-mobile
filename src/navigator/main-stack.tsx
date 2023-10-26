@@ -191,12 +191,18 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
                 component={TezosTokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={metadata} />)}
+                options={{
+                  ...generateScreenOptions(<HeaderTokenInfo token={metadata} />),
+                  headerShadowVisible: false
+                }}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
                 component={TokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
+                options={{
+                  ...generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />),
+                  headerShadowVisible: false
+                }}
               />
               <MainStack.Screen
                 name={ScreensEnum.Delegation}
