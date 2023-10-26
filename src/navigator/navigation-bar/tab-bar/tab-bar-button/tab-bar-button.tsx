@@ -56,13 +56,13 @@ export const TabBarButton = memo<Props>(
 
     const handlePress = () => {
       if (disabled) {
-        disabledOnPress?.();
+        return void disabledOnPress?.();
+      }
+
+      if (routeName === ScreensEnum.SwapScreen) {
+        navigate(routeName, swapScreenParams);
       } else {
-        if (routeName === ScreensEnum.SwapScreen) {
-          navigate(routeName, swapScreenParams);
-        } else {
-          navigate(routeName);
-        }
+        navigate(routeName);
       }
     };
 

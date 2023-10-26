@@ -16,11 +16,6 @@ export const useShareNFT = (slug: string, thumbnailUri: string | undefined, titl
   return useCallback(async () => {
     const dataStr = buildCollectibleDynamicLink(slug);
 
-    if (dataStr.length > 7168) {
-      // See: https://stackoverflow.com/questions/76084161/firebase-dynamic-links-apiexception-400-length-of-dynamiclink-14793-is-over-th
-      return void showErrorToast({ title: 'Cannot share', description: 'Data is too large' });
-    }
-
     try {
       const linkUrl = await getTempleDynamicLink(dataStr, {
         title,
@@ -33,15 +28,15 @@ export const useShareNFT = (slug: string, thumbnailUri: string | undefined, titl
       });
 
       await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);
-    } catch (e: any) {
+    } catch (error: any) {
       showErrorToast({
-        description: e.message,
+        description: error.message,
         isCopyButtonVisible: true,
-        onPress: () => copyStringToClipboard(e.message)
+        onPress: () => copyStringToClipboard(error.message)
       });
 
       await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, {
-        errorMessage: e.message
+        errorMessage: error.message
       });
     }
   }, [slug, title, description, thumbnailUri, trackEvent]);

@@ -1,4 +1,4 @@
-import React, { FC, memo, useMemo, useState } from 'react';
+import React, { FC, memo, useCallback, useMemo, useState } from 'react';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { AudioPlaceholder } from 'src/components/audio-placeholder';
@@ -53,6 +53,14 @@ const MediaContent = memo<MediaContentProps>(
     const [mediaFailed, setMediaFailed] = useState(false);
     useDidUpdate(() => setMediaFailed(false), [mime, mediaUri]);
 
+    const onMediaFail = useCallback((subject = 'media') => {
+      showErrorToast({ description: `Invalid ${subject}` });
+      setMediaFailed(true);
+    }, []);
+    const onModelMediaFail = useCallback(() => onMediaFail('3D model'), [onMediaFail]);
+    const onVideoMediaFail = useCallback(() => onMediaFail('video'), [onMediaFail]);
+    const onAudioMediaFail = useCallback(() => onMediaFail('audio'), [onMediaFail]);
+
     if (!mediaFailed && mime && mediaUri) {
       if (mime === 'model/gltf-binary') {
         return (
@@ -60,10 +68,7 @@ const MediaContent = memo<MediaContentProps>(
             uri={mediaUri}
             isBinary={true}
             style={styles.container}
-            onFail={() => {
-              showErrorToast({ description: 'Invalid 3D model' });
-              setMediaFailed(true);
-            }}
+            onFail={onModelMediaFail}
             setScrollEnabled={setScrollEnabled}
           />
         );
@@ -74,38 +79,18 @@ const MediaContent = memo<MediaContentProps>(
             uri={mediaUri}
             isBinary={false}
             style={styles.container}
-            onFail={() => {
-              showErrorToast({ description: 'Invalid media' });
-              setMediaFailed(true);
-            }}
+            onFail={onMediaFail}
             setScrollEnabled={setScrollEnabled}
           />
         );
       }
       if (mime.startsWith('video/')) {
-        return (
-          <SimplePlayer
-            uri={mediaUri}
-            size={size}
-            withLoader={true}
-            onError={() => {
-              showErrorToast({ description: 'Invalid video' });
-              setMediaFailed(true);
-            }}
-          />
-        );
+        return <SimplePlayer uri={mediaUri} size={size} withLoader={true} onError={onVideoMediaFail} />;
       }
       if (mime.startsWith('audio/')) {
         return (
           <>
-            <SimplePlayer
-              uri={mediaUri}
-              size={0}
-              onError={() => {
-                showErrorToast({ description: 'Invalid audio' });
-                setMediaFailed(true);
-              }}
-            />
+            <SimplePlayer uri={mediaUri} size={0} onError={onAudioMediaFail} />
 
             <CollectibleImage
               isFullView

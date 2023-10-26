@@ -25,7 +25,7 @@ import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams, buildSellCollectiblePar
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { navigateToObjktForBuy } from '../utils';
+import { IMAGE_SIZE, navigateToObjktForBuy } from '../utils';
 
 import { useCollectibleItemStyles } from './collectible-item.styles';
 
@@ -45,16 +45,18 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
   const selectedRpc = useSelectedRpcUrlSelector();
 
   const lastPrice = useMemo(() => {
-    if (item.lastDeal?.price == null) {
+    const lastDeal = item.lastDeal;
+
+    if (!lastDeal || !isDefined(lastDeal.price)) {
       return '---';
     }
 
-    const currency = objktCurrencies[item.lastDeal.currency_id];
+    const currency = objktCurrencies[lastDeal.currency_id];
     if (!currency) {
       return '---';
     }
 
-    const price = formatAssetAmount(mutezToTz(BigNumber(item.lastDeal.price), currency.decimals));
+    const price = formatAssetAmount(mutezToTz(BigNumber(lastDeal.price), currency.decimals));
 
     return `${price} ${currency.symbol}`;
   }, [item]);
@@ -193,7 +195,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
 
   const navigateToCollectibleModal = () => navigate(ModalsEnum.CollectibleModal, { slug });
 
-  const imageSize = formatSize(295);
+  const imageSize = formatSize(IMAGE_SIZE);
 
   return (
     <View style={styles.collectibleContainer}>
@@ -206,7 +208,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
       <View style={styles.collectible}>
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={0.7}>
-            <View style={[styles.imageWrap, { width: imageSize, height: imageSize }]}>
+            <View style={styles.imageWrap}>
               {item.isAdultContent ? (
                 <ImageBlurOverlay size={imageSize} isBigIcon={true} />
               ) : (

@@ -1,7 +1,7 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-import { ITEM_WIDTH, GAP_SIZE, BORDER_RADIUS } from '../utils';
+import { ITEM_WIDTH, GAP_SIZE, BORDER_RADIUS, IMAGE_SIZE } from '../utils';
 
 export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   collectibleContainer: {
@@ -15,7 +15,9 @@ export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typog
     position: 'relative'
   },
   imageWrap: {
-    backgroundColor: colors.blue10
+    backgroundColor: colors.blue10,
+    width: formatSize(IMAGE_SIZE),
+    height: formatSize(IMAGE_SIZE)
   },
   listed: {
     position: 'absolute',
@@ -34,11 +36,6 @@ export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typog
     margin: formatSize(16),
     justifyContent: 'space-between',
     flex: 1
-  },
-  image: {
-    borderRadius: formatSize(8),
-    width: formatSize(295),
-    height: formatSize(283)
   },
   collectibleName: {
     color: colors.black,

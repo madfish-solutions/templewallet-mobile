@@ -42,7 +42,7 @@ export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onFail, setS
     <>
       <WebView
         source={source}
-        style={[styles.loverOpacity, style]}
+        style={[styles.lowerOpacity, style]}
         onError={onFail}
         onMessage={onErrorMessage}
         onLoadStart={() => setIsLoading(true)}
