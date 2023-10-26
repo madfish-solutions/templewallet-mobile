@@ -1,11 +1,11 @@
 import { basicLightColors } from 'src/styles/colors';
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { hexa } from 'src/utils/style.util';
 
 import { GRID_GAP } from '../styles';
 
-export const useCollectibleItemStyles = createUseStyles(({ colors, typography }) => ({
+export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
     backgroundColor: colors.cardBG,
     borderRadius: formatSize(4),
@@ -31,7 +31,7 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
   }
 }));
 
-export const useBalanceStyles = createUseStyles(({ typography }) => ({
+export const useBalanceStyles = createUseStylesMemoized(({ typography }) => ({
   root: {
     position: 'absolute',
     bottom: formatSize(4),

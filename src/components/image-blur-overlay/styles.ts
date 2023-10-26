@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useBlurStyles = createUseStyles(({ colors, typography }) => ({
+export const useBlurStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
     overflow: 'hidden',
     borderRadius: formatSize(4),

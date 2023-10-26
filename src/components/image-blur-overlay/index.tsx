@@ -17,7 +17,7 @@ interface Props {
   size: number;
   isBigIcon?: boolean;
   isTouchable?: boolean;
-  /** Not allowed if descendant of <TouchableOpacity /> */
+  /** (!) Not allowed if descendant of <TouchableOpacity /> */
   onPress?: EmptyFn;
 }
 

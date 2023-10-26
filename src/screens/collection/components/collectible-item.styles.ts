@@ -1,9 +1,9 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 import { ITEM_WIDTH, GAP_SIZE, BORDER_RADIUS } from '../utils';
 
-export const useCollectibleItemStyles = createUseStyles(({ colors, typography }) => ({
+export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   collectibleContainer: {
     flex: 1,
     borderWidth: formatSize(1),

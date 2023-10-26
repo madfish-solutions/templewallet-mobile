@@ -1,9 +1,9 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 import { ITEM_WIDTH, GAP_SIZE, BORDER_RADIUS } from './utils';
 
-export const useCollectionStyles = createUseStyles(() => ({
+export const useCollectionStyles = createUseStylesMemoized(() => ({
   root: {
     flex: 1
   },
@@ -18,7 +18,7 @@ export const useCollectionStyles = createUseStyles(() => ({
   }
 }));
 
-export const useCollectionClosingComponentStyles = createUseStyles(({ colors }) => ({
+export const useCollectionClosingComponentStyles = createUseStylesMemoized(({ colors }) => ({
   emptyContainer: {
     justifyContent: 'center',
     alignItems: 'center',

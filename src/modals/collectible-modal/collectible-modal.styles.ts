@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useCollectibleModalStyles = createUseStyles(({ colors, typography }) => ({
+export const useCollectibleModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
   mediaContainer: {
     backgroundColor: colors.blue10,
     borderRadius: formatSize(4),

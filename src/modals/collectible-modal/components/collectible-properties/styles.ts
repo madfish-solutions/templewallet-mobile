@@ -1,9 +1,9 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 import { COLLECTIBLE_WIDTH } from '../../constants';
 
-export const useCollectiblePropertiesStyles = createUseStyles(() => ({
+export const useCollectiblePropertiesStyles = createUseStylesMemoized(() => ({
   root: {
     flex: 1,
     flexDirection: 'row',
@@ -12,7 +12,7 @@ export const useCollectiblePropertiesStyles = createUseStyles(() => ({
   }
 }));
 
-export const useCollectiblePropertyStyles = createUseStyles(({ colors, typography }) => ({
+export const useCollectiblePropertyStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
     width: COLLECTIBLE_WIDTH,
     marginBottom: formatSize(8),

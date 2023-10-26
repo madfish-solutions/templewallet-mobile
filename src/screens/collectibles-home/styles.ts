@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }) => ({
+export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typography }) => ({
   screen: {
     flex: 1,
     flexDirection: 'column'
@@ -73,7 +73,7 @@ export const useCollectiblesHomeStyles = createUseStyles(({ colors, typography }
   }
 }));
 
-export const useCollectiblesGridStyles = createUseStyles(() => ({
+export const useCollectiblesGridStyles = createUseStylesMemoized(() => ({
   loader: {
     width: '100%',
     alignItems: 'center',
@@ -82,7 +82,7 @@ export const useCollectiblesGridStyles = createUseStyles(() => ({
   }
 }));
 
-export const useCollectionButtonStyles = createUseStyles(({ colors, typography }) => ({
+export const useCollectionButtonStyles = createUseStylesMemoized(({ colors, typography }) => ({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -112,7 +112,7 @@ export const useCollectionButtonStyles = createUseStyles(({ colors, typography }
   }
 }));
 
-export const useCollectiblesHomeProfileStyles = createUseStyles(({ colors, typography }) => ({
+export const useCollectiblesHomeProfileStyles = createUseStylesMemoized(({ colors, typography }) => ({
   profileActions: {
     flexDirection: 'row'
   },

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 import { COLLECTIBLE_WIDTH } from '../../constants';
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   }
 });
 
-export const useCollectibleAttributeStyles = createUseStyles(({ typography, colors }) => ({
+export const useCollectibleAttributeStyles = createUseStylesMemoized(({ typography, colors }) => ({
   root: {
     width: COLLECTIBLE_WIDTH,
     justifyContent: 'center',
