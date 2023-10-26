@@ -4,7 +4,7 @@
 # CHECKLIST
 
 1. +
-2.
+2. +
 3. +- // Might have made other broken `application/x-directory` not fall back to image
 4. +
 5. +- // Please, use valid dynamic links

@@ -52,9 +52,6 @@ interface CommonTokenInterface {
 }
 
 export interface ObjktCollectionItem extends CommonTokenInterface {
-  fa: {
-    items: number;
-  };
   holders: ObjktHolder[];
   events: {
     marketplace_event_type: MarketPlaceEventEnum;
@@ -103,7 +100,7 @@ export interface CollectiblesByCollectionResponse {
 }
 
 export interface CollectiblesByGalleriesResponse {
-  gallery: { tokens: { token: ObjktCollectionItem; gallery: { max_items: number } }[] }[];
+  gallery: { max_items: number; tokens: { token: ObjktCollectionItem }[] }[];
 }
 
 export interface CollectiblesBySlugsResponse {

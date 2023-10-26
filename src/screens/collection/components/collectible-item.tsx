@@ -14,6 +14,7 @@ import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -31,15 +32,15 @@ const DETAILS_SYNC_INTERVAL = 4 * BLOCK_DURATION;
 interface Props {
   item: CollectionItemInterface;
   collectionContract: string;
-  selectedRpc: string;
   accountPkh: string;
 }
 
-export const CollectibleItem = memo<Props>(({ item, collectionContract, selectedRpc, accountPkh }) => {
+export const CollectibleItem = memo<Props>(({ item, collectionContract, accountPkh }) => {
   const slug = getTokenSlug(item);
 
   const styles = useCollectibleItemStyles();
   const { navigate } = useNavigation();
+  const selectedRpc = useSelectedRpcUrlSelector();
 
   const lastPrice = useMemo(() => {
     if (item.lastDeal?.price == null) {

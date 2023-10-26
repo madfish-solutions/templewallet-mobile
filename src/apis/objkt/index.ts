@@ -11,7 +11,13 @@ import { Collection } from 'src/store/collectons/collections-state';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 
-import { apolloObjktClient, HIDDEN_CONTRACTS } from './constants';
+import {
+  apolloObjktClient,
+  MAX_OBJKT_QUERY_RESPONSE_ITEMS,
+  FA_COLLECTION_PAGINATION_STEP,
+  GALLERY_COLLECTION_PAGINATION_STEP,
+  HIDDEN_CONTRACTS
+} from './constants';
 import {
   buildGetCollectiblesByCollectionQuery,
   buildGetCollectionsQuery,
@@ -36,8 +42,6 @@ import {
 import { transformObjktCollectionItem } from './utils';
 
 export { objktCurrencies } from './constants';
-
-const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
 
 export const fetchCollections$ = (accountPkh: string): Observable<Collection[]> => {
   const request = buildGetCollectionsQuery(accountPkh);
@@ -81,7 +85,7 @@ export const fetchTzProfilesInfo = (address: string) =>
       return data.holder_by_pk;
     });
 
-export const fetchCollectiblesOfCollection$ = (
+export const fetchCollectiblesOfCollection = (
   contract: string,
   creatorPkh: string,
   offset: number,
@@ -89,19 +93,39 @@ export const fetchCollectiblesOfCollection$ = (
 ) => {
   if (isDefined(galleryPk)) {
     return apolloObjktClient
-      .fetch$<CollectiblesByGalleriesResponse>(buildGetCollectiblesByGalleryQuery(galleryPk, offset))
-      .pipe(
-        map(result => {
-          const gallery = result.gallery[0];
+      .fetch<CollectiblesByGalleriesResponse>(buildGetCollectiblesByGalleryQuery(galleryPk, offset))
+      .then(result => {
+        if (!result) {
+          throw new Error('No result');
+        }
 
-          return gallery?.tokens.map(token => transformObjktCollectionItem(token.token, token.gallery.max_items)) ?? [];
-        })
-      );
+        const gallery = result.gallery[0];
+
+        const items = gallery?.tokens.map(token => transformObjktCollectionItem(token.token)) ?? [];
+
+        const collectionSize = gallery?.max_items ?? 0;
+
+        const reachedTheEnd = items.length < GALLERY_COLLECTION_PAGINATION_STEP;
+
+        return { items, collectionSize, reachedTheEnd };
+      });
   }
 
   return apolloObjktClient
-    .fetch$<CollectiblesByCollectionResponse>(buildGetCollectiblesByCollectionQuery(contract, creatorPkh, offset))
-    .pipe(map(result => result.token.map(token => transformObjktCollectionItem(token, token.fa.items))));
+    .fetch<CollectiblesByCollectionResponse>(buildGetCollectiblesByCollectionQuery(contract, creatorPkh, offset))
+    .then(data => {
+      if (!data) {
+        throw new Error('No result');
+      }
+
+      const items = data.token.map(transformObjktCollectionItem);
+
+      const collectionSize = offset + items.length;
+
+      const reachedTheEnd = items.length < FA_COLLECTION_PAGINATION_STEP;
+
+      return { items, collectionSize, reachedTheEnd };
+    });
 };
 
 export const fetchObjktCollectiblesBySlugs$ = (slugs: string[]) =>

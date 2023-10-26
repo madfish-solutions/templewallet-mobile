@@ -58,6 +58,12 @@ const TECHNICAL_ATTRIBUTE_NAME = '__hazards_';
 
 export const HIDDEN_ATTRIBUTES_NAME = [ADULT_ATTRIBUTE_NAME, TECHNICAL_ATTRIBUTE_NAME];
 
-export const PAGINATION_STEP_FA = 500;
+export const MAX_OBJKT_QUERY_RESPONSE_ITEMS = 500;
 
-export const PAGINATION_STEP_GALLERY = 15;
+/**
+ * There is no way to get 'fa' collection total size.
+ * Thus, fetching maximum items on every step.
+ */
+export const FA_COLLECTION_PAGINATION_STEP = MAX_OBJKT_QUERY_RESPONSE_ITEMS;
+
+export const GALLERY_COLLECTION_PAGINATION_STEP = 15;

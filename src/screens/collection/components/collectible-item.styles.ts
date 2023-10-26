@@ -1,15 +1,17 @@
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
+import { ITEM_WIDTH, GAP_SIZE, BORDER_RADIUS } from '../utils';
+
 export const useCollectibleItemStyles = createUseStyles(({ colors, typography }) => ({
   collectibleContainer: {
     flex: 1,
     borderWidth: formatSize(1),
-    borderRadius: formatSize(10),
+    borderRadius: formatSize(BORDER_RADIUS),
     borderColor: colors.lines,
     backgroundColor: colors.navigation,
-    width: formatSize(327),
-    marginHorizontal: formatSize(4),
+    width: formatSize(ITEM_WIDTH),
+    marginLeft: formatSize(GAP_SIZE),
     position: 'relative'
   },
   imageWrap: {
@@ -17,8 +19,8 @@ export const useCollectibleItemStyles = createUseStyles(({ colors, typography })
   },
   listed: {
     position: 'absolute',
-    borderTopLeftRadius: formatSize(10),
-    borderBottomRightRadius: formatSize(10),
+    borderTopLeftRadius: formatSize(BORDER_RADIUS),
+    borderBottomRightRadius: formatSize(BORDER_RADIUS),
     backgroundColor: colors.blue,
     zIndex: 10,
     paddingVertical: formatSize(3),

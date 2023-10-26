@@ -49,7 +49,6 @@ export interface CollectibleDetailsInterface extends CollectibleCommonInterface 
 export interface CollectionItemInterface extends CollectibleCommonInterface {
   lowestAsk: number | null;
   holders: ObjktHolder[];
-  collectionSize: number;
   lastDeal?: {
     price: number | null;
     currency_id: number;

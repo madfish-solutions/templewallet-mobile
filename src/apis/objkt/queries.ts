@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { PAGINATION_STEP_FA, PAGINATION_STEP_GALLERY } from './constants';
+import { FA_COLLECTION_PAGINATION_STEP, GALLERY_COLLECTION_PAGINATION_STEP } from './constants';
 
 export const buildGetCollectionsQuery = (creatorPkh: string) => gql`
   query MyQuery {
@@ -59,14 +59,11 @@ export const buildGetCollectiblesByCollectionQuery = (contract: string, address:
         supply: { _gt: "0" },
         creators: { creator_address: {_eq: "${address}"} }
       }
-      limit: ${PAGINATION_STEP_FA}
+      limit: ${FA_COLLECTION_PAGINATION_STEP}
       offset: ${offset}
       order_by: { token_id: asc }
     ) {
       ${commonTokenQuery}
-      fa {
-        items
-      }
       holders {
         holder_address
         quantity
@@ -88,8 +85,9 @@ export const buildGetCollectiblesByGalleryQuery = (galleryPk: number, offset: nu
     gallery(
       where: { pk: { _eq: "${galleryPk}"} }
     ) {
+      max_items
       tokens(
-        limit: ${PAGINATION_STEP_GALLERY}
+        limit: ${GALLERY_COLLECTION_PAGINATION_STEP}
         offset: ${offset}
       ) {
         token {
@@ -109,9 +107,6 @@ export const buildGetCollectiblesByGalleryQuery = (galleryPk: number, offset: nu
             currency_id
             timestamp
           }
-        }
-        gallery {
-          max_items
         }
       }
     }
