@@ -1,4 +1,4 @@
-import { VisibilityEnum } from '../../enums/visibility.enum';
+import type { VisibilityEnum } from 'src/enums/visibility.enum';
 
 export interface AccountTokenInterface {
   slug: string;

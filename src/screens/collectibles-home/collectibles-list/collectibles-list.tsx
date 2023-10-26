@@ -1,4 +1,5 @@
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { chunk } from 'lodash-es';
 import React, { FC, useCallback, useMemo } from 'react';
 import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
@@ -11,7 +12,6 @@ import { useScreenContainerStyles } from '../../../components/screen-container/s
 import { SIDEBAR_WIDTH } from '../../../config/styles';
 import { CollectibleInterface } from '../../../token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from '../../../token/utils/token.utils';
-import { sliceIntoChunks } from '../../../utils/array.utils';
 import { conditionalStyle } from '../../../utils/conditional-style';
 import { createGetItemLayout } from '../../../utils/flat-list.utils';
 import { CollectiblesListStyles } from './collectibles-list.styles';
@@ -37,7 +37,7 @@ export const CollectiblesList: FC<Props> = ({ collectibles, isShowInfo }) => {
     (isTablet() ? windowWidth - (SIDEBAR_WIDTH + SIDEBAR_MARGINS) : windowWidth - TABBAR_MARGINS) / ITEMS_PER_ROW -
     OFFSET_BETWEEN_ICONS;
 
-  const data = useMemo(() => sliceIntoChunks(collectibles, ITEMS_PER_ROW), [collectibles]);
+  const data = useMemo(() => chunk(collectibles, ITEMS_PER_ROW), [collectibles]);
 
   const getItemLayout = createGetItemLayout<CollectibleInterface[]>(itemSize);
 

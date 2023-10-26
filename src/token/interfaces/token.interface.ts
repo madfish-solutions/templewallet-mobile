@@ -1,5 +1,5 @@
 import { VisibilityEnum } from '../../enums/visibility.enum';
-import { AccountTokenInterface } from './account-token.interface';
+import type { AccountTokenInterface } from './account-token.interface';
 import { TokenMetadataInterface, emptyTokenMetadata } from './token-metadata.interface';
 
 export type TokenInterface = Omit<AccountTokenInterface, 'slug'> & TokenMetadataInterface;

@@ -1,5 +1,6 @@
-import { CollectibleAttributes, CollectibleTag, CurrencyInfo } from '../../apis/objkt/types';
-import { TokenInterface } from './token.interface';
+import type { CollectibleAttributes, CollectibleTag, CurrencyInfo } from 'src/apis/objkt/types';
+
+import type { TokenInterface } from './token.interface';
 
 interface Offer {
   buyerAddress: string;

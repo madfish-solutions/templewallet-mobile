@@ -1,5 +1,5 @@
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
-import { Route3Token } from 'src/interfaces/route3.interface';
+import type { Route3Token } from 'src/interfaces/route3.interface';
 
 export const THREE_ROUTE_SIRS_TOKEN: Route3Token = {
   id: 127,

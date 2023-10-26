@@ -7,8 +7,7 @@ import {
   ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT,
   LIQUIDITY_BAKING_PROXY_CONTRACT,
   ROUTE3_CONTRACT,
-  ROUTING_FEE_RATIO,
-  ZERO
+  ROUTING_FEE_RATIO
 } from 'src/config/swap';
 import {
   isSwapChains,
@@ -19,6 +18,7 @@ import {
 import { THREE_ROUTE_SIRS_TOKEN } from 'src/token/data/three-route-tokens';
 import { TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 
+import { ZERO } from './number.util';
 import { mapToRoute3ExecuteHops } from './route3.util';
 import { getReadOnlyContract } from './rpc/contract.utils';
 import { getTransferParams$ } from './transfer-params.utils';

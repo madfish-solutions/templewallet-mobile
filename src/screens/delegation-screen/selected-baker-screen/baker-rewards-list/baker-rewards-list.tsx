@@ -1,9 +1,11 @@
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useMemo } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import React, { memo, useCallback, useMemo } from 'react';
+import { Text, View } from 'react-native';
 
-import { DataPlaceholder } from '../../../../components/data-placeholder/data-placeholder';
-import { BakerRewardInterface } from '../../../../interfaces/baker-reward.interface';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+
 import { BakerRewardItem } from './baker-reward-item/baker-reward-item';
 import { useBakerRewardsListStyles } from './baker-rewards-list.styles';
 import { reduceFunction } from './utils/reduce-function';
@@ -22,14 +24,16 @@ const allRewardsPerEventKeys: (keyof RewardsPerEventHistoryItem)[] = [
   'rewardPerFutureEndorsement'
 ];
 
+const AVERAGE_ITEM_HEIGHT = 280;
+
 interface Props {
   bakerRewards: BakerRewardInterface[];
 }
 
-export const BakerRewardsList: FC<Props> = ({ bakerRewards }) => {
-  const styles = useBakerRewardsListStyles();
+const keyExtractor = (item: BakerRewardInterface) => item.cycle.toString();
 
-  const isShowPlaceholder = useMemo(() => bakerRewards.length === 0, [bakerRewards]);
+export const BakerRewardsList = memo<Props>(({ bakerRewards }) => {
+  const styles = useBakerRewardsListStyles();
 
   const rewardsPerEventHistory = useMemo(
     () =>
@@ -92,32 +96,36 @@ export const BakerRewardsList: FC<Props> = ({ bakerRewards }) => {
     [bakerRewards]
   );
 
+  const renderItem: ListRenderItem<BakerRewardInterface> = useCallback(
+    ({ item, index }) => (
+      <BakerRewardItem
+        currentCycle={currentCycle}
+        reward={item}
+        fallbackRewardPerEndorsement={fallbackRewardsPerEvents[index].rewardPerEndorsement}
+        fallbackRewardPerFutureBlock={fallbackRewardsPerEvents[index].rewardPerFutureBlock}
+        fallbackRewardPerFutureEndorsement={fallbackRewardsPerEvents[index].rewardPerFutureEndorsement}
+        fallbackRewardPerOwnBlock={fallbackRewardsPerEvents[index].rewardPerOwnBlock}
+      />
+    ),
+    [currentCycle, fallbackRewardsPerEvents]
+  );
+
+  const ListEmptyComponent = useMemo(() => <DataPlaceholder text="No Rewards records were found" />, []);
+
   return (
     <>
       <View style={styles.rewardsContainer}>
         <Text style={styles.rewardsText}>Rewards</Text>
       </View>
 
-      {isShowPlaceholder ? (
-        <DataPlaceholder text="No Rewards records were found" />
-      ) : (
-        <FlatList
-          data={bakerRewards}
-          contentContainerStyle={styles.flatListContentContainer}
-          keyExtractor={item => item.cycle.toString()}
-          renderItem={({ item, index }) => (
-            <BakerRewardItem
-              currentCycle={currentCycle}
-              key={`${item.cycle},${item.baker.address}`}
-              reward={item}
-              fallbackRewardPerEndorsement={fallbackRewardsPerEvents[index].rewardPerEndorsement}
-              fallbackRewardPerFutureBlock={fallbackRewardsPerEvents[index].rewardPerFutureBlock}
-              fallbackRewardPerFutureEndorsement={fallbackRewardsPerEvents[index].rewardPerFutureEndorsement}
-              fallbackRewardPerOwnBlock={fallbackRewardsPerEvents[index].rewardPerOwnBlock}
-            />
-          )}
-        />
-      )}
+      <FlashList
+        data={bakerRewards}
+        contentContainerStyle={styles.flatListContentContainer}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+        estimatedItemSize={AVERAGE_ITEM_HEIGHT}
+        ListEmptyComponent={ListEmptyComponent}
+      />
     </>
   );
-};
+});

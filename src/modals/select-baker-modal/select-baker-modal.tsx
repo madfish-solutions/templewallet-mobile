@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { ListRenderItem, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { BakerInterface, emptyBaker } from 'src/apis/baking-bad';
@@ -47,7 +47,9 @@ const bakersSortFieldsOptions = [
   BakersSortFieldEnum.Staking
 ];
 
-export const SelectBakerModal: FC = () => {
+const keyExtractor = (item: BakerInterface) => item.address;
+
+export const SelectBakerModal = memo(() => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
   const [currentBaker] = useSelectedBakerSelector();
@@ -55,7 +57,7 @@ export const SelectBakerModal: FC = () => {
   const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
 
   const searchPlaceholder = `Search ${bakerNameByNode}`;
-  const UNKNOWN_BAKER_NAME = `Unknown ${bakerNameByNode}`;
+  const unknownBakerName = `Unknown ${bakerNameByNode}`;
 
   const { trackEvent } = useAnalytics();
 
@@ -165,6 +167,30 @@ export const SelectBakerModal: FC = () => {
 
   const isValidBakerAddress = isDefined(selectedBaker) && !isValidAddress(selectedBaker.address);
 
+  const ListEmptyComponent = useMemo(
+    () =>
+      searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() ? (
+        <BakerListItem
+          item={{ ...emptyBaker, name: unknownBakerName, address: searchValue ?? '', isUnknownBaker: true }}
+          onPress={setSelectedBaker}
+          selected={searchValue === selectedBaker?.address}
+        />
+      ) : undefined,
+    [unknownBakerName, searchValue, selectedAccount.publicKeyHash, selectedBaker?.address]
+  );
+
+  const renderItem: ListRenderItem<BakerInterface> = useCallback(
+    ({ item }) => (
+      <BakerListItem
+        item={item}
+        selected={item.address === selectedBaker?.address}
+        onPress={setSelectedBaker}
+        testID={SelectBakerModalSelectors.bakerItem}
+      />
+    ),
+    [selectedBaker?.address]
+  );
+
   return (
     <>
       <ModalStatusBar />
@@ -206,26 +232,11 @@ export const SelectBakerModal: FC = () => {
       {isTezosNode && (
         <FlatList
           data={finalBakersList}
-          renderItem={({ item }) => (
-            <BakerListItem
-              item={item}
-              selected={item.address === selectedBaker?.address}
-              onPress={setSelectedBaker}
-              testID={SelectBakerModalSelectors.bakerItem}
-            />
-          )}
-          keyExtractor={item => item.address}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
           style={styles.flatList}
           windowSize={10}
-          ListEmptyComponent={
-            searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() ? (
-              <BakerListItem
-                item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
-                onPress={setSelectedBaker}
-                selected={searchValue === selectedBaker?.address}
-              />
-            ) : undefined
-          }
+          ListEmptyComponent={ListEmptyComponent}
         />
       )}
 
@@ -235,7 +246,7 @@ export const SelectBakerModal: FC = () => {
           <View style={styles.dcpBaker}>
             <Divider size={formatSize(16)} />
             <BakerListItem
-              item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
+              item={{ ...emptyBaker, name: unknownBakerName, address: searchValue ?? '', isUnknownBaker: true }}
               onPress={setSelectedBaker}
               selected={searchValue === selectedBaker?.address}
             />
@@ -256,4 +267,4 @@ export const SelectBakerModal: FC = () => {
       </View>
     </>
   );
-};
+});
