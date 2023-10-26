@@ -6,6 +6,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
 import { setNewTokensMetadata } from '../migration/migration-actions';
+
 import {
   addKnownSvg,
   addTokensMetadataAction,

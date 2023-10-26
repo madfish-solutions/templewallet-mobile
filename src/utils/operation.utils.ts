@@ -9,6 +9,7 @@ import {
   ParameterLiquidityBaking,
   ParamterFa2
 } from '../interfaces/operation.interface';
+
 import { isDefined } from './is-defined';
 import { stringToActivityStatusEnum } from './string-to-activity-status-enum.util';
 

@@ -2,6 +2,7 @@ import React, { FC, memo } from 'react';
 import { Text, View } from 'react-native';
 
 import { CollectibleAttribute } from '../../types';
+
 import { styles, useCollectibleAttributeStyles } from './styles';
 
 interface Props {

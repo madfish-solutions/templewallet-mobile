@@ -2,6 +2,7 @@ import { validateMnemonic } from 'bip39';
 import { secureCellSealWithPassphraseDecrypt64 } from 'react-native-themis';
 
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
+
 import { isDefined } from './is-defined';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';

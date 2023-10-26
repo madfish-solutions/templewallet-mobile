@@ -11,6 +11,7 @@ import { FormPasswordInput } from '../../form/form-password-input';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useShelter } from '../../shelter/use-shelter.hook';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import {
   EnableBiometryPasswordModalFormValues,
   enableBiometryPasswordModalInitialValues,

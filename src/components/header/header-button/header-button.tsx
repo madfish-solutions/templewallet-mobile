@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 import { TestIdProps } from '../../../interfaces/test-id.props';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TouchableIcon } from '../../icon/touchable-icon/touchable-icon';
+
 import { HeaderButtonStyles } from './header-button.styles';
 
 interface Props extends TestIdProps {

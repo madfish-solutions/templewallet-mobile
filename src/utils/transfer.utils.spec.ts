@@ -1,5 +1,6 @@
 import { TransferInterface } from '../interfaces/transfer.interface';
 import { mockAppliedTransfer, mockReceiverAddress, mockSenderAddress } from '../interfaces/transfer.interface.mock';
+
 import { mapTransfersToActivities } from './transfer.utils';
 
 describe('mapTransfersToActivities', () => {

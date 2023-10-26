@@ -8,6 +8,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { TruncatedText } from '../truncated-text';
+
 import { useEarnOpportunityTokensStyles } from './styles';
 
 interface Props {

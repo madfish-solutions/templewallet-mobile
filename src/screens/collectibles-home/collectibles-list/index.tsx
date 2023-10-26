@@ -16,6 +16,7 @@ import { UsableAccountAsset } from 'src/utils/assets/types';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 
 import { useCollectiblesGridStyles } from '../styles';
+
 import { CollectibleItem } from './collectible-item';
 import { useCollectibleItemStyles } from './collectible-item/styles';
 import { CollectiblesListStyles, GRID_GAP } from './styles';

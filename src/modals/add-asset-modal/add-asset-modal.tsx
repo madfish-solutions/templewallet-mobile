@@ -5,6 +5,7 @@ import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import { AddAssetAddress } from './add-asset-address/add-asset-address';
 import { AddAssetInfo } from './add-asset-info/add-asset-info';
 

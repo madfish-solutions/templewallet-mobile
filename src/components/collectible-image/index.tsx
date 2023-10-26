@@ -7,6 +7,7 @@ import { isImgUriDataUri } from 'src/utils/image.utils';
 import { ActivityIndicator } from '../activity-indicator';
 import { AnimatedSvg } from '../animated-svg';
 import { BrokenImage } from '../broken-image';
+
 import { useCollectibleImageStyles } from './styles';
 import { useCollectibleImagesStack } from './use-images-stack';
 

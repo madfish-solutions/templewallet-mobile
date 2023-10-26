@@ -6,6 +6,7 @@ import { useCurrentFiatCurrencyMetadataSelector } from '../../store/settings/set
 import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
 import { isDefined } from '../../utils/is-defined';
 import { formatAssetAmount } from '../../utils/number.util';
+
 import { useAssetEquityTextStyles } from './asset-equity-text.styles';
 
 interface Props {

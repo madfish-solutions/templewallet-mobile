@@ -13,6 +13,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
+
 import { accountEqualityFn } from './account-equality-fn';
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {

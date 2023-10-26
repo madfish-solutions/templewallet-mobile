@@ -14,6 +14,7 @@ import { useColors } from 'src/styles/use-colors';
 import { useAccountTokenBySlug } from 'src/utils/assets/hooks';
 
 import { HiddenButton } from '../hidden-button/hidden-button';
+
 import { RightSwipeViewSelectors } from './right-swipe-view.selectors';
 import { useRightSwipeViewStyles } from './right-swipe-view.styles';
 

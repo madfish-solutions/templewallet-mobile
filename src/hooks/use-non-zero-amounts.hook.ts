@@ -9,6 +9,7 @@ import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
 import { mutezToTz } from '../utils/tezos.util';
+
 import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 
 export const useNonZeroAmounts = (group: ActivityGroup) => {

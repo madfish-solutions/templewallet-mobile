@@ -10,6 +10,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 
 import { WalletSelectors } from '../wallet.selectors';
+
 import { NotificationsBellStyles } from './notifications-bell.styles';
 
 export const NotificationsBell = memo(() => {

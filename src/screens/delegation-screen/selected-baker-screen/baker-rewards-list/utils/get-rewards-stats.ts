@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { RewardsStatsCalculationParams } from '../interfaces/rewards-stats-calculation-params';
+
 import { calculateLuck } from './calculate-luck';
 import { getBakingEfficiency } from './get-baking-efficiency';
 import { CycleStatus } from './get-cycle-status-icon';

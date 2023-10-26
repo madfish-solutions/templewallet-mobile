@@ -3,6 +3,7 @@ import {
   mockActivitiesWithoutMatchedAddress
 } from '../interfaces/activity.interface.mock';
 import { mockOperations } from '../interfaces/operation.interface.mock';
+
 import { mapOperationsToActivities } from './operation.utils';
 
 describe('mapOperationsToActivities', () => {

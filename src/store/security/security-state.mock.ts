@@ -1,5 +1,6 @@
 import { INITIAL_ENTER_PASSWORD_LOCKTIME, INITIAL_ENTER_WRONG_PASSWORD_ATTEMPTS } from '../../config/security';
 import { createEntity } from '../create-entity';
+
 import { SecurityState } from './security-state';
 
 export const mockSecurityState: SecurityState = {

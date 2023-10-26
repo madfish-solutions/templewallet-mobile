@@ -8,6 +8,7 @@ import { EventFn } from '../../../../config/general';
 import { MarketTokensSortFieldEnum } from '../../../../enums/market-tokens-sort-field.enum';
 import { formatSize } from '../../../../styles/format-size';
 import { MarketSelectors } from '../../market.selectors';
+
 import { useFilterStyles } from './filter.styles';
 
 const marketTokensSortFieldsLabels: Record<MarketTokensSortFieldEnum, string> = {

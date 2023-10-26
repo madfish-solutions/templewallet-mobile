@@ -6,6 +6,7 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { useIconTitleNoBgStyles } from './icon-title-no-bg.styles';
 
 interface Props extends TestIdProps {

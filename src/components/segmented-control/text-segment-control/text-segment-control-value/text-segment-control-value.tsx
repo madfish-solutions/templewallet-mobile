@@ -5,6 +5,7 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { SegmentedControlValueComponentProps } from '../../segmented-control';
 import { useSegmentedControlColor } from '../../use-segmented-control-color.hook';
+
 import { useTextSegmentControlValueStyles } from './text-segment-control-value.styles';
 
 export const TextSegmentControlValue = memo<SegmentedControlValueComponentProps<string>>(

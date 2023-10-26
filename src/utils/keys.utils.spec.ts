@@ -1,4 +1,5 @@
 import { mockAccountCredentials } from '../mocks/account-credentials.mock';
+
 import { getDerivationPath, seedToPrivateKey, getPublicKeyAndHash$, generateSeed } from './keys.util';
 import { rxJsTestingHelper } from './testing.utils';
 

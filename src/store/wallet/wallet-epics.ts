@@ -30,6 +30,7 @@ import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
 import { loadTokensMetadataActions } from '../tokens-metadata/tokens-metadata-actions';
 import type { RootState } from '../types';
+
 import {
   addTokenAction,
   highPriorityLoadTokenBalanceAction,

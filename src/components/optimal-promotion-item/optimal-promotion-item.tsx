@@ -13,6 +13,7 @@ import {
 import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
 
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
+
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
 
 interface Props extends TestIdProps {

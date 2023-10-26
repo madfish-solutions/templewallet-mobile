@@ -10,6 +10,7 @@ import { ModalsEnum } from '../navigator/enums/modals.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { showErrorToast } from '../toast/toast.utils';
 import { isDefined } from '../utils/is-defined';
+
 import { BeaconHandler, isBeaconMessage } from './beacon-handler';
 
 export const beaconDeepLinkHandler = async (

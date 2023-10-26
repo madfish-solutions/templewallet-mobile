@@ -3,7 +3,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { objktCurrencies } from 'src/apis/objkt';
+import { objktCurrencies } from 'src/apis/objkt/constants';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import {

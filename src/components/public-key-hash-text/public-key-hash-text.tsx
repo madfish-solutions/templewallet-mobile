@@ -8,6 +8,7 @@ import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { TruncatedText } from '../truncated-text';
+
 import { usePublicKeyHashTextStyles } from './public-key-hash-text.styles';
 
 interface Props extends MarginProps, TestIdProps {

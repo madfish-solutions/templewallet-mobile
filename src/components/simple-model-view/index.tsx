@@ -5,6 +5,7 @@ import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { useWillUnmount } from 'src/utils/hooks/use-will-unmount';
 
 import { ActivityIndicator } from '../activity-indicator';
+
 import { useSimpleModelViewStyles } from './styles';
 
 interface Props {

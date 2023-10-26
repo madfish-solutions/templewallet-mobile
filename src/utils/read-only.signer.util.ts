@@ -2,6 +2,7 @@ import { Signer } from '@taquito/taquito';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
+
 import { READ_ONLY_SIGNER_PUBLIC_KEY, READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from './env.utils';
 
 export class ReadOnlySigner implements Signer {

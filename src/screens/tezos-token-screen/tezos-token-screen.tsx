@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from 'src/components/header-card/header-card';
+import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';

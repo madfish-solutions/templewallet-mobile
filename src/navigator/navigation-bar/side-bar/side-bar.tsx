@@ -23,6 +23,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
 
 import { getTokenParams, NOT_AVAILABLE_MESSAGE, RouteParams } from '../tab-bar/tab-bar';
+
 import { SideBarButton } from './side-bar-button/side-bar-button';
 import { useSideBarStyles } from './side-bar.styles';
 

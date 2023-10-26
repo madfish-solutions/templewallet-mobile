@@ -7,6 +7,7 @@ import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-meta
 import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
 
 import { UsableAccountAsset } from '../types';
+
 import { buildUsableAccountAsset } from './utils';
 
 export const useCurrentAccountTokens = (enabledOnly = false) => {

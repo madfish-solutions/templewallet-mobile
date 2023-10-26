@@ -24,6 +24,7 @@ import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList, initialFormValues } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
+
 import { InitialStepSelectors } from './initial-step.selectors';
 import { useInitialStepStyles } from './initial-step.styles';
 import { loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';

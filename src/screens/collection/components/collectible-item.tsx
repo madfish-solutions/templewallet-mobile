@@ -3,7 +3,8 @@ import React, { memo, useMemo } from 'react';
 import { TouchableOpacity, View, Text } from 'react-native';
 import useSWR from 'swr';
 
-import { fetchCollectibleExtraDetails, objktCurrencies } from 'src/apis/objkt';
+import { fetchCollectibleExtraDetails } from 'src/apis/objkt';
+import { objktCurrencies } from 'src/apis/objkt/constants';
 import { CollectibleImage } from 'src/components/collectible-image';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
@@ -25,6 +26,7 @@ import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { navigateToObjktForBuy } from '../utils';
+
 import { useCollectibleItemStyles } from './collectible-item.styles';
 
 const DETAILS_SYNC_INTERVAL = 4 * BLOCK_DURATION;

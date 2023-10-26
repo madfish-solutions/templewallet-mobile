@@ -16,6 +16,7 @@ import {
   migrateAccountsState
 } from '../migration/migration-actions';
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
+
 import {
   addHdAccountAction,
   addTokenAction,

@@ -10,6 +10,7 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
 import { useNavigation } from '../../../hooks/use-navigation.hook';
+
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 
 interface Props {

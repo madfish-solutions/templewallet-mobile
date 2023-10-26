@@ -41,8 +41,6 @@ import {
 } from './types';
 import { transformObjktCollectionItem } from './utils';
 
-export { objktCurrencies } from './constants';
-
 export const fetchCollections$ = (accountPkh: string): Observable<Collection[]> => {
   const request = buildGetCollectionsQuery(accountPkh);
 

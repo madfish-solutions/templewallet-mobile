@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native';
 
 import { ButtonStyleConfig } from '../components/button/button-style.config';
+
 import { Colors } from './colors';
 import { useTypography } from './typography.context';
 import { Typography } from './typography.types';

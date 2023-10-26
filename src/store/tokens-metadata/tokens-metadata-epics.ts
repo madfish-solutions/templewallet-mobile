@@ -8,6 +8,7 @@ import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from 'src/uti
 import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import type { RootState } from '../types';
+
 import {
   addTokensMetadataAction,
   loadTokenMetadataActions,

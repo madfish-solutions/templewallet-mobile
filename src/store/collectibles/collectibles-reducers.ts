@@ -3,6 +3,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 
 import { createEntity } from '../create-entity';
+
 import { loadCollectiblesDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
 

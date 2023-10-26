@@ -38,6 +38,7 @@ import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { WalletSelectors } from '../wallet.selectors';
+
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { useTokenListStyles } from './token-list.styles';

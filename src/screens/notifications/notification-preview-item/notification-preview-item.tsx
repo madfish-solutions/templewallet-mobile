@@ -16,6 +16,7 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatDateOutput } from 'src/utils/date.utils';
 
 import { NotificationsSelectors } from '../notifications.selectors';
+
 import { useNotificationPreviewItemStyles } from './notification-preview-item.styles';
 
 const NotificationsIconMap: Record<NotificationType, IconNameEnum> = {

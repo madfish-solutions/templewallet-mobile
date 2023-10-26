@@ -25,6 +25,7 @@ import { tezosDomainsResolver } from 'src/utils/dns.utils';
 
 import { handleContactSubmission } from '../utils/handle-contact-submission.util';
 import { useAddContactFormValidationSchema } from '../validation-schema';
+
 import { AddContactModalSelectors } from './add-contact-modal.selectors';
 
 export const AddContactModal: FC = () => {

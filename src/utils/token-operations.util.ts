@@ -16,6 +16,7 @@ import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { getTokenType } from '../token/utils/token.utils';
+
 import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
