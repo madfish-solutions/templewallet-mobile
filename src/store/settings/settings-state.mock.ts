@@ -23,7 +23,6 @@ export const mockSettingsState: SettingsState = {
   isOnRampPossibility: false,
   isOnRampHasBeenShownBefore: false,
   applicationOpenCounter: 1,
-  isSwapDisclaimerShowing: true,
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false
 };

@@ -7,7 +7,7 @@ import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/
 import { useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
-import { useAuthorisedInterval } from './use-interval.hook';
+import { useAuthorisedInterval } from './use-authed-interval';
 
 export const useIsPartnersPromoShown = () => {
   const areAdsNotEnabled = useIsEnabledAdsBannerSelector();

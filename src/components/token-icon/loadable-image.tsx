@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import FastImage, { Source } from 'react-native-fast-image';
 
 import { emptyFn, EmptyFn } from 'src/config/general';
@@ -17,8 +17,15 @@ interface Props {
 }
 
 export const LoadableTokenIconImage: FC<Props> = ({ uri, size, onError = emptyFn, useOriginal = false }) => {
+  const lastItemId = useRef(uri);
+
   const [isLoading, setIsLoading] = useState(true);
   const [isFailed, setIsFailed] = useState(false);
+  if (uri !== lastItemId.current) {
+    lastItemId.current = uri;
+    setIsLoading(true);
+    setIsFailed(false);
+  }
 
   const isShowPlaceholder = useMemo(() => isLoading || isFailed, [isLoading, isFailed]);
 

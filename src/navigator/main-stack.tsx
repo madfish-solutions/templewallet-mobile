@@ -19,9 +19,10 @@ import {
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
+import { isAndroid } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
-import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
+import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
@@ -260,20 +261,24 @@ export const MainStackScreen = () => {
               />
 
               {/** Swap stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.SwapScreen}
-                component={SwapScreen}
-                options={{
-                  ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
-                  animationEnabled: false
-                }}
-              />
+              {isAndroid && (
+                <>
+                  <MainStack.Screen
+                    name={ScreensEnum.SwapScreen}
+                    component={SwapScreen}
+                    options={{
+                      ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
+                      animationEnabled: false
+                    }}
+                  />
 
-              <MainStack.Screen
-                name={ScreensEnum.SwapSettingsScreen}
-                component={SwapSettingsScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
+                  <MainStack.Screen
+                    name={ScreensEnum.SwapSettingsScreen}
+                    component={SwapSettingsScreen}
+                    options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
+                  />
+                </>
+              )}
 
               {/** Market stack **/}
               <MainStack.Screen

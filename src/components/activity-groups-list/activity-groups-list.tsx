@@ -1,21 +1,27 @@
-import React, { FC, memo, useCallback, useMemo } from 'react';
-import { SectionList, SectionListData, SectionListRenderItemInfo, Text, View } from 'react-native';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
+import React, { FC, useCallback, useMemo } from 'react';
+import { Text, View } from 'react-native';
 
-import { emptyFn } from '../../config/general';
-import { useFakeRefreshControlProps } from '../../hooks/use-fake-refresh-control-props.hook';
-import { ActivityGroup, emptyActivity } from '../../interfaces/activity.interface';
-import { isTheSameDay, isToday, isYesterday } from '../../utils/date.utils';
-import { DataPlaceholder } from '../data-placeholder/data-placeholder';
-import { OptimalPromotionItem } from '../optimal-promotion-item/optimal-promotion-item';
-import { RefreshControl } from '../refresh-control/refresh-control';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+import { RefreshControl } from 'src/components/refresh-control/refresh-control';
+import { emptyFn } from 'src/config/general';
+import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
+import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
+import { isTheSameDay, isToday, isYesterday } from 'src/utils/date.utils';
+
 import { ActivityGroupItem } from './activity-group-item/activity-group-item';
 import { ActivityGroupsListSelectors } from './activity-groups-list.selectors';
 import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
-type RenderItem = SectionListRenderItemInfo<ActivityGroup, { title: string; data: ActivityGroup[] }>;
-type RenderSectionHeader = {
-  section: SectionListData<ActivityGroup, { title: string; data: ActivityGroup[] }>;
-};
+type ListItem = string | ActivityGroup;
+
+const keyExtractor = (item: ListItem) => (typeof item === 'string' ? item : item[0].hash);
+const getItemType = (item: ListItem) => (typeof item === 'string' ? 'sectionHeader' : 'row');
+
+const ListEmptyComponent = <DataPlaceholder text="No Activity records were found" />;
+
+const AVERAGE_ITEM_HEIGHT = 150;
 
 interface Props {
   activityGroups: ActivityGroup[];
@@ -24,100 +30,93 @@ interface Props {
   onOptimalPromotionError?: () => void;
 }
 
-const SECTIONS_AMOUNT_TO_RENDER_PER_BATCH = 10;
+export const ActivityGroupsList: FC<Props> = ({
+  activityGroups,
+  handleUpdate = emptyFn,
+  shouldShowPromotion = false,
+  onOptimalPromotionError
+}) => {
+  const styles = useActivityGroupsListStyles();
 
-const keyExtractor = (item: ActivityGroup) => item[0].hash;
+  const fakeRefreshControlProps = useFakeRefreshControlProps();
 
-export const ActivityGroupsList: FC<Props> = memo(
-  ({ activityGroups, handleUpdate = emptyFn, shouldShowPromotion = false, onOptimalPromotionError }) => {
-    const styles = useActivityGroupsListStyles();
+  const sections = useMemo(() => {
+    const result: ListItem[] = [];
+    let prevActivityDate = new Date(-1);
 
-    const fakeRefreshControlProps = useFakeRefreshControlProps();
+    for (const activityGroup of activityGroups) {
+      const firstActivity = activityGroup[0] ?? emptyActivity;
+      const date = new Date(firstActivity.timestamp);
 
-    const sections = useMemo(() => {
-      const result = [];
-      let prevActivityDate = new Date(-1);
+      if (isTheSameDay(date, prevActivityDate)) {
+        result.push(activityGroup);
+      } else {
+        let title = date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
 
-      for (const activityGroup of activityGroups) {
-        const firstActivity = activityGroup[0] ?? emptyActivity;
-        const date = new Date(firstActivity.timestamp);
+        isToday(date) && (title = 'Today');
+        isYesterday(date) && (title = 'Yesterday');
 
-        if (isTheSameDay(date, prevActivityDate)) {
-          result[result.length - 1]?.data.push(activityGroup);
-        } else {
-          let title = date.toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
-
-          isToday(date) && (title = 'Today');
-          isYesterday(date) && (title = 'Yesterday');
-
-          result.push({ title, data: [activityGroup] });
-        }
-
-        prevActivityDate = date;
+        result.push(title, activityGroup);
       }
 
-      return result;
-    }, [activityGroups]);
+      prevActivityDate = date;
+    }
 
-    const isShowPlaceholder: boolean = useMemo(() => activityGroups.length === 0, [activityGroups]);
+    return result;
+  }, [activityGroups]);
 
-    const renderItem = useCallback(
-      ({ item, index, section }: RenderItem) => (
+  const Promotion = useMemo(
+    () => (
+      <View style={styles.promotionItemWrapper}>
+        <OptimalPromotionItem
+          style={styles.promotionItem}
+          testID={ActivityGroupsListSelectors.promotion}
+          onImageError={onOptimalPromotionError}
+          onEmptyPromotionReceived={onOptimalPromotionError}
+        />
+      </View>
+    ),
+    [onOptimalPromotionError]
+  );
+
+  const renderItem: ListRenderItem<string | ActivityGroup> = useCallback(
+    ({ item, index }) =>
+      typeof item === 'string' ? (
+        <Text style={styles.sectionHeaderText}>{item}</Text>
+      ) : (
         <>
           <ActivityGroupItem group={item} />
-          {index === 0 && section.title === sections[0].title && shouldShowPromotion && (
-            <View style={styles.promotionItemWrapper}>
-              <OptimalPromotionItem
-                style={styles.promotionItem}
-                testID={ActivityGroupsListSelectors.promotion}
-                onImageError={onOptimalPromotionError}
-                onEmptyPromotionReceived={onOptimalPromotionError}
-              />
-            </View>
-          )}
+          {index === 1 && shouldShowPromotion && Promotion}
         </>
       ),
-      [sections]
-    );
+    [onOptimalPromotionError, shouldShowPromotion]
+  );
 
-    const renderSectionHeader = useCallback(
-      ({ section: { title } }: RenderSectionHeader) => <Text style={styles.sectionHeaderText}>{title}</Text>,
-      []
-    );
+  const stickyHeaderIndices = useMemo(
+    () =>
+      sections
+        .map((item, index) => (typeof item === 'string' ? index : null))
+        .filter(item => item !== null) as number[],
+    [sections]
+  );
 
-    return (
-      <>
-        {isShowPlaceholder ? (
-          <>
-            {shouldShowPromotion && (
-              <View style={styles.promotionItemWrapper}>
-                <OptimalPromotionItem
-                  style={[styles.promotionItem, styles.centeredItem]}
-                  testID={ActivityGroupsListSelectors.promotion}
-                  onImageError={onOptimalPromotionError}
-                  onEmptyPromotionReceived={onOptimalPromotionError}
-                />
-              </View>
-            )}
-            <DataPlaceholder text="No Activity records were found" />
-          </>
-        ) : (
-          <SectionList
-            sections={sections}
-            maxToRenderPerBatch={SECTIONS_AMOUNT_TO_RENDER_PER_BATCH}
-            disableVirtualization={true}
-            stickySectionHeadersEnabled={true}
-            contentContainerStyle={styles.sectionListContentContainer}
-            onEndReachedThreshold={0.5}
-            onEndReached={handleUpdate}
-            keyExtractor={keyExtractor}
-            bounces={false}
-            renderItem={renderItem}
-            renderSectionHeader={renderSectionHeader}
-            refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
-          />
-        )}
-      </>
-    );
-  }
-);
+  return (
+    <>
+      {sections.length === 0 && shouldShowPromotion && Promotion}
+      <View style={styles.contentContainer}>
+        <FlashList
+          data={sections}
+          stickyHeaderIndices={stickyHeaderIndices}
+          onEndReachedThreshold={0.01}
+          onEndReached={handleUpdate}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          estimatedItemSize={AVERAGE_ITEM_HEIGHT}
+          getItemType={getItemType}
+          ListEmptyComponent={ListEmptyComponent}
+          refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
+        />
+      </View>
+    </>
+  );
+};

@@ -9,7 +9,7 @@ import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { AnalyticsEventProperties } from 'src/types/analytics-event-properties.type';
 
 import { AnalyticsEventCategory } from './analytics-event.enum';
-import { jitsu } from './analytics.util';
+import { jitsu, sendAnalyticsEvent } from './analytics.util';
 
 export const useAnalytics = () => {
   const userId = useUserIdSelector();
@@ -26,17 +26,7 @@ export const useAnalytics = () => {
     ) =>
       event !== undefined &&
       shouldSendAnalytics &&
-      jitsu.track(category, {
-        userId,
-        event,
-        timestamp: Date.now(),
-        properties: {
-          event,
-          category,
-          ABTestingCategory: testGroupName,
-          ...additionalProperties
-        }
-      }),
+      sendAnalyticsEvent(event, category, { userId, ABTestingCategory: testGroupName }, additionalProperties),
     [analyticsEnabled, userId, testGroupName]
   );
 
