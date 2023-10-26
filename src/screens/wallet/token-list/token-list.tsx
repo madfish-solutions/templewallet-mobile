@@ -26,6 +26,7 @@ import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
+  useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
   useSelectedAccountTkeyTokenSelector,
   useVisibleTokensListSelector
@@ -76,6 +77,8 @@ export const TokensList: FC = () => {
   const visibleTokensList = useVisibleTokensListSelector();
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
+
+  const { publicKeyHash } = useSelectedAccountSelector();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));

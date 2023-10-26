@@ -62,6 +62,9 @@ const getSuggestedFeeMutez = (estimate: Estimate, opParam?: ParamsWithKind) => {
     !isDefined(opParam.gasLimit) ||
     opParam.gasLimit <= estimate.gasLimit
   ) {
+    console.log(1);
+    console.log(estimate.suggestedFeeMutez, 'suugested111');
+
     return estimate.suggestedFeeMutez;
   }
 
@@ -73,5 +76,5 @@ const getSuggestedFeeMutez = (estimate: Estimate, opParam?: ParamsWithKind) => {
   */
   const diff = Math.ceil((opParam.gasLimit - estimate.gasLimit) * MINIMAL_FEE_PER_GAS_MUTEZ);
 
-  return estimate.minimalFeeMutez + diff;
+  return estimate.suggestedFeeMutez + diff;
 };
