@@ -3,7 +3,6 @@ import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { optimalFetchEnableAds } from 'src/apis/optimal';
 import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -27,7 +26,6 @@ import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
-  useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
   useSelectedAccountTkeyTokenSelector,
   useVisibleTokensListSelector
@@ -79,8 +77,6 @@ export const TokensList: FC = () => {
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
 
-  const { publicKeyHash } = useSelectedAccountSelector();
-
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
     trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
@@ -104,7 +100,6 @@ export const TokensList: FC = () => {
   useEffect(() => {
     if (partnersPromoShown) {
       dispatch(loadAdvertisingPromotionActions.submit());
-      optimalFetchEnableAds(publicKeyHash);
     }
   }, [partnersPromoShown]);
 

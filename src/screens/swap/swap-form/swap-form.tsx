@@ -19,8 +19,7 @@ import {
   ROUTING_FEE_ADDRESS,
   ROUTING_FEE_SLIPPAGE_RATIO,
   SWAP_THRESHOLD_TO_GET_CASHBACK,
-  TEMPLE_TOKEN,
-  ZERO
+  TEMPLE_TOKEN
 } from 'src/config/swap';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
@@ -49,6 +48,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
+import { ZERO } from 'src/utils/number.util';
 import { fetchRoute3SwapParams, getRoute3TokenSymbol, isInputTokenEqualToTempleToken } from 'src/utils/route3.util';
 import {
   calculateFeeFromOutput,
