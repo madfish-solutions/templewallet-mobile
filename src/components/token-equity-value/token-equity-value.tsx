@@ -85,7 +85,7 @@ interface AssetEquityTextProps {
   style?: StyleProp<TextStyle>;
 }
 
-export const AssetEquityText = memo<AssetEquityTextProps>(({ assetSymbol, exchangeRate, style }) => {
+const AssetEquityText = memo<AssetEquityTextProps>(({ assetSymbol, exchangeRate, style }) => {
   const styles = useAssetEquityTextStyles();
   const { symbol } = useCurrentFiatCurrencyMetadataSelector();
 

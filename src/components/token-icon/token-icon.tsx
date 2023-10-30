@@ -83,7 +83,11 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
   }
 
   if (isImgUriSvg(thumbnailUri) || (isKnownSvg && !svgFailed)) {
-    return <SvgCssUri width={size} height={size} uri={formatImgUri(thumbnailUri)} onError={handleSvgError} />;
+    const uri = formatImgUri(thumbnailUri);
+
+    if (uri) {
+      return <SvgCssUri width={size} height={size} uri={uri} onError={handleSvgError} />;
+    }
   }
 
   if (isImgUriDataUri(thumbnailUri)) {

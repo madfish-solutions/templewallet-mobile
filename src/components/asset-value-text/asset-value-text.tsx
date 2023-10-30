@@ -11,6 +11,11 @@ import { FormattedAmount } from '../formatted-amount';
 
 interface Props {
   amount: string;
+  /**
+   * @deprecated
+   * Rework to accept TokenMetadataInterface
+   * with `exchangeRate` as a separate property
+   */
   asset: TokenInterface;
   style?: StyleProp<TextStyle>;
   showMinusSign?: boolean;
