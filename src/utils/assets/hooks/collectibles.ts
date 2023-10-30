@@ -21,7 +21,7 @@ export const useCurrentAccountCollectibles = (enabledOnly = false) => {
         );
 
         if (enabledOnly) {
-          return collectible.visibility === VisibilityEnum.Visible ? acc.concat(collectible) : acc;
+          return curr.visibility === VisibilityEnum.Visible && Number(curr.balance) > 0 ? acc.concat(collectible) : acc;
         }
 
         return acc.concat(collectible);

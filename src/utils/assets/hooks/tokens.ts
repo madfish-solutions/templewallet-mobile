@@ -22,7 +22,7 @@ export const useCurrentAccountTokens = (enabledOnly = false) => {
       accountTokens.reduce<UsableAccountAsset[]>((acc, curr) => {
         const token = buildUsableAccountAsset(
           curr,
-          allMetadatas[curr.slug]!, // `accountTokens` r already filtered for metadata presence,
+          allMetadatas[curr.slug]!, // `accountTokens` r already filtered for metadata presence
           getExchangeRate(curr.slug)
         );
 
@@ -32,7 +32,7 @@ export const useCurrentAccountTokens = (enabledOnly = false) => {
 
         return acc.concat(token);
       }, []),
-    [accountTokens, allMetadatas, enabledOnly]
+    [accountTokens, allMetadatas, enabledOnly, getExchangeRate]
   );
 };
 
@@ -47,7 +47,7 @@ export const useAccountTokenBySlug = (slug: string): UsableAccountAsset | undefi
 
       return token ? buildUsableAccountAsset(token, allMetadatas[slug]!, exchageRate) : undefined;
     },
-    [accountTokens, allMetadatas],
+    [slug, accountTokens, allMetadatas, exchageRate],
     isEqual
   );
 };

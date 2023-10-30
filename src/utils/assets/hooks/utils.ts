@@ -10,8 +10,8 @@ export const buildUsableAccountAsset = (
   exchangeRate?: number
 ): UsableAccountAsset => {
   let visibility = asset.visibility;
-  if (visibility === VisibilityEnum.InitiallyHidden && Number(asset.balance) > 0) {
-    visibility = VisibilityEnum.Visible;
+  if (visibility === VisibilityEnum.InitiallyHidden) {
+    visibility = Number(asset.balance) > 0 ? VisibilityEnum.Visible : VisibilityEnum.Hidden;
   }
 
   return {

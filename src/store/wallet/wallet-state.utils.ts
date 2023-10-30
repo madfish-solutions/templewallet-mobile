@@ -47,6 +47,7 @@ export const pushOrUpdateTokensBalances = (
         ...token,
         balance,
         visibility:
+          // Note: changing visibility status on non-zero balance. Might've been a mistake
           balance !== '0' && token.visibility === VisibilityEnum.InitiallyHidden
             ? VisibilityEnum.Visible
             : token.visibility
