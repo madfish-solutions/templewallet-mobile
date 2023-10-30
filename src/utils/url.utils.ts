@@ -11,7 +11,9 @@ export function buildSafeURL(input: string, base?: string | URL) {
   try {
     // Throws on invalid URL
     return new URL(input, base);
-  } catch {
+  } catch (error) {
+    console.error(error);
+
     return null;
   }
 }
@@ -25,10 +27,4 @@ export const concatUrlPath = (baseUrl: string, path: string) => {
 
 export const getUrlQueryParams = (url: string) => new URL(url).searchParams;
 
-export const getUrlHostname = (url: string) => {
-  try {
-    return new URL(url).hostname;
-  } catch (error) {
-    console.error(error);
-  }
-};
+export const getUrlHostname = (url: string) => buildSafeURL(url)?.hostname;

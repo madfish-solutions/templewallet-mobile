@@ -7,15 +7,15 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { ParamPreviewTypeEnum } from 'src/enums/param-preview-type.enum';
-import { useTokenMetadataGetter } from 'src/hooks/use-token-metadata-getter.hook';
 import { Asset, ParamPreviewInterface } from 'src/interfaces/param-preview.interface';
 import { formatSize } from 'src/styles/format-size';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isCollectible } from 'src/utils/tezos.util';
 
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
+import { useTokenGetter } from './uitils';
 
 interface Props {
   paramPreview: ParamPreviewInterface;
@@ -26,7 +26,7 @@ interface PreviewDataInterface {
   description: string;
   hash?: string;
   contract?: string;
-  token?: { tokenData: TokenMetadataInterface; amount: string };
+  token?: { tokenData: TokenInterface; amount: string };
 }
 
 interface ParamsPreviewDataInterface {
@@ -38,7 +38,8 @@ interface ParamsPreviewDataInterface {
 
 export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
   const styles = useOperationsPreviewItemStyles();
-  const getTokenMetadata = useTokenMetadataGetter();
+  const getToken = useTokenGetter();
+
   const formattedAmount = (params: ParamsPreviewDataInterface) => {
     const getContract = () => {
       if (isDefined(params.contract) && params.type !== ParamPreviewTypeEnum.ContractCall) {
@@ -55,7 +56,7 @@ export const OperationsPreviewItem: FC<Props> = ({ paramPreview }) => {
 
     const slug = getTokenSlug(contract ?? {});
 
-    const tokenData = getTokenMetadata(slug);
+    const tokenData = getToken(slug);
 
     const amount = params.amount;
 

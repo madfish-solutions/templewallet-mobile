@@ -2,6 +2,9 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
+import { useTokenMetadataGetter } from 'src/utils/token-metadata.utils';
+
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { useUsdToTokenRates } from '../store/currency/currency-selectors';
 import { loadTokenMetadataActions } from '../store/tokens-metadata/tokens-metadata-actions';
@@ -9,8 +12,6 @@ import { getTokenSlug } from '../token/utils/token.utils';
 import { isDefined } from '../utils/is-defined';
 import { isString } from '../utils/is-string';
 import { mutezToTz } from '../utils/tezos.util';
-
-import { useTokenMetadataGetter } from './use-token-metadata-getter.hook';
 
 export const useNonZeroAmounts = (group: ActivityGroup) => {
   const dispatch = useDispatch();
@@ -24,7 +25,12 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
 
     for (const { address, tokenId, amount } of group) {
       const slug = getTokenSlug({ address, id: tokenId });
-      const { decimals, symbol, name } = getTokenMetadata(slug);
+      const metadata = getTokenMetadata(slug);
+      if (!metadata) {
+        console.warn('Missing metadata for:', slug);
+      }
+
+      const { decimals, symbol, name } = metadata ?? emptyTokenMetadata;
       const exchangeRate: number | undefined = exchangeRates[slug];
       if (isString(address) && !isString(name)) {
         dispatch(loadTokenMetadataActions.submit({ address, id: Number(tokenId ?? '0') }));
@@ -53,5 +59,5 @@ export const useNonZeroAmounts = (group: ActivityGroup) => {
     }
 
     return { amounts, dollarSums: [negativeAmountSum, positiveAmountSum].filter(sum => !sum.isZero()) };
-  }, [group, getTokenMetadata, exchangeRates]);
+  }, [group, getTokenMetadata, exchangeRates, dispatch]);
 };

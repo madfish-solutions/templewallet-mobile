@@ -10,7 +10,6 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
@@ -39,7 +38,6 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
     const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
     const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
     const contacts = useContactsSelector();
-    const { metadata } = useNetworkInfo();
     const selectedAccountPkh = useCurrentAccountPkhSelector();
     const tzProfile = useTzProfile(selectedAccountPkh);
     const [userLogo, setUserLogo] = useState(tzProfile?.logo);
@@ -100,7 +98,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
             )}
             {showFullData && !isCollectibleScreen && (
               <HideBalance style={styles.balanceText}>
-                <AssetValueText asset={metadata} amount={tezos.balance} />
+                <AssetValueText asset={tezos} amount={tezos.balance} />
               </HideBalance>
             )}
           </View>

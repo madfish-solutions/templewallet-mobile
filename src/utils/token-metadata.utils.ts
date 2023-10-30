@@ -1,23 +1,20 @@
 import { BigNumber } from 'bignumber.js';
 import { chunk } from 'lodash-es';
 import memoize from 'mem';
+import { useCallback } from 'react';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { tezosMetadataApi, whitelistApi } from 'src/api.service';
-import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import type { RootState } from 'src/store/types';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import {
-  emptyTokenMetadata,
-  TokenMetadataInterface,
-  TokenStandardsEnum
-} from 'src/token/interfaces/token-metadata.interface';
+import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import type { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { getDollarValue } from './balance.utils';
-import { FiatCurrenciesEnum } from './exchange-rate.util';
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
@@ -84,64 +81,15 @@ const transformWhitelistToTokenMetadata = (
   standard: token.type === 'FA12' ? TokenStandardsEnum.Fa12 : TokenStandardsEnum.Fa2
 });
 
-export const normalizeTokenMetadata = (
-  selectedRpcUrl: string,
-  slug: string,
-  rawMetadata?: TokenMetadataInterface
-): TokenMetadataInterface => {
-  const [tokenAddress, tokenId] = slug.split('_');
-  const gasTokenMetadata = getNetworkGasTokenMetadata(selectedRpcUrl);
+export const useTokenMetadataGetter = () => {
+  const tokensMetadata = useTokensMetadataSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
-  return slug === TEZ_TOKEN_SLUG
-    ? gasTokenMetadata
-    : rawMetadata ?? {
-        ...emptyTokenMetadata,
-        symbol: UNKNOWN_TOKEN_SYMBOL,
-        name: `${tokenAddress} ${tokenId}`,
-        address: tokenAddress,
-        id: Number(tokenId ?? 0)
-      };
-};
-
-export const getFiatToUsdRate = (state: RootState) => {
-  const fiatExchangeRates = state.currency.fiatToTezosRates.data;
-  const fiatCurrency = state.settings.fiatCurrency;
-  const tezUsdExchangeRates = state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG];
-
-  // Coingecko and Temple Wallet APIs return slightly different TEZ/USD exchange rates
-  if (fiatCurrency === FiatCurrenciesEnum.USD) {
-    return 1;
-  }
-
-  const fiatExchangeRate: number | undefined = fiatExchangeRates[fiatCurrency.toLowerCase()];
-  const exchangeRateTezos: number | undefined = tezUsdExchangeRates;
-
-  if (isDefined(fiatExchangeRate) && isDefined(exchangeRateTezos)) {
-    return fiatExchangeRate / exchangeRateTezos;
-  }
-
-  return undefined;
-};
-
-const getTokenExchangeRate = (state: RootState, slug: string) => {
-  const tokenUsdExchangeRate = state.currency.usdToTokenRates.data[slug];
-  const fiatToUsdRate = getFiatToUsdRate(state);
-
-  return isDefined(tokenUsdExchangeRate) && isDefined(fiatToUsdRate) ? tokenUsdExchangeRate * fiatToUsdRate : undefined;
-};
-
-export const getTokenMetadata = (state: RootState, slug: string): TokenMetadataInterface => {
-  const tokenMetadata = normalizeTokenMetadata(
-    state.settings.selectedRpcUrl,
-    slug,
-    state.tokensMetadata.metadataRecord[slug]
+  return useCallback(
+    (slug: string): TokenMetadataInterface | undefined =>
+      slug === TEZ_TOKEN_SLUG ? getNetworkGasTokenMetadata(selectedRpcUrl) : tokensMetadata[slug],
+    [tokensMetadata, selectedRpcUrl]
   );
-  const exchangeRate = getTokenExchangeRate(state, slug);
-
-  return {
-    ...tokenMetadata,
-    exchangeRate
-  };
 };
 
 export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetadataInterface>> =>

@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash-es';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
@@ -113,6 +113,12 @@ export const useAssetBalanceSelector = (slug: string) => {
   const data = useAllCurrentAccountAssetsSelector();
 
   return useMemo(() => data?.stored.find(a => a.slug === slug)?.balance, [data?.stored]);
+};
+
+export const useTokenBalanceGetter = () => {
+  const data = useAllCurrentAccountAssetsSelector();
+
+  return useCallback((slug: string) => data?.stored.find(a => a.slug === slug)?.balance, [data?.stored]);
 };
 
 export const useCurrentAccountTezosBalance = () =>

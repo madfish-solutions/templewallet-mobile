@@ -106,7 +106,7 @@ export const Wallet = memo(() => {
           <Settings />
         </View>
 
-        <TokenEquityValue token={tezosToken} showTokenValue={false} />
+        <TokenEquityValue token={tezosToken} forTotalBalance={true} />
 
         <HeaderCardActionButtons token={tezosToken} />
       </HeaderCard>

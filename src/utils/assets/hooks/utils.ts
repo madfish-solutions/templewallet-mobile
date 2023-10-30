@@ -6,7 +6,8 @@ import { UsableAccountAsset } from '../types';
 
 export const buildUsableAccountAsset = (
   asset: AccountTokenInterface,
-  metadata: TokenMetadataInterface
+  metadata: TokenMetadataInterface,
+  exchangeRate?: number
 ): UsableAccountAsset => {
   let visibility = asset.visibility;
   if (visibility === VisibilityEnum.InitiallyHidden && Number(asset.balance) > 0) {
@@ -17,6 +18,7 @@ export const buildUsableAccountAsset = (
     slug: asset.slug,
     visibility,
     balance: asset.balance,
+    exchangeRate,
     ...metadata
   };
 };

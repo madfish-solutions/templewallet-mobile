@@ -16,9 +16,6 @@ export interface TokenMetadataInterface extends AssetMediaURIs {
   /** @deprecated // Lost in Redux at the moment */
   displayUri?: string;
   standard?: TokenStandardsEnum | null;
-
-  /** @deprecated Stored as separate Record */
-  exchangeRate?: number;
 }
 
 /** @deprecated // BAD PRACTICE !!! */

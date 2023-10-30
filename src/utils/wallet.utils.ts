@@ -3,19 +3,21 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountStateInterface, emptyAccountState } from 'src/interfaces/account-state.interface';
 import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
 import { Shelter } from 'src/shelter/shelter';
 import { ExchangeRateRecord } from 'src/store/currency/currency-state';
-import { useTokenMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
+import { useAssetExchangeRate, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import type { RootState } from 'src/store/types';
 import {
   useCurrentAccountTezosBalance,
   useTezosBalanceOfKnownAccountSelector
 } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import { TokenInterface, emptyToken } from 'src/token/interfaces/token.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
+import { getNetworkGasTokenMetadata } from './network.utils';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const withSelectedAccount =
@@ -72,15 +74,18 @@ export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opPar
   );
 
 export const useTezosToken = (balance: string) => {
-  const metadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const metadata = getNetworkGasTokenMetadata(selectedRpcUrl);
+  const exchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
 
   return useMemo<TokenInterface>(
     () => ({
-      ...emptyToken,
+      visibility: VisibilityEnum.Visible,
       ...metadata,
-      balance
+      balance,
+      exchangeRate
     }),
-    [metadata, balance]
+    [metadata, balance, exchangeRate]
   );
 };
 

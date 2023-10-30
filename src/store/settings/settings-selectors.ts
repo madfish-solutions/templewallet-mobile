@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
 
 import { FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
-import { getFiatToUsdRate } from 'src/utils/token-metadata.utils';
+import { isDefined } from 'src/utils/is-defined';
 
 import { useSelector } from '../selector';
+
+import { getFiatToUsdRate } from './utils';
 
 export const useThemeSelector = () => useSelector(({ settings }) => settings.theme);
 
@@ -63,3 +65,10 @@ export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings })
 
 export const useIsOnRampHasBeenShownBeforeSelector = () =>
   useSelector(({ settings }) => settings.isOnRampHasBeenShownBefore);
+
+export const useAssetExchangeRate = (slug: string) => {
+  const assetUsdExchangeRate = useSelector(state => state.currency.usdToTokenRates.data[slug]);
+  const fiatToUsdRate = useFiatToUsdRateSelector();
+
+  return isDefined(assetUsdExchangeRate) && isDefined(fiatToUsdRate) ? assetUsdExchangeRate * fiatToUsdRate : undefined;
+};
