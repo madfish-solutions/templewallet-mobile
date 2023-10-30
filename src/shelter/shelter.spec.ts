@@ -14,7 +14,7 @@ import {
   mockCryptoUtil,
   mockEncryptedData
 } from '../utils/crypto.util.mock';
-import { biometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from '../utils/keychain.utils';
+import { getBiometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from '../utils/keychain.utils';
 import { rxJsTestingHelper } from '../utils/testing.utis';
 import { Shelter } from './shelter';
 
@@ -113,7 +113,7 @@ describe('Shelter', () => {
             expect(mockKeychain.setGenericPassword).toBeCalledWith(
               'seedPhrase',
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions('seedPhrase')
+              getKeychainOptions('seedPhrase', 0)
             );
 
             expect(isLocked).toEqual(false);
@@ -151,7 +151,7 @@ describe('Shelter', () => {
             expect(mockKeychain.setGenericPassword).toBeCalledWith(
               mockHDAccountCredentials.publicKeyHash,
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions(mockHDAccountCredentials.publicKeyHash)
+              getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
             );
           }, done)
         );
@@ -176,7 +176,7 @@ describe('Shelter', () => {
             expect(mockKeychain.setGenericPassword).toBeCalledWith(
               mockHDAccountCredentials.publicKeyHash,
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions(mockHDAccountCredentials.publicKeyHash)
+              getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
             );
           }, done)
         );
@@ -193,7 +193,7 @@ describe('Shelter', () => {
               mockCorrectUserCredentialsValue,
               mockCorrectPasswordHash
             );
-            expect(mockKeychain.getGenericPassword).toBeCalledWith(getKeychainOptions('seedPhrase'));
+            expect(mockKeychain.getGenericPassword).toBeCalledWith(getKeychainOptions('seedPhrase', 0));
           }, done)
         );
     });
@@ -210,7 +210,7 @@ describe('Shelter', () => {
               mockCorrectPasswordHash
             );
             expect(mockKeychain.getGenericPassword).toBeCalledWith(
-              getKeychainOptions(mockAccountCredentials.publicKeyHash)
+              getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
           }, done)
         );
@@ -230,7 +230,7 @@ describe('Shelter', () => {
               mockCorrectPasswordHash
             );
             expect(mockKeychain.getGenericPassword).toBeCalledWith(
-              getKeychainOptions(mockAccountCredentials.publicKeyHash)
+              getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
           }, done)
         );
@@ -244,7 +244,7 @@ describe('Shelter', () => {
           expect(mockKeychain.setGenericPassword).toBeCalledWith(
             PASSWORD_STORAGE_KEY,
             JSON.stringify(mockCorrectPassword),
-            biometryKeychainOptions
+            getBiometryKeychainOptions(0)
           );
         }, done)
       );
@@ -262,13 +262,13 @@ describe('Shelter', () => {
 
     it('should reveal password from Keychain', async () => {
       await expect(Shelter.getBiometryPassword()).resolves.toEqual(mockCorrectUserCredentials);
-      expect(mockKeychain.getGenericPassword).toBeCalledWith(biometryKeychainOptions);
+      expect(mockKeychain.getGenericPassword).toBeCalledWith(getBiometryKeychainOptions(0));
     });
 
     it('should remove password from Keychain', done => {
       Shelter.disableBiometryPassword$().subscribe(
         rxJsTestingHelper(() => {
-          expect(mockKeychain.resetGenericPassword).toBeCalledWith(getKeychainOptions(PASSWORD_STORAGE_KEY));
+          expect(mockKeychain.resetGenericPassword).toBeCalledWith(getKeychainOptions(PASSWORD_STORAGE_KEY, 0));
         }, done)
       );
     });

@@ -44,6 +44,8 @@ export const useIsAuthorisedSelector = () => {
 
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
+export const useCurrentAccountPkhSelector = () => useSelector(state => state.wallet.selectedAccountPublicKeyHash);
+
 export const useAssetsListSelector = (): TokenInterface[] =>
   useSelector(state => {
     const selectedAccountState = getAccountState(state.wallet, state.wallet.selectedAccountPublicKeyHash);
