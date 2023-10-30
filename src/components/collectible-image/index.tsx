@@ -5,8 +5,8 @@ import { AssetMediaURIs } from 'src/utils/assets/types';
 import { isImgUriDataUri } from 'src/utils/image.utils';
 
 import { ActivityIndicator } from '../activity-indicator';
-import { AnimatedSvg } from '../animated-svg';
 import { BrokenImage } from '../broken-image';
+import { DataUriImage } from '../data-uri-image';
 
 import { useCollectibleImageStyles } from './styles';
 import { useCollectibleImagesStack } from './use-images-stack';
@@ -38,12 +38,18 @@ export const CollectibleImage = memo<Props>(
       );
     }
 
-    if (
-      isFullView && // Performance issues in NFTs grid
-      src &&
-      isImgUriDataUri(src)
-    ) {
-      return <AnimatedSvg style={styles.image} dataUri={src} onError={onFail} onLoadEnd={onSuccess} />;
+    if (src && isImgUriDataUri(src)) {
+      return (
+        <DataUriImage
+          dataUri={src}
+          animated={isFullView} // Performance issues in NFTs grid on iOS
+          width={size}
+          height={size}
+          style={styles.image}
+          onLoad={onSuccess}
+          onError={onFail}
+        />
+      );
     }
 
     return (
