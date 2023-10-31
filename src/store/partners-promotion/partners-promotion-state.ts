@@ -5,13 +5,13 @@ import { LoadableEntityState } from '../types';
 import { mockPartnersPromotion } from './partners-promotion-state.mock';
 
 export interface PartnersPromotionState {
-  tokenPromotion: LoadableEntityState<OptimalPromotionType>;
+  textPromotion: LoadableEntityState<OptimalPromotionType>;
   promotion: LoadableEntityState<OptimalPromotionType>;
   isEnabled: boolean;
 }
 
 export const partnersPromotionInitialState: PartnersPromotionState = {
-  tokenPromotion: createEntity(mockPartnersPromotion),
+  textPromotion: createEntity(mockPartnersPromotion),
   promotion: createEntity(mockPartnersPromotion),
   isEnabled: false
 };

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { emptyFn } from 'src/config/general';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -25,7 +25,7 @@ export const useNavigationBarButton = ({
     return value;
   }, [colors, focused, disabled]);
 
-  const handlePress = () => {
+  const handlePress = useCallback(() => {
     if (disabled) {
       disabledOnPress();
     } else {
@@ -35,7 +35,7 @@ export const useNavigationBarButton = ({
         navigate(routeName);
       }
     }
-  };
+  }, [disabled, disabledOnPress, navigate, routeName, swapScreenParams]);
 
   return {
     color,
