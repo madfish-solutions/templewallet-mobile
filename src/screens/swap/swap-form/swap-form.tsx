@@ -75,7 +75,6 @@ interface SwapFormProps {
 export const SwapForm: FC<SwapFormProps> = memo(({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
   const getSwapParams = useSwap();
-  console.log(outputToken, 'inForm');
 
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
