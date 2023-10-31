@@ -1,7 +1,10 @@
 import { Formik } from 'formik';
+import { noop } from 'lodash-es';
 import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
+
+import { Shelter } from 'src/shelter/shelter';
 
 import { ABTestGroup } from '../../apis/temple-wallet';
 import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
@@ -59,16 +62,19 @@ export const EnterPassword = () => {
 
   usePageAnalytic(OverlayEnum.EnterPassword);
 
-  useEffect(
-    () => void (!atBootsplash && isBiometryAvailable && unlockWithBiometry()),
-    [isBiometryAvailable, atBootsplash]
-  );
+  useEffect(() => {
+    Shelter.shouldDoSomeMigrations()
+      .then(
+        shouldDoMigrations => void (!atBootsplash && isBiometryAvailable && !shouldDoMigrations && unlockWithBiometry())
+      )
+      .catch(noop);
+  }, [isBiometryAvailable, atBootsplash, unlockWithBiometry]);
 
   useEffect(() => {
     if (groupName === ABTestGroup.Unknown) {
       dispatch(getUserTestingGroupNameActions.submit());
     }
-  }, [groupName]);
+  }, [dispatch, groupName]);
 
   return (
     <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>

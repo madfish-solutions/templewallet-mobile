@@ -12,59 +12,118 @@ import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '..
 import { isDefined } from '../utils/is-defined';
 import {
   getBiometryKeychainOptions,
+  getGenericPasswordOptions,
   getKeychainOptions,
   PASSWORD_CHECK_KEY,
   PASSWORD_STORAGE_KEY,
+  SHELTER_VERSION_STORAGE_KEY,
   shouldUseOnlySoftwareInV1
 } from '../utils/keychain.utils';
 import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../utils/keys.util';
 import { throwError$ } from '../utils/rxjs.utils';
 
 const EMPTY_PASSWORD_HASH = '';
-const SHELTER_VERSION_STORAGE_KEY = 'shelterVersion';
+const FATAL_MIGRATION_ERROR_MESSAGE = 'Migration failed, you may need to reset your wallet.';
+const MIGRATION_ERROR_MESSAGE = 'Migration has failed. Please try again on the next launch.';
+
+interface PasswordServiceMigrationResultBase {
+  isSuccess: boolean;
+  error?: unknown;
+  password: false | Keychain.UserCredentials;
+}
+
+interface SuccessPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
+  isSuccess: true;
+  error?: undefined;
+  password: Keychain.UserCredentials;
+}
+
+interface FailedPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
+  isSuccess: false;
+}
+
+type PasswordServiceMigrationResult = SuccessPasswordServiceMigrationResult | FailedPasswordServiceMigrationResult;
 
 export class Shelter {
   private static migrateFromChip$ = () =>
     forkJoin([Keychain.getAllGenericPasswordServices(), Shelter.getShelterVersion()]).pipe(
       switchMap(([passwordServices, shelterVersion]) =>
-        forkJoin(
-          passwordServices.map(async passwordService => {
-            console.log(`Copying ${passwordService}`);
-            const isBiometryService = passwordService === getBiometryKeychainOptions(0).service;
-            const password = isBiometryService
-              ? await Keychain.getGenericPassword(getBiometryKeychainOptions(shelterVersion))
-              : await Keychain.getGenericPassword(getKeychainOptions(passwordService, shelterVersion));
-            console.log(passwordService, isBiometryService, password, shelterVersion);
+        from(
+          (async () => {
+            const migrationResults = await Promise.all(
+              passwordServices.map(async (passwordService): Promise<PasswordServiceMigrationResult> => {
+                let password: false | Keychain.UserCredentials = false;
+                try {
+                  console.log(`Copying ${passwordService}`);
+                  const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
+                  password = await Keychain.getGenericPassword(oldPasswordServiceOptions);
+                  console.log('x1', passwordService, oldPasswordServiceOptions, password);
 
-            if (password === false) {
-              throw new Error('Failed to get password from Keychain');
+                  if (password === false) {
+                    return { isSuccess: false, password };
+                  }
+
+                  const newPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion + 1);
+                  const result = await Keychain.setGenericPassword(
+                    password.username,
+                    password.password,
+                    newPasswordServiceOptions
+                  );
+                  console.log('x2', passwordService, newPasswordServiceOptions, result);
+
+                  return { isSuccess: result !== false, password };
+                } catch (e) {
+                  console.error(e, typeof e === 'object' && e ? Object.entries(e) : JSON.stringify(e));
+
+                  return { error: e, isSuccess: false, password };
+                }
+              })
+            );
+
+            if (migrationResults.every(({ isSuccess }) => isSuccess)) {
+              console.log('x3');
+
+              return;
             }
 
-            await Keychain.setGenericPassword(
-              passwordService,
-              password.password,
-              isBiometryService
-                ? getBiometryKeychainOptions(shelterVersion + 1)
-                : getKeychainOptions(password.password, shelterVersion + 1)
-            );
-          })
-        ).pipe(
-          switchMap(() =>
-            forkJoin(
-              passwordServices.map(async passwordService => {
-                console.log(`Removing ${passwordService} from chip`);
-                const isBiometryService = passwordService === getBiometryKeychainOptions(0).service;
-                const key = passwordService.split('/').slice(1).join('/');
-                console.log(passwordService, isBiometryService, key);
+            await Promise.all(
+              passwordServices.map(async (passwordService, index) => {
+                const migrationResult = migrationResults[index];
+                const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
 
-                await Keychain.resetGenericPassword(
-                  isBiometryService
-                    ? getBiometryKeychainOptions(shelterVersion)
-                    : getKeychainOptions(key, shelterVersion)
-                );
+                if (migrationResult.isSuccess) {
+                  const { username, password } = migrationResult.password;
+                  const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
+                  console.log('x5', passwordService, result);
+
+                  if (result === false) {
+                    throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+                  }
+                } else if (isDefined(migrationResult.error)) {
+                  console.log('x6', passwordService, migrationResult);
+                  // TODO: add some handling
+                  throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+                } else {
+                  console.log('x7', passwordService, migrationResult);
+
+                  if (migrationResult.password === false) {
+                    return;
+                  }
+
+                  const { username, password } = migrationResult.password;
+                  const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
+                  console.log('x8', passwordService, result);
+
+                  if (result === false) {
+                    throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+                  }
+                }
               })
-            )
-          )
+            );
+
+            console.log('x8');
+            throw new Error(MIGRATION_ERROR_MESSAGE);
+          })()
         )
       )
     );
@@ -79,7 +138,7 @@ export class Shelter {
     const rawStoredVersion = await AsyncStorage.getItem(SHELTER_VERSION_STORAGE_KEY);
     const shelterIsEmpty = (await Keychain.getAllGenericPasswordServices()).length === 0;
 
-    return Number(rawStoredVersion ?? (shelterIsEmpty ? 0 : Shelter.migrations.length));
+    return Number(rawStoredVersion ?? (shelterIsEmpty ? Shelter.migrations.length : 0));
   };
 
   private static setShelterVersion = (version: number) =>
@@ -141,7 +200,11 @@ export class Shelter {
 
             return false;
           }),
-          catchError(() => of(false))
+          catchError(e => {
+            console.error(e);
+
+            return of(false);
+          })
         )
       )
     );
@@ -246,14 +309,14 @@ export class Shelter {
       map(privateKey => new InMemorySigner(privateKey))
     );
 
-  static enableBiometryPassword$ = (password: string, shelterVersion?: number) =>
+  static enableBiometryPassword$ = (password: string) =>
     forkJoin([Shelter.getShelterVersion(), Keychain.getSupportedBiometryType()]).pipe(
-      switchMap(([fallbackShelterVersion, supportedBiometryType]) =>
+      switchMap(([shelterVersion, supportedBiometryType]) =>
         isDefined(supportedBiometryType)
           ? Keychain.setGenericPassword(
               PASSWORD_STORAGE_KEY,
               JSON.stringify(password),
-              getBiometryKeychainOptions(shelterVersion ?? fallbackShelterVersion)
+              getBiometryKeychainOptions(shelterVersion)
             )
           : of(false)
       ),

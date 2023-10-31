@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Keychain from 'react-native-keychain';
 import { of } from 'rxjs';
 
@@ -7,6 +8,7 @@ const APP_IDENTIFIER = 'com.madfish.temple-wallet';
 
 export const PASSWORD_CHECK_KEY = 'app-password';
 export const PASSWORD_STORAGE_KEY = 'biometry-protected-app-password';
+export const SHELTER_VERSION_STORAGE_KEY = 'shelterVersion';
 
 const manufacturersForMigrationFromChip = ['google', 'samsung'];
 export const shouldUseOnlySoftwareInV1 = manufacturersForMigrationFromChip.includes(manufacturer.toLowerCase());
@@ -27,12 +29,23 @@ export const getBiometryKeychainOptions = (version: number): Keychain.Options =>
   authenticationType: Keychain.AUTHENTICATION_TYPE.BIOMETRICS
 });
 
+export const getGenericPasswordOptions = (passwordService: string, shelterVersion: number) => {
+  const key = passwordService.replace(`${APP_IDENTIFIER}/`, '');
+  const isBiometryService = key === PASSWORD_STORAGE_KEY;
+  const options = isBiometryService
+    ? getBiometryKeychainOptions(shelterVersion)
+    : getKeychainOptions(key, shelterVersion);
+
+  return options;
+};
+
 // pseudo async function as we don't need to wait until Keychain will remove all data
 // (common async solution stops reset process)
 export const resetKeychain$ = () => {
   Keychain.getAllGenericPasswordServices()
     .then(keychainServicesArray => {
       if (keychainServicesArray.length > 0) {
+        AsyncStorage.removeItem(SHELTER_VERSION_STORAGE_KEY);
         Promise.all(keychainServicesArray.map(service => Keychain.resetGenericPassword({ service })));
       }
     })
