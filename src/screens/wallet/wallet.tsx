@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -46,7 +46,7 @@ import { TokensList } from './token-list/token-list';
 import { WalletSelectors } from './wallet.selectors';
 import { WalletStyles } from './wallet.styles';
 
-export const Wallet = () => {
+export const Wallet = memo(() => {
   const dispatch = useDispatch();
   const { pageEvent } = useAnalytics();
   const { navigate } = useNavigation();
@@ -146,4 +146,4 @@ export const Wallet = () => {
       </BottomSheet>
     </>
   );
-};
+});

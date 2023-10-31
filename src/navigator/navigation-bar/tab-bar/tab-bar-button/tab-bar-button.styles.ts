@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useTabBarButtonStyles = createUseStyles(({ typography }) => ({
+export const useTabBarButtonStyles = createUseStylesMemoized(({ typography }) => ({
   container: {
     flexGrow: 1,
     justifyContent: 'center',

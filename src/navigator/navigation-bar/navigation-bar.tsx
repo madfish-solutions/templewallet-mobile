@@ -1,10 +1,11 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import Orientation, { useOrientationChange } from 'react-native-orientation-locker';
 
-import { useIsAuthorisedSelector } from '../../store/wallet/wallet-selectors';
-import { conditionalStyle } from '../../utils/conditional-style';
+import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { conditionalStyle } from 'src/utils/conditional-style';
+
 import { CurrentRouteNameContext } from '../current-route-name.context';
 import { ScreensEnum } from '../enums/screens.enum';
 import { NavigationBarStyles } from './navigation-bar.styles';
@@ -20,13 +21,16 @@ const screensWithoutTabBar = [
   ScreensEnum.NotificationsItem
 ];
 
-export const NavigationBar: FC = ({ children }) => {
+export const NavigationBar = memo(({ children }) => {
   const isAuthorised = useIsAuthorisedSelector();
   const currentRouteName = useContext(CurrentRouteNameContext);
 
   const [isShowTabletNavigation, setIsShowTabletNavigation] = useState(false);
 
-  const isShowNavigationBar = isAuthorised && !screensWithoutTabBar.includes(currentRouteName);
+  const isShowNavigationBar = useMemo(
+    () => isAuthorised && !screensWithoutTabBar.includes(currentRouteName),
+    [currentRouteName, isAuthorised]
+  );
 
   useEffect(() => void (!isTablet() && Orientation.lockToPortrait()), []);
 
@@ -44,4 +48,4 @@ export const NavigationBar: FC = ({ children }) => {
       {isShowNavigationBar && !isShowTabletNavigation && <TabBar currentRouteName={currentRouteName} />}
     </View>
   );
-};
+});

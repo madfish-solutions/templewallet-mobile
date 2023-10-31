@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, isEmptyArray, useFormik } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -72,7 +72,7 @@ interface SwapFormProps {
   outputToken?: TokenInterface;
 }
 
-export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
+export const SwapForm = memo<SwapFormProps>(({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
   const getSwapParams = useSwap();
 
@@ -425,4 +425,4 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       </ButtonsFloatingContainer>
     </FormikProvider>
   );
-};
+});

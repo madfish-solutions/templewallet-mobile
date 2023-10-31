@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -56,7 +56,7 @@ const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
-export const TokensList: FC = () => {
+export const TokensList = memo(() => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
@@ -224,7 +224,7 @@ export const TokensList: FC = () => {
       </View>
     </>
   );
-};
+});
 
 const addPlaceholdersForAndroid = (listData: ListItem[], screenFillingItemsCount: number) =>
   isAndroid && screenFillingItemsCount > listData.length

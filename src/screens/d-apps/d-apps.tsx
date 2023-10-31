@@ -1,7 +1,7 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
 import { chunk } from 'lodash-es';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
@@ -44,7 +44,7 @@ const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(24) + formatSize(32) + formatS
 const keyExtractor = (item: CustomDAppInfo[]) => item.map(dapp => dapp.name).join('/');
 const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
-export const DApps = () => {
+export const DApps = memo(() => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
 
@@ -158,4 +158,4 @@ export const DApps = () => {
       />
     </>
   );
-};
+});

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { HeaderCard } from 'src/components/header-card/header-card';
@@ -12,7 +12,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { TezosInfo } from './tezos-info/tezos-info';
 import { TopTokensTable } from './top-coins-table/top-tokens-table';
 
-export const Market = () => {
+export const Market = memo(() => {
   const dispatch = useDispatch();
 
   useAuthorisedInterval(() => dispatch(loadMarketTokensSlugsActions.submit()), MARKET_SYNC_INTERVAL);
@@ -29,4 +29,4 @@ export const Market = () => {
       <TopTokensTable />
     </>
   );
-};
+});

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
@@ -18,7 +18,7 @@ import { useTopTokensTableStyles } from './top-tokens-table.styles';
 const renderItem: ListRenderItem<MarketToken> = ({ item }) => <Row {...item} />;
 const keyExtractor = (item: MarketToken) => item.id;
 
-export const TopTokensTable = () => {
+export const TopTokensTable = memo(() => {
   const styles = useTopTokensTableStyles();
   const {
     filteredTokensList,
@@ -91,4 +91,4 @@ export const TopTokensTable = () => {
       </View>
     </View>
   );
-};
+});

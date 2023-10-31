@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { HeaderCard } from 'src/components/header-card/header-card';
@@ -13,7 +13,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCollectiblesHomeStyles } from './collectibles-home.styles';
 import { CollectiblesList } from './collectibles-list/collectibles-list';
 
-export const CollectiblesHome = () => {
+export const CollectiblesHome = memo(() => {
   const styles = useCollectiblesHomeStyles();
   const { navigate } = useNavigation();
 
@@ -35,4 +35,4 @@ export const CollectiblesHome = () => {
       <CollectiblesList collectiblesList={collectiblesList} />
     </>
   );
-};
+});
