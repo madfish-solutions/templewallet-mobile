@@ -10,7 +10,7 @@ import { isDefined } from 'src/utils/is-defined';
 const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
 
 type RouteType = { params?: { token: TokenInterface } };
-export type RouteParams = { name: string } & RouteType;
+type RouteParams = { name: string } & RouteType;
 
 export const useNavigationBar = (currentRouteName: ScreensEnum) => {
   const { isDcpNode } = useNetworkInfo();
