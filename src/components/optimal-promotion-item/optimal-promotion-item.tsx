@@ -8,13 +8,14 @@ import {
   usePartnersPromoLoadingSelector,
   usePartnersPromoSelector
 } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
+import { OptimalPromotionAdType, useIsEmptyPromotion } from 'src/utils/optimal.utils';
 
 import { PromotionItem } from '../promotion-item/promotion-item';
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
 
 interface Props extends TestIdProps {
+  adType: OptimalPromotionAdType;
   style?: StyleProp<ViewStyle>;
   shouldShowCloseButton?: boolean;
   variant?: OptimalPromotionVariantEnum;
@@ -23,6 +24,7 @@ interface Props extends TestIdProps {
 }
 
 export const OptimalPromotionItem: FC<Props> = ({
+  adType,
   testID,
   style,
   shouldShowCloseButton = true,
@@ -30,7 +32,7 @@ export const OptimalPromotionItem: FC<Props> = ({
   onImageError,
   onEmptyPromotionReceived
 }) => {
-  const partnersPromotion = usePartnersPromoSelector();
+  const partnersPromotion = usePartnersPromoSelector(adType);
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const { disablePromotion } = usePromotionAfterConfirmation();

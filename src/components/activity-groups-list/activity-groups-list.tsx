@@ -9,6 +9,7 @@ import { emptyFn } from 'src/config/general';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
 import { isTheSameDay, isToday, isYesterday } from 'src/utils/date.utils';
+import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { ActivityGroupItem } from './activity-group-item/activity-group-item';
 import { ActivityGroupsListSelectors } from './activity-groups-list.selectors';
@@ -69,6 +70,7 @@ export const ActivityGroupsList: FC<Props> = ({
     () => (
       <View style={styles.promotionItemWrapper}>
         <OptimalPromotionItem
+          adType={OptimalPromotionAdType.TwMobile}
           style={styles.promotionItem}
           testID={ActivityGroupsListSelectors.promotion}
           onImageError={onOptimalPromotionError}

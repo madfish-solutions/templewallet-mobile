@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
@@ -16,18 +15,6 @@ export const useIsPartnersPromoShown = () => {
   return isEnabled && !areAdsNotEnabled;
 };
 
-export const usePartnersPromoLoad = () => {
-  const promoIsShown = useIsPartnersPromoShown();
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (promoIsShown) {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
-    }
-  }, [promoIsShown]);
-};
-
 export const usePartnersPromoSync = () => {
   const promoIsShown = useIsPartnersPromoShown();
 
@@ -36,6 +23,7 @@ export const usePartnersPromoSync = () => {
   useAuthorisedInterval(
     () => {
       if (promoIsShown) {
+        dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
         dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
       }
     },

@@ -22,7 +22,6 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
@@ -59,7 +58,7 @@ const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' 
 export const TokensList = memo(() => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
-  const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
+  const { navigate } = useNavigation();
   const styles = useTokenListStyles();
 
   const apyRates = useTokensApyRatesSelector();
@@ -84,21 +83,6 @@ export const TokensList = memo(() => {
     dispatch(setZeroBalancesShown(value));
     trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
   }, []);
-
-  useEffect(() => {
-    const listener = () => {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
-      setPromotionErrorOccurred(false);
-    };
-
-    if (partnersPromoShown) {
-      addNavigationListener('focus', listener);
-    }
-
-    return () => {
-      removeNavigationListener('focus', listener);
-    };
-  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromoShown]);
 
   useEffect(() => {
     if (partnersPromoShown) {
@@ -146,6 +130,7 @@ export const TokensList = memo(() => {
           <View>
             <View style={styles.promotionItemWrapper}>
               <OptimalPromotionItem
+                adType={OptimalPromotionAdType.TwToken}
                 variant={OptimalPromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}

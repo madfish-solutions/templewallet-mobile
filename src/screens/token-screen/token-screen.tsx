@@ -11,7 +11,6 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { useContractActivity } from 'src/hooks/use-contract-activity';
-import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
@@ -55,8 +54,6 @@ export const TokenScreen = () => {
       })
     );
   }, []);
-
-  usePartnersPromoLoad();
 
   const { activities, handleUpdate } = useContractActivity(getTokenSlug(initialToken));
 

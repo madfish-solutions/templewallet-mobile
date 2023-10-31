@@ -15,10 +15,10 @@ const loadPartnersPromotionEpic: Epic<Action, Action, RootState> = (action$, sta
     ofType(loadPartnersPromoActions.submit),
     toPayload(),
     withSelectedAccount(state$),
-    switchMap(([payload, account]) =>
-      from(getOptimalPromotion(payload, account.publicKeyHash)).pipe(
-        map(optimalPromotion => loadPartnersPromoActions.success(optimalPromotion)),
-        catchError(error => of(loadPartnersPromoActions.fail(error.message)))
+    switchMap(([adType, account]) =>
+      from(getOptimalPromotion(adType, account.publicKeyHash)).pipe(
+        map(optimalPromotion => loadPartnersPromoActions.success({ adType, ad: optimalPromotion })),
+        catchError(error => of(loadPartnersPromoActions.fail({ adType, error: error.message })))
       )
     )
   );

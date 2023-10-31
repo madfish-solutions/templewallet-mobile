@@ -9,6 +9,7 @@ import { useFilteredMarketTokens } from 'src/hooks/use-filtered-market-tokens.ho
 import { MarketToken } from 'src/store/market/market.interfaces';
 import { formatSize } from 'src/styles/format-size';
 
+import { OptimalPromotionAdType } from '../../../utils/optimal.utils';
 import { MarketSelectors } from '../market.selectors';
 import { Filters } from './filters/filters';
 import { RightSwipeView } from './right-swipe-view/right-swipe-view';
@@ -54,6 +55,7 @@ export const TopTokensTable = memo(() => {
     <View style={styles.rootContainer}>
       {!promotionErrorOccurred && (
         <OptimalPromotionItem
+          adType={OptimalPromotionAdType.TwMobile}
           style={styles.promotion}
           testID={MarketSelectors.promotion}
           onImageError={() => setPromotionErrorOccurred(true)}
