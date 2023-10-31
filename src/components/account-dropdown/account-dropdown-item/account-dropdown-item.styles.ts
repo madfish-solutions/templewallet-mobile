@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useAccountDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
+export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
     flexDirection: 'row'
   },
@@ -40,24 +40,6 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
     ...typography.numbersRegular13,
     color: colors.black
   },
-  headerText: {
-    ...typography.caption11Regular,
-    color: colors.gray1,
-    marginBottom: formatSize(2)
-  },
-  headerBoldText: {
-    ...typography.numbersMedium15,
-    color: colors.black
-  },
-  collectiblesData: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: formatSize(5)
-  },
-  headerInfoColumn: {
-    marginHorizontal: formatSize(8)
-  },
   accountNameMargin: {
     marginLeft: formatSize(10)
   },
@@ -68,5 +50,26 @@ export const useAccountDropdownItemStyles = createUseStyles(({ colors, typograph
     overflow: 'hidden',
     height: formatSize(76),
     width: formatSize(76)
+  }
+}));
+
+export const useAccountDropdownItemCollectiblesInfoStyles = createUseStylesMemoized(({ colors, typography }) => ({
+  collectiblesData: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: formatSize(5)
+  },
+  headerInfoColumn: {
+    marginHorizontal: formatSize(8)
+  },
+  headerText: {
+    ...typography.caption11Regular,
+    color: colors.gray1,
+    marginBottom: formatSize(2)
+  },
+  headerBoldText: {
+    ...typography.numbersMedium15,
+    color: colors.black
   }
 }));

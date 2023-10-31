@@ -32,6 +32,12 @@ export const objktCurrencies: Record<number, ObjktCurrencyInfo> = {
     contract: 'KT1LN4LPSqTMS7Sd2CJw4bbDGRkMv2t68Fy9',
     id: '0'
   },
+  1429: {
+    symbol: 'DOGA',
+    decimals: 5,
+    contract: 'KT1Ha4yFVeyzw6KRAdkzq6TxDHB97KG4pZe8',
+    id: '0'
+  },
   1: {
     symbol: 'TEZ',
     decimals: 6,

@@ -31,6 +31,7 @@ export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError
         style={[{ width: size, height: size }, style]}
         paused={atBootsplash || isLocked}
         resizeMode="cover"
+        ignoreSilentSwitch="ignore"
         bufferConfig={{
           bufferForPlaybackMs: BUFFER_DURATION
         }}

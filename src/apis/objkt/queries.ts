@@ -198,6 +198,7 @@ const commonTokenQuery = `
     currency_id
     marketplace_contract
     price
+    price_xtz
     currency {
       type
     }

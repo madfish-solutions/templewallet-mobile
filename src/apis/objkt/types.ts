@@ -139,6 +139,7 @@ export interface ObjktListing {
   bigmap_key: number;
   currency_id: number;
   price: number;
+  price_xtz: number;
   /** E.g. `KT1WvzYHCNBvDSdwafTHv7nJ1dWmZ8GCYuuC` */
   marketplace_contract: string;
   currency: {
