@@ -29,11 +29,12 @@ export class Shelter {
       switchMap(([passwordServices, shelterVersion]) =>
         forkJoin(
           passwordServices.map(async passwordService => {
-            console.log(`Migrating ${passwordService}`);
+            console.log(`Copying ${passwordService}`);
             const isBiometryService = passwordService === getBiometryKeychainOptions(0).service;
             const password = isBiometryService
               ? await Keychain.getGenericPassword(getBiometryKeychainOptions(shelterVersion))
               : await Keychain.getGenericPassword(getKeychainOptions(passwordService, shelterVersion));
+            console.log(passwordService, isBiometryService, password, shelterVersion);
 
             if (password === false) {
               throw new Error('Failed to get password from Keychain');
@@ -47,6 +48,23 @@ export class Shelter {
                 : getKeychainOptions(password.password, shelterVersion + 1)
             );
           })
+        ).pipe(
+          switchMap(() =>
+            forkJoin(
+              passwordServices.map(async passwordService => {
+                console.log(`Removing ${passwordService} from chip`);
+                const isBiometryService = passwordService === getBiometryKeychainOptions(0).service;
+                const key = passwordService.split('/').slice(1).join('/');
+                console.log(passwordService, isBiometryService, key);
+
+                await Keychain.resetGenericPassword(
+                  isBiometryService
+                    ? getBiometryKeychainOptions(shelterVersion)
+                    : getKeychainOptions(key, shelterVersion)
+                );
+              })
+            )
+          )
         )
       )
     );
