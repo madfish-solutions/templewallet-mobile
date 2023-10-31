@@ -1,4 +1,5 @@
-import { OptimalPromotionAdType } from '../../utils/optimal.utils';
+import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
+
 import { useSelector } from '../selector';
 
 export const usePartnersPromoSelector = (adType: OptimalPromotionAdType) =>

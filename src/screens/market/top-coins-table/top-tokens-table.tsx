@@ -8,8 +8,8 @@ import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-p
 import { useFilteredMarketTokens } from 'src/hooks/use-filtered-market-tokens.hook';
 import { MarketToken } from 'src/store/market/market.interfaces';
 import { formatSize } from 'src/styles/format-size';
+import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
-import { OptimalPromotionAdType } from '../../../utils/optimal.utils';
 import { MarketSelectors } from '../market.selectors';
 import { Filters } from './filters/filters';
 import { RightSwipeView } from './right-swipe-view/right-swipe-view';
