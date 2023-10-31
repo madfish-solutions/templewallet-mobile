@@ -15,7 +15,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { isCollectible } from 'src/utils/tezos.util';
 
 import { useOperationsPreviewItemStyles } from './operations-preview-item.styles';
-import { useTokenGetter } from './uitils';
+import { useTokenGetter } from './utils';
 
 interface Props {
   paramPreview: ParamPreviewInterface;
