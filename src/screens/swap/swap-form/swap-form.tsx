@@ -2,7 +2,7 @@ import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { FormikProvider, isEmptyArray, useFormik } from 'formik';
-import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -72,9 +72,10 @@ interface SwapFormProps {
   outputToken?: TokenInterface;
 }
 
-export const SwapForm = memo<SwapFormProps>(({ inputToken, outputToken }) => {
+export const SwapForm: FC<SwapFormProps> = memo(({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
   const getSwapParams = useSwap();
+  console.log(outputToken, 'inForm');
 
   const { trackEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
@@ -246,8 +247,8 @@ export const SwapForm = memo<SwapFormProps>(({ inputToken, outputToken }) => {
     }
   };
 
-  const formik = useFormik<SwapFormValues>({
-    initialValues: {
+  const initialValues = useMemo(
+    () => ({
       inputAssets: {
         asset: inputToken ?? tezosToken,
         amount: undefined
@@ -256,9 +257,15 @@ export const SwapForm = memo<SwapFormProps>(({ inputToken, outputToken }) => {
         asset: outputToken ?? emptyTezosLikeToken,
         amount: undefined
       }
-    },
+    }),
+    [inputToken, outputToken, tezosToken]
+  );
+
+  const formik = useFormik<SwapFormValues>({
+    initialValues,
     validationSchema: swapFormValidationSchema,
-    onSubmit: handleSubmit
+    onSubmit: handleSubmit,
+    enableReinitialize: true
   });
 
   const { values, setFieldValue, isValid, submitForm, submitCount } = formik;
