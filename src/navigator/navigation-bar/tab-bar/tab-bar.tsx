@@ -1,10 +1,9 @@
-import React, { FC, useCallback } from 'react';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { isAndroid } from 'src/config/system';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import {
   dAppsStackScreens,
   marketStackScreens,
@@ -13,41 +12,20 @@ import {
   swapStackScreens,
   walletStackScreens
 } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/toast.utils';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { isDefined } from 'src/utils/is-defined';
 
+import { useNavigationBar } from '../hooks/use-navigation-bar';
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
 import { useTabBarStyles } from './tab-bar.styles';
-
-type RouteType = { params?: { token: TokenInterface } };
-export type RouteParams = { name: string } & RouteType;
-
-export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
 
 interface Props {
   currentRouteName: ScreensEnum;
 }
 
-export const TabBar: FC<Props> = ({ currentRouteName }) => {
+export const TabBar = memo<Props>(({ currentRouteName }) => {
   const styles = useTabBarStyles();
 
-  const { isDcpNode } = useNetworkInfo();
-  const { getState } = useNavigation();
-
-  const routes = getState().routes[0].state?.routes;
-  const route = getTokenParams(routes as RouteParams[]);
-  const swapScreenParams =
-    isDefined(route) && currentRouteName === ScreensEnum.TokenScreen ? { inputToken: route.params?.token } : undefined;
-
-  const isStackFocused = useCallback(
-    (screensStack: ScreensEnum[]) => isDefined(currentRouteName) && screensStack.includes(currentRouteName),
-    [currentRouteName]
-  );
-
-  const handleDisabledPress = () => showErrorToast({ description: NOT_AVAILABLE_MESSAGE });
+  const { isDcpNode, swapScreenParams, isStackFocused, handleDisabledPress } = useNavigationBar(currentRouteName);
 
   return (
     <View style={styles.container}>
@@ -100,17 +78,4 @@ export const TabBar: FC<Props> = ({ currentRouteName }) => {
       <InsetSubstitute type="bottom" />
     </View>
   );
-};
-
-export const getTokenParams = (routes: RouteParams[] | undefined): null | RouteType => {
-  let result = null;
-  if (Array.isArray(routes) && isDefined(routes)) {
-    for (const route of routes) {
-      if (route.name === ScreensEnum.TokenScreen) {
-        result = route;
-      }
-    }
-  }
-
-  return result;
-};
+});

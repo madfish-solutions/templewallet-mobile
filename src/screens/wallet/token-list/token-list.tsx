@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -22,10 +22,10 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import {
+  useSelectedAccountSelector,
   useSelectedAccountTezosTokenSelector,
   useSelectedAccountTkeyTokenSelector,
   useVisibleTokensListSelector
@@ -55,10 +55,10 @@ const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
-export const TokensList: FC = () => {
+export const TokensList = memo(() => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
-  const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
+  const { navigate } = useNavigation();
   const styles = useTokenListStyles();
 
   const apyRates = useTokensApyRatesSelector();
@@ -77,25 +77,12 @@ export const TokensList: FC = () => {
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
 
+  const { publicKeyHash } = useSelectedAccountSelector();
+
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
     trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
   }, []);
-
-  useEffect(() => {
-    const listener = () => {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
-      setPromotionErrorOccurred(false);
-    };
-
-    if (partnersPromoShown) {
-      addNavigationListener('focus', listener);
-    }
-
-    return () => {
-      removeNavigationListener('focus', listener);
-    };
-  }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromoShown]);
 
   useEffect(() => {
     if (partnersPromoShown) {
@@ -143,6 +130,7 @@ export const TokensList: FC = () => {
           <View>
             <View style={styles.promotionItemWrapper}>
               <OptimalPromotionItem
+                adType={OptimalPromotionAdType.TwToken}
                 variant={OptimalPromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}
@@ -221,7 +209,7 @@ export const TokensList: FC = () => {
       </View>
     </>
   );
-};
+});
 
 const addPlaceholdersForAndroid = (listData: ListItem[], screenFillingItemsCount: number) =>
   isAndroid && screenFillingItemsCount > listData.length

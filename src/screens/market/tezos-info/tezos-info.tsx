@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -16,7 +16,7 @@ import { MarketSelectors } from '../market.selectors';
 import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 
-export const TezosInfo = () => {
+export const TezosInfo = memo(() => {
   const styles = useTezosInfoStyles();
   const tezosMetadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
   const marketTezos = useTezosMarketTokenSelector();
@@ -105,4 +105,4 @@ export const TezosInfo = () => {
       </View>
     </View>
   );
-};
+});

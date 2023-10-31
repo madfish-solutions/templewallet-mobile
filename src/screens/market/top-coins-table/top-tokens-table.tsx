@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
@@ -8,6 +8,7 @@ import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-p
 import { useFilteredMarketTokens } from 'src/hooks/use-filtered-market-tokens.hook';
 import { MarketToken } from 'src/store/market/market.interfaces';
 import { formatSize } from 'src/styles/format-size';
+import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { MarketSelectors } from '../market.selectors';
 import { Filters } from './filters/filters';
@@ -18,7 +19,7 @@ import { useTopTokensTableStyles } from './top-tokens-table.styles';
 const renderItem: ListRenderItem<MarketToken> = ({ item }) => <Row {...item} />;
 const keyExtractor = (item: MarketToken) => item.id;
 
-export const TopTokensTable = () => {
+export const TopTokensTable = memo(() => {
   const styles = useTopTokensTableStyles();
   const {
     filteredTokensList,
@@ -54,6 +55,7 @@ export const TopTokensTable = () => {
     <View style={styles.rootContainer}>
       {!promotionErrorOccurred && (
         <OptimalPromotionItem
+          adType={OptimalPromotionAdType.TwMobile}
           style={styles.promotion}
           testID={MarketSelectors.promotion}
           onImageError={() => setPromotionErrorOccurred(true)}
@@ -91,4 +93,4 @@ export const TopTokensTable = () => {
       </View>
     </View>
   );
-};
+});

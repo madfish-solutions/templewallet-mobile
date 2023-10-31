@@ -1,5 +1,5 @@
 import { PortalProvider } from '@gorhom/portal';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -16,7 +16,10 @@ import {
   RATES_SYNC_INTERVAL,
   SELECTED_BAKER_SYNC_INTERVAL,
   NOTIFICATIONS_SYNC_INTERVAL,
-  APR_REFRESH_INTERVAL
+  APR_REFRESH_INTERVAL,
+  MARKET_SYNC_INTERVAL,
+  SWAP_SYNC_INTERVAL,
+  DAPPS_SYNC_INTERVAL
 } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
 import { isAndroid } from 'src/config/system';
@@ -24,6 +27,8 @@ import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-sub
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { usePartnersPromoSync } from 'src/hooks/use-partners-promo';
+import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
 import { Backup } from 'src/screens/backup/backup';
@@ -66,8 +71,15 @@ import { Welcome } from 'src/screens/welcome/welcome';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
+import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
+import { loadDAppsListActions, loadTokensApyActions } from 'src/store/d-apps/d-apps-actions';
+import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
+import { loadMarketTokensSlugsActions } from 'src/store/market/market-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { loadSwapDexesAction, loadSwapTokensAction } from 'src/store/swap/swap-actions';
 import {
   loadTokensActions,
   loadTezosBalanceActions,
@@ -77,16 +89,10 @@ import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/w
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
-import { useUsdToTokenRates } from '../store/currency/currency-selectors';
-import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
-import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
-import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
-import { loadAllSavingsAndStakesAction } from '../store/savings/actions';
-import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
 
-const MainStack = createStackNavigator<ScreensParamList>();
+const MainStack = createNativeStackNavigator<ScreensParamList>();
 
 export const MainStackScreen = () => {
   const dispatch = useDispatch();
@@ -135,6 +141,16 @@ export const MainStackScreen = () => {
     dispatch(loadAllSavingsAndStakesAction());
   }, APR_REFRESH_INTERVAL);
 
+  useAuthorisedInterval(() => {
+    if (isAndroid) {
+      dispatch(loadSwapTokensAction.submit());
+      dispatch(loadSwapDexesAction.submit());
+    }
+  }, SWAP_SYNC_INTERVAL);
+  useAuthorisedInterval(() => dispatch(loadDAppsListActions.submit()), DAPPS_SYNC_INTERVAL);
+  useAuthorisedInterval(() => dispatch(loadMarketTokensSlugsActions.submit()), MARKET_SYNC_INTERVAL);
+  usePartnersPromoSync();
+
   const shouldShowUnauthorizedScreens = !isAuthorised;
   const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
   const shouldShowBlankScreen = isAuthorised && isLocked;
@@ -181,22 +197,28 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Wallet}
                 component={Wallet}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.CollectiblesHome}
                 component={CollectiblesHome}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
                 component={TezosTokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={metadata} />)}
+                options={{
+                  ...generateScreenOptions(<HeaderTokenInfo token={metadata} />),
+                  headerShadowVisible: false
+                }}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
                 component={TokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
+                options={{
+                  ...generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />),
+                  headerShadowVisible: false
+                }}
               />
               <MainStack.Screen
                 name={ScreensEnum.Delegation}
@@ -257,7 +279,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.DApps}
                 component={DApps}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
 
               {/** Swap stack **/}
@@ -268,7 +290,7 @@ export const MainStackScreen = () => {
                     component={SwapScreen}
                     options={{
                       ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
-                      animationEnabled: false
+                      animation: 'none'
                     }}
                   />
 
@@ -284,14 +306,14 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Market}
                 component={Market}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
 
               {/** Settings stack **/}
               <MainStack.Screen
                 name={ScreensEnum.Settings}
                 component={Settings}
-                options={{ animationEnabled: false, headerShown: false }}
+                options={{ animation: 'none', headerShown: false }}
               />
               <MainStack.Screen
                 name={ScreensEnum.ManageAccounts}

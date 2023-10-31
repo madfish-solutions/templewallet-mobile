@@ -6,7 +6,8 @@ export const useHeaderTitleStyles = createUseStyles(() => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginRight: formatSize(18)
+    marginTop: formatSize(4),
+    marginRight: formatSize(4)
   },
   icons: {
     marginLeft: formatSize(18)

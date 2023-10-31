@@ -1,8 +1,8 @@
-import { transparent } from '../../../../config/styles';
-import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
+import { transparent } from 'src/config/styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useSideBarButtonStyles = createUseStyles(({ typography }) => ({
+export const useSideBarButtonStyles = createUseStylesMemoized(({ typography }) => ({
   container: {
     flexDirection: 'row',
     alignItems: 'center',

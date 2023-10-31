@@ -1,17 +1,17 @@
-import { StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { useMemo } from 'react';
 
-import { useColors } from '../../styles/use-colors';
+import { useColors } from 'src/styles/use-colors';
 
 export const useStackNavigationOptions = () => {
   const colors = useColors();
 
-  return useMemo<StackNavigationOptions>(
+  return useMemo<NativeStackNavigationOptions>(
     () => ({
+      headerBackVisible: false,
       presentation: 'modal',
       cardOverlayEnabled: true,
       gestureEnabled: true,
-      ...TransitionPresets.ModalPresentationIOS,
       cardStyle: {
         backgroundColor: colors.pageBG
       }

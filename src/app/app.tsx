@@ -2,7 +2,7 @@ import React from 'react';
 import { LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { enableScreens } from 'react-native-screens';
+import { enableScreens, enableFreeze } from 'react-native-screens';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -20,6 +20,7 @@ import { AppStyles } from './app.styles';
 
 initSentry();
 enableScreens();
+enableFreeze();
 LogBox.ignoreAllLogs();
 
 export const App = () => (

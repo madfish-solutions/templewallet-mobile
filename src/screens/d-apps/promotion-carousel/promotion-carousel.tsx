@@ -6,10 +6,11 @@ import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/li
 
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
-import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
+import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
+import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { COMMON_PROMOTION_CAROUSEL_DATA } from './promotion-carousel.data';
@@ -21,8 +22,6 @@ export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const partnersPromoShown = useIsPartnersPromoShown();
-
-  usePartnersPromoLoad();
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -41,6 +40,7 @@ export const PromotionCarousel = () => {
     if (partnersPromoShown && !promotionErrorOccurred) {
       result.unshift(
         <OptimalPromotionItem
+          adType={OptimalPromotionAdType.TwMobile}
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
           shouldShowCloseButton={false}
           style={styles.promotionItem}

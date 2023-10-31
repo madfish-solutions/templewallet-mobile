@@ -1,10 +1,9 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
 import { chunk } from 'lodash-es';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { Text, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
-import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
@@ -20,7 +19,6 @@ import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { loadDAppsListActions } from 'src/store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from 'src/store/d-apps/d-apps-selectors';
 import { useAllFarmsSelector } from 'src/store/farms/selectors';
 import { useSavingsItemsLoadingSelector } from 'src/store/savings/selectors';
@@ -44,8 +42,7 @@ const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(24) + formatSize(32) + formatS
 const keyExtractor = (item: CustomDAppInfo[]) => item.map(dapp => dapp.name).join('/');
 const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
-export const DApps = () => {
-  const dispatch = useDispatch();
+export const DApps = memo(() => {
   const { navigate } = useNavigation();
 
   const { width: windowWidth } = useWindowDimensions();
@@ -62,10 +59,6 @@ export const DApps = () => {
     () => BigNumber.max(farmsMaxApr, savingsMaxApr).toFixed(PERCENTAGE_DECIMALS),
     [farmsMaxApr, savingsMaxApr]
   );
-
-  useEffect(() => {
-    dispatch(loadDAppsListActions.submit());
-  }, []);
 
   const styles = useDAppsStyles();
 
@@ -158,4 +151,4 @@ export const DApps = () => {
       />
     </>
   );
-};
+});

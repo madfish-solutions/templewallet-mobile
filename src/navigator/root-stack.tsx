@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BigNumber } from 'bignumber.js';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -53,7 +53,7 @@ import { MainStackScreen } from './main-stack';
 
 export type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 
-const RootStack = createStackNavigator<RootStackParamList>();
+const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
   const { isLocked } = useAppLock();

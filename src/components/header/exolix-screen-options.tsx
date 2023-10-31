@@ -1,9 +1,10 @@
-import { StackNavigationOptions } from '@react-navigation/stack';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import React, { FC, useMemo } from 'react';
 
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { useExolixStep } from '../../store/exolix/exolix-selectors';
-import { IconNameEnum } from '../icon/icon-name.enum';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useExolixStep } from 'src/store/exolix/exolix-selectors';
+
 import { HeaderButton } from './header-button/header-button';
 import { HeaderProgress } from './header-progress/header-progress';
 import { HeaderTitle } from './header-title/header-title';
@@ -18,7 +19,7 @@ const BackButton: FC = () => {
   return <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={handleOnPress} />;
 };
 
-export const exolixScreenOptions = (): StackNavigationOptions => ({
+export const exolixScreenOptions = (): NativeStackNavigationOptions => ({
   headerTitleAlign: 'center',
   headerLeft: () => <BackButton />,
   headerTitle: () => <TitleComponent />,
