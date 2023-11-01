@@ -7,6 +7,7 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 import { OVERLAY_SHOW_TIMEOUT } from '../mnemonic/mnemonic.config';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
+
 import { StyledPasswordInputProps } from './styled-password-input.props';
 import { useStyledPasswordInputStyles } from './styled-password-input.styles';
 

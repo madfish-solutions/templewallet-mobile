@@ -1,9 +1,8 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
-import { emptyComponent, emptyFn, EmptyFn, EventFn } from 'src/config/general';
+import { emptyComponent, emptyFn, EventFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
@@ -17,6 +16,7 @@ import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-contr
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { SearchInput } from '../search-input/search-input';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
+
 import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-container';
 import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
@@ -42,6 +42,7 @@ export interface DropdownValueProps<T> extends TestIdProps {
   itemHeight?: number;
   list: T[];
   disabled?: boolean;
+  isCollectibleScreen?: boolean;
   onValueChange: EventFn<T | undefined>;
   itemTestIDPropertiesFn?: (value: T) => object | undefined;
 }
@@ -53,7 +54,9 @@ export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
-export type DropdownValueComponent<T> = FC<{ value?: T; disabled?: boolean } & TestIdProps>;
+export type DropdownValueComponent<T> = FC<
+  { value?: T; disabled?: boolean; isCollectibleScreen?: boolean } & TestIdProps
+>;
 
 export type DropdownListItemComponent<T> = FC<{
   item: T;
@@ -74,6 +77,7 @@ const DropdownComponent = <T extends unknown>({
   disabled = false,
   isLoading = false,
   isSearchable = false,
+  isCollectibleScreen = false,
   setSearchValue = emptyFn,
   equalityFn,
   renderValue,
@@ -137,7 +141,6 @@ const DropdownComponent = <T extends unknown>({
         style={styles.valueContainer}
         disabled={disabled}
         onPress={() => {
-          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
           scroll();
 
           trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
@@ -147,7 +150,7 @@ const DropdownComponent = <T extends unknown>({
         onLongPress={onLongPress}
         testID={testID}
       >
-        {renderValue({ value, disabled })}
+        {renderValue({ value, disabled, isCollectibleScreen })}
       </TouchableOpacity>
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>

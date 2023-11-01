@@ -16,6 +16,7 @@ import { formatSize } from '../../../../styles/format-size';
 import { isDefined } from '../../../../utils/is-defined';
 import { mutezToTz, tzToMutez } from '../../../../utils/tezos.util';
 import { useTezosToken } from '../../../../utils/wallet.utils';
+
 import { FeeFormInputValues } from './fee-form-input.form';
 import { useFeeFormInputStyles } from './fee-form-input.styles';
 

@@ -6,6 +6,7 @@ import { FormattedAmountWithLoader } from 'src/components/formatted-amount-with-
 import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
 
 import { AssetAmounts } from '../use-amounts';
+
 import { useStatsItemStyles } from './styles';
 
 interface Props {

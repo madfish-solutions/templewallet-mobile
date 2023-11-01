@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { TEZOS_DEXES_API_URL } from '../../utils/env.utils';
+
 import { BlockInterface, EMPTY_BLOCK } from './block.interface';
 
 const BLOCK_UPDATE_API_URL = `${TEZOS_DEXES_API_URL}/block`;

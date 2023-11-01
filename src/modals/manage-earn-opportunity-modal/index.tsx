@@ -190,7 +190,7 @@ export const ManageEarnOpportunityModal: FC = () => {
       <ModalStatusBar />
       <ScreenContainer isFullScreenMode scrollViewRef={scrollViewRef}>
         <TextSegmentControl
-          disabledValuesIndices={disabledTabSwitcherIndices}
+          disabledIndexes={disabledTabSwitcherIndices}
           selectedIndex={tabIndex}
           values={tabs}
           onChange={setTabIndex}

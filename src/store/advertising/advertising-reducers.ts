@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
+
 import { loadAdvertisingPromotionActions } from './advertising-actions';
 import { advertisingInitialState, AdvertisingState } from './advertising-state';
 

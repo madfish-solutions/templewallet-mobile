@@ -1,4 +1,5 @@
 import { createEntity } from '../create-entity';
+
 import { NotificationsState } from './notifications-state';
 
 export const mockNotificationsState: NotificationsState = {

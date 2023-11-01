@@ -6,6 +6,7 @@ import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.inte
 import { isString } from 'src/utils/is-string';
 
 import { TokenIcon } from '../../token-icon/token-icon';
+
 import { useHeaderTokenInfoStyles } from './header-token-info.styles';
 
 interface Props {

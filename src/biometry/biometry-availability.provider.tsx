@@ -3,6 +3,7 @@ import React, { FC, useState } from 'react';
 import ReactNativeBiometrics, { BiometryType } from 'react-native-biometrics';
 
 import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
+
 import { BiometryAvailabilityContext } from './biometry-availability.context';
 
 const rnBiometrics = new ReactNativeBiometrics();

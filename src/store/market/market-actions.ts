@@ -2,6 +2,7 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { MarketTokensSortFieldEnum } from '../../enums/market-tokens-sort-field.enum';
 import { createActions } from '../create-actions';
+
 import { MarketToken } from './market.interfaces';
 
 export const loadMarketTokensActions = createActions<void, Array<MarketToken>, string>('market/MARKET_TOKENS');

@@ -5,8 +5,9 @@ import {
   mockSymmetricKey64,
   mockUnencryptedString
 } from '../mocks/react-native-themis.mock';
+
 import { decryptString$, encryptString$ } from './crypto.util';
-import { rxJsTestingHelper } from './testing.utis';
+import { rxJsTestingHelper } from './testing.utils';
 
 const expectedEncryptionOutput = { encrypted64: mockEncryptedString, salt64: mockSymmetricKey64 };
 

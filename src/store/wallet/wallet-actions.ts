@@ -1,9 +1,10 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { AccountInterface } from '../../interfaces/account.interface';
-import { SendAssetActionPayloadInterface } from '../../interfaces/send-asset-action-payload.interface';
-import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
-import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { AccountInterface } from 'src/interfaces/account.interface';
+import { SendAssetActionPayloadInterface } from 'src/interfaces/send-asset-action-payload.interface';
+import { TokenBalanceResponse } from 'src/interfaces/token-balance-response.interface';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+
 import { createActions } from '../create-actions';
 
 export const setSelectedAccountAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT');
@@ -25,7 +26,7 @@ export const loadTokensBalancesArrayActions = createActions<
   void,
   { publicKeyHash: string; data: TokenBalanceResponse[]; selectedRpcUrl: string },
   string
->('assets/LOAD_TOKEN_BALANCE');
+>('assets/LOAD_TOKENS_BALANCES');
 
 export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');

@@ -6,6 +6,7 @@ import { formatSize } from 'src/styles/format-size';
 
 import { CheckboxLabel } from '../checkbox-description/checkbox-label';
 import { Divider } from '../divider/divider';
+
 import { useAbstractFieldStyles } from './abstract-field.styles';
 import { FieldProps } from './field.props';
 

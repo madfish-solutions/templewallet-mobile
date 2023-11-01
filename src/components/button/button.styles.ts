@@ -8,5 +8,9 @@ export const ButtonStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  loader: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center'
   }
 });

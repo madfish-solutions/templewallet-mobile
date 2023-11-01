@@ -14,6 +14,7 @@ import { sendAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withSelectedIsAnalyticsEnabled, withSelectedIsAuthorized, withSelectedUserId } from 'src/utils/security.utils';
 
 import type { RootState } from '../types';
+
 import { checkApp } from './security-actions';
 
 interface appCheckPayload extends VersionsInterface {

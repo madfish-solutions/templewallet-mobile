@@ -7,6 +7,7 @@ import { Divider } from '../../../../../components/divider/divider';
 import { Icon } from '../../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../../components/icon/icon-name.enum';
 import { formatSize } from '../../../../../styles/format-size';
+
 import { useAppMetadataConnectionViewStyles } from './app-metadata-connection-view.styles';
 
 interface Props {

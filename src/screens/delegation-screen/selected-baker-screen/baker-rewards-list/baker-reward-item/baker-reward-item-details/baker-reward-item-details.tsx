@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 
 import { BakerRewardInterface } from '../../../../../../interfaces/baker-reward.interface';
+
 import { Endorsements } from './details/endorsements';
 import { MissedEndorsements } from './details/missed-endorsements';
 import { MissedOwnBlocks } from './details/missed-own-blocks';

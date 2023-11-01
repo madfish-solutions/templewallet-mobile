@@ -3,6 +3,7 @@ import { createReducer } from '@reduxjs/toolkit';
 import { NotificationStatus } from '../../enums/notification-status.enum';
 import { isDefined } from '../../utils/is-defined';
 import { createEntity } from '../create-entity';
+
 import {
   loadNotificationsAction,
   setIsNewsEnabledAction,

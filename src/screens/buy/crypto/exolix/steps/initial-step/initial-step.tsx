@@ -14,7 +14,7 @@ import { BlackTextLink } from 'src/components/text-link/black-text-link';
 import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
@@ -24,6 +24,7 @@ import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList, initialFormValues } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
+
 import { InitialStepSelectors } from './initial-step.selectors';
 import { useInitialStepStyles } from './initial-step.styles';
 import { loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
@@ -38,7 +39,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const styles = useInitialStepStyles();
 
   const { filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
-  const { publicKeyHash } = useSelectedAccountSelector();
+  const publicKeyHash = useCurrentAccountPkhSelector();
   const tokenUsdExchangeRates = useUsdToTokenRates();
 
   const handleSubmit = () => {

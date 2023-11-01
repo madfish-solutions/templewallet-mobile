@@ -15,7 +15,8 @@ import {
   mockEncryptedData
 } from '../utils/crypto.util.mock';
 import { biometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from '../utils/keychain.utils';
-import { rxJsTestingHelper } from '../utils/testing.utis';
+import { rxJsTestingHelper } from '../utils/testing.utils';
+
 import { Shelter } from './shelter';
 
 describe('Shelter', () => {

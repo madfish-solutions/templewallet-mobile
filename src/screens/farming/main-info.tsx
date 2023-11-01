@@ -13,7 +13,6 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useAllFarmsSelector, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
@@ -22,8 +21,7 @@ export const MainInfo: FC = () => {
   const dispatch = useDispatch();
   const farms = useAllFarmsSelector();
   const stakes = useLastFarmsStakesSelector();
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
   const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
 
   const stakesEntriesWithEndedRewards = useMemo(() => {
@@ -31,8 +29,9 @@ export const MainInfo: FC = () => {
 
     return Object.entries(stakes).filter(
       ([contractAddress, stakeRecord]) =>
-        new BigNumber(stakeRecord?.claimableRewards ?? 0).isGreaterThan(DEFAULT_AMOUNT) &&
-        (stakeRecord?.rewardsDueDate ?? DEFAULT_AMOUNT) < now &&
+        stakeRecord?.claimableRewards &&
+        new BigNumber(stakeRecord.claimableRewards).isGreaterThan(DEFAULT_AMOUNT) &&
+        (!stakeRecord.rewardsDueDate || stakeRecord.rewardsDueDate < now) &&
         farms.data.some(farm => farm.item.contractAddress === contractAddress)
     );
   }, [stakes, farms]);

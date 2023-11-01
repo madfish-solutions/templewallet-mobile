@@ -8,6 +8,7 @@ import { useColors } from '../../../styles/use-colors';
 import { Divider } from '../../divider/divider';
 import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
+
 import { useProtectedOverlayStyle } from './protected-overlay.style';
 
 interface Props {

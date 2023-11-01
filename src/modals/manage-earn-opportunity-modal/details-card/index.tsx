@@ -28,6 +28,7 @@ import { useInterval } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
+
 import { StatsItem } from './stats-item';
 import { useDetailsCardStyles } from './styles';
 import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';

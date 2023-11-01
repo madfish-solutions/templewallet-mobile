@@ -7,6 +7,7 @@ import { loadSwapDexesAction, loadSwapTokensAction, resetSwapParamsAction } from
 import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 import { isDefined } from '../../utils/is-defined';
+
 import { SwapForm } from './swap-form/swap-form';
 
 export const SwapScreen: FC = () => {

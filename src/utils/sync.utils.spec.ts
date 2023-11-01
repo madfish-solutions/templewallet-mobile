@@ -1,5 +1,6 @@
 import { SyncPayloadInterface } from '../interfaces/sync.interface';
 import { mockReactNativeThemis } from '../mocks/react-native-themis.mock';
+
 import { isSyncPayload, parseSyncPayload, TEMPLE_SYNC_PREFIX } from './sync.utils';
 
 const prefixB64 = Buffer.from(TEMPLE_SYNC_PREFIX).toString('base64');

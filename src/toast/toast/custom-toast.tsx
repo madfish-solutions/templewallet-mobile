@@ -16,6 +16,7 @@ import { isDefined } from '../../utils/is-defined';
 import { isString } from '../../utils/is-string';
 import { tzktUrl } from '../../utils/linking';
 import { hexa } from '../../utils/style.util';
+
 import { useToastStyles } from './toast.styles';
 
 interface Props {

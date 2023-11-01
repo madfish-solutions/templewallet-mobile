@@ -8,6 +8,7 @@ import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { DexIcon } from '../dex-icon/dex-icon';
+
 import { useHopItemStyles } from './hop-item.styles';
 
 interface Props {

@@ -1,5 +1,6 @@
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
+
 import { MemberInterface } from './member.interface';
 
 export interface OperationInterface {

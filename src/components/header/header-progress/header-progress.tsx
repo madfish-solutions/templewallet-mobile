@@ -1,8 +1,10 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { formatSize } from '../../../styles/format-size';
+import { formatSize } from 'src/styles/format-size';
+
 import { Divider } from '../../divider/divider';
+
 import { useHeaderProgressStyles } from './header-progress.styles';
 
 const progressContainerWidth = formatSize(48);
@@ -19,7 +21,7 @@ export const HeaderProgress: FC<Props> = ({ current, total }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>
+      <Text style={styles.text} numberOfLines={1}>
         {current}/{total}
       </Text>
 

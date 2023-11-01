@@ -4,6 +4,7 @@ import { RpcClient } from '@taquito/rpc';
 import memoize from 'mem';
 
 import { isDefined } from '../is-defined';
+
 import { NoVespaiachHttpBackend } from './no-vespaiach-http-backend';
 
 interface RPCOptions {

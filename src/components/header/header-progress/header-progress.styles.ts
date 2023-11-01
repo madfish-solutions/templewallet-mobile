@@ -6,7 +6,9 @@ import { formatSize } from '../../../styles/format-size';
 export const useHeaderProgressStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     alignItems: 'center',
-    marginHorizontal: formatSize(16)
+    justifyContent: 'center',
+    marginHorizontal: formatSize(16),
+    minWidth: formatSize(60)
   },
   text: {
     ...typography.caption13Semibold,

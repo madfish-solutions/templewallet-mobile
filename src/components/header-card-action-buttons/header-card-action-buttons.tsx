@@ -10,18 +10,19 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
-import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { ButtonMedium } from '../button/button-medium/button-medium';
 import { useButtonMediumStyleConfig } from '../button/button-medium/button-medium.styles';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { Divider } from '../divider/divider';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { useHeaderCardActionButtonsStyles } from './header-card-action-buttons.styles';
 
 interface Props {
@@ -34,7 +35,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const { balance } = useTotalBalance();
   const styles = useHeaderCardActionButtonsStyles();
   const defaultStyleConfig = useButtonMediumStyleConfig();

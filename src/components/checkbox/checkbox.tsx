@@ -1,5 +1,5 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useCallback } from 'react';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Path, Rect, Svg } from 'react-native-svg';
 
 import { emptyFn } from 'src/config/general';

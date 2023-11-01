@@ -5,6 +5,7 @@ import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { getABGroup$ } from '../../apis/temple-wallet';
+
 import { getUserTestingGroupNameActions } from './ab-testing-actions';
 
 const getUserTestingGroupNameEpic = (action$: Observable<Action>) =>

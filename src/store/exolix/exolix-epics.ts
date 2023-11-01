@@ -10,6 +10,7 @@ import { loadExolixCurrencies, loadExolixExchangeData, submitExolixExchange } fr
 import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from 'src/utils/security.utils';
 
 import type { RootState } from '../types';
+
 import {
   loadExolixCurrenciesAction,
   loadExolixExchangeDataActions,

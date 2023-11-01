@@ -6,6 +6,7 @@ import memoize from 'mem';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ReadOnlySigner } from '../read-only.signer.util';
+
 import { getFastRpcClient } from './fast-rpc';
 
 const michelEncoder = new MichelCodecPacker();

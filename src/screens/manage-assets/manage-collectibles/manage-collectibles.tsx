@@ -1,15 +1,15 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React from 'react';
+import React, { memo } from 'react';
 import { Text } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useCollectiblesListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
@@ -22,12 +22,12 @@ const renderItem: ListRenderItem<TokenInterface> = ({ item }) => <ManageAssetsIt
 
 const ListEmptyComponent = <DataPlaceholder text="No collectibles matching search criteria were found" />;
 
-export const ManageCollectibles = () => {
+export const ManageCollectibles = memo(() => {
   const styles = useManageAssetsStyles();
 
   const { isTezosNode } = useNetworkInfo();
 
-  const collectiblesList = useCollectiblesListSelector();
+  const collectiblesList = useCurrentAccountCollectibles();
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectiblesList);
 
   return (
@@ -46,4 +46,4 @@ export const ManageCollectibles = () => {
       />
     </>
   );
-};
+});

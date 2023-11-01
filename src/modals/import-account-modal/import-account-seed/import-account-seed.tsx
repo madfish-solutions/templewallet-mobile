@@ -23,6 +23,7 @@ import { formatSize } from '../../../styles/format-size';
 import { isString } from '../../../utils/is-string';
 import { seedToPrivateKey } from '../../../utils/keys.util';
 import { ImportAccountStyles } from '../import-account.styles';
+
 import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
 import {
   importAccountSeedInitialValues,

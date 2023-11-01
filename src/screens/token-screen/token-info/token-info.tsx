@@ -9,6 +9,7 @@ import { TokenTypeEnum } from '../../../interfaces/token-type.enum';
 import { TokenInterface } from '../../../token/interfaces/token.interface';
 import { copyStringToClipboard } from '../../../utils/clipboard.utils';
 import { isDefined } from '../../../utils/is-defined';
+
 import { useTokenInfoStyles } from './token-info.styles';
 
 interface Props {

@@ -24,6 +24,7 @@ import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 import { DetailsSection } from '../details-section';
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
+
 import { earnOpportunitiesRisksPoints } from './constants';
 import { useAssetAmountInputStylesConfig, useStakeFormStyles } from './styles';
 import { StakeFormValues } from './use-stake-formik';

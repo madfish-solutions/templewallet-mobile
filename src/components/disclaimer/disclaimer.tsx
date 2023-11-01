@@ -4,6 +4,7 @@ import { Text } from 'react-native';
 import { isDefined } from '../../utils/is-defined';
 import { AttentionMessage } from '../attention-message/attention-message';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { useDisclaimerStyles } from './disclaimer.styles';
 
 interface Props {

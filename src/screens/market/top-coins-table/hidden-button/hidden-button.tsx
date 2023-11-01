@@ -9,6 +9,7 @@ import { formatSize } from '../../../../styles/format-size';
 import { AnalyticsEventCategory } from '../../../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../../../utils/analytics/use-analytics.hook';
 import { conditionalStyle } from '../../../../utils/conditional-style';
+
 import { useHiddenButtonStyles } from './hidden-button.styles';
 
 interface Props extends TestIdProps {

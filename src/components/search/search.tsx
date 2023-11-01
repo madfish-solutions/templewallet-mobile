@@ -12,6 +12,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { Divider } from '../divider/divider';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
+
 import { useSearchStyles } from './search.styles';
 
 interface Props extends TestIdProps {
@@ -73,7 +74,7 @@ export const Search: FC<Props> = ({
         <>
           {children}
           <Divider size={formatSize(dividerSize)} />
-          <TouchableIcon name={IconNameEnum.Search} size={formatSize(16)} onPress={() => setIsSearchMode(true)} />
+          <TouchableIcon name={IconNameEnum.SearchNew} onPress={() => setIsSearchMode(true)} />
         </>
       )}
     </View>

@@ -23,6 +23,7 @@ import { FormPasswordInput } from '../../../../form/form-password-input';
 import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
 import { formatSize } from '../../../../styles/format-size';
 import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
+
 import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
 

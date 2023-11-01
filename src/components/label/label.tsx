@@ -5,6 +5,7 @@ import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
 import { Divider } from '../divider/divider';
+
 import { DescriptionType, Description } from './description';
 import { useLabelStyles } from './styles';
 

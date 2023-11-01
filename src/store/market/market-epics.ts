@@ -11,6 +11,7 @@ import {
 } from 'src/utils/market.utils';
 
 import { RootState } from '../types';
+
 import { loadMarketTokensSlugsActions, loadMarketTokensActions } from './market-actions';
 
 const loadMarketTokensSlugs$ = () => from(fetchMarketTokensSlugs());

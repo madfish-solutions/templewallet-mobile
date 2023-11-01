@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { TokenTypeEnum } from '../interfaces/token-type.enum';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { getTokenType } from '../token/utils/token.utils';
+import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
+import { getTokenType } from 'src/token/utils/token.utils';
+
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 
 export const useTokenType = (address: string) => {
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [tokenType, setTokenType] = useState<TokenTypeEnum>(TokenTypeEnum.FA_1_2);

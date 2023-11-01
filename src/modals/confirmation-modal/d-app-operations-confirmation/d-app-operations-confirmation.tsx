@@ -6,6 +6,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { isDefined } from 'src/utils/is-defined';
 
 import { DAppOperationsConfirmationModalParams } from '../confirmation-modal.params';
+
 import { LoadingRequest } from './loading-request/loading-request';
 import { OperationRequestConfirmation } from './operation-request-confirmation/operation-request-confirmation';
 import { PermissionRequestConfirmation } from './permission-request-confirmation/permission-request-confirmation';
