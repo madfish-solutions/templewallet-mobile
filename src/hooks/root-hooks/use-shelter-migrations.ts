@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -11,15 +11,24 @@ export const useShelterMigrations = async () => {
   const biometricsEnabled = useBiometricsEnabledSelector();
   const dispatch = useDispatch();
 
+  const doMigrations = useCallback(() => {
+    dispatch(showLoaderAction());
+    Shelter.doMigrations$().subscribe({
+      next: () => dispatch(hideLoaderAction()),
+      error: err => {
+        console.error(err);
+        dispatch(hideLoaderAction());
+        Alert.alert('Data migration', err.message);
+      }
+    });
+  }, [dispatch]);
+
   useEffect(() => {
     (async () => {
       if (!(await Shelter.shouldDoSomeMigrations())) {
-        console.log('No shelter migrations needed');
-
         return;
       }
 
-      console.log('Starting shelter migration', biometricsEnabled, shouldUseOnlySoftwareInV1);
       if (biometricsEnabled && shouldUseOnlySoftwareInV1) {
         Alert.alert(
           'Data migration',
@@ -29,20 +38,7 @@ security chip. Please confirm the migration using your biometrics to maintain un
           [
             {
               text: 'Confirm',
-              onPress: () => {
-                dispatch(showLoaderAction());
-                Shelter.doMigrations$().subscribe({
-                  next: () => {
-                    console.log('next');
-                    dispatch(hideLoaderAction());
-                  },
-                  error: err => {
-                    console.error(err);
-                    dispatch(hideLoaderAction());
-                    Alert.alert('Data migration', err.message);
-                  }
-                });
-              }
+              onPress: doMigrations
             },
             {
               text: 'Cancel',
@@ -50,6 +46,8 @@ security chip. Please confirm the migration using your biometrics to maintain un
             }
           ]
         );
+      } else {
+        doMigrations();
       }
     })();
   }, [dispatch, biometricsEnabled]);
