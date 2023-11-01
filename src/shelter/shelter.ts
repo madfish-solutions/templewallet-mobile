@@ -54,10 +54,8 @@ export class Shelter {
               passwordServices.map(async (passwordService): Promise<PasswordServiceMigrationResult> => {
                 let password: false | Keychain.UserCredentials = false;
                 try {
-                  console.log(`Copying ${passwordService}`);
                   const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
                   password = await Keychain.getGenericPassword(oldPasswordServiceOptions);
-                  console.log('x1', passwordService, oldPasswordServiceOptions, password);
 
                   if (password === false) {
                     return { isSuccess: false, password };
@@ -69,7 +67,6 @@ export class Shelter {
                     password.password,
                     newPasswordServiceOptions
                   );
-                  console.log('x2', passwordService, newPasswordServiceOptions, result);
 
                   return { isSuccess: result !== false, password };
                 } catch (e) {
@@ -81,8 +78,6 @@ export class Shelter {
             );
 
             if (migrationResults.every(({ isSuccess }) => isSuccess)) {
-              console.log('x3');
-
               return;
             }
 
@@ -94,25 +89,25 @@ export class Shelter {
                 if (migrationResult.isSuccess) {
                   const { username, password } = migrationResult.password;
                   const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
-                  console.log('x5', passwordService, result);
 
                   if (result === false) {
                     throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
                   }
                 } else if (isDefined(migrationResult.error)) {
-                  console.log('x6', passwordService, migrationResult);
-                  // TODO: add some handling
+                  const { error } = migrationResult;
+
+                  if (error instanceof Error && error.message === 'code: 13, msg: Cancel') {
+                    return;
+                  }
+
                   throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
                 } else {
-                  console.log('x7', passwordService, migrationResult);
-
                   if (migrationResult.password === false) {
                     return;
                   }
 
                   const { username, password } = migrationResult.password;
                   const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
-                  console.log('x8', passwordService, result);
 
                   if (result === false) {
                     throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
@@ -121,13 +116,13 @@ export class Shelter {
               })
             );
 
-            console.log('x8');
             throw new Error(MIGRATION_ERROR_MESSAGE);
           })()
         )
       )
     );
 
+  // TODO: add logic for __DEV__ variable
   private static migrateFromSamsungOrGoogleChip$ = () =>
     shouldUseOnlySoftwareInV1 ? Shelter.migrateFromChip$() : of(undefined);
 
