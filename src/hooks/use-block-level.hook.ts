@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
-
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 
 export const useBlockLevel = () => {
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
   const [blockLevel, setBlockLevel] = useState<number>();
 
   useEffect(() => {

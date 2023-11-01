@@ -2,6 +2,7 @@ import { validateMnemonic } from 'bip39';
 import { string } from 'yup';
 
 import { isDefined } from '../../utils/is-defined';
+
 import { makeRequiredErrorMessage } from './messages';
 
 const wordsCountError = '12, 15, 18, 21 or 24 words';

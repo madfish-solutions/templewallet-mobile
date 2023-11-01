@@ -46,4 +46,6 @@ export const setIsOnRampHasBeenShownBeforeAction = createAction<boolean>(
 
 export const walletOpenedAction = createAction<void>('settings/APPLICATION_OPENED_ACTION');
 
+export const switchIsShowCollectibleInfoAction = createAction('settings/SET_IS_SHOW_COLLECTIBLE_INFO_ACTION');
+
 export const setAdsBannerVisibilityAction = createAction<boolean>('settings/TURN_OFF_ADS_BANNER_ACTION');

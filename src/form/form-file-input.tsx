@@ -2,6 +2,7 @@ import { useField } from 'formik';
 import React, { FC } from 'react';
 
 import { FileInput, FileInputProps, FileInputValue } from '../components/file-input/file-input';
+
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props extends Omit<FileInputProps, 'value' | 'onChange'> {

@@ -7,6 +7,7 @@ import { ScreenContainer } from '../../components/screen-container/screen-contai
 import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import { ImportWatchOnlyDebug } from './import-watch-only-debug/import-watch-only-debug';
 
 export const Debug: FC = () => {

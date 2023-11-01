@@ -11,6 +11,7 @@ import { isString } from '../../utils/is-string';
 import { ButtonLargePrimary } from '../button/button-large/button-large-primary/button-large-primary';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
+
 import { useFileInputStyles } from './file-input.styles';
 
 export interface FileInputValue {

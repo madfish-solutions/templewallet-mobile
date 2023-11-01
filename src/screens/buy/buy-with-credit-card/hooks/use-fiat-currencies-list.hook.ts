@@ -6,6 +6,7 @@ import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { isDefined } from 'src/utils/is-defined';
 
 import { mergeProvidersLimits } from '../utils';
+
 import { useFilteredCurrencies } from './use-filtered-currencies';
 
 export const useFiatCurrenciesList = (inputCurrencySymbol: string, outputTokenSymbol: string) => {

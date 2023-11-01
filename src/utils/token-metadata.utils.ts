@@ -1,22 +1,20 @@
 import { BigNumber } from 'bignumber.js';
+import { chunk } from 'lodash-es';
 import memoize from 'mem';
-import { from, Observable, of } from 'rxjs';
+import { useCallback } from 'react';
+import { forkJoin, from, Observable, of } from 'rxjs';
 import { map, filter, withLatestFrom } from 'rxjs/operators';
 
 import { tezosMetadataApi, whitelistApi } from 'src/api.service';
-import { UNKNOWN_TOKEN_SYMBOL } from 'src/config/general';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import type { RootState } from 'src/store/types';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import {
-  emptyTokenMetadata,
-  TokenMetadataInterface,
-  TokenStandardsEnum
-} from 'src/token/interfaces/token-metadata.interface';
+import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import type { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
 import { getDollarValue } from './balance.utils';
-import { FiatCurrenciesEnum } from './exchange-rate.util';
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';
 import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
@@ -55,20 +53,25 @@ interface TokenListItem {
   type: 'FA2' | 'FA12';
 }
 
-const transformDataToTokenMetadata = (token: TokenMetadataResponse | null, address: string, id: number) =>
-  !isDefined(token)
-    ? null
-    : {
-        id,
-        address,
-        decimals: token.decimals,
-        symbol: token.symbol ?? token.name?.substring(0, 8) ?? '???',
-        name: token.name ?? token.symbol ?? 'Unknown Token',
-        thumbnailUri: token.thumbnailUri,
-        artifactUri: token.artifactUri
-      };
+const transformDataToTokenMetadata = (
+  token: TokenMetadataResponse,
+  address: string,
+  id: number
+): TokenMetadataInterface => ({
+  id,
+  address,
+  decimals: token.decimals,
+  symbol: token.symbol ?? token.name?.substring(0, 8) ?? '???',
+  name: token.name ?? token.symbol ?? 'Unknown Token',
+  thumbnailUri: token.thumbnailUri,
+  artifactUri: token.artifactUri
+});
 
-const transformWhitelistToTokenMetadata = (token: TokenListItem, address: string, id: number) => ({
+const transformWhitelistToTokenMetadata = (
+  token: TokenListItem,
+  address: string,
+  id: number
+): TokenMetadataInterface => ({
   id,
   address,
   decimals: token.metadata.decimals,
@@ -78,75 +81,16 @@ const transformWhitelistToTokenMetadata = (token: TokenListItem, address: string
   standard: token.type === 'FA12' ? TokenStandardsEnum.Fa12 : TokenStandardsEnum.Fa2
 });
 
-export const normalizeTokenMetadata = (
-  selectedRpcUrl: string,
-  slug: string,
-  rawMetadata?: TokenMetadataInterface
-): TokenMetadataInterface => {
-  const [tokenAddress, tokenId] = slug.split('_');
-  const gasTokenMetadata = getNetworkGasTokenMetadata(selectedRpcUrl);
+export const useTokenMetadataGetter = () => {
+  const tokensMetadata = useTokensMetadataSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
-  return slug === TEZ_TOKEN_SLUG
-    ? gasTokenMetadata
-    : rawMetadata ?? {
-        ...emptyTokenMetadata,
-        symbol: UNKNOWN_TOKEN_SYMBOL,
-        name: `${tokenAddress} ${tokenId}`,
-        address: tokenAddress,
-        id: Number(tokenId ?? 0)
-      };
-};
-
-export const getFiatToUsdRate = (state: RootState) => {
-  const fiatExchangeRates = state.currency.fiatToTezosRates.data;
-  const fiatCurrency = state.settings.fiatCurrency;
-  const tezUsdExchangeRates = state.currency.usdToTokenRates.data[TEZ_TOKEN_SLUG];
-
-  // Coingecko and Temple Wallet APIs return slightly different TEZ/USD exchange rates
-  if (fiatCurrency === FiatCurrenciesEnum.USD) {
-    return 1;
-  }
-
-  const fiatExchangeRate: number | undefined = fiatExchangeRates[fiatCurrency.toLowerCase()];
-  const exchangeRateTezos: number | undefined = tezUsdExchangeRates;
-
-  if (isDefined(fiatExchangeRate) && isDefined(exchangeRateTezos)) {
-    return fiatExchangeRate / exchangeRateTezos;
-  }
-
-  return undefined;
-};
-
-const getTokenExchangeRate = (state: RootState, slug: string) => {
-  const tokenUsdExchangeRate = state.currency.usdToTokenRates.data[slug];
-  const fiatToUsdRate = getFiatToUsdRate(state);
-
-  return isDefined(tokenUsdExchangeRate) && isDefined(fiatToUsdRate) ? tokenUsdExchangeRate * fiatToUsdRate : undefined;
-};
-
-export const getTokenMetadata = (state: RootState, slug: string) => {
-  const tokenMetadata = normalizeTokenMetadata(
-    state.settings.selectedRpcUrl,
-    slug,
-    state.tokensMetadata.metadataRecord[slug]
+  return useCallback(
+    (slug: string): TokenMetadataInterface | undefined =>
+      slug === TEZ_TOKEN_SLUG ? getNetworkGasTokenMetadata(selectedRpcUrl) : tokensMetadata[slug],
+    [tokensMetadata, selectedRpcUrl]
   );
-  const exchangeRate = getTokenExchangeRate(state, slug);
-
-  return {
-    ...tokenMetadata,
-    exchangeRate
-  };
 };
-
-export const withMetadataSlugs =
-  <T>(state$: Observable<RootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
-        value,
-        tokensMetadata.metadataRecord
-      ])
-    );
 
 export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetadataInterface>> =>
   isDcpNode(selectedRpc)
@@ -171,9 +115,6 @@ export const loadTokenMetadata$ = memoize(
       return of(overridenTokenMetadata);
     }
 
-    const slug = `${address}_${id}`;
-    console.log('Loading metadata for:', slug);
-
     return from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
       map(({ data }) => transformDataToTokenMetadata(data, address, id)),
       filter(isDefined)
@@ -182,33 +123,65 @@ export const loadTokenMetadata$ = memoize(
   { cacheKey: ([address, id]) => getTokenSlug({ address, id }) }
 );
 
-export const loadTokensMetadata$ = memoize(
-  (slugs: Array<string>): Observable<Array<TokenMetadataInterface>> =>
-    from(tezosMetadataApi.post<Array<TokenMetadataResponse | null>>('/', slugs)).pipe(
-      map(({ data }) =>
-        data
-          .map((token, index) => {
-            const [address, id] = slugs[index].split('_');
-            const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
-              token => token.address === address && token.id === Number(id)
-            );
+const METADATA_CHUNK_SIZE = 100;
 
-            return overridenTokenMetadata ?? transformDataToTokenMetadata(token, address, Number(id));
-          })
-          .filter(isDefined)
+export const loadTokensMetadata$ = memoize(
+  (slugs: string[]): Observable<TokenMetadataInterface[]> =>
+    forkJoin(
+      // Parallelizing
+      chunk(slugs, METADATA_CHUNK_SIZE).map(slugsChunk =>
+        tezosMetadataApi.post<(TokenMetadataResponse | null)[]>('/', slugsChunk).then(({ data }) => data)
       )
+    ).pipe(
+      map(tokensChunks => tokensChunks.flat()),
+      map(tokens =>
+        tokens.map((token, index) => {
+          const slug = slugs[index]!;
+          const [address, id] = slug.split('_');
+          const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
+            token => token.address === address && token.id === Number(id)
+          );
+
+          if (overridenTokenMetadata) {
+            return overridenTokenMetadata;
+          }
+
+          return token && transformDataToTokenMetadata(token, address, Number(id));
+        })
+      ),
+      map(tokens => tokens.filter(isDefined))
     )
 );
 
-export const isAssetSearched = ({ name, symbol, address }: Partial<TokenInterface>, lowerCaseSearchValue: string) =>
+interface SearchableAsset extends Pick<TokenInterface, 'name' | 'symbol'> {
+  address?: string;
+}
+
+export const isAssetSearched = ({ name, symbol, address }: SearchableAsset, lowerCaseSearchValue: string) =>
   Boolean(name?.toLowerCase().includes(lowerCaseSearchValue)) ||
   Boolean(symbol?.toLowerCase().includes(lowerCaseSearchValue)) ||
   Boolean(address?.toLowerCase().includes(lowerCaseSearchValue));
 
-export const applySortByDollarValueDecrease = (assets: TokenInterface[]) =>
+type SortableByDollarAsset = Pick<TokenInterface, 'decimals' | 'balance' | 'exchangeRate'>;
+
+export const applySortByDollarValueDecrease: <T extends SortableByDollarAsset>(assets: T[]) => T[] = assets =>
   assets.sort((a, b) => {
-    const aDollarValue = isTruthy(a.exchangeRate) ? getDollarValue(a.balance, a, a.exchangeRate) : BigNumber(0);
-    const bDollarValue = isTruthy(b.exchangeRate) ? getDollarValue(b.balance, b, b.exchangeRate) : BigNumber(0);
+    const aDollarValue = isTruthy(a.exchangeRate)
+      ? getDollarValue(a.balance, a.decimals, a.exchangeRate)
+      : BigNumber(0);
+    const bDollarValue = isTruthy(b.exchangeRate)
+      ? getDollarValue(b.balance, b.decimals, b.exchangeRate)
+      : BigNumber(0);
 
     return bDollarValue.minus(aDollarValue).toNumber();
   });
+
+export const withMetadataSlugs =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
+        value,
+        tokensMetadata.metadataRecord
+      ])
+    );

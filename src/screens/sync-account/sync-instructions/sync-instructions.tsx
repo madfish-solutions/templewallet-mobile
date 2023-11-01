@@ -10,6 +10,7 @@ import { ScreenContainer } from '../../../components/screen-container/screen-con
 import { ScreensEnum } from '../../../navigator/enums/screens.enum';
 import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
+
 import { SyncInstructionsSelectors } from './sync-instructions.selectors';
 import { useSyncInstructionsStyles } from './sync-instructions.styles';
 

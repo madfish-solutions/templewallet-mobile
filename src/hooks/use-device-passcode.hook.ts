@@ -3,6 +3,7 @@ import { isPinOrFingerprintSet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
 import { resetApplicationAction } from '../store/root-state.actions';
+
 import { useAppStateStatus } from './use-app-state-status.hook';
 
 export const useDevicePasscode = () => {

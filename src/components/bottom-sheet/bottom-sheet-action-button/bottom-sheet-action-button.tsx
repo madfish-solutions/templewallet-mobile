@@ -1,14 +1,15 @@
 import React, { FC } from 'react';
-import { StyleProp, Text, TextStyle, TouchableWithoutFeedbackProps } from 'react-native';
+import { StyleProp, Text, TextStyle } from 'react-native';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { setTestID } from 'src/utils/test-id.utils';
 
-import { TouchableWithAnalytics } from '../../touchable-with-analytics';
+import { TouchableOpacityComponentProps, TouchableWithAnalytics } from '../../touchable-with-analytics';
+
 import { useBottomSheetActionButtonStyles } from './bottom-sheet-action-button.styles';
 
-interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress' | 'disabled'>, TestIdProps {
+interface Props extends Pick<TouchableOpacityComponentProps, 'style' | 'onPress' | 'disabled'>, TestIdProps {
   title: string;
   titleStyle?: StyleProp<TextStyle>;
 }

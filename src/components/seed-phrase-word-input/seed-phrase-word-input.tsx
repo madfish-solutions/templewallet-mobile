@@ -6,6 +6,7 @@ import { formatSize } from '../../styles/format-size';
 import { setTestID } from '../../utils/test-id.utils';
 import { Divider } from '../divider/divider';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
+
 import { SeedPhraseWordInputSelectors } from './seed-phrase-word-input.selectors';
 import { useSeedPhraseWordInputStyles } from './seed-phrase-word-input.styles';
 

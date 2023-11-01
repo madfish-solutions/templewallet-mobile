@@ -5,6 +5,7 @@ import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interf
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 
 import { createActions } from '../create-actions';
+
 import { UserStakeInterface } from './state';
 
 export const loadAllSavingsAndStakesAction = createAction<void>('savings/LOAD_ALL_SAVINGS_AND_STAKES');

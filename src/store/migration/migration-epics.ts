@@ -11,6 +11,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { emptyAction } from '../root-state.actions';
 import type { RootState } from '../types';
+
 import {
   addDcpTokensMetadata,
   deleteOldIsShownDomainName,

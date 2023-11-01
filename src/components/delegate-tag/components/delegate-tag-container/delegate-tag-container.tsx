@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { TokenInterface } from '../../../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../../../token/utils/token.utils';
 import { useApyStyles } from '../../../token-screen-content-container/apy.styles';
+
 import { useDelegateTagContainerStyles } from './delegate-tag-container.styles';
 
 interface DelegateTagContainerProps {

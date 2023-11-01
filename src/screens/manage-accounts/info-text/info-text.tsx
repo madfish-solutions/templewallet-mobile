@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 
 import { Divider } from '../../../components/divider/divider';
 import { formatSize } from '../../../styles/format-size';
+
 import { useInfoTextStyles } from './info-text.styles';
 
 export const InfoText = () => {

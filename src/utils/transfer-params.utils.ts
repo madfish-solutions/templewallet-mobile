@@ -8,6 +8,7 @@ import { AccountInterface } from '../interfaces/account.interface';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
+
 import { isString } from './is-string';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 

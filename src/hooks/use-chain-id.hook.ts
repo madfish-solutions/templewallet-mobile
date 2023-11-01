@@ -6,6 +6,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { READ_ONLY_SIGNER_PUBLIC_KEY, READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from 'src/utils/env.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
+/** @deprecated // Flawed logic. Manifests in a wrong initial value */
 export const useChainId = () => {
   const [chainId, setChainId] = useState<string>(ChainIds.MAINNET);
   const rpcUrl = useSelectedRpcUrlSelector();

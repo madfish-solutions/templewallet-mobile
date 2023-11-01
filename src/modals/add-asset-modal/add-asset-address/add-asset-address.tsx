@@ -3,22 +3,23 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
-import { Divider } from '../../../components/divider/divider';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../components/label/label';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { EmptyFn } from '../../../config/general';
-import { FormAddressInput } from '../../../form/form-address-input';
-import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
-import { useReadOnlyTezosToolkit } from '../../../hooks/use-read-only-tezos-toolkit.hook';
-import { loadTokenSuggestionActions } from '../../../store/tokens-metadata/tokens-metadata-actions';
-import { useAssetsListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { showErrorToast, showWarningToast } from '../../../toast/toast.utils';
-import { getTokenSlug, isValidTokenContract } from '../../../token/utils/token.utils';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { Divider } from 'src/components/divider/divider';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { EmptyFn } from 'src/config/general';
+import { FormAddressInput } from 'src/form/form-address-input';
+import { FormNumericInput } from 'src/form/form-numeric-input/form-numeric-input';
+import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { loadTokenSuggestionActions } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { useCurrentAccountStoredAssetsListSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { showErrorToast, showWarningToast } from 'src/toast/toast.utils';
+import { getTokenSlug, isValidTokenContract } from 'src/token/utils/token.utils';
+
 import {
   addTokenAddressFormInitialValues,
   addTokenAddressFormValidationSchema,
@@ -33,19 +34,20 @@ interface Props {
 
 export const AddAssetAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted }) => {
   const dispatch = useDispatch();
-  const selectedAccount = useSelectedAccountSelector();
-  const assetsList = useAssetsListSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
+
+  const assets = useCurrentAccountStoredAssetsListSelector();
 
   const onSubmit = ({ id, address }: AddTokenAddressFormValues) => {
     const token = { address, id: id?.toNumber() ?? 0 };
+    const slug = getTokenSlug(token);
 
     tezos.contract
       .at(address)
       .then(contract => {
         if (!isValidTokenContract(contract)) {
           showErrorToast({ description: 'Invalid token address' });
-        } else if (assetsList.find(item => getTokenSlug(item) === getTokenSlug(token)) !== undefined) {
+        } else if (assets?.some(item => item.slug === slug)) {
           showErrorToast({ description: 'Token with this address already added to this account.' });
         } else {
           dispatch(loadTokenSuggestionActions.submit(token));

@@ -1,7 +1,7 @@
 import { DefaultTheme, Theme } from '@react-navigation/native';
 import { useMemo } from 'react';
 
-import { useColors } from '../../styles/use-colors';
+import { useColors } from 'src/styles/use-colors';
 
 export const useNavigationContainerTheme = () => {
   const colors = useColors();

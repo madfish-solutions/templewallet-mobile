@@ -43,6 +43,20 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/temple_url_scheme" />
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+              <action android:name="android.intent.action.VIEW"/>
+              <category android:name="android.intent.category.DEFAULT"/>
+              <category android:name="android.intent.category.BROWSABLE"/>
+              <data android:scheme="https" android:host="templenft.page.link"/>
+              <data android:scheme="http"  android:host="templenft.page.link"/>
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+              <action android:name="android.intent.action.VIEW"/>
+              <category android:name="android.intent.category.DEFAULT"/>
+              <category android:name="android.intent.category.BROWSABLE"/>
+              <data android:scheme="https" android:host="link.templewallet.com"/>
+              <data android:scheme="http"  android:host="link.templewallet.com"/>
+            </intent-filter>
         </activity>
 
       <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->

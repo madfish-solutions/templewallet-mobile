@@ -8,6 +8,7 @@ import { getOptimalPromotion } from 'src/utils/optimal.utils';
 import { withSelectedAccount } from 'src/utils/wallet.utils';
 
 import { RootState } from '../types';
+
 import { loadPartnersPromoActions } from './partners-promotion-actions';
 
 const loadPartnersPromotionEpic: Epic<Action, Action, RootState> = (action$, state$) =>

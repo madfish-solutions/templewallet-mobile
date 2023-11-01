@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, PropsWithChildren, useCallback, useEffect, useRef } from 'react';
-import { Animated, View } from 'react-native';
+import { Animated, StyleProp, View, ViewStyle } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { EventFn } from 'src/config/general';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
@@ -12,32 +12,34 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
 export interface SegmentedControlProps<T> extends TestIdProps {
-  disabledValuesIndices?: number[];
+  disabledIndexes?: number[];
   selectedIndex: number;
   values: T[];
   width?: number;
   onChange: EventFn<number>;
+  style?: StyleProp<ViewStyle>;
   optionAnalyticsPropertiesFn?: (value: T, index: number) => object | undefined;
 }
 
 interface Props<T> extends SegmentedControlProps<T> {
-  renderValue: SegmentedControlValueComponent<T>;
+  ValueComponent: FC<SegmentedControlValueComponentProps<T>>;
 }
 
-export type SegmentedControlValueComponent<T> = FC<{
+export interface SegmentedControlValueComponentProps<T> {
   item: T;
   isDisabled: boolean;
   isSelected: boolean;
-}>;
+}
 
 const defaultOptionAnalyticsPropertiesFn = (_: unknown, index: number) => ({ index });
 
 export const SegmentedControl = <T extends unknown>({
-  disabledValuesIndices,
+  disabledIndexes,
   selectedIndex,
   values,
-  renderValue,
+  ValueComponent,
   width,
+  style,
   testID,
   testIDProperties,
   optionAnalyticsPropertiesFn = defaultOptionAnalyticsPropertiesFn,
@@ -63,11 +65,11 @@ export const SegmentedControl = <T extends unknown>({
 
   const renderOption = useCallback(
     (item: T, index: number) => {
-      const disabled = disabledValuesIndices?.includes(index) ?? false;
+      const isDisabled = disabledIndexes?.includes(index) ?? false;
 
       return (
         <TouchableOpacity
-          disabled={disabled}
+          disabled={isDisabled}
           key={index}
           style={[styles.itemContainer, { width: tileWidth }]}
           hitSlop={{
@@ -84,23 +86,19 @@ export const SegmentedControl = <T extends unknown>({
             onChange(index);
           }}
         >
-          {renderValue({
-            item,
-            isDisabled: disabled,
-            isSelected: index === selectedIndex
-          })}
+          <ValueComponent item={item} isDisabled={isDisabled} isSelected={index === selectedIndex} />
         </TouchableOpacity>
       );
     },
     [
-      disabledValuesIndices,
+      disabledIndexes,
       styles,
       tileWidth,
       trackEvent,
       testID,
       testIDProperties,
       onChange,
-      renderValue,
+      ValueComponent,
       selectedIndex,
       values,
       optionAnalyticsPropertiesFn
@@ -108,7 +106,7 @@ export const SegmentedControl = <T extends unknown>({
   );
 
   return (
-    <View style={[styles.container, { width }]} onLayout={handleLayout}>
+    <View style={[styles.container, { width }, style]} onLayout={handleLayout}>
       <Animated.View style={[styles.tile, { width: tileWidth, transform: [{ translateX }] }]} />
 
       <View style={styles.contentContainer}>{values.map(renderOption)}</View>

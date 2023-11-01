@@ -1,6 +1,7 @@
 import { ToastTypeEnum } from '../enums/toast-type.enum';
 import { mockReactNativeClipboard } from '../mocks/react-native-clipboard-clipboard.mock';
 import { mockReactNativeToastMessage } from '../mocks/react-native-toast-message.mock';
+
 import { copyStringToClipboard } from './clipboard.utils';
 
 describe('copyStringToClipboard', () => {

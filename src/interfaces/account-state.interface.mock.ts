@@ -1,4 +1,5 @@
 import { mockAccountTokens } from '../token/interfaces/account-token.interface.mock';
+
 import { AccountStateInterface } from './account-state.interface';
 
 export const mockAccountState: AccountStateInterface = {

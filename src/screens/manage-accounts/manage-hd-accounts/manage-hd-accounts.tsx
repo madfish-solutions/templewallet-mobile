@@ -15,6 +15,7 @@ import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
+
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
 import { ManageHdAccountsSelectors } from './manage-hd-accounts.selectors';
 import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';

@@ -2,6 +2,7 @@ import { string } from 'yup';
 
 import { isDefined } from '../../utils/is-defined';
 import { isKTAddress, isValidAddress } from '../../utils/tezos.util';
+
 import { makeRequiredErrorMessage } from './messages';
 
 const invalidAddressError = 'Invalid address';

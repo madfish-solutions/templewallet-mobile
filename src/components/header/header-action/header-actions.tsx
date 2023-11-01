@@ -6,6 +6,7 @@ import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { formatSize } from '../../../styles/format-size';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TouchableIcon } from '../../icon/touchable-icon/touchable-icon';
+
 import { useHeaderTitleStyles } from './header-actions.styles';
 
 export const HeaderAction: FC = () => {

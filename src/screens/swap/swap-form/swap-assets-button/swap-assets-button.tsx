@@ -11,6 +11,7 @@ import { resetSwapParamsAction } from 'src/store/swap/swap-actions';
 import { formatSize } from 'src/styles/format-size';
 
 import { SwapFormSelectors } from '../swap-form.selectors';
+
 import { SwapAssetsButtonStyles } from './swap-assets-button.styles';
 
 export const SwapAssetsButton: FC = () => {

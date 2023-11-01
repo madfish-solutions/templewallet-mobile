@@ -2,21 +2,22 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
-import { CheckboxLabel } from '../../../components/checkbox-description/checkbox-label';
-import { Divider } from '../../../components/divider/divider';
-import { HeaderBackButton } from '../../../components/header/header-back-button/header-back-button';
-import { HeaderTitle } from '../../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../../components/header/use-navigation-set-options.hook';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../components/label/label';
-import { NewSeedPhraseAttention } from '../../../components/new-seed-phrase-attention/new-seed-phrase-attention';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { FormCheckbox } from '../../../form/form-checkbox';
-import { RevealSeedPhraseView } from '../../../modals/reveal-seed-phrase-modal/reveal-seed-phrase-form-content/reveal-seed-phrase-view/reveal-seed-phrase-view';
-import { useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
+import { Divider } from 'src/components/divider/divider';
+import { HeaderBackButton } from 'src/components/header/header-back-button/header-back-button';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { NewSeedPhraseAttention } from 'src/components/new-seed-phrase-attention/new-seed-phrase-attention';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { FormCheckbox } from 'src/form/form-checkbox';
+import { RevealSeedPhraseView } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-form-content/reveal-seed-phrase-view/reveal-seed-phrase-view';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+
 import {
   createNewWalletValidationSchema,
   CreateNewWalletFormValues,
@@ -31,7 +32,7 @@ interface Props {
 
 export const RevealSeedPhrase: FC<Props> = ({ onSubmit }) => {
   const styles = useCreateNewWalletStyles();
-  const selectedAccount = useSelectedAccountSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
 
   useNavigationSetOptions(
     {
@@ -56,7 +57,7 @@ export const RevealSeedPhrase: FC<Props> = ({ onSubmit }) => {
               description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
             />
             <RevealSeedPhraseView
-              publicKeyHash={selectedAccount.publicKeyHash}
+              publicKeyHash={accountPkh}
               testID={RevealSeedPhraseSelectors.tapToRevealProtectedMask}
             />
           </View>

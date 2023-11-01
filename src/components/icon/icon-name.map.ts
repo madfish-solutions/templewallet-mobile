@@ -1,6 +1,7 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import ActionIcon from './assets/action.svg';
 import AlertCircleIcon from './assets/alert-circle.svg';
 import AlertMonochromeIcon from './assets/alert-monochrome.svg';
 import ShieldIcon from './assets/alert-shield.svg';
@@ -13,13 +14,22 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
+import AudioIcon from './assets/audio.svg';
 import BellIcon from './assets/bell.svg';
+import BlurDark from './assets/blur-dark.svg';
+import BlurEyeBlack from './assets/blur-eye-black.svg';
+import BlurEyeWhite from './assets/blur-eye-white.svg';
+import BlurLight from './assets/blur-light.svg';
 import BookOpenIcon from './assets/book-open.svg';
+import BrokenImage from './assets/broken-image.svg';
+import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
 import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
+import CheckboxOffIcon from './assets/checkbox-off.svg';
+import CheckboxOnIcon from './assets/checkbox-on.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
@@ -49,9 +59,11 @@ import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
 import EarnIcon from './assets/earn.svg';
+import EditNewIcon from './assets/edit-new.svg';
 import EditIcon from './assets/edit.svg';
 import EndorsementsIcon from './assets/endorsements.svg';
 import ExolixIcon from './assets/exolix.svg';
+import ExternalLinkTagIcon from './assets/external-link-tag.svg';
 import ExternalLinkIcon from './assets/external-link.svg';
 import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
@@ -84,11 +96,13 @@ import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
 import MoonPayIcon from './assets/moonpay.svg';
 import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NewsIcon from './assets/news.svg';
+import NFTCollectionIcon from './assets/nft-collection.svg';
 import NFT from './assets/nft.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
 import PlentyIcon from './assets/plenty.svg';
+import PlusCircleNewIcon from './assets/plus-circle-new.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
 import PlusIcon from './assets/plus-icon.svg';
@@ -101,6 +115,7 @@ import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
 import RetryIcon from './assets/retry.svg';
+import SearchNewIcon from './assets/search-new.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
@@ -109,9 +124,11 @@ import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
 import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
 import SmileIcon from './assets/smile.svg';
 import DiscordIcon from './assets/socials/discord.svg';
+import GithubIcon from './assets/socials/github.svg';
 import RedditIcon from './assets/socials/reddit.svg';
 import TelegramIcon from './assets/socials/telegram.svg';
 import TwitterIcon from './assets/socials/twitter.svg';
+import WebsiteIcon from './assets/socials/website.svg';
 import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import SpicyIcon from './assets/spicy.svg';
@@ -119,6 +136,7 @@ import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
 import SwapInfo from './assets/swap-info.svg';
 import SwapRouteItemBackgroundIcon from './assets/swap-route-item-background.svg';
+import SwapSettingsNewIcon from './assets/swap-settings-new.svg';
 import SwapSettings from './assets/swap-settings.svg';
 import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
@@ -152,11 +170,15 @@ import YouvesIcon from './assets/youves.svg';
 import { IconNameEnum } from './icon-name.enum';
 
 export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
+  [IconNameEnum.Audio]: AudioIcon,
+  [IconNameEnum.Action]: ActionIcon,
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
   [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Bell]: BellIcon,
+  [IconNameEnum.Burn]: BurnIcon,
+  [IconNameEnum.BrokenImage]: BrokenImage,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
   [IconNameEnum.DetailsArrowDown]: DetailsArrowDownIcon,
   [IconNameEnum.DetailsArrowRight]: DetailsArrowRightIcon,
@@ -181,12 +203,14 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
+  [IconNameEnum.PlusCircleNew]: PlusCircleNewIcon,
   [IconNameEnum.HelpCircle]: HelpCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
   [IconNameEnum.SwapSettings]: SwapSettings,
+  [IconNameEnum.SwapSettingsNew]: SwapSettingsNewIcon,
   [IconNameEnum.InputXCircle]: InputXCircleIcon,
   [IconNameEnum.X]: XIcon,
   [IconNameEnum.XBold]: XBoldIcon,
@@ -210,6 +234,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.Uah]: UahIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
+  [IconNameEnum.Github]: GithubIcon,
+  [IconNameEnum.Website]: WebsiteIcon,
+  [IconNameEnum.NFTCollection]: NFTCollectionIcon,
   [IconNameEnum.Apple]: AppleIcon,
   [IconNameEnum.AppleOnDark]: AppleOnDarkIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
@@ -219,6 +246,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.AliceBob]: AliceBobIcon,
   [IconNameEnum.Utorg]: UtorgIcon,
   [IconNameEnum.Ramp]: RampIcon,
+  [IconNameEnum.BlurEyeBlack]: BlurEyeBlack,
+  [IconNameEnum.BlurEyeWhite]: BlurEyeWhite,
   /** deprecated icons **/
   [IconNameEnum.NoNameToken]: NoNameTokenIcon,
   [IconNameEnum.SwapTokenPlaceholderIcon]: SwapTokenPlaceholderIcon,
@@ -251,12 +280,15 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouTube]: YouTubeIcon,
   [IconNameEnum.Reddit]: RedditIcon,
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
+  [IconNameEnum.ExternalLinkTag]: ExternalLinkTagIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,
   [IconNameEnum.Search]: SearchIcon,
+  [IconNameEnum.SearchNew]: SearchNewIcon,
   [IconNameEnum.XSearch]: XSearchIcon,
   [IconNameEnum.Alert]: AlertIcon,
   [IconNameEnum.AlertMonochrome]: AlertMonochromeIcon,
   [IconNameEnum.Edit]: EditIcon,
+  [IconNameEnum.EditNew]: EditNewIcon,
   [IconNameEnum.TouchId]: TouchIdIcon,
   [IconNameEnum.Trash]: TrashIcon,
   [IconNameEnum.LogOut]: LogOutIcon,
@@ -280,7 +312,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.PlusIcon]: PlusIcon,
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.UkraineIcon]: UkraineIcon,
-  [IconNameEnum.NotificationDot]: NotificationDotIcon,
   [IconNameEnum.Market]: MarketIcon,
   [IconNameEnum.Earn]: EarnIcon,
   [IconNameEnum.EarnDapp]: EarnDappIcon,
@@ -291,6 +322,11 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Update]: UpdateIcon,
   [IconNameEnum.SwapRouteItemBackground]: SwapRouteItemBackgroundIcon,
   [IconNameEnum.NFT]: NFT,
+  [IconNameEnum.BlurLight]: BlurLight,
+  [IconNameEnum.BlurDark]: BlurDark,
+  [IconNameEnum.NotificationDot]: NotificationDotIcon,
+  [IconNameEnum.CheckboxOn]: CheckboxOnIcon,
+  [IconNameEnum.CheckboxOff]: CheckboxOffIcon,
   [IconNameEnum.QsEarnSource]: QsEarnSource,
   [IconNameEnum.LiquidityBakingLogo]: LiquidityBakingLogo,
   [IconNameEnum.Smile]: SmileIcon,

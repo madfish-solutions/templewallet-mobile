@@ -1,14 +1,18 @@
 import React, { ComponentType, FC, useCallback } from 'react';
-import { GestureResponderEvent, TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity as RNTouchableOpacity } from 'react-native';
+import { TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
-export type OriginalTouchableOpacityComponentType = ComponentType<TouchableOpacityProps>;
+type GHTouchableOpacityProps = typeof GHTouchableOpacity extends ComponentType<infer P> ? P : never;
 
-interface Props extends TouchableOpacityProps, TestIdProps {
-  Component?: OriginalTouchableOpacityComponentType;
+/** Taking `GHTouchableOpacityProps`, as a narrower type of the two */
+export type TouchableOpacityComponentProps = GHTouchableOpacityProps;
+
+interface Props extends TouchableOpacityComponentProps, TestIdProps {
+  Component?: typeof RNTouchableOpacity | typeof GHTouchableOpacity;
   shouldTrackShortPress?: boolean;
   shouldTrackLongPress?: boolean;
 }
@@ -20,30 +24,24 @@ export const TouchableWithAnalytics: FC<Props> = ({
   shouldTrackShortPress = true,
   onPress,
   onLongPress,
-  Component = TouchableOpacity,
+  Component = RNTouchableOpacity,
   ...restProps
 }) => {
   const { trackEvent } = useAnalytics();
 
-  const handlePress = useCallback(
-    (event: GestureResponderEvent) => {
-      if (shouldTrackShortPress) {
-        trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
-      }
-      onPress?.(event);
-    },
-    [onPress, testID, testIDProperties, trackEvent, shouldTrackShortPress]
-  );
+  const handlePress = useCallback(() => {
+    if (shouldTrackShortPress) {
+      trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+    }
+    onPress?.();
+  }, [onPress, testID, testIDProperties, trackEvent, shouldTrackShortPress]);
 
-  const handleLongPress = useCallback(
-    (event: GestureResponderEvent) => {
-      if (shouldTrackLongPress) {
-        trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
-      }
-      onLongPress?.(event);
-    },
-    [onLongPress, testID, testIDProperties, trackEvent, shouldTrackLongPress]
-  );
+  const handleLongPress = useCallback(() => {
+    if (shouldTrackLongPress) {
+      trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+    }
+    onLongPress?.();
+  }, [onLongPress, testID, testIDProperties, trackEvent, shouldTrackLongPress]);
 
   return <Component {...restProps} onPress={handlePress} onLongPress={handleLongPress} testID={testID} />;
 };

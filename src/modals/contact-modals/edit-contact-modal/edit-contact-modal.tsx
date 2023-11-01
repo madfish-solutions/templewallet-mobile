@@ -19,13 +19,13 @@ import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { editContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { tezosDomainsResolver } from '../../../utils/dns.utils';
 import { handleContactSubmission } from '../utils/handle-contact-submission.util';
 import { useEditContactFormValidationSchema } from '../validation-schema';
+
 import { EditContactModalSelectors } from './edit-contact-modal.selectors';
 
 export const EditContactModal: FC = () => {
@@ -36,8 +36,7 @@ export const EditContactModal: FC = () => {
     params: { contact, index }
   } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditContact>>();
   const editContactFormValidationSchema = useEditContactFormValidationSchema(index);
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
   const resolver = tezosDomainsResolver(tezos);
 
   const formik = useRef<FormikProps<AccountBaseInterface>>(null);

@@ -9,6 +9,7 @@ import { formatSize } from 'src/styles/format-size';
 import { ButtonLargePrimary } from '../button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from '../button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from '../divider/divider';
+
 import { AcceptAdsBannerSelectors } from './accept-ads-banner.selectors';
 import { useCommonBannerStyles } from './common-banner.styles';
 

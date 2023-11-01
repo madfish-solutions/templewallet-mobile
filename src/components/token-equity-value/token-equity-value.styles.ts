@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useTokenEquityValueStyles = createUseStyles(({ colors, typography }) => ({
+export const useTokenEquityValueStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {
     marginVertical: formatSize(16)
   },
@@ -26,6 +26,12 @@ export const useTokenEquityValueStyles = createUseStyles(({ colors, typography }
   },
   additionalValueText: {
     ...typography.numbersRegular15,
+    color: colors.gray1
+  }
+}));
+
+export const useAssetEquityTextStyles = createUseStylesMemoized(({ colors }) => ({
+  numberText: {
     color: colors.gray1
   }
 }));

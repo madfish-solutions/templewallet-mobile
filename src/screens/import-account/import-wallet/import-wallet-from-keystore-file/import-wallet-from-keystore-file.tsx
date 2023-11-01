@@ -20,6 +20,7 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from 'src/utils/kukai.utils';
 
 import type { ImportWalletProps } from '../import-wallet';
+
 import {
   ImportWalletFromKeystoreFileFormValues,
   importWalletFromKeystoreFileInitialValues,

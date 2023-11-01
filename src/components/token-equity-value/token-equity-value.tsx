@@ -1,35 +1,41 @@
-import React, { FC } from 'react';
-import { Text, View } from 'react-native';
+import BigNumber from 'bignumber.js';
+import React, { memo } from 'react';
+import { StyleProp, Text, TextStyle, View } from 'react-native';
 
+import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
+import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { isDefined } from 'src/utils/is-defined';
+import { formatAssetAmount } from 'src/utils/number.util';
 
-import { useHideBalance } from '../../hooks/hide-balance/hide-balance.hook';
-import { useNetworkInfo } from '../../hooks/use-network-info.hook';
-import { useTotalBalance } from '../../hooks/use-total-balance';
-import { formatSize } from '../../styles/format-size';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { AssetEquityText } from '../asset-equity-text/asset-equity-text';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
-import { useTokenEquityValueStyles } from './token-equity-value.styles';
+
+import { useAssetEquityTextStyles, useTokenEquityValueStyles } from './token-equity-value.styles';
 
 const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 
 interface Props {
   token: TokenInterface;
-  showTokenValue?: boolean;
+  forTotalBalance?: boolean;
 }
 
-export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) => {
+export const TokenEquityValue = memo<Props>(({ token, forTotalBalance = false }) => {
   const styles = useTokenEquityValueStyles();
 
   const { isTezosNode } = useNetworkInfo();
 
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
   const totalBalance = useTotalBalance();
+
+  const exchangeRate = token.exchangeRate;
 
   return isTezosNode ? (
     <View style={styles.container}>
@@ -40,16 +46,20 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
           onPress={toggleHideBalance}
           testID={WalletSelectors.tokenEquityButton}
         />
-        {showTokenValue ? (
+
+        {!forTotalBalance ? (
           <View style={styles.equityContainer}>
             <Text style={styles.dateText}>Equity Value {currentDate}</Text>
-            <AssetEquityText style={styles.dateText} asset={token} />
+            {isDefined(exchangeRate) ? (
+              <AssetEquityText style={styles.dateText} assetSymbol={token.symbol} exchangeRate={exchangeRate} />
+            ) : null}
           </View>
         ) : (
           <Text style={styles.dateText}>Equity Value {currentDate}</Text>
         )}
       </View>
-      {showTokenValue ? (
+
+      {!forTotalBalance ? (
         <>
           <HideBalance style={styles.mainValueText}>
             <AssetValueText asset={token} amount={token.balance} />
@@ -67,4 +77,26 @@ export const TokenEquityValue: FC<Props> = ({ token, showTokenValue = true }) =>
   ) : (
     <Divider />
   );
-};
+});
+
+interface AssetEquityTextProps {
+  assetSymbol: string;
+  exchangeRate: number;
+  style?: StyleProp<TextStyle>;
+}
+
+const AssetEquityText = memo<AssetEquityTextProps>(({ assetSymbol, exchangeRate, style }) => {
+  const styles = useAssetEquityTextStyles();
+  const { symbol } = useCurrentFiatCurrencyMetadataSelector();
+
+  const formattedExchangeRate = formatAssetAmount(new BigNumber(exchangeRate ?? 0), 2);
+
+  return (
+    <Text style={style}>
+      <Text style={[style, styles.numberText]}>1</Text> <Text style={style}>{assetSymbol}</Text>
+      <Text style={style}> ≈ </Text>
+      <Text style={[style, styles.numberText]}>{formattedExchangeRate}</Text>
+      <Text style={style}>{symbol}</Text>
+    </Text>
+  );
+});

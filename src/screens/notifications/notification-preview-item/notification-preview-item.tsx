@@ -1,20 +1,22 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { Divider } from '../../../components/divider/divider';
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { NotificationStatus } from '../../../enums/notification-status.enum';
-import { NotificationType } from '../../../enums/notification-type.enum';
-import { NotificationInterface } from '../../../interfaces/notification.interface';
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { formatSize } from '../../../styles/format-size';
-import { useColors } from '../../../styles/use-colors';
-import { conditionalStyle } from '../../../utils/conditional-style';
-import { formatDateOutput } from '../../../utils/date.utils';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { NotificationStatus } from 'src/enums/notification-status.enum';
+import { NotificationType } from 'src/enums/notification-type.enum';
+import { NotificationInterface } from 'src/interfaces/notification.interface';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { formatDateOutput } from 'src/utils/date.utils';
+
 import { NotificationsSelectors } from '../notifications.selectors';
+
 import { useNotificationPreviewItemStyles } from './notification-preview-item.styles';
 
 const NotificationsIconMap: Record<NotificationType, IconNameEnum> = {
