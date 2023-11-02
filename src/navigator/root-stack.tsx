@@ -28,6 +28,7 @@ import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
+import { SecurityUpdate } from 'src/modals/security-update';
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
 import { SendModal } from 'src/modals/send-modal/send-modal';
 import { SplashModal } from 'src/modals/splash-modal/splash-modal';
@@ -192,6 +193,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.InAppBrowser}
               component={InAppBrowser}
               options={useModalOptions('In-App Browser')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.SecurityUpdate}
+              component={SecurityUpdate}
+              options={useModalOptions('Update Info', true)}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

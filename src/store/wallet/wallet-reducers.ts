@@ -25,7 +25,8 @@ import {
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadTokensBalancesArrayActions
+  loadTokensBalancesArrayActions,
+  setShouldMigrateOnRestartAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import {
@@ -145,6 +146,11 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
           }
     );
   });
+
+  builder.addCase(setShouldMigrateOnRestartAction, (state, { payload: shouldMigrateOnRestart }) => ({
+    ...state,
+    shouldMigrateOnRestart
+  }));
 
   // MIGRATIONS
   builder.addCase(deleteOldTokensMetadata, state => ({

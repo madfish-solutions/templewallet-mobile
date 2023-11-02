@@ -2,6 +2,7 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { forkJoin } from 'rxjs';
 
 import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
@@ -18,8 +19,10 @@ import { isAndroid } from 'src/config/system';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { Shelter } from 'src/shelter/shelter';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
@@ -37,6 +40,7 @@ import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
 import { WalletSelectors } from '../wallet.selectors';
@@ -79,10 +83,13 @@ export const TokensList: FC = () => {
   const publicKeyHash = useCurrentAccountPkhSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
 
-  const handleHideZeroBalanceChange = useCallback((value: boolean) => {
-    dispatch(setZeroBalancesShown(value));
-    trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
-  }, []);
+  const handleHideZeroBalanceChange = useCallback(
+    (value: boolean) => {
+      dispatch(setZeroBalancesShown(value));
+      trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
+    },
+    [dispatch, trackEvent]
+  );
 
   useEffect(() => {
     const listener = () => {
@@ -103,9 +110,26 @@ export const TokensList: FC = () => {
     if (partnersPromoShown) {
       dispatch(loadAdvertisingPromotionActions.submit());
     }
-  }, [partnersPromoShown]);
+  }, [dispatch, partnersPromoShown]);
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
+
+  useEffect(() => {
+    const shelterMigrationSubscription = forkJoin([
+      Shelter.newMigrationsExist(),
+      Shelter.getShelterVersion()
+    ]).subscribe(([shouldDoSomeMigrations, shelterVersion]) => {
+      if (shouldDoSomeMigrations && shouldMoveToSoftwareInV1 && shelterVersion === 0) {
+        navigate(ModalsEnum.SecurityUpdate);
+      } else if (shouldDoSomeMigrations) {
+        Shelter.doMigrations$().subscribe({
+          error: e => console.error(e)
+        });
+      }
+    });
+
+    return () => shelterMigrationSubscription.unsubscribe();
+  }, [navigate]);
 
   const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(

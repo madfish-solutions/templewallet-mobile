@@ -39,3 +39,5 @@ export const waitForOperationCompletionAction = createAction<{
   opHash: string;
   sender: AccountInterface;
 }>('d-apps/WAIT_FOR_OPERATION_COMPLETION');
+
+export const setShouldMigrateOnRestartAction = createAction<boolean>('wallet/SET_SHOULD_MIGRATE_ON_RESTART');

@@ -1,37 +1,36 @@
 import { Formik } from 'formik';
-import { noop } from 'lodash-es';
 import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { Shelter } from 'src/shelter/shelter';
+import { ABTestGroup } from 'src/apis/temple-wallet';
+import { useBiometryAvailability } from 'src/biometry/use-biometry-availability.hook';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLink } from 'src/components/button/button-link/button-link';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { Quote } from 'src/components/quote/quote';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { MAX_PASSWORD_ATTEMPTS } from 'src/config/security';
+import { FormPasswordInput } from 'src/form/form-password-input';
+import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
+import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
+import { useResetDataHandler } from 'src/hooks/use-reset-data-handler.hook';
+import { OverlayEnum } from 'src/navigator/enums/overlay.enum';
+import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { getUserTestingGroupNameActions } from 'src/store/ab-testing/ab-testing-actions';
+import { useUserTestingGroupNameSelector } from 'src/store/ab-testing/ab-testing-selectors';
+import { useBiometricsEnabledSelector } from 'src/store/settings/settings-selectors';
+import { useShouldMigrateOnRestartSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { ToastProvider } from 'src/toast/toast-provider';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
 
-import { ABTestGroup } from '../../apis/temple-wallet';
-import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLink } from '../../components/button/button-link/button-link';
-import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { TouchableIcon } from '../../components/icon/touchable-icon/touchable-icon';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { Label } from '../../components/label/label';
-import { Quote } from '../../components/quote/quote';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { MAX_PASSWORD_ATTEMPTS } from '../../config/security';
-import { FormPasswordInput } from '../../form/form-password-input';
-import { useAtBootsplash } from '../../hooks/use-hide-bootsplash';
-import { usePasswordLock } from '../../hooks/use-password-lock.hook';
-import { useResetDataHandler } from '../../hooks/use-reset-data-handler.hook';
-import { OverlayEnum } from '../../navigator/enums/overlay.enum';
-import { useAppLock } from '../../shelter/app-lock/app-lock';
-import { getUserTestingGroupNameActions } from '../../store/ab-testing/ab-testing-actions';
-import { useUserTestingGroupNameSelector } from '../../store/ab-testing/ab-testing-selectors';
-import { useBiometricsEnabledSelector } from '../../store/settings/settings-selectors';
-import { formatSize } from '../../styles/format-size';
-import { ToastProvider } from '../../toast/toast-provider';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../utils/is-defined';
 import {
   EnterPasswordFormValues,
   enterPasswordInitialValues,
@@ -56,19 +55,17 @@ export const EnterPassword = () => {
   const biometricsEnabled = useBiometricsEnabledSelector();
 
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
+  const shouldMigrateOnRestart = useShouldMigrateOnRestartSelector();
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
 
   usePageAnalytic(OverlayEnum.EnterPassword);
 
-  useEffect(() => {
-    Shelter.shouldDoSomeMigrations()
-      .then(
-        shouldDoMigrations => void (!atBootsplash && isBiometryAvailable && !shouldDoMigrations && unlockWithBiometry())
-      )
-      .catch(noop);
-  }, [isBiometryAvailable, atBootsplash, unlockWithBiometry]);
+  useEffect(
+    () => void (!atBootsplash && isBiometryAvailable && !shouldMigrateOnRestart && unlockWithBiometry()),
+    [isBiometryAvailable, atBootsplash, unlockWithBiometry, shouldMigrateOnRestart]
+  );
 
   useEffect(() => {
     if (groupName === ABTestGroup.Unknown) {

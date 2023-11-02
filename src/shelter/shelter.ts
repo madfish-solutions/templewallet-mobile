@@ -17,14 +17,14 @@ import {
   PASSWORD_CHECK_KEY,
   PASSWORD_STORAGE_KEY,
   SHELTER_VERSION_STORAGE_KEY,
-  shouldUseOnlySoftwareInV1
+  shouldMoveToSoftwareInV1
 } from '../utils/keychain.utils';
 import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../utils/keys.util';
 import { throwError$ } from '../utils/rxjs.utils';
 
 const EMPTY_PASSWORD_HASH = '';
-const FATAL_MIGRATION_ERROR_MESSAGE = 'Migration failed, you may need to reset your wallet.';
-const MIGRATION_ERROR_MESSAGE = 'Migration has failed. Please try again on the next launch.';
+const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to complete migration';
+const MIGRATION_ERROR_MESSAGE = 'Please try again on the next launch.';
 
 interface PasswordServiceMigrationResultBase {
   isSuccess: boolean;
@@ -124,17 +124,10 @@ export class Shelter {
 
   // TODO: add logic for __DEV__ variable
   private static migrateFromSamsungOrGoogleChip$ = () =>
-    shouldUseOnlySoftwareInV1 ? Shelter.migrateFromChip$() : of(undefined);
+    shouldMoveToSoftwareInV1 ? Shelter.migrateFromChip$() : of(undefined);
 
   private static migrations = [Shelter.migrateFromSamsungOrGoogleChip$];
   private static targetShelterVersion = Shelter.migrations.length;
-
-  private static getShelterVersion = async () => {
-    const rawStoredVersion = await AsyncStorage.getItem(SHELTER_VERSION_STORAGE_KEY);
-    const shelterIsEmpty = (await Keychain.getAllGenericPasswordServices()).length === 0;
-
-    return Number(rawStoredVersion ?? (shelterIsEmpty ? Shelter.migrations.length : 0));
-  };
 
   private static setShelterVersion = (version: number) =>
     AsyncStorage.setItem(SHELTER_VERSION_STORAGE_KEY, String(version));
@@ -174,7 +167,14 @@ export class Shelter {
       switchMap(value => (value === undefined ? throwError$(`Failed to decrypt value [${key}]`) : of(value)))
     );
 
-  static shouldDoSomeMigrations = async () => (await Shelter.getShelterVersion()) < Shelter.targetShelterVersion;
+  static getShelterVersion = async () => {
+    const rawStoredVersion = await AsyncStorage.getItem(SHELTER_VERSION_STORAGE_KEY);
+    const shelterIsEmpty = (await Keychain.getAllGenericPasswordServices()).length === 0;
+
+    return Number(rawStoredVersion ?? (shelterIsEmpty ? Shelter.migrations.length : 0));
+  };
+
+  static newMigrationsExist = async () => (await Shelter.getShelterVersion()) < Shelter.targetShelterVersion;
 
   static isLocked$ = Shelter._passwordHash$.pipe(map(password => password === EMPTY_PASSWORD_HASH));
 
@@ -214,7 +214,10 @@ export class Shelter {
     }
 
     return hashPassword$(password).pipe(
-      switchMap(passwordHash => {
+      switchMap(passwordHash =>
+        forkJoin([Promise.resolve(passwordHash), Shelter.setShelterVersion(Shelter.targetShelterVersion)])
+      ),
+      switchMap(([passwordHash]) => {
         Shelter._passwordHash$.next(passwordHash);
 
         const seed = mnemonicToSeedSync(seedPhrase);

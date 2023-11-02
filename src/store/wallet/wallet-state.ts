@@ -7,6 +7,7 @@ export interface WalletState {
   accounts: AccountInterface[];
   accountsStateRecord: Record<string, AccountStateInterface>;
   selectedAccountPublicKeyHash: string;
+  shouldMigrateOnRestart: boolean;
 
   /** @deprecated */
   tokensMetadata?: Record<string, TokenMetadataInterface>;
@@ -21,5 +22,6 @@ export interface WalletState {
 export const walletInitialState: WalletState = {
   accounts: [],
   accountsStateRecord: {},
-  selectedAccountPublicKeyHash: ''
+  selectedAccountPublicKeyHash: '',
+  shouldMigrateOnRestart: false
 };

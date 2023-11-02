@@ -151,3 +151,5 @@ export const useSelectedAccountTkeyTokenSelector = (): TokenInterface => {
 
   return tkey ?? TEMPLE_TOKEN;
 };
+
+export const useShouldMigrateOnRestartSelector = () => useSelector(({ wallet }) => wallet.shouldMigrateOnRestart);
