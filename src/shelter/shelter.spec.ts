@@ -16,6 +16,7 @@ import {
 } from '../utils/crypto.util.mock';
 import { getBiometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from '../utils/keychain.utils';
 import { rxJsTestingHelper } from '../utils/testing.utils';
+
 import { Shelter } from './shelter';
 
 // Store version in these tests doesn't matter, so we can set it to 0

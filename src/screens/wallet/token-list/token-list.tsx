@@ -36,8 +36,8 @@ import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 import { useAccountTokenBySlug, useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
