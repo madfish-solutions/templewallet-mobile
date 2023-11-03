@@ -29,13 +29,13 @@ const MIGRATION_ERROR_MESSAGE = 'Please try again on the next launch.';
 interface PasswordServiceMigrationResultBase {
   isSuccess: boolean;
   error?: unknown;
-  password: false | Keychain.UserCredentials;
+  readPassword: false | Keychain.UserCredentials;
 }
 
 interface SuccessPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
   isSuccess: true;
   error?: undefined;
-  password: Keychain.UserCredentials;
+  readPassword: Keychain.UserCredentials;
 }
 
 interface FailedPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
@@ -45,88 +45,93 @@ interface FailedPasswordServiceMigrationResult extends PasswordServiceMigrationR
 type PasswordServiceMigrationResult = SuccessPasswordServiceMigrationResult | FailedPasswordServiceMigrationResult;
 
 export class Shelter {
-  private static migrateFromChip$ = () =>
-    forkJoin([Keychain.getAllGenericPasswordServices(), Shelter.getShelterVersion()]).pipe(
-      switchMap(([passwordServices, shelterVersion]) =>
-        from(
-          (async () => {
-            const migrationResults = await Promise.all(
-              passwordServices.map(async (passwordService): Promise<PasswordServiceMigrationResult> => {
-                let password: false | Keychain.UserCredentials = false;
-                try {
-                  const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
-                  password = await Keychain.getGenericPassword(oldPasswordServiceOptions);
+  private static revertMigrationFromChip = async (
+    passwordServices: string[],
+    migrationResults: PasswordServiceMigrationResult[]
+  ) => {
+    const shelterVersion = await Shelter.getShelterVersion();
 
-                  if (password === false) {
-                    return { isSuccess: false, password };
-                  }
+    await Promise.all(
+      passwordServices.map(async (passwordService, index) => {
+        const migrationResult = migrationResults[index];
+        const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
 
-                  const newPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion + 1);
-                  const result = await Keychain.setGenericPassword(
-                    password.username,
-                    password.password,
-                    newPasswordServiceOptions
-                  );
+        if (migrationResult.isSuccess) {
+          const { username, password } = migrationResult.readPassword;
+          const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
 
-                  return { isSuccess: result !== false, password };
-                } catch (e) {
-                  console.error(e, typeof e === 'object' && e ? Object.entries(e) : JSON.stringify(e));
+          if (result === false) {
+            throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+          }
+        } else if (isDefined(migrationResult.error)) {
+          const { error } = migrationResult;
 
-                  return { error: e, isSuccess: false, password };
-                }
-              })
-            );
+          if (error instanceof Error && error.message === 'code: 13, msg: Cancel') {
+            return;
+          }
 
-            if (migrationResults.every(({ isSuccess }) => isSuccess)) {
-              return;
-            }
+          throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+        } else {
+          if (migrationResult.readPassword === false) {
+            return;
+          }
 
-            await Promise.all(
-              passwordServices.map(async (passwordService, index) => {
-                const migrationResult = migrationResults[index];
-                const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
+          const { username, password } = migrationResult.readPassword;
+          const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
 
-                if (migrationResult.isSuccess) {
-                  const { username, password } = migrationResult.password;
-                  const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
+          if (result === false) {
+            throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+          }
+        }
+      })
+    );
+  };
 
-                  if (result === false) {
-                    throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
-                  }
-                } else if (isDefined(migrationResult.error)) {
-                  const { error } = migrationResult;
+  private static migrateFromChip = async () => {
+    const passwordServices = await Keychain.getAllGenericPasswordServices();
+    const shelterVersion = await Shelter.getShelterVersion();
 
-                  if (error instanceof Error && error.message === 'code: 13, msg: Cancel') {
-                    return;
-                  }
+    const migrationResults = await Promise.all(
+      passwordServices.map(async (passwordService): Promise<PasswordServiceMigrationResult> => {
+        let readPassword: false | Keychain.UserCredentials = false;
+        try {
+          const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
+          readPassword = await Keychain.getGenericPassword(oldPasswordServiceOptions);
 
-                  throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
-                } else {
-                  if (migrationResult.password === false) {
-                    return;
-                  }
+          if (readPassword === false) {
+            return { isSuccess: false, readPassword };
+          }
 
-                  const { username, password } = migrationResult.password;
-                  const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
+          const newPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion + 1);
+          const result = await Keychain.setGenericPassword(
+            readPassword.username,
+            readPassword.password,
+            newPasswordServiceOptions
+          );
 
-                  if (result === false) {
-                    throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
-                  }
-                }
-              })
-            );
+          return { isSuccess: result !== false, readPassword };
+        } catch (e) {
+          console.error(e, typeof e === 'object' && e ? Object.entries(e) : JSON.stringify(e));
 
-            throw new Error(MIGRATION_ERROR_MESSAGE);
-          })()
-        )
-      )
+          return { error: e, isSuccess: false, readPassword };
+        }
+      })
     );
 
-  // TODO: add logic for __DEV__ variable
-  private static migrateFromSamsungOrGoogleChip$ = () =>
-    shouldMoveToSoftwareInV1 ? Shelter.migrateFromChip$() : of(undefined);
+    if (migrationResults.every(({ isSuccess }) => isSuccess)) {
+      return;
+    }
 
-  private static migrations = [Shelter.migrateFromSamsungOrGoogleChip$];
+    await Shelter.revertMigrationFromChip(passwordServices, migrationResults);
+
+    throw new Error(MIGRATION_ERROR_MESSAGE);
+  };
+
+  // TODO: add logic for __DEV__ variable
+  private static migrateFromSamsungOrGoogleChip = async () =>
+    shouldMoveToSoftwareInV1 && (await Shelter.migrateFromChip());
+
+  private static migrations = [Shelter.migrateFromSamsungOrGoogleChip];
   private static targetShelterVersion = Shelter.migrations.length;
 
   private static setShelterVersion = (version: number) =>
@@ -135,7 +140,7 @@ export class Shelter {
   private static _passwordHash$ = new BehaviorSubject(EMPTY_PASSWORD_HASH);
 
   private static saveSensitiveData$ = (data: Record<string, string>) =>
-    from(Shelter.getShelterVersion()).pipe(
+    Shelter.getShelterVersion$().pipe(
       switchMap(shelterVersion =>
         forkJoin(
           Object.entries(data).map(async ([key, value]) => {
@@ -157,7 +162,7 @@ export class Shelter {
     );
 
   private static decryptSensitiveData$ = (key: string, passwordHash: string) =>
-    from(Shelter.getShelterVersion()).pipe(
+    Shelter.getShelterVersion$().pipe(
       switchMap(shelterVersion => from(Keychain.getGenericPassword(getKeychainOptions(key, shelterVersion)))),
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError$(`No record in Keychain [${key}]`) : of(rawKeychainData)
@@ -173,6 +178,8 @@ export class Shelter {
 
     return Number(rawStoredVersion ?? (shelterIsEmpty ? Shelter.migrations.length : 0));
   };
+
+  static getShelterVersion$ = () => from(Shelter.getShelterVersion());
 
   static newMigrationsExist = async () => (await Shelter.getShelterVersion()) < Shelter.targetShelterVersion;
 
@@ -195,11 +202,7 @@ export class Shelter {
 
             return false;
           }),
-          catchError(e => {
-            console.error(e);
-
-            return of(false);
-          })
+          catchError(() => of(false))
         )
       )
     );
@@ -322,7 +325,7 @@ export class Shelter {
     );
 
   static disableBiometryPassword$ = () =>
-    from(Shelter.getShelterVersion()).pipe(
+    Shelter.getShelterVersion$().pipe(
       switchMap(shelterVersion =>
         from(Keychain.resetGenericPassword(getKeychainOptions(PASSWORD_STORAGE_KEY, shelterVersion)))
       )
@@ -337,12 +340,12 @@ export class Shelter {
     hashPassword$(password).pipe(map(passwordHash => passwordHash === Shelter._passwordHash$.getValue()));
 
   static doMigrations$ = () => {
-    return from(Shelter.getShelterVersion()).pipe(
+    return Shelter.getShelterVersion$().pipe(
       switchMap(shelterVersion =>
         range(shelterVersion, Shelter.targetShelterVersion).reduce<Observable<void>>(
           (acc, version) =>
             acc.pipe(
-              switchMap(() => Shelter.migrations[version]()),
+              switchMap(() => from(Shelter.migrations[version]())),
               switchMap(() => from(Shelter.setShelterVersion(version + 1)))
             ),
           of(undefined)

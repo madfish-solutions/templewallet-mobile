@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { Alert } from 'react-native';
 import RNRestart from 'react-native-restart';
 import { useDispatch } from 'react-redux';
@@ -15,7 +15,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { SecurityUpdateInfo } from './security-update-info';
 
-export const SecurityUpdate = () => {
+export const SecurityUpdate = memo(() => {
   const { innerScreenIndex, setInnerScreenIndex } = useInnerScreenProgress(2, 'headerLeft');
   const dispatch = useDispatch();
 
@@ -25,6 +25,7 @@ export const SecurityUpdate = () => {
 
   const handleSeedPhraseVerified = useCallback(() => {
     dispatch(setShouldMigrateOnRestartAction(true));
+    // TODO: implement calling exactly when the new state is saved into async storage
     setTimeout(() => RNRestart.restart(), 1000);
   }, [dispatch]);
 
@@ -67,4 +68,4 @@ phrase to prevent any loss of your funds.',
       )}
     </>
   );
-};
+});

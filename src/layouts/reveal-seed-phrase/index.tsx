@@ -18,7 +18,11 @@ import { RevealSeedPhraseView } from 'src/modals/reveal-seed-phrase-modal/reveal
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
-import { createNewWalletValidationSchema, CreateNewWalletFormValues, createNewWalletInitialValues } from './form';
+import {
+  createNewWalletValidationSchemaFactory,
+  CreateNewWalletFormValues,
+  createNewWalletInitialValues
+} from './form';
 import { RevealSeedPhraseSelectors } from './selectors';
 import { useCreateNewWalletStyles } from './styles';
 
@@ -47,7 +51,7 @@ export const RevealSeedPhrase: FC<Props> = ({
   );
 
   const validationSchema = useMemo(
-    () => createNewWalletValidationSchema(seedPhraseBackupErrorText),
+    () => createNewWalletValidationSchemaFactory(seedPhraseBackupErrorText),
     [seedPhraseBackupErrorText]
   );
 

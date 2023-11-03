@@ -18,6 +18,7 @@ import { getBiometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } 
 import { rxJsTestingHelper } from '../utils/testing.utis';
 import { Shelter } from './shelter';
 
+// Store version in these tests doesn't matter, so we can set it to 0
 describe('Shelter', () => {
   const mockIncorrectPassword = 'mockIncorrectPassword';
 

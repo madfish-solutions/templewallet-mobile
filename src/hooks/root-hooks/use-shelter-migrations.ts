@@ -58,5 +58,6 @@ to maintain uninterrupted use of the wallet",
     } else {
       doMigrations();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [atBootsplash]);
 };
