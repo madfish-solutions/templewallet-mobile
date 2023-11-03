@@ -11,13 +11,14 @@ export const PASSWORD_STORAGE_KEY = 'biometry-protected-app-password';
 export const SHELTER_VERSION_STORAGE_KEY = 'shelterVersion';
 
 const manufacturersForMigrationFromChip = ['google', 'samsung'];
-export const shouldMoveToSoftwareInV1 = manufacturersForMigrationFromChip.includes(manufacturer.toLowerCase());
+export const shouldMoveToSoftwareInV1 =
+  !__DEV__ && manufacturersForMigrationFromChip.includes(manufacturer.toLowerCase());
 
 export const getKeychainOptions = (key: string, version: number): Keychain.Options => ({
   service: `${APP_IDENTIFIER}/${key}`,
   accessible: Keychain.ACCESSIBLE.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
   securityLevel: isAndroid
-    ? /* __DEV__ || */ (version === 1 && shouldMoveToSoftwareInV1)
+    ? version === 1 && shouldMoveToSoftwareInV1
       ? Keychain.SECURITY_LEVEL.SECURE_SOFTWARE
       : Keychain.SECURITY_LEVEL.SECURE_HARDWARE
     : undefined

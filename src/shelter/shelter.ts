@@ -127,7 +127,6 @@ export class Shelter {
     throw new Error(MIGRATION_ERROR_MESSAGE);
   };
 
-  // TODO: add logic for __DEV__ variable
   private static migrateFromSamsungOrGoogleChip = async () =>
     shouldMoveToSoftwareInV1 && (await Shelter.migrateFromChip());
 
