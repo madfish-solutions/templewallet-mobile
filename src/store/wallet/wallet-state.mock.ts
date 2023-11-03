@@ -8,5 +8,6 @@ export const mockWalletState: WalletState = {
   accountsStateRecord: {
     [mockHdAccount.publicKeyHash]: mockAccountState
   },
-  selectedAccountPublicKeyHash: mockHdAccount.publicKeyHash
+  selectedAccountPublicKeyHash: mockHdAccount.publicKeyHash,
+  shouldMigrateOnRestart: false
 };
