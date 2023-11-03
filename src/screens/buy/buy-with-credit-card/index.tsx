@@ -28,6 +28,7 @@ import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { renderPaymentProviderOption } from '../components/payment-provider';
 import { renderSelectedPaymentProvider } from '../components/selected-payment-provider';
+
 import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
 import { useCryptoCurrencies } from './hooks/use-crypto-currencies-list.hook';
 import { useFiatCurrenciesList } from './hooks/use-fiat-currencies-list.hook';

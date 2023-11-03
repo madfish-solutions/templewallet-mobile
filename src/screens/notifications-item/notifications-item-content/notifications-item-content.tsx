@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 
 import { TextLink } from '../../../components/text-link/text-link';
 import { NotificationInterface } from '../../../interfaces/notification.interface';
+
 import { useNotificationsItemContentStyles } from './notifications-item-content.styles';
 
 type Props = Pick<NotificationInterface, 'content'>;

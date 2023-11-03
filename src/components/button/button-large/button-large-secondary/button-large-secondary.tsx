@@ -4,6 +4,7 @@ import { StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { Button } from '../../button';
 import { ButtonStyleConfig } from '../../button-style.config';
 import { ButtonLargeProps } from '../button-large.props';
+
 import { useButtonLargeSecondaryStyleConfig } from './button-large-secondary.styles';
 
 interface Props extends ButtonLargeProps {

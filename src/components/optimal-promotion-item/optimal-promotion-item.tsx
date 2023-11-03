@@ -1,6 +1,8 @@
 import React, { FC, useEffect } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
+import { PromotionItem } from 'src/components/promotion-item/promotion-item';
+import { EmptyFn } from 'src/config/general';
 import { usePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import {
@@ -10,16 +12,16 @@ import {
 } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
 
-import { PromotionItem } from '../promotion-item/promotion-item';
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
+
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
 
 interface Props extends TestIdProps {
   style?: StyleProp<ViewStyle>;
   shouldShowCloseButton?: boolean;
   variant?: OptimalPromotionVariantEnum;
-  onImageError?: () => void;
-  onEmptyPromotionReceived?: () => void;
+  onImageError?: EmptyFn;
+  onEmptyPromotionReceived?: EmptyFn;
 }
 
 export const OptimalPromotionItem: FC<Props> = ({
@@ -51,8 +53,8 @@ export const OptimalPromotionItem: FC<Props> = ({
     return (
       <TextPromotionItem
         testID={testID}
-        content={partnersPromotion.copy.content}
-        headline={partnersPromotion.copy.headline}
+        content={partnersPromotion?.copy?.content ?? 'fallback'}
+        headline={partnersPromotion?.copy?.headline ?? 'fallback'}
         imageUri={partnersPromotion.image}
         link={partnersPromotion.link}
         loading={partnersPromotionLoading}

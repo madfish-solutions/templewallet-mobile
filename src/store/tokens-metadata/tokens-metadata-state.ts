@@ -6,12 +6,14 @@ import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface TokensMetadataState {
+  isLoading: boolean;
   metadataRecord: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
   knownSvgs: Record<string, boolean>;
 }
 
 export const tokensMetadataInitialState: TokensMetadataState = {
+  isLoading: false,
   metadataRecord: [...KNOWN_MAINNET_TOKENS_METADATA, ...PREDEFINED_DCP_TOKENS_METADATA].reduce(
     (obj, tokenMetadata) => ({
       ...obj,

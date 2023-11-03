@@ -11,6 +11,7 @@ import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
 
 import { DetailsCard } from '../details-card';
+
 import { useDetailsSectionStyles } from './styles';
 
 interface Props {

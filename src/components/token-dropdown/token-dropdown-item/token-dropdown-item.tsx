@@ -14,6 +14,7 @@ import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TokenIcon } from '../../token-icon/token-icon';
 import { tokenEqualityFn } from '../token-equality-fn';
+
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 
 interface Props {

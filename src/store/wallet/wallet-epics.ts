@@ -1,10 +1,10 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniq } from 'lodash-es';
-import { combineEpics } from 'redux-observable';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { Action } from 'redux';
+import { Epic, combineEpics } from 'redux-observable';
+import { EMPTY, from, of } from 'rxjs';
 import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
-import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -13,6 +13,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { BURN_ADDRESS } from 'src/utils/known-addresses';
 import { isDcpNode } from 'src/utils/network.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import {
@@ -27,8 +28,9 @@ import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } fro
 
 import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
-import { loadTokensMetadataAction } from '../tokens-metadata/tokens-metadata-actions';
+import { loadTokensMetadataActions } from '../tokens-metadata/tokens-metadata-actions';
 import type { RootState } from '../types';
+
 import {
   addTokenAction,
   highPriorityLoadTokenBalanceAction,
@@ -45,7 +47,7 @@ const updateDataActions = () => [
   loadSelectedBakerActions.submit()
 ];
 
-const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(highPriorityLoadTokenBalanceAction),
     toPayload(),
@@ -65,7 +67,7 @@ const highPriorityLoadTokenBalanceEpic = (action$: Observable<Action>, state$: O
     )
   );
 
-const loadTokensBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensBalancesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadTokensBalancesArrayActions.submit),
     withSelectedAccount(state$),
@@ -86,7 +88,7 @@ const loadTokensBalancesEpic = (action$: Observable<Action>, state$: Observable<
     )
   );
 
-const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensWithBalancesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadTokensActions.submit),
     withSelectedAccount(state$),
@@ -115,7 +117,9 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
 
           return [
             loadTokensActions.success(tokensWithBalancesSlugs),
-            loadTokensMetadataAction(assetWithoutMetadataSlugs),
+            assetWithoutMetadataSlugs.length
+              ? loadTokensMetadataActions.submit(assetWithoutMetadataSlugs)
+              : loadTokensMetadataActions.success(),
             loadTokensBalancesArrayActions.submit()
           ];
         }),
@@ -124,7 +128,7 @@ const loadTokensWithBalancesEpic = (action$: Observable<Action>, state$: Observa
     )
   );
 
-const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTezosBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     withSelectedAccount(state$),
@@ -137,7 +141,7 @@ const loadTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<Ro
     )
   );
 
-const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const sendAssetEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
@@ -146,16 +150,22 @@ const sendAssetEpic = (action$: Observable<Action>, state$: Observable<RootState
     switchMap(([[{ asset, receiverPublicKeyHash, amount }, selectedAccount], rpcUrl]) =>
       getTransferParams$(asset, rpcUrl, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
-        map(opParams =>
-          navigateAction(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.InternalOperations, opParams })
-        )
+        map(opParams => {
+          const modalTitle = receiverPublicKeyHash === BURN_ADDRESS ? 'Confirm Burn' : 'Confirm Send';
+
+          return navigateAction(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams,
+            modalTitle
+          });
+        })
       )
     )
   );
 
 const BCD_INDEXING_DELAY = 15000;
 
-const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const waitForOperationCompletionEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(waitForOperationCompletionAction),
     toPayload(),
@@ -180,8 +190,7 @@ const waitForOperationCompletionEpic = (action$: Observable<Action>, state$: Obs
       )
     )
   );
-const addTokenMetadataEpic = (action$: Observable<Action>) =>
-  action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
+const addTokenMetadataEpic: Epic = action$ => action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
 export const walletEpics = combineEpics(
   highPriorityLoadTokenBalanceEpic,

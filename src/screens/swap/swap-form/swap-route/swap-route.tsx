@@ -1,7 +1,7 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
@@ -17,6 +17,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { LbPoolPart } from '../lb-pool-part';
 import { SwapRouteItem } from '../swap-route-item/swap-route-item';
+
 import { SwapRouteSelectors } from './selectors';
 import { useSwapRouteStyles } from './swap-route.styles';
 

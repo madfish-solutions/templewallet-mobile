@@ -11,6 +11,7 @@ import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
 import { loadWhitelistAction } from '../../../store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../../../store/wallet/wallet-actions';
 import { showSuccessToast } from '../../../toast/toast.utils';
+
 import {
   importWatchOnlyDebugInitialValues,
   importWatchOnlyDebugValidationSchema,

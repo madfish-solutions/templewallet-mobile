@@ -1,14 +1,11 @@
-import type { ReducerWithInitialState } from '@reduxjs/toolkit/dist/createReducer';
+import { CombinedState } from '@reduxjs/toolkit';
+import type { Reducer } from 'redux';
 
-import type { rootStateReducersMap } from './root-state.map';
+import type { rootReducer } from './root-state.reducers';
 
-type RootStateReducersMapType = typeof rootStateReducersMap;
+type GetStateType<R> = R extends Reducer<CombinedState<infer S>> ? S : never;
 
-export type RootState = {
-  [K in keyof RootStateReducersMapType]: RootStateReducersMapType[K] extends ReducerWithInitialState<infer S>
-    ? S
-    : never;
-};
+export type RootState = GetStateType<typeof rootReducer>;
 
 export interface LoadableEntityState<T> {
   data: T;

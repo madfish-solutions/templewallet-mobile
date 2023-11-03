@@ -1,4 +1,5 @@
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
+
 import { TransferInterface } from './transfer.interface';
 
 export const mockSenderAddress = 'mockSenderAddress';

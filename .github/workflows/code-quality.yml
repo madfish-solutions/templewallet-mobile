@@ -2,9 +2,6 @@ name: Code quality
 
 on:
   pull_request:
-    branches:
-      - master
-      - development
 
 jobs:
   code-quality:

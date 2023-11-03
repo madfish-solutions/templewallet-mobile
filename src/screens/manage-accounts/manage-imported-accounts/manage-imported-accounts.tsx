@@ -11,6 +11,7 @@ import { useImportedAccountListSelector, useSelectedAccountSelector } from '../.
 import { formatSize } from '../../../styles/format-size';
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item/manage-account-item';
+
 import { ManageImportedAccountsSelectors } from './manage-imported-accounts.selectors';
 
 export const ManageImportedAccounts = () => {

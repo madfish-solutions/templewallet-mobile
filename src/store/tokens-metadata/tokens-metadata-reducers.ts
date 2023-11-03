@@ -6,16 +6,28 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
 import { setNewTokensMetadata } from '../migration/migration-actions';
+
 import {
   addKnownSvg,
   addTokensMetadataAction,
   loadTokenSuggestionActions,
+  loadTokensMetadataActions,
   loadWhitelistAction,
   removeKnownSvg
 } from './tokens-metadata-actions';
 import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metadata-state';
 
 export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadataInitialState, builder => {
+  builder.addCase(loadTokensMetadataActions.submit, state => {
+    state.isLoading = true;
+  });
+  builder.addCase(loadTokensMetadataActions.success, state => {
+    state.isLoading = false;
+  });
+  builder.addCase(loadTokensMetadataActions.fail, state => {
+    state.isLoading = false;
+  });
+
   builder.addCase(addTokensMetadataAction, (state, { payload: tokensMetadata }) => {
     if (tokensMetadata.length < 1) {
       return state;

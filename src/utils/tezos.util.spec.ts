@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { FILM_TOKEN_METADATA, TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
+
 import { isKTAddress, isValidAddress, mutezToTz, tzToMutez, isCollectible } from './tezos.util';
 
 const mockNaNBigNumber = new BigNumber(NaN);

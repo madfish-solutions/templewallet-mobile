@@ -9,6 +9,7 @@ import {
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
 import { Divider } from '../divider/divider';
+
 import {
   PasswordStrengthIndicatorItem,
   PasswordStrengthIndicatorItemProps

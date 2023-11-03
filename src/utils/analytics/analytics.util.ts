@@ -4,6 +4,7 @@ import fetch from 'cross-fetch';
 import type { AnalyticsEventProperties } from 'src/types/analytics-event-properties.type';
 
 import { JITSU_ANALYTICS_KEY, JITSU_TRACKING_HOST } from '../env.utils';
+
 import { AnalyticsEventCategory } from './analytics-event.enum';
 
 export const jitsu = jitsuClient({

@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';
 import { ParamPreviewInterface, Token } from '../interfaces/param-preview.interface';
+
 import { isDefined } from './is-defined';
 import { tzToMutez } from './tezos.util';
 

@@ -8,6 +8,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { loadPermissionsActions } from '../../store/d-apps/d-apps-actions';
 import { usePermissionsSelector } from '../../store/d-apps/d-apps-selectors';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import { PermissionItem } from './permission-item/permission-item';
 
 export const DAppsSettings = () => {

@@ -8,9 +8,9 @@ export function useInnerScreenProgress(total: number, location: 'headerRight' | 
 
   useNavigationSetOptions(
     {
-      [location]: () => <HeaderProgress current={innerScreenIndex + 1} total={total} />
+      [location]: () => (total !== 0 ? <HeaderProgress current={innerScreenIndex + 1} total={total} /> : null)
     },
-    [innerScreenIndex]
+    [innerScreenIndex, total]
   );
 
   return { innerScreenIndex, setInnerScreenIndex };

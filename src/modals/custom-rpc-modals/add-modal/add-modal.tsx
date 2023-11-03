@@ -21,6 +21,7 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
+
 import { AddModalSelectors } from './add-modal.selectors';
 
 export const AddCustomRpcModal: FC = () => {

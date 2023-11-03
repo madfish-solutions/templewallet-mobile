@@ -1,3 +1,4 @@
+import { useCollectiblesDetailsLoading } from './use-collectibles-details-loading';
 import { useFirebaseApp } from './use-firebase-app';
 import { usePushNotifications } from './use-push-notifications';
 import { useQuickActions } from './use-quick-actions';
@@ -15,6 +16,7 @@ export const useRootHooks = () => {
 
   useTokensMetadataFixtures();
   useWhitelistLoading();
+  useCollectiblesDetailsLoading();
   useQuickActions();
   useResetLoading();
   useResetKeychainOnInstall();

@@ -1,17 +1,23 @@
 import { useMemo, useState } from 'react';
 
-import { AccountBaseInterface } from '../interfaces/account.interface';
-import { SectionDropdownDataInterface } from '../interfaces/section-dropdown-data.interface';
-import { useContactsSelector } from '../store/contact-book/contact-book-selectors';
-import { useSelectedAccountSelector, useVisibleAccountsListSelector } from '../store/wallet/wallet-selectors';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
+import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+import { useCurrentAccountPkhSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 
 export const useFilteredReceiversList = () => {
   const contacts = useContactsSelector();
-  const selectedAccount = useSelectedAccountSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
 
-  const myVisibleAccounts = useVisibleAccountsListSelector()
-    .filter(({ publicKeyHash }) => publicKeyHash !== selectedAccount.publicKeyHash)
-    .map(({ name, publicKeyHash }) => ({ name, publicKeyHash }));
+  const allVisibleAccounts = useVisibleAccountsListSelector();
+
+  const myVisibleAccounts = useMemo(
+    () =>
+      allVisibleAccounts
+        .filter(({ publicKeyHash }) => publicKeyHash !== accountPkh)
+        .map(({ name, publicKeyHash }) => ({ name, publicKeyHash })),
+    [allVisibleAccounts, accountPkh]
+  );
 
   const [searchValue, setSearchValue] = useState<string>('');
 

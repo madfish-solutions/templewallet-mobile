@@ -2,14 +2,15 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
 
-import { HeaderCard } from '../../../components/header-card/header-card';
-import { Icon } from '../../../components/icon/icon';
-import { IconNameEnum } from '../../../components/icon/icon-name.enum';
-import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from '../../../config/socials';
-import { formatSize } from '../../../styles/format-size';
+import { HeaderCard } from 'src/components/header-card/header-card';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SocialButton } from 'src/components/social-button';
+import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from 'src/config/socials';
+import { formatSize } from 'src/styles/format-size';
+
 import { SettingsHeaderSelectors } from './selectors';
 import { useSettingsHeaderStyles } from './settings-header.styles';
-import { SocialButton } from './social-button/social-button';
 
 export const SettingsHeader = () => {
   const styles = useSettingsHeaderStyles();

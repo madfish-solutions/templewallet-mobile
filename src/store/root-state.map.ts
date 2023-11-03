@@ -2,6 +2,8 @@ import { abTestingReducer } from './ab-testing/ab-testing-reducers';
 import { advertisingReducers } from './advertising/advertising-reducers';
 import { bakingReducers } from './baking/baking-reducers';
 import { buyWithCreditCardReducer } from './buy-with-credit-card/reducers';
+import { collectiblesPersistedReducer } from './collectibles/collectibles-reducers';
+import { collectionsReducer } from './collectons/collections-reducers';
 import { contactBookReducers } from './contact-book/contact-book-reducers';
 import { currencyReducers } from './currency/currency-reducers';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
@@ -37,5 +39,7 @@ export const rootStateReducersMap = {
   abTesting: abTestingReducer,
   farms: farmsReducer,
   savings: savingsReducer,
-  newsletter: newsletterReducers
+  newsletter: newsletterReducers,
+  collections: collectionsReducer,
+  collectibles: collectiblesPersistedReducer
 };

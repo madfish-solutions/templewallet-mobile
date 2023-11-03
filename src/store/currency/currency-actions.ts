@@ -1,4 +1,5 @@
 import { createActions } from '../create-actions';
+
 import { ExchangeRateRecord } from './currency-state';
 
 interface ExchangeRateInterface {

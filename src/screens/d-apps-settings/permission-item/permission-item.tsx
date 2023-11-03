@@ -14,6 +14,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { DAppsSettingsSelectors } from '../d-apps.settings.selectors';
+
 import { PermissionItemAnalyticsEvents } from './analytics-events';
 import { usePermissionItemStyles } from './permission-item.styles';
 import { PermissionItemSelectors } from './selectors';

@@ -19,6 +19,7 @@ import { useAddTokenSuggestionSelector } from '../../../store/tokens-metadata/to
 import { addTokenAction } from '../../../store/wallet/wallet-actions';
 import { formatSize } from '../../../styles/format-size';
 import { showSuccessToast } from '../../../toast/toast.utils';
+
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-asset-info.form';
 import { AddAssetInfoSelectors } from './add-asset-info.selectors';
 

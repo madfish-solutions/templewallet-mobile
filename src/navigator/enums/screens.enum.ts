@@ -1,4 +1,7 @@
+import { ObjktCollectionType } from 'src/apis/objkt/types';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+
+import { ModalsEnum } from './modals.enum';
 
 export enum ScreensEnum {
   Welcome = 'Welcome',
@@ -19,6 +22,7 @@ export enum ScreensEnum {
   ScanQrCode = 'ScanQrCode',
   Notifications = 'Notifications',
   NotificationsItem = 'NotificationsItem',
+  Collection = 'Collection',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -71,7 +75,7 @@ export type ScreensParamList = {
   [ScreensEnum.TezosTokenScreen]: undefined;
   [ScreensEnum.TokenScreen]: { token: TokenInterface };
   [ScreensEnum.Delegation]: undefined;
-  [ScreensEnum.ManageAssets]: undefined;
+  [ScreensEnum.ManageAssets]: { collectibles: boolean };
   [ScreensEnum.Activity]: undefined;
 
   [ScreensEnum.ScanQrCode]: undefined;
@@ -80,6 +84,12 @@ export type ScreensParamList = {
   [ScreensEnum.Buy]: undefined;
   [ScreensEnum.BuyWithCreditCard]: undefined;
   [ScreensEnum.Exolix]: undefined;
+  [ScreensEnum.Collection]: {
+    collectionContract: string;
+    collectionName: string;
+    type: ObjktCollectionType;
+    galleryPk: number | undefined;
+  };
 
   [ScreensEnum.Earn]: undefined;
   [ScreensEnum.Farming]: undefined;
@@ -130,7 +140,7 @@ export const walletStackScreens = [
   ScreensEnum.NotificationsItem,
   ScreensEnum.Blank
 ];
-export const nftStackScreens = [ScreensEnum.CollectiblesHome];
+export const nftStackScreens = [ScreensEnum.CollectiblesHome, ScreensEnum.Collection, ModalsEnum.CollectibleModal];
 export const dAppsStackScreens = [ScreensEnum.DApps];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];

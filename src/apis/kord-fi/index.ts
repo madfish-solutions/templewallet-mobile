@@ -15,6 +15,7 @@ import { tzktUrl } from 'src/utils/linking';
 import { tzToMutez } from 'src/utils/tezos.util';
 
 import { fallbackTezosToolkit } from '../youves/utils';
+
 import { KordFiLendStats, KordFiStatsResponse, KordFiUserDepositsResponse } from './types';
 
 const kordFiApi = axios.create({

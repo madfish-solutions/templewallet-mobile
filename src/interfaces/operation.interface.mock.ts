@@ -1,5 +1,6 @@
 import { ActivityStatusEnum } from '../enums/activity-status.enum';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
+
 import { OperationInterface } from './operation.interface';
 
 const mockMember = {

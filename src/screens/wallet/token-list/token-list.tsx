@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { forkJoin } from 'rxjs';
@@ -28,22 +28,21 @@ import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
-import {
-  useCurrentAccountPkhSelector,
-  useSelectedAccountTezosTokenSelector,
-  useSelectedAccountTkeyTokenSelector,
-  useVisibleTokensListSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
+import { TEZ_TOKEN_SLUG, TEMPLE_TOKEN } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
+import { useAccountTokenBySlug, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { WalletSelectors } from '../wallet.selectors';
+
 import { TezosToken } from './token-list-item/tezos-token';
 import { TokenListItem } from './token-list-item/token-list-item';
 import { useTokenListStyles } from './token-list.styles';
@@ -60,7 +59,7 @@ const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
-export const TokensList: FC = () => {
+export const TokensList = memo(() => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
@@ -75,21 +74,18 @@ export const TokensList: FC = () => {
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
-  const tezosToken = useSelectedAccountTezosTokenSelector();
-  const tkeyToken = useSelectedAccountTkeyTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
+  const tkeyToken = useAccountTokenBySlug(TEMPLE_TOKEN_SLUG);
   const isHideZeroBalance = useHideZeroBalancesSelector();
-  const visibleTokensList = useVisibleTokensListSelector();
+  const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
 
-  const handleHideZeroBalanceChange = useCallback(
-    (value: boolean) => {
-      dispatch(setZeroBalancesShown(value));
-      trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
-    },
-    [dispatch, trackEvent]
-  );
+  const handleHideZeroBalanceChange = useCallback((value: boolean) => {
+    dispatch(setZeroBalancesShown(value));
+    trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
+  }, []);
 
   useEffect(() => {
     const listener = () => {
@@ -112,7 +108,7 @@ export const TokensList: FC = () => {
     }
   }, [dispatch, partnersPromoShown]);
 
-  useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
+  const leadingAssets = useMemo(() => [tezosToken, tkeyToken ?? TEMPLE_TOKEN], [tezosToken, tkeyToken]);
 
   useEffect(() => {
     const shelterMigrationSubscription = forkJoin([
@@ -131,7 +127,6 @@ export const TokensList: FC = () => {
     return () => shelterMigrationSubscription.unsubscribe();
   }, [navigate]);
 
-  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,
@@ -160,7 +155,7 @@ export const TokensList: FC = () => {
     searchValue
   ]);
 
-  const handleLayout = (event: LayoutChangeEvent) => setListHeight(event.nativeEvent.layout.height);
+  const handleLayout = useCallback((event: LayoutChangeEvent) => setListHeight(event.nativeEvent.layout.height), []);
 
   const renderItem: ListRenderItem<ListItem> = useCallback(
     ({ item }) => {
@@ -196,6 +191,8 @@ export const TokensList: FC = () => {
     [apyRates, styles]
   );
 
+  useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
+
   const ListEmptyComponent = useMemo(() => <DataPlaceholder text="No records found." />, []);
 
   const refreshControl = useMemo(() => <RefreshControl {...fakeRefreshControlProps} />, [fakeRefreshControlProps]);
@@ -216,7 +213,7 @@ export const TokensList: FC = () => {
           </Checkbox>
         </View>
 
-        <Search onChange={setSearchValue} testID={WalletSelectors.searchTokenButton}>
+        <Search onChange={setSearchValue} testID={WalletSelectors.searchTokenButton} dividerSize={20}>
           <TouchableIcon
             name={IconNameEnum.Clock}
             size={formatSize(16)}
@@ -226,12 +223,12 @@ export const TokensList: FC = () => {
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
-            onPress={() => navigate(ScreensEnum.ManageAssets)}
+            onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: false })}
           />
         </Search>
       </View>
 
-      {isEnabledAdsBanner && <AcceptAdsBanner style={styles.banner} />}
+      {isEnabledAdsBanner ? <AcceptAdsBanner style={styles.banner} /> : null}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlashList
@@ -247,7 +244,7 @@ export const TokensList: FC = () => {
       </View>
     </>
   );
-};
+});
 
 const addPlaceholdersForAndroid = (listData: ListItem[], screenFillingItemsCount: number) =>
   isAndroid && screenFillingItemsCount > listData.length

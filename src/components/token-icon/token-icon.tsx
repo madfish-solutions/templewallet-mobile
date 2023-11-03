@@ -16,6 +16,7 @@ import { isString } from 'src/utils/is-string';
 import { DataUriImage } from '../data-uri-image';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { LoadableTokenIconImage } from './loadable-image';
 import { TokenIconStyles } from './token-icon.styles';
 
@@ -82,9 +83,11 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
   }
 
   if (isImgUriSvg(thumbnailUri) || (isKnownSvg && !svgFailed)) {
-    const normalizedUri = thumbnailUri.startsWith('ipfs://') ? formatImgUri(thumbnailUri) : thumbnailUri;
+    const uri = formatImgUri(thumbnailUri);
 
-    return <SvgCssUri width={size} height={size} uri={normalizedUri} onError={handleSvgError} />;
+    if (uri) {
+      return <SvgCssUri width={size} height={size} uri={uri} onError={handleSvgError} />;
+    }
   }
 
   if (isImgUriDataUri(thumbnailUri)) {

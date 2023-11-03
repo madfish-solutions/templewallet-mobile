@@ -9,6 +9,7 @@ import { Label } from 'src/components/label/label';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 
 import type { ImportWalletProps } from '../import-wallet';
+
 import {
   importWalletFromSeedPhraseInitialValues,
   importWalletFromSeedPhraseValidationSchema

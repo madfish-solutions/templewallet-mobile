@@ -60,12 +60,7 @@ export const ContactItem: FC<Props> = ({ contact, index }) => {
         </View>
       </View>
       <View style={styles.actions}>
-        <TouchableIcon
-          name={IconNameEnum.Edit}
-          size={formatSize(16)}
-          testID={ContactItemSelector.editButton}
-          onPress={hadleEditItem}
-        />
+        <TouchableIcon name={IconNameEnum.Edit} testID={ContactItemSelector.editButton} onPress={hadleEditItem} />
         <Divider size={formatSize(24)} />
         <TouchableIcon
           name={IconNameEnum.Trash}

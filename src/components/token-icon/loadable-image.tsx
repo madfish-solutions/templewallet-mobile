@@ -1,12 +1,12 @@
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import FastImage, { Source } from 'react-native-fast-image';
 
-import { emptyFn, EmptyFn } from 'src/config/general';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
   onError?: EmptyFn;
 }
 
-export const LoadableTokenIconImage: FC<Props> = ({ uri, size, onError = emptyFn, useOriginal = false }) => {
+export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOriginal = false }) => {
   const lastItemId = useRef(uri);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -35,13 +35,13 @@ export const LoadableTokenIconImage: FC<Props> = ({ uri, size, onError = emptyFn
   );
 
   const source = useMemo<Source>(
-    () => (isString(uri) ? { uri: formatImgUri(uri, !useOriginal) } : {}),
+    () => (isString(uri) ? { uri: formatImgUri(uri, 'small', !useOriginal) } : {}),
     [uri, useOriginal]
   );
 
   const handleError = useCallback(() => {
     setIsFailed(true);
-    onError();
+    onError?.();
   }, [onError]);
   const handleLoadEnd = useCallback(() => setIsLoading(false), []);
 
@@ -51,4 +51,4 @@ export const LoadableTokenIconImage: FC<Props> = ({ uri, size, onError = emptyFn
       <FastImage style={style} source={source} onError={handleError} onLoadEnd={handleLoadEnd} />
     </>
   );
-};
+});

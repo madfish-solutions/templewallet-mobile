@@ -6,6 +6,9 @@
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
 
+#import "SDImageCodersManager.h"
+#import <SDWebImageWebPCoder/SDImageWebPCoder.h>
+
 #import <React/RCTBundleURLProvider.h>
 
 #import <React/RCTLinkingManager.h>
@@ -21,6 +24,9 @@
   self.initialProps = @{};
 
   [FIRApp configure];
+
+  // Animated WEBP support. See: https://stackoverflow.com/a/70626476/9371122
+  [SDImageCodersManager.sharedManager addCoder:SDImageWebPCoder.sharedCoder];
 
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;

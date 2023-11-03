@@ -1,9 +1,11 @@
-import { VisibilityEnum } from '../../enums/visibility.enum';
+import type { VisibilityEnum } from 'src/enums/visibility.enum';
 
 export interface AccountTokenInterface {
   slug: string;
-  balance: string;
   visibility: VisibilityEnum;
+
+  /** @deprecated // Dynamic data. Gotta store separately */
+  balance: string;
 
   /** @deprecated */
   isVisible?: boolean;

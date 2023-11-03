@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
-import { isAndroid } from 'src/config/system';
+import { isAndroid, isIOS } from 'src/config/system';
 import { useRootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
@@ -41,7 +41,7 @@ import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountTezosBalance, useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
@@ -62,7 +62,7 @@ export const RootStackScreen = () => {
   const isAuthorised = useIsAuthorisedSelector();
   const { isDcpNode } = useNetworkInfo();
 
-  const { balance } = useSelectedAccountTezosTokenSelector();
+  const balance = useCurrentAccountTezosBalance();
   const isOnRampHasBeenShownBefore = useIsOnRampHasBeenShownBeforeSelector();
 
   useRootHooks();
@@ -151,7 +151,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.CollectibleModal}
               component={CollectibleModal}
-              options={useModalOptions('NFT Name')}
+              options={{ ...useModalOptions(), gestureEnabled: isIOS }}
             />
             <RootStack.Screen
               name={ModalsEnum.AddCustomRpc}

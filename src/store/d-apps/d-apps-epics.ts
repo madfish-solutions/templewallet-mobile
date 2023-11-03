@@ -13,6 +13,7 @@ import { withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { emptyAction } from '../root-state.actions';
 import type { RootState } from '../types';
+
 import {
   loadTokensApyActions,
   abortRequestAction,

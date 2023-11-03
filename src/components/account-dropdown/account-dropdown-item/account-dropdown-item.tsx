@@ -1,59 +1,154 @@
-import React, { FC } from 'react';
-import { View } from 'react-native';
+import BigNumber from 'bignumber.js';
+import React, { memo, useEffect, useMemo, useState } from 'react';
+import { Text, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
+import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
+import { HideBalance } from 'src/components/hide-balance/hide-balance';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
+import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
-import { useTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
+import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
+import { formatNumber } from 'src/utils/format-price';
+import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { mutezToTz } from 'src/utils/tezos.util';
+import { useTzProfile } from 'src/utils/tz-profiles';
+import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
-import { AssetValueText } from '../../asset-value-text/asset-value-text';
-import { DropdownListItemComponent } from '../../dropdown/dropdown';
-import { HideBalance } from '../../hide-balance/hide-balance';
-import { Icon } from '../../icon/icon';
-import { IconNameEnum } from '../../icon/icon-name.enum';
-import { RobotIcon } from '../../robot-icon/robot-icon';
-import { WalletAddress } from '../../wallet-address/wallet-address';
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
-import { useAccountDropdownItemStyles } from './account-dropdown-item.styles';
+import {
+  useAccountDropdownItemStyles,
+  useAccountDropdownItemCollectiblesInfoStyles
+} from './account-dropdown-item.styles';
 
-export const AccountDropdownItem: FC<AccountDropdownItemProps> = ({
-  account = emptyAccountBase,
-  showFullData = true,
-  actionIconName,
-  isPublicKeyHashTextDisabled
-}) => {
-  const styles = useAccountDropdownItemStyles();
-  const tezos = useTezosTokenSelector(account.publicKeyHash);
-  const { metadata } = useNetworkInfo();
+const COLLECTIBLES_ROBOT_ICON_SIZE = 76;
 
-  return (
-    <View style={styles.root}>
-      <RobotIcon seed={account.publicKeyHash} />
-      <View style={styles.infoContainer}>
-        <View style={[styles.upperContainer, conditionalStyle(showFullData, styles.upperContainerFullData)]}>
-          <TruncatedText style={styles.name}>{account.name}</TruncatedText>
-          {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
-        </View>
-        <View style={styles.lowerContainer}>
-          <WalletAddress
-            isLocalDomainNameShowing
-            publicKeyHash={account.publicKeyHash}
-            isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
+export const AccountDropdownItem = memo<AccountDropdownItemProps>(
+  ({
+    account = emptyAccountBase,
+    showFullData = true,
+    actionIconName,
+    isPublicKeyHashTextDisabled,
+    isCollectibleScreen = false
+  }) => {
+    const styles = useAccountDropdownItemStyles();
+    const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
+    const selectedAccountPkh = useCurrentAccountPkhSelector();
+    const tzProfile = useTzProfile(selectedAccountPkh);
+    const [userLogo, setUserLogo] = useState(tzProfile?.logo);
+
+    useEffect(() => setUserLogo(tzProfile?.logo), [tzProfile]);
+
+    return (
+      <View style={styles.root}>
+        {isDefined(userLogo) && isCollectibleScreen ? (
+          <FastImage
+            style={styles.image}
+            source={{ uri: formatImgUri(userLogo) }}
+            onError={() => setUserLogo(undefined)}
           />
-          {showFullData && (
-            <HideBalance style={styles.balanceText}>
-              <AssetValueText asset={metadata} amount={tezos.balance} />
-            </HideBalance>
-          )}
+        ) : (
+          <RobotIcon
+            seed={account.publicKeyHash}
+            size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined}
+          />
+        )}
+        <View style={styles.infoContainer}>
+          <View
+            style={[
+              styles.upperContainer,
+              conditionalStyle(showFullData, styles.upperContainerFullData),
+              conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
+            ]}
+          >
+            <TruncatedText style={styles.name}>
+              {isCollectibleScreen && tzProfile?.alias ? tzProfile.alias : account.name}
+            </TruncatedText>
+            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+          </View>
+          <View style={styles.lowerContainer}>
+            {isCollectibleScreen ? (
+              <CollectiblesInfo />
+            ) : (
+              <WalletAddress
+                isLocalDomainNameShowing
+                publicKeyHash={account.publicKeyHash}
+                isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
+              />
+            )}
+            {showFullData && !isCollectibleScreen && (
+              <HideBalance style={styles.balanceText}>
+                <AssetValueText asset={tezos} amount={tezos.balance} />
+              </HideBalance>
+            )}
+          </View>
         </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+);
 
 export const renderAccountListItem: DropdownListItemComponent<AccountBaseInterface> = ({ item, isSelected }) => (
   <AccountDropdownItem account={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
 );
+
+const CollectiblesInfo = memo(() => {
+  const styles = useAccountDropdownItemCollectiblesInfoStyles();
+
+  const contacts = useContactsSelector();
+
+  const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
+
+  const allDetails = useAllCollectiblesDetailsSelector();
+  const { metadata: gasMetadata } = useNetworkInfo();
+
+  const totalFloorPriceStr = useMemo(() => {
+    let totalFloorPrice = 0;
+    for (const { slug } of collectibles) {
+      const cheapestListing = allDetails[slug]?.listingsActive[0];
+
+      if (cheapestListing) {
+        totalFloorPrice += cheapestListing.price_xtz;
+      }
+    }
+
+    if (totalFloorPrice === 0) {
+      return '-';
+    }
+
+    const floorPrice = mutezToTz(new BigNumber(totalFloorPrice), gasMetadata.decimals).toNumber();
+    const floorPriceDisplayed = formatNumber(floorPrice);
+
+    return `${floorPriceDisplayed} ${gasMetadata.symbol}`;
+  }, [collectibles, allDetails, gasMetadata]);
+
+  return (
+    <>
+      <View style={styles.collectiblesData}>
+        <View style={styles.headerInfoColumn}>
+          <Text style={styles.headerText}>Items</Text>
+          <Text style={styles.headerBoldText}>{collectibles.length}</Text>
+        </View>
+        <View style={styles.headerInfoColumn}>
+          <Text style={styles.headerText}>Total Floor Price</Text>
+          <Text style={styles.headerBoldText}>{totalFloorPriceStr}</Text>
+        </View>
+        <View style={styles.headerInfoColumn}>
+          <Text style={styles.headerText}>Contacts</Text>
+          <Text style={styles.headerBoldText}>{contacts.length}</Text>
+        </View>
+      </View>
+    </>
+  );
+});

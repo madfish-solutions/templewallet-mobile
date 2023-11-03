@@ -12,6 +12,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { withSelectedAccount, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { RootState } from '../types';
+
 import {
   loadAllSavingsActions,
   loadAllSavingsAndStakesAction,

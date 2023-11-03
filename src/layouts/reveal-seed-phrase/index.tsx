@@ -15,7 +15,7 @@ import { NewSeedPhraseAttention } from 'src/components/new-seed-phrase-attention
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { RevealSeedPhraseView } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-form-content/reveal-seed-phrase-view/reveal-seed-phrase-view';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
 import {
@@ -40,7 +40,7 @@ export const RevealSeedPhrase: FC<Props> = ({
   headerTitleText = 'Manual backup'
 }) => {
   const styles = useCreateNewWalletStyles();
-  const selectedAccount = useSelectedAccountSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
 
   useNavigationSetOptions(
     {
@@ -66,7 +66,7 @@ export const RevealSeedPhrase: FC<Props> = ({
               description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
             />
             <RevealSeedPhraseView
-              publicKeyHash={selectedAccount.publicKeyHash}
+              publicKeyHash={accountPkh}
               testID={RevealSeedPhraseSelectors.tapToRevealProtectedMask}
             />
           </View>

@@ -5,6 +5,7 @@ import { ActivityGroup } from '../../../../interfaces/activity.interface';
 import { formatSize } from '../../../../styles/format-size';
 import { Divider } from '../../../divider/divider';
 import { Icon } from '../../../icon/icon';
+
 import { useActivityGroupTypeStyles } from './activity-group-type.styles';
 import { useActivityGroupInfo } from './use-activity-group-info.hook';
 

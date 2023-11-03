@@ -10,6 +10,7 @@ import { StyledTextInput } from '../../styled-text-input/styled-text-input';
 import { StyledTextInputStyles } from '../../styled-text-input/styled-text-input.styles';
 import { MnemonicStyles } from '../mnemonic.styles';
 import { ProtectedOverlay } from '../protected-overlay/protected-overlay';
+
 import { RevealSecretViewSelectors } from './reveal-secret-view.selectors';
 
 interface Props extends TestIdProps {

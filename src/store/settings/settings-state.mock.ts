@@ -1,6 +1,7 @@
 import { ThemesEnum } from '../../interfaces/theme.enum';
 import { FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
 import { RpcList } from '../../utils/rpc/rpc-list';
+
 import { SettingsState } from './settings-state';
 
 export const mockSettingsState: SettingsState = {
@@ -21,8 +22,9 @@ export const mockSettingsState: SettingsState = {
   isCloudBackupMade: true,
   isEnableAdsBanner: true,
   isOnRampPossibility: false,
-  isOnRampHasBeenShownBefore: false,
   applicationOpenCounter: 1,
+  isOnRampHasBeenShownBefore: false,
   isApkBuildLaunchEventFired: false,
-  isPushNotificationsEnabledEventFired: false
+  isPushNotificationsEnabledEventFired: false,
+  isShowCollectibleInfo: false
 };

@@ -1,7 +1,6 @@
 import { AccountInterface, AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 
 export enum ModalsEnum {
@@ -38,7 +37,7 @@ export type ModalsParamList = {
   [ModalsEnum.RevealPrivateKey]: { account: AccountInterface };
   [ModalsEnum.EnableBiometryPassword]: undefined;
   [ModalsEnum.ImportAccount]: undefined;
-  [ModalsEnum.CollectibleModal]: { collectible: TokenInterface };
+  [ModalsEnum.CollectibleModal]: { slug: string };
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.EditCustomRpc]: { url: string };
   [ModalsEnum.AddContact]: AccountBaseInterface | undefined;

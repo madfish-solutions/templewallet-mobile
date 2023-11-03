@@ -18,6 +18,7 @@ import { openUrl } from 'src/utils/linking';
 
 import { INITIAL_APR_VALUE } from '../../apis/youves/constants';
 import { getDelegateText } from '../../utils/get-delegate-text.util';
+
 import { useApyStyles } from './apy.styles';
 import { apyLinkSelectors } from './token-header.selectors';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';

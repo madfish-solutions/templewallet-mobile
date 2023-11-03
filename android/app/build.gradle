@@ -146,6 +146,9 @@ dependencies {
       See: https://stackoverflow.com/a/60492942/9371122
     */
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+
+    // Animated WEBP support. See: https://github.com/DylanVann/react-native-fast-image/issues/92#issuecomment-1680704556
+    implementation "com.github.zjupure:webpdecoder:2.6.${rootProject.ext.glideVersion}"
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

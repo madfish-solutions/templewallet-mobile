@@ -1,18 +1,20 @@
-import React, { FC, useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { View } from 'react-native';
 // eslint-disable-next-line import/default
 import Animated, { Easing, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 
-import { formatSize } from '../../styles/format-size';
+import { formatSize } from 'src/styles/format-size';
+
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { LoaderLines, VECTOR_SIZE } from './loader-lines';
 import { useLoaderStyles } from './loader.styles';
 
 const width = formatSize(48);
 const height = formatSize(24);
 
-export const Loader: FC = () => {
+export const Loader = memo(() => {
   const styles = useLoaderStyles();
 
   const progress = useSharedValue(0);
@@ -40,4 +42,4 @@ export const Loader: FC = () => {
       </View>
     </View>
   );
-};
+});

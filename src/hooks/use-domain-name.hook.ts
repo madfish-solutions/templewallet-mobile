@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { ONE_MINUTE } from 'src/config/fixed-times';
 import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
 import { setIsDomainAddressShown } from 'src/store/settings/settings-actions';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -24,8 +23,7 @@ const isMemoized = (pkh: string) =>
 export const useDomainName = (publicKeyHash: string) => {
   const [domainName, setDomainName] = useState(isMemoized(publicKeyHash) || '');
   const dispatch = useDispatch();
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
   const resolver = tezosDomainsResolver(tezos);
 
   const updateDomainReverseName = async (pkh: string) => {

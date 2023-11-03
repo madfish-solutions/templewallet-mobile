@@ -25,17 +25,14 @@ import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
-import {
-  useSelectedAccountSelector,
-  useSelectedAccountTezosTokenSelector,
-  useVisibleAssetListSelector
-} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isValidAddress } from 'src/utils/tezos.util';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { SendModalSelectors } from './send-modal.selectors';
@@ -48,24 +45,26 @@ export const SendModal: FC = () => {
     useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
   const { goBack } = useNavigation();
 
-  const selectedAccount = useSelectedAccountSelector();
   const styles = useSendModalStyles();
-  const assetsList = useVisibleAssetListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+
+  const tokens = useCurrentAccountTokens(true);
+  const collectibles = useCurrentAccountCollectibles(true);
+  const assets = useMemo(() => tokens.concat(collectibles), [tokens, collectibles]);
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const leadingAssets = useMemo(() => [tezosToken], [tezosToken]);
 
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assetsList, true, true, leadingAssets);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, true, true, leadingAssets);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
   const resolver = useMemo(() => tezosDomainsResolver(tezos), [tezos]);
 
   const isTransferDisabled = filteredReceiversList.length === 0;
   const recipient = filteredReceiversList[0]?.data[0];
 
   const inputInitialValue = useMemo(
-    () => assetsList.find(item => tokenEqualityFn(item, initialToken)) ?? tezosToken,
-    [assetsList, initialToken, tezosToken]
+    () => assets.find(item => tokenEqualityFn(item, initialToken)) ?? tezosToken,
+    [assets, initialToken, tezosToken]
   );
 
   const sendModalInitialValues = useMemo<SendModalFormValues>(

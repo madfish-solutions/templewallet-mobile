@@ -2,14 +2,14 @@ import { BigNumber } from 'bignumber.js';
 import { useCallback } from 'react';
 
 import { Route3LiquidityBakingChains, Route3SwapChains, Route3Token } from 'src/interfaces/route3.interface';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { getSwapTransferParams } from 'src/utils/swap.utils';
 
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 
 export const useSwap = () => {
-  const selectedAccount = useSelectedAccountSelector();
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const publicKeyHash = useCurrentAccountPkhSelector();
+  const tezos = useReadOnlyTezosToolkit();
 
   return useCallback(
     async (
@@ -26,8 +26,8 @@ export const useSwap = () => {
         minimumReceivedAtomic,
         chains,
         tezos,
-        selectedAccount.publicKeyHash
+        publicKeyHash
       ),
-    [tezos, selectedAccount.publicKeyHash]
+    [tezos, publicKeyHash]
   );
 };

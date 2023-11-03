@@ -18,6 +18,7 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
 import { renderTopUpTokenListItem, TopUpTokenDropdownItem } from '../dropdown-item';
+
 import { TopUpAssetValueText } from './asset-value-text';
 import { TopUpAssetAmountInputSelectors } from './selectors';
 import { useTopUpAssetAmountInputStyles } from './styles';
