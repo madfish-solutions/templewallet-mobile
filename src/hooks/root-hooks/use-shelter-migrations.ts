@@ -22,6 +22,7 @@ export const useShelterMigrations = async () => {
     Shelter.doMigrations$().subscribe({
       next: () => {
         dispatch(setShouldMigrateOnRestartAction(false));
+        dispatch(hideLoaderAction());
         Alert.alert(
           'Migration has succeeded',
           "All data has been successfully migrated from the device's security chip. Enjoy uninterrupted use of the wallet.",
@@ -29,11 +30,8 @@ export const useShelterMigrations = async () => {
         );
       },
       error: err => {
-        console.error(err);
-        Alert.alert('Migration has failed', err.message);
-      },
-      complete: () => {
         dispatch(hideLoaderAction());
+        Alert.alert('Migration has failed', err.message);
       }
     });
   }, [dispatch]);
