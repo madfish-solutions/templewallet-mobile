@@ -19,7 +19,7 @@ import { rxJsTestingHelper } from '../utils/testing.utils';
 
 import { Shelter } from './shelter';
 
-// Store version in these tests doesn't matter, so we can set it to 0
+// Shelter version in these tests doesn't matter, so we can set it to 0
 describe('Shelter', () => {
   const mockIncorrectPassword = 'mockIncorrectPassword';
 

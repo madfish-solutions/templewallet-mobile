@@ -2,7 +2,6 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { forkJoin } from 'rxjs';
 
 import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
@@ -19,10 +18,8 @@ import { isAndroid } from 'src/config/system';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { Shelter } from 'src/shelter/shelter';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
@@ -37,7 +34,6 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useAccountTokenBySlug, useCurrentAccountTokens } from 'src/utils/assets/hooks';
-import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
@@ -109,23 +105,6 @@ export const TokensList = memo(() => {
   }, [dispatch, partnersPromoShown]);
 
   const leadingAssets = useMemo(() => [tezosToken, tkeyToken ?? TEMPLE_TOKEN], [tezosToken, tkeyToken]);
-
-  useEffect(() => {
-    const shelterMigrationSubscription = forkJoin([
-      Shelter.newMigrationsExist(),
-      Shelter.getShelterVersion()
-    ]).subscribe(([shouldDoSomeMigrations, shelterVersion]) => {
-      if (shouldDoSomeMigrations && shouldMoveToSoftwareInV1 && shelterVersion === 0) {
-        navigate(ModalsEnum.SecurityUpdate);
-      } else if (shouldDoSomeMigrations) {
-        Shelter.doMigrations$().subscribe({
-          error: e => console.error(e)
-        });
-      }
-    });
-
-    return () => shelterMigrationSubscription.unsubscribe();
-  }, [navigate]);
 
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,

@@ -66,8 +66,15 @@ export class Shelter {
         } else if (isDefined(migrationResult.error)) {
           const { error } = migrationResult;
 
-          if (error instanceof Error && error.message === 'code: 13, msg: Cancel') {
-            return;
+          if (error instanceof Error) {
+            console.log(JSON.stringify(Object.entries(error)), error.name);
+            const errorWithCodeMatchResult = error.message.match(/^code: (\d+)/);
+            const codeNumber = errorWithCodeMatchResult ? Number(errorWithCodeMatchResult[1]) : undefined;
+
+            // A user cancelled biometric authentication
+            if (codeNumber === 13) {
+              return;
+            }
           }
 
           throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);

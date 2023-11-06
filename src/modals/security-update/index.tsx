@@ -1,6 +1,5 @@
 import React, { memo, useCallback } from 'react';
 import { Alert } from 'react-native';
-import RNRestart from 'react-native-restart';
 import { useDispatch } from 'react-redux';
 
 import { HeaderButton } from 'src/components/header/header-button/header-button';
@@ -23,11 +22,7 @@ export const SecurityUpdate = memo(() => {
 
   const goToSeedPhraseVerification = useCallback(() => setInnerScreenIndex(1), [setInnerScreenIndex]);
 
-  const handleSeedPhraseVerified = useCallback(() => {
-    dispatch(setShouldMigrateOnRestartAction(true));
-    // TODO: implement calling exactly when the new state is saved into async storage
-    setTimeout(() => RNRestart.restart(), 1000);
-  }, [dispatch]);
+  const handleSeedPhraseVerified = useCallback(() => dispatch(setShouldMigrateOnRestartAction(true)), [dispatch]);
 
   const handleCloseAttempt = useCallback(
     () =>
