@@ -26,6 +26,7 @@ import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNFTDynamicLinks } from 'src/hooks/use-nft-dynamic-links.hook';
+import { SecurityUpdate } from 'src/modals/security-update';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
 import { Backup } from 'src/screens/backup/backup';
@@ -87,7 +88,6 @@ import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interfac
 import { cloudTitle } from 'src/utils/cloud-backup';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 
-import { ModalsEnum } from './enums/modals.enum';
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useNavigation } from './hooks/use-navigation.hook';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
@@ -137,7 +137,7 @@ export const MainStackScreen = memo(() => {
       Shelter.getShelterVersion()
     ]).subscribe(([shouldDoSomeMigrations, shelterVersion]) => {
       if (shouldDoSomeMigrations && shouldMoveToSoftwareInV1 && shelterVersion === 0) {
-        navigate(ModalsEnum.SecurityUpdate);
+        navigate(ScreensEnum.SecurityUpdate);
       } else if (shouldDoSomeMigrations) {
         Shelter.doMigrations$().subscribe({
           error: e => console.error(e)
@@ -392,6 +392,12 @@ export const MainStackScreen = memo(() => {
                 name={ScreensEnum.Debug}
                 component={Debug}
                 options={generateScreenOptions(<HeaderTitle title="Debugging" />)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.SecurityUpdate}
+                component={SecurityUpdate}
+                options={generateScreenOptions(<HeaderTitle title="Update info" />)}
               />
             </>
           ) : null}

@@ -4,7 +4,6 @@ import { usePushNotifications } from './use-push-notifications';
 import { useQuickActions } from './use-quick-actions';
 import { useResetKeychainOnInstall } from './use-reset-keychain-on-install';
 import { useResetLoading } from './use-reset-loading';
-import { useShelterMigrations } from './use-shelter-migrations';
 import { useStorageAnalytics } from './use-storage-analytics';
 import { useStorageMigration } from './use-storage-migration';
 import { useTokensMetadataFixtures } from './use-tokens-metadata-fixtures';
@@ -23,6 +22,4 @@ export const useRootHooks = () => {
 
   useFirebaseApp();
   usePushNotifications();
-
-  useShelterMigrations();
 };

@@ -25,7 +25,6 @@ import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { getUserTestingGroupNameActions } from 'src/store/ab-testing/ab-testing-actions';
 import { useUserTestingGroupNameSelector } from 'src/store/ab-testing/ab-testing-selectors';
 import { useBiometricsEnabledSelector } from 'src/store/settings/settings-selectors';
-import { useShouldMigrateOnRestartSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { ToastProvider } from 'src/toast/toast-provider';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -55,7 +54,6 @@ export const EnterPassword = () => {
   const biometricsEnabled = useBiometricsEnabledSelector();
 
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
-  const shouldMigrateOnRestart = useShouldMigrateOnRestartSelector();
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
@@ -63,8 +61,8 @@ export const EnterPassword = () => {
   usePageAnalytic(OverlayEnum.EnterPassword);
 
   useEffect(
-    () => void (!atBootsplash && isBiometryAvailable && !shouldMigrateOnRestart && unlockWithBiometry()),
-    [isBiometryAvailable, atBootsplash, unlockWithBiometry, shouldMigrateOnRestart]
+    () => void (!atBootsplash && isBiometryAvailable && unlockWithBiometry()),
+    [isBiometryAvailable, atBootsplash, unlockWithBiometry]
   );
 
   useEffect(() => {

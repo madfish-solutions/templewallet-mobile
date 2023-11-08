@@ -132,5 +132,3 @@ export const useTezosBalanceOfKnownAccountSelector = (publicKeyHash: string) =>
 
     return state.contactBook.contactsStateRecord[publicKeyHash]?.tezosBalance ?? '0';
   });
-
-export const useShouldMigrateOnRestartSelector = () => useSelector(({ wallet }) => wallet.shouldMigrateOnRestart);

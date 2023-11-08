@@ -23,8 +23,9 @@ import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../ut
 import { throwError$ } from '../utils/rxjs.utils';
 
 const EMPTY_PASSWORD_HASH = '';
-const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to complete migration';
-const MIGRATION_ERROR_MESSAGE = 'Please try again on the next launch.';
+export const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to complete migration';
+const MIGRATION_WITH_BIOMETRY_ERROR_MESSAGE = 'Confirm the migration using your biometrics and try again.';
+const MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE = 'Please, try again.';
 
 interface PasswordServiceMigrationResultBase {
   isSuccess: boolean;
@@ -67,7 +68,6 @@ export class Shelter {
           const { error } = migrationResult;
 
           if (error instanceof Error) {
-            console.log(JSON.stringify(Object.entries(error)), error.name);
             const errorWithCodeMatchResult = error.message.match(/^code: (\d+)/);
             const codeNumber = errorWithCodeMatchResult ? Number(errorWithCodeMatchResult[1]) : undefined;
 
@@ -97,6 +97,7 @@ export class Shelter {
   private static migrateFromChip = async () => {
     const passwordServices = await Keychain.getAllGenericPasswordServices();
     const shelterVersion = await Shelter.getShelterVersion();
+    const hasBiometry = passwordServices.some(serviceName => serviceName.includes(PASSWORD_STORAGE_KEY));
 
     const migrationResults = await Promise.all(
       passwordServices.map(async (passwordService): Promise<PasswordServiceMigrationResult> => {
@@ -109,6 +110,7 @@ export class Shelter {
             return { isSuccess: false, readPassword };
           }
 
+          await Keychain.resetGenericPassword(oldPasswordServiceOptions);
           const newPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion + 1);
           const result = await Keychain.setGenericPassword(
             readPassword.username,
@@ -118,8 +120,6 @@ export class Shelter {
 
           return { isSuccess: result !== false, readPassword };
         } catch (e) {
-          console.error(e, typeof e === 'object' && e ? Object.entries(e) : JSON.stringify(e));
-
           return { error: e, isSuccess: false, readPassword };
         }
       })
@@ -131,7 +131,7 @@ export class Shelter {
 
     await Shelter.revertMigrationFromChip(passwordServices, migrationResults);
 
-    throw new Error(MIGRATION_ERROR_MESSAGE);
+    throw new Error(hasBiometry ? MIGRATION_WITH_BIOMETRY_ERROR_MESSAGE : MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE);
   };
 
   private static migrateFromSamsungOrGoogleChip = async () =>

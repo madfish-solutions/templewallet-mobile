@@ -23,6 +23,7 @@ export const useSecurityUpdateInfoStyles = createUseStylesMemoized(({ colors, ty
   },
   disclaimerDescriptionText: {
     ...typography.caption13Regular,
-    color: colors.black
+    color: colors.black,
+    letterSpacing: formatSize(-0.08)
   }
 }));

@@ -30,15 +30,15 @@ export const SecurityUpdateInfo = memo(({ onNextClick }: Props) => {
         <Text style={styles.header}>Important Security Update</Text>
         <Divider size={formatSize(16)} />
         <Text style={styles.description}>
-          To avoid data corruption following your device's security update, we will automatically initiate the migration
-          of your data from the device's security chip upon wallet restart.
+          To avoid data corruption following your device's security update, we will migrate your data from the device's
+          security chip.
         </Text>
         <Divider size={formatSize(8)} />
       </View>
       <Divider size={formatSize(16)} />
       <Disclaimer iconName={IconNameEnum.AlertMonochrome}>
         <Text style={styles.disclaimerDescriptionText}>
-          Please ensure you back up your seed phrase in the next step, to prevent lost of your funds.
+          Please ensure you back up your seed phrase at the next step, to prevent the loss of your funds.
         </Text>
         <Divider size={formatSize(4)} />
       </Disclaimer>

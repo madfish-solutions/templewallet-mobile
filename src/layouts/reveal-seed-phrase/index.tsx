@@ -80,7 +80,7 @@ export const RevealSeedPhrase: FC<Props> = ({
                 <Text style={styles.checkboxText}>I made Seed Phrase backup</Text>
               </FormCheckbox>
             </View>
-            <CheckboxLabel>And accept the risks that if I lose the phrase,{'\n'}my funds may be lost.</CheckboxLabel>
+            <CheckboxLabel>And accept the risks that if I lose the phrase, my funds may be lost.</CheckboxLabel>
             <Divider />
           </View>
           <View>
