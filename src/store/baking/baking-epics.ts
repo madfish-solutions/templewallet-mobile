@@ -8,7 +8,8 @@ import { getTzktApi } from 'src/api.service';
 import { BakerInterface, bakingBadApi, fetchBaker, emptyBaker, buildUnknownBaker } from 'src/apis/baking-bad';
 import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
 import type { RootState } from 'src/store/types';
-import { isTruthy } from 'src/utils/is-truthy';
+import { TzktAccount, TzktAccountType } from 'src/types/tzkt';
+import { isDefined } from 'src/utils/is-defined';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
@@ -16,19 +17,30 @@ import { loadBakerRewardsListActions, loadBakersListActions, loadSelectedBakerAc
 
 const NUMBER_OF_BAKER_REWARDS_TO_LOAD = 30;
 
+const getBaker$ = (bakerAddress: string | nullish) =>
+  isDefined(bakerAddress)
+    ? from(fetchBaker(bakerAddress)).pipe(map(baker => baker || buildUnknownBaker(bakerAddress)))
+    : of(emptyBaker);
+
 const loadSelectedBakerAddressEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSelectedBakerActions.submit),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) =>
-      from(createReadOnlyTezosToolkit(rpcUrl, selectedAccount).rpc.getDelegate(selectedAccount.publicKeyHash)).pipe(
-        switchMap(bakerAddress => {
-          if (!isTruthy(bakerAddress)) {
-            return of(emptyBaker);
+      from(getTzktApi(rpcUrl).get<TzktAccount>(`/accounts/${selectedAccount.publicKeyHash}`)).pipe(
+        switchMap(({ data: account }) => {
+          switch (account.type) {
+            case TzktAccountType.Empty:
+              return of(emptyBaker);
+            case TzktAccountType.User:
+            case TzktAccountType.Contract:
+              return getBaker$(account.delegate?.address);
+            default:
+              return from(
+                createReadOnlyTezosToolkit(rpcUrl, selectedAccount).rpc.getDelegate(selectedAccount.publicKeyHash)
+              ).pipe(switchMap(bakerAddress => getBaker$(bakerAddress)));
           }
-
-          return from(fetchBaker(bakerAddress)).pipe(map(baker => baker || buildUnknownBaker(bakerAddress)));
         }),
         map(baker => loadSelectedBakerActions.success(baker)),
         catchError(error => {
