@@ -62,7 +62,7 @@ export const EnterPassword = () => {
 
   useEffect(
     () => void (!atBootsplash && isBiometryAvailable && unlockWithBiometry()),
-    [isBiometryAvailable, atBootsplash, unlockWithBiometry]
+    [isBiometryAvailable, atBootsplash]
   );
 
   useEffect(() => {

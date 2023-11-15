@@ -5,6 +5,7 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -20,6 +21,7 @@ interface Props {
 
 export const SecurityUpdateInfo = memo(({ onNextClick }: Props) => {
   const styles = useSecurityUpdateInfoStyles();
+  useNavigationSetOptions({ headerLeft: () => null }, []);
 
   return (
     <ScreenContainer isFullScreenMode={true}>

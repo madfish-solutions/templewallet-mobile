@@ -4,7 +4,8 @@ import { formatSize } from 'src/styles/format-size';
 export const useSecurityUpdateInfoStyles = createUseStylesMemoized(({ colors, typography }) => ({
   illustration: {
     marginLeft: formatSize(-16),
-    marginRight: formatSize(-16)
+    marginRight: formatSize(-16),
+    alignSelf: 'center'
   },
   header: {
     ...typography.body20Bold,
