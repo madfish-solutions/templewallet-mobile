@@ -221,7 +221,7 @@ export const MainStackScreen = memo(() => {
               <MainStack.Screen
                 name={ScreensEnum.Notifications}
                 component={Notifications}
-                options={generateScreenOptions(<HeaderTitle title="Notifications and Ads" />)}
+                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NotificationsItem}
