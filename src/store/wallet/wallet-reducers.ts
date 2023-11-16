@@ -103,6 +103,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     })
   );
 
+  builder.addCase(loadTokensBalancesArrayActions.submit, state =>
+    updateCurrentAccountState(state, () => ({ tokensAreLoading: true }))
+  );
+
   builder.addCase(
     loadTokensBalancesArrayActions.success,
     (state, { payload: { publicKeyHash, data, selectedRpcUrl } }) => {
@@ -111,13 +115,19 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
       return updateAccountState(state, publicKeyHash, account =>
         isTezosNode
           ? {
-              tokensList: pushOrUpdateTokensBalances(account.tokensList, data)
+              tokensList: pushOrUpdateTokensBalances(account.tokensList, data),
+              tokensAreLoading: false
             }
           : {
-              dcpTokensList: pushOrUpdateTokensBalances(account.dcpTokensList, data)
+              dcpTokensList: pushOrUpdateTokensBalances(account.dcpTokensList, data),
+              tokensAreLoading: false
             }
       );
     }
+  );
+
+  builder.addCase(loadTokensBalancesArrayActions.fail, state =>
+    updateCurrentAccountState(state, () => ({ tokensAreLoading: false }))
   );
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
@@ -187,7 +197,8 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
                 : token
             ) ?? initialAccountState.tokensList,
           dcpTokensList: initialAccountState.dcpTokensList,
-          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
+          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList,
+          tokensAreLoading: false
         };
 
         accounts.push({

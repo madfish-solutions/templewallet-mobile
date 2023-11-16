@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -15,7 +15,10 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import {
+  useCurrentAccountPkhSelector,
+  useCurrentAccountTokensLoadingSelector
+} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -105,15 +108,32 @@ export const renderAccountListItem: DropdownListItemComponent<AccountBaseInterfa
 
 const CollectiblesInfo = memo(() => {
   const styles = useAccountDropdownItemCollectiblesInfoStyles();
+  const accountPkh = useCurrentAccountPkhSelector();
 
   const contacts = useContactsSelector();
 
   const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
+  const tokensAreLoading = useCurrentAccountTokensLoadingSelector();
+  const prevTokensAreLoadingRef = useRef(tokensAreLoading);
 
   const allDetails = useAllCollectiblesDetailsSelector();
   const { metadata: gasMetadata } = useNetworkInfo();
+  const [wasLoading, setWasLoading] = useState(false);
+
+  useEffect(() => {
+    if (prevTokensAreLoadingRef.current && !tokensAreLoading) {
+      setWasLoading(true);
+    }
+    prevTokensAreLoadingRef.current = tokensAreLoading;
+  }, [tokensAreLoading]);
+
+  useEffect(() => setWasLoading(false), [accountPkh]);
 
   const totalFloorPriceStr = useMemo(() => {
+    if (!wasLoading) {
+      return '-';
+    }
+
     let totalFloorPrice = 0;
     for (const { slug } of collectibles) {
       const cheapestListing = allDetails[slug]?.listingsActive[0];
@@ -131,7 +151,7 @@ const CollectiblesInfo = memo(() => {
     const floorPriceDisplayed = formatNumber(floorPrice);
 
     return `${floorPriceDisplayed} ${gasMetadata.symbol}`;
-  }, [collectibles, allDetails, gasMetadata]);
+  }, [wasLoading, gasMetadata, collectibles, allDetails]);
 
   return (
     <>
