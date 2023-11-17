@@ -13,12 +13,12 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
-import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
-import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import {
-  useCurrentAccountPkhSelector,
-  useCurrentAccountTokensLoadingSelector
-} from 'src/store/wallet/wallet-selectors';
+  useAllCollectiblesDetailsSelector,
+  useCollectibleDetailsLoadingSelector
+} from 'src/store/collectibles/collectibles-selectors';
+import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -82,7 +82,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
           </View>
           <View style={styles.lowerContainer}>
             {isCollectibleScreen ? (
-              <CollectiblesInfo />
+              <CollectiblesInfo key={account.publicKeyHash} />
             ) : (
               <WalletAddress
                 isLocalDomainNameShowing
@@ -108,26 +108,23 @@ export const renderAccountListItem: DropdownListItemComponent<AccountBaseInterfa
 
 const CollectiblesInfo = memo(() => {
   const styles = useAccountDropdownItemCollectiblesInfoStyles();
-  const accountPkh = useCurrentAccountPkhSelector();
 
   const contacts = useContactsSelector();
 
   const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
-  const tokensAreLoading = useCurrentAccountTokensLoadingSelector();
-  const prevTokensAreLoadingRef = useRef(tokensAreLoading);
+  const detailsAreLoading = useCollectibleDetailsLoadingSelector();
+  const prevDetailsAreLoadingRef = useRef(detailsAreLoading);
 
   const allDetails = useAllCollectiblesDetailsSelector();
   const { metadata: gasMetadata } = useNetworkInfo();
   const [wasLoading, setWasLoading] = useState(false);
 
   useEffect(() => {
-    if (prevTokensAreLoadingRef.current && !tokensAreLoading) {
+    if (prevDetailsAreLoadingRef.current && !detailsAreLoading) {
       setWasLoading(true);
     }
-    prevTokensAreLoadingRef.current = tokensAreLoading;
-  }, [tokensAreLoading]);
-
-  useEffect(() => setWasLoading(false), [accountPkh]);
+    prevDetailsAreLoadingRef.current = detailsAreLoading;
+  }, [detailsAreLoading]);
 
   const totalFloorPriceStr = useMemo(() => {
     if (!wasLoading) {

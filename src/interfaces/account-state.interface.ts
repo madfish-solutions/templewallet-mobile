@@ -9,7 +9,6 @@ export interface AccountStateInterface {
   tokensList: AccountTokenInterface[];
   dcpTokensList: AccountTokenInterface[];
   removedTokensList: string[];
-  tokensAreLoading?: boolean;
 }
 
 export const initialAccountState: AccountStateInterface = {
@@ -25,8 +24,7 @@ export const initialAccountState: AccountStateInterface = {
     balance: '0',
     visibility: VisibilityEnum.Visible
   })),
-  removedTokensList: [],
-  tokensAreLoading: false
+  removedTokensList: []
 };
 
 /** @deprecated // BAD PRACTICE */
@@ -35,6 +33,5 @@ export const emptyAccountState: AccountStateInterface = {
   tezosBalance: '0',
   tokensList: [],
   dcpTokensList: [],
-  removedTokensList: [],
-  tokensAreLoading: false
+  removedTokensList: []
 };

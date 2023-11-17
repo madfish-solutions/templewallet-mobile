@@ -73,13 +73,6 @@ const useAllCurrentAccountAssetsSelector = () =>
     (state1, state2) => state1?.stored === state2?.stored && state1?.removed === state2?.removed
   );
 
-export const useCurrentAccountTokensLoadingSelector = () =>
-  useSelector(state => {
-    const { selectedAccountPublicKeyHash, accountsStateRecord } = state.wallet;
-
-    return accountsStateRecord[selectedAccountPublicKeyHash]?.tokensAreLoading ?? false;
-  });
-
 export const useCurrentAccountStoredAssetsListSelector = () => {
   const allAssets = useAllCurrentAccountAssetsSelector();
 
