@@ -1,8 +1,6 @@
 import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { sleep } from 'src/utils/timeouts.util';
-
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
@@ -88,7 +86,6 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     } catch (error) {
       console.error(error);
     } finally {
-      await sleep(1000);
       setIsAdditionalLoading(false);
     }
   };
@@ -103,7 +100,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     handleUpdate,
     handleRefresh,
     activities,
-    isInitialLoading,
-    isAdditionalLoading
+    isAllLoaded,
+    isInitialLoading
   };
 };

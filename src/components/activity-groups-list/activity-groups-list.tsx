@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -27,16 +27,16 @@ const AVERAGE_ITEM_HEIGHT = 150;
 interface Props {
   activityGroups: ActivityGroup[];
   shouldShowPromotion?: boolean;
+  isAllLoaded?: boolean;
   isInitialLoading?: boolean;
-  isAdditionalLoading?: boolean;
   handleUpdate?: () => void;
   onOptimalPromotionError?: () => void;
 }
 
 export const ActivityGroupsList: FC<Props> = ({
   activityGroups,
+  isAllLoaded = false,
   isInitialLoading = false,
-  isAdditionalLoading = false,
   handleUpdate = emptyFn,
   shouldShowPromotion = false,
   onOptimalPromotionError
@@ -44,6 +44,13 @@ export const ActivityGroupsList: FC<Props> = ({
   const styles = useActivityGroupsListStyles();
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
+  const [endIsReached, setEndIsReached] = useState(false);
+
+  const handleEndReached = useCallback(() => {
+    setEndIsReached(true);
+    handleUpdate();
+  }, [handleUpdate]);
+  useEffect(() => setEndIsReached(false), [activityGroups]);
 
   const sections = useMemo(() => {
     const result: ListItem[] = [];
@@ -102,9 +109,10 @@ export const ActivityGroupsList: FC<Props> = ({
     [sections]
   );
 
+  const shouldRenderAdditionalLoader = !isAllLoaded && endIsReached;
   const renderAdditionalLoader = useCallback(
-    () => (isAdditionalLoading ? <ActivityIndicator style={styles.additionalLoader} size="large" /> : null),
-    [isAdditionalLoading, styles.additionalLoader]
+    () => (shouldRenderAdditionalLoader ? <ActivityIndicator style={styles.additionalLoader} size="large" /> : null),
+    [shouldRenderAdditionalLoader, styles.additionalLoader]
   );
 
   if (isInitialLoading) {
@@ -114,21 +122,24 @@ export const ActivityGroupsList: FC<Props> = ({
   return (
     <>
       {sections.length === 0 && shouldShowPromotion && Promotion}
-      <View style={styles.contentContainer}>
-        <FlashList
-          data={sections}
-          stickyHeaderIndices={stickyHeaderIndices}
-          onEndReachedThreshold={0.01}
-          onEndReached={handleUpdate}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          estimatedItemSize={AVERAGE_ITEM_HEIGHT}
-          getItemType={getItemType}
-          ListEmptyComponent={ListEmptyComponent}
-          ListFooterComponent={renderAdditionalLoader}
-          refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
-        />
-      </View>
+      {sections.length === 0 ? (
+        ListEmptyComponent
+      ) : (
+        <View style={styles.contentContainer}>
+          <FlashList
+            data={sections}
+            stickyHeaderIndices={stickyHeaderIndices}
+            onEndReachedThreshold={0.01}
+            onEndReached={handleEndReached}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            estimatedItemSize={AVERAGE_ITEM_HEIGHT}
+            getItemType={getItemType}
+            ListFooterComponent={renderAdditionalLoader}
+            refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
+          />
+        </View>
+      )}
     </>
   );
 };

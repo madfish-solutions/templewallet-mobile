@@ -6,7 +6,7 @@ import { ScreensEnum } from '../../navigator/enums/screens.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
 
 export const Activity = () => {
-  const { activities, handleUpdate, isInitialLoading, isAdditionalLoading } = useContractActivity();
+  const { activities, handleUpdate, isAllLoaded, isInitialLoading } = useContractActivity();
 
   usePageAnalytic(ScreensEnum.Activity);
 
@@ -14,8 +14,8 @@ export const Activity = () => {
     <ActivityGroupsList
       handleUpdate={handleUpdate}
       activityGroups={activities}
+      isAllLoaded={isAllLoaded}
       isInitialLoading={isInitialLoading}
-      isAdditionalLoading={isAdditionalLoading}
     />
   );
 };

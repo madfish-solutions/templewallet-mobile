@@ -4,6 +4,6 @@ export interface UseActivityInterface {
   handleUpdate: () => void;
   handleRefresh: () => void;
   activities: ActivityGroup[];
+  isAllLoaded: boolean;
   isInitialLoading: boolean;
-  isAdditionalLoading: boolean;
 }
