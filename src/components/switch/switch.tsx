@@ -14,6 +14,7 @@ import { generateHitSlop } from '../../styles/generate-hit-slop';
 import { useColors } from '../../styles/use-colors';
 import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
 import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+
 import { useSwitchStyles } from './switch.styles';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);

@@ -8,6 +8,8 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { PersistConfig } from 'redux-persist/lib/types';
 import { on, reducer } from 'ts-action';
 
+import { persistFailHandler } from 'src/utils/redux';
+
 import { resetApplicationAction } from './root-state.actions';
 import { rootStateReducersMap } from './root-state.map';
 import type { RootState } from './types';
@@ -29,9 +31,9 @@ const buildRootStateReducer = <S, A extends Action = AnyAction>(
   };
 };
 
-const rootReducer = buildRootStateReducer(rootStateReducersMap);
+export const rootReducer = buildRootStateReducer(rootStateReducersMap);
 
-const persistRootBlacklist: (keyof RootState)[] = ['buyWithCreditCard', 'exolix', 'farms', 'savings'];
+const persistRootBlacklist: (keyof RootState)[] = ['buyWithCreditCard', 'exolix', 'farms', 'savings', 'collectibles'];
 
 const PersistBlacklistTransform = createTransform(
   () => void 0,
@@ -44,6 +46,7 @@ const persistConfig: PersistConfig<RootState> = {
   version: 1,
   storage: AsyncStorage,
   stateReconciler: autoMergeLevel2,
+  writeFailHandler: persistFailHandler,
   /**
    * Basic(out-of-the-box) config setting `blacklist: persistRootBlacklist`
    * does not work as expected (presumably for `AsyncStorage` case).

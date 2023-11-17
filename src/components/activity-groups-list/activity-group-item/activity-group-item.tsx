@@ -10,6 +10,7 @@ import { tzktUrl } from '../../../utils/linking';
 import { Divider } from '../../divider/divider';
 import { ExternalLinkButton } from '../../icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';
+
 import { ActivityGroupAmountChange } from './activity-group-amount-change/activity-group-amount-change';
 import { ActivityGroupDollarAmountChange } from './activity-group-dollar-amount-change/activity-group-dollar-amount-change';
 import { useActivityGroupItemStyles } from './activity-group-item.styles';

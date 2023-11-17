@@ -7,6 +7,7 @@ import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { loadBakersListActions } from '../../store/baking/baking-actions';
 import { useBakerRewardsListSelector, useSelectedBakerSelector } from '../../store/baking/baking-selectors';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import { AboutDelegationScreen } from './about-delegation-screen/about-delegation-screen';
 import { SelectedBakerScreen } from './selected-baker-screen/selected-baker-screen';
 

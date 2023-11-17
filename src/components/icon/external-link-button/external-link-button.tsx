@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import type { EmptyFn } from 'src/config/general';
@@ -10,6 +10,7 @@ import { openUrl } from 'src/utils/linking';
 
 import { Icon } from '../icon';
 import { IconNameEnum } from '../icon-name.enum';
+
 import { useExternalLinkButtonStyles } from './external-link-button.styles';
 
 interface Props extends TestIdProps {

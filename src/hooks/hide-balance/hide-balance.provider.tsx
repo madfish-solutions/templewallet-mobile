@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 
 import { useBalanceHiddenSelector } from '../../store/settings/settings-selectors';
+
 import { HideBalanceContext } from './hide-balance.context';
 
 export const HideBalanceProvider: FC = ({ children }) => {

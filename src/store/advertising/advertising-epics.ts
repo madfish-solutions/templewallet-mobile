@@ -6,6 +6,7 @@ import { ofType } from 'ts-action-operators';
 
 import { templeWalletApi } from '../../api.service';
 import { GetAdvertisingInfoResponse } from '../../interfaces/advertising-promotion.interface';
+
 import { loadAdvertisingPromotionActions } from './advertising-actions';
 
 const loadActivePromotionEpic = (action$: Observable<Action>) =>

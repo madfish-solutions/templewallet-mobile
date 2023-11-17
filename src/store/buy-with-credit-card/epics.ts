@@ -3,7 +3,7 @@ import { catchError, forkJoin, from, map, Observable, of, switchMap, withLatestF
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getTezUahPairInfo } from 'src/apis/alice-bob';
+import { getAliceBobPairsInfo } from 'src/apis/alice-bob';
 import { getMoonPayCurrencies } from 'src/apis/moonpay';
 import { getCurrenciesInfo as getUtorgCurrenciesInfo } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
@@ -15,6 +15,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
 import type { RootState } from '../types';
+
 import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
 import { TopUpProviderCurrencies } from './state';
 import { mapAliceBobProviderCurrencies, mapMoonPayProviderCurrencies, mapUtorgProviderCurrencies } from './utils';
@@ -45,8 +46,7 @@ const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
       forkJoin([
         getCurrencies$(getMoonPayCurrencies, mapMoonPayProviderCurrencies),
         getCurrencies$(getUtorgCurrenciesInfo, mapUtorgProviderCurrencies),
-        // TODO: return showing error toast as soon as Alice&Bob API starts working
-        getCurrencies$(getTezUahPairInfo, mapAliceBobProviderCurrencies, false)
+        getCurrencies$(getAliceBobPairsInfo, mapAliceBobProviderCurrencies)
       ]).pipe(
         map(([moonpayCurrencies, utorgCurrencies, tezUahPairInfo]) =>
           loadAllCurrenciesActions.success({

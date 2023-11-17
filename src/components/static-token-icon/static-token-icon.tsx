@@ -11,6 +11,7 @@ import { isImgUriDataUri } from 'src/utils/image.utils';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { useStaticTokenIconStyles } from './static-token-icon.styles';
 
 interface Props {

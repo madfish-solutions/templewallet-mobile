@@ -4,12 +4,12 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { Divider } from '../../../../components/divider/divider';
 import { Icon } from '../../../../components/icon/icon';
 import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { EmptyFn, emptyFn } from '../../../../config/general';
 import { formatSize } from '../../../../styles/format-size';
 import { useColors } from '../../../../styles/use-colors';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
 import { useNavigation } from '../../../hooks/use-navigation.hook';
+
 import { useSideBarButtonStyles } from './side-bar-button.styles';
 
 interface Props {
@@ -25,7 +25,6 @@ interface Props {
   disabled?: boolean;
   showNotificationDot?: boolean;
   swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
-  onSwapButtonPress?: EmptyFn;
   disabledOnPress?: EmptyFn;
 }
 
@@ -37,8 +36,7 @@ export const SideBarButton: FC<Props> = ({
   disabled = false,
   showNotificationDot = false,
   swapScreenParams,
-  onSwapButtonPress,
-  disabledOnPress = emptyFn
+  disabledOnPress
 }) => {
   const colors = useColors();
   const styles = useSideBarButtonStyles();
@@ -54,16 +52,12 @@ export const SideBarButton: FC<Props> = ({
 
   const handlePress = () => {
     if (disabled) {
-      disabledOnPress();
+      disabledOnPress?.();
     } else {
-      if (onSwapButtonPress) {
-        onSwapButtonPress();
+      if (routeName === ScreensEnum.SwapScreen) {
+        navigate(routeName, swapScreenParams);
       } else {
-        if (routeName === ScreensEnum.SwapScreen) {
-          navigate(routeName, swapScreenParams);
-        } else {
-          navigate(routeName);
-        }
+        navigate(routeName);
       }
     }
   };

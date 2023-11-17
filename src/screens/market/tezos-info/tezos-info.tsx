@@ -5,20 +5,20 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TruncatedText } from 'src/components/truncated-text';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTezosMarketTokenSelector } from 'src/store/market/market-selectors';
-import { useTokenMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import { formatPriceChange, getPriceChangeColor, formatPrice, formatRegularValue } from 'src/utils/market.util';
+import { formatPrice, formatPriceChange, formatRegularValue, getPriceChangeColor } from 'src/utils/market.utils';
 
 import { MarketSelectors } from '../market.selectors';
+
 import { circulatingSupplyAlert, marketCapAlert, volumeAlert } from './alerts';
 import { useTezosInfoStyles } from './tezos-info.styles';
 
 export const TezosInfo = () => {
   const styles = useTezosInfoStyles();
-  const tezosMetadata = useTokenMetadataSelector(TEZ_TOKEN_SLUG);
+  const { metadata: tezosMetadata } = useNetworkInfo();
   const marketTezos = useTezosMarketTokenSelector();
   const colors = useColors();
 

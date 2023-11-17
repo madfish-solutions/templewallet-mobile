@@ -1,4 +1,5 @@
 import { uniq } from 'lodash-es';
+import { stringify } from 'qs';
 
 import { getTzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
@@ -15,6 +16,7 @@ import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { getTokenType } from '../token/utils/token.utils';
+
 import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
@@ -52,6 +54,7 @@ const getTokenFa2Operations = (
 ) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa2Interface>>('operations/transactions', {
+      paramsSerializer: stringify,
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -66,6 +69,7 @@ const getTokenFa2Operations = (
 const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastLevel?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa12Interface>>('operations/transactions', {
+      paramsSerializer: stringify,
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -203,6 +207,7 @@ const loadOperations = async (
 
 export const loadActivity = async (
   selectedRpcUrl: string,
+  /** @deprecated // Wanna pass PKH only */
   selectedAccount: AccountInterface,
   tokenSlug?: string,
   lastItem?: ActivityInterface

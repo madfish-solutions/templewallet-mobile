@@ -25,6 +25,7 @@ import { HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { tzToMutez } from 'src/utils/tezos.util';
 
 import { ConfirmationModalSelectors } from '../confirmation-modal.selectors';
+
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
@@ -82,7 +83,7 @@ export const OperationsConfirmation: FC<Props> = ({
     gasFeeSum = gasFeeSum?.minus(revealGasFee);
 
     const params = opParamsWithEstimations.map((opParam, index) => {
-      if (opParam.kind === OpKind.ACTIVATION) {
+      if (opParam.kind === OpKind.ACTIVATION || opParam.kind === OpKind.FAILING_NOOP) {
         return opParam;
       }
 

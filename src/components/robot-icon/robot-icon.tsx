@@ -5,6 +5,7 @@ import { View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 import { formatSize } from '../../styles/format-size';
+
 import { useRobotIconStyles } from './robot-icon.styles';
 
 interface Props {

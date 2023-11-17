@@ -11,7 +11,6 @@ import { HorizontalBorder } from 'src/components/horizontal-border';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useAssetAmount } from 'src/hooks/use-asset-amount.hook';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
-import { useInterval } from 'src/hooks/use-interval.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
@@ -25,9 +24,11 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
 import { isFarm } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
+import { useInterval } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
+
 import { StatsItem } from './stats-item';
 import { useDetailsCardStyles } from './styles';
 import { useClaimRewardsButtonConfig } from './use-claim-rewards-button-config';
@@ -37,6 +38,7 @@ interface DetailsCardProps {
   loading: boolean;
   stake?: UserStakeValueInterface;
   shouldShowClaimRewardsButton: boolean;
+  isNeedToShowMoreDetails?: boolean;
 }
 
 const EMPTY_STAKE: UserStakeValueInterface = {};
@@ -51,7 +53,8 @@ export const DetailsCard: FC<DetailsCardProps> = ({
   earnOpportunityItem,
   loading,
   stake = EMPTY_STAKE,
-  shouldShowClaimRewardsButton
+  shouldShowClaimRewardsButton,
+  isNeedToShowMoreDetails = true
 }) => {
   const { depositAmountAtomic = ZERO, claimableRewards = ZERO, fullReward = ZERO, rewardsDueDate, lastStakeId } = stake;
   const { stakedToken, depositExchangeRate, earnExchangeRate, rewardToken, apr, contractAddress } = earnOpportunityItem;
@@ -184,11 +187,11 @@ export const DetailsCard: FC<DetailsCardProps> = ({
           <View style={styles.statsRow}>
             <StatsItem
               loading={loading}
-              title="Your deposit:"
+              title={isNeedToShowMoreDetails ? 'Your deposit:' : 'Your deposit & Rewards:'}
               value={<FormattedAmount amount={depositAmount} style={styles.statsValue} symbol={depositTokenSymbol} />}
               usdEquivalent={depositUsdEquivalent}
             />
-            {!isLiquidityBaking && (
+            {!isLiquidityBaking && isNeedToShowMoreDetails && (
               <StatsItem
                 loading={loading}
                 title="Claimable rewards:"
@@ -204,7 +207,7 @@ export const DetailsCard: FC<DetailsCardProps> = ({
             )}
           </View>
 
-          {!isLiquidityBaking && (
+          {!isLiquidityBaking && isNeedToShowMoreDetails && (
             <>
               <Divider size={formatSize(12)} />
               <View style={styles.statsRow}>

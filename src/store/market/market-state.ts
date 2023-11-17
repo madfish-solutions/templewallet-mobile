@@ -1,5 +1,6 @@
 import { MarketTokensSortFieldEnum } from '../../enums/market-tokens-sort-field.enum';
 import { LoadableEntityState } from '../types';
+
 import { createEntity } from './../create-entity';
 import { MarketToken } from './market.interfaces';
 

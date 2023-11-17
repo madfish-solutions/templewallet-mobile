@@ -1,4 +1,5 @@
 import { mockAccountCredentials } from '../mocks/account-credentials.mock';
+
 import { ReadOnlySigner } from './read-only.signer.util';
 
 describe('ReadOnlySigner', () => {

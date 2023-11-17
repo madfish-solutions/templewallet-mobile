@@ -4,6 +4,7 @@ import React, { FC, useMemo } from 'react';
 import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
 import { useExolixStep } from '../../store/exolix/exolix-selectors';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { HeaderButton } from './header-button/header-button';
 import { HeaderProgress } from './header-progress/header-progress';
 import { HeaderTitle } from './header-title/header-title';

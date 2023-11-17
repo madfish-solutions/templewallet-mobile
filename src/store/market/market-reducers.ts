@@ -1,25 +1,26 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
+
 import {
   addFavouriteToken,
   deleteFavouriteToken,
   loadMarketTokensSlugsActions,
-  loadMarketTopTokenActions,
+  loadMarketTokensActions,
   selectSortValue
 } from './market-actions';
 import { MarketState, marketInitialState } from './market-state';
 
 export const marketReducers = createReducer<MarketState>(marketInitialState, builer => {
-  builer.addCase(loadMarketTopTokenActions.submit, state => ({
+  builer.addCase(loadMarketTokensActions.submit, state => ({
     ...state,
     tokens: createEntity(state.tokens.data, true)
   }));
-  builer.addCase(loadMarketTopTokenActions.success, (state, { payload: tokens }) => ({
+  builer.addCase(loadMarketTokensActions.success, (state, { payload: tokens }) => ({
     ...state,
     tokens: createEntity(tokens, false)
   }));
-  builer.addCase(loadMarketTopTokenActions.fail, (state, { payload: errorMessage }) => ({
+  builer.addCase(loadMarketTokensActions.fail, (state, { payload: errorMessage }) => ({
     ...state,
     tokens: createEntity(state.tokens.data, false, errorMessage)
   }));

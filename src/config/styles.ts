@@ -2,7 +2,7 @@ import { clamp } from 'lodash-es';
 import { Dimensions } from 'react-native';
 
 const basicScreenWidth = 375;
-const maxLayoutScale = 1.1;
+const maxLayoutScale = 1.2;
 export const layoutScale = clamp(Dimensions.get('screen').width / basicScreenWidth, maxLayoutScale);
 
 export const greyLight200 = '#E5E5EA';

@@ -1,12 +1,13 @@
-import { jsonEqualityFn } from '../../utils/store.utils';
-import { getTokenMetadata } from '../../utils/token-metadata.utils';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+
 import { useSelector } from '../selector';
 
-export const useTokenMetadataSelector = (slug: string) =>
-  useSelector(state => getTokenMetadata(state, slug), jsonEqualityFn);
+export const useAreMetadatasLoadingSelector = () => useSelector(state => state.tokensMetadata.isLoading);
 
-export const useTokensMetadataSelector = () =>
-  useSelector(({ tokensMetadata }) => tokensMetadata.metadataRecord, jsonEqualityFn);
+export const useTokensMetadataSelector = () => useSelector(({ tokensMetadata }) => tokensMetadata.metadataRecord);
+
+export const useAssetMetadataSelector = (slug: string): TokenMetadataInterface | undefined =>
+  useSelector(({ tokensMetadata }) => tokensMetadata.metadataRecord[slug]);
 
 export const useAddTokenSuggestionSelector = () =>
   useSelector(({ tokensMetadata }) => tokensMetadata.addTokenSuggestion);

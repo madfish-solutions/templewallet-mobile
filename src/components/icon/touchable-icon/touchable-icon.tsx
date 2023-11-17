@@ -1,19 +1,18 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { GestureResponderEvent } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
-import { EmptyFn, EventFn } from 'src/config/general';
 import { isAndroid } from 'src/config/system';
 import { formatSize } from 'src/styles/format-size';
 import { generateHitSlop } from 'src/styles/generate-hit-slop';
 
 import { Icon, IconProps } from '../icon';
+
 import { TouchableIconStyles } from './touchable-icon.styles';
 
 interface Props extends IconProps {
   disabled?: boolean;
-  onPress: EmptyFn | EventFn<GestureResponderEvent>;
+  onPress: EmptyFn;
 }
 
 export const TouchableIcon: FC<Props> = ({

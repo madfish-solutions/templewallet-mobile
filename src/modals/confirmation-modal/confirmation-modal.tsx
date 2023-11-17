@@ -28,6 +28,7 @@ const ConfirmationModalContent: FC = () => {
       return (
         <InternalOperationsConfirmation
           opParams={params.opParams}
+          modalTitle={params.modalTitle}
           testID={params.testID}
           disclaimerMessage={params.disclaimerMessage}
         />

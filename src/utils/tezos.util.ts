@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { TokenInterface } from '../token/interfaces/token.interface';
+
 import { isDefined } from './is-defined';
 
 export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
@@ -25,6 +26,6 @@ export const isCollectible = <T extends TokenMetadataInterface>(asset: T) => isD
 
 export const isValidAddress = (address: string) => validateAddress(address) === ValidationResult.VALID;
 
-export const isNonZeroBalance = (asset: TokenInterface) => asset.balance !== '0';
+export const isNonZeroBalance = (asset: Pick<TokenInterface, 'balance'>) => asset.balance !== '0';
 
 export const isKTAddress = (address: string) => address.startsWith('KT');

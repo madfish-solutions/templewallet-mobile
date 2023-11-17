@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useEffect } from 'react';
+import React, { memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
@@ -12,17 +12,18 @@ import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
 import {
   TOKENS_SYNC_INTERVAL,
-  BALANCES_SYNC_INTERVAL,
   RATES_SYNC_INTERVAL,
   SELECTED_BAKER_SYNC_INTERVAL,
   NOTIFICATIONS_SYNC_INTERVAL,
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
+import { isAndroid } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
-import { useAuthorisedInterval } from 'src/hooks/use-interval.hook';
+import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useNFTDynamicLinks } from 'src/hooks/use-nft-dynamic-links.hook';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
 import { Backup } from 'src/screens/backup/backup';
@@ -31,11 +32,12 @@ import { BuyWithCreditCard } from 'src/screens/buy/buy-with-credit-card';
 import { Exolix } from 'src/screens/buy/crypto/exolix/exolix';
 import { CloudBackup } from 'src/screens/cloud-backup';
 import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
+import { Collection } from 'src/screens/collection';
 import { Contacts } from 'src/screens/contacts/contacts';
 import { ContinueWithCloud } from 'src/screens/continue-with-cloud';
 import { CreateNewWallet } from 'src/screens/create-new-wallet/create-new-wallet';
-import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
 import { DApps } from 'src/screens/d-apps/d-apps';
+import { DAppsSettings } from 'src/screens/d-apps-settings/d-apps-settings';
 import { Debug } from 'src/screens/debug/debug';
 import { DelegationScreen } from 'src/screens/delegation-screen/delegation-screen';
 import { Earn } from 'src/screens/earn';
@@ -47,9 +49,9 @@ import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
 import { Market } from 'src/screens/market/market';
 import { NodeSettings } from 'src/screens/node-settings/node-settings';
+import { Notifications } from 'src/screens/notifications/notifications';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
 import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
-import { Notifications } from 'src/screens/notifications/notifications';
 import { Savings } from 'src/screens/savings';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
@@ -72,7 +74,7 @@ import {
   loadTezosBalanceActions,
   loadTokensBalancesArrayActions
 } from 'src/store/wallet/wallet-actions';
-import { useIsAuthorisedSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useIsAuthorisedSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
@@ -81,22 +83,21 @@ import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
 import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
 import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
 import { loadAllSavingsAndStakesAction } from '../store/savings/actions';
+
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
 
-export const MainStackScreen = () => {
+export const MainStackScreen = memo(() => {
   const dispatch = useDispatch();
   const isAuthorised = useIsAuthorisedSelector();
-  const { publicKeyHash: selectedAccountPkh } = useSelectedAccountSelector();
+  const selectedAccountPkh = useCurrentAccountPkhSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();
   const { isLocked } = useAppLock();
-
-  const blockSubscription = useBlockSubscription();
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
@@ -110,20 +111,25 @@ export const MainStackScreen = () => {
 
   useAppLockTimer();
   useBeaconHandler();
+  useNFTDynamicLinks();
 
-  const refreshDeps = [blockSubscription.block.header, selectedAccountPkh, selectedRpcUrl];
+  const blockSubscription = useBlockSubscription();
+
+  useEffect(() => {
+    dispatch(loadTezosBalanceActions.submit());
+    dispatch(loadTokensBalancesArrayActions.submit());
+  }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl]);
 
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
-  useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, refreshDeps);
-  useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, refreshDeps);
-  useAuthorisedInterval(
-    () => {
-      dispatch(loadTezosBalanceActions.submit());
-      dispatch(loadTokensBalancesArrayActions.submit());
-    },
-    BALANCES_SYNC_INTERVAL,
-    refreshDeps
-  );
+  useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, [
+    selectedAccountPkh,
+    selectedRpcUrl
+  ]);
+  useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, [
+    selectedAccountPkh,
+    selectedRpcUrl
+  ]);
+
   useAuthorisedInterval(() => dispatch(loadExchangeRates.submit()), RATES_SYNC_INTERVAL);
   useAuthorisedInterval(() => dispatch(loadNotificationsAction.submit()), NOTIFICATIONS_SYNC_INTERVAL, [
     selectedAccountPkh
@@ -144,7 +150,7 @@ export const MainStackScreen = () => {
 
       <NavigationBar>
         <MainStack.Navigator screenOptions={styleScreenOptions}>
-          {shouldShowUnauthorizedScreens && (
+          {shouldShowUnauthorizedScreens ? (
             <>
               <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
               <MainStack.Screen
@@ -173,8 +179,8 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title={`Restore from ${cloudTitle}`} />)}
               />
             </>
-          )}
-          {shouldShowAuthorizedScreens && (
+          ) : null}
+          {shouldShowAuthorizedScreens ? (
             <>
               {/** Wallet stack **/}
               <MainStack.Screen
@@ -215,7 +221,7 @@ export const MainStackScreen = () => {
               <MainStack.Screen
                 name={ScreensEnum.Notifications}
                 component={Notifications}
-                options={generateScreenOptions(<HeaderTitle title="Notifications and Ads" />)}
+                options={generateScreenOptions(<HeaderTitle title="Notifications" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.NotificationsItem}
@@ -251,6 +257,13 @@ export const MainStackScreen = () => {
                 component={BuyWithCreditCard}
                 options={generateScreenOptions(<HeaderTitle title="Top up balance" />)}
               />
+              <MainStack.Screen
+                name={ScreensEnum.Collection}
+                component={Collection}
+                options={({ route: { params } }) =>
+                  generateScreenOptions(<HeaderTitle title={`${params.collectionName}`} />)
+                }
+              />
 
               {/** DApps stack **/}
               <MainStack.Screen
@@ -260,20 +273,24 @@ export const MainStackScreen = () => {
               />
 
               {/** Swap stack **/}
-              <MainStack.Screen
-                name={ScreensEnum.SwapScreen}
-                component={SwapScreen}
-                options={{
-                  ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
-                  animationEnabled: false
-                }}
-              />
+              {isAndroid && (
+                <>
+                  <MainStack.Screen
+                    name={ScreensEnum.SwapScreen}
+                    component={SwapScreen}
+                    options={{
+                      ...generateScreenOptions(<HeaderTitle title="Swap" />, <HeaderAction />, false),
+                      animationEnabled: false
+                    }}
+                  />
 
-              <MainStack.Screen
-                name={ScreensEnum.SwapSettingsScreen}
-                component={SwapSettingsScreen}
-                options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
-              />
+                  <MainStack.Screen
+                    name={ScreensEnum.SwapSettingsScreen}
+                    component={SwapSettingsScreen}
+                    options={generateScreenOptions(<HeaderTitle title="Swap Settings" />)}
+                  />
+                </>
+              )}
 
               {/** Market stack **/}
               <MainStack.Screen
@@ -349,13 +366,13 @@ export const MainStackScreen = () => {
                 options={generateScreenOptions(<HeaderTitle title="Debugging" />)}
               />
             </>
-          )}
+          ) : null}
 
-          {shouldShowBlankScreen && (
+          {shouldShowBlankScreen ? (
             <MainStack.Screen name={ScreensEnum.Blank} options={{ headerShown: false }}>
               {emptyFn}
             </MainStack.Screen>
-          )}
+          ) : null}
 
           <MainStack.Screen
             name={ScreensEnum.ScanQrCode}
@@ -366,4 +383,4 @@ export const MainStackScreen = () => {
       </NavigationBar>
     </PortalProvider>
   );
-};
+});

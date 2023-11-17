@@ -13,7 +13,6 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
-import { useInterval } from 'src/hooks/use-interval.hook';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllCurrenciesActions, updatePairLimitsActions } from 'src/store/buy-with-credit-card/actions';
@@ -22,12 +21,14 @@ import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { useInterval } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 
 import { renderPaymentProviderOption } from '../components/payment-provider';
 import { renderSelectedPaymentProvider } from '../components/selected-payment-provider';
+
 import { useBuyWithCreditCardFormik } from './hooks/use-buy-with-credit-card-formik.hook';
 import { useCryptoCurrencies } from './hooks/use-crypto-currencies-list.hook';
 import { useFiatCurrenciesList } from './hooks/use-fiat-currencies-list.hook';
@@ -37,6 +38,8 @@ import { usePaymentProviders } from './hooks/use-payment-providers.hook';
 import { useUpdateCurrentProvider } from './hooks/use-update-current-provider.hook';
 import { BuyWithCreditCardSelectors } from './selectors';
 import { useBuyWithCreditCardStyles } from './styles';
+
+const FORM_REFRESH_INTERVAL = 20000;
 
 const newTopUpAssetAmountFn = (
   _: TopUpAssetAmountInterface,
@@ -132,7 +135,7 @@ export const BuyWithCreditCard: FC = () => {
     isLoading
   );
 
-  useInterval(refreshForm, 10000, [refreshForm], false);
+  useInterval(refreshForm, FORM_REFRESH_INTERVAL, [refreshForm], false);
 
   const someErrorOccured = Object.keys(errors).length > 0;
   const submitDisabled = (submitCount !== 0 && !isValid) || isLoading || someErrorOccured;

@@ -150,7 +150,7 @@ export const getYouvesSavingsItems$ = (tokenUsdExchangeRates: ExchangeRateRecord
   forkJoin([
     getYOUTokenSavingItem(new BigNumber(tokenUsdExchangeRates[KNOWN_TOKENS_SLUGS.YOU] ?? 1)),
     ...contracts.mainnet
-      .filter(({ SAVINGS_V3_POOL_ADDRESS }) => isString(SAVINGS_V3_POOL_ADDRESS))
+      .filter(({ SAVINGS_V3_POOL_ADDRESS, token }) => isString(SAVINGS_V3_POOL_ADDRESS) && token.id !== 'uXTZ')
       .map(assetDefinition => getSavingsItemByAssetDefinition(assetDefinition, tokenUsdExchangeRates))
   ]).pipe(map(items => items.filter(isDefined)));
 

@@ -4,12 +4,11 @@ import { View, Text } from 'react-native';
 import { Divider } from 'src/components/divider/divider';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { formatSize } from 'src/styles/format-size';
-import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { TruncatedText } from '../truncated-text';
+
 import { useEarnOpportunityTokensStyles } from './styles';
 
 interface Props {
@@ -32,10 +31,7 @@ export const EarnOpportunityTokens: FC<Props> = ({ stakeTokens, rewardToken }) =
               iconName={token.iconName}
               thumbnailUri={token.thumbnailUri}
               size={formatSize(32)}
-              style={[
-                conditionalStyle(index > 0, styles.nextToken),
-                conditionalStyle(getTokenSlug(token) === KNOWN_TOKENS_SLUGS.tzBTC, styles.whiteBg)
-              ]}
+              style={[conditionalStyle(index > 0, styles.nextToken)]}
             />
           ))}
           <View style={styles.rewardTokenWrapper}>

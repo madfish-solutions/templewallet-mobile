@@ -12,6 +12,7 @@ import { OverlayEnum } from '../../navigator/enums/overlay.enum';
 import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import { useAppCheckWarningStyles } from './app-check-warning.styles';
 
 export const AppCheckWarning = () => {

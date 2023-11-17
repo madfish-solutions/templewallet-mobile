@@ -12,6 +12,7 @@ import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-but
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { useSorterStyles } from './sorter.styles';
 
 interface Props<T extends string> extends TestIdProps {

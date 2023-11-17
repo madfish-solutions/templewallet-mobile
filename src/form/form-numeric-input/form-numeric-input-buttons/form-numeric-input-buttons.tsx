@@ -6,6 +6,7 @@ import { ButtonSmallSecondary } from '../../../components/button/button-small/bu
 import { Divider } from '../../../components/divider/divider';
 import { EventFn } from '../../../config/general';
 import { formatSize } from '../../../styles/format-size';
+
 import { FormNumericInputButtonsStyles } from './form-numeric-input-buttons.styles';
 
 interface Props {

@@ -2,6 +2,7 @@ import { ParamsWithKind } from '@taquito/taquito';
 import React, { FC } from 'react';
 
 import { getParamPreview } from '../../../../utils/param-preview.utils';
+
 import { OperationsPreviewItem } from './operations-preview-item/operations-preview-item';
 
 interface Props {

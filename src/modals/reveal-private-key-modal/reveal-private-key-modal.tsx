@@ -13,6 +13,7 @@ import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
 import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
 import { formatSize } from '../../styles/format-size';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import {
   RevealPrivateKeyModalFormValues,
   revealPrivateKeyModalValidationSchema

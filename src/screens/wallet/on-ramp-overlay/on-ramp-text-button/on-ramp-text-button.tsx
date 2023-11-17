@@ -1,18 +1,18 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { Text, TouchableWithoutFeedbackProps } from 'react-native';
+import { Text, TouchableOpacityProps } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
 import { setTestID } from 'src/utils/test-id.utils';
 
-import { Divider } from '../../../../components/divider/divider';
-import { Icon } from '../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { formatSize } from '../../../../styles/format-size';
-import { isDefined } from '../../../../utils/is-defined';
 import { useOnRampTextButtonStyles } from './on-ramp-text-button.styles';
 
-interface Props extends Pick<TouchableWithoutFeedbackProps, 'onPress'>, TestIdProps {
+interface Props extends Pick<TouchableOpacityProps, 'onPress'>, TestIdProps {
   title: string;
   iconName?: IconNameEnum;
 }

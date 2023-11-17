@@ -14,7 +14,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSelectedRpcUrlSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { useSwapTokensSelector } from 'src/store/swap/swap-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
@@ -24,6 +24,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
 import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
+
 import { createStakeOperationParams } from './create-stake-operation-params';
 
 export interface StakeFormValues {
@@ -31,14 +32,18 @@ export interface StakeFormValues {
   acceptRisks: boolean;
 }
 
+const forbidSubmitEventEarnOpportunityTypes: Array<EarnOpportunityTypeEnum | undefined> = [
+  EarnOpportunityTypeEnum.KORD_FI_SAVING,
+  EarnOpportunityTypeEnum.YOUVES_SAVING
+];
+
 export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserStakeValueInterface) => {
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunity);
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
-  const selectedAccount = useSelectedAccountSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
   const { data: threeRouteTokens } = useSwapTokensSelector();
-  const { publicKeyHash: accountPkh } = selectedAccount;
-  const tezos = useReadOnlyTezosToolkit(selectedAccount);
+  const tezos = useReadOnlyTezosToolkit();
   const slippageTolerancePercentage = useSlippageSelector();
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
@@ -76,11 +81,13 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         return;
       }
 
-      trackEvent('STAKE_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
-        farmAddress: earnOpportunity.contractAddress,
-        token: asset.symbol,
-        atomicAmount: amount.toFixed()
-      });
+      if (!forbidSubmitEventEarnOpportunityTypes.includes(earnOpportunity.type)) {
+        trackEvent('STAKE_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+          farmAddress: earnOpportunity.contractAddress,
+          token: asset.symbol,
+          atomicAmount: amount.toFixed()
+        });
+      }
       try {
         const opParams = await createStakeOperationParams(
           earnOpportunity,

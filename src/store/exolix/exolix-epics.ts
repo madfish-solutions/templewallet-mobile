@@ -5,12 +5,12 @@ import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { showErrorToast } from 'src/toast/toast.utils';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { jitsu } from 'src/utils/analytics/analytics.util';
+import { sendAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { loadExolixCurrencies, loadExolixExchangeData, submitExolixExchange } from 'src/utils/exolix.util';
 import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from 'src/utils/security.utils';
 
 import type { RootState } from '../types';
+
 import {
   loadExolixCurrenciesAction,
   loadExolixExchangeDataActions,
@@ -53,16 +53,7 @@ const loadExolixExchangeDataEpic: Epic = (action$: Observable<Action>, state$: S
         concatMap(exchangeData => [loadExolixExchangeDataActions.success(exchangeData), setExolixStepAction(1)]),
         catchError(err => {
           isAnalyticsEnabled &&
-            jitsu.track(AnalyticsEventCategory.General, {
-              userId,
-              event: 'SubmitExolixExchangeError',
-              timestamp: new Date().getTime(),
-              properties: {
-                event: 'SubmitExolixExchangeError',
-                category: AnalyticsEventCategory.General,
-                message: err.message
-              }
-            });
+            sendAnalyticsEvent('SubmitExolixExchangeError', undefined, { userId }, { message: err.message });
 
           showErrorToast({ description: 'Ooops, something went wrong' });
 

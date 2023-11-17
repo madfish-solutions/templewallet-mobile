@@ -27,9 +27,9 @@ export interface SettingsState {
   applicationOpenCounter: number;
   /** `true` if need to prompt user for ads showing */
   isEnableAdsBanner: boolean;
-  isSwapDisclaimerShowing: boolean;
   isApkBuildLaunchEventFired: boolean;
   isPushNotificationsEnabledEventFired: boolean;
+  isShowCollectibleInfo: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -52,7 +52,7 @@ export const settingsInitialState: SettingsState = {
   isEnableAdsBanner: true,
   isOnRampPossibility: false,
   isOnRampHasBeenShownBefore: false,
-  isSwapDisclaimerShowing: true,
   isApkBuildLaunchEventFired: false,
-  isPushNotificationsEnabledEventFired: false
+  isPushNotificationsEnabledEventFired: false,
+  isShowCollectibleInfo: false
 };

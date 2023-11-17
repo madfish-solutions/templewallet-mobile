@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
@@ -16,6 +16,7 @@ import { isString } from 'src/utils/is-string';
 import { DataUriImage } from '../data-uri-image';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { LoadableTokenIconImage } from './loadable-image';
 import { TokenIconStyles } from './token-icon.styles';
 
@@ -49,7 +50,14 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
   const colors = useColors();
   const dispatch = useDispatch();
   const isKnownSvg = useIsKnownSvgSelector(thumbnailUri ?? '');
+
+  const lastItemId = useRef(thumbnailUri);
+
   const [svgFailed, setSvgFailed] = useState(false);
+  if (thumbnailUri !== lastItemId.current) {
+    lastItemId.current = thumbnailUri;
+    setSvgFailed(false);
+  }
 
   const { metadata } = useNetworkInfo();
 
@@ -66,8 +74,6 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
     }
   }, [thumbnailUri, mayBeUnknownSvg, dispatch]);
 
-  useEffect(() => setSvgFailed(false), [thumbnailUri]);
-
   if (isDefined(iconName)) {
     return <Icon name={iconName} color={metadata.iconName === iconName ? colors.black : undefined} size={size} />;
   }
@@ -77,9 +83,11 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
   }
 
   if (isImgUriSvg(thumbnailUri) || (isKnownSvg && !svgFailed)) {
-    const normalizedUri = thumbnailUri.startsWith('ipfs://') ? formatImgUri(thumbnailUri) : thumbnailUri;
+    const uri = formatImgUri(thumbnailUri);
 
-    return <SvgCssUri width={size} height={size} uri={normalizedUri} onError={handleSvgError} />;
+    if (uri) {
+      return <SvgCssUri width={size} height={size} uri={uri} onError={handleSvgError} />;
+    }
   }
 
   if (isImgUriDataUri(thumbnailUri)) {

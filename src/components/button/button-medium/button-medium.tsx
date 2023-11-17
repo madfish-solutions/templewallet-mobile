@@ -4,6 +4,7 @@ import { IconNameEnum } from '../../icon/icon-name.enum';
 import { Button } from '../button';
 import { ButtonSharedProps } from '../button-shared.props';
 import { ButtonStyleConfig } from '../button-style.config';
+
 import { useButtonMediumStyleConfig } from './button-medium.styles';
 
 interface Props extends ButtonSharedProps {

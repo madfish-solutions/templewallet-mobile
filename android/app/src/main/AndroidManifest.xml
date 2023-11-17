@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.templewallet">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- used for debug and for api/rpc calls of blockchain -->
@@ -43,6 +42,20 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/temple_url_scheme" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+              <action android:name="android.intent.action.VIEW"/>
+              <category android:name="android.intent.category.DEFAULT"/>
+              <category android:name="android.intent.category.BROWSABLE"/>
+              <data android:scheme="https" android:host="templenft.page.link"/>
+              <data android:scheme="http"  android:host="templenft.page.link"/>
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+              <action android:name="android.intent.action.VIEW"/>
+              <category android:name="android.intent.category.DEFAULT"/>
+              <category android:name="android.intent.category.BROWSABLE"/>
+              <data android:scheme="https" android:host="link.templewallet.com"/>
+              <data android:scheme="http"  android:host="link.templewallet.com"/>
             </intent-filter>
         </activity>
 

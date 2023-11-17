@@ -4,6 +4,7 @@ import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PairLimits } from 'src/utils/pair-limits';
 
 import { createActions } from '../create-actions';
+
 import { BuyWithCreditCardState, PairLimitsRecord } from './state';
 
 export const loadAllCurrenciesActions = createActions<void, BuyWithCreditCardState['currencies'], string>(

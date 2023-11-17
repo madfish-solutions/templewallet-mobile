@@ -7,17 +7,14 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { templeWalletApi } from '../../api.service';
-import { isIOS } from '../../config/system';
-import { VersionsInterface } from '../../interfaces/versions.interface';
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { jitsu } from '../../utils/analytics/analytics.util';
-import {
-  withSelectedIsAnalyticsEnabled,
-  withSelectedIsAuthorized,
-  withSelectedUserId
-} from '../../utils/security.utils';
+import { templeWalletApi } from 'src/api.service';
+import { isIOS } from 'src/config/system';
+import { VersionsInterface } from 'src/interfaces/versions.interface';
+import { sendAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import { withSelectedIsAnalyticsEnabled, withSelectedIsAuthorized, withSelectedUserId } from 'src/utils/security.utils';
+
 import type { RootState } from '../types';
+
 import { checkApp } from './security-actions';
 
 interface appCheckPayload extends VersionsInterface {
@@ -39,16 +36,7 @@ const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootS
         catchError(err => {
           isAnalyticsEnabled &&
             isAuthorized &&
-            jitsu.track(AnalyticsEventCategory.General, {
-              userId,
-              event: 'AppCheckError',
-              timestamp: new Date().getTime(),
-              properties: {
-                event: 'AppCheckError',
-                category: AnalyticsEventCategory.General,
-                message: err.message
-              }
-            });
+            sendAnalyticsEvent('AppCheckError', undefined, { userId }, { message: err.message });
 
           return of(JSON.stringify(err));
         })

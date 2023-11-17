@@ -16,6 +16,7 @@ import {
 import { showErrorToast } from '../../../toast/toast.utils';
 import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from '../../../utils/sync.utils';
+
 import { ConfirmSync } from './confirm-sync/confirm-sync';
 import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
 import { CreateNewPassword } from './create-new-password/create-new-password';

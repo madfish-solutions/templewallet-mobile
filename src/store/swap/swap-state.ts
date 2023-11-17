@@ -8,6 +8,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
+
 import { DEFAULT_SWAP_PARAMS } from './swap-state.mock';
 
 export interface SwapState {

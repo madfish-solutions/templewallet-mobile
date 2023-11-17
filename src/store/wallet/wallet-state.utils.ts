@@ -2,6 +2,7 @@ import { VisibilityEnum } from '../../enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
 import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
 import { AccountTokenInterface } from '../../token/interfaces/account-token.interface';
+
 import { WalletState } from './wallet-state';
 
 export const updateCurrentAccountState = (
@@ -46,6 +47,7 @@ export const pushOrUpdateTokensBalances = (
         ...token,
         balance,
         visibility:
+          // Note: changing visibility status on non-zero balance. Might've been a mistake
           balance !== '0' && token.visibility === VisibilityEnum.InitiallyHidden
             ? VisibilityEnum.Visible
             : token.visibility

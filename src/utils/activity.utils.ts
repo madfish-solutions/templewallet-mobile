@@ -1,6 +1,7 @@
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityGroup, ActivityInterface, emptyActivity } from '../interfaces/activity.interface';
 import { TzktTokenTransfer } from '../interfaces/tzkt.interface';
+
 import { isDefined } from './is-defined';
 
 export const groupActivitiesByHash = (

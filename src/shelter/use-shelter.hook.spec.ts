@@ -11,10 +11,14 @@ import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from '../toast/toast.utils.mock';
+
 import { mockRevealedSecretKey, mockRevealedSeedPhrase, mockShelter } from './shelter.mock';
 import { useShelter } from './use-shelter.hook';
 
 describe('useShelter', () => {
+  jest.useFakeTimers();
+  afterAll(() => void jest.useRealTimers());
+
   const mockSuccessCallback = jest.fn();
 
   beforeEach(() => {
@@ -123,12 +127,12 @@ describe('useShelter', () => {
     expect(mockShelter.enableBiometryPassword$).not.toBeCalled();
   });
 
-  it('should create imported account', () => {
+  it('should create imported account', async () => {
     mockInMemorySigner.publicKey.mockReturnValueOnce(Promise.resolve('another public key'));
     const { result } = renderHook(() => useShelter());
 
     result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
-    jest.runAllTimers();
+    await jest.runAllTimersAsync();
 
     expect(mockShelter.createImportedAccount$).toBeCalledWith(mockAccountCredentials.privateKey, mockHdAccount.name);
 
@@ -138,11 +142,11 @@ describe('useShelter', () => {
     expect(mockGoBack).toBeCalled();
   });
 
-  it('should not create account with invalid private key', () => {
+  it('should not create account with invalid private key', async () => {
     const { result } = renderHook(() => useShelter());
 
     result.current.createImportedAccount({ privateKey: mockInvalidPrivateKey, name: mockHdAccount.name });
-    jest.runAllTimers();
+    await jest.runAllTimersAsync();
 
     expect(mockShelter.createImportedAccount$).not.toBeCalled();
 
@@ -152,11 +156,11 @@ describe('useShelter', () => {
     });
   });
 
-  it('should show error toast while creating the same account', () => {
+  it('should show error toast while creating the same account', async () => {
     const { result } = renderHook(() => useShelter());
 
     result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
-    jest.runAllTimers();
+    await jest.runAllTimersAsync();
 
     expect(mockShelter.createImportedAccount$).not.toBeCalled();
 

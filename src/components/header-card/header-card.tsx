@@ -1,19 +1,21 @@
 import React, { FC } from 'react';
-import { StyleProp, View, ViewStyle } from 'react-native';
+import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native';
 
 import { InsetSubstitute } from '../inset-substitute/inset-substitute';
+
 import { useHeaderCardStyles } from './header-card.styles';
 
 interface Props {
   hasInsetTop?: boolean;
   style?: StyleProp<ViewStyle>;
+  onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-export const HeaderCard: FC<Props> = ({ hasInsetTop = false, style, children }) => {
+export const HeaderCard: FC<Props> = ({ hasInsetTop = false, style, children, onLayout }) => {
   const styles = useHeaderCardStyles();
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, style]} onLayout={onLayout}>
       {hasInsetTop && <InsetSubstitute />}
       {children}
     </View>

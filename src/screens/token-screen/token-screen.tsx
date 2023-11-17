@@ -3,10 +3,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
-import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
-import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { HeaderCard } from 'src/components/header-card/header-card';
+import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
@@ -15,15 +15,13 @@ import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
-import {
-  useSelectedAccountSelector,
-  useSelectedAccountTezosTokenSelector,
-  useTokensListSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { TokenInfo } from './token-info/token-info';
 
@@ -31,9 +29,9 @@ export const TokenScreen = () => {
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
 
   const dispatch = useDispatch();
-  const selectedAccount = useSelectedAccountSelector();
-  const tokensList = useTokensListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
+  const tokensList = useCurrentAccountTokens();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
 
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
@@ -50,7 +48,7 @@ export const TokenScreen = () => {
   useEffect(() => {
     dispatch(
       highPriorityLoadTokenBalanceAction({
-        publicKeyHash: selectedAccount.publicKeyHash,
+        publicKeyHash: accountPkh,
         slug: getTokenSlug(token)
       })
     );
@@ -71,7 +69,7 @@ export const TokenScreen = () => {
       <HeaderCard>
         <TokenEquityValue token={token} />
 
-        <PublicKeyHashText publicKeyHash={selectedAccount.publicKeyHash} marginBottom={formatSize(16)} />
+        <PublicKeyHashText publicKeyHash={accountPkh} marginBottom={formatSize(16)} />
 
         <HeaderCardActionButtons token={token} />
       </HeaderCard>

@@ -9,13 +9,14 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { useIsAuthorisedSelector, useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
+import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isBeaconPayload } from 'src/utils/beacon.utils';
 import { isSyncPayload } from 'src/utils/sync.utils';
 import { isValidAddress } from 'src/utils/tezos.util';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { ScanQrCodeAnalyticsEvents } from './analytics-events';
 import CustomMarker from './custom-marker.svg';
@@ -25,7 +26,7 @@ import { useScanQrCodeStyles } from './scan-qr-code.styles';
 export const ScanQrCode = () => {
   const styles = useScanQrCodeStyles();
   const { navigate, goBack } = useNavigation();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const isAuthorised = useIsAuthorisedSelector();
   const { trackEvent } = useAnalytics();
 

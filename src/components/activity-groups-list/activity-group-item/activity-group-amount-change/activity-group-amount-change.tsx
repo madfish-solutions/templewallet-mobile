@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import { NonZeroAmounts } from '../../../../interfaces/non-zero-amounts.interface';
 import { conditionalStyle } from '../../../../utils/conditional-style';
 import { formatAssetAmount } from '../../../../utils/number.util';
+
 import { useActivityGroupAmountChangeStyles } from './activity-group-amount-change.styles';
 
 interface Props {

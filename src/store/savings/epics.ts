@@ -1,9 +1,10 @@
 import { debounce } from 'lodash-es';
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
+import { getKordFiItems$, getKordFiUserDeposits$ } from 'src/apis/kord-fi';
 import { getUserStake, getYouvesSavingsItems$ } from 'src/apis/youves';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
@@ -11,19 +12,21 @@ import { isDefined } from 'src/utils/is-defined';
 import { withSelectedAccount, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { RootState } from '../types';
+
 import {
   loadAllSavingsActions,
   loadAllSavingsAndStakesAction,
   loadAllStakesActions,
   loadSingleSavingStakeActions
 } from './actions';
+import { loadSingleSavingStake$ } from './utils';
 
 const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
     withSelectedAccount(state$),
     switchMap(([{ payload: savingsItem }, selectedAccount]) =>
-      from(getUserStake(selectedAccount, savingsItem.id, savingsItem.type)).pipe(
+      loadSingleSavingStake$(savingsItem, selectedAccount).pipe(
         map(stake => loadSingleSavingStakeActions.success({ stake, contractAddress: savingsItem.contractAddress })),
         catchError(err => {
           showErrorToastByError(err, undefined, true);
@@ -58,31 +61,40 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
   action$.pipe(
     ofType(loadAllSavingsAndStakesAction),
     withUsdToTokenRates(state$),
-    switchMap(([, rates]) => getYouvesSavingsItems$(rates)),
+    switchMap(([, rates]) => forkJoin([getYouvesSavingsItems$(rates), getKordFiItems$(rates)])),
     withSelectedAccount(state$),
-    switchMap(([savings, selectedAccount]) => {
-      if (savings.length === 0) {
+    switchMap(([[youvesSavings, kordFiSavings], selectedAccount]) => {
+      if (youvesSavings.length === 0 && kordFiSavings.length === 0) {
         throw new Error('Failed to fetch any savings items');
       }
 
-      return forkJoin(
-        savings.map(savingsItem =>
-          getUserStake(selectedAccount, savingsItem.id, savingsItem.type)
-            .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
-            .catch(e => {
-              console.error('Error while loading farm stakes: ', savingsItem.contractAddress);
-              showStakeLoadError(e);
+      return forkJoin([
+        forkJoin(
+          youvesSavings.map(savingsItem =>
+            getUserStake(selectedAccount, savingsItem.id, savingsItem.type)
+              .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
+              .catch(e => {
+                console.error('Error while loading farm stakes: ', savingsItem.contractAddress);
+                showStakeLoadError(e);
 
-              return [savingsItem.contractAddress, undefined];
-            })
-        )
-      ).pipe(
-        map(stakesEntries =>
-          Object.fromEntries(
-            stakesEntries.filter((entry): entry is [string, UserStakeValueInterface] => isDefined(entry[1]))
+                return [savingsItem.contractAddress, undefined];
+              })
           )
         ),
-        mergeMap(stakes => merge(of(loadAllSavingsActions.success(savings)), of(loadAllStakesActions.success(stakes))))
+        getKordFiUserDeposits$(selectedAccount.publicKeyHash)
+      ]).pipe(
+        map(([youvesStakesEntries, kordFiStakesEntries]) => ({
+          ...Object.fromEntries(
+            youvesStakesEntries.filter((entry): entry is [string, UserStakeValueInterface] => isDefined(entry[1]))
+          ),
+          ...kordFiStakesEntries
+        })),
+        mergeMap(stakes =>
+          merge(
+            of(loadAllSavingsActions.success([...youvesSavings, ...kordFiSavings])),
+            of(loadAllStakesActions.success(stakes))
+          )
+        )
       );
     }),
     catchError(err => {

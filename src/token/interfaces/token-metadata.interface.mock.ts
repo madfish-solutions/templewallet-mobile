@@ -1,4 +1,4 @@
-import { TokenMetadataInterface } from './token-metadata.interface';
+import type { TokenMetadataInterface } from './token-metadata.interface';
 
 export const mockFA1_2TokenMetadata: TokenMetadataInterface = {
   id: 0,
