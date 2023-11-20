@@ -29,15 +29,9 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   const initialLoad = useCallback(
     async (refresh = false) => {
       let fetchedActivities: Array<ActivityGroup> = [];
-      let shouldOverwrite = false;
       let isError = false;
       try {
         fetchedActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
-
-        if (fetchedActivities.length === 0) {
-          setState(prev => ({ ...prev, isAllLoaded: true }));
-        }
-        shouldOverwrite = refresh !== true;
       } catch (error) {
         console.error(error);
         isError = true;
@@ -46,7 +40,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
           let newActivities = fetchedActivities;
           if (isError) {
             newActivities = prevState.activities;
-          } else if (!shouldOverwrite) {
+          } else if (refresh === true) {
             const allActivities = [...fetchedActivities, ...prevState.activities];
             const allHashes = allActivities.map(x => x[0]).map(x => x.hash);
             const onlyUniqueHashes = uniq(allHashes);
@@ -54,7 +48,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
           }
 
           return {
-            ...prevState,
+            isAllLoaded: fetchedActivities.length === 0,
             activities: newActivities,
             isLoading: false
           };
@@ -96,7 +90,6 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
       console.error(error);
     } finally {
       setState(prevState => ({
-        ...prevState,
         activities: [...prevState.activities, ...newActivities],
         isAllLoaded: newActivities.length === 0,
         isLoading: false

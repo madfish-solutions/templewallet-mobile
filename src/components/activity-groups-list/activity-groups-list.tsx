@@ -45,7 +45,7 @@ export const ActivityGroupsList: FC<Props> = ({
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
   const [endIsReached, setEndIsReached] = useState(false);
-  const [loadingEnded, setLoadingEnded] = useState(false);
+  const [loadingEnded, setLoadingEnded] = useState(!isLoading);
 
   useEffect(() => {
     if (!isLoading) {
