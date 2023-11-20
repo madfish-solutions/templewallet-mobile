@@ -28,7 +28,7 @@ interface Props {
   activityGroups: ActivityGroup[];
   shouldShowPromotion?: boolean;
   isAllLoaded?: boolean;
-  isInitialLoading?: boolean;
+  isLoading?: boolean;
   handleUpdate?: () => void;
   onOptimalPromotionError?: () => void;
 }
@@ -36,7 +36,7 @@ interface Props {
 export const ActivityGroupsList: FC<Props> = ({
   activityGroups,
   isAllLoaded = false,
-  isInitialLoading = false,
+  isLoading = false,
   handleUpdate = emptyFn,
   shouldShowPromotion = false,
   onOptimalPromotionError
@@ -45,6 +45,13 @@ export const ActivityGroupsList: FC<Props> = ({
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
   const [endIsReached, setEndIsReached] = useState(false);
+  const [loadingEnded, setLoadingEnded] = useState(false);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setLoadingEnded(true);
+    }
+  }, [isLoading]);
 
   const handleEndReached = useCallback(() => {
     setEndIsReached(true);
@@ -115,31 +122,29 @@ export const ActivityGroupsList: FC<Props> = ({
     [shouldRenderAdditionalLoader, styles.additionalLoader]
   );
 
-  if (isInitialLoading) {
-    return <ActivityIndicator style={styles.initialLoader} size="large" />;
+  if (sections.length > 0) {
+    return (
+      <View style={styles.contentContainer}>
+        <FlashList
+          data={sections}
+          stickyHeaderIndices={stickyHeaderIndices}
+          onEndReachedThreshold={0.01}
+          onEndReached={handleEndReached}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          estimatedItemSize={AVERAGE_ITEM_HEIGHT}
+          getItemType={getItemType}
+          ListFooterComponent={renderAdditionalLoader}
+          refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
+        />
+      </View>
+    );
   }
 
   return (
     <>
-      {sections.length === 0 && shouldShowPromotion && Promotion}
-      {sections.length === 0 ? (
-        ListEmptyComponent
-      ) : (
-        <View style={styles.contentContainer}>
-          <FlashList
-            data={sections}
-            stickyHeaderIndices={stickyHeaderIndices}
-            onEndReachedThreshold={0.01}
-            onEndReached={handleEndReached}
-            keyExtractor={keyExtractor}
-            renderItem={renderItem}
-            estimatedItemSize={AVERAGE_ITEM_HEIGHT}
-            getItemType={getItemType}
-            ListFooterComponent={renderAdditionalLoader}
-            refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
-          />
-        </View>
-      )}
+      {shouldShowPromotion && Promotion}
+      {loadingEnded ? ListEmptyComponent : <ActivityIndicator style={styles.initialLoader} size="large" />}
     </>
   );
 };
