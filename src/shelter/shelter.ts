@@ -55,6 +55,7 @@ export class Shelter {
     await Promise.all(
       passwordServices.map(async (passwordService, index) => {
         const migrationResult = migrationResults[index];
+        console.log('fuflo1', passwordService, shelterVersion);
         const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
 
         if (migrationResult.isSuccess) {
@@ -180,7 +181,14 @@ export class Shelter {
 
   static getShelterVersion = async () => {
     const rawStoredVersion = await AsyncStorage.getItem(SHELTER_VERSION_STORAGE_KEY);
-    const shelterIsEmpty = (await Keychain.getAllGenericPasswordServices()).length === 0;
+
+    if (isDefined(rawStoredVersion)) {
+      return Number(rawStoredVersion);
+    }
+
+    // TODO: modify the logic as new version appears if necessary
+    const passwordCheckKey = await Keychain.getGenericPassword(getKeychainOptions(PASSWORD_CHECK_KEY, 0));
+    const shelterIsEmpty = passwordCheckKey === false;
 
     return Number(rawStoredVersion ?? (shelterIsEmpty ? Shelter.migrations.length : 0));
   };
