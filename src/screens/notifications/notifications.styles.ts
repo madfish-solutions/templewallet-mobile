@@ -7,5 +7,8 @@ export const NotificationsStyles = StyleSheet.create({
     paddingBottom: formatSize(16),
     paddingTop: 0,
     paddingHorizontal: 0
+  },
+  ads: {
+    margin: formatSize(16)
   }
 });
