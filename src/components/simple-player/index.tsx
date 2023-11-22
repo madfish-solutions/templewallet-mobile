@@ -71,7 +71,6 @@ export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError
             bufferForPlaybackMs: BUFFER_DURATION
           }}
           onError={onError}
-          onBuffer={console.log}
           onLoadStart={nativePlayerLoadStart}
           onLoad={handleNativePlayerLoad}
           disableFullscreen
