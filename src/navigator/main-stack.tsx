@@ -2,6 +2,7 @@ import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { forkJoin } from 'rxjs';
 
 import { useBeaconHandler } from 'src/beacon/use-beacon-handler.hook';
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
@@ -22,8 +23,10 @@ import { isAndroid } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
+import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNFTDynamicLinks } from 'src/hooks/use-nft-dynamic-links.hook';
+import { SecurityUpdate } from 'src/modals/security-update';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
 import { Backup } from 'src/screens/backup/backup';
@@ -65,9 +68,15 @@ import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
 import { Welcome } from 'src/screens/welcome/welcome';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { Shelter } from 'src/shelter/shelter';
 import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
+import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
+import { loadTokensApyActions } from 'src/store/d-apps/d-apps-actions';
+import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
+import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
+import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import {
   loadTokensActions,
@@ -77,14 +86,10 @@ import {
 import { useIsAuthorisedSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
-
-import { useUsdToTokenRates } from '../store/currency/currency-selectors';
-import { loadTokensApyActions } from '../store/d-apps/d-apps-actions';
-import { loadAllFarmsAndStakesAction } from '../store/farms/actions';
-import { togglePartnersPromotionAction } from '../store/partners-promotion/partners-promotion-actions';
-import { loadAllSavingsAndStakesAction } from '../store/savings/actions';
+import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
+import { useNavigation } from './hooks/use-navigation.hook';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
 import { NavigationBar } from './navigation-bar/navigation-bar';
 
@@ -98,6 +103,8 @@ export const MainStackScreen = memo(() => {
   const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();
   const { isLocked } = useAppLock();
+  const { navigate } = useNavigation();
+  const atBootsplash = useAtBootsplash();
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
@@ -119,6 +126,27 @@ export const MainStackScreen = memo(() => {
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensBalancesArrayActions.submit());
   }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl]);
+
+  useEffect(() => {
+    if (atBootsplash || isLocked) {
+      return;
+    }
+
+    const shelterMigrationSubscription = forkJoin([
+      Shelter.newMigrationsExist(),
+      Shelter.getShelterVersion()
+    ]).subscribe(([shouldDoSomeMigrations, shelterVersion]) => {
+      if (shouldDoSomeMigrations && shouldMoveToSoftwareInV1 && shelterVersion === 0) {
+        navigate(ScreensEnum.SecurityUpdate);
+      } else if (shouldDoSomeMigrations) {
+        Shelter.doMigrations$().subscribe({
+          error: e => console.error(e)
+        });
+      }
+    });
+
+    return () => shelterMigrationSubscription.unsubscribe();
+  }, [navigate, isLocked, atBootsplash]);
 
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
   useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, [
@@ -364,6 +392,12 @@ export const MainStackScreen = memo(() => {
                 name={ScreensEnum.Debug}
                 component={Debug}
                 options={generateScreenOptions(<HeaderTitle title="Debugging" />)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.SecurityUpdate}
+                component={SecurityUpdate}
+                options={generateScreenOptions(<HeaderTitle title="Update info" />)}
               />
             </>
           ) : null}
