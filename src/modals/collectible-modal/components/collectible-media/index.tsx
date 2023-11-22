@@ -85,7 +85,7 @@ const MediaContent = memo<MediaContentProps>(
         );
       }
       if (mime.startsWith('video/')) {
-        return <SimplePlayer uri={mediaUri} size={size} withLoader={true} onError={onVideoMediaFail} />;
+        return <SimplePlayer uri={mediaUri} size={size} withLoader={true} onError={onVideoMediaFail} isVideo />;
       }
       if (mime.startsWith('audio/')) {
         return (
