@@ -48,6 +48,9 @@ export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError
     [isVideo]
   );
 
+  const nativePlayerLoadStart = useCallback(() => setIsLoading(true), []);
+  const handleWebViewLoad = useCallback(() => setIsLoading(false), []);
+
   const handleWebViewError = useCallback(() => {
     if (onError) {
       onError({ error: { '': '', errorString: 'Failed to load video, it may be invalid or unsupported' } });
@@ -69,7 +72,7 @@ export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError
           }}
           onError={onError}
           onBuffer={console.log}
-          onLoadStart={() => setIsLoading(true)}
+          onLoadStart={nativePlayerLoadStart}
           onLoad={handleNativePlayerLoad}
           disableFullscreen
           disableBack
@@ -79,7 +82,7 @@ export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError
           source={{ uri }}
           style={[{ width: size, height: size }, style]}
           onError={handleWebViewError}
-          onLoadEnd={() => setIsLoading(false)}
+          onLoadEnd={handleWebViewLoad}
         />
       )}
 
