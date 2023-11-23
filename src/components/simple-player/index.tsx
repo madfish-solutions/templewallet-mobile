@@ -4,6 +4,7 @@ import { LoadError, OnLoadData as NativeOnLoadData } from 'react-native-video';
 import VideoPlayer from 'react-native-video-controls';
 import WebView from 'react-native-webview';
 
+import { emptyFn } from 'src/config/general';
 import { useAppStateStatus } from 'src/hooks/use-app-state-status.hook';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
@@ -21,7 +22,7 @@ interface Props {
 
 const BUFFER_DURATION = 8000;
 
-export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError, isVideo = false }) => {
+export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError = emptyFn, isVideo = false }) => {
   const atBootsplash = useAtBootsplash();
   const { isLocked } = useAppLock();
 
@@ -52,9 +53,7 @@ export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError
   const handleWebViewLoad = useCallback(() => setIsLoading(false), []);
 
   const handleWebViewError = useCallback(() => {
-    if (onError) {
-      onError({ error: { '': '', errorString: 'Failed to load video, it may be invalid or unsupported' } });
-    }
+    onError({ error: { '': '', errorString: 'Failed to load video, it may be invalid or unsupported' } });
   }, [onError]);
 
   return (
