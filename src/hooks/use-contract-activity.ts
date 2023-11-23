@@ -37,10 +37,11 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         isError = true;
       } finally {
         setState(prevState => {
+          const isAllLoaded = fetchedActivities.length === 0;
           let newActivities = fetchedActivities;
           if (isError) {
             newActivities = prevState.activities;
-          } else if (refresh === true) {
+          } else if (refresh === true && !isAllLoaded) {
             const allActivities = [...fetchedActivities, ...prevState.activities];
             const allHashes = allActivities.map(x => x[0]).map(x => x.hash);
             const onlyUniqueHashes = uniq(allHashes);
@@ -48,7 +49,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
           }
 
           return {
-            isAllLoaded: fetchedActivities.length === 0,
+            isAllLoaded,
             activities: newActivities,
             isLoading: false
           };
@@ -89,9 +90,10 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     } catch (error) {
       console.error(error);
     } finally {
+      const isAllLoaded = newActivities.length === 0;
       setState(prevState => ({
-        activities: [...prevState.activities, ...newActivities],
-        isAllLoaded: newActivities.length === 0,
+        activities: isAllLoaded ? prevState.activities : [...prevState.activities, ...newActivities],
+        isAllLoaded,
         isLoading: false
       }));
     }
