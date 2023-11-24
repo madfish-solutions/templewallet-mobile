@@ -1,8 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createReducer } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 
 import { createEntity } from '../create-entity';
+import { SlicedAsyncStorage } from '../sliced-async-storage';
 
 import { loadCollectiblesDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
@@ -50,8 +50,8 @@ const collectiblesReducer = createReducer<CollectiblesState>(collectiblesInitial
 export const collectiblesPersistedReducer = persistReducer(
   {
     key: 'root.collectibles',
-    storage: AsyncStorage,
-    whitelist: ['adultFlags'] as (keyof CollectiblesState)[]
+    storage: SlicedAsyncStorage
+    // whitelist: ['adultFlags'] as (keyof CollectiblesState)[]
   },
   collectiblesReducer
 );

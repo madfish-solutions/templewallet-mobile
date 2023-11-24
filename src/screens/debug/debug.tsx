@@ -1,4 +1,8 @@
-import React, { FC } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { FC, useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
+
+import { calculateStringSizeInBytes } from 'src/utils/string.utils';
 
 import { ButtonMedium } from '../../components/button/button-medium/button-medium';
 import { Divider } from '../../components/divider/divider';
@@ -17,12 +21,35 @@ export const Debug: FC = () => {
     throw new Error('Test error from Debug screen');
   };
 
+  const [asyncStorageStats, setAsyncStorageStats] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const getAsyncStorageStats = async () => {
+      const keys = await AsyncStorage.getAllKeys();
+      const stats = await AsyncStorage.multiGet(keys);
+      const statsObject = stats.reduce(
+        (acc, [key, value]) => ({ ...acc, [key]: calculateStringSizeInBytes(value ?? '') }),
+        {}
+      );
+      setAsyncStorageStats(statsObject);
+    };
+
+    getAsyncStorageStats();
+  }, []);
+
   return (
     <ScreenContainer>
       <ImportWatchOnlyDebug />
       <Divider size={formatSize(50)} />
       <ButtonMedium title="Throw Test Error" iconName={IconNameEnum.Alert} onPress={handleThrowErrorButtonsPress} />
       <Divider />
+      {Object.entries(asyncStorageStats).map(([key, value]) => (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }} key={key}>
+          <Text>{key}</Text>
+          <Divider size={formatSize(4)} />
+          <Text>{value} B</Text>
+        </View>
+      ))}
     </ScreenContainer>
   );
 };

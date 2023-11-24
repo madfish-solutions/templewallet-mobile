@@ -1,0 +1,166 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { range } from 'lodash-es';
+
+import { isDefined } from 'src/utils/is-defined';
+import { calculateStringSizeInBytes } from 'src/utils/string.utils';
+
+import { SlicedAsyncStorage } from './sliced-async-storage';
+
+const nonSlicedValue = 'a'.repeat(2e6);
+
+const cyrLetters = 'абвгґдеєжзиіїйклмнопрстуфхцчшщьюя';
+const charset = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789${cyrLetters}`;
+
+const bigValueSlices = range(0, 4).map(() =>
+  range(0, 1e6)
+    .map(() => charset[Math.floor(Math.random() * charset.length)])
+    .join('')
+);
+const bigValue = bigValueSlices.join('');
+
+const cyrLettersOnlyBigValueSlices = range(0, 6).map(() =>
+  range(0, 1e6)
+    .map(() => cyrLetters[Math.floor(Math.random() * cyrLetters.length)])
+    .join('')
+);
+const cyrLettersOnlyBigValue = cyrLettersOnlyBigValueSlices.join('');
+
+const testKey = 'test';
+const doNotTouchTestKeys = ['doNotTouch', 'doNotTouch2'];
+
+const setBigValue = async (slices: string[], key: string) =>
+  AsyncStorage.multiSet([
+    [key, JSON.stringify({ _isSliced: true, slices: slices.length })],
+    ...slices.map((slice, index): [string, string] => [`${key}__SLICE__${index}`, slice])
+  ]);
+
+const expectCorrectSlicedValue = async (totalValue: string, key: string) => {
+  const allKeys = await AsyncStorage.getAllKeys();
+  const allRelatedKeys = allKeys.filter(storedKey => storedKey.startsWith(key));
+  const expectedSlicesKeys = range(0, allRelatedKeys.length - 1).map(sliceIndex => `${key}__SLICE__${sliceIndex}`);
+  const expectedSortedKeys = [...expectedSlicesKeys, key].sort();
+  expect(allRelatedKeys.sort()).toEqual(expectedSortedKeys);
+
+  expect(await AsyncStorage.getItem(key)).toEqual(
+    JSON.stringify({ _isSliced: true, slices: allRelatedKeys.length - 1 })
+  );
+  const slicesPairs = await AsyncStorage.multiGet(expectedSlicesKeys);
+  const slicesValues = expectedSlicesKeys.map(sliceKey => slicesPairs.find(([key]) => key === sliceKey)?.[1]);
+  expect(slicesValues.every(isDefined)).toEqual(true);
+  expect(slicesValues.every(value => calculateStringSizeInBytes(value!) <= 2e6)).toEqual(true);
+  expect(slicesValues.join('')).toEqual(totalValue);
+};
+
+describe('SlicedAsyncStorage', () => {
+  beforeEach(async () => AsyncStorage.clear());
+
+  describe('getItem', () => {
+    it('should return null for non-existing key', async () => {
+      expect(await SlicedAsyncStorage.getItem('test')).toEqual(null);
+    });
+
+    it('should fetch value of size not greater than 2MB as before', async () => {
+      await AsyncStorage.setItem(testKey, nonSlicedValue);
+
+      expect(await SlicedAsyncStorage.getItem(testKey)).toEqual(nonSlicedValue);
+    });
+
+    it('should fetch value of size greater than 2MB by slices', async () => {
+      await setBigValue(bigValueSlices, testKey);
+
+      expect(await SlicedAsyncStorage.getItem(testKey)).toEqual(bigValue);
+    });
+  });
+
+  describe('setItem', () => {
+    describe('setting item for the first time', () => {
+      it('should set the value of size not greater than 2MB as before', async () => {
+        await SlicedAsyncStorage.setItem(testKey, nonSlicedValue);
+
+        expect(await AsyncStorage.getItem(testKey)).toEqual(nonSlicedValue);
+        expect(await AsyncStorage.getAllKeys()).toEqual([testKey]);
+      });
+
+      it('should set the first value of size greater than 2MB by slices', async () => {
+        await SlicedAsyncStorage.setItem(testKey, bigValue);
+
+        await expectCorrectSlicedValue(bigValue, testKey);
+      });
+
+      it('should set the first value of size greater than 2MB by slices, Cyrillic letters only', async () => {
+        await SlicedAsyncStorage.setItem(testKey, cyrLettersOnlyBigValue);
+
+        await expectCorrectSlicedValue(cyrLettersOnlyBigValue, testKey);
+      });
+    });
+
+    describe('overriding the value of size not greater than 2MB', () => {
+      it('should set the new value of size not greater than 2MB as before', async () => {
+        const value = 'a'.repeat(2e6);
+        await AsyncStorage.setItem(testKey, value);
+
+        const newValue = 'b'.repeat(2e6);
+        await SlicedAsyncStorage.setItem(testKey, newValue);
+
+        expect(await AsyncStorage.getItem(testKey)).toEqual(newValue);
+        expect(await AsyncStorage.getAllKeys()).toEqual([testKey]);
+      });
+
+      it('should set the new value of size greater than 2MB by slices', async () => {
+        await AsyncStorage.setItem(testKey, nonSlicedValue);
+
+        await SlicedAsyncStorage.setItem(testKey, bigValue);
+
+        await expectCorrectSlicedValue(bigValue, testKey);
+      });
+    });
+
+    describe('overriding the value of size greater than 2MB', () => {
+      it('should set the new value of size not greater than 2MB and remove slices', async () => {
+        await setBigValue(bigValueSlices, testKey);
+
+        await SlicedAsyncStorage.setItem(testKey, nonSlicedValue);
+
+        expect(await AsyncStorage.getItem(testKey)).toEqual(nonSlicedValue);
+        expect(await AsyncStorage.getAllKeys()).toEqual([testKey]);
+      });
+
+      it('should set the new value of size greater than 2MB and remove redundant slices', async () => {
+        await setBigValue(cyrLettersOnlyBigValueSlices, testKey);
+
+        await SlicedAsyncStorage.setItem(testKey, bigValue);
+
+        await expectCorrectSlicedValue(bigValue, testKey);
+      });
+    });
+  });
+
+  describe('removeItem', () => {
+    it('should remove the value of size not greater than 2MB as before', async () => {
+      await AsyncStorage.setItem(doNotTouchTestKeys[0], nonSlicedValue);
+      await setBigValue(bigValueSlices, doNotTouchTestKeys[1]);
+      await AsyncStorage.setItem(testKey, nonSlicedValue);
+
+      await SlicedAsyncStorage.removeItem(testKey);
+
+      expect(await AsyncStorage.getItem(testKey)).toEqual(null);
+      expect(await AsyncStorage.getItem(doNotTouchTestKeys[0])).toEqual(nonSlicedValue);
+      await expectCorrectSlicedValue(bigValue, doNotTouchTestKeys[1]);
+    });
+
+    it('should remove the value of size greater than 2MB without leaving garbage', async () => {
+      await AsyncStorage.setItem(doNotTouchTestKeys[0], nonSlicedValue);
+      await setBigValue(bigValueSlices, doNotTouchTestKeys[1]);
+      await setBigValue(cyrLettersOnlyBigValueSlices, testKey);
+
+      await SlicedAsyncStorage.removeItem(testKey);
+
+      expect(await AsyncStorage.getItem(doNotTouchTestKeys[0])).toEqual(nonSlicedValue);
+      await expectCorrectSlicedValue(bigValue, doNotTouchTestKeys[1]);
+      const leftKeys = await AsyncStorage.getAllKeys();
+      expect(leftKeys.every(key => doNotTouchTestKeys.includes(key) || key.startsWith(doNotTouchTestKeys[1]))).toEqual(
+        true
+      );
+    });
+  });
+});
