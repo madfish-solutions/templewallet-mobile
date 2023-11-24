@@ -2,6 +2,7 @@ import { string, ValidationError } from 'yup';
 
 import { isTezosDomainNameValid } from '../../utils/dns.utils';
 import { isDefined } from '../../utils/is-defined';
+
 import { addressValidation } from './address';
 import { makeRequiredErrorMessage } from './messages';
 

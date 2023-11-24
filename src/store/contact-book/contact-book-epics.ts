@@ -8,6 +8,7 @@ import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
 import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import type { RootState } from '../types';
+
 import { loadContactTezosBalance } from './contact-book-actions';
 
 const loadContactTezosBalanceEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>

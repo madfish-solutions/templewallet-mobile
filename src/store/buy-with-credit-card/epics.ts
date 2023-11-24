@@ -15,6 +15,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
 import type { RootState } from '../types';
+
 import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
 import { TopUpProviderCurrencies } from './state';
 import { mapAliceBobProviderCurrencies, mapMoonPayProviderCurrencies, mapUtorgProviderCurrencies } from './utils';

@@ -11,6 +11,7 @@ import { openUrl } from 'src/utils/linking';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
+
 import { TextPromotionItemSelectors } from './text-promotion-item.selectors';
 import { useTextPromotionItemStyles } from './text-promotion-item.styles';
 

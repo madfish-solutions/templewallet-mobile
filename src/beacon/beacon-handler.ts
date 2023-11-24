@@ -11,6 +11,7 @@ import type { ExtendedP2PPairingResponse } from '@airgap/beacon-types';
 
 import { EventFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
+
 import { BeaconStorage } from './storage';
 
 const WALLET_CLIENT_ERROR = 'Wallet client not defined!';

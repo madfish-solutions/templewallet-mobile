@@ -4,6 +4,7 @@ import { DCP_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list
 
 import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
+
 import {
   addCustomRpc,
   editCustomRpc,
@@ -27,7 +28,8 @@ import {
   setOnRampPossibilityAction,
   setIsOnRampHasBeenShownBeforeAction,
   setIsApkBuildLaunchEventFired,
-  setIsPushNotificationsEnabledEventFired
+  setIsPushNotificationsEnabledEventFired,
+  switchIsShowCollectibleInfoAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -116,6 +118,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(madeCloudBackupAction, state => ({
     ...state,
     isCloudBackupMade: true
+  }));
+
+  builder.addCase(switchIsShowCollectibleInfoAction, state => ({
+    ...state,
+    isShowCollectibleInfo: !state.isShowCollectibleInfo
   }));
 
   builder.addCase(setOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {

@@ -5,9 +5,11 @@ export const useNotificationPreviewItemStyles = createUseStyles(({ colors, typog
   container: {
     flexDirection: 'row',
     backgroundColor: colors.pageBG,
-    paddingHorizontal: formatSize(20),
-    paddingTop: formatSize(16),
-    paddingBottom: formatSize(8)
+    paddingLeft: formatSize(20),
+    paddingRight: formatSize(22),
+    paddingVertical: formatSize(16),
+    borderBottomWidth: formatSize(0.5),
+    borderBottomColor: colors.lines
   },
   containerRead: {
     backgroundColor: colors.input
@@ -39,7 +41,6 @@ export const useNotificationPreviewItemStyles = createUseStyles(({ colors, typog
     color: colors.gray1
   },
   dateDetailsInfo: {
-    height: formatSize(24),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

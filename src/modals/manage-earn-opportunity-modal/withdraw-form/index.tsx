@@ -32,6 +32,7 @@ import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT, PERCENTAGE_OPTIONS } from '../constant
 import { DetailsSection } from '../details-section';
 import { ManageEarnOpportunityModalSelectors } from '../selectors';
 import { VestingPeriodDisclaimers } from '../vesting-period-disclaimers';
+
 import { PERCENTAGE_OPTIONS_TEXTS } from './percentage-options';
 import { useAssetAmountInputStylesConfig, useWithdrawFormStyles } from './styles';
 import { useTokensOptions } from './use-tokens-options';
@@ -63,6 +64,7 @@ const renderTokenOptionListItem: DropdownListItemComponent<WithdrawTokenOption> 
 const tokenOptionTestIDPropertiesFn = (option: WithdrawTokenOption) => ({
   token: option.token.symbol
 });
+
 const PERCENTAGE_OPTIONS_INDICES = PERCENTAGE_OPTIONS.map((_, index) => index);
 
 export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formik, stake }) => {
@@ -152,6 +154,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
       symbol: tokens.length === 1 ? stakedToken.symbol : 'Shares',
       name: stakedToken.name,
       thumbnailUri: stakedToken.thumbnailUri,
+      iconName: stakedToken.iconName,
       address: stakedToken.address,
       exchangeRate:
         isDefined(depositExchangeRate) && isDefined(fiatToUsdExchangeRate)
@@ -190,7 +193,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
         />
         <Divider size={formatSize(16)} />
         <TextSegmentControl
-          disabledValuesIndices={disabledPercentageOptionsIndices}
+          disabledIndexes={disabledPercentageOptionsIndices}
           selectedIndex={amountOptionIndex}
           values={PERCENTAGE_OPTIONS_TEXTS}
           onChange={handleAmountOptionIndexChange}

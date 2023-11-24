@@ -6,6 +6,7 @@ import { MarketTokensSortFieldEnum } from '../enums/market-tokens-sort-field.enu
 import { MarketToken, MarketTokenRaw } from '../store/market/market.interfaces';
 import { RootState } from '../store/types';
 import { Colors } from '../styles/colors';
+
 import { kFormatter } from './number.util';
 
 const MINIMUM_AMOUNT = 0.01;

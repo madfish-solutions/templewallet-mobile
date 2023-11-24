@@ -1,13 +1,15 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { StyleProp, Text, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
-import { conditionalStyle } from '../../utils/conditional-style';
-import { isDefined } from '../../utils/is-defined';
-import { setTestID } from '../../utils/test-id.utils';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { isDefined } from 'src/utils/is-defined';
+import { setTestID } from 'src/utils/test-id.utils';
+
 import { Icon } from '../icon/icon';
+
 import { ButtonSharedProps } from './button-shared.props';
 import { ButtonStyleConfig } from './button-style.config';
 import { ButtonStyles } from './button.styles';
@@ -26,16 +28,13 @@ export const Button: FC<Props> = ({
   textStyle,
   buttonStyle,
   style,
-
   isFullWidth = false,
-
   marginTop,
   marginRight,
   marginBottom,
   marginLeft,
-
   onPress,
-
+  isLoading,
   testID,
   testIDProperties
 }) => {
@@ -46,6 +45,7 @@ export const Button: FC<Props> = ({
     activeColorConfig,
     disabledColorConfig = activeColorConfig
   } = styleConfig;
+
   const {
     titleColor,
     iconColor = titleColor,
@@ -85,6 +85,12 @@ export const Button: FC<Props> = ({
         )}
 
         <Text style={[titleStyle, { color: titleColor }, textStyle]}>{title}</Text>
+
+        {Boolean(isLoading) && (
+          <View style={ButtonStyles.loader}>
+            <ActivityIndicator size="small" />
+          </View>
+        )}
       </TouchableOpacity>
     </View>
   );

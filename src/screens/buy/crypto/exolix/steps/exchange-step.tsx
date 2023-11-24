@@ -1,6 +1,6 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC, useCallback, useEffect } from 'react';
 import { View, Text } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from '../../../../../components/button/button-large/button-large-primary/button-large-primary';

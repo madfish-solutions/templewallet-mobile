@@ -1,8 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InMemorySigner } from '@taquito/signer';
 import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
 import Keychain from 'react-native-keychain';
-import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
@@ -10,37 +11,165 @@ import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
-  biometryKeychainOptions,
+  getBiometryKeychainOptions,
+  getGenericPasswordOptions,
   getKeychainOptions,
   PASSWORD_CHECK_KEY,
-  PASSWORD_STORAGE_KEY
+  PASSWORD_STORAGE_KEY,
+  SHELTER_VERSION_STORAGE_KEY,
+  shouldMoveToSoftwareInV1
 } from '../utils/keychain.utils';
 import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../utils/keys.util';
 import { throwError$ } from '../utils/rxjs.utils';
 
 const EMPTY_PASSWORD_HASH = '';
+export const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to complete migration';
+const MIGRATION_WITH_BIOMETRY_ERROR_MESSAGE = 'Confirm the migration using your biometrics and try again.';
+const MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE = 'Please, try again.';
+
+interface PasswordServiceMigrationResultBase {
+  isSuccess: boolean;
+  error?: unknown;
+  readPassword: false | Keychain.UserCredentials;
+}
+
+interface SuccessPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
+  isSuccess: true;
+  error?: undefined;
+  readPassword: Keychain.UserCredentials;
+}
+
+interface FailedPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
+  isSuccess: false;
+}
+
+type PasswordServiceMigrationResult = SuccessPasswordServiceMigrationResult | FailedPasswordServiceMigrationResult;
 
 export class Shelter {
+  private static revertMigrationFromChip = async (
+    passwordServices: string[],
+    migrationResults: PasswordServiceMigrationResult[]
+  ) => {
+    const shelterVersion = await Shelter.getShelterVersion();
+
+    await Promise.all(
+      passwordServices.map(async (passwordService, index) => {
+        const migrationResult = migrationResults[index];
+        const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
+
+        if (migrationResult.isSuccess) {
+          const { username, password } = migrationResult.readPassword;
+          const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
+
+          if (result === false) {
+            throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+          }
+        } else if (isDefined(migrationResult.error)) {
+          const { error } = migrationResult;
+
+          if (error instanceof Error) {
+            const errorWithCodeMatchResult = error.message.match(/^code: (\d+)/);
+            const codeNumber = errorWithCodeMatchResult ? Number(errorWithCodeMatchResult[1]) : undefined;
+
+            // A user cancelled biometric authentication
+            if (codeNumber === 13) {
+              return;
+            }
+          }
+
+          throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+        } else {
+          if (migrationResult.readPassword === false) {
+            return;
+          }
+
+          const { username, password } = migrationResult.readPassword;
+          const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
+
+          if (result === false) {
+            throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
+          }
+        }
+      })
+    );
+  };
+
+  private static migrateFromChip = async () => {
+    const passwordServices = await Keychain.getAllGenericPasswordServices();
+    const shelterVersion = await Shelter.getShelterVersion();
+    const hasBiometry = passwordServices.some(serviceName => serviceName.includes(PASSWORD_STORAGE_KEY));
+
+    const migrationResults = await Promise.all(
+      passwordServices.map(async (passwordService): Promise<PasswordServiceMigrationResult> => {
+        let readPassword: false | Keychain.UserCredentials = false;
+        try {
+          const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
+          readPassword = await Keychain.getGenericPassword(oldPasswordServiceOptions);
+
+          if (readPassword === false) {
+            return { isSuccess: false, readPassword };
+          }
+
+          await Keychain.resetGenericPassword(oldPasswordServiceOptions);
+          const newPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion + 1);
+          const result = await Keychain.setGenericPassword(
+            readPassword.username,
+            readPassword.password,
+            newPasswordServiceOptions
+          );
+
+          return { isSuccess: result !== false, readPassword };
+        } catch (e) {
+          return { error: e, isSuccess: false, readPassword };
+        }
+      })
+    );
+
+    if (migrationResults.every(({ isSuccess }) => isSuccess)) {
+      return;
+    }
+
+    await Shelter.revertMigrationFromChip(passwordServices, migrationResults);
+
+    throw new Error(hasBiometry ? MIGRATION_WITH_BIOMETRY_ERROR_MESSAGE : MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE);
+  };
+
+  private static migrateFromSamsungOrGoogleChip = async () =>
+    shouldMoveToSoftwareInV1 && (await Shelter.migrateFromChip());
+
+  private static migrations = [Shelter.migrateFromSamsungOrGoogleChip];
+  private static targetShelterVersion = Shelter.migrations.length;
+
+  private static setShelterVersion = (version: number) =>
+    AsyncStorage.setItem(SHELTER_VERSION_STORAGE_KEY, String(version));
+
   private static _passwordHash$ = new BehaviorSubject(EMPTY_PASSWORD_HASH);
 
   private static saveSensitiveData$ = (data: Record<string, string>) =>
-    forkJoin(
-      Object.entries(data).map(entry =>
-        of(entry).pipe(
-          switchMap(([key, value]) =>
-            encryptString$(value, Shelter._passwordHash$.getValue()).pipe(
-              switchMap(encryptedData =>
-                Keychain.setGenericPassword(key, JSON.stringify(encryptedData), getKeychainOptions(key))
-              )
-            )
-          ),
-          switchMap(result => (result === false ? throwError$('Failed to save sensitive data') : of(result)))
+    Shelter.getShelterVersion$().pipe(
+      switchMap(shelterVersion =>
+        forkJoin(
+          Object.entries(data).map(async ([key, value]) => {
+            const encryptedData = await firstValueFrom(encryptString$(value, Shelter._passwordHash$.getValue()));
+            const result = await Keychain.setGenericPassword(
+              key,
+              JSON.stringify(encryptedData),
+              getKeychainOptions(key, shelterVersion)
+            );
+
+            if (result === false) {
+              throw new Error('Failed to save sensitive data');
+            }
+
+            return result;
+          })
         )
       )
     );
 
   private static decryptSensitiveData$ = (key: string, passwordHash: string) =>
-    from(Keychain.getGenericPassword(getKeychainOptions(key))).pipe(
+    Shelter.getShelterVersion$().pipe(
+      switchMap(shelterVersion => from(Keychain.getGenericPassword(getKeychainOptions(key, shelterVersion)))),
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError$(`No record in Keychain [${key}]`) : of(rawKeychainData)
       ),
@@ -48,6 +177,24 @@ export class Shelter {
       switchMap(keychainData => decryptString$(keychainData, passwordHash)),
       switchMap(value => (value === undefined ? throwError$(`Failed to decrypt value [${key}]`) : of(value)))
     );
+
+  static getShelterVersion = async () => {
+    const rawStoredVersion = await AsyncStorage.getItem(SHELTER_VERSION_STORAGE_KEY);
+
+    if (isDefined(rawStoredVersion)) {
+      return Number(rawStoredVersion);
+    }
+
+    // TODO: modify the logic as new version appears if necessary
+    const passwordCheckKey = await Keychain.getGenericPassword(getKeychainOptions(PASSWORD_CHECK_KEY, 0));
+    const shelterIsEmpty = passwordCheckKey === false;
+
+    return shelterIsEmpty ? Shelter.migrations.length : 0;
+  };
+
+  static getShelterVersion$ = () => from(Shelter.getShelterVersion());
+
+  static newMigrationsExist = async () => (await Shelter.getShelterVersion()) < Shelter.targetShelterVersion;
 
   static isLocked$ = Shelter._passwordHash$.pipe(map(password => password === EMPTY_PASSWORD_HASH));
 
@@ -83,7 +230,10 @@ export class Shelter {
     }
 
     return hashPassword$(password).pipe(
-      switchMap(passwordHash => {
+      switchMap(passwordHash =>
+        forkJoin([Promise.resolve(passwordHash), Shelter.setShelterVersion(Shelter.targetShelterVersion)])
+      ),
+      switchMap(([passwordHash]) => {
         Shelter._passwordHash$.next(passwordHash);
 
         const seed = mnemonicToSeedSync(seedPhrase);
@@ -174,19 +324,46 @@ export class Shelter {
     );
 
   static enableBiometryPassword$ = (password: string) =>
-    from(Keychain.getSupportedBiometryType()).pipe(
-      switchMap(supportedBiometryType =>
+    forkJoin([Shelter.getShelterVersion(), Keychain.getSupportedBiometryType()]).pipe(
+      switchMap(([shelterVersion, supportedBiometryType]) =>
         isDefined(supportedBiometryType)
-          ? Keychain.setGenericPassword(PASSWORD_STORAGE_KEY, JSON.stringify(password), biometryKeychainOptions)
+          ? Keychain.setGenericPassword(
+              PASSWORD_STORAGE_KEY,
+              JSON.stringify(password),
+              getBiometryKeychainOptions(shelterVersion)
+            )
           : of(false)
       ),
       catchError(() => of(false))
     );
 
-  static disableBiometryPassword$ = () => from(Keychain.resetGenericPassword(getKeychainOptions(PASSWORD_STORAGE_KEY)));
+  static disableBiometryPassword$ = () =>
+    Shelter.getShelterVersion$().pipe(
+      switchMap(shelterVersion =>
+        from(Keychain.resetGenericPassword(getKeychainOptions(PASSWORD_STORAGE_KEY, shelterVersion)))
+      )
+    );
 
-  static getBiometryPassword = async () => Keychain.getGenericPassword(biometryKeychainOptions);
+  static getBiometryPassword = async () =>
+    Shelter.getShelterVersion().then(shelterVersion =>
+      Keychain.getGenericPassword(getBiometryKeychainOptions(shelterVersion))
+    );
 
   static isPasswordCorrect$ = (password: string) =>
     hashPassword$(password).pipe(map(passwordHash => passwordHash === Shelter._passwordHash$.getValue()));
+
+  static doMigrations$ = () => {
+    return Shelter.getShelterVersion$().pipe(
+      switchMap(shelterVersion =>
+        range(shelterVersion, Shelter.targetShelterVersion).reduce<Observable<void>>(
+          (acc, version) =>
+            acc.pipe(
+              switchMap(() => from(Shelter.migrations[version]())),
+              switchMap(() => from(Shelter.setShelterVersion(version + 1)))
+            ),
+          of(undefined)
+        )
+      )
+    );
+  };
 }

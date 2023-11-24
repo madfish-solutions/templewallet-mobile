@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { map } from 'rxjs/operators';
 
-import { fetchApyFromYupana$ } from 'src/apollo/yupana';
+import { fetchApyFromYupana$ } from 'src/apis/yupana';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 
 import { getYOUTokenApr$, getYouvesTokenApr$ } from '../../apis/youves';

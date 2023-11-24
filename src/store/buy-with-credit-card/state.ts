@@ -3,6 +3,7 @@ import { PairLimits } from 'src/utils/pair-limits';
 
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
+
 import { TopUpInputInterface, TopUpOutputInterface } from './types';
 
 export interface TopUpProviderCurrencies {

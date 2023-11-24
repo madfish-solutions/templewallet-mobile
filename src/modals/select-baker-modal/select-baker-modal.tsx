@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/taquito';
 import { debounce } from 'lodash-es';
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { ListRenderItem, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { BakerInterface, emptyBaker } from 'src/apis/baking-bad';
@@ -19,7 +19,7 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector, useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -47,7 +47,9 @@ const bakersSortFieldsOptions = [
   BakersSortFieldEnum.Staking
 ];
 
-export const SelectBakerModal: FC = () => {
+const keyExtractor = (item: BakerInterface) => item.address;
+
+export const SelectBakerModal = memo(() => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
   const [currentBaker] = useSelectedBakerSelector();
@@ -55,11 +57,11 @@ export const SelectBakerModal: FC = () => {
   const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
 
   const searchPlaceholder = `Search ${bakerNameByNode}`;
-  const UNKNOWN_BAKER_NAME = `Unknown ${bakerNameByNode}`;
+  const unknownBakerName = `Unknown ${bakerNameByNode}`;
 
   const { trackEvent } = useAnalytics();
 
-  const selectedAccount = useSelectedAccountSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
 
   const bakersList = useBakersListSelector();
   const activeBakers = useMemo(() => bakersList.filter(baker => baker.serviceHealth === 'active'), [bakersList]);
@@ -113,9 +115,7 @@ export const SelectBakerModal: FC = () => {
       } else {
         navigate(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
-          opParams: [
-            { kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: selectedAccount.publicKeyHash }
-          ],
+          opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: accountPkh }],
           ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
           ...(isHelpUkraineBakerSelected && { testID: 'HELP_UKRAINE_BAKER_DELEGATION' }),
           ...(Boolean(selectedBaker.isUnknownBaker) && !isDcpNode && { disclaimerMessage: DISCLAIMER_MESSAGE })
@@ -165,6 +165,30 @@ export const SelectBakerModal: FC = () => {
 
   const isValidBakerAddress = isDefined(selectedBaker) && !isValidAddress(selectedBaker.address);
 
+  const ListEmptyComponent = useMemo(
+    () =>
+      searchValue?.toLowerCase() !== accountPkh.toLowerCase() ? (
+        <BakerListItem
+          item={{ ...emptyBaker, name: unknownBakerName, address: searchValue ?? '', isUnknownBaker: true }}
+          onPress={setSelectedBaker}
+          selected={searchValue === selectedBaker?.address}
+        />
+      ) : undefined,
+    [unknownBakerName, searchValue, accountPkh, selectedBaker?.address]
+  );
+
+  const renderItem: ListRenderItem<BakerInterface> = useCallback(
+    ({ item }) => (
+      <BakerListItem
+        item={item}
+        selected={item.address === selectedBaker?.address}
+        onPress={setSelectedBaker}
+        testID={SelectBakerModalSelectors.bakerItem}
+      />
+    ),
+    [selectedBaker?.address]
+  );
+
   return (
     <>
       <ModalStatusBar />
@@ -183,9 +207,7 @@ export const SelectBakerModal: FC = () => {
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
           {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
-          {searchValue === selectedAccount.publicKeyHash && (
-            <Text style={styles.errorText}>You can not delegate to yourself</Text>
-          )}
+          {searchValue === accountPkh && <Text style={styles.errorText}>You can not delegate to yourself</Text>}
         </View>
         {isTezosNode && (
           <View style={styles.upperContainer}>
@@ -206,41 +228,24 @@ export const SelectBakerModal: FC = () => {
       {isTezosNode && (
         <FlatList
           data={finalBakersList}
-          renderItem={({ item }) => (
-            <BakerListItem
-              item={item}
-              selected={item.address === selectedBaker?.address}
-              onPress={setSelectedBaker}
-              testID={SelectBakerModalSelectors.bakerItem}
-            />
-          )}
-          keyExtractor={item => item.address}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
           style={styles.flatList}
           windowSize={10}
-          ListEmptyComponent={
-            searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() ? (
-              <BakerListItem
-                item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
-                onPress={setSelectedBaker}
-                selected={searchValue === selectedBaker?.address}
-              />
-            ) : undefined
-          }
+          ListEmptyComponent={ListEmptyComponent}
         />
       )}
 
-      {isDcpNode &&
-        isValidAddress(searchValue ?? '') &&
-        searchValue?.toLowerCase() !== selectedAccount.publicKeyHash.toLowerCase() && (
-          <View style={styles.dcpBaker}>
-            <Divider size={formatSize(16)} />
-            <BakerListItem
-              item={{ ...emptyBaker, name: UNKNOWN_BAKER_NAME, address: searchValue ?? '', isUnknownBaker: true }}
-              onPress={setSelectedBaker}
-              selected={searchValue === selectedBaker?.address}
-            />
-          </View>
-        )}
+      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue?.toLowerCase() !== accountPkh.toLowerCase() && (
+        <View style={styles.dcpBaker}>
+          <Divider size={formatSize(16)} />
+          <BakerListItem
+            item={{ ...emptyBaker, name: unknownBakerName, address: searchValue ?? '', isUnknownBaker: true }}
+            onPress={setSelectedBaker}
+            selected={searchValue === selectedBaker?.address}
+          />
+        </View>
+      )}
 
       <View style={isDcpNode && styles.buttons}>
         <ModalButtonsContainer>
@@ -256,4 +261,4 @@ export const SelectBakerModal: FC = () => {
       </View>
     </>
   );
-};
+});

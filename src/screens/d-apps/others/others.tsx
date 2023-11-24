@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useState } from 'react';
-import { ListRenderItemInfo } from 'react-native';
+import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
@@ -15,31 +15,35 @@ import { useOpenUrlInAppBrowser } from 'src/utils/linking';
 import { useOthersDAppStyles } from './others.styles';
 
 interface Props extends TestIdProps {
-  item: ListRenderItemInfo<CustomDAppInfo>;
+  item: CustomDAppInfo;
+  itemWidth?: number;
 }
 
-export const OthersDApp: FC<Props> = ({ item, testID }) => {
-  const { name, logo, slug, dappUrl } = item.item;
-  const styles = useOthersDAppStyles();
+export const OthersDApp: FC<Props> = ({ item, itemWidth, testID }) => {
+  const { name, logo, slug, dappUrl } = item;
   const [imageLoadError, setImageLoadError] = useState(false);
 
+  const styles = useOthersDAppStyles();
   const openUrl = useOpenUrlInAppBrowser();
+
   const onPress = useCallback(() => openUrl(dappUrl), [openUrl, dappUrl]);
 
   return (
     <TouchableWithAnalytics
-      style={styles.container}
+      style={[styles.root, { width: itemWidth }]}
       testID={testID}
       testIDProperties={{ dapp: slug }}
       onPress={onPress}
     >
-      {imageLoadError ? (
-        <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />
-      ) : (
-        <FastImage style={styles.logo} source={{ uri: logo }} onError={() => setImageLoadError(true)} />
-      )}
-      <Divider size={formatSize(8)} />
-      <TruncatedText style={styles.text}>{name}</TruncatedText>
+      <View style={styles.container}>
+        {imageLoadError ? (
+          <Icon name={IconNameEnum.NoNameToken} size={formatSize(24)} style={styles.logo} />
+        ) : (
+          <FastImage style={styles.logo} source={{ uri: logo }} onError={() => setImageLoadError(true)} />
+        )}
+        <Divider size={formatSize(8)} />
+        <TruncatedText style={styles.text}>{name}</TruncatedText>
+      </View>
     </TouchableWithAnalytics>
   );
 };

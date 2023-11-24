@@ -6,6 +6,7 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { ScreenContainer } from '../screen-container/screen-container';
 import { IconSegmentControl } from '../segmented-control/icon-segment-control/icon-segment-control';
+
 import { TokenHeader } from './token-header';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
 

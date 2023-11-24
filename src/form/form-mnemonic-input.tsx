@@ -5,6 +5,7 @@ import { MnemonicInput } from '../components/mnemonic/mnemonic-input/mnemonic-in
 import { MnemonicProps } from '../components/mnemonic/mnemonic.props';
 import { TestIdProps } from '../interfaces/test-id.props';
 import { hasError } from '../utils/has-error';
+
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props extends Pick<MnemonicProps, 'placeholder' | 'testID'>, TestIdProps {

@@ -14,7 +14,8 @@ export const mockKeychain = {
   getGenericPassword: jest.fn(() => Promise.resolve<Keychain.UserCredentials>(mockCorrectUserCredentials)),
   setGenericPassword: jest.fn(() => Promise.resolve()),
   getSupportedBiometryType: jest.fn(() => Promise.resolve('FaceID')),
-  resetGenericPassword: jest.fn(() => Promise.resolve())
+  resetGenericPassword: jest.fn(() => Promise.resolve()),
+  getAllGenericPasswordServices: jest.fn(() => Promise.resolve(['mockService']))
 };
 
 jest.mock('react-native-keychain', () => mockKeychain);

@@ -29,6 +29,7 @@ export interface SettingsState {
   isEnableAdsBanner: boolean;
   isApkBuildLaunchEventFired: boolean;
   isPushNotificationsEnabledEventFired: boolean;
+  isShowCollectibleInfo: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -52,5 +53,6 @@ export const settingsInitialState: SettingsState = {
   isOnRampPossibility: false,
   isOnRampHasBeenShownBefore: false,
   isApkBuildLaunchEventFired: false,
-  isPushNotificationsEnabledEventFired: false
+  isPushNotificationsEnabledEventFired: false,
+  isShowCollectibleInfo: false
 };

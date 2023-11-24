@@ -43,6 +43,7 @@ export const ImportWallet: FC<ImportWalletProps> = ({ onSubmit }) => {
         testID={ImportWalletSelectors.FormSwitcher}
         onChange={setSegmentedControlIndex}
       />
+
       <Divider size={formatSize(32)} />
 
       {showSeedPhraseForm ? (

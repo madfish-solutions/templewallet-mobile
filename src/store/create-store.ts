@@ -6,7 +6,8 @@ import { FLUSH, PAUSE, PERSIST, persistStore, PURGE, REGISTER, REHYDRATE } from 
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { isDefined } from '../utils/is-defined';
+import { isDefined } from 'src/utils/is-defined';
+
 import persistedReducer from './root-state.reducers';
 import type { RootState } from './types';
 
@@ -29,7 +30,7 @@ export const createStore = (...epics: Epic[]) => {
       return getDefaultMiddleware({
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-          warnAfter: 300
+          warnAfter: 400
         },
         immutableCheck: {
           warnAfter: 600

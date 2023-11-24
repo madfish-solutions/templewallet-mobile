@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { AppMetadataIcon } from '../../../../components/app-metadata-icon/app-metadata-icon';
 import { Divider } from '../../../../components/divider/divider';
 import { formatSize } from '../../../../styles/format-size';
+
 import { useAppMetadataViewStyles } from './app-metadata-view.styles';
 
 interface Props {

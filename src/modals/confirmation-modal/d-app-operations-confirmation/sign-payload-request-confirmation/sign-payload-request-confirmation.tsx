@@ -25,6 +25,7 @@ import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
 
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
+
 import { SignPayloadRequestConfirmationSelectors } from './sign-payload-request-confirmation.selectors';
 import { useSignPayloadRequestConfirmationStyles } from './sign-payload-request-confirmation.styles';
 

@@ -1,33 +1,35 @@
+import { Action } from 'redux';
 import { combineEpics, Epic } from 'redux-observable';
-import { Observable, of } from 'rxjs';
-import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
-import { Action } from 'ts-action';
+import { of } from 'rxjs';
+import { catchError, concatMap, switchMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from '../../utils/token-metadata.utils';
-import { withSelectedRpcUrl } from '../../utils/wallet.utils';
+import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from 'src/utils/token-metadata.utils';
+import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
+
 import type { RootState } from '../types';
+
 import {
   addTokensMetadataAction,
   loadTokenMetadataActions,
-  loadTokensMetadataAction,
+  loadTokensMetadataActions,
   loadTokenSuggestionActions,
   loadWhitelistAction
 } from './tokens-metadata-actions';
 
-const loadWhitelistEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadWhitelistEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadWhitelistAction.submit),
     withSelectedRpcUrl(state$),
     switchMap(([, selectedRpcUrl]) =>
       loadWhitelist$(selectedRpcUrl).pipe(
-        concatMap(tokensMetadata => [loadWhitelistAction.success(tokensMetadata)]),
+        concatMap(updatedTokensMetadata => [loadWhitelistAction.success(updatedTokensMetadata)]),
         catchError(err => of(loadWhitelistAction.fail(err.message)))
       )
     )
   );
 
-const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
+const loadTokenSuggestionEpic: Epic = action$ =>
   action$.pipe(
     ofType(loadTokenSuggestionActions.submit),
     toPayload(),
@@ -46,7 +48,7 @@ const loadTokenSuggestionEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokenMetadataEpic = (action$: Observable<Action>) =>
+const loadTokenMetadataEpic: Epic = action$ =>
   action$.pipe(
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
@@ -61,14 +63,14 @@ const loadTokenMetadataEpic = (action$: Observable<Action>) =>
     )
   );
 
-const loadTokensMetadataEpic = (action$: Observable<Action>) =>
+const loadTokensMetadataEpic: Epic = action$ =>
   action$.pipe(
-    ofType(loadTokensMetadataAction),
+    ofType(loadTokensMetadataActions.submit),
     toPayload(),
     switchMap(slugs =>
       loadTokensMetadata$(slugs).pipe(
-        map(tokensMetadata => addTokensMetadataAction(tokensMetadata)),
-        catchError(err => of(loadTokenMetadataActions.fail(err.message)))
+        concatMap(tokensMetadata => [addTokensMetadataAction(tokensMetadata), loadTokensMetadataActions.success()]),
+        catchError(err => of(loadTokensMetadataActions.fail(err.message)))
       )
     )
   );

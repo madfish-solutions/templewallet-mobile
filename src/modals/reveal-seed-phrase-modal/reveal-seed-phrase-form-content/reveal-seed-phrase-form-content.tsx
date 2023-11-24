@@ -13,6 +13,7 @@ import { formatSize } from '../../../styles/format-size';
 import { getDerivationPath } from '../../../utils/keys.util';
 import { RevealSeedPhraseModalFormValues } from '../reveal-seed-phrase-modal.form';
 import { RevealSeedPharaseSelectors } from '../reveal-seed-phrase.selectors';
+
 import { RevealSeedPhraseView } from './reveal-seed-phrase-view/reveal-seed-phrase-view';
 
 export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFormValues>> = ({

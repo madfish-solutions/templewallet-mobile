@@ -1,4 +1,5 @@
 import { getTokenSlug, toTokenSlug } from '../utils/token.utils';
+
 import { TEMPLE_TOKEN } from './tokens-metadata';
 
 export const SIRS_TOKEN = {

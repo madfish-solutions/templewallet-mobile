@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -8,14 +8,13 @@ import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from 'src/components/divider/divider';
-import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { HeaderCard } from 'src/components/header-card/header-card';
+import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
-import { useWalletOpenTacker } from 'src/hooks/use-wallet-open-tacker.hook';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -26,18 +25,13 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
+import { walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
-import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
-import {
-  useAccountsListSelector,
-  useSelectedAccountSelector,
-  useSelectedAccountTezosTokenSelector,
-  useVisibleAccountsListSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { usePushNotificationsEvent } from '../../hooks/use-push-notifications-event';
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
 import { OnRampOverlay } from './on-ramp-overlay/on-ramp-overlay';
@@ -46,16 +40,14 @@ import { TokensList } from './token-list/token-list';
 import { WalletSelectors } from './wallet.selectors';
 import { WalletStyles } from './wallet.styles';
 
-export const Wallet = () => {
+export const Wallet = memo(() => {
   const dispatch = useDispatch();
   const { pageEvent } = useAnalytics();
   const { navigate } = useNavigation();
 
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
-  const account = useAccountsListSelector();
-  const selectedAccount = useSelectedAccountSelector();
-  const visibleAccounts = useVisibleAccountsListSelector();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const accounts = useAccountsListSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const contactCandidateAddress = useContactCandidateAddressSelector();
   const ignoredAddresses = useIgnoredAddressesSelector();
   const contactsAddresses = useContactsAddressesSelector();
@@ -66,14 +58,12 @@ export const Wallet = () => {
   usePushNotificationsEvent();
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
-  const handleDropdownValueChange = (value: AccountBaseInterface | undefined) =>
-    dispatch(setSelectedAccountAction(value?.publicKeyHash));
 
   useEffect(() => {
     if (
       !ignoredAddresses.includes(contactCandidateAddress) &&
       !contactsAddresses.includes(contactCandidateAddress) &&
-      !account.find(({ publicKeyHash }) => publicKeyHash === contactCandidateAddress)
+      !accounts.find(({ publicKeyHash }) => publicKeyHash === contactCandidateAddress)
     ) {
       bottomSheetController.open();
     }
@@ -91,18 +81,13 @@ export const Wallet = () => {
 
   useFocusEffect(trackPageOpened);
 
-  useWalletOpenTacker();
+  useEffect(() => void dispatch(walletOpenedAction()), []);
 
   return (
     <>
       <HeaderCard hasInsetTop={true}>
         <View style={WalletStyles.accountContainer}>
-          <CurrentAccountDropdown
-            value={selectedAccount}
-            list={visibleAccounts}
-            onValueChange={handleDropdownValueChange}
-            testID={WalletSelectors.accountDropdownButton}
-          />
+          <CurrentAccountDropdown testID={WalletSelectors.accountDropdownButton} />
 
           <Divider />
 
@@ -111,13 +96,17 @@ export const Wallet = () => {
             onPress={() => navigate(ScreensEnum.ScanQrCode)}
             testID={WalletSelectors.scanQRButton}
           />
+
           <Divider size={formatSize(24)} />
+
           <NotificationsBell />
+
           <Divider size={formatSize(24)} />
+
           <Settings />
         </View>
 
-        <TokenEquityValue token={tezosToken} showTokenValue={false} />
+        <TokenEquityValue token={tezosToken} forTotalBalance={true} />
 
         <HeaderCardActionButtons token={tezosToken} />
       </HeaderCard>
@@ -146,4 +135,4 @@ export const Wallet = () => {
       </BottomSheet>
     </>
   );
-};
+});

@@ -3,6 +3,7 @@ import { PairLimits } from 'src/utils/pair-limits';
 
 import { useSelector } from '../selector';
 import { LoadableEntityState } from '../types';
+
 import { PairLimitsRecord } from './state';
 
 export const useFiatCurrenciesSelector = (topUpProvider: TopUpProviderEnum) =>

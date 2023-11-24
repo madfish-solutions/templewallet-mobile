@@ -6,6 +6,7 @@ import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-b
 import { ImportAccountTypeEnum } from '../../enums/account-type.enum';
 import { ModalsEnum } from '../../navigator/enums/modals.enum';
 import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+
 import { ImportAccountPrivateKey } from './import-account-private-key/import-account-private-key';
 import { ImportAccountSeed } from './import-account-seed/import-account-seed';
 import { ImportAccountType } from './import-account-type/import-account-type';

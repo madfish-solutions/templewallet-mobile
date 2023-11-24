@@ -1,4 +1,5 @@
 import { FILM_TOKEN_METADATA, TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
+
 import { DCP_RPC } from './rpc/rpc-list';
 
 const DCP_NODE_RPC_URL = new URL(DCP_RPC.url).href;

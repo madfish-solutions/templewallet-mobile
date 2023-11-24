@@ -1,7 +1,7 @@
-import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { AvatarImage } from 'src/components/avatar-image/avatar-image';
 import { Divider } from 'src/components/divider/divider';
@@ -22,6 +22,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { RewardsStatsCalculationParams } from '../interfaces/rewards-stats-calculation-params';
 import { CycleStatus, getCycleStatusIcon } from '../utils/get-cycle-status-icon';
 import { getRewardsStats } from '../utils/get-rewards-stats';
+
 import { BakerRewardItemDetails } from './baker-reward-item-details/baker-reward-item-details';
 import { useBakerRewardItemStyles } from './baker-reward-item.styles';
 

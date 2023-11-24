@@ -1,4 +1,5 @@
-import { AccountBaseInterface } from '../../../interfaces/account.interface';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
+
 import { IconNameEnum } from '../../icon/icon-name.enum';
 
 export interface AccountDropdownItemProps {
@@ -6,4 +7,5 @@ export interface AccountDropdownItemProps {
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
   isPublicKeyHashTextDisabled?: boolean;
+  isCollectibleScreen?: boolean;
 }

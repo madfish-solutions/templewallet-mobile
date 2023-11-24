@@ -8,6 +8,7 @@ import { TokenInterface } from '../../token/interfaces/token.interface';
 import { getTokenSlug } from '../../token/utils/token.utils';
 import { getDelegateText } from '../../utils/get-delegate-text.util';
 import { isDefined } from '../../utils/is-defined';
+
 import { DelegateTagContainer } from './components/delegate-tag-container/delegate-tag-container';
 import { useDelegateTagStyles } from './delegate-tag.styles';
 

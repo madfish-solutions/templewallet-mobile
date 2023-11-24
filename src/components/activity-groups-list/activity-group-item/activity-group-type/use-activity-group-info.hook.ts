@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
 
-import { ActivityTypeEnum } from '../../../../enums/activity-type.enum';
-import { ActivityGroup, emptyActivity } from '../../../../interfaces/activity.interface';
-import { useSelectedAccountSelector } from '../../../../store/wallet/wallet-selectors';
-import { useColors } from '../../../../styles/use-colors';
-import { isString } from '../../../../utils/is-string';
+import { ActivityTypeEnum } from 'src/enums/activity-type.enum';
+import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useColors } from 'src/styles/use-colors';
+import { isString } from 'src/utils/is-string';
+
 import { IconNameEnum } from '../../../icon/icon-name.enum';
 
 export const useActivityGroupInfo = (group: ActivityGroup) => {
   const colors = useColors();
-  const publicKeyHash = useSelectedAccountSelector().publicKeyHash;
+  const publicKeyHash = useCurrentAccountPkhSelector();
 
   return useMemo<[IconNameEnum, string, string]>(() => {
     if (group.length > 1) {

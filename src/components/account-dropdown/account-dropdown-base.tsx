@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { memo } from 'react';
 
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -13,6 +13,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
+
 import { accountEqualityFn } from './account-equality-fn';
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
@@ -45,30 +46,36 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   );
 };
 
-export const AccountDropdownBase: FC<DropdownValueBaseProps<AccountBaseInterface> & TestIdProps> = ({
-  value,
-  list,
-  onValueChange,
-  renderValue,
-  renderAccountListItem,
-  testID,
-  testIDProperties
-}) => {
-  const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
+type Props = DropdownValueBaseProps<AccountBaseInterface> & TestIdProps;
 
-  return (
-    <Dropdown
-      testID={testID}
-      testIDProperties={testIDProperties}
-      description="Accounts"
-      value={value}
-      list={list}
-      equalityFn={accountEqualityFn}
-      renderValue={renderValue}
-      renderListItem={renderAccountListItem}
-      renderActionButtons={ActionButtons}
-      onValueChange={onValueChange}
-      onLongPress={onLongPressHandler}
-    />
-  );
-};
+export const AccountDropdownBase = memo<Props>(
+  ({
+    value,
+    list,
+    onValueChange,
+    renderValue,
+    renderAccountListItem,
+    testID,
+    testIDProperties,
+    isCollectibleScreen
+  }) => {
+    const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
+
+    return (
+      <Dropdown
+        testID={testID}
+        testIDProperties={testIDProperties}
+        description="Accounts"
+        value={value}
+        list={list}
+        equalityFn={accountEqualityFn}
+        renderValue={renderValue}
+        renderListItem={renderAccountListItem}
+        renderActionButtons={ActionButtons}
+        onValueChange={onValueChange}
+        onLongPress={onLongPressHandler}
+        isCollectibleScreen={isCollectibleScreen}
+      />
+    );
+  }
+);

@@ -1,12 +1,13 @@
-import React, { FC } from 'react';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+
 import { useSplashModalStyles } from './splash-modal.styles';
 
-export const SplashModal: FC = () => {
+export const SplashModal = memo(() => {
   const styles = useSplashModalStyles();
 
   return (
@@ -16,4 +17,4 @@ export const SplashModal: FC = () => {
       </View>
     </ScreenContainer>
   );
-};
+});

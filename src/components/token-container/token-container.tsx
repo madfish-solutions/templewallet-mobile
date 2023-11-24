@@ -8,6 +8,7 @@ import { DelegateTag } from '../delegate-tag/delegate-tag';
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
 import { TruncatedText } from '../truncated-text';
+
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 

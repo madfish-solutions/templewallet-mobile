@@ -11,6 +11,7 @@ import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from '../toast/toast.utils.mock';
+
 import { mockRevealedSecretKey, mockRevealedSeedPhrase, mockShelter } from './shelter.mock';
 import { useShelter } from './use-shelter.hook';
 

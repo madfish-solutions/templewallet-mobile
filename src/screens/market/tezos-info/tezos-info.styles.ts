@@ -1,4 +1,5 @@
 import { formatSize } from '../../../styles/format-size';
+
 import { createUseStyles } from './../../../styles/create-use-styles';
 
 export const useTezosInfoStyles = createUseStyles(({ colors, typography }) => ({

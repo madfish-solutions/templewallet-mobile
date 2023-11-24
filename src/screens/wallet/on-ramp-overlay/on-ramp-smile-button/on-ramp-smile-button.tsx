@@ -1,6 +1,6 @@
 import { TouchableOpacity } from '@gorhom/bottom-sheet';
 import React, { FC } from 'react';
-import { StyleProp, Text, TextStyle, TouchableWithoutFeedbackProps } from 'react-native';
+import { StyleProp, Text, TextStyle, TouchableOpacityProps } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
@@ -12,7 +12,7 @@ import { setTestID } from 'src/utils/test-id.utils';
 
 import { useOnRampSmileButtonStyles } from './on-ramp-smile-button.styles';
 
-interface Props extends Pick<TouchableWithoutFeedbackProps, 'style' | 'onPress' | 'disabled'>, TestIdProps {
+interface Props extends Pick<TouchableOpacityProps, 'style' | 'onPress' | 'disabled'>, TestIdProps {
   smileIconName: IconNameEnum;
   title: string;
   titleStyle?: StyleProp<TextStyle>;

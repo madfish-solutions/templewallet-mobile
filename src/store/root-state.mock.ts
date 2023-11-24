@@ -2,6 +2,8 @@ import { mockABTestingState } from './ab-testing/ab-testing-state.mock';
 import { mockAdvertisingState } from './advertising/advertising-state.mock';
 import { mockBakingState } from './baking/baking-state.mock';
 import { mockBuyWithCreditCardState } from './buy-with-credit-card/state.mock';
+import { mockCollectiblesState } from './collectibles/collectibles-state.mock';
+import { collectionsMockState } from './collectons/collections-state.mock';
 import { mockContactBookState } from './contact-book/contact-book-state.mock';
 import { mockCurrencyState } from './currency/currency-state.mock';
 import { mockDAppsState } from './d-apps/d-apps-state.mock';
@@ -33,9 +35,11 @@ export const mockRootState: RootState = {
   notifications: mockNotificationsState,
   swap: mockSwapState,
   contactBook: mockContactBookState,
+  collections: collectionsMockState,
   buyWithCreditCard: mockBuyWithCreditCardState,
   partnersPromotion: mockPartnersPromotionState,
   abTesting: mockABTestingState,
+  collectibles: mockCollectiblesState,
   farms: mockFarmsState,
   savings: mockSavingsState,
   newsletter: mockNewsletterState

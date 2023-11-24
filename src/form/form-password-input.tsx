@@ -8,6 +8,7 @@ import { StyledPasswordInputProps } from '../components/styled-password-input/st
 import { formatSize } from '../styles/format-size';
 import { hasError } from '../utils/has-error';
 import { isDefined } from '../utils/is-defined';
+
 import { ErrorMessage } from './error-message/error-message';
 
 interface Props extends Pick<StyledPasswordInputProps, 'testID'> {

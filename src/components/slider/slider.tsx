@@ -7,6 +7,7 @@ import { formatSize } from '../../styles/format-size';
 import { useColors } from '../../styles/use-colors';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+
 import { useSliderStyles } from './slider.styles';
 
 type Props = Pick<SliderProps, 'minimumValue' | 'maximumValue' | 'step'> &

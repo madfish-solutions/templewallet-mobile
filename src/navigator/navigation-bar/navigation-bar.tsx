@@ -7,6 +7,7 @@ import { useIsAuthorisedSelector } from '../../store/wallet/wallet-selectors';
 import { conditionalStyle } from '../../utils/conditional-style';
 import { CurrentRouteNameContext } from '../current-route-name.context';
 import { ScreensEnum } from '../enums/screens.enum';
+
 import { NavigationBarStyles } from './navigation-bar.styles';
 import { SideBar } from './side-bar/side-bar';
 import { TabBar } from './tab-bar/tab-bar';
@@ -17,7 +18,8 @@ const screensWithoutTabBar = [
   ScreensEnum.ScanQrCode,
   ScreensEnum.ManualBackup,
   ScreensEnum.CloudBackup,
-  ScreensEnum.NotificationsItem
+  ScreensEnum.NotificationsItem,
+  ScreensEnum.SecurityUpdate
 ];
 
 export const NavigationBar: FC = ({ children }) => {

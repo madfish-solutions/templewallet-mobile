@@ -5,13 +5,14 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Route3Chain } from 'src/interfaces/route3.interface';
 import { useSwapDexesSelector, useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
-import { useSelectedAccountTezosTokenSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { HopItem } from '../hop-item/hop-item';
 import { SwapRouteAmounts } from '../swap-route-amounts';
+
 import { useSwapRouteItem } from './swap-route-item.styles';
 
 interface Props {
@@ -24,7 +25,7 @@ interface Props {
 
 export const SwapRouteItem: FC<Props> = ({ chain, baseInput, baseOutput, shouldShowInput, shouldShowOutput }) => {
   const styles = useSwapRouteItem();
-  const tezosToken = useSelectedAccountTezosTokenSelector();
+  const tezosToken = useTezosTokenOfCurrentAccount();
   const { data: swapDexes } = useSwapDexesSelector();
   const { data } = useSwapTokensMetadataSelector();
   const swapTokensMetadata = useMemo<Array<TokenInterface>>(() => [tezosToken, ...data], [tezosToken, data]);

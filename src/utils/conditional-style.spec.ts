@@ -17,6 +17,6 @@ describe('conditionalStyle', () => {
   });
 
   it('should return empty object if condition is false and falseStyle not passed', () => {
-    expect(conditionalStyle(false, trueStyle)).toEqual({});
+    expect(conditionalStyle(false, trueStyle)).toEqual(undefined);
   });
 });

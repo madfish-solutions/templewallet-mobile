@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -11,6 +11,7 @@ import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { isFarm } from 'src/utils/earn.utils';
 
 import { DetailsCard } from '../details-card';
+
 import { useDetailsSectionStyles } from './styles';
 
 interface Props {
@@ -25,6 +26,23 @@ const youvesSavingsTypes = [EarnOpportunityTypeEnum.YOUVES_SAVING, EarnOpportuni
 export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldShowClaimRewardsButton, loading }) => {
   const styles = useDetailsSectionStyles();
   const isLiquidityBaking = earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
+  const isKordFi = earnOpportunityItem.type === EarnOpportunityTypeEnum.KORD_FI_SAVING;
+
+  const savingDetailsText = useMemo(() => {
+    let appName = '';
+
+    switch (earnOpportunityItem.type) {
+      case EarnOpportunityTypeEnum.KORD_FI_SAVING:
+        appName = 'Kord.Fi';
+        break;
+      case EarnOpportunityTypeEnum.YOUVES_SAVING:
+      case EarnOpportunityTypeEnum.YOUVES_STAKING:
+        appName = 'Youves';
+        break;
+    }
+
+    return `${appName} Savings Details`;
+  }, [earnOpportunityItem.type]);
 
   return (
     <>
@@ -44,11 +62,16 @@ export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldSh
             <Icon name={IconNameEnum.YouvesEarnSourceLarge} size={formatSize(24)} />
           </View>
         )}
+        {isKordFi && (
+          <View style={styles.youvesIconWrapper}>
+            <Icon name={IconNameEnum.KordFiEarnSource} size={formatSize(24)} />
+          </View>
+        )}
         <Divider size={formatSize(8)} />
         <Text style={styles.detailsTitleText}>
           {isLiquidityBaking && 'Liquidity Baking Details'}
           {!isLiquidityBaking && isFarm(earnOpportunityItem) && 'Quipuswap Farming Details'}
-          {!isFarm(earnOpportunityItem) && 'Youves Savings Details'}
+          {!isFarm(earnOpportunityItem) && savingDetailsText}
         </Text>
       </View>
 
@@ -59,6 +82,7 @@ export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldSh
         stake={stake}
         shouldShowClaimRewardsButton={shouldShowClaimRewardsButton}
         loading={loading}
+        isNeedToShowMoreDetails={earnOpportunityItem.type !== EarnOpportunityTypeEnum.KORD_FI_SAVING}
       />
     </>
   );
