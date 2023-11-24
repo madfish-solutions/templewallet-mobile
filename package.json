@@ -60,7 +60,7 @@
     "@temple-wallet/wallet-address-validator": "^0.4.3",
     "@tezos-domains/core": "1.26.0",
     "@tezos-domains/taquito-client": "1.26.0",
-    "axios": "^0.27.2",
+    "axios": "^1.6.0",
     "bignumber.js": "9.1.1",
     "bip39": "^3.0.4",
     "buffer": "^6.0.3",
