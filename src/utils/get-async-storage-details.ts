@@ -2,12 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { calculateStringSizeInBytes } from './string.utils';
 
-export interface AsyncStorageUsageDetails {
-  totalValuesSize: number;
-  sizesByKey: Record<string, number>;
-  oversizeForKeys: string[];
-}
-
 export const getAsyncStorageUsageDetails = async () => {
   const keys = await AsyncStorage.getAllKeys();
 
