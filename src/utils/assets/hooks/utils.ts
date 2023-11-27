@@ -15,10 +15,10 @@ export const buildUsableAccountAsset = (
   }
 
   return {
+    ...metadata,
     slug: asset.slug,
     visibility,
     balance: asset.balance,
-    exchangeRate,
-    ...metadata
+    exchangeRate
   };
 };
