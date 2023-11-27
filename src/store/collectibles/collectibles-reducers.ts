@@ -50,8 +50,8 @@ const collectiblesReducer = createReducer<CollectiblesState>(collectiblesInitial
 export const collectiblesPersistedReducer = persistReducer(
   {
     key: 'root.collectibles',
-    storage: SlicedAsyncStorage
-    // whitelist: ['adultFlags'] as (keyof CollectiblesState)[]
+    storage: SlicedAsyncStorage,
+    whitelist: ['adultFlags'] as (keyof CollectiblesState)[]
   },
   collectiblesReducer
 );
