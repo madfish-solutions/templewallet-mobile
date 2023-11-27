@@ -27,13 +27,12 @@ import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
-import { TEZ_TOKEN_SLUG, TEMPLE_TOKEN } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { useAccountTokenBySlug, useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
@@ -71,7 +70,7 @@ export const TokensList = memo(() => {
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const tkeyToken = useAccountTokenBySlug(TEMPLE_TOKEN_SLUG);
+  const tkeyToken = useAccountTkeyToken();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
@@ -104,7 +103,7 @@ export const TokensList = memo(() => {
     }
   }, [dispatch, partnersPromoShown]);
 
-  const leadingAssets = useMemo(() => [tezosToken, tkeyToken ?? TEMPLE_TOKEN], [tezosToken, tkeyToken]);
+  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
 
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
