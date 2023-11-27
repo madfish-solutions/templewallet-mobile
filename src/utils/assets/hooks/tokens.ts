@@ -6,7 +6,10 @@ import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
+import { useAssetBalanceSelector, useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
+import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
+import { TEMPLE_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 
 import { UsableAccountAsset } from '../types';
 
@@ -43,13 +46,37 @@ export const useAccountTokenBySlug = (slug: string): UsableAccountAsset | undefi
 
   return useMemoWithCompare(
     () => {
+      const metadata = allMetadatas[slug];
+
       const token = accountTokens.find(t => t.slug === slug);
 
-      return token ? buildUsableAccountAsset(token, allMetadatas[slug]!, exchageRate) : undefined;
+      if (!metadata || !token) {
+        console.warn(`Token for slug '${slug}' is not ready`);
+
+        return undefined;
+      }
+
+      return buildUsableAccountAsset(token, metadata, exchageRate);
     },
     [slug, accountTokens, allMetadatas, exchageRate],
     isEqual
   );
+};
+
+export const useAccountTkeyToken = (): UsableAccountAsset => {
+  const balance = useAssetBalanceSelector(TEMPLE_TOKEN_SLUG);
+  const token: AccountTokenInterface = useMemo(
+    () => ({
+      slug: TEMPLE_TOKEN_SLUG,
+      balance: balance ?? '0',
+      visibility: VisibilityEnum.Visible,
+      isVisible: true
+    }),
+    [balance]
+  );
+  const exchageRate = useAssetExchangeRate(TEMPLE_TOKEN_SLUG);
+
+  return useMemo(() => buildUsableAccountAsset(token, TEMPLE_TOKEN_METADATA, exchageRate), [token, exchageRate]);
 };
 
 export const useAccountTokensBalancesRecord = () => {
