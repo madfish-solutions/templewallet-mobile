@@ -13,18 +13,7 @@ import type { RootState } from './types';
 
 const epicMiddleware = createEpicMiddleware();
 // eslint-disable-next-line @typescript-eslint/ban-types
-const middlewares: Array<Middleware<{}, RootState>> = [
-  epicMiddleware,
-  () => next => action => {
-    const type = action?.type;
-    if (!type?.endsWith('-SUCCESS') && !type?.endsWith('-FAIL') && !type?.startsWith('persist')) {
-      console.log(action);
-    } else {
-      console.log(type);
-    }
-    next(action);
-  }
-];
+const middlewares: Array<Middleware<{}, RootState>> = [epicMiddleware];
 
 if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
   middlewares.push(createDebugger());

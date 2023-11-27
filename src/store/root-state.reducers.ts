@@ -43,7 +43,6 @@ const PersistBlacklistTransform = createTransform(
 
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
-  throttle: __DEV__ ? 1500 : undefined,
   version: 1,
   storage: SlicedAsyncStorage,
   stateReconciler: autoMergeLevel2,

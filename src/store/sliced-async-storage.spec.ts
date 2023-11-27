@@ -2,11 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { range } from 'lodash-es';
 
 import { isDefined } from 'src/utils/is-defined';
-import { calculateStringSizeInBytes } from 'src/utils/string.utils';
 
 import { SlicedAsyncStorage } from './sliced-async-storage';
 
-const nonSlicedValue = 'a'.repeat(2e6);
+const nonSlicedValue = 'a'.repeat(1e6);
 
 const cyrLetters = 'абвгґдеєжзиіїйклмнопрстуфхцчшщьюя';
 const charset = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789${cyrLetters}`;
@@ -23,7 +22,6 @@ const cyrLettersOnlyBigValueSlices = range(0, 6).map(() =>
     .map(() => cyrLetters[Math.floor(Math.random() * cyrLetters.length)])
     .join('')
 );
-const cyrLettersOnlyBigValue = cyrLettersOnlyBigValueSlices.join('');
 
 const testKey = 'test';
 const doNotTouchTestKeys = ['doNotTouch', 'doNotTouch2'];
@@ -47,7 +45,7 @@ const expectCorrectSlicedValue = async (totalValue: string, key: string) => {
   const slicesPairs = await AsyncStorage.multiGet(expectedSlicesKeys);
   const slicesValues = expectedSlicesKeys.map(sliceKey => slicesPairs.find(([key]) => key === sliceKey)?.[1]);
   expect(slicesValues.every(isDefined)).toEqual(true);
-  expect(slicesValues.every(value => calculateStringSizeInBytes(value!) <= 2e6)).toEqual(true);
+  expect(slicesValues.every(value => value!.length <= 1e6)).toEqual(true);
   expect(slicesValues.join('')).toEqual(totalValue);
 };
 
@@ -59,13 +57,13 @@ describe('SlicedAsyncStorage', () => {
       expect(await SlicedAsyncStorage.getItem('test')).toEqual(null);
     });
 
-    it('should fetch value of size not greater than 2MB as before', async () => {
+    it('should fetch a value if it is stored in one key', async () => {
       await AsyncStorage.setItem(testKey, nonSlicedValue);
 
       expect(await SlicedAsyncStorage.getItem(testKey)).toEqual(nonSlicedValue);
     });
 
-    it('should fetch value of size greater than 2MB by slices', async () => {
+    it('should fetch value if it is stored in slices', async () => {
       await setBigValue(bigValueSlices, testKey);
 
       expect(await SlicedAsyncStorage.getItem(testKey)).toEqual(bigValue);
@@ -74,39 +72,33 @@ describe('SlicedAsyncStorage', () => {
 
   describe('setItem', () => {
     describe('setting item for the first time', () => {
-      it('should set the value of size not greater than 2MB as before', async () => {
+      it('should set the value of JS length 1e6 or less as before', async () => {
         await SlicedAsyncStorage.setItem(testKey, nonSlicedValue);
 
         expect(await AsyncStorage.getItem(testKey)).toEqual(nonSlicedValue);
         expect(await AsyncStorage.getAllKeys()).toEqual([testKey]);
       });
 
-      it('should set the first value of size greater than 2MB by slices', async () => {
+      it('should set the first value of JS length greater than 1e6 by slices', async () => {
         await SlicedAsyncStorage.setItem(testKey, bigValue);
 
         await expectCorrectSlicedValue(bigValue, testKey);
       });
-
-      it('should set the first value of size greater than 2MB by slices, Cyrillic letters only', async () => {
-        await SlicedAsyncStorage.setItem(testKey, cyrLettersOnlyBigValue);
-
-        await expectCorrectSlicedValue(cyrLettersOnlyBigValue, testKey);
-      });
     });
 
-    describe('overriding the value of size not greater than 2MB', () => {
-      it('should set the new value of size not greater than 2MB as before', async () => {
-        const value = 'a'.repeat(2e6);
+    describe('overriding the value of JS length not greater than 1e6', () => {
+      it('should set the new value of JS length not greater than 1e6 as before', async () => {
+        const value = 'a'.repeat(1e6);
         await AsyncStorage.setItem(testKey, value);
 
-        const newValue = 'b'.repeat(2e6);
+        const newValue = 'b'.repeat(1e6);
         await SlicedAsyncStorage.setItem(testKey, newValue);
 
         expect(await AsyncStorage.getItem(testKey)).toEqual(newValue);
         expect(await AsyncStorage.getAllKeys()).toEqual([testKey]);
       });
 
-      it('should set the new value of size greater than 2MB by slices', async () => {
+      it('should set the new value of JS length greater than 1e6 by slices', async () => {
         await AsyncStorage.setItem(testKey, nonSlicedValue);
 
         await SlicedAsyncStorage.setItem(testKey, bigValue);
@@ -115,8 +107,8 @@ describe('SlicedAsyncStorage', () => {
       });
     });
 
-    describe('overriding the value of size greater than 2MB', () => {
-      it('should set the new value of size not greater than 2MB and remove slices', async () => {
+    describe('overriding the value of JS length greater than 1e6', () => {
+      it('should set the new value of JS length not greater than 1e6 and remove slices', async () => {
         await setBigValue(bigValueSlices, testKey);
 
         await SlicedAsyncStorage.setItem(testKey, nonSlicedValue);
@@ -125,7 +117,7 @@ describe('SlicedAsyncStorage', () => {
         expect(await AsyncStorage.getAllKeys()).toEqual([testKey]);
       });
 
-      it('should set the new value of size greater than 2MB and remove redundant slices', async () => {
+      it('should set the new value of JS length greater than 1e6 and remove redundant slices', async () => {
         await setBigValue(cyrLettersOnlyBigValueSlices, testKey);
 
         await SlicedAsyncStorage.setItem(testKey, bigValue);
@@ -136,7 +128,7 @@ describe('SlicedAsyncStorage', () => {
   });
 
   describe('removeItem', () => {
-    it('should remove the value of size not greater than 2MB as before', async () => {
+    it('should remove the value of JS length not greater than 1e6 as before', async () => {
       await AsyncStorage.setItem(doNotTouchTestKeys[0], nonSlicedValue);
       await setBigValue(bigValueSlices, doNotTouchTestKeys[1]);
       await AsyncStorage.setItem(testKey, nonSlicedValue);
@@ -148,7 +140,7 @@ describe('SlicedAsyncStorage', () => {
       await expectCorrectSlicedValue(bigValue, doNotTouchTestKeys[1]);
     });
 
-    it('should remove the value of size greater than 2MB without leaving garbage', async () => {
+    it('should remove the value of JS length greater than 1e6 without leaving garbage', async () => {
       await AsyncStorage.setItem(doNotTouchTestKeys[0], nonSlicedValue);
       await setBigValue(bigValueSlices, doNotTouchTestKeys[1]);
       await setBigValue(cyrLettersOnlyBigValueSlices, testKey);

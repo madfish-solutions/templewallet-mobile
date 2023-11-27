@@ -3,8 +3,8 @@ import { range } from 'lodash-es';
 
 import { isDefined } from 'src/utils/is-defined';
 
-const MAX_SLICE_SIZE_BYTES = 2e6; // 2MB
-const CANNOT_BE_ROOT_VALUE_LENGTH_THRESHOLD = 1000;
+const MAX_SLICE_LENGTH = 1e6; // Ensures that the slice is not greater than 2MB because JS uses UTF-16 encoding
+const CANNOT_BE_ROOT_VALUE_LENGTH_THRESHOLD = 100;
 
 interface RootSlicedValue {
   _isSliced: true;
@@ -58,16 +58,12 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
     return rootValue;
   },
   setItem: async (key: string, value: string) => {
-    try {
-      if (value.length > MAX_SLICE_SIZE_BYTES / 2) {
-        throw new Error('Using slicing before it is too late');
-      }
-
-      const slicesKeys = await getSlicesKeys(key);
+    if (value.length <= MAX_SLICE_LENGTH) {
+      const oldSlicesKeys = await getSlicesKeys(key);
       await AsyncStorage.setItem(key, value);
-      await AsyncStorage.multiRemove(slicesKeys);
-    } catch {
-      const slicesCount = Math.ceil((value.length / MAX_SLICE_SIZE_BYTES) * 2);
+      await AsyncStorage.multiRemove(oldSlicesKeys);
+    } else {
+      const slicesCount = Math.ceil(value.length / MAX_SLICE_LENGTH);
       const sliceSize = Math.ceil(value.length / slicesCount);
       const slices = range(0, slicesCount).map(sliceIndex =>
         value.slice(sliceIndex * sliceSize, (sliceIndex + 1) * sliceSize)
