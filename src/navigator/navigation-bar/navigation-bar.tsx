@@ -18,7 +18,8 @@ const screensWithoutTabBar = [
   ScreensEnum.ScanQrCode,
   ScreensEnum.ManualBackup,
   ScreensEnum.CloudBackup,
-  ScreensEnum.NotificationsItem
+  ScreensEnum.NotificationsItem,
+  ScreensEnum.SecurityUpdate
 ];
 
 export const NavigationBar: FC = ({ children }) => {

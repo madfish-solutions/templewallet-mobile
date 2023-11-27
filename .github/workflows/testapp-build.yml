@@ -106,7 +106,9 @@ jobs:
 
       - name: Install Pods
         if: ${{ github.event.inputs.ios == 'true' }}
-        run: yarn ios:pods
+        run:  |
+          export NO_FLIPPER=1
+          yarn ios:pods
 
       - name: Update iOS version
         if: ${{ github.event.inputs.ios == 'true' }}

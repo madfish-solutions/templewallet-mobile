@@ -75,9 +75,8 @@ export const TokensList = memo(() => {
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
-  const partnersPromoShown = useIsPartnersPromoShown();
-
   const publicKeyHash = useCurrentAccountPkhSelector();
+  const partnersPromoShown = useIsPartnersPromoShown();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
@@ -103,7 +102,7 @@ export const TokensList = memo(() => {
     if (partnersPromoShown) {
       dispatch(loadAdvertisingPromotionActions.submit());
     }
-  }, [partnersPromoShown]);
+  }, [dispatch, partnersPromoShown]);
 
   const leadingAssets = useMemo(() => [tezosToken, tkeyToken ?? TEMPLE_TOKEN], [tezosToken, tkeyToken]);
 

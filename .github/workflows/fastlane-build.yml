@@ -108,7 +108,9 @@ jobs:
         run: cd ios && bundle install
 
       - name: Install Pods
-        run: yarn ios:pods
+        run: |
+          export NO_FLIPPER=1
+          yarn ios:pods
 
       - name: Build iOS & Distribute to Testflight
         run: |
