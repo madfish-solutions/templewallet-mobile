@@ -15,14 +15,13 @@ interface Props {
   uri: string;
   size: number;
   style?: StyleProp<ViewStyle>;
-  withLoader?: boolean;
   onError?: SyncFn<LoadError>;
   isVideo?: boolean;
 }
 
 const BUFFER_DURATION = 8000;
 
-export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError = emptyFn, isVideo = false }) => {
+export const SimplePlayer = memo<Props>(({ uri, size, style, onError = emptyFn, isVideo = false }) => {
   const atBootsplash = useAtBootsplash();
   const { isLocked } = useAppLock();
 
@@ -64,16 +63,18 @@ export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError
           source={{ uri }}
           style={[{ width: size, height: size }, style]}
           paused={atBootsplash || isLocked || !appIsActive}
-          resizeMode="cover"
+          resizeMode="contain"
           ignoreSilentSwitch="ignore"
           bufferConfig={{
-            bufferForPlaybackMs: BUFFER_DURATION
+            bufferForPlaybackMs: BUFFER_DURATION,
+            bufferForPlaybackAfterRebufferMs: BUFFER_DURATION * 2
           }}
           onError={onError}
           onLoadStart={nativePlayerLoadStart}
           onLoad={handleNativePlayerLoad}
           disableFullscreen
           disableBack
+          disableVolume
         />
       ) : (
         <WebView
@@ -84,7 +85,7 @@ export const SimplePlayer = memo<Props>(({ uri, size, style, withLoader, onError
         />
       )}
 
-      {withLoader && isLoading ? <ActivityIndicator size="large" /> : null}
+      {isLoading && !shouldUseNativePlayer ? <ActivityIndicator size="large" /> : null}
     </>
   );
 });

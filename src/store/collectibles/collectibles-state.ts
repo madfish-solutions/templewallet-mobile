@@ -7,6 +7,7 @@ export type CollectibleDetailsRecord = Record<string, CollectibleDetailsInterfac
 export interface CollectiblesState {
   details: LoadableEntityState<CollectibleDetailsRecord>;
   adultFlags: Record<string, AdultFlag>;
+  mediaVolume: number;
 }
 
 interface AdultFlag {
@@ -17,5 +18,6 @@ interface AdultFlag {
 
 export const collectiblesInitialState: CollectiblesState = {
   details: createEntity({}),
-  adultFlags: {}
+  adultFlags: {},
+  mediaVolume: 1
 };
