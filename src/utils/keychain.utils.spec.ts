@@ -1,4 +1,4 @@
-import { biometryKeychainOptions, getKeychainOptions } from './keychain.utils';
+import { getBiometryKeychainOptions, getKeychainOptions } from './keychain.utils';
 
 const mockBiometryKeychainOptions = {
   service: 'com.madfish.temple-wallet/biometry-protected-app-password',
@@ -9,22 +9,22 @@ const mockBiometryKeychainOptions = {
 
 describe('getKeychainOptions', () => {
   it('should return object if we passing non-empty string', () => {
-    expect(getKeychainOptions('test')).toEqual({
+    expect(getKeychainOptions('test', 0)).toEqual({
       service: 'com.madfish.temple-wallet/test',
       accessible: mockBiometryKeychainOptions.accessible
     });
   });
 
   it('should return object if we passing empty string', () => {
-    expect(getKeychainOptions('')).toEqual({
+    expect(getKeychainOptions('', 0)).toEqual({
       service: 'com.madfish.temple-wallet/',
       accessible: mockBiometryKeychainOptions.accessible
     });
   });
 });
 
-describe('biometryKeychainOptions', () => {
+describe('getBiometryKeychainOptions', () => {
   it('should return keychain options object with hardcoded password storage key', () => {
-    expect(biometryKeychainOptions).toEqual(mockBiometryKeychainOptions);
+    expect(getBiometryKeychainOptions(0)).toEqual(mockBiometryKeychainOptions);
   });
 });

@@ -20,6 +20,7 @@
 */
 
 process.env.TZ = 'UTC';
+process.env.LANG = 'en_GB.UTF-8';
 
 module.exports = {
   preset: 'react-native',
