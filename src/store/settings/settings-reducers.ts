@@ -1,8 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { DCP_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
+import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
-import { addDcpRpc, changeTempleRpc } from '../migration/migration-actions';
+import { addDcpRpc, addMarigoldRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 
 import {
@@ -182,6 +182,16 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
         rpcList: newRpcList
       };
     }
+
+    return state;
+  });
+
+  builder.addCase(addMarigoldRpc, state => {
+    if (!state.marigoldWasAdded && !state.rpcList.some(rpc => rpc.url === MARIGOLD_RPC.url)) {
+      console.log('Adding Marigold RPC');
+      state.rpcList.splice(1, 0, MARIGOLD_RPC);
+    }
+    state.marigoldWasAdded = true;
 
     return state;
   });

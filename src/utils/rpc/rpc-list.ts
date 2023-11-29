@@ -10,10 +10,16 @@ export const TEMPLE_RPC: RpcInterface = {
   url: 'https://prod.tcinfra.net/rpc/mainnet'
 };
 
+export const MARIGOLD_RPC: RpcInterface = {
+  name: 'Marigold Mainnet',
+  url: 'https://mainnet.tezos.marigold.dev'
+};
+
 export const OLD_TEMPLE_RPC_URLS = ['https://mainnet-node.madfish.solutions', 'https://uoi3x99n7c.tezosrpc.midl.dev'];
 
 export const RpcList: RpcInterface[] = [
   TEMPLE_RPC,
+  MARIGOLD_RPC,
   {
     name: 'SmartPy Mainnet',
     url: 'https://mainnet.smartpy.io'
