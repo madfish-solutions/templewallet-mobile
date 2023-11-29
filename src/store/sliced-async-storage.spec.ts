@@ -3,8 +3,10 @@ import { range } from 'lodash-es';
 
 import { isDefined } from 'src/utils/is-defined';
 
-import { SlicedAsyncStorage } from './sliced-async-storage';
+import { SlicedAsyncStorage, SlicedAsyncStorageError } from './sliced-async-storage';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const nonStringValues = [undefined, null, 0, 1, true, false, {}, [], () => {}, Symbol('test')];
 const nonSlicedValue = 'a'.repeat(1e6);
 
 const cyrLetters = 'абвгґдеєжзиіїйклмнопрстуфхцчшщьюя';
@@ -68,6 +70,13 @@ describe('SlicedAsyncStorage', () => {
 
       expect(await SlicedAsyncStorage.getItem(testKey)).toEqual(bigValue);
     });
+
+    it('should throw SlicedAsyncStorageError in case the passed key is not a string', async () => {
+      for (const value of nonStringValues) {
+        // eslint-disable-next-line no-type-assertion/no-type-assertion,@typescript-eslint/no-explicit-any
+        await expect(() => SlicedAsyncStorage.getItem(value as any)).rejects.toThrowError(SlicedAsyncStorageError);
+      }
+    });
   });
 
   describe('setItem', () => {
@@ -125,6 +134,24 @@ describe('SlicedAsyncStorage', () => {
         await expectCorrectSlicedValue(bigValue, testKey);
       });
     });
+
+    it('should throw SlicedAsyncStorageError in case the passed key is not a string', async () => {
+      for (const value of nonStringValues) {
+        // eslint-disable-next-line no-type-assertion/no-type-assertion,@typescript-eslint/no-explicit-any
+        await expect(() => SlicedAsyncStorage.setItem(value as any, nonSlicedValue)).rejects.toThrowError(
+          SlicedAsyncStorageError
+        );
+      }
+    });
+
+    it('should throw SlicedAsyncStorageError in case the passed value is not a string', async () => {
+      for (const value of nonStringValues) {
+        // eslint-disable-next-line no-type-assertion/no-type-assertion,@typescript-eslint/no-explicit-any
+        await expect(() => SlicedAsyncStorage.setItem(testKey, value as any)).rejects.toThrowError(
+          SlicedAsyncStorageError
+        );
+      }
+    });
   });
 
   describe('removeItem', () => {
@@ -153,6 +180,13 @@ describe('SlicedAsyncStorage', () => {
       expect(leftKeys.every(key => doNotTouchTestKeys.includes(key) || key.startsWith(doNotTouchTestKeys[1]))).toEqual(
         true
       );
+    });
+
+    it('should throw SlicedAsyncStorageError in case the passed key is not a string', async () => {
+      for (const value of nonStringValues) {
+        // eslint-disable-next-line no-type-assertion/no-type-assertion,@typescript-eslint/no-explicit-any
+        await expect(() => SlicedAsyncStorage.removeItem(value as any)).rejects.toThrowError(SlicedAsyncStorageError);
+      }
     });
   });
 });

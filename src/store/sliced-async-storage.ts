@@ -11,6 +11,12 @@ interface RootSlicedValue {
   slices: number;
 }
 
+export class SlicedAsyncStorageError extends Error {
+  constructor(message: string, public key?: unknown) {
+    super(message);
+  }
+}
+
 const rootValueIsSliced = (rootValue: string) => {
   if (rootValue.length > CANNOT_BE_ROOT_VALUE_LENGTH_THRESHOLD) {
     return false;
@@ -39,8 +45,35 @@ const getSlicesKeys = async (rootKey: string) => {
   return [];
 };
 
+const assertKeyIsString = (keyName: unknown): keyName is string => {
+  if (typeof keyName !== 'string') {
+    throw new SlicedAsyncStorageError(
+      `[SlicedAsyncStorage] Using ${typeof keyName} type for key is not supported. Use string instead.\nKey passed: ${JSON.stringify(
+        keyName
+      )}\n`,
+      keyName
+    );
+  }
+
+  return true;
+};
+
+const assertValueIsString = (value: unknown, key: string): value is string => {
+  if (typeof value !== 'string') {
+    throw new SlicedAsyncStorageError(
+      `[SlicedAsyncStorage] The value for key "${key}" is not a string. Stringify it.\nPassed value: ${JSON.stringify(
+        value
+      )}\nPassed key: ${key}\n`
+    );
+  }
+
+  return true;
+};
+
 export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' | 'removeItem'> = {
   getItem: async (key: string) => {
+    assertKeyIsString(key);
+
     const rootValue = await AsyncStorage.getItem(key);
 
     if (isDefined(rootValue) && rootValueIsSliced(rootValue)) {
@@ -58,6 +91,9 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
     return rootValue;
   },
   setItem: async (key: string, value: string) => {
+    assertKeyIsString(key);
+    assertValueIsString(value, key);
+
     if (value.length <= MAX_SLICE_LENGTH) {
       const oldSlicesKeys = await getSlicesKeys(key);
       await AsyncStorage.setItem(key, value);
@@ -78,6 +114,7 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
     }
   },
   removeItem: async (key: string) => {
+    assertKeyIsString(key);
     const rawRootValue = await AsyncStorage.getItem(key);
 
     if (isDefined(rawRootValue) && rootValueIsSliced(rawRootValue)) {
