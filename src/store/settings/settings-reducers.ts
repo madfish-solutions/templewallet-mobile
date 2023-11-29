@@ -191,7 +191,5 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
       state.rpcList.splice(1, 0, MARIGOLD_RPC);
     }
     state.marigoldWasAdded = true;
-
-    return state;
   });
 });
