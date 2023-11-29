@@ -188,7 +188,6 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
   builder.addCase(addMarigoldRpc, state => {
     if (!state.marigoldWasAdded && !state.rpcList.some(rpc => rpc.url === MARIGOLD_RPC.url)) {
-      console.log('Adding Marigold RPC');
       state.rpcList.splice(1, 0, MARIGOLD_RPC);
     }
     state.marigoldWasAdded = true;
