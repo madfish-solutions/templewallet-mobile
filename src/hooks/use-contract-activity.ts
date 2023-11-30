@@ -69,6 +69,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
 
   const handleUpdate = async () => {
     let newActivities: Array<ActivityGroup> = [];
+    const wasLoading = isLoading;
     try {
       if (activities.length > 0 && !isAllLoaded) {
         const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
@@ -90,7 +91,12 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
     } catch (error) {
       console.error(error);
     } finally {
-      const isAllLoaded = newActivities.length === 0;
+      if (wasLoading) {
+        return;
+      }
+
+      const isAllLoaded = newActivities.length === 0 && !wasLoading;
+
       setState(prevState => ({
         activities: isAllLoaded ? prevState.activities : [...prevState.activities, ...newActivities],
         isAllLoaded,
