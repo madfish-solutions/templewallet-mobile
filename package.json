@@ -23,7 +23,7 @@
     "find-deadcode": "ts-prune --error"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "4.0.10",
