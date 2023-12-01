@@ -32,6 +32,7 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
           }))
         ),
         catchError(error => {
+          console.error(error);
           Sentry.captureException(error);
           showErrorToast({
             title: 'Warning!',
@@ -58,7 +59,6 @@ const getSuggestedFeeMutez = (estimate: Estimate, opParam?: ParamsWithKind) => {
   if (
     !(opParam && opParam.kind) ||
     opParam.kind === OpKind.ACTIVATION ||
-    opParam.kind === OpKind.FAILING_NOOP ||
     !isDefined(opParam.gasLimit) ||
     opParam.gasLimit <= estimate.gasLimit
   ) {
