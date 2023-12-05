@@ -30,7 +30,7 @@ const doNotTouchTestKeys = ['doNotTouch', 'doNotTouch2'];
 
 const setBigValue = async (slices: string[], key: string) =>
   AsyncStorage.multiSet([
-    [key, JSON.stringify({ _isSliced: true, slices: slices.length })],
+    [key, `_SLICED_:${slices.length}`],
     ...slices.map((slice, index): [string, string] => [`${key}__SLICE__${index}`, slice])
   ]);
 
@@ -41,9 +41,7 @@ const expectCorrectSlicedValue = async (totalValue: string, key: string) => {
   const expectedSortedKeys = [...expectedSlicesKeys, key].sort();
   expect(allRelatedKeys.sort()).toEqual(expectedSortedKeys);
 
-  expect(await AsyncStorage.getItem(key)).toEqual(
-    JSON.stringify({ _isSliced: true, slices: allRelatedKeys.length - 1 })
-  );
+  expect(await AsyncStorage.getItem(key)).toEqual(`_SLICED_:${allRelatedKeys.length - 1}`);
   const slicesPairs = await AsyncStorage.multiGet(expectedSlicesKeys);
   const slicesValues = expectedSlicesKeys.map(sliceKey => slicesPairs.find(([key]) => key === sliceKey)?.[1]);
   expect(slicesValues.every(isDefined)).toEqual(true);

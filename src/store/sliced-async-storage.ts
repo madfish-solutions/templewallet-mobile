@@ -4,12 +4,8 @@ import { range } from 'lodash-es';
 import { isDefined } from 'src/utils/is-defined';
 
 const MAX_SLICE_LENGTH = 1e6; // Ensures that the slice is not greater than 2MB because JS uses UTF-16 encoding
-const CANNOT_BE_ROOT_VALUE_LENGTH_THRESHOLD = 100;
-
-interface RootSlicedValue {
-  _isSliced: true;
-  slices: number;
-}
+const SLICED_ROOT_VALUE_PREFIX = '_SLICED_:';
+const SLICED_ROOT_VALUE_REGEX = new RegExp(`^${SLICED_ROOT_VALUE_PREFIX}(\\d+)$`);
 
 export class SlicedAsyncStorageError extends Error {
   constructor(message: string, public key?: unknown) {
@@ -17,18 +13,10 @@ export class SlicedAsyncStorageError extends Error {
   }
 }
 
-const rootValueIsSliced = (rootValue: string) => {
-  if (rootValue.length > CANNOT_BE_ROOT_VALUE_LENGTH_THRESHOLD) {
-    return false;
-  }
+const getValueSlicesCount = (rootValue: string | nullish) => {
+  const rootValueRegexMatch = rootValue?.match(SLICED_ROOT_VALUE_REGEX);
 
-  try {
-    const parsedValue = JSON.parse(rootValue);
-
-    return parsedValue?._isSliced === true && typeof parsedValue.slices === 'number';
-  } catch {
-    return false;
-  }
+  return rootValueRegexMatch ? Number(rootValueRegexMatch[1]) : 0;
 };
 
 const getSliceKey = (rootKey: string, sliceIndex: number) => `${rootKey}__SLICE__${sliceIndex}`;
@@ -36,13 +24,9 @@ const getSliceKey = (rootKey: string, sliceIndex: number) => `${rootKey}__SLICE_
 const getSlicesKeys = async (rootKey: string) => {
   const rawRootValue = await AsyncStorage.getItem(rootKey);
 
-  if (isDefined(rawRootValue) && rootValueIsSliced(rawRootValue)) {
-    const { slices } = JSON.parse(rawRootValue) as RootSlicedValue;
+  const slicesCount = getValueSlicesCount(rawRootValue);
 
-    return range(0, slices).map(sliceIndex => getSliceKey(rootKey, sliceIndex));
-  }
-
-  return [];
+  return range(0, slicesCount).map(sliceIndex => getSliceKey(rootKey, sliceIndex));
 };
 
 const assertKeyIsString = (keyName: unknown): keyName is string => {
@@ -75,11 +59,10 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
     assertKeyIsString(key);
 
     const rootValue = await AsyncStorage.getItem(key);
+    const slicesCount = getValueSlicesCount(rootValue);
 
-    if (isDefined(rootValue) && rootValueIsSliced(rootValue)) {
-      const { slices } = JSON.parse(rootValue) as RootSlicedValue;
-
-      const slicesKeys = range(0, slices).map(sliceIndex => getSliceKey(key, sliceIndex));
+    if (slicesCount) {
+      const slicesKeys = range(0, slicesCount).map(sliceIndex => getSliceKey(key, sliceIndex));
       const slicesPairs = await AsyncStorage.multiGet(slicesKeys);
       const slicesValues = slicesKeys.map(sliceKey => slicesPairs.find(([key]) => key === sliceKey)?.[1]);
 
@@ -106,7 +89,7 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
       );
       const prevSlicesKeys = await getSlicesKeys(key);
       await AsyncStorage.multiSet([
-        [key, JSON.stringify({ _isSliced: true, slices: slices.length })],
+        [key, `${SLICED_ROOT_VALUE_PREFIX}${slicesCount}`],
         ...slices.map((slice, index): [string, string] => [getSliceKey(key, index), slice])
       ]);
       const currentSlicesKeys = slices.map((_, index) => getSliceKey(key, index));
@@ -116,11 +99,10 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
   removeItem: async (key: string) => {
     assertKeyIsString(key);
     const rawRootValue = await AsyncStorage.getItem(key);
+    const slicesCount = getValueSlicesCount(rawRootValue);
 
-    if (isDefined(rawRootValue) && rootValueIsSliced(rawRootValue)) {
-      const { slices } = JSON.parse(rawRootValue) as RootSlicedValue;
-
-      const slicesKeys = range(0, slices).map(sliceIndex => getSliceKey(key, sliceIndex));
+    if (slicesCount) {
+      const slicesKeys = range(0, slicesCount).map(sliceIndex => getSliceKey(key, sliceIndex));
 
       await AsyncStorage.multiRemove([key, ...slicesKeys]);
     } else if (isDefined(rawRootValue)) {
