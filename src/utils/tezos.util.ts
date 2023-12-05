@@ -6,6 +6,12 @@ import { TokenInterface } from '../token/interfaces/token.interface';
 
 import { isDefined } from './is-defined';
 
+export const RPC_RETRY_OPTIONS = {
+  retries: 2,
+  minTimeout: 100,
+  maxTimeout: 100
+};
+
 export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
   if (bigNum.isNaN()) {
     return bigNum;
