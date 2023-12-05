@@ -64,9 +64,8 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
     if (slicesCount) {
       const slicesKeys = range(0, slicesCount).map(sliceIndex => getSliceKey(key, sliceIndex));
       const slicesPairs = await AsyncStorage.multiGet(slicesKeys);
-      const slicesValues = slicesKeys.map(sliceKey => slicesPairs.find(([key]) => key === sliceKey)?.[1]);
 
-      const result = slicesValues.map(value => value ?? '').join('');
+      const result = slicesPairs.map(([, value]) => value ?? '').join('');
 
       return result;
     }
