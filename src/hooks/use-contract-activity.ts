@@ -8,35 +8,52 @@ import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
 import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
 
+interface ContractActivityState {
+  activities: Array<ActivityGroup>;
+  isAllLoaded: boolean;
+  isLoading: boolean;
+}
+
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const lastActivityRef = useRef<string>('');
 
-  const [isAllLoaded, setIsAllLoaded] = useState<boolean>(false);
-  const [activities, setActivities] = useState<Array<ActivityGroup>>([]);
+  const [{ isAllLoaded, isLoading, activities }, setState] = useState<ContractActivityState>({
+    activities: [],
+    isAllLoaded: false,
+    isLoading: true
+  });
 
   const initialLoad = useCallback(
     async (refresh = false) => {
-      const activities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
+      let fetchedActivities: Array<ActivityGroup> = [];
+      let isError = false;
+      try {
+        fetchedActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
+      } catch (error) {
+        console.error(error);
+        isError = true;
+      } finally {
+        setState(prevState => {
+          const isAllLoaded = fetchedActivities.length === 0;
+          let newActivities = fetchedActivities;
+          if (isError) {
+            newActivities = prevState.activities;
+          } else if (refresh === true && !isAllLoaded) {
+            const allActivities = [...fetchedActivities, ...prevState.activities];
+            const allHashes = allActivities.map(x => x[0]).map(x => x.hash);
+            const onlyUniqueHashes = uniq(allHashes);
+            newActivities = onlyUniqueHashes.map(x => allActivities.find(y => y[0].hash === x)).filter(isDefined);
+          }
 
-      if (activities.length === 0) {
-        setIsAllLoaded(true);
-      }
-      if (refresh === true) {
-        setActivities(prev => {
-          const allActivities = [...activities, ...prev];
-          const allHashes = allActivities.map(x => x[0]).map(x => x.hash);
-          const onlyUniqueHashes = uniq(allHashes);
-          const onlyUniqueActivitites = onlyUniqueHashes
-            .map(x => allActivities.find(y => y[0].hash === x))
-            .filter(isDefined);
-
-          return onlyUniqueActivitites;
+          return {
+            isAllLoaded,
+            activities: newActivities,
+            isLoading: false
+          };
         });
-      } else {
-        setActivities(activities);
       }
     },
     [selectedRpcUrl, selectedAccount, tokenSlug]
@@ -51,31 +68,54 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   };
 
   const handleUpdate = async () => {
-    if (activities.length > 0 && !isAllLoaded) {
-      const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
+    let newActivities: Array<ActivityGroup> = [];
+    const wasLoading = isLoading;
+    try {
+      if (activities.length > 0 && !isAllLoaded) {
+        const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
 
-      if (lastActivityGroup.length > 0) {
-        const lastItem = lastActivityGroup[lastActivityGroup.length - 1];
+        if (lastActivityGroup.length > 0) {
+          const lastItem = lastActivityGroup[lastActivityGroup.length - 1];
 
-        if (lastItem.hash !== lastActivityRef.current) {
-          lastActivityRef.current = lastItem.hash;
+          if (lastItem.hash !== lastActivityRef.current) {
+            lastActivityRef.current = lastItem.hash;
 
-          if (isDefined(lastItem)) {
-            const newActivity = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
+            if (isDefined(lastItem) && !isLoading) {
+              setState(prev => ({ ...prev, isLoading: true }));
 
-            if (newActivity.length === 0) {
-              setIsAllLoaded(true);
+              newActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
             }
-            setActivities(prev => [...prev, ...newActivity]);
           }
         }
       }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      if (wasLoading) {
+        return;
+      }
+
+      const isAllLoaded = newActivities.length === 0 && !wasLoading;
+
+      setState(prevState => ({
+        activities: isAllLoaded ? prevState.activities : [...prevState.activities, ...newActivities],
+        isAllLoaded,
+        isLoading: false
+      }));
     }
   };
+
+  useEffect(() => {
+    if (activities.length < 10 && !isLoading) {
+      handleUpdate();
+    }
+  }, [activities, isLoading]);
 
   return {
     handleUpdate,
     handleRefresh,
-    activities
+    activities,
+    isAllLoaded,
+    isLoading
   };
 };
