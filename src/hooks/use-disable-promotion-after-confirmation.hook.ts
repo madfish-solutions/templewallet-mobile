@@ -39,9 +39,8 @@ export const usePromotionAfterConfirmation = () => {
   const disablePromotion = useCallback(
     () =>
       Alert.alert(
-        'Are you sure you want to turn off all ads?',
-        'Pay attention: you can receive cashback in USDt tokens for enabling advertisement in our \
-wallet. If you turned off ADS, you can always activate it in the settings.',
+        'Are you sure you want to disable all ads?',
+        'Pay attention: you can receive rewards in TKEY tokens for viewing ads in our wallet. If you disabled Ads, you can always activate it in the settings.',
         [
           {
             text: 'Cancel',
