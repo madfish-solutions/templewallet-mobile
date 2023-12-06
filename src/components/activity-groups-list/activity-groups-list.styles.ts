@@ -9,7 +9,6 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
     paddingLeft: formatSize(16)
   },
   adContainer: {
-    paddingTop: formatSize(0),
     paddingBottom: formatSize(12),
     paddingHorizontal: formatSize(16)
   },
