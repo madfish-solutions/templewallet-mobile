@@ -1,4 +1,4 @@
-import { TextStyle, ViewStyle } from 'react-native';
+import { Animated, TextStyle, ViewStyle } from 'react-native';
 
 type ButtonContainerStyle = Required<Pick<ViewStyle, 'height' | 'borderRadius'>> & Pick<ViewStyle, 'borderWidth'>;
 type ButtonTitleStyle = Required<Pick<TextStyle, 'fontSize' | 'fontFamily'>>;
@@ -6,6 +6,7 @@ type ButtonTitleStyle = Required<Pick<TextStyle, 'fontSize' | 'fontFamily'>>;
 type ButtonIconStyle = {
   size: number;
   marginRight: number;
+  translateY?: Animated.Value;
 };
 
 type ButtonColorConfig = {

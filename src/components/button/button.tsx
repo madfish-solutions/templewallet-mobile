@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
+import { Animated, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -45,6 +45,7 @@ export const Button: FC<Props> = ({
     activeColorConfig,
     disabledColorConfig = activeColorConfig
   } = styleConfig;
+  const iconTranslateY = iconStyle?.translateY;
 
   const {
     titleColor,
@@ -61,6 +62,15 @@ export const Button: FC<Props> = ({
     return onPress !== undefined && onPress();
   };
 
+  const icon = isDefined(iconName) && (
+    <Icon
+      name={iconName}
+      size={iconStyle?.size}
+      color={iconColor}
+      {...(isDefined(title) && { style: { marginRight: iconStyle?.marginRight } })}
+    />
+  );
+
   return (
     <View style={[conditionalStyle(isFullWidth, ButtonStyles.container), style]}>
       <TouchableOpacity
@@ -75,14 +85,10 @@ export const Button: FC<Props> = ({
         onPress={handlePress}
         {...setTestID(testID)}
       >
-        {isDefined(iconName) && (
-          <Icon
-            name={iconName}
-            size={iconStyle?.size}
-            color={iconColor}
-            {...(isDefined(title) && { style: { marginRight: iconStyle?.marginRight } })}
-          />
+        {isDefined(iconTranslateY) && isDefined(icon) && (
+          <Animated.View style={{ transform: [{ translateY: iconTranslateY }] }}>{icon}</Animated.View>
         )}
+        {!isDefined(iconTranslateY) && icon}
 
         <Text style={[titleStyle, { color: titleColor }, textStyle]}>{title}</Text>
 
