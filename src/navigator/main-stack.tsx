@@ -88,6 +88,8 @@ import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interfac
 import { cloudTitle } from 'src/utils/cloud-backup';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 
+import { isDcpNode } from '../utils/network.utils';
+
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useNavigation } from './hooks/use-navigation.hook';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
@@ -164,8 +166,10 @@ export const MainStackScreen = memo(() => {
   ]);
 
   useAuthorisedInterval(() => {
-    dispatch(loadAllFarmsAndStakesAction());
-    dispatch(loadAllSavingsAndStakesAction());
+    if (!isDcpNode(selectedRpcUrl)) {
+      dispatch(loadAllFarmsAndStakesAction());
+      dispatch(loadAllSavingsAndStakesAction());
+    }
   }, APR_REFRESH_INTERVAL);
 
   const shouldShowUnauthorizedScreens = !isAuthorised;
