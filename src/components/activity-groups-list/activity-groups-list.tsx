@@ -150,7 +150,13 @@ export const ActivityGroupsList: FC<Props> = ({
     <>
       {shouldShowPromotion && <View style={styles.adContainer}>{Promotion}</View>}
       <View style={styles.emptyListWrapper}>
-        {loadingEnded ? ListEmptyComponent : <ActivityIndicator size="large" />}
+        {loadingEnded ? (
+          ListEmptyComponent
+        ) : (
+          <View style={styles.loaderWrapper}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
       </View>
     </>
   );

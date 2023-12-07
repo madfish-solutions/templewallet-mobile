@@ -27,8 +27,10 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
     alignSelf: 'center'
   },
   emptyListWrapper: {
-    paddingTop: formatSize(96),
     alignItems: 'center'
+  },
+  loaderWrapper: {
+    paddingTop: formatSize(56)
   },
   additionalLoader: {
     paddingTop: formatSize(16)
