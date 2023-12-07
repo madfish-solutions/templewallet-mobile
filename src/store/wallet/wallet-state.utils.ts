@@ -1,3 +1,5 @@
+import { isDefined } from 'src/utils/is-defined';
+
 import { VisibilityEnum } from '../../enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from '../../interfaces/account-state.interface';
 import { TokenBalanceResponse } from '../../interfaces/token-balance-response.interface';
@@ -16,17 +18,12 @@ export const updateAccountState = (
   updateFn: (accountState: AccountStateInterface) => Partial<AccountStateInterface>
 ): WalletState => {
   const accountState = state.accountsStateRecord[accountPublicKeyHash];
-
-  return {
-    ...state,
-    accountsStateRecord: {
-      ...state.accountsStateRecord,
-      [accountPublicKeyHash]: {
-        ...accountState,
-        ...updateFn({ ...initialAccountState, ...accountState })
-      }
-    }
+  state.accountsStateRecord[accountPublicKeyHash] = {
+    ...accountState,
+    ...updateFn({ ...initialAccountState, ...accountState })
   };
+
+  return state;
 };
 
 export const pushOrUpdateTokensBalances = (
@@ -35,14 +32,16 @@ export const pushOrUpdateTokensBalances = (
 ) => {
   const result: AccountTokenInterface[] = [];
 
+  const newBalancesBySlugs = newBalances.reduce<Record<string, string>>((acc, { slug, balance }) => {
+    acc[slug] = balance;
+
+    return acc;
+  }, {});
+
   for (const token of initialTokensList) {
-    const indexOfToken = newBalances.findIndex(({ slug }) => slug === token.slug);
+    const balance = newBalancesBySlugs[token.slug];
 
-    if (indexOfToken === -1) {
-      result.push(token);
-    } else {
-      const balance = newBalances[indexOfToken].balance;
-
+    if (isDefined(balance)) {
       result.push({
         ...token,
         balance,
@@ -53,12 +52,14 @@ export const pushOrUpdateTokensBalances = (
             : token.visibility
       });
 
-      newBalances.splice(indexOfToken, 1);
+      delete newBalancesBySlugs[token.slug];
+    } else {
+      result.push(token);
     }
   }
 
   result.push(
-    ...newBalances.map(({ slug, balance }) => ({
+    ...Object.entries(newBalancesBySlugs).map(([slug, balance]) => ({
       slug,
       balance,
       visibility: balance === '0' ? VisibilityEnum.InitiallyHidden : VisibilityEnum.Visible

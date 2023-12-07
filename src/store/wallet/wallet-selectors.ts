@@ -118,7 +118,12 @@ export const useAssetBalanceSelector = (slug: string) => {
 export const useTokenBalanceGetter = () => {
   const data = useAllCurrentAccountAssetsSelector();
 
-  return useCallback((slug: string) => data?.stored.find(a => a.slug === slug)?.balance, [data?.stored]);
+  const balancesBySlug = useMemo(
+    () => Object.fromEntries((data?.stored ?? []).map(({ slug, balance }) => [slug, balance])),
+    [data]
+  );
+
+  return useCallback((slug: string): string | undefined => balancesBySlug[slug], [balancesBySlug]);
 };
 
 export const useCurrentAccountTezosBalance = () =>
