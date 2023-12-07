@@ -88,8 +88,6 @@ import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interfac
 import { cloudTitle } from 'src/utils/cloud-backup';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 
-import { isDcpNode } from '../utils/network.utils';
-
 import { ScreensEnum, ScreensParamList } from './enums/screens.enum';
 import { useNavigation } from './hooks/use-navigation.hook';
 import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style-options.hook';
@@ -110,7 +108,7 @@ export const MainStackScreen = memo(() => {
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
-  const { metadata } = useNetworkInfo();
+  const { isTezosNode, metadata } = useNetworkInfo();
 
   useEffect(() => {
     if (isEnableAdsBanner) {
@@ -166,7 +164,7 @@ export const MainStackScreen = memo(() => {
   ]);
 
   useAuthorisedInterval(() => {
-    if (!isDcpNode(selectedRpcUrl)) {
+    if (isTezosNode) {
       dispatch(loadAllFarmsAndStakesAction());
       dispatch(loadAllSavingsAndStakesAction());
     }

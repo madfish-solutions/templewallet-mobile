@@ -24,11 +24,7 @@ import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertisi
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
-import {
-  useHideZeroBalancesSelector,
-  useIsEnabledAdsBannerSelector,
-  useSelectedRpcUrlSelector
-} from 'src/store/settings/settings-selectors';
+import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -37,10 +33,10 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
-import { isDcpNode } from 'src/utils/network.utils';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { WalletSelectors } from '../wallet.selectors';
 
 import { TezosToken } from './token-list-item/tezos-token';
@@ -80,8 +76,8 @@ export const TokensList = memo(() => {
   const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
+  const { isTezosNode } = useNetworkInfo();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
@@ -110,12 +106,12 @@ export const TokensList = memo(() => {
   }, [dispatch, partnersPromoShown]);
 
   const leadingAssets = useMemo(() => {
-    if (isDcpNode(selectedRpcUrl)) {
-      return [tezosToken];
+    if (isTezosNode) {
+      return [tezosToken, tkeyToken];
     }
 
-    return [tezosToken, tkeyToken];
-  }, [selectedRpcUrl, tezosToken, tkeyToken]);
+    return [tezosToken];
+  }, [isTezosNode, tezosToken, tkeyToken]);
 
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
