@@ -1,4 +1,3 @@
-import { isNonEmptyArray } from '@apollo/client/utilities';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
 import { chunk } from 'lodash-es';
@@ -101,7 +100,7 @@ export const DApps = () => {
 
   const data = useMemo(() => chunk(sortedDAppsList, ITEMS_PER_ROW), [sortedDAppsList]);
 
-  const isListNotEmpty = useMemo(() => isNonEmptyArray(sortedDAppsList), [sortedDAppsList]);
+  const isListNotEmpty = useMemo(() => sortedDAppsList.length > 0, [sortedDAppsList]);
 
   const renderItem: ListRenderItem<CustomDAppInfo[]> = useCallback(
     ({ item }) => (
