@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Animated, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -62,14 +62,26 @@ export const Button: FC<Props> = ({
     return onPress !== undefined && onPress();
   };
 
-  const icon = isDefined(iconName) && (
-    <Icon
-      name={iconName}
-      size={iconStyle?.size}
-      color={iconColor}
-      {...(isDefined(title) && { style: { marginRight: iconStyle?.marginRight } })}
-    />
-  );
+  const icon = useMemo(() => {
+    if (!iconName) {
+      return null;
+    }
+
+    const staticIcon = (
+      <Icon
+        name={iconName}
+        size={iconStyle?.size}
+        color={iconColor}
+        {...(isDefined(title) && { style: { marginRight: iconStyle?.marginRight } })}
+      />
+    );
+
+    return isDefined(iconTranslateY) ? (
+      <Animated.View style={{ transform: [{ translateY: iconTranslateY }] }}>{staticIcon}</Animated.View>
+    ) : (
+      staticIcon
+    );
+  }, [iconTranslateY, iconStyle?.size, iconStyle?.marginRight, iconColor, title, iconName]);
 
   return (
     <View style={[conditionalStyle(isFullWidth, ButtonStyles.container), style]}>
@@ -85,10 +97,7 @@ export const Button: FC<Props> = ({
         onPress={handlePress}
         {...setTestID(testID)}
       >
-        {isDefined(iconTranslateY) && isDefined(icon) && (
-          <Animated.View style={{ transform: [{ translateY: iconTranslateY }] }}>{icon}</Animated.View>
-        )}
-        {!isDefined(iconTranslateY) && icon}
+        {icon}
 
         <Text style={[titleStyle, { color: titleColor }, textStyle]}>{title}</Text>
 
