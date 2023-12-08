@@ -11,17 +11,13 @@ import { TokenListItem } from './token-list-item';
 
 export const TezosToken = memo(() => {
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const [, isBakerSelected] = useSelectedBakerSelector();
+  const currentBaker = useSelectedBakerSelector();
   const { navigate } = useNavigation();
   const { isTezosNode } = useNetworkInfo();
 
   const onPress = useCallback(() => navigate(ScreensEnum.TezosTokenScreen), [navigate]);
 
   return (
-    <TokenListItem
-      token={tezosToken}
-      apy={isTezosNode && isBakerSelected ? delegationApy : undefined}
-      onPress={onPress}
-    />
+    <TokenListItem token={tezosToken} apy={isTezosNode && currentBaker ? delegationApy : undefined} onPress={onPress} />
   );
 });

@@ -4,7 +4,7 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { ListRenderItem, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { BakerInterface, emptyBaker } from 'src/apis/baking-bad';
+import { BakerInterface, buildUnknownBaker } from 'src/apis/baking-bad';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
@@ -52,7 +52,7 @@ const keyExtractor = (item: BakerInterface) => item.address;
 export const SelectBakerModal = memo(() => {
   const { goBack, navigate } = useNavigation();
   const styles = useSelectBakerModalStyles();
-  const [currentBaker] = useSelectedBakerSelector();
+  const currentBaker = useSelectedBakerSelector();
   const { isTezosNode, isDcpNode } = useNetworkInfo();
   const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
 
@@ -107,7 +107,7 @@ export const SelectBakerModal = memo(() => {
         trackEvent('HELP_UKRAINE_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
       }
 
-      if (currentBaker.address === selectedBaker.address) {
+      if (currentBaker?.address === selectedBaker.address) {
         showErrorToast({
           title: 'Re-delegation is not possible',
           description: `Already delegated funds to this ${isDcpNode ? 'producer' : 'baker'}.`
@@ -165,11 +165,16 @@ export const SelectBakerModal = memo(() => {
 
   const isValidBakerAddress = isDefined(selectedBaker) && !isValidAddress(selectedBaker.address);
 
+  const unknownBaker = useMemo(
+    () => buildUnknownBaker(searchValue ?? '', unknownBakerName),
+    [unknownBakerName, searchValue]
+  );
+
   const ListEmptyComponent = useMemo(
     () =>
       searchValue?.toLowerCase() !== accountPkh.toLowerCase() ? (
         <BakerListItem
-          item={{ ...emptyBaker, name: unknownBakerName, address: searchValue ?? '', isUnknownBaker: true }}
+          item={unknownBaker}
           onPress={setSelectedBaker}
           selected={searchValue === selectedBaker?.address}
         />
@@ -240,7 +245,7 @@ export const SelectBakerModal = memo(() => {
         <View style={styles.dcpBaker}>
           <Divider size={formatSize(16)} />
           <BakerListItem
-            item={{ ...emptyBaker, name: unknownBakerName, address: searchValue ?? '', isUnknownBaker: true }}
+            item={unknownBaker}
             onPress={setSelectedBaker}
             selected={searchValue === selectedBaker?.address}
           />

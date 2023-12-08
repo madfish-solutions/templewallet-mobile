@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { combineReducers } from '@reduxjs/toolkit';
 import type { CombinedState } from '@reduxjs/toolkit';
 import { Action, AnyAction, ReducersMapObject } from 'redux';
@@ -12,6 +11,7 @@ import { persistFailHandler } from 'src/utils/redux';
 
 import { resetApplicationAction } from './root-state.actions';
 import { rootStateReducersMap } from './root-state.map';
+import { SlicedAsyncStorage } from './sliced-async-storage';
 import type { RootState } from './types';
 
 const buildRootStateReducer = <S, A extends Action = AnyAction>(
@@ -44,7 +44,7 @@ const PersistBlacklistTransform = createTransform(
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
   version: 1,
-  storage: AsyncStorage,
+  storage: SlicedAsyncStorage,
   stateReconciler: autoMergeLevel2,
   writeFailHandler: persistFailHandler,
   /**
