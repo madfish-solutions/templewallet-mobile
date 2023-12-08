@@ -17,6 +17,7 @@ import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -36,7 +37,6 @@ import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/h
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
 import { WalletSelectors } from '../wallet.selectors';
 
 import { TezosToken } from './token-list-item/tezos-token';
