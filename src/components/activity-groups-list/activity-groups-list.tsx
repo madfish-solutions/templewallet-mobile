@@ -7,7 +7,9 @@ import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/opti
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { emptyFn } from 'src/config/general';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
+import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
+import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { isTheSameDay, isToday, isYesterday } from 'src/utils/date.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -26,26 +28,27 @@ const AVERAGE_ITEM_HEIGHT = 150;
 
 interface Props {
   activityGroups: ActivityGroup[];
-  shouldShowPromotion?: boolean;
   isAllLoaded?: boolean;
   isLoading?: boolean;
   handleUpdate?: () => void;
-  onOptimalPromotionError?: () => void;
 }
 
 export const ActivityGroupsList: FC<Props> = ({
   activityGroups,
   isAllLoaded = false,
   isLoading = false,
-  handleUpdate = emptyFn,
-  shouldShowPromotion = false,
-  onOptimalPromotionError
+  handleUpdate = emptyFn
 }) => {
+  usePartnersPromoLoad();
+
   const styles = useActivityGroupsListStyles();
 
+  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const fakeRefreshControlProps = useFakeRefreshControlProps();
   const [endIsReached, setEndIsReached] = useState(false);
   const [loadingEnded, setLoadingEnded] = useState(!isLoading);
+  const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
+  const shouldShowPromotion = partnersPromotionEnabled && !promotionErrorOccurred;
 
   useEffect(() => {
     if (!isLoading) {
@@ -58,6 +61,8 @@ export const ActivityGroupsList: FC<Props> = ({
     handleUpdate();
   }, [handleUpdate]);
   useEffect(() => setEndIsReached(false), [activityGroups]);
+
+  const onOptimalPromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
 
   const sections = useMemo(() => {
     const result: ListItem[] = [];
@@ -143,8 +148,16 @@ export const ActivityGroupsList: FC<Props> = ({
 
   return (
     <>
-      {shouldShowPromotion && Promotion}
-      {loadingEnded ? ListEmptyComponent : <ActivityIndicator style={styles.initialLoader} size="large" />}
+      {shouldShowPromotion && <View style={styles.adContainer}>{Promotion}</View>}
+      <View style={styles.emptyListWrapper}>
+        {loadingEnded ? (
+          ListEmptyComponent
+        ) : (
+          <View style={styles.loaderWrapper}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
+      </View>
     </>
   );
 };
