@@ -64,7 +64,6 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   const animationPlayedTimesCount = useRef(0);
   const earnIconTranslateYRef = useRef(new Animated.Value(0));
-  const animationIntervalRef = useRef<NodeJS.Timeout>();
 
   const playAnimation = useCallback(() => {
     if (animationPlayedTimesCount.current < 3) {
@@ -82,9 +81,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
     } else if (isLoaderBeingShown) {
       return;
     }
-    
+
     playAnimation();
     const animationInterval = setInterval(playAnimation, 4000);
+
     return () => void clearInterval(animationInterval);
   }, [isLocked, atBootsplash, isLoaderBeingShown, playAnimation]);
 
