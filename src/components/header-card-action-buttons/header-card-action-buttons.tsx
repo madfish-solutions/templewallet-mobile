@@ -75,12 +75,17 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   }, []);
 
   useEffect(() => {
-    if (!isLocked && !atBootsplash && !isLoaderBeingShown) {
-      playAnimation();
-      animationIntervalRef.current = setInterval(playAnimation, 4000);
-    }
+    if (isLocked || atBootsplash) {
+      animationPlayedTimesCount.current = 0;
 
-    return () => void (isDefined(animationIntervalRef.current) && clearInterval(animationIntervalRef.current));
+      return;
+    } else if (isLoaderBeingShown) {
+      return;
+    }
+    
+    playAnimation();
+    const animationInterval = setInterval(playAnimation, 4000);
+    return () => void clearInterval(animationInterval);
   }, [isLocked, atBootsplash, isLoaderBeingShown, playAnimation]);
 
   useEffect(() => {
