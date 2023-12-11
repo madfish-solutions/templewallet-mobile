@@ -4,6 +4,8 @@ type EmptyFn = () => void;
 type SyncFn<T, R = void> = (arg: T) => R;
 type AsyncFn<T, R = void> = (arg: T) => Promise<R>;
 
+type StringRecord<T = string> = Record<string, T>;
+
 declare module '*.svg' {
   import React from 'react';
   import { SvgProps } from 'react-native-svg';

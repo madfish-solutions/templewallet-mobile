@@ -1,9 +1,9 @@
 import AsyncStorage, { AsyncStorageStatic } from '@react-native-async-storage/async-storage';
-import { range } from 'lodash-es';
 
 import { isDefined } from 'src/utils/is-defined';
 
-const MAX_SLICE_LENGTH = 1e6; // Ensures that the slice is not greater than 2MB because JS uses UTF-16 encoding
+/** Ensures that the slice is not greater than 2MB because JS uses UTF-16 encoding */
+const MAX_SLICE_LENGTH = 1e6;
 const SLICED_ROOT_VALUE_PREFIX = '_SLICED_:';
 const SLICED_ROOT_VALUE_REGEX = new RegExp(`^${SLICED_ROOT_VALUE_PREFIX}(\\d+)$`);
 
@@ -19,14 +19,17 @@ const getValueSlicesCount = (rootValue: string | nullish) => {
   return rootValueRegexMatch ? Number(rootValueRegexMatch[1]) : 0;
 };
 
-const getSliceKey = (rootKey: string, sliceIndex: number) => `${rootKey}__SLICE__${sliceIndex}`;
+const buildSliceKey = (rootKey: string, sliceIndex: number) => `${rootKey}__SLICE__${sliceIndex}`;
+
+const buildSlicesKeys = (rootKey: string, slicesCount: number) =>
+  new Array(slicesCount).fill(null).map((_, sliceIndex) => buildSliceKey(rootKey, sliceIndex));
 
 const getSlicesKeys = async (rootKey: string) => {
   const rawRootValue = await AsyncStorage.getItem(rootKey);
 
   const slicesCount = getValueSlicesCount(rawRootValue);
 
-  return range(0, slicesCount).map(sliceIndex => getSliceKey(rootKey, sliceIndex));
+  return buildSlicesKeys(rootKey, slicesCount);
 };
 
 const assertKeyIsString = (keyName: unknown): keyName is string => {
@@ -55,57 +58,60 @@ const assertValueIsString = (value: unknown, key: string): value is string => {
 };
 
 export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' | 'removeItem'> = {
-  getItem: async (key: string) => {
-    assertKeyIsString(key);
+  getItem: async (rootKey: string) => {
+    assertKeyIsString(rootKey);
 
-    const rootValue = await AsyncStorage.getItem(key);
+    const rootValue = await AsyncStorage.getItem(rootKey);
     const slicesCount = getValueSlicesCount(rootValue);
 
     if (slicesCount) {
-      const slicesKeys = range(0, slicesCount).map(sliceIndex => getSliceKey(key, sliceIndex));
+      const slicesKeys = buildSlicesKeys(rootKey, slicesCount);
       const slicesPairs = await AsyncStorage.multiGet(slicesKeys);
 
-      const result = slicesPairs.map(([, value]) => value ?? '').join('');
+      // (!) Don't use `Array.join('')` here - it is slower
+      const result = slicesPairs.reduce((acc, curr) => acc + curr ?? '', '');
 
       return result;
     }
 
     return rootValue;
   },
-  setItem: async (key: string, value: string) => {
-    assertKeyIsString(key);
-    assertValueIsString(value, key);
+  setItem: async (rootKey: string, value: string) => {
+    assertKeyIsString(rootKey);
+    assertValueIsString(value, rootKey);
+
+    const prevSlicesKeys = await getSlicesKeys(rootKey);
 
     if (value.length <= MAX_SLICE_LENGTH) {
-      const oldSlicesKeys = await getSlicesKeys(key);
-      await AsyncStorage.setItem(key, value);
-      await AsyncStorage.multiRemove(oldSlicesKeys);
+      await AsyncStorage.setItem(rootKey, value);
+      await AsyncStorage.multiRemove(prevSlicesKeys);
     } else {
       const slicesCount = Math.ceil(value.length / MAX_SLICE_LENGTH);
-      const sliceSize = Math.ceil(value.length / slicesCount);
-      const slices = range(0, slicesCount).map(sliceIndex =>
-        value.slice(sliceIndex * sliceSize, (sliceIndex + 1) * sliceSize)
-      );
-      const prevSlicesKeys = await getSlicesKeys(key);
-      await AsyncStorage.multiSet([
-        [key, `${SLICED_ROOT_VALUE_PREFIX}${slicesCount}`],
-        ...slices.map((slice, index): [string, string] => [getSliceKey(key, index), slice])
-      ]);
-      const currentSlicesKeys = slices.map((_, index) => getSliceKey(key, index));
-      await AsyncStorage.multiRemove(prevSlicesKeys.filter(key => !currentSlicesKeys.includes(key)));
+
+      const slices: StringRecord = {
+        [rootKey]: `${SLICED_ROOT_VALUE_PREFIX}${slicesCount}`
+      };
+      for (let sliceIndex = 0; sliceIndex < slicesCount; sliceIndex++) {
+        const key = buildSliceKey(rootKey, sliceIndex);
+        const val = value.slice(sliceIndex * MAX_SLICE_LENGTH, (sliceIndex + 1) * MAX_SLICE_LENGTH);
+        slices[key] = val;
+      }
+
+      await AsyncStorage.multiSet(Object.entries(slices));
+      await AsyncStorage.multiRemove(prevSlicesKeys.filter(key => !slices[key]));
     }
   },
-  removeItem: async (key: string) => {
-    assertKeyIsString(key);
-    const rawRootValue = await AsyncStorage.getItem(key);
+  removeItem: async (rootKey: string) => {
+    assertKeyIsString(rootKey);
+    const rawRootValue = await AsyncStorage.getItem(rootKey);
     const slicesCount = getValueSlicesCount(rawRootValue);
 
     if (slicesCount) {
-      const slicesKeys = range(0, slicesCount).map(sliceIndex => getSliceKey(key, sliceIndex));
+      const slicesKeys = buildSlicesKeys(rootKey, slicesCount);
 
-      await AsyncStorage.multiRemove([key, ...slicesKeys]);
+      await AsyncStorage.multiRemove([rootKey, ...slicesKeys]);
     } else if (isDefined(rawRootValue)) {
-      await AsyncStorage.removeItem(key);
+      await AsyncStorage.removeItem(rootKey);
     }
   }
 };

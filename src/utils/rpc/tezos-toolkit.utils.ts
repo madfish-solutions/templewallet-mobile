@@ -2,7 +2,7 @@ import { localForger } from '@taquito/local-forging';
 import { CompositeForger, MichelCodecPacker, RpcForger, TezosToolkit } from '@taquito/taquito';
 import { Tzip12Module } from '@taquito/tzip12';
 import { Tzip16Module } from '@taquito/tzip16';
-import memoize from 'mem';
+import memoize from 'memoizee';
 
 import { AccountInterface } from '../../interfaces/account.interface';
 import { ReadOnlySigner } from '../read-only.signer.util';
@@ -28,5 +28,5 @@ export const createReadOnlyTezosToolkit = memoize(
 
     return readOnlyTezosToolkit;
   },
-  { cacheKey: ([rpcUrl, sender]) => `${rpcUrl}_${sender.publicKeyHash}` }
+  { normalizer: ([rpcUrl, sender]) => `${rpcUrl}_${sender.publicKeyHash}`, max: 10 }
 );

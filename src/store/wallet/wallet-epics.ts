@@ -106,7 +106,6 @@ const loadTokensWithBalancesEpic: Epic<Action, Action, RootState> = (action$, st
           );
 
           const isTezosNode = !isDcpNode(selectedRpcUrl);
-          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           const tokensList = (isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList) ?? [];
 
           const accountTokensSlugs = tokensList.map(token => token.slug);
