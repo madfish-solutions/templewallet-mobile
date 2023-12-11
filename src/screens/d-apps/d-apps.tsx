@@ -2,7 +2,7 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { BigNumber } from 'bignumber.js';
 import { chunk } from 'lodash-es';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -100,6 +100,8 @@ export const DApps = () => {
 
   const data = useMemo(() => chunk(sortedDAppsList, ITEMS_PER_ROW), [sortedDAppsList]);
 
+  const isListNotEmpty = useMemo(() => sortedDAppsList.length > 0, [sortedDAppsList]);
+
   const renderItem: ListRenderItem<CustomDAppInfo[]> = useCallback(
     ({ item }) => (
       <View style={styles.rowContainer}>
@@ -117,45 +119,49 @@ export const DApps = () => {
 
       <PromotionCarousel />
 
-      <SearchInput placeholder="Search Dapp" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
+      <SearchInput placeholder="Search Dapps" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
 
-      <Divider size={formatSize(12)} />
+      <Divider size={formatSize(4)} />
 
-      <Text style={styles.text}>Integrated</Text>
+      <ScrollView>
+        {!isString(searchQuery) && (
+          <>
+            <Text style={styles.text}>Integrated</Text>
 
-      <Divider size={formatSize(12)} />
+            <IntegratedDApp
+              iconName={IconNameEnum.EarnDapp}
+              title={`Earn up to ${isFarmsLoading || isSavingsLoading ? '---' : maxRoundedApr}% APR`}
+              description="Unlock on-chain earning potential"
+              onPress={() => navigate(ScreensEnum.Earn)}
+              testID={DAppsSelectors.earnButton}
+              testIDProperties={{
+                isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)
+              }}
+            />
 
-      <IntegratedDApp
-        iconName={IconNameEnum.EarnDapp}
-        title={`Earn up to ${isFarmsLoading || isSavingsLoading ? '---' : maxRoundedApr}% APR`}
-        description="Unlock on-chain earning potential"
-        onPress={() => navigate(ScreensEnum.Earn)}
-        testID={DAppsSelectors.earnButton}
-        testIDProperties={{
-          isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)
-        }}
-      />
+            <Divider size={formatSize(8)} />
+          </>
+        )}
 
-      <Divider size={formatSize(20)} />
+        {isListNotEmpty && (
+          <>
+            <Text style={styles.text}>Others</Text>
 
-      <Text style={styles.text}>Others</Text>
+            <View style={styles.dappBlockWrapper}>
+              <Disclaimer texts={texts} />
+            </View>
+          </>
+        )}
 
-      <Divider size={formatSize(12)} />
-
-      <View style={styles.dappBlockWrapper}>
-        <Disclaimer texts={texts} />
-      </View>
-
-      <Divider size={formatSize(12)} />
-
-      <FlashList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        estimatedItemSize={FLOORED_ITEM_HEIGHT}
-        contentContainerStyle={styles.contentContainer}
-        ListEmptyComponent={ListEmptyComponent}
-      />
+        <FlashList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          estimatedItemSize={FLOORED_ITEM_HEIGHT}
+          contentContainerStyle={styles.contentContainer}
+          ListEmptyComponent={ListEmptyComponent}
+        />
+      </ScrollView>
     </>
   );
 };
