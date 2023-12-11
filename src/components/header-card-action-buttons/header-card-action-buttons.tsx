@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useEffect, useMemo, useRef } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -13,10 +13,10 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
-import { useInterval } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
@@ -45,6 +45,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { balance } = useTotalBalance();
   const styles = useHeaderCardActionButtonsStyles();
   const defaultStyleConfig = useButtonMediumStyleConfig();
+  const isLoaderBeingShown = useIsShowLoaderSelector();
 
   const errorMessage =
     isDefined(token.address) && tezosToken.balance === emptyToken.balance
@@ -63,18 +64,25 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   const animationPlayedTimesCount = useRef(0);
   const earnIconTranslateYRef = useRef(new Animated.Value(0));
-  useInterval(
-    () => {
-      if (animationPlayedTimesCount.current < 3 && !isLocked && !atBootsplash) {
-        earnIconTranslateYRef.current.setValue(formatSize(-8));
-        Animated.spring(earnIconTranslateYRef.current, { toValue: 0, friction: 2, useNativeDriver: true }).start();
-        animationPlayedTimesCount.current++;
-      }
-    },
-    4000,
-    [isLocked, atBootsplash],
-    true
-  );
+  const animationIntervalRef = useRef<NodeJS.Timeout>();
+
+  const playAnimation = useCallback(() => {
+    if (animationPlayedTimesCount.current < 3) {
+      earnIconTranslateYRef.current.setValue(formatSize(-8));
+      Animated.spring(earnIconTranslateYRef.current, { toValue: 0, friction: 2, useNativeDriver: true }).start();
+      animationPlayedTimesCount.current++;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLocked && !atBootsplash && !isLoaderBeingShown) {
+      playAnimation();
+      animationIntervalRef.current = setInterval(playAnimation, 4000);
+    }
+
+    return () => void (isDefined(animationIntervalRef.current) && clearInterval(animationIntervalRef.current));
+  }, [isLocked, atBootsplash, isLoaderBeingShown, playAnimation]);
+
   useEffect(() => {
     if (isLocked || atBootsplash) {
       animationPlayedTimesCount.current = 0;
