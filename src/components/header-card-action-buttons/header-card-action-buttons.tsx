@@ -88,7 +88,6 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
     return () => void clearInterval(animationInterval);
   }, [isLocked, atBootsplash, isLoaderBeingShown, playAnimation]);
 
-
   const earnButtonStylesOverrides = useMemo(
     () => ({
       ...actionButtonStylesOverrides,
