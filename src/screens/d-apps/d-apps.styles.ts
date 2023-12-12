@@ -12,10 +12,12 @@ export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
   text: {
     ...typography.body15Semibold,
     color: colors.black,
-    paddingHorizontal: formatSize(16)
+    paddingHorizontal: formatSize(16),
+    marginVertical: formatSize(12)
   },
   dappBlockWrapper: {
-    paddingHorizontal: formatSize(16)
+    paddingHorizontal: formatSize(16),
+    marginBottom: formatSize(12)
   },
   dappIcon: {
     marginLeft: formatSize(24)

@@ -8,6 +8,10 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
     paddingBottom: formatSize(16),
     paddingLeft: formatSize(16)
   },
+  adContainer: {
+    paddingBottom: formatSize(12),
+    paddingHorizontal: formatSize(16)
+  },
   sectionHeaderText: {
     ...typography.numbersMedium13,
     color: colors.gray2,
@@ -22,8 +26,11 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
   centeredItem: {
     alignSelf: 'center'
   },
-  initialLoader: {
-    paddingTop: formatSize(128)
+  emptyListWrapper: {
+    alignItems: 'center'
+  },
+  loaderWrapper: {
+    paddingTop: formatSize(56)
   },
   additionalLoader: {
     paddingTop: formatSize(16)

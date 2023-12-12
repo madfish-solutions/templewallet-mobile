@@ -23,7 +23,7 @@
     "find-deadcode": "ts-prune --error"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "dependencies": {
     "@airgap/beacon-sdk": "4.0.10",
@@ -50,13 +50,13 @@
     "@reduxjs/toolkit": "^1.8.5",
     "@sentry/react-native": "5.9.1",
     "@shopify/flash-list": "^1.6.1",
-    "@taquito/local-forging": "17.3.0",
-    "@taquito/rpc": "17.3.0",
-    "@taquito/signer": "17.3.0",
-    "@taquito/taquito": "17.3.0",
-    "@taquito/tzip12": "17.3.0",
-    "@taquito/tzip16": "17.3.0",
-    "@taquito/utils": "17.3.0",
+    "@taquito/local-forging": "17.1.1",
+    "@taquito/rpc": "17.1.1",
+    "@taquito/signer": "17.1.1",
+    "@taquito/taquito": "17.1.1",
+    "@taquito/tzip12": "17.1.1",
+    "@taquito/tzip16": "17.1.1",
+    "@taquito/utils": "17.1.1",
     "@temple-wallet/wallet-address-validator": "^0.4.3",
     "@tezos-domains/core": "1.26.0",
     "@tezos-domains/taquito-client": "1.26.0",
@@ -172,11 +172,12 @@
   "resolutions": {
     "@types/node": "16.11.1",
     "@types/react-native": "0.72.2",
-    "@taquito/taquito": "17.3.0",
-    "@taquito/utils": "17.3.0",
-    "@taquito/beacon-wallet": "17.3.0",
-    "@taquito/contracts-library": "17.3.0",
-    "@taquito/tzip16": "17.3.0",
+    "@taquito/taquito": "17.1.1",
+    "@taquito/utils": "17.1.1",
+    "@taquito/beacon-wallet": "17.1.1",
+    "@taquito/contracts-library": "17.1.1",
+    "@taquito/rpc": "17.1.1",
+    "@taquito/tzip16": "17.1.1",
     "@airgap/beacon-dapp": "link:./node_modules/.cache/null",
     "@airgap/beacon-ui": "link:./node_modules/.cache/null",
     "minimist": "^1.2.6",

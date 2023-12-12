@@ -108,7 +108,7 @@ export const MainStackScreen = memo(() => {
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
 
-  const { metadata } = useNetworkInfo();
+  const { isTezosNode, metadata } = useNetworkInfo();
 
   useEffect(() => {
     if (isEnableAdsBanner) {
@@ -164,8 +164,10 @@ export const MainStackScreen = memo(() => {
   ]);
 
   useAuthorisedInterval(() => {
-    dispatch(loadAllFarmsAndStakesAction());
-    dispatch(loadAllSavingsAndStakesAction());
+    if (isTezosNode) {
+      dispatch(loadAllFarmsAndStakesAction());
+      dispatch(loadAllSavingsAndStakesAction());
+    }
   }, APR_REFRESH_INTERVAL);
 
   const shouldShowUnauthorizedScreens = !isAuthorised;
