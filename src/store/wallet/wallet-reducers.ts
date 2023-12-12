@@ -4,6 +4,7 @@ import { uniqBy } from 'lodash-es';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
 import { AccountInterface } from 'src/interfaces/account.interface';
+import type { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isDcpNode } from 'src/utils/network.utils';
@@ -88,20 +89,21 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     updateCurrentAccountState(state, () => ({ tezosBalance }))
   );
 
-  builder.addCase(loadTokensActions.success, (state, { payload: tokensWithBalancesSlugs }) =>
+  builder.addCase(loadTokensActions.success, (state, { payload: { slugs, ofDcpNetwork } }) =>
     updateCurrentAccountState(state, currentAccount => {
-      const currentTokensSlugsAsMap = currentAccount.tokensList.reduce<Record<string, boolean>>((acc, token) => {
-        acc[token.slug] = true;
+      const sourceName = ofDcpNetwork ? 'dcpTokensList' : 'tokensList';
+      const currentSlugs = currentAccount[sourceName].map(({ slug }) => slug);
 
-        return acc;
-      }, {});
-      const newTokensSlugs = tokensWithBalancesSlugs.filter(newTokenSlug => !currentTokensSlugsAsMap[newTokenSlug]);
+      const newTokens = slugs.reduce<AccountTokenInterface[]>(
+        (acc, slug) =>
+          currentSlugs.includes(slug)
+            ? acc
+            : acc.concat({ slug, balance: '0', visibility: VisibilityEnum.InitiallyHidden }),
+        []
+      );
 
       return {
-        tokensList: [
-          ...currentAccount.tokensList,
-          ...newTokensSlugs.map(slug => ({ slug, balance: '0', visibility: VisibilityEnum.InitiallyHidden }))
-        ]
+        [sourceName]: [...currentAccount[sourceName], ...newTokens]
       };
     })
   );

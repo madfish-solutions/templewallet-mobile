@@ -105,8 +105,8 @@ const loadTokensWithBalancesEpic: Epic<Action, Action, RootState> = (action$, st
             })
           );
 
-          const isTezosNode = !isDcpNode(selectedRpcUrl);
-          const tokensList = (isTezosNode ? selectedAccountState.tokensList : selectedAccountState.dcpTokensList) ?? [];
+          const nodeIsDcp = isDcpNode(selectedRpcUrl);
+          const tokensList = (nodeIsDcp ? selectedAccountState.dcpTokensList : selectedAccountState.tokensList) ?? [];
 
           const accountTokensSlugs = tokensList.map(token => token.slug);
           const existingMetadataSlugs = Object.keys(metadataRecord);
@@ -115,7 +115,7 @@ const loadTokensWithBalancesEpic: Epic<Action, Action, RootState> = (action$, st
           const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !existingMetadataSlugs.includes(x));
 
           return [
-            loadTokensActions.success(tokensWithBalancesSlugs),
+            loadTokensActions.success({ slugs: tokensWithBalancesSlugs, ofDcpNetwork: nodeIsDcp }),
             assetWithoutMetadataSlugs.length
               ? loadTokensMetadataActions.submit(assetWithoutMetadataSlugs)
               : loadTokensMetadataActions.success(),

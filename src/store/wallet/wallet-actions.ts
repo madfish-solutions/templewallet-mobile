@@ -16,7 +16,9 @@ export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisi
   'wallet/SET_ACCOUNT_VISIBILITY'
 );
 
-export const loadTokensActions = createActions<void, string[], string>('assets/LOAD_TOKENS');
+export const loadTokensActions = createActions<void, { slugs: string[]; ofDcpNetwork?: boolean }, string>(
+  'assets/LOAD_TOKENS'
+);
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
 export const highPriorityLoadTokenBalanceAction = createAction<{ publicKeyHash: string; slug: string }>(

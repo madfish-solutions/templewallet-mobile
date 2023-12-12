@@ -38,6 +38,7 @@ const fetchTokensBalancesOnce = (selectedRpcUrl: string, account: string, limit:
     params: {
       account,
       'token.contract.ne': TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS,
+      'balance.gt': 0,
       'sort.desc': 'balance',
       limit,
       offset
