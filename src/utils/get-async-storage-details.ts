@@ -5,33 +5,28 @@ import { calculateStringSizeInBytes } from './string.utils';
 export const getAsyncStorageUsageDetails = async () => {
   const keys = await AsyncStorage.getAllKeys();
 
-  const records = await Promise.all(
-    keys.map(key =>
-      AsyncStorage.getItem(key).then(
-        val => [key, val] as const,
-        error => {
-          console.error(error);
-
-          return [key, Symbol()] as const;
-        }
-      )
-    )
-  );
-
   const sizesByKey: Record<string, number> = {};
   const oversizeForKeys: string[] = [];
   let totalValuesSize = 0;
 
-  for (const [key, value] of records) {
-    if (typeof value === 'symbol') {
-      oversizeForKeys.push(key);
-      continue;
-    }
+  for (const key of keys) {
+    try {
+      const value = await AsyncStorage.getItem(key);
 
-    const size = value ? calculateStringSizeInBytes(value) : 0;
-    totalValuesSize += size;
-    sizesByKey[key] = size;
+      const size = await calculateStringSizeInBytesAsync(value);
+
+      totalValuesSize += size;
+      sizesByKey[key] = size;
+    } catch (error) {
+      console.error(error);
+
+      oversizeForKeys.push(key);
+    }
   }
 
   return { totalValuesSize, sizesByKey, oversizeForKeys };
 };
+
+/** Synchronous calculation might get heavy on runtime with large values */
+const calculateStringSizeInBytesAsync = (value: string | null) =>
+  value ? new Promise<number>(resolve => void setTimeout(() => void resolve(calculateStringSizeInBytes(value)), 0)) : 0;

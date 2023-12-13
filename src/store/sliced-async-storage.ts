@@ -21,10 +21,14 @@ const getValueSlicesCount = (rootValue: string | nullish) => {
 
 const buildSliceKey = (rootKey: string, sliceIndex: number) => `${rootKey}__SLICE__${sliceIndex}`;
 
-const buildSlicesKeys = (rootKey: string, slicesCount: number) =>
-  new Array(slicesCount).fill(null).map((_, sliceIndex) => buildSliceKey(rootKey, sliceIndex));
+const EMPTY_SLICES_KEYS: string[] = [];
 
-const getSlicesKeys = async (rootKey: string) => {
+const buildSlicesKeys = (rootKey: string, slicesCount: number) =>
+  slicesCount
+    ? new Array(slicesCount).fill(null).map((_, sliceIndex) => buildSliceKey(rootKey, sliceIndex))
+    : EMPTY_SLICES_KEYS;
+
+const readSlicesKeys = async (rootKey: string) => {
   const rawRootValue = await AsyncStorage.getItem(rootKey);
 
   const slicesCount = getValueSlicesCount(rawRootValue);
@@ -76,31 +80,39 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
 
     return rootValue;
   },
+
   setItem: async (rootKey: string, value: string) => {
     assertKeyIsString(rootKey);
     assertValueIsString(value, rootKey);
 
-    const prevSlicesKeys = await getSlicesKeys(rootKey);
+    const prevSlicesKeys = await readSlicesKeys(rootKey);
 
     if (value.length <= MAX_SLICE_LENGTH) {
-      await AsyncStorage.setItem(rootKey, value);
-      await AsyncStorage.multiRemove(prevSlicesKeys);
+      await Promise.all([
+        AsyncStorage.setItem(rootKey, value),
+        // Removing possible leftovers
+        AsyncStorage.multiRemove(prevSlicesKeys)
+      ]);
     } else {
       const slicesCount = Math.ceil(value.length / MAX_SLICE_LENGTH);
 
       const slices: StringRecord = {
         [rootKey]: `${SLICED_ROOT_VALUE_PREFIX}${slicesCount}`
       };
-      for (let sliceIndex = 0; sliceIndex < slicesCount; sliceIndex++) {
-        const key = buildSliceKey(rootKey, sliceIndex);
-        const val = value.slice(sliceIndex * MAX_SLICE_LENGTH, (sliceIndex + 1) * MAX_SLICE_LENGTH);
+      for (let i = 0; i < slicesCount; i++) {
+        const key = buildSliceKey(rootKey, i);
+        const val = value.slice(i * MAX_SLICE_LENGTH, (i + 1) * MAX_SLICE_LENGTH);
         slices[key] = val;
       }
 
-      await AsyncStorage.multiSet(Object.entries(slices));
-      await AsyncStorage.multiRemove(prevSlicesKeys.filter(key => !slices[key]));
+      await Promise.all([
+        AsyncStorage.multiSet(Object.entries(slices)),
+        // Removing possible leftovers
+        AsyncStorage.multiRemove(prevSlicesKeys.filter(key => !slices[key]))
+      ]);
     }
   },
+
   removeItem: async (rootKey: string) => {
     assertKeyIsString(rootKey);
     const rawRootValue = await AsyncStorage.getItem(rootKey);

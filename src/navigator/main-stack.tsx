@@ -19,7 +19,7 @@ import {
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
-import { isAndroid } from 'src/config/system';
+import { EMPTY_PUBLIC_KEY_HASH, isAndroid } from 'src/config/system';
 import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
@@ -123,6 +123,10 @@ export const MainStackScreen = memo(() => {
   const blockSubscription = useBlockSubscription();
 
   useEffect(() => {
+    if (!selectedAccountPkh || selectedAccountPkh === EMPTY_PUBLIC_KEY_HASH) {
+      return;
+    }
+
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadTokensBalancesArrayActions.submit());
   }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl]);
