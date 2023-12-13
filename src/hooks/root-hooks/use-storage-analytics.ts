@@ -12,7 +12,7 @@ export const useStorageAnalytics = () => {
       void getAsyncStorageUsageDetails().then(details =>
         trackEvent('STORAGES_STATE', AnalyticsEventCategory.General, { asyncStorage: details })
       ),
-    30000,
+    90000,
     [trackEvent]
   );
 };

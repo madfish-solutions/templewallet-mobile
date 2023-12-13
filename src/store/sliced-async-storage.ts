@@ -73,9 +73,7 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
       const slicesPairs = await AsyncStorage.multiGet(slicesKeys);
 
       // (!) Don't use `Array.join('')` here - it is slower
-      const result = slicesPairs.reduce((acc, curr) => acc + curr ?? '', '');
-
-      return result;
+      return slicesPairs.reduce((acc, curr) => acc + curr ?? '', '');
     }
 
     return rootValue;
@@ -101,8 +99,7 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
       };
       for (let i = 0; i < slicesCount; i++) {
         const key = buildSliceKey(rootKey, i);
-        const val = value.slice(i * MAX_SLICE_LENGTH, (i + 1) * MAX_SLICE_LENGTH);
-        slices[key] = val;
+        slices[key] = value.slice(i * MAX_SLICE_LENGTH, (i + 1) * MAX_SLICE_LENGTH);
       }
 
       await Promise.all([
