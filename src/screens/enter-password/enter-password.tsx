@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
 import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { ImageBackground, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ABTestGroup } from 'src/apis/temple-wallet';
@@ -8,14 +8,15 @@ import { useBiometryAvailability } from 'src/biometry/use-biometry-availability.
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from 'src/components/button/button-link/button-link';
 import { Divider } from 'src/components/divider/divider';
-import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { LogoWithText } from 'src/components/icon/logo-with-text';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { MAX_PASSWORD_ATTEMPTS } from 'src/config/security';
+import { isIOS } from 'src/config/system';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
@@ -72,18 +73,34 @@ export const EnterPassword = () => {
   }, [dispatch, groupName]);
 
   return (
-    <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>
-      <View style={styles.imageView}>
+    <ScreenContainer
+      style={styles.root}
+      contentContainerStyle={styles.scrollViewContentContainer}
+      keyboardBehavior="padding"
+      isFullScreenMode={true}
+    >
+      <ImageBackground
+        resizeMode={isIOS ? 'contain' : 'cover'}
+        source={require('src/components/icon/assets/background/christmas-bg.png')}
+        style={styles.bg}
+      >
         <InsetSubstitute />
-        <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
-      </View>
+
+        <View style={styles.imageView}>
+          <LogoWithText width={formatSize(248)} height={formatSize(104)} style={styles.logo} />
+        </View>
+
+        <Divider size={formatSize(121)} />
+
+        <Quote
+          quote="The only function of economic forecasting is to make astrology look more respectable."
+          author="John Kenneth Galbraith"
+        />
+      </ImageBackground>
+
       <Divider />
-      <Quote
-        quote="The only function of economic forecasting is to make astrology look more respectable."
-        author="John Kenneth Galbraith"
-      />
-      <Divider />
-      <View>
+
+      <View style={styles.footer}>
         <Formik
           initialValues={enterPasswordInitialValues}
           validationSchema={enterPasswordValidationSchema}
@@ -132,7 +149,7 @@ export const EnterPassword = () => {
         <Text style={styles.bottomText}>Having troubles?</Text>
         <Divider size={formatSize(4)} />
         <ButtonLink
-          title="Erase Data"
+          title="Reset a wallet"
           onPress={handleResetDataButtonPress}
           testID={EnterPasswordSelectors.eraseDataButtonLink}
         />
