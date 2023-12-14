@@ -2,13 +2,14 @@ import { combineReducers } from '@reduxjs/toolkit';
 import type { CombinedState } from '@reduxjs/toolkit';
 import { Action, AnyAction, ReducersMapObject } from 'redux';
 import type { Reducer } from 'redux';
-import { createTransform, persistReducer } from 'redux-persist';
+import { createMigrate, createTransform, persistReducer } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { PersistConfig } from 'redux-persist/lib/types';
 import { on, reducer } from 'ts-action';
 
 import { persistFailHandler } from 'src/utils/redux';
 
+import { MIGRATIONS } from './migrations';
 import { resetApplicationAction } from './root-state.actions';
 import { rootStateReducersMap } from './root-state.map';
 import { SlicedAsyncStorage } from './sliced-async-storage';
@@ -43,10 +44,11 @@ const PersistBlacklistTransform = createTransform(
 
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
-  version: 1,
+  version: 5,
   storage: SlicedAsyncStorage,
   stateReconciler: autoMergeLevel2,
   writeFailHandler: persistFailHandler,
+  migrate: createMigrate(MIGRATIONS, { debug: __DEV__ }),
   /**
    * Basic(out-of-the-box) config setting `blacklist: persistRootBlacklist`
    * does not work as expected (presumably for `AsyncStorage` case).

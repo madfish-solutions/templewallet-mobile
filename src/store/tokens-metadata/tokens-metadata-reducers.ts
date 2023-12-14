@@ -5,7 +5,6 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
-import { setNewTokensMetadata } from '../migration/migration-actions';
 
 import {
   addKnownSvg,
@@ -100,11 +99,5 @@ export const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensM
       ...state.knownSvgs,
       [url]: false
     }
-  }));
-
-  // MIGRATIONS
-  builder.addCase(setNewTokensMetadata, (state, { payload: metadataRecord }) => ({
-    ...state,
-    metadataRecord
   }));
 });

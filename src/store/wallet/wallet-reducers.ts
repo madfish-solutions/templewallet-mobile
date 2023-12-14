@@ -2,20 +2,11 @@ import { createReducer } from '@reduxjs/toolkit';
 import { uniqBy } from 'lodash-es';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { initialAccountState } from 'src/interfaces/account-state.interface';
 import type { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { isDefined } from 'src/utils/is-defined';
 import { isDcpNode } from 'src/utils/network.utils';
 
-import {
-  deleteOldIsShownDomainName,
-  deleteOldQuipuApy,
-  deleteOldTokensMetadata,
-  deleteOldTokenSuggestion,
-  migrateAccountsState
-} from '../migration/migration-actions';
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
 
 import {
@@ -151,66 +142,5 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
             dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
           }
     );
-  });
-
-  // MIGRATIONS
-  builder.addCase(deleteOldTokensMetadata, state => ({
-    ...state,
-    tokensMetadata: undefined
-  }));
-  builder.addCase(deleteOldTokenSuggestion, state => ({
-    ...state,
-    addTokenSuggestion: undefined
-  }));
-  builder.addCase(deleteOldIsShownDomainName, state => ({
-    ...state,
-    isShownDomainName: undefined
-  }));
-  builder.addCase(deleteOldQuipuApy, state => ({
-    ...state,
-    quipuApy: undefined
-  }));
-  builder.addCase(migrateAccountsState, state => {
-    if (state.accounts[0]?.isVisible === undefined) {
-      return state;
-    } else {
-      const accounts: AccountInterface[] = [];
-      const accountsStateRecord: Record<string, AccountStateInterface> = {};
-
-      for (const account of state.accounts) {
-        accountsStateRecord[account.publicKeyHash] = {
-          isVisible: account.isVisible ?? initialAccountState.isVisible,
-          tezosBalance: account.tezosBalance ?? initialAccountState.tezosBalance,
-          tokensList:
-            account.tokensList?.map(token =>
-              isDefined(token.isVisible)
-                ? {
-                    ...token,
-                    visibility: token.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden,
-                    isVisible: undefined
-                  }
-                : token
-            ) ?? initialAccountState.tokensList,
-          dcpTokensList: initialAccountState.dcpTokensList,
-          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
-        };
-
-        accounts.push({
-          ...account,
-          isVisible: undefined,
-          tezosBalance: undefined,
-          tokensList: undefined,
-          removedTokensList: undefined,
-          activityGroups: undefined,
-          pendingActivities: undefined
-        });
-      }
-
-      return {
-        ...state,
-        accounts,
-        accountsStateRecord
-      };
-    }
   });
 });

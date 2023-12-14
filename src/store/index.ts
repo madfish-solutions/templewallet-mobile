@@ -11,7 +11,6 @@ import { dAppsEpics } from './d-apps/d-apps-epics';
 import { exolixEpics } from './exolix/exolix-epics';
 import { farmsEpics } from './farms/epics';
 import { marketEpics } from './market/market-epics';
-import { migrationEpics } from './migration/migration-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
 import { partnersPromotionEpics } from './partners-promotion/partners-promotion-epics';
 import { rootStateEpics } from './root-state.epics';
@@ -32,7 +31,6 @@ export const { store, persistor } = createStore(
   settingsEpic,
   currencyEpics,
   securityEpics,
-  migrationEpics,
   advertisingEpics,
   marketEpics,
   notificationsEpics,
