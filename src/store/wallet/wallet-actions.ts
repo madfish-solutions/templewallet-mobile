@@ -30,6 +30,7 @@ export const loadTokensBalancesArrayActions = createActions<
   string
 >('assets/LOAD_TOKENS_BALANCES');
 
+/** TODO: add `ofDcpNetwork` flag to payload */
 export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
 export const toggleTokenVisibilityAction = createAction<{ slug: string; selectedRpcUrl: string }>(

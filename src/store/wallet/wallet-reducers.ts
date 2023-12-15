@@ -1,9 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { uniqBy } from 'lodash-es';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
-import type { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 
@@ -22,12 +20,7 @@ import {
   loadTokensBalancesArrayActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
-import {
-  pushOrUpdateTokensBalances,
-  toggleTokenVisibility,
-  updateAccountState,
-  updateCurrentAccountState
-} from './wallet-state.utils';
+import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
@@ -43,108 +36,119 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     )
   }));
 
-  builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) =>
-    updateAccountState(state, publicKeyHash, account => ({
-      ...account,
-      isVisible
-    }))
-  );
+  builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) => {
+    const accountState = retrieveAccountState(state, publicKeyHash);
 
-  builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) => ({
-    ...state,
-    accountsStateRecord: Object.keys(state.accountsStateRecord).reduce((accountsState, publicHash) => {
-      return {
-        ...accountsState,
-        [publicHash]: {
-          ...accountsState[publicHash],
-          tokensList: uniqBy(
-            [
-              // `tokensList` appeared to be undefined once
-              ...(accountsState[publicHash].tokensList ?? []),
-              ...tokensMetadata.map(token => ({
-                slug: toTokenSlug(token.contractAddress, token.fa2TokenId),
-                balance: '0',
-                visibility: VisibilityEnum.InitiallyHidden
-              }))
-            ],
-            'slug'
-          )
+    if (accountState) {
+      accountState.isVisible = isVisible;
+    }
+  });
+
+  builder.addCase(loadWhitelistAction.success, (state, { payload }) => {
+    for (const accountState of Object.values(state.accountsStateRecord)) {
+      if (!accountState.tokensList) {
+        // `tokensList` appeared to be undefined once
+        console.warn('Tokens list absent for some account state');
+        accountState.tokensList = [];
+      }
+      const currentSlugs = new Set(accountState.tokensList.map(({ slug }) => slug));
+
+      for (const token of payload) {
+        const slug = toTokenSlug(token.contractAddress, token.fa2TokenId);
+        if (!currentSlugs.has(slug)) {
+          accountState.tokensList.push({
+            slug,
+            balance: '0',
+            visibility: VisibilityEnum.InitiallyHidden
+          });
         }
-      };
-    }, state.accountsStateRecord)
-  }));
+      }
+    }
+  });
 
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
     selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
   }));
 
-  builder.addCase(loadTezosBalanceActions.success, (state, { payload: tezosBalance }) =>
-    updateCurrentAccountState(state, () => ({ tezosBalance }))
-  );
+  builder.addCase(loadTezosBalanceActions.success, (state, { payload }) => {
+    const accountState = retrieveAccountState(state);
+    if (accountState) {
+      accountState.tezosBalance = payload;
+    }
+  });
 
-  builder.addCase(loadTokensActions.success, (state, { payload: { slugs, ofDcpNetwork } }) =>
-    updateCurrentAccountState(state, currentAccount => {
-      const sourceName = ofDcpNetwork ? 'dcpTokensList' : 'tokensList';
-      const currentSlugs = currentAccount[sourceName].map(({ slug }) => slug);
+  builder.addCase(loadTokensActions.success, (state, { payload: { slugs, ofDcpNetwork } }) => {
+    const accountState = retrieveAccountState(state);
+    if (!accountState) {
+      return;
+    }
 
-      const newTokens = slugs.reduce<AccountTokenInterface[]>(
-        (acc, slug) =>
-          currentSlugs.includes(slug)
-            ? acc
-            : acc.concat({ slug, balance: '0', visibility: VisibilityEnum.InitiallyHidden }),
-        []
-      );
+    const tokens = accountState[ofDcpNetwork ? 'dcpTokensList' : 'tokensList'];
+    const currentSlugs = new Set(tokens.map(({ slug }) => slug));
 
-      return {
-        [sourceName]: [...currentAccount[sourceName], ...newTokens]
-      };
-    })
-  );
+    for (const slug of slugs) {
+      if (!currentSlugs.has(slug)) {
+        tokens.push({ slug, balance: '0', visibility: VisibilityEnum.InitiallyHidden });
+      }
+    }
+  });
 
   builder.addCase(
     loadTokensBalancesArrayActions.success,
     (state, { payload: { publicKeyHash, data, selectedRpcUrl } }) => {
-      const isTezosNode = !isDcpNode(selectedRpcUrl);
+      const accountState = retrieveAccountState(state, publicKeyHash);
+      if (!accountState) {
+        return;
+      }
 
-      return updateAccountState(state, publicKeyHash, account =>
-        isTezosNode
-          ? {
-              tokensList: pushOrUpdateTokensBalances(account.tokensList, data)
-            }
-          : {
-              dcpTokensList: pushOrUpdateTokensBalances(account.dcpTokensList, data)
-            }
-      );
+      if (isDcpNode(selectedRpcUrl)) {
+        accountState.dcpTokensList = pushOrUpdateTokensBalances(accountState.dcpTokensList, data);
+      } else {
+        accountState.tokensList = pushOrUpdateTokensBalances(accountState.tokensList, data);
+      }
     }
   );
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
+    const accountState = retrieveAccountState(state);
+    if (!accountState) {
+      return;
+    }
+
     const slug = getTokenSlug(tokenMetadata);
 
-    return updateCurrentAccountState(state, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, [{ slug, balance: '0' }]),
-      removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
-    }));
+    const removedI = accountState.removedTokensList.findIndex(s => s === slug);
+    if (removedI > -1) {
+      accountState.removedTokensList.splice(removedI, 1);
+    }
+
+    if (!accountState.tokensList.some(t => t.slug === slug)) {
+      accountState.tokensList.push({
+        slug,
+        balance: '0',
+        visibility: VisibilityEnum.InitiallyHidden
+      });
+    }
   });
 
-  builder.addCase(removeTokenAction, (state, { payload: slug }) =>
-    updateCurrentAccountState(state, currentAccount => ({
-      removedTokensList: [...currentAccount.removedTokensList, slug]
-    }))
-  );
+  builder.addCase(removeTokenAction, (state, { payload: slug }) => {
+    const accountState = retrieveAccountState(state);
+
+    if (accountState && !accountState.removedTokensList.includes(slug)) {
+      accountState.removedTokensList.push(slug);
+    }
+  });
 
   builder.addCase(toggleTokenVisibilityAction, (state, { payload: { slug, selectedRpcUrl } }) => {
-    const isTezosNode = !isDcpNode(selectedRpcUrl);
+    const accountState = retrieveAccountState(state);
 
-    return updateCurrentAccountState(state, currentAccount =>
-      isTezosNode
-        ? {
-            tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
-          }
-        : {
-            dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
-          }
+    const token = accountState?.[isDcpNode(selectedRpcUrl) ? 'dcpTokensList' : 'tokensList']?.find(
+      t => t.slug === slug
     );
+
+    if (token) {
+      token.visibility = token.visibility === VisibilityEnum.Visible ? VisibilityEnum.Hidden : VisibilityEnum.Visible;
+    }
   });
 });
