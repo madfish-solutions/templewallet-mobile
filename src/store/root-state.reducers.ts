@@ -2,7 +2,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import type { CombinedState } from '@reduxjs/toolkit';
 import { Action, AnyAction, ReducersMapObject } from 'redux';
 import type { Reducer } from 'redux';
-import { createMigrate, createTransform, persistReducer } from 'redux-persist';
+import { createMigrate, persistReducer } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import { PersistConfig } from 'redux-persist/lib/types';
 import { on, reducer } from 'ts-action';
@@ -34,13 +34,14 @@ const buildRootStateReducer = <S, A extends Action = AnyAction>(
 
 export const rootReducer = buildRootStateReducer(rootStateReducersMap);
 
-const persistRootBlacklist: (keyof RootState)[] = ['buyWithCreditCard', 'exolix', 'farms', 'savings', 'collectibles'];
-
-const PersistBlacklistTransform = createTransform(
-  () => void 0,
-  () => void 0,
-  { whitelist: persistRootBlacklist }
-);
+const persistConfigBlacklist: (keyof RootState)[] = [
+  'buyWithCreditCard',
+  'exolix',
+  'farms',
+  'savings',
+  'collectibles',
+  'tokensMetadata'
+];
 
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
@@ -50,13 +51,11 @@ const persistConfig: PersistConfig<RootState> = {
   writeFailHandler: persistFailHandler,
   migrate: createMigrate(MIGRATIONS, { debug: __DEV__ }),
   /**
-   * Basic(out-of-the-box) config setting `blacklist: persistRootBlacklist`
-   * does not work as expected (presumably for `AsyncStorage` case).
-   *
-   * It does not respect new-added blacklisted slices for a while after app launch.
-   * Results in misrepresented store state.
+   * (!) With async storage, rehydration is done after initial state is set.
+   * And new-added blacklisted slices might not be applied correctly.
+   * Be careful with store architecture changes - migration might be needed.
    */
-  transforms: [PersistBlacklistTransform]
+  blacklist: persistConfigBlacklist
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

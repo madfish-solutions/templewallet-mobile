@@ -32,7 +32,7 @@ interface WhitelistResponse {
   logoURI: string;
   name: string;
   timestamp: string;
-  tokens?: Array<TokenListItem>;
+  tokens?: WhitelistTokensItem[];
   version: {
     major: number;
     minor: number;
@@ -40,7 +40,7 @@ interface WhitelistResponse {
   };
 }
 
-interface TokenListItem {
+export interface WhitelistTokensItem {
   contractAddress: 'tez' | string;
   fa2TokenId?: number;
   network: 'mainnet' | string;
@@ -67,13 +67,9 @@ const transformDataToTokenMetadata = (
   artifactUri: token.artifactUri
 });
 
-const transformWhitelistToTokenMetadata = (
-  token: TokenListItem,
-  address: string,
-  id: number
-): TokenMetadataInterface => ({
-  id,
-  address,
+export const transformWhitelistToTokenMetadata = (token: WhitelistTokensItem): TokenMetadataInterface => ({
+  id: token.fa2TokenId ?? 0,
+  address: token.contractAddress,
   decimals: token.metadata.decimals,
   symbol: token.metadata.symbol ?? token.metadata.name?.substring(0, 8) ?? '???',
   name: token.metadata.name ?? token.metadata.symbol ?? 'Unknown Token',
@@ -92,15 +88,13 @@ export const useTokenMetadataGetter = () => {
   );
 };
 
-export const loadWhitelist$ = (selectedRpc: string): Observable<Array<TokenMetadataInterface>> =>
+export const loadWhitelist$ = (selectedRpc: string) =>
   isDcpNode(selectedRpc)
     ? from([])
     : from(whitelistApi.get<WhitelistResponse>('tokens/quipuswap.whitelist.json')).pipe(
         map(({ data }) =>
           isDefined(data.tokens)
-            ? data.tokens
-                .filter(x => x.contractAddress !== 'tez')
-                .map(token => transformWhitelistToTokenMetadata(token, token.contractAddress, token.fa2TokenId ?? 0))
+            ? data.tokens.filter(x => x.contractAddress !== 'tez') // .map(token => transformWhitelistToTokenMetadata(token, token.contractAddress, token.fa2TokenId ?? 0))
             : []
         )
       );
