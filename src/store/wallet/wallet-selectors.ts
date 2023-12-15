@@ -53,7 +53,7 @@ export const useRawCurrentAccountSelector = () =>
 /** @deprecated */
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
-const useAllCurrentAccountAssetsSelector = () =>
+export const useAllCurrentAccountAssetsSelector = () =>
   useSelector(
     state => {
       const account = state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash];

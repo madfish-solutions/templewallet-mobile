@@ -12,15 +12,14 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
 import {
-  TOKENS_SYNC_INTERVAL,
   RATES_SYNC_INTERVAL,
   SELECTED_BAKER_SYNC_INTERVAL,
   NOTIFICATIONS_SYNC_INTERVAL,
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
-import { EMPTY_PUBLIC_KEY_HASH, isAndroid } from 'src/config/system';
-import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
+import { isAndroid } from 'src/config/system';
+import { useMainHooks } from 'src/hooks/main-hooks';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
@@ -78,11 +77,6 @@ import { loadNotificationsAction } from 'src/store/notifications/notifications-a
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
-import {
-  loadTokensActions,
-  loadTezosBalanceActions,
-  loadTokensBalancesArrayActions
-} from 'src/store/wallet/wallet-actions';
 import { useIsAuthorisedSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
@@ -120,16 +114,7 @@ export const MainStackScreen = memo(() => {
   useBeaconHandler();
   useNFTDynamicLinks();
 
-  const blockSubscription = useBlockSubscription();
-
-  useEffect(() => {
-    if (!selectedAccountPkh || selectedAccountPkh === EMPTY_PUBLIC_KEY_HASH) {
-      return;
-    }
-
-    dispatch(loadTezosBalanceActions.submit());
-    dispatch(loadTokensBalancesArrayActions.submit());
-  }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl]);
+  useMainHooks();
 
   useEffect(() => {
     if (atBootsplash || isLocked) {
@@ -153,10 +138,6 @@ export const MainStackScreen = memo(() => {
   }, [navigate, isLocked, atBootsplash]);
 
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
-  useAuthorisedInterval(() => dispatch(loadTokensActions.submit()), TOKENS_SYNC_INTERVAL, [
-    selectedAccountPkh,
-    selectedRpcUrl
-  ]);
   useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, [
     selectedAccountPkh,
     selectedRpcUrl

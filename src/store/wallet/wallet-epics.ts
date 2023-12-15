@@ -1,51 +1,32 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { uniq } from 'lodash-es';
 import { Action } from 'redux';
 import { Epic, combineEpics } from 'redux-observable';
 import { EMPTY, from, of } from 'rxjs';
-import { catchError, concatMap, delay, map, switchMap } from 'rxjs/operators';
+import { catchError, delay, map, switchMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { TokenBalanceResponse } from 'src/interfaces/token-balance-response.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
-import { isDcpNode } from 'src/utils/network.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
-import {
-  loadAssetBalance$,
-  loadTokensBalancesArrayFromTzkt$,
-  loadTezosBalance$,
-  loadTokensWithBalance$
-} from 'src/utils/token-balance.utils';
-import { withMetadataSlugs } from 'src/utils/token-metadata.utils';
+import { loadAssetBalance$, loadTokensBalancesArrayFromTzkt$, loadTezosBalance$ } from 'src/utils/token-balance.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
-import { withSelectedAccount, withSelectedAccountState, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import { loadSelectedBakerActions } from '../baking/baking-actions';
 import { navigateAction } from '../root-state.actions';
-import { loadTokensMetadataActions } from '../tokens-metadata/tokens-metadata-actions';
 import type { RootState } from '../types';
 
 import {
-  addTokenAction,
   highPriorityLoadTokenBalanceAction,
   loadTezosBalanceActions,
   loadTokensBalancesArrayActions,
-  loadTokensActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
-
-const updateDataActions = () => [
-  loadTezosBalanceActions.submit(),
-  loadTokensActions.submit(),
-  loadSelectedBakerActions.submit()
-];
 
 const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
@@ -88,45 +69,6 @@ const loadTokensBalancesEpic: Epic<Action, Action, RootState> = (action$, state$
     )
   );
 
-const loadTokensWithBalancesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
-  action$.pipe(
-    ofType(loadTokensActions.submit),
-    withSelectedAccount(state$),
-    withSelectedAccountState(state$),
-    withMetadataSlugs(state$),
-    withSelectedRpcUrl(state$),
-    switchMap(([[[[, selectedAccount], selectedAccountState], metadataRecord], selectedRpcUrl]) =>
-      loadTokensWithBalance$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
-        concatMap(tokensWithBalance => {
-          const tokensWithBalancesSlugs = tokensWithBalance.map(tokenWithBalance =>
-            getTokenSlug({
-              address: tokenWithBalance.token.contract.address,
-              id: tokenWithBalance.token.tokenId
-            })
-          );
-
-          const nodeIsDcp = isDcpNode(selectedRpcUrl);
-          const tokensList = (nodeIsDcp ? selectedAccountState.dcpTokensList : selectedAccountState.tokensList) ?? [];
-
-          const accountTokensSlugs = tokensList.map(token => token.slug);
-          const existingMetadataSlugs = Object.keys(metadataRecord);
-
-          const allTokensSlugs = uniq([...accountTokensSlugs, ...tokensWithBalancesSlugs]);
-          const assetWithoutMetadataSlugs = allTokensSlugs.filter(x => !existingMetadataSlugs.includes(x));
-
-          return [
-            loadTokensActions.success({ slugs: tokensWithBalancesSlugs, ofDcpNetwork: nodeIsDcp }),
-            assetWithoutMetadataSlugs.length
-              ? loadTokensMetadataActions.submit(assetWithoutMetadataSlugs)
-              : loadTokensMetadataActions.success(),
-            loadTokensBalancesArrayActions.submit()
-          ];
-        }),
-        catchError(err => of(loadTokensActions.fail(err.message)))
-      )
-    )
-  );
-
 const loadTezosBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
@@ -162,8 +104,6 @@ const sendAssetEpic: Epic<Action, Action, RootState> = (action$, state$) =>
     )
   );
 
-const BCD_INDEXING_DELAY = 15000;
-
 const waitForOperationCompletionEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(waitForOperationCompletionAction),
@@ -172,31 +112,24 @@ const waitForOperationCompletionEpic: Epic<Action, Action, RootState> = (action$
     switchMap(([{ opHash, sender }, rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
+        // delay(BCD_INDEXING_DELAY),
+        // concatMap(updateDataActions),
+        switchMap(() => EMPTY),
         catchError(err => {
-          if (err.message === 'Confirmation polling timed out') {
-            return of(undefined);
-          } else {
-            throw new Error(err.message);
+          if (err.message !== 'Confirmation polling timed out') {
+            showErrorToast({ description: err?.message ?? 'Confirmation error' });
           }
-        }),
-        delay(BCD_INDEXING_DELAY),
-        concatMap(updateDataActions),
-        catchError(err => {
-          showErrorToast({ description: err.message });
 
           return EMPTY;
         })
       )
     )
   );
-const addTokenMetadataEpic: Epic = action$ => action$.pipe(ofType(addTokenAction), concatMap(updateDataActions));
 
 export const walletEpics = combineEpics(
   highPriorityLoadTokenBalanceEpic,
   loadTokensBalancesEpic,
   loadTezosBalanceEpic,
-  loadTokensWithBalancesEpic,
   sendAssetEpic,
-  waitForOperationCompletionEpic,
-  addTokenMetadataEpic
+  waitForOperationCompletionEpic
 );

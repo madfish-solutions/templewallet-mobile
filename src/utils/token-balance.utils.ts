@@ -45,7 +45,7 @@ const fetchTokensBalancesOnce = (selectedRpcUrl: string, account: string, limit:
     }
   });
 
-export const loadTokensWithBalance$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
+const loadTokensWithBalance$ = (selectedRpcUrl: string, accountPublicKeyHash: string) =>
   from(fetchAllTokensBalances(selectedRpcUrl, accountPublicKeyHash));
 
 const mapTzktTokenBalance = (tztkBalances: Array<TzktAccountTokenBalance>) =>

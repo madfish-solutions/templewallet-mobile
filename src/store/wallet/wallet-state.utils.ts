@@ -22,11 +22,9 @@ export const retrieveAccountState = (state: Draft<WalletState>, pkh = state.sele
 };
 
 export const pushOrUpdateTokensBalances = (
-  initialTokensList: AccountTokenInterface[],
+  initialTokensList: Draft<AccountTokenInterface>[],
   newBalances: TokenBalanceResponse[]
 ) => {
-  const result: AccountTokenInterface[] = [];
-
   const newBalancesBySlugs = newBalances.reduce<Record<string, string>>((acc, { slug, balance }) => {
     acc[slug] = balance;
 
@@ -37,29 +35,21 @@ export const pushOrUpdateTokensBalances = (
     const balance = newBalancesBySlugs[token.slug];
 
     if (isDefined(balance)) {
-      result.push({
-        ...token,
-        balance,
-        visibility:
-          // Note: changing visibility status on non-zero balance. Might've been a mistake
-          balance !== '0' && token.visibility === VisibilityEnum.InitiallyHidden
-            ? VisibilityEnum.Visible
-            : token.visibility
-      });
+      token.balance = balance;
+      token.visibility = // Note: changing visibility status on non-zero balance. Might've been a mistake
+        balance !== '0' && token.visibility === VisibilityEnum.InitiallyHidden
+          ? VisibilityEnum.Visible
+          : token.visibility;
 
       delete newBalancesBySlugs[token.slug];
-    } else {
-      result.push(token);
     }
   }
 
-  result.push(
-    ...Object.entries(newBalancesBySlugs).map(([slug, balance]) => ({
+  for (const [slug, balance] of Object.entries(newBalancesBySlugs)) {
+    initialTokensList.push({
       slug,
       balance,
       visibility: balance === '0' ? VisibilityEnum.InitiallyHidden : VisibilityEnum.Visible
-    }))
-  );
-
-  return result;
+    });
+  }
 };

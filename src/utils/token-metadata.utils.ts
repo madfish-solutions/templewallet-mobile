@@ -3,12 +3,11 @@ import { chunk } from 'lodash-es';
 import memoizee from 'memoizee';
 import { useCallback } from 'react';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { map, filter, withLatestFrom } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
 
 import { tezosMetadataApi, whitelistApi } from 'src/api.service';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import type { RootState } from 'src/store/types';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import type { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -92,11 +91,7 @@ export const loadWhitelist$ = (selectedRpc: string) =>
   isDcpNode(selectedRpc)
     ? from([])
     : from(whitelistApi.get<WhitelistResponse>('tokens/quipuswap.whitelist.json')).pipe(
-        map(({ data }) =>
-          isDefined(data.tokens)
-            ? data.tokens.filter(x => x.contractAddress !== 'tez') // .map(token => transformWhitelistToTokenMetadata(token, token.contractAddress, token.fa2TokenId ?? 0))
-            : []
-        )
+        map(({ data }) => data.tokens?.filter(x => x.contractAddress !== 'tez') ?? [])
       );
 
 export const loadTokenMetadata$ = memoizee(
@@ -171,13 +166,3 @@ export const applySortByDollarValueDecrease: <T extends SortableByDollarAsset>(a
 
     return bDollarValue.minus(aDollarValue).toNumber();
   });
-
-export const withMetadataSlugs =
-  <T>(state$: Observable<RootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { tokensMetadata }): [T, Record<string, TokenMetadataInterface>] => [
-        value,
-        tokensMetadata.metadataRecord
-      ])
-    );

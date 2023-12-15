@@ -11,7 +11,6 @@ import {
   addHdAccountAction,
   addTokenAction,
   loadTezosBalanceActions,
-  loadTokensActions,
   removeTokenAction,
   setSelectedAccountAction,
   toggleTokenVisibilityAction,
@@ -78,22 +77,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }
   });
 
-  builder.addCase(loadTokensActions.success, (state, { payload: { slugs, ofDcpNetwork } }) => {
-    const accountState = retrieveAccountState(state);
-    if (!accountState) {
-      return;
-    }
-
-    const tokens = accountState[ofDcpNetwork ? 'dcpTokensList' : 'tokensList'];
-    const currentSlugs = new Set(tokens.map(({ slug }) => slug));
-
-    for (const slug of slugs) {
-      if (!currentSlugs.has(slug)) {
-        tokens.push({ slug, balance: '0', visibility: VisibilityEnum.InitiallyHidden });
-      }
-    }
-  });
-
   builder.addCase(
     loadTokensBalancesArrayActions.success,
     (state, { payload: { publicKeyHash, data, selectedRpcUrl } }) => {
@@ -102,11 +85,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
         return;
       }
 
-      if (isDcpNode(selectedRpcUrl)) {
-        accountState.dcpTokensList = pushOrUpdateTokensBalances(accountState.dcpTokensList, data);
-      } else {
-        accountState.tokensList = pushOrUpdateTokensBalances(accountState.tokensList, data);
-      }
+      pushOrUpdateTokensBalances(
+        isDcpNode(selectedRpcUrl) ? accountState.dcpTokensList : accountState.tokensList,
+        data
+      );
     }
   );
 
