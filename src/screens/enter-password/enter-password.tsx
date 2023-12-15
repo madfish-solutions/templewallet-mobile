@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { ImageBackground, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -8,6 +8,8 @@ import { useBiometryAvailability } from 'src/biometry/use-biometry-availability.
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from 'src/components/button/button-link/button-link';
 import { Divider } from 'src/components/divider/divider';
+import ChristmasBgDark from 'src/components/icon/assets/background/christmas-bg-dark.png';
+import ChristmasBgLight from 'src/components/icon/assets/background/christmas-bg-light.png';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { LogoWithText } from 'src/components/icon/logo-with-text';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
@@ -21,11 +23,12 @@ import { FormPasswordInput } from 'src/form/form-password-input';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
 import { useResetDataHandler } from 'src/hooks/use-reset-data-handler.hook';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { OverlayEnum } from 'src/navigator/enums/overlay.enum';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { getUserTestingGroupNameActions } from 'src/store/ab-testing/ab-testing-actions';
 import { useUserTestingGroupNameSelector } from 'src/store/ab-testing/ab-testing-selectors';
-import { useBiometricsEnabledSelector } from 'src/store/settings/settings-selectors';
+import { useBiometricsEnabledSelector, useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { ToastProvider } from 'src/toast/toast-provider';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -40,6 +43,7 @@ import { EnterPasswordSelectors } from './enter-password.selectors';
 import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
+  const theme = useThemeSelector();
   const styles = useEnterPasswordStyles();
   const groupName = useUserTestingGroupNameSelector();
   const dispatch = useDispatch();
@@ -56,6 +60,8 @@ export const EnterPassword = () => {
 
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
+
+  const christmasBgSource = useMemo(() => (theme === ThemesEnum.dark ? ChristmasBgDark : ChristmasBgLight), [theme]);
 
   const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
 
@@ -79,11 +85,7 @@ export const EnterPassword = () => {
       keyboardBehavior="padding"
       isFullScreenMode={true}
     >
-      <ImageBackground
-        resizeMode={isIOS ? 'contain' : 'cover'}
-        source={require('src/components/icon/assets/background/christmas-bg.png')}
-        style={styles.bg}
-      >
+      <ImageBackground resizeMode={isIOS ? 'contain' : 'cover'} source={christmasBgSource} style={styles.bg}>
         <InsetSubstitute />
 
         <View style={styles.imageView}>

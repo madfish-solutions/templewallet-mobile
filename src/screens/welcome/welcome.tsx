@@ -4,6 +4,7 @@ import { View, Text, ImageBackground } from 'react-native';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
+import ChristmasBgLight from 'src/components/icon/assets/background/christmas-bg-light.png';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { LogoWithText } from 'src/components/icon/logo-with-text';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -29,11 +30,7 @@ export const Welcome = () => {
 
   return (
     <ScreenContainer contentContainerStyle={styles.scrollViewContentContainer} isFullScreenMode={true}>
-      <ImageBackground
-        resizeMode={isIOS ? 'contain' : 'cover'}
-        source={require('src/components/icon/assets/background/christmas-bg.png')}
-        style={styles.bg}
-      >
+      <ImageBackground resizeMode={isIOS ? 'contain' : 'cover'} source={ChristmasBgLight} style={styles.bg}>
         <InsetSubstitute />
 
         <View style={styles.imageView}>
