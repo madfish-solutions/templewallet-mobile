@@ -112,8 +112,6 @@ const waitForOperationCompletionEpic: Epic<Action, Action, RootState> = (action$
     switchMap(([{ opHash, sender }, rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
-        // delay(BCD_INDEXING_DELAY),
-        // concatMap(updateDataActions),
         switchMap(() => EMPTY),
         catchError(err => {
           if (err.message !== 'Confirmation polling timed out') {

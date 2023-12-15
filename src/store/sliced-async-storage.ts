@@ -29,6 +29,12 @@ const buildSlicesKeys = (rootKey: string, slicesCount: number) =>
     : EMPTY_SLICES_KEYS;
 
 const readSlicesKeys = async (rootKey: string) => {
+  const allKeys = await AsyncStorage.getAllKeys();
+
+  if (!allKeys.includes(buildSliceKey(rootKey, 0))) {
+    return EMPTY_SLICES_KEYS;
+  }
+
   const rawRootValue = await AsyncStorage.getItem(rootKey);
 
   const slicesCount = getValueSlicesCount(rawRootValue);
