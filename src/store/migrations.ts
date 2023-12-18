@@ -4,7 +4,7 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
 import type { AccountInterface } from 'src/interfaces/account.interface';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
-import { PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
+import { OVERRIDEN_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
@@ -18,7 +18,6 @@ export const MIGRATIONS: MigrationManifest = {
     if (!untypedState) {
       return untypedState;
     }
-
     const state = untypedState as TypedPersistedRootState;
 
     delete state.wallet.addTokenSuggestion;
@@ -41,6 +40,15 @@ export const MIGRATIONS: MigrationManifest = {
     const state = untypedState as TypedPersistedRootState;
 
     const tokensMetadataRecords = state.tokensMetadata.metadataRecord;
+
+    // Overrides
+    for (const metadata of OVERRIDEN_MAINNET_TOKENS_METADATA) {
+      const slug = getTokenSlug(metadata);
+      tokensMetadataRecords[slug] = {
+        ...tokensMetadataRecords[slug],
+        ...metadata
+      };
+    }
 
     // SIRS
     const sirsToken = tokensMetadataRecords[KNOWN_TOKENS_SLUGS.SIRS];
