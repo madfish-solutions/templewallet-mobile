@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { combineEpics, Epic } from 'redux-observable';
-import { of } from 'rxjs';
+import { of, map } from 'rxjs';
 import { catchError, concatMap, switchMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
@@ -10,7 +10,7 @@ import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 import type { RootState } from '../types';
 
 import {
-  addTokensMetadataAction,
+  putTokensMetadataAction,
   loadTokenMetadataActions,
   loadTokensMetadataActions,
   loadTokenSuggestionActions,
@@ -37,7 +37,7 @@ const loadTokenSuggestionEpic: Epic = action$ =>
       loadTokenMetadata$(address, id).pipe(
         concatMap(tokenMetadata => [
           loadTokenSuggestionActions.success(tokenMetadata),
-          addTokensMetadataAction([tokenMetadata])
+          putTokensMetadataAction([tokenMetadata])
         ]),
         catchError(error => {
           console.error(error);
@@ -56,7 +56,7 @@ const loadTokenMetadataEpic: Epic = action$ =>
       loadTokenMetadata$(address, id).pipe(
         concatMap(tokenMetadata => [
           loadTokenMetadataActions.success(tokenMetadata),
-          addTokensMetadataAction([tokenMetadata])
+          putTokensMetadataAction([tokenMetadata])
         ]),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
       )
@@ -69,7 +69,7 @@ const loadTokensMetadataEpic: Epic = action$ =>
     toPayload(),
     switchMap(slugs =>
       loadTokensMetadata$(slugs).pipe(
-        concatMap(tokensMetadata => [addTokensMetadataAction(tokensMetadata), loadTokensMetadataActions.success()]),
+        map(tokensMetadata => loadTokensMetadataActions.success(tokensMetadata)),
         catchError(err => of(loadTokensMetadataActions.fail(err.message)))
       )
     )

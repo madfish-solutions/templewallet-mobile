@@ -10,7 +10,7 @@ import { SlicedAsyncStorage } from '../sliced-async-storage';
 
 import {
   addKnownSvg,
-  addTokensMetadataAction,
+  putTokensMetadataAction,
   loadTokenSuggestionActions,
   loadTokensMetadataActions,
   loadWhitelistAction,
@@ -23,15 +23,26 @@ const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadata
     state.isLoading = true;
   });
 
-  builder.addCase(loadTokensMetadataActions.success, state => {
+  builder.addCase(loadTokensMetadataActions.success, (state, { payload }) => {
     state.isLoading = false;
+
+    for (const metadata of payload) {
+      if (!metadata) {
+        continue;
+      }
+      const slug = getTokenSlug(metadata);
+
+      if (!state.metadataRecord[slug]) {
+        state.metadataRecord[slug] = metadata;
+      }
+    }
   });
 
   builder.addCase(loadTokensMetadataActions.fail, state => {
     state.isLoading = false;
   });
 
-  builder.addCase(addTokensMetadataAction, (state, { payload }) => {
+  builder.addCase(putTokensMetadataAction, (state, { payload }) => {
     for (const metadata of payload) {
       if (!metadata) {
         continue;

@@ -9,10 +9,12 @@ export const addKnownSvg = createAction<string>('assets/ADD_KNOWN_SVG');
 
 export const removeKnownSvg = createAction<string>('assets/REMOVE_KNOWN_SVG');
 
-export const addTokensMetadataAction = createAction<(TokenMetadataInterface | nullish)[]>('assets/ADD_TOKENS_METADATA');
+export const putTokensMetadataAction = createAction<(TokenMetadataInterface | nullish)[]>('assets/ADD_TOKENS_METADATA');
 
 /** TODO: add `ofDcpNetwork` flag to payload */
-export const loadTokensMetadataActions = createActions<string[]>('assets/LOAD_TOKENS_METADATA');
+export const loadTokensMetadataActions = createActions<string[], (TokenMetadataInterface | nullish)[]>(
+  'assets/LOAD_TOKENS_METADATA'
+);
 
 export const loadWhitelistAction = createActions<void, WhitelistTokensItem[]>('assets/LOAD_WHITELIST_METADATA');
 
