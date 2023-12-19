@@ -21,7 +21,8 @@ const DECIMAL_VALUE = 2;
 
 export const DelegateTag: FC<Props> = ({ apy, token }) => {
   const styles = useDelegateTagStyles();
-  const [, isBakerSelected] = useSelectedBakerSelector();
+  const currentBaker = useSelectedBakerSelector();
+  const isBakerSelected = Boolean(currentBaker);
 
   const tokenSlug = getTokenSlug(token);
 
@@ -48,7 +49,7 @@ export const DelegateTag: FC<Props> = ({ apy, token }) => {
     }
 
     return <Text style={styles.text}>Not Delegated</Text>;
-  }, [isBakerSelected, isTezosToken, regularToken, apyValue]);
+  }, [isBakerSelected, isTezosToken, regularToken, apyValue, styles.text]);
 
   return <DelegateTagContainer token={token}>{tag}</DelegateTagContainer>;
 };

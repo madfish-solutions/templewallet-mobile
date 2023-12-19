@@ -17,6 +17,7 @@ import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -76,6 +77,7 @@ export const TokensList = memo(() => {
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
+  const { isTezosNode } = useNetworkInfo();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
@@ -103,7 +105,13 @@ export const TokensList = memo(() => {
     }
   }, [dispatch, partnersPromoShown]);
 
-  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
+  const leadingAssets = useMemo(() => {
+    if (isTezosNode) {
+      return [tezosToken, tkeyToken];
+    }
+
+    return [tezosToken];
+  }, [isTezosNode, tezosToken, tkeyToken]);
 
   const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,

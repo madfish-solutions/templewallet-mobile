@@ -34,14 +34,14 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   const styles = useTokenScreenContentContainerStyles();
   const apyStyles = useApyStyles();
   const { navigate } = useNavigation();
-  const [, isBakerSelected] = useSelectedBakerSelector();
+  const currentBaker = useSelectedBakerSelector();
   const { trackEvent } = useAnalytics();
   const isTezos = token.address === '';
   const tokenSlug = getTokenSlug(token);
   const { isDcpNode } = useNetworkInfo();
 
   const navigationFlow = () => {
-    isDcpNode && !isBakerSelected ? navigate(ModalsEnum.SelectBaker) : navigate(ScreensEnum.Delegation);
+    isDcpNode && !currentBaker ? navigate(ModalsEnum.SelectBaker) : navigate(ScreensEnum.Delegation);
   };
 
   const { rate: apyRate = INITIAL_APR_VALUE, link: apyLink } = useTokenApyInfo(tokenSlug);
@@ -54,7 +54,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
   if (showHistoryComponent && isTezos) {
     return (
       <TouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
-        <Text style={styles.delegateText}>{isBakerSelected ? 'Rewards & Redelegate' : 'Not Delegated'}</Text>
+        <Text style={styles.delegateText}>{currentBaker ? 'Rewards & Redelegate' : 'Not Delegated'}</Text>
       </TouchableOpacity>
     );
   }

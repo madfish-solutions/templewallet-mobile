@@ -1,12 +1,10 @@
-import { BakerInterface, emptyBaker } from 'src/apis/baking-bad';
-
 import { useSelector } from '../selector';
 
-export const useSelectedBakerSelector = (): [BakerInterface, boolean] => {
+export const useSelectedBakerSelector = () => {
   const selectedBaker = useSelector(state => state.baking.selectedBaker);
-  const isBakerSelected = selectedBaker.address !== emptyBaker.address;
 
-  return [selectedBaker, isBakerSelected];
+  // Checking address, because previously 'Empty baker' with `address: ''` was set in store.
+  return selectedBaker?.address ? selectedBaker : null;
 };
 
 export const useBakersListSelector = () => useSelector(state => state.baking.bakersList.data);

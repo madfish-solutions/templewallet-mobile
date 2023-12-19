@@ -1,14 +1,16 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ImageBackground } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
-import { Icon } from 'src/components/icon/icon';
+import ChristmasBgLight from 'src/components/icon/assets/background/christmas-bg-light.png';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { LogoWithText } from 'src/components/icon/logo-with-text';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { isIOS } from 'src/config/system';
 import { useABTestingLoading } from 'src/hooks/use-ab-testing-loading.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -27,22 +29,25 @@ export const Welcome = () => {
   useABTestingLoading();
 
   return (
-    <ScreenContainer isFullScreenMode={true}>
-      <View style={styles.imageView}>
+    <ScreenContainer contentContainerStyle={styles.scrollViewContentContainer} isFullScreenMode={true}>
+      <ImageBackground resizeMode={isIOS ? 'contain' : 'cover'} source={ChristmasBgLight} style={styles.bg}>
         <InsetSubstitute />
-        <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
-      </View>
+
+        <View style={styles.imageView}>
+          <LogoWithText width={formatSize(248)} height={formatSize(104)} style={styles.logo} />
+        </View>
+
+        <Divider size={formatSize(131)} />
+
+        <Quote
+          quote="The only function of economic forecasting is to make astrology look more respectable."
+          author="John Kenneth Galbraith"
+        />
+      </ImageBackground>
 
       <Divider />
 
-      <Quote
-        quote="The only function of economic forecasting is to make astrology look more respectable."
-        author="John Kenneth Galbraith"
-      />
-
-      <Divider />
-
-      <View>
+      <View style={styles.footer}>
         <ButtonLargePrimary
           title="Create a new Wallet"
           iconName={IconNameEnum.PlusSquare}

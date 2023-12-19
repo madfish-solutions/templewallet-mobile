@@ -10,7 +10,8 @@ import {
   migrateTokenSuggestion,
   addDcpTokensMetadata,
   changeTempleRpc,
-  updateSirsTokenAction
+  updateSirsTokenAction,
+  addMarigoldRpc
 } from 'src/store/migration/migration-actions';
 
 export const useStorageMigration = () => {
@@ -24,6 +25,7 @@ export const useStorageMigration = () => {
     dispatch(migrateAccountsState());
     dispatch(addDcpRpc());
     dispatch(changeTempleRpc());
+    dispatch(addMarigoldRpc());
     dispatch(addDcpTokensMetadata());
     dispatch(updateSirsTokenAction());
   }, []);

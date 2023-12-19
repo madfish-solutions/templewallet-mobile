@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
@@ -13,7 +13,6 @@ import { TokenScreenContentContainer } from 'src/components/token-screen-content
 import { useContractActivity } from 'src/hooks/use-contract-activity';
 import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
-import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -32,9 +31,6 @@ export const TokenScreen = () => {
   const accountPkh = useCurrentAccountPkhSelector();
   const tokensList = useCurrentAccountTokens();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
-
-  const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const token = useMemo(() => {
     const slug = getTokenSlug(initialToken);
@@ -56,7 +52,7 @@ export const TokenScreen = () => {
 
   usePartnersPromoLoad();
 
-  const { activities, handleUpdate } = useContractActivity(getTokenSlug(initialToken));
+  const { activities, handleUpdate, isAllLoaded, isLoading } = useContractActivity(getTokenSlug(initialToken));
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
 
@@ -77,8 +73,8 @@ export const TokenScreen = () => {
           <ActivityGroupsList
             handleUpdate={handleUpdate}
             activityGroups={activities}
-            shouldShowPromotion={partnersPromotionEnabled && !promotionErrorOccurred}
-            onOptimalPromotionError={() => setPromotionErrorOccurred(true)}
+            isAllLoaded={isAllLoaded}
+            isLoading={isLoading}
           />
         }
         infoComponent={<TokenInfo token={token} />}

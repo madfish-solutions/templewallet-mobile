@@ -90,9 +90,12 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
 
   builder.addCase(loadTokensActions.success, (state, { payload: tokensWithBalancesSlugs }) =>
     updateCurrentAccountState(state, currentAccount => {
-      const newTokensSlugs = tokensWithBalancesSlugs.filter(
-        newTokenSlug => currentAccount.tokensList.findIndex(existingToken => existingToken.slug === newTokenSlug) === -1
-      );
+      const currentTokensSlugsAsMap = currentAccount.tokensList.reduce<Record<string, boolean>>((acc, token) => {
+        acc[token.slug] = true;
+
+        return acc;
+      }, {});
+      const newTokensSlugs = tokensWithBalancesSlugs.filter(newTokenSlug => !currentTokensSlugsAsMap[newTokenSlug]);
 
       return {
         tokensList: [

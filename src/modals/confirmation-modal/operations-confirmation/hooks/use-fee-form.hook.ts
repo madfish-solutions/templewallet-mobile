@@ -83,7 +83,7 @@ const applyEstimations = (initialParams: ParamsWithKind[], estimationsList: Esti
       fee = estimation.suggestedFeeMutez,
       gasLimit = estimation.gasLimit,
       storageLimit = estimation.storageLimit
-    } = opParam.kind === OpKind.ACTIVATION || opParam.kind === OpKind.FAILING_NOOP ? {} : opParam;
+    } = opParam.kind === OpKind.ACTIVATION ? {} : opParam;
 
     return { ...opParam, fee, gasLimit, storageLimit };
   });
@@ -98,7 +98,7 @@ const applyEstimations = (initialParams: ParamsWithKind[], estimationsList: Esti
 const calcBasicFees = (opParams: ParamsWithKind[], reveal?: EstimationInterface) => {
   const basicFees = opParams.reduce(
     (prev, opParam) => {
-      if (opParam.kind === OpKind.ACTIVATION || opParam.kind === OpKind.FAILING_NOOP) {
+      if (opParam.kind === OpKind.ACTIVATION) {
         return prev;
       }
 

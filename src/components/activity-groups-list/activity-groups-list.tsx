@@ -1,14 +1,17 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { FC, useCallback, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { emptyFn } from 'src/config/general';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
+import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
+import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { isTheSameDay, isToday, isYesterday } from 'src/utils/date.utils';
+import { isDefined } from 'src/utils/is-defined';
 
 import { ActivityGroupItem } from './activity-group-item/activity-group-item';
 import { ActivityGroupsListSelectors } from './activity-groups-list.selectors';
@@ -25,20 +28,41 @@ const AVERAGE_ITEM_HEIGHT = 150;
 
 interface Props {
   activityGroups: ActivityGroup[];
-  shouldShowPromotion?: boolean;
+  isAllLoaded?: boolean;
+  isLoading?: boolean;
   handleUpdate?: () => void;
-  onOptimalPromotionError?: () => void;
 }
 
 export const ActivityGroupsList: FC<Props> = ({
   activityGroups,
-  handleUpdate = emptyFn,
-  shouldShowPromotion = false,
-  onOptimalPromotionError
+  isAllLoaded = false,
+  isLoading = false,
+  handleUpdate = emptyFn
 }) => {
+  usePartnersPromoLoad();
+
   const styles = useActivityGroupsListStyles();
 
+  const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
   const fakeRefreshControlProps = useFakeRefreshControlProps();
+  const [endIsReached, setEndIsReached] = useState(false);
+  const [loadingEnded, setLoadingEnded] = useState(!isLoading);
+  const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
+  const shouldShowPromotion = partnersPromotionEnabled && !promotionErrorOccurred;
+
+  useEffect(() => {
+    if (!isLoading) {
+      setLoadingEnded(true);
+    }
+  }, [isLoading]);
+
+  const handleEndReached = useCallback(() => {
+    setEndIsReached(true);
+    handleUpdate();
+  }, [handleUpdate]);
+  useEffect(() => setEndIsReached(false), [activityGroups]);
+
+  const onOptimalPromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
 
   const sections = useMemo(() => {
     const result: ListItem[] = [];
@@ -76,7 +100,7 @@ export const ActivityGroupsList: FC<Props> = ({
         />
       </View>
     ),
-    [onOptimalPromotionError]
+    [onOptimalPromotionError, styles]
   );
 
   const renderItem: ListRenderItem<string | ActivityGroup> = useCallback(
@@ -89,33 +113,50 @@ export const ActivityGroupsList: FC<Props> = ({
           {index === 1 && shouldShowPromotion && Promotion}
         </>
       ),
-    [onOptimalPromotionError, shouldShowPromotion]
+    [shouldShowPromotion, styles, Promotion]
   );
 
   const stickyHeaderIndices = useMemo(
-    () =>
-      sections
-        .map((item, index) => (typeof item === 'string' ? index : null))
-        .filter(item => item !== null) as number[],
+    () => sections.map((item, index) => (typeof item === 'string' ? index : null)).filter(isDefined),
     [sections]
   );
 
-  return (
-    <>
-      {sections.length === 0 && shouldShowPromotion && Promotion}
+  const shouldRenderAdditionalLoader = !isAllLoaded && endIsReached;
+  const renderAdditionalLoader = useCallback(
+    () => (shouldRenderAdditionalLoader ? <ActivityIndicator style={styles.additionalLoader} size="large" /> : null),
+    [shouldRenderAdditionalLoader, styles.additionalLoader]
+  );
+
+  if (sections.length > 0) {
+    return (
       <View style={styles.contentContainer}>
         <FlashList
           data={sections}
           stickyHeaderIndices={stickyHeaderIndices}
           onEndReachedThreshold={0.01}
-          onEndReached={handleUpdate}
+          onEndReached={handleEndReached}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           estimatedItemSize={AVERAGE_ITEM_HEIGHT}
           getItemType={getItemType}
-          ListEmptyComponent={ListEmptyComponent}
+          ListFooterComponent={renderAdditionalLoader}
           refreshControl={<RefreshControl {...fakeRefreshControlProps} />}
         />
+      </View>
+    );
+  }
+
+  return (
+    <>
+      {shouldShowPromotion && <View style={styles.adContainer}>{Promotion}</View>}
+      <View style={styles.emptyListWrapper}>
+        {loadingEnded ? (
+          ListEmptyComponent
+        ) : (
+          <View style={styles.loaderWrapper}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
       </View>
     </>
   );

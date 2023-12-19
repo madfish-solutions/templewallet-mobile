@@ -1,4 +1,5 @@
 import React, { FC, memo, useCallback, useMemo, useState } from 'react';
+import { View } from 'react-native';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { AudioPlaceholder } from 'src/components/audio-placeholder';
@@ -85,13 +86,11 @@ const MediaContent = memo<MediaContentProps>(
         );
       }
       if (mime.startsWith('video/')) {
-        return <SimplePlayer uri={mediaUri} size={size} withLoader={true} onError={onVideoMediaFail} />;
+        return <SimplePlayer uri={mediaUri} size={size} onError={onVideoMediaFail} isVideo />;
       }
       if (mime.startsWith('audio/')) {
         return (
-          <>
-            <SimplePlayer uri={mediaUri} size={0} onError={onAudioMediaFail} />
-
+          <View style={styles.audioContainer}>
             <CollectibleImage
               isFullView
               size={size}
@@ -101,7 +100,8 @@ const MediaContent = memo<MediaContentProps>(
               thumbnailUri={thumbnailUri}
               Fallback={AudioPlaceholderLocal}
             />
-          </>
+            <SimplePlayer uri={mediaUri} size={size} onError={onAudioMediaFail} style={styles.audio} />
+          </View>
         );
       }
     }

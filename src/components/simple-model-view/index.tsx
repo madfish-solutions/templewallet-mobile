@@ -1,10 +1,11 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
 import { useWillUnmount } from 'src/utils/hooks/use-will-unmount';
 
 import { ActivityIndicator } from '../activity-indicator';
+import { BrokenImage } from '../broken-image';
 
 import { useSimpleModelViewStyles } from './styles';
 
@@ -32,26 +33,41 @@ export const SimpleModelView = memo<Props>(({ uri, isBinary, style, onFail, setS
   }, [uri]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [shouldUseFallback, setShouldUseFallback] = useState(false);
 
   useWillUnmount(() => setScrollEnabled?.(true));
 
   const handleTouchStart = () => setScrollEnabled?.(false);
   const handleTouchEnd = () => setScrollEnabled?.(true);
 
+  useEffect(() => setShouldUseFallback(false), [uri]);
+
+  const handleWebViewMessage = useCallback((event: WebViewMessageEvent) => {
+    const { data } = event.nativeEvent;
+    if (data.startsWith('"Uncaught')) {
+      setShouldUseFallback(true);
+    }
+    console.error('WebView embeded page error:', data);
+  }, []);
+
   return (
     <>
-      <WebView
-        source={source}
-        style={[styles.lowerOpacity, style]}
-        onError={onFail}
-        onMessage={onErrorMessage}
-        onLoadStart={() => setIsLoading(true)}
-        onLoadEnd={() => setIsLoading(false)}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
-        injectedJavaScriptBeforeContentLoaded={injectedJavaScriptBeforeContentLoaded}
-      />
+      {shouldUseFallback ? (
+        <BrokenImage isBigIcon style={[styles.lowerOpacity, style]} />
+      ) : (
+        <WebView
+          source={source}
+          style={[styles.lowerOpacity, style]}
+          onError={onFail}
+          onMessage={handleWebViewMessage}
+          onLoadStart={() => setIsLoading(true)}
+          onLoadEnd={() => setIsLoading(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+          injectedJavaScriptBeforeContentLoaded={injectedJavaScriptBeforeContentLoaded}
+        />
+      )}
 
       {isLoading ? <ActivityIndicator size="large" /> : null}
     </>
@@ -91,6 +107,3 @@ const injectedJavaScriptBeforeContentLoaded = `
   };
   true;
 `;
-
-const onErrorMessage = (event: WebViewMessageEvent) =>
-  console.error('WebView embeded page error:', event.nativeEvent.data);

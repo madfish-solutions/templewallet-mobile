@@ -1,15 +1,19 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
+import { Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, isIOS } from 'src/config/system';
+import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
+import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
@@ -34,11 +38,14 @@ const CHAINBITS_URL = 'https://buy.chainbits.com';
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
+  const { isLocked } = useAppLock();
+  const atBootsplash = useAtBootsplash();
   const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const { balance } = useTotalBalance();
   const styles = useHeaderCardActionButtonsStyles();
   const defaultStyleConfig = useButtonMediumStyleConfig();
+  const isLoaderBeingShown = useIsShowLoaderSelector();
 
   const errorMessage =
     isDefined(token.address) && tezosToken.balance === emptyToken.balance
@@ -53,6 +60,40 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       titleStyle: styles.actionButtonTitle
     }),
     []
+  );
+
+  const animationPlayedTimesCount = useRef(0);
+  const earnIconTranslateYRef = useRef(new Animated.Value(0));
+
+  const playAnimation = useCallback(() => {
+    if (animationPlayedTimesCount.current < 3) {
+      earnIconTranslateYRef.current.setValue(formatSize(-8));
+      Animated.spring(earnIconTranslateYRef.current, { toValue: 0, friction: 2, useNativeDriver: true }).start();
+      animationPlayedTimesCount.current++;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLocked || atBootsplash) {
+      animationPlayedTimesCount.current = 0;
+
+      return;
+    } else if (isLoaderBeingShown) {
+      return;
+    }
+
+    playAnimation();
+    const animationInterval = setInterval(playAnimation, 4000);
+
+    return () => void clearInterval(animationInterval);
+  }, [isLocked, atBootsplash, isLoaderBeingShown, playAnimation]);
+
+  const earnButtonStylesOverrides = useMemo(
+    () => ({
+      ...actionButtonStylesOverrides,
+      iconStyle: { ...defaultStyleConfig.iconStyle, translateY: earnIconTranslateYRef.current }
+    }),
+    [actionButtonStylesOverrides, defaultStyleConfig.iconStyle]
   );
 
   const sendButtonStylesOverrides = useMemo(
@@ -106,7 +147,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         title="Earn"
         iconName={IconNameEnum.Earn}
         onPress={() => navigate(ScreensEnum.Earn)}
-        styleConfigOverrides={actionButtonStylesOverrides}
+        styleConfigOverrides={earnButtonStylesOverrides}
         style={styles.buttonContainer}
         testID={WalletSelectors.earnButton}
         testIDProperties={{
