@@ -142,7 +142,8 @@ import SwapIcon from './assets/swap.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoBottomIcon from './assets/temple-logo-bottom.svg';
 import TempleLogoUpIcon from './assets/temple-logo-up.svg';
-import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
+import TempleLogoWithTextDarkIcon from './assets/temple-logo-with-text-dark.svg';
+import TempleLogoWithTextLightIcon from './assets/temple-logo-with-text-light.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
@@ -273,7 +274,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TempleLogo]: TempleLogoIcon,
   [IconNameEnum.TempleLogoUp]: TempleLogoUpIcon,
   [IconNameEnum.TempleLogoBottom]: TempleLogoBottomIcon,
-  [IconNameEnum.TempleLogoWithText]: TempleLogoWithTextIcon,
+  [IconNameEnum.TempleLogoWithTextDark]: TempleLogoWithTextDarkIcon,
+  [IconNameEnum.TempleLogoWithTextLight]: TempleLogoWithTextLightIcon,
   [IconNameEnum.Telegram]: TelegramIcon,
   [IconNameEnum.Discord]: DiscordIcon,
   [IconNameEnum.Twitter]: TwitterIcon,
