@@ -16,20 +16,14 @@ import type { RootState } from './types';
  * See: https://github.com/rt2zz/redux-persist/issues/806#issuecomment-695053978
  */
 export const getStoredStateToMigrateStorage = async (config: PersistConfig<any>) => {
-  console.log('getStoredStateToMigrateStorage(', config.key, ')');
-
   // Reading from MMKV storage
-  let state = await getStoredState(config).catch(error => {
-    console.error('getStoredState error:', 1, config.key, error);
-  });
+  let state = await getStoredState(config);
   if (state) {
     return state as PersistedState;
   }
 
   // Falling back to AsyncStorage. Not cleaning it just for extra caution.
-  state = await getStoredState({ ...config, storage: SlicedAsyncStorage }).catch(error => {
-    console.error('getStoredState error:', 2, config.key, error);
-  });
+  state = await getStoredState({ ...config, storage: SlicedAsyncStorage });
 
   return state as PersistedState;
 };
