@@ -9,10 +9,10 @@ import { on, reducer } from 'ts-action';
 
 import { persistFailHandler } from 'src/utils/redux';
 
-import { MIGRATIONS } from './migrations';
+import { MIGRATIONS, getStoredStateToMigrateStorage } from './migrations';
+import { AsyncMmkvStorage } from './mmkv-storage';
 import { resetApplicationAction } from './root-state.actions';
 import { rootStateReducersMap } from './root-state.map';
-import { SlicedAsyncStorage } from './sliced-async-storage';
 import type { RootState } from './types';
 
 const buildRootStateReducer = <S, A extends Action = AnyAction>(
@@ -46,7 +46,7 @@ const persistConfigBlacklist: (keyof RootState)[] = [
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
   version: 5,
-  storage: SlicedAsyncStorage,
+  storage: AsyncMmkvStorage,
   stateReconciler: autoMergeLevel2,
   writeFailHandler: persistFailHandler,
   migrate: createMigrate(MIGRATIONS, { debug: __DEV__ }),
@@ -55,7 +55,8 @@ const persistConfig: PersistConfig<RootState> = {
    * And new-added blacklisted slices might not be applied correctly.
    * Be careful with store architecture changes - migration might be needed.
    */
-  blacklist: persistConfigBlacklist
+  blacklist: persistConfigBlacklist,
+  getStoredState: getStoredStateToMigrateStorage
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

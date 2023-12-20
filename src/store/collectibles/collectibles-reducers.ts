@@ -2,7 +2,8 @@ import { createReducer } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 
 import { createEntity } from '../create-entity';
-import { SlicedAsyncStorage } from '../sliced-async-storage';
+import { getStoredStateToMigrateStorage } from '../migrations';
+import { AsyncMmkvStorage } from '../mmkv-storage';
 
 import { loadCollectiblesDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
@@ -23,7 +24,9 @@ const collectiblesReducer = createReducer<CollectiblesState>(collectiblesInitial
 
     // Removing expired flags
     for (const [slug, { ts }] of Object.entries(adultFlags)) {
-      if (ts + ADULT_FLAG_TTL < timestampInSeconds) delete adultFlags[slug];
+      if (ts + ADULT_FLAG_TTL < timestampInSeconds) {
+        delete adultFlags[slug];
+      }
     }
 
     for (const [slug, details] of Object.entries(detailsRecord)) {
@@ -50,8 +53,9 @@ const collectiblesReducer = createReducer<CollectiblesState>(collectiblesInitial
 export const collectiblesPersistedReducer = persistReducer(
   {
     key: 'root.collectibles',
-    storage: SlicedAsyncStorage,
-    whitelist: ['adultFlags'] as (keyof CollectiblesState)[]
+    storage: AsyncMmkvStorage,
+    whitelist: ['adultFlags'] as (keyof CollectiblesState)[],
+    getStoredState: getStoredStateToMigrateStorage
   },
   collectiblesReducer
 );

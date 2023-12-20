@@ -6,7 +6,7 @@ import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { transformWhitelistToTokenMetadata } from 'src/utils/token-metadata.utils';
 
 import { createEntity } from '../create-entity';
-import { SlicedAsyncStorage } from '../sliced-async-storage';
+import { AsyncMmkvStorage } from '../mmkv-storage';
 
 import {
   addKnownSvg,
@@ -90,7 +90,7 @@ const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadata
 export const tokensMetadataPersistedReducers = persistReducer(
   {
     key: 'root.tokensMetadata',
-    storage: SlicedAsyncStorage,
+    storage: AsyncMmkvStorage,
     blacklist: ['isLoading', 'addTokenSuggestion'] as (keyof TokensMetadataState)[]
   },
   tokensMetadataReducers

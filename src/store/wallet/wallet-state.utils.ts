@@ -36,10 +36,10 @@ export const pushOrUpdateTokensBalances = (
 
     if (isDefined(balance)) {
       token.balance = balance;
-      token.visibility = // Note: changing visibility status on non-zero balance. Might've been a mistake
-        balance !== '0' && token.visibility === VisibilityEnum.InitiallyHidden
-          ? VisibilityEnum.Visible
-          : token.visibility;
+      if (balance !== '0' && token.visibility === VisibilityEnum.InitiallyHidden) {
+        // Note: changing visibility status on non-zero balance. Might've been a mistake
+        token.visibility = VisibilityEnum.Visible;
+      }
 
       delete newBalancesBySlugs[token.slug];
     }
