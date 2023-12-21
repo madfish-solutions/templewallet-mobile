@@ -14,7 +14,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { EmptyFn } from 'src/config/general';
 import { FormNumericInput } from 'src/form/form-numeric-input/form-numeric-input';
 import { FormTextInput } from 'src/form/form-text-input';
-import { putTokensMetadataAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { putTokenMetadataAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { useAddTokenSuggestionSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { addTokenAction } from 'src/store/wallet/wallet-actions';
 import { formatSize } from 'src/styles/format-size';
@@ -40,7 +40,7 @@ export const AddAssetInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
     const tokenMetadata = { ...initialValues, ...data, decimals: data.decimals.toNumber() };
 
     dispatch(addTokenAction(tokenMetadata));
-    dispatch(putTokensMetadataAction([tokenMetadata]));
+    dispatch(putTokenMetadataAction(tokenMetadata));
 
     showSuccessToast({ description: 'Token successfully added' });
     onFormSubmitted();

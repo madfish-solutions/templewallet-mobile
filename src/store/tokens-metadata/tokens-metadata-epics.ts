@@ -10,7 +10,7 @@ import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 import type { RootState } from '../types';
 
 import {
-  putTokensMetadataAction,
+  putTokenMetadataAction,
   loadTokenMetadataActions,
   loadTokensMetadataActions,
   loadTokenSuggestionActions,
@@ -37,7 +37,7 @@ const loadTokenSuggestionEpic: Epic = action$ =>
       loadTokenMetadata$(address, id).pipe(
         concatMap(tokenMetadata => [
           loadTokenSuggestionActions.success(tokenMetadata),
-          putTokensMetadataAction([tokenMetadata])
+          putTokenMetadataAction(tokenMetadata)
         ]),
         catchError(error => {
           console.error(error);
@@ -56,7 +56,7 @@ const loadTokenMetadataEpic: Epic = action$ =>
       loadTokenMetadata$(address, id).pipe(
         concatMap(tokenMetadata => [
           loadTokenMetadataActions.success(tokenMetadata),
-          putTokensMetadataAction([tokenMetadata])
+          putTokenMetadataAction(tokenMetadata)
         ]),
         catchError(err => of(loadTokenMetadataActions.fail(err.message)))
       )

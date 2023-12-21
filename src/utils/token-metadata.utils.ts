@@ -3,7 +3,7 @@ import { chunk } from 'lodash-es';
 import memoizee from 'memoizee';
 import { useCallback } from 'react';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { tezosMetadataApi, whitelistApi } from 'src/api.service';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
@@ -25,6 +25,13 @@ export interface TokenMetadataResponse {
   thumbnailUri?: string;
   artifactUri?: string;
 }
+
+/** Currently, metadata service does not throw, instead, returns status 200. */
+type SingleTokenMetadataResponse =
+  | TokenMetadataResponse
+  | {
+      message: string;
+    };
 
 interface WhitelistResponse {
   keywords: Array<string>;
@@ -104,9 +111,14 @@ export const loadTokenMetadata$ = memoizee(
       return of(overridenTokenMetadata);
     }
 
-    return from(tezosMetadataApi.get<TokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
-      map(({ data }) => transformDataToTokenMetadata(data, address, id)),
-      filter(isDefined)
+    return from(tezosMetadataApi.get<SingleTokenMetadataResponse>(`/metadata/${address}/${id}`)).pipe(
+      map(({ data }) => {
+        if (data && 'decimals' in data) {
+          return transformDataToTokenMetadata(data, address, id);
+        } else {
+          throw new Error(`Service errored with: ${data.message}`);
+        }
+      })
     );
   },
   {

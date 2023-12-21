@@ -10,7 +10,7 @@ import { AsyncMmkvStorage } from '../mmkv-storage';
 
 import {
   addKnownSvg,
-  putTokensMetadataAction,
+  putTokenMetadataAction,
   loadTokenSuggestionActions,
   loadTokensMetadataActions,
   loadWhitelistAction,
@@ -42,15 +42,13 @@ const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadata
     state.isLoading = false;
   });
 
-  builder.addCase(putTokensMetadataAction, (state, { payload }) => {
-    for (const metadata of payload) {
-      if (!metadata) {
-        continue;
-      }
-      const slug = getTokenSlug(metadata);
-
-      state.metadataRecord[slug] = Object.assign({}, metadata, state.metadataRecord[slug]);
+  builder.addCase(putTokenMetadataAction, (state, { payload: metadata }) => {
+    if (!metadata) {
+      return state;
     }
+    const slug = getTokenSlug(metadata);
+
+    state.metadataRecord[slug] = Object.assign({}, state.metadataRecord[slug], metadata);
   });
 
   builder.addCase(loadWhitelistAction.success, (state, { payload }) => {
