@@ -23,7 +23,7 @@ import type { RootState } from '../types';
 import {
   highPriorityLoadTokenBalanceAction,
   loadTezosBalanceActions,
-  loadAssetsBalancesctions,
+  loadAssetsBalancesActions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
@@ -37,12 +37,12 @@ const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (actio
       loadAssetBalance$(selectedRpcUrl, payload.publicKeyHash, payload.slug).pipe(
         map(balance =>
           isDefined(balance)
-            ? loadAssetsBalancesctions.success({
+            ? loadAssetsBalancesActions.success({
                 publicKeyHash: payload.publicKeyHash,
                 balances: { slug: payload.slug, balance },
                 selectedRpcUrl
               })
-            : loadAssetsBalancesctions.fail(`${payload.slug} balance load FAILED`)
+            : loadAssetsBalancesActions.fail(`${payload.slug} balance load FAILED`)
         )
       )
     )
@@ -50,13 +50,13 @@ const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (actio
 
 const loadTokensBalancesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
-    ofType(loadAssetsBalancesctions.submit),
+    ofType(loadAssetsBalancesActions.submit),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[_, selectedAccount], selectedRpcUrl]) =>
       from(fetchAllAssetsBalancesFromTzkt(selectedRpcUrl, selectedAccount.publicKeyHash)).pipe(
         map(data =>
-          loadAssetsBalancesctions.success({
+          loadAssetsBalancesActions.success({
             publicKeyHash: selectedAccount.publicKeyHash,
             balances: data,
             selectedRpcUrl
@@ -65,7 +65,7 @@ const loadTokensBalancesEpic: Epic<Action, Action, RootState> = (action$, state$
       )
     ),
     catchError(([selectedAccount]) =>
-      of(loadAssetsBalancesctions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(delay(5))
+      of(loadAssetsBalancesActions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(delay(5))
     )
   );
 
@@ -120,7 +120,7 @@ const waitForOperationCompletionEpic: Epic<Action, Action, RootState> = (action$
           }
         }),
         delay(BLOCK_DURATION),
-        concatMap(() => [loadTezosBalanceActions.submit(), loadAssetsBalancesctions.submit()]),
+        concatMap(() => [loadTezosBalanceActions.submit(), loadAssetsBalancesActions.submit()]),
         catchError(err => {
           showErrorToast({ description: err.message });
 

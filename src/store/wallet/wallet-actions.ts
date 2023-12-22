@@ -20,7 +20,7 @@ export const loadTezosBalanceActions = createActions<void, string, string>('asse
 export const highPriorityLoadTokenBalanceAction = createAction<{ publicKeyHash: string; slug: string }>(
   'assets/HIGH_PRIORITY_LOAD_TOKEN_BALANCE'
 );
-export const loadAssetsBalancesctions = createActions<
+export const loadAssetsBalancesActions = createActions<
   void,
   { publicKeyHash: string; balances: StringRecord; selectedRpcUrl: string },
   string

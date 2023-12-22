@@ -27,7 +27,7 @@ import { loadNotificationsAction } from 'src/store/notifications/notifications-a
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
-import { loadTezosBalanceActions, loadAssetsBalancesctions } from 'src/store/wallet/wallet-actions';
+import { loadTezosBalanceActions, loadAssetsBalancesActions } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 
@@ -65,7 +65,7 @@ export const useMainHooks = (isLocked: boolean) => {
     }
 
     dispatch(loadTezosBalanceActions.submit());
-    dispatch(loadAssetsBalancesctions.submit());
+    dispatch(loadAssetsBalancesActions.submit());
   }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl]);
 
   useMetadataLoading(selectedAccountPkh);

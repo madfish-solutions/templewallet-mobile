@@ -16,7 +16,7 @@ import {
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadAssetsBalancesctions
+  loadAssetsBalancesActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
@@ -78,7 +78,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   });
 
   builder.addCase(
-    loadAssetsBalancesctions.success,
+    loadAssetsBalancesActions.success,
     (state, { payload: { publicKeyHash, balances, selectedRpcUrl } }) => {
       const accountState = retrieveAccountState(state, publicKeyHash);
       if (!accountState) {
