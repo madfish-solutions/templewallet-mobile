@@ -3,17 +3,17 @@ import { BigNumber } from 'bignumber.js';
 import { Action } from 'redux';
 import { Epic, combineEpics } from 'redux-observable';
 import { EMPTY, from, of } from 'rxjs';
-import { catchError, delay, map, switchMap } from 'rxjs/operators';
+import { catchError, delay, map, switchMap, concatMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { BLOCK_DURATION } from 'src/config/fixed-times';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
-import { TokenBalanceResponse } from 'src/interfaces/token-balance-response.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
-import { loadAssetBalance$, loadTokensBalancesArrayFromTzkt$, loadTezosBalance$ } from 'src/utils/token-balance.utils';
+import { loadAssetBalance$, loadTezosBalance$, fetchAllAssetsBalancesFromTzkt } from 'src/utils/token-balance.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
@@ -23,7 +23,7 @@ import type { RootState } from '../types';
 import {
   highPriorityLoadTokenBalanceAction,
   loadTezosBalanceActions,
-  loadTokensBalancesArrayActions,
+  loadAssetsBalancesctions,
   sendAssetActions,
   waitForOperationCompletionAction
 } from './wallet-actions';
@@ -37,12 +37,12 @@ const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (actio
       loadAssetBalance$(selectedRpcUrl, payload.publicKeyHash, payload.slug).pipe(
         map(balance =>
           isDefined(balance)
-            ? loadTokensBalancesArrayActions.success({
+            ? loadAssetsBalancesctions.success({
                 publicKeyHash: payload.publicKeyHash,
-                data: [{ slug: payload.slug, balance }],
+                balances: { slug: payload.slug, balance },
                 selectedRpcUrl
               })
-            : loadTokensBalancesArrayActions.fail(`${payload.slug} balance load FAILED`)
+            : loadAssetsBalancesctions.fail(`${payload.slug} balance load FAILED`)
         )
       )
     )
@@ -50,22 +50,22 @@ const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (actio
 
 const loadTokensBalancesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
-    ofType(loadTokensBalancesArrayActions.submit),
+    ofType(loadAssetsBalancesctions.submit),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[_, selectedAccount], selectedRpcUrl]) =>
-      loadTokensBalancesArrayFromTzkt$(selectedRpcUrl, selectedAccount.publicKeyHash).pipe(
+      from(fetchAllAssetsBalancesFromTzkt(selectedRpcUrl, selectedAccount.publicKeyHash)).pipe(
         map(data =>
-          loadTokensBalancesArrayActions.success({
+          loadAssetsBalancesctions.success({
             publicKeyHash: selectedAccount.publicKeyHash,
-            data: data.filter((item): item is TokenBalanceResponse => isDefined(item.balance)),
+            balances: data,
             selectedRpcUrl
           })
         )
       )
     ),
     catchError(([selectedAccount]) =>
-      of(loadTokensBalancesArrayActions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(delay(5))
+      of(loadAssetsBalancesctions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(delay(5))
     )
   );
 
@@ -112,11 +112,17 @@ const waitForOperationCompletionEpic: Epic<Action, Action, RootState> = (action$
     switchMap(([{ opHash, sender }, rpcUrl]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
-        switchMap(() => EMPTY),
         catchError(err => {
-          if (err.message !== 'Confirmation polling timed out') {
-            showErrorToast({ description: err?.message ?? 'Confirmation error' });
+          if (err.message === 'Confirmation polling timed out') {
+            return of(undefined);
+          } else {
+            throw new Error(err.message);
           }
+        }),
+        delay(BLOCK_DURATION),
+        concatMap(() => [loadTezosBalanceActions.submit(), loadAssetsBalancesctions.submit()]),
+        catchError(err => {
+          showErrorToast({ description: err.message });
 
           return EMPTY;
         })

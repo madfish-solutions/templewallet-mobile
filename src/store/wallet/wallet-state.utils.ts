@@ -3,7 +3,6 @@ import { Draft } from '@reduxjs/toolkit';
 import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
-import { TokenBalanceResponse } from 'src/interfaces/token-balance-response.interface';
 import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -23,14 +22,8 @@ export const retrieveAccountState = (state: Draft<WalletState>, pkh = state.sele
 
 export const pushOrUpdateTokensBalances = (
   initialTokensList: Draft<AccountTokenInterface>[],
-  newBalances: TokenBalanceResponse[]
+  newBalancesBySlugs: StringRecord
 ) => {
-  const newBalancesBySlugs = newBalances.reduce<Record<string, string>>((acc, { slug, balance }) => {
-    acc[slug] = balance;
-
-    return acc;
-  }, {});
-
   for (const token of initialTokensList) {
     const balance = newBalancesBySlugs[token.slug];
 

@@ -1,11 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { TEZOS_DEXES_API_URL } from '../../utils/env.utils';
+import { TEZOS_DEXES_API_URL } from 'src/utils/env.utils';
 
 import { BlockInterface, EMPTY_BLOCK } from './block.interface';
 
 const BLOCK_UPDATE_API_URL = `${TEZOS_DEXES_API_URL}/block`;
 
+/**
+ * Currently, some updates might be lost.
+ *
+ * TODO: Look into:
+ * ```
+ * useEffect(() => {
+ *   const subscription = tezos.stream.subscribeBlock('head');
+ *
+ *   subscription.on('data', block => setBlockLevel(block.header.level));
+ *
+ *   return () => subscription.close();
+ * }, [tezos]);
+ * ```
+ */
 export const useBlockSubscription = () => {
   const webSocketRef = useRef<WebSocket>();
   const refreshControlRef = useRef(Math.random());

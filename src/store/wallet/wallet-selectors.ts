@@ -131,7 +131,7 @@ export const useCurrentAccountTezosBalance = () =>
 
 export const useTezosBalanceOfKnownAccountSelector = (publicKeyHash: string) =>
   useSelector(state => {
-    if (state.wallet.accounts.find(account => account.publicKeyHash === publicKeyHash)) {
+    if (state.wallet.accounts.some(account => account.publicKeyHash === publicKeyHash)) {
       return state.wallet.accountsStateRecord[publicKeyHash]?.tezosBalance ?? '0';
     }
 

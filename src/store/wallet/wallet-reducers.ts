@@ -16,7 +16,7 @@ import {
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadTokensBalancesArrayActions
+  loadAssetsBalancesctions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
@@ -78,8 +78,8 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   });
 
   builder.addCase(
-    loadTokensBalancesArrayActions.success,
-    (state, { payload: { publicKeyHash, data, selectedRpcUrl } }) => {
+    loadAssetsBalancesctions.success,
+    (state, { payload: { publicKeyHash, balances, selectedRpcUrl } }) => {
       const accountState = retrieveAccountState(state, publicKeyHash);
       if (!accountState) {
         return;
@@ -87,7 +87,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
 
       pushOrUpdateTokensBalances(
         isDcpNode(selectedRpcUrl) ? accountState.dcpTokensList : accountState.tokensList,
-        data
+        balances
       );
     }
   );
