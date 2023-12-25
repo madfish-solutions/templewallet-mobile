@@ -12,9 +12,7 @@ import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
 import type { RootState } from './types';
 
-/**
- * See: https://github.com/rt2zz/redux-persist/issues/806#issuecomment-695053978
- */
+// @ts-prune-ignore-next
 export const getStoredStateToMigrateStorage = async (config: PersistConfig<any>) => {
   // Reading from MMKV storage
   let state = await getStoredState(config);
