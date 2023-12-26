@@ -197,7 +197,8 @@ export const RootStackScreen = () => {
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
 
-      {isSplash && <SplashModal />}
+      {/** Hiding screen in preview is implemented natively for Android */}
+      {isSplash && !isAndroid && <SplashModal />}
       {isAuthorised && isLocked && <EnterPassword />}
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}
