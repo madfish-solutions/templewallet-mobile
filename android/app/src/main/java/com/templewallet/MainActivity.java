@@ -10,6 +10,8 @@ import com.zoontek.rnbootsplash.RNBootSplash;
 import android.content.Intent;
 import android.content.res.Configuration;
 
+import android.view.WindowManager;
+
 public class MainActivity extends ReactActivity {
 
   /**
@@ -52,4 +54,15 @@ public class MainActivity extends ReactActivity {
       this.sendBroadcast(intent);
   }
 
+  @Override
+  protected void onPause() {
+      super.onPause();
+      this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+  }
+
+  @Override
+  protected void onResume() {
+      super.onResume();
+      this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+  }
 }
