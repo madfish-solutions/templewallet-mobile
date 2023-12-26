@@ -1,9 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 
+import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
+
 import { createEntity } from '../create-entity';
-import { getStoredStateToMigrateStorage } from '../migrations';
-import { AsyncMmkvStorage } from '../mmkv-storage';
 
 import { loadCollectiblesDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
@@ -53,9 +53,8 @@ const collectiblesReducer = createReducer<CollectiblesState>(collectiblesInitial
 export const collectiblesPersistedReducer = persistReducer(
   {
     key: 'root.collectibles',
-    storage: AsyncMmkvStorage,
-    whitelist: ['adultFlags'] as (keyof CollectiblesState)[],
-    getStoredState: getStoredStateToMigrateStorage
+    storage: SlicedAsyncStorage,
+    whitelist: ['adultFlags'] as (keyof CollectiblesState)[]
   },
   collectiblesReducer
 );

@@ -216,9 +216,6 @@ PODS:
   - libwebp/sharpyuv (1.3.2)
   - libwebp/webp (1.3.2):
     - libwebp/sharpyuv
-  - MMKV (1.3.2):
-    - MMKVCore (~> 1.3.2)
-  - MMKVCore (1.3.2)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -519,9 +516,6 @@ PODS:
     - React-Core
   - react-native-flipper (0.164.0):
     - React-Core
-  - react-native-mmkv (2.11.0):
-    - MMKV (>= 1.2.13)
-    - React-Core
   - react-native-orientation-locker (1.5.0):
     - React-Core
   - react-native-randombytes (3.6.1):
@@ -809,7 +803,6 @@ DEPENDENCIES:
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
-  - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-restart (from `../node_modules/react-native-restart`)
@@ -895,8 +888,6 @@ SPEC REPOS:
     - GTMSessionFetcher
     - libevent
     - libwebp
-    - MMKV
-    - MMKVCore
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
@@ -962,8 +953,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-document-picker"
   react-native-flipper:
     :path: "../node_modules/react-native-flipper"
-  react-native-mmkv:
-    :path: "../node_modules/react-native-mmkv"
   react-native-orientation-locker:
     :path: "../node_modules/react-native-orientation-locker"
   react-native-randombytes:
@@ -1107,8 +1096,6 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 3a63d75eecd6aa32c2fc79f578064e1214dfdec2
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
-  MMKV: f21593c0af4b3f2a0ceb8f820f28bb639ea22bb7
-  MMKVCore: 31b4cb83f8266467eef20a35b6d78e409a11060d
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   Permission-Camera: bf6791b17c7f614b6826019fcfdcc286d3a107f6
@@ -1134,7 +1121,6 @@ SPEC CHECKSUMS:
   react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
   react-native-document-picker: f68191637788994baed5f57d12994aa32cf8bf88
   react-native-flipper: c33a4995958ef12a2b2f8290d63bed7adeed7634
-  react-native-mmkv: e97c0c79403fb94577e5d902ab1ebd42b0715b43
   react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162

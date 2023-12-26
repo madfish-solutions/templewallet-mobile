@@ -1,4 +1,4 @@
-import { getStoredState, PersistConfig, type MigrationManifest, type PersistedState } from 'redux-persist';
+import type { MigrationManifest, PersistedState } from 'redux-persist';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
@@ -8,25 +8,8 @@ import { OVERRIDEN_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } fro
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
-import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
 import type { RootState } from './types';
-
-/**
- * See: https://github.com/rt2zz/redux-persist/issues/806#issuecomment-695053978
- */
-export const getStoredStateToMigrateStorage = async (config: PersistConfig<any>) => {
-  // Reading from MMKV storage
-  let state = await getStoredState(config);
-  if (state) {
-    return state as PersistedState;
-  }
-
-  // Falling back to AsyncStorage. Not cleaning it just for extra caution.
-  state = await getStoredState({ ...config, storage: SlicedAsyncStorage });
-
-  return state as PersistedState;
-};
 
 type TypedPersistedRootState = Exclude<PersistedState, undefined> & RootState;
 

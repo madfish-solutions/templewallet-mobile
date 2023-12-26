@@ -3,10 +3,10 @@ import { persistReducer } from 'redux-persist';
 
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
+import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 import { transformWhitelistToTokenMetadata } from 'src/utils/token-metadata.utils';
 
 import { createEntity } from '../create-entity';
-import { AsyncMmkvStorage } from '../mmkv-storage';
 
 import {
   addKnownSvg,
@@ -88,7 +88,7 @@ const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadata
 export const tokensMetadataPersistedReducers = persistReducer(
   {
     key: 'root.tokensMetadata',
-    storage: AsyncMmkvStorage,
+    storage: SlicedAsyncStorage,
     blacklist: ['isLoading', 'addTokenSuggestion'] as (keyof TokensMetadataState)[]
   },
   tokensMetadataReducers
