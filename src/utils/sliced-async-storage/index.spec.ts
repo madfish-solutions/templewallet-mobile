@@ -3,7 +3,7 @@ import { range } from 'lodash-es';
 
 import { isDefined } from 'src/utils/is-defined';
 
-import { SlicedAsyncStorage, SlicedAsyncStorageError } from './sliced-async-storage';
+import { SlicedAsyncStorage, SlicedAsyncStorageError } from '.';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const nonStringValues = [undefined, null, 0, 1, true, false, {}, [], () => {}, Symbol('test')];

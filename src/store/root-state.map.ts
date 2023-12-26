@@ -17,12 +17,12 @@ import { savingsReducer } from './savings/reducers';
 import { securityReducers } from './security/security-reducers';
 import { settingsReducers } from './settings/settings-reducers';
 import { swapReducer } from './swap/swap-reducers';
-import { tokensMetadataReducers } from './tokens-metadata/tokens-metadata-reducers';
+import { tokensMetadataPersistedReducers } from './tokens-metadata/tokens-metadata-reducers';
 import { walletReducers } from './wallet/wallet-reducers';
 
 export const rootStateReducersMap = {
   wallet: walletReducers,
-  tokensMetadata: tokensMetadataReducers,
+  tokensMetadata: tokensMetadataPersistedReducers,
   baking: bakingReducers,
   settings: settingsReducers,
   security: securityReducers,

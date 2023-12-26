@@ -53,7 +53,7 @@ export const useRawCurrentAccountSelector = () =>
 /** @deprecated */
 export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
 
-const useAllCurrentAccountAssetsSelector = () =>
+export const useAllCurrentAccountAssetsSelector = () =>
   useSelector(
     state => {
       const account = state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash];
@@ -131,7 +131,7 @@ export const useCurrentAccountTezosBalance = () =>
 
 export const useTezosBalanceOfKnownAccountSelector = (publicKeyHash: string) =>
   useSelector(state => {
-    if (state.wallet.accounts.find(account => account.publicKeyHash === publicKeyHash)) {
+    if (state.wallet.accounts.some(account => account.publicKeyHash === publicKeyHash)) {
       return state.wallet.accountsStateRecord[publicKeyHash]?.tezosBalance ?? '0';
     }
 

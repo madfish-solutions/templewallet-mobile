@@ -17,7 +17,8 @@ class TempleApolloClient<TCacheShape> extends ApolloClient<TCacheShape> {
     const result: FetchResult<T> = await super.query<T, TVars>({
       query,
       variables,
-      fetchPolicy: 'network-only',
+      // Disabling cache as it creates bottlenecks (blocks thread) when fetching large data
+      fetchPolicy: 'no-cache',
       ...options
     });
 

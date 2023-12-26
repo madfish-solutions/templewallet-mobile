@@ -30,7 +30,6 @@ export interface SettingsState {
   isApkBuildLaunchEventFired: boolean;
   isPushNotificationsEnabledEventFired: boolean;
   isShowCollectibleInfo: boolean;
-  marigoldWasAdded: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -55,6 +54,5 @@ export const settingsInitialState: SettingsState = {
   isOnRampHasBeenShownBefore: false,
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
-  isShowCollectibleInfo: false,
-  marigoldWasAdded: false
+  isShowCollectibleInfo: false
 };
