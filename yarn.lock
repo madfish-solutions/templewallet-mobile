@@ -2962,6 +2962,15 @@
     redux-thunk "^2.4.1"
     reselect "^4.1.5"
 
+"@robinbobin/react-native-google-drive-api-wrapper@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@robinbobin/react-native-google-drive-api-wrapper/-/react-native-google-drive-api-wrapper-1.2.3.tgz#c4cfbfb027785589d53841ab667078f69266988c"
+  integrity sha512-WCbkb9zzKIR4Wg5xmX33eDGkfDH6wS1LUhnGET/FNRpJiRC+Lnofnrk7JrrmXg7cLjjJ3J/HkW15bsp2CwbjjQ==
+  dependencies:
+    base64-js "^1.5.1"
+    simple-common-utils "^2.3.0"
+    utf8 "^3.0.0"
+
 "@sentry-internal/tracing@7.63.0":
   version "7.63.0"
   resolved "https://registry.yarnpkg.com/@sentry-internal/tracing/-/tracing-7.63.0.tgz#58903b2205456034611cc5bc1b5b2479275f89c7"
@@ -4859,7 +4868,7 @@ base16@^1.0.0:
   resolved "https://registry.npmjs.org/base16/-/base16-1.0.0.tgz"
   integrity sha1-4pf2DX7BAUp6lxo568ipjAtoHnA=
 
-base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.3.1:
+base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.3.1, base64-js@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
@@ -10930,6 +10939,11 @@ signal-exit@^3.0.7:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
+
+simple-common-utils@^2.3.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/simple-common-utils/-/simple-common-utils-2.6.0.tgz#457f126c20c82ba10212427886f4c8ebe86cc6d7"
+  integrity sha512-K0gtyfMQ1+iDQvZKgdY2L+pbaG0MHp1ke6ho7IL6UKR8f59st+QJgw27FADF+3Hut19C3WUb7IhgENdY/OJG8w==
 
 simple-concat@^1.0.0:
   version "1.0.1"

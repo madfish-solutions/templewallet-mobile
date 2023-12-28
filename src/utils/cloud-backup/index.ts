@@ -11,6 +11,7 @@ export { keepRestoredCloudBackup, useRestoredCloudBackup } from './keeper';
 export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
 export const FAILED_TO_LOGIN_ERR_TITLE = isIOS ? 'Failed to sync cloud' : 'Failed to log-in';
 
+/** Keep it async for possible future needs */
 export const isCloudAvailable = (): Promise<boolean> =>
   isIOS ? ICloudAPI.isCloudAvailable() : GoogleDriveAPI.isCloudAvailable();
 
