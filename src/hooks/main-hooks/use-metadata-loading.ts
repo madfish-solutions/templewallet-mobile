@@ -1,17 +1,22 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
 import { loadTokensMetadataActions } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { useAreMetadatasLoadingSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useAllCurrentAccountAssetsSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllCurrentAccountAssetsSelector, useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { useDidUpdate } from 'src/utils/hooks';
 import { isTruthy } from 'src/utils/is-truthy';
 import { useTokenMetadataGetter } from 'src/utils/token-metadata.utils';
 
+import { useNetworkInfo } from '../use-network-info.hook';
+
 const LOAD_CHUNK_SIZE = 50;
 
-export const useMetadataLoading = (selectedAccountPkh: string) => {
+export const useMetadataLoading = () => {
   const dispatch = useDispatch();
+
+  const isAuthorised = useIsAuthorisedSelector();
+  const { isTezosMainnet } = useNetworkInfo();
 
   const assets = useAllCurrentAccountAssetsSelector();
   const getMetadata = useTokenMetadataGetter();
@@ -21,12 +26,10 @@ export const useMetadataLoading = (selectedAccountPkh: string) => {
 
   const checkedRef = useRef<string[]>([]);
 
-  useEffect(() => {
-    if (!selectedAccountPkh || selectedAccountPkh === EMPTY_PUBLIC_KEY_HASH) {
-      return;
-    }
+  useDidUpdate(() => void (checkedRef.current = []), [isAuthorised]);
 
-    if (metadataLoading || !slugsToCheck?.length) {
+  useEffect(() => {
+    if (metadataLoading || !slugsToCheck?.length || !isTezosMainnet || !isAuthorised) {
       return;
     }
 
@@ -52,5 +55,5 @@ export const useMetadataLoading = (selectedAccountPkh: string) => {
 
       dispatch(loadTokensMetadataActions.submit(missingChunk));
     }
-  }, [slugsToCheck, getMetadata, metadataLoading, selectedAccountPkh, dispatch]);
+  }, [slugsToCheck, getMetadata, metadataLoading, isAuthorised, isTezosMainnet, dispatch]);
 };
