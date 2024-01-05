@@ -13,8 +13,6 @@ export interface TokenMetadataInterface extends AssetMediaURIs {
   symbol: string;
   decimals: number;
   iconName?: IconNameEnum;
-  /** @deprecated // Lost in Redux at the moment */
-  displayUri?: string;
   standard?: TokenStandardsEnum | null;
 }
 

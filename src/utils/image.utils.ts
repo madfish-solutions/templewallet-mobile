@@ -47,15 +47,18 @@ export const buildCollectibleImagesStack = (
         assureGetDataUriImage(thumbnailUri)
       ]
     : [
+        /* There are performance issues with these on Collectibles screen with many <SvgXml /> components.
         assureGetDataUriImage(thumbnailUri),
         assureGetDataUriImage(displayUri),
         assureGetDataUriImage(artifactUri),
+        */
+
+        // Some image of video asset (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) only available through this option:
+        buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288'),
 
         buildObjktMediaURI(artifactInfo.ipfs, 'thumb288'),
         buildObjktMediaURI(displayInfo.ipfs, 'thumb288'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'thumb288'),
-        // Some image of video asset (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) only available through this option:
-        buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288'),
 
         buildIpfsMediaUriByInfo(thumbnailInfo, 'medium'),
         buildIpfsMediaUriByInfo(thumbnailInfo, 'small'),
@@ -185,6 +188,9 @@ export const isImageRectangular = (uri?: string) => {
 export const getXmlFromSvgDataUriInUtf8Encoding = (uri: string) =>
   decodeURIComponent(uri).slice(SVG_DATA_URI_UTF8_PREFIX.length);
 
+/** Observed in Plenty NFTs the following: `path="...123-456...""`
+ * There should be a space before `-` sign for `<SvgXml />` to render.
+ */
 export const fixSvgXml = (xml: string) => xml.replace(/(\d*\.?\d+)-(\d*)/g, '$1 -$2');
 
 export const formatCollectibleArtifactUri = (artifactUri: string) => formatObjktMediaUri(artifactUri, 'artifact');
