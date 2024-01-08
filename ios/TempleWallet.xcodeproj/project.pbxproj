@@ -544,7 +544,7 @@
 				CODE_SIGN_ENTITLEMENTS = TempleWallet/TempleWallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 319;
+				CURRENT_PROJECT_VERSION = 1027;
 				DEVELOPMENT_TEAM = D653UWS37K;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = D653UWS37K;
 				ENABLE_BITCODE = NO;
@@ -579,7 +579,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 319;
+				CURRENT_PROJECT_VERSION = 1027;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = D653UWS37K;
 				INFOPLIST_FILE = TempleWallet/Info.plist;
