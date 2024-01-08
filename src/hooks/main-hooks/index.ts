@@ -68,7 +68,7 @@ export const useMainHooks = (isLocked: boolean) => {
     dispatch(loadAssetsBalancesActions.submit());
   }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl]);
 
-  useMetadataLoading(selectedAccountPkh);
+  useMetadataLoading();
 
   useEffect(() => {
     if (atBootsplash || isLocked) {

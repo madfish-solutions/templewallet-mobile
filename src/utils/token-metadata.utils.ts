@@ -24,6 +24,7 @@ export interface TokenMetadataResponse {
   name?: string;
   thumbnailUri?: string;
   artifactUri?: string;
+  displayUri?: string;
 }
 
 /** Currently, metadata service does not throw, instead, returns status 200. */
@@ -70,7 +71,8 @@ const transformDataToTokenMetadata = (
   symbol: token.symbol ?? token.name?.substring(0, 8) ?? '???',
   name: token.name ?? token.symbol ?? 'Unknown Token',
   thumbnailUri: token.thumbnailUri,
-  artifactUri: token.artifactUri
+  artifactUri: token.artifactUri,
+  displayUri: token.displayUri
 });
 
 export const transformWhitelistToTokenMetadata = (token: WhitelistTokensItem): TokenMetadataInterface => ({
