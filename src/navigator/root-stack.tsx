@@ -9,7 +9,6 @@ import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
 import { isAndroid, isIOS } from 'src/config/system';
 import { useRootHooks } from 'src/hooks/root-hooks';
-import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
@@ -30,7 +29,6 @@ import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/revea
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
 import { SendModal } from 'src/modals/send-modal/send-modal';
-import { SplashModal } from 'src/modals/splash-modal/splash-modal';
 import { AppCheckWarning } from 'src/screens/app-check/app-check-warning';
 import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
@@ -66,7 +64,6 @@ export const RootStackScreen = () => {
 
   useRootHooks();
 
-  const isSplash = useAppSplash();
   const isPasscode = useDevicePasscode();
   const isForceUpdateNeeded = useIsForceUpdateNeeded();
   const isAppCheckFailed = useIsAppCheckFailed();
@@ -198,7 +195,6 @@ export const RootStackScreen = () => {
       </PortalProvider>
 
       {/** Hiding screen in preview is implemented natively for Android */}
-      {isSplash && !isAndroid && <SplashModal />}
       {isAuthorised && isLocked && <EnterPassword />}
       {!isPasscode && <PassCode />}
       {isForceUpdateNeeded && <ForceUpdate />}

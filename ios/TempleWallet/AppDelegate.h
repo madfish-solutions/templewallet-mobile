@@ -4,4 +4,7 @@
 
 @interface AppDelegate : RCTAppDelegate <UNUserNotificationCenterDelegate>
 
+@property (nonatomic, strong) UIView *overlayView;
+@property (nonatomic, strong) UIWindow *overlayWindow;
+
 @end

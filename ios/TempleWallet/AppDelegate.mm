@@ -13,6 +13,7 @@
 
 #import <React/RCTLinkingManager.h>
 
+#import <UIKit/UIKit.h>
 
 @implementation AppDelegate
 
@@ -30,6 +31,23 @@
 
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
+
+  // Initialize overlay view
+  self.overlayView = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+  self.overlayView.backgroundColor = [UIColor whiteColor];
+  self.overlayView.hidden = NO; // Initially visible
+
+  self.overlayWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+  self.overlayWindow.backgroundColor = [UIColor whiteColor];
+  self.overlayWindow.hidden = NO; // Initially visible
+  self.overlayWindow.windowLevel = UIWindowLevelStatusBar + 1;
+  [self.overlayWindow addSubview:self.overlayView];
+
+  // Set the root view controller for the main window
+  UIViewController *rootViewController = [[UIViewController alloc] init];
+  self.overlayWindow.rootViewController = rootViewController;
+
+  [self.window makeKeyAndVisible]; // Ensure that the main window is visible
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
@@ -97,6 +115,24 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
   completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+  // Show the white overlay when the app becomes inactive
+  self.overlayWindow.hidden = NO;
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+  // Show the white overlay when the app becomes inactive
+  self.overlayWindow.hidden = NO;
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+  // Hide the white overlay when the app becomes active again
+  self.overlayWindow.hidden = YES;
 }
 
 @end

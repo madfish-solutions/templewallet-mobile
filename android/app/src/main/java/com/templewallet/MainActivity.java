@@ -56,13 +56,13 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected void onPause() {
-      super.onPause();
       this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+      super.onPause();
   }
 
   @Override
   protected void onResume() {
-      super.onResume();
       this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+      super.onResume();
   }
 }
