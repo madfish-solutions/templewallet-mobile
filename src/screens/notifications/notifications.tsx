@@ -19,6 +19,7 @@ import { NotificationsStyles } from './notifications.styles';
 
 const VIEW_ALL_NOTIFICATIONS_TIMEOUT = 5 * 1000;
 const AVERAGE_NOTIFICATION_ITEM_HEIGHT = Math.round(formatSize(132));
+const PROMOTION_ID = 'notifications-promotion';
 
 const keyExtractor = (item: NotificationInterface) => item.id.toString();
 
@@ -29,10 +30,10 @@ const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
 export const Notifications = () => {
   const notifications = useNotificationsSelector();
   const dispatch = useDispatch();
-  const partnersPromoShown = useIsPartnersPromoShown();
+  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
-  usePartnersPromoLoad();
+  usePartnersPromoLoad(PROMOTION_ID);
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
 
@@ -49,6 +50,7 @@ export const Notifications = () => {
       {partnersPromoShown && !promotionErrorOccurred && (
         <>
           <OptimalPromotionItem
+            id={PROMOTION_ID}
             testID={NotificationsSelectors.promotion}
             style={NotificationsStyles.ads}
             onImageError={handlePromotionItemError}

@@ -5,6 +5,8 @@ import { mockPartnersPromotion } from 'src/store/partners-promotion/partners-pro
 
 import { optimalApi } from '../api.service';
 
+export const AD_HIDING_TIMEOUT = 12 * 3600 * 1000;
+
 export enum OptimalPromotionAdType {
   TwMobile = 'tw-mobile',
   TwToken = 'tw-token'

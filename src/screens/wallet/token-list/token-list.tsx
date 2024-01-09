@@ -45,6 +45,8 @@ import { useTokenListStyles } from './token-list.styles';
 
 const AD_PLACEHOLDER = 'ad';
 
+export const PROMOTION_ID = 'wallet-promotion';
+
 type ListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
@@ -76,7 +78,7 @@ export const TokensList = memo(() => {
   const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
-  const partnersPromoShown = useIsPartnersPromoShown();
+  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const { isTezosNode } = useNetworkInfo();
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
@@ -86,8 +88,10 @@ export const TokensList = memo(() => {
 
   useEffect(() => {
     const listener = () => {
-      dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
-      setPromotionErrorOccurred(false);
+      if (partnersPromoShown) {
+        dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
+        setPromotionErrorOccurred(false);
+      }
     };
 
     if (partnersPromoShown) {
@@ -150,6 +154,7 @@ export const TokensList = memo(() => {
           <View>
             <View style={styles.promotionItemWrapper}>
               <OptimalPromotionItem
+                id={PROMOTION_ID}
                 variant={OptimalPromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}

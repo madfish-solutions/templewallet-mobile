@@ -19,6 +19,8 @@ import { useTopTokensTableStyles } from './top-tokens-table.styles';
 const renderItem: ListRenderItem<MarketToken> = ({ item }) => <Row {...item} />;
 const keyExtractor = (item: MarketToken) => item.id;
 
+export const PROMOTION_ID = 'market-promotion';
+
 export const TopTokensTable = () => {
   const styles = useTopTokensTableStyles();
   const {
@@ -55,6 +57,7 @@ export const TopTokensTable = () => {
     <View style={styles.rootContainer}>
       {!promotionErrorOccurred && (
         <OptimalPromotionItem
+          id={PROMOTION_ID}
           style={styles.promotion}
           testID={MarketSelectors.promotion}
           onImageError={() => setPromotionErrorOccurred(true)}

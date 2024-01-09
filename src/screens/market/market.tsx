@@ -10,14 +10,14 @@ import { loadMarketTokensSlugsActions } from 'src/store/market/market-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { TezosInfo } from './tezos-info/tezos-info';
-import { TopTokensTable } from './top-coins-table/top-tokens-table';
+import { PROMOTION_ID, TopTokensTable } from './top-coins-table/top-tokens-table';
 
 export const Market = () => {
   const dispatch = useDispatch();
 
   useAuthorisedInterval(() => dispatch(loadMarketTokensSlugsActions.submit()), MARKET_SYNC_INTERVAL);
 
-  usePartnersPromoSync();
+  usePartnersPromoSync(PROMOTION_ID);
 
   usePageAnalytic(ScreensEnum.Market);
 

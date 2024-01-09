@@ -7,17 +7,19 @@ import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/
 import { useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 
+import { useAdTemporaryHiding } from './use-ad-temporary-hiding.hook';
 import { useAuthorisedInterval } from './use-authed-interval';
 
-export const useIsPartnersPromoShown = () => {
+export const useIsPartnersPromoShown = (id: string) => {
   const areAdsNotEnabled = useIsEnabledAdsBannerSelector();
   const isEnabled = useIsPartnersPromoEnabledSelector();
+  const { isHiddenTemporarily } = useAdTemporaryHiding(id);
 
-  return isEnabled && !areAdsNotEnabled;
+  return isEnabled && !areAdsNotEnabled && !isHiddenTemporarily;
 };
 
-export const usePartnersPromoLoad = () => {
-  const promoIsShown = useIsPartnersPromoShown();
+export const usePartnersPromoLoad = (id: string) => {
+  const promoIsShown = useIsPartnersPromoShown(id);
 
   const dispatch = useDispatch();
 
@@ -25,11 +27,11 @@ export const usePartnersPromoLoad = () => {
     if (promoIsShown) {
       dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwMobile));
     }
-  }, [promoIsShown]);
+  }, [dispatch, promoIsShown]);
 };
 
-export const usePartnersPromoSync = () => {
-  const promoIsShown = useIsPartnersPromoShown();
+export const usePartnersPromoSync = (id: string) => {
+  const promoIsShown = useIsPartnersPromoShown(id);
 
   const dispatch = useDispatch();
 

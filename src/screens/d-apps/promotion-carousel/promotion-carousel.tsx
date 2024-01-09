@@ -16,13 +16,15 @@ import { COMMON_PROMOTION_CAROUSEL_DATA } from './promotion-carousel.data';
 import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
 import { usePromotionCarouselStyles } from './promotion-carousel.styles';
 
+const PROMOTION_ID = 'carousel-promotion';
+
 export const PromotionCarousel = () => {
   const activePromotion = useActivePromotionSelector();
   const styles = usePromotionCarouselStyles();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
-  const partnersPromoShown = useIsPartnersPromoShown();
+  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
 
-  usePartnersPromoLoad();
+  usePartnersPromoLoad(PROMOTION_ID);
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -41,6 +43,7 @@ export const PromotionCarousel = () => {
     if (partnersPromoShown && !promotionErrorOccurred) {
       result.unshift(
         <OptimalPromotionItem
+          id={PROMOTION_ID}
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
           shouldShowCloseButton={false}
           style={styles.promotionItem}
