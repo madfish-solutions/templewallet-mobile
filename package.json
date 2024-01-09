@@ -189,6 +189,7 @@
     "yargs": "^17.4.0",
     "json5": "2.2.3",
     "levelup": "^5.1.1",
-    "bignumber.js": "9.1.1"
+    "bignumber.js": "9.1.1",
+    "follow-redirects": "^1.15.4"
   }
 }
