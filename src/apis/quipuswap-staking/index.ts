@@ -24,6 +24,10 @@ export const getV3FarmsList = async () => {
     ...rest,
     item: {
       ...item,
+      tokens: item.tokens.map(({ contractAddress, ...rest }) => ({
+        ...rest,
+        contractAddress: contractAddress === 'tez' ? '' : contractAddress
+      })),
       firstActivityTime: firstActivityTimestamps[index]
     }
   }));
