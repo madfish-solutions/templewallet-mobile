@@ -45,7 +45,7 @@ import { useTokenListStyles } from './token-list.styles';
 
 const AD_PLACEHOLDER = 'ad';
 
-export const PROMOTION_ID = 'wallet-promotion';
+const PROMOTION_ID = 'wallet-promotion';
 
 type ListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
