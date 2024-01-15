@@ -6,13 +6,6 @@ export const useWelcomeStyles = createUseStyles(({ colors, typography }) => ({
     marginTop: formatSize(108),
     alignItems: 'center'
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  buttonBox: {
-    flex: 0.475
-  },
   orDivider: {
     height: formatSize(18),
     flexDirection: 'row',

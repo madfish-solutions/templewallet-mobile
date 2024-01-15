@@ -55,7 +55,6 @@ import DetailsArrowDownIcon from './assets/details-arrow-down.svg';
 import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
-import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
 import EarnIcon from './assets/earn.svg';
@@ -78,6 +77,7 @@ import GoogleDriveIcon from './assets/google-drive.svg';
 import HelpCircleIcon from './assets/help-circle.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
+import ImportSquareIcon from './assets/import-square.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
@@ -200,7 +200,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.GHigh]: GHighIcon,
   [IconNameEnum.Globe]: GlobeIcon,
   [IconNameEnum.HourGlasses]: HourGlassesIcon,
-  [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
+  [IconNameEnum.ImportSquare]: ImportSquareIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.PlusCircleNew]: PlusCircleNewIcon,

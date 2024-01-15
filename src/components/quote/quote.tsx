@@ -15,14 +15,10 @@ export const Quote: FC<Props> = ({ quote, author }) => {
   const styles = useQuoteStyles();
 
   return (
-    <View>
-      <Text style={styles.text}>
-        <Text style={styles.textQuotes}>“</Text>
-        {quote}
-        <Text style={styles.textQuotes}>”</Text>
-      </Text>
-      <Divider size={formatSize(8)} />
-      <Text style={styles.author}>{author}</Text>
+    <View style={styles.container}>
+      <Text style={styles.text}>“{quote}”</Text>
+      <Divider size={formatSize(12)} />
+      <Text style={styles.author}>© {author}</Text>
     </View>
   );
 };
