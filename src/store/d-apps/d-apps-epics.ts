@@ -9,7 +9,7 @@ import { templeWalletApi } from 'src/api.service';
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { CustomDAppsInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
-import { withUsdToTokenRates } from 'src/utils/wallet.utils';
+import { withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { emptyAction } from '../root-state.actions';
 import type { RootState } from '../types';
@@ -109,15 +109,16 @@ const loadDAppsListEpic: Epic = (action$: Observable<Action>) =>
 const loadTokensApyEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadTokensApyActions.submit),
+    withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([, tokenUsdExchangeRates]) =>
+    switchMap(([[, rpcUrl], tokenUsdExchangeRates]) =>
       forkJoin([
         fetchUSDTApy$(),
         fetchTzBtcApy$(),
         fetchKUSDApy$(),
-        fetchUBTCApr$(),
-        fetchUUSDCApr$(),
-        fetchYOUApr$(tokenUsdExchangeRates)
+        fetchUBTCApr$(rpcUrl),
+        fetchUUSDCApr$(rpcUrl),
+        fetchYOUApr$(tokenUsdExchangeRates, rpcUrl)
       ]).pipe(map(responses => loadTokensApyActions.success(Object.assign({}, ...responses))))
     )
   );
