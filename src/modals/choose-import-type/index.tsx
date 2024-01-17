@@ -56,10 +56,10 @@ export const ChooseImportType = memo(() => {
 
         <View>
           {ImportTypes.map(item => (
-            <>
+            <View key={item.title}>
               <Divider size={formatSize(16)} />
               <ImportTypeItem {...item} />
-            </>
+            </View>
           ))}
         </View>
       </View>

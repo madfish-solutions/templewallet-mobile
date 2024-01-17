@@ -2,20 +2,20 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../../../components/button/buttons-container/buttons-container';
-import { ButtonsFloatingContainer } from '../../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Divider } from '../../../../components/divider/divider';
-import { HeaderTitle } from '../../../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
-import { InsetSubstitute } from '../../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../../components/label/label';
-import { ScreenContainer } from '../../../../components/screen-container/screen-container';
-import { FormPasswordInput } from '../../../../form/form-password-input';
-import { useShelter } from '../../../../shelter/use-shelter.hook';
-import { formatSize } from '../../../../styles/format-size';
-import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { Divider } from 'src/components/divider/divider';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { FormPasswordInput } from 'src/form/form-password-input';
+import { useShelter } from 'src/shelter/use-shelter.hook';
+import { formatSize } from 'src/styles/format-size';
+import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 
 import {
   CreateNewPasswordFormValues,
@@ -28,7 +28,7 @@ interface CreateNewPasswordProps {
   seedPhrase: string;
   useBiometry?: boolean;
   hdAccountsLength?: number;
-  onGoBackPress: () => void;
+  onGoBackPress: EmptyFn;
 }
 
 export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
