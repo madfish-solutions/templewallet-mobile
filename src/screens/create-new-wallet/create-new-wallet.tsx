@@ -137,7 +137,7 @@ export const CreateNewWallet = () => {
               </CheckboxLabel>
             </View>
           </ScreenContainer>
-          <View style={styles.fixedButtonContainer}>
+          <View style={[styles.fixedButtonContainer, styles.withoutSeparator]}>
             <ButtonLargePrimary
               title="Create"
               onPress={() => {

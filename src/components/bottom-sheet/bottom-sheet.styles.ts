@@ -1,5 +1,5 @@
 import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { formatSize, formatTextSize } from '../../styles/format-size';
 
 export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typography }) => ({
   root: {
@@ -13,18 +13,21 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
   headerContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: formatSize(16),
+    paddingVertical: formatSize(16),
+    paddingHorizontal: formatSize(12),
     borderBottomColor: colors.lines,
     borderBottomWidth: formatSize(0.5)
   },
   title: {
     ...typography.body17Semibold,
     color: colors.black,
-    marginBottom: formatSize(2)
+    lineHeight: formatTextSize(22),
+    marginBottom: formatSize(4)
   },
   description: {
     ...typography.caption13Regular,
     color: colors.gray1,
+    lineHeight: formatTextSize(18),
     textAlign: 'center'
   },
   cancelButton: {

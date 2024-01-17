@@ -35,6 +35,7 @@ import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
+import CloudNativeIcon from './assets/cloud-native.svg';
 import CloudIcon from './assets/cloud.svg';
 import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
@@ -75,6 +76,7 @@ import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
+import GoogleDriveNativeIcon from './assets/google-drive-native.svg';
 import GoogleDriveIcon from './assets/google-drive.svg';
 import HelpCircleIcon from './assets/help-circle.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
@@ -91,6 +93,7 @@ import LinkIcon from './assets/link.svg';
 import LiquidityBakingLogo from './assets/liquidity-baking-logo.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
+import ManualBackupIcon from './assets/manual-backup.svg';
 import MarketIcon from './assets/market.svg';
 import MinusIcon from './assets/minus-icon.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
@@ -343,5 +346,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.KordFiEarnSource]: KordFiEarnSource,
   [IconNameEnum.Sync]: SyncIcon,
   [IconNameEnum.FileUpload]: FileUploadIcon,
-  [IconNameEnum.Docs]: DocsIcon
+  [IconNameEnum.Docs]: DocsIcon,
+  [IconNameEnum.CloudNative]: CloudNativeIcon,
+  [IconNameEnum.GoogleDriveNative]: GoogleDriveNativeIcon,
+  [IconNameEnum.ManualBackup]: ManualBackupIcon
 };

@@ -167,5 +167,8 @@ export enum IconNameEnum {
   KordFiEarnSource = 'KordFiEarnSource',
   Sync = 'Sync',
   FileUpload = 'FileUpload',
-  Docs = 'Docs'
+  Docs = 'Docs',
+  CloudNative = 'CloudNative',
+  ManualBackup = 'ManualBackup',
+  GoogleDriveNative = 'GoogleDriveNative'
 }
