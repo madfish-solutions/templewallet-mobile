@@ -22,7 +22,12 @@ export enum ModalsEnum {
   ManageFarmingPool = 'ManageFarmingPool',
   Newsletter = 'Newsletter',
   InAppBrowser = 'InAppBrowser',
-  ManageSavingsPool = 'ManageSavingsPool'
+  ManageSavingsPool = 'ManageSavingsPool',
+  ChooseImportType = 'ChooseImportType',
+  ImportFromSeed = 'ImportFromSeed',
+  ImportFromKeystore = 'ImportFromKeystore',
+  SyncInstructions = 'SyncInstructions',
+  ConfirmSync = 'ConfirmSync'
 }
 
 export type ModalsParamList = {
@@ -45,4 +50,9 @@ export type ModalsParamList = {
   [ModalsEnum.ManageSavingsPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
   [ModalsEnum.Newsletter]: undefined;
   [ModalsEnum.InAppBrowser]: { uri: string };
+  [ModalsEnum.ChooseImportType]: undefined;
+  [ModalsEnum.ImportFromSeed]: undefined;
+  [ModalsEnum.ImportFromKeystore]: undefined;
+  [ModalsEnum.SyncInstructions]: undefined;
+  [ModalsEnum.ConfirmSync]: { payload: string };
 };

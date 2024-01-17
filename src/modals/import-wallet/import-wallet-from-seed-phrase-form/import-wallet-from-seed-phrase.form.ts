@@ -1,6 +1,6 @@
 import { object, SchemaOf } from 'yup';
 
-import { seedPhraseValidation } from '../../../../form/validation/seed-phrase';
+import { seedPhraseValidation } from '../../../form/validation/seed-phrase';
 
 type ImportWalletFromSeedPhraseFormValues = {
   seedPhrase: string;

@@ -2,20 +2,19 @@ import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { useShelter } from 'src/shelter/use-shelter.hook';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
-
-import { ScreensEnum, ScreensParamList } from '../../../navigator/enums/screens.enum';
-import { useShelter } from '../../../shelter/use-shelter.hook';
-import { enterPassword } from '../../../store/security/security-actions';
+import { enterPassword } from 'src/store/security/security-actions';
 import {
   hideLoaderAction,
   setAdsBannerVisibilityAction,
   setIsAnalyticsEnabled,
   showLoaderAction
-} from '../../../store/settings/settings-actions';
-import { showErrorToast } from '../../../toast/toast.utils';
-import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
-import { parseSyncPayload } from '../../../utils/sync.utils';
+} from 'src/store/settings/settings-actions';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { parseSyncPayload } from 'src/utils/sync.utils';
 
 import { ConfirmSync } from './confirm-sync/confirm-sync';
 import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
@@ -30,8 +29,8 @@ export const AfterSyncQRScan = () => {
   const [hdAccountsLength, setHdAccountsLength] = useState(0);
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
-  const { payload } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ConfirmSync>>().params;
-  usePageAnalytic(ScreensEnum.ConfirmSync);
+  const { payload } = useRoute<RouteProp<ModalsParamList, ModalsEnum.ConfirmSync>>().params;
+  usePageAnalytic(ModalsEnum.ConfirmSync);
 
   const handleConfirmSyncFormSubmit = ({
     usePrevPassword,

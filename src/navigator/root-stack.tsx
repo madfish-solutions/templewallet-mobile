@@ -13,6 +13,7 @@ import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
+import { ChooseImportType } from 'src/modals/choose-import-type';
 import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
 import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal/add-contact-modal';
@@ -21,6 +22,8 @@ import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-mo
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { ImportAccountModal } from 'src/modals/import-account-modal/import-account-modal';
+import { ImportFromKeystoreFile } from 'src/modals/import-wallet/import-from-keystore-file';
+import { ImportFromSeed } from 'src/modals/import-wallet/import-from-seed';
 import { InAppBrowser } from 'src/modals/in-app-browser';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
@@ -31,6 +34,8 @@ import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/revea
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
 import { SendModal } from 'src/modals/send-modal/send-modal';
 import { SplashModal } from 'src/modals/splash-modal/splash-modal';
+import { AfterSyncQRScan } from 'src/modals/sync-account/after-sync-qr-scan/after-sync-qr-scan';
+import { SyncInstructions } from 'src/modals/sync-account/sync-instructions/sync-instructions';
 import { AppCheckWarning } from 'src/screens/app-check/app-check-warning';
 import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
@@ -192,6 +197,31 @@ export const RootStackScreen = () => {
               name={ModalsEnum.InAppBrowser}
               component={InAppBrowser}
               options={useModalOptions('In-App Browser')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ChooseImportType}
+              component={ChooseImportType}
+              options={useModalOptions('Import Existing Wallet')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ImportFromSeed}
+              component={ImportFromSeed}
+              options={useModalOptions('Import Seed Phrase')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ImportFromKeystore}
+              component={ImportFromKeystoreFile}
+              options={useModalOptions('Import Keystore File')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.SyncInstructions}
+              component={SyncInstructions}
+              options={useModalOptions('Sync with Extension Wallet')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ConfirmSync}
+              component={AfterSyncQRScan}
+              options={useModalOptions('Confirm Sync')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext.Provider>

@@ -2,27 +2,29 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { Divider } from 'src/components/divider/divider';
 import { ViewAdsField } from 'src/components/fields/view-ads-field';
-
-import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { CheckboxLabel } from '../../../../components/checkbox-description/checkbox-label';
-import { Disclaimer } from '../../../../components/disclaimer/disclaimer';
-import { Divider } from '../../../../components/divider/divider';
-import { HeaderBackButton } from '../../../../components/header/header-back-button/header-back-button';
-import { HeaderTitle } from '../../../../components/header/header-title/header-title';
-import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
-import { InsetSubstitute } from '../../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../../components/label/label';
-import { ScreenContainer } from '../../../../components/screen-container/screen-container';
-import { TextLink } from '../../../../components/text-link/text-link';
-import { MAX_PASSWORD_ATTEMPTS } from '../../../../config/security';
-import { analyticsCollecting, privacyPolicy, termsOfUse } from '../../../../config/socials';
-import { FormBiometryCheckbox } from '../../../../form/form-biometry-checkbox/form-biometry-checkbox';
-import { FormCheckbox } from '../../../../form/form-checkbox';
-import { FormPasswordInput } from '../../../../form/form-password-input';
-import { usePasswordLock } from '../../../../hooks/use-password-lock.hook';
-import { formatSize } from '../../../../styles/format-size';
-import { useSetPasswordScreensCommonStyles } from '../../../../styles/set-password-screens-common-styles';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TextLink } from 'src/components/text-link/text-link';
+import { MAX_PASSWORD_ATTEMPTS } from 'src/config/security';
+import { analyticsCollecting, privacyPolicy, termsOfUse } from 'src/config/socials';
+import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
+import { FormCheckbox } from 'src/form/form-checkbox';
+import { FormPasswordInput } from 'src/form/form-password-input';
+import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 
 import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
@@ -33,12 +35,12 @@ interface ConfirmSyncProps {
 
 export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
   const styles = useSetPasswordScreensCommonStyles();
+  const { goBack } = useNavigation();
 
   const { isDisabled, timeleft } = usePasswordLock();
 
   useNavigationSetOptions(
     {
-      headerLeft: () => <HeaderBackButton />,
       headerTitle: () => <HeaderTitle title="Confirm Sync" />
     },
     []
@@ -108,17 +110,25 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
               </CheckboxLabel>
             </View>
           </ScreenContainer>
-          <View style={[styles.marginTopAuto, styles.fixedButtonContainer]}>
-            <ButtonLargePrimary
-              title={values.usePrevPassword === true ? 'Sync' : 'Next'}
-              disabled={!isValid || isDisabled}
-              onPress={submitForm}
-              testID={
-                values.usePrevPassword === true ? ConfirmSyncSelectors.syncButton : ConfirmSyncSelectors.nextButton
-              }
-            />
+
+          <ButtonsFloatingContainer>
+            <ButtonsContainer style={styles.buttonsContainer}>
+              <View style={styles.buttonBox}>
+                <ButtonLargeSecondary title="Back" onPress={goBack} />
+              </View>
+              <View style={styles.buttonBox}>
+                <ButtonLargePrimary
+                  title={values.usePrevPassword === true ? 'Sync' : 'Next'}
+                  disabled={!isValid || isDisabled}
+                  onPress={submitForm}
+                  testID={
+                    values.usePrevPassword === true ? ConfirmSyncSelectors.syncButton : ConfirmSyncSelectors.nextButton
+                  }
+                />
+              </View>
+            </ButtonsContainer>
             <InsetSubstitute type="bottom" />
-          </View>
+          </ButtonsFloatingContainer>
         </>
       )}
     </Formik>

@@ -25,5 +25,11 @@ export const useSetPasswordScreensCommonStyles = createUseStyles(({ colors, typo
   },
   mb40: {
     marginBottom: formatSize(40)
+  },
+  buttonsContainer: {
+    paddingHorizontal: formatSize(8)
+  },
+  buttonBox: {
+    flex: 0.475
   }
 }));

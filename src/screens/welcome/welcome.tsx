@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
+import { ButtonDelegatePrimary } from 'src/components/button/button-large/button-delegate-primary/button-delegate-primary';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
@@ -9,12 +10,11 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { useABTestingLoading } from 'src/hooks/use-ab-testing-loading.hook';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-
-import { ButtonDelegatePrimary } from '../../components/button/button-large/button-delegate-primary/button-delegate-primary';
 
 import { ContinueWithCloudButton } from './ContinueWithCloudButton';
 import { WelcomeSelectors } from './welcome.selectors';
@@ -62,7 +62,7 @@ export const Welcome = () => {
         <ButtonDelegatePrimary
           title="Import Existing Wallet"
           iconName={IconNameEnum.ImportSquare}
-          onPress={() => navigate(ScreensEnum.ImportAccount)}
+          onPress={() => navigate(ModalsEnum.ChooseImportType)}
           testID={WelcomeSelectors.importExistingWalletButton}
         />
 

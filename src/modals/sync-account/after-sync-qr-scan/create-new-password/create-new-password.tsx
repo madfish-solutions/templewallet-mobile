@@ -3,11 +3,12 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { ButtonLargePrimary } from '../../../../components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from '../../../../components/button/buttons-container/buttons-container';
+import { ButtonsFloatingContainer } from '../../../../components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from '../../../../components/divider/divider';
-import { HeaderButton } from '../../../../components/header/header-button/header-button';
 import { HeaderTitle } from '../../../../components/header/header-title/header-title';
 import { useNavigationSetOptions } from '../../../../components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
 import { InsetSubstitute } from '../../../../components/inset-substitute/inset-substitute';
 import { Label } from '../../../../components/label/label';
 import { ScreenContainer } from '../../../../components/screen-container/screen-container';
@@ -44,8 +45,7 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
 
   useNavigationSetOptions(
     {
-      headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
-      headerTitle: () => <HeaderTitle title="Create a new password" />
+      headerTitle: () => <HeaderTitle title="Create Password" />
     },
     [onGoBackPress]
   );
@@ -75,15 +75,23 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
               />
             </View>
           </ScreenContainer>
-          <View style={[styles.marginTopAuto, styles.fixedButtonContainer]}>
-            <ButtonLargePrimary
-              title="Sync"
-              disabled={!isValid}
-              onPress={submitForm}
-              testID={CreateNewPasswordSyncAccountSelectors.syncButton}
-            />
+
+          <ButtonsFloatingContainer>
+            <ButtonsContainer style={styles.buttonsContainer}>
+              <View style={styles.buttonBox}>
+                <ButtonLargeSecondary title="Back" onPress={onGoBackPress} />
+              </View>
+              <View style={styles.buttonBox}>
+                <ButtonLargePrimary
+                  title="Sync"
+                  disabled={!isValid}
+                  onPress={submitForm}
+                  testID={CreateNewPasswordSyncAccountSelectors.syncButton}
+                />
+              </View>
+            </ButtonsContainer>
             <InsetSubstitute type="bottom" />
-          </View>
+          </ButtonsFloatingContainer>
         </>
       )}
     </Formik>

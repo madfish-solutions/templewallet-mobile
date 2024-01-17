@@ -55,6 +55,7 @@ import DetailsArrowDownIcon from './assets/details-arrow-down.svg';
 import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
+import DocsIcon from './assets/docs.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
 import EarnIcon from './assets/earn.svg';
@@ -68,6 +69,7 @@ import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import FaceIdIcon from './assets/face-id.svg';
 import FavoriteIcon from './assets/favourite.svg';
+import FileUploadIcon from './assets/file-upload.svg';
 import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
@@ -139,6 +141,7 @@ import SwapRouteItemBackgroundIcon from './assets/swap-route-item-background.svg
 import SwapSettingsNewIcon from './assets/swap-settings-new.svg';
 import SwapSettings from './assets/swap-settings.svg';
 import SwapIcon from './assets/swap.svg';
+import SyncIcon from './assets/sync.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoBottomIcon from './assets/temple-logo-bottom.svg';
 import TempleLogoUpIcon from './assets/temple-logo-up.svg';
@@ -337,5 +340,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
   [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
   [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon,
-  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource
+  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource,
+  [IconNameEnum.Sync]: SyncIcon,
+  [IconNameEnum.FileUpload]: FileUploadIcon,
+  [IconNameEnum.Docs]: DocsIcon
 };
