@@ -2,7 +2,6 @@ import { mainnetTokens } from 'youves-sdk/dist/networks.mainnet';
 
 import { YouvesTokensEnum } from './enums';
 
-export const MAINNET_SMARTPY_RPC = 'https://mainnet.smartpy.io';
 const YOUVES_INDEXER_URL = 'https://youves-mainnet-indexer.prod.gke.papers.tech/v1/graphql';
 export const YOUVES_TOKENS: string[] = [YouvesTokensEnum.YOU, YouvesTokensEnum.UBTC, YouvesTokensEnum.UUSD];
 export const INITIAL_APR_VALUE = 0;

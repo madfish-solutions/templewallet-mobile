@@ -27,21 +27,23 @@ export const fetchTzBtcApy$ = () => {
   return fetchApyFromYupana$('TZBTC').pipe(map(val => ({ [slug]: val })));
 };
 
-export const fetchUBTCApr$ = () => {
+export const fetchUBTCApr$ = (rpcUrl: string) => {
   const slug = KNOWN_TOKENS_SLUGS.uBTC;
 
-  return getYouvesTokenApr$(youvesTokensRecord[YouvesTokensEnum.UBTC]).pipe(map(value => ({ [slug]: value })));
+  return getYouvesTokenApr$(youvesTokensRecord[YouvesTokensEnum.UBTC], rpcUrl).pipe(map(value => ({ [slug]: value })));
 };
 
-export const fetchUUSDCApr$ = () => {
+export const fetchUUSDCApr$ = (rpcUrl: string) => {
   const slug = KNOWN_TOKENS_SLUGS.uUSD;
 
-  return getYouvesTokenApr$(youvesTokensRecord[YouvesTokensEnum.UUSD]).pipe(map(value => ({ [slug]: value })));
+  return getYouvesTokenApr$(youvesTokensRecord[YouvesTokensEnum.UUSD], rpcUrl).pipe(map(value => ({ [slug]: value })));
 };
 
-export const fetchYOUApr$ = (tokenUsdExchangeRates: ExchangeRateRecord) => {
+export const fetchYOUApr$ = (tokenUsdExchangeRates: ExchangeRateRecord, rpcUrl: string) => {
   const slug = KNOWN_TOKENS_SLUGS.YOU;
   const assetToUsdExchangeRate = new BigNumber(tokenUsdExchangeRates[slug]);
 
-  return getYOUTokenApr$(assetToUsdExchangeRate, assetToUsdExchangeRate).pipe(map(value => ({ [slug]: value })));
+  return getYOUTokenApr$(assetToUsdExchangeRate, assetToUsdExchangeRate, rpcUrl).pipe(
+    map(value => ({ [slug]: value }))
+  );
 };
