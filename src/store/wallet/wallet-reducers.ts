@@ -1,41 +1,25 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { uniqBy } from 'lodash-es';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
-import { AccountInterface } from 'src/interfaces/account.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
-import { isDefined } from 'src/utils/is-defined';
+import { initialAccountState } from 'src/interfaces/account-state.interface';
+import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 
-import {
-  deleteOldIsShownDomainName,
-  deleteOldQuipuApy,
-  deleteOldTokensMetadata,
-  deleteOldTokenSuggestion,
-  migrateAccountsState
-} from '../migration/migration-actions';
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
 
 import {
   addHdAccountAction,
   addTokenAction,
   loadTezosBalanceActions,
-  loadTokensActions,
   removeTokenAction,
   setSelectedAccountAction,
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadTokensBalancesArrayActions
+  loadAssetsBalancesActions
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
-import {
-  pushOrUpdateTokensBalances,
-  toggleTokenVisibility,
-  updateAccountState,
-  updateCurrentAccountState
-} from './wallet-state.utils';
+import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
@@ -43,172 +27,110 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     accounts: [...state.accounts, account],
     accountsStateRecord: { ...state.accountsStateRecord, [account.publicKeyHash]: initialAccountState }
   }));
+
   builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => ({
     ...state,
     accounts: state.accounts.map(item =>
       item.publicKeyHash === updatedAccount.publicKeyHash ? { ...item, ...updatedAccount } : item
     )
   }));
-  builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) =>
-    updateAccountState(state, publicKeyHash, account => ({
-      ...account,
-      isVisible
-    }))
-  );
-  builder.addCase(loadWhitelistAction.success, (state, { payload: tokensMetadata }) => ({
-    ...state,
-    accountsStateRecord: Object.keys(state.accountsStateRecord).reduce((accountsState, publicHash) => {
-      return {
-        ...accountsState,
-        [publicHash]: {
-          ...accountsState[publicHash],
-          tokensList: uniqBy(
-            [
-              // `tokensList` appeared to be undefined once
-              ...(accountsState[publicHash].tokensList ?? []),
-              ...tokensMetadata.map(token => ({
-                ...token,
-                slug: getTokenSlug(token),
-                balance: '0',
-                visibility: VisibilityEnum.InitiallyHidden
-              }))
-            ],
-            'slug'
-          )
+
+  builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) => {
+    const accountState = retrieveAccountState(state, publicKeyHash);
+
+    if (accountState) {
+      accountState.isVisible = isVisible;
+    }
+  });
+
+  builder.addCase(loadWhitelistAction.success, (state, { payload }) => {
+    for (const accountState of Object.values(state.accountsStateRecord)) {
+      if (!accountState.tokensList) {
+        // `tokensList` appeared to be undefined once
+        console.warn('Tokens list absent for some account state');
+        accountState.tokensList = [];
+      }
+      const currentSlugs = new Set(accountState.tokensList.map(({ slug }) => slug));
+
+      for (const token of payload) {
+        const slug = toTokenSlug(token.contractAddress, token.fa2TokenId);
+        if (!currentSlugs.has(slug)) {
+          accountState.tokensList.push({
+            slug,
+            balance: '0',
+            visibility: VisibilityEnum.InitiallyHidden
+          });
         }
-      };
-    }, state.accountsStateRecord)
-  }));
+      }
+    }
+  });
+
   builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
     ...state,
     selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
   }));
 
-  builder.addCase(loadTezosBalanceActions.success, (state, { payload: tezosBalance }) =>
-    updateCurrentAccountState(state, () => ({ tezosBalance }))
-  );
-
-  builder.addCase(loadTokensActions.success, (state, { payload: tokensWithBalancesSlugs }) =>
-    updateCurrentAccountState(state, currentAccount => {
-      const currentTokensSlugsAsMap = currentAccount.tokensList.reduce<Record<string, boolean>>((acc, token) => {
-        acc[token.slug] = true;
-
-        return acc;
-      }, {});
-      const newTokensSlugs = tokensWithBalancesSlugs.filter(newTokenSlug => !currentTokensSlugsAsMap[newTokenSlug]);
-
-      return {
-        tokensList: [
-          ...currentAccount.tokensList,
-          ...newTokensSlugs.map(slug => ({ slug, balance: '0', visibility: VisibilityEnum.InitiallyHidden }))
-        ]
-      };
-    })
-  );
+  builder.addCase(loadTezosBalanceActions.success, (state, { payload }) => {
+    const accountState = retrieveAccountState(state);
+    if (accountState) {
+      accountState.tezosBalance = payload;
+    }
+  });
 
   builder.addCase(
-    loadTokensBalancesArrayActions.success,
-    (state, { payload: { publicKeyHash, data, selectedRpcUrl } }) => {
-      const isTezosNode = !isDcpNode(selectedRpcUrl);
+    loadAssetsBalancesActions.success,
+    (state, { payload: { publicKeyHash, balances, selectedRpcUrl } }) => {
+      const accountState = retrieveAccountState(state, publicKeyHash);
+      if (!accountState) {
+        return;
+      }
 
-      return updateAccountState(state, publicKeyHash, account =>
-        isTezosNode
-          ? {
-              tokensList: pushOrUpdateTokensBalances(account.tokensList, data)
-            }
-          : {
-              dcpTokensList: pushOrUpdateTokensBalances(account.dcpTokensList, data)
-            }
+      pushOrUpdateTokensBalances(
+        isDcpNode(selectedRpcUrl) ? accountState.dcpTokensList : accountState.tokensList,
+        balances
       );
     }
   );
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
+    const accountState = retrieveAccountState(state);
+    if (!accountState) {
+      return;
+    }
+
     const slug = getTokenSlug(tokenMetadata);
 
-    return updateCurrentAccountState(state, currentAccount => ({
-      tokensList: pushOrUpdateTokensBalances(currentAccount.tokensList, [{ slug, balance: '0' }]),
-      removedTokensList: currentAccount.removedTokensList.filter(removedTokenSlug => removedTokenSlug !== slug)
-    }));
+    const removedI = accountState.removedTokensList.findIndex(s => s === slug);
+    if (removedI > -1) {
+      accountState.removedTokensList.splice(removedI, 1);
+    }
+
+    if (!accountState.tokensList.some(t => t.slug === slug)) {
+      accountState.tokensList.push({
+        slug,
+        balance: '0',
+        visibility: VisibilityEnum.InitiallyHidden
+      });
+    }
   });
-  builder.addCase(removeTokenAction, (state, { payload: slug }) =>
-    updateCurrentAccountState(state, currentAccount => ({
-      removedTokensList: [...currentAccount.removedTokensList, slug]
-    }))
-  );
+
+  builder.addCase(removeTokenAction, (state, { payload: slug }) => {
+    const accountState = retrieveAccountState(state);
+
+    if (accountState && !accountState.removedTokensList.includes(slug)) {
+      accountState.removedTokensList.push(slug);
+    }
+  });
 
   builder.addCase(toggleTokenVisibilityAction, (state, { payload: { slug, selectedRpcUrl } }) => {
-    const isTezosNode = !isDcpNode(selectedRpcUrl);
+    const accountState = retrieveAccountState(state);
 
-    return updateCurrentAccountState(state, currentAccount =>
-      isTezosNode
-        ? {
-            tokensList: toggleTokenVisibility(currentAccount.tokensList, slug)
-          }
-        : {
-            dcpTokensList: toggleTokenVisibility(currentAccount.dcpTokensList, slug)
-          }
+    const token = accountState?.[isDcpNode(selectedRpcUrl) ? 'dcpTokensList' : 'tokensList']?.find(
+      t => t.slug === slug
     );
-  });
 
-  // MIGRATIONS
-  builder.addCase(deleteOldTokensMetadata, state => ({
-    ...state,
-    tokensMetadata: undefined
-  }));
-  builder.addCase(deleteOldTokenSuggestion, state => ({
-    ...state,
-    addTokenSuggestion: undefined
-  }));
-  builder.addCase(deleteOldIsShownDomainName, state => ({
-    ...state,
-    isShownDomainName: undefined
-  }));
-  builder.addCase(deleteOldQuipuApy, state => ({
-    ...state,
-    quipuApy: undefined
-  }));
-  builder.addCase(migrateAccountsState, state => {
-    if (state.accounts[0]?.isVisible === undefined) {
-      return state;
-    } else {
-      const accounts: AccountInterface[] = [];
-      const accountsStateRecord: Record<string, AccountStateInterface> = {};
-
-      for (const account of state.accounts) {
-        accountsStateRecord[account.publicKeyHash] = {
-          isVisible: account.isVisible ?? initialAccountState.isVisible,
-          tezosBalance: account.tezosBalance ?? initialAccountState.tezosBalance,
-          tokensList:
-            account.tokensList?.map(token =>
-              isDefined(token.isVisible)
-                ? {
-                    ...token,
-                    visibility: token.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden,
-                    isVisible: undefined
-                  }
-                : token
-            ) ?? initialAccountState.tokensList,
-          dcpTokensList: initialAccountState.dcpTokensList,
-          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
-        };
-
-        accounts.push({
-          ...account,
-          isVisible: undefined,
-          tezosBalance: undefined,
-          tokensList: undefined,
-          removedTokensList: undefined,
-          activityGroups: undefined,
-          pendingActivities: undefined
-        });
-      }
-
-      return {
-        ...state,
-        accounts,
-        accountsStateRecord
-      };
+    if (token) {
+      token.visibility = token.visibility === VisibilityEnum.Visible ? VisibilityEnum.Hidden : VisibilityEnum.Visible;
     }
   });
 });

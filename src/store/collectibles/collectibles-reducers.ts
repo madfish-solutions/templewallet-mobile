@@ -1,8 +1,9 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 
+import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
+
 import { createEntity } from '../create-entity';
-import { SlicedAsyncStorage } from '../sliced-async-storage';
 
 import { loadCollectiblesDetailsActions } from './collectibles-actions';
 import { CollectiblesState, collectiblesInitialState } from './collectibles-state';
@@ -23,7 +24,9 @@ const collectiblesReducer = createReducer<CollectiblesState>(collectiblesInitial
 
     // Removing expired flags
     for (const [slug, { ts }] of Object.entries(adultFlags)) {
-      if (ts + ADULT_FLAG_TTL < timestampInSeconds) delete adultFlags[slug];
+      if (ts + ADULT_FLAG_TTL < timestampInSeconds) {
+        delete adultFlags[slug];
+      }
     }
 
     for (const [slug, details] of Object.entries(detailsRecord)) {

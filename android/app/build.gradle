@@ -88,8 +88,8 @@ android {
         applicationId "com.templewallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 319
-        versionName "1.20"
+        versionCode 1027
+        versionName "1.21"
 
         missingDimensionStrategy 'react-native-camera', 'general'
     }

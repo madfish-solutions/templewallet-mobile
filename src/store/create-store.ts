@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import type { Middleware } from 'redux';
 import createDebugger from 'redux-flipper';
 import { combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
-import { FLUSH, PAUSE, PERSIST, persistStore, PURGE, REGISTER, REHYDRATE } from 'redux-persist';
+import { persistStore } from 'redux-persist';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -28,13 +28,8 @@ export const createStore = (...epics: Epic[]) => {
     reducer: persistedReducer,
     middleware: getDefaultMiddleware => {
       return getDefaultMiddleware({
-        serializableCheck: {
-          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-          warnAfter: 400
-        },
-        immutableCheck: {
-          warnAfter: 600
-        }
+        serializableCheck: false,
+        immutableCheck: false
       }).concat(middlewares);
     }
   });

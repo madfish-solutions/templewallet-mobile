@@ -2,7 +2,6 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { SendAssetActionPayloadInterface } from 'src/interfaces/send-asset-action-payload.interface';
-import { TokenBalanceResponse } from 'src/interfaces/token-balance-response.interface';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 
 import { createActions } from '../create-actions';
@@ -16,18 +15,18 @@ export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisi
   'wallet/SET_ACCOUNT_VISIBILITY'
 );
 
-export const loadTokensActions = createActions<void, string[], string>('assets/LOAD_TOKENS');
 export const loadTezosBalanceActions = createActions<void, string, string>('assets/LOAD_TEZOS');
 
 export const highPriorityLoadTokenBalanceAction = createAction<{ publicKeyHash: string; slug: string }>(
   'assets/HIGH_PRIORITY_LOAD_TOKEN_BALANCE'
 );
-export const loadTokensBalancesArrayActions = createActions<
+export const loadAssetsBalancesActions = createActions<
   void,
-  { publicKeyHash: string; data: TokenBalanceResponse[]; selectedRpcUrl: string },
+  { publicKeyHash: string; balances: StringRecord; selectedRpcUrl: string },
   string
 >('assets/LOAD_TOKENS_BALANCES');
 
+/** TODO: add `ofDcpNetwork` flag to payload */
 export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
 export const toggleTokenVisibilityAction = createAction<{ slug: string; selectedRpcUrl: string }>(

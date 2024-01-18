@@ -26,12 +26,3 @@ export const initialAccountState: AccountStateInterface = {
   })),
   removedTokensList: []
 };
-
-/** @deprecated // BAD PRACTICE */
-export const emptyAccountState: AccountStateInterface = {
-  isVisible: true,
-  tezosBalance: '0',
-  tokensList: [],
-  dcpTokensList: [],
-  removedTokensList: []
-};

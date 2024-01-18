@@ -9,7 +9,7 @@ import { getUserStake, getYouvesSavingsItems$ } from 'src/apis/youves';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { withSelectedAccount, withUsdToTokenRates } from 'src/utils/wallet.utils';
+import { withSelectedAccount, withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { RootState } from '../types';
 
@@ -24,9 +24,10 @@ import { loadSingleSavingStake$ } from './utils';
 const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
+    withSelectedRpcUrl(state$),
     withSelectedAccount(state$),
-    switchMap(([{ payload: savingsItem }, selectedAccount]) =>
-      loadSingleSavingStake$(savingsItem, selectedAccount).pipe(
+    switchMap(([[{ payload: savingsItem }, rpcUrl], selectedAccount]) =>
+      loadSingleSavingStake$(savingsItem, selectedAccount, rpcUrl).pipe(
         map(stake => loadSingleSavingStakeActions.success({ stake, contractAddress: savingsItem.contractAddress })),
         catchError(err => {
           showErrorToastByError(err, undefined, true);
@@ -45,8 +46,9 @@ const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Ob
 const loadAllSavingsItems: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllSavingsActions.submit),
+    withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([, rates]) => getYouvesSavingsItems$(rates)),
+    switchMap(([[, rpcUrl], rates]) => getYouvesSavingsItems$(rates, rpcUrl)),
     map(savings => loadAllSavingsActions.success(savings)),
     catchError(err => {
       showErrorToastByError(err, undefined, true);
@@ -60,10 +62,12 @@ const showStakeLoadError = debounce((e: unknown) => showErrorToastByError(e), 50
 const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllSavingsAndStakesAction),
+    withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([, rates]) => forkJoin([getYouvesSavingsItems$(rates), getKordFiItems$(rates)])),
+    switchMap(([[, rpcUrl], rates]) => forkJoin([getYouvesSavingsItems$(rates, rpcUrl), getKordFiItems$(rates)])),
+    withSelectedRpcUrl(state$),
     withSelectedAccount(state$),
-    switchMap(([[youvesSavings, kordFiSavings], selectedAccount]) => {
+    switchMap(([[[youvesSavings, kordFiSavings], rpcUrl], selectedAccount]) => {
       if (youvesSavings.length === 0 && kordFiSavings.length === 0) {
         throw new Error('Failed to fetch any savings items');
       }
@@ -71,7 +75,7 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
       return forkJoin([
         forkJoin(
           youvesSavings.map(savingsItem =>
-            getUserStake(selectedAccount, savingsItem.id, savingsItem.type)
+            getUserStake(selectedAccount, savingsItem.id, savingsItem.type, rpcUrl)
               .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
               .catch(e => {
                 console.error('Error while loading farm stakes: ', savingsItem.contractAddress);

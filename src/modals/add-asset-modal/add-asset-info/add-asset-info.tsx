@@ -4,21 +4,21 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from '../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from '../../../components/button/buttons-container/buttons-container';
-import { Divider } from '../../../components/divider/divider';
-import { InsetSubstitute } from '../../../components/inset-substitute/inset-substitute';
-import { Label } from '../../../components/label/label';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { EmptyFn } from '../../../config/general';
-import { FormNumericInput } from '../../../form/form-numeric-input/form-numeric-input';
-import { FormTextInput } from '../../../form/form-text-input';
-import { addTokensMetadataAction } from '../../../store/tokens-metadata/tokens-metadata-actions';
-import { useAddTokenSuggestionSelector } from '../../../store/tokens-metadata/tokens-metadata-selectors';
-import { addTokenAction } from '../../../store/wallet/wallet-actions';
-import { formatSize } from '../../../styles/format-size';
-import { showSuccessToast } from '../../../toast/toast.utils';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { Divider } from 'src/components/divider/divider';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { EmptyFn } from 'src/config/general';
+import { FormNumericInput } from 'src/form/form-numeric-input/form-numeric-input';
+import { FormTextInput } from 'src/form/form-text-input';
+import { putTokenMetadataAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { useAddTokenSuggestionSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
+import { addTokenAction } from 'src/store/wallet/wallet-actions';
+import { formatSize } from 'src/styles/format-size';
+import { showSuccessToast } from 'src/toast/toast.utils';
 
 import { addTokenInfoFormValidationSchema, AddTokenInfoFormValues } from './add-asset-info.form';
 import { AddAssetInfoSelectors } from './add-asset-info.selectors';
@@ -40,7 +40,7 @@ export const AddAssetInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
     const tokenMetadata = { ...initialValues, ...data, decimals: data.decimals.toNumber() };
 
     dispatch(addTokenAction(tokenMetadata));
-    dispatch(addTokensMetadataAction([tokenMetadata]));
+    dispatch(putTokenMetadataAction(tokenMetadata));
 
     showSuccessToast({ description: 'Token successfully added' });
     onFormSubmitted();

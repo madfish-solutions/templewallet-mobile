@@ -1,6 +1,8 @@
 import 'react-native-gesture-handler/jestSetup';
 
-import './src/mocks/mem.mock';
+import './src/mocks/memoization.mock';
+
+import './src/mocks/react-native-config.mock';
 
 import './src/mocks/taquito-signer.mock';
 import './src/mocks/native-modules.mock';

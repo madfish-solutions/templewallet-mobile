@@ -1,8 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
+import { DCP_RPC } from 'src/utils/rpc/rpc-list';
 
-import { addDcpRpc, addMarigoldRpc, changeTempleRpc } from '../migration/migration-actions';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 
 import {
@@ -146,50 +145,4 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     ...state,
     isEnableAdsBanner: payload
   }));
-
-  // MIGRATIONS
-  builder.addCase(addDcpRpc, state => {
-    const isMigrationNeeded = state.rpcList.find(rpc => rpc.url === DCP_RPC.url) === undefined;
-
-    if (isMigrationNeeded) {
-      return {
-        ...state,
-        rpcList: [...state.rpcList, DCP_RPC]
-      };
-    }
-
-    return state;
-  });
-
-  builder.addCase(changeTempleRpc, state => {
-    const oldTempleRpc = state.rpcList.find(rpc => OLD_TEMPLE_RPC_URLS.includes(rpc.url));
-    const newRpcList = [
-      TEMPLE_RPC,
-      ...state.rpcList.filter(rpc => rpc.name !== TEMPLE_RPC.name && rpc.url !== TEMPLE_RPC.url)
-    ];
-
-    if (oldTempleRpc) {
-      if (OLD_TEMPLE_RPC_URLS.includes(state.selectedRpcUrl)) {
-        return {
-          ...state,
-          rpcList: newRpcList,
-          selectedRpcUrl: TEMPLE_RPC.url
-        };
-      }
-
-      return {
-        ...state,
-        rpcList: newRpcList
-      };
-    }
-
-    return state;
-  });
-
-  builder.addCase(addMarigoldRpc, state => {
-    if (!state.marigoldWasAdded && !state.rpcList.some(rpc => rpc.url === MARIGOLD_RPC.url)) {
-      state.rpcList.splice(1, 0, MARIGOLD_RPC);
-    }
-    state.marigoldWasAdded = true;
-  });
 });

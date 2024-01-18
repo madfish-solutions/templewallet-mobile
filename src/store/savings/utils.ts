@@ -6,14 +6,14 @@ import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 
-export const loadSingleSavingStake$ = (savingsItem: SavingsItem, selectedAccount: AccountInterface) =>
+export const loadSingleSavingStake$ = (savingsItem: SavingsItem, selectedAccount: AccountInterface, rpcUrl: string) =>
   of(savingsItem).pipe(
     switchMap(item => {
       switch (item.type) {
         case EarnOpportunityTypeEnum.KORD_FI_SAVING:
           return getKordFiUserDeposits$(selectedAccount.publicKeyHash);
         default:
-          return from(getUserStake(selectedAccount, item.id, item.type));
+          return from(getUserStake(selectedAccount, item.id, item.type, rpcUrl));
       }
     })
   );

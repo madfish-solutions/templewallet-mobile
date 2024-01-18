@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { AccountStateInterface, emptyAccountState } from 'src/interfaces/account-state.interface';
 import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
 import { Shelter } from 'src/shelter/shelter';
 import { ExchangeRateRecord } from 'src/store/currency/currency-state';
@@ -30,18 +29,6 @@ export const withSelectedAccount =
           emptyAccount;
 
         return [value, selectedAccount];
-      })
-    );
-
-export const withSelectedAccountState =
-  <T>(state$: Observable<RootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { wallet }): [T, AccountStateInterface] => {
-        const selectedAccountState =
-          wallet.accountsStateRecord[wallet.selectedAccountPublicKeyHash] ?? emptyAccountState;
-
-        return [value, selectedAccountState];
       })
     );
 
