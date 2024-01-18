@@ -1,6 +1,6 @@
 import { Portal } from '@gorhom/portal';
-import React, { useContext } from 'react';
-import { Text, View } from 'react-native';
+import React, { useContext, useEffect, useRef } from 'react';
+import { Text, View, Animated } from 'react-native';
 
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
@@ -32,10 +32,21 @@ const OverlayComponent = () => {
 
   const cloudIsAvailable = useIsCloudAvailable();
 
+  const translation = useRef(new Animated.Value(300)).current;
+
+  useEffect(() => {
+    Animated.timing(translation, {
+      toValue: 0,
+      useNativeDriver: true
+    }).start();
+  }, []);
+
   return (
     <Portal>
       <View style={styles.backdrop}>
-        <View style={[dropdownBottomSheetStyles.root, styles.root]}>
+        <Animated.View
+          style={[dropdownBottomSheetStyles.root, styles.root, { transform: [{ translateY: translation }] }]}
+        >
           <View style={dropdownBottomSheetStyles.headerContainer}>
             <Text style={dropdownBottomSheetStyles.title}>Backup your wallet</Text>
             <Text style={dropdownBottomSheetStyles.description}>
@@ -61,7 +72,7 @@ const OverlayComponent = () => {
             onPress={() => navigate(ScreensEnum.ManualBackup)}
             testID={BackupYourWalletSelectors.manuallyBackupButton}
           />
-        </View>
+        </Animated.View>
       </View>
     </Portal>
   );
