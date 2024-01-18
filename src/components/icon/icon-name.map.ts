@@ -86,6 +86,7 @@ import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import KeyIcon from './assets/key.svg';
 import KordFiEarnSource from './assets/kord-fi-earn-source.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
@@ -349,5 +350,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Docs]: DocsIcon,
   [IconNameEnum.CloudNative]: CloudNativeIcon,
   [IconNameEnum.GoogleDriveNative]: GoogleDriveNativeIcon,
-  [IconNameEnum.ManualBackup]: ManualBackupIcon
+  [IconNameEnum.ManualBackup]: ManualBackupIcon,
+  [IconNameEnum.Key]: KeyIcon
 };

@@ -17,7 +17,7 @@ import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.u
 export const useShelter = () => {
   const dispatch = useDispatch();
   const accounts = useAccountsListSelector();
-  const { navigate, goBack } = useNavigation();
+  const { navigate, dispatch: navigationDispatch } = useNavigation();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
   const createHdAccount$ = useMemo(() => new Subject(), []);
@@ -30,13 +30,13 @@ export const useShelter = () => {
     const subscriptions = [
       importWalletSubscription(importWallet$, dispatch),
       createHdAccountSubscription(createHdAccount$, accounts, dispatch),
-      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, goBack),
+      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, navigationDispatch),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
       enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, accounts.length, goBack, revealSeedPhrase$]);
+  }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, accounts.length, revealSeedPhrase$]);
 
   const importWallet = (params: ImportWalletParams) => importWallet$.next(params);
   const createHdAccount = () => createHdAccount$.next(EMPTY);

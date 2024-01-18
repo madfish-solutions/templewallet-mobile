@@ -34,7 +34,7 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   };
 
   const handleImportAccountButtonPress = () => {
-    navigate(ModalsEnum.ImportAccount);
+    navigate(ModalsEnum.ChooseAccountImportType);
     onPress();
   };
 

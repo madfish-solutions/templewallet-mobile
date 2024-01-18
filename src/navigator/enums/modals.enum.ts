@@ -13,7 +13,6 @@ export enum ModalsEnum {
   RevealSeedPhrase = 'RevealSeedPhrase',
   RevealPrivateKey = 'RevealPrivateKey',
   EnableBiometryPassword = 'EnableBiometryPassword',
-  ImportAccount = 'ImportAccount',
   CollectibleModal = 'CollectibleModal',
   AddCustomRpc = 'AddCustomRpc',
   EditCustomRpc = 'EditCustomRpc',
@@ -23,11 +22,14 @@ export enum ModalsEnum {
   Newsletter = 'Newsletter',
   InAppBrowser = 'InAppBrowser',
   ManageSavingsPool = 'ManageSavingsPool',
-  ChooseImportType = 'ChooseImportType',
-  ImportFromSeed = 'ImportFromSeed',
-  ImportFromKeystore = 'ImportFromKeystore',
+  ChooseWalletImportType = 'ChooseWalletImportType',
+  ImportWalletFromSeedPhrase = 'ImportWalletFromSeedPhrase',
+  ImportWalletFromKeystoreFile = 'ImportWalletFromKeystoreFile',
   SyncInstructions = 'SyncInstructions',
-  ConfirmSync = 'ConfirmSync'
+  ConfirmSync = 'ConfirmSync',
+  ChooseAccountImportType = 'ChooseAccountImportType',
+  ImportAccountFromSeedPhrase = 'ImportAccountFromSeedPhrase',
+  ImportAccountFromPrivateKey = 'ImportAccountFromPrivateKey'
 }
 
 export type ModalsParamList = {
@@ -40,7 +42,6 @@ export type ModalsParamList = {
   [ModalsEnum.RevealSeedPhrase]: { account?: AccountInterface };
   [ModalsEnum.RevealPrivateKey]: { account: AccountInterface };
   [ModalsEnum.EnableBiometryPassword]: undefined;
-  [ModalsEnum.ImportAccount]: undefined;
   [ModalsEnum.CollectibleModal]: { slug: string };
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.EditCustomRpc]: { url: string };
@@ -50,9 +51,12 @@ export type ModalsParamList = {
   [ModalsEnum.ManageSavingsPool]: Pick<EarnOpportunity, 'id' | 'contractAddress'>;
   [ModalsEnum.Newsletter]: undefined;
   [ModalsEnum.InAppBrowser]: { uri: string };
-  [ModalsEnum.ChooseImportType]: undefined;
-  [ModalsEnum.ImportFromSeed]: undefined;
-  [ModalsEnum.ImportFromKeystore]: undefined;
+  [ModalsEnum.ChooseWalletImportType]: undefined;
+  [ModalsEnum.ImportWalletFromSeedPhrase]: undefined;
+  [ModalsEnum.ImportWalletFromKeystoreFile]: undefined;
   [ModalsEnum.SyncInstructions]: undefined;
   [ModalsEnum.ConfirmSync]: { payload: string };
+  [ModalsEnum.ChooseAccountImportType]: undefined;
+  [ModalsEnum.ImportAccountFromSeedPhrase]: undefined;
+  [ModalsEnum.ImportAccountFromPrivateKey]: undefined;
 };

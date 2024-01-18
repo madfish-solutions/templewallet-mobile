@@ -1,8 +1,8 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
-import { black } from '../../../config/styles';
-import { generateShadow } from '../../../styles/generate-shadow';
+import { black } from '../../config/styles';
+import { generateShadow } from '../../styles/generate-shadow';
 
 export const useImportTypeItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {

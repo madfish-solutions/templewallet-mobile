@@ -62,7 +62,7 @@ export const Welcome = () => {
         <ButtonDelegatePrimary
           title="Import Existing Wallet"
           iconName={IconNameEnum.ImportSquare}
-          onPress={() => navigate(ModalsEnum.ChooseImportType)}
+          onPress={() => navigate(ModalsEnum.ChooseWalletImportType)}
           testID={WelcomeSelectors.importExistingWalletButton}
         />
 

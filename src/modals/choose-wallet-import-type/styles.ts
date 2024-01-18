@@ -1,7 +1,7 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
-export const useChooseImportTypeStyles = createUseStylesMemoized(({ colors, typography }) => ({
+export const useChooseWalletImportTypeStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {
     flex: 1,
     backgroundColor: colors.pageBG,

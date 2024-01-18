@@ -18,7 +18,7 @@ export const ImportWallet: FC<Props> = ({ fromSeed = true }) => {
   const [seedPhrase, setSeedPhrase] = useState('');
   const [initialPassword, setInitialPassword] = useState<string>();
 
-  usePageAnalytic(fromSeed ? ModalsEnum.ImportFromSeed : ModalsEnum.ImportFromKeystore);
+  usePageAnalytic(fromSeed ? ModalsEnum.ImportWalletFromSeedPhrase : ModalsEnum.ImportWalletFromKeystoreFile);
 
   const handleImportWalletFormSubmit = ({ seedPhrase: newSeedPhrase, password }: ImportWalletCredentials) => {
     setSeedPhrase(newSeedPhrase);

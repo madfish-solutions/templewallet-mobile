@@ -1,3 +1,5 @@
+import { StackActions } from '@react-navigation/native';
+import type { NavigationAction } from '@react-navigation/routers';
 import { Dispatch } from '@reduxjs/toolkit';
 import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 
@@ -13,7 +15,7 @@ export const createImportAccountSubscription = (
   createImportedAccount$: Subject<{ privateKey: string; name: string }>,
   accounts: AccountInterface[],
   dispatch: Dispatch,
-  goBack: () => void
+  navigationDispatch: (action: NavigationAction) => void
 ) =>
   createImportedAccount$
     .pipe(
@@ -49,6 +51,6 @@ export const createImportAccountSubscription = (
         dispatch(addHdAccountAction(publicData));
         dispatch(loadWhitelistAction.submit());
         showSuccessToast({ description: 'Account Imported!' });
-        goBack();
+        navigationDispatch(StackActions.popToTop());
       }
     });

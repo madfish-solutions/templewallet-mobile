@@ -13,7 +13,7 @@ import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
-import { ChooseImportType } from 'src/modals/choose-import-type';
+import { ChooseWalletImportType } from 'src/modals/choose-wallet-import-type';
 import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
 import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal/add-contact-modal';
@@ -21,9 +21,8 @@ import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal/e
 import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-modal';
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
-import { ImportAccountModal } from 'src/modals/import-account-modal/import-account-modal';
-import { ImportFromKeystoreFile } from 'src/modals/import-wallet/import-from-keystore-file';
-import { ImportFromSeed } from 'src/modals/import-wallet/import-from-seed';
+import { ImportWalletFromKeystoreFile } from 'src/modals/import-wallet/import-wallet-from-keystore-file';
+import { ImportWalletFromSeedPhrase } from 'src/modals/import-wallet/import-wallet-from-seed-phrase';
 import { InAppBrowser } from 'src/modals/in-app-browser';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
@@ -46,6 +45,10 @@ import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountTezosBalance, useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+
+import { ChooseAccountImportType } from '../modals/choose-account-import-type';
+import { ImportAccountPrivateKey } from '../modals/import-account/import-account-private-key/import-account-private-key';
+import { ImportAccountSeed } from '../modals/import-account/import-account-seed/import-account-seed';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
@@ -148,11 +151,6 @@ export const RootStackScreen = () => {
               options={useModalOptions('Approve Password')}
             />
             <RootStack.Screen
-              name={ModalsEnum.ImportAccount}
-              component={ImportAccountModal}
-              options={useModalOptions('Import account')}
-            />
-            <RootStack.Screen
               name={ModalsEnum.CollectibleModal}
               component={CollectibleModal}
               options={{ ...useModalOptions(), gestureEnabled: isIOS }}
@@ -199,18 +197,33 @@ export const RootStackScreen = () => {
               options={useModalOptions('In-App Browser')}
             />
             <RootStack.Screen
-              name={ModalsEnum.ChooseImportType}
-              component={ChooseImportType}
-              options={useModalOptions('Import Existing Wallet')}
+              name={ModalsEnum.ChooseAccountImportType}
+              component={ChooseAccountImportType}
+              options={useModalOptions('Import account')}
             />
             <RootStack.Screen
-              name={ModalsEnum.ImportFromSeed}
-              component={ImportFromSeed}
+              name={ModalsEnum.ImportAccountFromSeedPhrase}
+              component={ImportAccountSeed}
               options={useModalOptions('Import Seed Phrase')}
             />
             <RootStack.Screen
-              name={ModalsEnum.ImportFromKeystore}
-              component={ImportFromKeystoreFile}
+              name={ModalsEnum.ImportAccountFromPrivateKey}
+              component={ImportAccountPrivateKey}
+              options={useModalOptions('Import Private Key')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ChooseWalletImportType}
+              component={ChooseWalletImportType}
+              options={useModalOptions('Import Existing Wallet')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ImportWalletFromSeedPhrase}
+              component={ImportWalletFromSeedPhrase}
+              options={useModalOptions('Import Seed Phrase')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ImportWalletFromKeystoreFile}
+              component={ImportWalletFromKeystoreFile}
               options={useModalOptions('Import Keystore File')}
             />
             <RootStack.Screen

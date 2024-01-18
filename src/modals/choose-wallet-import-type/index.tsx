@@ -5,29 +5,28 @@ import { ButtonLargeSecondary } from 'src/components/button/button-large/button-
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ImportTypeItem, ImportTypeItemProps } from 'src/components/import-type-item';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { ImportTypeItem } from './import-type-item';
-import { ImportType } from './interfaces';
-import { useChooseImportTypeStyles } from './styles';
+import { useChooseWalletImportTypeStyles } from './styles';
 
-export const ChooseImportType = memo(() => {
-  usePageAnalytic(ModalsEnum.ChooseImportType);
+export const ChooseWalletImportType = memo(() => {
+  usePageAnalytic(ModalsEnum.ChooseWalletImportType);
 
-  const styles = useChooseImportTypeStyles();
+  const styles = useChooseWalletImportTypeStyles();
   const { navigate, goBack } = useNavigation();
 
-  const ImportTypes: ImportType[] = useMemo(
+  const ImportTypes: ImportTypeItemProps[] = useMemo(
     () => [
       {
         title: 'Seed Phrase',
         description: 'Use your seed phrase from Temple Wallet\n' + 'or another crypto wallet',
         iconName: IconNameEnum.Docs,
-        onPress: () => navigate(ModalsEnum.ImportFromSeed)
+        onPress: () => navigate(ModalsEnum.ImportWalletFromSeedPhrase)
       },
       {
         title: 'Sync with Extension Wallet',
@@ -39,7 +38,7 @@ export const ChooseImportType = memo(() => {
         title: 'Keystore File',
         description: 'Import your wallet from an encrypted\n' + 'keystore file (.tez)',
         iconName: IconNameEnum.FileUpload,
-        onPress: () => navigate(ModalsEnum.ImportFromKeystore)
+        onPress: () => navigate(ModalsEnum.ImportWalletFromKeystoreFile)
       }
     ],
     [navigate]

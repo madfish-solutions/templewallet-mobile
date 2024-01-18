@@ -170,5 +170,6 @@ export enum IconNameEnum {
   Docs = 'Docs',
   CloudNative = 'CloudNative',
   ManualBackup = 'ManualBackup',
-  GoogleDriveNative = 'GoogleDriveNative'
+  GoogleDriveNative = 'GoogleDriveNative',
+  Key = 'Key'
 }

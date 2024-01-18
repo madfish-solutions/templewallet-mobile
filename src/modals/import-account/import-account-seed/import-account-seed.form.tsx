@@ -1,10 +1,10 @@
 import { isValidPath } from 'ed25519-hd-key';
 import { mixed, object, SchemaOf, string } from 'yup';
 
-import { ImportAccountDerivationEnum } from '../../../enums/account-type.enum';
-import { seedPhraseValidation } from '../../../form/validation/seed-phrase';
-import { isDefined } from '../../../utils/is-defined';
-import { getDerivationPath } from '../../../utils/keys.util';
+import { ImportAccountDerivationEnum } from 'src/enums/account-type.enum';
+import { seedPhraseValidation } from 'src/form/validation/seed-phrase';
+import { isDefined } from 'src/utils/is-defined';
+import { getDerivationPath } from 'src/utils/keys.util';
 
 export type ImportAccountSeedValues = {
   seedPhrase: string;
