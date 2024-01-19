@@ -1,8 +1,8 @@
 import { boolean, object, SchemaOf, string } from 'yup';
 
-import { FileInputValue } from '../../../components/file-input/file-input';
-import { makeRequiredErrorMessage } from '../../../form/validation/messages';
-import { isString } from '../../../utils/is-string';
+import { FileInputValue } from 'src/components/file-input/file-input';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
+import { isString } from 'src/utils/is-string';
 
 export type ImportWalletFromKeystoreFileFormValues = {
   keystoreFile: FileInputValue;

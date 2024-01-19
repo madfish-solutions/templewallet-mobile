@@ -1,6 +1,5 @@
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { isIOS } from 'src/config/system';
-
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
 
 import { EncryptedBackupObject } from './common';
 import * as GoogleDriveAPI from './google-drive';

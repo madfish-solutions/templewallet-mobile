@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize, formatTextSize } from '../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useSyncInstructionsStyles = createUseStyles(({ colors, typography }) => ({
   container: {

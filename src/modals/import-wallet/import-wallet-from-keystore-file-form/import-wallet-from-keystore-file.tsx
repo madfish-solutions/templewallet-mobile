@@ -24,10 +24,9 @@ import { FormFileInput } from 'src/form/form-file-input';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ImportWalletProps } from 'src/modals/import-wallet/interfaces';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from 'src/utils/kukai.utils';
-
-import { formatSize } from '../../../styles/format-size';
 
 import {
   ImportWalletFromKeystoreFileFormValues,

@@ -13,6 +13,7 @@ import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
+import { ChooseAccountImportType } from 'src/modals/choose-account-import-type';
 import { ChooseWalletImportType } from 'src/modals/choose-wallet-import-type';
 import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
@@ -21,6 +22,8 @@ import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal/e
 import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-modal';
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
+import { ImportAccountPrivateKey } from 'src/modals/import-account/import-account-private-key/import-account-private-key';
+import { ImportAccountSeed } from 'src/modals/import-account/import-account-seed/import-account-seed';
 import { ImportWalletFromKeystoreFile } from 'src/modals/import-wallet/import-wallet-from-keystore-file';
 import { ImportWalletFromSeedPhrase } from 'src/modals/import-wallet/import-wallet-from-seed-phrase';
 import { InAppBrowser } from 'src/modals/in-app-browser';
@@ -45,10 +48,6 @@ import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/
 import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountTezosBalance, useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
-
-import { ChooseAccountImportType } from '../modals/choose-account-import-type';
-import { ImportAccountPrivateKey } from '../modals/import-account/import-account-private-key/import-account-private-key';
-import { ImportAccountSeed } from '../modals/import-account/import-account-seed/import-account-seed';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
