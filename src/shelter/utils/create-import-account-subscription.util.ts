@@ -1,21 +1,27 @@
 import { StackActions } from '@react-navigation/native';
 import type { NavigationAction } from '@react-navigation/routers';
 import { Dispatch } from '@reduxjs/toolkit';
-import { catchError, of, Subject, switchMap, tap } from 'rxjs';
+import { BigNumber } from 'bignumber.js';
+import { catchError, EMPTY, of, Subject, switchMap, tap } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import { AccountInterface } from '../../interfaces/account.interface';
-import { hideLoaderAction, showLoaderAction } from '../../store/settings/settings-actions';
-import { loadWhitelistAction } from '../../store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
-import { showErrorToast, showSuccessToast, showWarningToast } from '../../toast/toast.utils';
-import { getPublicKeyAndHash$ } from '../../utils/keys.util';
+import { isAndroid } from 'src/config/system';
+import { AccountInterface } from 'src/interfaces/account.interface';
+import { hideLoaderAction, setOnRampPossibilityAction, showLoaderAction } from 'src/store/settings/settings-actions';
+import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
+import { getPublicKeyAndHash$ } from 'src/utils/keys.util';
+import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
+
 import { Shelter } from '../shelter';
 
 export const createImportAccountSubscription = (
   createImportedAccount$: Subject<{ privateKey: string; name: string }>,
   accounts: AccountInterface[],
   dispatch: Dispatch,
-  navigationDispatch: (action: NavigationAction) => void
+  navigationDispatch: (action: NavigationAction) => void,
+  rpcUrl: string
 ) =>
   createImportedAccount$
     .pipe(
@@ -50,7 +56,19 @@ export const createImportAccountSubscription = (
         dispatch(setSelectedAccountAction(publicData.publicKeyHash));
         dispatch(addHdAccountAction(publicData));
         dispatch(loadWhitelistAction.submit());
+
         showSuccessToast({ description: 'Account Imported!' });
         navigationDispatch(StackActions.popToTop());
+
+        loadTezosBalance$(rpcUrl, publicData.publicKeyHash)
+          .pipe(
+            map(balance => {
+              if (isAndroid && new BigNumber(balance).isEqualTo(0)) {
+                dispatch(setOnRampPossibilityAction(true));
+              }
+            }),
+            catchError(() => of(EMPTY))
+          )
+          .subscribe();
       }
     });

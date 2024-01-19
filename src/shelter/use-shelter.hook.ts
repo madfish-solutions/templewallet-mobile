@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { EMPTY, Subject } from 'rxjs';
 
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
+import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
 
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
@@ -18,6 +19,7 @@ export const useShelter = () => {
   const dispatch = useDispatch();
   const accounts = useAccountsListSelector();
   const { navigate, dispatch: navigationDispatch } = useNavigation();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
   const createHdAccount$ = useMemo(() => new Subject(), []);
@@ -30,7 +32,7 @@ export const useShelter = () => {
     const subscriptions = [
       importWalletSubscription(importWallet$, dispatch),
       createHdAccountSubscription(createHdAccount$, accounts, dispatch),
-      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, navigationDispatch),
+      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, navigationDispatch, selectedRpcUrl),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
       enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];

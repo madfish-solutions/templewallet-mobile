@@ -35,6 +35,7 @@ export const ImportAccountPrivateKey = () => {
       privateKey,
       name: `Account ${accountIndex}`
     });
+
     goBack();
   };
 
