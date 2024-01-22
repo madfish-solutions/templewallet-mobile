@@ -61,10 +61,11 @@ export const ImportAccountPrivateKey = () => {
       </ScreenContainer>
       <ButtonsFloatingContainer>
         <ButtonsContainer style={styles.buttonsContainer}>
-          <View style={styles.buttonBox}>
+          <View style={styles.flex}>
             <ButtonLargeSecondary title="Back" onPress={goBack} testID={ImportAccountPrivateKeySelectors.backButton} />
           </View>
-          <View style={styles.buttonBox}>
+          <Divider size={formatSize(15)} />
+          <View style={styles.flex}>
             <ButtonLargePrimary
               title="Import"
               disabled={!formik.isValid}

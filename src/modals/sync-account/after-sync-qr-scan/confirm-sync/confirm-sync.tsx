@@ -113,10 +113,11 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
 
           <ButtonsFloatingContainer>
             <ButtonsContainer style={styles.buttonsContainer}>
-              <View style={styles.buttonBox}>
+              <View style={styles.flex}>
                 <ButtonLargeSecondary title="Back" onPress={goBack} />
               </View>
-              <View style={styles.buttonBox}>
+              <Divider size={formatSize(15)} />
+              <View style={styles.flex}>
                 <ButtonLargePrimary
                   title={values.usePrevPassword === true ? 'Sync' : 'Next'}
                   disabled={!isValid || isDisabled}

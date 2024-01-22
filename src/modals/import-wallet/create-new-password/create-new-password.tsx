@@ -134,10 +134,11 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
 
       <ButtonsFloatingContainer>
         <ButtonsContainer style={styles.buttonsContainer}>
-          <View style={styles.buttonBox}>
+          <View style={styles.flex}>
             <ButtonLargeSecondary title="Back" onPress={onGoBackPress} />
           </View>
-          <View style={styles.buttonBox}>
+          <Divider size={formatSize(15)} />
+          <View style={styles.flex}>
             <ButtonLargePrimary
               title="Import"
               disabled={!isValid}

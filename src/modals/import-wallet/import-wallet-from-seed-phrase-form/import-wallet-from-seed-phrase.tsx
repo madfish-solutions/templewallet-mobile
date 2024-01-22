@@ -16,6 +16,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { ImportWalletProps } from 'src/modals/import-wallet/interfaces';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
 
 import {
   importWalletFromSeedPhraseInitialValues,
@@ -50,14 +51,15 @@ export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) 
 
       <ButtonsFloatingContainer>
         <ButtonsContainer style={styles.buttonsContainer}>
-          <View style={styles.buttonBox}>
+          <View style={styles.flex}>
             <ButtonLargeSecondary
               title="Back"
               onPress={goBack}
               testID={ImportWalletFromSeedPhraseSelectors.backButton}
             />
           </View>
-          <View style={styles.buttonBox}>
+          <Divider size={formatSize(15)} />
+          <View style={styles.flex}>
             <ButtonLargePrimary
               title="Next"
               disabled={!formik.isValid}

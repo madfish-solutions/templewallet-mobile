@@ -14,7 +14,7 @@ export const useImportWalletFromKeystoreFileStyles = createUseStyles(({ colors, 
   buttonsContainer: {
     paddingHorizontal: formatSize(8)
   },
-  buttonBox: {
-    flex: 0.475
+  flex: {
+    flex: 1
   }
 }));

@@ -5,10 +5,12 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { SyncInstructionsSelectors } from './sync-instructions.selectors';
@@ -46,10 +48,11 @@ export const SyncInstructions = memo(() => {
 
       <ButtonsFloatingContainer>
         <ButtonsContainer style={styles.buttonsContainer}>
-          <View style={styles.buttonBox}>
+          <View style={styles.flex}>
             <ButtonLargeSecondary title="Back" onPress={goBack} testID={SyncInstructionsSelectors.backButton} />
           </View>
-          <View style={styles.buttonBox}>
+          <Divider size={formatSize(15)} />
+          <View style={styles.flex}>
             <ButtonLargePrimary
               title="Scan QR"
               onPress={() => navigate(ScreensEnum.ScanQrCode)}
