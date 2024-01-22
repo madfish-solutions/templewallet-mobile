@@ -1,5 +1,5 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import { ImportWallet } from './import-wallet';
 
-export const ImportWalletFromSeedPhrase = () => <ImportWallet />;
+export const ImportWalletFromSeedPhrase = memo(() => <ImportWallet />);

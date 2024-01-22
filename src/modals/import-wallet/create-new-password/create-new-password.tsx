@@ -1,5 +1,5 @@
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -33,13 +33,13 @@ import { isString } from 'src/utils/is-string';
 import { createNewPasswordValidationSchema, CreateNewPasswordFormValues } from './create-new-password.form';
 import { CreateNewPasswordSelectors } from './create-new-password.selectors';
 
-interface CreateNewPasswordProps {
+interface Props {
   initialPassword?: string;
   onGoBackPress: EmptyFn;
   seedPhrase: string;
 }
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
+export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
   const dispatch = useDispatch();
 
   const styles = useSetPasswordScreensCommonStyles();
@@ -53,14 +53,14 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
     acceptTerms: 0
   });
 
-  const handleSubmit = ({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
+  const handleSubmit = useCallback(({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
     if (viewAds) {
       dispatch(togglePartnersPromotionAction(true));
       dispatch(setAdsBannerVisibilityAction(false));
     }
     dispatch(setIsAnalyticsEnabled(analytics));
     importWallet({ seedPhrase, password, useBiometry });
-  };
+  }, []);
 
   const createNewPasswordInitialValues = useMemo(
     () => ({
@@ -89,8 +89,10 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
     }
   }, []);
 
-  const handleLayoutChange = (name: string, value: number) =>
-    setFieldsPositions(prevState => ({ ...prevState, [name]: value }));
+  const handleLayoutChange = useCallback(
+    (name: string, value: number) => setFieldsPositions(prevState => ({ ...prevState, [name]: value })),
+    []
+  );
 
   return (
     <FormikProvider value={formik}>
@@ -161,4 +163,4 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({ onGoBackPress, s
       </ButtonsFloatingContainer>
     </FormikProvider>
   );
-};
+});

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -13,18 +13,21 @@ interface Props {
   fromSeed?: boolean;
 }
 
-export const ImportWallet: FC<Props> = ({ fromSeed = true }) => {
+export const ImportWallet = memo<Props>(({ fromSeed = true }) => {
   const { innerScreenIndex, setInnerScreenIndex } = useInnerScreenProgress(2, true);
   const [seedPhrase, setSeedPhrase] = useState('');
   const [initialPassword, setInitialPassword] = useState<string>();
 
   usePageAnalytic(fromSeed ? ModalsEnum.ImportWalletFromSeedPhrase : ModalsEnum.ImportWalletFromKeystoreFile);
 
-  const handleImportWalletFormSubmit = ({ seedPhrase: newSeedPhrase, password }: ImportWalletCredentials) => {
-    setSeedPhrase(newSeedPhrase);
-    setInitialPassword(password);
-    setInnerScreenIndex(1);
-  };
+  const handleImportWalletFormSubmit = useCallback(
+    ({ seedPhrase: newSeedPhrase, password }: ImportWalletCredentials) => {
+      setSeedPhrase(newSeedPhrase);
+      setInitialPassword(password);
+      setInnerScreenIndex(1);
+    },
+    []
+  );
 
   return (
     <>
@@ -43,4 +46,4 @@ export const ImportWallet: FC<Props> = ({ fromSeed = true }) => {
       )}
     </>
   );
-};
+});

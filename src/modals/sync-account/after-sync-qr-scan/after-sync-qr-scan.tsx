@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
@@ -20,7 +20,7 @@ import { ConfirmSync } from './confirm-sync/confirm-sync';
 import { ConfirmSyncFormValues } from './confirm-sync/confirm-sync.form';
 import { CreateNewPassword } from './create-new-password/create-new-password';
 
-export const AfterSyncQRScan = () => {
+export const AfterSyncQRScan = memo(() => {
   const dispatch = useDispatch();
   const { importWallet } = useShelter();
 
@@ -85,4 +85,4 @@ export const AfterSyncQRScan = () => {
       )}
     </>
   );
-};
+});

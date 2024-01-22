@@ -1,5 +1,5 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import { ImportWallet } from './import-wallet';
 
-export const ImportWalletFromKeystoreFile = () => <ImportWallet fromSeed={false} />;
+export const ImportWalletFromKeystoreFile = memo(() => <ImportWallet fromSeed={false} />);

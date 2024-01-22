@@ -1,6 +1,6 @@
 import { mnemonicToSeedSync } from 'bip39';
 import { FormikProvider, useFormik } from 'formik';
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -32,19 +32,19 @@ import {
 } from './import-account-seed.form';
 import { ImportAccountSeedSelectors } from './import-account-seed.selectors';
 
-export const ImportAccountSeed = () => {
+export const ImportAccountSeed = memo(() => {
   const dispatch = useDispatch();
   const styles = useImportAccountFromSeedStyles();
   const { goBack } = useNavigation();
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
 
-  const onSubmit = (values: ImportAccountSeedValues) => {
+  const onSubmit = useCallback(({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
     dispatch(showLoaderAction());
 
     setTimeout(() => {
-      const seed = mnemonicToSeedSync(values.seedPhrase, values.password);
-      const privateKey = seedToPrivateKey(seed, isString(values.derivationPath) ? values.derivationPath : undefined);
+      const seed = mnemonicToSeedSync(seedPhrase, password);
+      const privateKey = seedToPrivateKey(seed, isString(derivationPath) ? derivationPath : undefined);
 
       createImportedAccount({
         name: `Account ${accountsIndex}`,
@@ -53,7 +53,7 @@ export const ImportAccountSeed = () => {
 
       goBack();
     }, 0);
-  };
+  }, []);
 
   const formik = useFormik({
     initialValues: importAccountSeedInitialValues,
@@ -107,4 +107,4 @@ export const ImportAccountSeed = () => {
       </ButtonsFloatingContainer>
     </FormikProvider>
   );
-};
+});

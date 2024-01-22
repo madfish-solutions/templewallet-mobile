@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -29,11 +29,11 @@ import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-scree
 import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
 
-interface ConfirmSyncProps {
+interface Props {
   onSubmit: (formValues: ConfirmSyncFormValues) => void;
 }
 
-export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
+export const ConfirmSync = memo<Props>(({ onSubmit }) => {
   const styles = useSetPasswordScreensCommonStyles();
   const { goBack } = useNavigation();
 
@@ -134,4 +134,4 @@ export const ConfirmSync: FC<ConfirmSyncProps> = ({ onSubmit }) => {
       )}
     </Formik>
   );
-};
+});

@@ -1,5 +1,5 @@
 import { FormikProvider, useFormik } from 'formik';
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
 
 import { AndroidKeyboardDisclaimer } from 'src/components/android-keyboard-disclaimer/android-keyboard-disclaimer';
@@ -24,20 +24,20 @@ import {
 } from './import-account-private-key.form';
 import { ImportAccountPrivateKeySelectors } from './import-account-private-key.selectors';
 
-export const ImportAccountPrivateKey = () => {
+export const ImportAccountPrivateKey = memo(() => {
   const { createImportedAccount } = useShelter();
   const accountIndex = useAccountsListSelector().length + 1;
   const { goBack } = useNavigation();
   const styles = useImportAccountFromPrivateKeyStyles();
 
-  const onSubmit = ({ privateKey }: { privateKey: string }) => {
+  const onSubmit = useCallback(({ privateKey }: { privateKey: string }) => {
     createImportedAccount({
       privateKey,
       name: `Account ${accountIndex}`
     });
 
     goBack();
-  };
+  }, []);
 
   const formik = useFormik({
     initialValues: importAccountPrivateKeyInitialValues,
@@ -78,4 +78,4 @@ export const ImportAccountPrivateKey = () => {
       </ButtonsFloatingContainer>
     </FormikProvider>
   );
-};
+});

@@ -1,5 +1,5 @@
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC } from 'react';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 
 import { AndroidKeyboardDisclaimer } from 'src/components/android-keyboard-disclaimer/android-keyboard-disclaimer';
@@ -25,7 +25,7 @@ import {
 import { ImportWalletFromSeedPhraseSelectors } from './import-wallet-from-seed-phrase.selectors';
 import { useImportWalletFromSeedPhraseStyles } from './import-wallet-from-seed-phrase.styles';
 
-export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) => {
+export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit }) => {
   const { goBack } = useNavigation();
   const styles = useImportWalletFromSeedPhraseStyles();
 
@@ -72,4 +72,4 @@ export const ImportWalletFromSeedPhrase: FC<ImportWalletProps> = ({ onSubmit }) 
       </ButtonsFloatingContainer>
     </FormikProvider>
   );
-};
+});

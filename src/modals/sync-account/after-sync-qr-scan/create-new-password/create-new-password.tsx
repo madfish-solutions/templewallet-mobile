@@ -1,5 +1,5 @@
 import { Formik } from 'formik';
-import React, { FC } from 'react';
+import React, { memo } from 'react';
 import { View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -24,19 +24,14 @@ import {
 } from './create-new-password.form';
 import { CreateNewPasswordSyncAccountSelectors } from './create-new-password.selectors';
 
-interface CreateNewPasswordProps {
+interface Props {
   seedPhrase: string;
   useBiometry?: boolean;
   hdAccountsLength?: number;
   onGoBackPress: EmptyFn;
 }
 
-export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
-  seedPhrase,
-  useBiometry,
-  hdAccountsLength,
-  onGoBackPress
-}) => {
+export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccountsLength, onGoBackPress }) => {
   const { importWallet } = useShelter();
   const styles = useSetPasswordScreensCommonStyles();
 
@@ -97,4 +92,4 @@ export const CreateNewPassword: FC<CreateNewPasswordProps> = ({
       )}
     </Formik>
   );
-};
+});

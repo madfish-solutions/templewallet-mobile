@@ -1,6 +1,6 @@
 import { validateMnemonic } from 'bip39';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC } from 'react';
+import React, { memo, useCallback } from 'react';
 import { Text, View } from 'react-native';
 import { readFile } from 'react-native-fs';
 
@@ -43,41 +43,44 @@ const checkKukaiPasswordValid = (password: string): boolean =>
 const TOO_WEAK_PASSWORD_ERROR =
   'The password is too weak. Please, set a new one according to the requirements of the application.';
 
-export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }) => {
+export const ImportWalletFromKeystoreFile = memo<ImportWalletProps>(({ onSubmit }) => {
   const { goBack } = useNavigation();
   const styles = useImportWalletFromKeystoreFileStyles();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Keystore File" /> }, []);
 
-  const handleSubmit = async (values: ImportWalletFromKeystoreFileFormValues) => {
-    try {
-      if (values.shouldUseFilePasswordForExtension && !checkKukaiPasswordValid(values.password)) {
-        throw new Error(TOO_WEAK_PASSWORD_ERROR);
-      }
-      const content = await readFile(values.keystoreFile.uri, 'utf8');
-      const seedPhrase = await decryptSeedPhrase(content, values.password);
-      if (!validateMnemonic(seedPhrase)) {
-        throw new Error('Mnemonic not validated');
-      }
-      onSubmit({
-        seedPhrase,
-        password: values.shouldUseFilePasswordForExtension ? values.password : undefined
-      });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      if (e.message === KUKAI_VERSION_ERROR) {
-        showErrorToast({
-          title: 'Cannot import',
-          description: KUKAI_VERSION_ERROR
+  const handleSubmit = useCallback(
+    async ({ shouldUseFilePasswordForExtension, password, keystoreFile }: ImportWalletFromKeystoreFileFormValues) => {
+      try {
+        if (shouldUseFilePasswordForExtension && !checkKukaiPasswordValid(password)) {
+          throw new Error(TOO_WEAK_PASSWORD_ERROR);
+        }
+        const content = await readFile(keystoreFile.uri, 'utf8');
+        const seedPhrase = await decryptSeedPhrase(content, password);
+        if (!validateMnemonic(seedPhrase)) {
+          throw new Error('Mnemonic not validated');
+        }
+        onSubmit({
+          seedPhrase,
+          password: shouldUseFilePasswordForExtension ? password : undefined
         });
-      } else {
-        showErrorToast({
-          title: 'Wrong file or password',
-          description: 'Please change one of them and try again'
-        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        if (e.message === KUKAI_VERSION_ERROR) {
+          showErrorToast({
+            title: 'Cannot import',
+            description: KUKAI_VERSION_ERROR
+          });
+        } else {
+          showErrorToast({
+            title: 'Wrong file or password',
+            description: 'Please change one of them and try again'
+          });
+        }
       }
-    }
-  };
+    },
+    []
+  );
 
   const formik = useFormik({
     initialValues: importWalletFromKeystoreFileInitialValues,
@@ -128,4 +131,4 @@ export const ImportWalletFromKeystoreFile: FC<ImportWalletProps> = ({ onSubmit }
       </ButtonsFloatingContainer>
     </FormikProvider>
   );
-};
+});
