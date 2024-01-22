@@ -27,7 +27,7 @@ export const useBurnCollectible = (collectible: TokenMetadataInterface | nullish
             dispatch(
               sendAssetActions.submit({
                 asset: collectible,
-                amount: 1,
+                amount: '1',
                 receiverPublicKeyHash: BURN_ADDRESS
               })
             )
