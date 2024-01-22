@@ -29,6 +29,7 @@ export const useFilteredCurrenciesList = () => {
   }, [searchValue, currencies]);
 
   return {
+    allCurrencies: currencies,
     filteredCurrenciesList,
     searchValue,
     setSearchValue
