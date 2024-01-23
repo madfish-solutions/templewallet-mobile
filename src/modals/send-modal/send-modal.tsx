@@ -106,7 +106,7 @@ export const SendModal: FC = () => {
           sendAssetActions.submit({
             asset,
             receiverPublicKeyHash: transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash,
-            amount: amount.toNumber()
+            amount: amount.toString()
           })
         ),
       !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash)));
