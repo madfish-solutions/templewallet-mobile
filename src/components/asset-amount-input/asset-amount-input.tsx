@@ -103,10 +103,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
       [configAmountInputStyles]
     );
 
-    const token = useMemo(
-      () => assetsList.find(candidateToken => getTokenSlug(candidateToken) === getTokenSlug(value.asset)),
-      [assetsList, value.asset]
-    );
+    const slug = useMemo(() => getTokenSlug(value.asset), [value.asset]);
+    const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
     const balance = useMemo(() => token?.balance ?? value.asset.balance, [token, value.asset.balance]);
 

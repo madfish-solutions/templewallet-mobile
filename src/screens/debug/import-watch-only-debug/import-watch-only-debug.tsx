@@ -41,7 +41,7 @@ export const ImportWatchOnlyDebug: FC = () => {
     <Formik
       initialValues={importWatchOnlyDebugInitialValues}
       validationSchema={importWatchOnlyDebugValidationSchema}
-      enableReinitialize={true}
+      enableReinitialize={true} // (!) Might lead to unwanted form resets.
       onSubmit={onSubmit}
     >
       {({ submitForm, isValid }) => (
