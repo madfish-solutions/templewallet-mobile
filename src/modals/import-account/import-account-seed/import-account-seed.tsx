@@ -15,11 +15,13 @@ import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { showLoaderAction } from 'src/store/settings/settings-actions';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isString } from 'src/utils/is-string';
 import { seedToPrivateKey } from 'src/utils/keys.util';
 
@@ -38,6 +40,8 @@ export const ImportAccountSeed = memo(() => {
   const { goBack } = useNavigation();
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
+
+  usePageAnalytic(ModalsEnum.ImportAccountFromSeedPhrase);
 
   const onSubmit = useCallback(({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
     dispatch(showLoaderAction());

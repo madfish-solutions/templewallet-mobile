@@ -22,9 +22,11 @@ import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biome
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { ConfirmSyncFormValues, ConfirmSyncInitialValues, ConfirmSyncValidationSchema } from './confirm-sync.form';
 import { ConfirmSyncSelectors } from './confirm-sync.selectors';
@@ -45,6 +47,8 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
     },
     []
   );
+
+  usePageAnalytic(ModalsEnum.ConfirmSync);
 
   return (
     <Formik initialValues={ConfirmSyncInitialValues} validationSchema={ConfirmSyncValidationSchema} onSubmit={onSubmit}>

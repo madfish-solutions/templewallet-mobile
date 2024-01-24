@@ -2,8 +2,7 @@ import { StackActions } from '@react-navigation/native';
 import type { NavigationAction } from '@react-navigation/routers';
 import { Dispatch } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
-import { catchError, EMPTY, of, Subject, switchMap, tap } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, lastValueFrom, of, Subject, switchMap, tap } from 'rxjs';
 
 import { isAndroid } from 'src/config/system';
 import { AccountInterface } from 'src/interfaces/account.interface';
@@ -60,15 +59,10 @@ export const createImportAccountSubscription = (
         showSuccessToast({ description: 'Account Imported!' });
         navigationDispatch(StackActions.popToTop());
 
-        loadTezosBalance$(rpcUrl, publicData.publicKeyHash)
-          .pipe(
-            map(balance => {
-              if (isAndroid && new BigNumber(balance).isEqualTo(0)) {
-                dispatch(setOnRampPossibilityAction(true));
-              }
-            }),
-            catchError(() => of(EMPTY))
-          )
-          .subscribe();
+        lastValueFrom(loadTezosBalance$(rpcUrl, publicData.publicKeyHash)).then(
+          balance =>
+            void (isAndroid && new BigNumber(balance).isEqualTo(0) && dispatch(setOnRampPossibilityAction(true))),
+          error => console.error(error)
+        );
       }
     });

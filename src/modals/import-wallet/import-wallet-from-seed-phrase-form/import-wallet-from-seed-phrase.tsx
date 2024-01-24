@@ -15,8 +15,10 @@ import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { ImportWalletProps } from 'src/modals/import-wallet/interfaces';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import {
   importWalletFromSeedPhraseInitialValues,
@@ -30,6 +32,8 @@ export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit })
   const styles = useImportWalletFromSeedPhraseStyles();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Seed Phrase" /> }, []);
+
+  usePageAnalytic(ModalsEnum.ImportWalletFromSeedPhrase);
 
   const formik = useFormik({
     initialValues: importWalletFromSeedPhraseInitialValues,

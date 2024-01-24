@@ -12,10 +12,12 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { useImportAccountFromPrivateKeyStyles } from './import-account-from-private-key.styles';
 import {
@@ -29,6 +31,8 @@ export const ImportAccountPrivateKey = memo(() => {
   const accountIndex = useAccountsListSelector().length + 1;
   const { goBack } = useNavigation();
   const styles = useImportAccountFromPrivateKeyStyles();
+
+  usePageAnalytic(ModalsEnum.ImportAccountFromPrivateKey);
 
   const onSubmit = useCallback(({ privateKey }: { privateKey: string }) => {
     createImportedAccount({

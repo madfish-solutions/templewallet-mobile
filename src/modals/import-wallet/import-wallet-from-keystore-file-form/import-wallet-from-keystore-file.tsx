@@ -28,6 +28,9 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from 'src/utils/kukai.utils';
 
+import { ModalsEnum } from '../../../navigator/enums/modals.enum';
+import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
+
 import {
   ImportWalletFromKeystoreFileFormValues,
   importWalletFromKeystoreFileInitialValues,
@@ -48,6 +51,8 @@ export const ImportWalletFromKeystoreFile = memo<ImportWalletProps>(({ onSubmit 
   const styles = useImportWalletFromKeystoreFileStyles();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Keystore File" /> }, []);
+
+  usePageAnalytic(ModalsEnum.ImportWalletFromKeystoreFile);
 
   const handleSubmit = useCallback(
     async ({ shouldUseFilePasswordForExtension, password, keystoreFile }: ImportWalletFromKeystoreFileFormValues) => {
