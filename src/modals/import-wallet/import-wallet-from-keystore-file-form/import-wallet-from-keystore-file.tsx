@@ -23,13 +23,12 @@ import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormFileInput } from 'src/form/form-file-input';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ImportWalletProps } from 'src/modals/import-wallet/interfaces';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { decryptSeedPhrase, KUKAI_VERSION_ERROR } from 'src/utils/kukai.utils';
-
-import { ModalsEnum } from '../../../navigator/enums/modals.enum';
-import { usePageAnalytic } from '../../../utils/analytics/use-analytics.hook';
 
 import {
   ImportWalletFromKeystoreFileFormValues,
