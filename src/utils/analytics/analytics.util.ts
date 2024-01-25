@@ -16,7 +16,7 @@ interface UserAnalyticsId {
   ABTestingCategory?: string;
 }
 
-export type AnalyticsEventProperties = Record<string, unknown>;
+export type AnalyticsEventProperties = object;
 
 export const sendAnalyticsEvent = (
   event: string,
