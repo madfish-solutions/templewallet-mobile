@@ -19,7 +19,6 @@ interface Props
   extends Pick<StyledTextInputProps, 'value' | 'placeholder' | 'isError' | 'onBlur' | 'onChangeText'>,
     TestIdProps {
   pasteButtonTestID?: string;
-  pasteButtonTestIDProperties?: object;
 }
 
 export const AddressInput: FC<Props> = ({
@@ -30,15 +29,14 @@ export const AddressInput: FC<Props> = ({
   onChangeText = emptyFn,
   testID,
   testIDProperties,
-  pasteButtonTestID,
-  pasteButtonTestIDProperties
+  pasteButtonTestID
 }) => {
   const inputRef = useRef<TextInput>(null);
   const { trackEvent } = useAnalytics();
 
   const handlePasteButtonPress = async () => {
     inputRef.current?.focus();
-    trackEvent(pasteButtonTestID, AnalyticsEventCategory.ButtonPress, pasteButtonTestIDProperties);
+    trackEvent(pasteButtonTestID, AnalyticsEventCategory.ButtonPress);
     onChangeText(await Clipboard.getString());
   };
 
