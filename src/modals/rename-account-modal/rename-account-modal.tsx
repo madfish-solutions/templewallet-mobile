@@ -40,7 +40,7 @@ export const RenameAccountModal = () => {
 
   return (
     <Formik
-      enableReinitialize={true}
+      enableReinitialize={true} // (!) Might lead to unwanted form resets.
       initialValues={createHdAccountInitialValues}
       validationSchema={renameAccountModalValidationSchema}
       onSubmit={onSubmit}

@@ -59,7 +59,7 @@ export const ImportAccountSeed: FC<Props> = ({ onBackHandler }) => {
     <Formik
       initialValues={importAccountSeedInitialValues}
       validationSchema={importAccountSeedValidationSchema}
-      enableReinitialize={true}
+      enableReinitialize={true} // (!) Might lead to unwanted form resets.
       onSubmit={onSubmit}
     >
       {({ values, submitForm, isValid }) => (

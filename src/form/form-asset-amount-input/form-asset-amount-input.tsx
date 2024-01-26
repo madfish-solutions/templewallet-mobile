@@ -1,10 +1,15 @@
 import { useField, useFormikContext } from 'formik';
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
-import { AssetAmountInput, AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
-import { AssetAmountInputProps } from '../../components/asset-amount-input/asset-amount-input.props';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { hasError } from '../../utils/has-error';
+import { AssetAmountInput, AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { AssetAmountInputProps } from 'src/components/asset-amount-input/asset-amount-input.props';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
+import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { hasError } from 'src/utils/has-error';
+import { useDidUpdate } from 'src/utils/hooks';
+
 import { ErrorMessage } from '../error-message/error-message';
 
 interface Props
@@ -40,7 +45,7 @@ export const FormAssetAmountInput = memo<Props>(
     assetOptionTestIdPropertiesFn
   }) => {
     const formikContext = useFormikContext();
-    const [field, meta] = useField<AssetAmountInterface>(name);
+    const [field, meta, helpers] = useField<AssetAmountInterface>(name);
     const isError = hasError(meta);
 
     const handleValueChange: SyncFn<AssetAmountInterface, void> = useCallback(
@@ -52,6 +57,25 @@ export const FormAssetAmountInput = memo<Props>(
     );
 
     const handleBlur = useCallback(() => formikContext.setFieldTouched(name, true), [formikContext.setFieldTouched]);
+
+    const slug = useMemo(() => getTokenSlug(field.value.asset), [field.value.asset]);
+    const balanceStored = useAssetBalanceSelector(slug);
+    const exchangeRateStored = useAssetExchangeRate(slug);
+
+    useDidUpdate(
+      () =>
+        void helpers.setValue({ ...field.value, asset: { ...field.value.asset, balance: balanceStored ?? '0' } }, true),
+      [balanceStored]
+    );
+
+    useDidUpdate(
+      () =>
+        void helpers.setValue(
+          { ...field.value, asset: { ...field.value.asset, exchangeRate: exchangeRateStored } },
+          true
+        ),
+      [exchangeRateStored]
+    );
 
     return (
       <>

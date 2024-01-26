@@ -77,7 +77,7 @@ export const SendModal: FC = () => {
       recipient,
       transferBetweenOwnAccounts: false
     }),
-    [inputInitialValue]
+    []
   );
 
   const onSubmit = useCallback(
@@ -117,8 +117,7 @@ export const SendModal: FC = () => {
   const formik = useFormik({
     initialValues: sendModalInitialValues,
     validationSchema: sendModalValidationSchema,
-    onSubmit,
-    enableReinitialize: true
+    onSubmit
   });
 
   const { errors, values, submitForm } = formik;

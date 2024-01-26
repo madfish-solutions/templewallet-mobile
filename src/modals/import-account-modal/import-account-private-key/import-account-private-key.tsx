@@ -39,7 +39,7 @@ export const ImportAccountPrivateKey: FC<Props> = ({ onBackHandler }) => {
     <Formik
       initialValues={importAccountPrivateKeyInitialValues}
       validationSchema={importAccountPrivateKeyValidationSchema}
-      enableReinitialize={true}
+      enableReinitialize={true} // (!) Might lead to unwanted form resets.
       onSubmit={onSubmit}
     >
       {({ submitForm, isValid }) => (
