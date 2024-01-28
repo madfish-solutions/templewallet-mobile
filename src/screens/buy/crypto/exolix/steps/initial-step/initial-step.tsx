@@ -16,6 +16,7 @@ import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/error-toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { getProperNetworkFullName } from 'src/utils/topup';
@@ -38,7 +39,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const dispatch = useDispatch();
   const styles = useInitialStepStyles();
 
-  const { filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
+  const { allCurrencies, filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
   const publicKeyHash = useCurrentAccountPkhSelector();
   const tokenUsdExchangeRates = useUsdToTokenRates();
 
@@ -84,9 +85,11 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
     const inputAssetCode = inputCurrency.asset.code;
-    const inputAsset = filteredCurrenciesList.find(item => item.code === inputAssetCode);
+    const inputAsset = allCurrencies.find(item => item.code === inputAssetCode);
     if (!isTruthy(inputAsset)) {
-      throw new Error('Selected asset not found');
+      showErrorToast({ description: 'Selected asset not found' });
+
+      return;
     }
 
     const requestData = {
@@ -104,7 +107,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     const outputAssetCode = outputCurrency.asset.code;
     const outputAsset = outputTokensList.find(item => item.code === outputAssetCode);
     if (!isTruthy(outputAsset)) {
-      throw new Error('Selected asset not found');
+      showErrorToast({ description: 'Selected asset not found' });
+
+      return;
     }
 
     const requestData = {

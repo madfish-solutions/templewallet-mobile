@@ -1,8 +1,6 @@
 import { jitsuClient } from '@jitsu/sdk-js/packages/javascript-sdk';
 import fetch from 'cross-fetch';
 
-import type { AnalyticsEventProperties } from 'src/types/analytics-event-properties.type';
-
 import { JITSU_ANALYTICS_KEY, JITSU_TRACKING_HOST } from '../env.utils';
 
 import { AnalyticsEventCategory } from './analytics-event.enum';
@@ -17,6 +15,8 @@ interface UserAnalyticsId {
   userId?: string;
   ABTestingCategory?: string;
 }
+
+export type AnalyticsEventProperties = object;
 
 export const sendAnalyticsEvent = (
   event: string,

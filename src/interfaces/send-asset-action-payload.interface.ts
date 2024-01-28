@@ -3,5 +3,5 @@ import { TokenMetadataInterface } from '../token/interfaces/token-metadata.inter
 export interface SendAssetActionPayloadInterface {
   asset: TokenMetadataInterface;
   receiverPublicKeyHash: string;
-  amount: number;
+  amount: string;
 }

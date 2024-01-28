@@ -32,7 +32,7 @@ export const RevealPrivateKeyModal = () => {
 
   return (
     <Formik
-      enableReinitialize={true}
+      enableReinitialize={true} // (!) Might lead to unwanted form resets.
       initialValues={RevealPrivateKeyModalInitialValues}
       validationSchema={revealPrivateKeyModalValidationSchema}
       onSubmit={emptyFn}
