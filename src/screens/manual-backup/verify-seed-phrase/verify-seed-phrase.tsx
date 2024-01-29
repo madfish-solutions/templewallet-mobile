@@ -8,6 +8,7 @@ import { object, string } from 'yup';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
+import { HeaderProgress } from 'src/components/header/header-progress/header-progress';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -43,6 +44,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
   useNavigationSetOptions(
     {
       headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
+      headerRight: () => <HeaderProgress current={2} total={2} />,
       headerTitle: () => <HeaderTitle title="Verify your seed" />
     },
     []
@@ -150,7 +152,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
             onTouchStart={() => void (!isValid && showErrorToast({ description: 'Please check your seed phrase' }))}
           >
             <ButtonLargePrimary
-              title="Next"
+              title="Confirm"
               disabled={!isValid}
               onPress={submitForm}
               testID={VerifySeedPhraseSelectors.nextButton}
