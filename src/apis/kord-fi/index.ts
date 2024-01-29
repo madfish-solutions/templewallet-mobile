@@ -12,9 +12,8 @@ import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG, TZBTC_TOKEN_METADATA } from 'src/to
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { toEarnOpportunityToken } from 'src/utils/earn.utils';
 import { tzktUrl } from 'src/utils/linking';
+import { TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 import { tzToMutez } from 'src/utils/tezos.util';
-
-import { fallbackTezosToolkit } from '../youves/utils';
 
 import { KordFiLendStats, KordFiStatsResponse, KordFiUserDepositsResponse } from './types';
 
@@ -110,7 +109,7 @@ export const getKordFiItems$ = (rates: ExchangeRateRecord): Observable<Array<Sav
         discFactor: '0',
         earnExchangeRate: tezExchangeRate.toString(),
         vestingPeriodSeconds: '0',
-        stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), KORDFI_TEZOS_CONTRACT_ADDRESS),
+        stakeUrl: tzktUrl(TEMPLE_RPC.url, KORDFI_TEZOS_CONTRACT_ADDRESS),
         stakedToken: TEZOS_TOKEN,
         tokens: [TEZOS_TOKEN],
         rewardToken: TEZOS_TOKEN,
@@ -125,11 +124,11 @@ export const getKordFiItems$ = (rates: ExchangeRateRecord): Observable<Array<Sav
         contractAddress: TZBTC_CONTRACT_ADDRESS,
         apr: kordFiStats.tzbtcApr?.toString(),
         depositExchangeRate: tzbtcExchangeRate.toString(),
-        depositTokenUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), TZBTC_TOKEN_METADATA.address),
+        depositTokenUrl: tzktUrl(TEMPLE_RPC.url, TZBTC_TOKEN_METADATA.address),
         discFactor: '0',
         earnExchangeRate: tzbtcExchangeRate.toString(),
         vestingPeriodSeconds: '0',
-        stakeUrl: tzktUrl(fallbackTezosToolkit.rpc.getRpcUrl(), TZBTC_CONTRACT_ADDRESS),
+        stakeUrl: tzktUrl(TEMPLE_RPC.url, TZBTC_CONTRACT_ADDRESS),
         stakedToken: TZBTC_TOKEN,
         tokens: [TZBTC_TOKEN],
         rewardToken: TZBTC_TOKEN,

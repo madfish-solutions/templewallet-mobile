@@ -2,7 +2,7 @@ import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
-import { emptyComponent, emptyFn, EventFn } from 'src/config/general';
+import { emptyComponent } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
@@ -29,7 +29,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   itemHeight?: number;
   itemContainerStyle?: StyleProp<ViewStyle>;
   isLoading?: boolean;
-  setSearchValue?: EventFn<string>;
+  setSearchValue?: SyncFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
@@ -43,7 +43,7 @@ export interface DropdownValueProps<T> extends TestIdProps {
   list: T[];
   disabled?: boolean;
   isCollectibleScreen?: boolean;
-  onValueChange: EventFn<T | undefined>;
+  onValueChange: SyncFn<T | undefined>;
   itemTestIDPropertiesFn?: (value: T) => object | undefined;
 }
 
@@ -78,7 +78,7 @@ const DropdownComponent = <T extends unknown>({
   isLoading = false,
   isSearchable = false,
   isCollectibleScreen = false,
-  setSearchValue = emptyFn,
+  setSearchValue,
   equalityFn,
   renderValue,
   renderListItem,
@@ -88,7 +88,7 @@ const DropdownComponent = <T extends unknown>({
   onLongPress,
   testID,
   testIDProperties,
-  itemTestIDPropertiesFn = emptyFn
+  itemTestIDPropertiesFn
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
@@ -112,7 +112,7 @@ const DropdownComponent = <T extends unknown>({
           key={index}
           onPress={handlePress}
           testID={DropdownSelectors.option}
-          testIDProperties={itemTestIDPropertiesFn(item)}
+          testIDProperties={itemTestIDPropertiesFn?.(item)}
         >
           <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
             {renderListItem({ item, isSelected })}

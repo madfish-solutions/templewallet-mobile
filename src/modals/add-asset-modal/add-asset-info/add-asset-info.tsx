@@ -48,7 +48,7 @@ export const AddAssetInfo: FC<Props> = ({ onCancelButtonPress, onFormSubmitted }
 
   return (
     <Formik
-      enableReinitialize={true}
+      enableReinitialize={true} // (!) Might lead to unwanted form resets.
       initialValues={initialValues}
       validationSchema={addTokenInfoFormValidationSchema}
       onSubmit={onSubmit}

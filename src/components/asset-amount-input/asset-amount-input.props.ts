@@ -1,7 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { TextInputProps, TextStyle, ViewStyle } from 'react-native';
 
-import { EmptyFn, EventFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
@@ -30,10 +29,10 @@ export interface AssetAmountInputProps extends TestIdProps {
   isShowNameForValue?: boolean;
   isSingleAsset?: boolean;
   selectionOptions?: TextInputProps['selection'];
-  setSearchValue?: EventFn<string>;
+  setSearchValue?: SyncFn<string>;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
-  onValueChange: EventFn<AssetAmountInterface>;
+  onValueChange: SyncFn<AssetAmountInterface>;
   tokenTestID?: string;
   switcherTestID?: string;
   maxButtonTestID?: string;
