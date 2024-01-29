@@ -10,7 +10,6 @@ export const greyLight400 = '#F4F4F4';
 export const black = '#000000';
 export const orangeLight200 = '#FF3D00';
 export const white = '#FFFFFF';
-export const red = 'red';
 export const transparent = 'transparent';
 
 export const SIDEBAR_WIDTH = 200;

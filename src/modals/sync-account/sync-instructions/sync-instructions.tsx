@@ -18,7 +18,7 @@ import { useSyncInstructionsStyles } from './sync-instructions.styles';
 
 const syncSteps = [
   'Open the extension on desktop',
-  'Go to settings > Synchronization',
+  'Go to Settings > Synchronization',
   'Enter a Password',
   'Scan a QR code'
 ];

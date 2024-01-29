@@ -50,7 +50,7 @@ export const ChooseWalletImportType = memo(() => {
         <View style={styles.textContainer}>
           <Divider size={formatSize(8)} />
           <Text style={styles.title}>Type of import</Text>
-          <Text style={styles.description}>Select how would you like to import account.</Text>
+          <Text style={styles.description}>Choose how would you like to import account.</Text>
         </View>
 
         <View>
