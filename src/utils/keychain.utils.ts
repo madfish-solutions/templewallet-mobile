@@ -12,7 +12,7 @@ export const SHELTER_VERSION_STORAGE_KEY = 'shelterVersion';
 
 const manufacturersForMigrationFromChip = ['google', 'samsung'];
 export const shouldMoveToSoftwareInV1 =
-  !__DEV__ && manufacturersForMigrationFromChip.includes(manufacturer.toLowerCase());
+  __DEV__ || manufacturersForMigrationFromChip.includes(manufacturer.toLowerCase());
 
 export const getKeychainOptions = (key: string, version: number): Keychain.Options => ({
   service: `${APP_IDENTIFIER}/${key}`,
