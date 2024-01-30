@@ -16,7 +16,7 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     paddingVertical: formatSize(16),
     paddingHorizontal: formatSize(12),
     borderBottomColor: colors.lines,
-    borderBottomWidth: formatSize(0.5)
+    borderBottomWidth: formatSize(1)
   },
   title: {
     ...typography.body17Semibold,
