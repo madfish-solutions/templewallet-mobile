@@ -48,7 +48,7 @@ export const ActivityGroupsList: FC<Props> = ({
   const [endIsReached, setEndIsReached] = useState(false);
   const [loadingEnded, setLoadingEnded] = useState(!isLoading);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
-  const shouldShowPromotion = partnersPromotionEnabled && !promotionErrorOccurred;
+  const shouldShowPromotion = partnersPromotionEnabled; /* && !promotionErrorOccurred; */
 
   useEffect(() => {
     if (!isLoading) {

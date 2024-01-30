@@ -127,7 +127,7 @@ export const TokensList = memo(() => {
       (isHideZeroBalance && filteredAssetsList.length === 0) || (searchValue?.length ?? 0) > 0 || !partnersPromoShown;
 
     const assetsListWithPromotion: ListItem[] = [...filteredAssetsList];
-    if (!shouldHidePromotion && !promotionErrorOccurred) {
+    if (!shouldHidePromotion /* && !promotionErrorOccurred */) {
       assetsListWithPromotion.splice(ITEMS_BEFORE_AD, 0, AD_PLACEHOLDER);
     }
 
