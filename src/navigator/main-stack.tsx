@@ -32,7 +32,6 @@ import { DelegationScreen } from 'src/screens/delegation-screen/delegation-scree
 import { Earn } from 'src/screens/earn';
 import { Farming } from 'src/screens/farming';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
-import { ImportAccount } from 'src/screens/import-account/import-account';
 import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
 import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
@@ -47,8 +46,6 @@ import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
 import { Settings } from 'src/screens/settings/settings';
 import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
 import { SwapScreen } from 'src/screens/swap/swap';
-import { AfterSyncQRScan } from 'src/screens/sync-account/after-sync-qr-scan/after-sync-qr-scan';
-import { SyncInstructions } from 'src/screens/sync-account/sync-instructions/sync-instructions';
 import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-screen';
 import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
@@ -87,21 +84,6 @@ export const MainStackScreen = memo(() => {
           {shouldShowUnauthorizedScreens ? (
             <>
               <MainStack.Screen name={ScreensEnum.Welcome} component={Welcome} options={{ headerShown: false }} />
-              <MainStack.Screen
-                name={ScreensEnum.ImportAccount}
-                component={ImportAccount}
-                options={generateScreenOptions(<HeaderTitle title="Import existing Wallet" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.SyncInstructions}
-                component={SyncInstructions}
-                options={generateScreenOptions(<HeaderTitle title="Sync" />)}
-              />
-              <MainStack.Screen
-                name={ScreensEnum.ConfirmSync}
-                component={AfterSyncQRScan}
-                options={generateScreenOptions(<HeaderTitle title="Confirm Sync" />)}
-              />
               <MainStack.Screen
                 name={ScreensEnum.CreateAccount}
                 component={CreateNewWallet}

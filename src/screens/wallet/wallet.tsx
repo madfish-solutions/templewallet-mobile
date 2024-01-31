@@ -1,4 +1,4 @@
-import { useFocusEffect } from '@react-navigation/native';
+import { StackActions, useFocusEffect } from '@react-navigation/native';
 import React, { memo, useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -43,7 +43,7 @@ import { WalletStyles } from './wallet.styles';
 export const Wallet = memo(() => {
   const dispatch = useDispatch();
   const { pageEvent } = useAnalytics();
-  const { navigate } = useNavigation();
+  const { navigate, dispatch: navigationDispatch, getState } = useNavigation();
 
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const accounts = useAccountsListSelector();
@@ -71,6 +71,12 @@ export const Wallet = memo(() => {
 
   useEffect(() => {
     if (shouldShowNewsletterModal && isAnyBackupMade) {
+      const routes = getState().routes;
+      const prevRouteName = routes[routes.length - 1].name;
+      if (prevRouteName !== ScreensEnum.CloudBackup && prevRouteName !== ScreensEnum.ManualBackup) {
+        navigationDispatch(StackActions.popToTop());
+      }
+
       navigate(ModalsEnum.Newsletter);
     }
   }, [shouldShowNewsletterModal, isAnyBackupMade]);

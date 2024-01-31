@@ -8,7 +8,7 @@
     "android:release:aab": "cd android && ./gradlew bundleRelease",
     "android:release:apk": "cd android && ./gradlew app:assembleRelease",
     "android:test-flight": "cd android && bundle exec fastlane alpha",
-    "ios": "react-native run-ios --simulator \"iPhone 14 Pro\"",
+    "ios": "react-native run-ios --simulator \"iPhone 15 Pro\"",
     "ios:pods": "cd ios && pod install",
     "ios:test-flight": "cd ios && bundle exec fastlane beta",
     "start": "react-native start",

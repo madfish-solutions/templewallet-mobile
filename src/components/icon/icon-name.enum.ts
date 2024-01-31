@@ -24,8 +24,8 @@ export enum IconNameEnum {
   GLow = 'GLow',
   GMid = 'GMid',
   GHigh = 'GHigh',
-  DownloadCloud = 'DownloadCloud',
   HourGlasses = 'HourGlasses',
+  ImportSquare = 'ImportSquare',
   PlusSquare = 'PlusSquare',
   HelpCircle = 'HelpCircle',
   PlusCircle = 'PlusCircle',
@@ -164,5 +164,12 @@ export enum IconNameEnum {
   YouvesEarnSource = 'YouvesEarnSource',
   YouvesEarnSourceDark = 'YouvesEarnSourceDark',
   YouvesEarnSourceLarge = 'YouvesEarnSourceLarge',
-  KordFiEarnSource = 'KordFiEarnSource'
+  KordFiEarnSource = 'KordFiEarnSource',
+  Sync = 'Sync',
+  FileUpload = 'FileUpload',
+  Docs = 'Docs',
+  CloudNative = 'CloudNative',
+  ManualBackup = 'ManualBackup',
+  GoogleDriveNative = 'GoogleDriveNative',
+  Key = 'Key'
 }
