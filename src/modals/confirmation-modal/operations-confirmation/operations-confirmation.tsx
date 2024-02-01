@@ -106,7 +106,7 @@ export const OperationsConfirmation: FC<Props> = ({
 
   return (
     <Formik<FeeFormInputValues>
-      enableReinitialize={true}
+      enableReinitialize={true} // (!) Might lead to unwanted form resets.
       initialValues={formInitialValues}
       validationSchema={formValidationSchema}
       onSubmit={handleSubmit}

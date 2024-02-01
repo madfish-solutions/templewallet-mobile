@@ -1,8 +1,8 @@
-import { red, transparent } from 'src/config/styles';
+import { transparent } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
-export const useErrorMessageStyles = createUseStylesMemoized(({ typography }) => ({
+export const useErrorMessageStyles = createUseStylesMemoized(({ typography, colors }) => ({
   root: {
     ...typography.caption11Regular,
     color: transparent,
@@ -12,6 +12,6 @@ export const useErrorMessageStyles = createUseStylesMemoized(({ typography }) =>
     alignSelf: 'flex-start'
   },
   rootVisible: {
-    color: red
+    color: colors.destructive
   }
 }));

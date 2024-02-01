@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
@@ -8,6 +7,7 @@ import { ButtonsContainer } from 'src/components/button/buttons-container/button
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
+import { HeaderProgress } from 'src/components/header/header-progress/header-progress';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -30,7 +30,7 @@ import { useCreateNewWalletStyles } from './styles';
 
 interface Props {
   onSubmit: (formValues: CreateNewWalletFormValues) => void;
-  onBackPress?: EmptyFn;
+  onGoBackPress: EmptyFn;
   submitButtonTitle?: string;
   seedPhraseBackupErrorText?: string;
   headerTitleText?: string;
@@ -38,21 +38,21 @@ interface Props {
 
 export const RevealSeedPhrase: FC<Props> = ({
   onSubmit,
-  onBackPress,
+  onGoBackPress,
   submitButtonTitle = 'Next',
   seedPhraseBackupErrorText,
   headerTitleText = 'Manual backup'
 }) => {
   const styles = useCreateNewWalletStyles();
   const accountPkh = useCurrentAccountPkhSelector();
-  const { goBack } = useNavigation();
 
   useNavigationSetOptions(
     {
-      headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onBackPress ?? goBack} />,
+      headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
+      headerRight: () => <HeaderProgress current={1} total={2} />,
       headerTitle: () => <HeaderTitle title={headerTitleText} />
     },
-    [headerTitleText, onBackPress]
+    [headerTitleText, onGoBackPress]
   );
 
   const validationSchema = useMemo(

@@ -7,6 +7,8 @@ import { isDefined } from './is-defined';
 
 export const TEMPLE_SYNC_PREFIX = 'templesync';
 
+export const FAILED_TO_DECRYPT_ERROR = 'Wrong password. Make sure that you use the right password and try again.';
+
 export const parseSyncPayload = async (payload: string, password: string): Promise<SyncPayloadInterface> => {
   let index = 0;
   const pick = (length?: number) => payload.slice(index, isDefined(length) ? (index += length) : undefined);
@@ -31,7 +33,7 @@ export const parseSyncPayload = async (payload: string, password: string): Promi
       hdAccountsLength
     };
   } catch (_err) {
-    throw new Error('Failed to decrypt sync payload');
+    throw new Error(FAILED_TO_DECRYPT_ERROR);
   }
 };
 

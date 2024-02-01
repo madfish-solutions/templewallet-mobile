@@ -5,9 +5,6 @@ import { ModalsEnum } from './modals.enum';
 
 export enum ScreensEnum {
   Welcome = 'Welcome',
-  ImportAccount = 'ImportAccount',
-  SyncInstructions = 'SyncInstructions',
-  ConfirmSync = 'ConfirmSync',
   CreateAccount = 'CreateAccount',
   ContinueWithCloud = 'ContinueWithCloud',
   SecurityUpdate = 'SecurityUpdate',
@@ -64,9 +61,6 @@ export enum ScreensEnum {
 
 export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
-  [ScreensEnum.ImportAccount]: undefined;
-  [ScreensEnum.SyncInstructions]: undefined;
-  [ScreensEnum.ConfirmSync]: { payload: string };
   [ScreensEnum.CreateAccount]: { backupToCloud?: boolean; cloudBackupId?: number };
   [ScreensEnum.ContinueWithCloud]: undefined;
   [ScreensEnum.SecurityUpdate]: undefined;

@@ -20,7 +20,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { getFastRpcClient } from 'src/utils/rpc/fast-rpc';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
-import { INDEXER_CONFIG, MAINNET_SMARTPY_RPC, YOUVES_TOKENS_ICONS } from './constants';
+import { INDEXER_CONFIG, YOUVES_TOKENS_ICONS } from './constants';
 import { YouvesTokensEnum } from './enums';
 import { CacheStorageType } from './types';
 
@@ -35,8 +35,6 @@ export const youvesTokensRecord = Object.values(contracts.mainnet)
     }),
     {}
   );
-
-export const fallbackTezosToolkit = new TezosToolkit(getFastRpcClient(MAINNET_SMARTPY_RPC));
 
 class MemoryStorage implements Storage {
   /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -59,8 +57,11 @@ class MemoryStorage implements Storage {
   }
 }
 
-const getTezosToolkit = (account?: AccountInterface) =>
-  isDefined(account) ? createReadOnlyTezosToolkit(MAINNET_SMARTPY_RPC, account) : fallbackTezosToolkit;
+export const getTezosToolkit = memoize(
+  (rpcUrl: string, account?: AccountInterface) =>
+    isDefined(account) ? createReadOnlyTezosToolkit(rpcUrl, account) : new TezosToolkit(getFastRpcClient(rpcUrl)),
+  { cacheKey: ([rpcUrl, account]) => [rpcUrl, account?.publicKey].join('_') }
+);
 
 class MemoizeControllableCache<A extends unknown[], V> {
   private readonly cache: Map<string, CacheStorageType<V>>;
@@ -89,16 +90,16 @@ class MemoizeControllableCache<A extends unknown[], V> {
   }
 }
 
-const getCreateEngineCacheKey = (token: AssetDefinition, account?: AccountInterface) =>
-  [token.id, account?.publicKey, account?.publicKeyHash].join('_');
+const getCreateEngineCacheKey = (rpcUrl: string, token: AssetDefinition, account?: AccountInterface) =>
+  [rpcUrl, token.id, account?.publicKey].join('_');
 export const createEngineCache = new MemoizeControllableCache<
-  [AssetDefinition, AccountInterface | undefined],
+  [string, AssetDefinition, AccountInterface | undefined],
   YouvesEngine
 >(getCreateEngineCacheKey);
 export const createEngineMemoized = memoize(
-  (token: AssetDefinition, account?: AccountInterface) =>
+  (rpcUrl: string, token: AssetDefinition, account?: AccountInterface) =>
     createEngine({
-      tezos: getTezosToolkit(account),
+      tezos: getTezosToolkit(rpcUrl, account),
       contracts: token,
       storage: new MemoryStorage(),
       indexerConfig: INDEXER_CONFIG,
@@ -107,43 +108,49 @@ export const createEngineMemoized = memoize(
       networkConstants: mainnetNetworkConstants
     }),
   {
-    cacheKey: ([token, account]) => getCreateEngineCacheKey(token, account),
+    cacheKey: ([rpcUrl, token, account]) => getCreateEngineCacheKey(rpcUrl, token, account),
     cache: createEngineCache
   }
 );
 
 const getCreateUnifiedSavingsCacheKey = (
+  rpcUrl: string,
   { SAVINGS_V3_POOL_ADDRESS, token }: AssetDefinition,
   account: AccountInterface
-) => [SAVINGS_V3_POOL_ADDRESS, token.id, account.publicKey, account.publicKeyHash].join('_');
+) => [rpcUrl, SAVINGS_V3_POOL_ADDRESS, token.id, account.publicKey].join('_');
 export const createUnifiedSavingsCache = new MemoizeControllableCache<
-  [AssetDefinition, AccountInterface],
+  [string, AssetDefinition, AccountInterface],
   UnifiedSavings
 >(getCreateUnifiedSavingsCacheKey);
 export const createUnifiedSavings = memoize(
-  (assetDefinition: AssetDefinition, account: AccountInterface) =>
+  (rpcUrl: string, assetDefinition: AssetDefinition, account: AccountInterface) =>
     new UnifiedSavings(
       assetDefinition.SAVINGS_V3_POOL_ADDRESS,
       assetDefinition.token,
       assetDefinition.token,
-      createReadOnlyTezosToolkit(MAINNET_SMARTPY_RPC, account),
+      createReadOnlyTezosToolkit(rpcUrl, account),
       INDEXER_CONFIG,
       mainnetNetworkConstants
     ),
   {
-    cacheKey: ([assetDefinition, account]) => getCreateUnifiedSavingsCacheKey(assetDefinition, account),
+    cacheKey: ([rpcUrl, assetDefinition, account]) => getCreateUnifiedSavingsCacheKey(rpcUrl, assetDefinition, account),
     cache: createUnifiedSavingsCache
   }
 );
 
-const getCreateUnifiedStakingCacheKey = (account?: AccountInterface) =>
-  [account?.publicKey, account?.publicKeyHash].join('_');
-export const createUnifiedStakingCache = new MemoizeControllableCache<[AccountInterface | undefined], UnifiedStaking>(
-  getCreateUnifiedStakingCacheKey
-);
+const getCreateUnifiedStakingCacheKey = (rpcUrl: string, account?: AccountInterface) =>
+  [rpcUrl, account?.publicKey].join('_');
+export const createUnifiedStakingCache = new MemoizeControllableCache<
+  [string, AccountInterface | undefined],
+  UnifiedStaking
+>(getCreateUnifiedStakingCacheKey);
 export const createUnifiedStaking = memoize(
-  (account?: AccountInterface) => new UnifiedStaking(getTezosToolkit(account), INDEXER_CONFIG, mainnetNetworkConstants),
-  { cacheKey: ([account]) => getCreateUnifiedStakingCacheKey(account), cache: createUnifiedStakingCache }
+  (rpcUrl: string, account?: AccountInterface) =>
+    new UnifiedStaking(getTezosToolkit(rpcUrl, account), INDEXER_CONFIG, mainnetNetworkConstants),
+  {
+    cacheKey: ([rpcUrl, account]) => getCreateUnifiedStakingCacheKey(rpcUrl, account),
+    cache: createUnifiedStakingCache
+  }
 );
 
 export const toEarnOpportunityToken = (token: YouvesToken) => {

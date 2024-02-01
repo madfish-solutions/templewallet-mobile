@@ -11,7 +11,7 @@ export const useQuoteStyles = createUseStyles(({ colors, typography }) => ({
     textAlign: 'center'
   },
   author: {
-    ...typography.tagline11Tag,
+    ...typography.caption11Regular,
     color: colors.gray1,
     textAlign: 'center'
   }

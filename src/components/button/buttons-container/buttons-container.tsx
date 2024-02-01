@@ -1,6 +1,8 @@
 import React, { FC } from 'react';
-import { View } from 'react-native';
+import { View, ViewStyle } from 'react-native';
 
 import { ButtonsContainerStyles } from './buttons-container.styles';
 
-export const ButtonsContainer: FC = ({ children }) => <View style={ButtonsContainerStyles.container}>{children}</View>;
+export const ButtonsContainer: FC<{ style?: ViewStyle }> = ({ children, style }) => (
+  <View style={[ButtonsContainerStyles.container, style]}>{children}</View>
+);

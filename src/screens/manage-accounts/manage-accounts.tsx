@@ -84,7 +84,7 @@ export const ManageAccounts = () => {
           key="import-an-account"
           title="Import an account"
           onPress={() => {
-            navigate(ModalsEnum.ImportAccount);
+            navigate(ModalsEnum.ChooseAccountImportType);
             revealSelectBottomSheetController.close();
           }}
           testID={ManageAccountsSelectors.importAnAccountButton}

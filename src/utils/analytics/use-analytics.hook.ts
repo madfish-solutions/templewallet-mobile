@@ -6,10 +6,9 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useUserTestingGroupNameSelector } from 'src/store/ab-testing/ab-testing-selectors';
 import { useAnalyticsEnabledSelector, useUserIdSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
-import { AnalyticsEventProperties } from 'src/types/analytics-event-properties.type';
 
 import { AnalyticsEventCategory } from './analytics-event.enum';
-import { jitsu, sendAnalyticsEvent } from './analytics.util';
+import { AnalyticsEventProperties, jitsu, sendAnalyticsEvent } from './analytics.util';
 
 export const useAnalytics = () => {
   const userId = useUserIdSelector();

@@ -35,6 +35,7 @@ import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
+import CloudNativeIcon from './assets/cloud-native.svg';
 import CloudIcon from './assets/cloud.svg';
 import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
@@ -55,7 +56,7 @@ import DetailsArrowDownIcon from './assets/details-arrow-down.svg';
 import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
-import DownloadCloudIcon from './assets/download-cloud.svg';
+import DocsIcon from './assets/docs.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
 import EarnIcon from './assets/earn.svg';
@@ -69,19 +70,23 @@ import EyeClosedBoldIcon from './assets/eye-closed-bold.svg';
 import EyeOpenBoldIcon from './assets/eye-open-bold.svg';
 import FaceIdIcon from './assets/face-id.svg';
 import FavoriteIcon from './assets/favourite.svg';
+import FileUploadIcon from './assets/file-upload.svg';
 import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
 import GlobeIcon from './assets/globe.svg';
+import GoogleDriveNativeIcon from './assets/google-drive-native.svg';
 import GoogleDriveIcon from './assets/google-drive.svg';
 import HelpCircleIcon from './assets/help-circle.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
+import ImportSquareIcon from './assets/import-square.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
 import IosSearchIcon from './assets/ios-search.svg';
+import KeyIcon from './assets/key.svg';
 import KordFiEarnSource from './assets/kord-fi-earn-source.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
@@ -89,6 +94,7 @@ import LinkIcon from './assets/link.svg';
 import LiquidityBakingLogo from './assets/liquidity-baking-logo.svg';
 import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
+import ManualBackupIcon from './assets/manual-backup.svg';
 import MarketIcon from './assets/market.svg';
 import MinusIcon from './assets/minus-icon.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
@@ -139,11 +145,11 @@ import SwapRouteItemBackgroundIcon from './assets/swap-route-item-background.svg
 import SwapSettingsNewIcon from './assets/swap-settings-new.svg';
 import SwapSettings from './assets/swap-settings.svg';
 import SwapIcon from './assets/swap.svg';
+import SyncIcon from './assets/sync.svg';
 import TagIcon from './assets/tag.svg';
 import TempleLogoBottomIcon from './assets/temple-logo-bottom.svg';
 import TempleLogoUpIcon from './assets/temple-logo-up.svg';
-import TempleLogoWithTextDarkIcon from './assets/temple-logo-with-text-dark.svg';
-import TempleLogoWithTextLightIcon from './assets/temple-logo-with-text-light.svg';
+import TempleLogoWithTextIcon from './assets/temple-logo-with-text.svg';
 import TempleLogoIcon from './assets/temple-logo.svg';
 import TerminalIcon from './assets/terminal.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
@@ -201,7 +207,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.GHigh]: GHighIcon,
   [IconNameEnum.Globe]: GlobeIcon,
   [IconNameEnum.HourGlasses]: HourGlassesIcon,
-  [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
+  [IconNameEnum.ImportSquare]: ImportSquareIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.PlusCircleNew]: PlusCircleNewIcon,
@@ -274,8 +280,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TempleLogo]: TempleLogoIcon,
   [IconNameEnum.TempleLogoUp]: TempleLogoUpIcon,
   [IconNameEnum.TempleLogoBottom]: TempleLogoBottomIcon,
-  [IconNameEnum.TempleLogoWithTextDark]: TempleLogoWithTextDarkIcon,
-  [IconNameEnum.TempleLogoWithTextLight]: TempleLogoWithTextLightIcon,
+  [IconNameEnum.TempleLogoWithText]: TempleLogoWithTextIcon,
   [IconNameEnum.Telegram]: TelegramIcon,
   [IconNameEnum.Discord]: DiscordIcon,
   [IconNameEnum.Twitter]: TwitterIcon,
@@ -339,5 +344,12 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
   [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
   [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon,
-  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource
+  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource,
+  [IconNameEnum.Sync]: SyncIcon,
+  [IconNameEnum.FileUpload]: FileUploadIcon,
+  [IconNameEnum.Docs]: DocsIcon,
+  [IconNameEnum.CloudNative]: CloudNativeIcon,
+  [IconNameEnum.GoogleDriveNative]: GoogleDriveNativeIcon,
+  [IconNameEnum.ManualBackup]: ManualBackupIcon,
+  [IconNameEnum.Key]: KeyIcon
 };

@@ -45,7 +45,10 @@ const mockTezosToolkit = {
   setForgerProvider: jest.fn(),
   setSignerProvider: jest.fn(),
   getFactory: jest.fn(() => () => ({})),
-  addExtension: jest.fn()
+  addExtension: jest.fn(),
+  tz: {
+    getBalance: jest.fn(() => Promise.resolve('mocked-balance'))
+  }
 };
 
 jest.mock('@taquito/taquito', () => ({

@@ -1,5 +1,5 @@
 import { useField } from 'formik';
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 import { Checkbox } from '../components/checkbox/checkbox';
 import { CheckboxProps } from '../components/checkbox/checkbox.props';
@@ -12,10 +12,20 @@ import { ErrorMessage } from './error-message/error-message';
 
 interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID'>, TestIdProps {
   name: string;
+  descriptionNode?: ReactNode;
   error?: string;
 }
 
-export const FormCheckbox: FC<Props> = ({ name, children, disabled, size, testID, testIDProperties, error }) => {
+export const FormCheckbox: FC<Props> = ({
+  name,
+  children,
+  descriptionNode,
+  disabled,
+  size,
+  testID,
+  testIDProperties,
+  error
+}) => {
   const [field, meta, helpers] = useField<boolean>(name);
   const { trackEvent } = useAnalytics();
 
@@ -31,6 +41,7 @@ export const FormCheckbox: FC<Props> = ({ name, children, disabled, size, testID
       <Checkbox disabled={disabled} value={field.value} size={size} onChange={handleChange} testID={testID}>
         {children}
       </Checkbox>
+      {descriptionNode}
       <ErrorMessage meta={meta} />
       {isDefined(error) && (
         <ErrorMessage

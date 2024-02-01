@@ -1,5 +1,5 @@
 import { boolean } from 'yup';
 
-const termOfUsageError = 'Unable to continue without confirming Terms of Use';
+const termOfUsageError = 'Unable to continue without accepting Terms of Use';
 
 export const acceptTermsValidation = boolean().required(termOfUsageError).oneOf([true], termOfUsageError);

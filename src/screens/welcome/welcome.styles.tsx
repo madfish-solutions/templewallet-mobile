@@ -2,29 +2,9 @@ import { createUseStyles, createUseStylesConfig } from 'src/styles/create-use-st
 import { formatSize } from 'src/styles/format-size';
 
 export const useWelcomeStyles = createUseStyles(({ colors, typography }) => ({
-  scrollViewContentContainer: {
-    paddingTop: 0,
-    paddingHorizontal: 0
-  },
-  bg: {
-    flex: 1
-  },
   imageView: {
-    marginTop: formatSize(96),
+    marginTop: formatSize(108),
     alignItems: 'center'
-  },
-  logo: {
-    backgroundColor: colors.pageBG
-  },
-  footer: {
-    paddingHorizontal: formatSize(16)
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  buttonBox: {
-    flex: 0.475
   },
   orDivider: {
     height: formatSize(18),
@@ -37,7 +17,7 @@ export const useWelcomeStyles = createUseStyles(({ colors, typography }) => ({
   orDividerLine: {
     flex: 1,
     height: formatSize(1),
-    backgroundColor: colors.gray1
+    backgroundColor: colors.lines
   },
   orDividerText: {
     ...typography.caption13Regular,

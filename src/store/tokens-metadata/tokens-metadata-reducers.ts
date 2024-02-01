@@ -1,6 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { persistReducer } from 'redux-persist';
+import { createMigrate, MigrationManifest, PersistedState, persistReducer } from 'redux-persist';
 
+import { OVERRIDEN_MAINNET_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
@@ -17,6 +18,8 @@ import {
   removeKnownSvg
 } from './tokens-metadata-actions';
 import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metadata-state';
+
+type TypedPersistedState = Exclude<PersistedState, undefined> & TokensMetadataState;
 
 const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadataInitialState, builder => {
   builder.addCase(loadTokensMetadataActions.submit, state => {
@@ -85,10 +88,32 @@ const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadata
   });
 });
 
+const MIGRATIONS: MigrationManifest = {
+  '2': (untypedState: PersistedState): TypedPersistedState | undefined => {
+    if (!untypedState) {
+      return untypedState;
+    }
+
+    const state = untypedState as TypedPersistedState;
+
+    for (const metadata of OVERRIDEN_MAINNET_TOKENS_METADATA) {
+      const slug = getTokenSlug(metadata);
+      state.metadataRecord[slug] = {
+        ...(state.metadataRecord[slug] ?? {}),
+        ...metadata
+      };
+    }
+
+    return state;
+  }
+};
+
 export const tokensMetadataPersistedReducers = persistReducer(
   {
     key: 'root.tokensMetadata',
+    version: 2,
     storage: SlicedAsyncStorage,
+    migrate: createMigrate(MIGRATIONS, { debug: __DEV__ }),
     blacklist: ['isLoading', 'addTokenSuggestion'] as (keyof TokensMetadataState)[]
   },
   tokensMetadataReducers

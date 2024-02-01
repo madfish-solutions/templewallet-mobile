@@ -126,18 +126,26 @@ export const CreateNewWallet = () => {
 
             <View onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}>
               <View style={styles.checkboxContainer}>
-                <FormCheckbox name="acceptTerms" testID={CreateNewWalletSelectors.acceptTermsCheckbox}>
+                <FormCheckbox
+                  name="acceptTerms"
+                  descriptionNode={
+                    <>
+                      <Divider size={formatSize(8)} />
+                      <CheckboxLabel>
+                        I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
+                        <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
+                      </CheckboxLabel>
+                    </>
+                  }
+                  testID={CreateNewWalletSelectors.acceptTermsCheckbox}
+                >
                   <Divider size={formatSize(8)} />
                   <Text style={styles.checkboxText}>Accept terms</Text>
                 </FormCheckbox>
               </View>
-              <CheckboxLabel>
-                I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
-                <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-              </CheckboxLabel>
             </View>
           </ScreenContainer>
-          <View style={styles.fixedButtonContainer}>
+          <View style={[styles.fixedButtonContainer, styles.withoutSeparator]}>
             <ButtonLargePrimary
               title="Create"
               onPress={() => {

@@ -1,7 +1,7 @@
-import { SyncPayloadInterface } from '../interfaces/sync.interface';
-import { mockReactNativeThemis } from '../mocks/react-native-themis.mock';
+import { SyncPayloadInterface } from 'src/interfaces/sync.interface';
+import { mockReactNativeThemis } from 'src/mocks/react-native-themis.mock';
 
-import { isSyncPayload, parseSyncPayload, TEMPLE_SYNC_PREFIX } from './sync.utils';
+import { FAILED_TO_DECRYPT_ERROR, isSyncPayload, parseSyncPayload, TEMPLE_SYNC_PREFIX } from './sync.utils';
 
 const prefixB64 = Buffer.from(TEMPLE_SYNC_PREFIX).toString('base64');
 const pseudoValidPayload = [prefixB64, Buffer.from(new Uint8Array(49)).toString('base64')].join('');
@@ -13,8 +13,6 @@ const validParsed: SyncPayloadInterface = {
   mnemonic: 'elbow blood dial initial shaft average upgrade erupt spray basket fall uncle',
   hdAccountsLength: 3
 };
-
-const FAILED_TO_DECRYPT_ERROR = 'Failed to decrypt sync payload';
 
 describe('isSyncPayload', () => {
   it('should false when random payload', () => {
