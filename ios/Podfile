@@ -10,9 +10,7 @@ pod 'Firebase', :modular_headers => true
 pod 'FirebaseCore', :modular_headers => true
 pod 'GoogleUtilities', :modular_headers => true
 
-pod 'Firebase', :modular_headers => true
-pod 'FirebaseCore', :modular_headers => true
-pod 'GoogleUtilities', :modular_headers => true
+pod 'Google-Mobile-Ads-SDK'
 
 platform :ios, '12.4'
 prepare_react_native_project!

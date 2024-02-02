@@ -13,6 +13,8 @@
 
 #import <React/RCTLinkingManager.h>
 
+#import <GoogleMobileAds/GoogleMobileAds.h>
+
 
 @implementation AppDelegate
 
@@ -30,6 +32,8 @@
 
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
+
+  [GADMobileAds.sharedInstance startWithCompletionHandler:nil];
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }

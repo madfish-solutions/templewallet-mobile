@@ -17,7 +17,7 @@
     "lint:format": "prettier \"src/**/*\" --write --ignore-unknown",
     "ts": "tsc --pretty",
     "clear:android": "cd android && ./gradlew clean",
-    "clear:ios": "rm -rf ios/Pods && rm -rf ios/build && pod cache clean --all",
+    "clear:ios": "rm -rf ios/build && pod cache clean --all",
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true",
     "clear:watchman": "if [ -x \"$(command -v watchman)\" ]; then watchman watch-del-all; fi",
     "find-deadcode": "ts-prune --error",

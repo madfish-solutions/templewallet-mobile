@@ -169,8 +169,10 @@ export const TokensList = memo(() => {
             <AdBanner
               // See test ads: https://developers.google.com/ad-manager/mobile-ads-sdk/android/test-ads
               // (!) Changing this value (and `adSize`) in runtime does not replace the ad.
-              adUnitID="/6499/example/native"
+              adUnitID="/6499/example/native-video"
               adSize="mediumRectangle"
+              // adUnitID="/6499/example/banner"
+              // adSize="banner"
               // testDevices={[PublisherBanner.simulatorId]}
               onAdFailedToLoad={error => console.error(1, error)}
               onAppEvent={event => console.log(2, event.name, event.info)}
