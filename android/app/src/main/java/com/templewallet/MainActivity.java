@@ -10,6 +10,10 @@ import com.zoontek.rnbootsplash.RNBootSplash;
 import android.content.Intent;
 import android.content.res.Configuration;
 
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+
 public class MainActivity extends ReactActivity {
 
   /**
@@ -25,6 +29,13 @@ public class MainActivity extends ReactActivity {
   protected void onCreate(Bundle savedInstanceState) {
     RNBootSplash.init(this, R.style.BootTheme);
     super.onCreate(null);
+
+    // See: https://developers.google.com/ad-manager/mobile-ads-sdk/android/quick-start
+    MobileAds.initialize(this, new OnInitializationCompleteListener() {
+      @Override
+      public void onInitializationComplete(InitializationStatus initializationStatus) {
+      }
+  });
   }
 
   /**

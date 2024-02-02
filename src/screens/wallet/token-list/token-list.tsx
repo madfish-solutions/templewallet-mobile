@@ -1,17 +1,23 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
+import {
+  Banner as AdBanner
+  // Interstitial,
+  // PublisherBanner,
+  // NativeAdsManager,
+} from 'react-native-ad-manager';
 import { useDispatch } from 'react-redux';
 
 import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
-import { HorizontalBorder } from 'src/components/horizontal-border';
+// import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
-import { OptimalPromotionVariantEnum } from 'src/components/optimal-promotion-item/optimal-promotion-variant.enum';
+// import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+// import { OptimalPromotionVariantEnum } from 'src/components/optimal-promotion-item/optimal-promotion-variant.enum';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
@@ -147,7 +153,8 @@ export const TokensList = memo(() => {
     ({ item }) => {
       if (item === AD_PLACEHOLDER) {
         return (
-          <View>
+          <View style={{ alignItems: 'center' }}>
+            {/*
             <View style={styles.promotionItemWrapper}>
               <OptimalPromotionItem
                 variant={OptimalPromotionVariantEnum.Text}
@@ -158,6 +165,16 @@ export const TokensList = memo(() => {
               />
             </View>
             <HorizontalBorder style={styles.promotionItemBorder} />
+            */}
+            <AdBanner
+              // See test ads: https://developers.google.com/ad-manager/mobile-ads-sdk/android/test-ads
+              // (!) Changing this value (and `adSize`) in runtime does not replace the ad.
+              adUnitID="/6499/example/native"
+              adSize="mediumRectangle"
+              // testDevices={[PublisherBanner.simulatorId]}
+              onAdFailedToLoad={error => console.error(1, error)}
+              onAppEvent={event => console.log(2, event.name, event.info)}
+            />
           </View>
         );
       }
