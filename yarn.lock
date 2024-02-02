@@ -9944,6 +9944,11 @@ react-is@^17.0.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-ad-manager@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-ad-manager/-/react-native-ad-manager-2.0.8.tgz#ee81af20ea6050bf90c2247653d8de106013dbe8"
+  integrity sha512-C4wQgz7GlWa1asxwuspv7PTUx+yfPR62Tg9r8RwJ5KncAPxeMzk0OusK70LJZF4YuS2vinnZ0CUxDPMVvtKVoA==
+
 react-native-android-open-settings@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/react-native-android-open-settings/-/react-native-android-open-settings-1.3.0.tgz#c6257f3c88ada62945fffe887933a2a828adf45d"
