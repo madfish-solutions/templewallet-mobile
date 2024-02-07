@@ -25,7 +25,11 @@ import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertisi
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
-import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
+import {
+  useHideZeroBalancesSelector,
+  useIsEnabledAdsBannerSelector,
+  useIsInAppUpdateAvailableSelector
+} from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -37,6 +41,7 @@ import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/h
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { InAppUpdateBanner } from '../../../components/in-app-update-banner/in-app-update-banner';
 import { WalletSelectors } from '../wallet.selectors';
 
 import { TezosToken } from './token-list-item/tezos-token';
@@ -75,6 +80,7 @@ export const TokensList = memo(() => {
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+  const isInAppUpdateAvailable = useIsInAppUpdateAvailableSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
   const { isTezosNode } = useNetworkInfo();
@@ -214,7 +220,9 @@ export const TokensList = memo(() => {
         </Search>
       </View>
 
-      {isEnabledAdsBanner ? <AcceptAdsBanner style={styles.banner} /> : null}
+      {isInAppUpdateAvailable ? <InAppUpdateBanner style={styles.banner} /> : null}
+
+      {isEnabledAdsBanner && !isInAppUpdateAvailable ? <AcceptAdsBanner style={styles.banner} /> : null}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlashList
