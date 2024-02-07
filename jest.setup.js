@@ -14,6 +14,7 @@ import './src/mocks/react-native-clipboard-clipboard.mock';
 import './src/mocks/react-native-device-info.mock';
 import './src/mocks/react-native-firebase.mock';
 import './src/mocks/react-native-fs.mock';
+import './src/mocks/sp-react-native-in-app-updates.mock';
 import './src/mocks/react-native-orientation-locker.mock';
 import './src/mocks/react-native-permissions.mock';
 import './src/mocks/react-native-quick-actions.mock';
