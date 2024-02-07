@@ -15,18 +15,17 @@ interface Props {
 export const InAppUpdateBanner = memo<Props>(({ style }) => {
   const styles = useInAppUpdateBannerStyles();
 
-  const handleUpdateButton = async () => {
+  const handleUpdateButton = () => {
     const inAppUpdates = new SpInAppUpdates(false);
     let updateOptions: StartUpdateOptions = {};
 
     if (isAndroid) {
       // android only, on iOS the user will be prompted to go to our store page
       updateOptions = {
-        updateType: IAUUpdateKind.FLEXIBLE
+        updateType: IAUUpdateKind.IMMEDIATE
       };
     }
-    await inAppUpdates.startUpdate(updateOptions);
-    inAppUpdates.installUpdate();
+    inAppUpdates.startUpdate(updateOptions);
   };
 
   return (
