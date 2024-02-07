@@ -1,10 +1,9 @@
 import React, { memo } from 'react';
 import { View, Text, StyleProp, ViewStyle } from 'react-native';
-import { useDispatch } from 'react-redux';
+import SpInAppUpdates, { IAUUpdateKind, StartUpdateOptions } from 'sp-react-native-in-app-updates';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
-import { setAdsBannerVisibilityAction } from 'src/store/settings/settings-actions';
+import { isAndroid } from 'src/config/system';
 
 import { InAppUpdateBannerSelectors } from './in-app-update-banner.selectors';
 import { useInAppUpdateBannerStyles } from './in-app-update-banner.styles';
@@ -14,12 +13,20 @@ interface Props {
 }
 
 export const InAppUpdateBanner = memo<Props>(({ style }) => {
-  const dispatch = useDispatch();
   const styles = useInAppUpdateBannerStyles();
 
-  const handleUpdateButton = () => {
-    dispatch(togglePartnersPromotionAction(true));
-    dispatch(setAdsBannerVisibilityAction(false));
+  const handleUpdateButton = async () => {
+    const inAppUpdates = new SpInAppUpdates(false);
+    let updateOptions: StartUpdateOptions = {};
+
+    if (isAndroid) {
+      // android only, on iOS the user will be prompted to go to our store page
+      updateOptions = {
+        updateType: IAUUpdateKind.FLEXIBLE
+      };
+    }
+    await inAppUpdates.startUpdate(updateOptions);
+    inAppUpdates.installUpdate();
   };
 
   return (
