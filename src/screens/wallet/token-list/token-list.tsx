@@ -10,6 +10,7 @@ import { Divider } from 'src/components/divider/divider';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { InAppUpdateBanner } from 'src/components/in-app-update-banner/in-app-update-banner';
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { OptimalPromotionVariantEnum } from 'src/components/optimal-promotion-item/optimal-promotion-variant.enum';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
@@ -41,7 +42,6 @@ import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/h
 import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { InAppUpdateBanner } from '../../../components/in-app-update-banner/in-app-update-banner';
 import { WalletSelectors } from '../wallet.selectors';
 
 import { TezosToken } from './token-list-item/tezos-token';
