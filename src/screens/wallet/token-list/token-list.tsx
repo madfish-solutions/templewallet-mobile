@@ -220,9 +220,11 @@ export const TokensList = memo(() => {
         </Search>
       </View>
 
-      {isInAppUpdateAvailable ? <InAppUpdateBanner style={styles.banner} /> : null}
-
-      {isEnabledAdsBanner && !isInAppUpdateAvailable ? <AcceptAdsBanner style={styles.banner} /> : null}
+      {isInAppUpdateAvailable ? (
+        <InAppUpdateBanner style={styles.banner} />
+      ) : isEnabledAdsBanner ? (
+        <AcceptAdsBanner style={styles.banner} />
+      ) : null}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlashList

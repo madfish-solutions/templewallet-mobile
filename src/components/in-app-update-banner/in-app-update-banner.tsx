@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { View, Text, StyleProp, ViewStyle } from 'react-native';
-import SpInAppUpdates, { IAUUpdateKind, StartUpdateOptions } from 'sp-react-native-in-app-updates';
+import SpInAppUpdates, { IAUUpdateKind } from 'sp-react-native-in-app-updates';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { isAndroid } from 'src/config/system';
@@ -17,15 +17,14 @@ export const InAppUpdateBanner = memo<Props>(({ style }) => {
 
   const handleUpdateButton = () => {
     const inAppUpdates = new SpInAppUpdates(false);
-    let updateOptions: StartUpdateOptions = {};
-
-    if (isAndroid) {
-      // android only, on iOS the user will be prompted to go to our store page
-      updateOptions = {
-        updateType: IAUUpdateKind.IMMEDIATE
-      };
-    }
-    inAppUpdates.startUpdate(updateOptions);
+    inAppUpdates.startUpdate(
+      isAndroid
+        ? {
+            // Android only. On iOS the user will be prompted to go to the store
+            updateType: IAUUpdateKind.IMMEDIATE
+          }
+        : {}
+    );
   };
 
   return (
