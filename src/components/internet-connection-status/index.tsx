@@ -3,19 +3,28 @@ import { isNull } from 'lodash-es';
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+
 import { useInternetConnectionStatusStyles } from './styles';
 
 export const InternetConnectionStatus = memo(() => {
   const { isConnected } = useNetInfo();
   const styles = useInternetConnectionStatusStyles();
+  const colors = useColors();
 
   if (isNull(isConnected)) {
     return null;
   }
 
-  return isConnected ? null : (
+  return (
     <View style={styles.container}>
-      <Text style={styles.text}>Disconnected</Text>
+      <Icon name={IconNameEnum.NoConnection} size={formatSize(16)} color={colors.black} />
+      <Divider size={formatSize(8)} />
+      <Text style={styles.text}>No connection</Text>
     </View>
   );
 });

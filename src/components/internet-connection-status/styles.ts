@@ -1,15 +1,18 @@
-import { white } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
-import { formatTextSize } from 'src/styles/format-size';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useInternetConnectionStatusStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {
-    backgroundColor: colors.destructive
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.disabled,
+    paddingVertical: formatSize(8)
   },
   text: {
-    ...typography.body15Semibold,
-    color: white,
-    lineHeight: formatTextSize(20),
+    ...typography.numbersRegular11,
+    color: colors.black,
+    lineHeight: formatTextSize(13),
     textAlign: 'center'
   }
 }));
