@@ -6,6 +6,7 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
+import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { Loader } from 'src/components/loader/loader';
 import { isAndroid, isIOS } from 'src/config/system';
 import { useRootHooks } from 'src/hooks/root-hooks';
@@ -245,6 +246,8 @@ export const RootStackScreen = () => {
       {isForceUpdateNeeded && <ForceUpdate />}
       {isAppCheckFailed && <AppCheckWarning />}
       {isShowLoader && <Loader />}
+
+      <InternetConnectionStatus />
     </NavigationContainer>
   );
 };
