@@ -11,7 +11,11 @@ import { useColors } from 'src/styles/use-colors';
 
 import { useInternetConnectionStatusStyles } from './styles';
 
-export const InternetConnectionStatus = memo(() => {
+interface Props {
+  sideBar?: boolean;
+}
+
+export const InternetConnectionStatus = memo<Props>(({ sideBar }) => {
   const { isConnected } = useNetInfo();
   const styles = useInternetConnectionStatusStyles();
   const colors = useColors();
@@ -20,11 +24,14 @@ export const InternetConnectionStatus = memo(() => {
     return null;
   }
 
-  return (
-    <View style={styles.container}>
-      <Icon name={IconNameEnum.NoConnection} size={formatSize(16)} color={colors.black} />
-      <Divider size={formatSize(8)} />
-      <Text style={styles.text}>No connection</Text>
-    </View>
+  return isConnected ? null : (
+    <>
+      {sideBar && <Divider size={formatSize(16)} />}
+      <View style={styles.container}>
+        <Icon name={IconNameEnum.NoConnection} size={formatSize(16)} color={colors.black} />
+        <Divider size={formatSize(8)} />
+        <Text style={styles.text}>No connection</Text>
+      </View>
+    </>
   );
 });

@@ -4,6 +4,7 @@ import { ScrollView, View } from 'react-native';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
 import { isAndroid } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -92,6 +93,7 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
         <View>
           <OctopusWithLove />
           <Divider size={formatSize(8)} />
+          <InternetConnectionStatus sideBar />
           <InsetSubstitute type="bottom" />
         </View>
       </ScrollView>
