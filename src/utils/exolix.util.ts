@@ -9,15 +9,14 @@ import {
   GetRateResponseWithAmountTooLow,
   SubmitExchangePayload
 } from 'src/interfaces/exolix.interface';
-import { outputTokensList } from 'src/screens/buy/crypto/exolix/config';
-import { ExolixTopUpInputInterface } from 'src/screens/buy/crypto/exolix/exolix-topup.form';
+import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
 
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';
 
 const currenciesLimit = 100;
 
-export const loadExolixCurrencies = async (): Promise<ExolixTopUpInputInterface[]> => {
+export const loadExolixCurrencies = async (): Promise<TopUpWithNetworkInterface[]> => {
   let page = 1;
   let result = await loadCurrency(page);
   let totalData = result.data;
@@ -42,13 +41,7 @@ export const loadExolixCurrencies = async (): Promise<ExolixTopUpInputInterface[
         }
       }))
     )
-    .flat()
-    .filter(
-      ({ name, network }) =>
-        outputTokensList.find(
-          outputToken => outputToken.name === name && outputToken.network?.code === network.code
-        ) === undefined
-    );
+    .flat();
 };
 
 const loadCurrency = async (page = 1) =>

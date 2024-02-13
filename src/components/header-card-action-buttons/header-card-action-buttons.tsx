@@ -126,7 +126,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         testID={WalletSelectors.receiveButton}
       />
 
-      {isAndroid && (
+      {!isAndroid && (
         <>
           <Divider size={formatSize(8)} />
           <ButtonMedium

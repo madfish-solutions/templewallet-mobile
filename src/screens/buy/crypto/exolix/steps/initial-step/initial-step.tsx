@@ -12,7 +12,6 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { BlackTextLink } from 'src/components/text-link/black-text-link';
 import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
-import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -22,7 +21,7 @@ import { isTruthy } from 'src/utils/is-truthy';
 import { getProperNetworkFullName } from 'src/utils/topup';
 
 import { ErrorComponent } from '../../components/error-component';
-import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, outputTokensList, initialFormValues } from '../../config';
+import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, initialFormValues } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
 import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-list.hook';
 
@@ -39,9 +38,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const dispatch = useDispatch();
   const styles = useInitialStepStyles();
 
-  const { allCurrencies, filteredCurrenciesList, setSearchValue } = useFilteredCurrenciesList();
+  const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue } =
+    useFilteredCurrenciesList();
   const publicKeyHash = useCurrentAccountPkhSelector();
-  const tokenUsdExchangeRates = useUsdToTokenRates();
 
   const handleSubmit = () => {
     if (!isDefined(values.coinFrom.amount)) {
@@ -70,22 +69,19 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const inputCurrency = values.coinFrom.asset;
   const outputCurrency = values.coinTo.asset;
 
-  const outputTokenPrice = useMemo(() => tokenUsdExchangeRates[outputCurrency.slug], [outputCurrency.slug]);
-
   useEffect(() => {
     loadMinMaxFields(
       setFieldValue,
       inputCurrency.code,
       inputCurrency.network?.code,
       outputCurrency.code,
-      outputCurrency.network?.code,
-      outputTokenPrice
+      outputCurrency.network?.code
     );
-  }, [inputCurrency, outputCurrency, outputTokenPrice]);
+  }, [inputCurrency, outputCurrency]);
 
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
     const inputAssetCode = inputCurrency.asset.code;
-    const inputAsset = allCurrencies.find(item => item.code === inputAssetCode);
+    const inputAsset = inputCurrencies.find(item => item.code === inputAssetCode);
     if (!isTruthy(inputAsset)) {
       showErrorToast({ description: 'Selected asset not found' });
 
@@ -105,7 +101,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
 
   const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
     const outputAssetCode = outputCurrency.asset.code;
-    const outputAsset = outputTokensList.find(item => item.code === outputAssetCode);
+    const outputAsset = outputCurrencies.find(item => item.code === outputAssetCode);
     if (!isTruthy(outputAsset)) {
       showErrorToast({ description: 'Selected asset not found' });
 
@@ -144,7 +140,7 @@ Otherwise, you may lose your assets permanently.`
                   name="coinFrom"
                   label="Send"
                   isSearchable
-                  assetsList={filteredCurrenciesList}
+                  assetsList={filteredInputCurrenciesList}
                   onValueChange={handleInputValueChange}
                   tokenTestID={InitialStepSelectors.sendTokenChange}
                   setSearchValue={setSearchValue}
@@ -158,7 +154,7 @@ Otherwise, you may lose your assets permanently.`
                   name="coinTo"
                   label="Get"
                   editable={false}
-                  assetsList={outputTokensList}
+                  assetsList={outputCurrencies}
                   onValueChange={handleOutputValueChange}
                   tokenTestID={InitialStepSelectors.getTokenChange}
                 />
