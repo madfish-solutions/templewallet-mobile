@@ -154,6 +154,7 @@ Otherwise, you may lose your assets permanently.`
                   name="coinTo"
                   label="Get"
                   editable={false}
+                  singleAsset={outputCurrencies.length === 1}
                   assetsList={outputCurrencies}
                   onValueChange={handleOutputValueChange}
                   tokenTestID={InitialStepSelectors.getTokenChange}
