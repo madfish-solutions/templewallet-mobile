@@ -1,5 +1,4 @@
 import { useNetInfo } from '@react-native-community/netinfo';
-import { isNull } from 'lodash-es';
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -20,11 +19,11 @@ export const InternetConnectionStatus = memo<Props>(({ sideBar }) => {
   const styles = useInternetConnectionStatusStyles();
   const colors = useColors();
 
-  if (isNull(isConnected)) {
+  if (isConnected !== false) {
     return null;
   }
 
-  return isConnected ? null : (
+  return (
     <>
       {sideBar && <Divider size={formatSize(16)} />}
       <View style={styles.container}>
