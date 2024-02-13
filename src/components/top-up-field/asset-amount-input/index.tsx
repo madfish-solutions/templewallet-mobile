@@ -69,7 +69,6 @@ const AssetAmountInputComponent: FC<
   onFocus,
   onValueChange
 }) => {
-  console.log(value, 'value');
   const styles = useTopUpAssetAmountInputStyles();
   const colors = useColors();
   const { trackEvent } = useAnalytics();
