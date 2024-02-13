@@ -12,7 +12,7 @@ const avgCommission = 300;
 
 type setFieldType = (field: string, value: BigNumber | number) => void;
 
-export const loadUSDTRate = async (coinTo: string, coinToNetwork: string) => {
+const loadUSDTRate = async (coinTo: string, coinToNetwork: string) => {
   const exchangeData = {
     coinTo,
     coinToNetwork,
