@@ -58,6 +58,7 @@ const getSuggestedFeeMutez = (estimate: Estimate, opParam?: ParamsWithKind) => {
   if (
     !(opParam && opParam.kind) ||
     opParam.kind === OpKind.ACTIVATION ||
+    opParam.kind === OpKind.FAILING_NOOP ||
     !isDefined(opParam.gasLimit) ||
     opParam.gasLimit <= estimate.gasLimit
   ) {
