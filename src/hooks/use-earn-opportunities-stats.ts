@@ -20,7 +20,10 @@ export const useEarnOpportunitiesStats = (
       netApr: new BigNumber(DEFAULT_AMOUNT),
       totalStakedAmountInFiat: new BigNumber(DEFAULT_AMOUNT),
       totalClaimableRewardsInFiat: new BigNumber(DEFAULT_AMOUNT),
-      maxApr: BigNumber.maximum(DEFAULT_AMOUNT, ...earnOpportunities.map(item => item.apr ?? DEFAULT_AMOUNT))
+      maxApr: BigNumber.maximum(
+        DEFAULT_AMOUNT,
+        ...earnOpportunities.map(item => (isDefined(item.apr) && item.apr !== 'NaN' ? item.apr : DEFAULT_AMOUNT))
+      )
     };
 
     let totalWeightedApr = new BigNumber(DEFAULT_AMOUNT);
