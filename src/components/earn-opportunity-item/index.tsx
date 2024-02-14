@@ -82,7 +82,7 @@ export const EarnOpportunityItem: FC<Props> = ({
         return 'Liquidity Baking';
 
       default:
-        return null;
+        return 'QuipuSwap';
     }
   }, [item]);
   const earnSourceIcon = useMemo(() => {
