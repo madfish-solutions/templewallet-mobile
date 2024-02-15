@@ -83,6 +83,10 @@ export const catchThrowToastError =
   };
 
 export const showErrorToastByError = (error: unknown, fallbackTitle?: string, takeDescriptionFromErrorMsg = false) => {
+  if (isServerError(error as Error)) {
+    return;
+  }
+
   let title: string;
   let description: string | undefined;
 
@@ -102,3 +106,7 @@ export const showErrorToastByError = (error: unknown, fallbackTitle?: string, ta
     showErrorToast({ description: title });
   }
 };
+
+const serverErrorMessages = ['Http error response: (502)', "undefined is not an object (evaluating 'response.data')"];
+
+const isServerError = (error: Error) => serverErrorMessages.some(errorMessage => error.message.includes(errorMessage));
