@@ -14,6 +14,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
+import { showFailedStakeLoadWarning } from '../../toast/toast.utils';
 import type { RootState } from '../types';
 
 import {
@@ -91,9 +92,9 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
             farms.map(async ({ item: farm }) =>
               getFarmStake(farm, tezos, selectedAccount.publicKeyHash)
                 .then((stake): [string, RawStakeValue | null] => [farm.contractAddress, stake])
-                .catch((e): [string, undefined] => {
-                  showErrorToastByError(e);
+                .catch((): [string, undefined] => {
                   console.error('Error while loading farm stakes: ', farm.contractAddress);
+                  showFailedStakeLoadWarning();
 
                   return [farm.contractAddress, undefined];
                 })

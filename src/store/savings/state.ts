@@ -7,8 +7,8 @@ import { LoadableEntityState } from '../types';
 
 export type UserStakeInterface = Record<string, UserStakeValueInterface>;
 export interface SavingsState {
-  allSavingsItems: LoadableEntityState<Array<SavingsItem>>;
   stakes: LoadableEntityState<UserStakeInterface>;
+  allSavingsItems: LoadableEntityState<Array<SavingsItem>>;
   sortField: EarnOpportunitiesSortFieldEnum;
 }
 

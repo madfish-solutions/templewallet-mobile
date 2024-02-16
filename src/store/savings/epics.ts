@@ -1,4 +1,3 @@
-import { debounce } from 'lodash-es';
 import { combineEpics, Epic } from 'redux-observable';
 import { catchError, forkJoin, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
@@ -8,7 +7,7 @@ import { getKordFiItems$, getKordFiUserDeposits$ } from 'src/apis/kord-fi';
 import { getUserStake, getYouvesSavingsItems$ } from 'src/apis/youves';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
-import { isDefined } from 'src/utils/is-defined';
+import { showFailedStakeLoadWarning } from 'src/toast/toast.utils';
 import { withSelectedAccount, withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { RootState } from '../types';
@@ -57,8 +56,6 @@ const loadAllSavingsItems: Epic = (action$: Observable<Action>, state$: Observab
     })
   );
 
-const showStakeLoadError = debounce((e: unknown) => showErrorToastByError(e), 500, { leading: true, trailing: false });
-
 const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllSavingsAndStakesAction),
@@ -76,10 +73,13 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
         forkJoin(
           youvesSavings.map(savingsItem =>
             getUserStake(selectedAccount, savingsItem.id, savingsItem.type, rpcUrl)
-              .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
-              .catch(e => {
-                console.error('Error while loading farm stakes: ', savingsItem.contractAddress);
-                showStakeLoadError(e);
+              .then((stake): [string, UserStakeValueInterface | null | undefined] => [
+                savingsItem.contractAddress,
+                stake
+              ])
+              .catch((): [string, undefined] => {
+                console.error('Error while loading saving stakes: ', savingsItem.contractAddress);
+                showFailedStakeLoadWarning();
 
                 return [savingsItem.contractAddress, undefined];
               })
@@ -88,9 +88,7 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
         getKordFiUserDeposits$(selectedAccount.publicKeyHash)
       ]).pipe(
         map(([youvesStakesEntries, kordFiStakesEntries]) => ({
-          ...Object.fromEntries(
-            youvesStakesEntries.filter((entry): entry is [string, UserStakeValueInterface] => isDefined(entry[1]))
-          ),
+          ...Object.fromEntries(youvesStakesEntries),
           ...kordFiStakesEntries
         })),
         mergeMap(stakes =>
