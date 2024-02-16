@@ -90,16 +90,18 @@ export interface GetRateRequestData {
 }
 
 export interface GetRateResponse {
-  toAmount: number;
-  minAmount: number;
-  rate: number;
-  withdrawMin: number;
-  message: null;
+  toAmount?: number;
+  minAmount?: number;
+  maxAmount?: number;
+  rate?: number;
+  withdrawMin?: number;
+  message?: null;
 }
 
 export interface GetRateResponseWithAmountTooLow {
-  toAmount: number;
-  minAmount: number;
-  rate: null;
-  message: string;
+  toAmount?: number;
+  minAmount?: number;
+  maxAmount?: number;
+  rate?: null;
+  message?: string;
 }

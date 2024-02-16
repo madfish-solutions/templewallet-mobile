@@ -43,7 +43,7 @@ const defaultNewValueFn: TopUpAssetAmountInputProps['newValueFn'] = (
   amount
 });
 const topUpInputEqualityFn = (a: TopUpInterfaceBase, b?: TopUpInterfaceBase) =>
-  a.code === b?.code && a.network === b.network;
+  a.code === b?.code && a.network?.code === b.network?.code;
 const topUpInputKeyExtractor = (token: TopUpInterfaceBase, index: number) => `${index}_${token.code}_${token.network}`;
 
 const AssetAmountInputComponent: FC<
