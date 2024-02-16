@@ -10,6 +10,7 @@ import { Divider } from 'src/components/divider/divider';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { InAppUpdateBanner } from 'src/components/in-app-update-banner/in-app-update-banner';
 import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { OptimalPromotionVariantEnum } from 'src/components/optimal-promotion-item/optimal-promotion-variant.enum';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
@@ -25,7 +26,11 @@ import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertisi
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
-import { useHideZeroBalancesSelector, useIsEnabledAdsBannerSelector } from 'src/store/settings/settings-selectors';
+import {
+  useHideZeroBalancesSelector,
+  useIsEnabledAdsBannerSelector,
+  useIsInAppUpdateAvailableSelector
+} from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -75,6 +80,7 @@ export const TokensList = memo(() => {
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useCurrentAccountTokens(true);
   const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
+  const isInAppUpdateAvailable = useIsInAppUpdateAvailableSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
   const partnersPromoShown = useIsPartnersPromoShown();
   const { isTezosNode } = useNetworkInfo();
@@ -214,7 +220,11 @@ export const TokensList = memo(() => {
         </Search>
       </View>
 
-      {isEnabledAdsBanner ? <AcceptAdsBanner style={styles.banner} /> : null}
+      {isInAppUpdateAvailable ? (
+        <InAppUpdateBanner style={styles.banner} />
+      ) : isEnabledAdsBanner ? (
+        <AcceptAdsBanner style={styles.banner} />
+      ) : null}
 
       <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
         <FlashList

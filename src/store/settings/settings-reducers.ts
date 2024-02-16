@@ -28,7 +28,8 @@ import {
   setIsOnRampHasBeenShownBeforeAction,
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired,
-  switchIsShowCollectibleInfoAction
+  switchIsShowCollectibleInfoAction,
+  setIsInAppUpdateAvailableAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -144,5 +145,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setAdsBannerVisibilityAction, (state, { payload }) => ({
     ...state,
     isEnableAdsBanner: payload
+  }));
+
+  builder.addCase(setIsInAppUpdateAvailableAction, (state, { payload }) => ({
+    ...state,
+    isInAppUpdateAvailable: payload
   }));
 });

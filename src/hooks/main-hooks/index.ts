@@ -10,9 +10,11 @@ import {
   APR_REFRESH_INTERVAL
 } from 'src/config/fixed-times';
 import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
+import { useBlockSubscription } from 'src/hooks/block-subscription/use-block-subscription.hook';
 import { useAppLockTimer } from 'src/hooks/use-app-lock-timer.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
+import { useInAppUpdate } from 'src/hooks/use-in-app-update.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNFTDynamicLinks } from 'src/hooks/use-nft-dynamic-links.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -30,8 +32,6 @@ import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/st
 import { loadTezosBalanceActions, loadAssetsBalancesActions } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
-
-import { useBlockSubscription } from '../block-subscription/use-block-subscription.hook';
 
 import { useMetadataLoading } from './use-metadata-loading';
 
@@ -53,6 +53,7 @@ export const useMainHooks = (isLocked: boolean) => {
     }
   }, [isEnableAdsBanner]);
 
+  useInAppUpdate();
   useAppLockTimer();
   useBeaconHandler();
   useNFTDynamicLinks();
