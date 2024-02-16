@@ -83,7 +83,7 @@ export const OperationsConfirmation: FC<Props> = ({
     gasFeeSum = gasFeeSum?.minus(revealGasFee);
 
     const params = opParamsWithEstimations.map((opParam, index) => {
-      if (opParam.kind === OpKind.ACTIVATION) {
+      if (opParam.kind === OpKind.ACTIVATION || opParam.kind === OpKind.FAILING_NOOP) {
         return opParam;
       }
 
