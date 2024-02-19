@@ -7,6 +7,7 @@ import { getLiquidityBakingFarm } from 'src/apis/liquidity-baking';
 import { getV3FarmsList } from 'src/apis/quipuswap-staking';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
+import { showFailedStakeLoadWarning } from 'src/toast/toast.utils';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
@@ -14,7 +15,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import { showFailedStakeLoadWarning } from '../../toast/toast.utils';
 import type { RootState } from '../types';
 
 import {
