@@ -2,7 +2,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
+import { ActivityGroupsList, PROMOTION_ID } from 'src/components/activity-groups-list/activity-groups-list';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { HeaderCard } from 'src/components/header-card/header-card';
@@ -50,7 +50,7 @@ export const TokenScreen = () => {
     );
   }, []);
 
-  usePartnersPromoLoad();
+  usePartnersPromoLoad(PROMOTION_ID);
 
   const { activities, handleUpdate, isAllLoaded, isLoading } = useContractActivity(getTokenSlug(initialToken));
 

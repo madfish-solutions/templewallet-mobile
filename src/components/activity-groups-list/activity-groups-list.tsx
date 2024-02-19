@@ -25,6 +25,7 @@ const getItemType = (item: ListItem) => (typeof item === 'string' ? 'sectionHead
 const ListEmptyComponent = <DataPlaceholder text="No Activity records were found" />;
 
 const AVERAGE_ITEM_HEIGHT = 150;
+export const PROMOTION_ID = 'activities-promotion';
 
 interface Props {
   activityGroups: ActivityGroup[];
@@ -39,7 +40,7 @@ export const ActivityGroupsList: FC<Props> = ({
   isLoading = false,
   handleUpdate = emptyFn
 }) => {
-  usePartnersPromoLoad();
+  usePartnersPromoLoad(PROMOTION_ID);
 
   const styles = useActivityGroupsListStyles();
 
@@ -93,6 +94,7 @@ export const ActivityGroupsList: FC<Props> = ({
     () => (
       <View style={styles.promotionItemWrapper}>
         <OptimalPromotionItem
+          id={PROMOTION_ID}
           style={styles.promotionItem}
           testID={ActivityGroupsListSelectors.promotion}
           onImageError={onOptimalPromotionError}
