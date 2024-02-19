@@ -1,7 +1,8 @@
+import { contracts } from '@temple-wallet/youves-sdk/dist/networks';
+import { AssetDefinition } from '@temple-wallet/youves-sdk/dist/networks.base';
+import { UnifiedStakeExtendedItem } from '@temple-wallet/youves-sdk/dist/staking/unified-staking';
 import { BigNumber } from 'bignumber.js';
 import { catchError, firstValueFrom, forkJoin, from, map, Observable, of } from 'rxjs';
-import { contracts, AssetDefinition } from 'youves-sdk';
-import { UnifiedStakeExtendedItem } from 'youves-sdk/dist/staking/unified-staking';
 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
