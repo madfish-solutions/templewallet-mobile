@@ -171,5 +171,6 @@ export enum IconNameEnum {
   CloudNative = 'CloudNative',
   ManualBackup = 'ManualBackup',
   GoogleDriveNative = 'GoogleDriveNative',
-  Key = 'Key'
+  Key = 'Key',
+  NoConnection = 'NoConnection'
 }

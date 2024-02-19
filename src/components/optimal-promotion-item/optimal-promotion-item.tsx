@@ -1,15 +1,16 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
 import { PromotionItem } from 'src/components/promotion-item/promotion-item';
 import { EmptyFn } from 'src/config/general';
-import { usePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
+import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import {
   useIsPartnersPromoEnabledSelector,
   usePartnersPromoLoadingSelector,
   usePartnersPromoSelector
 } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useTimeout } from 'src/utils/hooks';
 import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
 
 import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
@@ -17,6 +18,7 @@ import { TextPromotionItem } from '../text-promotion-item/text-promotion-item';
 import { OptimalPromotionVariantEnum } from './optimal-promotion-variant.enum';
 
 interface Props extends TestIdProps {
+  id: string;
   style?: StyleProp<ViewStyle>;
   shouldShowCloseButton?: boolean;
   variant?: OptimalPromotionVariantEnum;
@@ -26,6 +28,7 @@ interface Props extends TestIdProps {
 
 export const OptimalPromotionItem: FC<Props> = ({
   testID,
+  id,
   style,
   shouldShowCloseButton = true,
   variant = OptimalPromotionVariantEnum.Image,
@@ -35,17 +38,26 @@ export const OptimalPromotionItem: FC<Props> = ({
   const partnersPromotion = usePartnersPromoSelector();
   const partnersPromotionLoading = usePartnersPromoLoadingSelector();
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
-  const { disablePromotion } = usePromotionAfterConfirmation();
+  const { isHiddenTemporarily, hidePromotion } = useAdTemporaryHiding(id);
+  const prevIsLoadingRef = useRef(partnersPromotionLoading);
+  const [shouldPreventShowingPrevAd, setShouldPreventShowingPrevAd] = useState(true);
 
   const promotionIsEmpty = useIsEmptyPromotion(partnersPromotion);
 
   useEffect(() => {
-    if (partnersPromotionEnabled && onEmptyPromotionReceived && promotionIsEmpty) {
+    if (prevIsLoadingRef.current && !partnersPromotionLoading) {
+      setShouldPreventShowingPrevAd(false);
+    }
+  }, [partnersPromotionLoading]);
+  useTimeout(() => setShouldPreventShowingPrevAd(false), 2000);
+
+  useEffect(() => {
+    if (partnersPromotionEnabled && onEmptyPromotionReceived && promotionIsEmpty && !shouldPreventShowingPrevAd) {
       onEmptyPromotionReceived();
     }
-  }, [partnersPromotionEnabled, onEmptyPromotionReceived, promotionIsEmpty]);
+  }, [partnersPromotionEnabled, onEmptyPromotionReceived, promotionIsEmpty, shouldPreventShowingPrevAd]);
 
-  if (!partnersPromotionEnabled || promotionIsEmpty) {
+  if (!partnersPromotionEnabled || promotionIsEmpty || isHiddenTemporarily) {
     return null;
   }
 
@@ -57,10 +69,10 @@ export const OptimalPromotionItem: FC<Props> = ({
         headline={partnersPromotion?.copy?.headline ?? 'fallback'}
         imageUri={partnersPromotion.image}
         link={partnersPromotion.link}
-        loading={partnersPromotionLoading}
+        loading={partnersPromotionLoading || shouldPreventShowingPrevAd}
         shouldShowCloseButton={shouldShowCloseButton}
         style={style}
-        onClose={disablePromotion}
+        onClose={hidePromotion}
         onImageError={onImageError}
       />
     );
@@ -75,7 +87,7 @@ export const OptimalPromotionItem: FC<Props> = ({
       shouldShowAdBage
       shouldShowCloseButton={shouldShowCloseButton}
       style={style}
-      onCloseButtonClick={disablePromotion}
+      onCloseButtonClick={hidePromotion}
       onImageError={onImageError}
     />
   );

@@ -104,6 +104,7 @@ import MoreHorizontalIcon from './assets/more-horizontal.svg';
 import NewsIcon from './assets/news.svg';
 import NFTCollectionIcon from './assets/nft-collection.svg';
 import NFT from './assets/nft.svg';
+import NoConnectionIcon from './assets/no-connection.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
@@ -351,5 +352,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.CloudNative]: CloudNativeIcon,
   [IconNameEnum.GoogleDriveNative]: GoogleDriveNativeIcon,
   [IconNameEnum.ManualBackup]: ManualBackupIcon,
-  [IconNameEnum.Key]: KeyIcon
+  [IconNameEnum.Key]: KeyIcon,
+  [IconNameEnum.NoConnection]: NoConnectionIcon
 };

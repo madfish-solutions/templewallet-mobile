@@ -5,22 +5,16 @@ import { bigNumberValidation, withMinMaxBignumberValidation } from 'src/form/val
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
 
-export type ExolixTopUpInputInterface = TopUpWithNetworkInterface;
-
-export interface ExolixTopUpOutputInterface extends TopUpWithNetworkInterface {
-  slug: string;
-}
-
 export interface ExolixTopupFormValues {
   coinFrom: {
-    asset: ExolixTopUpInputInterface;
+    asset: TopUpWithNetworkInterface;
     amount?: BigNumber;
     min?: number;
     max?: number;
   };
   rate: number;
   coinTo: {
-    asset: ExolixTopUpOutputInterface;
+    asset: TopUpWithNetworkInterface;
     amount?: BigNumber;
   };
 }

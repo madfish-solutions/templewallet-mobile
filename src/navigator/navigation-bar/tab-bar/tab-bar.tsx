@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { isAndroid } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensOrModalsEnum } from 'src/interfaces/stacks.interface';
@@ -42,53 +43,56 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
   const handleDisabledPress = useCallback(() => showErrorToast({ description: NOT_AVAILABLE_MESSAGE }), []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.buttonsContainer}>
-        <TabBarButton
-          label="Wallet"
-          iconName={IconNameEnum.TezWallet}
-          iconWidth={formatSize(28)}
-          routeName={ScreensEnum.Wallet}
-          focused={isStackFocusedMemo(walletStackScreens)}
-        />
-        <TabBarButton
-          label="NFT"
-          iconName={IconNameEnum.NFT}
-          iconWidth={formatSize(32)}
-          routeName={ScreensEnum.CollectiblesHome}
-          focused={isStackFocusedMemo(nftStackScreens)}
-          disabledOnPress={handleDisabledPress}
-        />
-        {isAndroid && (
+    <>
+      <InternetConnectionStatus />
+      <View style={styles.container}>
+        <View style={styles.buttonsContainer}>
           <TabBarButton
-            label="Swap"
-            iconName={IconNameEnum.Swap}
+            label="Wallet"
+            iconName={IconNameEnum.TezWallet}
+            iconWidth={formatSize(28)}
+            routeName={ScreensEnum.Wallet}
+            focused={isStackFocusedMemo(walletStackScreens)}
+          />
+          <TabBarButton
+            label="NFT"
+            iconName={IconNameEnum.NFT}
             iconWidth={formatSize(32)}
-            routeName={ScreensEnum.SwapScreen}
-            swapScreenParams={swapScreenParams}
-            focused={isStackFocusedMemo(swapStackScreens)}
+            routeName={ScreensEnum.CollectiblesHome}
+            focused={isStackFocusedMemo(nftStackScreens)}
+            disabledOnPress={handleDisabledPress}
+          />
+          {isAndroid && (
+            <TabBarButton
+              label="Swap"
+              iconName={IconNameEnum.Swap}
+              iconWidth={formatSize(32)}
+              routeName={ScreensEnum.SwapScreen}
+              swapScreenParams={swapScreenParams}
+              focused={isStackFocusedMemo(swapStackScreens)}
+              disabled={isDcpNode}
+              disabledOnPress={handleDisabledPress}
+            />
+          )}
+          <TabBarButton
+            label="DApps"
+            iconName={IconNameEnum.DApps}
+            iconWidth={formatSize(32)}
+            routeName={ScreensEnum.DApps}
+            focused={isStackFocusedMemo(dAppsStackScreens)}
             disabled={isDcpNode}
             disabledOnPress={handleDisabledPress}
           />
-        )}
-        <TabBarButton
-          label="DApps"
-          iconName={IconNameEnum.DApps}
-          iconWidth={formatSize(32)}
-          routeName={ScreensEnum.DApps}
-          focused={isStackFocusedMemo(dAppsStackScreens)}
-          disabled={isDcpNode}
-          disabledOnPress={handleDisabledPress}
-        />
-        <TabBarButton
-          label="Market"
-          iconName={IconNameEnum.Market}
-          iconWidth={formatSize(32)}
-          routeName={ScreensEnum.Market}
-          focused={isStackFocusedMemo(marketStackScreens)}
-        />
+          <TabBarButton
+            label="Market"
+            iconName={IconNameEnum.Market}
+            iconWidth={formatSize(32)}
+            routeName={ScreensEnum.Market}
+            focused={isStackFocusedMemo(marketStackScreens)}
+          />
+        </View>
+        <InsetSubstitute type="bottom" />
       </View>
-      <InsetSubstitute type="bottom" />
-    </View>
+    </>
   );
 });

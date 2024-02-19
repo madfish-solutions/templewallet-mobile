@@ -61,6 +61,8 @@ export const useIsAnyBackupMadeSelector = () =>
 
 export const useIsOnRampPossibilitySelector = () => useSelector(({ settings }) => settings.isOnRampPossibility);
 
+export const useIsInAppUpdateAvailableSelector = () => useSelector(({ settings }) => settings.isInAppUpdateAvailable);
+
 export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings }) => settings.isShowCollectibleInfo);
 
 export const useIsOnRampHasBeenShownBeforeSelector = () =>
