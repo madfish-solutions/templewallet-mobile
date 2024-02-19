@@ -1,14 +1,19 @@
 import { TezosToolkit } from '@taquito/taquito';
-import { createEngine } from '@temple-wallet/youves-sdk/dist/engines/createEngine';
-import { YouvesEngine } from '@temple-wallet/youves-sdk/dist/engines/YouvesEngine';
-import { contracts } from '@temple-wallet/youves-sdk/dist/networks';
-import { AssetDefinition } from '@temple-wallet/youves-sdk/dist/networks.base';
-import { mainnetNetworkConstants, mainnetTokens } from '@temple-wallet/youves-sdk/dist/networks.mainnet';
-import { UnifiedSavings } from '@temple-wallet/youves-sdk/dist/staking/savings-v3';
-import { UnifiedStaking } from '@temple-wallet/youves-sdk/dist/staking/unified-staking';
-import { Storage } from '@temple-wallet/youves-sdk/dist/storage/Storage';
-import { StorageKey, StorageKeyReturnType } from '@temple-wallet/youves-sdk/dist/storage/types';
-import { TokenType, Token as YouvesToken } from '@temple-wallet/youves-sdk/dist/tokens/token';
+import {
+  createEngine,
+  YouvesEngine,
+  contracts,
+  AssetDefinition,
+  mainnetNetworkConstants,
+  mainnetTokens,
+  UnifiedSavings,
+  UnifiedStaking,
+  Storage,
+  StorageKey,
+  StorageKeyReturnType,
+  TokenType,
+  Token as YouvesToken
+} from '@temple-wallet/youves-sdk';
 import memoize from 'mem';
 
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';

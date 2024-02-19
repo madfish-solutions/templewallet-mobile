@@ -1,6 +1,4 @@
-import { contracts } from '@temple-wallet/youves-sdk/dist/networks';
-import { AssetDefinition } from '@temple-wallet/youves-sdk/dist/networks.base';
-import { UnifiedStakeExtendedItem } from '@temple-wallet/youves-sdk/dist/staking/unified-staking';
+import { contracts, AssetDefinition, UnifiedStakeExtendedItem } from '@temple-wallet/youves-sdk';
 import { BigNumber } from 'bignumber.js';
 import { catchError, firstValueFrom, forkJoin, from, map, Observable, of } from 'rxjs';
 
