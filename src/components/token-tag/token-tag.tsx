@@ -2,25 +2,26 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo } from 'react';
 import { Text } from 'react-native';
 
-import { useSelectedBakerSelector } from '../../store/baking/baking-selectors';
-import { TEZ_TOKEN_SLUG } from '../../token/data/tokens-metadata';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { getTokenSlug } from '../../token/utils/token.utils';
-import { getDelegateText } from '../../utils/get-delegate-text.util';
-import { isDefined } from '../../utils/is-defined';
+import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { getDelegateText } from 'src/utils/get-delegate-text.util';
+import { isDefined } from 'src/utils/is-defined';
 
-import { DelegateTagContainer } from './components/delegate-tag-container/delegate-tag-container';
-import { useDelegateTagStyles } from './delegate-tag.styles';
+import { TokenTagContainer } from './components/token-tag-container/token-tag-container';
+import { useTokenTagStyles } from './token-tag.styles';
 
 interface Props {
   token: TokenInterface;
+  scam?: boolean;
   apy?: number;
 }
 
 const DECIMAL_VALUE = 2;
 
-export const DelegateTag: FC<Props> = ({ apy, token }) => {
-  const styles = useDelegateTagStyles();
+export const TokenTag: FC<Props> = ({ token, scam, apy }) => {
+  const styles = useTokenTagStyles();
   const currentBaker = useSelectedBakerSelector();
   const isBakerSelected = Boolean(currentBaker);
 
@@ -40,6 +41,10 @@ export const DelegateTag: FC<Props> = ({ apy, token }) => {
   const regularToken = useMemo(() => isDefined(apy) && apy > 0 && apyValue, [apy, apyValue]);
 
   const tag = useMemo(() => {
+    if (scam) {
+      return <Text style={styles.text}>Scam</Text>;
+    }
+
     if (!isTezosToken) {
       return regularToken;
     }
@@ -49,7 +54,11 @@ export const DelegateTag: FC<Props> = ({ apy, token }) => {
     }
 
     return <Text style={styles.text}>Not Delegated</Text>;
-  }, [isBakerSelected, isTezosToken, regularToken, apyValue, styles.text]);
+  }, [isBakerSelected, isTezosToken, regularToken, apyValue, styles.text, scam]);
 
-  return <DelegateTagContainer token={token}>{tag}</DelegateTagContainer>;
+  return (
+    <TokenTagContainer token={token} scam={scam}>
+      {tag}
+    </TokenTagContainer>
+  );
 };

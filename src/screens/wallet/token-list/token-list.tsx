@@ -31,6 +31,7 @@ import {
   useIsEnabledAdsBannerSelector,
   useIsInAppUpdateAvailableSelector
 } from 'src/store/settings/settings-selectors';
+import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -69,6 +70,7 @@ export const TokensList = memo(() => {
   const styles = useTokenListStyles();
 
   const apyRates = useTokensApyRatesSelector();
+  const scamTokenSlugsRecord = useScamTokenSlugsSelector();
 
   const [listHeight, setListHeight] = useState(0);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
@@ -183,9 +185,9 @@ export const TokensList = memo(() => {
         return <View style={{ height: ITEM_HEIGHT }} />;
       }
 
-      return <TokenListItem token={item} apy={apyRates[slug]} />;
+      return <TokenListItem token={item} scam={scamTokenSlugsRecord[slug]} apy={apyRates[slug]} />;
     },
-    [apyRates, styles]
+    [apyRates, scamTokenSlugsRecord, styles]
   );
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
