@@ -172,5 +172,6 @@ export enum IconNameEnum {
   ManualBackup = 'ManualBackup',
   GoogleDriveNative = 'GoogleDriveNative',
   Key = 'Key',
-  NoConnection = 'NoConnection'
+  NoConnection = 'NoConnection',
+  ScamInfo = 'ScamInfo'
 }

@@ -24,7 +24,7 @@ export const TokenListItem = memo<Props>(({ token, scam, apy, onPress }) => {
 
       return;
     }
-    navigate(ScreensEnum.TokenScreen, { token });
+    navigate(ScreensEnum.TokenScreen, { token, scam });
   }, [token, onPress, navigate]);
 
   return (

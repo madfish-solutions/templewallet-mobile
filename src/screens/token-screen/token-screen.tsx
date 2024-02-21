@@ -25,7 +25,7 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
-  const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+  const { token: initialToken, scam } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
 
   const dispatch = useDispatch();
   const accountPkh = useCurrentAccountPkhSelector();
@@ -79,6 +79,7 @@ export const TokenScreen = () => {
         }
         infoComponent={<TokenInfo token={token} />}
         token={token}
+        scam={scam}
       />
     </>
   );

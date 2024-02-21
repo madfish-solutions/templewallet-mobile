@@ -14,11 +14,12 @@ interface Props {
   historyComponent: ReactElement;
   infoComponent: ReactElement;
   token: TokenInterface;
+  scam?: boolean;
 }
 
 const historyComponentIndex = 0;
 
-export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent, token }) => {
+export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent, token, scam }) => {
   const styles = useTokenScreenContentContainerStyles();
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
@@ -27,7 +28,7 @@ export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoC
   return (
     <>
       <View style={styles.headerContainer}>
-        <TokenHeader showHistoryComponent={showHistoryComponent} token={token} />
+        <TokenHeader showHistoryComponent={showHistoryComponent} token={token} scam={scam} />
         <IconSegmentControl
           selectedIndex={segmentedControlIndex}
           values={[IconNameEnum.Clock, IconNameEnum.Info]}
