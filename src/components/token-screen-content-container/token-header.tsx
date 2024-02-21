@@ -65,7 +65,8 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token, scam }) =>
         'This token may be a scam. We strongly advise removing it from your token list to safeguard against the risk of losing funds.',
         [
           {
-            text: 'Cancel'
+            text: 'Cancel',
+            style: 'cancel'
           },
           {
             text: 'Delete',
