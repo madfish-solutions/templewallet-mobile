@@ -4,7 +4,7 @@ import { Subject, switchMap, tap } from 'rxjs';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
-import { loadScamlistAction, loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 
 import { Shelter } from '../shelter';
@@ -27,7 +27,6 @@ export const createHdAccountSubscription = (
         dispatch(setSelectedAccountAction(publicData.publicKeyHash));
         dispatch(addHdAccountAction(publicData));
         dispatch(loadWhitelistAction.submit());
-        dispatch(loadScamlistAction.submit());
       }
     });
 };

@@ -1,7 +1,7 @@
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useTokenTagContainerStyles = createUseStyles(({ colors }) => ({
+export const useTokenTagContainerStyles = createUseStylesMemoized(({ colors }) => ({
   apyContainer: {
     backgroundColor: colors.blue,
     borderRadius: formatSize(8),

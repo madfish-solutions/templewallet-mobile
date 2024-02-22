@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Text } from 'react-native';
 
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
@@ -20,7 +20,7 @@ interface Props {
 
 const DECIMAL_VALUE = 2;
 
-export const TokenTag: FC<Props> = ({ token, scam, apy }) => {
+export const TokenTag = memo<Props>(({ token, scam, apy }) => {
   const styles = useTokenTagStyles();
   const currentBaker = useSelectedBakerSelector();
   const isBakerSelected = Boolean(currentBaker);
@@ -61,4 +61,4 @@ export const TokenTag: FC<Props> = ({ token, scam, apy }) => {
       {tag}
     </TokenTagContainer>
   );
-};
+});

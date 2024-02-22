@@ -1,9 +1,9 @@
 import { white } from 'src/config/styles';
 import { basicLightColors } from 'src/styles/colors';
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, typography }) => ({
+export const useTokenScreenContentContainerStyles = createUseStylesMemoized(({ colors, typography }) => ({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

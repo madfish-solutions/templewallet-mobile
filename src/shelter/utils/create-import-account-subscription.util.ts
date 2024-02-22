@@ -7,7 +7,7 @@ import { catchError, lastValueFrom, of, Subject, switchMap, tap } from 'rxjs';
 import { isAndroid } from 'src/config/system';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { hideLoaderAction, setOnRampPossibilityAction, showLoaderAction } from 'src/store/settings/settings-actions';
-import { loadScamlistAction, loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
 import { getPublicKeyAndHash$ } from 'src/utils/keys.util';
@@ -55,7 +55,6 @@ export const createImportAccountSubscription = (
         dispatch(setSelectedAccountAction(publicData.publicKeyHash));
         dispatch(addHdAccountAction(publicData));
         dispatch(loadWhitelistAction.submit());
-        dispatch(loadScamlistAction.submit());
 
         showSuccessToast({ description: 'Account Imported!' });
         navigationDispatch(StackActions.popToTop());

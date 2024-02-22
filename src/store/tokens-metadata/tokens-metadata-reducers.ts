@@ -65,18 +65,17 @@ const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadata
     }
   });
 
-  builder.addCase(loadScamlistAction.submit, state => ({
-    ...state,
-    scamTokenSlugs: createEntity({}, true)
-  }));
-  builder.addCase(loadScamlistAction.success, (state, { payload: scamTokenSlugs }) => ({
-    ...state,
-    scamTokenSlugs: createEntity(scamTokenSlugs, false)
-  }));
-  builder.addCase(loadScamlistAction.fail, (state, { payload: error }) => ({
-    ...state,
-    scamTokenSlugs: createEntity({}, false, error)
-  }));
+  builder.addCase(loadScamlistAction.submit, ({ scamTokenSlugs }) => {
+    scamTokenSlugs.isLoading = true;
+  });
+  builder.addCase(loadScamlistAction.success, ({ scamTokenSlugs }, { payload: newScamTokenSlugs }) => {
+    scamTokenSlugs.isLoading = false;
+    scamTokenSlugs.data = newScamTokenSlugs;
+  });
+  builder.addCase(loadScamlistAction.fail, ({ scamTokenSlugs }, { payload: error }) => {
+    scamTokenSlugs.isLoading = false;
+    scamTokenSlugs.error = error;
+  });
 
   builder.addCase(loadTokenSuggestionActions.submit, state => ({
     ...state,
