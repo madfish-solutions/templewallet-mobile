@@ -4,7 +4,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
 import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+import { GenericPromotionItem } from 'src/components/generic-promotion-item';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
@@ -42,13 +42,13 @@ export const PromotionCarousel = () => {
 
     if (partnersPromoShown && !promotionErrorOccurred) {
       result.unshift(
-        <OptimalPromotionItem
+        <GenericPromotionItem
           id={PROMOTION_ID}
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
           shouldShowCloseButton={false}
           style={styles.promotionItem}
-          onImageError={() => setPromotionErrorOccurred(true)}
-          onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
+          shouldTryHypelabAd={false}
+          onError={() => setPromotionErrorOccurred(true)}
         />
       );
     }

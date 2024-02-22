@@ -7,15 +7,15 @@ import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-ban
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
+import { GenericPromotionItem } from 'src/components/generic-promotion-item';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { InAppUpdateBanner } from 'src/components/in-app-update-banner/in-app-update-banner';
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
-import { OptimalPromotionVariantEnum } from 'src/components/optimal-promotion-item/optimal-promotion-variant.enum';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
+import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -159,13 +159,12 @@ export const TokensList = memo(() => {
         return (
           <View>
             <View style={styles.promotionItemWrapper}>
-              <OptimalPromotionItem
+              <GenericPromotionItem
                 id={PROMOTION_ID}
-                variant={OptimalPromotionVariantEnum.Text}
+                variant={PromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}
-                onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
-                onImageError={() => setPromotionErrorOccurred(true)}
+                onError={() => setPromotionErrorOccurred(true)}
               />
             </View>
             <HorizontalBorder style={styles.promotionItemBorder} />

@@ -3,9 +3,10 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+import { GenericPromotionItem } from 'src/components/generic-promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { emptyFn } from 'src/config/general';
+import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
@@ -19,7 +20,6 @@ import { useActivityGroupsListStyles } from './activity-groups-list.styles';
 
 type ListItem = string | ActivityGroup;
 
-const keyExtractor = (item: ListItem) => (typeof item === 'string' ? item : item[0].hash);
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'sectionHeader' : 'row');
 
 const ListEmptyComponent = <DataPlaceholder text="No Activity records were found" />;
@@ -45,11 +45,25 @@ export const ActivityGroupsList: FC<Props> = ({
   const styles = useActivityGroupsListStyles();
 
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
+  const { isHiddenTemporarily } = useAdTemporaryHiding(PROMOTION_ID);
   const fakeRefreshControlProps = useFakeRefreshControlProps();
   const [endIsReached, setEndIsReached] = useState(false);
   const [loadingEnded, setLoadingEnded] = useState(!isLoading);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
-  const shouldShowPromotion = partnersPromotionEnabled && !promotionErrorOccurred;
+  const shouldShowPromotion = partnersPromotionEnabled && !promotionErrorOccurred && !isHiddenTemporarily;
+
+  const keyExtractor = useCallback(
+    (item: ListItem, index: number) => {
+      const keyRoot = typeof item === 'string' ? item : item[0].hash;
+
+      if (index === 1 && shouldShowPromotion) {
+        return `${keyRoot}-with-promotion`;
+      }
+
+      return keyRoot;
+    },
+    [shouldShowPromotion]
+  );
 
   useEffect(() => {
     if (!isLoading) {
@@ -93,12 +107,11 @@ export const ActivityGroupsList: FC<Props> = ({
   const Promotion = useMemo(
     () => (
       <View style={styles.promotionItemWrapper}>
-        <OptimalPromotionItem
+        <GenericPromotionItem
           id={PROMOTION_ID}
           style={styles.promotionItem}
           testID={ActivityGroupsListSelectors.promotion}
-          onImageError={onOptimalPromotionError}
-          onEmptyPromotionReceived={onOptimalPromotionError}
+          onError={onOptimalPromotionError}
         />
       </View>
     ),

@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { GenericPromotionItem } from 'src/components/generic-promotion-item';
 import { HorizontalBorder } from 'src/components/horizontal-border';
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
 import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -49,12 +49,11 @@ export const Notifications = () => {
     <>
       {partnersPromoShown && !promotionErrorOccurred && (
         <>
-          <OptimalPromotionItem
+          <GenericPromotionItem
             id={PROMOTION_ID}
             testID={NotificationsSelectors.promotion}
             style={NotificationsStyles.ads}
-            onImageError={handlePromotionItemError}
-            onEmptyPromotionReceived={handlePromotionItemError}
+            onError={handlePromotionItemError}
           />
           <HorizontalBorder />
         </>
