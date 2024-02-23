@@ -88,7 +88,7 @@ export const getKordFiUserDeposits$ = (address: string): Observable<{ [key: stri
       };
     }),
     catchError(error => {
-      console.error('error: ', error);
+      console.error('Error getting Kord.Fi user deposits: ', error);
 
       return of({});
     })

@@ -1,3 +1,4 @@
+import { debounce } from 'lodash-es';
 import Toast from 'react-native-toast-message';
 
 import { EmptyFn } from 'src/config/general';
@@ -33,3 +34,12 @@ export const showWarningToast = ({ description, title, onPress }: ToastProps) =>
   });
 
 export const showCopiedToast = () => Toast.show({ type: ToastTypeEnum.Copied });
+
+export const showFailedStakeLoadWarning = debounce(
+  () => showWarningToast({ description: 'Failed to update balances. Please, change RPC and try again.' }),
+  2000,
+  {
+    leading: true,
+    trailing: false
+  }
+);

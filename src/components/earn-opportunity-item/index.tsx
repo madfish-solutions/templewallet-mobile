@@ -82,7 +82,7 @@ export const EarnOpportunityItem: FC<Props> = ({
         return 'Liquidity Baking';
 
       default:
-        return null;
+        return 'QuipuSwap';
     }
   }, [item]);
   const earnSourceIcon = useMemo(() => {
@@ -98,7 +98,10 @@ export const EarnOpportunityItem: FC<Props> = ({
     }
   }, [theme, item]);
 
-  const formattedApr = useMemo(() => (isDefined(apr) ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'), [apr]);
+  const formattedApr = useMemo(
+    () => (isDefined(apr) && apr !== 'NaN' ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'),
+    [apr]
+  );
 
   const depositAmounts = useAmounts(
     lastStakeRecord?.depositAmountAtomic,

@@ -7,8 +7,8 @@ import { LoadableEntityState } from '../types';
 
 export type LastUserStakeInterface = Record<string, UserStakeValueInterface>;
 export interface FarmsState {
-  allFarms: LoadableEntityState<Array<SingleFarmResponse>>;
   lastStakes: LoadableEntityState<LastUserStakeInterface>;
+  allFarms: LoadableEntityState<Array<SingleFarmResponse>>;
   sortField: EarnOpportunitiesSortFieldEnum;
 }
 

@@ -1,4 +1,4 @@
-import { mainnetTokens } from 'youves-sdk/dist/networks.mainnet';
+import { mainnetTokens } from '@temple-wallet/youves-sdk/dist/networks.mainnet';
 
 import { YouvesTokensEnum } from './enums';
 
