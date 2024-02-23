@@ -13,6 +13,7 @@ import { TokenScreenContentContainer } from 'src/components/token-screen-content
 import { useContractActivity } from 'src/hooks/use-contract-activity';
 import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -25,12 +26,14 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { TokenInfo } from './token-info/token-info';
 
 export const TokenScreen = () => {
-  const { token: initialToken, scam } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+  const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
 
   const dispatch = useDispatch();
   const accountPkh = useCurrentAccountPkhSelector();
   const tokensList = useCurrentAccountTokens();
   const tezosToken = useTezosTokenOfCurrentAccount();
+
+  const scamTokenSlugsRecord = useScamTokenSlugsSelector();
 
   const token = useMemo(() => {
     const slug = getTokenSlug(initialToken);
@@ -79,7 +82,7 @@ export const TokenScreen = () => {
         }
         infoComponent={<TokenInfo token={token} />}
         token={token}
-        scam={scam}
+        scam={scamTokenSlugsRecord[getTokenSlug(token)]}
       />
     </>
   );

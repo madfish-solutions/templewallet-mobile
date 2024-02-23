@@ -69,7 +69,7 @@ export type ScreensParamList = {
   [ScreensEnum.Wallet]: undefined;
   [ScreensEnum.CollectiblesHome]: undefined;
   [ScreensEnum.TezosTokenScreen]: undefined;
-  [ScreensEnum.TokenScreen]: { token: TokenInterface; scam?: boolean };
+  [ScreensEnum.TokenScreen]: { token: TokenInterface };
   [ScreensEnum.Delegation]: undefined;
   [ScreensEnum.ManageAssets]: { collectibles: boolean };
   [ScreensEnum.Activity]: undefined;
