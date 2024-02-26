@@ -2,7 +2,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { forkJoin, of, Subject, switchMap, tap } from 'rxjs';
 
 import { hideLoaderAction, setIsBiometricsEnabled, showLoaderAction } from 'src/store/settings/settings-actions';
-import { loadScamlistAction, loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 
 import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
@@ -30,7 +30,6 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletPara
         }
 
         dispatch(loadWhitelistAction.submit());
-        dispatch(loadScamlistAction.submit());
 
         isPasswordSaved !== false && dispatch(setIsBiometricsEnabled(true));
       }
