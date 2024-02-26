@@ -2,6 +2,11 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ImagePromotionView } from 'src/components/image-promotion-view';
+import { TextPromotionItemSelectors } from 'src/components/text-promotion-view/selectors';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { AdFrameMessageType } from 'src/enums/ad-frame-message-type.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
@@ -15,12 +20,6 @@ import { HYPELAB_AD_FRAME_URL, HYPELAB_NATIVE_PLACEMENT_SLUG, HYPELAB_SMALL_PLAC
 import { useTimeout } from 'src/utils/hooks';
 import { isString } from 'src/utils/is-string';
 import { openUrl } from 'src/utils/linking';
-
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { ImagePromotionView } from '../image-promotion-view';
-import { TextPromotionItemSelectors } from '../text-promotion-view/selectors';
-import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { useHypelabPromotionStyles } from './styles';
 

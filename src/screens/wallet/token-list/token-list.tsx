@@ -161,6 +161,7 @@ export const TokensList = memo(() => {
   ]);
 
   const handleLayout = useCallback((event: LayoutChangeEvent) => setListHeight(event.nativeEvent.layout.height), []);
+  const handlePromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
 
   const renderItem: ListRenderItem<ListItem> = useCallback(
     ({ item }) => {
@@ -173,7 +174,7 @@ export const TokensList = memo(() => {
                 variant={PromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}
-                onError={() => setPromotionErrorOccurred(true)}
+                onError={handlePromotionError}
                 onLoad={onAdLoad}
               />
             </View>

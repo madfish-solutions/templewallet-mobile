@@ -1,6 +1,8 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import FastImage from 'react-native-fast-image';
 
+import { ImagePromotionView } from 'src/components/image-promotion-view';
+import { TextPromotionView } from 'src/components/text-promotion-view';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import {
   usePartnersPromoErrorSelector,
@@ -11,9 +13,6 @@ import { SingleProviderPromotionProps } from 'src/types/promotion';
 import { useTimeout } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
-
-import { ImagePromotionView } from '../image-promotion-view';
-import { TextPromotionView } from '../text-promotion-view';
 
 import { useOptimalPromotionStyles } from './styles';
 

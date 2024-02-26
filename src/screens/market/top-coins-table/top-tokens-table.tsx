@@ -51,6 +51,8 @@ export const TopTokensTable = () => {
 
   const closeAllOpenRows = useCallback(() => ref.current?.closeAllOpenRows(), []);
 
+  const handlePromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
+
   const handleSelectorChangeAndSwipeClose = (index: number) => {
     handleSelectorChange(index);
     closeAllOpenRows();
@@ -64,7 +66,7 @@ export const TopTokensTable = () => {
             id={PROMOTION_ID}
             testID={MarketSelectors.promotion}
             onLoad={onAdLoad}
-            onError={() => setPromotionErrorOccurred(true)}
+            onError={handlePromotionError}
             onLayout={onOutsideOfScrollAdLayout}
           />
         </View>

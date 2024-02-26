@@ -2,16 +2,15 @@ import { useIsFocused } from '@react-navigation/native';
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
 
+import { ActivityIndicator } from 'src/components/activity-indicator';
+import { HypelabPromotion } from 'src/components/hypelab-promotion';
+import { OptimalPromotion } from 'src/components/optimal-promotion';
 import { isAndroid } from 'src/config/system';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
+import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-
-import { PromotionVariantEnum } from '../../enums/promotion-variant.enum';
-import { ActivityIndicator } from '../activity-indicator';
-import { HypelabPromotion } from '../hypelab-promotion';
-import { OptimalPromotion } from '../optimal-promotion';
 
 import { usePromotionItemStyles } from './styles';
 
@@ -75,9 +74,7 @@ export const PromotionItem = forwardRef<View, Props>(
       }
       setAdsState(prevState => ({ ...prevState, currentProvider: PromotionProviderEnum.HypeLab }));
     }, [handleAdError, shouldTryHypelabAd]);
-    const handleHypelabError = useCallback(() => {
-      handleAdError();
-    }, [handleAdError]);
+    const handleHypelabError = useCallback(() => handleAdError(), [handleAdError]);
 
     const handleAdReadyFactory = useCallback(
       (provider: PromotionProviderEnum) => () => {

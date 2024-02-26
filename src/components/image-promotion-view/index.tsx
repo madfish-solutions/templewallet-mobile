@@ -1,15 +1,14 @@
 import React, { useCallback, memo, PropsWithChildren } from 'react';
 import { View } from 'react-native';
 
+import { Bage } from 'src/components/bage/bage';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { openUrl } from 'src/utils/linking';
-
-import { Bage } from '../bage/bage';
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { PromotionItemSelectors } from './selectors';
 import { useImagePromotionViewStyles } from './styles';
