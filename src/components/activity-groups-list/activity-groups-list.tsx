@@ -1,6 +1,6 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, LayoutChangeEvent, Text, View } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { GenericPromotionItem } from 'src/components/generic-promotion-item';
@@ -8,6 +8,7 @@ import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { emptyFn } from 'src/config/general';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
@@ -32,13 +33,15 @@ interface Props {
   isAllLoaded?: boolean;
   isLoading?: boolean;
   handleUpdate?: () => void;
+  pageName: string;
 }
 
 export const ActivityGroupsList: FC<Props> = ({
   activityGroups,
   isAllLoaded = false,
   isLoading = false,
-  handleUpdate = emptyFn
+  handleUpdate = emptyFn,
+  pageName
 }) => {
   usePartnersPromoLoad(PROMOTION_ID);
 
@@ -51,6 +54,15 @@ export const ActivityGroupsList: FC<Props> = ({
   const [loadingEnded, setLoadingEnded] = useState(!isLoading);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const shouldShowPromotion = partnersPromotionEnabled && !promotionErrorOccurred && !isHiddenTemporarily;
+
+  const {
+    onListScroll,
+    onInsideScrollAdLayout,
+    onListLayoutChange,
+    onOutsideOfScrollAdLayout,
+    onAdLoad,
+    resetAdState
+  } = useInternalAdsAnalytics(pageName);
 
   const keyExtractor = useCallback(
     (item: ListItem, index: number) => {
@@ -77,7 +89,7 @@ export const ActivityGroupsList: FC<Props> = ({
   }, [handleUpdate]);
   useEffect(() => setEndIsReached(false), [activityGroups]);
 
-  const onOptimalPromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
+  const handlePromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
 
   const sections = useMemo(() => {
     const result: ListItem[] = [];
@@ -103,19 +115,34 @@ export const ActivityGroupsList: FC<Props> = ({
 
     return result;
   }, [activityGroups]);
+  const shouldRenderList = sections.length > 0;
+
+  useEffect(() => resetAdState(), [resetAdState, shouldRenderList]);
+
+  const handlePromotionLayout = useCallback(
+    (e: LayoutChangeEvent) => {
+      if (shouldRenderList) {
+        onInsideScrollAdLayout(e);
+      } else {
+        onOutsideOfScrollAdLayout(e);
+      }
+    },
+    [onInsideScrollAdLayout, onOutsideOfScrollAdLayout, shouldRenderList]
+  );
 
   const Promotion = useMemo(
     () => (
-      <View style={styles.promotionItemWrapper}>
+      <View style={styles.promotionItemWrapper} onLayout={handlePromotionLayout}>
         <GenericPromotionItem
           id={PROMOTION_ID}
           style={styles.promotionItem}
           testID={ActivityGroupsListSelectors.promotion}
-          onError={onOptimalPromotionError}
+          onError={handlePromotionError}
+          onLoad={onAdLoad}
         />
       </View>
     ),
-    [onOptimalPromotionError, styles]
+    [styles, handlePromotionLayout, handlePromotionError, onAdLoad]
   );
 
   const renderItem: ListRenderItem<string | ActivityGroup> = useCallback(
@@ -142,7 +169,7 @@ export const ActivityGroupsList: FC<Props> = ({
     [shouldRenderAdditionalLoader, styles.additionalLoader]
   );
 
-  if (sections.length > 0) {
+  if (shouldRenderList) {
     return (
       <View style={styles.contentContainer}>
         <FlashList
@@ -150,6 +177,8 @@ export const ActivityGroupsList: FC<Props> = ({
           stickyHeaderIndices={stickyHeaderIndices}
           onEndReachedThreshold={0.01}
           onEndReached={handleEndReached}
+          onLayout={onListLayoutChange}
+          onScroll={onListScroll}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           estimatedItemSize={AVERAGE_ITEM_HEIGHT}

@@ -6,6 +6,7 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { GenericPromotionItem } from 'src/components/generic-promotion-item';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredMarketTokens } from 'src/hooks/use-filtered-market-tokens.hook';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { MarketToken } from 'src/store/market/market.interfaces';
 import { formatSize } from 'src/styles/format-size';
 
@@ -34,6 +35,8 @@ export const TopTokensTable = () => {
   const ref = useRef<SwipeListView<MarketToken>>(null);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
+  const { onOutsideOfScrollAdLayout, onAdLoad } = useInternalAdsAnalytics('Market');
+
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
   const listEmptyComponent =
@@ -60,7 +63,9 @@ export const TopTokensTable = () => {
           <GenericPromotionItem
             id={PROMOTION_ID}
             testID={MarketSelectors.promotion}
+            onLoad={onAdLoad}
             onError={() => setPromotionErrorOccurred(true)}
+            onLayout={onOutsideOfScrollAdLayout}
           />
         </View>
       )}

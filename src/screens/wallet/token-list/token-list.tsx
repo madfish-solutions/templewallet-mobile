@@ -18,6 +18,7 @@ import { isAndroid } from 'src/config/system';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -74,6 +75,9 @@ export const TokensList = memo(() => {
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const flashListRef = useRef<FlashList<ListItem>>(null);
+  const adListItemRef = useRef<View>(null);
+  const flashListWrapperRef = useRef<View>(null);
+  const refs = useMemo(() => ({ parent: flashListWrapperRef, element: adListItemRef }), []);
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
@@ -86,6 +90,11 @@ export const TokensList = memo(() => {
   const publicKeyHash = useCurrentAccountPkhSelector();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const { isTezosNode } = useNetworkInfo();
+
+  const { onListScroll, onInsideScrollAdLayout, onListLayoutChange, onAdLoad } = useInternalAdsAnalytics(
+    'Home page',
+    refs
+  );
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
@@ -157,7 +166,7 @@ export const TokensList = memo(() => {
     ({ item }) => {
       if (item === AD_PLACEHOLDER) {
         return (
-          <View>
+          <View onLayout={onInsideScrollAdLayout} ref={adListItemRef}>
             <View style={styles.promotionItemWrapper}>
               <GenericPromotionItem
                 id={PROMOTION_ID}
@@ -165,6 +174,7 @@ export const TokensList = memo(() => {
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}
                 onError={() => setPromotionErrorOccurred(true)}
+                onLoad={onAdLoad}
               />
             </View>
             <HorizontalBorder style={styles.promotionItemBorder} />
@@ -184,7 +194,7 @@ export const TokensList = memo(() => {
 
       return <TokenListItem token={item} apy={apyRates[slug]} />;
     },
-    [apyRates, styles]
+    [apyRates, onAdLoad, onInsideScrollAdLayout, styles]
   );
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
@@ -230,7 +240,12 @@ export const TokensList = memo(() => {
         <AcceptAdsBanner style={styles.banner} />
       ) : null}
 
-      <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
+      <View
+        style={styles.contentContainerStyle}
+        ref={flashListWrapperRef}
+        onLayout={handleLayout}
+        testID={WalletSelectors.tokenList}
+      >
         <FlashList
           ref={flashListRef}
           data={renderData}
@@ -240,6 +255,8 @@ export const TokensList = memo(() => {
           estimatedItemSize={FLOORED_ITEM_HEIGHT}
           ListEmptyComponent={ListEmptyComponent}
           refreshControl={refreshControl}
+          onScroll={onListScroll}
+          onLayout={onListLayoutChange}
         />
       </View>
     </>

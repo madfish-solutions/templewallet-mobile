@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { GenericPromotionItem } from 'src/components/generic-promotion-item';
 import { HorizontalBorder } from 'src/components/horizontal-border';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -34,6 +35,7 @@ export const Notifications = () => {
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   usePartnersPromoLoad(PROMOTION_ID);
+  const { onOutsideOfScrollAdLayout, onAdLoad } = useInternalAdsAnalytics('Notifications');
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
 
@@ -54,6 +56,8 @@ export const Notifications = () => {
             testID={NotificationsSelectors.promotion}
             style={NotificationsStyles.ads}
             onError={handlePromotionItemError}
+            onLayout={onOutsideOfScrollAdLayout}
+            onLoad={onAdLoad}
           />
           <HorizontalBorder />
         </>

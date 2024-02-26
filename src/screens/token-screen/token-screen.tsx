@@ -75,6 +75,7 @@ export const TokenScreen = () => {
             activityGroups={activities}
             isAllLoaded={isAllLoaded}
             isLoading={isLoading}
+            pageName="Token page"
           />
         }
         infoComponent={<TokenInfo token={token} />}
