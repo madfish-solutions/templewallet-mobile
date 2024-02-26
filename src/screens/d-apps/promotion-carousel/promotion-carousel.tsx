@@ -54,7 +54,7 @@ export const PromotionCarousel = () => {
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
           shouldShowCloseButton={false}
           style={styles.promotionItem}
-          // shouldTryHypelabAd={false}
+          shouldTryHypelabAd={false}
           ref={adRef}
           onError={() => setPromotionErrorOccurred(true)}
           onLoad={onAdLoad}
