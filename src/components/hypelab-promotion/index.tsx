@@ -22,9 +22,9 @@ import { ImagePromotionView } from '../image-promotion-view';
 import { TextPromotionItemSelectors } from '../text-promotion-view/selectors';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
-import { useNewHypelabPromotionStyles } from './styles';
+import { useHypelabPromotionStyles } from './styles';
 
-export const NewHypelabPromotion: FC<SingleProviderPromotionProps> = ({
+export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
   variant,
   isVisible,
   shouldShowCloseButton,
@@ -36,7 +36,7 @@ export const NewHypelabPromotion: FC<SingleProviderPromotionProps> = ({
   const { testID, testIDProperties } = testIDProps;
   const isImageAd = variant === PromotionVariantEnum.Image;
   const colors = useColors();
-  const styles = useNewHypelabPromotionStyles();
+  const styles = useHypelabPromotionStyles();
   const theme = useThemeSelector();
   const { trackEvent } = useAnalytics();
   const [adFrameAspectRatio, setAdFrameAspectRatio] = useState(359 / 80);

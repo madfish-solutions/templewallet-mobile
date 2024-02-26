@@ -3,7 +3,7 @@ import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { GenericPromotionItem } from 'src/components/generic-promotion-item';
+import { PromotionItem } from 'src/components/promotion-item';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredMarketTokens } from 'src/hooks/use-filtered-market-tokens.hook';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
@@ -60,7 +60,7 @@ export const TopTokensTable = () => {
     <View style={styles.rootContainer}>
       {!promotionErrorOccurred && (
         <View style={styles.promotionWrapper}>
-          <GenericPromotionItem
+          <PromotionItem
             id={PROMOTION_ID}
             testID={MarketSelectors.promotion}
             onLoad={onAdLoad}

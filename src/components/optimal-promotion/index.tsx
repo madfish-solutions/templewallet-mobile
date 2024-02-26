@@ -15,9 +15,9 @@ import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
 import { ImagePromotionView } from '../image-promotion-view';
 import { TextPromotionView } from '../text-promotion-view';
 
-import { useNewOptimalPromotionStyles } from './styles';
+import { useOptimalPromotionStyles } from './styles';
 
-export const NewOptimalPromotion: FC<SingleProviderPromotionProps> = ({
+export const OptimalPromotion: FC<SingleProviderPromotionProps> = ({
   variant,
   isVisible,
   shouldShowCloseButton,
@@ -27,7 +27,7 @@ export const NewOptimalPromotion: FC<SingleProviderPromotionProps> = ({
   ...testIDProps
 }) => {
   const isImageAd = variant === PromotionVariantEnum.Image;
-  const styles = useNewOptimalPromotionStyles();
+  const styles = useOptimalPromotionStyles();
   const promo = usePartnersPromoSelector();
   const isLoading = usePartnersPromoLoadingSelector();
   const errorFromStore = usePartnersPromoErrorSelector();

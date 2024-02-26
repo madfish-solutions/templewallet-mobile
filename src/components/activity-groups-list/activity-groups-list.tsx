@@ -3,7 +3,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, LayoutChangeEvent, Text, View } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { GenericPromotionItem } from 'src/components/generic-promotion-item';
+import { PromotionItem } from 'src/components/promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { emptyFn } from 'src/config/general';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
@@ -133,7 +133,7 @@ export const ActivityGroupsList: FC<Props> = ({
   const Promotion = useMemo(
     () => (
       <View style={styles.promotionItemWrapper} onLayout={handlePromotionLayout}>
-        <GenericPromotionItem
+        <PromotionItem
           id={PROMOTION_ID}
           style={styles.promotionItem}
           testID={ActivityGroupsListSelectors.promotion}

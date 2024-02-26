@@ -3,8 +3,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { GenericPromotionItem } from 'src/components/generic-promotion-item';
 import { HorizontalBorder } from 'src/components/horizontal-border';
+import { PromotionItem } from 'src/components/promotion-item';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
@@ -51,7 +51,7 @@ export const Notifications = () => {
     <>
       {partnersPromoShown && !promotionErrorOccurred && (
         <>
-          <GenericPromotionItem
+          <PromotionItem
             id={PROMOTION_ID}
             testID={NotificationsSelectors.promotion}
             style={NotificationsStyles.ads}

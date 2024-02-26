@@ -10,10 +10,10 @@ import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/
 
 import { PromotionVariantEnum } from '../../enums/promotion-variant.enum';
 import { ActivityIndicator } from '../activity-indicator';
-import { NewHypelabPromotion } from '../new-hypelab-promotion';
-import { NewOptimalPromotion } from '../new-optimal-promotion';
+import { HypelabPromotion } from '../hypelab-promotion';
+import { OptimalPromotion } from '../optimal-promotion';
 
-import { useGenericPromotionItemStyles } from './styles';
+import { usePromotionItemStyles } from './styles';
 
 interface Props extends TestIdProps {
   id: string;
@@ -26,7 +26,7 @@ interface Props extends TestIdProps {
   onLayout?: ViewProps['onLayout'];
 }
 
-export const GenericPromotionItem = forwardRef<View, Props>(
+export const PromotionItem = forwardRef<View, Props>(
   (
     {
       id,
@@ -42,7 +42,7 @@ export const GenericPromotionItem = forwardRef<View, Props>(
     ref
   ) => {
     const isImageAd = variant === PromotionVariantEnum.Image;
-    const styles = useGenericPromotionItemStyles();
+    const styles = usePromotionItemStyles();
     const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
     const { isHiddenTemporarily, hidePromotion } = useAdTemporaryHiding(id);
     const isFocused = useIsFocused();
@@ -111,7 +111,7 @@ export const GenericPromotionItem = forwardRef<View, Props>(
         onLayout={onLayout}
       >
         {currentProvider === PromotionProviderEnum.Optimal && isFocused && (
-          <NewOptimalPromotion
+          <OptimalPromotion
             {...testIDProps}
             variant={variant}
             isVisible={adIsReady}
@@ -122,7 +122,7 @@ export const GenericPromotionItem = forwardRef<View, Props>(
           />
         )}
         {currentProvider === PromotionProviderEnum.HypeLab && shouldTryHypelabAd && isFocused && (
-          <NewHypelabPromotion
+          <HypelabPromotion
             {...testIDProps}
             variant={variant}
             isVisible={adIsReady}

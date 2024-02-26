@@ -1,7 +1,7 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useNewHypelabPromotionStyles = createUseStylesMemoized(() => ({
+export const useHypelabPromotionStyles = createUseStylesMemoized(() => ({
   imageAdFrameWrapper: {
     width: formatSize(320),
     height: formatSize(50),

@@ -5,7 +5,7 @@ import Carousel from 'react-native-reanimated-carousel';
 import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
 import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 
-import { GenericPromotionItem } from 'src/components/generic-promotion-item';
+import { PromotionItem } from 'src/components/promotion-item';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
@@ -49,7 +49,7 @@ export const PromotionCarousel = () => {
 
     if (partnersPromoShown && !promotionErrorOccurred) {
       result.unshift(
-        <GenericPromotionItem
+        <PromotionItem
           id={PROMOTION_ID}
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
           shouldShowCloseButton={false}

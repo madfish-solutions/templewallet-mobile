@@ -7,11 +7,11 @@ import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-ban
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
-import { GenericPromotionItem } from 'src/components/generic-promotion-item';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { InAppUpdateBanner } from 'src/components/in-app-update-banner/in-app-update-banner';
+import { PromotionItem } from 'src/components/promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
@@ -168,7 +168,7 @@ export const TokensList = memo(() => {
         return (
           <View onLayout={onInsideScrollAdLayout} ref={adListItemRef}>
             <View style={styles.promotionItemWrapper}>
-              <GenericPromotionItem
+              <PromotionItem
                 id={PROMOTION_ID}
                 variant={PromotionVariantEnum.Text}
                 style={styles.promotionItem}

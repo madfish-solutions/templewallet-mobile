@@ -3,7 +3,7 @@ import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
-export const useGenericPromotionItemStyles = createUseStylesMemoized(({ colors }) => ({
+export const usePromotionItemStyles = createUseStylesMemoized(({ colors }) => ({
   androidContainer: {
     overflow: 'hidden'
   },
