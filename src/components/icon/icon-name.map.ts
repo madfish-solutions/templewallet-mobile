@@ -122,6 +122,7 @@ import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
 import RetryIcon from './assets/retry.svg';
+import ScamInfoIcon from './assets/scam-info.svg';
 import SearchNewIcon from './assets/search-new.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
@@ -353,5 +354,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.GoogleDriveNative]: GoogleDriveNativeIcon,
   [IconNameEnum.ManualBackup]: ManualBackupIcon,
   [IconNameEnum.Key]: KeyIcon,
-  [IconNameEnum.NoConnection]: NoConnectionIcon
+  [IconNameEnum.NoConnection]: NoConnectionIcon,
+  [IconNameEnum.ScamInfo]: ScamInfoIcon
 };

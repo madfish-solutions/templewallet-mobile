@@ -4,7 +4,7 @@ import { of, map } from 'rxjs';
 import { catchError, concatMap, switchMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from 'src/utils/token-metadata.utils';
+import { loadScamlist$, loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from 'src/utils/token-metadata.utils';
 import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import type { RootState } from '../types';
@@ -14,7 +14,8 @@ import {
   loadTokenMetadataActions,
   loadTokensMetadataActions,
   loadTokenSuggestionActions,
-  loadWhitelistAction
+  loadWhitelistAction,
+  loadScamlistAction
 } from './tokens-metadata-actions';
 
 const loadWhitelistEpic: Epic<Action, Action, RootState> = (action$, state$) =>
@@ -25,6 +26,17 @@ const loadWhitelistEpic: Epic<Action, Action, RootState> = (action$, state$) =>
       loadWhitelist$(selectedRpcUrl).pipe(
         concatMap(updatedTokensMetadata => [loadWhitelistAction.success(updatedTokensMetadata)]),
         catchError(err => of(loadWhitelistAction.fail(err.message)))
+      )
+    )
+  );
+
+const loadScamlistEpic: Epic<Action, Action, RootState> = action$ =>
+  action$.pipe(
+    ofType(loadScamlistAction.submit),
+    switchMap(() =>
+      loadScamlist$().pipe(
+        concatMap(scamSlugs => [loadScamlistAction.success(scamSlugs)]),
+        catchError(err => of(loadScamlistAction.fail(err.message)))
       )
     )
   );
@@ -77,6 +89,7 @@ const loadTokensMetadataEpic: Epic = action$ =>
 
 export const tokensMetadataEpics = combineEpics(
   loadWhitelistEpic,
+  loadScamlistEpic,
   loadTokenSuggestionEpic,
   loadTokenMetadataEpic,
   loadTokensMetadataEpic

@@ -1,23 +1,28 @@
 import { BigNumber } from 'bignumber.js';
-import React, { FC, useMemo } from 'react';
-import { Text } from 'react-native';
+import React, { FC, useCallback, useMemo } from 'react';
+import { Alert, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useDispatch } from 'react-redux';
 
+import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { white } from 'src/config/styles';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
+import { removeTokenAction } from 'src/store/wallet/wallet-actions';
+import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { getDelegateText } from 'src/utils/get-delegate-text.util';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
-
-import { INITIAL_APR_VALUE } from '../../apis/youves/constants';
-import { getDelegateText } from '../../utils/get-delegate-text.util';
 
 import { useApyStyles } from './apy.styles';
 import { apyLinkSelectors } from './token-header.selectors';
@@ -26,11 +31,13 @@ import { useTokenScreenContentContainerStyles } from './token-screen-content-con
 interface Props {
   showHistoryComponent: boolean;
   token: TokenInterface;
+  scam?: boolean;
 }
 
 const DECIMAL_VALUE = 2;
 
-export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
+export const TokenHeader: FC<Props> = ({ showHistoryComponent, token, scam }) => {
+  const dispatch = useDispatch();
   const styles = useTokenScreenContentContainerStyles();
   const apyStyles = useApyStyles();
   const { navigate } = useNavigation();
@@ -51,6 +58,41 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
     [apyRate]
   );
 
+  const handleScamPress = useCallback(
+    () =>
+      Alert.alert(
+        'Be cautious!',
+        'This token may be a scam. We strongly advise removing it from your token list to safeguard against the risk of losing funds.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel'
+          },
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: () => {
+              dispatch(removeTokenAction(tokenSlug));
+              navigate(ScreensEnum.Wallet);
+            }
+          }
+        ]
+      ),
+    [tokenSlug]
+  );
+
+  const handleApyPress = useCallback(() => {
+    if (!apyLink) {
+      return;
+    }
+
+    const eventName = `${apyLinkSelectors[apyLink]}/${token.name}`;
+
+    trackEvent(eventName, AnalyticsEventCategory.ButtonPress);
+
+    openUrl(apyLink);
+  }, [apyLink]);
+
   if (showHistoryComponent && isTezos) {
     return (
       <TouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
@@ -59,18 +101,16 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token }) => {
     );
   }
 
-  const handleApyPress =
-    isDefined(apyLink) && apyRate !== 0
-      ? () => {
-          const eventName = `${apyLinkSelectors[apyLink]}/${token.name}`;
+  if (showHistoryComponent && scam) {
+    return (
+      <TouchableOpacity onPress={handleScamPress} style={styles.scamContainer}>
+        <Icon name={IconNameEnum.ScamInfo} size={formatSize(24)} color={white} />
+        <Text style={styles.scamText}>Scam</Text>
+      </TouchableOpacity>
+    );
+  }
 
-          trackEvent(eventName, AnalyticsEventCategory.ButtonPress);
-
-          openUrl(apyLink);
-        }
-      : undefined;
-
-  if (showHistoryComponent && isDefined(handleApyPress)) {
+  if (showHistoryComponent && isDefined(apyLink) && apyRate !== 0) {
     const label = getDelegateText(token);
 
     return (

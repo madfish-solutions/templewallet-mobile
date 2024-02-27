@@ -14,3 +14,5 @@ export const useAddTokenSuggestionSelector = () =>
 
 export const useIsKnownSvgSelector = (url: string) =>
   useSelector(({ tokensMetadata }) => Boolean(tokensMetadata.knownSvgs[url]));
+
+export const useScamTokenSlugsSelector = () => useSelector(({ tokensMetadata }) => tokensMetadata.scamTokenSlugs.data);
