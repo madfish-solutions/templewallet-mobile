@@ -8,7 +8,7 @@ import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/li
 import { PromotionItem } from 'src/components/promotion-item';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
-import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
+import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
@@ -30,8 +30,6 @@ export const PromotionCarousel = () => {
   const adRef = useRef<View>(null);
   const refs = useMemo(() => ({ parent: layoutRef, element: adRef }), [layoutRef, adRef]);
   const { onOutsideOfScrollAdLayout, onAdLoad } = useInternalAdsAnalytics('DApps', refs, promotionOffset, 500);
-
-  usePartnersPromoLoad(PROMOTION_ID);
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];

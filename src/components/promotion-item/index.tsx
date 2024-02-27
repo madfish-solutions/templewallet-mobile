@@ -5,10 +5,12 @@ import { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { HypelabPromotion } from 'src/components/hypelab-promotion';
 import { OptimalPromotion } from 'src/components/optimal-promotion';
+import { PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { isAndroid } from 'src/config/system';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
+import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 
@@ -17,6 +19,7 @@ import { usePromotionItemStyles } from './styles';
 interface Props extends TestIdProps {
   id: string;
   style?: StyleProp<ViewStyle>;
+  shouldRefreshAd?: boolean;
   shouldShowCloseButton?: boolean;
   shouldTryHypelabAd?: boolean;
   variant?: PromotionVariantEnum;
@@ -30,6 +33,7 @@ export const PromotionItem = forwardRef<View, Props>(
     {
       id,
       style,
+      shouldRefreshAd = false,
       shouldShowCloseButton = true,
       variant = PromotionVariantEnum.Image,
       shouldTryHypelabAd = true,
@@ -62,6 +66,22 @@ export const PromotionItem = forwardRef<View, Props>(
         });
       }
     }, [isFocused]);
+
+    useAuthorisedInterval(
+      () => {
+        if (!shouldRefreshAd || !partnersPromotionEnabled || isHiddenTemporarily) {
+          return;
+        }
+
+        setAdsState({
+          currentProvider: PromotionProviderEnum.Optimal,
+          adError: false,
+          adIsReady: false
+        });
+      },
+      PROMO_SYNC_INTERVAL,
+      [partnersPromotionEnabled, isHiddenTemporarily, shouldRefreshAd]
+    );
 
     const handleAdError = useCallback(() => {
       setAdsState(prevState => ({ ...prevState, adError: true }));
@@ -113,6 +133,7 @@ export const PromotionItem = forwardRef<View, Props>(
             variant={variant}
             isVisible={adIsReady}
             shouldShowCloseButton={shouldShowCloseButton}
+            shouldRefreshAd={shouldRefreshAd}
             onClose={hidePromotion}
             onReady={handleOptimalAdReady}
             onError={handleOptimalError}

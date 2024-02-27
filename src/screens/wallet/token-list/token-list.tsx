@@ -25,7 +25,6 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import {
   useHideZeroBalancesSelector,
@@ -40,7 +39,6 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
-import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { WalletSelectors } from '../wallet.selectors';
@@ -104,7 +102,6 @@ export const TokensList = memo(() => {
   useEffect(() => {
     const listener = () => {
       if (partnersPromoShown) {
-        dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
         setPromotionErrorOccurred(false);
       }
     };
@@ -195,7 +192,7 @@ export const TokensList = memo(() => {
 
       return <TokenListItem token={item} apy={apyRates[slug]} />;
     },
-    [apyRates, onAdLoad, onInsideScrollAdLayout, styles]
+    [apyRates, handlePromotionError, onAdLoad, onInsideScrollAdLayout, styles]
   );
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);

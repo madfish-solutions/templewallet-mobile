@@ -1,25 +1,27 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import FastImage from 'react-native-fast-image';
+import useSWR from 'swr';
 
 import { ImagePromotionView } from 'src/components/image-promotion-view';
 import { TextPromotionView } from 'src/components/text-promotion-view';
+// import { PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
-import {
-  usePartnersPromoErrorSelector,
-  usePartnersPromoLoadingSelector,
-  usePartnersPromoSelector
-} from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { SingleProviderPromotionProps } from 'src/types/promotion';
-import { useTimeout } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
-import { useIsEmptyPromotion } from 'src/utils/optimal.utils';
+import { getOptimalPromotion, OptimalPromotionAdType, useIsEmptyPromotion } from 'src/utils/optimal.utils';
 
 import { useOptimalPromotionStyles } from './styles';
 
-export const OptimalPromotion: FC<SingleProviderPromotionProps> = ({
+interface SelfRefreshingPromotionProps {
+  shouldRefreshAd: boolean;
+}
+
+export const OptimalPromotion: FC<SingleProviderPromotionProps & SelfRefreshingPromotionProps> = ({
   variant,
   isVisible,
   shouldShowCloseButton,
+  // shouldRefreshAd,
   onClose,
   onReady,
   onError,
@@ -27,49 +29,41 @@ export const OptimalPromotion: FC<SingleProviderPromotionProps> = ({
 }) => {
   const isImageAd = variant === PromotionVariantEnum.Image;
   const styles = useOptimalPromotionStyles();
-  const promo = usePartnersPromoSelector();
-  const isLoading = usePartnersPromoLoadingSelector();
-  const errorFromStore = usePartnersPromoErrorSelector();
-  const [isImageBroken, setIsImageBroken] = useState(false);
-  const [wasLoading, setWasLoading] = useState(false);
-  const [shouldPreventShowingPrevAd, setShouldPreventShowingPrevAd] = useState(true);
-  const [adViewIsReady, setAdViewIsReady] = useState(isImageAd);
-  const prevIsLoadingRef = useRef(isLoading);
-  const promotionIsEmpty = useIsEmptyPromotion(promo);
-  const apiQueryFailed = (isDefined(errorFromStore) || promotionIsEmpty) && wasLoading;
-  const adIsNotLikelyToLoad = (isDefined(errorFromStore) || promotionIsEmpty) && !isLoading;
+  const accountPkh = useCurrentAccountPkhSelector();
 
-  useTimeout(
-    () => {
-      if (adIsNotLikelyToLoad) {
-        onError();
-      }
-    },
-    2000,
-    [adIsNotLikelyToLoad, onError]
+  const localGetOptimalPromotion = useCallback(
+    () => getOptimalPromotion(isImageAd ? OptimalPromotionAdType.TwMobile : OptimalPromotionAdType.TwToken, accountPkh),
+    [accountPkh, isImageAd]
   );
+  const {
+    data: promo,
+    error,
+    isValidating,
+    mutate
+  } = useSWR(['optimal-promotion', accountPkh, isImageAd], localGetOptimalPromotion, {
+    // refreshInterval: shouldRefreshAd ? PROMO_SYNC_INTERVAL : undefined
+  });
+  const prevIsValidatingRef = useRef(isValidating);
+
+  const [isImageBroken, setIsImageBroken] = useState(false);
+  const [adViewIsReady, setAdViewIsReady] = useState(isImageAd);
+  const promotionIsEmpty = useIsEmptyPromotion(promo);
 
   useEffect(() => {
-    if (wasLoading) {
-      setShouldPreventShowingPrevAd(false);
+    if (!isValidating) {
+      mutate();
     }
-  }, [wasLoading]);
-  useTimeout(() => setShouldPreventShowingPrevAd(false), 2000, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
-    if (!isLoading && prevIsLoadingRef.current) {
-      setWasLoading(true);
-    }
-    prevIsLoadingRef.current = isLoading;
-  }, [isLoading]);
-
-  useEffect(() => {
-    if (apiQueryFailed) {
+    if (isDefined(error) || promotionIsEmpty) {
       onError();
-    } else if (!promotionIsEmpty && !shouldPreventShowingPrevAd && adViewIsReady) {
+    } else if (!promotionIsEmpty && promo && adViewIsReady) {
       onReady();
     }
-  }, [apiQueryFailed, onError, onReady, promotionIsEmpty, shouldPreventShowingPrevAd, adViewIsReady]);
+    prevIsValidatingRef.current = isValidating;
+  }, [onError, onReady, promotionIsEmpty, adViewIsReady, error, promo, isValidating]);
 
   const onImageError = useCallback(() => {
     setIsImageBroken(true);
@@ -78,7 +72,7 @@ export const OptimalPromotion: FC<SingleProviderPromotionProps> = ({
 
   const handleTextPromotionReady = useCallback(() => setAdViewIsReady(true), []);
 
-  if (isDefined(errorFromStore) || promotionIsEmpty || isImageBroken || shouldPreventShowingPrevAd) {
+  if (isDefined(error) || promotionIsEmpty || isImageBroken || !promo) {
     return null;
   }
 

@@ -9,7 +9,6 @@ import { emptyFn } from 'src/config/general';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
-import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { isTheSameDay, isToday, isYesterday } from 'src/utils/date.utils';
@@ -43,8 +42,6 @@ export const ActivityGroupsList: FC<Props> = ({
   handleUpdate = emptyFn,
   pageName
 }) => {
-  usePartnersPromoLoad(PROMOTION_ID);
-
   const styles = useActivityGroupsListStyles();
 
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();

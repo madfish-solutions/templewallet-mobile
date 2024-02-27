@@ -64,6 +64,7 @@ export const TopTokensTable = () => {
         <View style={styles.promotionWrapper}>
           <PromotionItem
             id={PROMOTION_ID}
+            shouldRefreshAd
             testID={MarketSelectors.promotion}
             onLoad={onAdLoad}
             onError={handlePromotionError}

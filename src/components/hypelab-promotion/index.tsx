@@ -64,10 +64,6 @@ export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
     [adHref, onError]
   );
 
-  const handleAdFrameError = useCallback(() => {
-    onError();
-  }, [onError]);
-
   const handleAdFrameMessage = useCallback(
     (e: WebViewMessageEvent) => {
       try {
@@ -111,7 +107,7 @@ export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
           <WebView
             source={adFrameSource}
             containerStyle={styles.imageAdFrame}
-            onError={handleAdFrameError}
+            onError={onError}
             onMessage={handleAdFrameMessage}
             webviewDebuggingEnabled={__DEV__}
             scrollEnabled={false}
@@ -128,7 +124,7 @@ export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
         source={adFrameSource}
         containerStyle={styles.textAdFrame}
         style={[styles.textAdFrame, { aspectRatio: adFrameAspectRatio }]}
-        onError={handleAdFrameError}
+        onError={onError}
         onMessage={handleAdFrameMessage}
         webviewDebuggingEnabled={__DEV__}
         scrollEnabled={false}

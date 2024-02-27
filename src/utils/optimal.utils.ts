@@ -1,9 +1,8 @@
-import { isEqual } from 'lodash-es';
 import { useMemo } from 'react';
 
-import { mockPartnersPromotion } from 'src/store/partners-promotion/partners-promotion-state.mock';
-
 import { optimalApi } from '../api.service';
+
+import { isDefined } from './is-defined';
 
 export const AD_HIDING_TIMEOUT = 12 * 3600 * 1000;
 
@@ -35,11 +34,9 @@ type NormalPromotion = {
 
 export type OptimalPromotionType = EmptyPromotion | NormalPromotion;
 
-export function useIsEmptyPromotion(promotion: OptimalPromotionType): promotion is EmptyPromotion {
+export function useIsEmptyPromotion(promotion: OptimalPromotionType | nullish): promotion is EmptyPromotion {
   return useMemo(
-    () =>
-      !('link' in promotion && 'image' in promotion && 'copy' in promotion) ||
-      isEqual(mockPartnersPromotion, promotion),
+    () => isDefined(promotion) && !('link' in promotion && 'image' in promotion && 'copy' in promotion),
     [promotion]
   );
 }

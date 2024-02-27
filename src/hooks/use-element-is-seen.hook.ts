@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * @param isVisible Indicates whether the element is visible right now, assuming that the screen is focused.
@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 export const useElementIsSeen = (isVisible: boolean, seenTimeout: number, shouldResetOnScreenBlur = true) => {
   const isFocused = useIsFocused();
   const [isSeen, setIsSeen] = useState(false);
+  const resetWasCalledRef = useRef(false);
   const isVisibleRef = useRef(isVisible);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export const useElementIsSeen = (isVisible: boolean, seenTimeout: number, should
     }
   }, [isFocused, shouldResetOnScreenBlur]);
 
-  useEffect(() => {
+  const updateIsSeen = useCallback(() => {
     isVisibleRef.current = isVisible && isFocused;
 
     if (isVisible && isFocused) {
@@ -31,5 +32,18 @@ export const useElementIsSeen = (isVisible: boolean, seenTimeout: number, should
     }
   }, [isFocused, isVisible, seenTimeout]);
 
-  return isSeen;
+  const resetIsSeen = useCallback(() => {
+    setIsSeen(false);
+    resetWasCalledRef.current = true;
+  }, []);
+
+  useEffect(updateIsSeen, [updateIsSeen]);
+  useEffect(() => {
+    if (resetWasCalledRef.current) {
+      resetWasCalledRef.current = false;
+      updateIsSeen();
+    }
+  }, [updateIsSeen, isSeen]);
+
+  return { isSeen, resetIsSeen };
 };

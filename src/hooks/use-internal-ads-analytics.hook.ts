@@ -31,7 +31,10 @@ export const useInternalAdsAnalytics = (
   const { trackEvent } = useAnalytics();
   const [adAreaIsVisible, setAdAreaIsVisible] = useState(false);
   const [loadedPromotionProvider, setLoadedPromotionProvider] = useState<PromotionProviderEnum | undefined>();
-  const adIsSeen = useElementIsSeen(adAreaIsVisible && isDefined(loadedPromotionProvider), seenTimeout);
+  const { isSeen: adIsSeen, resetIsSeen: resetAdIsSeen } = useElementIsSeen(
+    adAreaIsVisible && isDefined(loadedPromotionProvider),
+    seenTimeout
+  );
   const prevAdIsSeenRef = useRef(adIsSeen);
 
   useEffect(() => {
@@ -96,6 +99,14 @@ export const useInternalAdsAnalytics = (
     setLoadedPromotionProvider(undefined);
   }, []);
 
+  const onAdLoad = useCallback(
+    (provider: PromotionProviderEnum) => {
+      resetAdIsSeen();
+      setLoadedPromotionProvider(provider);
+    },
+    [setLoadedPromotionProvider, resetAdIsSeen]
+  );
+
   const {
     onListScroll,
     onElementLayoutChange: onInsideScrollAdLayout,
@@ -107,7 +118,7 @@ export const useInternalAdsAnalytics = (
     onInsideScrollAdLayout,
     onListLayoutChange,
     onOutsideOfScrollAdLayout,
-    onAdLoad: setLoadedPromotionProvider,
+    onAdLoad,
     resetAdState
   };
 };

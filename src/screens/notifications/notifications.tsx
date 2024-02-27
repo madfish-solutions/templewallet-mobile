@@ -6,7 +6,7 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { PromotionItem } from 'src/components/promotion-item';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
-import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
+import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { viewAllNotificationsAction } from 'src/store/notifications/notifications-actions';
@@ -34,7 +34,6 @@ export const Notifications = () => {
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
-  usePartnersPromoLoad(PROMOTION_ID);
   const { onOutsideOfScrollAdLayout, onAdLoad } = useInternalAdsAnalytics('Notifications');
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
