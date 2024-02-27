@@ -25,7 +25,7 @@ export const useToastStyles = createUseStyles(({ colors, typography }) => ({
   },
   description: {
     ...typography.caption13Regular,
-    lineHeight: formatTextSize(20)
+    lineHeight: formatTextSize(18)
   },
   textWrapper: {
     flex: 1,
@@ -35,9 +35,10 @@ export const useToastStyles = createUseStyles(({ colors, typography }) => ({
     flexDirection: 'row'
   },
   iconLeft: {
-    margin: formatSize(10)
+    marginTop: formatSize(11),
+    marginHorizontal: formatSize(8)
   },
-  iconContainer: {
+  copyIconContainer: {
     padding: formatSize(4),
     marginLeft: formatSize(4),
     borderRadius: formatSize(4)

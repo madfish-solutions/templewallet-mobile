@@ -133,7 +133,7 @@
     "text-encoding": "^0.7.0",
     "ts-action": "^11.0.0",
     "ts-action-operators": "^9.1.2",
-    "youves-sdk": "^0.0.6",
+    "@temple-wallet/youves-sdk": "^0.0.9",
     "yup": "^0.32.11"
   },
   "devDependencies": {

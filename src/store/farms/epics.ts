@@ -7,6 +7,7 @@ import { getLiquidityBakingFarm } from 'src/apis/liquidity-baking';
 import { getV3FarmsList } from 'src/apis/quipuswap-staking';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
+import { showFailedStakeLoadWarning } from 'src/toast/toast.utils';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
@@ -91,9 +92,9 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
             farms.map(async ({ item: farm }) =>
               getFarmStake(farm, tezos, selectedAccount.publicKeyHash)
                 .then((stake): [string, RawStakeValue | null] => [farm.contractAddress, stake])
-                .catch((e): [string, undefined] => {
-                  showErrorToastByError(e);
+                .catch((): [string, undefined] => {
                   console.error('Error while loading farm stakes: ', farm.contractAddress);
+                  showFailedStakeLoadWarning();
 
                   return [farm.contractAddress, undefined];
                 })
