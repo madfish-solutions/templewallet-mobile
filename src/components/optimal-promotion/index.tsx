@@ -4,7 +4,6 @@ import useSWR from 'swr';
 
 import { ImagePromotionView } from 'src/components/image-promotion-view';
 import { TextPromotionView } from 'src/components/text-promotion-view';
-// import { PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { SingleProviderPromotionProps } from 'src/types/promotion';
@@ -21,7 +20,6 @@ export const OptimalPromotion: FC<SingleProviderPromotionProps & SelfRefreshingP
   variant,
   isVisible,
   shouldShowCloseButton,
-  // shouldRefreshAd,
   onClose,
   onReady,
   onError,
@@ -40,9 +38,7 @@ export const OptimalPromotion: FC<SingleProviderPromotionProps & SelfRefreshingP
     error,
     isValidating,
     mutate
-  } = useSWR(['optimal-promotion', accountPkh, isImageAd], localGetOptimalPromotion, {
-    // refreshInterval: shouldRefreshAd ? PROMO_SYNC_INTERVAL : undefined
-  });
+  } = useSWR(['optimal-promotion', accountPkh, isImageAd], localGetOptimalPromotion);
   const prevIsValidatingRef = useRef(isValidating);
 
   const [isImageBroken, setIsImageBroken] = useState(false);

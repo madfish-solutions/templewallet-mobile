@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, LayoutChangeEvent, Text, View } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -9,6 +9,8 @@ import { emptyFn } from 'src/config/general';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useListElementIntersection } from 'src/hooks/use-list-element-intersection.hook';
+import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { isTheSameDay, isToday, isYesterday } from 'src/utils/date.utils';
@@ -51,15 +53,6 @@ export const ActivityGroupsList: FC<Props> = ({
   const [loadingEnded, setLoadingEnded] = useState(!isLoading);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const shouldShowPromotion = partnersPromotionEnabled && !promotionErrorOccurred && !isHiddenTemporarily;
-
-  const {
-    onListScroll,
-    onInsideScrollAdLayout,
-    onListLayoutChange,
-    onOutsideOfScrollAdLayout,
-    onAdLoad,
-    resetAdState
-  } = useInternalAdsAnalytics(pageName);
 
   const keyExtractor = useCallback(
     (item: ListItem, index: number) => {
@@ -114,17 +107,37 @@ export const ActivityGroupsList: FC<Props> = ({
   }, [activityGroups]);
   const shouldRenderList = sections.length > 0;
 
-  useEffect(() => resetAdState(), [resetAdState, shouldRenderList]);
+  const adRef = useRef<View>(null);
+  const separateAdParentRef = useRef<View>(null);
+
+  const { onAdLoad, resetAdState, onIsVisible } = useInternalAdsAnalytics(pageName);
+  const {
+    onListScroll,
+    onElementLayoutChange: onListAdLayoutChange,
+    onListLayoutChange,
+    onUnmount: onListAdUnmount
+  } = useListElementIntersection(onIsVisible);
+  const { onElementOrParentLayout: onSeparateAdOrParentLayout, onUnmount: onSeparateAdUnmount } =
+    useOutsideOfListIntersection(separateAdParentRef, adRef, onIsVisible);
+
+  useEffect(() => {
+    if (shouldRenderList) {
+      onSeparateAdUnmount();
+    } else {
+      onListAdUnmount();
+    }
+    resetAdState();
+  }, [onListAdUnmount, onSeparateAdUnmount, resetAdState, shouldRenderList]);
 
   const handlePromotionLayout = useCallback(
     (e: LayoutChangeEvent) => {
       if (shouldRenderList) {
-        onInsideScrollAdLayout(e);
+        onListAdLayoutChange(e);
       } else {
-        onOutsideOfScrollAdLayout(e);
+        onSeparateAdOrParentLayout();
       }
     },
-    [onInsideScrollAdLayout, onOutsideOfScrollAdLayout, shouldRenderList]
+    [onListAdLayoutChange, onSeparateAdOrParentLayout, shouldRenderList]
   );
 
   const Promotion = useMemo(
@@ -134,6 +147,7 @@ export const ActivityGroupsList: FC<Props> = ({
           id={PROMOTION_ID}
           style={styles.promotionItem}
           testID={ActivityGroupsListSelectors.promotion}
+          ref={adRef}
           onError={handlePromotionError}
           onLoad={onAdLoad}
         />
@@ -189,7 +203,11 @@ export const ActivityGroupsList: FC<Props> = ({
 
   return (
     <>
-      {shouldShowPromotion && <View style={styles.adContainer}>{Promotion}</View>}
+      {shouldShowPromotion && (
+        <View style={styles.adContainer} ref={separateAdParentRef} onLayout={onSeparateAdOrParentLayout}>
+          {Promotion}
+        </View>
+      )}
       <View style={styles.emptyListWrapper}>
         {loadingEnded ? (
           ListEmptyComponent

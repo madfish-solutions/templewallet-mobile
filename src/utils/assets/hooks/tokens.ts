@@ -51,7 +51,7 @@ export const useAccountTokenBySlug = (slug: string): UsableAccountAsset | undefi
       const token = accountTokens.find(t => t.slug === slug);
 
       if (!metadata || !token) {
-        console.warn(`Token for slug '${slug}' is not ready`);
+        // console.warn(`Token for slug '${slug}' is not ready`);
 
         return undefined;
       }

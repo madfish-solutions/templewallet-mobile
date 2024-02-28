@@ -7,6 +7,7 @@ import { PromotionItem } from 'src/components/promotion-item';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredMarketTokens } from 'src/hooks/use-filtered-market-tokens.hook';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { MarketToken } from 'src/store/market/market.interfaces';
 import { formatSize } from 'src/styles/format-size';
 
@@ -35,7 +36,10 @@ export const TopTokensTable = () => {
   const ref = useRef<SwipeListView<MarketToken>>(null);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
-  const { onOutsideOfScrollAdLayout, onAdLoad } = useInternalAdsAnalytics('Market');
+  const adRef = useRef<View>(null);
+  const adParentRef = useRef<View>(null);
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('Market', false);
+  const { onElementOrParentLayout } = useOutsideOfListIntersection(adParentRef, adRef, onIsVisible);
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
@@ -61,14 +65,15 @@ export const TopTokensTable = () => {
   return (
     <View style={styles.rootContainer}>
       {!promotionErrorOccurred && (
-        <View style={styles.promotionWrapper}>
+        <View style={styles.promotionWrapper} ref={adParentRef} onLayout={onElementOrParentLayout}>
           <PromotionItem
             id={PROMOTION_ID}
             shouldRefreshAd
             testID={MarketSelectors.promotion}
             onLoad={onAdLoad}
             onError={handlePromotionError}
-            onLayout={onOutsideOfScrollAdLayout}
+            onLayout={onElementOrParentLayout}
+            ref={adRef}
           />
         </View>
       )}

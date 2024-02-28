@@ -19,6 +19,7 @@ import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useListElementIntersection } from 'src/hooks/use-list-element-intersection.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -89,10 +90,8 @@ export const TokensList = memo(() => {
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const { isTezosNode } = useNetworkInfo();
 
-  const { onListScroll, onInsideScrollAdLayout, onListLayoutChange, onAdLoad } = useInternalAdsAnalytics(
-    'Home page',
-    refs
-  );
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('Home page');
+  const { onListScroll, onElementLayoutChange, onListLayoutChange } = useListElementIntersection(onIsVisible, refs);
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
@@ -164,7 +163,7 @@ export const TokensList = memo(() => {
     ({ item }) => {
       if (item === AD_PLACEHOLDER) {
         return (
-          <View onLayout={onInsideScrollAdLayout} ref={adListItemRef}>
+          <View onLayout={onElementLayoutChange} ref={adListItemRef}>
             <View style={styles.promotionItemWrapper}>
               <PromotionItem
                 id={PROMOTION_ID}
@@ -192,7 +191,7 @@ export const TokensList = memo(() => {
 
       return <TokenListItem token={item} apy={apyRates[slug]} />;
     },
-    [apyRates, handlePromotionError, onAdLoad, onInsideScrollAdLayout, styles]
+    [apyRates, handlePromotionError, onAdLoad, onElementLayoutChange, styles]
   );
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);

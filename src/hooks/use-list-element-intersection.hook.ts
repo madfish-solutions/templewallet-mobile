@@ -1,35 +1,39 @@
-import { throttle } from 'lodash-es';
-import { MutableRefObject, useCallback, useMemo, useRef } from 'react';
-import { LayoutChangeEvent, LayoutRectangle, NativeScrollEvent, NativeSyntheticEvent, View } from 'react-native';
+import { noop, throttle } from 'lodash-es';
+import { useCallback, useMemo, useRef } from 'react';
+import { LayoutChangeEvent, LayoutRectangle, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
+import { IntersectionHookRef } from 'src/types/intersection-hook-ref';
 import { getIntersectionRatio } from 'src/utils/get-intersection-ratio';
 import { isDefined } from 'src/utils/is-defined';
 
-export interface Refs {
-  /** The parent of the element or the list which contains the element */
-  parent: MutableRefObject<View | null>;
-  element: MutableRefObject<View | null>;
-}
+const DEFAULT_INTERSECTION_THRESHOLD = 0.5;
 
-export const DEFAULT_INTERSECTION_THRESHOLD = 0.5;
+interface IntersectionHookRefs {
+  parent: IntersectionHookRef;
+  element: IntersectionHookRef;
+}
 
 /**
  * A hook for observing the intersection of a component inside a list. `react-native-intersection-observer` exists
  * for similar purposes but it is incompatible with our components.
  * @param onIntersectChange A callback to be called when the intersection state changes
  * @param refs If specified, the measurement of the element will be relative to `parent`; otherwise, the data from
- * events will be used
+ * events will be used. Do without it whenever possible
  * @param threshold The part of the child element area that should be visible for the intersection to be considered
- * @returns Callbacks for the list and the element
+ * @returns Callbacks for the list and the element and current intersection state
  */
-export const useIntersectionObservation = (
-  onIntersectChange: (value: boolean) => void,
-  refs?: Refs,
+export const useListElementIntersection = (
+  onIntersectChange: (value: boolean) => void = noop,
+  refs?: IntersectionHookRefs,
   threshold = DEFAULT_INTERSECTION_THRESHOLD
 ) => {
   const lastLayoutRectangleRef = useRef<LayoutRectangle>();
   const lastNativeScrollConfigRef = useRef<Omit<NativeScrollEvent, 'contentSize' | 'zoomScale'>>();
-  const lastIsIntersectedRef = useRef<boolean>();
+  const isIntersectedRef = useRef<boolean>();
+
+  const onUnmount = useCallback(() => {
+    isIntersectedRef.current = false;
+  }, []);
 
   const refreshIsIntersected = useCallback(() => {
     const layoutRectangleWithoutScroll = lastLayoutRectangleRef.current;
@@ -47,10 +51,10 @@ export const useIntersectionObservation = (
       width: layoutRectangleWithoutScroll.width,
       height: layoutRectangleWithoutScroll.height
     };
-    const isIntersected = getIntersectionRatio(listLayoutMeasurement, layoutRectangle) >= threshold;
-    if (lastIsIntersectedRef.current !== isIntersected) {
-      lastIsIntersectedRef.current = isIntersected;
-      onIntersectChange(isIntersected);
+    const newIsIntersected = getIntersectionRatio(listLayoutMeasurement, layoutRectangle) >= threshold;
+    if (isIntersectedRef.current !== newIsIntersected) {
+      isIntersectedRef.current = newIsIntersected;
+      onIntersectChange(newIsIntersected);
     }
   }, [onIntersectChange, threshold]);
   const refreshIsIntersectedWithMeasurements = useCallback(() => {
@@ -72,9 +76,7 @@ export const useIntersectionObservation = (
 
         refreshIsIntersected();
       },
-      () => {
-        console.error('Failed to measure element layout relatively to the parent');
-      }
+      () => console.error('Failed to measure element layout relatively to the parent')
     );
   }, [refreshIsIntersected, refs]);
 
@@ -93,7 +95,7 @@ export const useIntersectionObservation = (
             refreshIsIntersected();
           }
         },
-        100,
+        10,
         { leading: false, trailing: true }
       ),
     [refreshIsIntersected, refreshIsIntersectedWithMeasurements, refs]
@@ -143,5 +145,10 @@ export const useIntersectionObservation = (
     [refreshIsIntersected, refreshIsIntersectedWithMeasurements, refs]
   );
 
-  return { onListScroll, onElementLayoutChange, onListLayoutChange };
+  return {
+    onListScroll,
+    onElementLayoutChange,
+    onListLayoutChange,
+    onUnmount
+  };
 };

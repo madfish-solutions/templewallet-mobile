@@ -1,16 +1,19 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { isDefined } from 'src/utils/is-defined';
+
 /**
  * @param isVisible Indicates whether the element is visible right now, assuming that the screen is focused.
- * @param seenTimeout If the element becomes visible and stays visible for this amount of time, it is considered seen.
+ * @param seenTimeoutDuration If the element becomes visible and stays visible for this amount of time, it is considered seen.
  * @param shouldResetOnScreenBlur If true, the seen state will be reset when the element becomes invisible.
  */
-export const useElementIsSeen = (isVisible: boolean, seenTimeout: number, shouldResetOnScreenBlur = true) => {
+export const useElementIsSeen = (isVisible: boolean, seenTimeoutDuration: number, shouldResetOnScreenBlur = true) => {
   const isFocused = useIsFocused();
   const [isSeen, setIsSeen] = useState(false);
   const resetWasCalledRef = useRef(false);
   const isVisibleRef = useRef(isVisible);
+  const seenTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (shouldResetOnScreenBlur && !isFocused) {
@@ -18,19 +21,23 @@ export const useElementIsSeen = (isVisible: boolean, seenTimeout: number, should
     }
   }, [isFocused, shouldResetOnScreenBlur]);
 
+  const clearSeenTimeout = useCallback(() => {
+    void (isDefined(seenTimeoutRef.current) && clearTimeout(seenTimeoutRef.current));
+  }, []);
+
   const updateIsSeen = useCallback(() => {
     isVisibleRef.current = isVisible && isFocused;
 
     if (isVisible && isFocused) {
-      const timeout = setTimeout(() => {
+      seenTimeoutRef.current = setTimeout(() => {
         if (isVisibleRef.current) {
           setIsSeen(true);
         }
-      }, seenTimeout);
+      }, seenTimeoutDuration);
 
-      return () => clearTimeout(timeout);
+      return () => clearSeenTimeout();
     }
-  }, [isFocused, isVisible, seenTimeout]);
+  }, [isFocused, isVisible, seenTimeoutDuration, clearSeenTimeout]);
 
   const resetIsSeen = useCallback(() => {
     setIsSeen(false);
@@ -45,5 +52,5 @@ export const useElementIsSeen = (isVisible: boolean, seenTimeout: number, should
     }
   }, [updateIsSeen, isSeen]);
 
-  return { isSeen, resetIsSeen };
+  return { isSeen, resetIsSeen, clearSeenTimeout };
 };

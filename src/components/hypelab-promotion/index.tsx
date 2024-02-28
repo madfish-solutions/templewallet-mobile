@@ -18,10 +18,13 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { HYPELAB_AD_FRAME_URL, HYPELAB_NATIVE_PLACEMENT_SLUG, HYPELAB_SMALL_PLACEMENT_SLUG } from 'src/utils/env.utils';
 import { useTimeout } from 'src/utils/hooks';
+import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { openUrl } from 'src/utils/linking';
 
 import { useHypelabPromotionStyles } from './styles';
+
+const AD_CONTENT_RELATED_URL_SEARCH_PARAMS = ['campaign_slug', 'creative_set_slug', 'placement_slug'];
 
 export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
   variant,
@@ -74,8 +77,16 @@ export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
             setAdFrameAspectRatio(message.width / message.height);
             break;
           case AdFrameMessageType.Ready:
+            const prevAdHrefSearchParams = isDefined(adHref) ? new URL(adHref).searchParams : new URLSearchParams();
+            const newAdHrefSearchParams = new URL(message.ad.cta_url).searchParams;
             setAdHref(message.ad.cta_url);
-            onReady();
+            if (
+              AD_CONTENT_RELATED_URL_SEARCH_PARAMS.some(
+                paramName => prevAdHrefSearchParams.get(paramName) !== newAdHrefSearchParams.get(paramName)
+              )
+            ) {
+              onReady();
+            }
             break;
           case AdFrameMessageType.Error:
             onError();

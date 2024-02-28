@@ -1,5 +1,4 @@
-import { throttle } from 'lodash-es';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
@@ -23,13 +22,10 @@ const PROMOTION_ID = 'carousel-promotion';
 export const PromotionCarousel = () => {
   const activePromotion = useActivePromotionSelector();
   const styles = usePromotionCarouselStyles();
-  const [promotionOffset, setPromotionOffset] = useState({ x: 0, y: 0 });
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
-  const layoutRef = useRef<View>(null);
-  const adRef = useRef<View>(null);
-  const refs = useMemo(() => ({ parent: layoutRef, element: adRef }), [layoutRef, adRef]);
-  const { onOutsideOfScrollAdLayout, onAdLoad } = useInternalAdsAnalytics('DApps', refs, promotionOffset, 500);
+  const shouldShowPartnersPromotion = partnersPromoShown && !promotionErrorOccurred;
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('DApps', true, 500);
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -45,24 +41,27 @@ export const PromotionCarousel = () => {
       );
     }
 
-    if (partnersPromoShown && !promotionErrorOccurred) {
+    if (shouldShowPartnersPromotion) {
       result.unshift(
         <PromotionItem
           id={PROMOTION_ID}
           testID={PromotionCarouselSelectors.optimalPromotionBanner}
           shouldShowCloseButton={false}
           style={styles.promotionItem}
-          shouldTryHypelabAd={false}
-          ref={adRef}
+          shouldTryHypelabAd
           onError={() => setPromotionErrorOccurred(true)}
           onLoad={onAdLoad}
-          onLayout={onOutsideOfScrollAdLayout}
         />
       );
     }
 
     return result;
-  }, [activePromotion, onAdLoad, onOutsideOfScrollAdLayout, partnersPromoShown, promotionErrorOccurred, styles]);
+  }, [activePromotion, onAdLoad, shouldShowPartnersPromotion, styles]);
+
+  const handleSnapToItem = useCallback(
+    (index: number) => onIsVisible(shouldShowPartnersPromotion && index === 0),
+    [onIsVisible, shouldShowPartnersPromotion]
+  );
 
   const height = formatSize(112);
   const { layoutWidth, handleLayout } = useLayoutSizes();
@@ -77,35 +76,12 @@ export const PromotionCarousel = () => {
     []
   );
 
-  const handleProgressChange = useMemo(
-    () =>
-      throttle(
-        (offsetProgress: number, absoluteProgress: number) => {
-          let actualOffset = offsetProgress;
-          if (absoluteProgress > 1) {
-            const offsetPerSlide = Math.abs(offsetProgress / absoluteProgress);
-            const totalLength = offsetPerSlide * data.length;
-            const pivotX = totalLength / 2;
-            if (offsetProgress > pivotX) {
-              actualOffset = offsetProgress - totalLength;
-            } else if (offsetProgress < -pivotX) {
-              actualOffset = offsetProgress + totalLength;
-            }
-          }
-          setPromotionOffset({ x: actualOffset, y: 0 });
-        },
-        100,
-        { leading: false, trailing: true }
-      ),
-    [data.length]
-  );
-
   const renderItem = useCallback((info: CarouselRenderItemInfo<JSX.Element>) => info.item, []);
 
   const style = useMemo(() => [styles.container, { height }], [styles.container, height]);
 
   return (
-    <View onLayout={handleLayout} style={style} ref={layoutRef}>
+    <View onLayout={handleLayout} style={style}>
       {flooredWidth > 0 ? (
         <Carousel
           data={data}
@@ -118,7 +94,7 @@ export const PromotionCarousel = () => {
           height={height}
           scrollAnimationDuration={1200}
           renderItem={renderItem}
-          onProgressChange={handleProgressChange}
+          onSnapToItem={handleSnapToItem}
         />
       ) : null}
     </View>

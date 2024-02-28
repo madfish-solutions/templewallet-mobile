@@ -1,7 +1,7 @@
 import { clamp } from 'lodash-es';
 import { LayoutRectangle } from 'react-native';
 
-interface ParentSize {
+export interface ParentSize {
   width: number;
   height: number;
 }
