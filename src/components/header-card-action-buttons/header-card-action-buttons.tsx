@@ -103,7 +103,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         ? defaultStyleConfig.disabledColorConfig
         : defaultStyleConfig.activeColorConfig
     }),
-    [disabledSendButton]
+    [defaultStyleConfig, disabledSendButton]
   );
 
   const handleSendButton = () => {

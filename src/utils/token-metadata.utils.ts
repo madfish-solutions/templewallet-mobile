@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { tezosMetadataApi, whitelistApi } from 'src/api.service';
+import { scamlistApi, tezosMetadataApi, whitelistApi } from 'src/api.service';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -45,6 +45,12 @@ interface WhitelistResponse {
     minor: number;
     patch: number;
   };
+}
+
+interface ScamlistResponse {
+  name: string;
+  version: string;
+  slugs: Record<string, boolean>;
 }
 
 export interface WhitelistTokensItem {
@@ -102,6 +108,9 @@ export const loadWhitelist$ = (selectedRpc: string) =>
     : from(whitelistApi.get<WhitelistResponse>('tokens/quipuswap.whitelist.json')).pipe(
         map(({ data }) => data.tokens?.filter(x => x.contractAddress !== 'tez') ?? [])
       );
+
+export const loadScamlist$ = () =>
+  from(scamlistApi.get<ScamlistResponse>('tokens/scamlist.json')).pipe(map(({ data }) => data.slugs));
 
 export const loadTokenMetadata$ = memoizee(
   (address: string, id = 0): Observable<TokenMetadataInterface> => {

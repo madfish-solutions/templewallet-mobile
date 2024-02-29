@@ -25,6 +25,10 @@ export const whitelistApi = axios.create({
   baseURL: 'https://raw.githubusercontent.com/madfish-solutions/tokens-whitelist/master/'
 });
 
+export const scamlistApi = axios.create({
+  baseURL: 'https://raw.githubusercontent.com/madfish-solutions/tokens-scamlist/master/'
+});
+
 export const coingeckoApi = axios.create({ baseURL: 'https://api.coingecko.com/api/v3/' });
 
 export const exolixApi = axios.create({

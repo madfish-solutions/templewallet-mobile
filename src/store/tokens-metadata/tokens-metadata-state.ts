@@ -10,6 +10,7 @@ export interface TokensMetadataState {
   metadataRecord: Record<string, TokenMetadataInterface>;
   addTokenSuggestion: LoadableEntityState<TokenMetadataInterface>;
   knownSvgs: Record<string, boolean>;
+  scamTokenSlugs: LoadableEntityState<Record<string, boolean>>;
 }
 
 export const tokensMetadataInitialState: TokensMetadataState = {
@@ -22,5 +23,6 @@ export const tokensMetadataInitialState: TokensMetadataState = {
     {}
   ),
   addTokenSuggestion: createEntity(emptyTokenMetadata),
-  knownSvgs: {}
+  knownSvgs: {},
+  scamTokenSlugs: createEntity({})
 };

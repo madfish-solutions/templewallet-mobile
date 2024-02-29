@@ -18,6 +18,8 @@ export const loadTokensMetadataActions = createActions<string[], (TokenMetadataI
 
 export const loadWhitelistAction = createActions<void, WhitelistTokensItem[]>('assets/LOAD_WHITELIST_METADATA');
 
+export const loadScamlistAction = createActions<void, Record<string, boolean>>('assets/LOAD_SCAM_TOKEN_SLUGS');
+
 export const loadTokenMetadataActions = createActions<
   Pick<TokenMetadataInterface, 'id' | 'address'>,
   TokenMetadataInterface,

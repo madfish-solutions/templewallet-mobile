@@ -15,7 +15,8 @@ import {
   loadTokenSuggestionActions,
   loadTokensMetadataActions,
   loadWhitelistAction,
-  removeKnownSvg
+  removeKnownSvg,
+  loadScamlistAction
 } from './tokens-metadata-actions';
 import { tokensMetadataInitialState, TokensMetadataState } from './tokens-metadata-state';
 
@@ -62,6 +63,18 @@ const tokensMetadataReducers = createReducer<TokensMetadataState>(tokensMetadata
         state.metadataRecord[slug] = transformWhitelistToTokenMetadata(token);
       }
     }
+  });
+
+  builder.addCase(loadScamlistAction.submit, ({ scamTokenSlugs }) => {
+    scamTokenSlugs.isLoading = true;
+  });
+  builder.addCase(loadScamlistAction.success, ({ scamTokenSlugs }, { payload: newScamTokenSlugs }) => {
+    scamTokenSlugs.isLoading = false;
+    scamTokenSlugs.data = newScamTokenSlugs;
+  });
+  builder.addCase(loadScamlistAction.fail, ({ scamTokenSlugs }, { payload: error }) => {
+    scamTokenSlugs.isLoading = false;
+    scamTokenSlugs.error = error;
   });
 
   builder.addCase(loadTokenSuggestionActions.submit, state => ({
