@@ -21,7 +21,7 @@ import { useTopTokensTableStyles } from './top-tokens-table.styles';
 const renderItem: ListRenderItem<MarketToken> = ({ item }) => <Row {...item} />;
 const keyExtractor = (item: MarketToken) => item.id;
 
-export const PROMOTION_ID = 'market-promotion';
+const PROMOTION_ID = 'market-promotion';
 
 export const TopTokensTable = () => {
   const styles = useTopTokensTableStyles();

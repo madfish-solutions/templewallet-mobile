@@ -27,7 +27,7 @@ const getItemType = (item: ListItem) => (typeof item === 'string' ? 'sectionHead
 const ListEmptyComponent = <DataPlaceholder text="No Activity records were found" />;
 
 const AVERAGE_ITEM_HEIGHT = 150;
-export const PROMOTION_ID = 'activities-promotion';
+const PROMOTION_ID = 'activities-promotion';
 
 interface Props {
   activityGroups: ActivityGroup[];

@@ -32,7 +32,7 @@ type NormalPromotion = {
   view_url: string;
 };
 
-export type OptimalPromotionType = EmptyPromotion | NormalPromotion;
+type OptimalPromotionType = EmptyPromotion | NormalPromotion;
 
 export function useIsEmptyPromotion(promotion: OptimalPromotionType | nullish): promotion is EmptyPromotion {
   return useMemo(
