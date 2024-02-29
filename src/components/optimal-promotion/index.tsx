@@ -7,6 +7,7 @@ import { TextPromotionView } from 'src/components/text-promotion-view';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { SingleProviderPromotionProps } from 'src/types/promotion';
+import { useDidMount } from 'src/utils/hooks/use-did-mount';
 import { isDefined } from 'src/utils/is-defined';
 import { getOptimalPromotion, OptimalPromotionAdType, useIsEmptyPromotion } from 'src/utils/optimal.utils';
 
@@ -45,12 +46,11 @@ export const OptimalPromotion: FC<SingleProviderPromotionProps & SelfRefreshingP
   const [adViewIsReady, setAdViewIsReady] = useState(isImageAd);
   const promotionIsEmpty = useIsEmptyPromotion(promo);
 
-  useEffect(() => {
+  useDidMount(() => {
     if (!isValidating) {
       mutate();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   useEffect(() => {
     if (isDefined(error) || promotionIsEmpty) {
