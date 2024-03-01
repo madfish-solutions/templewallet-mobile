@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
-import { View } from 'react-native';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { LayoutChangeEvent, LayoutRectangle, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
 import { Icon } from 'src/components/icon/icon';
@@ -7,6 +7,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ImagePromotionView } from 'src/components/image-promotion-view';
 import { TextPromotionItemSelectors } from 'src/components/text-promotion-view/selectors';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { layoutScale } from 'src/config/styles';
 import { AdFrameMessageType } from 'src/enums/ad-frame-message-type.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
@@ -41,21 +42,42 @@ export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
   const styles = useHypelabPromotionStyles();
   const theme = useThemeSelector();
   const { trackEvent } = useAnalytics();
-  const [adFrameAspectRatio, setAdFrameAspectRatio] = useState(359 / 80);
   const [adHref, setAdHref] = useState<string>();
+
+  const [layoutRect, setLayoutRect] = useState<LayoutRectangle | undefined>();
+  const initialSize = useMemo(() => {
+    if (isImageAd) {
+      return { w: 320, h: 50 };
+    }
+
+    return layoutRect ? { w: Math.round(layoutRect.width / layoutScale), h: 80 } : undefined;
+  }, [isImageAd, layoutRect]);
+  const [size, setSize] = useState(initialSize);
+  useEffect(() => void (initialSize && setSize(prevSize => prevSize ?? initialSize)), [initialSize]);
+
   const adFrameSource = useMemo(() => {
     const placementSlug = isImageAd ? HYPELAB_SMALL_PLACEMENT_SLUG : HYPELAB_NATIVE_PLACEMENT_SLUG;
     const origin = theme === ThemesEnum.dark ? 'mobile-dark' : 'mobile-light';
-    const size = isImageAd ? { w: '320', h: '50' } : { w: '359', h: '80' };
+
+    if (!initialSize) {
+      return undefined;
+    }
+
     const searchParams = new URLSearchParams({
       p: placementSlug,
       o: origin,
-      vw: formatSize(Number(size.w)).toString(),
-      ...size
+      vw: formatSize(Number(initialSize.w)).toString(),
+      w: Number(initialSize.w).toString(),
+      h: Number(initialSize.h).toString()
     });
 
     return { uri: `${HYPELAB_AD_FRAME_URL}/?${searchParams.toString()}` };
-  }, [isImageAd, theme]);
+  }, [isImageAd, initialSize, theme]);
+
+  const handleMainLayout = useCallback((e: LayoutChangeEvent) => {
+    e.persist();
+    setLayoutRect(e.nativeEvent.layout);
+  }, []);
 
   useTimeout(
     () => {
@@ -74,7 +96,7 @@ export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
 
         switch (message.type) {
           case AdFrameMessageType.Resize:
-            setAdFrameAspectRatio(message.width / message.height);
+            setSize({ w: Math.round(message.width / layoutScale), h: Math.round(message.height / layoutScale) });
             break;
           case AdFrameMessageType.Ready:
             const prevAdHrefSearchParams = isDefined(adHref) ? new URL(adHref).searchParams : new URLSearchParams();
@@ -104,6 +126,16 @@ export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
     [adHref, onError, onReady, testID, testIDProperties, trackEvent]
   );
 
+  const webViewCommonProps = {
+    source: adFrameSource,
+    onError: onError,
+    onMessage: handleAdFrameMessage,
+    webviewDebuggingEnabled: __DEV__,
+    scrollEnabled: false,
+    scalesPageToFit: false,
+    textZoom: 100
+  };
+
   if (isImageAd) {
     return (
       <ImagePromotionView
@@ -115,32 +147,17 @@ export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
         {...testIDProps}
       >
         <View style={styles.imageAdFrameWrapper}>
-          <WebView
-            source={adFrameSource}
-            containerStyle={styles.imageAdFrame}
-            onError={onError}
-            onMessage={handleAdFrameMessage}
-            webviewDebuggingEnabled={__DEV__}
-            scrollEnabled={false}
-            scalesPageToFit={false}
-          />
+          <WebView {...webViewCommonProps} containerStyle={styles.imageAdFrame} />
         </View>
       </ImagePromotionView>
     );
   }
 
   return (
-    <View style={[styles.textAdFrameContainer, !isVisible && styles.invisible]}>
-      <WebView
-        source={adFrameSource}
-        containerStyle={styles.textAdFrame}
-        style={[styles.textAdFrame, { aspectRatio: adFrameAspectRatio }]}
-        onError={onError}
-        onMessage={handleAdFrameMessage}
-        webviewDebuggingEnabled={__DEV__}
-        scrollEnabled={false}
-        scalesPageToFit={false}
-      />
+    <View style={[styles.textAdFrameContainer, !isVisible && styles.invisible]} onLayout={handleMainLayout}>
+      {adFrameSource && size && (
+        <WebView {...webViewCommonProps} containerStyle={[styles.textAdFrame, { aspectRatio: size.w / size.h }]} />
+      )}
       {shouldShowCloseButton && (
         <TouchableWithAnalytics
           style={styles.closeButton}

@@ -145,7 +145,7 @@ export const ActivityGroupsList: FC<Props> = ({
       <View style={styles.promotionItemWrapper} onLayout={handlePromotionLayout}>
         <PromotionItem
           id={PROMOTION_ID}
-          style={styles.promotionItem}
+          style={shouldRenderList && styles.listPromotionItem}
           testID={ActivityGroupsListSelectors.promotion}
           ref={adRef}
           onError={handlePromotionError}
@@ -153,7 +153,7 @@ export const ActivityGroupsList: FC<Props> = ({
         />
       </View>
     ),
-    [styles, handlePromotionLayout, handlePromotionError, onAdLoad]
+    [styles, shouldRenderList, handlePromotionLayout, handlePromotionError, onAdLoad]
   );
 
   const renderItem: ListRenderItem<string | ActivityGroup> = useCallback(

@@ -43,15 +43,17 @@ export const PromotionCarousel = () => {
 
     if (shouldShowPartnersPromotion) {
       result.unshift(
-        <PromotionItem
-          id={PROMOTION_ID}
-          testID={PromotionCarouselSelectors.optimalPromotionBanner}
-          shouldShowCloseButton={false}
-          style={styles.promotionItem}
-          shouldTryHypelabAd={false}
-          onError={() => setPromotionErrorOccurred(true)}
-          onLoad={onAdLoad}
-        />
+        <View style={styles.promotionItemWrapper}>
+          <PromotionItem
+            id={PROMOTION_ID}
+            testID={PromotionCarouselSelectors.optimalPromotionBanner}
+            shouldShowCloseButton={false}
+            style={styles.promotionItem}
+            shouldTryHypelabAd={false}
+            onError={() => setPromotionErrorOccurred(true)}
+            onLoad={onAdLoad}
+          />
+        </View>
       );
     }
 

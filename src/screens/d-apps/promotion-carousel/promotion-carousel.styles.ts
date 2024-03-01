@@ -5,9 +5,13 @@ export const usePromotionCarouselStyles = createUseStyles(({ colors }) => ({
   container: {
     marginVertical: formatSize(12)
   },
+  promotionItemWrapper: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   promotionItem: {
     backgroundColor: colors.pageBG,
-    marginLeft: formatSize(16),
     width: formatSize(343),
     shadowOpacity: 0,
     elevation: 0

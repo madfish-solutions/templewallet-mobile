@@ -36,7 +36,7 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
   additionalLoader: {
     paddingTop: formatSize(16)
   },
-  promotionItem: {
-    width: formatSize(343)
+  listPromotionItem: {
+    marginRight: formatSize(16)
   }
 }));
