@@ -1,4 +1,5 @@
 export enum PromotionProviderEnum {
   Optimal = 'Optimal',
-  HypeLab = 'HypeLab'
+  HypeLab = 'HypeLab',
+  Persona = 'Persona'
 }

@@ -5,6 +5,7 @@ import { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { HypelabPromotion } from 'src/components/hypelab-promotion';
 import { OptimalPromotion } from 'src/components/optimal-promotion';
+import { PersonaPromotion } from 'src/components/persona-promotion';
 import { PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { isAndroid } from 'src/config/system';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
@@ -21,7 +22,7 @@ interface Props extends TestIdProps {
   style?: StyleProp<ViewStyle>;
   shouldRefreshAd?: boolean;
   shouldShowCloseButton?: boolean;
-  shouldTryHypelabAd?: boolean;
+  onlyOptimalAd?: boolean;
   variant?: PromotionVariantEnum;
   onError?: EmptyFn;
   onLoad?: SyncFn<PromotionProviderEnum>;
@@ -36,7 +37,7 @@ export const PromotionItem = forwardRef<View, Props>(
       shouldRefreshAd = false,
       shouldShowCloseButton = true,
       variant = PromotionVariantEnum.Image,
-      shouldTryHypelabAd = true,
+      onlyOptimalAd = false,
       onError,
       onLoad,
       onLayout,
@@ -89,12 +90,19 @@ export const PromotionItem = forwardRef<View, Props>(
     }, [onError]);
 
     const handleOptimalError = useCallback(() => {
-      if (!shouldTryHypelabAd) {
+      if (onlyOptimalAd) {
         handleAdError();
+      } else {
+        setAdsState(prevState => ({ ...prevState, currentProvider: PromotionProviderEnum.HypeLab }));
       }
-      setAdsState(prevState => ({ ...prevState, currentProvider: PromotionProviderEnum.HypeLab }));
-    }, [handleAdError, shouldTryHypelabAd]);
-    const handleHypelabError = useCallback(() => handleAdError(), [handleAdError]);
+    }, [handleAdError, onlyOptimalAd]);
+    const handleHypelabError = useCallback(() => {
+      if (variant === PromotionVariantEnum.Text) {
+        handleAdError();
+      } else {
+        setAdsState(prevState => ({ ...prevState, currentProvider: PromotionProviderEnum.Persona }));
+      }
+    }, [handleAdError, variant]);
 
     const handleAdReadyFactory = useCallback(
       (provider: PromotionProviderEnum) => () => {
@@ -111,10 +119,22 @@ export const PromotionItem = forwardRef<View, Props>(
       () => handleAdReadyFactory(PromotionProviderEnum.HypeLab),
       [handleAdReadyFactory]
     );
+    const handlePersonaAdReady = useMemo(
+      () => handleAdReadyFactory(PromotionProviderEnum.Persona),
+      [handleAdReadyFactory]
+    );
 
     if (!partnersPromotionEnabled || adError || isHiddenTemporarily) {
       return null;
     }
+
+    const promotionCommonProps = {
+      ...testIDProps,
+      variant: variant,
+      isVisible: adIsReady,
+      shouldShowCloseButton: shouldShowCloseButton,
+      onClose: hidePromotion
+    };
 
     return (
       <View
@@ -129,26 +149,17 @@ export const PromotionItem = forwardRef<View, Props>(
       >
         {currentProvider === PromotionProviderEnum.Optimal && isFocused && (
           <OptimalPromotion
-            {...testIDProps}
-            variant={variant}
-            isVisible={adIsReady}
-            shouldShowCloseButton={shouldShowCloseButton}
+            {...promotionCommonProps}
             shouldRefreshAd={shouldRefreshAd}
-            onClose={hidePromotion}
             onReady={handleOptimalAdReady}
             onError={handleOptimalError}
           />
         )}
-        {currentProvider === PromotionProviderEnum.HypeLab && shouldTryHypelabAd && isFocused && (
-          <HypelabPromotion
-            {...testIDProps}
-            variant={variant}
-            isVisible={adIsReady}
-            shouldShowCloseButton={shouldShowCloseButton}
-            onClose={hidePromotion}
-            onReady={handleHypelabAdReady}
-            onError={handleHypelabError}
-          />
+        {currentProvider === PromotionProviderEnum.HypeLab && isFocused && (
+          <HypelabPromotion {...promotionCommonProps} onReady={handleHypelabAdReady} onError={handleHypelabError} />
+        )}
+        {currentProvider === PromotionProviderEnum.Persona && isFocused && (
+          <PersonaPromotion {...promotionCommonProps} onReady={handlePersonaAdReady} onError={handleAdError} />
         )}
         {!adIsReady && (
           <View style={styles.loaderContainer}>

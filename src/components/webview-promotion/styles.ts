@@ -1,12 +1,14 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useHypelabPromotionStyles = createUseStylesMemoized(() => ({
+export const useWebviewPromotionStyles = createUseStylesMemoized(() => ({
   imageAdFrameWrapper: {
-    width: formatSize(320),
-    height: formatSize(50),
     borderRadius: formatSize(8),
     overflow: 'hidden'
+  },
+  fullSize: {
+    width: '100%',
+    height: '100%'
   },
   imageAdFrame: {
     width: '100%',
