@@ -7,6 +7,7 @@ import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isDcpNode } from 'src/utils/network.utils';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
 import type { RootState } from './types';
@@ -153,5 +154,22 @@ export const MIGRATIONS: MigrationManifest = {
         accountsStateRecord
       }
     };
+  },
+  '6': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
+    if (!untypedState) {
+      return untypedState;
+    }
+
+    const state = untypedState as TypedPersistedRootState;
+
+    return isDcpNode(state.settings.selectedRpcUrl)
+      ? {
+          ...state,
+          settings: {
+            ...state.settings,
+            selectedRpcUrl: TEMPLE_RPC.url
+          }
+        }
+      : state;
   }
 };

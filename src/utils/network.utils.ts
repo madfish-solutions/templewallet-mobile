@@ -8,3 +8,5 @@ export const isDcpNode = (selectedRpcUrl: string) => new URL(selectedRpcUrl).hre
 
 export const getNetworkGasTokenMetadata = (selectedRpcUrl: string) =>
   isDcpNode(selectedRpcUrl) ? FILM_TOKEN_METADATA : TEZ_TOKEN_METADATA;
+
+export const TALENT_MAINNET_CHAIN_ID = 'NetXooyhiru73tk';
