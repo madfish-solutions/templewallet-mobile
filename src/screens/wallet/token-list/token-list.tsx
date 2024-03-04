@@ -11,20 +11,21 @@ import { HorizontalBorder } from 'src/components/horizontal-border';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { InAppUpdateBanner } from 'src/components/in-app-update-banner/in-app-update-banner';
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
-import { OptimalPromotionVariantEnum } from 'src/components/optimal-promotion-item/optimal-promotion-variant.enum';
+import { PromotionItem } from 'src/components/promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
+import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useListElementIntersection } from 'src/hooks/use-list-element-intersection.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
-import { loadPartnersPromoActions } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import {
   useHideZeroBalancesSelector,
@@ -40,7 +41,6 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
-import { OptimalPromotionAdType } from 'src/utils/optimal.utils';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { WalletSelectors } from '../wallet.selectors';
@@ -76,6 +76,9 @@ export const TokensList = memo(() => {
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const flashListRef = useRef<FlashList<ListItem>>(null);
+  const adListItemRef = useRef<View>(null);
+  const flashListWrapperRef = useRef<View>(null);
+  const refs = useMemo(() => ({ parent: flashListWrapperRef, element: adListItemRef }), []);
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
@@ -89,6 +92,9 @@ export const TokensList = memo(() => {
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const { isTezosNode } = useNetworkInfo();
 
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('Home page');
+  const { onListScroll, onElementLayoutChange, onListLayoutChange } = useListElementIntersection(onIsVisible, refs);
+
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
     dispatch(setZeroBalancesShown(value));
     trackEvent(WalletSelectors.hideZeroBalancesCheckbox, AnalyticsEventCategory.ButtonPress);
@@ -97,7 +103,6 @@ export const TokensList = memo(() => {
   useEffect(() => {
     const listener = () => {
       if (partnersPromoShown) {
-        dispatch(loadPartnersPromoActions.submit(OptimalPromotionAdType.TwToken));
         setPromotionErrorOccurred(false);
       }
     };
@@ -154,20 +159,21 @@ export const TokensList = memo(() => {
   ]);
 
   const handleLayout = useCallback((event: LayoutChangeEvent) => setListHeight(event.nativeEvent.layout.height), []);
+  const handlePromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
 
   const renderItem: ListRenderItem<ListItem> = useCallback(
     ({ item }) => {
       if (item === AD_PLACEHOLDER) {
         return (
-          <View>
+          <View onLayout={onElementLayoutChange} ref={adListItemRef}>
             <View style={styles.promotionItemWrapper}>
-              <OptimalPromotionItem
+              <PromotionItem
                 id={PROMOTION_ID}
-                variant={OptimalPromotionVariantEnum.Text}
+                variant={PromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}
-                onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
-                onImageError={() => setPromotionErrorOccurred(true)}
+                onError={handlePromotionError}
+                onLoad={onAdLoad}
               />
             </View>
             <HorizontalBorder style={styles.promotionItemBorder} />
@@ -187,7 +193,7 @@ export const TokensList = memo(() => {
 
       return <TokenListItem token={item} scam={scamTokenSlugsRecord[slug]} apy={apyRates[slug]} />;
     },
-    [apyRates, scamTokenSlugsRecord, styles]
+    [apyRates, scamTokenSlugsRecord, handlePromotionError, onAdLoad, onElementLayoutChange, styles]
   );
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
@@ -233,7 +239,12 @@ export const TokensList = memo(() => {
         <AcceptAdsBanner style={styles.banner} />
       ) : null}
 
-      <View style={styles.contentContainerStyle} onLayout={handleLayout} testID={WalletSelectors.tokenList}>
+      <View
+        style={styles.contentContainerStyle}
+        ref={flashListWrapperRef}
+        onLayout={handleLayout}
+        testID={WalletSelectors.tokenList}
+      >
         <FlashList
           ref={flashListRef}
           data={renderData}
@@ -243,6 +254,8 @@ export const TokensList = memo(() => {
           estimatedItemSize={FLOORED_ITEM_HEIGHT}
           ListEmptyComponent={ListEmptyComponent}
           refreshControl={refreshControl}
+          onScroll={onListScroll}
+          onLayout={onListLayoutChange}
         />
       </View>
     </>

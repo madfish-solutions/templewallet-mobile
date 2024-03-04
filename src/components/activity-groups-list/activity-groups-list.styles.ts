@@ -5,21 +5,22 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
   contentContainer: {
     flex: 1,
     paddingTop: formatSize(8),
-    paddingBottom: formatSize(16),
-    paddingLeft: formatSize(16)
+    paddingBottom: formatSize(16)
   },
   adContainer: {
     paddingBottom: formatSize(12),
-    paddingHorizontal: formatSize(16)
+    paddingRight: formatSize(16)
   },
   sectionHeaderText: {
     ...typography.numbersMedium13,
     color: colors.gray2,
     backgroundColor: colors.pageBG,
-    paddingVertical: formatSize(4)
+    paddingVertical: formatSize(4),
+    marginLeft: formatSize(16)
   },
   promotionItemWrapper: {
     paddingVertical: formatSize(12),
+    marginLeft: formatSize(16),
     borderBottomWidth: formatSize(0.5),
     borderBottomColor: colors.lines
   },
@@ -35,7 +36,7 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
   additionalLoader: {
     paddingTop: formatSize(16)
   },
-  promotionItem: {
-    width: formatSize(343)
+  listPromotionItem: {
+    marginRight: formatSize(16)
   }
 }));

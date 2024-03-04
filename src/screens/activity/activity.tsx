@@ -16,6 +16,7 @@ export const Activity = () => {
       activityGroups={activities}
       isAllLoaded={isAllLoaded}
       isLoading={isLoading}
+      pageName="Activity"
     />
   );
 };

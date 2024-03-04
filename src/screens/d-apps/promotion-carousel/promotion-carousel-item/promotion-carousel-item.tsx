@@ -1,7 +1,10 @@
+import { noop } from 'lodash-es';
 import React, { FC, memo } from 'react';
-import { Source } from 'react-native-fast-image';
+import FastImage, { Source } from 'react-native-fast-image';
+import { SvgUri } from 'react-native-svg';
 
-import { PromotionItem } from 'src/components/promotion-item/promotion-item';
+import { ImagePromotionView } from 'src/components/image-promotion-view';
+import { formatSize } from 'src/styles/format-size';
 
 import { usePromotionCarouselItemStyles } from './promotion-carousel-item.styles';
 
@@ -12,8 +15,23 @@ interface Props {
   shouldShowAdBage?: boolean;
 }
 
-export const PromotionCarouselItem: FC<Props> = memo(props => {
+export const PromotionCarouselItem: FC<Props> = memo(({ source, link, testID, shouldShowAdBage = false }) => {
   const styles = usePromotionCarouselItemStyles();
 
-  return <PromotionItem style={styles.container} {...props} />;
+  return (
+    <ImagePromotionView
+      href={link}
+      isVisible
+      shouldShowCloseButton={false}
+      shouldShowAdBage={shouldShowAdBage}
+      testID={testID}
+      onClose={noop}
+    >
+      {typeof source === 'string' ? (
+        <SvgUri style={styles.bannerImage} height={formatSize(112)} width={formatSize(343)} uri={source} />
+      ) : (
+        <FastImage style={styles.bannerImage} source={source} />
+      )}
+    </ImagePromotionView>
+  );
 });

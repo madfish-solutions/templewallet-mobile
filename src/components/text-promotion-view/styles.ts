@@ -1,9 +1,9 @@
 import { black } from 'src/config/styles';
-import { createUseStyles } from 'src/styles/create-use-styles';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 
-export const useTextPromotionItemStyles = createUseStyles(({ colors, typography }) => ({
+export const useTextPromotionViewStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {
     paddingHorizontal: formatSize(7.5),
     paddingVertical: formatSize(12),
@@ -12,6 +12,9 @@ export const useTextPromotionItemStyles = createUseStyles(({ colors, typography 
     flexDirection: 'row',
     position: 'relative',
     ...generateShadow(1, black)
+  },
+  invisible: {
+    opacity: 0
   },
   imageContainer: {
     marginRight: formatSize(9.5),
@@ -59,13 +62,5 @@ export const useTextPromotionItemStyles = createUseStyles(({ colors, typography 
     top: formatSize(6),
     right: formatSize(6),
     padding: formatSize(6)
-  },
-  loaderContainer: {
-    backgroundColor: colors.cardBG,
-    width: formatSize(359),
-    height: formatSize(80),
-    borderRadius: formatSize(10),
-    justifyContent: 'center',
-    alignItems: 'center'
   }
 }));
