@@ -8,7 +8,7 @@ export const useBottomSheetActionButtonStyles = createUseStyles(({ colors, typog
     alignItems: 'center',
     backgroundColor: colors.navigation,
     borderColor: colors.lines,
-    borderBottomWidth: formatSize(0.5)
+    borderBottomWidth: formatSize(1)
   },
   title: {
     ...typography.body17Regular,

@@ -14,7 +14,7 @@ interface Props extends TokenContainerProps {
   onPress?: EmptyFn;
 }
 
-export const TokenListItem = memo<Props>(({ token, apy, onPress }) => {
+export const TokenListItem = memo<Props>(({ token, scam, apy, onPress }) => {
   const styles = useTokenListItemStyles();
   const { navigate } = useNavigation();
 
@@ -29,7 +29,7 @@ export const TokenListItem = memo<Props>(({ token, apy, onPress }) => {
 
   return (
     <TouchableOpacity onPress={handleOnPress} style={styles.container}>
-      <TokenContainer token={token} apy={apy}>
+      <TokenContainer token={token} scam={scam} apy={apy}>
         <View style={styles.rightContainer}>
           <HideBalance style={styles.balanceText}>
             <AssetValueText asset={token} amount={token.balance} showSymbol={false} />

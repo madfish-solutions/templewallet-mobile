@@ -11,5 +11,5 @@ interface Props {
 }
 
 export const TopUpAssetValueText: FC<Props> = ({ amount, style }) => {
-  return <Text style={style}>{formatAssetAmount(isDefined(amount) ? amount : new BigNumber(0))}</Text>;
+  return <Text style={style}>{formatAssetAmount(isDefined(amount) ? amount : new BigNumber(0), 8)}</Text>;
 };

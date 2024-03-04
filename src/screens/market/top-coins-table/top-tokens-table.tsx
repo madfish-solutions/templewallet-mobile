@@ -3,9 +3,11 @@ import { ListRenderItem, RefreshControl, Text, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+import { PromotionItem } from 'src/components/promotion-item';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredMarketTokens } from 'src/hooks/use-filtered-market-tokens.hook';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { MarketToken } from 'src/store/market/market.interfaces';
 import { formatSize } from 'src/styles/format-size';
 
@@ -19,6 +21,8 @@ import { useTopTokensTableStyles } from './top-tokens-table.styles';
 const renderItem: ListRenderItem<MarketToken> = ({ item }) => <Row {...item} />;
 const keyExtractor = (item: MarketToken) => item.id;
 
+const PROMOTION_ID = 'market-promotion';
+
 export const TopTokensTable = () => {
   const styles = useTopTokensTableStyles();
   const {
@@ -31,6 +35,11 @@ export const TopTokensTable = () => {
   } = useFilteredMarketTokens();
   const ref = useRef<SwipeListView<MarketToken>>(null);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
+
+  const adRef = useRef<View>(null);
+  const adParentRef = useRef<View>(null);
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('Market', false);
+  const { onElementOrParentLayout } = useOutsideOfListIntersection(adParentRef, adRef, onIsVisible);
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
@@ -46,6 +55,8 @@ export const TopTokensTable = () => {
 
   const closeAllOpenRows = useCallback(() => ref.current?.closeAllOpenRows(), []);
 
+  const handlePromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
+
   const handleSelectorChangeAndSwipeClose = (index: number) => {
     handleSelectorChange(index);
     closeAllOpenRows();
@@ -54,12 +65,17 @@ export const TopTokensTable = () => {
   return (
     <View style={styles.rootContainer}>
       {!promotionErrorOccurred && (
-        <OptimalPromotionItem
-          style={styles.promotion}
-          testID={MarketSelectors.promotion}
-          onImageError={() => setPromotionErrorOccurred(true)}
-          onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
-        />
+        <View style={styles.promotionWrapper} ref={adParentRef} onLayout={onElementOrParentLayout}>
+          <PromotionItem
+            id={PROMOTION_ID}
+            shouldRefreshAd
+            testID={MarketSelectors.promotion}
+            onLoad={onAdLoad}
+            onError={handlePromotionError}
+            onLayout={onElementOrParentLayout}
+            ref={adRef}
+          />
+        </View>
       )}
       <Filters
         sortFiled={sortFiled}

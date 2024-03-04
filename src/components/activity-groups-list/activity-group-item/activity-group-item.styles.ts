@@ -3,6 +3,7 @@ import { formatSize } from '../../../styles/format-size';
 
 export const useActivityGroupItemStyles = createUseStyles(({ colors }) => ({
   container: {
+    marginLeft: formatSize(16),
     borderBottomColor: colors.lines,
     borderBottomWidth: formatSize(0.5),
     paddingRight: formatSize(16)

@@ -41,7 +41,6 @@ export const useOpportunityCategoryCardStyles = createUseStylesMemoized(({ color
   statsItemLabel: {
     ...typography.caption11Regular,
     letterSpacing: formatSize(0.07),
-    textIndent: formatSize(1),
     color: colors.gray1
   },
   statsItemValue: {

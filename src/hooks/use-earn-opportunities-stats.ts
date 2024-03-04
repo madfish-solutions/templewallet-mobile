@@ -20,7 +20,7 @@ export const useEarnOpportunitiesStats = (
       netApr: new BigNumber(DEFAULT_AMOUNT),
       totalStakedAmountInFiat: new BigNumber(DEFAULT_AMOUNT),
       totalClaimableRewardsInFiat: new BigNumber(DEFAULT_AMOUNT),
-      maxApr: BigNumber.maximum(DEFAULT_AMOUNT, ...earnOpportunities.map(item => item.apr ?? DEFAULT_AMOUNT))
+      maxApr: BigNumber.maximum(DEFAULT_AMOUNT, ...earnOpportunities.map(item => getCorrectApr(item.apr)))
     };
 
     let totalWeightedApr = new BigNumber(DEFAULT_AMOUNT);
@@ -39,9 +39,7 @@ export const useEarnOpportunitiesStats = (
         fiatToUsdRate
       );
 
-      totalWeightedApr = totalWeightedApr.plus(
-        new BigNumber(item.apr ?? DEFAULT_AMOUNT).multipliedBy(depositValueInFiat)
-      );
+      totalWeightedApr = totalWeightedApr.plus(new BigNumber(getCorrectApr(item.apr)).multipliedBy(depositValueInFiat));
       result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.plus(depositValueInFiat);
       result.totalClaimableRewardsInFiat = result.totalClaimableRewardsInFiat.plus(
         atomicTokenAmountToFiat(
@@ -60,3 +58,5 @@ export const useEarnOpportunitiesStats = (
     return result;
   }, [earnOpportunities, userStakes, fiatToUsdRate]);
 };
+
+const getCorrectApr = (apr: string | null) => (isDefined(apr) && apr !== 'NaN' ? apr : DEFAULT_AMOUNT);

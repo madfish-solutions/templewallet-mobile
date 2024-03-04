@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
@@ -33,7 +34,7 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   };
 
   const handleImportAccountButtonPress = () => {
-    navigate(ScreensEnum.ImportAccount);
+    navigate(ModalsEnum.ChooseAccountImportType);
     onPress();
   };
 

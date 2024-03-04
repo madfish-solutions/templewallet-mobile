@@ -32,7 +32,8 @@ export const MnemonicInput: FC<MnemonicProps> = ({
 
   const handlePasteButtonPress = async () => {
     inputRef.current?.focus();
-    onChangeText(await Clipboard.getString());
+    const clipboardText = await Clipboard.getString();
+    onChangeText(clipboardText.trim());
   };
 
   return (

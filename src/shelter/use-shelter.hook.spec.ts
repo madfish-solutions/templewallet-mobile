@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { mockHdAccount } from '../interfaces/account.interface.mock';
 import { mockAccountCredentials, mockInvalidPrivateKey } from '../mocks/account-credentials.mock';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
-import { mockGoBack, mockNavigate } from '../mocks/react-navigation.mock';
+import { mockNavigationDispatch, mockNavigate } from '../mocks/react-navigation.mock';
 import { mockUseDispatch } from '../mocks/react-redux.mock';
 import { mockInMemorySigner } from '../mocks/taquito-signer.mock';
 import { StacksEnum } from '../navigator/enums/stacks.enum';
@@ -29,7 +29,7 @@ describe('useShelter', () => {
     mockShelter.revealSeedPhrase$.mockClear();
     mockShelter.createImportedAccount$.mockClear();
     mockUseDispatch.mockClear();
-    mockGoBack.mockClear();
+    mockNavigationDispatch.mockClear();
     mockNavigate.mockClear();
     mockShowErrorToast.mockClear();
     mockShowSuccessToast.mockClear();
@@ -139,7 +139,7 @@ describe('useShelter', () => {
     expect(mockUseDispatch).toBeCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
     expect(mockUseDispatch).toBeCalledWith(addHdAccountAction(mockHdAccount));
     expect(mockShowSuccessToast).toBeCalledWith({ description: 'Account Imported!' });
-    expect(mockGoBack).toBeCalled();
+    expect(mockNavigationDispatch).toBeCalledWith({ type: 'POP_TO_TOP' });
   });
 
   it('should not create account with invalid private key', async () => {

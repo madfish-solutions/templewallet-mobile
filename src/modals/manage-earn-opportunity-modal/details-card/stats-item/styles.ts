@@ -8,7 +8,6 @@ export const useStatsItemStyles = createUseStylesMemoized(({ colors, typography 
   title: {
     ...typography.caption11Regular,
     letterSpacing: formatSize(0.07),
-    textIndent: formatSize(1),
     marginBottom: formatSize(2),
     color: colors.gray1
   },

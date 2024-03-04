@@ -4,15 +4,15 @@ import { View } from 'react-native';
 import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
 import { formatSize } from 'src/styles/format-size';
 
-import { DelegateTag } from '../delegate-tag/delegate-tag';
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
+import { TokenTag } from '../token-tag/token-tag';
 import { TruncatedText } from '../truncated-text';
 
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
-export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_APR_VALUE, children }) => {
+export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_APR_VALUE, scam, children }) => {
   const styles = useTokenContainerStyles();
 
   return (
@@ -23,7 +23,7 @@ export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_A
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
             <TruncatedText style={styles.symbolText}>{token.symbol}</TruncatedText>
-            <DelegateTag token={token} apy={apy} />
+            <TokenTag token={token} scam={scam} apy={apy} />
           </View>
           <TruncatedText style={styles.nameText}>{token.name}</TruncatedText>
         </View>

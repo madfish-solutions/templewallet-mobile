@@ -13,6 +13,9 @@ export const useSetPasswordScreensCommonStyles = createUseStyles(({ colors, typo
     paddingHorizontal: formatSize(16),
     backgroundColor: colors.pageBG
   },
+  withoutSeparator: {
+    borderTopWidth: 0
+  },
   checkboxContainer: {
     marginLeft: formatSize(4)
   },
@@ -25,5 +28,11 @@ export const useSetPasswordScreensCommonStyles = createUseStyles(({ colors, typo
   },
   mb40: {
     marginBottom: formatSize(40)
+  },
+  buttonsContainer: {
+    paddingHorizontal: formatSize(8)
+  },
+  flex: {
+    flex: 1
   }
 }));

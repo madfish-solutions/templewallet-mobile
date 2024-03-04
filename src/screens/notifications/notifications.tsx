@@ -1,11 +1,14 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { HorizontalBorder } from 'src/components/horizontal-border';
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
-import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
+import { PromotionItem } from 'src/components/promotion-item';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
+import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { viewAllNotificationsAction } from 'src/store/notifications/notifications-actions';
@@ -19,6 +22,7 @@ import { NotificationsStyles } from './notifications.styles';
 
 const VIEW_ALL_NOTIFICATIONS_TIMEOUT = 5 * 1000;
 const AVERAGE_NOTIFICATION_ITEM_HEIGHT = Math.round(formatSize(132));
+const PROMOTION_ID = 'notifications-promotion';
 
 const keyExtractor = (item: NotificationInterface) => item.id.toString();
 
@@ -29,10 +33,12 @@ const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
 export const Notifications = () => {
   const notifications = useNotificationsSelector();
   const dispatch = useDispatch();
-  const partnersPromoShown = useIsPartnersPromoShown();
+  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
-  usePartnersPromoLoad();
+  const adRef = useRef<View>(null);
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('Notifications');
+  const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
 
@@ -48,11 +54,14 @@ export const Notifications = () => {
     <>
       {partnersPromoShown && !promotionErrorOccurred && (
         <>
-          <OptimalPromotionItem
+          <PromotionItem
+            id={PROMOTION_ID}
             testID={NotificationsSelectors.promotion}
             style={NotificationsStyles.ads}
-            onImageError={handlePromotionItemError}
-            onEmptyPromotionReceived={handlePromotionItemError}
+            ref={adRef}
+            onError={handlePromotionItemError}
+            onLayout={onElementOrParentLayout}
+            onLoad={onAdLoad}
           />
           <HorizontalBorder />
         </>

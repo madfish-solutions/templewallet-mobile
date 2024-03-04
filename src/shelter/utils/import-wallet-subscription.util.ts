@@ -1,9 +1,10 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { forkJoin, of, Subject, switchMap, tap } from 'rxjs';
 
-import { hideLoaderAction, setIsBiometricsEnabled, showLoaderAction } from '../../store/settings/settings-actions';
-import { loadWhitelistAction } from '../../store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from '../../store/wallet/wallet-actions';
+import { hideLoaderAction, setIsBiometricsEnabled, showLoaderAction } from 'src/store/settings/settings-actions';
+import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+
 import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
 import { Shelter } from '../shelter';
 

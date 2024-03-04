@@ -1,21 +1,20 @@
 import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Divider } from '../../components/divider/divider';
-import { ExternalLinkButton } from '../../components/icon/external-link-button/external-link-button';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { PublicKeyHashText } from '../../components/public-key-hash-text/public-key-hash-text';
-import { EmptyFn } from '../../config/general';
-import { white } from '../../config/styles';
-import { ToastTypeEnum } from '../../enums/toast-type.enum';
-import { useSelectedRpcUrlSelector } from '../../store/settings/settings-selectors';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { isDefined } from '../../utils/is-defined';
-import { isString } from '../../utils/is-string';
-import { tzktUrl } from '../../utils/linking';
-import { hexa } from '../../utils/style.util';
+import { Divider } from 'src/components/divider/divider';
+import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
+import { white } from 'src/config/styles';
+import { ToastTypeEnum } from 'src/enums/toast-type.enum';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
+import { tzktUrl } from 'src/utils/linking';
+import { hexa } from 'src/utils/style.util';
 
 import { useToastStyles } from './toast.styles';
 
@@ -28,6 +27,12 @@ interface Props {
   isCopyButtonVisible?: boolean;
   onPress: EmptyFn;
 }
+
+const iconNameMap: Record<string, IconNameEnum> = {
+  [ToastTypeEnum.Success]: IconNameEnum.Success,
+  [ToastTypeEnum.Warning]: IconNameEnum.AlertCircle,
+  [ToastTypeEnum.Error]: IconNameEnum.AlertTriangle
+};
 
 export const CustomToast: FC<Props> = ({
   title,
@@ -59,7 +64,8 @@ export const CustomToast: FC<Props> = ({
       <View style={[styles.overlay, { backgroundColor: backgroundColorMap[toastType] }]}>
         <View style={styles.innerContent}>
           <Icon
-            name={toastType === ToastTypeEnum.Success ? IconNameEnum.Success : IconNameEnum.Shield}
+            name={iconNameMap[toastType]}
+            size={formatSize(16)}
             style={styles.iconLeft}
             {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}
           />
@@ -82,7 +88,7 @@ export const CustomToast: FC<Props> = ({
                 {description}
               </Text>
               {isCopyButtonVisible === true && (
-                <View style={styles.iconContainer}>
+                <View style={styles.copyIconContainer}>
                   <Icon name={IconNameEnum.Copy} color={white} />
                 </View>
               )}

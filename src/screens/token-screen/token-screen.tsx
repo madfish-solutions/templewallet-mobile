@@ -11,8 +11,8 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { useContractActivity } from 'src/hooks/use-contract-activity';
-import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -32,6 +32,8 @@ export const TokenScreen = () => {
   const tokensList = useCurrentAccountTokens();
   const tezosToken = useTezosTokenOfCurrentAccount();
 
+  const scamTokenSlugsRecord = useScamTokenSlugsSelector();
+
   const token = useMemo(() => {
     const slug = getTokenSlug(initialToken);
     if (slug === TEZ_TOKEN_SLUG) {
@@ -49,8 +51,6 @@ export const TokenScreen = () => {
       })
     );
   }, []);
-
-  usePartnersPromoLoad();
 
   const { activities, handleUpdate, isAllLoaded, isLoading } = useContractActivity(getTokenSlug(initialToken));
 
@@ -75,10 +75,12 @@ export const TokenScreen = () => {
             activityGroups={activities}
             isAllLoaded={isAllLoaded}
             isLoading={isLoading}
+            pageName="Token page"
           />
         }
         infoComponent={<TokenInfo token={token} />}
         token={token}
+        scam={scamTokenSlugsRecord[getTokenSlug(token)]}
       />
     </>
   );

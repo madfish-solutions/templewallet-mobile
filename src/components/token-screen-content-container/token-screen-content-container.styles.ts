@@ -1,8 +1,9 @@
-import { basicLightColors } from '../../styles/colors';
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { white } from 'src/config/styles';
+import { basicLightColors } from 'src/styles/colors';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, typography }) => ({
+export const useTokenScreenContentContainerStyles = createUseStylesMemoized(({ colors, typography }) => ({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -31,6 +32,20 @@ export const useTokenScreenContentContainerStyles = createUseStyles(({ colors, t
   },
   apyText: {
     ...typography.caption13Semibold,
-    color: 'white'
+    color: white
+  },
+  scamText: {
+    ...typography.tagline13Tag,
+    textTransform: 'uppercase',
+    color: white
+  },
+  scamContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: formatSize(4),
+    paddingRight: formatSize(8),
+    borderRadius: formatSize(14),
+    backgroundColor: colors.destructive
   }
 }));

@@ -29,9 +29,10 @@ export const useTopTokensTableStyles = createUseStyles(({ colors, typography }) 
   name: {
     textAlign: 'center'
   },
-  promotion: {
+  promotionWrapper: {
     backgroundColor: colors.pageBG,
     paddingVertical: formatSize(12),
+    paddingHorizontal: formatSize(16),
     borderBottomWidth: formatSize(1),
     borderColor: colors.lines
   }

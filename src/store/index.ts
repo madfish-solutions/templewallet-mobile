@@ -12,7 +12,6 @@ import { exolixEpics } from './exolix/exolix-epics';
 import { farmsEpics } from './farms/epics';
 import { marketEpics } from './market/market-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
-import { partnersPromotionEpics } from './partners-promotion/partners-promotion-epics';
 import { rootStateEpics } from './root-state.epics';
 import { savingsEpics } from './savings/epics';
 import { securityEpics } from './security/security-epics';
@@ -38,7 +37,6 @@ export const { store, persistor } = createStore(
   contactsEpics,
   collectionsEpics,
   buyWithCreditCardEpics,
-  partnersPromotionEpics,
   abTestingEpics,
   collectiblesEpics,
   farmsEpics,

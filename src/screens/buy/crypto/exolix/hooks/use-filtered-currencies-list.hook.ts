@@ -5,10 +5,26 @@ import { useExolixCurrencies } from 'src/store/exolix/exolix-selectors';
 import { isString } from 'src/utils/is-string';
 
 export const useFilteredCurrenciesList = () => {
-  const currencies = useExolixCurrencies();
+  const allCurrencies = useExolixCurrencies();
   const [searchValue, setSearchValue] = useState<string>();
-  const filteredCurrenciesList = useMemo<TopUpWithNetworkInterface[]>(() => {
-    const sourceArray = currencies;
+
+  const { inputCurrencies, outputCurrencies } = useMemo(() => {
+    const inputCurrencies: TopUpWithNetworkInterface[] = [];
+    const outputCurrencies: TopUpWithNetworkInterface[] = [];
+
+    allCurrencies.forEach(currency => {
+      if (currency.network.code === 'XTZ') {
+        outputCurrencies.push(currency);
+      } else {
+        inputCurrencies.push(currency);
+      }
+    });
+
+    return { inputCurrencies, outputCurrencies };
+  }, [allCurrencies]);
+
+  const filteredInputCurrenciesList = useMemo(() => {
+    const sourceArray = inputCurrencies;
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
@@ -26,11 +42,13 @@ export const useFilteredCurrenciesList = () => {
     } else {
       return sourceArray;
     }
-  }, [searchValue, currencies]);
+  }, [searchValue, inputCurrencies]);
 
   return {
-    allCurrencies: currencies,
-    filteredCurrenciesList,
+    allCurrencies,
+    inputCurrencies,
+    outputCurrencies,
+    filteredInputCurrenciesList,
     searchValue,
     setSearchValue
   };

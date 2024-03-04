@@ -74,7 +74,7 @@ export const ScanQrCode = () => {
       }
     } else {
       if (isSyncPayload(data)) {
-        navigate(ScreensEnum.ConfirmSync, { payload: data });
+        navigate(ModalsEnum.ConfirmSync, { payload: data });
       } else {
         trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
         showErrorToast({ description: 'Invalid QR code' });

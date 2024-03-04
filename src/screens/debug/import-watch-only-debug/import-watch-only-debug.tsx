@@ -3,14 +3,14 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../components/button/button-large/button-large-primary/button-large-primary';
-import { AccountTypeEnum } from '../../../enums/account-type.enum';
-import { FormAddressInput } from '../../../form/form-address-input';
-import { FormTextInput } from '../../../form/form-text-input';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { loadWhitelistAction } from '../../../store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from '../../../store/wallet/wallet-actions';
-import { showSuccessToast } from '../../../toast/toast.utils';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { FormAddressInput } from 'src/form/form-address-input';
+import { FormTextInput } from 'src/form/form-text-input';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { showSuccessToast } from 'src/toast/toast.utils';
 
 import {
   importWatchOnlyDebugInitialValues,

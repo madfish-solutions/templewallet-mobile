@@ -38,7 +38,7 @@ export const SecurityUpdate = memo(() => {
       {innerScreenIndex === 0 && <SecurityUpdateInfo onNextClick={goToSeedPhraseVerification} />}
       {innerScreenIndex === 1 && (
         <RevealSeedPhrase
-          onBackPress={handleBackPress}
+          onGoBackPress={handleBackPress}
           onSubmit={doMigration}
           submitButtonTitle="Update"
           seedPhraseBackupErrorText="Unable to continue without accepting Seed Phrase backup"

@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { MARKET_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
-import { usePartnersPromoSync } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadMarketTokensSlugsActions } from 'src/store/market/market-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -16,8 +15,6 @@ export const Market = () => {
   const dispatch = useDispatch();
 
   useAuthorisedInterval(() => dispatch(loadMarketTokensSlugsActions.submit()), MARKET_SYNC_INTERVAL);
-
-  usePartnersPromoSync();
 
   usePageAnalytic(ScreensEnum.Market);
 
