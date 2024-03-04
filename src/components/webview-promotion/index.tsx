@@ -28,7 +28,7 @@ import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { useWebviewPromotionStyles } from './styles';
 
-export interface WebViewPromotionProps extends SingleProviderPromotionProps {
+interface WebViewPromotionProps extends SingleProviderPromotionProps {
   provider: PromotionProviderEnum.HypeLab | PromotionProviderEnum.Persona;
   placementSlug: string;
   initialOriginalWidth?: number;
