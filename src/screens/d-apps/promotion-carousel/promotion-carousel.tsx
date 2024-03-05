@@ -25,7 +25,8 @@ export const PromotionCarousel = () => {
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const shouldShowPartnersPromotion = partnersPromoShown && !promotionErrorOccurred;
-  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('DApps', true, 500);
+  const adPageName = 'DApps';
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, true, 500);
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -47,6 +48,7 @@ export const PromotionCarousel = () => {
           <PromotionItem
             id={PROMOTION_ID}
             testID={PromotionCarouselSelectors.optimalPromotionBanner}
+            pageName={adPageName}
             shouldShowCloseButton={false}
             style={styles.promotionItem}
             shouldTryHypelabAd={false}

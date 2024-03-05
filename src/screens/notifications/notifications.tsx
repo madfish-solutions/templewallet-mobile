@@ -37,7 +37,8 @@ export const Notifications = () => {
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const adRef = useRef<View>(null);
-  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('Notifications');
+  const adPageName = 'Notifications';
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName);
   const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
@@ -57,6 +58,7 @@ export const Notifications = () => {
           <PromotionItem
             id={PROMOTION_ID}
             testID={NotificationsSelectors.promotion}
+            pageName={adPageName}
             style={NotificationsStyles.ads}
             ref={adRef}
             onError={handlePromotionItemError}

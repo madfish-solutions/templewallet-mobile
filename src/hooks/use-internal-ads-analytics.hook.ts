@@ -2,6 +2,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
@@ -15,6 +16,7 @@ import { useElementIsSeen } from './use-element-is-seen.hook';
  * @param seenTimeout If the element becomes visible and stays visible for this amount of time, it is considered seen.
  */
 export const useInternalAdsAnalytics = (page: string, initialAdAreaIsVisible = false, seenTimeout = 200) => {
+  const accountPkh = useCurrentAccountPkhSelector();
   const isFocused = useIsFocused();
   const { trackEvent } = useAnalytics();
   const [adAreaIsVisible, setAdAreaIsVisible] = useState(initialAdAreaIsVisible);
@@ -30,11 +32,12 @@ export const useInternalAdsAnalytics = (page: string, initialAdAreaIsVisible = f
     if (adIsSeen && !prevAdIsSeenRef.current) {
       trackEvent('Internal Ads Activity', AnalyticsEventCategory.General, {
         page,
-        provider: loadedPromotionProvider
+        provider: loadedPromotionProvider,
+        accountPkh
       });
     }
     prevAdIsSeenRef.current = adIsSeen;
-  }, [adIsSeen, trackEvent, loadedPromotionProvider, page]);
+  }, [adIsSeen, trackEvent, loadedPromotionProvider, page, accountPkh]);
 
   useEffect(() => void (!isFocused && setLoadedPromotionProvider(undefined)), [isFocused]);
 

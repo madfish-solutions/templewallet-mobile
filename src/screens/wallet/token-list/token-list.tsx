@@ -92,7 +92,8 @@ export const TokensList = memo(() => {
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const { isTezosNode } = useNetworkInfo();
 
-  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics('Home page');
+  const adPageName = 'Home page';
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName);
   const { onListScroll, onElementLayoutChange, onListLayoutChange } = useListElementIntersection(onIsVisible, refs);
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
@@ -172,6 +173,7 @@ export const TokensList = memo(() => {
                 variant={PromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}
+                pageName={adPageName}
                 onError={handlePromotionError}
                 onLoad={onAdLoad}
               />
