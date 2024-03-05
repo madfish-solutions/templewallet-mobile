@@ -39,7 +39,7 @@ export const TopTokensTable = () => {
   const adRef = useRef<View>(null);
   const adParentRef = useRef<View>(null);
   const adPageName = 'Market';
-  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, false);
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, undefined, false);
   const { onElementOrParentLayout } = useOutsideOfListIntersection(adParentRef, adRef, onIsVisible);
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();

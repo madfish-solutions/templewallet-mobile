@@ -26,7 +26,7 @@ export const PromotionCarousel = () => {
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const shouldShowPartnersPromotion = partnersPromoShown && !promotionErrorOccurred;
   const adPageName = 'DApps';
-  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, true, 500);
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, undefined, true, 500);
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
