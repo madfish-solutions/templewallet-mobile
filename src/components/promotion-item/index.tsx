@@ -11,18 +11,20 @@ import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
-import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 
 import { usePromotionItemStyles } from './styles';
 
-interface Props extends TestIdProps {
+interface Props {
   id: string;
   style?: StyleProp<ViewStyle>;
   shouldRefreshAd?: boolean;
   shouldShowCloseButton?: boolean;
   shouldTryHypelabAd?: boolean;
   variant?: PromotionVariantEnum;
+  testID: string;
+  pageName: string;
   onError?: EmptyFn;
   onLoad?: SyncFn<PromotionProviderEnum>;
   onLayout?: ViewProps['onLayout'];
@@ -37,13 +39,16 @@ export const PromotionItem = forwardRef<View, Props>(
       shouldShowCloseButton = true,
       variant = PromotionVariantEnum.Image,
       shouldTryHypelabAd = true,
+      testID,
+      pageName,
       onError,
       onLoad,
-      onLayout,
-      ...testIDProps
+      onLayout
     },
     ref
   ) => {
+    const accountPkh = useCurrentAccountPkhSelector();
+
     const isImageAd = variant === PromotionVariantEnum.Image;
     const styles = usePromotionItemStyles();
     const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
@@ -112,6 +117,16 @@ export const PromotionItem = forwardRef<View, Props>(
       [handleAdReadyFactory]
     );
 
+    const testIDProperties = useMemo(
+      () => ({
+        variant,
+        provider: currentProvider,
+        page: pageName,
+        accountPkh
+      }),
+      [currentProvider, variant, pageName, accountPkh]
+    );
+
     if (!partnersPromotionEnabled || adError || isHiddenTemporarily) {
       return null;
     }
@@ -129,11 +144,12 @@ export const PromotionItem = forwardRef<View, Props>(
       >
         {currentProvider === PromotionProviderEnum.Optimal && isFocused && (
           <OptimalPromotion
-            {...testIDProps}
             variant={variant}
             isVisible={adIsReady}
             shouldShowCloseButton={shouldShowCloseButton}
             shouldRefreshAd={shouldRefreshAd}
+            testID={testID}
+            testIDProperties={testIDProperties}
             onClose={hidePromotion}
             onReady={handleOptimalAdReady}
             onError={handleOptimalError}
@@ -141,10 +157,11 @@ export const PromotionItem = forwardRef<View, Props>(
         )}
         {currentProvider === PromotionProviderEnum.HypeLab && shouldTryHypelabAd && isFocused && (
           <HypelabPromotion
-            {...testIDProps}
             variant={variant}
             isVisible={adIsReady}
             shouldShowCloseButton={shouldShowCloseButton}
+            testID={testID}
+            testIDProperties={testIDProperties}
             onClose={hidePromotion}
             onReady={handleHypelabAdReady}
             onError={handleHypelabError}

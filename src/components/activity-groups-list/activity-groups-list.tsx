@@ -147,6 +147,7 @@ export const ActivityGroupsList: FC<Props> = ({
           id={PROMOTION_ID}
           style={shouldRenderList && styles.listPromotionItem}
           testID={ActivityGroupsListSelectors.promotion}
+          pageName={pageName}
           ref={adRef}
           onError={handlePromotionError}
           onLoad={onAdLoad}
