@@ -12,18 +12,20 @@ import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
-import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 
 import { usePromotionItemStyles } from './styles';
 
-interface Props extends TestIdProps {
+interface Props {
   id: string;
   style?: StyleProp<ViewStyle>;
   shouldRefreshAd?: boolean;
   shouldShowCloseButton?: boolean;
   onlyOptimalAd?: boolean;
   variant?: PromotionVariantEnum;
+  testID: string;
+  pageName: string;
   onError?: EmptyFn;
   onLoad?: SyncFn<PromotionProviderEnum>;
   onLayout?: ViewProps['onLayout'];
@@ -36,15 +38,18 @@ export const PromotionItem = forwardRef<View, Props>(
       style,
       shouldRefreshAd = false,
       shouldShowCloseButton = true,
+      testID,
       variant = PromotionVariantEnum.Image,
       onlyOptimalAd = false,
+      pageName,
       onError,
       onLoad,
-      onLayout,
-      ...testIDProps
+      onLayout
     },
     ref
   ) => {
+    const accountPkh = useCurrentAccountPkhSelector();
+
     const isImageAd = variant === PromotionVariantEnum.Image;
     const styles = usePromotionItemStyles();
     const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
@@ -124,15 +129,26 @@ export const PromotionItem = forwardRef<View, Props>(
       [handleAdReadyFactory]
     );
 
+    const testIDProperties = useMemo(
+      () => ({
+        variant,
+        provider: currentProvider,
+        page: pageName,
+        accountPkh
+      }),
+      [currentProvider, variant, pageName, accountPkh]
+    );
+
     if (!partnersPromotionEnabled || adError || isHiddenTemporarily) {
       return null;
     }
 
     const promotionCommonProps = {
-      ...testIDProps,
-      variant: variant,
+      testID,
+      testIDProperties,
+      variant,
       isVisible: adIsReady,
-      shouldShowCloseButton: shouldShowCloseButton,
+      shouldShowCloseButton,
       onClose: hidePromotion
     };
 
