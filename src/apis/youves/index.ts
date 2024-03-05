@@ -20,12 +20,9 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { INITIAL_APR_VALUE } from './constants';
 import { SavingsPoolStorage } from './types';
 import {
-  createEngineCache,
   createEngineMemoized,
   createUnifiedSavings,
-  createUnifiedSavingsCache,
   createUnifiedStaking,
-  createUnifiedStakingCache,
   getTezosToolkit,
   toEarnOpportunityToken
 } from './utils';
@@ -40,7 +37,7 @@ export const getYOUTokenApr$ = (
   return from(unifiedStaking.getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)).pipe(
     map(value => fractionToPercentage(value).toNumber()),
     catchError(() => {
-      createUnifiedStakingCache.deleteByArgs(rpcUrl, undefined);
+      createUnifiedStaking.delete(rpcUrl);
 
       return of(INITIAL_APR_VALUE);
     })
@@ -53,7 +50,7 @@ export const getYouvesTokenApr$ = (token: AssetDefinition, rpcUrl: string): Obse
   return from(youves.getSavingsPoolV3YearlyInterestRate()).pipe(
     map(value => fractionToPercentage(value).toNumber()),
     catchError(() => {
-      createEngineCache.deleteByArgs(rpcUrl, token, undefined);
+      createEngineMemoized.delete(rpcUrl, token);
 
       return of(INITIAL_APR_VALUE);
     })
@@ -98,6 +95,7 @@ const getYOUTokenSavingItem = async (
       firstActivityTime
     };
   } catch (error) {
+    createUnifiedStaking.delete(rpcUrl);
     console.error(error);
 
     return undefined;
@@ -175,7 +173,7 @@ export const getUserStake = async (
         const unifiedStaking = createUnifiedStaking(rpcUrl, account);
         lastStake = getLastElement(await unifiedStaking.getOwnStakesWithExtraInfo());
       } catch (e) {
-        createUnifiedStakingCache.deleteByArgs(rpcUrl, account);
+        createUnifiedStaking.delete(rpcUrl, account);
 
         throw e;
       }
@@ -189,7 +187,7 @@ export const getUserStake = async (
         const savings = createUnifiedSavings(rpcUrl, assetDefinition, account);
         lastStake = getLastElement(await savings.getOwnStakesWithExtraInfo());
       } catch (e) {
-        createUnifiedSavingsCache.deleteByArgs(rpcUrl, assetDefinition, account);
+        createUnifiedSavings.delete(rpcUrl, assetDefinition, account);
 
         throw e;
       }
