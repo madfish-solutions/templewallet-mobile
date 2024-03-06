@@ -1,4 +1,3 @@
-import { TezosToolkit } from '@taquito/taquito';
 import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
@@ -19,9 +18,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addCustomRpc, setSelectedRpcUrl } from 'src/store/settings/settings-actions';
 import { useRpcListSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { showWarningToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { TALENT_MAINNET_CHAIN_ID } from 'src/utils/network.utils';
 
 import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
 
@@ -32,27 +29,14 @@ export const AddCustomRpcModal: FC = () => {
   const { goBack } = useNavigation();
   const rpcList = useRpcListSelector();
 
-  const handleSubmit = async (newRpc: RpcInterface) => {
+  const handleSubmit = (newRpc: RpcInterface) => {
     if (confirmUniqueRPC(rpcList, newRpc) === false) {
       return;
     }
 
-    let isTalentNet = false;
-    try {
-      const tezos = new TezosToolkit(newRpc.url);
-      const chainId = await tezos.rpc.getChainId();
-      isTalentNet = chainId === TALENT_MAINNET_CHAIN_ID;
-    } catch (e) {
-      console.error(e);
-    }
-
-    if (isTalentNet) {
-      showWarningToast({ description: 'The T4L3NT Mainnet RPC is temporarily unavailable.' });
-    } else {
-      dispatch(addCustomRpc(newRpc));
-      dispatch(setSelectedRpcUrl(newRpc.url));
-      goBack();
-    }
+    dispatch(addCustomRpc(newRpc));
+    dispatch(setSelectedRpcUrl(newRpc.url));
+    goBack();
   };
 
   usePageAnalytic(ModalsEnum.AddCustomRpc);
