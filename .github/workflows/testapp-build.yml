@@ -120,7 +120,7 @@ jobs:
 
       - name: Build iOS
         if: ${{ github.event.inputs.ios == 'true' }}
-        uses: yukiarrr/ios-build-action@v1.5.0
+        uses: yukiarrr/ios-build-action@v1.11.2
         with:
           project-path: ios/TempleWallet.xcodeproj
           workspace-path: ios/TempleWallet.xcworkspace
