@@ -21,6 +21,7 @@ import { privacyPolicy, termsOfUse } from 'src/config/socials';
 import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setAdsBannerVisibilityAction, setIsAnalyticsEnabled } from 'src/store/settings/settings-actions';
@@ -41,6 +42,8 @@ interface Props {
 
 export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
   const dispatch = useDispatch();
+
+  const handleNoInternet = useNoInternetWarningToast();
 
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
@@ -152,7 +155,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
             <ButtonLargePrimary
               title="Import"
               disabled={!isValid}
-              onPress={() => {
+              onPress={handleNoInternet(() => {
                 setFieldTouched('password', true, true);
                 setFieldTouched('passwordConfirmation', true, true);
                 setFieldTouched('acceptTerms', true, true);
@@ -162,7 +165,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
                 if (isValid) {
                   submitForm();
                 }
-              }}
+              })}
               testID={CreateNewPasswordSelectors.createButton}
             />
           </View>

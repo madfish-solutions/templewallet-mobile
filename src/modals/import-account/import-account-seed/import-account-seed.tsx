@@ -15,6 +15,7 @@ import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
@@ -40,6 +41,8 @@ export const ImportAccountSeed = memo(() => {
   const { goBack } = useNavigation();
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
+
+  const handleNoInternet = useNoInternetWarningToast();
 
   usePageAnalytic(ModalsEnum.ImportAccountFromSeedPhrase);
 
@@ -102,7 +105,7 @@ export const ImportAccountSeed = memo(() => {
             <ButtonLargePrimary
               title="Import"
               disabled={!formik.isValid}
-              onPress={formik.submitForm}
+              onPress={handleNoInternet(formik.submitForm)}
               testID={ImportAccountSeedSelectors.importButton}
             />
           </View>

@@ -10,6 +10,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { useABTestingLoading } from 'src/hooks/use-ab-testing-loading.hook';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -23,6 +24,8 @@ import { useWelcomeStyles } from './welcome.styles';
 export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
+
+  const handleNoInternet = useNoInternetWarningToast();
 
   usePageAnalytic(ScreensEnum.Welcome);
   useABTestingLoading();
@@ -53,7 +56,7 @@ export const Welcome = () => {
         <ButtonLargePrimary
           title="Create New Wallet"
           iconName={IconNameEnum.PlusSquare}
-          onPress={() => navigate(ScreensEnum.CreateAccount, {})}
+          onPress={handleNoInternet(() => navigate(ScreensEnum.CreateAccount, {}))}
           testID={WelcomeSelectors.createNewWalletButton}
         />
 
@@ -62,7 +65,7 @@ export const Welcome = () => {
         <ButtonDelegatePrimary
           title="Import Existing Wallet"
           iconName={IconNameEnum.ImportSquare}
-          onPress={() => navigate(ModalsEnum.ChooseWalletImportType)}
+          onPress={handleNoInternet(() => navigate(ModalsEnum.ChooseWalletImportType))}
           testID={WelcomeSelectors.importExistingWalletButton}
         />
 

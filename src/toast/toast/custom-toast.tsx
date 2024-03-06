@@ -21,6 +21,7 @@ import { useToastStyles } from './toast.styles';
 interface Props {
   title?: string;
   description?: string;
+  iconName?: IconNameEnum;
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
@@ -37,6 +38,7 @@ const iconNameMap: Record<string, IconNameEnum> = {
 export const CustomToast: FC<Props> = ({
   title,
   description,
+  iconName,
   hide,
   toastType,
   operationHash,
@@ -64,7 +66,7 @@ export const CustomToast: FC<Props> = ({
       <View style={[styles.overlay, { backgroundColor: backgroundColorMap[toastType] }]}>
         <View style={styles.innerContent}>
           <Icon
-            name={iconNameMap[toastType]}
+            name={iconName ?? iconNameMap[toastType]}
             size={formatSize(16)}
             style={styles.iconLeft}
             {...(toastType !== ToastTypeEnum.Warning && { color: colors.white })}

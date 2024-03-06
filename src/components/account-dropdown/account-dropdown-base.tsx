@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -22,6 +23,8 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { trackEvent } = useAnalytics();
   const { createHdAccount } = useShelter();
 
+  const handleNoInternet = useNoInternetWarningToast();
+
   const handleCreateNewAccountButtonPress = () => {
     createHdAccount();
     onPress();
@@ -40,8 +43,11 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
 
   return (
     <>
-      <BottomSheetActionButton title="Create new account" onPress={handleCreateNewAccountButtonPress} />
-      <BottomSheetActionButton title="Import an account" onPress={handleImportAccountButtonPress} />
+      <BottomSheetActionButton
+        title="Create new account"
+        onPress={handleNoInternet(handleCreateNewAccountButtonPress)}
+      />
+      <BottomSheetActionButton title="Import an account" onPress={handleNoInternet(handleImportAccountButtonPress)} />
       <BottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
     </>
   );

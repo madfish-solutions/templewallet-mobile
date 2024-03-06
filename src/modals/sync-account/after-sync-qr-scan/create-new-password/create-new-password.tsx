@@ -17,6 +17,8 @@ import { useShelter } from 'src/shelter/use-shelter.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 
+import { useNoInternetWarningToast } from '../../../../hooks/use-no-internet-warning-toast';
+
 import {
   CreateNewPasswordFormValues,
   createNewPasswordInitialValues,
@@ -34,6 +36,8 @@ interface Props {
 export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccountsLength, onGoBackPress }) => {
   const { importWallet } = useShelter();
   const styles = useSetPasswordScreensCommonStyles();
+
+  const handleNoInternet = useNoInternetWarningToast();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
@@ -81,7 +85,7 @@ export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccou
                 <ButtonLargePrimary
                   title="Sync"
                   disabled={!isValid}
-                  onPress={submitForm}
+                  onPress={handleNoInternet(submitForm)}
                   testID={CreateNewPasswordSyncAccountSelectors.syncButton}
                 />
               </View>

@@ -21,6 +21,7 @@ import { analyticsCollecting, privacyPolicy, termsOfUse } from 'src/config/socia
 import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -38,6 +39,8 @@ interface Props {
 export const ConfirmSync = memo<Props>(({ onSubmit }) => {
   const styles = useSetPasswordScreensCommonStyles();
   const { goBack } = useNavigation();
+
+  const handleNoInternet = useNoInternetWarningToast();
 
   const { isDisabled, timeleft } = usePasswordLock();
 
@@ -125,7 +128,7 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
                 <ButtonLargePrimary
                   title={values.usePrevPassword === true ? 'Sync' : 'Next'}
                   disabled={!isValid || isDisabled}
-                  onPress={submitForm}
+                  onPress={handleNoInternet(submitForm)}
                   testID={
                     values.usePrevPassword === true ? ConfirmSyncSelectors.syncButton : ConfirmSyncSelectors.nextButton
                   }

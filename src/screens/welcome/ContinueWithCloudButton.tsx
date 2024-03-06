@@ -10,10 +10,14 @@ import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { cloudTitle } from 'src/utils/cloud-backup';
 import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
 
+import { useNoInternetWarningToast } from '../../hooks/use-no-internet-warning-toast';
+
 import { WelcomeSelectors } from './welcome.selectors';
 import { useCloudButtonActiveColorStyleConfig } from './welcome.styles';
 
 export const ContinueWithCloudButton = () => {
+  const handleNoInternet = useNoInternetWarningToast();
+
   const cloudBtnActiveColorStyleConfig = useCloudButtonActiveColorStyleConfig();
 
   const theme = useThemeSelector();
@@ -23,9 +27,6 @@ export const ContinueWithCloudButton = () => {
   const cloudIsAvailable = useIsCloudAvailable();
 
   const iconName = getCloudIconEnum(theme, cloudIsAvailable);
-  const handlePress = () => {
-    navigate(ScreensEnum.ContinueWithCloud);
-  };
 
   return (
     <ButtonLargeSecondary
@@ -33,7 +34,7 @@ export const ContinueWithCloudButton = () => {
       iconName={iconName}
       activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
       disabled={!cloudIsAvailable}
-      onPress={handlePress}
+      onPress={handleNoInternet(() => navigate(ScreensEnum.ContinueWithCloud))}
       testID={WelcomeSelectors.continueWithCloudButton}
       testIDProperties={{ cloud: cloudTitle }}
     />

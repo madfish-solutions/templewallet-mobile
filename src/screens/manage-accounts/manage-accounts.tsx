@@ -19,6 +19,8 @@ import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { useNoInternetWarningToast } from '../../hooks/use-no-internet-warning-toast';
+
 import { ManageAccountsSelectors } from './manage-accounts.selectors';
 import { useManageAccountsStyles } from './manage-accounts.styles';
 import { ManageHdAccounts } from './manage-hd-accounts/manage-hd-accounts';
@@ -32,6 +34,8 @@ export const ManageAccounts = () => {
   const { trackEvent } = useAnalytics();
 
   const styles = useManageAccountsStyles();
+
+  const handleNoInternet = useNoInternetWarningToast();
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showManageHdAccounts = segmentedControlIndex === manageHdAccountsIndex;
@@ -73,20 +77,20 @@ export const ManageAccounts = () => {
         <BottomSheetActionButton
           key="create-new-hd-account"
           title="Create new HD account"
-          onPress={() => {
+          onPress={handleNoInternet(() => {
             trackEvent(ManageAccountsSelectors.createNewHDAccountButton, AnalyticsEventCategory.ButtonPress);
             createHdAccount();
             revealSelectBottomSheetController.close();
-          }}
+          })}
           testID={ManageAccountsSelectors.createNewHDAccountButton}
         />
         <BottomSheetActionButton
           key="import-an-account"
           title="Import an account"
-          onPress={() => {
+          onPress={handleNoInternet(() => {
             navigate(ModalsEnum.ChooseAccountImportType);
             revealSelectBottomSheetController.close();
-          }}
+          })}
           testID={ManageAccountsSelectors.importAnAccountButton}
         />
       </BottomSheet>

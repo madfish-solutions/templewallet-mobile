@@ -19,6 +19,8 @@ import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { useNoInternetWarningToast } from '../../../hooks/use-no-internet-warning-toast';
+
 import { useImportAccountFromPrivateKeyStyles } from './import-account-from-private-key.styles';
 import {
   importAccountPrivateKeyInitialValues,
@@ -31,6 +33,8 @@ export const ImportAccountPrivateKey = memo(() => {
   const accountIndex = useAccountsListSelector().length + 1;
   const { goBack } = useNavigation();
   const styles = useImportAccountFromPrivateKeyStyles();
+
+  const handleNoInternet = useNoInternetWarningToast();
 
   usePageAnalytic(ModalsEnum.ImportAccountFromPrivateKey);
 
@@ -73,7 +77,7 @@ export const ImportAccountPrivateKey = memo(() => {
             <ButtonLargePrimary
               title="Import"
               disabled={!formik.isValid}
-              onPress={formik.submitForm}
+              onPress={handleNoInternet(formik.submitForm)}
               testID={ImportAccountPrivateKeySelectors.importButton}
             />
           </View>

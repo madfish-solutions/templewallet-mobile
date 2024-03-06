@@ -18,6 +18,7 @@ import { privacyPolicy, termsOfUse } from 'src/config/socials';
 import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
@@ -34,6 +35,8 @@ import {
 import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 
 export const CreateNewWallet = () => {
+  const handleNoInternet = useNoInternetWarningToast();
+
   const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
   const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = useRestoredCloudBackup(cloudBackupId);
@@ -148,7 +151,7 @@ export const CreateNewWallet = () => {
           <View style={[styles.fixedButtonContainer, styles.withoutSeparator]}>
             <ButtonLargePrimary
               title="Create"
-              onPress={() => {
+              onPress={handleNoInternet(() => {
                 setFieldTouched('password', true, true);
                 setFieldTouched('passwordConfirmation', true, true);
                 setFieldTouched('acceptTerms', true, true);
@@ -158,7 +161,7 @@ export const CreateNewWallet = () => {
                 if (isValid) {
                   submitForm();
                 }
-              }}
+              })}
               testID={CreateNewWalletSelectors.createButton}
             />
             <InsetSubstitute type="bottom" />
