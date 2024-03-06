@@ -4,9 +4,10 @@ import Carousel from 'react-native-reanimated-carousel';
 import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
 import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
+import { PromotionItem } from 'src/components/promotion-item';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
-import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
+import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
@@ -23,8 +24,9 @@ export const PromotionCarousel = () => {
   const styles = usePromotionCarouselStyles();
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
-
-  usePartnersPromoLoad(PROMOTION_ID);
+  const shouldShowPartnersPromotion = partnersPromoShown && !promotionErrorOccurred;
+  const adPageName = 'DApps';
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, undefined, true, 500);
 
   const data = useMemo<Array<JSX.Element>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
@@ -40,21 +42,30 @@ export const PromotionCarousel = () => {
       );
     }
 
-    if (partnersPromoShown && !promotionErrorOccurred) {
+    if (shouldShowPartnersPromotion) {
       result.unshift(
-        <OptimalPromotionItem
-          id={PROMOTION_ID}
-          testID={PromotionCarouselSelectors.optimalPromotionBanner}
-          shouldShowCloseButton={false}
-          style={styles.promotionItem}
-          onImageError={() => setPromotionErrorOccurred(true)}
-          onEmptyPromotionReceived={() => setPromotionErrorOccurred(true)}
-        />
+        <View style={styles.promotionItemWrapper}>
+          <PromotionItem
+            id={PROMOTION_ID}
+            testID={PromotionCarouselSelectors.optimalPromotionBanner}
+            pageName={adPageName}
+            shouldShowCloseButton={false}
+            style={styles.promotionItem}
+            shouldTryHypelabAd={false}
+            onError={() => setPromotionErrorOccurred(true)}
+            onLoad={onAdLoad}
+          />
+        </View>
       );
     }
 
     return result;
-  }, [activePromotion, partnersPromoShown, promotionErrorOccurred, styles]);
+  }, [activePromotion, onAdLoad, shouldShowPartnersPromotion, styles]);
+
+  const handleSnapToItem = useCallback(
+    (index: number) => onIsVisible(shouldShowPartnersPromotion && index === 0),
+    [onIsVisible, shouldShowPartnersPromotion]
+  );
 
   const height = formatSize(112);
   const { layoutWidth, handleLayout } = useLayoutSizes();
@@ -87,6 +98,7 @@ export const PromotionCarousel = () => {
           height={height}
           scrollAnimationDuration={1200}
           renderItem={renderItem}
+          onSnapToItem={handleSnapToItem}
         />
       ) : null}
     </View>

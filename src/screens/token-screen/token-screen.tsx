@@ -2,7 +2,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ActivityGroupsList, PROMOTION_ID } from 'src/components/activity-groups-list/activity-groups-list';
+import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { HeaderCard } from 'src/components/header-card/header-card';
@@ -11,7 +11,6 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { useContractActivity } from 'src/hooks/use-contract-activity';
-import { usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
@@ -53,8 +52,6 @@ export const TokenScreen = () => {
     );
   }, []);
 
-  usePartnersPromoLoad(PROMOTION_ID);
-
   const { activities, handleUpdate, isAllLoaded, isLoading } = useContractActivity(getTokenSlug(initialToken));
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
@@ -78,6 +75,7 @@ export const TokenScreen = () => {
             activityGroups={activities}
             isAllLoaded={isAllLoaded}
             isLoading={isLoading}
+            pageName="Token page"
           />
         }
         infoComponent={<TokenInfo token={token} />}
