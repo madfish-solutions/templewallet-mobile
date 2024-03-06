@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { TextPromotionItemSelectors } from 'src/components/text-promotion-item/text-promotion-item.selectors';
+import { PromotionItemSelectors } from 'src/components/image-promotion-view/selectors';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -45,20 +45,20 @@ export const usePromotionAfterConfirmation = () => {
           {
             text: 'Cancel',
             style: 'cancel',
-            onPress: () => trackEvent(TextPromotionItemSelectors.cancelButton, AnalyticsEventCategory.ButtonPress)
+            onPress: () => trackEvent(PromotionItemSelectors.cancelButton, AnalyticsEventCategory.ButtonPress)
           },
           {
             text: 'Disable',
             style: 'destructive',
             onPress: () => {
-              trackEvent(TextPromotionItemSelectors.disablelButton, AnalyticsEventCategory.ButtonPress);
+              trackEvent(PromotionItemSelectors.disableButton, AnalyticsEventCategory.ButtonPress);
               dispatch(togglePartnersPromotionAction(false));
               dispatch(setAdsBannerVisibilityAction(false));
             }
           }
         ]
       ),
-    [dispatch]
+    [dispatch, trackEvent]
   );
 
   return { enablePromotion, disablePromotion };

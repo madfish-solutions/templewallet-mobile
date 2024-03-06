@@ -1,11 +1,14 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { HorizontalBorder } from 'src/components/horizontal-border';
-import { OptimalPromotionItem } from 'src/components/optimal-promotion-item/optimal-promotion-item';
-import { useIsPartnersPromoShown, usePartnersPromoLoad } from 'src/hooks/use-partners-promo';
+import { PromotionItem } from 'src/components/promotion-item';
+import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
+import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { viewAllNotificationsAction } from 'src/store/notifications/notifications-actions';
@@ -33,7 +36,10 @@ export const Notifications = () => {
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
-  usePartnersPromoLoad(PROMOTION_ID);
+  const adRef = useRef<View>(null);
+  const adPageName = 'Notifications';
+  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName);
+  const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
 
@@ -49,12 +55,15 @@ export const Notifications = () => {
     <>
       {partnersPromoShown && !promotionErrorOccurred && (
         <>
-          <OptimalPromotionItem
+          <PromotionItem
             id={PROMOTION_ID}
             testID={NotificationsSelectors.promotion}
+            pageName={adPageName}
             style={NotificationsStyles.ads}
-            onImageError={handlePromotionItemError}
-            onEmptyPromotionReceived={handlePromotionItemError}
+            ref={adRef}
+            onError={handlePromotionItemError}
+            onLayout={onElementOrParentLayout}
+            onLoad={onAdLoad}
           />
           <HorizontalBorder />
         </>
