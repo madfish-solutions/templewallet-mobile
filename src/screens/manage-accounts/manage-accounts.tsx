@@ -11,6 +11,7 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -18,8 +19,6 @@ import { useShelter } from 'src/shelter/use-shelter.hook';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-
-import { useNoInternetWarningToast } from '../../hooks/use-no-internet-warning-toast';
 
 import { ManageAccountsSelectors } from './manage-accounts.selectors';
 import { useManageAccountsStyles } from './manage-accounts.styles';

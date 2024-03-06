@@ -13,11 +13,10 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
-
-import { useNoInternetWarningToast } from '../../../../hooks/use-no-internet-warning-toast';
 
 import {
   CreateNewPasswordFormValues,

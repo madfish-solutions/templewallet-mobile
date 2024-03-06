@@ -3,14 +3,13 @@ import React from 'react';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { isAndroid, isIOS } from 'src/config/system';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { cloudTitle } from 'src/utils/cloud-backup';
 import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
-
-import { useNoInternetWarningToast } from '../../hooks/use-no-internet-warning-toast';
 
 import { WelcomeSelectors } from './welcome.selectors';
 import { useCloudButtonActiveColorStyleConfig } from './welcome.styles';

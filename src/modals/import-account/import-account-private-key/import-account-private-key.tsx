@@ -12,14 +12,13 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
+import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-
-import { useNoInternetWarningToast } from '../../../hooks/use-no-internet-warning-toast';
 
 import { useImportAccountFromPrivateKeyStyles } from './import-account-from-private-key.styles';
 import {
