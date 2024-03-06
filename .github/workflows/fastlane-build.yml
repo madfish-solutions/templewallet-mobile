@@ -58,29 +58,29 @@ jobs:
 
       # Android
 
-      - name: Setup Java SDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '11'
-
-      - name: Setup ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7.2
-          bundler-cache: true
-
-      - name: Install Android Gemfile dependencies
-        run: cd android && bundle install
-
-      - name: Build Android & Distribute to Google Play Console
-        run: |
-          export LC_ALL=en_US.UTF-8
-          export LANG=en_US.UTF-8
-          yarn android:test-flight
-        env:
-          BUILD_NUMBER: ${{ github.event.inputs.build-number }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+#      - name: Setup Java SDK
+#        uses: actions/setup-java@v3
+#        with:
+#          distribution: 'zulu'
+#          java-version: '11'
+#
+#      - name: Setup ruby
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          ruby-version: 2.7.2
+#          bundler-cache: true
+#
+#      - name: Install Android Gemfile dependencies
+#        run: cd android && bundle install
+#
+#      - name: Build Android & Distribute to Google Play Console
+#        run: |
+#          export LC_ALL=en_US.UTF-8
+#          export LANG=en_US.UTF-8
+#          yarn android:test-flight
+#        env:
+#          BUILD_NUMBER: ${{ github.event.inputs.build-number }}
+#          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
 
       # Github release
 
