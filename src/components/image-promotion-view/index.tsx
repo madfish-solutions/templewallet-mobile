@@ -26,7 +26,7 @@ export const ImagePromotionView = memo<PropsWithChildren<ImagePromotionViewProps
     const colors = useColors();
     const styles = useImagePromotionViewStyles();
 
-    const openLink = useCallback(() => openUrl(href), [href]);
+    const openLink = useCallback(() => href && openUrl(href), [href]);
 
     return (
       <TouchableWithAnalytics

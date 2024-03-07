@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { LayoutChangeEvent, LayoutRectangle, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
@@ -27,146 +27,146 @@ import { useHypelabPromotionStyles } from './styles';
 
 const AD_CONTENT_RELATED_URL_SEARCH_PARAMS = ['campaign_slug', 'creative_set_slug', 'placement_slug'];
 
-export const HypelabPromotion: FC<SingleProviderPromotionProps> = ({
-  variant,
-  isVisible,
-  shouldShowCloseButton,
-  onClose,
-  onReady,
-  onError,
-  ...testIDProps
-}) => {
-  const { testID, testIDProperties } = testIDProps;
-  const isImageAd = variant === PromotionVariantEnum.Image;
-  const colors = useColors();
-  const styles = useHypelabPromotionStyles();
-  const theme = useThemeSelector();
-  const { trackEvent } = useAnalytics();
-  const [adHref, setAdHref] = useState<string>();
+export const HypelabPromotion = memo<SingleProviderPromotionProps>(
+  ({ variant, isVisible, shouldShowCloseButton, onClose, onReady, onError, ...testIDProps }) => {
+    const { testID, testIDProperties } = testIDProps;
+    const isImageAd = variant === PromotionVariantEnum.Image;
+    const colors = useColors();
+    const styles = useHypelabPromotionStyles();
+    const theme = useThemeSelector();
+    const { trackEvent } = useAnalytics();
+    const [adHref, setAdHref] = useState<string>();
 
-  const [layoutRect, setLayoutRect] = useState<LayoutRectangle | undefined>();
-  const initialSize = useMemo(() => {
-    if (isImageAd) {
-      return { w: 320, h: 50 };
-    }
-
-    return layoutRect ? { w: Math.round(layoutRect.width / layoutScale), h: 80 } : undefined;
-  }, [isImageAd, layoutRect]);
-  const [size, setSize] = useState(initialSize);
-  useEffect(() => void (initialSize && setSize(prevSize => prevSize ?? initialSize)), [initialSize]);
-
-  const adFrameSource = useMemo(() => {
-    const placementSlug = isImageAd ? HYPELAB_SMALL_PLACEMENT_SLUG : HYPELAB_NATIVE_PLACEMENT_SLUG;
-    const origin = theme === ThemesEnum.dark ? 'mobile-dark' : 'mobile-light';
-
-    if (!initialSize) {
-      return undefined;
-    }
-
-    const searchParams = new URLSearchParams({
-      p: placementSlug,
-      o: origin,
-      vw: formatSize(Number(initialSize.w)).toString(),
-      w: Number(initialSize.w).toString(),
-      h: Number(initialSize.h).toString()
-    });
-
-    return { uri: `${HYPELAB_AD_FRAME_URL}/?${searchParams.toString()}` };
-  }, [isImageAd, initialSize, theme]);
-
-  const handleMainLayout = useCallback((e: LayoutChangeEvent) => {
-    e.persist();
-    setLayoutRect(e.nativeEvent.layout);
-  }, []);
-
-  useTimeout(
-    () => {
-      if (!isString(adHref)) {
-        onError();
+    const [layoutRect, setLayoutRect] = useState<LayoutRectangle | undefined>();
+    const initialSize = useMemo(() => {
+      if (isImageAd) {
+        return { w: 320, h: 50 };
       }
-    },
-    30000,
-    [adHref, onError]
-  );
 
-  const handleAdFrameMessage = useCallback(
-    (e: WebViewMessageEvent) => {
-      try {
-        const message: AdFrameMessage = JSON.parse(e.nativeEvent.data);
+      return layoutRect ? { w: Math.round(layoutRect.width / layoutScale), h: 80 } : undefined;
+    }, [isImageAd, layoutRect]);
+    const [size, setSize] = useState(initialSize);
+    useEffect(() => void (initialSize && setSize(prevSize => prevSize ?? initialSize)), [initialSize]);
 
-        switch (message.type) {
-          case AdFrameMessageType.Resize:
-            setSize({ w: Math.round(message.width / layoutScale), h: Math.round(message.height / layoutScale) });
-            break;
-          case AdFrameMessageType.Ready:
-            const prevAdHrefSearchParams = isDefined(adHref) ? new URL(adHref).searchParams : new URLSearchParams();
-            const newAdHrefSearchParams = new URL(message.ad.cta_url).searchParams;
-            setAdHref(message.ad.cta_url);
-            if (
-              AD_CONTENT_RELATED_URL_SEARCH_PARAMS.some(
-                paramName => prevAdHrefSearchParams.get(paramName) !== newAdHrefSearchParams.get(paramName)
-              )
-            ) {
-              onReady();
-            }
-            break;
-          case AdFrameMessageType.Error:
-            onError();
-            break;
-          case AdFrameMessageType.Click:
-            if (isString(adHref)) {
-              trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
-              openUrl(adHref);
-            }
+    const adFrameSource = useMemo(() => {
+      const placementSlug = isImageAd ? HYPELAB_SMALL_PLACEMENT_SLUG : HYPELAB_NATIVE_PLACEMENT_SLUG;
+      const origin = theme === ThemesEnum.dark ? 'mobile-dark' : 'mobile-light';
+
+      if (!initialSize) {
+        return undefined;
+      }
+
+      const searchParams = new URLSearchParams({
+        p: placementSlug,
+        o: origin,
+        vw: formatSize(Number(initialSize.w)).toString(),
+        w: Number(initialSize.w).toString(),
+        h: Number(initialSize.h).toString()
+      });
+
+      return { uri: `${HYPELAB_AD_FRAME_URL}/?${searchParams.toString()}` };
+    }, [isImageAd, initialSize, theme]);
+
+    const handleMainLayout = useCallback((e: LayoutChangeEvent) => {
+      e.persist();
+      setLayoutRect(e.nativeEvent.layout);
+    }, []);
+
+    useTimeout(
+      () => {
+        if (!isString(adHref)) {
+          onError();
         }
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    [adHref, onError, onReady, testID, testIDProperties, trackEvent]
-  );
+      },
+      30000,
+      [adHref, onError]
+    );
 
-  const webViewCommonProps = {
-    source: adFrameSource,
-    onError: onError,
-    onMessage: handleAdFrameMessage,
-    webviewDebuggingEnabled: __DEV__,
-    scrollEnabled: false,
-    scalesPageToFit: false,
-    textZoom: 100
-  };
+    const handleAdFrameMessage = useCallback(
+      (e: WebViewMessageEvent) => {
+        try {
+          const message: AdFrameMessage = JSON.parse(e.nativeEvent.data);
 
-  if (isImageAd) {
+          switch (message.type) {
+            case AdFrameMessageType.Resize:
+              if (message.height !== 0 && message.width !== 0) {
+                setSize({ w: Math.round(message.width / layoutScale), h: Math.round(message.height / layoutScale) });
+              }
+              break;
+            case AdFrameMessageType.Ready:
+              const prevAdHrefSearchParams = isDefined(adHref) ? new URL(adHref).searchParams : new URLSearchParams();
+              const newAdHrefSearchParams = new URL(message.ad.cta_url).searchParams;
+              setAdHref(message.ad.cta_url);
+              if (
+                AD_CONTENT_RELATED_URL_SEARCH_PARAMS.some(
+                  paramName => prevAdHrefSearchParams.get(paramName) !== newAdHrefSearchParams.get(paramName)
+                )
+              ) {
+                onReady();
+              }
+              break;
+            case AdFrameMessageType.Error:
+              onError();
+              break;
+            case AdFrameMessageType.Click:
+              if (isString(adHref)) {
+                trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+                openUrl(adHref);
+              }
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      },
+      [adHref, onError, onReady, testID, testIDProperties, trackEvent]
+    );
+
+    const webViewCommonProps = {
+      source: adFrameSource,
+      onError: onError,
+      onMessage: handleAdFrameMessage,
+      webviewDebuggingEnabled: __DEV__,
+      scrollEnabled: false,
+      scalesPageToFit: false,
+      textZoom: 100
+    };
+
+    if (isImageAd) {
+      return (
+        <ImagePromotionView
+          onClose={onClose}
+          shouldShowCloseButton={shouldShowCloseButton}
+          href={adHref ?? ''}
+          isVisible={isVisible}
+          shouldShowAdBage
+          {...testIDProps}
+        >
+          <View style={styles.imageAdFrameWrapper}>
+            <WebView {...webViewCommonProps} containerStyle={styles.imageAdFrame} style={styles.webView} />
+          </View>
+        </ImagePromotionView>
+      );
+    }
+
     return (
-      <ImagePromotionView
-        onClose={onClose}
-        shouldShowCloseButton={shouldShowCloseButton}
-        href={adHref ?? ''}
-        isVisible={isVisible}
-        shouldShowAdBage
-        {...testIDProps}
-      >
-        <View style={styles.imageAdFrameWrapper}>
-          <WebView {...webViewCommonProps} containerStyle={styles.imageAdFrame} />
-        </View>
-      </ImagePromotionView>
+      <View style={[styles.textAdFrameContainer, !isVisible && styles.invisible]} onLayout={handleMainLayout}>
+        {adFrameSource && size && (
+          <WebView
+            {...webViewCommonProps}
+            containerStyle={[styles.textAdFrame, { aspectRatio: size.w / size.h }]}
+            style={styles.webView}
+          />
+        )}
+        {shouldShowCloseButton && (
+          <TouchableWithAnalytics
+            style={styles.closeButton}
+            onPress={onClose}
+            testID={TextPromotionItemSelectors.closeButton}
+          >
+            <Icon name={IconNameEnum.X} size={formatSize(16)} color={colors.peach} />
+          </TouchableWithAnalytics>
+        )}
+      </View>
     );
   }
-
-  return (
-    <View style={[styles.textAdFrameContainer, !isVisible && styles.invisible]} onLayout={handleMainLayout}>
-      {adFrameSource && size && (
-        <WebView {...webViewCommonProps} containerStyle={[styles.textAdFrame, { aspectRatio: size.w / size.h }]} />
-      )}
-      {shouldShowCloseButton && (
-        <TouchableWithAnalytics
-          style={styles.closeButton}
-          onPress={onClose}
-          testID={TextPromotionItemSelectors.closeButton}
-        >
-          <Icon name={IconNameEnum.X} size={formatSize(16)} color={colors.peach} />
-        </TouchableWithAnalytics>
-      )}
-    </View>
-  );
-};
+);
