@@ -6,12 +6,7 @@ import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { enterPassword } from 'src/store/security/security-actions';
-import {
-  hideLoaderAction,
-  setAdsBannerVisibilityAction,
-  setIsAnalyticsEnabled,
-  showLoaderAction
-} from 'src/store/settings/settings-actions';
+import { hideLoaderAction, setIsAnalyticsEnabled, showLoaderAction } from 'src/store/settings/settings-actions';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { parseSyncPayload } from 'src/utils/sync.utils';
@@ -39,10 +34,7 @@ export const AfterSyncQRScan = memo(() => {
     viewAds,
     useBiometry: useBiometryValue
   }: ConfirmSyncFormValues) => {
-    if (viewAds) {
-      dispatch(togglePartnersPromotionAction(true));
-      dispatch(setAdsBannerVisibilityAction(false));
-    }
+    dispatch(togglePartnersPromotionAction(viewAds));
     dispatch(setIsAnalyticsEnabled(analytics));
     dispatch(showLoaderAction());
 

@@ -23,7 +23,6 @@ import {
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
-  setAdsBannerVisibilityAction,
   setOnRampPossibilityAction,
   setIsOnRampHasBeenShownBeforeAction,
   setIsApkBuildLaunchEventFired,
@@ -140,11 +139,6 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(walletOpenedAction, state => ({
     ...state,
     applicationOpenCounter: (state.applicationOpenCounter ?? 0) + 1
-  }));
-
-  builder.addCase(setAdsBannerVisibilityAction, (state, { payload }) => ({
-    ...state,
-    isEnableAdsBanner: payload
   }));
 
   builder.addCase(setIsInAppUpdateAvailableAction, (state, { payload }) => ({
