@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, LayoutRectangle, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
@@ -60,6 +60,9 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     const { trackEvent } = useAnalytics();
     const [adHref, setAdHref] = useState<string>();
 
+    const adHrefRef = useRef<string | undefined>(adHref);
+    useEffect(() => void (adHrefRef.current = adHref), [adHref]);
+
     const [layoutRect, setLayoutRect] = useState<LayoutRectangle | undefined>();
     const initialSize = useMemo(() => {
       if (isDefined(initialOriginalWidth) && isDefined(initialOriginalHeight)) {
@@ -104,15 +107,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
       setLayoutRect(e.nativeEvent.layout);
     }, []);
 
-    useTimeout(
-      () => {
-        if (!isString(adHref)) {
-          onError();
-        }
-      },
-      30000,
-      [adHref, onError]
-    );
+    useTimeout(() => void (!isString(adHrefRef.current) && onError()), 30000, [onError]);
 
     const handleAdFrameMessage = useCallback(
       (e: WebViewMessageEvent) => {
