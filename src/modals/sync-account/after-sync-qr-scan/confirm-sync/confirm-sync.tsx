@@ -21,7 +21,7 @@ import { analyticsCollecting, privacyPolicy, termsOfUse } from 'src/config/socia
 import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
-import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -40,7 +40,7 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
   const styles = useSetPasswordScreensCommonStyles();
   const { goBack } = useNavigation();
 
-  const handleNoInternet = useNoInternetWarningToast();
+  const handleNoInternet = useCallbackIfOnline();
 
   const { isDisabled, timeleft } = usePasswordLock();
 

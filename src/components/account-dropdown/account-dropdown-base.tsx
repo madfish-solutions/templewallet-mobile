@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 
-import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -23,7 +23,7 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { trackEvent } = useAnalytics();
   const { createHdAccount } = useShelter();
 
-  const handleNoInternet = useNoInternetWarningToast();
+  const handleNoInternet = useCallbackIfOnline();
 
   const handleCreateNewAccountButtonPress = () => {
     createHdAccount();

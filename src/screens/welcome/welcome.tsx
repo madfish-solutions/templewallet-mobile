@@ -10,7 +10,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { useABTestingLoading } from 'src/hooks/use-ab-testing-loading.hook';
-import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -25,7 +25,7 @@ export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
 
-  const handleNoInternet = useNoInternetWarningToast();
+  const handleNoInternet = useCallbackIfOnline();
 
   usePageAnalytic(ScreensEnum.Welcome);
   useABTestingLoading();

@@ -4,13 +4,13 @@ import { useCallback } from 'react';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { showWarningToast } from 'src/toast/toast.utils';
 
-export const useNoInternetWarningToast = () => {
+export const useCallbackIfOnline = () => {
   const { isConnected } = useNetInfo();
 
   return useCallback(
-    (callback: EmptyFn) => () => {
+    (onOnline: EmptyFn) => () => {
       if (isConnected !== false) {
-        callback();
+        onOnline();
 
         return;
       }

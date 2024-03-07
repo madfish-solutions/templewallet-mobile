@@ -3,7 +3,7 @@ import React from 'react';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { isAndroid, isIOS } from 'src/config/system';
-import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -15,7 +15,7 @@ import { WelcomeSelectors } from './welcome.selectors';
 import { useCloudButtonActiveColorStyleConfig } from './welcome.styles';
 
 export const ContinueWithCloudButton = () => {
-  const handleNoInternet = useNoInternetWarningToast();
+  const handleNoInternet = useCallbackIfOnline();
 
   const cloudBtnActiveColorStyleConfig = useCloudButtonActiveColorStyleConfig();
 

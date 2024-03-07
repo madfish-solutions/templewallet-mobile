@@ -13,7 +13,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormPasswordInput } from 'src/form/form-password-input';
-import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
@@ -36,7 +36,7 @@ export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccou
   const { importWallet } = useShelter();
   const styles = useSetPasswordScreensCommonStyles();
 
-  const handleNoInternet = useNoInternetWarningToast();
+  const handleNoInternet = useCallbackIfOnline();
 
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });

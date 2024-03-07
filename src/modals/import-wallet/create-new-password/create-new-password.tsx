@@ -21,7 +21,7 @@ import { privacyPolicy, termsOfUse } from 'src/config/socials';
 import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
-import { useNoInternetWarningToast } from 'src/hooks/use-no-internet-warning-toast';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setAdsBannerVisibilityAction, setIsAnalyticsEnabled } from 'src/store/settings/settings-actions';
@@ -43,7 +43,7 @@ interface Props {
 export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
   const dispatch = useDispatch();
 
-  const handleNoInternet = useNoInternetWarningToast();
+  const handleNoInternet = useCallbackIfOnline();
 
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
