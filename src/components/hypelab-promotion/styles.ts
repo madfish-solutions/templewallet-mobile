@@ -5,8 +5,7 @@ export const useHypelabPromotionStyles = createUseStylesMemoized(() => ({
   imageAdFrameWrapper: {
     width: formatSize(320),
     height: formatSize(50),
-    borderRadius: formatSize(8),
-    overflow: 'hidden'
+    borderRadius: formatSize(8)
   },
   imageAdFrame: {
     width: '100%',
@@ -28,5 +27,9 @@ export const useHypelabPromotionStyles = createUseStylesMemoized(() => ({
   },
   invisible: {
     opacity: 0
+  },
+  // https://stackoverflow.com/questions/54131875/screen-blinks-once-when-rendering-a-webview-on-android
+  webView: {
+    opacity: 0.99
   }
 }));
