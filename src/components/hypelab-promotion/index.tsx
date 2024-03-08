@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, LayoutRectangle, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
@@ -36,6 +36,9 @@ export const HypelabPromotion = memo<SingleProviderPromotionProps>(
     const theme = useThemeSelector();
     const { trackEvent } = useAnalytics();
     const [adHref, setAdHref] = useState<string>();
+    const adHrefRef = useRef(adHref);
+
+    useEffect(() => void (adHrefRef.current = adHref), [adHref]);
 
     const [layoutRect, setLayoutRect] = useState<LayoutRectangle | undefined>();
     const initialSize = useMemo(() => {
@@ -74,12 +77,12 @@ export const HypelabPromotion = memo<SingleProviderPromotionProps>(
 
     useTimeout(
       () => {
-        if (!isString(adHref)) {
+        if (!isString(adHrefRef.current)) {
           onError();
         }
       },
       30000,
-      [adHref, onError]
+      [onError]
     );
 
     const handleAdFrameMessage = useCallback(
