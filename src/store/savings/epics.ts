@@ -73,15 +73,12 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
         forkJoin(
           youvesSavings.map(savingsItem =>
             getUserStake(selectedAccount, savingsItem.id, savingsItem.type, rpcUrl)
-              .then((stake): [string, UserStakeValueInterface | null | undefined] => [
-                savingsItem.contractAddress,
-                stake
-              ])
-              .catch((): [string, undefined] => {
+              .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
+              .catch((): [string, nullish] => {
                 console.error('Error while loading saving stakes: ', savingsItem.contractAddress);
                 showFailedStakeLoadWarning();
 
-                return [savingsItem.contractAddress, undefined];
+                return [savingsItem.contractAddress, null];
               })
           )
         ),
