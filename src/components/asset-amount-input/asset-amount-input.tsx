@@ -18,6 +18,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 import { isCollectible, mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
+import { isString } from '../../utils/is-string';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
@@ -38,6 +39,8 @@ export interface AssetAmountInterface {
   asset: TokenInterface;
   amount?: BigNumber;
 }
+
+const DEFAULT_BALANCE = '0';
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
 const defaultAssetAmountInputStylesConfig: AssetAmountInputStylesConfig = {};
@@ -106,7 +109,10 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const slug = useMemo(() => getTokenSlug(value.asset), [value.asset]);
     const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
-    const balance = useMemo(() => token?.balance ?? value.asset.balance, [token, value.asset.balance]);
+    const balance = useMemo(
+      () => (isString(value.asset.name) ? token?.balance ?? DEFAULT_BALANCE : DEFAULT_BALANCE),
+      [token?.balance, value.asset.name]
+    );
 
     const { isTezosNode } = useNetworkInfo();
     const selectedRpcUrl = useSelectedRpcUrlSelector();
