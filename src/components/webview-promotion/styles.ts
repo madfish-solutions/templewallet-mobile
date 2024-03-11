@@ -3,8 +3,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useWebviewPromotionStyles = createUseStylesMemoized(() => ({
   imageAdFrameWrapper: {
-    borderRadius: formatSize(8),
-    overflow: 'hidden'
+    borderRadius: formatSize(8)
   },
   fullSize: {
     width: '100%',
@@ -30,5 +29,9 @@ export const useWebviewPromotionStyles = createUseStylesMemoized(() => ({
   },
   invisible: {
     opacity: 0
+  },
+  // https://stackoverflow.com/questions/54131875/screen-blinks-once-when-rendering-a-webview-on-android
+  webView: {
+    opacity: 0.99
   }
 }));

@@ -116,7 +116,9 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
 
           switch (message.type) {
             case AdFrameMessageType.Resize:
-              setSize({ w: Math.round(message.width / layoutScale), h: Math.round(message.height / layoutScale) });
+              if (message.height !== 0 && message.width !== 0) {
+                setSize({ w: Math.round(message.width / layoutScale), h: Math.round(message.height / layoutScale) });
+              }
               break;
             case AdFrameMessageType.Ready:
               setAdHref(message.ad.cta_url);
