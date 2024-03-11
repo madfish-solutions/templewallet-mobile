@@ -5,10 +5,6 @@ export const useWebviewPromotionStyles = createUseStylesMemoized(() => ({
   imageAdFrameWrapper: {
     borderRadius: formatSize(8)
   },
-  fullSize: {
-    width: '100%',
-    height: '100%'
-  },
   imageAdFrame: {
     width: '100%',
     borderRadius: formatSize(8)

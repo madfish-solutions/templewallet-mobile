@@ -172,7 +172,9 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
             ]}
             onLayout={handleContainerLayout}
           >
-            {adFrameSource && <WebView {...webViewCommonProps} containerStyle={styles.imageAdFrame} />}
+            {adFrameSource && (
+              <WebView {...webViewCommonProps} containerStyle={styles.imageAdFrame} style={styles.webView} />
+            )}
           </View>
         </ImagePromotionView>
       );
