@@ -110,8 +110,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
     const balance = useMemo(
-      () => (isString(value.asset.name) ? token?.balance ?? DEFAULT_BALANCE : DEFAULT_BALANCE),
-      [token?.balance, value.asset.name]
+      () => (isString(value.asset.name) ? token?.balance ?? value.asset.balance : DEFAULT_BALANCE),
+      [token?.balance, value.asset]
     );
 
     const { isTezosNode } = useNetworkInfo();
