@@ -15,10 +15,10 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
+import { isString } from 'src/utils/is-string';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 import { isCollectible, mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
-import { isString } from '../../utils/is-string';
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
