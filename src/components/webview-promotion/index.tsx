@@ -91,8 +91,8 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
         o: origin,
         vw: formatSize(Number(initialSize.w)).toString(),
         vh: formatSize(Number(initialSize.h)).toString(),
-        w: Number(initialSize.w).toString(),
-        h: Number(initialSize.h).toString(),
+        w: initialSize.w.toString(),
+        h: initialSize.h.toString(),
         ap: provider.toLowerCase()
       });
       if (provider === PromotionProviderEnum.Persona) {
@@ -181,7 +181,11 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     return (
       <View style={[styles.textAdFrameContainer, !isVisible && styles.invisible]} onLayout={handleContainerLayout}>
         {adFrameSource && size && (
-          <WebView {...webViewCommonProps} containerStyle={[styles.textAdFrame, { aspectRatio: size.w / size.h }]} />
+          <WebView
+            {...webViewCommonProps}
+            containerStyle={[styles.textAdFrame, { aspectRatio: size.w / size.h }]}
+            style={styles.webView}
+          />
         )}
         {shouldShowCloseButton && (
           <TouchableWithAnalytics
