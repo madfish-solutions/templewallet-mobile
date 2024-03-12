@@ -15,7 +15,6 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
-import { isString } from 'src/utils/is-string';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 import { isCollectible, mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
@@ -110,7 +109,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
     const balance = useMemo(
-      () => (isString(value.asset.name) ? token?.balance ?? value.asset.balance : DEFAULT_BALANCE),
+      () =>
+        tokenEqualityFn(value.asset, emptyTezosLikeToken) ? DEFAULT_BALANCE : token?.balance ?? value.asset.balance,
       [token?.balance, value.asset]
     );
 
