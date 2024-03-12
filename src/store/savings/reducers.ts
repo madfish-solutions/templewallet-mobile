@@ -37,9 +37,9 @@ export const savingsReducer = createReducer<SavingsState>(savingsInitialState, b
       let newStake: UserStakeValueInterface | undefined;
       switch (stake) {
         case undefined:
-          newStake = state.stakes.data[savingAddress];
           break;
         case null:
+          newStake = state.stakes.data[savingAddress];
           break;
         default:
           newStake = stake;
