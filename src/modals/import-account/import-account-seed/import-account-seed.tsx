@@ -42,8 +42,6 @@ export const ImportAccountSeed = memo(() => {
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
 
-  const handleNoInternet = useCallbackIfOnline();
-
   usePageAnalytic(ModalsEnum.ImportAccountFromSeedPhrase);
 
   const onSubmit = useCallback(({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
@@ -105,7 +103,7 @@ export const ImportAccountSeed = memo(() => {
             <ButtonLargePrimary
               title="Import"
               disabled={!formik.isValid}
-              onPress={handleNoInternet(formik.submitForm)}
+              onPress={useCallbackIfOnline(formik.submitForm)}
               testID={ImportAccountSeedSelectors.importButton}
             />
           </View>

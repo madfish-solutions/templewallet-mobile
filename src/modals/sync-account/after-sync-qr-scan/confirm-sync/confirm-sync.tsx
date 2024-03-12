@@ -1,4 +1,4 @@
-import { Formik } from 'formik';
+import { FormikProvider, useFormik } from 'formik';
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -40,8 +40,6 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
   const styles = useSetPasswordScreensCommonStyles();
   const { goBack } = useNavigation();
 
-  const handleNoInternet = useCallbackIfOnline();
-
   const { isDisabled, timeleft } = usePasswordLock();
 
   useNavigationSetOptions(
@@ -53,92 +51,96 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
 
   usePageAnalytic(ModalsEnum.ConfirmSync);
 
+  const formik = useFormik({
+    initialValues: ConfirmSyncInitialValues,
+    validationSchema: ConfirmSyncValidationSchema,
+    onSubmit
+  });
+
+  const { submitForm, isValid, values } = formik;
+
   return (
-    <Formik initialValues={ConfirmSyncInitialValues} validationSchema={ConfirmSyncValidationSchema} onSubmit={onSubmit}>
-      {({ submitForm, isValid, values }) => (
-        <>
-          <ScreenContainer isFullScreenMode={true}>
-            <View>
-              <Divider size={formatSize(12)} />
-              <Label label="Password" description="The same password is used to unlock your extension." />
-              <FormPasswordInput
-                name="password"
-                {...(isDisabled && {
-                  error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
-                })}
-                testID={ConfirmSyncSelectors.passwordInput}
+    <FormikProvider value={formik}>
+      <ScreenContainer isFullScreenMode={true}>
+        <View>
+          <Divider size={formatSize(12)} />
+          <Label label="Password" description="The same password is used to unlock your extension." />
+          <FormPasswordInput
+            name="password"
+            {...(isDisabled && {
+              error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
+            })}
+            testID={ConfirmSyncSelectors.passwordInput}
+          />
+
+          <View style={styles.checkboxContainer}>
+            <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.useAsAppPasswordCheckbox}>
+              <Divider size={formatSize(8)} />
+              <Text style={styles.checkboxText}>Use as App Password</Text>
+            </FormCheckbox>
+          </View>
+
+          <View style={styles.checkboxContainer}>
+            <FormBiometryCheckbox name="useBiometry" />
+          </View>
+
+          <View style={[styles.checkboxContainer, styles.removeMargin]}>
+            <FormCheckbox name="analytics" testID={ConfirmSyncSelectors.analyticsCheckbox}>
+              <Divider size={formatSize(8)} />
+              <Text style={styles.checkboxText}>Analytics</Text>
+            </FormCheckbox>
+          </View>
+          <CheckboxLabel>
+            I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
+          </CheckboxLabel>
+
+          <Divider size={formatSize(24)} />
+
+          <ViewAdsField name="viewAds" testID={ConfirmSyncSelectors.viewAdsCheckbox} />
+
+          {values.usePrevPassword === true && (
+            <>
+              <Divider size={formatSize(8)} />
+              <Disclaimer
+                texts={['The password to unlock your mobile temple wallet is the same you set for the extension.']}
               />
+              <Divider size={formatSize(8)} />
+            </>
+          )}
+        </View>
+        <View>
+          <View style={styles.checkboxContainer}>
+            <FormCheckbox name="acceptTerms" testID={ConfirmSyncSelectors.acceptTermsCheckbox}>
+              <Divider size={formatSize(8)} />
+              <Text style={styles.checkboxText}>Accept terms</Text>
+            </FormCheckbox>
+          </View>
+          <CheckboxLabel>
+            I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
+            <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
+          </CheckboxLabel>
+        </View>
+      </ScreenContainer>
 
-              <View style={styles.checkboxContainer}>
-                <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.useAsAppPasswordCheckbox}>
-                  <Divider size={formatSize(8)} />
-                  <Text style={styles.checkboxText}>Use as App Password</Text>
-                </FormCheckbox>
-              </View>
-
-              <View style={styles.checkboxContainer}>
-                <FormBiometryCheckbox name="useBiometry" />
-              </View>
-
-              <View style={[styles.checkboxContainer, styles.removeMargin]}>
-                <FormCheckbox name="analytics" testID={ConfirmSyncSelectors.analyticsCheckbox}>
-                  <Divider size={formatSize(8)} />
-                  <Text style={styles.checkboxText}>Analytics</Text>
-                </FormCheckbox>
-              </View>
-              <CheckboxLabel>
-                I agree to the <TextLink url={analyticsCollecting}>anonymous information collecting</TextLink>
-              </CheckboxLabel>
-
-              <Divider size={formatSize(24)} />
-
-              <ViewAdsField name="viewAds" testID={ConfirmSyncSelectors.viewAdsCheckbox} />
-
-              {values.usePrevPassword === true && (
-                <>
-                  <Divider size={formatSize(8)} />
-                  <Disclaimer
-                    texts={['The password to unlock your mobile temple wallet is the same you set for the extension.']}
-                  />
-                  <Divider size={formatSize(8)} />
-                </>
-              )}
-            </View>
-            <View>
-              <View style={styles.checkboxContainer}>
-                <FormCheckbox name="acceptTerms" testID={ConfirmSyncSelectors.acceptTermsCheckbox}>
-                  <Divider size={formatSize(8)} />
-                  <Text style={styles.checkboxText}>Accept terms</Text>
-                </FormCheckbox>
-              </View>
-              <CheckboxLabel>
-                I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
-                <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-              </CheckboxLabel>
-            </View>
-          </ScreenContainer>
-
-          <ButtonsFloatingContainer>
-            <ButtonsContainer style={styles.buttonsContainer}>
-              <View style={styles.flex}>
-                <ButtonLargeSecondary title="Back" onPress={goBack} />
-              </View>
-              <Divider size={formatSize(15)} />
-              <View style={styles.flex}>
-                <ButtonLargePrimary
-                  title={values.usePrevPassword === true ? 'Sync' : 'Next'}
-                  disabled={!isValid || isDisabled}
-                  onPress={handleNoInternet(submitForm)}
-                  testID={
-                    values.usePrevPassword === true ? ConfirmSyncSelectors.syncButton : ConfirmSyncSelectors.nextButton
-                  }
-                />
-              </View>
-            </ButtonsContainer>
-            <InsetSubstitute type="bottom" />
-          </ButtonsFloatingContainer>
-        </>
-      )}
-    </Formik>
+      <ButtonsFloatingContainer>
+        <ButtonsContainer style={styles.buttonsContainer}>
+          <View style={styles.flex}>
+            <ButtonLargeSecondary title="Back" onPress={goBack} />
+          </View>
+          <Divider size={formatSize(15)} />
+          <View style={styles.flex}>
+            <ButtonLargePrimary
+              title={values.usePrevPassword === true ? 'Sync' : 'Next'}
+              disabled={!isValid || isDisabled}
+              onPress={useCallbackIfOnline(submitForm)}
+              testID={
+                values.usePrevPassword === true ? ConfirmSyncSelectors.syncButton : ConfirmSyncSelectors.nextButton
+              }
+            />
+          </View>
+        </ButtonsContainer>
+        <InsetSubstitute type="bottom" />
+      </ButtonsFloatingContainer>
+    </FormikProvider>
   );
 });

@@ -23,8 +23,6 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const { trackEvent } = useAnalytics();
   const { createHdAccount } = useShelter();
 
-  const handleNoInternet = useCallbackIfOnline();
-
   const handleCreateNewAccountButtonPress = () => {
     createHdAccount();
     onPress();
@@ -45,9 +43,12 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
     <>
       <BottomSheetActionButton
         title="Create new account"
-        onPress={handleNoInternet(handleCreateNewAccountButtonPress)}
+        onPress={useCallbackIfOnline(handleCreateNewAccountButtonPress)}
       />
-      <BottomSheetActionButton title="Import an account" onPress={handleNoInternet(handleImportAccountButtonPress)} />
+      <BottomSheetActionButton
+        title="Import an account"
+        onPress={useCallbackIfOnline(handleImportAccountButtonPress)}
+      />
       <BottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
     </>
   );

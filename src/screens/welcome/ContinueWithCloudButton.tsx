@@ -15,8 +15,6 @@ import { WelcomeSelectors } from './welcome.selectors';
 import { useCloudButtonActiveColorStyleConfig } from './welcome.styles';
 
 export const ContinueWithCloudButton = () => {
-  const handleNoInternet = useCallbackIfOnline();
-
   const cloudBtnActiveColorStyleConfig = useCloudButtonActiveColorStyleConfig();
 
   const theme = useThemeSelector();
@@ -33,7 +31,7 @@ export const ContinueWithCloudButton = () => {
       iconName={iconName}
       activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
       disabled={!cloudIsAvailable}
-      onPress={handleNoInternet(() => navigate(ScreensEnum.ContinueWithCloud))}
+      onPress={useCallbackIfOnline(() => navigate(ScreensEnum.ContinueWithCloud))}
       testID={WelcomeSelectors.continueWithCloudButton}
       testIDProperties={{ cloud: cloudTitle }}
     />

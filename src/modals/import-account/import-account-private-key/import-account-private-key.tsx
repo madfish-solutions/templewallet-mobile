@@ -33,8 +33,6 @@ export const ImportAccountPrivateKey = memo(() => {
   const { goBack } = useNavigation();
   const styles = useImportAccountFromPrivateKeyStyles();
 
-  const handleNoInternet = useCallbackIfOnline();
-
   usePageAnalytic(ModalsEnum.ImportAccountFromPrivateKey);
 
   const onSubmit = useCallback(({ privateKey }: { privateKey: string }) => {
@@ -76,7 +74,7 @@ export const ImportAccountPrivateKey = memo(() => {
             <ButtonLargePrimary
               title="Import"
               disabled={!formik.isValid}
-              onPress={handleNoInternet(formik.submitForm)}
+              onPress={useCallbackIfOnline(formik.submitForm)}
               testID={ImportAccountPrivateKeySelectors.importButton}
             />
           </View>

@@ -43,8 +43,6 @@ interface Props {
 export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initialPassword = '' }) => {
   const dispatch = useDispatch();
 
-  const handleNoInternet = useCallbackIfOnline();
-
   const styles = useSetPasswordScreensCommonStyles();
   const { importWallet } = useShelter();
 
@@ -155,7 +153,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
             <ButtonLargePrimary
               title="Import"
               disabled={!isValid}
-              onPress={handleNoInternet(() => {
+              onPress={useCallbackIfOnline(() => {
                 setFieldTouched('password', true, true);
                 setFieldTouched('passwordConfirmation', true, true);
                 setFieldTouched('acceptTerms', true, true);

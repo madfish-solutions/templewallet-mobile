@@ -25,8 +25,6 @@ export const Welcome = () => {
   const { navigate } = useNavigation();
   const styles = useWelcomeStyles();
 
-  const handleNoInternet = useCallbackIfOnline();
-
   usePageAnalytic(ScreensEnum.Welcome);
   useABTestingLoading();
 
@@ -56,7 +54,7 @@ export const Welcome = () => {
         <ButtonLargePrimary
           title="Create New Wallet"
           iconName={IconNameEnum.PlusSquare}
-          onPress={handleNoInternet(() => navigate(ScreensEnum.CreateAccount, {}))}
+          onPress={useCallbackIfOnline(() => navigate(ScreensEnum.CreateAccount, {}))}
           testID={WelcomeSelectors.createNewWalletButton}
         />
 
@@ -65,7 +63,7 @@ export const Welcome = () => {
         <ButtonDelegatePrimary
           title="Import Existing Wallet"
           iconName={IconNameEnum.ImportSquare}
-          onPress={handleNoInternet(() => navigate(ModalsEnum.ChooseWalletImportType))}
+          onPress={useCallbackIfOnline(() => navigate(ModalsEnum.ChooseWalletImportType))}
           testID={WelcomeSelectors.importExistingWalletButton}
         />
 

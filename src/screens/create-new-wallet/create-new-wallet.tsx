@@ -1,5 +1,5 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { Formik } from 'formik';
+import { FormikProvider, useFormik } from 'formik';
 import React, { useMemo, useRef, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
@@ -35,8 +35,6 @@ import {
 import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 
 export const CreateNewWallet = () => {
-  const handleNoInternet = useCallbackIfOnline();
-
   const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
 
   const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = useRestoredCloudBackup(cloudBackupId);
@@ -81,93 +79,98 @@ export const CreateNewWallet = () => {
   );
 
   const handleSubmit = useHandleSubmit(backupFlow);
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema: createNewPasswordValidationSchema,
+    onSubmit: handleSubmit
+  });
+
+  const { submitForm, setFieldTouched, isValid, errors } = formik;
+
   const handleLayoutChange = (name: string, value: number) =>
     setFieldsPositions(prevState => ({ ...prevState, [name]: value }));
 
   return (
-    <Formik initialValues={initialValues} validationSchema={createNewPasswordValidationSchema} onSubmit={handleSubmit}>
-      {({ submitForm, setFieldTouched, isValid, errors }) => (
-        <>
-          <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true}>
-            <View style={styles.mb40}>
-              <Divider size={formatSize(12)} />
-              <View onLayout={event => handleLayoutChange('password', event.nativeEvent.layout.y)}>
-                <Label
-                  label="Password"
-                  description={
-                    backupFlow?.type === 'AUTO_BACKUP'
-                      ? [
-                          { text: 'A password is used to' },
-                          { text: ' protect', bold: true },
-                          { text: ' and' },
-                          { text: ' backup', bold: true },
-                          { text: ' the wallet.' }
-                        ]
-                      : 'A password is used to protect the wallet.'
-                  }
-                />
-                <FormPasswordInput
-                  isShowPasswordStrengthIndicator
-                  name="password"
-                  testID={CreateNewWalletSelectors.passwordInput}
-                />
-              </View>
-
-              <View>
-                <Label label="Repeat Password" description="Please enter the password again." />
-                <FormPasswordInput name="passwordConfirmation" testID={CreateNewWalletSelectors.repeatPasswordInput} />
-              </View>
-
-              <View style={styles.checkboxContainer} testID={CreateNewWalletSelectors.useBiometricsToUnlockCheckBox}>
-                <FormBiometryCheckbox name="useBiometry" />
-              </View>
-
-              <AnalyticsField name="analytics" testID={CreateNewWalletSelectors.analyticsCheckbox} />
-              <Divider size={formatSize(24)} />
-              <ViewAdsField name="viewAds" testID={CreateNewWalletSelectors.viewAdsCheckbox} />
-            </View>
-
-            <View onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}>
-              <View style={styles.checkboxContainer}>
-                <FormCheckbox
-                  name="acceptTerms"
-                  descriptionNode={
-                    <>
-                      <Divider size={formatSize(8)} />
-                      <CheckboxLabel>
-                        I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
-                        <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-                      </CheckboxLabel>
-                    </>
-                  }
-                  testID={CreateNewWalletSelectors.acceptTermsCheckbox}
-                >
-                  <Divider size={formatSize(8)} />
-                  <Text style={styles.checkboxText}>Accept terms</Text>
-                </FormCheckbox>
-              </View>
-            </View>
-          </ScreenContainer>
-          <View style={[styles.fixedButtonContainer, styles.withoutSeparator]}>
-            <ButtonLargePrimary
-              title="Create"
-              onPress={handleNoInternet(() => {
-                setFieldTouched('password', true, true);
-                setFieldTouched('passwordConfirmation', true, true);
-                setFieldTouched('acceptTerms', true, true);
-
-                scrollToField(refScrollView, errors, fieldsPositions);
-
-                if (isValid) {
-                  submitForm();
-                }
-              })}
-              testID={CreateNewWalletSelectors.createButton}
+    <FormikProvider value={formik}>
+      <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true}>
+        <View style={styles.mb40}>
+          <Divider size={formatSize(12)} />
+          <View onLayout={event => handleLayoutChange('password', event.nativeEvent.layout.y)}>
+            <Label
+              label="Password"
+              description={
+                backupFlow?.type === 'AUTO_BACKUP'
+                  ? [
+                      { text: 'A password is used to' },
+                      { text: ' protect', bold: true },
+                      { text: ' and' },
+                      { text: ' backup', bold: true },
+                      { text: ' the wallet.' }
+                    ]
+                  : 'A password is used to protect the wallet.'
+              }
             />
-            <InsetSubstitute type="bottom" />
+            <FormPasswordInput
+              isShowPasswordStrengthIndicator
+              name="password"
+              testID={CreateNewWalletSelectors.passwordInput}
+            />
           </View>
-        </>
-      )}
-    </Formik>
+
+          <View>
+            <Label label="Repeat Password" description="Please enter the password again." />
+            <FormPasswordInput name="passwordConfirmation" testID={CreateNewWalletSelectors.repeatPasswordInput} />
+          </View>
+
+          <View style={styles.checkboxContainer} testID={CreateNewWalletSelectors.useBiometricsToUnlockCheckBox}>
+            <FormBiometryCheckbox name="useBiometry" />
+          </View>
+
+          <AnalyticsField name="analytics" testID={CreateNewWalletSelectors.analyticsCheckbox} />
+          <Divider size={formatSize(24)} />
+          <ViewAdsField name="viewAds" testID={CreateNewWalletSelectors.viewAdsCheckbox} />
+        </View>
+
+        <View onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}>
+          <View style={styles.checkboxContainer}>
+            <FormCheckbox
+              name="acceptTerms"
+              descriptionNode={
+                <>
+                  <Divider size={formatSize(8)} />
+                  <CheckboxLabel>
+                    I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
+                    <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
+                  </CheckboxLabel>
+                </>
+              }
+              testID={CreateNewWalletSelectors.acceptTermsCheckbox}
+            >
+              <Divider size={formatSize(8)} />
+              <Text style={styles.checkboxText}>Accept terms</Text>
+            </FormCheckbox>
+          </View>
+        </View>
+      </ScreenContainer>
+      <View style={[styles.fixedButtonContainer, styles.withoutSeparator]}>
+        <ButtonLargePrimary
+          title="Create"
+          onPress={useCallbackIfOnline(() => {
+            setFieldTouched('password', true, true);
+            setFieldTouched('passwordConfirmation', true, true);
+            setFieldTouched('acceptTerms', true, true);
+
+            scrollToField(refScrollView, errors, fieldsPositions);
+
+            if (isValid) {
+              submitForm();
+            }
+          })}
+          testID={CreateNewWalletSelectors.createButton}
+        />
+        <InsetSubstitute type="bottom" />
+      </View>
+    </FormikProvider>
   );
 };

@@ -34,8 +34,6 @@ export const ManageAccounts = () => {
 
   const styles = useManageAccountsStyles();
 
-  const handleNoInternet = useCallbackIfOnline();
-
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
   const showManageHdAccounts = segmentedControlIndex === manageHdAccountsIndex;
   const revealSelectBottomSheetController = useBottomSheetController();
@@ -76,7 +74,7 @@ export const ManageAccounts = () => {
         <BottomSheetActionButton
           key="create-new-hd-account"
           title="Create new HD account"
-          onPress={handleNoInternet(() => {
+          onPress={useCallbackIfOnline(() => {
             trackEvent(ManageAccountsSelectors.createNewHDAccountButton, AnalyticsEventCategory.ButtonPress);
             createHdAccount();
             revealSelectBottomSheetController.close();
@@ -86,7 +84,7 @@ export const ManageAccounts = () => {
         <BottomSheetActionButton
           key="import-an-account"
           title="Import an account"
-          onPress={handleNoInternet(() => {
+          onPress={useCallbackIfOnline(() => {
             navigate(ModalsEnum.ChooseAccountImportType);
             revealSelectBottomSheetController.close();
           })}
