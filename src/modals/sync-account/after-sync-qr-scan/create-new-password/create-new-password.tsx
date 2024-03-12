@@ -36,8 +36,6 @@ export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccou
   const { importWallet } = useShelter();
   const styles = useSetPasswordScreensCommonStyles();
 
-  const handleNoInternet = useCallbackIfOnline();
-
   const handleSubmit = ({ password }: CreateNewPasswordFormValues) =>
     importWallet({ seedPhrase, password, useBiometry, hdAccountsLength });
 
@@ -84,7 +82,7 @@ export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccou
                 <ButtonLargePrimary
                   title="Sync"
                   disabled={!isValid}
-                  onPress={handleNoInternet(submitForm)}
+                  onPress={useCallbackIfOnline(submitForm)}
                   testID={CreateNewPasswordSyncAccountSelectors.syncButton}
                 />
               </View>
