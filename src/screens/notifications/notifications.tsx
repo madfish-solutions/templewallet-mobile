@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -51,9 +51,9 @@ export const Notifications = () => {
 
   usePageAnalytic(ScreensEnum.Notifications);
 
-  return (
-    <>
-      {partnersPromoShown && !promotionErrorOccurred && (
+  const ListHeaderComponent = useMemo(
+    () =>
+      partnersPromoShown && !promotionErrorOccurred ? (
         <>
           <PromotionItem
             id={PROMOTION_ID}
@@ -67,15 +67,19 @@ export const Notifications = () => {
           />
           <HorizontalBorder />
         </>
-      )}
-      <FlashList
-        data={notifications}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        estimatedItemSize={AVERAGE_NOTIFICATION_ITEM_HEIGHT}
-        contentContainerStyle={NotificationsStyles.contentContainer}
-        ListEmptyComponent={ListEmptyComponent}
-      />
-    </>
+      ) : undefined,
+    [handlePromotionItemError, onAdLoad, onElementOrParentLayout, partnersPromoShown, promotionErrorOccurred]
+  );
+
+  return (
+    <FlashList
+      data={notifications}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      estimatedItemSize={AVERAGE_NOTIFICATION_ITEM_HEIGHT}
+      contentContainerStyle={NotificationsStyles.contentContainer}
+      ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={ListEmptyComponent}
+    />
   );
 };
