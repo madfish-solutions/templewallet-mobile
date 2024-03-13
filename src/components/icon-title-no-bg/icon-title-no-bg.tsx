@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Text } from 'react-native';
+import { StyleProp, Text, TextStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -12,16 +12,17 @@ import { useIconTitleNoBgStyles } from './icon-title-no-bg.styles';
 interface Props extends TestIdProps {
   text: string;
   icon: IconNameEnum;
+  textStyle?: StyleProp<TextStyle>;
   onPress: EmptyFn;
 }
 
-export const IconTitleNoBg: FC<Props> = ({ text, icon, onPress, testID }) => {
+export const IconTitleNoBg: FC<Props> = ({ text, icon, textStyle, onPress, testID }) => {
   const styles = useIconTitleNoBgStyles();
 
   return (
     <TouchableOpacity style={styles.touchableOpacity} onPress={onPress} testID={testID}>
       <Icon name={icon} />
-      <Text style={styles.text}>{text}</Text>
+      <Text style={[styles.text, textStyle]}>{text}</Text>
     </TouchableOpacity>
   );
 };
