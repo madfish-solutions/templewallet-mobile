@@ -25,8 +25,8 @@ export interface SettingsState {
   isOnRampPossibility: boolean;
   isOnRampHasBeenShownBefore: boolean;
   applicationOpenCounter: number;
-  /** `true` if need to prompt user for ads showing */
-  isEnableAdsBanner: boolean;
+  /** @deprecated */
+  isEnableAdsBanner?: boolean;
   isApkBuildLaunchEventFired: boolean;
   isPushNotificationsEnabledEventFired: boolean;
   isShowCollectibleInfo: boolean;
@@ -50,7 +50,6 @@ export const settingsInitialState: SettingsState = {
   isManualBackupMade: true,
   isCloudBackupMade: true,
   applicationOpenCounter: 0,
-  isEnableAdsBanner: true,
   isOnRampPossibility: false,
   isOnRampHasBeenShownBefore: false,
   isApkBuildLaunchEventFired: false,

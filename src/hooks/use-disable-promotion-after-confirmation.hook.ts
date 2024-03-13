@@ -7,8 +7,6 @@ import { togglePartnersPromotionAction } from 'src/store/partners-promotion/part
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
-import { setAdsBannerVisibilityAction } from '../store/settings/settings-actions';
-
 export const usePromotionAfterConfirmation = () => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
@@ -28,7 +26,6 @@ export const usePromotionAfterConfirmation = () => {
             style: 'destructive',
             onPress: () => {
               dispatch(togglePartnersPromotionAction(true));
-              dispatch(setAdsBannerVisibilityAction(false));
             }
           }
         ]
@@ -53,7 +50,6 @@ export const usePromotionAfterConfirmation = () => {
             onPress: () => {
               trackEvent(PromotionItemSelectors.disableButton, AnalyticsEventCategory.ButtonPress);
               dispatch(togglePartnersPromotionAction(false));
-              dispatch(setAdsBannerVisibilityAction(false));
             }
           }
         ]

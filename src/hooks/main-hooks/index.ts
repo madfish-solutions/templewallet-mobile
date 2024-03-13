@@ -26,9 +26,8 @@ import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { loadTokensApyActions } from 'src/store/d-apps/d-apps-actions';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
-import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
-import { useIsEnabledAdsBannerSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadAssetsBalancesActions } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
@@ -40,18 +39,11 @@ export const useMainHooks = (isLocked: boolean) => {
 
   const selectedAccountPkh = useCurrentAccountPkhSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const isEnableAdsBanner = useIsEnabledAdsBannerSelector();
   const exchangeRates = useUsdToTokenRates();
   const { navigate } = useNavigation();
   const atBootsplash = useAtBootsplash();
 
   const { isTezosNode } = useNetworkInfo();
-
-  useEffect(() => {
-    if (isEnableAdsBanner) {
-      dispatch(togglePartnersPromotionAction(false));
-    }
-  }, [isEnableAdsBanner]);
 
   useInAppUpdate();
   useAppLockTimer();

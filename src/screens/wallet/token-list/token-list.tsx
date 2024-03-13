@@ -3,7 +3,6 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
@@ -27,11 +26,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
-import {
-  useHideZeroBalancesSelector,
-  useIsEnabledAdsBannerSelector,
-  useIsInAppUpdateAvailableSelector
-} from 'src/store/settings/settings-selectors';
+import { useHideZeroBalancesSelector, useIsInAppUpdateAvailableSelector } from 'src/store/settings/settings-selectors';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -86,7 +81,6 @@ export const TokensList = memo(() => {
   const tkeyToken = useAccountTkeyToken();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useCurrentAccountTokens(true);
-  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const isInAppUpdateAvailable = useIsInAppUpdateAvailableSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
@@ -236,11 +230,7 @@ export const TokensList = memo(() => {
         </Search>
       </View>
 
-      {isInAppUpdateAvailable ? (
-        <InAppUpdateBanner style={styles.banner} />
-      ) : isEnabledAdsBanner ? (
-        <AcceptAdsBanner style={styles.banner} />
-      ) : null}
+      {isInAppUpdateAvailable ? <InAppUpdateBanner style={styles.banner} /> : null}
 
       <View
         style={styles.contentContainerStyle}
