@@ -1,11 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { HttpBackend } from '@taquito/http-utils';
 import { RpcClient } from '@taquito/rpc';
-import memoize from 'mem';
+import memoize from 'memoizee';
 
 import { isDefined } from '../is-defined';
-
-import { NoVespaiachHttpBackend } from './no-vespaiach-http-backend';
 
 interface RPCOptions {
   block: string;
@@ -19,10 +16,6 @@ class FastRpcClient extends RpcClient {
     hash: string;
     refreshedAt: number; // timestamp
   };
-
-  constructor(url: string, chain?: string, httpBackend?: HttpBackend) {
-    super(url, chain, httpBackend ?? new NoVespaiachHttpBackend());
-  }
 
   async getBlockHash(opts?: RPCOptions) {
     await this.loadLatestBlock(opts);
@@ -41,7 +34,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getBalanceMemo = memoize(super.getBalance.bind(this), {
-    cacheKey: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    normalizer: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -52,7 +46,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getLiveBlocksMemo = memoize(super.getLiveBlocks.bind(this), {
-    cacheKey: ([opts]) => toOptsKey(opts),
+    normalizer: ([opts]) => toOptsKey(opts),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -63,7 +58,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getStorageMemo = memoize(super.getStorage.bind(this), {
-    cacheKey: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    normalizer: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -74,7 +70,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getScriptMemo = memoize(super.getScript.bind(this), {
-    cacheKey: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    normalizer: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -85,7 +82,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getContractMemo = memoize(super.getContract.bind(this), {
-    cacheKey: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    normalizer: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -106,7 +104,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getEntrypointsMemo = memoize(super.getEntrypoints.bind(this), {
-    cacheKey: ([contract, opts]) => [contract, toOptsKey(opts)].join(''),
+    normalizer: ([contract, opts]) => [contract, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -117,7 +116,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getManagerKeyMemo = memoize(super.getManagerKey.bind(this), {
-    cacheKey: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    normalizer: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -128,7 +128,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getDelegateMemo = memoize(super.getDelegate.bind(this), {
-    cacheKey: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    normalizer: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -139,7 +140,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getBigMapExprMemo = memoize(super.getBigMapExpr.bind(this), {
-    cacheKey: ([id, expr, opts]) => [id, expr, toOptsKey(opts)].join(''),
+    normalizer: ([id, expr, opts]) => [id, expr, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -150,7 +152,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getDelegatesMemo = memoize(super.getDelegates.bind(this), {
-    cacheKey: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    normalizer: ([address, opts]) => [address, toOptsKey(opts)].join(''),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -161,7 +164,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getConstantsMemo = memoize(super.getConstants.bind(this), {
-    cacheKey: ([opts]) => toOptsKey(opts),
+    normalizer: ([opts]) => toOptsKey(opts),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -172,7 +176,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getBlockMemo = memoize(super.getBlock.bind(this), {
-    cacheKey: ([opts]) => toOptsKey(opts),
+    normalizer: ([opts]) => toOptsKey(opts),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -183,7 +188,8 @@ class FastRpcClient extends RpcClient {
   }
 
   getBlockHeaderMemo = memoize(super.getBlockHeader.bind(this), {
-    cacheKey: ([opts]) => toOptsKey(opts),
+    normalizer: ([opts]) => toOptsKey(opts),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
@@ -194,11 +200,12 @@ class FastRpcClient extends RpcClient {
   }
 
   getBlockMetadataMemo = memoize(super.getBlockMetadata.bind(this), {
-    cacheKey: ([opts]) => toOptsKey(opts),
+    normalizer: ([opts]) => toOptsKey(opts),
+    promise: true,
     maxAge: this.memoizeMaxAge
   });
 
-  getChainId = memoize(super.getChainId.bind(this));
+  getChainId = memoize(super.getChainId.bind(this), { promise: true });
 
   private async loadLatestBlock(opts?: RPCOptions) {
     const head = wantsHead(opts);
