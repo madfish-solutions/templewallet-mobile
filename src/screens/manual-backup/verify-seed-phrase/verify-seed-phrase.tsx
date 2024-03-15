@@ -15,10 +15,11 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { isAndroid } from 'src/config/system';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
-import { madeManualBackupAction, setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { madeManualBackupAction, setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { formatOrdinalNumber } from 'src/utils/number-format.utils';
@@ -113,7 +114,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
     dispatch(madeManualBackupAction());
     showSuccessToast({ description: 'You have successfully verified seed phrase!' });
 
-    isAndroid && dispatch(setOnRampPossibilityAction(true));
+    isAndroid && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
   };
 
   return (

@@ -14,19 +14,26 @@ import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { FormAddressInput } from 'src/form/form-address-input';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { useAddressFieldAnalytics } from 'src/hooks/use-address-field-analytics.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
+import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
+import { useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { getTokenSlug } from 'src/token/utils/token.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
@@ -51,6 +58,8 @@ export const SendModal: FC = () => {
   const collectibles = useCurrentAccountCollectibles(true);
   const assets = useMemo(() => tokens.concat(collectibles), [tokens, collectibles]);
   const tezosToken = useTezosTokenOfCurrentAccount();
+  const { isTezosNode } = useNetworkInfo();
+  const tezosBalance = useCurrentAccountTezosBalance();
   const leadingAssets = useMemo(() => [tezosToken], [tezosToken]);
 
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, true, true, leadingAssets);
@@ -101,17 +110,21 @@ export const SendModal: FC = () => {
         }
       }
 
-      void (isDefined(amount) &&
+      !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash));
+
+      if (getTokenSlug(asset) === TEZ_TOKEN_SLUG && (amount?.isGreaterThan(tezosBalance) ?? false) && isTezosNode) {
+        dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
+      } else if (isDefined(amount)) {
         dispatch(
           sendAssetActions.submit({
             asset,
             receiverPublicKeyHash: transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash,
             amount: amount.toString()
           })
-        ),
-      !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash)));
+        );
+      }
     },
-    [resolver, dispatch]
+    [dispatch, tezosBalance, isTezosNode, resolver]
   );
 
   const formik = useFormik({
@@ -212,6 +225,7 @@ export const SendModal: FC = () => {
           <InsetSubstitute type="bottom" />
         </View>
       </ScreenContainer>
+      <OnRampOverlay />
     </FormikProvider>
   );
 };

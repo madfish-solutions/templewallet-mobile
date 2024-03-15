@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import { firstValueFrom } from 'rxjs';
 import { object, SchemaOf } from 'yup';
 
+import { isAndroid } from 'src/config/system';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { passwordValidation } from 'src/form/validation/password';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -10,7 +12,7 @@ import { Shelter } from 'src/shelter/shelter';
 import {
   hideLoaderAction,
   madeCloudBackupAction,
-  setOnRampPossibilityAction,
+  setOnRampOverlayStateAction,
   showLoaderAction
 } from 'src/store/settings/settings-actions';
 import { showSuccessToast, catchThrowToastError, ToastError, showErrorToastByError } from 'src/toast/toast.utils';
@@ -23,8 +25,6 @@ import {
   saveCloudBackup
 } from 'src/utils/cloud-backup';
 import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
-
-import { isAndroid } from '../../config/system';
 
 import { CloudBackupSelectors } from './selectors';
 import { alertOnExistingBackup } from './utils';
@@ -58,7 +58,7 @@ export const useHandleSubmit = () => {
 
         dispatch(hideLoaderAction());
         dispatch(madeCloudBackupAction());
-        isAndroid && dispatch(setOnRampPossibilityAction(true));
+        isAndroid && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
 
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
         goBack();

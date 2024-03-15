@@ -44,8 +44,8 @@ export const withUsdToTokenRates =
       withLatestFrom(state$, (value, { currency }): [T, ExchangeRateRecord] => [value, currency.usdToTokenRates.data])
     );
 
-export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opParams: ParamsWithKind[]) =>
-  Shelter.getSigner$(sender.publicKeyHash).pipe(
+export const sendTransaction$ = (rpcUrl: string, senderPkh: string, opParams: ParamsWithKind[]) =>
+  Shelter.getSigner$(senderPkh).pipe(
     switchMap(signer => {
       const tezos = createTezosToolkit(rpcUrl);
       tezos.setSignerProvider(signer);

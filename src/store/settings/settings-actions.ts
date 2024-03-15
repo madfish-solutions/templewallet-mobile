@@ -1,5 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { RpcInterface } from 'src/interfaces/rpc.interface';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { FiatCurrenciesEnum } from 'src/utils/exchange-rate.util';
@@ -39,7 +40,9 @@ export const requestSeedPhraseBackupAction = createAction<void>('settings/REQUES
 export const madeManualBackupAction = createAction<void>('settings/MADE_MANUAL_BACKUP_ACTION');
 export const madeCloudBackupAction = createAction<void>('settings/MADE_CLOUD_BACKUP_ACTION');
 
-export const setOnRampPossibilityAction = createAction<boolean>('settings/SET_ON_RAMP_POSSIBILITY_ACTION');
+export const setOnRampOverlayStateAction = createAction<OnRampOverlayState>(
+  'settings/SET_ON_RAMP_OVERLAY_STATE_ACTION'
+);
 export const setIsOnRampHasBeenShownBeforeAction = createAction<boolean>(
   'settings/SET_IS_ON_RAMP_HAS_BEEN_SHOWN_BEFORE_ACTION'
 );

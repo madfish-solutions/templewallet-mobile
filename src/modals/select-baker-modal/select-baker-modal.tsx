@@ -1,8 +1,10 @@
 import { OpKind } from '@taquito/taquito';
+import { BigNumber } from 'bignumber.js';
 import { debounce } from 'lodash-es';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { ListRenderItem, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import { useDispatch } from 'react-redux';
 
 import { BakerInterface, buildUnknownBaker } from 'src/apis/baking-bad';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -14,12 +16,15 @@ import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar
 import { SearchInput } from 'src/components/search-input/search-input';
 import { Sorter } from 'src/components/sorter/sorter';
 import { BakersSortFieldEnum } from 'src/enums/bakers-sort-field.enum';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { useBakersListSelector, useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
+import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -54,6 +59,8 @@ export const SelectBakerModal = memo(() => {
   const styles = useSelectBakerModalStyles();
   const currentBaker = useSelectedBakerSelector();
   const { isTezosNode, isDcpNode } = useNetworkInfo();
+  const tezosBalance = useCurrentAccountTezosBalance();
+  const dispatch = useDispatch();
   const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
 
   const searchPlaceholder = `Search ${bakerNameByNode}`;
@@ -112,6 +119,8 @@ export const SelectBakerModal = memo(() => {
           title: 'Re-delegation is not possible',
           description: `Already delegated funds to this ${isDcpNode ? 'producer' : 'baker'}.`
         });
+      } else if (new BigNumber(tezosBalance).isZero() && isTezosNode) {
+        dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       } else {
         navigate(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
@@ -264,6 +273,8 @@ export const SelectBakerModal = memo(() => {
           />
         </ModalButtonsContainer>
       </View>
+
+      <OnRampOverlay />
     </>
   );
 });

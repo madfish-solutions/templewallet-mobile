@@ -15,6 +15,7 @@ import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
 import { useFarmSelector, useFarmsLoadingSelector, useFarmStakeSelector } from 'src/store/farms/selectors';
 import { loadSingleSavingStakeActions } from 'src/store/savings/actions';
@@ -246,6 +247,7 @@ export const ManageEarnOpportunityModal: FC = () => {
           />
         )}
       </ModalButtonsContainer>
+      <OnRampOverlay />
     </>
   );
 };

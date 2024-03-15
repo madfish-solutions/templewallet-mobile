@@ -29,7 +29,7 @@ const approveOperationRequest = ({
   opParams,
   message
 }: ApproveOperationRequestActionPayloadInterface) =>
-  sendTransaction$(rpcUrl, sender, opParams).pipe(
+  sendTransaction$(rpcUrl, sender.publicKeyHash, opParams).pipe(
     switchMap(({ hash }) =>
       from(
         BeaconHandler.respond({

@@ -23,7 +23,7 @@ import {
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
-  setOnRampPossibilityAction,
+  setOnRampOverlayStateAction,
   setIsOnRampHasBeenShownBeforeAction,
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired,
@@ -124,9 +124,9 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShowCollectibleInfo: !state.isShowCollectibleInfo
   }));
 
-  builder.addCase(setOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {
+  builder.addCase(setOnRampOverlayStateAction, (state, { payload: onRampOverlayState }) => {
     if (state.selectedRpcUrl !== DCP_RPC.url) {
-      return { ...state, isOnRampPossibility };
+      return { ...state, onRampOverlayState };
     }
 
     return state;

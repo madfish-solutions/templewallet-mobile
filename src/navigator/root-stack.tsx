@@ -2,12 +2,13 @@ import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { BigNumber } from 'bignumber.js';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
 import { isAndroid, isIOS } from 'src/config/system';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useRootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
@@ -45,9 +46,13 @@ import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
-import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountTezosBalance, useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import {
+  useCurrentAccountTezosBalance,
+  useCurrentAccountTezosBalanceLoadingSelector,
+  useIsAuthorisedSelector
+} from 'src/store/wallet/wallet-selectors';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
@@ -69,6 +74,7 @@ export const RootStackScreen = () => {
   const { isDcpNode } = useNetworkInfo();
 
   const balance = useCurrentAccountTezosBalance();
+  const balanceLoading = useCurrentAccountTezosBalanceLoadingSelector();
   const isOnRampHasBeenShownBefore = useIsOnRampHasBeenShownBeforeSelector();
 
   useRootHooks();
@@ -82,18 +88,26 @@ export const RootStackScreen = () => {
   const screenOptions = useStackNavigationOptions();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
+  const [shouldShowStartRampOverlayIfNoTez, setShouldShowStartRampOverlayIfNoTez] = useState(false);
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (shouldShowStartRampOverlayIfNoTez && new BigNumber(balance).isZero() && balanceLoading === false) {
+      dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
+      setShouldShowStartRampOverlayIfNoTez(false);
+    }
+  }, [balance, balanceLoading, dispatch, shouldShowStartRampOverlayIfNoTez]);
+
   const beforeRemove = useCallback(() => {
     dispatch(shouldShowNewsletterModalAction(false));
-    if (isAndroid && !isOnRampHasBeenShownBefore && new BigNumber(balance).isEqualTo(0)) {
-      dispatch(setOnRampPossibilityAction(true));
+    if (isAndroid && !isOnRampHasBeenShownBefore) {
+      setShouldShowStartRampOverlayIfNoTez(true);
     }
-  }, [isOnRampHasBeenShownBefore, balance, dispatch]);
+  }, [dispatch, isOnRampHasBeenShownBefore]);
 
   return (
     <NavigationContainer

@@ -10,19 +10,22 @@ import { BackHandler, Keyboard, Text, View } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { emptyComponent, emptyFn, EmptyFn } from '../../config/general';
+import { emptyComponent, emptyFn } from '../../config/general';
 import { useAppLock } from '../../shelter/app-lock/app-lock';
 import { formatSize } from '../../styles/format-size';
 import { isDefined } from '../../utils/is-defined';
+import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { useDropdownBottomSheetStyles } from './bottom-sheet.styles';
 import { BottomSheetControllerProps } from './use-bottom-sheet-controller';
 
 interface Props extends BottomSheetControllerProps {
   title?: string;
-  description: string;
+  description?: string;
   cancelButtonText?: string;
   onCancelButtonPress?: EmptyFn;
+  cancelButtonTestID?: string;
+  onClose?: EmptyFn;
   contentHeight: number;
 }
 
@@ -30,7 +33,9 @@ export const BottomSheet: FC<Props> = ({
   title,
   description,
   cancelButtonText = 'Cancel',
+  cancelButtonTestID,
   onCancelButtonPress = emptyFn,
+  onClose = emptyFn,
   contentHeight,
   controller,
   children
@@ -65,6 +70,12 @@ export const BottomSheet: FC<Props> = ({
     controller.close();
     onCancelButtonPress();
   };
+  const handleClose = () => {
+    if (isOpened) {
+      setIsOpened(false);
+      onClose();
+    }
+  };
 
   useEffect(() => {
     if (isOpened) {
@@ -93,18 +104,26 @@ export const BottomSheet: FC<Props> = ({
           backgroundComponent={emptyComponent}
           backdropComponent={renderBackdropComponent}
           onChange={handleChange}
+          onClose={handleClose}
         >
           <View style={styles.root}>
-            <View style={styles.headerContainer}>
-              {isDefined(title) && <Text style={styles.title}>{title}</Text>}
-              <Text style={styles.description}>{description}</Text>
-            </View>
+            {(isDefined(title) || isDefined(description)) && (
+              <View style={styles.headerContainer}>
+                {isDefined(title) && <Text style={styles.title}>{title}</Text>}
+                {isDefined(description) && <Text style={styles.description}>{description}</Text>}
+              </View>
+            )}
 
             {children}
 
-            <TouchableOpacity style={styles.cancelButton} onPress={handleCancelPress}>
+            <TouchableWithAnalytics
+              Component={TouchableOpacity}
+              testID={cancelButtonTestID}
+              style={styles.cancelButton}
+              onPress={handleCancelPress}
+            >
               <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
-            </TouchableOpacity>
+            </TouchableWithAnalytics>
           </View>
         </GorhomBottomSheet>
       )}

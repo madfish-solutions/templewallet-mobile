@@ -21,6 +21,7 @@ import {
   SWAP_THRESHOLD_TO_GET_CASHBACK,
   TEMPLE_TOKEN
 } from 'src/config/swap';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
@@ -30,8 +31,10 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { isLiquidityBakingParamsResponse } from 'src/interfaces/route3.interface';
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { navigateAction } from 'src/store/root-state.actions';
+import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { loadSwapParamsAction } from 'src/store/swap/swap-actions';
 import {
@@ -39,10 +42,11 @@ import {
   useSwapTokenBySlugSelector,
   useSwapTokensMetadataSelector
 } from 'src/store/swap/swap-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { SIRS_TOKEN } from 'src/token/data/token-slugs';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -82,6 +86,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const publicKeyHash = useCurrentAccountPkhSelector();
   const tezos = useReadOnlyTezosToolkit();
+  const tezosBalance = useCurrentAccountTezosBalance();
   const blockLevel = useBlockLevel();
   const { isLoading } = useSwapTokensMetadataSelector();
   const usdExchangeRates = useUsdToTokenRates();
@@ -107,6 +112,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
 
     if (!inputAssets.amount || !fromRoute3Token || !toRoute3Token || swapInputMinusFeeAtomic.isEqualTo(ZERO)) {
+      return;
+    }
+
+    // TODO: add logic for DCP network after swaps are implemented for it
+    if (inputAssetSlug === TEZ_TOKEN_SLUG && inputAssets.amount.isGreaterThan(tezosBalance)) {
+      dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
+
       return;
     }
 
@@ -423,6 +435,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           testID={SwapFormSelectors.swapButton}
         />
       </ButtonsFloatingContainer>
+
+      <OnRampOverlay />
     </FormikProvider>
   );
 };
