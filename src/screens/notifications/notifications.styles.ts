@@ -1,14 +1,12 @@
-import { StyleSheet } from 'react-native';
-
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const NotificationsStyles = StyleSheet.create({
+export const useNotificationsStyles = createUseStylesMemoized(() => ({
   contentContainer: {
-    paddingBottom: formatSize(16),
-    paddingTop: 0,
-    paddingHorizontal: 0
+    flex: 1,
+    paddingBottom: formatSize(16)
   },
   ads: {
     margin: formatSize(16)
   }
-});
+}));

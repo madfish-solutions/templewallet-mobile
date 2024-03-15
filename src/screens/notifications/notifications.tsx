@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { PromotionItem } from 'src/components/promotion-item';
+import { isIOS } from 'src/config/system';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
@@ -18,7 +19,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { NotificationPreviewItem } from './notification-preview-item/notification-preview-item';
 import { NotificationsSelectors } from './notifications.selectors';
-import { NotificationsStyles } from './notifications.styles';
+import { useNotificationsStyles } from './notifications.styles';
 
 const VIEW_ALL_NOTIFICATIONS_TIMEOUT = 5 * 1000;
 const AVERAGE_NOTIFICATION_ITEM_HEIGHT = Math.round(formatSize(132));
@@ -31,15 +32,23 @@ const renderItem: ListRenderItem<NotificationInterface> = ({ item }) => <Notific
 const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
 
 export const Notifications = () => {
+  const styles = useNotificationsStyles();
+
   const notifications = useNotificationsSelector();
   const dispatch = useDispatch();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
+  const flashListWrapperRef = useRef<View>(null);
   const adRef = useRef<View>(null);
+
   const adPageName = 'Notifications';
   const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName);
-  const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
+  const { onElementOrParentLayout } = useOutsideOfListIntersection(
+    isIOS ? flashListWrapperRef : undefined,
+    adRef,
+    onIsVisible
+  );
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
 
@@ -56,30 +65,31 @@ export const Notifications = () => {
       partnersPromoShown && !promotionErrorOccurred ? (
         <>
           <PromotionItem
-            id={PROMOTION_ID}
-            testID={NotificationsSelectors.promotion}
-            pageName={adPageName}
-            style={NotificationsStyles.ads}
             ref={adRef}
+            id={PROMOTION_ID}
+            pageName={adPageName}
+            testID={NotificationsSelectors.promotion}
             onError={handlePromotionItemError}
             onLayout={onElementOrParentLayout}
             onLoad={onAdLoad}
+            style={styles.ads}
           />
           <HorizontalBorder />
         </>
       ) : undefined,
-    [handlePromotionItemError, onAdLoad, onElementOrParentLayout, partnersPromoShown, promotionErrorOccurred]
+    [handlePromotionItemError, onAdLoad, onElementOrParentLayout, partnersPromoShown, promotionErrorOccurred, styles]
   );
 
   return (
-    <FlashList
-      data={notifications}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      estimatedItemSize={AVERAGE_NOTIFICATION_ITEM_HEIGHT}
-      contentContainerStyle={NotificationsStyles.contentContainer}
-      ListHeaderComponent={ListHeaderComponent}
-      ListEmptyComponent={ListEmptyComponent}
-    />
+    <View ref={flashListWrapperRef} style={styles.contentContainer}>
+      <FlashList
+        data={notifications}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        estimatedItemSize={AVERAGE_NOTIFICATION_ITEM_HEIGHT}
+        ListHeaderComponent={ListHeaderComponent}
+        ListEmptyComponent={ListEmptyComponent}
+      />
+    </View>
   );
 };
