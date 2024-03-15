@@ -18,7 +18,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { NotificationPreviewItem } from './notification-preview-item/notification-preview-item';
 import { NotificationsSelectors } from './notifications.selectors';
-import { useNotificationsStyles } from './notifications.styles';
+import { NotificationsStyles } from './notifications.styles';
 
 const VIEW_ALL_NOTIFICATIONS_TIMEOUT = 5 * 1000;
 const AVERAGE_NOTIFICATION_ITEM_HEIGHT = Math.round(formatSize(132));
@@ -31,8 +31,6 @@ const renderItem: ListRenderItem<NotificationInterface> = ({ item }) => <Notific
 const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
 
 export const Notifications = () => {
-  const styles = useNotificationsStyles();
-
   const notifications = useNotificationsSelector();
   const dispatch = useDispatch();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
@@ -66,16 +64,16 @@ export const Notifications = () => {
             onError={handlePromotionItemError}
             onLayout={onElementOrParentLayout}
             onLoad={onAdLoad}
-            style={styles.ads}
+            style={NotificationsStyles.ads}
           />
           <HorizontalBorder />
         </>
       ) : undefined,
-    [handlePromotionItemError, onAdLoad, onElementOrParentLayout, partnersPromoShown, promotionErrorOccurred, styles]
+    [handlePromotionItemError, onAdLoad, onElementOrParentLayout, partnersPromoShown, promotionErrorOccurred]
   );
 
   return (
-    <View style={styles.contentContainer}>
+    <View style={NotificationsStyles.contentContainer}>
       <FlashList
         data={notifications}
         renderItem={renderItem}
