@@ -41,8 +41,6 @@ export const useHideZeroBalancesSelector = () => useSelector(({ settings }) => s
 
 export const useIsShowLoaderSelector = () => useSelector(({ settings }) => settings.isShowLoader);
 
-export const useIsEnabledAdsBannerSelector = () => useSelector(({ settings }) => settings.isEnableAdsBanner);
-
 export const useIsApkBuildLaunchEventFiredSelector = () =>
   useSelector(({ settings }) => settings.isApkBuildLaunchEventFired);
 

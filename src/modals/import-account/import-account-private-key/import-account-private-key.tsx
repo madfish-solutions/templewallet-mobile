@@ -12,6 +12,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
@@ -73,7 +74,7 @@ export const ImportAccountPrivateKey = memo(() => {
             <ButtonLargePrimary
               title="Import"
               disabled={!formik.isValid}
-              onPress={formik.submitForm}
+              onPress={useCallbackIfOnline(formik.submitForm)}
               testID={ImportAccountPrivateKeySelectors.importButton}
             />
           </View>

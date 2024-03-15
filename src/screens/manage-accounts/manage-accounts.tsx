@@ -11,6 +11,7 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -73,20 +74,20 @@ export const ManageAccounts = () => {
         <BottomSheetActionButton
           key="create-new-hd-account"
           title="Create new HD account"
-          onPress={() => {
+          onPress={useCallbackIfOnline(() => {
             trackEvent(ManageAccountsSelectors.createNewHDAccountButton, AnalyticsEventCategory.ButtonPress);
             createHdAccount();
             revealSelectBottomSheetController.close();
-          }}
+          })}
           testID={ManageAccountsSelectors.createNewHDAccountButton}
         />
         <BottomSheetActionButton
           key="import-an-account"
           title="Import an account"
-          onPress={() => {
+          onPress={useCallbackIfOnline(() => {
             navigate(ModalsEnum.ChooseAccountImportType);
             revealSelectBottomSheetController.close();
-          }}
+          })}
           testID={ManageAccountsSelectors.importAnAccountButton}
         />
       </BottomSheet>
