@@ -6,7 +6,6 @@ import { useDispatch } from 'react-redux';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { PromotionItem } from 'src/components/promotion-item';
-import { isIOS } from 'src/config/system';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
@@ -39,16 +38,11 @@ export const Notifications = () => {
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
-  const flashListWrapperRef = useRef<View>(null);
   const adRef = useRef<View>(null);
 
   const adPageName = 'Notifications';
   const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName);
-  const { onElementOrParentLayout } = useOutsideOfListIntersection(
-    isIOS ? flashListWrapperRef : undefined,
-    adRef,
-    onIsVisible
-  );
+  const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
 
@@ -81,7 +75,7 @@ export const Notifications = () => {
   );
 
   return (
-    <View ref={flashListWrapperRef} style={styles.contentContainer}>
+    <View style={styles.contentContainer}>
       <FlashList
         data={notifications}
         renderItem={renderItem}

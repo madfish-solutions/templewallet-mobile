@@ -6,7 +6,6 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { PromotionItem } from 'src/components/promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { emptyFn } from 'src/config/general';
-import { isIOS } from 'src/config/system';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
@@ -85,16 +84,11 @@ export const ActivityGroupsList: FC<Props> = ({
     return result;
   }, [activityGroups]);
 
-  const flashListWrapperRef = useRef<View>(null);
   const adRef = useRef<View>(null);
 
   const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(pageName);
 
-  const { onElementOrParentLayout } = useOutsideOfListIntersection(
-    isIOS ? flashListWrapperRef : undefined,
-    adRef,
-    onIsVisible
-  );
+  const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
 
   const ListHeaderComponent = useMemo(
     () =>
@@ -150,7 +144,7 @@ export const ActivityGroupsList: FC<Props> = ({
   );
 
   return (
-    <View ref={flashListWrapperRef} style={styles.contentContainer}>
+    <View style={styles.contentContainer}>
       <FlashList
         data={sections}
         stickyHeaderIndices={stickyHeaderIndices}
