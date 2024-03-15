@@ -149,6 +149,7 @@ export const TokensList = memo(() => {
   }, [filteredAssetsList, screenFillingItemsCount, partnersPromoShown, promotionErrorOccurred]);
 
   const shouldShowEmptyListComponent = filteredAssetsList.length === 0;
+  const isNonEmptyRenderList = renderData.length > 1;
 
   const handleLayout = useCallback((event: LayoutChangeEvent) => setListHeight(event.nativeEvent.layout.height), []);
   const handlePromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
@@ -227,7 +228,7 @@ export const TokensList = memo(() => {
       {isInAppUpdateAvailable ? <InAppUpdateBanner style={styles.banner} /> : null}
 
       <View
-        style={renderData.length > 1 ? styles.listContainer : styles.listContainerWithAd}
+        style={isNonEmptyRenderList ? styles.listContainer : styles.listContainerWithAd}
         ref={flashListWrapperRef}
         onLayout={handleLayout}
         testID={WalletSelectors.tokenList}
@@ -235,7 +236,7 @@ export const TokensList = memo(() => {
         <FlashList
           ref={flashListRef}
           data={renderData}
-          scrollEnabled={renderData.length > 1}
+          scrollEnabled={isNonEmptyRenderList}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           getItemType={getItemType}
