@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -40,8 +41,14 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
 
   return (
     <>
-      <BottomSheetActionButton title="Create new account" onPress={handleCreateNewAccountButtonPress} />
-      <BottomSheetActionButton title="Import an account" onPress={handleImportAccountButtonPress} />
+      <BottomSheetActionButton
+        title="Create new account"
+        onPress={useCallbackIfOnline(handleCreateNewAccountButtonPress)}
+      />
+      <BottomSheetActionButton
+        title="Import an account"
+        onPress={useCallbackIfOnline(handleImportAccountButtonPress)}
+      />
       <BottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
     </>
   );
