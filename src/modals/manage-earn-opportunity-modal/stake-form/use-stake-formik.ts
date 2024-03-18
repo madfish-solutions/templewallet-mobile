@@ -17,7 +17,7 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useSelectedRpcUrlSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { useSwapTokensSelector } from 'src/store/swap/swap-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
@@ -47,6 +47,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const canUseOnRamp = useCanUseOnRamp();
+  const tezosBalance = useCurrentAccountTezosBalance();
   const accountPkh = useCurrentAccountPkhSelector();
   const { data: threeRouteTokens } = useSwapTokensSelector();
   const tezos = useReadOnlyTezosToolkit();
@@ -97,7 +98,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         return;
       }
 
-      if (canUseOnRamp && toTokenSlug(asset.address, asset.id) === TEZ_TOKEN_SLUG) {
+      if (canUseOnRamp && toTokenSlug(asset.address, asset.id) === TEZ_TOKEN_SLUG && amount.gt(tezosBalance)) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
 
         return;
