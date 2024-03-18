@@ -23,6 +23,8 @@ export interface SettingsState {
   isShowLoader: boolean;
   isManualBackupMade: boolean;
   isCloudBackupMade: boolean;
+  /** @deprecated */
+  isOnRampPossibility?: boolean;
   onRampOverlayState: OnRampOverlayState;
   isOnRampHasBeenShownBefore: boolean;
   applicationOpenCounter: number;
