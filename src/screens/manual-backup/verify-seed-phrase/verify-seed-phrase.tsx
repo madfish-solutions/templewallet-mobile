@@ -14,8 +14,8 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { isAndroid } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
@@ -39,6 +39,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
   const styles = useVerifySeedPhraseStyles();
   const { navigate } = useNavigation();
   const { revealSeedPhrase } = useShelter();
+  const canUseOnRamp = useCanUseOnRamp();
 
   const [words, setWords] = useState<string[]>([]);
 
@@ -114,7 +115,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
     dispatch(madeManualBackupAction());
     showSuccessToast({ description: 'You have successfully verified seed phrase!' });
 
-    isAndroid && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
+    canUseOnRamp && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
   };
 
   return (

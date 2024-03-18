@@ -7,10 +7,11 @@ import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
-import { isAndroid, isIOS } from 'src/config/system';
+import { isIOS } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useRootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
@@ -71,6 +72,7 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
+  const canUseOnRamp = useCanUseOnRamp();
   const { isDcpNode } = useNetworkInfo();
 
   const balance = useCurrentAccountTezosBalance();
@@ -104,10 +106,10 @@ export const RootStackScreen = () => {
 
   const beforeRemove = useCallback(() => {
     dispatch(shouldShowNewsletterModalAction(false));
-    if (isAndroid && !isOnRampHasBeenShownBefore) {
+    if (canUseOnRamp && !isOnRampHasBeenShownBefore) {
       setShouldShowStartRampOverlayIfNoTez(true);
     }
-  }, [dispatch, isOnRampHasBeenShownBefore]);
+  }, [canUseOnRamp, dispatch, isOnRampHasBeenShownBefore]);
 
   return (
     <NavigationContainer

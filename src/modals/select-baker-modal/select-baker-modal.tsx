@@ -17,6 +17,7 @@ import { SearchInput } from 'src/components/search-input/search-input';
 import { Sorter } from 'src/components/sorter/sorter';
 import { BakersSortFieldEnum } from 'src/enums/bakers-sort-field.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -59,6 +60,7 @@ export const SelectBakerModal = memo(() => {
   const styles = useSelectBakerModalStyles();
   const currentBaker = useSelectedBakerSelector();
   const { isTezosNode, isDcpNode } = useNetworkInfo();
+  const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
   const dispatch = useDispatch();
   const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
@@ -119,7 +121,7 @@ export const SelectBakerModal = memo(() => {
           title: 'Re-delegation is not possible',
           description: `Already delegated funds to this ${isDcpNode ? 'producer' : 'baker'}.`
         });
-      } else if (new BigNumber(tezosBalance).isZero() && isTezosNode) {
+      } else if (new BigNumber(tezosBalance).isZero() && canUseOnRamp) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       } else {
         navigate(ModalsEnum.Confirmation, {

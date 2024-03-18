@@ -19,9 +19,9 @@ import { FormAddressInput } from 'src/form/form-address-input';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { useAddressFieldAnalytics } from 'src/hooks/use-address-field-analytics.hook';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -58,7 +58,7 @@ export const SendModal: FC = () => {
   const collectibles = useCurrentAccountCollectibles(true);
   const assets = useMemo(() => tokens.concat(collectibles), [tokens, collectibles]);
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const { isTezosNode } = useNetworkInfo();
+  const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
   const leadingAssets = useMemo(() => [tezosToken], [tezosToken]);
 
@@ -112,7 +112,7 @@ export const SendModal: FC = () => {
 
       !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash));
 
-      if (getTokenSlug(asset) === TEZ_TOKEN_SLUG && (amount?.isGreaterThan(tezosBalance) ?? false) && isTezosNode) {
+      if (getTokenSlug(asset) === TEZ_TOKEN_SLUG && (amount?.isGreaterThan(tezosBalance) ?? false) && canUseOnRamp) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       } else if (isDefined(amount)) {
         dispatch(
@@ -124,7 +124,7 @@ export const SendModal: FC = () => {
         );
       }
     },
-    [dispatch, tezosBalance, isTezosNode, resolver]
+    [dispatch, tezosBalance, canUseOnRamp, resolver]
   );
 
   const formik = useFormik({

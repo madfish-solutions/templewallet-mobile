@@ -12,7 +12,7 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ApproveInternalOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-internal-operation-request-action-payload.interface';
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
@@ -61,10 +61,10 @@ const approveInternalOperationRequest = ({
   );
 
 export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle, disclaimerMessage, testID }) => {
+  const canUseOnRamp = useCanUseOnRamp();
   const dispatch = useDispatch();
   const selectedAccount = useRawCurrentAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
-  const { isTezosNode } = useNetworkInfo();
   const tezosBalance = useCurrentAccountTezosBalance();
   const lastSetOverlayStateRef = useRef<OnRampOverlayState | null>(null);
 
@@ -102,17 +102,17 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
 
   const handleEstimationError = useCallback(
     (error: string) =>
-      NOT_ENOUGH_TEZ_ERRORS_KEYWORDS.some(keyword => error.includes(keyword)) && isTezosNode
+      NOT_ENOUGH_TEZ_ERRORS_KEYWORDS.some(keyword => error.includes(keyword)) && canUseOnRamp
         ? updateOverlayState(OnRampOverlayState.Continue)
         : console.error(error),
-    [isTezosNode, updateOverlayState]
+    [canUseOnRamp, updateOverlayState]
   );
 
   const handleTotalTezValue = useCallback(
     (newValue: BigNumber) =>
-      isTezosNode &&
+      canUseOnRamp &&
       updateOverlayState(newValue.gt(tezosBalance) ? OnRampOverlayState.Continue : OnRampOverlayState.Closed),
-    [isTezosNode, tezosBalance, updateOverlayState]
+    [canUseOnRamp, tezosBalance, updateOverlayState]
   );
 
   return (

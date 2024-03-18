@@ -10,11 +10,11 @@ import { BackHandler, Keyboard, Text, View } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { emptyComponent, emptyFn } from '../../config/general';
-import { useAppLock } from '../../shelter/app-lock/app-lock';
-import { formatSize } from '../../styles/format-size';
-import { isDefined } from '../../utils/is-defined';
-import { TouchableWithAnalytics } from '../touchable-with-analytics';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { emptyComponent, emptyFn } from 'src/config/general';
+import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
 
 import { useDropdownBottomSheetStyles } from './bottom-sheet.styles';
 import { BottomSheetControllerProps } from './use-bottom-sheet-controller';

@@ -3,9 +3,9 @@ import { useDispatch } from 'react-redux';
 import { firstValueFrom } from 'rxjs';
 import { object, SchemaOf } from 'yup';
 
-import { isAndroid } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { passwordValidation } from 'src/form/validation/password';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
@@ -46,6 +46,7 @@ export const useHandleSubmit = () => {
   const dispatch = useDispatch();
   const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
   const { trackEvent } = useAnalytics();
+  const canUseOnRamp = useCanUseOnRamp();
 
   const proceedWithSaving = useCallback(
     async (password: string, replacing = false) => {
@@ -58,7 +59,7 @@ export const useHandleSubmit = () => {
 
         dispatch(hideLoaderAction());
         dispatch(madeCloudBackupAction());
-        isAndroid && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
+        canUseOnRamp && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
 
         showSuccessToast({ description: 'Your wallet has been backed up successfully!' });
         goBack();
@@ -71,7 +72,7 @@ export const useHandleSubmit = () => {
         trackCloudError(error);
       }
     },
-    [dispatch, goBack, trackCloudError, trackCloudSuccess]
+    [canUseOnRamp, dispatch, goBack, trackCloudError, trackCloudSuccess]
   );
 
   const submit: (password: string) => Promise<void> = useCallback(

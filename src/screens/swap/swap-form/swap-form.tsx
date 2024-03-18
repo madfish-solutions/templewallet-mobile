@@ -24,6 +24,7 @@ import {
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useSwap } from 'src/hooks/use-swap.hook';
@@ -90,6 +91,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const blockLevel = useBlockLevel();
   const { isLoading } = useSwapTokensMetadataSelector();
   const usdExchangeRates = useUsdToTokenRates();
+  const canUseOnRamp = useCanUseOnRamp();
 
   const swapParams = useSwapParamsSelector();
   const prevOutputRef = useRef(swapParams.data.output);
@@ -115,8 +117,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       return;
     }
 
-    // TODO: add logic for DCP network after swaps are implemented for it
-    if (inputAssetSlug === TEZ_TOKEN_SLUG && inputAssets.amount.isGreaterThan(tezosBalance)) {
+    if (inputAssetSlug === TEZ_TOKEN_SLUG && inputAssets.amount.isGreaterThan(tezosBalance) && canUseOnRamp) {
       dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
 
       return;
