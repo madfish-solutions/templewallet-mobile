@@ -21,6 +21,7 @@ import { privacyPolicy, termsOfUse } from 'src/config/socials';
 import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { setIsAnalyticsEnabled } from 'src/store/settings/settings-actions';
@@ -153,7 +154,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
             <ButtonLargePrimary
               title="Import"
               disabled={!isValid}
-              onPress={() => {
+              onPress={useCallbackIfOnline(() => {
                 setFieldTouched('password', true, true);
                 setFieldTouched('passwordConfirmation', true, true);
                 setFieldTouched('acceptTerms', true, true);
@@ -163,7 +164,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
                 if (isValid) {
                   submitForm();
                 }
-              }}
+              })}
               testID={CreateNewPasswordSelectors.createButton}
             />
           </View>

@@ -44,20 +44,20 @@ export const useFilteredAssetsList = <T extends FilterableAsset>(
       return searchedAssetsList;
     }
 
+    let filteredLeadingAssets: T[] = leadingAssets;
+
     if (leadingAssetsAreFilterable) {
-      if (filterZeroBalances && leadingAssets.every(asset => !isNonZeroBalance(asset))) {
-        return searchedAssetsList;
+      if (filterZeroBalances) {
+        filteredLeadingAssets = filteredLeadingAssets.filter(asset => isNonZeroBalance(asset));
       }
+
       const searchValueLowercased = searchValue?.toLowerCase();
-      if (
-        isString(searchValueLowercased) &&
-        leadingAssets.every(asset => !isAssetSearched(asset, searchValueLowercased))
-      ) {
-        return searchedAssetsList;
+      if (isString(searchValueLowercased)) {
+        filteredLeadingAssets = filteredLeadingAssets.filter(asset => isAssetSearched(asset, searchValueLowercased));
       }
     }
 
-    return uniqBy([...leadingAssets, ...searchedAssetsList], getTokenSlug);
+    return uniqBy([...filteredLeadingAssets, ...searchedAssetsList], getTokenSlug);
   }, [searchedAssetsList, searchValue, filterZeroBalances, leadingAssets, leadingAssetsAreFilterable]);
 
   return {

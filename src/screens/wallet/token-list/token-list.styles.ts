@@ -2,10 +2,11 @@ import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useTokenListStyles = createUseStylesMemoized(({ colors, typography }) => ({
-  contentContainerStyle: {
-    flexGrow: 1,
-    flexShrink: 1,
-    backgroundColor: colors.pageBG
+  listContainer: {
+    flexGrow: 1
+  },
+  listContainerWithAd: {
+    height: formatSize(100)
   },
   headerContainer: {
     height: formatSize(40),

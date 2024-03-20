@@ -1,36 +1,41 @@
 import { debounce } from 'lodash-es';
 import Toast from 'react-native-toast-message';
 
-import { EmptyFn } from 'src/config/general';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
 
 export { ToastError, showErrorToast, showErrorToastByError, catchThrowToastError } from './error-toast.utils';
 
 interface ToastProps {
   description: string;
+  iconName?: IconNameEnum;
   title?: string;
   onPress?: EmptyFn;
   operationHash?: string;
   isCopyButtonVisible?: boolean;
 }
 
-export const showSuccessToast = ({ description, title, onPress, operationHash }: ToastProps) =>
+export const showSuccessToast = ({ description, title, onPress, iconName, operationHash }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Success,
     text1: title,
     text2: description,
     onPress,
     props: {
-      operationHash
+      operationHash,
+      iconName
     }
   });
 
-export const showWarningToast = ({ description, title, onPress }: ToastProps) =>
+export const showWarningToast = ({ description, title, iconName, onPress }: ToastProps) =>
   Toast.show({
     type: ToastTypeEnum.Warning,
     text1: title,
     text2: description,
-    onPress
+    onPress,
+    props: {
+      iconName
+    }
   });
 
 export const showCopiedToast = () => Toast.show({ type: ToastTypeEnum.Copied });

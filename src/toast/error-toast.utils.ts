@@ -1,6 +1,6 @@
 import Toast, { ToastShowParams } from 'react-native-toast-message';
 
-import { EmptyFn } from 'src/config/general';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ToastTypeEnum } from 'src/enums/toast-type.enum';
 import { errorMessageFilter } from 'src/utils/error-message.util';
 import { isString } from 'src/utils/is-string';
@@ -8,6 +8,7 @@ import { isString } from 'src/utils/is-string';
 interface ToastProps {
   description: string;
   title?: string;
+  iconName?: IconNameEnum;
   onPress?: EmptyFn;
   operationHash?: string;
   isCopyButtonVisible?: boolean;
@@ -25,7 +26,7 @@ const TAQUITO_500_ERROR_MESSAGE = 'Http error response: (500)';
  */
 const JSON_PARSE_ERROR = 'JSON Parse error: Unexpected';
 
-export const showErrorToast = ({ description, title, onPress, isCopyButtonVisible }: ToastProps) => {
+export const showErrorToast = ({ description, title, iconName, onPress, isCopyButtonVisible }: ToastProps) => {
   const slicedErrorMessage = description.slice(0, 26);
 
   if (description === TAQUITO_MISSED_BLOCK_ERROR_MESSAGE) {
@@ -41,14 +42,20 @@ export const showErrorToast = ({ description, title, onPress, isCopyButtonVisibl
   if (description.startsWith(JSON_PARSE_ERROR)) {
     return Toast.show({
       ...commonParams,
-      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE)
+      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE),
+      props: {
+        iconName
+      }
     });
   }
 
   if (TAQUITO_500_ERROR_MESSAGE === slicedErrorMessage) {
     return Toast.show({
       ...commonParams,
-      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE)
+      text2: errorMessageFilter(DEFAULT_ERROR_MESSAGE),
+      props: {
+        iconName
+      }
     });
   }
 
@@ -56,7 +63,8 @@ export const showErrorToast = ({ description, title, onPress, isCopyButtonVisibl
     ...commonParams,
     text2: errorMessageFilter(description),
     props: {
-      isCopyButtonVisible
+      isCopyButtonVisible,
+      iconName
     }
   });
 };

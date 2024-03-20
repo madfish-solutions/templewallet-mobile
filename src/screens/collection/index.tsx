@@ -36,7 +36,7 @@ export const Collection = memo(() => {
     galleryPk
   );
 
-  const { setInnerScreenIndex } = useInnerScreenProgress(collectionSize ?? collectibles.length);
+  const { setInnerScreenIndex } = useInnerScreenProgress(collectionSize ?? collectibles.length, false, true);
 
   const onViewableItemsChanged = useCallback((info: { viewableItems: ViewToken[] }) => {
     const index = info.viewableItems[0]?.index;
