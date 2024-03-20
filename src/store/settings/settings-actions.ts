@@ -30,6 +30,8 @@ export const showLoaderAction = createAction('settings/SHOW_LOADER_ACTION');
 export const hideLoaderAction = createAction('settings/HIDE_LOADER_ACTION');
 export const setIsShowLoaderAction = createAction<boolean>('settings/SET_IS_SHOW_LOADER_ACTION');
 
+export const resetPermanentInitialSettingsAction = createAction('settings/RESET_PERMANENT_INITIAL_SETTINGS');
+
 export const setIsApkBuildLaunchEventFired = createAction<boolean>('settings/SET_IS_APK_BUILD_LAUNCH_EVENT_FIRED');
 
 export const setIsPushNotificationsEnabledEventFired = createAction<boolean>(

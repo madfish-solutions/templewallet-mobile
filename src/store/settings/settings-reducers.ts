@@ -1,5 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { DCP_RPC } from 'src/utils/rpc/rpc-list';
 
 import { resetKeychainOnInstallAction } from '../root-state.actions';
@@ -28,7 +29,8 @@ import {
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired,
   switchIsShowCollectibleInfoAction,
-  setIsInAppUpdateAvailableAction
+  setIsInAppUpdateAvailableAction,
+  resetPermanentInitialSettingsAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -37,6 +39,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(changeTheme, (state, { payload: theme }) => ({ ...state, theme }));
 
   builder.addCase(setIsShowLoaderAction, (state, { payload: isShowLoader }) => ({ ...state, isShowLoader }));
+
+  builder.addCase(resetPermanentInitialSettingsAction, state => {
+    state.isShowLoader = false;
+    state.onRampOverlayState = OnRampOverlayState.Closed;
+  });
 
   builder.addCase(setIsBiometricsEnabled, (state, { payload: isBiometricsEnabled }) => ({
     ...state,
