@@ -20,7 +20,6 @@ export const mockSettingsState: SettingsState = {
   isShowLoader: false,
   isManualBackupMade: true,
   isCloudBackupMade: true,
-  isEnableAdsBanner: true,
   isOnRampPossibility: false,
   applicationOpenCounter: 1,
   isOnRampHasBeenShownBefore: false,

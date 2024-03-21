@@ -16,5 +16,10 @@ export const useStyledRadioButtonsGroupStyles = createUseStyles(({ colors, typog
     ...typography.body15Semibold,
     color: colors.black,
     flex: 1
+  },
+  disabledLabel: {
+    ...typography.body15Semibold,
+    color: colors.disabled,
+    flex: 1
   }
 }));

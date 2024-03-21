@@ -39,6 +39,8 @@ export interface AssetAmountInterface {
   amount?: BigNumber;
 }
 
+const DEFAULT_BALANCE = '0';
+
 const TOKEN_INPUT_TYPE_INDEX = 0;
 const defaultAssetAmountInputStylesConfig: AssetAmountInputStylesConfig = {};
 const defaultAssetOptionTestIdPropertiesFn = (asset: TokenInterface) => ({ token: asset.symbol });
@@ -106,7 +108,11 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const slug = useMemo(() => getTokenSlug(value.asset), [value.asset]);
     const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
-    const balance = useMemo(() => token?.balance ?? value.asset.balance, [token, value.asset.balance]);
+    const balance = useMemo(
+      () =>
+        tokenEqualityFn(value.asset, emptyTezosLikeToken) ? DEFAULT_BALANCE : token?.balance ?? value.asset.balance,
+      [token?.balance, value.asset]
+    );
 
     const { isTezosNode } = useNetworkInfo();
     const selectedRpcUrl = useSelectedRpcUrlSelector();
