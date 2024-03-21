@@ -24,7 +24,6 @@ export const mockSettingsState: SettingsState = {
   startModalAllowed: false,
   onRampOverlayState: OnRampOverlayState.Closed,
   applicationOpenCounter: 1,
-  isOnRampHasBeenShownBefore: false,
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,

@@ -63,9 +63,6 @@ export const useIsInAppUpdateAvailableSelector = () => useSelector(({ settings }
 
 export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings }) => settings.isShowCollectibleInfo);
 
-export const useIsOnRampHasBeenShownBeforeSelector = () =>
-  useSelector(({ settings }) => settings.isOnRampHasBeenShownBefore);
-
 export const useAssetExchangeRate = (slug: string) => {
   const assetUsdExchangeRate = useSelector(state => state.currency.usdToTokenRates.data[slug]);
   const fiatToUsdRate = useFiatToUsdRateSelector();

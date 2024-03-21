@@ -45,9 +45,6 @@ export const madeCloudBackupAction = createAction<void>('settings/MADE_CLOUD_BAC
 export const setOnRampOverlayStateAction = createAction<OnRampOverlayState>(
   'settings/SET_ON_RAMP_OVERLAY_STATE_ACTION'
 );
-export const setIsOnRampHasBeenShownBeforeAction = createAction<boolean>(
-  'settings/SET_IS_ON_RAMP_HAS_BEEN_SHOWN_BEFORE_ACTION'
-);
 
 export const walletOpenedAction = createAction<void>('settings/APPLICATION_OPENED_ACTION');
 

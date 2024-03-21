@@ -27,7 +27,8 @@ export interface SettingsState {
   isOnRampPossibility?: boolean;
   startModalAllowed: boolean;
   onRampOverlayState: OnRampOverlayState;
-  isOnRampHasBeenShownBefore: boolean;
+  /** @deprecated */
+  isOnRampHasBeenShownBefore?: boolean;
   applicationOpenCounter: number;
   /** @deprecated */
   isEnableAdsBanner?: boolean;
@@ -56,7 +57,6 @@ export const settingsInitialState: SettingsState = {
   applicationOpenCounter: 0,
   startModalAllowed: false,
   onRampOverlayState: OnRampOverlayState.Closed,
-  isOnRampHasBeenShownBefore: false,
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,

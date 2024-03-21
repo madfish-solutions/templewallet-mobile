@@ -9,11 +9,7 @@ import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import {
-  setIsOnRampHasBeenShownBeforeAction,
-  setOnRampOverlayStateAction,
-  setStartModalAllowedAction
-} from 'src/store/settings/settings-actions';
+import { setOnRampOverlayStateAction, setStartModalAllowedAction } from 'src/store/settings/settings-actions';
 import { useOnRampOverlayStateSelector, useStartModalAllowedSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -25,11 +21,11 @@ import { OnRampSmileButton } from './on-ramp-smile-button/on-ramp-smile-button';
 import { OnRampTextButton } from './on-ramp-text-button/on-ramp-text-button';
 import { getWertLink } from './utils/get-wert-link.util';
 
-interface OnRampAnimatedProps {
+interface OverlayBodyProps {
   isStart: boolean;
 }
 
-const OverlayBody = memo<Pick<OnRampAnimatedProps, 'isStart'>>(({ isStart }) => {
+const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
   const dispatch = useDispatch();
@@ -38,7 +34,6 @@ const OverlayBody = memo<Pick<OnRampAnimatedProps, 'isStart'>>(({ isStart }) => 
   const handleOnRampButtonPress = useCallback(
     (amount = 0) => {
       dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Closed));
-      dispatch(setIsOnRampHasBeenShownBeforeAction(true));
       openUrl(getWertLink(publicKeyHash, amount));
     },
     [dispatch, publicKeyHash]

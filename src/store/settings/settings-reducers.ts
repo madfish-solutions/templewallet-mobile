@@ -25,7 +25,6 @@ import {
   madeManualBackupAction,
   madeCloudBackupAction,
   setOnRampOverlayStateAction,
-  setIsOnRampHasBeenShownBeforeAction,
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired,
   switchIsShowCollectibleInfoAction,
@@ -144,10 +143,6 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
 
     return state;
   });
-  builder.addCase(setIsOnRampHasBeenShownBeforeAction, (state, { payload: isOnRampHasBeenShownBefore }) => ({
-    ...state,
-    isOnRampHasBeenShownBefore
-  }));
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,
