@@ -70,25 +70,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
   }));
 
-  builder.addCase(loadTezosBalanceActions.submit, state => {
-    const accountState = retrieveAccountState(state);
-    if (accountState) {
-      accountState.tezosBalanceLoading = true;
-    }
-  });
-
   builder.addCase(loadTezosBalanceActions.success, (state, { payload }) => {
     const accountState = retrieveAccountState(state);
     if (accountState) {
       accountState.tezosBalance = payload;
-      accountState.tezosBalanceLoading = false;
-    }
-  });
-
-  builder.addCase(loadTezosBalanceActions.fail, state => {
-    const accountState = retrieveAccountState(state);
-    if (accountState) {
-      accountState.tezosBalanceLoading = false;
     }
   });
 

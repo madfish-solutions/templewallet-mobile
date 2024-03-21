@@ -72,3 +72,5 @@ export const useAssetExchangeRate = (slug: string) => {
 
   return isDefined(assetUsdExchangeRate) && isDefined(fiatToUsdRate) ? assetUsdExchangeRate * fiatToUsdRate : undefined;
 };
+
+export const useStartModalAllowedSelector = () => useSelector(({ settings }) => settings.startModalAllowed);

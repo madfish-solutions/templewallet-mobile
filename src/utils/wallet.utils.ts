@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
 import { Shelter } from 'src/shelter/shelter';
@@ -30,6 +31,13 @@ export const withSelectedAccount =
 
         return [value, selectedAccount];
       })
+    );
+
+export const withOnRampOverlayState =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { settings }): [T, OnRampOverlayState] => [value, settings.onRampOverlayState])
     );
 
 export const withSelectedRpcUrl =

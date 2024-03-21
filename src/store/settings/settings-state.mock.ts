@@ -21,6 +21,7 @@ export const mockSettingsState: SettingsState = {
   isShowLoader: false,
   isManualBackupMade: true,
   isCloudBackupMade: true,
+  startModalAllowed: false,
   onRampOverlayState: OnRampOverlayState.Closed,
   applicationOpenCounter: 1,
   isOnRampHasBeenShownBefore: false,

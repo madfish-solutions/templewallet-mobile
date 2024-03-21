@@ -1,17 +1,14 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { BigNumber } from 'bignumber.js';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState } from 'react';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
+import { NewsletterModalTracker } from 'src/components/newsletter-modal-tracker';
 import { isIOS } from 'src/config/system';
-import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useRootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
@@ -45,15 +42,9 @@ import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
-import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
-import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useIsOnRampHasBeenShownBeforeSelector, useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import {
-  useCurrentAccountTezosBalance,
-  useCurrentAccountTezosBalanceLoadingSelector,
-  useIsAuthorisedSelector
-} from 'src/store/wallet/wallet-selectors';
+import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
+import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
@@ -72,12 +63,7 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
-  const canUseOnRamp = useCanUseOnRamp();
   const { isDcpNode } = useNetworkInfo();
-
-  const balance = useCurrentAccountTezosBalance();
-  const balanceLoading = useCurrentAccountTezosBalanceLoadingSelector();
-  const isOnRampHasBeenShownBefore = useIsOnRampHasBeenShownBeforeSelector();
 
   useRootHooks();
 
@@ -90,26 +76,9 @@ export const RootStackScreen = () => {
   const screenOptions = useStackNavigationOptions();
 
   const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
-  const [shouldShowStartRampOverlayIfNoTez, setShouldShowStartRampOverlayIfNoTez] = useState(false);
 
   const handleNavigationContainerStateChange = () =>
     setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (shouldShowStartRampOverlayIfNoTez && new BigNumber(balance).isZero() && balanceLoading === false) {
-      dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start));
-      setShouldShowStartRampOverlayIfNoTez(false);
-    }
-  }, [balance, balanceLoading, dispatch, shouldShowStartRampOverlayIfNoTez]);
-
-  const beforeRemove = useCallback(() => {
-    dispatch(shouldShowNewsletterModalAction(false));
-    if (canUseOnRamp && !isOnRampHasBeenShownBefore) {
-      setShouldShowStartRampOverlayIfNoTez(true);
-    }
-  }, [canUseOnRamp, dispatch, isOnRampHasBeenShownBefore]);
 
   return (
     <NavigationContainer
@@ -204,7 +173,6 @@ export const RootStackScreen = () => {
               name={ModalsEnum.Newsletter}
               component={Newsletter}
               options={useModalOptions('Newsletter')}
-              listeners={{ beforeRemove }}
             />
             <RootStack.Screen
               name={ModalsEnum.InAppBrowser}
@@ -255,6 +223,7 @@ export const RootStackScreen = () => {
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
 
+      <NewsletterModalTracker />
       {isSplash && <SplashModal />}
       {isAuthorised && isLocked && <EnterPassword />}
       {!isPasscode && <PassCode />}

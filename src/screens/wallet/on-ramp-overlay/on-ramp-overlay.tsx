@@ -9,8 +9,12 @@ import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { setIsOnRampHasBeenShownBeforeAction, setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useOnRampOverlayStateSelector } from 'src/store/settings/settings-selectors';
+import {
+  setIsOnRampHasBeenShownBeforeAction,
+  setOnRampOverlayStateAction,
+  setStartModalAllowedAction
+} from 'src/store/settings/settings-actions';
+import { useOnRampOverlayStateSelector, useStartModalAllowedSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { openUrl } from 'src/utils/linking';
@@ -100,17 +104,23 @@ const OverlayBody = memo<Pick<OnRampAnimatedProps, 'isStart'>>(({ isStart }) => 
 export const OnRampOverlay = () => {
   const bottomSheetController = useBottomSheetController();
   const onRampOverlayState = useOnRampOverlayStateSelector();
+  const startModalAllowed = useStartModalAllowedSelector();
   const dispatch = useDispatch();
   const isStart = onRampOverlayState === OnRampOverlayState.Start;
-  const isOnRampPossibility = onRampOverlayState !== OnRampOverlayState.Closed;
   const isFocused = useIsFocused();
 
-  useEffect(
-    () => (isFocused && isOnRampPossibility ? bottomSheetController.open() : bottomSheetController.close()),
-    [bottomSheetController, isFocused, isOnRampPossibility]
-  );
+  useEffect(() => {
+    isFocused &&
+    (onRampOverlayState === OnRampOverlayState.Continue ||
+      (onRampOverlayState === OnRampOverlayState.Start && startModalAllowed))
+      ? bottomSheetController.open()
+      : bottomSheetController.close();
+  }, [bottomSheetController, isFocused, onRampOverlayState, startModalAllowed]);
 
-  const handleCancel = useCallback(() => dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Closed)), [dispatch]);
+  const handleCancel = useCallback(() => {
+    dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Closed));
+    dispatch(setStartModalAllowedAction(false));
+  }, [dispatch]);
 
   return (
     <BottomSheet
