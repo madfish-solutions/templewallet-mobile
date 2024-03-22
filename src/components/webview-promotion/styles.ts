@@ -1,7 +1,8 @@
-import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { StyleSheet } from 'react-native';
+
 import { formatSize } from 'src/styles/format-size';
 
-export const useWebviewPromotionStyles = createUseStylesMemoized(() => ({
+export const WebviewPromotionStyles = StyleSheet.create({
   imageAdFrameWrapper: {
     borderRadius: formatSize(8)
   },
@@ -30,4 +31,4 @@ export const useWebviewPromotionStyles = createUseStylesMemoized(() => ({
   webView: {
     opacity: 0.99
   }
-}));
+});

@@ -26,7 +26,7 @@ import { ImagePromotionView } from '../image-promotion-view';
 import { TextPromotionItemSelectors } from '../text-promotion-view/selectors';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
-import { useWebviewPromotionStyles } from './styles';
+import { WebviewPromotionStyles } from './styles';
 
 interface WebViewPromotionProps extends SingleProviderPromotionProps {
   provider: PromotionProviderEnum.HypeLab | PromotionProviderEnum.Persona;
@@ -55,7 +55,6 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     const isImageAd = variant === PromotionVariantEnum.Image;
     const accountPkh = useCurrentAccountPkhSelector();
     const colors = useColors();
-    const styles = useWebviewPromotionStyles();
     const theme = useThemeSelector();
     const { trackEvent } = useAnalytics();
     const [adHref, setAdHref] = useState<string>();
@@ -167,13 +166,17 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
         >
           <View
             style={[
-              styles.imageAdFrameWrapper,
+              WebviewPromotionStyles.imageAdFrameWrapper,
               { width: formatSize(size?.w ?? 320), height: formatSize(size?.h ?? 112) }
             ]}
             onLayout={handleContainerLayout}
           >
             {adFrameSource && (
-              <WebView {...webViewCommonProps} containerStyle={styles.imageAdFrame} style={styles.webView} />
+              <WebView
+                {...webViewCommonProps}
+                containerStyle={WebviewPromotionStyles.imageAdFrame}
+                style={WebviewPromotionStyles.webView}
+              />
             )}
           </View>
         </ImagePromotionView>
@@ -181,17 +184,20 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     }
 
     return (
-      <View style={[styles.textAdFrameContainer, !isVisible && styles.invisible]} onLayout={handleContainerLayout}>
+      <View
+        style={[WebviewPromotionStyles.textAdFrameContainer, !isVisible && WebviewPromotionStyles.invisible]}
+        onLayout={handleContainerLayout}
+      >
         {adFrameSource && size && (
           <WebView
             {...webViewCommonProps}
-            containerStyle={[styles.textAdFrame, { aspectRatio: size.w / size.h }]}
-            style={styles.webView}
+            containerStyle={[WebviewPromotionStyles.textAdFrame, { aspectRatio: size.w / size.h }]}
+            style={WebviewPromotionStyles.webView}
           />
         )}
         {shouldShowCloseButton && (
           <TouchableWithAnalytics
-            style={styles.closeButton}
+            style={WebviewPromotionStyles.closeButton}
             onPress={onClose}
             testID={TextPromotionItemSelectors.closeButton}
           >
