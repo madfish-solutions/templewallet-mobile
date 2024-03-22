@@ -5,7 +5,7 @@
 		<key>provisioningProfiles</key>
 		<dict>
 			<key>com.madfish.temple-wallet</key>
-			<string>Temple Wallet Ad Hoc Provisioning Profile</string>
+			<string>match AdHoc com.madfish.temple-wallet</string>
 		</dict>
 		<key>iCloudContainerEnvironment</key>
 		<string>Production</string>
