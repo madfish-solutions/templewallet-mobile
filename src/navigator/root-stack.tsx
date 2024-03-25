@@ -2,10 +2,10 @@ import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
 import { Loader } from 'src/components/loader/loader';
-import { NewsletterModalTracker } from 'src/components/newsletter-modal-tracker';
 import { isIOS } from 'src/config/system';
 import { useRootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
@@ -42,6 +42,7 @@ import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
 import { PassCode } from 'src/screens/passcode/passcode';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
+import { shouldShowNewsletterModalAction } from 'src/store/newsletter/newsletter-actions';
 import { useIsAppCheckFailed, useIsForceUpdateNeeded } from 'src/store/security/security-selectors';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
@@ -60,6 +61,7 @@ export type RootStackParamList = { MainStack: undefined } & ModalsParamList;
 const RootStack = createStackNavigator<RootStackParamList>();
 
 export const RootStackScreen = () => {
+  const dispatch = useDispatch();
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
@@ -173,6 +175,7 @@ export const RootStackScreen = () => {
               name={ModalsEnum.Newsletter}
               component={Newsletter}
               options={useModalOptions('Newsletter')}
+              listeners={{ beforeRemove: () => dispatch(shouldShowNewsletterModalAction(false)) }}
             />
             <RootStack.Screen
               name={ModalsEnum.InAppBrowser}
@@ -223,7 +226,6 @@ export const RootStackScreen = () => {
         </CurrentRouteNameContext.Provider>
       </PortalProvider>
 
-      <NewsletterModalTracker />
       {isSplash && <SplashModal />}
       {isAuthorised && isLocked && <EnterPassword />}
       {!isPasscode && <PassCode />}

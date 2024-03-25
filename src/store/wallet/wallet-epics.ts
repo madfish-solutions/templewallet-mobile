@@ -83,14 +83,15 @@ const loadTezosBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) 
         withOnRampOverlayState(state$),
         concatMap(([balance, overlayState]) => {
           const successAction = loadTezosBalanceActions.success(balance);
-          const showOnRampAction = setOnRampOverlayStateAction(OnRampOverlayState.Start);
-
-          return new BigNumber(balance).isZero() &&
+          const showOnRampAction =
             isAndroid &&
             !isDcpNode(rpcUrl) &&
-            overlayState === OnRampOverlayState.Closed
-            ? [successAction, showOnRampAction]
-            : [successAction];
+            overlayState === OnRampOverlayState.Closed &&
+            new BigNumber(balance).isZero()
+              ? setOnRampOverlayStateAction(OnRampOverlayState.Start)
+              : null;
+
+          return showOnRampAction ? [successAction, showOnRampAction] : [successAction];
         }),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
