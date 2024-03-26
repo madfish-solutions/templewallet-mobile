@@ -143,8 +143,9 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
 
     const webViewCommonProps = useMemo(
       () => ({
+        allowsInlineMediaPlayback: true,
         source: adFrameSource,
-        onError: onError,
+        onError,
         onMessage: handleAdFrameMessage,
         webviewDebuggingEnabled: __DEV__,
         scrollEnabled: false,
