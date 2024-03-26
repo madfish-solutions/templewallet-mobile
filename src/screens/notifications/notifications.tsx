@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -37,6 +37,7 @@ export const Notifications = () => {
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const adRef = useRef<View>(null);
+
   const adPageName = 'Notifications';
   const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName);
   const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
@@ -51,31 +52,36 @@ export const Notifications = () => {
 
   usePageAnalytic(ScreensEnum.Notifications);
 
-  return (
-    <>
-      {partnersPromoShown && !promotionErrorOccurred && (
+  const ListHeaderComponent = useMemo(
+    () =>
+      partnersPromoShown && !promotionErrorOccurred ? (
         <>
           <PromotionItem
-            id={PROMOTION_ID}
-            testID={NotificationsSelectors.promotion}
-            pageName={adPageName}
-            style={NotificationsStyles.ads}
             ref={adRef}
+            id={PROMOTION_ID}
+            pageName={adPageName}
+            testID={NotificationsSelectors.promotion}
             onError={handlePromotionItemError}
             onLayout={onElementOrParentLayout}
             onLoad={onAdLoad}
+            style={NotificationsStyles.ads}
           />
           <HorizontalBorder />
         </>
-      )}
+      ) : undefined,
+    [handlePromotionItemError, onAdLoad, onElementOrParentLayout, partnersPromoShown, promotionErrorOccurred]
+  );
+
+  return (
+    <View style={NotificationsStyles.contentContainer}>
       <FlashList
         data={notifications}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         estimatedItemSize={AVERAGE_NOTIFICATION_ITEM_HEIGHT}
-        contentContainerStyle={NotificationsStyles.contentContainer}
+        ListHeaderComponent={ListHeaderComponent}
         ListEmptyComponent={ListEmptyComponent}
       />
-    </>
+    </View>
   );
 };
