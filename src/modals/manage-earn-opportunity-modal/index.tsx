@@ -14,6 +14,7 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
+import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
@@ -75,6 +76,7 @@ export const ManageEarnOpportunityModal: FC = () => {
   const earnOpportunityType = earnOpportunityItem?.type ?? EarnOpportunityTypeEnum.DEX_TWO;
   const earnOpportunityIsSupported = earnOpportunitiesTypesToDisplay.includes(earnOpportunityType);
 
+  const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
   const styles = useEarnOpportunityModalStyles();
   const blockLevel = useBlockLevel();
   const prevBlockLevelRef = useRef(blockLevel);
@@ -247,7 +249,7 @@ export const ManageEarnOpportunityModal: FC = () => {
           />
         )}
       </ModalButtonsContainer>
-      <OnRampOverlay />
+      {onRampOverlayIsOpened && <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} />}
     </>
   );
 };

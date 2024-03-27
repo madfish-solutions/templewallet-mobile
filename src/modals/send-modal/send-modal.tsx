@@ -22,6 +22,7 @@ import { useAddressFieldAnalytics } from 'src/hooks/use-address-field-analytics.
 import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
+import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -60,6 +61,7 @@ export const SendModal: FC = () => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
+  const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
   const leadingAssets = useMemo(() => [tezosToken], [tezosToken]);
 
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, true, true, leadingAssets);
@@ -225,7 +227,7 @@ export const SendModal: FC = () => {
           <InsetSubstitute type="bottom" />
         </View>
       </ScreenContainer>
-      <OnRampOverlay />
+      {onRampOverlayIsOpened && <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} />}
     </FormikProvider>
   );
 };

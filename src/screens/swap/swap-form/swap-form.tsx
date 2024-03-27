@@ -26,6 +26,7 @@ import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asse
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
+import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useSwap } from 'src/hooks/use-swap.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -92,6 +93,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { isLoading } = useSwapTokensMetadataSelector();
   const usdExchangeRates = useUsdToTokenRates();
   const canUseOnRamp = useCanUseOnRamp();
+  const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const swapParams = useSwapParamsSelector();
   const prevOutputRef = useRef(swapParams.data.output);
@@ -437,7 +439,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         />
       </ButtonsFloatingContainer>
 
-      <OnRampOverlay />
+      {onRampOverlayIsOpened && <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} />}
     </FormikProvider>
   );
 };

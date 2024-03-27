@@ -24,7 +24,7 @@ interface OverlayBodyProps {
 }
 
 interface OnRampOverlayProps extends OverlayBodyProps {
-  onCancel: EmptyFn;
+  onClose: EmptyFn;
 }
 
 const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
@@ -98,7 +98,7 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
   );
 });
 
-export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isStart, onCancel }) => {
+export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isStart, onClose }) => {
   const bottomSheetController = useBottomSheetController();
 
   useEffect(() => {
@@ -113,8 +113,8 @@ export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isStart, onCancel }) => 
       controller={bottomSheetController}
       cancelButtonText="Not now"
       cancelButtonTestID={OnRampOverlaySelectors.notNowButton}
-      onCancelButtonPress={onCancel}
-      onClose={onCancel}
+      onCancelButtonPress={onClose}
+      onClose={onClose}
     >
       <OverlayBody isStart={isStart} />
     </BottomSheet>

@@ -41,6 +41,6 @@ export const WalletOverlay = () => {
 
   return onRampOverlayState === OnRampOverlayState.Continue ||
     (onRampOverlayState === OnRampOverlayState.Start && newsletterModalWasClosed) ? (
-    <OnRampOverlay isStart={onRampOverlayState === OnRampOverlayState.Start} onCancel={handleCancel} />
+    <OnRampOverlay isStart={onRampOverlayState === OnRampOverlayState.Start} onClose={handleCancel} />
   ) : null;
 };

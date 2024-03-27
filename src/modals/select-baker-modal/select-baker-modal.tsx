@@ -19,6 +19,7 @@ import { BakersSortFieldEnum } from 'src/enums/bakers-sort-field.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -63,6 +64,7 @@ export const SelectBakerModal = memo(() => {
   const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
   const dispatch = useDispatch();
+  const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
   const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
 
   const searchPlaceholder = `Search ${bakerNameByNode}`;
@@ -276,7 +278,7 @@ export const SelectBakerModal = memo(() => {
         </ModalButtonsContainer>
       </View>
 
-      <OnRampOverlay />
+      {onRampOverlayIsOpened && <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} />}
     </>
   );
 });
