@@ -125,6 +125,7 @@ export const HypelabPromotion = memo<SingleProviderPromotionProps>(
     );
 
     const webViewCommonProps = {
+      allowsInlineMediaPlayback: true,
       source: adFrameSource,
       onError: onError,
       onMessage: handleAdFrameMessage,
