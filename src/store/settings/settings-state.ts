@@ -25,7 +25,6 @@ export interface SettingsState {
   isCloudBackupMade: boolean;
   /** @deprecated */
   isOnRampPossibility?: boolean;
-  startModalAllowed: boolean;
   onRampOverlayState: OnRampOverlayState;
   /** @deprecated */
   isOnRampHasBeenShownBefore?: boolean;
@@ -55,7 +54,6 @@ export const settingsInitialState: SettingsState = {
   isManualBackupMade: true,
   isCloudBackupMade: true,
   applicationOpenCounter: 0,
-  startModalAllowed: false,
   onRampOverlayState: OnRampOverlayState.Closed,
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
