@@ -1,5 +1,4 @@
-import { useIsFocused } from '@react-navigation/native';
-import React, { memo, useCallback, useEffect } from 'react';
+import React, { FC, memo, useCallback, useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -9,8 +8,7 @@ import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { setOnRampOverlayStateAction, setStartModalAllowedAction } from 'src/store/settings/settings-actions';
-import { useOnRampOverlayStateSelector, useStartModalAllowedSelector } from 'src/store/settings/settings-selectors';
+import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { openUrl } from 'src/utils/linking';
@@ -23,6 +21,10 @@ import { getWertLink } from './utils/get-wert-link.util';
 
 interface OverlayBodyProps {
   isStart: boolean;
+}
+
+interface OnRampOverlayProps extends OverlayBodyProps {
+  onCancel: EmptyFn;
 }
 
 const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
@@ -96,26 +98,14 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
   );
 });
 
-export const OnRampOverlay = () => {
+export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isStart, onCancel }) => {
   const bottomSheetController = useBottomSheetController();
-  const onRampOverlayState = useOnRampOverlayStateSelector();
-  const startModalAllowed = useStartModalAllowedSelector();
-  const dispatch = useDispatch();
-  const isStart = onRampOverlayState === OnRampOverlayState.Start;
-  const isFocused = useIsFocused();
 
   useEffect(() => {
-    isFocused &&
-    (onRampOverlayState === OnRampOverlayState.Continue ||
-      (onRampOverlayState === OnRampOverlayState.Start && startModalAllowed))
-      ? bottomSheetController.open()
-      : bottomSheetController.close();
-  }, [bottomSheetController, isFocused, onRampOverlayState, startModalAllowed]);
+    bottomSheetController.open();
 
-  const handleCancel = useCallback(() => {
-    dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Closed));
-    dispatch(setStartModalAllowedAction(false));
-  }, [dispatch]);
+    return () => bottomSheetController.close();
+  }, [bottomSheetController]);
 
   return (
     <BottomSheet
@@ -123,8 +113,8 @@ export const OnRampOverlay = () => {
       controller={bottomSheetController}
       cancelButtonText="Not now"
       cancelButtonTestID={OnRampOverlaySelectors.notNowButton}
-      onCancelButtonPress={handleCancel}
-      onClose={handleCancel}
+      onCancelButtonPress={onCancel}
+      onClose={onCancel}
     >
       <OverlayBody isStart={isStart} />
     </BottomSheet>

@@ -29,8 +29,7 @@ import {
   setIsPushNotificationsEnabledEventFired,
   switchIsShowCollectibleInfoAction,
   setIsInAppUpdateAvailableAction,
-  resetPermanentInitialSettingsAction,
-  setStartModalAllowedAction
+  resetPermanentInitialSettingsAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -44,10 +43,6 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     state.isShowLoader = false;
     state.onRampOverlayState = OnRampOverlayState.Closed;
     state.startModalAllowed = false;
-  });
-
-  builder.addCase(setStartModalAllowedAction, (state, { payload: newStartModalAllowed }) => {
-    state.startModalAllowed = newStartModalAllowed;
   });
 
   builder.addCase(setIsBiometricsEnabled, (state, { payload: isBiometricsEnabled }) => ({
