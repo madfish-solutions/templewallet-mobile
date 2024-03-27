@@ -3,7 +3,7 @@ import { useFirebaseApp } from './use-firebase-app';
 import { usePushNotifications } from './use-push-notifications';
 import { useQuickActions } from './use-quick-actions';
 import { useResetKeychainOnInstall } from './use-reset-keychain-on-install';
-import { useResetLoading } from './use-reset-loading';
+import { useResetPermanentInitialSettings } from './use-reset-permanent-initial-settings';
 import { useScamlistLoading } from './use-scamlist-loading';
 import { useStorageAnalytics } from './use-storage-analytics';
 import { useWhitelistLoading } from './use-whitelist-loading';
@@ -15,7 +15,7 @@ export const useRootHooks = () => {
   useScamlistLoading();
   useCollectiblesDetailsLoading();
   useQuickActions();
-  useResetLoading();
+  useResetPermanentInitialSettings();
   useResetKeychainOnInstall();
 
   useFirebaseApp();

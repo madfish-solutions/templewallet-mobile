@@ -5,12 +5,14 @@ import { BigNumber } from 'bignumber.js';
 import { catchError, lastValueFrom, of, Subject, switchMap, tap } from 'rxjs';
 
 import { isAndroid } from 'src/config/system';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
-import { hideLoaderAction, setOnRampPossibilityAction, showLoaderAction } from 'src/store/settings/settings-actions';
+import { hideLoaderAction, setOnRampOverlayStateAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
 import { getPublicKeyAndHash$ } from 'src/utils/keys.util';
+import { isDcpNode } from 'src/utils/network.utils';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
 
 import { Shelter } from '../shelter';
@@ -61,7 +63,12 @@ export const createImportAccountSubscription = (
 
         lastValueFrom(loadTezosBalance$(rpcUrl, publicData.publicKeyHash)).then(
           balance =>
-            void (isAndroid && new BigNumber(balance).isEqualTo(0) && dispatch(setOnRampPossibilityAction(true))),
+            void (
+              isAndroid &&
+              new BigNumber(balance).isEqualTo(0) &&
+              !isDcpNode(rpcUrl) &&
+              dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start))
+            ),
           error => console.error(error)
         );
       }

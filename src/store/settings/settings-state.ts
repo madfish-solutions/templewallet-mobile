@@ -1,10 +1,11 @@
 import { nanoid } from '@reduxjs/toolkit';
 import { Appearance } from 'react-native';
 
-import { RpcInterface } from '../../interfaces/rpc.interface';
-import { ThemesEnum } from '../../interfaces/theme.enum';
-import { FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
-import { RpcList } from '../../utils/rpc/rpc-list';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { RpcInterface } from 'src/interfaces/rpc.interface';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { FiatCurrenciesEnum } from 'src/utils/exchange-rate.util';
+import { RpcList } from 'src/utils/rpc/rpc-list';
 
 export interface SettingsState {
   theme: ThemesEnum;
@@ -22,8 +23,11 @@ export interface SettingsState {
   isShowLoader: boolean;
   isManualBackupMade: boolean;
   isCloudBackupMade: boolean;
-  isOnRampPossibility: boolean;
-  isOnRampHasBeenShownBefore: boolean;
+  /** @deprecated */
+  isOnRampPossibility?: boolean;
+  onRampOverlayState: OnRampOverlayState;
+  /** @deprecated */
+  isOnRampHasBeenShownBefore?: boolean;
   applicationOpenCounter: number;
   /** @deprecated */
   isEnableAdsBanner?: boolean;
@@ -50,8 +54,7 @@ export const settingsInitialState: SettingsState = {
   isManualBackupMade: true,
   isCloudBackupMade: true,
   applicationOpenCounter: 0,
-  isOnRampPossibility: false,
-  isOnRampHasBeenShownBefore: false,
+  onRampOverlayState: OnRampOverlayState.Closed,
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,

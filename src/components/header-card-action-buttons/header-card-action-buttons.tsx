@@ -4,6 +4,8 @@ import { Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, isIOS } from 'src/config/system';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
@@ -12,7 +14,7 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
-import { setOnRampPossibilityAction } from 'src/store/settings/settings-actions';
+import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -40,6 +42,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const { navigate } = useNavigation();
   const { isLocked } = useAppLock();
   const atBootsplash = useAtBootsplash();
+  const canUseOnRamp = useCanUseOnRamp();
   const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const { balance } = useTotalBalance();
@@ -112,7 +115,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
     }
 
     showErrorToast({ description: errorMessage });
-    dispatch(setOnRampPossibilityAction(true));
+    canUseOnRamp && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
   };
 
   return (

@@ -16,6 +16,7 @@ export const useOnRampOverlayStyles = createUseStyles(({ colors, typography }) =
   },
   title: {
     ...typography.body20Bold,
+    lineHeight: formatSize(25),
     color: colors.black,
     textTransform: 'none'
   },
@@ -30,7 +31,8 @@ export const useOnRampOverlayStyles = createUseStyles(({ colors, typography }) =
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingVertical: formatSize(24)
+    paddingTop: formatSize(24),
+    paddingBottom: formatSize(16)
   },
   backgroundPeach: {
     backgroundColor: colors.peach

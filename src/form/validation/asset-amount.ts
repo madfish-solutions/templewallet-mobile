@@ -33,7 +33,7 @@ export const createAssetAmountWithMaxValidation = (
   assetAmountValidation.clone().test('max-amount', (value, context) => {
     const { asset, amount } = value;
 
-    if (!isDefined(asset?.balance) || !isDefined(amount)) {
+    if (!isDefined(asset?.balance) || !(amount instanceof BigNumber)) {
       return true;
     }
 
@@ -42,7 +42,7 @@ export const createAssetAmountWithMaxValidation = (
     const maxAmount = BigNumber.max(new BigNumber(asset.balance).minus(gasAmountCap), 0);
     const displayedMaxAmount = formatAssetAmount(mutezToTz(maxAmount, asset.decimals ?? 0));
 
-    return (amount as BigNumber).lte(maxAmount)
+    return amount.lte(maxAmount)
       ? true
       : new ValidationError(
           `Maximal amount is ${displayedMaxAmount} ${asset.symbol}`,

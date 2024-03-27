@@ -1,5 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { DCP_RPC } from 'src/utils/rpc/rpc-list';
 
 import { resetKeychainOnInstallAction } from '../root-state.actions';
@@ -23,12 +24,12 @@ import {
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
-  setOnRampPossibilityAction,
-  setIsOnRampHasBeenShownBeforeAction,
+  setOnRampOverlayStateAction,
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired,
   switchIsShowCollectibleInfoAction,
-  setIsInAppUpdateAvailableAction
+  setIsInAppUpdateAvailableAction,
+  resetPermanentInitialSettingsAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -37,6 +38,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(changeTheme, (state, { payload: theme }) => ({ ...state, theme }));
 
   builder.addCase(setIsShowLoaderAction, (state, { payload: isShowLoader }) => ({ ...state, isShowLoader }));
+
+  builder.addCase(resetPermanentInitialSettingsAction, state => {
+    state.isShowLoader = false;
+    state.onRampOverlayState = OnRampOverlayState.Closed;
+  });
 
   builder.addCase(setIsBiometricsEnabled, (state, { payload: isBiometricsEnabled }) => ({
     ...state,
@@ -124,17 +130,13 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isShowCollectibleInfo: !state.isShowCollectibleInfo
   }));
 
-  builder.addCase(setOnRampPossibilityAction, (state, { payload: isOnRampPossibility }) => {
+  builder.addCase(setOnRampOverlayStateAction, (state, { payload: onRampOverlayState }) => {
     if (state.selectedRpcUrl !== DCP_RPC.url) {
-      return { ...state, isOnRampPossibility };
+      return { ...state, onRampOverlayState };
     }
 
     return state;
   });
-  builder.addCase(setIsOnRampHasBeenShownBeforeAction, (state, { payload: isOnRampHasBeenShownBefore }) => ({
-    ...state,
-    isOnRampHasBeenShownBefore
-  }));
 
   builder.addCase(walletOpenedAction, state => ({
     ...state,

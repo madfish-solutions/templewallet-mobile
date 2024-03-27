@@ -1,6 +1,7 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
-import { Formik } from 'formik';
-import React, { FC, ReactNode } from 'react';
+import { BigNumber } from 'bignumber.js';
+import { FormikProvider, useFormik } from 'formik';
+import React, { FC, ReactNode, useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
@@ -11,7 +12,7 @@ import { Divider } from 'src/components/divider/divider';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { EventFn } from 'src/config/general';
+import { emptyFn, EventFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -41,6 +42,8 @@ interface Props extends TestIdProps {
   opParams: ParamsWithKind[];
   isLoading: boolean;
   disclaimer?: ReactNode;
+  onEstimationError?: SyncFn<string>;
+  onTotalTezValue?: SyncFn<BigNumber>;
   onSubmit: EventFn<ParamsWithKind[]>;
 }
 
@@ -48,6 +51,8 @@ export const OperationsConfirmation: FC<Props> = ({
   sender,
   opParams,
   isLoading,
+  onEstimationError = emptyFn,
+  onTotalTezValue = emptyFn,
   onSubmit,
   children,
   disclaimer,
@@ -104,75 +109,99 @@ export const OperationsConfirmation: FC<Props> = ({
     onSubmit(params);
   };
 
+  const formik = useFormik<FeeFormInputValues>({
+    enableReinitialize: true, // (!) Might lead to unwanted form resets.
+    initialValues: formInitialValues,
+    validationSchema: formValidationSchema,
+    onSubmit: handleSubmit
+  });
+  const { values, isValid, setFieldValue, submitForm } = formik;
+
+  const totalTezValue = useMemo(
+    () =>
+      BigNumber.sum(
+        ...opParams.map(operation => {
+          if (operation.kind === OpKind.TRANSACTION) {
+            return operation.mutez === true
+              ? operation.amount
+              : tzToMutez(new BigNumber(operation.amount), metadata.decimals);
+          }
+
+          return 0;
+        })
+      )
+        .plus(tzToMutez(values.gasFeeSum ?? basicFees.gasFeeSum, metadata.decimals))
+        .plus((values.storageLimitSum ?? basicFees.storageLimitSum).times(minimalFeePerStorageByteMutez)),
+    [basicFees, opParams, values.gasFeeSum, values.storageLimitSum, minimalFeePerStorageByteMutez, metadata]
+  );
+
+  useEffect(() => onTotalTezValue(totalTezValue), [onTotalTezValue, totalTezValue]);
+
+  useEffect(
+    () => void (isDefined(estimations.error) && onEstimationError(estimations.error)),
+    [estimations.error, onEstimationError]
+  );
+
   return (
-    <Formik<FeeFormInputValues>
-      enableReinitialize={true} // (!) Might lead to unwanted form resets.
-      initialValues={formInitialValues}
-      validationSchema={formValidationSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ values, isValid, setFieldValue, submitForm }) => (
-        <>
-          <ScreenContainer>
-            {children}
-            {estimations.isLoading ? (
-              <LoadingPlaceholder text="Operation is loading..." />
-            ) : (
+    <FormikProvider value={formik}>
+      <ScreenContainer>
+        {children}
+        {estimations.isLoading ? (
+          <LoadingPlaceholder text="Operation is loading..." />
+        ) : (
+          <>
+            {opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === HELP_UKRAINE_BAKER_ADDRESS && (
               <>
-                {opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === HELP_UKRAINE_BAKER_ADDRESS && (
-                  <>
-                    <Divider size={formatSize(12)} />
-                    <DelegateDisclaimer title="This Baker helps Ukraine 🇺🇦" text={disclaimerMessage} />
-                    <Divider size={formatSize(28)} />
-                  </>
-                )}
-
-                <Text style={styles.sectionTitle}>Account</Text>
-                <Divider />
-
-                <AccountDropdownItem account={sender} />
-                <Divider />
-
-                <Text style={styles.sectionTitle}>Preview</Text>
                 <Divider size={formatSize(12)} />
-
-                <View style={styles.divider} />
-                <Divider size={formatSize(8)} />
-
-                <OperationsPreview opParams={opParamsWithEstimations} />
-                {disclaimer}
-                <Divider />
-
-                <FeeFormInput
-                  values={values}
-                  basicFees={basicFees}
-                  estimationWasSuccessful={estimationsApplied}
-                  onlyOneOperation={onlyOneOperation}
-                  minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
-                  setFieldValue={setFieldValue}
-                />
+                <DelegateDisclaimer title="This Baker helps Ukraine 🇺🇦" text={disclaimerMessage} />
+                <Divider size={formatSize(28)} />
               </>
             )}
-            <Divider />
-          </ScreenContainer>
 
-          <ModalButtonsContainer>
-            <ButtonLargeSecondary
-              title="Back"
-              disabled={isLoading}
-              onPress={goBack}
-              testID={ConfirmationModalSelectors.backButton}
+            <Text style={styles.sectionTitle}>Account</Text>
+            <Divider />
+
+            <AccountDropdownItem account={sender} />
+            <Divider />
+
+            <Text style={styles.sectionTitle}>Preview</Text>
+            <Divider size={formatSize(12)} />
+
+            <View style={styles.divider} />
+            <Divider size={formatSize(8)} />
+
+            <OperationsPreview opParams={opParamsWithEstimations} />
+            {disclaimer}
+            <Divider />
+
+            <FeeFormInput
+              values={values}
+              basicFees={basicFees}
+              estimationWasSuccessful={estimationsApplied}
+              onlyOneOperation={onlyOneOperation}
+              minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
+              setFieldValue={setFieldValue}
             />
-            <Divider size={formatSize(16)} />
-            <ButtonLargePrimary
-              title="Confirm"
-              disabled={estimations.isLoading || isLoading || !isValid}
-              onPress={submitForm}
-              testID={ConfirmationModalSelectors.confirmButton}
-            />
-          </ModalButtonsContainer>
-        </>
-      )}
-    </Formik>
+          </>
+        )}
+        <Divider />
+      </ScreenContainer>
+
+      <ModalButtonsContainer>
+        <ButtonLargeSecondary
+          title="Back"
+          disabled={isLoading}
+          onPress={goBack}
+          testID={ConfirmationModalSelectors.backButton}
+        />
+        <Divider size={formatSize(16)} />
+        <ButtonLargePrimary
+          title="Confirm"
+          disabled={estimations.isLoading || isLoading || !isValid}
+          onPress={submitForm}
+          testID={ConfirmationModalSelectors.confirmButton}
+        />
+      </ModalButtonsContainer>
+    </FormikProvider>
   );
 };

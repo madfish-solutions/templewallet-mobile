@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
 import { Shelter } from 'src/shelter/shelter';
@@ -32,6 +33,13 @@ export const withSelectedAccount =
       })
     );
 
+export const withOnRampOverlayState =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { settings }): [T, OnRampOverlayState] => [value, settings.onRampOverlayState])
+    );
+
 export const withSelectedRpcUrl =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
@@ -44,8 +52,8 @@ export const withUsdToTokenRates =
       withLatestFrom(state$, (value, { currency }): [T, ExchangeRateRecord] => [value, currency.usdToTokenRates.data])
     );
 
-export const sendTransaction$ = (rpcUrl: string, sender: AccountInterface, opParams: ParamsWithKind[]) =>
-  Shelter.getSigner$(sender.publicKeyHash).pipe(
+export const sendTransaction$ = (rpcUrl: string, senderPkh: string, opParams: ParamsWithKind[]) =>
+  Shelter.getSigner$(senderPkh).pipe(
     switchMap(signer => {
       const tezos = createTezosToolkit(rpcUrl);
       tezos.setSignerProvider(signer);
