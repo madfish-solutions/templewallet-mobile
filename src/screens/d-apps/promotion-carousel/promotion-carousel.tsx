@@ -51,7 +51,7 @@ export const PromotionCarousel = () => {
             pageName={adPageName}
             shouldShowCloseButton={false}
             style={styles.promotionItem}
-            shouldTryHypelabAd={false}
+            onlyOptimalAd
             onError={() => setPromotionErrorOccurred(true)}
             onLoad={onAdLoad}
           />

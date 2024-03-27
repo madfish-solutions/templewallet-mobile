@@ -44,7 +44,7 @@ export const useOutsideOfListIntersection = (
     };
 
     if (element && !parentRef) {
-      element.measureInWindow((x, y, width, height) => {
+      element.measure((x, y, width, height) => {
         handleNewDimensions(Dimensions.get('window'), { x, y, width, height });
       });
 
