@@ -22,8 +22,6 @@ import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal/e
 import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-modal';
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
-import { ImportAccountPrivateKey } from 'src/modals/import-account/import-account-private-key/import-account-private-key';
-import { ImportAccountSeed } from 'src/modals/import-account/import-account-seed/import-account-seed';
 import { InAppBrowser } from 'src/modals/in-app-browser';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
@@ -196,16 +194,6 @@ export const RootStackScreen = () => {
               name={ModalsEnum.ChooseAccountImportType}
               component={ChooseAccountImportType}
               options={useModalOptions('Import account')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.ImportAccountFromSeedPhrase}
-              component={ImportAccountSeed}
-              options={useModalOptions('Import Seed Phrase')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.ImportAccountFromPrivateKey}
-              component={ImportAccountPrivateKey}
-              options={useModalOptions('Import Private Key')}
             />
             <RootStack.Screen
               name={ModalsEnum.ChooseWalletImportType}

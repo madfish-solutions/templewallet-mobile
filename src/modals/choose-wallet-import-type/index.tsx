@@ -28,8 +28,6 @@ enum ImportType {
 export const ChooseWalletImportType = memo(() => {
   const [selectedImportType, setSelectedImportType] = useState<ImportType | null>(null);
 
-  const onBackPress = useCallback(() => setSelectedImportType(null), []);
-
   const importTypes: ImportTypeItemProps[] = useMemo(
     () => [
       {
@@ -53,6 +51,8 @@ export const ChooseWalletImportType = memo(() => {
     ],
     []
   );
+
+  const onBackPress = useCallback(() => setSelectedImportType(null), []);
 
   const renderContent = useCallback(() => {
     switch (selectedImportType) {

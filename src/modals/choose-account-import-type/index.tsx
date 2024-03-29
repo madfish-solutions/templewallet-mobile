@@ -1,9 +1,11 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ImportTypeItem, ImportTypeItemProps } from 'src/components/import-type-item';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -12,31 +14,66 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { ImportAccountPrivateKey } from '../import-account/import-account-private-key/import-account-private-key';
+import { ImportAccountSeed } from '../import-account/import-account-seed/import-account-seed';
+
 import { useChooseAccountImportTypeStyles } from './styles';
 
+enum ImportType {
+  SeedPhrase = 'SeedPhrase',
+  PrivateKey = 'PrivateKey'
+}
+
 export const ChooseAccountImportType = memo(() => {
-  usePageAnalytic(ModalsEnum.ChooseAccountImportType);
+  const [selectedImportType, setSelectedImportType] = useState<ImportType | null>(null);
 
-  const styles = useChooseAccountImportTypeStyles();
-  const { navigate, goBack } = useNavigation();
-
-  const ImportTypes: ImportTypeItemProps[] = useMemo(
+  const importTypes: ImportTypeItemProps[] = useMemo(
     () => [
       {
         title: 'Seed Phrase',
         description: 'Use your seed phrase from Temple Wallet\n' + 'or another crypto wallet',
         iconName: IconNameEnum.Docs,
-        onPress: () => navigate(ModalsEnum.ImportAccountFromSeedPhrase)
+        onPress: () => setSelectedImportType(ImportType.SeedPhrase)
       },
       {
         title: 'Private Key',
         description: 'Use your private key of the account you\n' + 'want to import',
         iconName: IconNameEnum.Key,
-        onPress: () => navigate(ModalsEnum.ImportAccountFromPrivateKey)
+        onPress: () => setSelectedImportType(ImportType.PrivateKey)
       }
     ],
-    [navigate]
+    []
   );
+
+  const onBackPress = useCallback(() => setSelectedImportType(null), []);
+
+  const renderContent = useCallback(() => {
+    switch (selectedImportType) {
+      case ImportType.SeedPhrase:
+        return <ImportAccountSeed onBackPress={onBackPress} />;
+
+      case ImportType.PrivateKey:
+        return <ImportAccountPrivateKey onBackPress={onBackPress} />;
+
+      default:
+        return <ChooseWalletImportTypeContent importTypes={importTypes} />;
+    }
+  }, [importTypes, onBackPress, selectedImportType]);
+
+  return renderContent();
+});
+
+interface Props {
+  importTypes: ImportTypeItemProps[];
+}
+
+const ChooseWalletImportTypeContent = memo<Props>(({ importTypes }) => {
+  const { goBack } = useNavigation();
+  const styles = useChooseAccountImportTypeStyles();
+
+  usePageAnalytic(ModalsEnum.ChooseAccountImportType);
+
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import account" /> }, []);
 
   return (
     <>
@@ -48,7 +85,7 @@ export const ChooseAccountImportType = memo(() => {
         </View>
 
         <View>
-          {ImportTypes.map(item => (
+          {importTypes.map(item => (
             <View key={item.title}>
               <Divider size={formatSize(16)} />
               <ImportTypeItem {...item} />
