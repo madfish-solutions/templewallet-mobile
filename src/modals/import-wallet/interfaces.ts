@@ -5,4 +5,5 @@ export interface ImportWalletCredentials {
 
 export interface ImportWalletProps {
   onSubmit: (formValues: ImportWalletCredentials) => void;
+  onBackPress: EmptyFn;
 }

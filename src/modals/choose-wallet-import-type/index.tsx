@@ -1,9 +1,11 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ImportTypeItem, ImportTypeItemProps } from 'src/components/import-type-item';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -12,36 +14,78 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { ImportWallet } from '../import-wallet/import-wallet';
+import { SyncInstructions } from '../sync-account/sync-instructions/sync-instructions';
+
 import { useChooseWalletImportTypeStyles } from './styles';
 
+enum ImportType {
+  SeedPhrase = 'SeedPhrase',
+  KeystoreFile = 'KeystoreFile',
+  Sync = 'Sync'
+}
+
 export const ChooseWalletImportType = memo(() => {
-  usePageAnalytic(ModalsEnum.ChooseWalletImportType);
+  const [selectedImportType, setSelectedImportType] = useState<ImportType | null>(null);
 
-  const styles = useChooseWalletImportTypeStyles();
-  const { navigate, goBack } = useNavigation();
+  const onBackPress = useCallback(() => setSelectedImportType(null), []);
 
-  const ImportTypes: ImportTypeItemProps[] = useMemo(
+  const importTypes: ImportTypeItemProps[] = useMemo(
     () => [
       {
         title: 'Seed Phrase',
         description: 'Use your seed phrase from Temple Wallet\n' + 'or another crypto wallet',
         iconName: IconNameEnum.Docs,
-        onPress: () => navigate(ModalsEnum.ImportWalletFromSeedPhrase)
+        onPress: () => setSelectedImportType(ImportType.SeedPhrase)
       },
       {
         title: 'Sync with Extension Wallet',
         description: 'Synchronize your mobile and extension\n' + 'Temple Wallet',
         iconName: IconNameEnum.Sync,
-        onPress: () => navigate(ModalsEnum.SyncInstructions)
+        onPress: () => setSelectedImportType(ImportType.Sync)
       },
       {
         title: 'Keystore File',
         description: 'Import your wallet from an encrypted\n' + 'keystore file (.tez)',
         iconName: IconNameEnum.FileUpload,
-        onPress: () => navigate(ModalsEnum.ImportWalletFromKeystoreFile)
+        onPress: () => setSelectedImportType(ImportType.KeystoreFile)
       }
     ],
-    [navigate]
+    []
+  );
+
+  const renderContent = useCallback(() => {
+    switch (selectedImportType) {
+      case ImportType.SeedPhrase:
+        return <ImportWallet onBackPress={onBackPress} />;
+
+      case ImportType.KeystoreFile:
+        return <ImportWallet fromSeed={false} onBackPress={onBackPress} />;
+
+      case ImportType.Sync:
+        return <SyncInstructions onBackPress={onBackPress} />;
+
+      default:
+        return <ChooseWalletImportTypeContent importTypes={importTypes} />;
+    }
+  }, [importTypes, onBackPress, selectedImportType]);
+
+  return renderContent();
+});
+
+interface Props {
+  importTypes: ImportTypeItemProps[];
+}
+
+const ChooseWalletImportTypeContent = memo<Props>(({ importTypes }) => {
+  const { goBack } = useNavigation();
+  const styles = useChooseWalletImportTypeStyles();
+
+  usePageAnalytic(ModalsEnum.ChooseWalletImportType);
+
+  useNavigationSetOptions(
+    { headerTitle: () => <HeaderTitle title="Import Existing Wallet" />, headerLeft: () => null },
+    []
   );
 
   return (
@@ -54,7 +98,7 @@ export const ChooseWalletImportType = memo(() => {
         </View>
 
         <View>
-          {ImportTypes.map(item => (
+          {importTypes.map(item => (
             <View key={item.title}>
               <Divider size={formatSize(16)} />
               <ImportTypeItem {...item} />
