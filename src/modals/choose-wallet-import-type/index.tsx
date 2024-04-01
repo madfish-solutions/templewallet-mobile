@@ -54,23 +54,19 @@ export const ChooseWalletImportType = memo(() => {
 
   const onBackPress = useCallback(() => setSelectedImportType(null), []);
 
-  const renderContent = useCallback(() => {
-    switch (selectedImportType) {
-      case ImportType.SeedPhrase:
-        return <ImportWallet onBackPress={onBackPress} />;
+  switch (selectedImportType) {
+    case ImportType.SeedPhrase:
+      return <ImportWallet onBackPress={onBackPress} />;
 
-      case ImportType.KeystoreFile:
-        return <ImportWallet fromSeed={false} onBackPress={onBackPress} />;
+    case ImportType.KeystoreFile:
+      return <ImportWallet fromSeed={false} onBackPress={onBackPress} />;
 
-      case ImportType.Sync:
-        return <SyncInstructions onBackPress={onBackPress} />;
+    case ImportType.Sync:
+      return <SyncInstructions onBackPress={onBackPress} />;
 
-      default:
-        return <ChooseWalletImportTypeContent importTypes={importTypes} />;
-    }
-  }, [importTypes, onBackPress, selectedImportType]);
-
-  return renderContent();
+    default:
+      return <ChooseWalletImportTypeContent importTypes={importTypes} />;
+  }
 });
 
 interface Props {
