@@ -13,7 +13,6 @@ import {
   hideLoaderAction,
   madeCloudBackupAction,
   requestSeedPhraseBackupAction,
-  setAdsBannerVisibilityAction,
   setIsAnalyticsEnabled,
   showLoaderAction
 } from 'src/store/settings/settings-actions';
@@ -96,10 +95,7 @@ export const useHandleSubmit = (backupFlow?: BackupFlow) => {
   return useCallback(
     async ({ password, useBiometry, analytics, viewAds }: CreateNewPasswordFormValues) => {
       try {
-        if (viewAds) {
-          dispatch(togglePartnersPromotionAction(true));
-          dispatch(setAdsBannerVisibilityAction(false));
-        }
+        dispatch(togglePartnersPromotionAction(viewAds));
         dispatch(showLoaderAction());
         dispatch(setIsAnalyticsEnabled(analytics));
 

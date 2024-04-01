@@ -3,7 +3,6 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AcceptAdsBanner } from 'src/components/accept-ads-banner/accept-ads-banner';
 import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
@@ -27,11 +26,7 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
-import {
-  useHideZeroBalancesSelector,
-  useIsEnabledAdsBannerSelector,
-  useIsInAppUpdateAvailableSelector
-} from 'src/store/settings/settings-selectors';
+import { useHideZeroBalancesSelector, useIsInAppUpdateAvailableSelector } from 'src/store/settings/settings-selectors';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -57,7 +52,7 @@ type ListItem = TokenInterface | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
 /** padding size + icon size */
-const ITEM_HEIGHT = formatSize(24) + formatSize(32);
+const ITEM_HEIGHT = formatSize(24 + 32);
 const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
 
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
@@ -86,7 +81,6 @@ export const TokensList = memo(() => {
   const tkeyToken = useAccountTkeyToken();
   const isHideZeroBalance = useHideZeroBalancesSelector();
   const visibleTokensList = useCurrentAccountTokens(true);
-  const isEnabledAdsBanner = useIsEnabledAdsBannerSelector();
   const isInAppUpdateAvailable = useIsInAppUpdateAvailableSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
@@ -132,7 +126,7 @@ export const TokensList = memo(() => {
     return [tezosToken];
   }, [isTezosNode, tezosToken, tkeyToken]);
 
-  const { filteredAssetsList, searchValue, setSearchValue } = useFilteredAssetsList(
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,
     isHideZeroBalance,
     true,
@@ -142,29 +136,26 @@ export const TokensList = memo(() => {
   const screenFillingItemsCount = useMemo(() => listHeight / ITEM_HEIGHT, [listHeight]);
 
   const renderData = useMemo(() => {
-    const shouldHidePromotion =
-      (isHideZeroBalance && filteredAssetsList.length === 0) || (searchValue?.length ?? 0) > 0 || !partnersPromoShown;
+    const isNonEmptyList = filteredAssetsList.length > 0;
 
     const assetsListWithPromotion: ListItem[] = [...filteredAssetsList];
-    if (!shouldHidePromotion && !promotionErrorOccurred) {
-      assetsListWithPromotion.splice(ITEMS_BEFORE_AD, 0, AD_PLACEHOLDER);
+    if (partnersPromoShown && !promotionErrorOccurred) {
+      assetsListWithPromotion.splice(isNonEmptyList ? ITEMS_BEFORE_AD : 0, 0, AD_PLACEHOLDER);
     }
 
-    return addPlaceholdersForAndroid(assetsListWithPromotion, screenFillingItemsCount);
-  }, [
-    filteredAssetsList,
-    screenFillingItemsCount,
-    isHideZeroBalance,
-    partnersPromoShown,
-    promotionErrorOccurred,
-    searchValue
-  ]);
+    return isNonEmptyList
+      ? addPlaceholdersForAndroid(assetsListWithPromotion, screenFillingItemsCount)
+      : assetsListWithPromotion;
+  }, [filteredAssetsList, screenFillingItemsCount, partnersPromoShown, promotionErrorOccurred]);
+
+  const shouldShowEmptyListComponent = filteredAssetsList.length === 0;
+  const isNonEmptyRenderList = renderData.length > 1;
 
   const handleLayout = useCallback((event: LayoutChangeEvent) => setListHeight(event.nativeEvent.layout.height), []);
   const handlePromotionError = useCallback(() => setPromotionErrorOccurred(true), []);
 
   const renderItem: ListRenderItem<ListItem> = useCallback(
-    ({ item }) => {
+    ({ item, index }) => {
       if (item === AD_PLACEHOLDER) {
         return (
           <View onLayout={onElementLayoutChange} ref={adListItemRef}>
@@ -179,7 +170,7 @@ export const TokensList = memo(() => {
                 onLoad={onAdLoad}
               />
             </View>
-            <HorizontalBorder style={styles.promotionItemBorder} />
+            {index !== 0 && <HorizontalBorder style={styles.promotionItemBorder} />}
           </View>
         );
       }
@@ -200,8 +191,6 @@ export const TokensList = memo(() => {
   );
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
-
-  const ListEmptyComponent = useMemo(() => <DataPlaceholder text="No records found." />, []);
 
   const refreshControl = useMemo(() => <RefreshControl {...fakeRefreshControlProps} />, [fakeRefreshControlProps]);
 
@@ -236,14 +225,10 @@ export const TokensList = memo(() => {
         </Search>
       </View>
 
-      {isInAppUpdateAvailable ? (
-        <InAppUpdateBanner style={styles.banner} />
-      ) : isEnabledAdsBanner ? (
-        <AcceptAdsBanner style={styles.banner} />
-      ) : null}
+      {isInAppUpdateAvailable ? <InAppUpdateBanner style={styles.banner} /> : null}
 
       <View
-        style={styles.contentContainerStyle}
+        style={isNonEmptyRenderList ? styles.listContainer : styles.listContainerWithAd}
         ref={flashListWrapperRef}
         onLayout={handleLayout}
         testID={WalletSelectors.tokenList}
@@ -251,16 +236,17 @@ export const TokensList = memo(() => {
         <FlashList
           ref={flashListRef}
           data={renderData}
+          scrollEnabled={isNonEmptyRenderList}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           getItemType={getItemType}
           estimatedItemSize={FLOORED_ITEM_HEIGHT}
-          ListEmptyComponent={ListEmptyComponent}
           refreshControl={refreshControl}
           onScroll={onListScroll}
           onLayout={onListLayoutChange}
         />
       </View>
+      {shouldShowEmptyListComponent && <DataPlaceholder text="No records found." />}
     </>
   );
 });

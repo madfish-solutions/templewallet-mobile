@@ -16,9 +16,17 @@ interface Props<T extends string> extends StyledRadioGroupProps<T>, TestIdProps 
   value: T;
   onChange: (value: T) => void;
   labelStyle?: ViewStyle;
+  disabledLabelStyle?: ViewStyle;
 }
 
-export const StyledRadioGroup = <T extends string>({ value, items, onChange, labelStyle, testID }: Props<T>) => {
+export const StyledRadioGroup = <T extends string>({
+  value,
+  items,
+  onChange,
+  disabledLabelStyle,
+  labelStyle,
+  testID
+}: Props<T>) => {
   const colors = useColors();
   const styles = useStyledRadioButtonsGroupStyles();
 
@@ -29,8 +37,10 @@ export const StyledRadioGroup = <T extends string>({ value, items, onChange, lab
         value={value}
         onPress={onChange}
         color={colors.orange}
+        disabledColor={colors.disabled}
         itemContainerStyle={styles.itemContainer}
         itemLabelStyle={[styles.label, labelStyle]}
+        disabledItemLabelStyle={[styles.label, disabledLabelStyle ?? styles.disabledLabel]}
         testID={testID}
       />
     </View>

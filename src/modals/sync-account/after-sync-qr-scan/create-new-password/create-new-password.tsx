@@ -1,4 +1,4 @@
-import { Formik } from 'formik';
+import { FormikProvider, useFormik } from 'formik';
 import React, { memo } from 'react';
 import { View } from 'react-native';
 
@@ -13,6 +13,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
@@ -45,51 +46,49 @@ export const CreateNewPassword = memo<Props>(({ seedPhrase, useBiometry, hdAccou
     [onGoBackPress]
   );
 
+  const formik = useFormik({
+    initialValues: createNewPasswordInitialValues,
+    validationSchema: createNewPasswordValidationSchema,
+    onSubmit: handleSubmit
+  });
+
   return (
-    <Formik
-      initialValues={createNewPasswordInitialValues}
-      validationSchema={createNewPasswordValidationSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ submitForm, isValid }) => (
-        <>
-          <ScreenContainer isFullScreenMode={true}>
-            <View>
-              <Divider size={formatSize(12)} />
-              <Label label="Password" description="A password is used to protect the wallet." />
-              <FormPasswordInput
-                isShowPasswordStrengthIndicator
-                name="password"
-                testID={CreateNewPasswordSyncAccountSelectors.passwordInput}
-              />
+    <FormikProvider value={formik}>
+      <ScreenContainer isFullScreenMode={true}>
+        <View>
+          <Divider size={formatSize(12)} />
+          <Label label="Password" description="A password is used to protect the wallet." />
+          <FormPasswordInput
+            isShowPasswordStrengthIndicator
+            name="password"
+            testID={CreateNewPasswordSyncAccountSelectors.passwordInput}
+          />
 
-              <Label label="Repeat Password" description="Please enter the password again." />
-              <FormPasswordInput
-                name="passwordConfirmation"
-                testID={CreateNewPasswordSyncAccountSelectors.repeatPasswordInput}
-              />
-            </View>
-          </ScreenContainer>
+          <Label label="Repeat Password" description="Please enter the password again." />
+          <FormPasswordInput
+            name="passwordConfirmation"
+            testID={CreateNewPasswordSyncAccountSelectors.repeatPasswordInput}
+          />
+        </View>
+      </ScreenContainer>
 
-          <ButtonsFloatingContainer>
-            <ButtonsContainer style={styles.buttonsContainer}>
-              <View style={styles.flex}>
-                <ButtonLargeSecondary title="Back" onPress={onGoBackPress} />
-              </View>
-              <Divider size={formatSize(15)} />
-              <View style={styles.flex}>
-                <ButtonLargePrimary
-                  title="Sync"
-                  disabled={!isValid}
-                  onPress={submitForm}
-                  testID={CreateNewPasswordSyncAccountSelectors.syncButton}
-                />
-              </View>
-            </ButtonsContainer>
-            <InsetSubstitute type="bottom" />
-          </ButtonsFloatingContainer>
-        </>
-      )}
-    </Formik>
+      <ButtonsFloatingContainer>
+        <ButtonsContainer style={styles.buttonsContainer}>
+          <View style={styles.flex}>
+            <ButtonLargeSecondary title="Back" onPress={onGoBackPress} />
+          </View>
+          <Divider size={formatSize(15)} />
+          <View style={styles.flex}>
+            <ButtonLargePrimary
+              title="Sync"
+              disabled={!formik.isValid}
+              onPress={useCallbackIfOnline(formik.submitForm)}
+              testID={CreateNewPasswordSyncAccountSelectors.syncButton}
+            />
+          </View>
+        </ButtonsContainer>
+        <InsetSubstitute type="bottom" />
+      </ButtonsFloatingContainer>
+    </FormikProvider>
   );
 });

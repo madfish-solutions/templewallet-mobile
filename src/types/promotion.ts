@@ -26,8 +26,13 @@ interface ReadyAdMessage extends AdFrameMessageBase {
   ad: { cta_url: string };
 }
 
-interface OtherAdMessage extends AdFrameMessageBase {
-  type: Exclude<AdFrameMessageType, AdFrameMessageType.Resize | AdFrameMessageType.Ready>;
+interface ErrorAdMessage extends AdFrameMessageBase {
+  type: AdFrameMessageType.Error;
+  reason?: string;
 }
 
-export type AdFrameMessage = ResizeAdMessage | ReadyAdMessage | OtherAdMessage;
+interface ClickAdMessage extends AdFrameMessageBase {
+  type: AdFrameMessageType.Click;
+}
+
+export type AdFrameMessage = ResizeAdMessage | ReadyAdMessage | ErrorAdMessage | ClickAdMessage;

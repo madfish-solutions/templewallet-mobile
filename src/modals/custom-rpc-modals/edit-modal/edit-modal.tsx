@@ -28,6 +28,7 @@ import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics
 import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
 
 import { EditModalSelectors } from './edit-modal.selectors';
+import { useEditModalStyles } from './styles';
 
 export const EditCustomRpcModal: FC = () => {
   const { url } = useRoute<RouteProp<ModalsParamList, ModalsEnum.EditCustomRpc>>().params;
@@ -36,6 +37,7 @@ export const EditCustomRpcModal: FC = () => {
   const { goBack } = useNavigation();
   const { trackEvent } = useAnalytics();
   const rpcList = useRpcListSelector();
+  const styles = useEditModalStyles();
 
   const initialValues = useMemo(() => {
     const rpc = rpcList.find(rpc => rpc.url === url);
@@ -105,6 +107,7 @@ export const EditCustomRpcModal: FC = () => {
             <IconTitleNoBg
               icon={IconNameEnum.Trash}
               text="Delete RPC"
+              textStyle={styles.destructive}
               onPress={onDeleteButtonPress}
               testID={EditModalSelectors.deleteRpcButton}
             />

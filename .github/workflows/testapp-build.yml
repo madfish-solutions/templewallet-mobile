@@ -7,7 +7,7 @@ on:
     inputs:
       version:
         description: Version
-        default: "1.24"
+        default: "1.25"
         required: true
       build-number:
         description: Build number
@@ -26,7 +26,7 @@ on:
 jobs:
   testapp-build:
     name: Create new iOS / Android builds and upload them via TestApp
-    runs-on: macos-latest
+    runs-on: macos-14
     environment: testapp
     steps:
       - name: Clone repository
@@ -57,6 +57,7 @@ jobs:
           HYPELAB_AD_FRAME_URL: ${{ vars.HYPELAB_AD_FRAME_URL }}
           HYPELAB_SMALL_PLACEMENT_SLUG: ${{ vars.HYPELAB_SMALL_PLACEMENT_SLUG }}
           HYPELAB_NATIVE_PLACEMENT_SLUG: ${{ vars.HYPELAB_NATIVE_PLACEMENT_SLUG }}
+          PERSONA_PLACEMENT_SLUG: ${{ vars.PERSONA_PLACEMENT_SLUG }}
           APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}

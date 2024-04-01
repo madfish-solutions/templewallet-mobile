@@ -10,6 +10,8 @@ export interface RadioItemInterface<T extends string> {
   value: T;
   label?: string;
   buttons?: ItemButtonInterface[];
+  /** If specified, the item cannot be selected but this message is displayed on an attempt to select the item */
+  disabledMessage?: string;
 }
 
 export interface RadioItemProps extends RadioItemInterface<string>, TestIdProps {
@@ -24,7 +26,9 @@ export interface RadioGroupProps<T extends string> extends TestIdProps {
   items: RadioItemInterface<T>[];
   value?: T;
   color?: string;
+  disabledColor?: string;
   itemContainerStyle?: StyleType;
+  disabledItemLabelStyle?: StyleType;
   itemLabelStyle?: StyleType;
   onPress: (value: T) => void;
 }
