@@ -10,7 +10,7 @@ const DEFAULT_INTERSECTION_THRESHOLD = 0.5;
 /**
  * A hook for observing the intersection of a component with its parent or app window.
  * @param parentRef If specified, intersection with the element, which is available by this ref, is observed;
- * otherwise, intersection with app window is observed
+ * otherwise, intersection with app screen is observed
  * @param elementRef Reference to the element
  * @param onIntersectChange A callback to be called when the intersection state changes
  * @param threshold The part of the child element area that should be visible for the intersection to be considered
@@ -45,7 +45,7 @@ export const useOutsideOfListIntersection = (
 
     if (element && !parentRef) {
       element.measure((x, y, width, height) => {
-        handleNewDimensions(Dimensions.get('window'), { x, y, width, height });
+        handleNewDimensions(Dimensions.get('screen'), { x, y, width, height });
       });
 
       return;
