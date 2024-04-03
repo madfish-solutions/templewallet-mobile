@@ -39,7 +39,6 @@ export const WalletOverlay = memo(() => {
     return <BackupYourWalletOverlay />;
   }
 
-  // Bottom sheets should be rendered for some time before opening to open properly
   return onRampOverlayState === OnRampOverlayState.Continue ||
     (onRampOverlayState === OnRampOverlayState.Start && newsletterModalWasClosed) ? (
     <OnRampOverlay isStart={onRampOverlayState === OnRampOverlayState.Start} onClose={handleCancel} isOpen />
