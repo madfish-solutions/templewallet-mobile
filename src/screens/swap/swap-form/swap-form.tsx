@@ -439,7 +439,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         />
       </ButtonsFloatingContainer>
 
-      {onRampOverlayIsOpened && <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} />}
+      <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </FormikProvider>
   );
 };

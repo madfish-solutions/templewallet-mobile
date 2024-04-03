@@ -31,16 +31,21 @@ export const WalletOverlay = () => {
     setNewsletterModalWasClosed(false);
   }, [dispatch]);
 
-  if (!isFocused) {
-    return null;
-  }
-
-  if (!isAnyBackupMade) {
+  if (!isAnyBackupMade && isFocused) {
     return <BackupYourWalletOverlay />;
   }
 
-  return onRampOverlayState === OnRampOverlayState.Continue ||
-    (onRampOverlayState === OnRampOverlayState.Start && newsletterModalWasClosed) ? (
-    <OnRampOverlay isStart={onRampOverlayState === OnRampOverlayState.Start} onClose={handleCancel} />
-  ) : null;
+  const shouldShowOnRampOverlay =
+    isFocused &&
+    (onRampOverlayState === OnRampOverlayState.Continue ||
+      (onRampOverlayState === OnRampOverlayState.Start && newsletterModalWasClosed));
+
+  // Bottom sheets should be rendered for some time before opening to open properly
+  return (
+    <OnRampOverlay
+      isStart={onRampOverlayState === OnRampOverlayState.Start}
+      onClose={handleCancel}
+      isOpen={shouldShowOnRampOverlay}
+    />
+  );
 };

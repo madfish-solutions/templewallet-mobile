@@ -249,7 +249,7 @@ export const ManageEarnOpportunityModal: FC = () => {
           />
         )}
       </ModalButtonsContainer>
-      {onRampOverlayIsOpened && <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} />}
+      <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </>
   );
 };

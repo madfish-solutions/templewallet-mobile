@@ -278,7 +278,7 @@ export const SelectBakerModal = memo(() => {
         </ModalButtonsContainer>
       </View>
 
-      {onRampOverlayIsOpened && <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} />}
+      <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </>
   );
 });

@@ -24,6 +24,7 @@ interface OverlayBodyProps {
 }
 
 interface OnRampOverlayProps extends OverlayBodyProps {
+  isOpen: boolean;
   onClose: EmptyFn;
 }
 
@@ -98,14 +99,12 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
   );
 });
 
-export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isStart, onClose }) => {
+export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isOpen, isStart, onClose }) => {
   const bottomSheetController = useBottomSheetController();
 
   useEffect(() => {
-    bottomSheetController.open();
-
-    return () => bottomSheetController.close();
-  }, [bottomSheetController]);
+    isOpen ? bottomSheetController.open() : bottomSheetController.close();
+  }, [bottomSheetController, isOpen]);
 
   return (
     <BottomSheet

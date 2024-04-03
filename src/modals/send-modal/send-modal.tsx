@@ -227,7 +227,7 @@ export const SendModal: FC = () => {
           <InsetSubstitute type="bottom" />
         </View>
       </ScreenContainer>
-      {onRampOverlayIsOpened && <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} />}
+      <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </FormikProvider>
   );
 };
