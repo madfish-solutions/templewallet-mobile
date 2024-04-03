@@ -4,12 +4,7 @@ import { formatSize } from 'src/styles/format-size';
 export const useActivityGroupsListStyles = createUseStyles(({ colors, typography }) => ({
   contentContainer: {
     flex: 1,
-    paddingTop: formatSize(8),
     paddingBottom: formatSize(16)
-  },
-  adContainer: {
-    paddingBottom: formatSize(12),
-    paddingRight: formatSize(16)
   },
   sectionHeaderText: {
     ...typography.numbersMedium13,
@@ -19,10 +14,7 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
     marginLeft: formatSize(16)
   },
   promotionItemWrapper: {
-    paddingVertical: formatSize(12),
-    marginLeft: formatSize(16),
-    borderBottomWidth: formatSize(0.5),
-    borderBottomColor: colors.lines
+    margin: formatSize(16)
   },
   centeredItem: {
     alignSelf: 'center'
@@ -35,8 +27,5 @@ export const useActivityGroupsListStyles = createUseStyles(({ colors, typography
   },
   additionalLoader: {
     paddingTop: formatSize(16)
-  },
-  listPromotionItem: {
-    marginRight: formatSize(16)
   }
 }));

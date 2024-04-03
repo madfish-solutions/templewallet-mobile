@@ -1,10 +1,9 @@
-import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { StyleSheet } from 'react-native';
+
 import { formatSize } from 'src/styles/format-size';
 
-export const useHypelabPromotionStyles = createUseStylesMemoized(() => ({
+export const WebviewPromotionStyles = StyleSheet.create({
   imageAdFrameWrapper: {
-    width: formatSize(320),
-    height: formatSize(50),
     borderRadius: formatSize(8)
   },
   imageAdFrame: {
@@ -32,4 +31,4 @@ export const useHypelabPromotionStyles = createUseStylesMemoized(() => ({
   webView: {
     opacity: 0.99
   }
-}));
+});
