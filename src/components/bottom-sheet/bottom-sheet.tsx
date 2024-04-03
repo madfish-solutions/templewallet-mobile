@@ -27,6 +27,7 @@ interface Props extends BottomSheetControllerProps {
   cancelButtonTestID?: string;
   onClose?: EmptyFn;
   contentHeight: number;
+  isInitiallyOpen?: boolean;
 }
 
 export const BottomSheet: FC<Props> = ({
@@ -34,6 +35,7 @@ export const BottomSheet: FC<Props> = ({
   description,
   cancelButtonText = 'Cancel',
   cancelButtonTestID,
+  isInitiallyOpen = false,
   onCancelButtonPress = emptyFn,
   onClose = emptyFn,
   contentHeight,
@@ -96,7 +98,7 @@ export const BottomSheet: FC<Props> = ({
       {!isLocked && (
         <GorhomBottomSheet
           ref={controller.ref}
-          index={-1}
+          index={isInitiallyOpen ? 0 : -1}
           snapPoints={[contentHeight]}
           enablePanDownToClose={true}
           bottomInset={bottomInset}

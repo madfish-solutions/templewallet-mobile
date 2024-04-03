@@ -1,4 +1,4 @@
-import React, { FC, memo, useCallback, useEffect } from 'react';
+import React, { FC, memo, useCallback, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -101,9 +101,16 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
 
 export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isOpen, isStart, onClose }) => {
   const bottomSheetController = useBottomSheetController();
+  const isInitiallyOpenRef = useRef(isOpen);
 
   useEffect(() => {
-    isOpen ? bottomSheetController.open() : bottomSheetController.close();
+    if (isOpen) {
+      bottomSheetController.open();
+
+      return () => bottomSheetController.close();
+    }
+
+    bottomSheetController.close();
   }, [bottomSheetController, isOpen]);
 
   return (
@@ -112,6 +119,7 @@ export const OnRampOverlay: FC<OnRampOverlayProps> = ({ isOpen, isStart, onClose
       controller={bottomSheetController}
       cancelButtonText="Not now"
       cancelButtonTestID={OnRampOverlaySelectors.notNowButton}
+      isInitiallyOpen={isInitiallyOpenRef.current}
       onCancelButtonPress={onClose}
       onClose={onClose}
     >
