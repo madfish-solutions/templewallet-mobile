@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -10,7 +10,7 @@ import { useIsAnyBackupMadeSelector, useOnRampOverlayStateSelector } from 'src/s
 import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { OnRampOverlay } from './on-ramp-overlay/on-ramp-overlay';
 
-export const WalletOverlay = () => {
+export const WalletOverlay = memo(() => {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
@@ -48,4 +48,4 @@ export const WalletOverlay = () => {
       isOpen={shouldShowOnRampOverlay}
     />
   );
-};
+});
