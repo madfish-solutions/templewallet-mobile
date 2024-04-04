@@ -1,17 +1,7 @@
-import { StyleSheet } from 'react-native';
-
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 export const useOnRampOverlayStyles = createUseStyles(({ colors, typography }) => ({
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.black16,
-    flexDirection: 'column',
-    justifyContent: 'flex-end'
-  },
   root: {
-    height: 'auto',
-    paddingBottom: formatSize(2),
     backgroundColor: colors.pageBG
   },
   title: {

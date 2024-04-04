@@ -29,7 +29,35 @@ import { sendTransaction$ } from 'src/utils/wallet.utils';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
 
-const NOT_ENOUGH_TEZ_ERRORS_KEYWORDS = ['empty_implicit_contract', 'empty_implicit_delegated_contract'];
+const NOT_ENOUGH_TEZ_ESTIMATION_ERRORS_KEYWORDS = [
+  'empty_implicit_contract',
+  'empty_implicit_delegated_contract',
+  'storage_exhausted'
+];
+
+const isNotEnoughTezForDelegationFeeError = (error: string, senderPkh: string): boolean => {
+  /* An example of matching value: `HttpResponseError: Http error response: (500) [
+    {"kind":"temporary","id":"proto.018-Proxford.contract.balance_too_low","contract":"tz1dmR1BEyVW8fYyHT4QjarrRXyMJ1F4DciT","balance":"20","amount":"374"},
+    {"kind":"temporary","id":"proto.018-Proxford.tez.subtraction_underflow","amounts":["20","374"]}]`
+  */
+
+  if (!error.startsWith('HttpResponseError')) {
+    return false;
+  }
+
+  const firstLine = error.split('\n')[0];
+  const rawResponseBody = firstLine.slice(firstLine.indexOf(')') + 1).trim();
+  try {
+    const responseBody = JSON.parse(rawResponseBody);
+
+    return (
+      Array.isArray(responseBody) &&
+      responseBody.some(({ id, contract }) => id.includes('balance_too_low') && contract === senderPkh)
+    );
+  } catch (e) {
+    return false;
+  }
+};
 
 type Props = Omit<InternalOperationsConfirmationModalParams, 'type'>;
 
@@ -102,10 +130,12 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
 
   const handleEstimationError = useCallback(
     (error: string) =>
-      NOT_ENOUGH_TEZ_ERRORS_KEYWORDS.some(keyword => error.includes(keyword)) && canUseOnRamp
+      (NOT_ENOUGH_TEZ_ESTIMATION_ERRORS_KEYWORDS.some(keyword => error.includes(keyword)) ||
+        isNotEnoughTezForDelegationFeeError(error, selectedAccount!.publicKeyHash)) &&
+      canUseOnRamp
         ? updateOverlayState(OnRampOverlayState.Continue)
         : console.error(error),
-    [canUseOnRamp, updateOverlayState]
+    [canUseOnRamp, selectedAccount, updateOverlayState]
   );
 
   const handleTotalTezValue = useCallback(

@@ -43,7 +43,7 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
   );
 
   return (
-    <View style={dropdownBottomSheetStyles.headerContainer}>
+    <View style={[dropdownBottomSheetStyles.headerContainer, styles.root]}>
       <Text style={styles.title}>{isStart ? 'Jump in Tezos right now!' : 'Insufficient TEZ balance'}</Text>
       <Divider size={formatSize(8)} />
       {isStart ? (
