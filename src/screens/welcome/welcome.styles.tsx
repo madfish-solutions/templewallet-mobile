@@ -1,3 +1,4 @@
+import { transparent } from 'src/config/styles';
 import { createUseStyles, createUseStylesConfig } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -30,12 +31,12 @@ export const useWelcomeStyles = createUseStyles(({ colors, typography }) => ({
 export const useCloudButtonActiveColorStyleConfig = createUseStylesConfig(({ colors }) => ({
   googleDrive: {
     titleColor: colors.blue,
-    backgroundColor: colors.white,
+    backgroundColor: transparent,
     borderColor: colors.blue
   },
   iCloud: {
     titleColor: colors.black,
-    backgroundColor: colors.white,
+    backgroundColor: transparent,
     borderColor: colors.black
   }
 }));

@@ -10,6 +10,8 @@ import { ButtonLargeSecondary } from 'src/components/button/button-large/button-
 import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -35,14 +37,20 @@ import {
 } from './import-account-seed.form';
 import { ImportAccountSeedSelectors } from './import-account-seed.selectors';
 
-export const ImportAccountSeed = memo(() => {
+interface Props {
+  onBackPress: EmptyFn;
+}
+
+export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   const dispatch = useDispatch();
-  const styles = useImportAccountFromSeedStyles();
   const { goBack } = useNavigation();
+  const styles = useImportAccountFromSeedStyles();
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
 
   usePageAnalytic(ModalsEnum.ImportAccountFromSeedPhrase);
+
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Seed Phrase" /> }, []);
 
   const onSubmit = useCallback(({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
     dispatch(showLoaderAction());
@@ -96,7 +104,7 @@ export const ImportAccountSeed = memo(() => {
       <ButtonsFloatingContainer>
         <ButtonsContainer style={styles.buttonsContainer}>
           <View style={styles.flex}>
-            <ButtonLargeSecondary title="Back" onPress={goBack} testID={ImportAccountSeedSelectors.backButton} />
+            <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={ImportAccountSeedSelectors.backButton} />
           </View>
           <Divider size={formatSize(15)} />
           <View style={styles.flex}>
