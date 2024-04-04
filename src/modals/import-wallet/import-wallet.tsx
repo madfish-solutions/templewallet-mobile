@@ -9,9 +9,10 @@ import { ImportWalletCredentials } from './interfaces';
 
 interface Props {
   fromSeed?: boolean;
+  onBackPress: EmptyFn;
 }
 
-export const ImportWallet = memo<Props>(({ fromSeed = true }) => {
+export const ImportWallet = memo<Props>(({ fromSeed = true, onBackPress }) => {
   const { innerScreenIndex, setInnerScreenIndex } = useInnerScreenProgress(2, true);
   const [seedPhrase, setSeedPhrase] = useState('');
   const [initialPassword, setInitialPassword] = useState<string>();
@@ -29,9 +30,9 @@ export const ImportWallet = memo<Props>(({ fromSeed = true }) => {
     <>
       {innerScreenIndex === 0 &&
         (fromSeed ? (
-          <ImportWalletFromSeedPhrase onSubmit={handleImportWalletFormSubmit} />
+          <ImportWalletFromSeedPhrase onSubmit={handleImportWalletFormSubmit} onBackPress={onBackPress} />
         ) : (
-          <ImportWalletFromKeystoreFile onSubmit={handleImportWalletFormSubmit} />
+          <ImportWalletFromKeystoreFile onSubmit={handleImportWalletFormSubmit} onBackPress={onBackPress} />
         ))}
       {innerScreenIndex === 1 && (
         <CreateNewPassword

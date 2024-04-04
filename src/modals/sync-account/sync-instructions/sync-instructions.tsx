@@ -6,6 +6,8 @@ import { ButtonLargeSecondary } from 'src/components/button/button-large/button-
 import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
+import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -23,9 +25,15 @@ const syncSteps = [
   'Scan a QR code'
 ];
 
-export const SyncInstructions = memo(() => {
-  const { navigate, goBack } = useNavigation();
+interface Props {
+  onBackPress: EmptyFn;
+}
+
+export const SyncInstructions = memo<Props>(({ onBackPress }) => {
+  const { navigate } = useNavigation();
   const styles = useSyncInstructionsStyles();
+
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Sync with Extension Wallet" /> }, []);
 
   usePageAnalytic(ModalsEnum.SyncInstructions);
 
@@ -37,8 +45,8 @@ export const SyncInstructions = memo(() => {
         </View>
         <View style={styles.stepsContainer}>
           {syncSteps.map((step, id) => (
-            <View style={styles.stepContainer}>
-              <Text style={styles.text} key={step}>
+            <View key={step} style={styles.stepContainer}>
+              <Text style={styles.text}>
                 {id + 1}. {step}
               </Text>
             </View>
@@ -49,7 +57,7 @@ export const SyncInstructions = memo(() => {
       <ButtonsFloatingContainer>
         <ButtonsContainer style={styles.buttonsContainer}>
           <View style={styles.flex}>
-            <ButtonLargeSecondary title="Back" onPress={goBack} testID={SyncInstructionsSelectors.backButton} />
+            <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={SyncInstructionsSelectors.backButton} />
           </View>
           <Divider size={formatSize(15)} />
           <View style={styles.flex}>

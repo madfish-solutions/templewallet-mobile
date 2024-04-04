@@ -24,7 +24,6 @@ import { FormFileInput } from 'src/form/form-file-input';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ImportWalletProps } from 'src/modals/import-wallet/interfaces';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -45,8 +44,7 @@ const checkKukaiPasswordValid = (password: string): boolean =>
 const TOO_WEAK_PASSWORD_ERROR =
   'The password is too weak. Please, set a new one according to the requirements of the application.';
 
-export const ImportWalletFromKeystoreFile = memo<ImportWalletProps>(({ onSubmit }) => {
-  const { goBack } = useNavigation();
+export const ImportWalletFromKeystoreFile = memo<ImportWalletProps>(({ onSubmit, onBackPress }) => {
   const styles = useImportWalletFromKeystoreFileStyles();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Keystore File" /> }, []);
@@ -124,7 +122,7 @@ export const ImportWalletFromKeystoreFile = memo<ImportWalletProps>(({ onSubmit 
       <ButtonsFloatingContainer>
         <ButtonsContainer style={styles.buttonsContainer}>
           <View style={styles.flex}>
-            <ButtonLargeSecondary title="Back" onPress={goBack} />
+            <ButtonLargeSecondary title="Back" onPress={onBackPress} />
           </View>
           <Divider size={formatSize(15)} />
           <View style={styles.flex}>

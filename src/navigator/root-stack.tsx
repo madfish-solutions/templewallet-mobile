@@ -22,10 +22,6 @@ import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal/e
 import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-modal';
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
-import { ImportAccountPrivateKey } from 'src/modals/import-account/import-account-private-key/import-account-private-key';
-import { ImportAccountSeed } from 'src/modals/import-account/import-account-seed/import-account-seed';
-import { ImportWalletFromKeystoreFile } from 'src/modals/import-wallet/import-wallet-from-keystore-file';
-import { ImportWalletFromSeedPhrase } from 'src/modals/import-wallet/import-wallet-from-seed-phrase';
 import { InAppBrowser } from 'src/modals/in-app-browser';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
@@ -37,7 +33,6 @@ import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-mod
 import { SendModal } from 'src/modals/send-modal/send-modal';
 import { SplashModal } from 'src/modals/splash-modal/splash-modal';
 import { AfterSyncQRScan } from 'src/modals/sync-account/after-sync-qr-scan/after-sync-qr-scan';
-import { SyncInstructions } from 'src/modals/sync-account/sync-instructions/sync-instructions';
 import { AppCheckWarning } from 'src/screens/app-check/app-check-warning';
 import { EnterPassword } from 'src/screens/enter-password/enter-password';
 import { ForceUpdate } from 'src/screens/force-update/force-update';
@@ -201,34 +196,9 @@ export const RootStackScreen = () => {
               options={useModalOptions('Import account')}
             />
             <RootStack.Screen
-              name={ModalsEnum.ImportAccountFromSeedPhrase}
-              component={ImportAccountSeed}
-              options={useModalOptions('Import Seed Phrase')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.ImportAccountFromPrivateKey}
-              component={ImportAccountPrivateKey}
-              options={useModalOptions('Import Private Key')}
-            />
-            <RootStack.Screen
               name={ModalsEnum.ChooseWalletImportType}
               component={ChooseWalletImportType}
               options={useModalOptions('Import Existing Wallet')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.ImportWalletFromSeedPhrase}
-              component={ImportWalletFromSeedPhrase}
-              options={useModalOptions('Import Seed Phrase')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.ImportWalletFromKeystoreFile}
-              component={ImportWalletFromKeystoreFile}
-              options={useModalOptions('Import Keystore File')}
-            />
-            <RootStack.Screen
-              name={ModalsEnum.SyncInstructions}
-              component={SyncInstructions}
-              options={useModalOptions('Sync with Extension Wallet')}
             />
             <RootStack.Screen
               name={ModalsEnum.ConfirmSync}
