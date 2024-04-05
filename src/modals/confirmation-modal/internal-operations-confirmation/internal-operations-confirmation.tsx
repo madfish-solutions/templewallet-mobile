@@ -41,7 +41,7 @@ const isNotEnoughTezForDelegationFeeError = (error: string, senderPkh: string): 
     {"kind":"temporary","id":"proto.018-Proxford.tez.subtraction_underflow","amounts":["20","374"]}]`
   */
 
-  if (!error.startsWith('HttpResponseError')) {
+  if (!error.startsWith('HttpResponseError') || !error.includes('balance_too_low')) {
     return false;
   }
 
@@ -130,9 +130,9 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
 
   const handleEstimationError = useCallback(
     (error: string) =>
+      canUseOnRamp &&
       (NOT_ENOUGH_TEZ_ESTIMATION_ERRORS_KEYWORDS.some(keyword => error.includes(keyword)) ||
-        isNotEnoughTezForDelegationFeeError(error, selectedAccount!.publicKeyHash)) &&
-      canUseOnRamp
+        isNotEnoughTezForDelegationFeeError(error, selectedAccount!.publicKeyHash))
         ? updateOverlayState(OnRampOverlayState.Continue)
         : console.error(error),
     [canUseOnRamp, selectedAccount, updateOverlayState]
