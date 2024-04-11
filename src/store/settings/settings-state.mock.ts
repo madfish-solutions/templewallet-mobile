@@ -26,5 +26,6 @@ export const mockSettingsState: SettingsState = {
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,
-  isInAppUpdateAvailable: false
+  isInAppUpdateAvailable: false,
+  isInAppBrowserEnabled: true
 };

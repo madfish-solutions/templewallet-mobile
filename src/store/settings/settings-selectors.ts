@@ -61,6 +61,8 @@ export const useIsOnRampPossibilitySelector = () => useSelector(({ settings }) =
 
 export const useIsInAppUpdateAvailableSelector = () => useSelector(({ settings }) => settings.isInAppUpdateAvailable);
 
+export const useIsInAppBrowserEnabledSelector = () => useSelector(({ settings }) => settings.isInAppBrowserEnabled);
+
 export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings }) => settings.isShowCollectibleInfo);
 
 export const useIsOnRampHasBeenShownBeforeSelector = () =>

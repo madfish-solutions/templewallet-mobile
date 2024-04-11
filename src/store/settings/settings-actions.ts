@@ -49,3 +49,5 @@ export const walletOpenedAction = createAction<void>('settings/APPLICATION_OPENE
 export const switchIsShowCollectibleInfoAction = createAction('settings/SET_IS_SHOW_COLLECTIBLE_INFO_ACTION');
 
 export const setIsInAppUpdateAvailableAction = createAction<boolean>('settings/SET_IS_IN_APP_UPDATE_AVAILABLE_ACTION');
+
+export const setIsInAppBrowserEnabledAction = createAction<boolean>('settings/SET_IS_IN_APP_BROWSER_ENABLED_ACTION');

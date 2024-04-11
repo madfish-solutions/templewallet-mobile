@@ -28,7 +28,8 @@ import {
   setIsApkBuildLaunchEventFired,
   setIsPushNotificationsEnabledEventFired,
   switchIsShowCollectibleInfoAction,
-  setIsInAppUpdateAvailableAction
+  setIsInAppUpdateAvailableAction,
+  setIsInAppBrowserEnabledAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -144,5 +145,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsInAppUpdateAvailableAction, (state, { payload }) => ({
     ...state,
     isInAppUpdateAvailable: payload
+  }));
+
+  builder.addCase(setIsInAppBrowserEnabledAction, (state, { payload }) => ({
+    ...state,
+    isInAppBrowserEnabled: payload
   }));
 });

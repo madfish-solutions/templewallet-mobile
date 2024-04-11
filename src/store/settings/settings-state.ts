@@ -1,10 +1,11 @@
 import { nanoid } from '@reduxjs/toolkit';
 import { Appearance } from 'react-native';
 
-import { RpcInterface } from '../../interfaces/rpc.interface';
-import { ThemesEnum } from '../../interfaces/theme.enum';
-import { FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
-import { RpcList } from '../../utils/rpc/rpc-list';
+import { isAndroid } from 'src/config/system';
+import { RpcInterface } from 'src/interfaces/rpc.interface';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { FiatCurrenciesEnum } from 'src/utils/exchange-rate.util';
+import { RpcList } from 'src/utils/rpc/rpc-list';
 
 export interface SettingsState {
   theme: ThemesEnum;
@@ -31,6 +32,7 @@ export interface SettingsState {
   isPushNotificationsEnabledEventFired: boolean;
   isShowCollectibleInfo: boolean;
   isInAppUpdateAvailable: boolean;
+  isInAppBrowserEnabled: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -55,5 +57,6 @@ export const settingsInitialState: SettingsState = {
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,
-  isInAppUpdateAvailable: false
+  isInAppUpdateAvailable: false,
+  isInAppBrowserEnabled: isAndroid
 };
