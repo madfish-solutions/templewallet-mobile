@@ -1,7 +1,6 @@
+import { isIOS } from 'src/config/system';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
-
-import { isIOS } from '../../config/system';
 
 import { ITEM_WIDTH, GAP_SIZE, BORDER_RADIUS } from './utils';
 
