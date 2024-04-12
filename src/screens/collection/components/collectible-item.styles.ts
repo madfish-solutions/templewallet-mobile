@@ -86,43 +86,14 @@ export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typog
     justifyContent: 'flex-end'
   },
   actionButton: {
-    marginTop: formatSize(8),
-    borderWidth: formatSize(2),
-    borderRadius: formatSize(10),
-    alignItems: 'center'
+    marginTop: formatSize(8)
   },
-  actionButtonText: {
-    paddingVertical: formatSize(13),
-    ...typography.body17Semibold
-  },
-
-  firstButtonActive: {
-    borderColor: colors.peach,
-    color: colors.peach
-  },
-  firstButtonDisabled: {
-    borderColor: colors.disabled,
-    color: colors.disabled
-  },
-
-  secondButtonActive: {
-    borderColor: colors.peach,
-    color: colors.white,
-    backgroundColor: colors.peach
-  },
-  secondButtonDisabled: {
-    backgroundColor: colors.disabled,
-    borderColor: colors.disabled
-  },
-  secondButtonTextDisabled: {
+  primaryButton: {
     color: colors.white
   },
 
   topContainer: {
     flex: 1
-  },
-  secondButtonTextActive: {
-    color: colors.white
   },
   nameBlock: {
     flexDirection: 'row',
