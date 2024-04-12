@@ -140,8 +140,10 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
 
   const handleTotalTezValue = useCallback(
     (newValue: BigNumber) =>
-      canUseOnRamp &&
-      updateOverlayState(newValue.gt(tezosBalance) ? OnRampOverlayState.Continue : OnRampOverlayState.Closed),
+      void (
+        canUseOnRamp &&
+        updateOverlayState(newValue.gt(tezosBalance) ? OnRampOverlayState.Continue : OnRampOverlayState.Closed)
+      ),
     [canUseOnRamp, tezosBalance, updateOverlayState]
   );
 
