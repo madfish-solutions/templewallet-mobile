@@ -1,14 +1,12 @@
 import { Portal } from '@gorhom/portal';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Text, View, Animated } from 'react-native';
 
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { CurrentRouteNameContext } from 'src/navigator/current-route-name.context';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
 import { cloudIconName, cloudTitle } from 'src/utils/cloud-backup';
 import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
 
@@ -16,15 +14,6 @@ import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.s
 import { BackupYourWalletSelectors } from './backup-your-wallet.selectors';
 
 export const BackupYourWalletOverlay = () => {
-  const isAnyBackupMade = useIsAnyBackupMadeSelector();
-  const currentRouteName = useContext(CurrentRouteNameContext);
-
-  const isShowOverlay = currentRouteName === ScreensEnum.Wallet && !isAnyBackupMade;
-
-  return isShowOverlay ? <OverlayComponent /> : null;
-};
-
-const OverlayComponent = () => {
   const { navigate } = useNavigation();
 
   const styles = useBackupYourWalletOverlayStyles();
