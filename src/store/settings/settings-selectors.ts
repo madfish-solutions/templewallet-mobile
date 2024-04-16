@@ -57,14 +57,13 @@ export const useIsBackupMadeSelector = () => {
 export const useIsAnyBackupMadeSelector = () =>
   useSelector(({ settings }) => settings.isManualBackupMade || settings.isCloudBackupMade);
 
-export const useIsOnRampPossibilitySelector = () => useSelector(({ settings }) => settings.isOnRampPossibility);
+export const useOnRampOverlayStateSelector = () => useSelector(({ settings }) => settings.onRampOverlayState);
 
 export const useIsInAppUpdateAvailableSelector = () => useSelector(({ settings }) => settings.isInAppUpdateAvailable);
 
-export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings }) => settings.isShowCollectibleInfo);
+export const useIsInAppBrowserEnabledSelector = () => useSelector(({ settings }) => settings.isInAppBrowserEnabled);
 
-export const useIsOnRampHasBeenShownBeforeSelector = () =>
-  useSelector(({ settings }) => settings.isOnRampHasBeenShownBefore);
+export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings }) => settings.isShowCollectibleInfo);
 
 export const useAssetExchangeRate = (slug: string) => {
   const assetUsdExchangeRate = useSelector(state => state.currency.usdToTokenRates.data[slug]);

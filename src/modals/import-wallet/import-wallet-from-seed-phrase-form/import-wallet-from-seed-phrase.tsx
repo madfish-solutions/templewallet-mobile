@@ -16,7 +16,6 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { ImportWalletProps } from 'src/modals/import-wallet/interfaces';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -27,8 +26,7 @@ import {
 import { ImportWalletFromSeedPhraseSelectors } from './import-wallet-from-seed-phrase.selectors';
 import { useImportWalletFromSeedPhraseStyles } from './import-wallet-from-seed-phrase.styles';
 
-export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit }) => {
-  const { goBack } = useNavigation();
+export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit, onBackPress }) => {
   const styles = useImportWalletFromSeedPhraseStyles();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Seed Phrase" /> }, []);
@@ -58,7 +56,7 @@ export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit })
           <View style={styles.flex}>
             <ButtonLargeSecondary
               title="Back"
-              onPress={goBack}
+              onPress={onBackPress}
               testID={ImportWalletFromSeedPhraseSelectors.backButton}
             />
           </View>

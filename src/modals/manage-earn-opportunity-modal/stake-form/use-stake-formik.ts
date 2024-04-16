@@ -5,18 +5,23 @@ import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup'
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
-import { createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { assetAmountValidation, createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
+import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
+import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useSelectedRpcUrlSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { useSwapTokensSelector } from 'src/store/swap/swap-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
+import { toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.type';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -41,6 +46,8 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunity);
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
+  const canUseOnRamp = useCanUseOnRamp();
+  const tezosBalance = useCurrentAccountTezosBalance();
   const accountPkh = useCurrentAccountPkhSelector();
   const { data: threeRouteTokens } = useSwapTokensSelector();
   const tezos = useReadOnlyTezosToolkit();
@@ -62,12 +69,22 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const validationSchema = useMemo<SchemaOf<StakeFormValues>>(
     () =>
       objectSchema().shape({
-        assetAmount: createAssetAmountWithMaxValidation(
-          gasToken,
-          earnOpportunity?.type === EarnOpportunityTypeEnum.STABLESWAP
-            ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE
-            : undefined
-        ),
+        assetAmount: (objectSchema<any>() as SchemaOf<AssetAmountInterface>).when(value => {
+          const selectedAsset = value?.asset;
+          const isGasToken =
+            isDefined(selectedAsset) && toTokenSlug(selectedAsset.address, selectedAsset.id) === TEZ_TOKEN_SLUG;
+
+          if (isGasToken) {
+            return assetAmountValidation;
+          }
+
+          return createAssetAmountWithMaxValidation(
+            gasToken,
+            earnOpportunity?.type === EarnOpportunityTypeEnum.STABLESWAP
+              ? EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE
+              : undefined
+          );
+        }),
         acceptRisks: booleanSchema().oneOf([true], 'Accept risks before depositing').required()
       }),
     [gasToken, earnOpportunity?.type]
@@ -78,6 +95,12 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
       const { asset, amount } = values.assetAmount;
 
       if (!isDefined(earnOpportunity) || !isDefined(amount)) {
+        return;
+      }
+
+      if (canUseOnRamp && toTokenSlug(asset.address, asset.id) === TEZ_TOKEN_SLUG && amount.gt(tezosBalance)) {
+        dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
+
         return;
       }
 
@@ -115,12 +138,13 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
     },
     [
       earnOpportunity,
+      canUseOnRamp,
+      dispatch,
+      trackEvent,
       tezos,
       accountPkh,
-      trackEvent,
       stake?.lastStakeId,
       threeRouteTokens,
-      dispatch,
       slippageTolerancePercentage
     ]
   );

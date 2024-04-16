@@ -1,13 +1,14 @@
 import * as Sentry from '@sentry/react-native';
-import { OpKind, ParamsWithKind, Estimate } from '@taquito/taquito';
+import { OpKind, ParamsWithKind, Estimate, TezosOperationError } from '@taquito/taquito';
 import { pick } from 'lodash-es';
 import { useEffect, useState } from 'react';
-import { from, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { from } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { EstimationInterface } from 'src/interfaces/estimation.interface';
+import { LoadableEntityState } from 'src/store/types';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -16,8 +17,10 @@ import { isDefined } from 'src/utils/is-defined';
 const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
-  const [data, setData] = useState<EstimationInterface[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [estimationState, setEstimationState] = useState<LoadableEntityState<EstimationInterface[]>>({
+    isLoading: true,
+    data: []
+  });
   const tezos = useReadOnlyTezosToolkit(sender);
 
   useEffect(() => {
@@ -30,8 +33,11 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
             // @ts-ignore
             minimalFeePerStorageByteMutez: Number(estimate.minimalFeePerStorageByteMutez)
           }))
-        ),
-        catchError(error => {
+        )
+      )
+      .subscribe({
+        next: value => setEstimationState({ isLoading: false, data: value }),
+        error: error => {
           Sentry.captureException(error);
           showErrorToast({
             title: 'Warning!',
@@ -40,18 +46,18 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
             onPress: () => copyStringToClipboard(error.toString())
           });
 
-          return of([]);
-        })
-      )
-      .subscribe(value => {
-        setIsLoading(false);
-        setData(value);
+          setEstimationState({
+            error: error instanceof TezosOperationError ? error.id : error.toString(),
+            isLoading: false,
+            data: []
+          });
+        }
       });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  return { data, isLoading };
+  return estimationState;
 };
 
 const getSuggestedFeeMutez = (estimate: Estimate, opParam?: ParamsWithKind) => {

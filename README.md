@@ -15,7 +15,7 @@ Other important features include:
 
 # ▶️ Installation
 
-Follow this steps to build and run wallet locally.
+Follow these steps to build and run wallet locally.
 
 ## Setting up the development environment
 
@@ -63,7 +63,7 @@ To start the iOS application run
 yarn ios
 ```
 
-If you want to contribute your code, before making a pull request - ensure, that code passes all pipeline checks. You can manually to check it before a pull request running commands
+If you want to contribute your code, before making a pull request - ensure, that code passes all pipeline checks. You can manually check it before a pull request running commands
 ```
 yarn ts
 yarn lint

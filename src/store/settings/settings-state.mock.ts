@@ -1,6 +1,7 @@
-import { ThemesEnum } from '../../interfaces/theme.enum';
-import { FiatCurrenciesEnum } from '../../utils/exchange-rate.util';
-import { RpcList } from '../../utils/rpc/rpc-list';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { FiatCurrenciesEnum } from 'src/utils/exchange-rate.util';
+import { RpcList } from 'src/utils/rpc/rpc-list';
 
 import { SettingsState } from './settings-state';
 
@@ -20,11 +21,11 @@ export const mockSettingsState: SettingsState = {
   isShowLoader: false,
   isManualBackupMade: true,
   isCloudBackupMade: true,
-  isOnRampPossibility: false,
+  onRampOverlayState: OnRampOverlayState.Closed,
   applicationOpenCounter: 1,
-  isOnRampHasBeenShownBefore: false,
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,
-  isInAppUpdateAvailable: false
+  isInAppUpdateAvailable: false,
+  isInAppBrowserEnabled: true
 };

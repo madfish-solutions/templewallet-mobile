@@ -4,8 +4,8 @@ import { Tzip12Module } from '@taquito/tzip12';
 import { Tzip16Module } from '@taquito/tzip16';
 import memoize from 'memoizee';
 
-import { AccountInterface } from '../../interfaces/account.interface';
-import { ReadOnlySigner } from '../read-only.signer.util';
+import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
+import { ReadOnlySigner } from 'src/utils/read-only.signer.util';
 
 import { getFastRpcClient } from './fast-rpc';
 
@@ -22,7 +22,7 @@ export const createTezosToolkit = (rpcUrl: string) => {
 };
 
 export const createReadOnlyTezosToolkit = memoize(
-  (rpcUrl: string, sender: Pick<AccountInterface, 'publicKey' | 'publicKeyHash'>) => {
+  (rpcUrl: string, sender: ReadOnlySignerPayload) => {
     const readOnlyTezosToolkit = createTezosToolkit(rpcUrl);
     readOnlyTezosToolkit.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
 
