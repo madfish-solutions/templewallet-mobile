@@ -3,8 +3,8 @@
 - All components should be functional and use hooks, class components are not supported
 - Each component should reside in a separate folder under named `my-component`
 - Сomponent name should be in the **CamelCase**: `MyAwesomeComponent`
-- Component can be grouped in folders for better understanding of the structure
-- Component JSX should containt as minimum JS code as possible, all logic code should be extracted into **components render function**:
+- Components can be grouped in folders for better understanding of the structure
+- Component JSX should contain as minimum JS code as possible, all logic code should be extracted into **components render function**:
 
 ### Bad
 
@@ -122,7 +122,7 @@ const Component = () => {
 
 ## Avoid props drilling
 
-Anyone who has worked in React would have faced this and if not then will face it definitely. Prop drilling is basically a situation when the same data is being sent at almost every level due to requirements in the final level. Use `Context` and `Providers` to avoid props driling.
+Anyone who has worked in React would have faced this and if not then will face it definitely. Prop drilling is basically a situation when the same data is being sent at almost every level due to requirements in the final level. Use `Context` and `Providers` to avoid props drilling.
 
 ### Bad:
 
@@ -344,7 +344,7 @@ Case, underscores ( \_ ) and dashes (-) are ignored from the name comparison.
 
 ## Library classname composition
 
-In some projects we use Tailwind and its better to re-use its classnames instead of implementing new one.
+In some projects we use Tailwind and its better to reuse its classnames instead of implementing new one.
 
 ## Prefer interfaces over types
 
@@ -402,7 +402,7 @@ Try to follow these recommended order of props filling in component:
 - props (e.g. disabled)
 - handlers
 
-## Error hanlding
+## Error handling
 
 if there are several types of errors that you need to handle, then you can check instance of error in catch block to determine the types of errors
 
