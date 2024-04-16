@@ -1,3 +1,4 @@
+import { isIOS } from 'src/config/system';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -12,7 +13,7 @@ export const useCollectionStyles = createUseStylesMemoized(() => ({
     justifyContent: 'center'
   },
   contentContainerStyle: {
-    paddingVertical: formatSize(12),
+    paddingVertical: formatSize(isIOS ? 30 : 12),
     paddingLeft: formatSize(24) - formatSize(GAP_SIZE),
     paddingRight: formatSize(24)
   }
