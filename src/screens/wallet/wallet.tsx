@@ -32,11 +32,10 @@ import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { BackupYourWalletOverlay } from './backup-your-wallet-overlay/backup-your-wallet-overlay';
 import { NotificationsBell } from './notifications-bell/notifications-bell';
-import { OnRampOverlay } from './on-ramp-overlay/on-ramp-overlay';
 import { Settings } from './settings/settings';
 import { TokensList } from './token-list/token-list';
+import { WalletOverlay } from './wallet-overlay';
 import { WalletSelectors } from './wallet.selectors';
 import { WalletStyles } from './wallet.styles';
 
@@ -119,8 +118,7 @@ export const Wallet = memo(() => {
 
       <TokensList />
 
-      <BackupYourWalletOverlay />
-      <OnRampOverlay />
+      <WalletOverlay />
 
       <BottomSheet
         title="Add this address to Contacts?"

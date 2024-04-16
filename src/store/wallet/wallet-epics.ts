@@ -7,17 +7,21 @@ import { catchError, delay, map, switchMap, concatMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { BLOCK_DURATION } from 'src/config/fixed-times';
+import { isAndroid } from 'src/config/system';
+import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
+import { isDcpNode } from 'src/utils/network.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { loadAssetBalance$, loadTezosBalance$, fetchAllAssetsBalancesFromTzkt } from 'src/utils/token-balance.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
-import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { withOnRampOverlayState, withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction } from '../root-state.actions';
+import { setOnRampOverlayStateAction } from '../settings/settings-actions';
 import type { RootState } from '../types';
 
 import {
@@ -76,7 +80,19 @@ const loadTezosBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) 
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) =>
       loadTezosBalance$(rpcUrl, selectedAccount.publicKeyHash).pipe(
-        map(balance => loadTezosBalanceActions.success(balance)),
+        withOnRampOverlayState(state$),
+        concatMap(([balance, overlayState]) => {
+          const successAction = loadTezosBalanceActions.success(balance);
+          const showOnRampAction =
+            isAndroid &&
+            !isDcpNode(rpcUrl) &&
+            overlayState === OnRampOverlayState.Closed &&
+            new BigNumber(balance).isZero()
+              ? setOnRampOverlayStateAction(OnRampOverlayState.Start)
+              : null;
+
+          return showOnRampAction ? [successAction, showOnRampAction] : [successAction];
+        }),
         catchError(err => of(loadTezosBalanceActions.fail(err.message)))
       )
     )

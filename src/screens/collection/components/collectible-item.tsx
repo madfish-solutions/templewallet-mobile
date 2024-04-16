@@ -5,12 +5,16 @@ import useSWR from 'swr';
 
 import { fetchCollectibleExtraDetails } from 'src/apis/objkt';
 import { objktCurrencies } from 'src/apis/objkt/constants';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { CollectibleImage } from 'src/components/collectible-image';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
 import { BLOCK_DURATION } from 'src/config/fixed-times';
+import { emptyFn } from 'src/config/general';
+import { isIOS } from 'src/config/system';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -76,6 +80,10 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
   );
 
   const firstButton = useMemo(() => {
+    if (isIOS) {
+      return { title: '', onPress: emptyFn };
+    }
+
     if (!isAccountHolder) {
       return {
         title: 'Make offer',
@@ -89,7 +97,8 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
     if (!highestOffer) {
       return {
         title: 'No offers yet',
-        disabled: true
+        disabled: true,
+        onPress: emptyFn
       };
     }
 
@@ -98,7 +107,8 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
     if (!currency) {
       return {
         title: 'Sell',
-        disabled: true
+        disabled: true,
+        onPress: emptyFn
       };
     }
 
@@ -124,6 +134,10 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
   }, [accountPkh, selectedRpc, isAccountHolder, collectionContract, item.id, extraDetails?.offers_active, navigate]);
 
   const secondButton = useMemo(() => {
+    if (isIOS) {
+      return { title: '', onPress: emptyFn };
+    }
+
     if (isAccountHolder) {
       const holdingAmount = item.holders.reduce(
         (acc, curr) => (curr.holder_address === accountPkh ? acc + curr.quantity : acc),
@@ -143,7 +157,8 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
 
       return {
         title: 'Listed',
-        disabled: true
+        disabled: true,
+        onPress: emptyFn
       };
     }
 
@@ -152,7 +167,8 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
     if (!listing) {
       return {
         title: 'Not listed',
-        disabled: true
+        disabled: true,
+        onPress: emptyFn
       };
     }
 
@@ -162,7 +178,8 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
     if (!isSupportedContract || !purchaseCurrency) {
       return {
         title: 'Buy',
-        disabled: true
+        disabled: true,
+        onPress: emptyFn
       };
     }
 
@@ -256,40 +273,32 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
           </View>
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            onPress={firstButton.onPress}
-            disabled={firstButton.disabled}
-            style={[styles.actionButton, firstButton.disabled ? styles.firstButtonDisabled : styles.firstButtonActive]}
-          >
-            <Text
-              style={[
-                styles.actionButtonText,
-                firstButton.disabled ? styles.firstButtonDisabled : styles.firstButtonActive
-              ]}
-            >
-              {firstButton.title}
-            </Text>
-          </TouchableOpacity>
+        {isIOS ? (
+          <>
+            <Divider size={formatSize(16)} />
+            <ButtonLargeSecondary
+              title="View in NFT Market"
+              onPress={() => navigateToObjktForBuy(collectionContract, item.id)}
+            />
+          </>
+        ) : (
+          <View style={styles.buttonContainer}>
+            <ButtonLargeSecondary
+              title={firstButton.title}
+              disabled={firstButton.disabled}
+              style={styles.actionButton}
+              onPress={firstButton.onPress}
+            />
 
-          <TouchableOpacity
-            onPress={secondButton.onPress}
-            style={[
-              styles.actionButton,
-              secondButton.disabled ? styles.secondButtonDisabled : styles.secondButtonActive
-            ]}
-            disabled={secondButton.disabled}
-          >
-            <Text
-              style={[
-                styles.actionButtonText,
-                secondButton.disabled ? styles.secondButtonTextDisabled : styles.secondButtonTextActive
-              ]}
-            >
-              {secondButton.title}
-            </Text>
-          </TouchableOpacity>
-        </View>
+            <ButtonLargePrimary
+              title={secondButton.title}
+              disabled={secondButton.disabled}
+              style={styles.actionButton}
+              textStyle={styles.primaryButton}
+              onPress={secondButton.onPress}
+            />
+          </View>
+        )}
       </View>
     </View>
   );
