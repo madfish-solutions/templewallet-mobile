@@ -1,6 +1,7 @@
 import { nanoid } from '@reduxjs/toolkit';
 import { Appearance } from 'react-native';
 
+import { isAndroid } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { RpcInterface } from 'src/interfaces/rpc.interface';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
@@ -35,6 +36,7 @@ export interface SettingsState {
   isPushNotificationsEnabledEventFired: boolean;
   isShowCollectibleInfo: boolean;
   isInAppUpdateAvailable: boolean;
+  isInAppBrowserEnabled: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -58,5 +60,6 @@ export const settingsInitialState: SettingsState = {
   isApkBuildLaunchEventFired: false,
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,
-  isInAppUpdateAvailable: false
+  isInAppUpdateAvailable: false,
+  isInAppBrowserEnabled: isAndroid
 };

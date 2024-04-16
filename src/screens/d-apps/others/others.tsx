@@ -9,8 +9,9 @@ import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics'
 import { TruncatedText } from 'src/components/truncated-text';
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { useOpenUrlInAppBrowser } from 'src/utils/linking';
+import { openUrl, useOpenUrlInAppBrowser } from 'src/utils/linking';
 
 import { useOthersDAppStyles } from './others.styles';
 
@@ -24,9 +25,13 @@ export const OthersDApp: FC<Props> = ({ item, itemWidth, testID }) => {
   const [imageLoadError, setImageLoadError] = useState(false);
 
   const styles = useOthersDAppStyles();
-  const openUrl = useOpenUrlInAppBrowser();
+  const openUrlInAppBrowser = useOpenUrlInAppBrowser();
+  const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
 
-  const onPress = useCallback(() => openUrl(dappUrl), [openUrl, dappUrl]);
+  const onPress = useCallback(
+    () => (isInAppBrowserEnabled ? openUrlInAppBrowser(dappUrl) : openUrl(dappUrl)),
+    [isInAppBrowserEnabled, openUrlInAppBrowser, dappUrl]
+  );
 
   return (
     <TouchableWithAnalytics

@@ -29,6 +29,7 @@ import {
   setIsPushNotificationsEnabledEventFired,
   switchIsShowCollectibleInfoAction,
   setIsInAppUpdateAvailableAction,
+  setIsInAppBrowserEnabledAction,
   resetPermanentInitialSettingsAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
@@ -146,5 +147,10 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsInAppUpdateAvailableAction, (state, { payload }) => ({
     ...state,
     isInAppUpdateAvailable: payload
+  }));
+
+  builder.addCase(setIsInAppBrowserEnabledAction, (state, { payload }) => ({
+    ...state,
+    isInAppBrowserEnabled: payload
   }));
 });
