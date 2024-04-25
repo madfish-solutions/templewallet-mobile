@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { Share } from 'react-native';
 
+import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { CollectibleModalSelectors } from 'src/modals/collectible-modal/collectible-modal.selectors';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -24,7 +25,7 @@ export const useShareNFT = (slug: string, thumbnailUri: string | undefined, titl
       });
 
       await Share.share({
-        message: `View NFT with Temple Wallet mobile: ${linkUrl}`
+        message: `View ${LIMIT_NFT_FEATURES ? 'collectible' : 'NFT'} with Temple Wallet mobile: ${linkUrl}`
       });
 
       await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);

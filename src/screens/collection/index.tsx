@@ -4,6 +4,7 @@ import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from '
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
@@ -94,7 +95,7 @@ const ListFooterComponent: FC<{ empty: boolean; isLoading: boolean }> = ({ empty
       </View>
     ) : (
       <View style={styles.emptyContainer}>
-        <DataPlaceholder text="Not found any NFT" />
+        <DataPlaceholder text={`Not found any ${LIMIT_NFT_FEATURES ? 'collectible' : 'NFT'}`} />
       </View>
     );
   }
