@@ -285,17 +285,15 @@ export const CollectibleModal = memo(() => {
         {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
 
         {isAccountHolder ? (
-          <View style={styles.burnContainer}>
-            <TouchableWithAnalytics
-              Component={TouchableOpacity}
-              onPress={burnCollectible}
-              style={styles.burnButton}
-              testID={CollectibleModalSelectors.burnButton}
-            >
-              <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
-              <Icon name={IconNameEnum.Burn} />
-            </TouchableWithAnalytics>
-          </View>
+          <TouchableWithAnalytics
+            Component={TouchableOpacity}
+            onPress={burnCollectible}
+            style={styles.burnButton}
+            testID={CollectibleModalSelectors.burnButton}
+          >
+            <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
+            <Icon name={IconNameEnum.Burn} />
+          </TouchableWithAnalytics>
         ) : null}
       </View>
     </ScreenContainer>
