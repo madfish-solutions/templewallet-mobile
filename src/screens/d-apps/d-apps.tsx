@@ -14,6 +14,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { SearchInput } from 'src/components/search-input/search-input';
 import { PERCENTAGE_DECIMALS } from 'src/config/earn-opportunities';
 import { SIDEBAR_WIDTH } from 'src/config/styles';
+import { LIMIT_DAPPS_FEATURES } from 'src/config/system';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
@@ -77,13 +78,17 @@ export const DApps = () => {
 
   const tabletMode = isTablet();
 
-  const texts = useMemo(
-    () =>
-      tabletMode
-        ? ['Other DApps are third-party websites. They should be used at your own risk.']
-        : ['Other DApps are third-party websites.', 'They should be used at your own risk.'],
-    [tabletMode]
-  );
+  const texts = useMemo(() => {
+    const lines = LIMIT_DAPPS_FEATURES
+      ? [
+          'Temple only provides links to third-party web',
+          'applications for Tezos blockchain. They should',
+          'be used at your own risk.'
+        ]
+      : ['Other DApps are third-party websites.', 'They should be used at your own risk.'];
+
+    return tabletMode ? [lines.join(' ')] : lines;
+  }, [tabletMode]);
 
   const sortedDAppsList = useMemo(
     () =>
@@ -119,7 +124,11 @@ export const DApps = () => {
 
       <PromotionCarousel />
 
-      <SearchInput placeholder="Search Dapps" onChangeText={setSearchQuery} testID={DAppsSelectors.searchDAppsInput} />
+      <SearchInput
+        placeholder={LIMIT_DAPPS_FEATURES ? 'Search' : 'Search Dapps'}
+        onChangeText={setSearchQuery}
+        testID={DAppsSelectors.searchDAppsInput}
+      />
 
       <Divider size={formatSize(4)} />
 

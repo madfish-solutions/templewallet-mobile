@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { InternetConnectionStatus } from 'src/components/internet-connection-status';
-import { isAndroid } from 'src/config/system';
+import { LIMIT_DAPPS_FEATURES, LIMIT_FIN_FEATURES, LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensOrModalsEnum } from 'src/interfaces/stacks.interface';
 import {
@@ -55,14 +55,14 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
             focused={isStackFocusedMemo(walletStackScreens)}
           />
           <TabBarButton
-            label="NFT"
+            label={LIMIT_NFT_FEATURES ? 'Collectibles' : 'NFT'}
             iconName={IconNameEnum.NFT}
             iconWidth={formatSize(32)}
             routeName={ScreensEnum.CollectiblesHome}
             focused={isStackFocusedMemo(nftStackScreens)}
             disabledOnPress={handleDisabledPress}
           />
-          {isAndroid && (
+          {!LIMIT_FIN_FEATURES && (
             <TabBarButton
               label="Swap"
               iconName={IconNameEnum.Swap}
@@ -75,7 +75,7 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
             />
           )}
           <TabBarButton
-            label="DApps"
+            label={LIMIT_DAPPS_FEATURES ? 'Explore' : 'DApps'}
             iconName={IconNameEnum.DApps}
             iconWidth={formatSize(32)}
             routeName={ScreensEnum.DApps}

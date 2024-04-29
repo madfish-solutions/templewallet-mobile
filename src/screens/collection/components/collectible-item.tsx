@@ -14,7 +14,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
 import { BLOCK_DURATION } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
-import { isIOS } from 'src/config/system';
+import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -80,7 +80,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
   );
 
   const firstButton = useMemo(() => {
-    if (isIOS) {
+    if (LIMIT_NFT_FEATURES) {
       return { title: '', onPress: emptyFn };
     }
 
@@ -134,7 +134,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
   }, [accountPkh, selectedRpc, isAccountHolder, collectionContract, item.id, extraDetails?.offers_active, navigate]);
 
   const secondButton = useMemo(() => {
-    if (isIOS) {
+    if (LIMIT_NFT_FEATURES) {
       return { title: '', onPress: emptyFn };
     }
 
@@ -273,11 +273,12 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
           </View>
         </View>
 
-        {isIOS ? (
+        {LIMIT_NFT_FEATURES ? (
           <>
             <Divider size={formatSize(16)} />
+
             <ButtonLargeSecondary
-              title="View in NFT Market"
+              title="View in Market"
               onPress={() => navigateToObjktForBuy(collectionContract, item.id)}
             />
           </>

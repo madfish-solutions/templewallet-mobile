@@ -19,6 +19,7 @@ import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics'
 import { TruncatedText } from 'src/components/truncated-text';
 import { BLOCK_DURATION } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
+import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
@@ -284,17 +285,15 @@ export const CollectibleModal = memo(() => {
         {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
 
         {isAccountHolder ? (
-          <View style={styles.burnContainer}>
-            <TouchableWithAnalytics
-              Component={TouchableOpacity}
-              onPress={burnCollectible}
-              style={styles.burnButton}
-              testID={CollectibleModalSelectors.burnButton}
-            >
-              <Text style={styles.burnButtonText}>Burn Nft</Text>
-              <Icon name={IconNameEnum.Burn} />
-            </TouchableWithAnalytics>
-          </View>
+          <TouchableWithAnalytics
+            Component={TouchableOpacity}
+            onPress={burnCollectible}
+            style={styles.burnButton}
+            testID={CollectibleModalSelectors.burnButton}
+          >
+            <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
+            <Icon name={IconNameEnum.Burn} />
+          </TouchableWithAnalytics>
         ) : null}
       </View>
     </ScreenContainer>

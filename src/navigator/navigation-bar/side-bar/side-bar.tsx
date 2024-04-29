@@ -6,7 +6,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
-import { isAndroid } from 'src/config/system';
+import { LIMIT_DAPPS_FEATURES, LIMIT_FIN_FEATURES, LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensOrModalsEnum } from 'src/interfaces/stacks.interface';
 import {
@@ -57,13 +57,13 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
             focused={isStackFocusedMemo(walletStackScreens)}
           />
           <SideBarButton
-            label="NFT"
+            label={LIMIT_NFT_FEATURES ? 'Collectibles' : 'NFT'}
             iconName={IconNameEnum.NFT}
             routeName={ScreensEnum.CollectiblesHome}
             focused={isStackFocusedMemo(nftStackScreens)}
             disabledOnPress={handleDisabledPress}
           />
-          {isAndroid && (
+          {!LIMIT_FIN_FEATURES && (
             <SideBarButton
               label="Swap"
               iconName={IconNameEnum.Swap}
@@ -75,7 +75,7 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
             />
           )}
           <SideBarButton
-            label="DApps"
+            label={LIMIT_DAPPS_FEATURES ? 'Explore' : 'DApps'}
             iconName={IconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocusedMemo(dAppsStackScreens)}
