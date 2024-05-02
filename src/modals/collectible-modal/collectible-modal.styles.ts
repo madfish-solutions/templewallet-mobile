@@ -66,15 +66,12 @@ export const useCollectibleModalStyles = createUseStylesMemoized(({ colors, typo
   segmentControl: {
     marginBottom: formatSize(16)
   },
-  burnContainer: {
-    alignItems: 'center',
-    marginTop: formatSize(8)
-  },
   burnButton: {
+    alignSelf: 'center',
+    marginTop: formatSize(8),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: formatSize(108),
     paddingVertical: formatSize(8),
     paddingHorizontal: formatSize(8.5)
   },

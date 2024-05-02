@@ -10,6 +10,7 @@ import {
   useScreenContainerStyles
 } from 'src/components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from 'src/config/styles';
+import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useAreMetadatasLoadingSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { UsableAccountAsset } from 'src/utils/assets/types';
@@ -96,7 +97,11 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
 
 const ListFooterComponent: FC<{ empty: boolean; isSyncing: boolean }> = ({ empty, isSyncing }) => {
   if (empty) {
-    return isSyncing ? <Spinner /> : <DataPlaceholder text="Not found any NFT" />;
+    return isSyncing ? (
+      <Spinner />
+    ) : (
+      <DataPlaceholder text={`Not found any ${LIMIT_NFT_FEATURES ? 'collectible' : 'NFT'}`} />
+    );
   }
 
   return isSyncing ? <Spinner /> : null;

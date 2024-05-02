@@ -9,3 +9,9 @@ export const isAndroid = Platform.OS === 'android';
 export const EMPTY_PUBLIC_KEY_HASH = 'EMPTY_PUBLIC_KEY_HASH';
 
 export const manufacturer = getManufacturerSync();
+
+export const LIMIT_NFT_FEATURES = isIOS;
+
+export const LIMIT_DAPPS_FEATURES = isIOS;
+
+export const LIMIT_FIN_FEATURES = isIOS;
