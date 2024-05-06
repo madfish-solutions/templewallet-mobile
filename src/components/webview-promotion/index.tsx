@@ -22,7 +22,7 @@ import { openUrl } from 'src/utils/linking';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
-import { ImagePromotionView } from '../image-promotion-view';
+import { BackgroundAsset, ImagePromotionView } from '../image-promotion-view';
 import { TextPromotionItemSelectors } from '../text-promotion-view/selectors';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
@@ -58,6 +58,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     const theme = useThemeSelector();
     const { trackEvent } = useAnalytics();
     const [adHref, setAdHref] = useState<string>();
+    const [backgroundAsset, setBackgroundAsset] = useState<BackgroundAsset | undefined>();
 
     const adHrefRef = useRef<string | undefined>(adHref);
     useEffect(() => void (adHrefRef.current = adHref), [adHref]);
@@ -120,8 +121,26 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
               }
               break;
             case AdFrameMessageType.Ready:
-              setAdHref(message.ad.cta_url);
-              if (adChanged(adHref, message.ad.cta_url)) {
+              const { cta_url: ctaUrl, creative_set: creativeSet } = message.ad;
+              setAdHref(ctaUrl);
+              if (creativeSet && 'video' in creativeSet) {
+                setBackgroundAsset({
+                  type: 'video',
+                  uri: creativeSet.video.url,
+                  width: creativeSet.video.width,
+                  height: creativeSet.video.height
+                });
+              } else {
+                setBackgroundAsset(
+                  creativeSet && {
+                    type: 'image',
+                    uri: creativeSet.image.url,
+                    width: creativeSet.image.width,
+                    height: creativeSet.image.height
+                  }
+                );
+              }
+              if (adChanged(adHref, ctaUrl)) {
                 onReady();
               }
               break;
@@ -163,6 +182,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
           href={adHref ?? ''}
           isVisible={isVisible}
           shouldShowAdBage
+          backgroundAsset={backgroundAsset}
           {...testIDProps}
         >
           <View

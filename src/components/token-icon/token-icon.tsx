@@ -1,15 +1,14 @@
-import React, { FC, useCallback, useMemo, useRef, useState } from 'react';
+import React, { FC, useMemo } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
-import { useDispatch } from 'react-redux';
 
+import { ImageTypeEnum } from 'src/enums/image-type.enum';
+import { useImageType } from 'src/hooks/use-image-type.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { addKnownSvg, removeKnownSvg } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { useIsKnownSvgSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
-import { isImgUriSvg, isImgUriDataUri, isImageRectangular, formatImgUri } from 'src/utils/image.utils';
+import { isImageRectangular, formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
@@ -28,7 +27,7 @@ interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'
 export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, style, ...rest }) => {
   const roundedStyle = useMemo(
     () => (isImageRectangular(thumbnailUri) ? undefined : { borderRadius: size / 2 }),
-    [thumbnailUri]
+    [size, thumbnailUri]
   );
   const containerSizeStyle = useMemo(() => ({ width: size, height: size }), [size]);
 
@@ -43,36 +42,12 @@ type TokenIconImageProps = Props & {
   size: number;
 };
 
-const ENDS_WITH_EXTENSION_REGEX = /\.[a-z0-9]+$/i;
-
 const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size }) => {
-  const mayBeUnknownSvg = !ENDS_WITH_EXTENSION_REGEX.test(thumbnailUri ?? '');
+  const { imageType, svgFailed, onRasterRenderError, onSvgRenderError } = useImageType(thumbnailUri ?? '');
+
   const colors = useColors();
-  const dispatch = useDispatch();
-  const isKnownSvg = useIsKnownSvgSelector(thumbnailUri ?? '');
-
-  const lastItemId = useRef(thumbnailUri);
-
-  const [svgFailed, setSvgFailed] = useState(false);
-  if (thumbnailUri !== lastItemId.current) {
-    lastItemId.current = thumbnailUri;
-    setSvgFailed(false);
-  }
 
   const { metadata } = useNetworkInfo();
-
-  const handleLoadableTokenIconError = useCallback(() => {
-    if (mayBeUnknownSvg && !svgFailed) {
-      dispatch(addKnownSvg(thumbnailUri ?? ''));
-    }
-  }, [mayBeUnknownSvg, thumbnailUri, svgFailed, dispatch]);
-
-  const handleSvgError = useCallback(() => {
-    if (mayBeUnknownSvg) {
-      setSvgFailed(true);
-      dispatch(removeKnownSvg(thumbnailUri ?? ''));
-    }
-  }, [thumbnailUri, mayBeUnknownSvg, dispatch]);
 
   if (isDefined(iconName)) {
     return <Icon name={iconName} color={metadata.iconName === iconName ? colors.black : undefined} size={size} />;
@@ -82,24 +57,14 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
     return <Icon name={IconNameEnum.NoNameToken} size={size} />;
   }
 
-  if (isImgUriSvg(thumbnailUri) || (isKnownSvg && !svgFailed)) {
-    const uri = formatImgUri(thumbnailUri);
-
-    if (uri) {
-      return <SvgCssUri width={size} height={size} uri={uri} onError={handleSvgError} />;
-    }
-  }
-
-  if (isImgUriDataUri(thumbnailUri)) {
-    return <DataUriImage width={size} height={size} dataUri={thumbnailUri} />;
+  switch (imageType) {
+    case ImageTypeEnum.RemoteSvg:
+      return <SvgCssUri width={size} height={size} uri={formatImgUri(thumbnailUri)!} onError={onSvgRenderError} />;
+    case ImageTypeEnum.DataUri:
+      return <DataUriImage width={size} height={size} dataUri={thumbnailUri} />;
   }
 
   return (
-    <LoadableTokenIconImage
-      uri={thumbnailUri}
-      size={size}
-      onError={handleLoadableTokenIconError}
-      useOriginal={svgFailed}
-    />
+    <LoadableTokenIconImage uri={thumbnailUri} size={size} onError={onRasterRenderError} useOriginal={svgFailed} />
   );
 };

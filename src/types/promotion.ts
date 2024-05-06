@@ -21,9 +21,27 @@ interface ResizeAdMessage extends AdFrameMessageBase {
   height: number;
 }
 
+interface ImageCreativeSet {
+  image: {
+    url: string;
+    height: number;
+    width: number;
+  };
+}
+
+interface VideoCreativeSet {
+  video: {
+    url: string;
+    height: number;
+    width: number;
+  };
+}
+
+type CreativeSet = ImageCreativeSet | VideoCreativeSet;
+
 interface ReadyAdMessage extends AdFrameMessageBase {
   type: AdFrameMessageType.Ready;
-  ad: { cta_url: string };
+  ad: { cta_url: string; creative_set?: CreativeSet };
 }
 
 interface ErrorAdMessage extends AdFrameMessageBase {
