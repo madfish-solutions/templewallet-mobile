@@ -9,7 +9,7 @@ import { useImageType } from 'src/hooks/use-image-type.hook';
 
 import { DataUriImage } from './data-uri-image';
 
-export interface UnknownTypeImageProps {
+interface UnknownTypeImageProps {
   width: number;
   height: number;
   uri: string;
