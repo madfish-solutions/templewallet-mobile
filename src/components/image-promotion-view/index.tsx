@@ -111,7 +111,7 @@ export const ImagePromotionView = memo<PropsWithChildren<ImagePromotionViewProps
                 />
               )}
             </View>
-            <BlurView style={styles.blurView} blurType="light" blurAmount={10} />
+            <BlurView style={styles.blurView} blurType="light" blurAmount={formatSize(10)} />
           </>
         )}
 
