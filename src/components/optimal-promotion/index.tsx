@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import FastImage from 'react-native-fast-image';
 import useSWR from 'swr';
 
@@ -68,6 +68,19 @@ export const OptimalPromotion: FC<SingleProviderPromotionProps & SelfRefreshingP
 
   const handleTextPromotionReady = useCallback(() => setAdViewIsReady(true), []);
 
+  const backgroundAsset = useMemo(
+    () =>
+      isImageAd && isDefined(promo) && isDefined(promo.image)
+        ? {
+            type: 'image' as const,
+            uri: promo.image,
+            width: 321,
+            height: 101
+          }
+        : undefined,
+    [promo, isImageAd]
+  );
+
   if (isDefined(error) || promotionIsEmpty || isImageBroken || !promo) {
     return null;
   }
@@ -83,6 +96,7 @@ export const OptimalPromotion: FC<SingleProviderPromotionProps & SelfRefreshingP
         href={href}
         isVisible={isVisible}
         shouldShowAdBage
+        backgroundAsset={backgroundAsset}
         {...testIDProps}
       >
         <FastImage style={styles.bannerImage} source={{ uri: imageSrc }} onError={onImageError} />

@@ -86,7 +86,7 @@ const MediaContent = memo<MediaContentProps>(
         );
       }
       if (mime.startsWith('video/')) {
-        return <SimplePlayer uri={mediaUri} size={size} onError={onVideoMediaFail} isVideo />;
+        return <SimplePlayer uri={mediaUri} width={size} height={size} onError={onVideoMediaFail} isVideo />;
       }
       if (mime.startsWith('audio/')) {
         return (
@@ -100,7 +100,7 @@ const MediaContent = memo<MediaContentProps>(
               thumbnailUri={thumbnailUri}
               Fallback={AudioPlaceholderLocal}
             />
-            <SimplePlayer uri={mediaUri} size={size} onError={onAudioMediaFail} style={styles.audio} />
+            <SimplePlayer uri={mediaUri} width={size} height={size} onError={onAudioMediaFail} style={styles.audio} />
           </View>
         );
       }
