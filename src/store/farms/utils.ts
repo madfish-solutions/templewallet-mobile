@@ -23,7 +23,7 @@ export interface RawStakeValue {
 }
 
 export class GetFarmStakeError extends Error {
-  constructor(public readonly farmAddress: string, message: string) {
+  constructor(public readonly farmAddress: string, public readonly accountPkh: string, message: string) {
     super(message);
   }
 }

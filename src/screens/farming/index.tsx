@@ -40,10 +40,8 @@ export const Farming: FC = () => {
   useLoadOnEachBlock(stakesLoading, loadAllFarmsAndStakesAction);
 
   const renderItem = useCallback<ListRenderItem<Farm>>(
-    ({ item }) => (
-      <FarmItem farm={item} lastStakeRecord={stakes[item.contractAddress]} stakeIsLoading={stakesLoading} />
-    ),
-    [stakes, stakesLoading]
+    ({ item }) => <FarmItem farm={item} lastStakeRecord={stakes[item.contractAddress]} />,
+    [stakes]
   );
 
   return (

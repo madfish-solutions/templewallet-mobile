@@ -1,17 +1,14 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, from, map, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { getLiquidityBakingFarm } from 'src/apis/liquidity-baking';
 import { getV3FarmsList } from 'src/apis/quipuswap-staking';
-import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
-import { showFailedStakeLoadWarning } from 'src/toast/toast.utils';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
-import { isDefined } from 'src/utils/is-defined';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
@@ -23,33 +20,34 @@ import {
   loadAllStakesActions,
   loadSingleFarmStakeActions
 } from './actions';
-import { getFarmStake, GetFarmStakeError, RawStakeValue, toUserStakeValueInterface, withExchangeRates } from './utils';
+import { getFarmStake, GetFarmStakeError, toUserStakeValueInterface, withExchangeRates } from './utils';
 
 const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSingleFarmStakeActions.submit),
-    withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[{ payload: farm }, selectedAccount], rpcUrl]) => {
-      const tezos = createReadOnlyTezosToolkit(rpcUrl, selectedAccount);
+    mergeMap(([{ payload }, rpcUrl]) => {
+      const { farm, accountPkh } = payload;
+      const tezos = createReadOnlyTezosToolkit(rpcUrl);
 
-      return from(getFarmStake(farm, tezos, selectedAccount.publicKeyHash)).pipe(
+      return from(getFarmStake(farm, tezos, accountPkh)).pipe(
         map(stake =>
           loadSingleFarmStakeActions.success({
-            stake: isDefined(stake) ? toUserStakeValueInterface(stake, farm.vestingPeriodSeconds) : undefined,
-            farmAddress: farm.contractAddress
+            stake: stake ? toUserStakeValueInterface(stake, farm.vestingPeriodSeconds) : undefined,
+            farmAddress: farm.contractAddress,
+            accountPkh
           })
         ),
         catchError(err => {
-          throw new GetFarmStakeError(farm.contractAddress, (err as Error).message);
+          throw new GetFarmStakeError(farm.contractAddress, accountPkh, (err as Error).message);
         })
       );
     }),
     catchError(err => {
-      const { farmAddress } = err as GetFarmStakeError;
+      const { farmAddress, accountPkh, message: errorMessage } = err as GetFarmStakeError;
       showErrorToastByError(err);
 
-      return of(loadSingleFarmStakeActions.fail({ farmAddress, error: (err as Error).message }));
+      return of(loadSingleFarmStakeActions.fail({ farmAddress, accountPkh, error: errorMessage }));
     })
   );
 
@@ -78,41 +76,18 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
   action$.pipe(
     ofType(loadAllFarmsAndStakesAction),
     withExchangeRates(state$),
-    withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[[, exchangeRates], selectedAccount], rpcUrl]) => {
-      const tezos = createReadOnlyTezosToolkit(rpcUrl, selectedAccount);
+    switchMap(([[{ payload: accountPkh }, exchangeRates], rpcUrl]) => {
+      const tezos = createReadOnlyTezosToolkit(rpcUrl);
       const { [KNOWN_TOKENS_SLUGS.tzBTC]: tzbtcExchangeRate, [TEZ_TOKEN_SLUG]: tezExchangeRate } = exchangeRates;
 
       return forkJoin([getV3FarmsList(), getLiquidityBakingFarm(tezos, tezExchangeRate, tzbtcExchangeRate)]).pipe(
         switchMap(([v3Farms, lbFarm]) => {
           const farms = [...v3Farms, lbFarm];
 
-          return forkJoin(
-            farms.map(async ({ item: farm }) =>
-              getFarmStake(farm, tezos, selectedAccount.publicKeyHash)
-                .then((stake): [string, RawStakeValue | null] => [farm.contractAddress, stake])
-                .catch((): [string, undefined] => {
-                  console.error('Error while loading farm stakes: ', farm.contractAddress);
-                  showFailedStakeLoadWarning();
-
-                  return [farm.contractAddress, undefined];
-                })
-            )
-          ).pipe(
-            map(stakesEntries =>
-              Object.fromEntries(
-                stakesEntries.map(([farmAddress, stake]): [string, UserStakeValueInterface | null | undefined] => {
-                  const farm = farms.find(({ item }) => item.contractAddress === farmAddress);
-
-                  return [
-                    farmAddress,
-                    stake && toUserStakeValueInterface(stake, farm?.item.vestingPeriodSeconds ?? '0')
-                  ];
-                })
-              )
-            ),
-            mergeMap(stakes => merge(of(loadAllFarmsActions.success(farms)), of(loadAllStakesActions.success(stakes))))
+          return of(
+            loadAllFarmsActions.success(farms),
+            ...farms.map(({ item: farm }) => loadSingleFarmStakeActions.submit({ farm, accountPkh }))
           );
         })
       );
@@ -120,7 +95,7 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
     catchError(err => {
       showErrorToast({ description: getAxiosQueryErrorMessage(err) });
 
-      return of(loadAllFarmsActions.fail());
+      return of(loadAllFarmsActions.fail(), loadAllStakesActions.fail());
     })
   );
 

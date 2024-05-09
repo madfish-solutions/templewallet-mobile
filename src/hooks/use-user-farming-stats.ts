@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 
-import { useAllFarmsSelector, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
+import { useAllFarms, useFarmsStakesWereLoadingSelector, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
 
 import { useEarnOpportunitiesStats } from './use-earn-opportunities-stats';
 
 export const useUserFarmingStats = () => {
-  const allFarms = useAllFarmsSelector();
+  const allFarms = useAllFarms();
   const lastStakes = useLastFarmsStakesSelector();
   const farms = useMemo(() => allFarms.data.map(({ item }) => item), [allFarms.data]);
+  const stakesWereLoaded = useFarmsStakesWereLoadingSelector();
 
-  return useEarnOpportunitiesStats(farms, lastStakes);
+  return useEarnOpportunitiesStats(farms, lastStakes, stakesWereLoaded);
 };

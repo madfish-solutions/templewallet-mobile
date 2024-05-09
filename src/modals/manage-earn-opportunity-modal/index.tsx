@@ -18,7 +18,7 @@ import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
-import { useFarmSelector, useFarmsLoadingSelector, useFarmStakeSelector } from 'src/store/farms/selectors';
+import { useFarm, useFarmsLoadingSelector, useFarmStakeSelector } from 'src/store/farms/selectors';
 import { loadSingleSavingStakeActions } from 'src/store/savings/actions';
 import {
   useSavingsItemSelector,
@@ -27,6 +27,7 @@ import {
 } from 'src/store/savings/selectors';
 import { loadSwapTokensAction } from 'src/store/swap/swap-actions';
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isFarm } from 'src/utils/earn.utils';
@@ -62,13 +63,14 @@ export const ManageEarnOpportunityModal: FC = () => {
   const route = useRoute<RouteProp<ModalsParamList, ModalsEnum.ManageFarmingPool | ModalsEnum.ManageSavingsPool>>();
   const { id, contractAddress } = route.params;
   const isFarmingPool = route.name === ModalsEnum.ManageFarmingPool;
-  const farm = useFarmSelector(id, contractAddress);
+  const farm = useFarm(id, contractAddress);
   const savingsItem = useSavingsItemSelector(id, contractAddress);
   const earnOpportunityItem = isFarmingPool ? farm?.item : savingsItem;
   const farmIsLoading = useFarmsLoadingSelector();
   const savingsItemIsLoading = useSavingsItemsLoadingSelector();
   const earnOpportunityLoading = isFarmingPool ? farmIsLoading : savingsItemIsLoading;
   const { isLoading: swapTokensMetadataLoading } = useSwapTokensMetadataSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
   const pageIsLoading = (earnOpportunityLoading && !isDefined(earnOpportunityItem)) || swapTokensMetadataLoading;
   const farmStake = useFarmStakeSelector(contractAddress);
   const savingsStake = useSavingsItemStakeSelector(contractAddress);
@@ -117,15 +119,15 @@ export const ManageEarnOpportunityModal: FC = () => {
 
     dispatch(
       isFarm(earnOpportunityItem)
-        ? loadSingleFarmStakeActions.submit(earnOpportunityItem)
-        : loadSingleSavingStakeActions.submit(earnOpportunityItem)
+        ? loadSingleFarmStakeActions.submit({ farm: earnOpportunityItem, accountPkh })
+        : loadSingleSavingStakeActions.submit({ item: earnOpportunityItem, accountPkh })
     );
 
     if (!isFarm(earnOpportunityItem) && !startedLoadingTokensRef.current) {
       dispatch(loadSwapTokensAction.submit());
       startedLoadingTokensRef.current = true;
     }
-  }, [earnOpportunityItem, dispatch]);
+  }, [earnOpportunityItem, dispatch, accountPkh]);
 
   const handleDepositClick = useCallback(() => {
     const scrollViewHandle = findNodeHandle(scrollViewRef.current);

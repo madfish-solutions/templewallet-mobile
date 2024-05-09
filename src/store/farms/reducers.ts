@@ -1,11 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { omit } from 'lodash-es';
 
-import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
-import { setSelectedAccountAction } from '../wallet/wallet-actions';
 
 import {
   loadAllFarmsActions,
@@ -14,39 +11,57 @@ import {
   loadSingleFarmStakeActions,
   selectFarmsSortValueAction
 } from './actions';
-import { farmsInitialState, FarmsState, LastUserStakeInterface } from './state';
+import { farmsInitialState, FarmsState } from './state';
 
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
-  builder.addCase(loadSingleFarmStakeActions.submit, state => ({
-    ...state,
-    lastStakes: createEntity(state.lastStakes.data, true)
-  }));
-  builder.addCase(loadSingleFarmStakeActions.success, (state, { payload: { stake, farmAddress } }) => {
-    const currentStakes = state.lastStakes.data;
+  builder.addCase(loadSingleFarmStakeActions.submit, (state, { payload }) => {
+    const { farm, accountPkh } = payload;
 
-    const lastStakes = isDefined(stake)
-      ? {
-          ...currentStakes,
-          [farmAddress]: stake
-        }
-      : omit(currentStakes, farmAddress);
+    if (!isDefined(state.lastStakes[accountPkh])) {
+      state.lastStakes[accountPkh] = {};
+    }
 
-    return {
-      ...state,
-      lastStakes: createEntity(lastStakes)
-    };
+    const stakeState = state.lastStakes[accountPkh][farm.contractAddress];
+
+    state.lastStakes[accountPkh][farm.contractAddress] = createEntity(
+      stakeState?.data,
+      true,
+      undefined,
+      stakeState?.wasLoading ?? false
+    );
   });
+
+  builder.addCase(loadSingleFarmStakeActions.success, (state, { payload }) => {
+    const { stake, farmAddress, accountPkh } = payload;
+
+    state.lastStakes[accountPkh][farmAddress] = createEntity(stake, false, undefined, true);
+  });
+
   builder.addCase(loadSingleFarmStakeActions.fail, (state, { payload }) => {
-    return {
-      ...state,
-      lastStakes: createEntity(state.lastStakes.data, false, payload.error)
-    };
+    const { accountPkh, farmAddress, error } = payload;
+
+    const stakeState = state.lastStakes[accountPkh][farmAddress];
+
+    state.lastStakes[accountPkh][farmAddress] = createEntity(stakeState?.data, false, error, true);
   });
-  builder.addCase(loadAllFarmsAndStakesAction, state => ({
-    ...state,
-    allFarms: createEntity(state.allFarms.data, true),
-    lastStakes: createEntity(state.lastStakes.data, true)
-  }));
+
+  builder.addCase(loadAllFarmsAndStakesAction, (state, { payload: accountPkh }) => {
+    state.allFarms = createEntity(state.allFarms.data, true);
+
+    if (!isDefined(state.lastStakes[accountPkh])) {
+      state.lastStakes[accountPkh] = {};
+    }
+
+    state.lastStakes[accountPkh] = Object.fromEntries(
+      state.allFarms.data.map(({ item }) => {
+        const { contractAddress } = item;
+        const stakeState = state.lastStakes[accountPkh]?.[contractAddress];
+
+        return [contractAddress, createEntity(stakeState?.data, true, undefined, stakeState?.wasLoading)];
+      })
+    );
+  });
+
   builder.addCase(loadAllFarmsActions.submit, state => ({
     ...state,
     allFarms: createEntity(state.allFarms.data, true)
@@ -59,34 +74,24 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     ...state,
     allFarms: createEntity(state.allFarms.data, false, payload)
   }));
+
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => {
-    const newStakes = Object.entries(payload).reduce<LastUserStakeInterface>((acc, [farmAddress, stake]) => {
-      let newStake: UserStakeValueInterface | undefined;
-      switch (stake) {
-        case undefined:
-          newStake = state.lastStakes.data[farmAddress];
-          break;
-        case null:
-          break;
-        default:
-          newStake = stake;
-      }
-      if (isDefined(newStake)) {
-        acc[farmAddress] = newStake;
-      }
+    const { accountPkh, stakes } = payload;
 
-      return acc;
-    }, {});
+    if (!isDefined(state.lastStakes[accountPkh])) {
+      state.lastStakes[accountPkh] = {};
+    }
 
-    return {
-      ...state,
-      lastStakes: createEntity(newStakes)
-    };
+    const newStakes = Object.fromEntries(
+      Object.entries(stakes).map(([farmAddress, newStakeState]) => [
+        farmAddress,
+        createEntity(newStakeState.data, false, newStakeState.error, true)
+      ])
+    );
+
+    state.lastStakes[accountPkh] = newStakes;
   });
-  builder.addCase(setSelectedAccountAction, state => ({
-    ...state,
-    lastStakes: farmsInitialState.lastStakes
-  }));
+
   builder.addCase(selectFarmsSortValueAction, (state, { payload }) => ({
     ...state,
     sortField: payload

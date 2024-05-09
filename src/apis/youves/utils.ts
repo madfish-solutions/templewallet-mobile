@@ -57,7 +57,7 @@ class MemoryStorage implements Storage {
   }
 }
 
-export const getTezosToolkit = memoize(
+const getTezosToolkit = memoize(
   (rpcUrl: string, account?: AccountInterface) =>
     isDefined(account) ? createReadOnlyTezosToolkit(rpcUrl, account) : new TezosToolkit(getFastRpcClient(rpcUrl)),
   { normalizer: ([rpcUrl, account]) => [rpcUrl, account?.publicKey].join('_') }

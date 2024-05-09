@@ -9,7 +9,7 @@ import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-oppor
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
 import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { Farm } from 'src/types/farm';
 
 import { calculateTimeDiffInSeconds } from './date.utils';

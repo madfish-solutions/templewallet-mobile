@@ -95,10 +95,14 @@ export const useMainHooks = (isLocked: boolean) => {
     selectedAccountPkh
   ]);
 
-  useAuthorisedInterval(() => {
-    if (isTezosNode) {
-      dispatch(loadAllFarmsAndStakesAction());
-      dispatch(loadAllSavingsAndStakesAction());
-    }
-  }, APR_REFRESH_INTERVAL);
+  useAuthorisedInterval(
+    () => {
+      if (isTezosNode) {
+        dispatch(loadAllFarmsAndStakesAction(selectedAccountPkh));
+        dispatch(loadAllSavingsAndStakesAction(selectedAccountPkh));
+      }
+    },
+    APR_REFRESH_INTERVAL,
+    [isTezosNode, selectedAccountPkh]
+  );
 };

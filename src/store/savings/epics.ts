@@ -1,14 +1,12 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, forkJoin, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, map, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getKordFiItems$, getKordFiUserDeposits$ } from 'src/apis/kord-fi';
-import { getUserStake, getYouvesSavingsItems$ } from 'src/apis/youves';
-import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { getKordFiItems$ } from 'src/apis/kord-fi';
+import { getYouvesSavingsItems$ } from 'src/apis/youves';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
-import { showFailedStakeLoadWarning } from 'src/toast/toast.utils';
-import { withSelectedAccount, withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
+import { withAccount, withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { RootState } from '../types';
 
@@ -24,17 +22,24 @@ const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Ob
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
     withSelectedRpcUrl(state$),
-    withSelectedAccount(state$),
-    switchMap(([[{ payload: savingsItem }, rpcUrl], selectedAccount]) =>
-      loadSingleSavingStake$(savingsItem, selectedAccount, rpcUrl).pipe(
-        map(stake => loadSingleSavingStakeActions.success({ stake, contractAddress: savingsItem.contractAddress })),
+    withAccount(state$, ([{ payload }]) => payload.accountPkh),
+    mergeMap(([[{ payload }, rpcUrl], account]) =>
+      loadSingleSavingStake$(payload.item, account, rpcUrl).pipe(
+        map(stake =>
+          loadSingleSavingStakeActions.success({
+            stake: stake ?? undefined,
+            contractAddress: payload.item.contractAddress,
+            accountPkh: payload.accountPkh
+          })
+        ),
         catchError(err => {
           showErrorToastByError(err, undefined, true);
 
           return of(
             loadSingleSavingStakeActions.fail({
-              contractAddress: savingsItem.contractAddress,
-              error: (err as Error).message
+              contractAddress: payload.item.contractAddress,
+              error: (err as Error).message,
+              accountPkh: payload.accountPkh
             })
           );
         })
@@ -61,39 +66,19 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
     ofType(loadAllSavingsAndStakesAction),
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([[, rpcUrl], rates]) => forkJoin([getYouvesSavingsItems$(rates, rpcUrl), getKordFiItems$(rates)])),
-    withSelectedRpcUrl(state$),
-    withSelectedAccount(state$),
-    switchMap(([[[youvesSavings, kordFiSavings], rpcUrl], selectedAccount]) => {
+    switchMap(([[{ payload: accountPkh }, rpcUrl], rates]) =>
+      forkJoin([getYouvesSavingsItems$(rates, rpcUrl), getKordFiItems$(rates), of(accountPkh)])
+    ),
+    mergeMap(([youvesSavings, kordFiSavings, accountPkh]) => {
       if (youvesSavings.length === 0 && kordFiSavings.length === 0) {
         throw new Error('Failed to fetch any savings items');
       }
 
-      return forkJoin([
-        forkJoin(
-          youvesSavings.map(savingsItem =>
-            getUserStake(selectedAccount, savingsItem.id, savingsItem.type, rpcUrl)
-              .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
-              .catch((): [string, nullish] => {
-                console.error('Error while loading saving stakes: ', savingsItem.contractAddress);
-                showFailedStakeLoadWarning();
-
-                return [savingsItem.contractAddress, null];
-              })
-          )
-        ),
-        getKordFiUserDeposits$(selectedAccount.publicKeyHash)
-      ]).pipe(
-        map(([youvesStakesEntries, kordFiStakesEntries]) => ({
-          ...Object.fromEntries(youvesStakesEntries),
-          ...kordFiStakesEntries
-        })),
-        mergeMap(stakes =>
-          merge(
-            of(loadAllSavingsActions.success([...youvesSavings, ...kordFiSavings])),
-            of(loadAllStakesActions.success(stakes))
-          )
-        )
+      return of(
+        loadAllSavingsActions.success([...youvesSavings, ...kordFiSavings]),
+        ...youvesSavings
+          .concat(kordFiSavings)
+          .map(savingsItem => loadSingleSavingStakeActions.submit({ item: savingsItem, accountPkh }))
       );
     }),
     catchError(err => {

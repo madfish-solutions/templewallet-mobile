@@ -18,7 +18,7 @@ import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors'
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { formatTimespan, MS_IN_SECOND, SECONDS_IN_DAY } from 'src/utils/date.utils';

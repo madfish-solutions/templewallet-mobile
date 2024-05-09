@@ -22,7 +22,7 @@ import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';

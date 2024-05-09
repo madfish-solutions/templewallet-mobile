@@ -1,25 +1,66 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
-import { setSelectedAccountAction } from '../wallet/wallet-actions';
 
 import {
   loadAllSavingsActions,
   loadAllSavingsAndStakesAction,
   loadAllStakesActions,
+  loadSingleSavingStakeActions,
   selectSavingsSortValueAction
 } from './actions';
-import { savingsInitialState, SavingsState, UserStakeInterface } from './state';
+import { savingsInitialState, SavingsState } from './state';
 
 export const savingsReducer = createReducer<SavingsState>(savingsInitialState, builder => {
-  builder.addCase(loadAllSavingsAndStakesAction, state => ({
-    ...state,
-    allSavingsItems: createEntity(state.allSavingsItems.data, true),
-    stakes: createEntity(state.stakes.data, true)
-  }));
+  builder.addCase(loadSingleSavingStakeActions.submit, (state, { payload }) => {
+    const { item, accountPkh } = payload;
+
+    if (!isDefined(state.stakes[accountPkh])) {
+      state.stakes[accountPkh] = {};
+    }
+
+    const stakeState = state.stakes[accountPkh][item.contractAddress];
+
+    state.stakes[accountPkh][item.contractAddress] = createEntity(
+      stakeState?.data,
+      true,
+      undefined,
+      stakeState?.wasLoading ?? false
+    );
+  });
+
+  builder.addCase(loadSingleSavingStakeActions.success, (state, { payload }) => {
+    const { stake, contractAddress, accountPkh } = payload;
+
+    state.stakes[accountPkh][contractAddress] = createEntity(stake, false, undefined, true);
+  });
+
+  builder.addCase(loadSingleSavingStakeActions.fail, (state, { payload }) => {
+    const { accountPkh, contractAddress, error } = payload;
+
+    const stakeState = state.stakes[accountPkh][contractAddress];
+
+    state.stakes[accountPkh][contractAddress] = createEntity(stakeState?.data, false, error, true);
+  });
+
+  builder.addCase(loadAllSavingsAndStakesAction, (state, { payload: accountPkh }) => {
+    state.allSavingsItems = createEntity(state.allSavingsItems.data, true);
+
+    if (!isDefined(state.stakes[accountPkh])) {
+      state.stakes[accountPkh] = {};
+    }
+
+    state.stakes[accountPkh] = Object.fromEntries(
+      state.allSavingsItems.data.map(({ contractAddress }) => {
+        const stakeState = state.stakes[accountPkh]?.[contractAddress];
+
+        return [contractAddress, createEntity(stakeState?.data, true, undefined, stakeState?.wasLoading ?? false)];
+      })
+    );
+  });
+
   builder.addCase(loadAllSavingsActions.submit, state => ({
     ...state,
     allSavingsItems: createEntity(state.allSavingsItems.data, true)
@@ -32,34 +73,24 @@ export const savingsReducer = createReducer<SavingsState>(savingsInitialState, b
     ...state,
     allSavingsItems: createEntity(state.allSavingsItems.data, false, payload)
   }));
+
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => {
-    const newStakes = Object.entries(payload).reduce<UserStakeInterface>((acc, [savingAddress, stake]) => {
-      let newStake: UserStakeValueInterface | undefined;
-      switch (stake) {
-        case undefined:
-          break;
-        case null:
-          newStake = state.stakes.data[savingAddress];
-          break;
-        default:
-          newStake = stake;
-      }
-      if (isDefined(newStake)) {
-        acc[savingAddress] = newStake;
-      }
+    const { accountPkh, stakes } = payload;
 
-      return acc;
-    }, {});
+    if (!isDefined(state.stakes[accountPkh])) {
+      state.stakes[accountPkh] = {};
+    }
 
-    return {
-      ...state,
-      stakes: createEntity(newStakes)
-    };
+    const newStakes = Object.fromEntries(
+      Object.entries(stakes).map(([itemAddress, newStakeState]) => [
+        itemAddress,
+        createEntity(newStakeState.data, false, newStakeState.error, true)
+      ])
+    );
+
+    state.stakes[accountPkh] = newStakes;
   });
-  builder.addCase(setSelectedAccountAction, state => ({
-    ...state,
-    stakes: savingsInitialState.stakes
-  }));
+
   builder.addCase(selectSavingsSortValueAction, (state, { payload }) => ({
     ...state,
     sortField: payload

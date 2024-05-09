@@ -6,6 +6,6 @@ import { FarmsState } from './state';
 
 export const mockFarmsState: FarmsState = {
   allFarms: createEntity([]),
-  lastStakes: createEntity({}),
+  lastStakes: {},
   sortField: EarnOpportunitiesSortFieldEnum.Default
 };

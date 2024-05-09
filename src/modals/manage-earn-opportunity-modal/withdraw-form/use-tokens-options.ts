@@ -9,7 +9,7 @@ import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens'
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WithdrawTokenOption } from './use-withdraw-formik';

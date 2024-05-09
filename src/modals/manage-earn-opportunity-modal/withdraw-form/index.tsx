@@ -21,7 +21,7 @@ import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors'
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { percentageToFraction } from 'src/utils/percentage.utils';

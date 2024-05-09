@@ -15,17 +15,12 @@ import { isString } from 'src/utils/is-string';
 import { tzktUrl } from 'src/utils/linking';
 import { fractionToPercentage } from 'src/utils/percentage.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
+import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { INITIAL_APR_VALUE } from './constants';
 import { SavingsPoolStorage } from './types';
-import {
-  createEngineMemoized,
-  createUnifiedSavings,
-  createUnifiedStaking,
-  getTezosToolkit,
-  toEarnOpportunityToken
-} from './utils';
+import { createEngineMemoized, createUnifiedSavings, createUnifiedStaking, toEarnOpportunityToken } from './utils';
 
 export const getYOUTokenApr$ = (
   assetToUsdExchangeRate: BigNumber,
@@ -62,7 +57,7 @@ const getYOUTokenSavingItem = async (
   rpcUrl: string
 ): Promise<SavingsItem | undefined> => {
   try {
-    const tezos = getTezosToolkit(rpcUrl);
+    const tezos = createReadOnlyTezosToolkit(rpcUrl);
     const unifiedStaking = createUnifiedStaking(rpcUrl);
     const apr = await firstValueFrom(getYOUTokenApr$(youToUsdExchangeRate, youToUsdExchangeRate, rpcUrl));
     const savingsContract = await getReadOnlyContract(unifiedStaking.stakingContract, tezos);
@@ -108,7 +103,7 @@ const getSavingsItemByAssetDefinition = async (
   rpcUrl: string
 ): Promise<SavingsItem | undefined> => {
   try {
-    const tezos = getTezosToolkit(rpcUrl);
+    const tezos = createReadOnlyTezosToolkit(rpcUrl);
     const { id, token, SAVINGS_V3_POOL_ADDRESS } = assetDefinition;
     const { decimals: tokenDecimals, contractAddress: tokenAddress, tokenId } = token;
     const apr = await firstValueFrom(getYouvesTokenApr$(assetDefinition, rpcUrl));
@@ -196,13 +191,13 @@ export const getUserStake = async (
       throw new Error('Unsupported savings type');
   }
 
-  return (
-    lastStake && {
-      lastStakeId: lastStake.id.toFixed(),
-      depositAmountAtomic: lastStake.token_amount.toFixed(),
-      claimableRewards: lastStake.rewardNow.toFixed(),
-      fullReward: lastStake.rewardTotal.toFixed(),
-      rewardsDueDate: new Date(lastStake.endTimestamp).getTime()
-    }
-  );
+  return lastStake
+    ? {
+        lastStakeId: lastStake.id.toFixed(),
+        depositAmountAtomic: lastStake.token_amount.toFixed(),
+        claimableRewards: lastStake.rewardNow.toFixed(),
+        fullReward: lastStake.rewardTotal.toFixed(),
+        rewardsDueDate: new Date(lastStake.endTimestamp).getTime()
+      }
+    : null;
 };

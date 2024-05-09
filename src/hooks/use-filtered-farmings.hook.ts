@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { selectFarmsSortValueAction } from 'src/store/farms/actions';
 import {
   useFarmsLoadingSelector,
-  useAllFarmsSelector,
+  useAllFarms,
   useFarmSortFieldSelector,
   useLastFarmsStakesSelector
 } from 'src/store/farms/selectors';
@@ -11,7 +11,7 @@ import {
 import { useFilteredEarnOpportunities } from './use-filtered-earn-opportunities.hook';
 
 export const useFilteredFarmings = () => {
-  const farms = useAllFarmsSelector();
+  const farms = useAllFarms();
   const stakes = useLastFarmsStakesSelector();
   const sortField = useFarmSortFieldSelector();
   const farmsLoading = useFarmsLoadingSelector();

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BigNumber } from 'bignumber.js';
+import { isEqual } from 'lodash-es';
 import { Observable, catchError, from, map, of } from 'rxjs';
 
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
@@ -22,7 +23,7 @@ const kordFiApi = axios.create({
 });
 
 export const KORDFI_TEZOS_CONTRACT_ADDRESS = 'KT19qWdPBRtkWrsQnDvVfsqJgJB19keBhhMX';
-const TZBTC_CONTRACT_ADDRESS = 'KT1WL6sHt8syFT2ts7NCmb5gPcS2tyfRxSyi';
+export const TZBTC_CONTRACT_ADDRESS = 'KT1WL6sHt8syFT2ts7NCmb5gPcS2tyfRxSyi';
 const TEZOS_TOKEN: EarnOpportunityToken = toEarnOpportunityToken(
   TEZ_TOKEN_METADATA,
   EarnOpportunityTokenStandardEnum.Fa12,
@@ -88,9 +89,17 @@ export const getKordFiUserDeposits$ = (address: string): Observable<{ [key: stri
       };
     }),
     catchError(error => {
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.status === 404 &&
+        isEqual(error.response.data, { detail: 'User not found' })
+      ) {
+        return of({});
+      }
+
       console.error('Error getting Kord.Fi user deposits: ', error);
 
-      return of({});
+      throw error;
     })
   );
 

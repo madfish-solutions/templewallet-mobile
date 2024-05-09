@@ -40,14 +40,8 @@ export const Savings: FC = () => {
   useLoadOnEachBlock(stakesLoading, loadAllSavingsAndStakesAction);
 
   const renderItem = useCallback<ListRenderItem<SavingsItem>>(
-    ({ item }) => (
-      <SavingsItemCard
-        item={item}
-        lastStakeRecord={savingsStakes[item.contractAddress]}
-        stakeIsLoading={stakesLoading}
-      />
-    ),
-    [savingsStakes, stakesLoading]
+    ({ item }) => <SavingsItemCard item={item} lastStakeRecord={savingsStakes[item.contractAddress]} />,
+    [savingsStakes]
   );
 
   return (
