@@ -8,7 +8,26 @@ export const useImagePromotionViewStyles = createUseStylesMemoized(({ colors }) 
     justifyContent: 'center',
     alignItems: 'center',
     height: formatSize(112),
-    position: 'relative'
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: formatSize(10)
+  },
+  blurView: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
+  },
+  centeredWithOverflowWrapper: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden'
   },
   invisible: {
     display: 'none'
