@@ -1,4 +1,4 @@
-import { from, of, switchMap } from 'rxjs';
+import { from, of, map, switchMap } from 'rxjs';
 
 import { getKordFiUserDeposits$ } from 'src/apis/kord-fi';
 import { getUserStake } from 'src/apis/youves';
@@ -11,7 +11,9 @@ export const loadSingleSavingStake$ = (savingsItem: SavingsItem, selectedAccount
     switchMap(item => {
       switch (item.type) {
         case EarnOpportunityTypeEnum.KORD_FI_SAVING:
-          return getKordFiUserDeposits$(selectedAccount.publicKeyHash);
+          return getKordFiUserDeposits$(selectedAccount.publicKeyHash).pipe(
+            map(deposits => deposits[item.contractAddress])
+          );
         default:
           return from(getUserStake(selectedAccount, item.id, item.type, rpcUrl));
       }

@@ -5,6 +5,7 @@ import { catchError, firstValueFrom, forkJoin, from, map, Observable, of } from 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ExchangeRateRecord } from 'src/store/currency/currency-state';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -158,7 +159,7 @@ export const getUserStake = async (
   stakingOrSavingId: string,
   type: EarnOpportunityTypeEnum,
   rpcUrl: string
-) => {
+): Promise<UserStakeValueInterface | null> => {
   const assetDefinition = contracts.mainnet.find(({ id }) => id === stakingOrSavingId);
   let lastStake: UnifiedStakeExtendedItem | undefined;
 
