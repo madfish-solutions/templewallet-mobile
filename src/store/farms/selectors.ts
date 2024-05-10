@@ -7,10 +7,18 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 
 import { useSelector } from '../selector';
 
-export const useFarmsLoadingSelector = () => useSelector(({ farms }) => farms.allFarms.isLoading);
+export const useFarmsWereLoadingSelector = () =>
+  useSelector(({ farms }) => Object.values(farms.allFarms).some(({ wasLoading }) => wasLoading));
+
+export const useFarmsLoadingSelector = () =>
+  useSelector(({ farms }) => Object.values(farms.allFarms).some(({ isLoading }) => isLoading));
 
 export const useFarm = (id: string, contractAddress: string) => {
-  const list = useSelector(({ farms }) => farms.allFarms.data);
+  const list = useSelector(({ farms }) =>
+    Object.values(farms.allFarms)
+      .map(({ data }) => data)
+      .flat()
+  );
 
   return useMemo(() => {
     const sameContractFarms = list.filter(({ item }) => item.contractAddress === contractAddress);
@@ -28,21 +36,24 @@ export const useFarmStakeSelector = (farmAddress: string): UserStakeValueInterfa
   useSelector(({ farms, wallet }) => farms.lastStakes[wallet.selectedAccountPublicKeyHash]?.[farmAddress]?.data);
 
 export const useAllFarms = () => {
-  const allFarms = useSelector(({ farms }) => farms.allFarms);
+  const allFarmsStates = useSelector(({ farms }) => Object.values(farms.allFarms));
 
   return useMemo(() => {
-    const data = allFarms.data.filter(
-      farm =>
-        earnOpportunitiesTypesToDisplay.includes(farm.item.type ?? EarnOpportunityTypeEnum.DEX_TWO) &&
-        farm.item.dailyDistribution !== '0'
-    );
+    const data = allFarmsStates
+      .map(({ data }) => data)
+      .flat()
+      .filter(
+        farm =>
+          earnOpportunitiesTypesToDisplay.includes(farm.item.type ?? EarnOpportunityTypeEnum.DEX_TWO) &&
+          farm.item.dailyDistribution !== '0'
+      );
 
     return {
       data,
-      isLoading: allFarms.isLoading,
-      error: allFarms.error
+      isLoading: allFarmsStates.some(({ isLoading }) => isLoading),
+      error: allFarmsStates.map(({ error }) => error).find(Boolean)
     };
-  }, [allFarms]);
+  }, [allFarmsStates]);
 };
 
 export const useLastFarmsStakesSelector = () =>

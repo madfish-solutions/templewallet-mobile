@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
 import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
+import { FarmsProviderEnum } from 'src/enums/farms-provider.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { Farm } from 'src/types/farm';
 import { SingleFarmResponse } from 'src/types/single-farm-response';
@@ -14,9 +15,17 @@ export const loadSingleFarmStakeActions = createActions<
   { farmAddress: string; accountPkh: string; error: string }
 >('farms/LOAD_SINGLE_FARM_STAKE');
 
+/** Use them for loading both farms and stakes gradually */
 export const loadAllFarmsAndStakesAction = createAction<string>('farms/LOAD_ALL_FARMS_AND_STAKES');
 
-export const loadAllFarmsActions = createActions<void, Array<SingleFarmResponse>, void>('farms/LOAD_ALL_FARMS');
+/** Use it to load farms only by "all or nothing" strategy */
+export const loadAllFarmsAction = createAction<void>('farms/LOAD_ALL_FARMS');
+
+export const loadFarmsByProviderActions = createActions<
+  FarmsProviderEnum,
+  { provider: FarmsProviderEnum; data: Array<SingleFarmResponse> },
+  { provider: FarmsProviderEnum; error: string }
+>('farms/LOAD_FARMS_BY_PROVIDER');
 
 export const loadAllStakesActions = createActions<
   { accountPkh: string; farms: Array<SingleFarmResponse> },

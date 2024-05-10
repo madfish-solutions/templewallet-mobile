@@ -17,9 +17,9 @@ import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
-import { loadAllFarmsActions, loadSingleFarmStakeActions } from 'src/store/farms/actions';
+import { loadAllFarmsAction, loadSingleFarmStakeActions } from 'src/store/farms/actions';
 import { useFarm, useFarmsLoadingSelector, useFarmStakeSelector } from 'src/store/farms/selectors';
-import { loadSingleSavingStakeActions } from 'src/store/savings/actions';
+import { loadAllSavingsActions, loadSingleSavingStakeActions } from 'src/store/savings/actions';
 import {
   useSavingsItemSelector,
   useSavingsItemsLoadingSelector,
@@ -108,9 +108,9 @@ export const ManageEarnOpportunityModal: FC = () => {
   useEffect(() => {
     if (!isDefined(earnOpportunityItem) || prevBlockLevelRef.current !== blockLevel) {
       prevBlockLevelRef.current = blockLevel;
-      dispatch(loadAllFarmsActions.submit());
+      dispatch(isFarmingPool ? loadAllFarmsAction() : loadAllSavingsActions.submit());
     }
-  }, [blockLevel, earnOpportunityItem, dispatch]);
+  }, [blockLevel, earnOpportunityItem, dispatch, isFarmingPool]);
 
   useEffect(() => {
     if (!isDefined(earnOpportunityItem)) {

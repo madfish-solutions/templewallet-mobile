@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { selectFarmsSortValueAction } from 'src/store/farms/actions';
 import {
-  useFarmsLoadingSelector,
+  useFarmsWereLoadingSelector,
   useAllFarms,
   useFarmSortFieldSelector,
   useLastFarmsStakesSelector
@@ -14,8 +14,7 @@ export const useFilteredFarmings = () => {
   const farms = useAllFarms();
   const stakes = useLastFarmsStakesSelector();
   const sortField = useFarmSortFieldSelector();
-  const farmsLoading = useFarmsLoadingSelector();
-  const pageIsLoading = farmsLoading && farms.data.length === 0;
+  const farmsWereLoading = useFarmsWereLoadingSelector();
   const farmsItems = useMemo(() => farms.data.map(({ item }) => item), [farms.data]);
 
   const { depositedOnly, filteredItemsList, setSearchValue, handleSetSortField, handleToggleDepositOnly } =
@@ -25,7 +24,7 @@ export const useFilteredFarmings = () => {
     sortField,
     depositedOnly,
     filteredItemsList,
-    pageIsLoading,
+    shouldShowLoader: !farmsWereLoading,
     setSearchValue,
     handleSetSortField,
     handleToggleDepositOnly

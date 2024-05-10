@@ -52,8 +52,8 @@ const loadAllSavingsItems: Epic = (action$: Observable<Action>, state$: Observab
     ofType(loadAllSavingsActions.submit),
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([[, rpcUrl], rates]) => getYouvesSavingsItems$(rates, rpcUrl)),
-    map(savings => loadAllSavingsActions.success(savings)),
+    switchMap(([[, rpcUrl], rates]) => forkJoin([getYouvesSavingsItems$(rates, rpcUrl), getKordFiItems$(rates)])),
+    map(([youvesSavings, kordFiSavings]) => loadAllSavingsActions.success(youvesSavings.concat(kordFiSavings))),
     catchError(err => {
       showErrorToastByError(err, undefined, true);
 
@@ -74,11 +74,11 @@ const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$:
         throw new Error('Failed to fetch any savings items');
       }
 
+      const allSavings = youvesSavings.concat(kordFiSavings);
+
       return of(
-        loadAllSavingsActions.success([...youvesSavings, ...kordFiSavings]),
-        ...youvesSavings
-          .concat(kordFiSavings)
-          .map(savingsItem => loadSingleSavingStakeActions.submit({ item: savingsItem, accountPkh }))
+        loadAllSavingsActions.success(allSavings),
+        ...allSavings.map(savingsItem => loadSingleSavingStakeActions.submit({ item: savingsItem, accountPkh }))
       );
     }),
     catchError(err => {

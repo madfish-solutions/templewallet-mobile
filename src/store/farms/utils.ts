@@ -14,7 +14,7 @@ import { getBalance } from 'src/utils/token-balance.utils';
 import { ExchangeRateRecord } from '../currency/currency-state';
 import { RootState } from '../types';
 
-export interface RawStakeValue {
+interface RawStakeValue {
   lastStakeId: string;
   depositAmountAtomic: string;
   claimableRewards: string;

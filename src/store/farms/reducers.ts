@@ -1,11 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { FarmsProviderEnum } from 'src/enums/farms-provider.enum';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
 
 import {
-  loadAllFarmsActions,
+  loadFarmsByProviderActions,
   loadAllFarmsAndStakesAction,
   loadAllStakesActions,
   loadSingleFarmStakeActions,
@@ -46,34 +47,36 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   });
 
   builder.addCase(loadAllFarmsAndStakesAction, (state, { payload: accountPkh }) => {
-    state.allFarms = createEntity(state.allFarms.data, true);
+    const previousStakes = state.lastStakes[accountPkh] ?? {};
+    state.lastStakes[accountPkh] = {};
 
-    if (!isDefined(state.lastStakes[accountPkh])) {
-      state.lastStakes[accountPkh] = {};
-    }
+    Object.values(FarmsProviderEnum).forEach(provider => {
+      const previousFarms = state.allFarms[provider];
+      state.allFarms[provider] = createEntity(previousFarms.data, true);
+      Object.assign(
+        state.lastStakes[accountPkh],
+        Object.fromEntries(
+          previousFarms.data.map(({ item }) => {
+            const { contractAddress } = item;
+            const stakeState = previousStakes[contractAddress];
 
-    state.lastStakes[accountPkh] = Object.fromEntries(
-      state.allFarms.data.map(({ item }) => {
-        const { contractAddress } = item;
-        const stakeState = state.lastStakes[accountPkh]?.[contractAddress];
-
-        return [contractAddress, createEntity(stakeState?.data, true, undefined, stakeState?.wasLoading)];
-      })
-    );
+            return [contractAddress, createEntity(stakeState?.data, true, undefined, stakeState?.wasLoading ?? false)];
+          })
+        )
+      );
+    });
   });
 
-  builder.addCase(loadAllFarmsActions.submit, state => ({
-    ...state,
-    allFarms: createEntity(state.allFarms.data, true)
-  }));
-  builder.addCase(loadAllFarmsActions.success, (state, { payload }) => ({
-    ...state,
-    allFarms: createEntity(payload, false)
-  }));
-  builder.addCase(loadAllFarmsActions.fail, (state, { payload }) => ({
-    ...state,
-    allFarms: createEntity(state.allFarms.data, false, payload)
-  }));
+  builder.addCase(loadFarmsByProviderActions.submit, (state, { payload: provider }) => {
+    const { data, wasLoading } = state.allFarms[provider];
+    state.allFarms[provider] = createEntity(data, true, undefined, wasLoading ?? false);
+  });
+  builder.addCase(loadFarmsByProviderActions.success, (state, { payload }) => {
+    state.allFarms[payload.provider] = createEntity(payload.data, false, undefined, true);
+  });
+  builder.addCase(loadFarmsByProviderActions.fail, (state, { payload }) => {
+    state.allFarms[payload.provider] = createEntity(state.allFarms[payload.provider].data, false, payload.error, true);
+  });
 
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => {
     const { accountPkh, stakes } = payload;

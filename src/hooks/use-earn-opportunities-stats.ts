@@ -11,7 +11,7 @@ import { ZERO } from 'src/utils/number.util';
 export const useEarnOpportunitiesStats = (
   earnOpportunities: EarnOpportunity[],
   userStakes: Record<string, UserStakeValueInterface | undefined>,
-  stakesWereLoaded: boolean
+  stakesWereLoading: boolean
 ) => {
   const fiatToUsdRate = useFiatToUsdRateSelector();
 
@@ -32,7 +32,7 @@ export const useEarnOpportunitiesStats = (
       maxApr: BigNumber.maximum(ZERO, ...earnOpportunities.map(item => getCorrectApr(item.apr)))
     };
 
-    if (!stakesWereLoaded) {
+    if (!stakesWereLoading) {
       return {
         netApr: undefined,
         totalStakedAmountInFiat: undefined,
@@ -78,7 +78,7 @@ export const useEarnOpportunitiesStats = (
     }
 
     return result;
-  }, [earnOpportunities, stakesWereLoaded, userStakes, fiatToUsdRate]);
+  }, [earnOpportunities, stakesWereLoading, userStakes, fiatToUsdRate]);
 };
 
 const getCorrectApr = (apr: string | null) => (isDefined(apr) && apr !== 'NaN' ? apr : ZERO);

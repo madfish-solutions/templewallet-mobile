@@ -9,7 +9,7 @@ import { useEarnOpportunitiesStats } from './use-earn-opportunities-stats';
 export const useUserSavingsStats = () => {
   const savings = useSavingsItemsSelector();
   const stakes = useSavingsStakesSelector();
-  const stakesWereLoaded = useSavingsStakesWereLoadingSelector();
+  const stakesWereLoading = useSavingsStakesWereLoadingSelector();
 
-  return useEarnOpportunitiesStats(savings, stakes, stakesWereLoaded);
+  return useEarnOpportunitiesStats(savings, stakes, stakesWereLoading);
 };

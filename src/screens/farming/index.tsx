@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { ActivityIndicator, ListRenderItem } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -20,7 +20,10 @@ import { MainInfo } from './main-info';
 import { FarmsSelectorsEnum } from './selectors';
 import { useFarmingStyles } from './styles';
 
-const keyExtractor = ({ id, contractAddress }: Farm) => `${id}_${contractAddress}`;
+const LOADER_PLACEHOLDER = 'loader-placeholder';
+
+const keyExtractor = (item: Farm | typeof LOADER_PLACEHOLDER) =>
+  item === LOADER_PLACEHOLDER ? LOADER_PLACEHOLDER : `${item.id}_${item.contractAddress}`;
 
 export const Farming: FC = () => {
   const stakes = useLastFarmsStakesSelector();
@@ -30,7 +33,7 @@ export const Farming: FC = () => {
     sortField,
     depositedOnly,
     filteredItemsList,
-    pageIsLoading,
+    shouldShowLoader,
     setSearchValue,
     handleSetSortField,
     handleToggleDepositOnly
@@ -39,10 +42,24 @@ export const Farming: FC = () => {
   usePageAnalytic(ScreensEnum.Farming);
   useLoadOnEachBlock(stakesLoading, loadAllFarmsAndStakesAction);
 
-  const renderItem = useCallback<ListRenderItem<Farm>>(
-    ({ item }) => <FarmItem farm={item} lastStakeRecord={stakes[item.contractAddress]} />,
-    [stakes]
+  const renderItem = useCallback<ListRenderItem<Farm | typeof LOADER_PLACEHOLDER>>(
+    ({ item }) =>
+      item === LOADER_PLACEHOLDER ? (
+        <ActivityIndicator
+          style={filteredItemsList.length === 0 ? styles.onlyLoader : styles.bottomLoader}
+          size="large"
+        />
+      ) : (
+        <FarmItem farm={item} lastStakeRecord={stakes[item.contractAddress]} />
+      ),
+    [filteredItemsList.length, stakes, styles.bottomLoader, styles.onlyLoader]
   );
+
+  const data = useMemo(() => {
+    const initialItems: Array<Farm | typeof LOADER_PLACEHOLDER> = filteredItemsList;
+
+    return shouldShowLoader ? initialItems.concat(LOADER_PLACEHOLDER) : initialItems;
+  }, [filteredItemsList, shouldShowLoader]);
 
   return (
     <>
@@ -59,27 +76,19 @@ export const Farming: FC = () => {
         handleSetSortField={handleSetSortField}
       />
       <HorizontalBorder />
-      {pageIsLoading ? (
-        <ActivityIndicator style={styles.loader} size="large" />
-      ) : (
-        <>
-          <Divider size={formatSize(8)} />
-          <FlatList
-            data={filteredItemsList}
-            keyExtractor={keyExtractor}
-            ListEmptyComponent={
-              <DataPlaceholder
-                text={
-                  Object.keys(stakes).length === 0 && depositedOnly
-                    ? 'You have no deposits in farms'
-                    : 'No records found'
-                }
-              />
+      <Divider size={formatSize(8)} />
+      <FlatList
+        data={data}
+        keyExtractor={keyExtractor}
+        ListEmptyComponent={
+          <DataPlaceholder
+            text={
+              Object.keys(stakes).length === 0 && depositedOnly ? 'You have no deposits in farms' : 'No records found'
             }
-            renderItem={renderItem}
           />
-        </>
-      )}
+        }
+        renderItem={renderItem}
+      />
     </>
   );
 };

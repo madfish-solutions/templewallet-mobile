@@ -23,7 +23,7 @@ const kordFiApi = axios.create({
 });
 
 export const KORDFI_TEZOS_CONTRACT_ADDRESS = 'KT19qWdPBRtkWrsQnDvVfsqJgJB19keBhhMX';
-export const TZBTC_CONTRACT_ADDRESS = 'KT1WL6sHt8syFT2ts7NCmb5gPcS2tyfRxSyi';
+const TZBTC_CONTRACT_ADDRESS = 'KT1WL6sHt8syFT2ts7NCmb5gPcS2tyfRxSyi';
 const TEZOS_TOKEN: EarnOpportunityToken = toEarnOpportunityToken(
   TEZ_TOKEN_METADATA,
   EarnOpportunityTokenStandardEnum.Fa12,
