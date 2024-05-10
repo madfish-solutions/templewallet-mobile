@@ -35,7 +35,7 @@ export const MainInfo: FC = () => {
         isDefined(stakeRecord) &&
         new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT).isGreaterThan(DEFAULT_AMOUNT) &&
         (!isDefined(stakeRecord.rewardsDueDate) || stakeRecord.rewardsDueDate < now) &&
-        farms.data.some(farm => farm.item.contractAddress === contractAddress)
+        farms.some(farm => farm.contractAddress === contractAddress)
       );
     });
   }, [stakes, farms]);
@@ -46,15 +46,12 @@ export const MainInfo: FC = () => {
     let result = new BigNumber(0);
 
     stakesEntriesWithEndedRewards.forEach(([address, stakeRecord]) => {
-      const farm = farms.data.find(_farm => _farm.item.contractAddress === address);
+      const farm = farms.find(_farm => _farm.contractAddress === address);
 
       if (isDefined(farm)) {
         result = result.plus(
-          mutezToTz(
-            new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT),
-            farm.item.rewardToken.metadata.decimals
-          )
-            .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_AMOUNT)
+          mutezToTz(new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT), farm.rewardToken.metadata.decimals)
+            .multipliedBy(farm.earnExchangeRate ?? DEFAULT_AMOUNT)
             .multipliedBy(fiatToUsdExchangeRate ?? DEFAULT_EXCHANGE_RATE)
         );
       }

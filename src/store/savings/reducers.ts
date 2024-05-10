@@ -1,13 +1,14 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { SavingsProviderEnum } from 'src/enums/savings-provider.enum';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
 
 import {
-  loadAllSavingsActions,
   loadAllSavingsAndStakesAction,
   loadAllStakesActions,
+  loadSavingsByProviderActions,
   loadSingleSavingStakeActions,
   selectSavingsSortValueAction
 } from './actions';
@@ -46,33 +47,40 @@ export const savingsReducer = createReducer<SavingsState>(savingsInitialState, b
   });
 
   builder.addCase(loadAllSavingsAndStakesAction, (state, { payload: accountPkh }) => {
-    state.allSavingsItems = createEntity(state.allSavingsItems.data, true);
+    const previousStakes = state.stakes[accountPkh] ?? {};
+    state.stakes[accountPkh] = {};
 
-    if (!isDefined(state.stakes[accountPkh])) {
-      state.stakes[accountPkh] = {};
-    }
+    Object.values(SavingsProviderEnum).forEach(provider => {
+      const previousSavingsItems = state.allSavingsItems[provider];
+      state.allSavingsItems[provider] = createEntity(previousSavingsItems.data, true);
+      Object.assign(
+        state.stakes[accountPkh],
+        Object.fromEntries(
+          previousSavingsItems.data.map(({ contractAddress }) => {
+            const stakeState = previousStakes[contractAddress];
 
-    state.stakes[accountPkh] = Object.fromEntries(
-      state.allSavingsItems.data.map(({ contractAddress }) => {
-        const stakeState = state.stakes[accountPkh]?.[contractAddress];
-
-        return [contractAddress, createEntity(stakeState?.data, true, undefined, stakeState?.wasLoading ?? false)];
-      })
-    );
+            return [contractAddress, createEntity(stakeState?.data, true, undefined, stakeState?.wasLoading ?? false)];
+          })
+        )
+      );
+    });
   });
 
-  builder.addCase(loadAllSavingsActions.submit, state => ({
-    ...state,
-    allSavingsItems: createEntity(state.allSavingsItems.data, true)
-  }));
-  builder.addCase(loadAllSavingsActions.success, (state, { payload }) => ({
-    ...state,
-    allSavingsItems: createEntity(payload, false)
-  }));
-  builder.addCase(loadAllSavingsActions.fail, (state, { payload }) => ({
-    ...state,
-    allSavingsItems: createEntity(state.allSavingsItems.data, false, payload)
-  }));
+  builder.addCase(loadSavingsByProviderActions.submit, (state, { payload: provider }) => {
+    const { data, wasLoading } = state.allSavingsItems[provider];
+    state.allSavingsItems[provider] = createEntity(data, true, undefined, wasLoading ?? false);
+  });
+  builder.addCase(loadSavingsByProviderActions.success, (state, { payload }) => {
+    state.allSavingsItems[payload.provider] = createEntity(payload.data, false, undefined, true);
+  });
+  builder.addCase(loadSavingsByProviderActions.fail, (state, { payload }) => {
+    state.allSavingsItems[payload.provider] = createEntity(
+      state.allSavingsItems[payload.provider].data,
+      false,
+      payload.error,
+      true
+    );
+  });
 
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => {
     const { accountPkh, stakes } = payload;

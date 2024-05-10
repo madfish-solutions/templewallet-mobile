@@ -107,7 +107,7 @@ const loadFarmsByProvider: Epic = (action$: Observable<Action>, state$: Observab
     })
   );
 
-const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllFarmsAndStakes: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllFarmsAndStakesAction),
     withExchangeRates(state$),
@@ -115,6 +115,15 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
     switchMap(([[{ payload: accountPkh }, exchangeRates], rpcUrl]) => {
       const tezos = createReadOnlyTezosToolkit(rpcUrl);
       const { [KNOWN_TOKENS_SLUGS.tzBTC]: tzbtcExchangeRate, [TEZ_TOKEN_SLUG]: tezExchangeRate } = exchangeRates;
+
+      const makeFarmsListErrorHandler = (farmsProvider: FarmsProviderEnum) => (err: unknown) => {
+        showErrorToast({ description: getAxiosQueryErrorMessage(err) });
+
+        return of(
+          loadFarmsByProviderActions.fail({ provider: farmsProvider, error: (err as Error).message }),
+          loadAllStakesActions.fail()
+        );
+      };
 
       return merge(
         from(getV3FarmsList()).pipe(
@@ -124,14 +133,7 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
               ...v3Farms.map(({ item: farm }) => loadSingleFarmStakeActions.submit({ farm, accountPkh }))
             )
           ),
-          catchError(err => {
-            showErrorToast({ description: getAxiosQueryErrorMessage(err) });
-
-            return of(
-              loadFarmsByProviderActions.fail({ provider: FarmsProviderEnum.Quipuswap, error: (err as Error).message }),
-              loadAllStakesActions.fail()
-            );
-          })
+          catchError(makeFarmsListErrorHandler(FarmsProviderEnum.Quipuswap))
         ),
         from(getLiquidityBakingFarm(tezos, tezExchangeRate, tzbtcExchangeRate)).pipe(
           switchMap(lbFarm =>
@@ -140,17 +142,7 @@ const loadAllFarmsAndLastStake: Epic = (action$: Observable<Action>, state$: Obs
               loadSingleFarmStakeActions.submit({ farm: lbFarm.item, accountPkh })
             )
           ),
-          catchError(err => {
-            showErrorToast({ description: getAxiosQueryErrorMessage(err) });
-
-            return of(
-              loadFarmsByProviderActions.fail({
-                provider: FarmsProviderEnum.LiquidityBaking,
-                error: (err as Error).message
-              }),
-              loadAllStakesActions.fail()
-            );
-          })
+          catchError(makeFarmsListErrorHandler(FarmsProviderEnum.LiquidityBaking))
         )
       );
     })
@@ -160,5 +152,5 @@ export const farmsEpics = combineEpics(
   loadSingleFarmLastStake,
   loadAllFarms,
   loadFarmsByProvider,
-  loadAllFarmsAndLastStake
+  loadAllFarmsAndStakes
 );

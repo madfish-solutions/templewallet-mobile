@@ -7,7 +7,7 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 
 import { useSelector } from '../selector';
 
-export const useFarmsWereLoadingSelector = () =>
+export const useSomeFarmsWereLoadingSelector = () =>
   useSelector(({ farms }) => Object.values(farms.allFarms).some(({ wasLoading }) => wasLoading));
 
 export const useFarmsLoadingSelector = () =>
@@ -38,22 +38,18 @@ export const useFarmStakeSelector = (farmAddress: string): UserStakeValueInterfa
 export const useAllFarms = () => {
   const allFarmsStates = useSelector(({ farms }) => Object.values(farms.allFarms));
 
-  return useMemo(() => {
-    const data = allFarmsStates
-      .map(({ data }) => data)
-      .flat()
-      .filter(
-        farm =>
-          earnOpportunitiesTypesToDisplay.includes(farm.item.type ?? EarnOpportunityTypeEnum.DEX_TWO) &&
-          farm.item.dailyDistribution !== '0'
-      );
-
-    return {
-      data,
-      isLoading: allFarmsStates.some(({ isLoading }) => isLoading),
-      error: allFarmsStates.map(({ error }) => error).find(Boolean)
-    };
-  }, [allFarmsStates]);
+  return useMemo(
+    () =>
+      allFarmsStates
+        .map(({ data }) => data.map(({ item }) => item))
+        .flat()
+        .filter(
+          farm =>
+            earnOpportunitiesTypesToDisplay.includes(farm.type ?? EarnOpportunityTypeEnum.DEX_TWO) &&
+            farm.dailyDistribution !== '0'
+        ),
+    [allFarmsStates]
+  );
 };
 
 export const useLastFarmsStakesSelector = () =>
@@ -70,11 +66,11 @@ export const useFarmsStakesLoadingSelector = () =>
     return Object.values(accountStakes).some(({ isLoading }) => isLoading);
   });
 
-export const useFarmsStakesWereLoadingSelector = () =>
+export const useSomeFarmsStakesWereLoadingSelector = () =>
   useSelector(({ farms, wallet }) => {
     const accountStakes = farms.lastStakes[wallet.selectedAccountPublicKeyHash] ?? {};
 
-    return Object.values(accountStakes).every(({ wasLoading }) => wasLoading);
+    return Object.values(accountStakes).some(({ wasLoading }) => wasLoading);
   });
 
 export const useFarmStakeWasLoadingSelector = (farmAddress: string) => {

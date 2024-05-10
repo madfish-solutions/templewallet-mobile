@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
 import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
+import { SavingsProviderEnum } from 'src/enums/savings-provider.enum';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 
@@ -13,9 +14,17 @@ export const loadSingleSavingStakeActions = createActions<
   { contractAddress: string; accountPkh: string; error: string }
 >('savings/LOAD_SINGLE_SAVING_STAKE');
 
+/** Use them for loading both savings and stakes gradually */
 export const loadAllSavingsAndStakesAction = createAction<string>('savings/LOAD_ALL_SAVINGS_AND_STAKES');
 
-export const loadAllSavingsActions = createActions<void, Array<SavingsItem>, void>('savings/LOAD_ALL_FARMS');
+/** Use it to load savings only by "all or nothing" strategy */
+export const loadAllSavingsAction = createAction<void>('savings/LOAD_ALL_SAVINGS');
+
+export const loadSavingsByProviderActions = createActions<
+  SavingsProviderEnum,
+  { provider: SavingsProviderEnum; data: Array<SavingsItem> },
+  { provider: SavingsProviderEnum; error: string }
+>('savings/LOAD_SAVINGS_BY_PROVIDER');
 
 export const loadAllStakesActions = createActions<
   { accountPkh: string; savings: Array<SavingsItem> },

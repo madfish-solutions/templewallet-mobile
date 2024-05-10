@@ -17,7 +17,7 @@ export const useFarmingStyles = createUseStyles(({ colors, typography }) => ({
     ...typography.caption11Regular,
     color: colors.gray1
   },
-  onlyLoader: {
+  emptyListLoader: {
     marginTop: formatSize(100)
   },
   bottomLoader: {

@@ -19,9 +19,9 @@ import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { loadAllFarmsAction, loadSingleFarmStakeActions } from 'src/store/farms/actions';
 import { useFarm, useFarmsLoadingSelector, useFarmStakeSelector } from 'src/store/farms/selectors';
-import { loadAllSavingsActions, loadSingleSavingStakeActions } from 'src/store/savings/actions';
+import { loadAllSavingsAction, loadSingleSavingStakeActions } from 'src/store/savings/actions';
 import {
-  useSavingsItemSelector,
+  useSavingsItem,
   useSavingsItemsLoadingSelector,
   useSavingsItemStakeSelector
 } from 'src/store/savings/selectors';
@@ -64,7 +64,7 @@ export const ManageEarnOpportunityModal: FC = () => {
   const { id, contractAddress } = route.params;
   const isFarmingPool = route.name === ModalsEnum.ManageFarmingPool;
   const farm = useFarm(id, contractAddress);
-  const savingsItem = useSavingsItemSelector(id, contractAddress);
+  const savingsItem = useSavingsItem(id, contractAddress);
   const earnOpportunityItem = isFarmingPool ? farm?.item : savingsItem;
   const farmIsLoading = useFarmsLoadingSelector();
   const savingsItemIsLoading = useSavingsItemsLoadingSelector();
@@ -108,7 +108,7 @@ export const ManageEarnOpportunityModal: FC = () => {
   useEffect(() => {
     if (!isDefined(earnOpportunityItem) || prevBlockLevelRef.current !== blockLevel) {
       prevBlockLevelRef.current = blockLevel;
-      dispatch(isFarmingPool ? loadAllFarmsAction() : loadAllSavingsActions.submit());
+      dispatch(isFarmingPool ? loadAllFarmsAction() : loadAllSavingsAction());
     }
   }, [blockLevel, earnOpportunityItem, dispatch, isFarmingPool]);
 

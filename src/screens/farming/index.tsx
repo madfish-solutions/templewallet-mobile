@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { ActivityIndicator, ListRenderItem } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -14,16 +14,17 @@ import { useFarmsStakesLoadingSelector, useLastFarmsStakesSelector } from 'src/s
 import { formatSize } from 'src/styles/format-size';
 import { Farm } from 'src/types/farm';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import {
+  createItemsListWithLoader,
+  earnOpportunityKeyExtractor,
+  getRenderEarnOpportunityFn,
+  LOADER_PLACEHOLDER
+} from 'src/utils/earn-opportunities/list.utils';
 
 import { FarmItem } from './farm-item';
 import { MainInfo } from './main-info';
 import { FarmsSelectorsEnum } from './selectors';
 import { useFarmingStyles } from './styles';
-
-const LOADER_PLACEHOLDER = 'loader-placeholder';
-
-const keyExtractor = (item: Farm | typeof LOADER_PLACEHOLDER) =>
-  item === LOADER_PLACEHOLDER ? LOADER_PLACEHOLDER : `${item.id}_${item.contractAddress}`;
 
 export const Farming: FC = () => {
   const stakes = useLastFarmsStakesSelector();
@@ -42,24 +43,24 @@ export const Farming: FC = () => {
   usePageAnalytic(ScreensEnum.Farming);
   useLoadOnEachBlock(stakesLoading, loadAllFarmsAndStakesAction);
 
-  const renderItem = useCallback<ListRenderItem<Farm | typeof LOADER_PLACEHOLDER>>(
-    ({ item }) =>
-      item === LOADER_PLACEHOLDER ? (
-        <ActivityIndicator
-          style={filteredItemsList.length === 0 ? styles.onlyLoader : styles.bottomLoader}
-          size="large"
-        />
-      ) : (
-        <FarmItem farm={item} lastStakeRecord={stakes[item.contractAddress]} />
+  const renderItem = useMemo<ListRenderItem<Farm | typeof LOADER_PLACEHOLDER>>(
+    () =>
+      getRenderEarnOpportunityFn<Farm>(
+        () => (
+          <ActivityIndicator
+            style={filteredItemsList.length === 0 ? styles.emptyListLoader : styles.bottomLoader}
+            size="large"
+          />
+        ),
+        item => <FarmItem farm={item} lastStakeRecord={stakes[item.contractAddress]} />
       ),
-    [filteredItemsList.length, stakes, styles.bottomLoader, styles.onlyLoader]
+    [filteredItemsList.length, stakes, styles.bottomLoader, styles.emptyListLoader]
   );
 
-  const data = useMemo(() => {
-    const initialItems: Array<Farm | typeof LOADER_PLACEHOLDER> = filteredItemsList;
-
-    return shouldShowLoader ? initialItems.concat(LOADER_PLACEHOLDER) : initialItems;
-  }, [filteredItemsList, shouldShowLoader]);
+  const data = useMemo(
+    () => createItemsListWithLoader(filteredItemsList, shouldShowLoader),
+    [filteredItemsList, shouldShowLoader]
+  );
 
   return (
     <>
@@ -79,7 +80,7 @@ export const Farming: FC = () => {
       <Divider size={formatSize(8)} />
       <FlatList
         data={data}
-        keyExtractor={keyExtractor}
+        keyExtractor={earnOpportunityKeyExtractor}
         ListEmptyComponent={
           <DataPlaceholder
             text={

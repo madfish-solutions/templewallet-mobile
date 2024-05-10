@@ -4,8 +4,15 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 
 import { useSelector } from '../selector';
 
-export const useSavingsItemSelector = (id: string, contractAddress: string) => {
-  const list = useSelector(({ savings }) => savings.allSavingsItems.data);
+export const useSomeSavingsItemsWereLoadingSelector = () =>
+  useSelector(({ savings }) => Object.values(savings.allSavingsItems).some(({ wasLoading }) => wasLoading));
+
+export const useSavingsItem = (id: string, contractAddress: string) => {
+  const list = useSelector(({ savings }) =>
+    Object.values(savings.allSavingsItems)
+      .map(({ data }) => data)
+      .flat()
+  );
 
   return useMemo(
     () => list.find(item => item.id === id && item.contractAddress === contractAddress),
@@ -13,12 +20,17 @@ export const useSavingsItemSelector = (id: string, contractAddress: string) => {
   );
 };
 
+export const useSavingsItemsLoadingSelector = () =>
+  useSelector(({ savings }) => Object.values(savings.allSavingsItems).some(({ isLoading }) => isLoading));
+
 export const useSavingsItemStakeSelector = (itemAddress: string): UserStakeValueInterface | undefined =>
   useSelector(({ savings, wallet }) => savings.stakes[wallet.selectedAccountPublicKeyHash]?.[itemAddress]?.data);
 
-export const useSavingsItemsLoadingSelector = () => useSelector(({ savings }) => savings.allSavingsItems.isLoading);
+export const useSavingsItems = () => {
+  const allSavingsItemsStates = useSelector(({ savings }) => Object.values(savings.allSavingsItems));
 
-export const useSavingsItemsSelector = () => useSelector(({ savings }) => savings.allSavingsItems.data);
+  return useMemo(() => allSavingsItemsStates.map(({ data }) => data).flat(), [allSavingsItemsStates]);
+};
 
 export const useSavingsStakesSelector = () =>
   useSelector(({ savings, wallet }) => {
@@ -36,7 +48,7 @@ export const useSavingsStakesLoadingSelector = () =>
     return Object.values(accountStakes).some(({ isLoading }) => isLoading);
   });
 
-export const useSavingsStakesWereLoadingSelector = () =>
+export const useSomeSavingsStakesWereLoadingSelector = () =>
   useSelector(({ savings, wallet }) => {
     const accountStakes = savings.stakes[wallet.selectedAccountPublicKeyHash] ?? {};
 
