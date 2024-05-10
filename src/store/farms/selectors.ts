@@ -7,8 +7,8 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 
 import { useSelector } from '../selector';
 
-export const useSomeFarmsWereLoadingSelector = () =>
-  useSelector(({ farms }) => Object.values(farms.allFarms).some(({ wasLoading }) => wasLoading));
+export const useAllFarmsWereLoadingSelector = () =>
+  useSelector(({ farms }) => Object.values(farms.allFarms).every(({ wasLoading }) => wasLoading));
 
 export const useFarmsLoadingSelector = () =>
   useSelector(({ farms }) => Object.values(farms.allFarms).some(({ isLoading }) => isLoading));

@@ -25,21 +25,23 @@ export const useEarnOpportunitiesStats = (
       };
     }
 
-    const result = {
-      netApr: ZERO,
-      totalStakedAmountInFiat: ZERO,
-      totalClaimableRewardsInFiat: ZERO,
-      maxApr: BigNumber.maximum(ZERO, ...earnOpportunities.map(item => getCorrectApr(item.apr)))
-    };
+    const maxApr = BigNumber.maximum(ZERO, ...earnOpportunities.map(item => getCorrectApr(item.apr)));
 
     if (!someStakesWereLoading) {
       return {
         netApr: undefined,
         totalStakedAmountInFiat: undefined,
         totalClaimableRewardsInFiat: undefined,
-        maxApr: result.maxApr
+        maxApr
       };
     }
+
+    const result = {
+      netApr: ZERO,
+      totalStakedAmountInFiat: ZERO,
+      totalClaimableRewardsInFiat: ZERO,
+      maxApr
+    };
 
     let totalWeightedApr = ZERO;
 

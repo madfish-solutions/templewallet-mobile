@@ -1,5 +1,5 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, delay, exhaustMap, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -112,7 +112,7 @@ const loadAllFarmsAndStakes: Epic = (action$: Observable<Action>, state$: Observ
     ofType(loadAllFarmsAndStakesAction),
     withExchangeRates(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[{ payload: accountPkh }, exchangeRates], rpcUrl]) => {
+    exhaustMap(([[{ payload: accountPkh }, exchangeRates], rpcUrl]) => {
       const tezos = createReadOnlyTezosToolkit(rpcUrl);
       const { [KNOWN_TOKENS_SLUGS.tzBTC]: tzbtcExchangeRate, [TEZ_TOKEN_SLUG]: tezExchangeRate } = exchangeRates;
 
@@ -127,6 +127,7 @@ const loadAllFarmsAndStakes: Epic = (action$: Observable<Action>, state$: Observ
 
       return merge(
         from(getV3FarmsList()).pipe(
+          delay(20_000),
           switchMap(v3Farms =>
             of(
               loadFarmsByProviderActions.success({ data: v3Farms, provider: FarmsProviderEnum.Quipuswap }),

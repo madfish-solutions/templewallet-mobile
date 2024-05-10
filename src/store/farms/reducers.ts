@@ -52,7 +52,7 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
 
     Object.values(FarmsProviderEnum).forEach(provider => {
       const previousFarms = state.allFarms[provider];
-      state.allFarms[provider] = createEntity(previousFarms.data, true);
+      state.allFarms[provider] = createEntity(previousFarms.data, true, undefined, previousFarms.wasLoading ?? false);
       Object.assign(
         state.lastStakes[accountPkh],
         Object.fromEntries(

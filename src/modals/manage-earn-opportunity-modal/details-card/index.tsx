@@ -22,6 +22,7 @@ import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE, toIntegerSeconds } from 'src/utils/date.utils';
+import { formatOptionalPercentage } from 'src/utils/earn-opportunities/format.utils';
 import { isFarm } from 'src/utils/earn.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { useInterval } from 'src/utils/hooks';
@@ -68,7 +69,6 @@ export const DetailsCard = memo<DetailsCardProps>(
       earnOpportunityItem;
     const isLiquidityBaking = earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
     const stakedTokenDecimals = stakedToken.metadata.decimals;
-    const aprFormatted = isDefined(apr) ? `${Number(apr).toFixed(2)}%` : '-';
     const [claimPending, setClaimPending] = useState(false);
     const styles = useDetailsCardStyles();
     const claimRewardsButtonConfig = useClaimRewardsButtonConfig();
@@ -182,7 +182,7 @@ export const DetailsCard = memo<DetailsCardProps>(
       <View style={styles.root}>
         <View style={styles.title}>
           <EarnOpportunityTokens {...tokens} />
-          <Text style={styles.aprLabel}>APR: {aprFormatted}</Text>
+          <Text style={styles.aprLabel}>APR: {formatOptionalPercentage(apr ?? undefined, '-')}</Text>
         </View>
         <HorizontalBorder style={styles.titleBorder} />
         {depositAmount.isZero() ? (

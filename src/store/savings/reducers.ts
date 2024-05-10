@@ -52,7 +52,12 @@ export const savingsReducer = createReducer<SavingsState>(savingsInitialState, b
 
     Object.values(SavingsProviderEnum).forEach(provider => {
       const previousSavingsItems = state.allSavingsItems[provider];
-      state.allSavingsItems[provider] = createEntity(previousSavingsItems.data, true);
+      state.allSavingsItems[provider] = createEntity(
+        previousSavingsItems.data,
+        true,
+        undefined,
+        previousSavingsItems.wasLoading ?? false
+      );
       Object.assign(
         state.stakes[accountPkh],
         Object.fromEntries(

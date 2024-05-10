@@ -14,7 +14,7 @@ export const loadSingleSavingStakeActions = createActions<
   { contractAddress: string; accountPkh: string; error: string }
 >('savings/LOAD_SINGLE_SAVING_STAKE');
 
-/** Use them for loading both savings and stakes gradually */
+/** Use it for loading both savings and stakes gradually */
 export const loadAllSavingsAndStakesAction = createAction<string>('savings/LOAD_ALL_SAVINGS_AND_STAKES');
 
 /** Use it to load savings only by "all or nothing" strategy */

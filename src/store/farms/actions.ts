@@ -15,7 +15,7 @@ export const loadSingleFarmStakeActions = createActions<
   { farmAddress: string; accountPkh: string; error: string }
 >('farms/LOAD_SINGLE_FARM_STAKE');
 
-/** Use them for loading both farms and stakes gradually */
+/** Use it for loading both farms and stakes gradually */
 export const loadAllFarmsAndStakesAction = createAction<string>('farms/LOAD_ALL_FARMS_AND_STAKES');
 
 /** Use it to load farms only by "all or nothing" strategy */

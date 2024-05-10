@@ -1,6 +1,6 @@
 import { selectFarmsSortValueAction } from 'src/store/farms/actions';
 import {
-  useSomeFarmsWereLoadingSelector,
+  useAllFarmsWereLoadingSelector,
   useAllFarms,
   useFarmSortFieldSelector,
   useLastFarmsStakesSelector
@@ -12,7 +12,7 @@ export const useFilteredFarmings = () => {
   const farms = useAllFarms();
   const stakes = useLastFarmsStakesSelector();
   const sortField = useFarmSortFieldSelector();
-  const someFarmsWereLoading = useSomeFarmsWereLoadingSelector();
+  const allFarmsWereLoading = useAllFarmsWereLoadingSelector();
 
   const { depositedOnly, filteredItemsList, setSearchValue, handleSetSortField, handleToggleDepositOnly } =
     useFilteredEarnOpportunities(selectFarmsSortValueAction, sortField, farms, stakes);
@@ -21,7 +21,7 @@ export const useFilteredFarmings = () => {
     sortField,
     depositedOnly,
     filteredItemsList,
-    shouldShowLoader: !someFarmsWereLoading,
+    shouldShowLoader: !allFarmsWereLoading,
     setSearchValue,
     handleSetSortField,
     handleToggleDepositOnly

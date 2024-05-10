@@ -9,7 +9,6 @@ import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { PERCENTAGE_DECIMALS } from 'src/config/earn-opportunities';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
@@ -21,8 +20,8 @@ import { KNOWN_STABLECOINS_SLUGS } from 'src/token/data/token-slugs';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { SECONDS_IN_DAY } from 'src/utils/date.utils';
+import { formatOptionalPercentage } from 'src/utils/earn-opportunities/format.utils';
 import { isFarm } from 'src/utils/earn.utils';
-import { isDefined } from 'src/utils/is-defined';
 
 import { EarnOpportunityItemSelectors } from './selectors';
 import { StatsItem } from './stats-item';
@@ -92,11 +91,6 @@ export const EarnOpportunityItem = memo<Props>(
       }
     }, [theme, item]);
 
-    const formattedApr = useMemo(
-      () => (isDefined(apr) && apr !== 'NaN' ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'),
-      [apr]
-    );
-
     const depositAmounts = useAmounts(
       lastStakeRecord?.depositAmountAtomic,
       stakedToken.metadata.decimals,
@@ -137,7 +131,7 @@ export const EarnOpportunityItem = memo<Props>(
           <View style={[styles.tokensContainer, styles.row]}>
             <EarnOpportunityTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
             <View>
-              <Text style={styles.aprText}>APR: {formattedApr}%</Text>
+              <Text style={styles.aprText}>APR: {formatOptionalPercentage(apr ?? undefined)}</Text>
               <View style={styles.earnSource}>
                 {isLiquidityBaking ? (
                   <View style={[styles.earnSourceIcon, styles.liquidityBakingIconWrapper]}>

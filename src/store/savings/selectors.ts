@@ -4,8 +4,8 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 
 import { useSelector } from '../selector';
 
-export const useSomeSavingsItemsWereLoadingSelector = () =>
-  useSelector(({ savings }) => Object.values(savings.allSavingsItems).some(({ wasLoading }) => wasLoading));
+export const useAllSavingsItemsWereLoadingSelector = () =>
+  useSelector(({ savings }) => Object.values(savings.allSavingsItems).every(({ wasLoading }) => wasLoading));
 
 export const useSavingsItem = (id: string, contractAddress: string) => {
   const list = useSelector(({ savings }) =>
