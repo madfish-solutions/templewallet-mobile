@@ -2,7 +2,7 @@ import { ListRenderItem } from 'react-native';
 
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 
-export const LOADER_PLACEHOLDER = 'loader-placeholder';
+const LOADER_PLACEHOLDER = 'loader-placeholder';
 
 export const earnOpportunityKeyExtractor = (item: EarnOpportunity | typeof LOADER_PLACEHOLDER) =>
   item === LOADER_PLACEHOLDER ? LOADER_PLACEHOLDER : `${item.id}_${item.contractAddress}`;
