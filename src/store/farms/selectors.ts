@@ -4,11 +4,15 @@ import { useMemo } from 'react';
 import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { nullableEntityWasLoading } from 'src/utils/earn-opportunities/entity.utils';
+import { isDefined } from 'src/utils/is-defined';
 
 import { useSelector } from '../selector';
 
 export const useAllFarmsWereLoadingSelector = () =>
-  useSelector(({ farms }) => Object.values(farms.allFarms).every(({ wasLoading }) => wasLoading));
+  useSelector(({ farms }) =>
+    Object.values(farms.allFarms).every(({ data, error }) => data.length > 0 || isDefined(error))
+  );
 
 export const useFarmsLoadingSelector = () =>
   useSelector(({ farms }) => Object.values(farms.allFarms).some(({ isLoading }) => isLoading));
@@ -33,7 +37,9 @@ export const useFarm = (id: string, contractAddress: string) => {
 };
 
 export const useFarmStakeSelector = (farmAddress: string): UserStakeValueInterface | undefined =>
-  useSelector(({ farms, wallet }) => farms.lastStakes[wallet.selectedAccountPublicKeyHash]?.[farmAddress]?.data);
+  useSelector(
+    ({ farms, wallet }) => farms.lastStakes[wallet.selectedAccountPublicKeyHash]?.[farmAddress]?.data ?? undefined
+  );
 
 export const useAllFarms = () => {
   const allFarmsStates = useSelector(({ farms }) => Object.values(farms.allFarms));
@@ -56,7 +62,7 @@ export const useLastFarmsStakesSelector = () =>
   useSelector(({ farms, wallet }) => {
     const rawStakes = farms.lastStakes[wallet.selectedAccountPublicKeyHash] ?? {};
 
-    return Object.fromEntries(Object.entries(rawStakes).map(([key, { data }]) => [key, data]));
+    return Object.fromEntries(Object.entries(rawStakes).map(([key, { data }]) => [key, data ?? undefined]));
   }, isEqual);
 
 export const useFarmsStakesLoadingSelector = () =>
@@ -70,15 +76,12 @@ export const useSomeFarmsStakesWereLoadingSelector = () =>
   useSelector(({ farms, wallet }) => {
     const accountStakes = farms.lastStakes[wallet.selectedAccountPublicKeyHash] ?? {};
 
-    return Object.values(accountStakes).some(({ wasLoading }) => wasLoading);
+    return Object.values(accountStakes).some(nullableEntityWasLoading);
   });
 
-export const useFarmStakeWasLoadingSelector = (farmAddress: string) => {
-  const farmStake = useSelector(
-    ({ farms, wallet }) => farms.lastStakes[wallet.selectedAccountPublicKeyHash]?.[farmAddress]
+export const useFarmStakeWasLoadingSelector = (farmAddress: string) =>
+  useSelector(({ farms, wallet }) =>
+    nullableEntityWasLoading(farms.lastStakes[wallet.selectedAccountPublicKeyHash]?.[farmAddress])
   );
-
-  return farmStake?.wasLoading ?? false;
-};
 
 export const useFarmSortFieldSelector = () => useSelector(({ farms }) => farms.sortField);

@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { ActivityIndicator, ListRenderItem } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -17,8 +17,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import {
   createItemsListWithLoader,
   earnOpportunityKeyExtractor,
-  getRenderEarnOpportunityFn,
-  LOADER_PLACEHOLDER
+  getRenderEarnOpportunityFn
 } from 'src/utils/earn-opportunities/list.utils';
 
 import { FarmItem } from './farm-item';
@@ -43,7 +42,7 @@ export const Farming: FC = () => {
   usePageAnalytic(ScreensEnum.Farming);
   useLoadOnEachBlock(stakesLoading, loadAllFarmsAndStakesAction);
 
-  const renderItem = useMemo<ListRenderItem<Farm | typeof LOADER_PLACEHOLDER>>(
+  const renderItem = useMemo(
     () =>
       getRenderEarnOpportunityFn<Farm>(
         () => (

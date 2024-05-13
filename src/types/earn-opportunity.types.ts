@@ -6,4 +6,7 @@ import { Farm } from './farm';
 
 export type EarnOpportunity = Farm | SavingsItem;
 
-export type UserEarnOpportunitiesStakes = Record<string, LoadableEntityState<UserStakeValueInterface | undefined>>;
+export type UserEarnOpportunitiesStakes = Record<
+  string,
+  LoadableEntityState<UserStakeValueInterface | null | undefined>
+>;

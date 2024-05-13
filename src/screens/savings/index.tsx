@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { ActivityIndicator, ListRenderItem } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -17,8 +17,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import {
   createItemsListWithLoader,
   earnOpportunityKeyExtractor,
-  getRenderEarnOpportunityFn,
-  LOADER_PLACEHOLDER
+  getRenderEarnOpportunityFn
 } from 'src/utils/earn-opportunities/list.utils';
 
 import { MainInfo } from './main-info';
@@ -43,7 +42,7 @@ export const Savings: FC = () => {
   usePageAnalytic(ScreensEnum.Savings);
   useLoadOnEachBlock(stakesLoading, loadAllSavingsAndStakesAction);
 
-  const renderItem = useMemo<ListRenderItem<SavingsItem | typeof LOADER_PLACEHOLDER>>(
+  const renderItem = useMemo(
     () =>
       getRenderEarnOpportunityFn<SavingsItem>(
         () => (

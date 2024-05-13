@@ -62,7 +62,9 @@ const getKordFiStats$ = (): Observable<KordFiLendStats> =>
     )
   );
 
-export const getKordFiUserDeposits$ = (address: string): Observable<{ [key: string]: UserStakeValueInterface }> =>
+export const getKordFiUserDeposits$ = (
+  address: string
+): Observable<{ [key: string]: UserStakeValueInterface | null }> =>
   from(kordFiApi.post<KordFiUserDepositsResponse>('/llb-api/user-deposits/', { address })).pipe(
     map(({ data: { xtz_deposit, tzbtc_deposit } }) => {
       const tezosDepositAmountAtomic = tzToMutez(new BigNumber(xtz_deposit), TEZ_TOKEN_METADATA.decimals).toFixed();
@@ -94,7 +96,7 @@ export const getKordFiUserDeposits$ = (address: string): Observable<{ [key: stri
         error.response?.status === 404 &&
         isEqual(error.response.data, { detail: 'User not found' })
       ) {
-        return of({});
+        return of({ [KORDFI_TEZOS_CONTRACT_ADDRESS]: null, [TZBTC_CONTRACT_ADDRESS]: null });
       }
 
       console.error('Error getting Kord.Fi user deposits: ', error);

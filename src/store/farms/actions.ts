@@ -11,7 +11,7 @@ import { LoadableEntityState } from '../types';
 
 export const loadSingleFarmStakeActions = createActions<
   { farm: Farm; accountPkh: string },
-  { farmAddress: string; accountPkh: string; stake: UserStakeValueInterface | undefined },
+  { farmAddress: string; accountPkh: string; stake: UserStakeValueInterface | null },
   { farmAddress: string; accountPkh: string; error: string }
 >('farms/LOAD_SINGLE_FARM_STAKE');
 
@@ -29,7 +29,7 @@ export const loadFarmsByProviderActions = createActions<
 
 export const loadAllStakesActions = createActions<
   { accountPkh: string; farms: Array<SingleFarmResponse> },
-  { accountPkh: string; stakes: Record<string, LoadableEntityState<UserStakeValueInterface | undefined>> },
+  { accountPkh: string; stakes: Record<string, LoadableEntityState<UserStakeValueInterface | null | undefined>> },
   void
 >('farms/LOAD_ALL_STAKES');
 

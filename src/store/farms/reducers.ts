@@ -17,25 +17,19 @@ import { farmsInitialState, FarmsState } from './state';
 export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder => {
   builder.addCase(loadSingleFarmStakeActions.submit, (state, { payload }) => {
     const { farm, accountPkh } = payload;
+    const prevStakeState = state.lastStakes[accountPkh][farm.contractAddress];
 
     if (!isDefined(state.lastStakes[accountPkh])) {
       state.lastStakes[accountPkh] = {};
     }
 
-    const stakeState = state.lastStakes[accountPkh][farm.contractAddress];
-
-    state.lastStakes[accountPkh][farm.contractAddress] = createEntity(
-      stakeState?.data,
-      true,
-      undefined,
-      stakeState?.wasLoading ?? false
-    );
+    state.lastStakes[accountPkh][farm.contractAddress] = createEntity(prevStakeState?.data, true);
   });
 
   builder.addCase(loadSingleFarmStakeActions.success, (state, { payload }) => {
     const { stake, farmAddress, accountPkh } = payload;
 
-    state.lastStakes[accountPkh][farmAddress] = createEntity(stake, false, undefined, true);
+    state.lastStakes[accountPkh][farmAddress] = createEntity(stake, false);
   });
 
   builder.addCase(loadSingleFarmStakeActions.fail, (state, { payload }) => {
@@ -43,7 +37,7 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
 
     const stakeState = state.lastStakes[accountPkh][farmAddress];
 
-    state.lastStakes[accountPkh][farmAddress] = createEntity(stakeState?.data, false, error, true);
+    state.lastStakes[accountPkh][farmAddress] = createEntity(stakeState?.data, false, error);
   });
 
   builder.addCase(loadAllFarmsAndStakesAction, (state, { payload: accountPkh }) => {
@@ -52,7 +46,7 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
 
     Object.values(FarmsProviderEnum).forEach(provider => {
       const previousFarms = state.allFarms[provider];
-      state.allFarms[provider] = createEntity(previousFarms.data, true, undefined, previousFarms.wasLoading ?? false);
+      state.allFarms[provider] = createEntity(previousFarms.data, true);
       Object.assign(
         state.lastStakes[accountPkh],
         Object.fromEntries(
@@ -60,7 +54,7 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
             const { contractAddress } = item;
             const stakeState = previousStakes[contractAddress];
 
-            return [contractAddress, createEntity(stakeState?.data, true, undefined, stakeState?.wasLoading ?? false)];
+            return [contractAddress, createEntity(stakeState?.data, true)];
           })
         )
       );
@@ -68,18 +62,18 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
   });
 
   builder.addCase(loadFarmsByProviderActions.submit, (state, { payload: provider }) => {
-    const { data, wasLoading } = state.allFarms[provider];
-    state.allFarms[provider] = createEntity(data, true, undefined, wasLoading ?? false);
+    state.allFarms[provider] = createEntity(state.allFarms[provider].data, true);
   });
   builder.addCase(loadFarmsByProviderActions.success, (state, { payload }) => {
-    state.allFarms[payload.provider] = createEntity(payload.data, false, undefined, true);
+    state.allFarms[payload.provider] = createEntity(payload.data, false);
   });
   builder.addCase(loadFarmsByProviderActions.fail, (state, { payload }) => {
-    state.allFarms[payload.provider] = createEntity(state.allFarms[payload.provider].data, false, payload.error, true);
+    state.allFarms[payload.provider] = createEntity(state.allFarms[payload.provider].data, false, payload.error);
   });
 
   builder.addCase(loadAllStakesActions.success, (state, { payload }) => {
     const { accountPkh, stakes } = payload;
+    const prevStakes = state.lastStakes[accountPkh] ?? {};
 
     if (!isDefined(state.lastStakes[accountPkh])) {
       state.lastStakes[accountPkh] = {};
@@ -88,7 +82,11 @@ export const farmsReducer = createReducer<FarmsState>(farmsInitialState, builder
     const newStakes = Object.fromEntries(
       Object.entries(stakes).map(([farmAddress, newStakeState]) => [
         farmAddress,
-        createEntity(newStakeState.data, false, newStakeState.error, true)
+        createEntity(
+          newStakeState.data === undefined ? prevStakes[farmAddress]?.data : newStakeState.data,
+          false,
+          newStakeState.error
+        )
       ])
     );
 

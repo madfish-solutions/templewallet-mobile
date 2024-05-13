@@ -31,7 +31,7 @@ const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Ob
       loadSingleSavingStake$(payload.item, account, rpcUrl).pipe(
         map(stake =>
           loadSingleSavingStakeActions.success({
-            stake: stake ?? undefined,
+            stake,
             contractAddress: payload.item.contractAddress,
             accountPkh: payload.accountPkh
           })

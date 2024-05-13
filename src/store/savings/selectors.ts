@@ -1,11 +1,15 @@
 import { useMemo } from 'react';
 
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { nullableEntityWasLoading } from 'src/utils/earn-opportunities/entity.utils';
+import { isDefined } from 'src/utils/is-defined';
 
 import { useSelector } from '../selector';
 
 export const useAllSavingsItemsWereLoadingSelector = () =>
-  useSelector(({ savings }) => Object.values(savings.allSavingsItems).every(({ wasLoading }) => wasLoading));
+  useSelector(({ savings }) =>
+    Object.values(savings.allSavingsItems).every(({ data, error }) => data.length > 0 || isDefined(error))
+  );
 
 export const useSavingsItem = (id: string, contractAddress: string) => {
   const list = useSelector(({ savings }) =>
@@ -24,7 +28,9 @@ export const useSavingsItemsLoadingSelector = () =>
   useSelector(({ savings }) => Object.values(savings.allSavingsItems).some(({ isLoading }) => isLoading));
 
 export const useSavingsItemStakeSelector = (itemAddress: string): UserStakeValueInterface | undefined =>
-  useSelector(({ savings, wallet }) => savings.stakes[wallet.selectedAccountPublicKeyHash]?.[itemAddress]?.data);
+  useSelector(
+    ({ savings, wallet }) => savings.stakes[wallet.selectedAccountPublicKeyHash]?.[itemAddress]?.data ?? undefined
+  );
 
 export const useSavingsItems = () => {
   const allSavingsItemsStates = useSelector(({ savings }) => Object.values(savings.allSavingsItems));
@@ -36,7 +42,7 @@ export const useSavingsStakesSelector = () =>
   useSelector(({ savings, wallet }) => {
     const rawStakes = savings.stakes[wallet.selectedAccountPublicKeyHash] ?? {};
 
-    return Object.fromEntries(Object.entries(rawStakes).map(([key, { data }]) => [key, data]));
+    return Object.fromEntries(Object.entries(rawStakes).map(([key, { data }]) => [key, data ?? undefined]));
   });
 
 export const useSavingsSortFieldSelector = () => useSelector(({ savings }) => savings.sortField);
@@ -52,13 +58,10 @@ export const useSomeSavingsStakesWereLoadingSelector = () =>
   useSelector(({ savings, wallet }) => {
     const accountStakes = savings.stakes[wallet.selectedAccountPublicKeyHash] ?? {};
 
-    return Object.values(accountStakes).some(({ wasLoading }) => wasLoading);
+    return Object.values(accountStakes).some(nullableEntityWasLoading);
   });
 
-export const useSavingsItemStakeWasLoadingSelector = (itemAddress: string) => {
-  const stake = useSelector(
-    ({ savings, wallet }) => savings.stakes[wallet.selectedAccountPublicKeyHash]?.[itemAddress]
+export const useSavingsItemStakeWasLoadingSelector = (itemAddress: string) =>
+  useSelector(({ savings, wallet }) =>
+    nullableEntityWasLoading(savings.stakes[wallet.selectedAccountPublicKeyHash]?.[itemAddress])
   );
-
-  return stake?.wasLoading ?? false;
-};

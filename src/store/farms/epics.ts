@@ -36,7 +36,7 @@ const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Obse
       return from(getFarmStake(farm, tezos, accountPkh)).pipe(
         map(stake =>
           loadSingleFarmStakeActions.success({
-            stake: stake ? toUserStakeValueInterface(stake, farm.vestingPeriodSeconds) : undefined,
+            stake: stake && toUserStakeValueInterface(stake, farm.vestingPeriodSeconds),
             farmAddress: farm.contractAddress,
             accountPkh
           })

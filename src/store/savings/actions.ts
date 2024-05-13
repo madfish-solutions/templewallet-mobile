@@ -10,7 +10,7 @@ import { LoadableEntityState } from '../types';
 
 export const loadSingleSavingStakeActions = createActions<
   { item: SavingsItem; accountPkh: string },
-  { contractAddress: string; accountPkh: string; stake: UserStakeValueInterface | undefined },
+  { contractAddress: string; accountPkh: string; stake: UserStakeValueInterface | null },
   { contractAddress: string; accountPkh: string; error: string }
 >('savings/LOAD_SINGLE_SAVING_STAKE');
 
@@ -28,7 +28,7 @@ export const loadSavingsByProviderActions = createActions<
 
 export const loadAllStakesActions = createActions<
   { accountPkh: string; savings: Array<SavingsItem> },
-  { accountPkh: string; stakes: Record<string, LoadableEntityState<UserStakeValueInterface | undefined>> },
+  { accountPkh: string; stakes: Record<string, LoadableEntityState<UserStakeValueInterface | null | undefined>> },
   void
 >('savings/LOAD_ALL_STAKES');
 
