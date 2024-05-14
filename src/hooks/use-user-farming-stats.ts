@@ -1,8 +1,4 @@
-import {
-  useAllFarms,
-  useSomeFarmsStakesWereLoadingSelector,
-  useLastFarmsStakes
-} from 'src/store/farms/selectors';
+import { useAllFarms, useSomeFarmsStakesWereLoadingSelector, useLastFarmsStakes } from 'src/store/farms/selectors';
 
 import { useEarnOpportunitiesStats } from './use-earn-opportunities-stats';
 
