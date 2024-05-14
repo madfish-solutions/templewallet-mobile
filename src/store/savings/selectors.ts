@@ -33,9 +33,15 @@ export const useSavingsItemStakeSelector = (itemAddress: string): UserStakeValue
   );
 
 export const useSavingsItems = () => {
-  const allSavingsItemsStates = useSelector(({ savings }) => Object.values(savings.allSavingsItems));
+  const allSavingsItemsStates = useSelector(({ savings }) => savings.allSavingsItems);
 
-  return useMemo(() => allSavingsItemsStates.map(({ data }) => data).flat(), [allSavingsItemsStates]);
+  return useMemo(
+    () =>
+      Object.values(allSavingsItemsStates)
+        .map(({ data }) => data)
+        .flat(),
+    [allSavingsItemsStates]
+  );
 };
 
 export const useSavingsStakes = () => {
