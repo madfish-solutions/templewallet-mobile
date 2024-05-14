@@ -2,7 +2,7 @@ import { selectSavingsSortValueAction } from 'src/store/savings/actions';
 import {
   useSavingsItems,
   useSavingsSortFieldSelector,
-  useSavingsStakesSelector,
+  useSavingsStakes,
   useAllSavingsItemsWereLoadingSelector
 } from 'src/store/savings/selectors';
 
@@ -10,7 +10,7 @@ import { useFilteredEarnOpportunities } from './use-filtered-earn-opportunities.
 
 export const useFilteredSavings = () => {
   const savingsItems = useSavingsItems();
-  const stakes = useSavingsStakesSelector();
+  const stakes = useSavingsStakes();
   const sortField = useSavingsSortFieldSelector();
   const allSavingsWereLoading = useAllSavingsItemsWereLoadingSelector();
 

@@ -10,7 +10,7 @@ import { useFilteredFarmings } from 'src/hooks/use-filtered-farmings.hook';
 import { useLoadOnEachBlock } from 'src/hooks/use-load-on-each-block.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
-import { useFarmsStakesLoadingSelector, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
+import { useFarmsStakesLoadingSelector, useLastFarmsStakes } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { Farm } from 'src/types/farm';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -26,7 +26,7 @@ import { FarmsSelectorsEnum } from './selectors';
 import { useFarmingStyles } from './styles';
 
 export const Farming: FC = () => {
-  const stakes = useLastFarmsStakesSelector();
+  const stakes = useLastFarmsStakes();
   const stakesLoading = useFarmsStakesLoadingSelector();
   const styles = useFarmingStyles();
   const {

@@ -12,15 +12,15 @@ export const useAllSavingsItemsWereLoadingSelector = () =>
   );
 
 export const useSavingsItem = (id: string, contractAddress: string) => {
-  const list = useSelector(({ savings }) =>
-    Object.values(savings.allSavingsItems)
-      .map(({ data }) => data)
-      .flat()
-  );
+  const allSavings = useSelector(({ savings }) => savings.allSavingsItems);
 
   return useMemo(
-    () => list.find(item => item.id === id && item.contractAddress === contractAddress),
-    [list, id, contractAddress]
+    () =>
+      Object.values(allSavings)
+        .map(({ data }) => data)
+        .flat()
+        .find(item => item.id === id && item.contractAddress === contractAddress),
+    [allSavings, id, contractAddress]
   );
 };
 
@@ -38,12 +38,14 @@ export const useSavingsItems = () => {
   return useMemo(() => allSavingsItemsStates.map(({ data }) => data).flat(), [allSavingsItemsStates]);
 };
 
-export const useSavingsStakesSelector = () =>
-  useSelector(({ savings, wallet }) => {
-    const rawStakes = savings.stakes[wallet.selectedAccountPublicKeyHash] ?? {};
+export const useSavingsStakes = () => {
+  const rawStakes = useSelector(({ savings, wallet }) => savings.stakes[wallet.selectedAccountPublicKeyHash]);
 
-    return Object.fromEntries(Object.entries(rawStakes).map(([key, { data }]) => [key, data ?? undefined]));
-  });
+  return useMemo(
+    () => Object.fromEntries(Object.entries(rawStakes ?? {}).map(([key, { data }]) => [key, data ?? undefined])),
+    [rawStakes]
+  );
+};
 
 export const useSavingsSortFieldSelector = () => useSelector(({ savings }) => savings.sortField);
 

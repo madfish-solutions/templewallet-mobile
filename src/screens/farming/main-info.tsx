@@ -11,7 +11,7 @@ import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useAllFarms, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
+import { useAllFarms, useLastFarmsStakes } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { isDefined } from 'src/utils/is-defined';
@@ -21,7 +21,7 @@ import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.u
 export const MainInfo: FC = () => {
   const dispatch = useDispatch();
   const farms = useAllFarms();
-  const stakes = useLastFarmsStakesSelector();
+  const stakes = useLastFarmsStakes();
   const tezos = useReadOnlyTezosToolkit();
   const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
 

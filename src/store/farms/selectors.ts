@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
@@ -18,14 +17,13 @@ export const useFarmsLoadingSelector = () =>
   useSelector(({ farms }) => Object.values(farms.allFarms).some(({ isLoading }) => isLoading));
 
 export const useFarm = (id: string, contractAddress: string) => {
-  const list = useSelector(({ farms }) =>
-    Object.values(farms.allFarms)
-      .map(({ data }) => data)
-      .flat()
-  );
+  const allFarms = useSelector(({ farms }) => farms.allFarms);
 
   return useMemo(() => {
-    const sameContractFarms = list.filter(({ item }) => item.contractAddress === contractAddress);
+    const sameContractFarms = Object.values(allFarms)
+      .map(({ data }) => data)
+      .flat()
+      .filter(({ item }) => item.contractAddress === contractAddress);
 
     // IDs of the same farms from Quipuswap API may differ
     if (sameContractFarms.length === 1) {
@@ -33,7 +31,7 @@ export const useFarm = (id: string, contractAddress: string) => {
     }
 
     return sameContractFarms.find(({ item }) => item.id === id);
-  }, [list, id, contractAddress]);
+  }, [allFarms, id, contractAddress]);
 };
 
 export const useFarmStakeSelector = (farmAddress: string): UserStakeValueInterface | undefined =>
@@ -42,11 +40,11 @@ export const useFarmStakeSelector = (farmAddress: string): UserStakeValueInterfa
   );
 
 export const useAllFarms = () => {
-  const allFarmsStates = useSelector(({ farms }) => Object.values(farms.allFarms));
+  const allFarmsStates = useSelector(({ farms }) => farms.allFarms);
 
   return useMemo(
     () =>
-      allFarmsStates
+      Object.values(allFarmsStates)
         .map(({ data }) => data.map(({ item }) => item))
         .flat()
         .filter(
@@ -58,12 +56,14 @@ export const useAllFarms = () => {
   );
 };
 
-export const useLastFarmsStakesSelector = () =>
-  useSelector(({ farms, wallet }) => {
-    const rawStakes = farms.lastStakes[wallet.selectedAccountPublicKeyHash] ?? {};
+export const useLastFarmsStakes = () => {
+  const rawStakes = useSelector(({ farms, wallet }) => farms.lastStakes[wallet.selectedAccountPublicKeyHash]);
 
-    return Object.fromEntries(Object.entries(rawStakes).map(([key, { data }]) => [key, data ?? undefined]));
-  }, isEqual);
+  return useMemo(
+    () => Object.fromEntries(Object.entries(rawStakes ?? {}).map(([key, { data }]) => [key, data ?? undefined])),
+    [rawStakes]
+  );
+};
 
 export const useFarmsStakesLoadingSelector = () =>
   useSelector(({ farms, wallet }) => {

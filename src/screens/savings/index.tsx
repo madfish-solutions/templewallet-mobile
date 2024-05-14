@@ -11,7 +11,7 @@ import { useLoadOnEachBlock } from 'src/hooks/use-load-on-each-block.hook';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
-import { useSavingsStakesLoadingSelector, useSavingsStakesSelector } from 'src/store/savings/selectors';
+import { useSavingsStakesLoadingSelector, useSavingsStakes } from 'src/store/savings/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import {
@@ -26,7 +26,7 @@ import { SavingsSelectorsEnum } from './selectors';
 import { useSavingsStyles } from './styles';
 
 export const Savings: FC = () => {
-  const stakes = useSavingsStakesSelector();
+  const stakes = useSavingsStakes();
   const stakesLoading = useSavingsStakesLoadingSelector();
   const styles = useSavingsStyles();
   const {

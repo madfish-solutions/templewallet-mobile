@@ -3,14 +3,14 @@ import {
   useAllFarmsWereLoadingSelector,
   useAllFarms,
   useFarmSortFieldSelector,
-  useLastFarmsStakesSelector
+  useLastFarmsStakes
 } from 'src/store/farms/selectors';
 
 import { useFilteredEarnOpportunities } from './use-filtered-earn-opportunities.hook';
 
 export const useFilteredFarmings = () => {
   const farms = useAllFarms();
-  const stakes = useLastFarmsStakesSelector();
+  const stakes = useLastFarmsStakes();
   const sortField = useFarmSortFieldSelector();
   const allFarmsWereLoading = useAllFarmsWereLoadingSelector();
 
