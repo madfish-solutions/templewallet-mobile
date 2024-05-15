@@ -8,6 +8,15 @@ import { atomicTokenAmountToFiat } from 'src/utils/fiat.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { ZERO } from 'src/utils/number.util';
 
+const numberIsValid = (value: string | null): value is `${number}` => isDefined(value) && !isNaN(Number(value));
+
+interface ReadyStakeEarnOpportunitiesStats {
+  netApr: BigNumber | undefined;
+  totalStakedAmountInFiat: BigNumber;
+  totalClaimableRewardsInFiat: BigNumber;
+  maxApr: BigNumber | undefined;
+}
+
 export const useEarnOpportunitiesStats = (
   earnOpportunities: EarnOpportunity[],
   userStakes: Record<string, UserStakeValueInterface | undefined>,
@@ -25,7 +34,8 @@ export const useEarnOpportunitiesStats = (
       };
     }
 
-    const maxApr = BigNumber.maximum(ZERO, ...earnOpportunities.map(item => getCorrectApr(item.apr)));
+    const validAprValues = earnOpportunities.map(item => item.apr).filter(numberIsValid);
+    const maxApr = validAprValues.length === 0 ? undefined : BigNumber.maximum(ZERO, ...validAprValues);
 
     if (!someStakesWereLoading) {
       return {
@@ -36,14 +46,15 @@ export const useEarnOpportunitiesStats = (
       };
     }
 
-    const result = {
-      netApr: ZERO,
+    const result: ReadyStakeEarnOpportunitiesStats = {
+      netApr: undefined,
       totalStakedAmountInFiat: ZERO,
       totalClaimableRewardsInFiat: ZERO,
       maxApr
     };
 
-    let totalWeightedApr = ZERO;
+    let netAprNumerator = ZERO;
+    let netAprDenominator = ZERO;
 
     Object.entries(userStakes).forEach(([address, stakeRecord]) => {
       if (!stakeRecord) {
@@ -63,24 +74,33 @@ export const useEarnOpportunitiesStats = (
         fiatToUsdRate
       );
 
-      totalWeightedApr = totalWeightedApr.plus(new BigNumber(getCorrectApr(item.apr)).multipliedBy(depositValueInFiat));
-      result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.plus(depositValueInFiat);
-      result.totalClaimableRewardsInFiat = result.totalClaimableRewardsInFiat.plus(
-        atomicTokenAmountToFiat(
-          new BigNumber(stakeRecord.claimableRewards ?? ZERO),
-          item.rewardToken.metadata.decimals,
-          item.earnExchangeRate,
-          fiatToUsdRate
-        )
+      const weightedAprSummand = new BigNumber(item.apr ?? '').multipliedBy(depositValueInFiat);
+
+      if (!weightedAprSummand.isNaN()) {
+        netAprNumerator = netAprNumerator.plus(weightedAprSummand);
+        netAprDenominator = netAprDenominator.plus(depositValueInFiat);
+      }
+
+      if (!depositValueInFiat.isNaN()) {
+        result.totalStakedAmountInFiat = result.totalStakedAmountInFiat.plus(depositValueInFiat);
+      }
+
+      const claimableRewardsInFiat = atomicTokenAmountToFiat(
+        new BigNumber(stakeRecord.claimableRewards ?? ZERO),
+        item.rewardToken.metadata.decimals,
+        item.earnExchangeRate,
+        fiatToUsdRate
       );
+
+      if (!claimableRewardsInFiat.isNaN()) {
+        result.totalClaimableRewardsInFiat = result.totalClaimableRewardsInFiat.plus(claimableRewardsInFiat);
+      }
     });
 
-    if (result.totalStakedAmountInFiat.isGreaterThan(ZERO)) {
-      result.netApr = totalWeightedApr.dividedBy(result.totalStakedAmountInFiat);
+    if (netAprDenominator.isGreaterThan(ZERO)) {
+      result.netApr = netAprNumerator.dividedBy(netAprDenominator);
     }
 
     return result;
   }, [earnOpportunities, someStakesWereLoading, userStakes, fiatToUsdRate]);
 };
-
-const getCorrectApr = (apr: string | null) => (isDefined(apr) && apr !== 'NaN' ? apr : ZERO);

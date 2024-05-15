@@ -13,6 +13,6 @@ export const OptionalFormattedAmount = memo<OptionalFormattedAmountProps>(
   ({ amount, renderLoader, style, ...restProps }) => {
     const Loader = useMemo(() => renderLoader ?? (() => <Text style={style}>---</Text>), [renderLoader, style]);
 
-    return amount ? <FormattedAmount amount={amount} style={style} {...restProps} /> : <Loader />;
+    return amount && !amount.isNaN() ? <FormattedAmount amount={amount} style={style} {...restProps} /> : <Loader />;
   }
 );

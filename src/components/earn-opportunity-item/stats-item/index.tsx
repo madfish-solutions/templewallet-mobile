@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
-import { FormattedAmount } from 'src/components/formatted-amount';
 import { OptionalFormattedAmount } from 'src/components/optional-formatted-amount';
 import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
 
@@ -31,7 +30,7 @@ export const StatsItem = memo<Props>(({ title, amounts, wasLoading, fiatEquivale
         style={styles.value}
       />
       {!fiatEquivalentIsMain && (
-        <FormattedAmount
+        <OptionalFormattedAmount
           style={styles.fiatEquity}
           isDollarValue
           showAllDecimalPlaces
