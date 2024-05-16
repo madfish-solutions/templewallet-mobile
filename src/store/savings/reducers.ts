@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { SavingsProviderEnum } from 'src/enums/savings-provider.enum';
-import { isDefined } from 'src/utils/is-defined';
+import { getStakeState, setStakeState } from 'src/utils/earn-opportunities/store.utils';
 
 import { createEntity } from '../create-entity';
 
@@ -17,27 +17,22 @@ import { savingsInitialState, SavingsState } from './state';
 export const savingsReducer = createReducer<SavingsState>(savingsInitialState, builder => {
   builder.addCase(loadSingleSavingStakeActions.submit, (state, { payload }) => {
     const { item, accountPkh } = payload;
-    const prevStakeState = state.stakes[accountPkh][item.contractAddress];
 
-    if (!isDefined(state.stakes[accountPkh])) {
-      state.stakes[accountPkh] = {};
-    }
-
-    state.stakes[accountPkh][item.contractAddress] = createEntity(prevStakeState?.data, true);
+    const prevStakeState = getStakeState(state, accountPkh, item.contractAddress);
+    setStakeState(state, accountPkh, item.contractAddress, createEntity(prevStakeState?.data, true));
   });
 
   builder.addCase(loadSingleSavingStakeActions.success, (state, { payload }) => {
     const { stake, contractAddress, accountPkh } = payload;
 
-    state.stakes[accountPkh][contractAddress] = createEntity(stake, false);
+    setStakeState(state, accountPkh, contractAddress, createEntity(stake, false));
   });
 
   builder.addCase(loadSingleSavingStakeActions.fail, (state, { payload }) => {
     const { accountPkh, contractAddress, error } = payload;
 
-    const stakeState = state.stakes[accountPkh][contractAddress];
-
-    state.stakes[accountPkh][contractAddress] = createEntity(stakeState?.data, false, error);
+    const prevStakeState = getStakeState(state, accountPkh, contractAddress);
+    setStakeState(state, accountPkh, contractAddress, createEntity(prevStakeState?.data, false, error));
   });
 
   builder.addCase(loadAllSavingsAndStakesAction, (state, { payload: accountPkh }) => {
@@ -78,11 +73,7 @@ export const savingsReducer = createReducer<SavingsState>(savingsInitialState, b
     const { accountPkh, stakes } = payload;
     const prevStakes = state.stakes[accountPkh] ?? {};
 
-    if (!isDefined(state.stakes[accountPkh])) {
-      state.stakes[accountPkh] = {};
-    }
-
-    const newStakes = Object.fromEntries(
+    state.stakes[accountPkh] = Object.fromEntries(
       Object.entries(stakes).map(([itemAddress, newStakeState]) => [
         itemAddress,
         createEntity(
@@ -92,8 +83,6 @@ export const savingsReducer = createReducer<SavingsState>(savingsInitialState, b
         )
       ])
     );
-
-    state.stakes[accountPkh] = newStakes;
   });
 
   builder.addCase(selectSavingsSortValueAction, (state, { payload }) => ({

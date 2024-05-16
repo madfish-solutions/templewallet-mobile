@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { nullableEntityWasLoading } from 'src/utils/earn-opportunities/entity.utils';
+import { nullableEntityWasLoading } from 'src/utils/earn-opportunities/store.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { useSelector } from '../selector';

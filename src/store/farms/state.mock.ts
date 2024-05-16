@@ -7,6 +7,6 @@ import { FarmsState } from './state';
 
 export const mockFarmsState: FarmsState = {
   allFarms: { [FarmsProviderEnum.Quipuswap]: createEntity([]), [FarmsProviderEnum.LiquidityBaking]: createEntity([]) },
-  lastStakes: {},
+  stakes: {},
   sortField: EarnOpportunitiesSortFieldEnum.Default
 };

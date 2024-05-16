@@ -7,13 +7,13 @@ import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 
 export interface FarmsState {
-  lastStakes: Record<string, UserEarnOpportunitiesStakes>;
+  stakes: Record<string, UserEarnOpportunitiesStakes>;
   allFarms: Record<FarmsProviderEnum, LoadableEntityState<Array<SingleFarmResponse>>>;
   sortField: EarnOpportunitiesSortFieldEnum;
 }
 
 export const farmsInitialState: FarmsState = {
-  lastStakes: {},
+  stakes: {},
   allFarms: { [FarmsProviderEnum.Quipuswap]: createEntity([]), [FarmsProviderEnum.LiquidityBaking]: createEntity([]) },
   sortField: EarnOpportunitiesSortFieldEnum.Default
 };
