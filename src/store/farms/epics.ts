@@ -1,5 +1,5 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, delay, exhaustMap, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, delay, exhaustMap, forkJoin, from, map, merge, mergeMap, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -25,7 +25,7 @@ import {
 } from './actions';
 import { getFarmStake, GetFarmStakeError, toUserStakeValueInterface, withExchangeRates } from './utils';
 
-const loadSingleFarmLastStake: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSingleFarmLastStake: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadSingleFarmStakeActions.submit),
     withSelectedRpcUrl(state$),
@@ -54,7 +54,7 @@ const loadSingleFarmLastStake: Epic<Action, Action> = (action$: Observable<Actio
     })
   );
 
-const loadAllFarms: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllFarms: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadAllFarmsAction),
     withExchangeRates(state$),
@@ -82,7 +82,7 @@ const loadAllFarms: Epic<Action, Action> = (action$: Observable<Action>, state$:
     })
   );
 
-const loadFarmsByProvider: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadFarmsByProvider: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadFarmsByProviderActions.submit),
     withExchangeRates(state$),
@@ -107,7 +107,7 @@ const loadFarmsByProvider: Epic<Action, Action> = (action$: Observable<Action>, 
     })
   );
 
-const loadAllFarmsAndStakes: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllFarmsAndStakes: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadAllFarmsAndStakesAction),
     withExchangeRates(state$),

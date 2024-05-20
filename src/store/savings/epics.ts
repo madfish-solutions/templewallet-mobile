@@ -1,5 +1,5 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, forkJoin, from, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, from, map, merge, mergeMap, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -22,7 +22,7 @@ import {
 } from './actions';
 import { loadSingleSavingStake$ } from './utils';
 
-const loadSingleSavingLastStake: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSingleSavingLastStake: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
     withSelectedRpcUrl(state$),
@@ -51,7 +51,7 @@ const loadSingleSavingLastStake: Epic<Action, Action> = (action$: Observable<Act
     )
   );
 
-const loadAllSavingsItems: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllSavingsItems: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadAllSavingsAction),
     withSelectedRpcUrl(state$),
@@ -73,7 +73,7 @@ const loadAllSavingsItems: Epic<Action, Action> = (action$: Observable<Action>, 
     })
   );
 
-const loadSavingsItemsByProvider: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSavingsItemsByProvider: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadSavingsByProviderActions.submit),
     withSelectedRpcUrl(state$),
@@ -92,10 +92,7 @@ const loadSavingsItemsByProvider: Epic<Action, Action> = (action$: Observable<Ac
     )
   );
 
-const loadAllSavingsItemsAndStakes: Epic<Action, Action> = (
-  action$: Observable<Action>,
-  state$: Observable<RootState>
-) =>
+const loadAllSavingsItemsAndStakes: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadAllSavingsAndStakesAction),
     withSelectedRpcUrl(state$),
