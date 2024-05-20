@@ -22,7 +22,7 @@ import {
 } from './actions';
 import { loadSingleSavingStake$ } from './utils';
 
-const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSingleSavingLastStake: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
     withSelectedRpcUrl(state$),
@@ -51,13 +51,13 @@ const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Ob
     )
   );
 
-const loadAllSavingsItems: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllSavingsItems: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllSavingsAction),
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
     switchMap(([[, rpcUrl], rates]) => forkJoin([getYouvesSavingsItems$(rates, rpcUrl), getKordFiItems$(rates)])),
-    map(([youvesSavings, kordFiSavings]) =>
+    switchMap(([youvesSavings, kordFiSavings]) =>
       of(
         loadSavingsByProviderActions.success({ data: youvesSavings, provider: SavingsProviderEnum.Youves }),
         loadSavingsByProviderActions.success({ data: kordFiSavings, provider: SavingsProviderEnum.KordFi })
@@ -73,7 +73,7 @@ const loadAllSavingsItems: Epic = (action$: Observable<Action>, state$: Observab
     })
   );
 
-const loadSavingsItemsByProvider: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSavingsItemsByProvider: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSavingsByProviderActions.submit),
     withSelectedRpcUrl(state$),
@@ -92,7 +92,10 @@ const loadSavingsItemsByProvider: Epic = (action$: Observable<Action>, state$: O
     )
   );
 
-const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllSavingsItemsAndStakes: Epic<Action, Action> = (
+  action$: Observable<Action>,
+  state$: Observable<RootState>
+) =>
   action$.pipe(
     ofType(loadAllSavingsAndStakesAction),
     withSelectedRpcUrl(state$),

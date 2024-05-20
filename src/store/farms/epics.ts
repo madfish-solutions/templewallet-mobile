@@ -25,7 +25,7 @@ import {
 } from './actions';
 import { getFarmStake, GetFarmStakeError, toUserStakeValueInterface, withExchangeRates } from './utils';
 
-const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSingleFarmLastStake: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadSingleFarmStakeActions.submit),
     withSelectedRpcUrl(state$),
@@ -54,7 +54,7 @@ const loadSingleFarmLastStake: Epic = (action$: Observable<Action>, state$: Obse
     })
   );
 
-const loadAllFarms: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllFarms: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllFarmsAction),
     withExchangeRates(state$),
@@ -82,7 +82,7 @@ const loadAllFarms: Epic = (action$: Observable<Action>, state$: Observable<Root
     })
   );
 
-const loadFarmsByProvider: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadFarmsByProvider: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadFarmsByProviderActions.submit),
     withExchangeRates(state$),
@@ -107,7 +107,7 @@ const loadFarmsByProvider: Epic = (action$: Observable<Action>, state$: Observab
     })
   );
 
-const loadAllFarmsAndStakes: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllFarmsAndStakes: Epic<Action, Action> = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllFarmsAndStakesAction),
     withExchangeRates(state$),
