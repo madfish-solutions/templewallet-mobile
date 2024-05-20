@@ -78,18 +78,6 @@ export const DApps = () => {
 
   const tabletMode = isTablet();
 
-  const texts = useMemo(() => {
-    const lines = LIMIT_DAPPS_FEATURES
-      ? [
-          'Temple only provides links to third-party web',
-          'applications for Tezos blockchain. They should',
-          'be used at your own risk.'
-        ]
-      : ['Other DApps are third-party websites.', 'They should be used at your own risk.'];
-
-    return tabletMode ? [lines.join(' ')] : lines;
-  }, [tabletMode]);
-
   const sortedDAppsList = useMemo(
     () =>
       isString(searchQuery)
@@ -117,6 +105,28 @@ export const DApps = () => {
     ),
     [itemWidth]
   );
+
+  const otherDappsHeader = useMemo(() => {
+    if (!isListNotEmpty) {
+      return null;
+    }
+
+    if (LIMIT_DAPPS_FEATURES) {
+      return <Text style={styles.text}>Bookmarks</Text>;
+    }
+
+    const texts = ['Other DApps are third-party websites.', 'They should be used at your own risk.'];
+
+    return (
+      <>
+        <Text style={styles.text}>Others</Text>
+
+        <View style={styles.dappBlockWrapper}>
+          <Disclaimer texts={tabletMode ? [texts.join(' ')] : texts} />
+        </View>
+      </>
+    );
+  }, [isListNotEmpty, tabletMode, styles]);
 
   return (
     <>
@@ -152,15 +162,7 @@ export const DApps = () => {
           </>
         )}
 
-        {isListNotEmpty && (
-          <>
-            <Text style={styles.text}>Others</Text>
-
-            <View style={styles.dappBlockWrapper}>
-              <Disclaimer texts={texts} />
-            </View>
-          </>
-        )}
+        {otherDappsHeader}
 
         <FlashList
           data={data}
