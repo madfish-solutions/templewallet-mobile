@@ -10,6 +10,7 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useFarmStakeWasLoadingSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { Farm } from 'src/types/farm';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -22,15 +23,16 @@ import { HARVEST_CONFIRMATION_TEXT } from './constants';
 interface Props {
   farm: Farm;
   lastStakeRecord?: UserStakeValueInterface;
-  stakeIsLoading: boolean;
 }
 
-export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) => {
+export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const { id, contractAddress } = farm;
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const tezos = useReadOnlyTezosToolkit();
   const { trackEvent } = useAnalytics();
+
+  const stakeWasLoading = useFarmStakeWasLoadingSelector(contractAddress);
 
   const navigateToFarm = useCallback(
     () => navigate(ModalsEnum.ManageFarmingPool, { id: id, contractAddress: contractAddress }),
@@ -84,7 +86,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord, stakeIsLoading }) =
       lastStakeRecord={lastStakeRecord}
       navigateToOpportunity={navigateToFarm}
       harvestRewards={harvestAssetsApi}
-      stakeIsLoading={stakeIsLoading}
+      stakeWasLoading={stakeWasLoading}
     />
   );
 };

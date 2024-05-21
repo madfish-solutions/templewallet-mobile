@@ -1,11 +1,11 @@
-import React, { FC, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Text } from 'react-native';
 
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { formatSize } from 'src/styles/format-size';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { formatTimespan, SECONDS_IN_DAY, SECONDS_IN_HOUR, SECONDS_IN_MINUTE } from 'src/utils/date.utils';
 
 import { useVestingPeriodDisclaimersStyles } from './styles';
@@ -16,7 +16,7 @@ interface Props {
 
 const NEGLIGIBLE_VESTING_PERIOD_SECONDS = 15;
 
-export const VestingPeriodDisclaimers: FC<Props> = ({ earnOpportunityItem }) => {
+export const VestingPeriodDisclaimers = memo<Props>(({ earnOpportunityItem }) => {
   const vestingPeriodSeconds = Number(earnOpportunityItem.vestingPeriodSeconds);
   const formattedVestingPeriod = useMemo(() => {
     let unit: 'hour' | 'day' | 'second' | 'minute';
@@ -63,4 +63,4 @@ export const VestingPeriodDisclaimers: FC<Props> = ({ earnOpportunityItem }) => 
       {vestingPeriodSeconds > NEGLIGIBLE_VESTING_PERIOD_SECONDS && <Divider size={formatSize(16)} />}
     </>
   );
-};
+});

@@ -1,5 +1,5 @@
 import { noop } from 'lodash-es';
-import React, { FC, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Bage } from 'src/components/bage/bage';
@@ -9,8 +9,6 @@ import { EarnOpportunityTokens } from 'src/components/earn-opportunity-tokens';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { PERCENTAGE_DECIMALS } from 'src/config/earn-opportunities';
-import { EmptyFn } from 'src/config/general';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
@@ -20,10 +18,10 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { KNOWN_STABLECOINS_SLUGS } from 'src/token/data/token-slugs';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { SECONDS_IN_DAY } from 'src/utils/date.utils';
+import { formatOptionalPercentage } from 'src/utils/earn-opportunities/format.utils';
 import { isFarm } from 'src/utils/earn.utils';
-import { isDefined } from 'src/utils/is-defined';
 
 import { EarnOpportunityItemSelectors } from './selectors';
 import { StatsItem } from './stats-item';
@@ -35,187 +33,182 @@ interface Props {
   lastStakeRecord?: UserStakeValueInterface;
   navigateToOpportunity: EmptyFn;
   harvestRewards?: EmptyFn;
-  stakeIsLoading: boolean;
+  stakeWasLoading: boolean;
 }
 
-export const EarnOpportunityItem: FC<Props> = ({
-  item,
-  lastStakeRecord,
-  navigateToOpportunity,
-  harvestRewards = noop,
-  stakeIsLoading
-}) => {
-  const {
-    apr,
-    stakedToken,
-    depositExchangeRate,
-    earnExchangeRate,
-    type: itemType,
-    vestingPeriodSeconds,
-    id,
-    contractAddress
-  } = item;
-  const colors = useColors();
-  const theme = useThemeSelector();
-  const styles = useEarnOpportunityItemStyles();
-  const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
-  const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
-  const { stakeTokens, rewardToken } = useEarnOpportunityTokens(item);
-  const itemIsFarm = isFarm(item);
-  const isLiquidityBaking = itemType === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
-  const isKordFi = itemType === EarnOpportunityTypeEnum.KORD_FI_SAVING;
-  const allTokensAreStablecoins = useMemo(
-    () =>
-      item.tokens.every(token =>
-        KNOWN_STABLECOINS_SLUGS.includes(toTokenSlug(token.contractAddress, token.fa2TokenId))
-      ),
-    [item.tokens]
-  );
-  const earnSourceText = useMemo(() => {
-    switch (item.type) {
-      case EarnOpportunityTypeEnum.YOUVES_SAVING:
-      case EarnOpportunityTypeEnum.YOUVES_STAKING:
-        return 'Youves';
-      case EarnOpportunityTypeEnum.KORD_FI_SAVING:
-        return 'Kord.Fi';
-      case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
-        return 'Liquidity Baking';
-
-      default:
-        return 'QuipuSwap';
-    }
-  }, [item]);
-  const earnSourceIcon = useMemo(() => {
-    switch (item.type) {
-      case EarnOpportunityTypeEnum.YOUVES_SAVING:
-      case EarnOpportunityTypeEnum.YOUVES_STAKING:
-        return theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
-      case EarnOpportunityTypeEnum.KORD_FI_SAVING:
-        return IconNameEnum.KordFiEarnSource;
-
-      default:
-        return IconNameEnum.QsEarnSource;
-    }
-  }, [theme, item]);
-
-  const formattedApr = useMemo(
-    () => (isDefined(apr) && apr !== 'NaN' ? Number(apr).toFixed(PERCENTAGE_DECIMALS) : '---'),
-    [apr]
-  );
-
-  const depositAmounts = useAmounts(
-    lastStakeRecord?.depositAmountAtomic,
-    stakedToken.metadata.decimals,
-    depositExchangeRate
-  );
-  const { amount: depositAmount } = depositAmounts;
-  const depositIsZero = depositAmount.isZero();
-
-  const claimableRewardsAmounts = useAmounts(lastStakeRecord?.claimableRewards, rewardToken.decimals, earnExchangeRate);
-
-  const actionButtonsTestIDProperties = useMemo(
-    () => ({
+export const EarnOpportunityItem = memo<Props>(
+  ({ item, lastStakeRecord, navigateToOpportunity, harvestRewards = noop, stakeWasLoading }) => {
+    const {
+      apr,
+      stakedToken,
+      depositExchangeRate,
+      earnExchangeRate,
+      type: itemType,
+      vestingPeriodSeconds,
       id,
       contractAddress
-    }),
-    [id, contractAddress]
-  );
+    } = item;
+    const colors = useColors();
+    const theme = useThemeSelector();
+    const styles = useEarnOpportunityItemStyles();
+    const buttonPrimaryStylesConfig = useButtonPrimaryStyleConfig();
+    const buttonSecondaryStylesConfig = useButtonSecondaryStyleConfig();
+    const { stakeTokens, rewardToken } = useEarnOpportunityTokens(item);
+    const itemIsFarm = isFarm(item);
+    const isLiquidityBaking = itemType === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
+    const isKordFi = itemType === EarnOpportunityTypeEnum.KORD_FI_SAVING;
+    const allTokensAreStablecoins = useMemo(
+      () =>
+        item.tokens.every(token =>
+          KNOWN_STABLECOINS_SLUGS.includes(toTokenSlug(token.contractAddress, token.fa2TokenId))
+        ),
+      [item.tokens]
+    );
+    const earnSourceText = useMemo(() => {
+      switch (item.type) {
+        case EarnOpportunityTypeEnum.YOUVES_SAVING:
+        case EarnOpportunityTypeEnum.YOUVES_STAKING:
+          return 'Youves';
+        case EarnOpportunityTypeEnum.KORD_FI_SAVING:
+          return 'Kord.Fi';
+        case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
+          return 'Liquidity Baking';
 
-  return (
-    <View style={[styles.root, styles.mb16]}>
-      <View style={styles.bageContainer}>
-        {(itemType === EarnOpportunityTypeEnum.STABLESWAP || (allTokensAreStablecoins && !itemIsFarm)) && (
-          <Bage text="Stable Pool" color={colors.kolibriGreen} style={styles.bage} textStyle={styles.bageText} />
-        )}
-        {Number(vestingPeriodSeconds) > SECONDS_IN_DAY && (
-          <Bage
-            text={itemIsFarm ? 'Long-Term Farm' : 'Long-Term Savings Pool'}
-            style={[styles.bage, styles.lastBage]}
-            textStyle={styles.bageText}
-          />
-        )}
-      </View>
-      <View style={styles.mainContent}>
-        <View style={[styles.tokensContainer, styles.row]}>
-          <EarnOpportunityTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
-          <View>
-            <Text style={styles.aprText}>APR: {formattedApr}%</Text>
-            <View style={styles.earnSource}>
-              {isLiquidityBaking ? (
-                <View style={[styles.earnSourceIcon, styles.liquidityBakingIconWrapper]}>
-                  <Icon size={formatSize(6)} name={IconNameEnum.LiquidityBakingLogo} />
-                </View>
-              ) : (
-                <Icon style={styles.earnSourceIcon} size={formatSize(12)} name={earnSourceIcon} />
-              )}
-              <Text style={styles.attributeTitle}>{earnSourceText}</Text>
-            </View>
-          </View>
-        </View>
+        default:
+          return 'QuipuSwap';
+      }
+    }, [item]);
+    const earnSourceIcon = useMemo(() => {
+      switch (item.type) {
+        case EarnOpportunityTypeEnum.YOUVES_SAVING:
+        case EarnOpportunityTypeEnum.YOUVES_STAKING:
+          return theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
+        case EarnOpportunityTypeEnum.KORD_FI_SAVING:
+          return IconNameEnum.KordFiEarnSource;
 
-        <HorizontalBorder />
+        default:
+          return IconNameEnum.QsEarnSource;
+      }
+    }, [theme, item]);
 
-        <Divider size={formatSize(8)} />
+    const depositAmounts = useAmounts(
+      lastStakeRecord?.depositAmountAtomic,
+      stakedToken.metadata.decimals,
+      depositExchangeRate
+    );
+    const { amount: depositAmount } = depositAmounts;
+    const depositIsZero = depositAmount.isZero();
 
-        <View style={[styles.row, styles.mb16]}>
-          <StatsItem
-            title={isKordFi ? 'Your deposit & Rewards:' : 'Your deposit:'}
-            amounts={depositAmounts}
-            isLoading={stakeIsLoading}
-            fiatEquivalentIsMain={itemIsFarm}
-            tokenSymbol={stakedToken.metadata.symbol}
-          />
-          {!depositIsZero && !isLiquidityBaking && !isKordFi && (
-            <StatsItem
-              title="Claimable rewards:"
-              amounts={claimableRewardsAmounts}
-              isLoading={stakeIsLoading}
-              fiatEquivalentIsMain={itemIsFarm}
-              tokenSymbol={rewardToken.symbol}
+    const claimableRewardsAmounts = useAmounts(
+      lastStakeRecord?.claimableRewards,
+      rewardToken.decimals,
+      earnExchangeRate
+    );
+
+    const actionButtonsTestIDProperties = useMemo(
+      () => ({
+        id,
+        contractAddress
+      }),
+      [id, contractAddress]
+    );
+
+    return (
+      <View style={[styles.root, styles.mb16]}>
+        <View style={styles.bageContainer}>
+          {(itemType === EarnOpportunityTypeEnum.STABLESWAP || (allTokensAreStablecoins && !itemIsFarm)) && (
+            <Bage text="Stable Pool" color={colors.kolibriGreen} style={styles.bage} textStyle={styles.bageText} />
+          )}
+          {Number(vestingPeriodSeconds) > SECONDS_IN_DAY && (
+            <Bage
+              text={itemIsFarm ? 'Long-Term Farm' : 'Long-Term Savings Pool'}
+              style={[styles.bage, styles.lastBage]}
+              textStyle={styles.bageText}
             />
           )}
         </View>
-
-        <View style={styles.row}>
-          {!depositIsZero && (
-            <View style={styles.flex}>
-              <Button
-                title="MANAGE"
-                isFullWidth
-                onPress={navigateToOpportunity}
-                styleConfig={buttonSecondaryStylesConfig}
-                testID={EarnOpportunityItemSelectors.ManageButton}
-                testIDProperties={actionButtonsTestIDProperties}
-              />
+        <View style={styles.mainContent}>
+          <View style={[styles.tokensContainer, styles.row]}>
+            <EarnOpportunityTokens stakeTokens={stakeTokens} rewardToken={rewardToken} />
+            <View>
+              <Text style={styles.aprText}>APR: {formatOptionalPercentage(apr ?? undefined)}</Text>
+              <View style={styles.earnSource}>
+                {isLiquidityBaking ? (
+                  <View style={[styles.earnSourceIcon, styles.liquidityBakingIconWrapper]}>
+                    <Icon size={formatSize(6)} name={IconNameEnum.LiquidityBakingLogo} />
+                  </View>
+                ) : (
+                  <Icon style={styles.earnSourceIcon} size={formatSize(12)} name={earnSourceIcon} />
+                )}
+                <Text style={styles.attributeTitle}>{earnSourceText}</Text>
+              </View>
             </View>
-          )}
-          {!depositIsZero && itemIsFarm && !isLiquidityBaking && (
-            <>
-              <Divider size={formatSize(8)} />
+          </View>
+
+          <HorizontalBorder />
+
+          <Divider size={formatSize(8)} />
+
+          <View style={[styles.row, styles.mb16]}>
+            <StatsItem
+              title={isKordFi ? 'Your deposit & Rewards:' : 'Your deposit:'}
+              amounts={depositAmounts}
+              wasLoading={stakeWasLoading}
+              fiatEquivalentIsMain={itemIsFarm}
+              tokenSymbol={stakedToken.metadata.symbol}
+            />
+            {!depositIsZero && !isLiquidityBaking && !isKordFi && (
+              <StatsItem
+                title="Claimable rewards:"
+                amounts={claimableRewardsAmounts}
+                wasLoading={stakeWasLoading}
+                fiatEquivalentIsMain={itemIsFarm}
+                tokenSymbol={rewardToken.symbol}
+              />
+            )}
+          </View>
+
+          <View style={styles.row}>
+            {!depositIsZero && (
               <View style={styles.flex}>
                 <Button
+                  title="MANAGE"
                   isFullWidth
-                  title="CLAIM REWARDS"
-                  onPress={harvestRewards}
-                  styleConfig={buttonPrimaryStylesConfig}
-                  testID={EarnOpportunityItemSelectors.ClaimRewardsButton}
+                  onPress={navigateToOpportunity}
+                  styleConfig={buttonSecondaryStylesConfig}
+                  testID={EarnOpportunityItemSelectors.ManageButton}
                   testIDProperties={actionButtonsTestIDProperties}
                 />
               </View>
-            </>
-          )}
-          {depositIsZero && (
-            <Button
-              isFullWidth
-              title={itemIsFarm ? 'START FARMING' : 'START EARNING'}
-              onPress={navigateToOpportunity}
-              styleConfig={buttonPrimaryStylesConfig}
-              testID={EarnOpportunityItemSelectors.StartFarmingButton}
-              testIDProperties={actionButtonsTestIDProperties}
-            />
-          )}
+            )}
+            {!depositIsZero && itemIsFarm && !isLiquidityBaking && (
+              <>
+                <Divider size={formatSize(8)} />
+                <View style={styles.flex}>
+                  <Button
+                    isFullWidth
+                    title="CLAIM REWARDS"
+                    onPress={harvestRewards}
+                    styleConfig={buttonPrimaryStylesConfig}
+                    testID={EarnOpportunityItemSelectors.ClaimRewardsButton}
+                    testIDProperties={actionButtonsTestIDProperties}
+                  />
+                </View>
+              </>
+            )}
+            {depositIsZero && (
+              <Button
+                isFullWidth
+                title={itemIsFarm ? 'START FARMING' : 'START EARNING'}
+                onPress={navigateToOpportunity}
+                styleConfig={buttonPrimaryStylesConfig}
+                testID={EarnOpportunityItemSelectors.StartFarmingButton}
+                testIDProperties={actionButtonsTestIDProperties}
+              />
+            )}
+          </View>
         </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+);

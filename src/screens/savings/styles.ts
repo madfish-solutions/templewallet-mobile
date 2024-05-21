@@ -19,5 +19,11 @@ export const useSavingsStyles = createUseStyles(({ colors, typography }) => ({
   },
   loader: {
     marginTop: formatSize(100)
+  },
+  emptyListLoader: {
+    marginTop: formatSize(100)
+  },
+  bottomLoader: {
+    margin: formatSize(24)
   }
 }));

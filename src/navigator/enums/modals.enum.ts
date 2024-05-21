@@ -1,7 +1,7 @@
 import { AccountInterface, AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 
 export enum ModalsEnum {
   Receive = 'Receive',

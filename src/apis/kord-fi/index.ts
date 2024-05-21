@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BigNumber } from 'bignumber.js';
+import { isEqual } from 'lodash-es';
 import { Observable, catchError, from, map, of } from 'rxjs';
 
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
@@ -61,7 +62,9 @@ const getKordFiStats$ = (): Observable<KordFiLendStats> =>
     )
   );
 
-export const getKordFiUserDeposits$ = (address: string): Observable<{ [key: string]: UserStakeValueInterface }> =>
+export const getKordFiUserDeposits$ = (
+  address: string
+): Observable<{ [key: string]: UserStakeValueInterface | null }> =>
   from(kordFiApi.post<KordFiUserDepositsResponse>('/llb-api/user-deposits/', { address })).pipe(
     map(({ data: { xtz_deposit, tzbtc_deposit } }) => {
       const tezosDepositAmountAtomic = tzToMutez(new BigNumber(xtz_deposit), TEZ_TOKEN_METADATA.decimals).toFixed();
@@ -88,9 +91,17 @@ export const getKordFiUserDeposits$ = (address: string): Observable<{ [key: stri
       };
     }),
     catchError(error => {
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.status === 404 &&
+        isEqual(error.response.data, { detail: 'User not found' })
+      ) {
+        return of({ [KORDFI_TEZOS_CONTRACT_ADDRESS]: null, [TZBTC_CONTRACT_ADDRESS]: null });
+      }
+
       console.error('Error getting Kord.Fi user deposits: ', error);
 
-      return of({});
+      throw error;
     })
   );
 

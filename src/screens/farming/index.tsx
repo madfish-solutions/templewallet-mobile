@@ -1,5 +1,5 @@
-import React, { FC, useCallback } from 'react';
-import { ActivityIndicator, ListRenderItem } from 'react-native';
+import React, { FC, useMemo } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -10,27 +10,30 @@ import { useFilteredFarmings } from 'src/hooks/use-filtered-farmings.hook';
 import { useLoadOnEachBlock } from 'src/hooks/use-load-on-each-block.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
-import { useFarmsStakesLoadingSelector, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
+import { useFarmsStakesLoadingSelector, useLastFarmsStakes } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { Farm } from 'src/types/farm';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import {
+  createItemsListWithLoader,
+  earnOpportunityKeyExtractor,
+  getRenderEarnOpportunityFn
+} from 'src/utils/earn-opportunities/list.utils';
 
 import { FarmItem } from './farm-item';
 import { MainInfo } from './main-info';
 import { FarmsSelectorsEnum } from './selectors';
 import { useFarmingStyles } from './styles';
 
-const keyExtractor = ({ id, contractAddress }: Farm) => `${id}_${contractAddress}`;
-
 export const Farming: FC = () => {
-  const stakes = useLastFarmsStakesSelector();
+  const stakes = useLastFarmsStakes();
   const stakesLoading = useFarmsStakesLoadingSelector();
   const styles = useFarmingStyles();
   const {
     sortField,
     depositedOnly,
     filteredItemsList,
-    pageIsLoading,
+    shouldShowLoader,
     setSearchValue,
     handleSetSortField,
     handleToggleDepositOnly
@@ -39,11 +42,23 @@ export const Farming: FC = () => {
   usePageAnalytic(ScreensEnum.Farming);
   useLoadOnEachBlock(stakesLoading, loadAllFarmsAndStakesAction);
 
-  const renderItem = useCallback<ListRenderItem<Farm>>(
-    ({ item }) => (
-      <FarmItem farm={item} lastStakeRecord={stakes[item.contractAddress]} stakeIsLoading={stakesLoading} />
-    ),
-    [stakes, stakesLoading]
+  const renderItem = useMemo(
+    () =>
+      getRenderEarnOpportunityFn<Farm>(
+        () => (
+          <ActivityIndicator
+            style={filteredItemsList.length === 0 ? styles.emptyListLoader : styles.bottomLoader}
+            size="large"
+          />
+        ),
+        item => <FarmItem farm={item} lastStakeRecord={stakes[item.contractAddress]} />
+      ),
+    [filteredItemsList.length, stakes, styles.bottomLoader, styles.emptyListLoader]
+  );
+
+  const data = useMemo(
+    () => createItemsListWithLoader(filteredItemsList, shouldShowLoader),
+    [filteredItemsList, shouldShowLoader]
   );
 
   return (
@@ -61,27 +76,19 @@ export const Farming: FC = () => {
         handleSetSortField={handleSetSortField}
       />
       <HorizontalBorder />
-      {pageIsLoading ? (
-        <ActivityIndicator style={styles.loader} size="large" />
-      ) : (
-        <>
-          <Divider size={formatSize(8)} />
-          <FlatList
-            data={filteredItemsList}
-            keyExtractor={keyExtractor}
-            ListEmptyComponent={
-              <DataPlaceholder
-                text={
-                  Object.keys(stakes).length === 0 && depositedOnly
-                    ? 'You have no deposits in farms'
-                    : 'No records found'
-                }
-              />
+      <Divider size={formatSize(8)} />
+      <FlatList
+        data={data}
+        keyExtractor={earnOpportunityKeyExtractor}
+        ListEmptyComponent={
+          <DataPlaceholder
+            text={
+              Object.keys(stakes).length === 0 && depositedOnly ? 'You have no deposits in farms' : 'No records found'
             }
-            renderItem={renderItem}
           />
-        </>
-      )}
+        }
+        renderItem={renderItem}
+      />
     </>
   );
 };

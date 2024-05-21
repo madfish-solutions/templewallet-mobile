@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -7,7 +7,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { formatSize } from 'src/styles/format-size';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { isFarm } from 'src/utils/earn.utils';
 
 import { DetailsCard } from '../details-card';
@@ -23,7 +23,7 @@ interface Props {
 
 const youvesSavingsTypes = [EarnOpportunityTypeEnum.YOUVES_SAVING, EarnOpportunityTypeEnum.YOUVES_STAKING];
 
-export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldShowClaimRewardsButton, loading }) => {
+export const DetailsSection = memo<Props>(({ earnOpportunityItem, stake, shouldShowClaimRewardsButton, loading }) => {
   const styles = useDetailsSectionStyles();
   const isLiquidityBaking = earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
   const isKordFi = earnOpportunityItem.type === EarnOpportunityTypeEnum.KORD_FI_SAVING;
@@ -86,4 +86,4 @@ export const DetailsSection: FC<Props> = ({ earnOpportunityItem, stake, shouldSh
       />
     </>
   );
-};
+});

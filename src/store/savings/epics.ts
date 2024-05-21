@@ -1,40 +1,49 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, forkJoin, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
+import { catchError, forkJoin, from, map, merge, mergeMap, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getKordFiItems$, getKordFiUserDeposits$ } from 'src/apis/kord-fi';
-import { getUserStake, getYouvesSavingsItems$ } from 'src/apis/youves';
-import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { showErrorToastByError } from 'src/toast/error-toast.utils';
+import { getKordFiItems$ } from 'src/apis/kord-fi';
+import { getYouvesSavingsItems$ } from 'src/apis/youves';
+import { SavingsProviderEnum } from 'src/enums/savings-provider.enum';
+import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
 import { showFailedStakeLoadWarning } from 'src/toast/toast.utils';
-import { withSelectedAccount, withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
+import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
+import { withAccount, withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { RootState } from '../types';
 
 import {
-  loadAllSavingsActions,
+  loadAllSavingsAction,
   loadAllSavingsAndStakesAction,
   loadAllStakesActions,
+  loadSavingsByProviderActions,
   loadSingleSavingStakeActions
 } from './actions';
 import { loadSingleSavingStake$ } from './utils';
 
-const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSingleSavingLastStake: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
     withSelectedRpcUrl(state$),
-    withSelectedAccount(state$),
-    switchMap(([[{ payload: savingsItem }, rpcUrl], selectedAccount]) =>
-      loadSingleSavingStake$(savingsItem, selectedAccount, rpcUrl).pipe(
-        map(stake => loadSingleSavingStakeActions.success({ stake, contractAddress: savingsItem.contractAddress })),
+    withAccount(state$, ([{ payload }]) => payload.accountPkh),
+    mergeMap(([[{ payload }, rpcUrl], account]) =>
+      loadSingleSavingStake$(payload.item, account, rpcUrl).pipe(
+        map(stake =>
+          loadSingleSavingStakeActions.success({
+            stake,
+            contractAddress: payload.item.contractAddress,
+            accountPkh: payload.accountPkh
+          })
+        ),
         catchError(err => {
-          showErrorToastByError(err, undefined, true);
+          showFailedStakeLoadWarning();
 
           return of(
             loadSingleSavingStakeActions.fail({
-              contractAddress: savingsItem.contractAddress,
-              error: (err as Error).message
+              contractAddress: payload.item.contractAddress,
+              error: (err as Error).message,
+              accountPkh: payload.accountPkh
             })
           );
         })
@@ -42,65 +51,92 @@ const loadSingleSavingLastStake: Epic = (action$: Observable<Action>, state$: Ob
     )
   );
 
-const loadAllSavingsItems: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllSavingsItems: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
-    ofType(loadAllSavingsActions.submit),
+    ofType(loadAllSavingsAction),
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([[, rpcUrl], rates]) => getYouvesSavingsItems$(rates, rpcUrl)),
-    map(savings => loadAllSavingsActions.success(savings)),
+    switchMap(([[, rpcUrl], rates]) => forkJoin([getYouvesSavingsItems$(rates, rpcUrl), getKordFiItems$(rates)])),
+    switchMap(([youvesSavings, kordFiSavings]) =>
+      of(
+        loadSavingsByProviderActions.success({ data: youvesSavings, provider: SavingsProviderEnum.Youves }),
+        loadSavingsByProviderActions.success({ data: kordFiSavings, provider: SavingsProviderEnum.KordFi })
+      )
+    ),
     catchError(err => {
       showErrorToastByError(err, undefined, true);
 
-      return of(loadAllSavingsActions.fail());
+      return of(
+        loadSavingsByProviderActions.fail({ provider: SavingsProviderEnum.Youves, error: (err as Error).message }),
+        loadSavingsByProviderActions.fail({ provider: SavingsProviderEnum.KordFi, error: (err as Error).message })
+      );
     })
   );
 
-const loadAllSavingsItemsAndStakes: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadSavingsItemsByProvider: Epic<Action, Action, RootState> = (action$, state$) =>
+  action$.pipe(
+    ofType(loadSavingsByProviderActions.submit),
+    withSelectedRpcUrl(state$),
+    withUsdToTokenRates(state$),
+    switchMap(([[{ payload: savingsProvider }, rpcUrl], rates]) =>
+      from(
+        savingsProvider === SavingsProviderEnum.KordFi ? getKordFiItems$(rates) : getYouvesSavingsItems$(rates, rpcUrl)
+      ).pipe(
+        map(data => loadSavingsByProviderActions.success({ data, provider: savingsProvider })),
+        catchError(err => {
+          showErrorToast({ description: getAxiosQueryErrorMessage(err) });
+
+          return of(loadSavingsByProviderActions.fail({ provider: savingsProvider, error: (err as Error).message }));
+        })
+      )
+    )
+  );
+
+const loadAllSavingsItemsAndStakes: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
     ofType(loadAllSavingsAndStakesAction),
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([[, rpcUrl], rates]) => forkJoin([getYouvesSavingsItems$(rates, rpcUrl), getKordFiItems$(rates)])),
-    withSelectedRpcUrl(state$),
-    withSelectedAccount(state$),
-    switchMap(([[[youvesSavings, kordFiSavings], rpcUrl], selectedAccount]) => {
-      if (youvesSavings.length === 0 && kordFiSavings.length === 0) {
-        throw new Error('Failed to fetch any savings items');
-      }
+    switchMap(([[{ payload: accountPkh }, rpcUrl], rates]) => {
+      const makeSavingsListErrorHandler = (savingsProvider: SavingsProviderEnum) => (err: unknown) => {
+        showErrorToast({ description: getAxiosQueryErrorMessage(err) });
 
-      return forkJoin([
-        forkJoin(
-          youvesSavings.map(savingsItem =>
-            getUserStake(selectedAccount, savingsItem.id, savingsItem.type, rpcUrl)
-              .then((stake): [string, UserStakeValueInterface | undefined] => [savingsItem.contractAddress, stake])
-              .catch((): [string, nullish] => {
-                console.error('Error while loading saving stakes: ', savingsItem.contractAddress);
-                showFailedStakeLoadWarning();
+        return of(
+          loadSavingsByProviderActions.fail({ provider: savingsProvider, error: (err as Error).message }),
+          loadAllStakesActions.fail()
+        );
+      };
 
-                return [savingsItem.contractAddress, null];
-              })
-          )
+      return merge(
+        getYouvesSavingsItems$(rates, rpcUrl).pipe(
+          switchMap(youvesSavings =>
+            of(
+              loadSavingsByProviderActions.success({ data: youvesSavings, provider: SavingsProviderEnum.Youves }),
+              ...youvesSavings.map(savingsItem =>
+                loadSingleSavingStakeActions.submit({ item: savingsItem, accountPkh })
+              )
+            )
+          ),
+          catchError(makeSavingsListErrorHandler(SavingsProviderEnum.Youves))
         ),
-        getKordFiUserDeposits$(selectedAccount.publicKeyHash)
-      ]).pipe(
-        map(([youvesStakesEntries, kordFiStakesEntries]) => ({
-          ...Object.fromEntries(youvesStakesEntries),
-          ...kordFiStakesEntries
-        })),
-        mergeMap(stakes =>
-          merge(
-            of(loadAllSavingsActions.success([...youvesSavings, ...kordFiSavings])),
-            of(loadAllStakesActions.success(stakes))
-          )
+        getKordFiItems$(rates).pipe(
+          switchMap(kordFiSavings =>
+            of(
+              loadSavingsByProviderActions.success({ data: kordFiSavings, provider: SavingsProviderEnum.KordFi }),
+              ...kordFiSavings.map(savingsItem =>
+                loadSingleSavingStakeActions.submit({ item: savingsItem, accountPkh })
+              )
+            )
+          ),
+          catchError(makeSavingsListErrorHandler(SavingsProviderEnum.KordFi))
         )
       );
-    }),
-    catchError(err => {
-      showErrorToastByError(err, undefined, true);
-
-      return of(loadAllSavingsActions.fail(), loadAllStakesActions.fail());
     })
   );
 
-export const savingsEpics = combineEpics(loadSingleSavingLastStake, loadAllSavingsItems, loadAllSavingsItemsAndStakes);
+export const savingsEpics = combineEpics(
+  loadSingleSavingLastStake,
+  loadAllSavingsItems,
+  loadSavingsItemsByProvider,
+  loadAllSavingsItemsAndStakes
+);

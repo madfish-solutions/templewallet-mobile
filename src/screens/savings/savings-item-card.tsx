@@ -5,15 +5,16 @@ import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interf
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useSavingsItemStakeWasLoadingSelector } from 'src/store/savings/selectors';
 
 interface Props {
   item: SavingsItem;
   lastStakeRecord?: UserStakeValueInterface;
-  stakeIsLoading: boolean;
 }
 
-export const SavingsItemCard: FC<Props> = ({ item, lastStakeRecord, stakeIsLoading }) => {
+export const SavingsItemCard: FC<Props> = ({ item, lastStakeRecord }) => {
   const { navigate } = useNavigation();
+  const stakeWasLoading = useSavingsItemStakeWasLoadingSelector(item.contractAddress);
 
   const navigateToOpportunity = useCallback(
     () => navigate(ModalsEnum.ManageSavingsPool, { id: item.id, contractAddress: item.contractAddress }),
@@ -25,7 +26,7 @@ export const SavingsItemCard: FC<Props> = ({ item, lastStakeRecord, stakeIsLoadi
       item={item}
       lastStakeRecord={lastStakeRecord}
       navigateToOpportunity={navigateToOpportunity}
-      stakeIsLoading={stakeIsLoading}
+      stakeWasLoading={stakeWasLoading}
     />
   );
 };

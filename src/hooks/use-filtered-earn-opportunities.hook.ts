@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { sortByApr, sortByNewest, sortByOldest } from 'src/utils/earn.utils';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
@@ -14,7 +14,7 @@ export const useFilteredEarnOpportunities = <T extends EarnOpportunity, E extend
   selectSortValueAction: ActionCreatorWithPayload<EarnOpportunitiesSortFieldEnum, E>,
   sortField: EarnOpportunitiesSortFieldEnum,
   items: T[],
-  stakes: Record<string, UserStakeValueInterface>
+  stakes: Record<string, UserStakeValueInterface | undefined>
 ) => {
   const dispatch = useDispatch();
 
@@ -25,8 +25,11 @@ export const useFilteredEarnOpportunities = <T extends EarnOpportunity, E extend
     let result = [...items];
 
     if (depositedOnly) {
-      const stakedItemsAddresses = Object.keys(stakes);
-      result = result.filter(item => stakedItemsAddresses.includes(item.contractAddress));
+      result = result.filter(item => {
+        const stake = stakes[item.contractAddress];
+
+        return stake && Number(stake.depositAmountAtomic ?? '0') > 0;
+      });
     }
 
     if (isString(searchValue)) {
@@ -65,7 +68,7 @@ export const useFilteredEarnOpportunities = <T extends EarnOpportunity, E extend
     }
 
     return result;
-  }, [items, searchValue, depositedOnly, sortField]);
+  }, [items, depositedOnly, searchValue, sortField, stakes]);
 
   const handleSetSortField = useCallback(
     (sortField: EarnOpportunitiesSortFieldEnum) => dispatch(selectSortValueAction(sortField)),
