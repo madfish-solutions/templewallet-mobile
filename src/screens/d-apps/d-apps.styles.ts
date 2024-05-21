@@ -1,7 +1,7 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStylesMemoized } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
-export const useDAppsStyles = createUseStyles(({ colors, typography }) => ({
+export const useDAppsStyles = createUseStylesMemoized(({ colors, typography }) => ({
   rowContainer: {
     flexDirection: 'row'
   },

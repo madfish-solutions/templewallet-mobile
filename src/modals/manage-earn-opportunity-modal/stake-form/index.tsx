@@ -16,7 +16,7 @@ import { useFarmsStakesLoadingSelector } from 'src/store/farms/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { isFarm } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 

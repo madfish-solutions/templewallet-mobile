@@ -6,5 +6,5 @@ export const mockDApp: CustomDAppInfo = {
   type: DappEnum.DeFi,
   logo: 'https://bcd-static-assets.fra1.digitaloceanspaces.com/dapps/quipuswap/quipuswap_logo.jpg',
   slug: 'quipuswap',
-  category: [DappEnum.DeFi]
+  categories: [DappEnum.DeFi]
 };

@@ -1,4 +1,3 @@
-import { TezosToolkit } from '@taquito/taquito';
 import {
   createEngine,
   contracts,
@@ -17,8 +16,6 @@ import memoize from 'memoizee';
 
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
-import { isDefined } from 'src/utils/is-defined';
-import { getFastRpcClient } from 'src/utils/rpc/fast-rpc';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
 import { INDEXER_CONFIG, YOUVES_TOKENS_ICONS } from './constants';
@@ -57,19 +54,13 @@ class MemoryStorage implements Storage {
   }
 }
 
-export const getTezosToolkit = memoize(
-  (rpcUrl: string, account?: AccountInterface) =>
-    isDefined(account) ? createReadOnlyTezosToolkit(rpcUrl, account) : new TezosToolkit(getFastRpcClient(rpcUrl)),
-  { normalizer: ([rpcUrl, account]) => [rpcUrl, account?.publicKey].join('_') }
-);
-
 const getCreateEngineCacheKey = (rpcUrl: string, token: AssetDefinition, account?: AccountInterface) =>
   [rpcUrl, token.id, account?.publicKey].join('_');
 
 export const createEngineMemoized = memoize(
   (rpcUrl: string, token: AssetDefinition, account?: AccountInterface) =>
     createEngine({
-      tezos: getTezosToolkit(rpcUrl, account),
+      tezos: createReadOnlyTezosToolkit(rpcUrl, account),
       contracts: token,
       storage: new MemoryStorage(),
       indexerConfig: INDEXER_CONFIG,
@@ -109,7 +100,7 @@ const getCreateUnifiedStakingCacheKey = (rpcUrl: string, account?: AccountInterf
 
 export const createUnifiedStaking = memoize(
   (rpcUrl: string, account?: AccountInterface) =>
-    new UnifiedStaking(getTezosToolkit(rpcUrl, account), INDEXER_CONFIG, mainnetNetworkConstants),
+    new UnifiedStaking(createReadOnlyTezosToolkit(rpcUrl, account), INDEXER_CONFIG, mainnetNetworkConstants),
   {
     normalizer: ([rpcUrl, account]) => getCreateUnifiedStakingCacheKey(rpcUrl, account)
   }

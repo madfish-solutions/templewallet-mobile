@@ -6,7 +6,7 @@ import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-oppor
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';

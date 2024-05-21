@@ -33,6 +33,18 @@ export const withSelectedAccount =
       })
     );
 
+export const withAccount =
+  <T>(state$: Observable<RootState>, getAccountPkh: (value: T) => string) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { wallet }): [T, AccountInterface] => {
+        const account =
+          wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === getAccountPkh(value)) ?? emptyAccount;
+
+        return [value, account];
+      })
+    );
+
 export const withOnRampOverlayState =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>

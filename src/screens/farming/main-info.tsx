@@ -9,8 +9,9 @@ import { DEFAULT_AMOUNT, DEFAULT_EXCHANGE_RATE } from 'src/config/earn-opportuni
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useAllFarmsSelector, useLastFarmsStakesSelector } from 'src/store/farms/selectors';
+import { useAllFarms, useLastFarmsStakes } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { isDefined } from 'src/utils/is-defined';
@@ -19,21 +20,24 @@ import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.u
 
 export const MainInfo: FC = () => {
   const dispatch = useDispatch();
-  const farms = useAllFarmsSelector();
-  const stakes = useLastFarmsStakesSelector();
+  const farms = useAllFarms();
+  const stakes = useLastFarmsStakes();
   const tezos = useReadOnlyTezosToolkit();
   const fiatToUsdExchangeRate = useFiatToUsdRateSelector();
 
   const stakesEntriesWithEndedRewards = useMemo(() => {
     const now = Date.now();
 
-    return Object.entries(stakes).filter(
-      ([contractAddress, stakeRecord]) =>
-        stakeRecord?.claimableRewards &&
-        new BigNumber(stakeRecord.claimableRewards).isGreaterThan(DEFAULT_AMOUNT) &&
-        (!stakeRecord.rewardsDueDate || stakeRecord.rewardsDueDate < now) &&
-        farms.data.some(farm => farm.item.contractAddress === contractAddress)
-    );
+    return Object.entries(stakes).filter((value): value is [string, UserStakeValueInterface] => {
+      const [contractAddress, stakeRecord] = value;
+
+      return (
+        isDefined(stakeRecord) &&
+        new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT).isGreaterThan(DEFAULT_AMOUNT) &&
+        (!isDefined(stakeRecord.rewardsDueDate) || stakeRecord.rewardsDueDate < now) &&
+        farms.some(farm => farm.contractAddress === contractAddress)
+      );
+    });
   }, [stakes, farms]);
 
   const { netApr, totalStakedAmountInFiat } = useUserFarmingStats();
@@ -42,15 +46,12 @@ export const MainInfo: FC = () => {
     let result = new BigNumber(0);
 
     stakesEntriesWithEndedRewards.forEach(([address, stakeRecord]) => {
-      const farm = farms.data.find(_farm => _farm.item.contractAddress === address);
+      const farm = farms.find(_farm => _farm.contractAddress === address);
 
       if (isDefined(farm)) {
         result = result.plus(
-          mutezToTz(
-            new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT),
-            farm.item.rewardToken.metadata.decimals
-          )
-            .multipliedBy(farm.item.earnExchangeRate ?? DEFAULT_AMOUNT)
+          mutezToTz(new BigNumber(stakeRecord.claimableRewards ?? DEFAULT_AMOUNT), farm.rewardToken.metadata.decimals)
+            .multipliedBy(farm.earnExchangeRate ?? DEFAULT_AMOUNT)
             .multipliedBy(fiatToUsdExchangeRate ?? DEFAULT_EXCHANGE_RATE)
         );
       }

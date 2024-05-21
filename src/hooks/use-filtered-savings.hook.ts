@@ -1,19 +1,18 @@
 import { selectSavingsSortValueAction } from 'src/store/savings/actions';
 import {
-  useSavingsItemsLoadingSelector,
-  useSavingsItemsSelector,
+  useSavingsItems,
   useSavingsSortFieldSelector,
-  useSavingsStakesSelector
+  useSavingsStakes,
+  useAllSavingsItemsWereLoadingSelector
 } from 'src/store/savings/selectors';
 
 import { useFilteredEarnOpportunities } from './use-filtered-earn-opportunities.hook';
 
 export const useFilteredSavings = () => {
-  const savingsItems = useSavingsItemsSelector();
-  const stakes = useSavingsStakesSelector();
+  const savingsItems = useSavingsItems();
+  const stakes = useSavingsStakes();
   const sortField = useSavingsSortFieldSelector();
-  const savingsItemsLoading = useSavingsItemsLoadingSelector();
-  const pageIsLoading = savingsItemsLoading && savingsItems.length === 0;
+  const allSavingsWereLoading = useAllSavingsItemsWereLoadingSelector();
 
   const { depositedOnly, filteredItemsList, setSearchValue, handleSetSortField, handleToggleDepositOnly } =
     useFilteredEarnOpportunities(selectSavingsSortValueAction, sortField, savingsItems, stakes);
@@ -22,7 +21,7 @@ export const useFilteredSavings = () => {
     sortField,
     depositedOnly,
     filteredItemsList,
-    pageIsLoading,
+    shouldShowLoader: !allSavingsWereLoading,
     setSearchValue,
     handleSetSortField,
     handleToggleDepositOnly

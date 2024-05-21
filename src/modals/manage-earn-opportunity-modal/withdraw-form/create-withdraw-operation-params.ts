@@ -3,7 +3,7 @@ import { TezosToolkit, TransferParams } from '@taquito/taquito';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { getKordFiWithdrawTransferParams } from 'src/modals/manage-earn-opportunity-modal/withdraw-form/create-kordfi-withdraw-transfer-params';
-import { EarnOpportunity } from 'src/types/earn-opportunity.type';
+import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
 
 import { createLiquidityBakingWithdrawTransfersParams } from './create-liquidity-baking-withdraw-transfers-params';

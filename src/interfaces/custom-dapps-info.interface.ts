@@ -13,7 +13,7 @@ export interface CustomDAppInfo {
   type: DappEnum;
   logo: string;
   slug: string;
-  category: DappEnum[];
+  categories: DappEnum[];
 }
 
 export interface CustomDAppsInfo {

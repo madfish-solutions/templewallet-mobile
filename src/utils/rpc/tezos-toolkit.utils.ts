@@ -7,6 +7,8 @@ import memoize from 'memoizee';
 import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
 import { ReadOnlySigner } from 'src/utils/read-only.signer.util';
 
+import { isDefined } from '../is-defined';
+
 import { getFastRpcClient } from './fast-rpc';
 
 const michelEncoder = new MichelCodecPacker();
@@ -22,11 +24,13 @@ export const createTezosToolkit = (rpcUrl: string) => {
 };
 
 export const createReadOnlyTezosToolkit = memoize(
-  (rpcUrl: string, sender: ReadOnlySignerPayload) => {
+  (rpcUrl: string, sender?: ReadOnlySignerPayload) => {
     const readOnlyTezosToolkit = createTezosToolkit(rpcUrl);
-    readOnlyTezosToolkit.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
+    if (isDefined(sender)) {
+      readOnlyTezosToolkit.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
+    }
 
     return readOnlyTezosToolkit;
   },
-  { normalizer: ([rpcUrl, sender]) => `${rpcUrl}_${sender.publicKeyHash}`, max: 10 }
+  { normalizer: ([rpcUrl, sender]) => `${rpcUrl}_${sender?.publicKeyHash}`, max: 10 }
 );

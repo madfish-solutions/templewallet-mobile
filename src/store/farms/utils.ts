@@ -14,7 +14,7 @@ import { getBalance } from 'src/utils/token-balance.utils';
 import { ExchangeRateRecord } from '../currency/currency-state';
 import { RootState } from '../types';
 
-export interface RawStakeValue {
+interface RawStakeValue {
   lastStakeId: string;
   depositAmountAtomic: string;
   claimableRewards: string;
@@ -23,7 +23,7 @@ export interface RawStakeValue {
 }
 
 export class GetFarmStakeError extends Error {
-  constructor(public readonly farmAddress: string, message: string) {
+  constructor(public readonly farmAddress: string, public readonly accountPkh: string, message: string) {
     super(message);
   }
 }

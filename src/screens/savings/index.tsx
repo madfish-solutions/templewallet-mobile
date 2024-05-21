@@ -1,5 +1,5 @@
-import React, { FC, useCallback } from 'react';
-import { ActivityIndicator, ListRenderItem } from 'react-native';
+import React, { FC, useMemo } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -11,26 +11,29 @@ import { useLoadOnEachBlock } from 'src/hooks/use-load-on-each-block.hook';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
-import { useSavingsStakesLoadingSelector, useSavingsStakesSelector } from 'src/store/savings/selectors';
+import { useSavingsStakesLoadingSelector, useSavingsStakes } from 'src/store/savings/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import {
+  createItemsListWithLoader,
+  earnOpportunityKeyExtractor,
+  getRenderEarnOpportunityFn
+} from 'src/utils/earn-opportunities/list.utils';
 
 import { MainInfo } from './main-info';
 import { SavingsItemCard } from './savings-item-card';
 import { SavingsSelectorsEnum } from './selectors';
 import { useSavingsStyles } from './styles';
 
-const keyExtractor = ({ id, contractAddress }: SavingsItem) => `${id}_${contractAddress}`;
-
 export const Savings: FC = () => {
-  const savingsStakes = useSavingsStakesSelector();
+  const stakes = useSavingsStakes();
   const stakesLoading = useSavingsStakesLoadingSelector();
   const styles = useSavingsStyles();
   const {
     sortField,
     depositedOnly,
     filteredItemsList,
-    pageIsLoading,
+    shouldShowLoader,
     setSearchValue,
     handleSetSortField,
     handleToggleDepositOnly
@@ -39,15 +42,23 @@ export const Savings: FC = () => {
   usePageAnalytic(ScreensEnum.Savings);
   useLoadOnEachBlock(stakesLoading, loadAllSavingsAndStakesAction);
 
-  const renderItem = useCallback<ListRenderItem<SavingsItem>>(
-    ({ item }) => (
-      <SavingsItemCard
-        item={item}
-        lastStakeRecord={savingsStakes[item.contractAddress]}
-        stakeIsLoading={stakesLoading}
-      />
-    ),
-    [savingsStakes, stakesLoading]
+  const renderItem = useMemo(
+    () =>
+      getRenderEarnOpportunityFn<SavingsItem>(
+        () => (
+          <ActivityIndicator
+            style={filteredItemsList.length === 0 ? styles.emptyListLoader : styles.bottomLoader}
+            size="large"
+          />
+        ),
+        item => <SavingsItemCard item={item} lastStakeRecord={stakes[item.contractAddress]} />
+      ),
+    [filteredItemsList.length, stakes, styles.bottomLoader, styles.emptyListLoader]
+  );
+
+  const data = useMemo(
+    () => createItemsListWithLoader(filteredItemsList, shouldShowLoader),
+    [filteredItemsList, shouldShowLoader]
   );
 
   return (
@@ -65,27 +76,20 @@ export const Savings: FC = () => {
         handleSetSortField={handleSetSortField}
       />
       <HorizontalBorder />
-      {pageIsLoading ? (
-        <ActivityIndicator style={styles.loader} size="large" />
-      ) : (
-        <>
-          <Divider size={formatSize(8)} />
-          <FlatList
-            data={filteredItemsList}
-            keyExtractor={keyExtractor}
-            ListEmptyComponent={
-              <DataPlaceholder
-                text={
-                  Object.keys(savingsStakes).length === 0 && depositedOnly
-                    ? 'You have no deposited savings'
-                    : 'No records found'
-                }
-              />
+
+      <Divider size={formatSize(8)} />
+      <FlatList
+        data={data}
+        keyExtractor={earnOpportunityKeyExtractor}
+        ListEmptyComponent={
+          <DataPlaceholder
+            text={
+              Object.keys(stakes).length === 0 && depositedOnly ? 'You have no deposited savings' : 'No records found'
             }
-            renderItem={renderItem}
           />
-        </>
-      )}
+        }
+        renderItem={renderItem}
+      />
     </>
   );
 };

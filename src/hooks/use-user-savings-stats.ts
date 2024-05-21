@@ -1,10 +1,15 @@
-import { useSavingsItemsSelector, useSavingsStakesSelector } from 'src/store/savings/selectors';
+import {
+  useSavingsItems,
+  useSavingsStakes,
+  useSomeSavingsStakesWereLoadingSelector
+} from 'src/store/savings/selectors';
 
 import { useEarnOpportunitiesStats } from './use-earn-opportunities-stats';
 
 export const useUserSavingsStats = () => {
-  const savings = useSavingsItemsSelector();
-  const stakes = useSavingsStakesSelector();
+  const savings = useSavingsItems();
+  const stakes = useSavingsStakes();
+  const someStakesWereLoading = useSomeSavingsStakesWereLoadingSelector();
 
-  return useEarnOpportunitiesStats(savings, stakes);
+  return useEarnOpportunitiesStats(savings, stakes, someStakesWereLoading);
 };
