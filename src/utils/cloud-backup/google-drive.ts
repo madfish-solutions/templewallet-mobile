@@ -3,18 +3,15 @@
  * See: https://github.com/react-native-google-signin/google-signin/blob/master/docs/android-guide.md
  */
 import { GoogleSignin, statusCodes, NativeModuleError } from '@react-native-google-signin/google-signin';
-import RNCloudFs from 'react-native-cloud-fs';
-import * as RNFS from 'react-native-fs';
+import { GDrive, MimeTypes } from '@robinbobin/react-native-google-drive-api-wrapper';
 
 import { isString } from 'src/utils/is-string';
-import { rejectOnTimeout } from 'src/utils/timeouts.util';
 
 import { CLOUD_REQUEST_TIMEOUT, EncryptedBackupObject, buildAndEncryptBackup, parseBackup } from './common';
 
-const scope = 'hidden';
 const filename = 'wallet-backup.json';
 
-export const isCloudAvailable = async () => Boolean(RNCloudFs);
+export const isCloudAvailable = async () => true;
 
 export const requestSignInToCloud = async () => {
   await ensureGooglePlayServicesAvailable();
@@ -50,10 +47,11 @@ export const requestSignInToCloud = async () => {
   }
 
   try {
-    /* Syncing signed-in state to RNCloudFS */
-    return await RNCloudFs.loginIfNeeded();
+    await buildGDrive();
+
+    return true;
   } catch (error) {
-    console.error('RNCloudFs.loginIfNeeded() error:', { error });
+    console.error(error);
 
     throw new Error('Failed to sync sign-in status');
   }
@@ -68,15 +66,18 @@ export const fetchCloudBackup = async (): Promise<EncryptedBackupObject | undefi
     return;
   }
 
-  const encryptedBackup = await rejectOnTimeout(
-    RNCloudFs.getGoogleDriveDocument(details.id).catch(error => {
-      console.error('RNCloudFs.getGoogleDriveDocument() error:', error);
+  const gDrive = await buildGDrive();
+  gDrive.fetchTimeout = CLOUD_REQUEST_TIMEOUT;
 
-      throw new Error("Failed to read cloud. See if it's enabled");
-    }),
-    CLOUD_REQUEST_TIMEOUT,
-    new Error('Reading cloud took too long')
-  );
+  const encryptedBackup = await gDrive.files.getText(details.id).catch(error => {
+    console.error(error);
+
+    if (error?.name === 'AbortError') {
+      throw new Error('Reading cloud took too long');
+    }
+
+    throw new Error("Failed to read cloud. See if it's enabled");
+  });
 
   return parseBackup(encryptedBackup);
 };
@@ -84,24 +85,23 @@ export const fetchCloudBackup = async (): Promise<EncryptedBackupObject | undefi
 export const saveCloudBackup = async (mnemonic: string, password: string) => {
   const encryptedData = await buildAndEncryptBackup(mnemonic, password);
 
-  const localPath = `${RNFS.DocumentDirectoryPath}/${filename}`;
+  const gDrive = await buildGDrive();
 
-  await RNFS.writeFile(localPath, encryptedData, 'utf8');
-
-  const fileId = await RNCloudFs.copyToCloud({
-    scope,
-    targetPath: filename,
-    mimeType: 'application/json',
-    sourcePath: { path: localPath }
-  })
-    .catch(error => {
-      console.error('RNCloudFs.copyToCloud() error:', error);
-
-      throw new Error('Failed to upload to cloud');
+  const uploader = gDrive.files
+    .newMultipartUploader()
+    .setRequestBody({
+      name: filename,
+      parents: ['appDataFolder']
     })
-    .finally(() => RNFS.unlink(localPath).catch(console.error));
+    .setData(encryptedData, MimeTypes.JSON);
 
-  const fileExists = await checkIfBackupExists(fileId);
+  const details: FileDetails = await uploader.execute().catch(error => {
+    console.error(error);
+
+    throw new Error('Failed to upload to cloud');
+  });
+
+  const fileExists = await checkIfBackupExists(details.id);
 
   if (fileExists === false) {
     throw new Error('File not found after saving');
@@ -117,11 +117,20 @@ const checkIfBackupExists = async (fileId?: string) => {
     return false;
   }
 
-  return await RNCloudFs.fileExists({ scope, fileId }).catch(error => {
-    console.error('RNCloudFs.fileExists() error:', error);
+  const gDrive = await buildGDrive();
 
-    return false;
-  });
+  return await gDrive.files.getMetadata(fileId).then(
+    info => {
+      console.log('Backup file metadata:', info);
+
+      return true;
+    },
+    error => {
+      console.error(error);
+
+      return false;
+    }
+  );
 };
 
 const ensureGooglePlayServicesAvailable = async () => {
@@ -139,8 +148,6 @@ const ensureGooglePlayServicesAvailable = async () => {
 const preLogOut = async () => {
   try {
     await GoogleSignin.signOut();
-    /* Syncing signed-in state to RNCloudFS */
-    await RNCloudFs.logout();
   } catch (error) {
     console.error('preLogOut() error:', { error });
 
@@ -148,15 +155,33 @@ const preLogOut = async () => {
   }
 };
 
-const fetchCloudBackupDetails = async () => {
-  const data = await RNCloudFs.listFiles<'Android'>({
-    scope,
-    targetPath: ''
-  }).catch(error => {
-    console.error("NCloudFs.listFiles<'Android'> error:", error);
+interface FileDetails {
+  id: string;
+  name: string;
+  mimeType: string;
+  kind: string;
+}
 
-    throw error;
+const fetchCloudBackupDetails = async () => {
+  const gDrive = await buildGDrive();
+
+  const data: { files: FileDetails[]; incompleteSearch: boolean } = await gDrive.files.list({
+    spaces: 'appDataFolder'
   });
 
   return data.files?.find(file => file.name.endsWith(filename));
+};
+
+const buildGDrive = async () => {
+  const gDrive = new GDrive();
+
+  const accessInfo = await GoogleSignin.getTokens().catch(error => {
+    console.error(error);
+
+    throw new Error('First, sign-in to Google account');
+  });
+
+  gDrive.accessToken = accessInfo.accessToken;
+
+  return gDrive;
 };
