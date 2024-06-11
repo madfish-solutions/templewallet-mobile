@@ -2,23 +2,23 @@ import { useField } from 'formik';
 import React, { FC } from 'react';
 import { Text } from 'react-native';
 
-import { openSecuritySettings } from '../../biometry/biometry.utils';
-import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
-import { Checkbox } from '../../components/checkbox/checkbox';
-import { Divider } from '../../components/divider/divider';
-import { formatSize } from '../../styles/format-size';
-import { isDefined } from '../../utils/is-defined';
-import { ErrorMessage } from '../error-message/error-message';
+import { openSecuritySettings } from 'src/biometry/biometry.utils';
+import { useBiometryAvailability } from 'src/biometry/use-biometry-availability.hook';
+import { Checkbox } from 'src/components/checkbox/checkbox';
+import { Divider } from 'src/components/divider/divider';
+import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
 
 import { useFormBiometryCheckboxStyles } from './form-biometry-checkbox.styles';
 
 interface Props {
   name: string;
+  testID?: string;
 }
 
-export const FormBiometryCheckbox: FC<Props> = ({ name }) => {
+export const FormBiometryCheckbox: FC<Props> = ({ name, testID }) => {
   const styles = useFormBiometryCheckboxStyles();
-  const [field, meta, helpers] = useField<boolean>(name);
+  const [field, , helpers] = useField<boolean>(name);
   const { isHardwareAvailable, biometryType } = useBiometryAvailability();
 
   const handleChange = (newValue: boolean) => {
@@ -31,12 +31,9 @@ export const FormBiometryCheckbox: FC<Props> = ({ name }) => {
   };
 
   return isHardwareAvailable ? (
-    <>
-      <Checkbox value={field.value} onChange={handleChange}>
-        <Divider size={formatSize(8)} />
-        <Text style={styles.checkboxText}>Use {biometryType ?? 'Biometrics'} to unlock the app</Text>
-      </Checkbox>
-      <ErrorMessage meta={meta} />
-    </>
+    <Checkbox value={field.value} onChange={handleChange} inverted testID={testID}>
+      <Divider size={formatSize(4)} />
+      <Text style={styles.checkboxText}>Use {biometryType ?? 'Biometrics'} to unlock the app</Text>
+    </Checkbox>
   ) : null;
 };

@@ -1,10 +1,9 @@
-import React, { FC, ReactNode } from 'react';
+import React, { memo } from 'react';
 import { View, Text } from 'react-native';
 
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { formatSize } from 'src/styles/format-size';
 
-import { CheckboxLabel } from '../checkbox-description/checkbox-label';
 import { Divider } from '../divider/divider';
 
 import { useAbstractFieldStyles } from './abstract-field.styles';
@@ -12,20 +11,19 @@ import { FieldProps } from './field.props';
 
 interface Props extends FieldProps {
   title: string;
-  description: ReactNode;
 }
-export const AbstractField: FC<Props> = ({ name, title, description, testID }) => {
+
+export const AbstractField = memo<Props>(({ name, title, testID }) => {
   const styles = useAbstractFieldStyles();
 
   return (
     <>
-      <View style={[styles.checkboxContainer, styles.removeMargin]}>
-        <FormCheckbox name={name} testID={testID}>
-          <Divider size={formatSize(8)} />
+      <View style={styles.checkboxContainer}>
+        <FormCheckbox name={name} testID={testID} inverted shouldShowError={false}>
+          <Divider size={formatSize(4)} />
           <Text style={styles.checkboxText}>{title}</Text>
         </FormCheckbox>
       </View>
-      <CheckboxLabel>{description}</CheckboxLabel>
     </>
   );
-};
+});

@@ -32,16 +32,16 @@ export const FormPasswordInput: FC<Props> = ({ name, isShowPasswordStrengthIndic
         onChangeText={field.onChange(name)}
         testID={testID}
       />
-      {isDefined(isShowPasswordStrengthIndicator) && isShowPasswordStrengthIndicator ? (
+      {Boolean(isShowPasswordStrengthIndicator) ? (
         <>
-          <Divider size={formatSize(16)} />
+          <Divider size={formatSize(8)} />
           <PasswordStrengthIndicator isError={isError} password={field.value} />
-          {!isDefined(error) && <Divider size={formatSize(28)} />}
+          <Divider size={formatSize(16)} />
         </>
       ) : (
         <ErrorMessage meta={meta} />
       )}
-      {(isDefined(error) || isError) && (
+      {(isDefined(error) || isError) && !Boolean(isShowPasswordStrengthIndicator) && (
         <ErrorMessage
           meta={{
             ...meta,
