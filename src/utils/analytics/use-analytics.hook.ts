@@ -14,24 +14,25 @@ export const useAnalytics = () => {
   const userId = useUserIdSelector();
   const analyticsEnabled = useAnalyticsEnabledSelector();
   const isAuthorized = useIsAuthorisedSelector();
-  const shouldSendAnalytics = analyticsEnabled && isAuthorized;
+  const defaultShouldSendAnalytics = analyticsEnabled && isAuthorized;
   const testGroupName = useUserTestingGroupNameSelector();
 
   const trackEvent = useCallback(
     async (
       event?: string,
       category: AnalyticsEventCategory = AnalyticsEventCategory.General,
-      additionalProperties: AnalyticsEventProperties = {}
+      additionalProperties: AnalyticsEventProperties = {},
+      shouldSendAnalytics: boolean = defaultShouldSendAnalytics
     ) =>
       event !== undefined &&
       shouldSendAnalytics &&
       sendAnalyticsEvent(event, category, { userId, ABTestingCategory: testGroupName }, additionalProperties),
-    [analyticsEnabled, userId, testGroupName]
+    [defaultShouldSendAnalytics, userId, testGroupName]
   );
 
   const pageEvent = useCallback(
     async (path: string, search: string, additionalProperties: AnalyticsEventProperties = {}) =>
-      shouldSendAnalytics &&
+      defaultShouldSendAnalytics &&
       jitsu.track(AnalyticsEventCategory.PageOpened, {
         userId,
         name: path,
@@ -46,7 +47,7 @@ export const useAnalytics = () => {
           ...additionalProperties
         }
       }),
-    [analyticsEnabled, userId, testGroupName]
+    [defaultShouldSendAnalytics, userId, testGroupName]
   );
 
   return {

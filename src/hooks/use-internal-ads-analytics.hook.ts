@@ -36,12 +36,17 @@ export const useInternalAdsAnalytics = (
 
   useEffect(() => {
     if (adIsSeen && !prevAdIsSeenRef.current) {
-      trackEvent('Internal Ads Activity', AnalyticsEventCategory.General, {
-        variant,
-        page,
-        provider: loadedPromotionProvider,
-        accountPkh
-      });
+      trackEvent(
+        'Internal Ads Activity',
+        AnalyticsEventCategory.General,
+        {
+          variant,
+          page,
+          provider: loadedPromotionProvider,
+          accountPkh
+        },
+        true
+      );
     }
     prevAdIsSeenRef.current = adIsSeen;
   }, [adIsSeen, trackEvent, loadedPromotionProvider, accountPkh, page, variant]);

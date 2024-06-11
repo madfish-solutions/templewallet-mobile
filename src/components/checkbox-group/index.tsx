@@ -1,4 +1,4 @@
-import React, { Children, Fragment, memo } from 'react';
+import React, { Children, FC, Fragment } from 'react';
 import { View, ViewProps } from 'react-native';
 
 import { HorizontalBorder } from 'src/components/horizontal-border';
@@ -9,7 +9,7 @@ interface CheckboxGroupProps extends ViewProps {
   isError?: boolean;
 }
 
-export const CheckboxGroup = memo<CheckboxGroupProps>(({ isError = false, children, style, ...restProps }) => {
+export const CheckboxGroup: FC<CheckboxGroupProps> = ({ isError = false, children, style, ...restProps }) => {
   const styles = useCheckboxGroupStyles();
 
   return (
@@ -22,4 +22,4 @@ export const CheckboxGroup = memo<CheckboxGroupProps>(({ isError = false, childr
       ))}
     </View>
   );
-});
+};
