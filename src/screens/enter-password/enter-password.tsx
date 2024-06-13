@@ -96,9 +96,11 @@ export const EnterPassword = () => {
                 <View style={styles.passwordInputWrapper}>
                   <FormPasswordInput
                     name="password"
-                    {...(isDisabled && {
-                      error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
-                    })}
+                    error={
+                      isDisabled
+                        ? `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
+                        : undefined
+                    }
                     testID={EnterPasswordSelectors.passwordInput}
                   />
                 </View>

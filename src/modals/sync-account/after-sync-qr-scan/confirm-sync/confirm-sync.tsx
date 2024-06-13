@@ -64,9 +64,11 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
         <Label label="Password" description="The same password is used to unlock your extension." />
         <FormPasswordInput
           name="password"
-          {...(isDisabled && {
-            error: `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
-          })}
+          error={
+            isDisabled
+              ? `You have entered the wrong password ${MAX_PASSWORD_ATTEMPTS} times. Your wallet is being blocked for ${timeleft}`
+              : undefined
+          }
           testID={ConfirmSyncSelectors.passwordInput}
         />
 
