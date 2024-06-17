@@ -5,10 +5,10 @@ import { loadExolixRate } from 'src/utils/exolix.util';
 import { isDefined } from 'src/utils/is-defined';
 
 // due to legal restrictions
-const maxDollarValue = 10000;
+const MAX_DOLLAR_VALUE = 10000;
 
-const minAssetAmount = 0.00001;
-const avgCommission = 300;
+const MIN_ASSET_AMOUNT = 0.00001;
+const AVG_COMISSION = 300;
 
 type setFieldType = (field: string, value: BigNumber | number) => void;
 
@@ -41,25 +41,15 @@ export const loadMinMaxFields = async (
   outputAssetNetwork = 'XTZ'
 ) => {
   try {
-    const outputTokenPrice = await loadUSDTRate(outputAssetCode, outputAssetNetwork);
-
-    const backwardExchangeData = {
-      coinTo: inputAssetCode,
-      coinToNetwork: inputAssetNetwork,
-      coinFrom: outputAssetCode,
-      coinFromNetwork: outputAssetNetwork,
-      amount: (maxDollarValue + avgCommission) / outputTokenPrice
-    };
-
-    const forwardExchangeData = {
+    const exchangeData = {
       coinTo: outputAssetCode,
       coinToNetwork: outputAssetNetwork,
       coinFrom: inputAssetCode,
       coinFromNetwork: inputAssetNetwork,
-      amount: minAssetAmount
+      amount: MIN_ASSET_AMOUNT
     };
 
-    const minAmountExchangeResponse = await loadExolixRate(forwardExchangeData);
+    let minAmountExchangeResponse = await loadExolixRate(exchangeData);
 
     if (!('minAmount' in minAmountExchangeResponse)) {
       throw new Error('Failed to get minimal input amount');
@@ -67,35 +57,50 @@ export const loadMinMaxFields = async (
 
     let minAmount = minAmountExchangeResponse.minAmount;
     // setting correct exchange amount
-    forwardExchangeData.amount = minAmount;
+    exchangeData.amount = minAmount;
 
-    let finalMaxAmount = 0;
+    if (!('maxAmount' in minAmountExchangeResponse)) {
+      for (let i = 0; i < 2; i++) {
+        // Getting maxAmount from the response for minimal exchange
+        minAmountExchangeResponse = await loadExolixRate(exchangeData);
 
-    for (let i = 0; i < 10; i++) {
-      const maxAmountExchangeResponse = await loadExolixRate(forwardExchangeData);
+        if ('maxAmount' in minAmountExchangeResponse) {
+          break;
+        }
 
-      if ('maxAmount' in maxAmountExchangeResponse) {
-        finalMaxAmount = maxAmountExchangeResponse.maxAmount;
-        break;
+        // Preparing to try again with the new minimal amount
+        minAmount = minAmountExchangeResponse.minAmount;
+        exchangeData.amount = minAmount;
       }
-
-      minAmount = maxAmountExchangeResponse.minAmount;
-      forwardExchangeData.amount = minAmount;
     }
 
-    if (finalMaxAmount === 0) {
+    if (!('maxAmount' in minAmountExchangeResponse)) {
       throw new Error('Failed to get maximal input amount');
     }
 
-    const backwardExchange = await loadExolixRate(backwardExchangeData);
+    // Trying to get an input amount for an output of 10K USD worth by getting reverse exchange
+    const outputTokenPrice = await loadUSDTRate(outputAssetCode, outputAssetNetwork);
+    const backwardExchange = await loadExolixRate({
+      coinTo: inputAssetCode,
+      coinToNetwork: inputAssetNetwork,
+      coinFrom: outputAssetCode,
+      coinFromNetwork: outputAssetNetwork,
+      amount: (MAX_DOLLAR_VALUE + AVG_COMISSION) / outputTokenPrice
+    });
+    // Ignoring the invalid output of the backward exchange
+    const maxDollarValueMaxAmount =
+      backwardExchange.message == null && backwardExchange.toAmount >= minAmount
+        ? backwardExchange.toAmount
+        : undefined;
 
-    setFieldValue(
-      'coinFrom.min',
-      BigNumber.min(minAmount, backwardExchange.message == null ? backwardExchange.toAmount : Infinity)
-    );
+    // Choosing the least of maxAmount from the first exchange and the output of backward exchange, if any
+    setFieldValue('coinFrom.min', BigNumber.min(minAmount));
 
     // if there is a message than something went wrong with the estimation and some values may be incorrect
-    setFieldValue('coinFrom.max', new BigNumber(finalMaxAmount));
+    setFieldValue(
+      'coinFrom.max',
+      BigNumber.min(minAmountExchangeResponse.maxAmount, maxDollarValueMaxAmount ?? Infinity)
+    );
   } catch (error) {
     console.error({ error });
   }
@@ -110,6 +115,13 @@ export const updateOutputInputValue = (
       setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
     } else {
       setFieldValue('coinTo.amount', new BigNumber(0));
+    }
+
+    if ('minAmount' in responseData) {
+      setFieldValue('coinFrom.min', new BigNumber(responseData.minAmount));
+    }
+    if ('maxAmount' in responseData) {
+      setFieldValue('coinFrom.max', new BigNumber(responseData.maxAmount));
     }
 
     if ('rate' in responseData) {
