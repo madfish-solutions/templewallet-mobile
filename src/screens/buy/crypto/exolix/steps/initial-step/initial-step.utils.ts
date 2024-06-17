@@ -94,7 +94,7 @@ export const loadMinMaxFields = async (
         : undefined;
 
     // Choosing the least of maxAmount from the first exchange and the output of backward exchange, if any
-    setFieldValue('coinFrom.min', BigNumber.min(minAmount));
+    setFieldValue('coinFrom.min', new BigNumber(minAmount));
 
     // if there is a message than something went wrong with the estimation and some values may be incorrect
     setFieldValue(
