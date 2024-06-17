@@ -55,7 +55,7 @@ const termsAlertParams = {
   buttons: [
     { text: 'Terms of Usage', onPress: () => openUrl(termsOfUse) },
     { text: 'Privacy Policy', onPress: () => openUrl(privacyPolicy) },
-    { text: 'Ok', isPreferred: true }
+    { text: 'Cancel', isPreferred: true }
   ]
 };
 

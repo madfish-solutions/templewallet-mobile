@@ -66,7 +66,11 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
     onSubmit: handleSubmit
   });
 
-  const { submitForm, errors, setFieldTouched, isValid } = formik;
+  const { submitForm, errors, setFieldTouched, isValid, touched } = formik;
+  const disableImport = useMemo(
+    () => Object.keys(errors).filter(key => touched[key as keyof CreateNewPasswordFormValues]).length > 0,
+    [errors, touched]
+  );
 
   useEffect(() => {
     if (isString(initialPassword)) {
@@ -108,7 +112,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
         <ButtonLargeSecondary title="Back" onPress={onGoBackPress} />
         <ButtonLargePrimary
           title="Import"
-          disabled={!isValid}
+          disabled={disableImport}
           onPress={useCallbackIfOnline(() => {
             setFieldTouched('password', true, true);
             setFieldTouched('passwordConfirmation', true, true);
