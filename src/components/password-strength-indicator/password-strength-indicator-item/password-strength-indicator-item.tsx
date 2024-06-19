@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Text } from 'react-native';
+import React, { memo } from 'react';
+import { Text, View } from 'react-native';
 
 import { usePasswordStrengthIndicatorItemStyles } from './password-strength-indicator-item.styles';
 
@@ -9,13 +9,15 @@ export interface PasswordStrengthIndicatorItemProps {
   noColor?: boolean;
 }
 
-export const PasswordStrengthIndicatorItem: FC<PasswordStrengthIndicatorItemProps> = ({
-  isValid,
-  message,
-  noColor = false
-}) => {
-  const styles = usePasswordStrengthIndicatorItemStyles();
-  const validationColor = isValid ? styles.adding : noColor ? undefined : styles.destructive;
+export const PasswordStrengthIndicatorItem = memo<PasswordStrengthIndicatorItemProps>(
+  ({ isValid, message, noColor = false }) => {
+    const styles = usePasswordStrengthIndicatorItemStyles();
+    const status = isValid ? 'valid' : noColor ? 'default' : 'error';
 
-  return <Text style={[styles.text, validationColor]}>{message}</Text>;
-};
+    return (
+      <View style={[styles.root, styles[`${status}Root`]]}>
+        <Text style={[styles.text, styles[`${status}Text`]]}>{message}</Text>
+      </View>
+    );
+  }
+);

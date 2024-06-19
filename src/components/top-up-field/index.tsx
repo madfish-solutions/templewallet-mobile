@@ -1,7 +1,7 @@
 import { useField, useFormikContext } from 'formik';
 import React, { FC, useCallback } from 'react';
 
-import { emptyFn, EventFn } from 'src/config/general';
+import { emptyFn } from 'src/config/general';
 import { hasError } from 'src/utils/has-error';
 
 import { TopUpAssetAmountInput } from './asset-amount-input';
@@ -30,7 +30,7 @@ export const TopUpFormAssetAmountInput: FC<TopUpFormAssetAmountInputProps> = ({
   const [field, meta] = useField<TopUpAssetAmountInterface>(name);
   const isError = hasError(meta);
 
-  const handleValueChange: EventFn<TopUpAssetAmountInterface, void> = useCallback(
+  const handleValueChange: SyncFn<TopUpAssetAmountInterface> = useCallback(
     newValue => {
       onValueChange(newValue);
       formikContext.setFieldValue(name, newValue);

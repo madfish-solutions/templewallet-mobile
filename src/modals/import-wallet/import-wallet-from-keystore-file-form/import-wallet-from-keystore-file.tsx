@@ -15,9 +15,11 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import {
-  LETTERS_NUMBERS_MIXTURE_REGX,
-  MIN_PASSWORD_LENGTH,
-  UPPER_CASE_LOWER_CASE_MIXTURE_REGX
+  AT_LEAST_ONE_LOWER_CASE_REGX,
+  AT_LEAST_ONE_NUMBER_REGX,
+  AT_LEAST_ONE_UPPER_CASE_REGX,
+  MIN_CHARS_REGX,
+  SPECIAL_CHARACTER_REGX
 } from 'src/config/security';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormFileInput } from 'src/form/form-file-input';
@@ -37,9 +39,13 @@ import {
 import { useImportWalletFromKeystoreFileStyles } from './import-wallet-from-keystore-file.styles';
 
 const checkKukaiPasswordValid = (password: string): boolean =>
-  password.length >= MIN_PASSWORD_LENGTH &&
-  UPPER_CASE_LOWER_CASE_MIXTURE_REGX.test(password) &&
-  LETTERS_NUMBERS_MIXTURE_REGX.test(password);
+  [
+    AT_LEAST_ONE_LOWER_CASE_REGX,
+    AT_LEAST_ONE_NUMBER_REGX,
+    AT_LEAST_ONE_UPPER_CASE_REGX,
+    MIN_CHARS_REGX,
+    SPECIAL_CHARACTER_REGX
+  ].every(rule => rule.test(password));
 
 const TOO_WEAK_PASSWORD_ERROR =
   'The password is too weak. Please, set a new one according to the requirements of the application.';

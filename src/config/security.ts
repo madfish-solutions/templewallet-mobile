@@ -8,7 +8,8 @@ export const INITIAL_ENTER_PASSWORD_LOCKTIME = 0;
 export const RANDOM_DELAY_TIME = 1000;
 export const CONSTANT_DELAY_TIME = 1000;
 
-export const MIN_PASSWORD_LENGTH = 8;
-export const UPPER_CASE_LOWER_CASE_MIXTURE_REGX = /(?=.*[a-z])(?=.*[A-Z])/;
-export const LETTERS_NUMBERS_MIXTURE_REGX = /(?=.*\d)(?=.*[A-Za-z])/;
+export const MIN_CHARS_REGX = /^.{8,}$/;
+export const AT_LEAST_ONE_NUMBER_REGX = /\d/;
+export const AT_LEAST_ONE_LOWER_CASE_REGX = /[a-z]/;
+export const AT_LEAST_ONE_UPPER_CASE_REGX = /[A-Z]/;
 export const SPECIAL_CHARACTER_REGX = /[!@#$%^&*()_+\-=\]{};':"\\|,.<>?]/;

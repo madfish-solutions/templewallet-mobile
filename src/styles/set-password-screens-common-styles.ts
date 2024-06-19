@@ -26,13 +26,20 @@ export const useSetPasswordScreensCommonStyles = createUseStyles(({ colors, typo
     ...typography.body15Semibold,
     color: colors.black
   },
-  mb40: {
-    marginBottom: formatSize(40)
-  },
   buttonsContainer: {
     paddingHorizontal: formatSize(8)
   },
   flex: {
     flex: 1
+  },
+  checkboxWithTooltipContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: formatSize(12),
+    marginRight: formatSize(12)
+  },
+  buttonsFloatingContainer: {
+    backgroundColor: colors.white
   }
 }));

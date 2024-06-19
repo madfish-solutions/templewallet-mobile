@@ -1,27 +1,15 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import { FormikProvider, useFormik } from 'formik';
-import React, { useMemo, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { LayoutChangeEvent, ScrollView } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
-import { Divider } from 'src/components/divider/divider';
-import { AnalyticsField } from 'src/components/fields/analytics-field';
-import { ViewAdsField } from 'src/components/fields/view-ads-field';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
-import { Label } from 'src/components/label/label';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { TextLink } from 'src/components/text-link/text-link';
-import { privacyPolicy, termsOfUse } from 'src/config/socials';
-import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
-import { FormCheckbox } from 'src/form/form-checkbox';
-import { FormPasswordInput } from 'src/form/form-password-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
+import { WalletInitButtonsFloatingContainer } from 'src/layouts/wallet-init-buttons-floating-container';
+import { WalletInitNewPasswordInputs } from 'src/layouts/wallet-init-new-password-inputs';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
-import { formatSize } from 'src/styles/format-size';
-import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { scrollToField } from 'src/utils/form.utils';
 import { isString } from 'src/utils/is-string';
@@ -58,8 +46,6 @@ export const CreateNewWallet = () => {
     [backupFlow?.type]
   );
 
-  const styles = useSetPasswordScreensCommonStyles();
-
   const refScrollView = useRef<ScrollView>(null);
   const [fieldsPositions, setFieldsPositions] = useState({
     password: 0,
@@ -88,72 +74,35 @@ export const CreateNewWallet = () => {
 
   const { submitForm, setFieldTouched, isValid, errors } = formik;
 
-  const handleLayoutChange = (name: string, value: number) =>
-    setFieldsPositions(prevState => ({ ...prevState, [name]: value }));
+  const handleLayoutChange = useCallback(
+    (name: string, value: number) => setFieldsPositions(prevState => ({ ...prevState, [name]: value })),
+    []
+  );
+  const handleMainPartLayout = useCallback(
+    (event: LayoutChangeEvent) => handleLayoutChange('password', event.nativeEvent.layout.y),
+    [handleLayoutChange]
+  );
+  const handleAcceptTermsLayout = useCallback(
+    (event: LayoutChangeEvent) => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y),
+    [handleLayoutChange]
+  );
 
   return (
     <FormikProvider value={formik}>
-      <ScreenContainer scrollViewRef={refScrollView} isFullScreenMode={true}>
-        <View style={styles.mb40}>
-          <Divider size={formatSize(12)} />
-          <View onLayout={event => handleLayoutChange('password', event.nativeEvent.layout.y)}>
-            <Label
-              label="Password"
-              description={
-                backupFlow?.type === 'AUTO_BACKUP'
-                  ? [
-                      { text: 'A password is used to' },
-                      { text: ' protect', bold: true },
-                      { text: ' and' },
-                      { text: ' backup', bold: true },
-                      { text: ' the wallet.' }
-                    ]
-                  : 'A password is used to protect the wallet.'
-              }
-            />
-            <FormPasswordInput
-              isShowPasswordStrengthIndicator
-              name="password"
-              testID={CreateNewWalletSelectors.passwordInput}
-            />
-          </View>
+      <WalletInitNewPasswordInputs
+        passwordInputTestID={CreateNewWalletSelectors.passwordInput}
+        repeatPasswordInputTestID={CreateNewWalletSelectors.repeatPasswordInput}
+        acceptTermsCheckboxTestID={CreateNewWalletSelectors.acceptTermsCheckbox}
+        analyticsCheckboxTestID={CreateNewWalletSelectors.analyticsCheckbox}
+        useBiometricsToUnlockCheckBoxTestID={CreateNewWalletSelectors.useBiometricsToUnlockCheckBox}
+        viewAdsCheckboxTestID={CreateNewWalletSelectors.viewAdsCheckbox}
+        formik={formik}
+        refScrollView={refScrollView}
+        onMainPartLayout={handleMainPartLayout}
+        onAcceptTermsLayout={handleAcceptTermsLayout}
+      />
 
-          <View>
-            <Label label="Repeat Password" description="Please enter the password again." />
-            <FormPasswordInput name="passwordConfirmation" testID={CreateNewWalletSelectors.repeatPasswordInput} />
-          </View>
-
-          <View style={styles.checkboxContainer} testID={CreateNewWalletSelectors.useBiometricsToUnlockCheckBox}>
-            <FormBiometryCheckbox name="useBiometry" />
-          </View>
-
-          <AnalyticsField name="analytics" testID={CreateNewWalletSelectors.analyticsCheckbox} />
-          <Divider size={formatSize(24)} />
-          <ViewAdsField name="viewAds" testID={CreateNewWalletSelectors.viewAdsCheckbox} />
-        </View>
-
-        <View onLayout={event => handleLayoutChange('acceptTerms', event.nativeEvent.layout.y)}>
-          <View style={styles.checkboxContainer}>
-            <FormCheckbox
-              name="acceptTerms"
-              descriptionNode={
-                <>
-                  <Divider size={formatSize(8)} />
-                  <CheckboxLabel>
-                    I have read and agree to{'\n'}the <TextLink url={termsOfUse}>Terms of Use</TextLink> and{' '}
-                    <TextLink url={privacyPolicy}>Privacy Policy</TextLink>
-                  </CheckboxLabel>
-                </>
-              }
-              testID={CreateNewWalletSelectors.acceptTermsCheckbox}
-            >
-              <Divider size={formatSize(8)} />
-              <Text style={styles.checkboxText}>Accept terms</Text>
-            </FormCheckbox>
-          </View>
-        </View>
-      </ScreenContainer>
-      <View style={[styles.fixedButtonContainer, styles.withoutSeparator]}>
+      <WalletInitButtonsFloatingContainer>
         <ButtonLargePrimary
           title="Create"
           onPress={useCallbackIfOnline(() => {
@@ -169,8 +118,7 @@ export const CreateNewWallet = () => {
           })}
           testID={CreateNewWalletSelectors.createButton}
         />
-        <InsetSubstitute type="bottom" />
-      </View>
+      </WalletInitButtonsFloatingContainer>
     </FormikProvider>
   );
 };
