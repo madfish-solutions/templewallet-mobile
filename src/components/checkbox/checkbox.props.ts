@@ -1,10 +1,13 @@
-import { EventFn } from '../../config/general';
-import { TestIdProps } from '../../interfaces/test-id.props';
+import { ReactNode } from 'react';
+
+import { TestIdProps } from 'src/interfaces/test-id.props';
 
 export interface CheckboxProps extends TestIdProps {
   disabled?: boolean;
   value: boolean;
   size?: number;
   strokeWidth?: number;
-  onChange: EventFn<boolean>;
+  inverted?: boolean;
+  onChange: SyncFn<boolean>;
+  children?: ReactNode;
 }

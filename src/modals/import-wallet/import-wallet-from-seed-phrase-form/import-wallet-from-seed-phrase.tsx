@@ -42,7 +42,7 @@ export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit, o
   return (
     <FormikProvider value={formik}>
       <ScreenContainer>
-        <Divider />
+        <Divider size={formatSize(16)} />
 
         <View style={styles.seedPhraseInputContainer}>
           <Label label="Seed phrase" description="Mnemonic. Your secret 12 - 24 words phrase." />

@@ -10,10 +10,11 @@ import { isDefined } from '../utils/is-defined';
 
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID'>, TestIdProps {
+interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID' | 'inverted'>, TestIdProps {
   name: string;
   descriptionNode?: ReactNode;
   error?: string;
+  shouldShowError?: boolean;
 }
 
 export const FormCheckbox: FC<Props> = ({
@@ -22,9 +23,11 @@ export const FormCheckbox: FC<Props> = ({
   descriptionNode,
   disabled,
   size,
+  inverted,
   testID,
   testIDProperties,
-  error
+  error,
+  shouldShowError = true
 }) => {
   const [field, meta, helpers] = useField<boolean>(name);
   const { trackEvent } = useAnalytics();
@@ -38,19 +41,30 @@ export const FormCheckbox: FC<Props> = ({
 
   return (
     <>
-      <Checkbox disabled={disabled} value={field.value} size={size} onChange={handleChange} testID={testID}>
+      <Checkbox
+        disabled={disabled}
+        value={field.value}
+        size={size}
+        inverted={inverted}
+        onChange={handleChange}
+        testID={testID}
+      >
         {children}
       </Checkbox>
       {descriptionNode}
-      <ErrorMessage meta={meta} />
-      {isDefined(error) && (
-        <ErrorMessage
-          meta={{
-            ...meta,
-            touched: true,
-            error
-          }}
-        />
+      {shouldShowError && (
+        <>
+          <ErrorMessage meta={meta} />
+          {isDefined(error) && (
+            <ErrorMessage
+              meta={{
+                ...meta,
+                touched: true,
+                error
+              }}
+            />
+          )}
+        </>
       )}
     </>
   );

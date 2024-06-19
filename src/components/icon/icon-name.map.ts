@@ -82,9 +82,12 @@ import HelpCircleIcon from './assets/help-circle.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
 import ImportSquareIcon from './assets/import-square.svg';
+import InfoFilledAltIcon from './assets/info-filled-alt.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
 import InputXCircleIcon from './assets/input-x-circle.svg';
+import InvertedCheckboxOffIcon from './assets/inverted-checkbox-off.svg';
+import InvertedCheckboxOnIcon from './assets/inverted-checkbox-on.svg';
 import IosSearchIcon from './assets/ios-search.svg';
 import KeyIcon from './assets/key.svg';
 import KordFiEarnSource from './assets/kord-fi-earn-source.svg';
@@ -210,6 +213,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Globe]: GlobeIcon,
   [IconNameEnum.HourGlasses]: HourGlassesIcon,
   [IconNameEnum.ImportSquare]: ImportSquareIcon,
+  [IconNameEnum.InvertedCheckboxOff]: InvertedCheckboxOffIcon,
+  [IconNameEnum.InvertedCheckboxOn]: InvertedCheckboxOnIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
   [IconNameEnum.PlusCircleNew]: PlusCircleNewIcon,
@@ -243,6 +248,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.Uah]: UahIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
+  [IconNameEnum.InfoFilledAlt]: InfoFilledAltIcon,
   [IconNameEnum.Github]: GithubIcon,
   [IconNameEnum.Website]: WebsiteIcon,
   [IconNameEnum.NFTCollection]: NFTCollectionIcon,
