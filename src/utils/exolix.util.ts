@@ -1,15 +1,15 @@
+import retry from 'async-retry';
 import axios from 'axios';
 
 import { exolixApi } from 'src/api.service';
+import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
 import {
   ExolixCurrenciesResponseInterface,
   ExchangeDataInterface,
   GetRateRequestData,
   GetRateResponse,
-  GetRateResponseWithAmountTooLow,
   SubmitExchangePayload
-} from 'src/interfaces/exolix.interface';
-import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
+} from 'src/types/exolix.types';
 
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';
@@ -45,11 +45,15 @@ export const loadExolixCurrencies = async (): Promise<TopUpWithNetworkInterface[
 };
 
 const loadCurrency = async (page = 1) =>
-  exolixApi
-    .get<ExolixCurrenciesResponseInterface>('/currencies', {
-      params: { size: currenciesLimit, page, withNetworks: true }
-    })
-    .then(r => r.data);
+  retry(
+    () =>
+      exolixApi
+        .get<ExolixCurrenciesResponseInterface>('/currencies', {
+          params: { size: currenciesLimit, page, withNetworks: true }
+        })
+        .then(r => r.data),
+    { retries: 3, minTimeout: 250, maxTimeout: 1000 }
+  );
 
 export const loadExolixRate = async (data: GetRateRequestData) =>
   exolixApi.get<GetRateResponse>('/rate', { params: { ...data, rateType: 'fixed' } }).then(
@@ -59,7 +63,7 @@ export const loadExolixRate = async (data: GetRateRequestData) =>
         const data = error.response.data;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (typeof data === 'object' && data != null && (data as any).error == null) {
-          return data as GetRateResponseWithAmountTooLow;
+          return data as GetRateResponse;
         }
       }
       console.error(error);

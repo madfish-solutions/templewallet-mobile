@@ -1,5 +1,5 @@
-import { ExchangeDataInterface } from 'src/interfaces/exolix.interface';
 import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
+import { ExchangeDataInterface } from 'src/types/exolix.types';
 
 export const exolixInitialState: ExolixState = {
   step: 0,

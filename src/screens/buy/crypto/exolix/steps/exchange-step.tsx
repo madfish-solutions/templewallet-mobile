@@ -3,16 +3,17 @@ import { View, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
-import { ButtonLargePrimary } from '../../../../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsFloatingContainer } from '../../../../../components/button/buttons-floating-container/buttons-floating-container';
-import { Divider } from '../../../../../components/divider/divider';
-import { ScreenContainer } from '../../../../../components/screen-container/screen-container';
-import { ExchangeDataStatusEnum } from '../../../../../interfaces/exolix.interface';
-import { restartExolixTopupAction, setExolixStepAction } from '../../../../../store/exolix/exolix-actions';
-import { useExolixExchangeData, useExolixStep } from '../../../../../store/exolix/exolix-selectors';
-import { formatSize } from '../../../../../styles/format-size';
-import { isDefined } from '../../../../../utils/is-defined';
-import { openUrl } from '../../../../../utils/linking';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { Divider } from 'src/components/divider/divider';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { restartExolixTopupAction, setExolixStepAction } from 'src/store/exolix/exolix-actions';
+import { useExolixExchangeData, useExolixStep } from 'src/store/exolix/exolix-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { ExchangeDataStatusEnum } from 'src/types/exolix.types';
+import { isDefined } from 'src/utils/is-defined';
+import { openUrl } from 'src/utils/linking';
+
 import { CopyRow } from '../components/copy-row';
 import { ErrorComponent } from '../components/error-component';
 import { EXOLIX_CONTACT_LINK } from '../config';

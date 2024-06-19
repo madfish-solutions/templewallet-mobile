@@ -89,19 +89,31 @@ export interface GetRateRequestData {
   amount: number;
 }
 
-export interface GetRateResponse {
-  toAmount?: number;
-  minAmount?: number;
-  maxAmount?: number;
-  rate?: number;
-  withdrawMin?: number;
-  message?: null;
+interface GetRateResponseWithAmountTooLow {
+  fromAmount: number;
+  toAmount: number;
+  message: string;
+  minAmount: number;
 }
 
-export interface GetRateResponseWithAmountTooLow {
-  toAmount?: number;
-  minAmount?: number;
-  maxAmount?: number;
-  rate?: null;
-  message?: string;
+interface GetRateResponseWithAmountTooHigh {
+  fromAmount: number;
+  toAmount: number;
+  message: string;
+  maxAmount: number;
 }
+
+interface GetRateSuccessResponse {
+  fromAmount: number;
+  toAmount: number;
+  rate: number;
+  message: null;
+  minAmount: number;
+  withdrawMin: number;
+  maxAmount: number;
+}
+
+export type GetRateResponse =
+  | GetRateResponseWithAmountTooLow
+  | GetRateResponseWithAmountTooHigh
+  | GetRateSuccessResponse;

@@ -1,7 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { ExchangeDataInterface, SubmitExchangePayload } from 'src/interfaces/exolix.interface';
 import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
+import { ExchangeDataInterface, SubmitExchangePayload } from 'src/types/exolix.types';
 
 import { createActions } from '../create-actions';
 
