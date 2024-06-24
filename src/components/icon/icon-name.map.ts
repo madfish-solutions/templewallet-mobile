@@ -8,8 +8,6 @@ import ShieldIcon from './assets/alert-shield.svg';
 import AlertTriangleIcon from './assets/alert-triangle.svg';
 import AlertIcon from './assets/alert.svg';
 import AliceBobIcon from './assets/alice-bob.svg';
-import AppleOnDarkIcon from './assets/apple-on-dark.svg';
-import AppleIcon from './assets/apple.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
@@ -35,7 +33,8 @@ import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
-import CloudNativeIcon from './assets/cloud-native.svg';
+import CloudFillOnDarkIcon from './assets/cloud-fill-on-dark.svg';
+import CloudFillIcon from './assets/cloud-fill.svg';
 import CloudIcon from './assets/cloud.svg';
 import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
@@ -57,6 +56,7 @@ import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DocsIcon from './assets/docs.svg';
+import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
 import EarnIcon from './assets/earn.svg';
@@ -252,8 +252,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Github]: GithubIcon,
   [IconNameEnum.Website]: WebsiteIcon,
   [IconNameEnum.NFTCollection]: NFTCollectionIcon,
-  [IconNameEnum.Apple]: AppleIcon,
-  [IconNameEnum.AppleOnDark]: AppleOnDarkIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
@@ -277,6 +275,9 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.CheckCircle]: CheckCircleIcon,
   [IconNameEnum.Lock]: LockIcon,
   [IconNameEnum.Cloud]: CloudIcon,
+  [IconNameEnum.CloudFill]: CloudFillIcon,
+  [IconNameEnum.CloudFillOnDark]: CloudFillOnDarkIcon,
+  [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.AlertCircle]: AlertCircleIcon,
   [IconNameEnum.AlertTriangle]: AlertTriangleIcon,
   [IconNameEnum.Clock]: ClockIcon,
@@ -356,7 +357,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Sync]: SyncIcon,
   [IconNameEnum.FileUpload]: FileUploadIcon,
   [IconNameEnum.Docs]: DocsIcon,
-  [IconNameEnum.CloudNative]: CloudNativeIcon,
   [IconNameEnum.GoogleDriveNative]: GoogleDriveNativeIcon,
   [IconNameEnum.ManualBackup]: ManualBackupIcon,
   [IconNameEnum.Key]: KeyIcon,

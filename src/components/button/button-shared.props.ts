@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
-import { EmptyFn } from 'src/config/general';
 import { MarginProps } from 'src/interfaces/margin.props';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 
