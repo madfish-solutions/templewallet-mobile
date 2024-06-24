@@ -11,6 +11,10 @@ import { iconNameMap } from './icon-name.map';
 export interface IconProps extends TestIdProps, SvgProps {
   name: IconNameEnum;
   size?: number;
+  /** Stroke color
+   *
+   * TODO: Expand to setting `fill` color too
+   */
   color?: string;
   style?: StyleProp<ViewStyle>;
 }

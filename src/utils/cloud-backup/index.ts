@@ -10,7 +10,7 @@ export { decryptCloudBackup } from './common';
 export { keepRestoredCloudBackup, useRestoredCloudBackup } from './keeper';
 
 export const cloudTitle = isIOS ? 'iCloud' : 'Google Drive';
-export const cloudIconName = isIOS ? IconNameEnum.CloudNative : IconNameEnum.GoogleDriveNative;
+export const cloudIconName = isIOS ? IconNameEnum.Cloud : IconNameEnum.GoogleDriveNative;
 export const FAILED_TO_LOGIN_ERR_TITLE = isIOS ? 'Failed to sync cloud' : 'Failed to log-in';
 
 export const isCloudAvailable = (): Promise<boolean> =>
