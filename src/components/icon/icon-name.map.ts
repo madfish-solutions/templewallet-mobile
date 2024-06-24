@@ -35,8 +35,6 @@ import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
-import CloudNativeIcon from './assets/cloud-native.svg';
-import CloudIcon from './assets/cloud.svg';
 import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
 import CreditCardIcon from './assets/credit-card.svg';
@@ -57,6 +55,7 @@ import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DocsIcon from './assets/docs.svg';
+import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
 import EarnIcon from './assets/earn.svg';
@@ -169,6 +168,7 @@ import TriangleDownIcon from './assets/triangle-down.svg';
 import UahIcon from './assets/uah.svg';
 import UkraineIcon from './assets/ukraine.svg';
 import UpdateIcon from './assets/update.svg';
+import UploadCloudIcon from './assets/upload-cloud.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import XBoldIcon from './assets/x-bold.svg';
@@ -276,7 +276,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Check]: CheckIcon,
   [IconNameEnum.CheckCircle]: CheckCircleIcon,
   [IconNameEnum.Lock]: LockIcon,
-  [IconNameEnum.Cloud]: CloudIcon,
+  [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
+  [IconNameEnum.UploadCloud]: UploadCloudIcon,
   [IconNameEnum.AlertCircle]: AlertCircleIcon,
   [IconNameEnum.AlertTriangle]: AlertTriangleIcon,
   [IconNameEnum.Clock]: ClockIcon,
@@ -356,7 +357,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Sync]: SyncIcon,
   [IconNameEnum.FileUpload]: FileUploadIcon,
   [IconNameEnum.Docs]: DocsIcon,
-  [IconNameEnum.CloudNative]: CloudNativeIcon,
   [IconNameEnum.GoogleDriveNative]: GoogleDriveNativeIcon,
   [IconNameEnum.ManualBackup]: ManualBackupIcon,
   [IconNameEnum.Key]: KeyIcon,

@@ -30,7 +30,7 @@ export const ForceUpdate = () => {
     <ScreenContainer style={styles.root} isFullScreenMode={true}>
       <View style={styles.container}>
         <View style={styles.iconContainer}>
-          <Icon name={IconNameEnum.Cloud} size={formatSize(64)} color={colors.orange} />
+          <Icon name={IconNameEnum.DownloadCloud} size={formatSize(64)} color={colors.orange} />
         </View>
         <Divider />
         <View>
