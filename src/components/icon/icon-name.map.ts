@@ -8,8 +8,6 @@ import ShieldIcon from './assets/alert-shield.svg';
 import AlertTriangleIcon from './assets/alert-triangle.svg';
 import AlertIcon from './assets/alert.svg';
 import AliceBobIcon from './assets/alice-bob.svg';
-import AppleOnDarkIcon from './assets/apple-on-dark.svg';
-import AppleIcon from './assets/apple.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
@@ -35,6 +33,9 @@ import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
 import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
+import CloudFillOnDarkIcon from './assets/cloud-fill-on-dark.svg';
+import CloudFillIcon from './assets/cloud-fill.svg';
+import CloudIcon from './assets/cloud.svg';
 import CopyBoldIcon from './assets/copy-bold.svg';
 import CopyIcon from './assets/copy.svg';
 import CreditCardIcon from './assets/credit-card.svg';
@@ -168,7 +169,6 @@ import TriangleDownIcon from './assets/triangle-down.svg';
 import UahIcon from './assets/uah.svg';
 import UkraineIcon from './assets/ukraine.svg';
 import UpdateIcon from './assets/update.svg';
-import UploadCloudIcon from './assets/upload-cloud.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import XBoldIcon from './assets/x-bold.svg';
@@ -252,8 +252,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Github]: GithubIcon,
   [IconNameEnum.Website]: WebsiteIcon,
   [IconNameEnum.NFTCollection]: NFTCollectionIcon,
-  [IconNameEnum.Apple]: AppleIcon,
-  [IconNameEnum.AppleOnDark]: AppleOnDarkIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
@@ -276,8 +274,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Check]: CheckIcon,
   [IconNameEnum.CheckCircle]: CheckCircleIcon,
   [IconNameEnum.Lock]: LockIcon,
+  [IconNameEnum.Cloud]: CloudIcon,
+  [IconNameEnum.CloudFill]: CloudFillIcon,
+  [IconNameEnum.CloudFillOnDark]: CloudFillOnDarkIcon,
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
-  [IconNameEnum.UploadCloud]: UploadCloudIcon,
   [IconNameEnum.AlertCircle]: AlertCircleIcon,
   [IconNameEnum.AlertTriangle]: AlertTriangleIcon,
   [IconNameEnum.Clock]: ClockIcon,

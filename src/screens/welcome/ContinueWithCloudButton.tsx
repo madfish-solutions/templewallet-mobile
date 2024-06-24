@@ -41,10 +41,10 @@ export const ContinueWithCloudButton = () => {
 const getCloudIconEnum = (theme: ThemesEnum, cloudIsAvailable: boolean) => {
   if (isIOS) {
     if (theme === ThemesEnum.light) {
-      return cloudIsAvailable ? IconNameEnum.Apple : IconNameEnum.AppleOnDark;
+      return cloudIsAvailable ? IconNameEnum.CloudFill : IconNameEnum.CloudFillOnDark;
     }
 
-    return cloudIsAvailable ? IconNameEnum.AppleOnDark : IconNameEnum.Apple;
+    return cloudIsAvailable ? IconNameEnum.CloudFillOnDark : IconNameEnum.CloudFill;
   }
 
   return IconNameEnum.GoogleDrive;
