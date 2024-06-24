@@ -27,7 +27,7 @@ export const ContinueWithCloudButton = () => {
 
   return (
     <ButtonLargeSecondary
-      title={`Continue with ${isIOS ? 'Apple' : cloudTitle}`}
+      title={`Continue with ${cloudTitle}`}
       iconName={iconName}
       activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
       disabled={!cloudIsAvailable}
