@@ -7,7 +7,7 @@ on:
     inputs:
       version:
         description: Version
-        default: "1.29"
+        default: "1.30"
         required: true
       build-number:
         description: Build number
