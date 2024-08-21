@@ -18,4 +18,4 @@ export const supportUkraine = 'https://donate.mad.fish/';
 export const yupanaLink = 'https://app.yupana.finance/';
 export const quipuLink = 'https://quipuswap.com/farming';
 export const madfishLink = 'https://story.madfish.solutions/';
-export const templeTapLink = 'https://t.me/temple_tap_bot';
+export const templeTapLink = 'https://t.me/temple_tap_bot/game?startapp=442873246';
