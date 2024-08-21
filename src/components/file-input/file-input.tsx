@@ -2,15 +2,14 @@ import React, { FC } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import { pickSingle } from 'react-native-document-picker';
 
-import { EventFn } from '../../config/general';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { showErrorToast } from '../../toast/toast.utils';
-import { normalizeFileUri } from '../../utils/file.utils';
-import { isString } from '../../utils/is-string';
-import { ButtonLargePrimary } from '../button/button-large/button-large-primary/button-large-primary';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { normalizeFileUri } from 'src/utils/file.utils';
+import { isString } from 'src/utils/is-string';
 
 import { useFileInputStyles } from './file-input.styles';
 
@@ -21,7 +20,7 @@ export interface FileInputValue {
 
 export interface FileInputProps {
   value?: FileInputValue;
-  onChange: EventFn<FileInputValue>;
+  onChange: SyncFn<FileInputValue>;
 }
 
 export const FileInput: FC<FileInputProps> = ({ value, onChange }) => {
@@ -36,7 +35,7 @@ export const FileInput: FC<FileInputProps> = ({ value, onChange }) => {
     try {
       const pickResult = await pickSingle({ copyTo: 'cachesDirectory' });
 
-      onChange({ fileName: pickResult.name, uri: normalizeFileUri(pickResult.uri) });
+      onChange({ fileName: pickResult.name ?? '', uri: normalizeFileUri(pickResult.uri) });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.message !== 'User canceled document picker') {
