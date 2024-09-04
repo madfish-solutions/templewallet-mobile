@@ -33,8 +33,9 @@ import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors'
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 
 import { useMetadataLoading } from './use-metadata-loading';
+import { useNotificationRedirection } from './use-notification-redirection';
 
-export const useMainHooks = (isLocked: boolean) => {
+export const useMainHooks = (isLocked: boolean, isAuthorised: boolean) => {
   const dispatch = useDispatch();
 
   const selectedAccountPkh = useCurrentAccountPkhSelector();
@@ -49,6 +50,7 @@ export const useMainHooks = (isLocked: boolean) => {
   useAppLockTimer();
   useBeaconHandler();
   useNFTDynamicLinks();
+  useNotificationRedirection(isLocked, isAuthorised);
 
   const blockSubscription = useBlockSubscription();
 
