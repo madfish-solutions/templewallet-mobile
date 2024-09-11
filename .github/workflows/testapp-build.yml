@@ -87,6 +87,7 @@ jobs:
       - name: Retain Android artifact
         uses: actions/upload-artifact@v4
         with:
+          name: android
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: warn
           retention-days: 30
@@ -142,6 +143,7 @@ jobs:
       - name: Retain iOS artifact
         uses: actions/upload-artifact@v4
         with:
+          name: ios
           path: ios/build/TempleWallet.ipa
           if-no-files-found: warn
           retention-days: 30
