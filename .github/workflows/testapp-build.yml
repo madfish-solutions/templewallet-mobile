@@ -85,7 +85,7 @@ jobs:
         run: yarn android:release:apk
 
       - name: Retain Android artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: warn
@@ -140,7 +140,7 @@ jobs:
           team-id: ${{ secrets.TEAM_ID }}
 
       - name: Retain iOS artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: ios/build/TempleWallet.ipa
           if-no-files-found: warn
