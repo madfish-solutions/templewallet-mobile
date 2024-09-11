@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash-es';
 import type { MigrationManifest, PersistedState } from 'redux-persist';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
@@ -153,5 +154,17 @@ export const MIGRATIONS: MigrationManifest = {
         accountsStateRecord
       }
     };
+  },
+  '6': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
+    if (!untypedState) {
+      return untypedState;
+    }
+    const state = untypedState as TypedPersistedRootState;
+    state.settings.rpcList = state.settings.rpcList.filter(({ name, url }) => !isEqual({ name, url }, MARIGOLD_RPC));
+    if (state.settings.selectedRpcUrl === MARIGOLD_RPC.url) {
+      state.settings.selectedRpcUrl = TEMPLE_RPC.url;
+    }
+
+    return state;
   }
 };
