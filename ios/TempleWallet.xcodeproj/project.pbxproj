@@ -8,18 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* TempleWalletTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* TempleWalletTests.m */; };
-		0C80B921A6F3F58F76C31292 /* libPods-TempleWallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-TempleWallet.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		1491AFCE28D4B46E008017E9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1491AFCD28D4B46E008017E9 /* GoogleService-Info.plist */; };
 		14D5356428D86EEB0023E53D /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 14D5356328D86EEB0023E53D /* BootSplash.storyboard */; };
 		14D5356628D878090023E53D /* security.txt in Resources */ = {isa = PBXBuildFile; fileRef = 14D5356528D878090023E53D /* security.txt */; };
+		1C4CF49F5CE5267D0956AFC9 /* Pods_TempleWallet_TempleWalletTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A3A11F7789DA2352E52F86D /* Pods_TempleWallet_TempleWalletTests.framework */; };
 		213EED5B11AA4A6C9A06D64B /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 19D400E31E174C93A20763BF /* Inter-SemiBold.ttf */; };
+		3F06D9A3CCD2BDEFEFA8C734 /* Pods_TempleWallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31B48AF8771C8F9175708765 /* Pods_TempleWallet.framework */; };
 		512DF758E19F4A3AA1D6C595 /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D9F4A07B836436BB2AF8792 /* Inter-Regular.ttf */; };
 		54F7E6C33DDB46D0B8844D9D /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D9B6AB061444B8682415EE6 /* Rubik-Medium.ttf */; };
 		5B86C85E2BBEC41400D72867 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5B86C85D2BBEC41400D72867 /* PrivacyInfo.xcprivacy */; };
-		7699B88040F8A987B510C191 /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-TempleWallet-TempleWalletTests.a */; };
 		84FA6AD1E871438190450F26 /* Inter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F43D4FA211DF408C81CD55CB /* Inter-Bold.ttf */; };
 		AC3A7D00563147339795E46A /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3B5E3AF0CF448E69600D4FA /* Rubik-SemiBold.ttf */; };
 		FFCBD1E9F5EE47449AF293B5 /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1B6B3CA8A9C04D8C83B192A1 /* Rubik-Regular.ttf */; };
@@ -49,13 +49,13 @@
 		14D5356328D86EEB0023E53D /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = TempleWallet/BootSplash.storyboard; sourceTree = "<group>"; };
 		14D5356528D878090023E53D /* security.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = security.txt; sourceTree = "<group>"; };
 		19D400E31E174C93A20763BF /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.ttf"; path = "../src/assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
-		19F6CBCC0A4E27FBF8BF4A61 /* libPods-TempleWallet-TempleWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet-TempleWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B6B3CA8A9C04D8C83B192A1 /* Rubik-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Regular.ttf"; path = "../src/assets/fonts/Rubik-Regular.ttf"; sourceTree = "<group>"; };
+		31B48AF8771C8F9175708765 /* Pods_TempleWallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TempleWallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A3A11F7789DA2352E52F86D /* Pods_TempleWallet_TempleWalletTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TempleWallet_TempleWalletTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-TempleWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-TempleWallet-TempleWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet-TempleWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5B86C85D2BBEC41400D72867 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-TempleWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TempleWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D9F4A07B836436BB2AF8792 /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../src/assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-TempleWallet-TempleWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet-TempleWalletTests.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet-TempleWalletTests/Pods-TempleWallet-TempleWalletTests.release.xcconfig"; sourceTree = "<group>"; };
 		9D9B6AB061444B8682415EE6 /* Rubik-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Rubik-Medium.ttf"; path = "../src/assets/fonts/Rubik-Medium.ttf"; sourceTree = "<group>"; };
@@ -70,7 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7699B88040F8A987B510C191 /* libPods-TempleWallet-TempleWalletTests.a in Frameworks */,
+				1C4CF49F5CE5267D0956AFC9 /* Pods_TempleWallet_TempleWalletTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,7 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-TempleWallet.a in Frameworks */,
+				3F06D9A3CCD2BDEFEFA8C734 /* Pods_TempleWallet.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,8 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-TempleWallet.a */,
-				19F6CBCC0A4E27FBF8BF4A61 /* libPods-TempleWallet-TempleWalletTests.a */,
+				31B48AF8771C8F9175708765 /* Pods_TempleWallet.framework */,
+				3A3A11F7789DA2352E52F86D /* Pods_TempleWallet_TempleWalletTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -658,6 +658,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
@@ -729,6 +737,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
