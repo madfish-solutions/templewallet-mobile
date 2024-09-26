@@ -19,7 +19,6 @@ export const OLD_TEMPLE_RPC_URLS = ['https://mainnet-node.madfish.solutions', 'h
 
 export const RpcList: RpcInterface[] = [
   TEMPLE_RPC,
-  MARIGOLD_RPC,
   {
     name: 'SmartPy Mainnet',
     url: 'https://mainnet.smartpy.io'
