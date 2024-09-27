@@ -563,7 +563,7 @@ PODS:
     - React-Core
   - RNBootSplash (5.0.2):
     - React-Core
-  - RNCAsyncStorage (1.21.0):
+  - RNCAsyncStorage (2.0.0):
     - React-Core
   - RNCClipboard (1.11.1):
     - React-Core
@@ -1024,7 +1024,7 @@ SPEC CHECKSUMS:
   ReactCommon: adad72ee3b9bb03ae9feb5a9656eaf8676f243ee
   ReactNativeExceptionHandler: b11ff67c78802b2f62eed0e10e75cb1ef7947c60
   RNBootSplash: 162e6b22df17b8fadc1ab68b0a43093d1e6c4cab
-  RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
+  RNCAsyncStorage: d35c79ffba52c1013013e16b1fc295aec2feabb6
   RNCClipboard: 2834e1c4af68697089cdd455ee4a4cdd198fa7dd
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNCPushNotificationIOS: 64218f3c776c03d7408284a819b2abfda1834bc8
