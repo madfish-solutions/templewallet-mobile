@@ -515,7 +515,7 @@ PODS:
     - react-native-config/App (= 1.5.1)
   - react-native-config/App (1.5.1):
     - React-Core
-  - react-native-document-picker (8.1.1):
+  - react-native-document-picker (8.2.2):
     - React-Core
   - react-native-flipper (0.164.0):
     - React-Core
@@ -1131,7 +1131,7 @@ SPEC CHECKSUMS:
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-cloud-fs: cd21282c5cecaf285225e447dd7f3cf2f9015496
   react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
-  react-native-document-picker: f68191637788994baed5f57d12994aa32cf8bf88
+  react-native-document-picker: cd4d6b36a5207ad7a9e599ebb9eb0c2e84fa0b87
   react-native-flipper: c33a4995958ef12a2b2f8290d63bed7adeed7634
   react-native-netinfo: 8a7fd3f7130ef4ad2fb4276d5c9f8d3f28d2df3d
   react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
@@ -1197,4 +1197,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 1912cce0ce9aaf1fa1368a0107088ff89ad81da0
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.14.3
