@@ -4,16 +4,31 @@ import { useCallback, useEffect } from 'react';
 import { PermissionsAndroid } from 'react-native';
 /* eslint-disable-next-line import/no-named-as-default */
 import PushNotification from 'react-native-push-notification';
+import { useDispatch } from 'react-redux';
 
 import { isAndroid } from 'src/config/system';
+import { setShouldRedirectToNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { isDefined } from 'src/utils/is-defined';
 
 export const usePushNotifications = () => {
+  const dispatch = useDispatch();
+
   useEffect(() => {
     requestUserPermission(getFcmToken);
-    const unsubscribe = handleForegroundNotifications();
+    const unsubscribeFromFgNotifications = handleForegroundNotifications();
 
-    return unsubscribe;
+    const handleRemoteMessage = () => void dispatch(setShouldRedirectToNotificationsAction(true));
+
+    const unsubscribeFromNotificationOpenedApp = messaging().onNotificationOpenedApp(handleRemoteMessage);
+    messaging()
+      .getInitialNotification()
+      .then(message => message && handleRemoteMessage())
+      .catch(error => console.error(error));
+
+    return () => {
+      unsubscribeFromFgNotifications();
+      unsubscribeFromNotificationOpenedApp();
+    };
   }, []);
 
   const getFcmToken = useCallback(async () => {

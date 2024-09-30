@@ -69,7 +69,7 @@ export const MainStackScreen = memo(() => {
 
   const { metadata } = useNetworkInfo();
 
-  useMainHooks(isLocked);
+  useMainHooks(isLocked, isAuthorised);
 
   const shouldShowUnauthorizedScreens = !isAuthorised;
   const shouldShowAuthorizedScreens = isAuthorised && !isLocked;

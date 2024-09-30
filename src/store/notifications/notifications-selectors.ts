@@ -24,3 +24,6 @@ export const useIsNewNotificationsAvailableSelector = () =>
   );
 
 export const useIsNewsEnabledSelector = () => useSelector(({ notifications }) => notifications.isNewsEnabled);
+
+export const useShouldRedirectToNotificationsSelector = () =>
+  useSelector(({ notifications }) => notifications.shouldRedirectToNotifications);
