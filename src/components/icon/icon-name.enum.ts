@@ -87,6 +87,7 @@ export enum IconNameEnum {
   AlertCircle = 'AlertCircle',
   Clock = 'Clock',
   Info = 'Info',
+  InfoAlt = 'InfoAlt',
   ChevronRight = 'ChevronRight',
   ChevronUp = 'ChevronUp',
   News = 'News',
@@ -176,5 +177,6 @@ export enum IconNameEnum {
   GoogleDriveNative = 'GoogleDriveNative',
   Key = 'Key',
   NoConnection = 'NoConnection',
-  ScamInfo = 'ScamInfo'
+  ScamInfo = 'ScamInfo',
+  Stake = 'Stake'
 }

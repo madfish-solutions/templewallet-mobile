@@ -115,7 +115,7 @@ export const ActivityGroupsList: FC<Props> = ({
             <ActivityIndicator size="large" />
           </View>
         ) : (
-          <DataPlaceholder text="No Activity records were found" />
+          <DataPlaceholder text="No operations yet." />
         )}
       </View>
     ),

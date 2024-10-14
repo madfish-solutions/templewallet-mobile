@@ -12,7 +12,7 @@ export const useStackNavigatorStyleOptions = (): StackNavigationOptions => {
     () => ({
       headerStyle: {
         ...generateShadow(1, colors.lines),
-        backgroundColor: colors.navigation,
+        background22Color: colors.navigation,
         borderBottomWidth: formatSize(0.5),
         borderBottomColor: colors.lines
       },

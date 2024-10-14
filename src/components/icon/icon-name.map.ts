@@ -82,6 +82,7 @@ import HelpCircleIcon from './assets/help-circle.svg';
 import HourGlassesIcon from './assets/hourglasses.svg';
 import HummerIcon from './assets/hummer.svg';
 import ImportSquareIcon from './assets/import-square.svg';
+import InfoAltIcon from './assets/info-alt.svg';
 import InfoFilledAltIcon from './assets/info-filled-alt.svg';
 import InfoFilledIcon from './assets/info-gray.svg';
 import InfoIcon from './assets/info.svg';
@@ -143,6 +144,7 @@ import WebsiteIcon from './assets/socials/website.svg';
 import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
 import SpicyIcon from './assets/spicy.svg';
+import StakeIcon from './assets/stake.svg';
 import SuccessIcon from './assets/success.svg';
 import SwapArrowIcon from './assets/swap-arrow.svg';
 import SwapInfo from './assets/swap-info.svg';
@@ -282,6 +284,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.AlertTriangle]: AlertTriangleIcon,
   [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.Info]: InfoIcon,
+  [IconNameEnum.InfoAlt]: InfoAltIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
   [IconNameEnum.ChevronUp]: ChevronUpIcon,
   [IconNameEnum.NoResult]: NoResultIcon,
@@ -361,5 +364,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ManualBackup]: ManualBackupIcon,
   [IconNameEnum.Key]: KeyIcon,
   [IconNameEnum.NoConnection]: NoConnectionIcon,
-  [IconNameEnum.ScamInfo]: ScamInfoIcon
+  [IconNameEnum.ScamInfo]: ScamInfoIcon,
+  [IconNameEnum.Stake]: StakeIcon
 };

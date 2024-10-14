@@ -47,6 +47,7 @@ import { Settings } from 'src/screens/settings/settings';
 import { SwapSettingsScreen } from 'src/screens/swap/settings/swap-settings';
 import { SwapScreen } from 'src/screens/swap/swap';
 import { TezosTokenScreen } from 'src/screens/tezos-token-screen/tezos-token-screen';
+import { TokenInfo } from 'src/screens/token-info/token-info';
 import { TokenScreen } from 'src/screens/token-screen/token-screen';
 import { Wallet } from 'src/screens/wallet/wallet';
 import { Welcome } from 'src/screens/welcome/welcome';
@@ -112,17 +113,22 @@ export const MainStackScreen = memo(() => {
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
                 component={TezosTokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={metadata} />)}
+                options={generateScreenOptions(<HeaderTokenInfo token={metadata} />, null, true, false)}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
                 component={TokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />)}
+                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />, null, true, false)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.TokenInfo}
+                component={TokenInfo}
+                options={generateScreenOptions(<HeaderTitle title="Token Info" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Delegation}
                 component={DelegationScreen}
-                options={generateScreenOptions(<HeaderTitle title="Delegation" />)}
+                options={generateScreenOptions(<HeaderTitle title="Delegate & Stake" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.ManageAssets}

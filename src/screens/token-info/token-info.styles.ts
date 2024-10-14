@@ -1,7 +1,10 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from '../../styles/create-use-styles';
+import { formatSize } from '../../styles/format-size';
 
 export const useTokenInfoStyles = createUseStyles(({ colors, typography }) => ({
+  contentContainerStyle: {
+    paddingTop: formatSize(16)
+  },
   addressContainer: {
     padding: formatSize(12),
     borderRadius: formatSize(8),
