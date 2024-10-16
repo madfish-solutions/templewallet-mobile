@@ -1,6 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
@@ -9,6 +9,7 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
 import { emptyFn } from 'src/config/general';
+import { transparent } from 'src/config/styles';
 import { isAndroid } from 'src/config/system';
 import { useMainHooks } from 'src/hooks/main-hooks';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -53,6 +54,7 @@ import { Wallet } from 'src/screens/wallet/wallet';
 import { Welcome } from 'src/screens/welcome/welcome';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { useColors } from 'src/styles/use-colors';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
@@ -67,6 +69,16 @@ export const MainStackScreen = memo(() => {
   const { isLocked } = useAppLock();
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
+  const colors = useColors();
+
+  const tokenScreenHeaderStyle = useMemo(
+    () => ({
+      backgroundColor: colors.navigation,
+      borderBottomWidth: 0,
+      shadowColor: transparent
+    }),
+    [colors]
+  );
 
   const { metadata } = useNetworkInfo();
 
@@ -113,12 +125,22 @@ export const MainStackScreen = memo(() => {
               <MainStack.Screen
                 name={ScreensEnum.TezosTokenScreen}
                 component={TezosTokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={metadata} />, null, true, false)}
+                options={generateScreenOptions(
+                  <HeaderTokenInfo token={metadata} />,
+                  null,
+                  true,
+                  tokenScreenHeaderStyle
+                )}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenScreen}
                 component={TokenScreen}
-                options={generateScreenOptions(<HeaderTokenInfo token={emptyTokenMetadata} />, null, true, false)}
+                options={generateScreenOptions(
+                  <HeaderTokenInfo token={emptyTokenMetadata} />,
+                  null,
+                  true,
+                  tokenScreenHeaderStyle
+                )}
               />
               <MainStack.Screen
                 name={ScreensEnum.TokenInfo}
