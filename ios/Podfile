@@ -70,11 +70,9 @@ target 'TempleWallet' do
     # Patch to fix fastlane artifact upload.
     # See: https://github.com/mapbox/mapbox-maps-ios/issues/2233#issuecomment-2345562101
 
-    puts "Stripping bitcode from Themis frameworks"
-
     themis_paths = [
-      'node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_armv7/themis.framework/themis',
-      'node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_i386_x86_64-simulator/themis.framework/themis'
+      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_armv7/themis.framework/themis',
+      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_i386_x86_64-simulator/themis.framework/themis'
     ]
 
     themis_paths.each do |path|
