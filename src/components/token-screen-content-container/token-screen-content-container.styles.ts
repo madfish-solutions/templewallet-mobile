@@ -15,7 +15,7 @@ export const useTokenScreenContentContainerStyles = createUseStylesMemoized(({ c
   },
   headerText: {
     ...typography.body15Semibold,
-    color: colors.gray1
+    color: colors.black
   },
   delegateContainer: {
     flexDirection: 'row',
@@ -23,7 +23,7 @@ export const useTokenScreenContentContainerStyles = createUseStylesMemoized(({ c
     alignItems: 'center',
     paddingVertical: formatSize(4),
     paddingHorizontal: formatSize(8),
-    borderRadius: formatSize(14),
+    borderRadius: formatSize(8),
     backgroundColor: colors.blue
   },
   delegateText: {
@@ -45,7 +45,7 @@ export const useTokenScreenContentContainerStyles = createUseStylesMemoized(({ c
     alignItems: 'center',
     padding: formatSize(4),
     paddingRight: formatSize(8),
-    borderRadius: formatSize(14),
+    borderRadius: formatSize(8),
     backgroundColor: colors.destructive
   }
 }));

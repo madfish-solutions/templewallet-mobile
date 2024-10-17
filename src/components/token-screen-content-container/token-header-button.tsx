@@ -25,18 +25,17 @@ import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
 
 import { useApyStyles } from './apy.styles';
-import { apyLinkSelectors } from './token-header.selectors';
+import { apyLinkSelectors } from './token-header-button.selectors';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
 
 interface Props {
-  showHistoryComponent: boolean;
   token: TokenInterface;
   scam?: boolean;
 }
 
 const DECIMAL_VALUE = 2;
 
-export const TokenHeader: FC<Props> = ({ showHistoryComponent, token, scam }) => {
+export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
   const dispatch = useDispatch();
   const styles = useTokenScreenContentContainerStyles();
   const apyStyles = useApyStyles();
@@ -93,15 +92,15 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token, scam }) =>
     openUrl(apyLink);
   }, [apyLink]);
 
-  if (showHistoryComponent && isTezos) {
+  if (isTezos) {
     return (
       <TouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
-        <Text style={styles.delegateText}>{currentBaker ? 'Rewards & Redelegate' : 'Not Delegated'}</Text>
+        <Text style={styles.delegateText}>{currentBaker ? 'Delegate & Stake' : 'Not Delegated'}</Text>
       </TouchableOpacity>
     );
   }
 
-  if (showHistoryComponent && scam) {
+  if (scam) {
     return (
       <TouchableOpacity onPress={handleScamPress} style={styles.scamContainer}>
         <Icon name={IconNameEnum.ScamInfo} size={formatSize(24)} color={white} />
@@ -110,7 +109,7 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token, scam }) =>
     );
   }
 
-  if (showHistoryComponent && isDefined(apyLink) && apyRate !== 0) {
+  if (isDefined(apyLink) && apyRate !== 0) {
     const label = getDelegateText(token);
 
     return (
@@ -122,5 +121,5 @@ export const TokenHeader: FC<Props> = ({ showHistoryComponent, token, scam }) =>
     );
   }
 
-  return <Text style={styles.headerText}>{showHistoryComponent ? 'History' : 'Info'}</Text>;
+  return null;
 };
