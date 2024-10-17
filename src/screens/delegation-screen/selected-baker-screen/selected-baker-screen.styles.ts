@@ -1,12 +1,13 @@
-import { black } from '../../../config/styles';
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
-import { generateShadow } from '../../../styles/generate-shadow';
+import { black } from 'src/config/styles';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
+import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typography }) => ({
-  bakerCard: {
+  card: {
     ...generateShadow(1, black),
-    margin: formatSize(16),
+    marginTop: formatSize(16),
+    marginHorizontal: formatSize(16),
     padding: formatSize(8),
     borderRadius: formatSize(10),
     backgroundColor: colors.cardBG
@@ -16,7 +17,7 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  bakerContainer: {
+  mainContentContainer: {
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -45,5 +46,13 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
   },
   accountPkh: {
     height: formatSize(24)
+  },
+  stakeIcon: {
+    padding: formatSize(4),
+    backgroundColor: colors.blue10,
+    borderRadius: formatSize(8)
+  },
+  linkIcon: {
+    marginRight: formatSize(8)
   }
 }));

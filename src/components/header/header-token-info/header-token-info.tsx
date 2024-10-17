@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
+import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TruncatedText } from 'src/components/truncated-text';
+import { formatSize } from 'src/styles/format-size';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { isString } from 'src/utils/is-string';
-
-import { TokenIcon } from '../../token-icon/token-icon';
 
 import { useHeaderTokenInfoStyles } from './header-token-info.styles';
 
@@ -20,7 +20,7 @@ export const HeaderTokenInfo: FC<Props> = ({ token }) => {
 
   return (
     <View style={styles.container}>
-      <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
+      <TokenIcon size={formatSize(40)} iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
       <View style={styles.textContainer}>
         <TruncatedText style={styles.title}>{token.symbol}</TruncatedText>
         <TruncatedText style={styles.subtitle}>{subtitle}</TruncatedText>

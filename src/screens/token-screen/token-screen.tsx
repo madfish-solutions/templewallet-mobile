@@ -1,17 +1,20 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
+import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { useContractActivity } from 'src/hooks/use-contract-activity';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
@@ -22,10 +25,10 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { TokenInfo } from './token-info/token-info';
-
 export const TokenScreen = () => {
   const { token: initialToken } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenScreen>>().params;
+
+  const { navigate } = useNavigation();
 
   const dispatch = useDispatch();
   const accountPkh = useCurrentAccountPkhSelector();
@@ -54,7 +57,15 @@ export const TokenScreen = () => {
 
   const { activities, handleUpdate, isAllLoaded, isLoading } = useContractActivity(getTokenSlug(initialToken));
 
-  useNavigationSetOptions({ headerTitle: () => <HeaderTokenInfo token={token} /> }, [token]);
+  const handleInfoIconClick = useCallback(() => navigate(ScreensEnum.TokenInfo, { token }), [navigate, token]);
+
+  useNavigationSetOptions(
+    {
+      headerTitle: () => <HeaderTokenInfo token={token} />,
+      headerRight: () => <HeaderButton iconName={IconNameEnum.InfoAlt} onPress={handleInfoIconClick} />
+    },
+    [token]
+  );
 
   usePageAnalytic(ScreensEnum.TokenScreen, undefined, { token: token.name });
 
@@ -78,7 +89,6 @@ export const TokenScreen = () => {
             pageName="Token page"
           />
         }
-        infoComponent={<TokenInfo token={token} />}
         token={token}
         scam={scamTokenSlugsRecord[getTokenSlug(token)]}
       />

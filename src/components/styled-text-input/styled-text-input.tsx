@@ -1,11 +1,12 @@
 import React, { forwardRef } from 'react';
 import { Keyboard, TextInput, View } from 'react-native';
 
-import { emptyFn } from '../../config/general';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { isString } from '../../utils/is-string';
-import { setTestID } from '../../utils/test-id.utils';
+import { emptyFn } from 'src/config/general';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { isString } from 'src/utils/is-string';
+import { setTestID } from 'src/utils/test-id.utils';
+
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 
@@ -41,7 +42,7 @@ export const StyledTextInput = forwardRef<TextInput, StyledTextInputProps>(
         <TextInput
           ref={ref}
           style={[styles.regular, isError && styles.error, isPasswordInput && styles.passwordPadding, style]}
-          placeholderTextColor={colors.gray3}
+          placeholderTextColor={colors.gray1}
           selectionColor={colors.orange}
           value={value}
           onChangeText={onChangeText}

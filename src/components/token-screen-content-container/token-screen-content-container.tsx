@@ -1,43 +1,28 @@
-import React, { FC, ReactElement, useState } from 'react';
-import { View } from 'react-native';
+import React, { FC, ReactElement } from 'react';
+import { Text, View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
-import { TokenInterface } from '../../token/interfaces/token.interface';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { ScreenContainer } from '../screen-container/screen-container';
-import { IconSegmentControl } from '../segmented-control/icon-segment-control/icon-segment-control';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
-import { TokenHeader } from './token-header';
+import { TokenHeaderButton } from './token-header-button';
 import { useTokenScreenContentContainerStyles } from './token-screen-content-container.styles';
 
 interface Props {
   historyComponent: ReactElement;
-  infoComponent: ReactElement;
   token: TokenInterface;
   scam?: boolean;
 }
 
-const historyComponentIndex = 0;
-
-export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, infoComponent, token, scam }) => {
+export const TokenScreenContentContainer: FC<Props> = ({ historyComponent, token, scam }) => {
   const styles = useTokenScreenContentContainerStyles();
-
-  const [segmentedControlIndex, setSegmentedControlIndex] = useState(0);
-  const showHistoryComponent = segmentedControlIndex === historyComponentIndex;
 
   return (
     <>
       <View style={styles.headerContainer}>
-        <TokenHeader showHistoryComponent={showHistoryComponent} token={token} scam={scam} />
-        <IconSegmentControl
-          selectedIndex={segmentedControlIndex}
-          values={[IconNameEnum.Clock, IconNameEnum.Info]}
-          width={formatSize(94)}
-          onChange={setSegmentedControlIndex}
-        />
+        <Text style={styles.headerText}>History</Text>
+        <TokenHeaderButton token={token} scam={scam} />
       </View>
 
-      {showHistoryComponent ? historyComponent : <ScreenContainer>{infoComponent}</ScreenContainer>}
+      {historyComponent}
     </>
   );
 };

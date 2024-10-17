@@ -1,14 +1,16 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { NotificationStatus } from '../../enums/notification-status.enum';
-import { isDefined } from '../../utils/is-defined';
+import { NotificationStatus } from 'src/enums/notification-status.enum';
+import { isDefined } from 'src/utils/is-defined';
+
 import { createEntity } from '../create-entity';
 
 import {
   loadNotificationsAction,
   setIsNewsEnabledAction,
   readNotificationsItemAction,
-  viewAllNotificationsAction
+  viewAllNotificationsAction,
+  setShouldRedirectToNotificationsAction
 } from './notifications-actions';
 import { notificationsInitialState, NotificationsState } from './notifications-state';
 
@@ -76,4 +78,8 @@ export const notificationsReducers = createReducer<NotificationsState>(notificat
     ...state,
     isNewsEnabled
   }));
+
+  builder.addCase(setShouldRedirectToNotificationsAction, (state, { payload: shouldRedirectToNotifications }) => {
+    state.shouldRedirectToNotifications = shouldRedirectToNotifications;
+  });
 });

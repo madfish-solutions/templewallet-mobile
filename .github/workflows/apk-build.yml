@@ -7,7 +7,7 @@ on:
     inputs:
       version:
         description: Version
-        default: "1.31"
+        default: "1.32"
         required: true
       build-number:
         description: Build number
@@ -75,7 +75,7 @@ jobs:
         run: yarn android:release:apk
 
       - name: Retain Android artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           path: android/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: warn
