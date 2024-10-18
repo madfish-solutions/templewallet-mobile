@@ -149,6 +149,10 @@ dependencies {
 
     // Animated WEBP support. See: https://github.com/DylanVann/react-native-fast-image/issues/92#issuecomment-1680704556
     implementation "com.github.zjupure:webpdecoder:2.6.${rootProject.ext.glideVersion}"
+
+    // Patch upgrading to SDK v34 (without RN upgrade):
+    // See: https://github.com/joltup/rn-fetch-blob/issues/866#issuecomment-2227436658
+    implementation 'org.jetbrains:annotations:16.0.2'
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

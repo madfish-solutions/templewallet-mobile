@@ -701,7 +701,8 @@ PODS:
     - FirebaseCoreExtension
     - React-Core
     - RNFBApp
-  - RNFlashList (1.6.1):
+  - RNFlashList (1.7.1):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNFS (2.20.0):
     - React-Core
@@ -1193,7 +1194,7 @@ SPEC CHECKSUMS:
   RNFBAppCheck: 41631e7f6eb5e733dd009b2c601cdbdb20ee452b
   RNFBDynamicLinks: 0be04fa60c7d96437588fd4a5ae37334ba49db34
   RNFBMessaging: 3fa1114c0868dd21f20dfe186adf42297ea316b1
-  RNFlashList: 236646d48f224a034f35baa0242e1b77db063b1e
+  RNFlashList: 912ea5fbd98161b0816342c30179a7a2d51744cf
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
   RNGoogleSignin: 22e468a9474dbcb8618d8847205ad4f0b2575d13
@@ -1215,6 +1216,6 @@ SPEC CHECKSUMS:
   Yoga: 87e59f6d458e5061d2421086c5de994b3f7cd151
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 1912cce0ce9aaf1fa1368a0107088ff89ad81da0
+PODFILE CHECKSUM: 9f71d21638951623da46544e78da90f2fd2b4a1a
 
 COCOAPODS: 1.15.2
