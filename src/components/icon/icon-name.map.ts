@@ -112,6 +112,7 @@ import NoConnectionIcon from './assets/no-connection.svg';
 import NoResultIcon from './assets/no-result.svg';
 import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
+import OXtzIcon from './assets/oxtz.svg';
 import PlentyIcon from './assets/plenty.svg';
 import PlusCircleNewIcon from './assets/plus-circle-new.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
@@ -173,6 +174,7 @@ import UkraineIcon from './assets/ukraine.svg';
 import UpdateIcon from './assets/update.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
+import WTezIcon from './assets/wtez.svg';
 import XBoldIcon from './assets/x-bold.svg';
 import XCircleIcon from './assets/x-circle.svg';
 import XSearchIcon from './assets/x-search.svg';
@@ -238,6 +240,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Settings]: SettingsIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
   [IconNameEnum.Spicy]: SpicyIcon,
+  [IconNameEnum.WTez]: WTezIcon,
+  [IconNameEnum.OXtz]: OXtzIcon,
   [IconNameEnum.Youves]: YouvesIcon,
   [IconNameEnum.Vortex]: VortexIcon,
   [IconNameEnum.QuipuSwap]: QuipuSwapIcon,

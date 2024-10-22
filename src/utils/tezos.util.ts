@@ -6,6 +6,9 @@ import { TokenInterface } from '../token/interfaces/token.interface';
 
 import { isDefined } from './is-defined';
 
+/** From @taquito/taquito */
+export const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
+
 export const RPC_RETRY_OPTIONS = {
   retries: 2,
   minTimeout: 100,
