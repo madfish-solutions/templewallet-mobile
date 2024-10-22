@@ -50,7 +50,7 @@ import {
 import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { /* KNOWN_TOKENS_SLUGS, */ KNOWN_TOKENS_SLUGS, TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
+import { KNOWN_TOKENS_SLUGS, TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';

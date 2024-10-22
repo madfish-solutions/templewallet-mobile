@@ -20,7 +20,7 @@ export const ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT = Math.ceil(
     (Math.min(CASHBACK_PERCENT, ROUTING_FEE_PERCENT - CASHBACK_PERCENT) / 100)
 );
 
-// These value have been set after some experimentation
+// These values have been set after some experimentation
 export const SINGLE_SWAP_IN_BATCH_MAX_DEXES = 16;
 const LB_OPERATION_DEXES_COST = 2;
 export const SINGLE_SIRS_SWAP_MAX_DEXES = SINGLE_SWAP_IN_BATCH_MAX_DEXES - LB_OPERATION_DEXES_COST;
