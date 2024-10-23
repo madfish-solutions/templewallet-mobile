@@ -14,10 +14,9 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
 import {
   ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT,
-  BURN_ADDREESS,
-  CASHBACK_PERCENT,
+  CASHBACK_RATIO,
   ROUTING_FEE_ADDRESS,
-  ROUTING_FEE_PERCENT,
+  ROUTING_FEE_RATIO,
   ROUTING_FEE_SLIPPAGE_RATIO,
   SINGLE_SIRS_SWAP_MAX_DEXES,
   SINGLE_SWAP_IN_BATCH_MAX_DEXES,
@@ -57,6 +56,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
+import { BURN_ADDRESS } from 'src/utils/known-addresses';
 import { ZERO } from 'src/utils/number.util';
 import { fetchRoute3SwapParams, getRoute3TokenSymbol } from 'src/utils/route3.util';
 import {
@@ -185,7 +185,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         fromRoute3Token,
         routingFeeFromInputAtomic.minus(cashbackSwapInputFromInAtomic),
         publicKeyHash,
-        BURN_ADDREESS,
+        BURN_ADDRESS,
         tezos
       );
       allSwapParams.push(...routingInputFeeOpParams);
@@ -222,20 +222,18 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       const routingFeeOpParams = await getRoutingFeeTransferParams(
         TEMPLE_TOKEN,
-        templeOutputAtomic.times(ROUTING_FEE_PERCENT - CASHBACK_PERCENT).dividedToIntegerBy(ROUTING_FEE_PERCENT),
+        templeOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
         publicKeyHash,
-        BURN_ADDREESS,
+        BURN_ADDRESS,
         tezos
       );
       allSwapParams.push(...routingFeeOpParams);
     } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold && isOutputTokenTempleToken) {
       routingOutputFeeTransferParams = await getRoutingFeeTransferParams(
         TEMPLE_TOKEN,
-        routingFeeFromOutputAtomic
-          .times(ROUTING_FEE_PERCENT - CASHBACK_PERCENT)
-          .dividedToIntegerBy(ROUTING_FEE_PERCENT),
+        routingFeeFromOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
         publicKeyHash,
-        BURN_ADDREESS,
+        BURN_ADDRESS,
         tezos
       );
     } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold) {
@@ -260,9 +258,9 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       const routingFeeOpParams = await getRoutingFeeTransferParams(
         TEMPLE_TOKEN,
-        templeOutputAtomic.times(ROUTING_FEE_PERCENT - CASHBACK_PERCENT).dividedToIntegerBy(ROUTING_FEE_PERCENT),
+        templeOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
         publicKeyHash,
-        BURN_ADDREESS,
+        BURN_ADDRESS,
         tezos
       );
       routingOutputFeeTransferParams = [...swapToTempleTokenOpParams, ...routingFeeOpParams];

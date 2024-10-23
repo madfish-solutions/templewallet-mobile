@@ -140,9 +140,3 @@ export const getRoute3TokenBySlug = (route3Tokens: Array<Route3Token>, slug: str
 
   return route3Tokens.find(token => getRoute3TokenSlug(token) === slug);
 };
-
-export const getAtomicValuePercentage = (
-  value: BigNumber,
-  percentage: BigNumber.Value,
-  roundingMode: BigNumber.RoundingMode = BigNumber.ROUND_FLOOR
-) => value.multipliedBy(percentage).div(100).integerValue(roundingMode);

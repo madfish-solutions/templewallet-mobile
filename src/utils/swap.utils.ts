@@ -5,15 +5,15 @@ import { firstValueFrom, map } from 'rxjs';
 import {
   APP_ID,
   ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT,
-  CASHBACK_PERCENT,
+  CASHBACK_RATIO,
   LIQUIDITY_BAKING_PROXY_CONTRACT,
   ROUTE3_CONTRACT,
-  ROUTING_FEE_PERCENT
+  ROUTING_FEE_RATIO
 } from 'src/config/swap';
 import { isSwapHops, Route3LiquidityBakingHops, Route3SwapHops, Route3Token } from 'src/interfaces/route3.interface';
 
 import { ZERO } from './number.util';
-import { getAtomicValuePercentage, mapToRoute3ExecuteHops } from './route3.util';
+import { mapToRoute3ExecuteHops } from './route3.util';
 import { getReadOnlyContract } from './rpc/contract.utils';
 import { MINIMAL_FEE_PER_GAS_MUTEZ } from './tezos.util';
 import { getTransferParams$ } from './transfer-params.utils';
@@ -25,11 +25,9 @@ export const calculateSidePaymentsFromInput = (inputAmount: BigNumber | undefine
   const swapInputAtomic = (inputAmount ?? ZERO).integerValue(BigNumber.ROUND_DOWN);
   const shouldTakeFeeFromInput = swapInputAtomic.gte(ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT);
   const inputFeeAtomic = shouldTakeFeeFromInput
-    ? getAtomicValuePercentage(swapInputAtomic, ROUTING_FEE_PERCENT, BigNumber.ROUND_CEIL)
+    ? swapInputAtomic.times(ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_CEIL)
     : ZERO;
-  const cashbackSwapInputAtomic = shouldTakeFeeFromInput
-    ? getAtomicValuePercentage(swapInputAtomic, CASHBACK_PERCENT)
-    : ZERO;
+  const cashbackSwapInputAtomic = shouldTakeFeeFromInput ? swapInputAtomic.times(CASHBACK_RATIO).integerValue() : ZERO;
   const swapInputMinusFeeAtomic = swapInputAtomic.minus(inputFeeAtomic);
 
   return {
@@ -44,7 +42,7 @@ export const calculateOutputFeeAtomic = (inputAmount: BigNumber | undefined, out
 
   return swapInputAtomic.gte(ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT)
     ? ZERO
-    : getAtomicValuePercentage(outputAmount, ROUTING_FEE_PERCENT, BigNumber.ROUND_CEIL);
+    : outputAmount.times(ROUTING_FEE_RATIO).integerValue(BigNumber.ROUND_CEIL);
 };
 
 export const getRoutingFeeTransferParams = async (
