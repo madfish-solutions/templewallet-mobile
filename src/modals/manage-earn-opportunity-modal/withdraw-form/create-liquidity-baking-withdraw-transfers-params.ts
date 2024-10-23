@@ -26,8 +26,8 @@ export const createLiquidityBakingWithdrawTransfersParams = async (
       threeRouteOutputToken,
       outputAtomic,
       routingFeeFromOutputAtomic,
-      xtzChain,
-      tzbtcChain
+      xtzHops,
+      tzbtcHops
     }
   ] = await calculateUnstakeParams([tokenIndex], lpAmount, slippageTolerancePercentage);
 
@@ -52,7 +52,7 @@ export const createLiquidityBakingWithdrawTransfersParams = async (
     threeRouteOutputToken,
     swapInputMinusFeeAtomic,
     outputAtomic,
-    { xtzChain, tzbtcChain },
+    { xtzHops, tzbtcHops },
     tezos,
     accountPkh
   );

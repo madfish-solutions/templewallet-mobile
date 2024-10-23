@@ -50,6 +50,8 @@ export enum IconNameEnum {
   DApps = 'DApps',
   SoonBadge = 'SoonBadge',
   Spicy = 'Spicy',
+  WTez = 'WTez',
+  OXtz = 'OXtz',
   Youves = 'Youves',
   Vortex = 'Vortex',
   Plenty = 'Plenty',

@@ -1,19 +1,18 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { ROUTING_FEE_ADDRESS } from 'src/config/swap';
+import { ROUTING_FEE_ADDRESS, SINGLE_SWAP_IN_BATCH_MAX_DEXES } from 'src/config/swap';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { Route3Token } from 'src/interfaces/route3.interface';
 import { ToastError } from 'src/toast/error-toast.utils';
-import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { fetchRoute3SwapParams, getRoute3TokenSlug } from 'src/utils/route3.util';
+import { fetchRoute3SwapParams } from 'src/utils/route3.util';
 import {
-  calculateRoutingInputAndFeeFromInput,
+  calculateSidePaymentsFromInput,
   calculateSlippageRatio,
-  calculateFeeFromOutput,
+  calculateOutputFeeAtomic,
   getSwapTransferParams,
   getRoutingFeeTransferParams
 } from 'src/utils/swap.utils';
@@ -46,12 +45,12 @@ export const createStakeTransfersParams = async (
     throw new Error('Failed to find 3route output token');
   }
 
-  const { swapInputMinusFeeAtomic, routingFeeFromInputAtomic } = calculateRoutingInputAndFeeFromInput(amount);
+  const { swapInputMinusFeeAtomic, inputFeeAtomic: routingFeeFromInputAtomic } = calculateSidePaymentsFromInput(amount);
   const threeRouteSwapParams = await fetchRoute3SwapParams({
     fromSymbol: fromRoute3Token.symbol,
     toSymbol: toRoute3Token.symbol,
     amount: mutezToTz(swapInputMinusFeeAtomic, asset.decimals).toString(),
-    chainsLimit: getRoute3TokenSlug(fromRoute3Token) === KNOWN_TOKENS_SLUGS.SIRS ? 1 : 2
+    dexesLimit: SINGLE_SWAP_IN_BATCH_MAX_DEXES
   });
 
   if (!isDefined(threeRouteSwapParams.output) || threeRouteSwapParams.output === '0') {
@@ -64,7 +63,7 @@ export const createStakeTransfersParams = async (
       .integerValue(BigNumber.ROUND_DOWN),
     1
   );
-  const routingFeeFromOutputAtomic = calculateFeeFromOutput(amount, minimumReceivedAtomic);
+  const routingFeeFromOutputAtomic = calculateOutputFeeAtomic(amount, minimumReceivedAtomic);
   const swapTransferParams = await getSwapTransferParams(
     fromRoute3Token,
     toRoute3Token,

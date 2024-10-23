@@ -139,6 +139,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
     [
       earnOpportunity,
       canUseOnRamp,
+      tezosBalance,
       dispatch,
       trackEvent,
       tezos,

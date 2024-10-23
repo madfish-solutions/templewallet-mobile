@@ -6,7 +6,7 @@ import { isTruthy } from './is-truthy';
 
 const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
-const IPFS_GATE = 'https://cloudflare-ipfs.com/ipfs';
+const IPFS_GATE = 'https://ipfs.io/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
 type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
