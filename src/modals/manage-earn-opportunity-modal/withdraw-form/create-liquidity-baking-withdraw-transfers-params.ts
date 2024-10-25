@@ -29,7 +29,7 @@ export const createLiquidityBakingWithdrawTransfersParams = async (
       xtzHops,
       tzbtcHops
     }
-  ] = await calculateUnstakeParams([tokenIndex], lpAmount, slippageTolerancePercentage);
+  ] = await calculateUnstakeParams([tokenIndex], lpAmount, slippageTolerancePercentage, tezos.rpc.getRpcUrl());
 
   const transferFeeFromInputParams = await getRoutingFeeTransferParams(
     THREE_ROUTE_SIRS_TOKEN,

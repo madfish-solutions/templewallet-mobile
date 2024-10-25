@@ -13,24 +13,30 @@ export interface Hop {
 export interface Route3SwapParamsRequestRaw {
   fromSymbol: string;
   toSymbol: string;
+  toTokenDecimals: number;
   amount: string | undefined;
   dexesLimit?: number;
+  /** Needed to make a correction of params if input is SIRS */
+  rpcUrl: string;
 }
 
 // TODO: add `showTree: boolean` when adding route view
 interface Route3SwapParamsRequestBase {
   fromSymbol: string;
   toSymbol: string;
+  toTokenDecimals: number;
   amount: string;
+  /** Needed to make a correction of params if input is SIRS */
+  rpcUrl: string;
 }
 
 export interface Route3SwapParamsRequest extends Route3SwapParamsRequestBase {
-  dexesLimit?: number;
+  dexesLimit: number;
 }
 
 export interface Route3LbSwapParamsRequest extends Route3SwapParamsRequestBase {
-  xtzDexesLimit?: number;
-  tzbtcDexesLimit?: number;
+  xtzDexesLimit: number;
+  tzbtcDexesLimit: number;
 }
 
 export interface Route3Hop {

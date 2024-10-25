@@ -7,6 +7,7 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useTokenBalanceGetter } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
@@ -97,6 +98,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     } = stylesConfig;
     const colors = useColors();
     const { trackEvent } = useAnalytics();
+    const getBalance = useTokenBalanceGetter();
 
     const configInputPaddingStyles = useMemo(
       () => ({
@@ -109,9 +111,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
     const balance = useMemo(
-      () =>
-        tokenEqualityFn(value.asset, emptyTezosLikeToken) ? DEFAULT_BALANCE : token?.balance ?? value.asset.balance,
-      [token?.balance, value.asset]
+      () => (tokenEqualityFn(value.asset, emptyTezosLikeToken) ? DEFAULT_BALANCE : getBalance(slug) ?? '0'),
+      [getBalance, slug, value.asset]
     );
 
     const { isTezosNode } = useNetworkInfo();

@@ -202,8 +202,10 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       const swapToTempleParams = await fetchRoute3SwapParams({
         fromSymbol: fromRoute3Token.symbol,
         toSymbol: TEMPLE_TOKEN.symbol,
+        toTokenDecimals: TEMPLE_TOKEN.decimals,
         amount: mutezToTz(routingFeeFromInputAtomic, fromRoute3Token.decimals).toFixed(),
-        dexesLimit: cashbackSwapMaxDexes
+        dexesLimit: cashbackSwapMaxDexes,
+        rpcUrl: tezos.rpc.getRpcUrl()
       });
 
       const templeOutputAtomic = tzToMutez(new BigNumber(swapToTempleParams.output ?? ZERO), TEMPLE_TOKEN.decimals)
@@ -240,8 +242,10 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       const swapToTempleParams = await fetchRoute3SwapParams({
         fromSymbol: toRoute3Token.symbol,
         toSymbol: TEMPLE_TOKEN.symbol,
+        toTokenDecimals: TEMPLE_TOKEN.decimals,
         amount: mutezToTz(routingFeeFromOutputAtomic, toRoute3Token.decimals).toFixed(),
-        dexesLimit: cashbackSwapMaxDexes
+        dexesLimit: cashbackSwapMaxDexes,
+        rpcUrl: tezos.rpc.getRpcUrl()
       });
 
       const templeOutputAtomic = tzToMutez(new BigNumber(swapToTempleParams.output ?? ZERO), TEMPLE_TOKEN.decimals)
@@ -353,12 +357,14 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         loadSwapParamsAction.submit({
           fromSymbol: getRoute3TokenSymbol(input.asset),
           toSymbol: getRoute3TokenSymbol(output.asset),
+          toTokenDecimals: output.asset.decimals,
           amount: mutezToTz(amount, input.asset.decimals).toFixed(),
-          dexesLimit: mainSwapMaxDexes
+          dexesLimit: mainSwapMaxDexes,
+          rpcUrl: tezos.rpc.getRpcUrl()
         })
       );
     },
-    [dispatch, getSwapWithFeeParams]
+    [dispatch, getSwapWithFeeParams, tezos.rpc]
   );
 
   useEffect(() => {

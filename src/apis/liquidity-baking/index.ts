@@ -109,7 +109,8 @@ export const getLiquidityBakingFarm = async (
 export const calculateUnstakeParams = async (
   outputTokenIndexes: number[],
   lpAmount: BigNumber,
-  slippageTolerancePercentage: number
+  slippageTolerancePercentage: number,
+  rpcUrl: string
 ) => {
   const { swapInputMinusFeeAtomic, inputFeeAtomic: routingFeeFromInputAtomic } =
     calculateSidePaymentsFromInput(lpAmount);
@@ -124,10 +125,12 @@ export const calculateUnstakeParams = async (
       } = await fetchRoute3LiquidityBakingParams({
         fromSymbol: SIRS_TOKEN_METADATA.symbol,
         toSymbol: threeRouteOutputToken.symbol,
+        toTokenDecimals: threeRouteOutputToken.decimals,
         amount: mutezToTz(swapInputMinusFeeAtomic, SIRS_TOKEN_METADATA.decimals).toFixed(),
         // Such swap has either XTZ or tzBTC hops
         xtzDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
-        tzbtcDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES
+        tzbtcDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
+        rpcUrl
       });
 
       if (rawOutput === ZERO.toFixed() || !isDefined(rawOutput)) {

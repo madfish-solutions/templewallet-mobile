@@ -49,8 +49,10 @@ export const createStakeTransfersParams = async (
   const threeRouteSwapParams = await fetchRoute3SwapParams({
     fromSymbol: fromRoute3Token.symbol,
     toSymbol: toRoute3Token.symbol,
+    toTokenDecimals: toRoute3Token.decimals,
     amount: mutezToTz(swapInputMinusFeeAtomic, asset.decimals).toString(),
-    dexesLimit: SINGLE_SWAP_IN_BATCH_MAX_DEXES
+    dexesLimit: SINGLE_SWAP_IN_BATCH_MAX_DEXES,
+    rpcUrl: tezos.rpc.getRpcUrl()
   });
 
   if (!isDefined(threeRouteSwapParams.output) || threeRouteSwapParams.output === '0') {

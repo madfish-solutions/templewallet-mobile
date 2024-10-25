@@ -1,9 +1,12 @@
 import { MichelsonMap } from '@taquito/taquito';
+import axios from 'axios';
 import { BigNumber } from 'bignumber.js';
-import { intersection, transform } from 'lodash-es';
+import { intersection, pick, transform } from 'lodash-es';
+import memoizee from 'memoizee';
 import { from, map } from 'rxjs';
 
 import { ROUTE3_BASE_URL, route3Api } from 'src/apis/route3';
+import { BLOCK_DURATION, ONE_MINUTE } from 'src/config/fixed-times';
 import {
   Hop,
   Route3Dex,
@@ -19,6 +22,7 @@ import {
   THREE_ROUTE_TZBTC_TOKEN,
   THREE_ROUTE_XTZ_TOKEN
 } from 'src/token/data/three-route-tokens';
+import { LIQUIDITY_BAKING_DEX_ADDRESS } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
@@ -41,7 +45,9 @@ const parser = (origJSON: string): ReturnType<(typeof JSON)['parse']> => {
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest): string;
 function getRoute3ParametrizedUrlPart(params: Route3LbSwapParamsRequest): string;
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest | Route3LbSwapParamsRequest) {
-  const { fromSymbol, toSymbol, amount, ...queryParams } = params;
+  const { fromSymbol, toSymbol, amount } = params;
+  const queryParams =
+    'dexesLimit' in params ? pick(params, 'dexesLimit') : pick(params, 'xtzDexesLimit', 'tzbtcDexesLimit');
   const searchParams = new URLSearchParams(
     transform<typeof queryParams, StringRecord>(
       queryParams,
@@ -69,6 +75,24 @@ const fetchRoute3TraditionalSwapParams = (
     .then(res => res.text())
     .then(res => parser(res));
 
+const getLbSubsidyCausedXtzDeviation = memoizee(
+  async (rpcUrl: string) => {
+    const currentBlockRpcBaseURL = `${rpcUrl}/chains/main/blocks/head/context`;
+    const { data: constants } = await axios.get<{ minimal_block_delay: string; liquidity_baking_subsidy: string }>(
+      `${currentBlockRpcBaseURL}/constants`
+    );
+    const { minimal_block_delay: blockDuration = String(BLOCK_DURATION), liquidity_baking_subsidy: lbSubsidyPerMin } =
+      constants;
+    const lbSubsidyPerBlock = Math.floor(Number(lbSubsidyPerMin) / Math.floor(60 / Number(blockDuration)));
+    const { data: rawSirsDexBalance } = await axios.get<string>(
+      `${currentBlockRpcBaseURL}/contracts/${LIQUIDITY_BAKING_DEX_ADDRESS}/balance`
+    );
+
+    return lbSubsidyPerBlock / Number(rawSirsDexBalance);
+  },
+  { promise: true, maxAge: ONE_MINUTE * 5 }
+);
+
 export const fetchRoute3LiquidityBakingParams = (
   params: Route3LbSwapParamsRequest
 ): Promise<Route3LiquidityBakingParamsResponse> =>
@@ -78,9 +102,54 @@ export const fetchRoute3LiquidityBakingParams = (
     }
   })
     .then(res => res.text())
-    .then(res => parser(res));
+    .then(async res => {
+      const { rpcUrl, fromSymbol, toSymbol, toTokenDecimals } = params;
+      const originalParams: Route3LiquidityBakingParamsResponse = parser(res);
 
-export const fetchRoute3SwapParams = ({ fromSymbol, toSymbol, amount, dexesLimit }: Route3SwapParamsRequest) => {
+      if (
+        fromSymbol !== THREE_ROUTE_SIRS_TOKEN.symbol ||
+        toSymbol === THREE_ROUTE_XTZ_TOKEN.symbol ||
+        originalParams.output === undefined
+      ) {
+        return originalParams;
+      }
+
+      // SIRS -> not XTZ swaps are likely to fail with tez.subtraction_underflow error, preventing it
+      try {
+        const lbSubsidyCausedXtzDeviation = await getLbSubsidyCausedXtzDeviation(rpcUrl);
+        const initialXtzInput = new BigNumber(originalParams.xtzHops[0].tokenInAmount);
+        const correctedXtzInput = initialXtzInput.times(1 - lbSubsidyCausedXtzDeviation).integerValue();
+        const initialOutput = new BigNumber(originalParams.output);
+        // The difference between inputs is usually pretty small, so we can use the following formula
+        const correctedOutput = initialOutput
+          .times(correctedXtzInput)
+          .div(initialXtzInput)
+          .decimalPlaces(toTokenDecimals, BigNumber.ROUND_FLOOR);
+
+        return {
+          ...originalParams,
+          output: correctedOutput.toString(),
+          xtzHops: [
+            {
+              ...originalParams.xtzHops[0],
+              tokenInAmount: correctedXtzInput.toFixed()
+            }
+          ].concat(originalParams.xtzHops.slice(1))
+        };
+      } catch (err) {
+        console.error(err);
+
+        return originalParams;
+      }
+    });
+
+export const fetchRoute3SwapParams = ({
+  fromSymbol,
+  toSymbol,
+  amount,
+  dexesLimit,
+  ...restParams
+}: Route3SwapParamsRequest) => {
   const isLbUnderlyingTokenSwap =
     intersection([fromSymbol, toSymbol], [THREE_ROUTE_TZBTC_TOKEN.symbol, THREE_ROUTE_XTZ_TOKEN.symbol]).length > 0;
 
@@ -90,18 +159,11 @@ export const fetchRoute3SwapParams = ({ fromSymbol, toSymbol, amount, dexesLimit
         toSymbol,
         amount,
         // XTZ <-> SIRS and TZBTC <-> SIRS swaps have either XTZ or TZBTC hops, so a total number of hops cannot exceed the limit
-        xtzDexesLimit: isDefined(dexesLimit)
-          ? isLbUnderlyingTokenSwap
-            ? dexesLimit
-            : Math.ceil(dexesLimit / 2)
-          : undefined,
-        tzbtcDexesLimit: isDefined(dexesLimit)
-          ? isLbUnderlyingTokenSwap
-            ? dexesLimit
-            : Math.floor(dexesLimit / 2)
-          : undefined
+        xtzDexesLimit: isLbUnderlyingTokenSwap ? dexesLimit : Math.ceil(dexesLimit / 2),
+        tzbtcDexesLimit: isLbUnderlyingTokenSwap ? dexesLimit : Math.floor(dexesLimit / 2),
+        ...restParams
       })
-    : fetchRoute3TraditionalSwapParams({ fromSymbol, toSymbol, amount, dexesLimit });
+    : fetchRoute3TraditionalSwapParams({ fromSymbol, toSymbol, amount, dexesLimit, ...restParams });
 };
 
 export const fetchRoute3Dexes$ = () =>

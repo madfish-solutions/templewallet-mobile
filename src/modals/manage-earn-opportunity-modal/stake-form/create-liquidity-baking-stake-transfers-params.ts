@@ -27,7 +27,8 @@ export const createLiquidityBakingStakeTransfersParams = async (
   asset: TokenInterface,
   tezos: TezosToolkit,
   accountPkh: string,
-  slippageTolerancePercentage: number
+  slippageTolerancePercentage: number,
+  rpcUrl: string
 ) => {
   const inputIsTezos = getTokenSlug(asset) === TEZ_TOKEN_SLUG;
   const inputToken = inputIsTezos ? THREE_ROUTE_XTZ_TOKEN : THREE_ROUTE_TZBTC_TOKEN;
@@ -38,11 +39,13 @@ export const createLiquidityBakingStakeTransfersParams = async (
     xtzHops
   } = await fetchRoute3LiquidityBakingParams({
     fromSymbol: inputToken.symbol,
-    toSymbol: 'SIRS',
+    toSymbol: THREE_ROUTE_SIRS_TOKEN.symbol,
+    toTokenDecimals: THREE_ROUTE_SIRS_TOKEN.decimals,
     amount: mutezToTz(swapInputMinusFeeAtomic, inputToken.decimals).toFixed(),
     // Such swap has either XTZ or tzBTC hops
     xtzDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
-    tzbtcDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES
+    tzbtcDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
+    rpcUrl
   });
   const slippageRatio = calculateSlippageRatio(slippageTolerancePercentage);
   const swapOutputAtomic = BigNumber.max(
