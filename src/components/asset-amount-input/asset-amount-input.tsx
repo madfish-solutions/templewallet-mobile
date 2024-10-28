@@ -7,9 +7,10 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
-import { useTokenBalanceGetter } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountTezosBalance, useTokenBalanceGetter } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -98,7 +99,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     } = stylesConfig;
     const colors = useColors();
     const { trackEvent } = useAnalytics();
-    const getBalance = useTokenBalanceGetter();
+    const getTokenBalance = useTokenBalanceGetter();
+    const tezosBalance = useCurrentAccountTezosBalance();
 
     const configInputPaddingStyles = useMemo(
       () => ({
@@ -110,10 +112,13 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const slug = useMemo(() => getTokenSlug(value.asset), [value.asset]);
     const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
-    const balance = useMemo(
-      () => (tokenEqualityFn(value.asset, emptyTezosLikeToken) ? DEFAULT_BALANCE : getBalance(slug) ?? '0'),
-      [getBalance, slug, value.asset]
-    );
+    const balance = useMemo(() => {
+      if (tokenEqualityFn(value.asset, emptyTezosLikeToken)) {
+        return DEFAULT_BALANCE;
+      }
+
+      return slug === TEZ_TOKEN_SLUG ? tezosBalance : getTokenBalance(slug) ?? '0';
+    }, [getTokenBalance, slug, tezosBalance, value.asset]);
 
     const { isTezosNode } = useNetworkInfo();
     const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -158,7 +163,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
       inputValueRef.current = newNumericInputValue;
 
       return newNumericInputValue;
-    }, [value.amount, isTokenInputType, value.asset.decimals, exchangeRate]);
+    }, [value.amount, isTokenInputType, value.asset, exchangeRate]);
 
     const renderTokenValue = useCallback<DropdownValueComponent<TokenInterface>>(
       ({ value: tokenValue }) => (
@@ -182,7 +187,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
           amount: getDefinedAmount(newInputValue, value.asset.decimals, exchangeRate, isTokenInputType)
         });
       },
-      [value, onValueChange, isTokenInputType]
+      [value, onValueChange, isTokenInputType, exchangeRate]
     );
 
     const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
