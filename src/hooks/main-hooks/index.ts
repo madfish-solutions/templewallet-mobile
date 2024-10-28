@@ -16,7 +16,7 @@ import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useInAppUpdate } from 'src/hooks/use-in-app-update.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useNFTDynamicLinks } from 'src/hooks/use-nft-dynamic-links.hook';
+import { useNFTUniversalLinks } from 'src/hooks/use-nft-universal-links.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
@@ -49,7 +49,7 @@ export const useMainHooks = (isLocked: boolean, isAuthorised: boolean) => {
   useInAppUpdate();
   useAppLockTimer();
   useBeaconHandler();
-  useNFTDynamicLinks();
+  useNFTUniversalLinks();
   useNotificationRedirection(isLocked, isAuthorised);
 
   const blockSubscription = useBlockSubscription();

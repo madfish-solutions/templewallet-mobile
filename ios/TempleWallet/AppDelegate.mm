@@ -66,8 +66,50 @@
    openURL:(NSURL *)url
    options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
+  NSLog(@"openURL = %@", url);
   return [RCTLinkingManager application:application openURL:url options:options];
 }
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+ restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+  NSLog(@"activityType = %@", userActivity.activityType);
+  return [RCTLinkingManager application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
+}
+
+/* - (BOOL)application:(UIApplication *)application
+  userActivity:(NSUserActivity *)userActivity
+  restorationHandler:(void (^)(NSArray<id<UIUserActivityRestoring>> *restorableObjects))restorationHandler
+{
+  NSLog(@"activityType = %@", userActivity.activityType);
+  if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
+    NSURL *incomingURL = userActivity.webpageURL;
+    NSLog(@"incomingURL = %@", incomingURL);
+    NSURLComponents *components = [NSURLComponents componentsWithURL:incomingURL resolvingAgainstBaseURL:true];
+    NSLog(@"path = %@", components.path);
+    NSLog(@"queryItems = %@", components.queryItems);
+    if (components.path != nil && components.queryItems != nil) {
+      NSString *path = components.path;
+      NSArray<NSURLQueryItem *> *params = components.queryItems;
+      NSLog(@"path = %@", path);
+      return YES;
+      // TODO: parse query params
+      /* NSURLQueryItem *albumName = [params firstObject];
+      NSURLQueryItem *photoIndex = [params lastObject];
+      if (albumName != nil && photoIndex != nil) {
+        NSLog(@"album = %@", albumName.value);
+        NSLog(@"photoIndex = %@", photoIndex.value);
+        return YES;
+      } else {
+        NSLog(@"Either album name or photo index missing");
+        return NO;
+      } */
+    /* }
+  }
+  return NO;
+} */
 
 // Required for the register event.
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken

@@ -6,8 +6,6 @@
 	<string>14863818751-1seoo2foi73kbog7okgo6joffpacrp8q.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.14863818751-1seoo2foi73kbog7okgo6joffpacrp8q</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>14863818751-2jgd929v7brjsjc2kp0ce3752jjhghi6.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCBhlMbcrSbnS9NR8WSCnnUh0XZT-rtbyQ</string>
 	<key>GCM_SENDER_ID</key>
@@ -32,7 +30,5 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:14863818751:ios:77311aaef75709509f51ca</string>
-	<key>DATABASE_URL</key>
-	<string>https://templewallet-default-rtdb.europe-west1.firebasedatabase.app</string>
 </dict>
 </plist>

@@ -3280,11 +3280,6 @@
     firebase "10.12.2"
     superstruct "^0.6.2"
 
-"@react-native-firebase/dynamic-links@^20":
-  version "20.5.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/dynamic-links/-/dynamic-links-20.5.0.tgz#43df47356fee08f746d5b6f7d1c61c3f0ca449aa"
-  integrity sha512-7j2P0KitMCGB+uZ74pfIg/qSc3IggXlf29/6kSxZebf5UiLuNH02T0zIpulfQYTDcEoPyHNjTATOXvIpT7lIkw==
-
 "@react-native-firebase/messaging@^20":
   version "20.5.0"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-20.5.0.tgz#90eeed62d1a069b4fd56746afcfb33ee2a61ba0f"

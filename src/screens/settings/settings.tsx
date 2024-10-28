@@ -36,7 +36,7 @@ import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics
 
 import { showErrorToast } from '../../toast/toast.utils';
 import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { getTempleDynamicLink } from '../../utils/dynamic-links';
+import { getTempleUniversalLink } from '../../utils/universal-links';
 
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
@@ -66,9 +66,9 @@ export const Settings = () => {
 
   const handleShare = useCallback(async () => {
     try {
-      const dynamicLink = await getTempleDynamicLink();
+      const link = getTempleUniversalLink();
       await Share.share({
-        message: SHARE_CONTENT + dynamicLink
+        message: SHARE_CONTENT + link
       });
 
       await trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);

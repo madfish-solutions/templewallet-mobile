@@ -7,23 +7,15 @@ import { showErrorToast } from 'src/toast/error-toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
-import { getTempleDynamicLink } from 'src/utils/dynamic-links';
-import { formatImgUri } from 'src/utils/image.utils';
-import { buildCollectibleDynamicLink } from 'src/utils/nft-dynamic-links';
+import { buildCollectibleUniversalLink } from 'src/utils/nft-universal-links';
 
-export const useShareNFT = (slug: string, thumbnailUri: string | undefined, title = '---', description?: string) => {
+export const useShareNFT = (slug: string) => {
   const { trackEvent } = useAnalytics();
 
   return useCallback(async () => {
-    const dataStr = buildCollectibleDynamicLink(slug);
+    const linkUrl = buildCollectibleUniversalLink(slug);
 
     try {
-      const linkUrl = await getTempleDynamicLink(dataStr, {
-        title,
-        descriptionText: description,
-        imageUrl: thumbnailUri ? formatImgUri(thumbnailUri, 'medium') : undefined
-      });
-
       await Share.share({
         message: `View ${LIMIT_NFT_FEATURES ? 'collectible' : 'NFT'} with Temple Wallet mobile: ${linkUrl}`
       });
@@ -40,5 +32,5 @@ export const useShareNFT = (slug: string, thumbnailUri: string | undefined, titl
         errorMessage: error.message
       });
     }
-  }, [slug, title, description, thumbnailUri, trackEvent]);
+  }, [slug, trackEvent]);
 };
