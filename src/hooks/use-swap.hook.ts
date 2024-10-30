@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { useCallback } from 'react';
 
-import { Route3LiquidityBakingChains, Route3SwapChains, Route3Token } from 'src/interfaces/route3.interface';
+import { Route3SwapHops, Route3LiquidityBakingHops, Route3Token } from 'src/interfaces/route3.interface';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { getSwapTransferParams } from 'src/utils/swap.utils';
 
@@ -17,14 +17,14 @@ export const useSwap = () => {
       toRoute3Token: Route3Token,
       inputAmountAtomic: BigNumber,
       minimumReceivedAtomic: BigNumber,
-      chains: Route3SwapChains | Route3LiquidityBakingChains
+      hops: Route3SwapHops | Route3LiquidityBakingHops
     ) =>
       getSwapTransferParams(
         fromRoute3Token,
         toRoute3Token,
         inputAmountAtomic,
         minimumReceivedAtomic,
-        chains,
+        hops,
         tezos,
         publicKeyHash
       ),

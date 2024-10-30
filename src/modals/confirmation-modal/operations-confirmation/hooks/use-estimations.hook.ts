@@ -12,9 +12,7 @@ import { LoadableEntityState } from 'src/store/types';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
-
-/** From @taquito/taquito */
-const MINIMAL_FEE_PER_GAS_MUTEZ = 0.1;
+import { MINIMAL_FEE_PER_GAS_MUTEZ } from 'src/utils/tezos.util';
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
   const [estimationState, setEstimationState] = useState<LoadableEntityState<EstimationInterface[]>>({

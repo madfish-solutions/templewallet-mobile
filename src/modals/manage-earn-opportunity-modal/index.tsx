@@ -149,7 +149,7 @@ export const ManageEarnOpportunityModal: FC = () => {
 
   usePageAnalytic(route.name, undefined, route.params);
 
-  const isKordFi = earnOpportunityItem?.type === EarnOpportunityTypeEnum.KORD_FI_SAVING ?? false;
+  const isKordFi = earnOpportunityItem?.type === EarnOpportunityTypeEnum.KORD_FI_SAVING;
   const amountToWithdraw = isDefined(stake) && isDefined(stake.fullReward) && +stake.fullReward > 0;
   const disabledTabSwitcherIndices = useMemo(() => {
     if (isDefined(stake)) {

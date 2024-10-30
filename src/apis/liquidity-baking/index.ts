@@ -1,6 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
+import { SINGLE_SIRS_SWAP_MAX_DEXES } from 'src/config/swap';
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking-storage.interface';
@@ -14,11 +15,7 @@ import { tzktUrl } from 'src/utils/linking';
 import { ZERO } from 'src/utils/number.util';
 import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
-import {
-  calculateFeeFromOutput,
-  calculateRoutingInputAndFeeFromInput,
-  calculateSlippageRatio
-} from 'src/utils/swap.utils';
+import { calculateSidePaymentsFromInput, calculateOutputFeeAtomic, calculateSlippageRatio } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import {
@@ -112,21 +109,28 @@ export const getLiquidityBakingFarm = async (
 export const calculateUnstakeParams = async (
   outputTokenIndexes: number[],
   lpAmount: BigNumber,
-  slippageTolerancePercentage: number
+  slippageTolerancePercentage: number,
+  rpcUrl: string
 ) => {
-  const { swapInputMinusFeeAtomic, routingFeeFromInputAtomic } = calculateRoutingInputAndFeeFromInput(lpAmount);
+  const { swapInputMinusFeeAtomic, inputFeeAtomic: routingFeeFromInputAtomic } =
+    calculateSidePaymentsFromInput(lpAmount);
 
   return Promise.all(
     outputTokenIndexes.map(async outputTokenIndex => {
       const threeRouteOutputToken = THREE_ROUTE_LB_TOKENS[outputTokenIndex];
       const {
         output: rawOutput,
-        xtzChain,
-        tzbtcChain
+        xtzHops,
+        tzbtcHops
       } = await fetchRoute3LiquidityBakingParams({
         fromSymbol: SIRS_TOKEN_METADATA.symbol,
         toSymbol: threeRouteOutputToken.symbol,
-        amount: mutezToTz(swapInputMinusFeeAtomic, SIRS_TOKEN_METADATA.decimals).toFixed()
+        toTokenDecimals: threeRouteOutputToken.decimals,
+        amount: mutezToTz(swapInputMinusFeeAtomic, SIRS_TOKEN_METADATA.decimals).toFixed(),
+        // Such swap has either XTZ or tzBTC hops
+        xtzDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
+        tzbtcDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
+        rpcUrl
       });
 
       if (rawOutput === ZERO.toFixed() || !isDefined(rawOutput)) {
@@ -136,7 +140,7 @@ export const calculateUnstakeParams = async (
       const outputAtomic = tzToMutez(new BigNumber(rawOutput), threeRouteOutputToken.decimals)
         .times(calculateSlippageRatio(slippageTolerancePercentage))
         .integerValue(BigNumber.ROUND_DOWN);
-      const routingFeeFromOutputAtomic = calculateFeeFromOutput(lpAmount, outputAtomic);
+      const routingFeeFromOutputAtomic = calculateOutputFeeAtomic(lpAmount, outputAtomic);
       const outputAfterFeeAtomic = outputAtomic.minus(routingFeeFromOutputAtomic);
 
       return {
@@ -146,8 +150,8 @@ export const calculateUnstakeParams = async (
         outputAtomic,
         routingFeeFromOutputAtomic,
         outputAfterFeeAtomic,
-        xtzChain,
-        tzbtcChain
+        xtzHops,
+        tzbtcHops
       };
     })
   );

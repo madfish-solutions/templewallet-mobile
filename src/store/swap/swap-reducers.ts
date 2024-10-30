@@ -1,4 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+
+import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
 import { createEntity } from '../create-entity';
 
@@ -9,10 +12,10 @@ import {
   loadSwapTokensMetadataAction,
   resetSwapParamsAction
 } from './swap-actions';
-import { route3InitialState } from './swap-state';
+import { route3InitialState, SwapState } from './swap-state';
 import { DEFAULT_SWAP_PARAMS } from './swap-state.mock';
 
-export const swapReducer = createReducer(route3InitialState, builder => {
+const swapReducer = createReducer(route3InitialState, builder => {
   builder.addCase(loadSwapTokensAction.submit, state => {
     state.tokens = createEntity([], true);
     state.tokensMetadata = createEntity([], true);
@@ -51,3 +54,12 @@ export const swapReducer = createReducer(route3InitialState, builder => {
     state.swapParams = createEntity(DEFAULT_SWAP_PARAMS, false, payload);
   });
 });
+
+export const swapPersistedReducer = persistReducer<SwapState>(
+  {
+    key: 'root.swap',
+    storage: SlicedAsyncStorage,
+    blacklist: ['swapParams']
+  },
+  swapReducer
+);
