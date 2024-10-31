@@ -64,8 +64,6 @@ enum SegmentControlNamesEnum {
 }
 
 export const CollectibleModal = memo(() => {
-  const { params, path, name: pathName, key } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>();
-  console.log('oy vey 1', params, path, pathName, key);
   const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
 
   const [address, id] = fromTokenSlug(slug);
@@ -150,7 +148,7 @@ export const CollectibleModal = memo(() => {
   const thumbnailUri = metadata?.thumbnailUri ?? details?.thumbnailUri;
   const displayUri = metadata?.displayUri ?? details?.displayUri;
 
-  const handleShare = useShareNFT(slug);
+  const handleShare = useShareNFT(slug, thumbnailUri, name, details?.description);
 
   const [segmentControlIndex, setSegmentControlIndex] = useState(0);
 
