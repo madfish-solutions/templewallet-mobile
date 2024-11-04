@@ -52,31 +52,11 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" />
-                <data android:host="templewallet-deeplinks-nextjs.netlify.app" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" />
-                <data android:host="templewallet-deeplinks-nextjs.netlify.app" />
+                <data android:scheme="https" android:host="templewallet-deeplinks-nextjs.netlify.app" />
+                <data android:scheme="http" android:host="templewallet-deeplinks-nextjs.netlify.app" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" />
-                <data android:host="development--templewallet-deeplinks-nextjs.netlify.app" />
-            </intent-filter>
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" />
-                <data android:host="development--templewallet-deeplinks-nextjs.netlify.app" />
-            </intent-filter>
+            <!-- Development version of deeplinks handler: development\-\-templewallet-deeplinks-nextjs.netlify.app -->
         </activity>
 
         <!-- Change the value to true to enable pop-up for in foreground on receiving remote notifications (for prevent duplicating while showing local notifications set this to false) -->
