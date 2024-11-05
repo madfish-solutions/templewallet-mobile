@@ -4,7 +4,7 @@ import { Alert, Text, View } from 'react-native';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
-import { CASHBACK_PERCENT, ROUTING_FEE_PERCENT, ROUTING_FEE_RATIO } from 'src/config/swap';
+import { CASHBACK_RATIO, ROUTING_FEE_RATIO } from 'src/config/swap';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
@@ -48,12 +48,12 @@ export const SwapExchangeRate: FC<Props> = ({
     if (isDefined(outputAmount) && outputAmount.isGreaterThan(0)) {
       return `${outputAmount
         .multipliedBy(slippageRatio)
-        .multipliedBy(routingFeeIsTakenFromOutput ? ROUTING_FEE_RATIO : 1)
+        .multipliedBy(routingFeeIsTakenFromOutput ? 1 - ROUTING_FEE_RATIO : 1)
         .toFixed(Math.min(8, outputAsset.decimals), BigNumber.ROUND_DOWN)} ${outputAsset.symbol}`;
     }
 
     return '---';
-  }, [slippageRatio, outputAmount, outputAsset.decimals, routingFeeIsTakenFromOutput]);
+  }, [outputAmount, slippageRatio, routingFeeIsTakenFromOutput, outputAsset.decimals, outputAsset.symbol]);
 
   const routingFeeAlert = () =>
     Alert.alert(
@@ -70,7 +70,7 @@ export const SwapExchangeRate: FC<Props> = ({
   const cashbackAlert = () =>
     Alert.alert(
       'Cashback',
-      `Swap more than 10$ and receive ${CASHBACK_PERCENT}% from the swapped amount in the TKEY token as a cashback`,
+      `Swap more than 10$ and receive ${CASHBACK_RATIO * 100}% from the swapped amount in the TKEY token as a cashback`,
       [
         {
           text: 'Ok',
@@ -91,7 +91,7 @@ export const SwapExchangeRate: FC<Props> = ({
             onPress={routingFeeAlert}
           />
         </View>
-        <Text style={styles.infoValue}>{ROUTING_FEE_PERCENT}%</Text>
+        <Text style={styles.infoValue}>{ROUTING_FEE_RATIO * 100}%</Text>
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.infoText}>Exchange rate</Text>
@@ -106,7 +106,7 @@ export const SwapExchangeRate: FC<Props> = ({
           <Text style={styles.infoText}>Cashback</Text>
           <TouchableIcon onPress={cashbackAlert} name={IconNameEnum.InfoFilled} size={formatSize(24)} />
         </View>
-        <Text style={styles.infoValue}>{CASHBACK_PERCENT}%</Text>
+        <Text style={styles.infoValue}>{CASHBACK_RATIO * 100}%</Text>
       </View>
     </>
   );

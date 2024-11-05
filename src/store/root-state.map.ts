@@ -16,7 +16,7 @@ import { partnersPromotionReducers } from './partners-promotion/partners-promoti
 import { savingsReducer } from './savings/reducers';
 import { securityReducers } from './security/security-reducers';
 import { settingsReducers } from './settings/settings-reducers';
-import { swapReducer } from './swap/swap-reducers';
+import { swapPersistedReducer } from './swap/swap-reducers';
 import { tokensMetadataPersistedReducers } from './tokens-metadata/tokens-metadata-reducers';
 import { walletReducers } from './wallet/wallet-reducers';
 
@@ -32,7 +32,7 @@ export const rootStateReducersMap = {
   advertising: advertisingReducers,
   market: marketReducers,
   notifications: notificationsReducers,
-  swap: swapReducer,
+  swap: swapPersistedReducer,
   contactBook: contactBookReducers,
   buyWithCreditCard: buyWithCreditCardReducer,
   partnersPromotion: partnersPromotionReducers,
