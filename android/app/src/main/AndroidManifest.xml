@@ -52,8 +52,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="templewallet-deeplinks-nextjs.netlify.app" />
-                <data android:scheme="http" android:host="templewallet-deeplinks-nextjs.netlify.app" />
+                <data android:scheme="https" android:host="app.templewallet.com" />
+                <data android:scheme="http" android:host="app.templewallet.com" />
             </intent-filter>
 
             <!-- Development version of deeplinks handler: development\-\-templewallet-deeplinks-nextjs.netlify.app -->

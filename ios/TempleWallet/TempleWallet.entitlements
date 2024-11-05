@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:templewallet-deeplinks-nextjs.netlify.app</string>
+		<string>applinks:app.templewallet.com</string>
 		<string>applinks:development--templewallet-deeplinks-nextjs.netlify.app?mode=developer</string>
 	</array>
 	<key>com.apple.developer.devicecheck.appattest-environment</key>
