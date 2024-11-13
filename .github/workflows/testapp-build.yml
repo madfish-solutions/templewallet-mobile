@@ -7,7 +7,7 @@ on:
     inputs:
       version:
         description: Version
-        default: "1.33"
+        default: "1.34"
         required: true
       build-number:
         description: Build number
@@ -53,7 +53,7 @@ jobs:
           TEZOS_DEXES_API_URL: ${{ vars.TEZOS_DEXES_API_URL }}
           FIREBASE_GOOGLE_SERVICE_ANDROID: ${{ secrets.FIREBASE_GOOGLE_SERVICE_ANDROID }}
           FIREBASE_GOOGLE_SERVICE_IOS: ${{ secrets.FIREBASE_GOOGLE_SERVICE_IOS }}
-          DYNAMIC_LINKS_DOMAIN_URI_PREFIX: ${{ secrets.DYNAMIC_LINKS_DOMAIN_URI_PREFIX }}
+          UNIVERSAL_LINKS_DOMAIN_URI_PREFIX: ${{ vars.UNIVERSAL_LINKS_DOMAIN_URI_PREFIX }}
           HYPELAB_AD_FRAME_URL: ${{ vars.HYPELAB_AD_FRAME_URL }}
           HYPELAB_SMALL_PLACEMENT_SLUG: ${{ vars.HYPELAB_SMALL_PLACEMENT_SLUG }}
           HYPELAB_NATIVE_PLACEMENT_SLUG: ${{ vars.HYPELAB_NATIVE_PLACEMENT_SLUG }}
