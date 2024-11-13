@@ -45,7 +45,6 @@
     "@react-native-community/slider": "^4.4.3",
     "@react-native-firebase/app": "^20",
     "@react-native-firebase/app-check": "^20",
-    "@react-native-firebase/dynamic-links": "^20",
     "@react-native-firebase/messaging": "^20",
     "@react-native-google-signin/google-signin": "9.0.2",
     "@react-navigation/native": "6.1.8",

@@ -1,11 +1,3 @@
-export const mockReactNativeFirebaseDynamicLinks = {
-  dynamicLinks: jest.fn(() => ({
-    getInitialLink: jest.fn(),
-    onLink: jest.fn(),
-    buildShortLink: jest.fn()
-  }))
-};
-
 export const mockReactNativeFirebaseMessaging = {
   messaging: jest.fn(() => ({
     getToken: jest.fn(),
@@ -24,8 +16,6 @@ export const mockReactNativeFirebaseAppCheck = {
 };
 
 jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
-
-jest.mock('@react-native-firebase/dynamic-links', () => mockReactNativeFirebaseDynamicLinks);
 
 jest.mock('@react-native-firebase/messaging', () => mockReactNativeFirebaseMessaging);
 
