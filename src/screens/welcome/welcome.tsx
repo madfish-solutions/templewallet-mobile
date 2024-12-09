@@ -49,7 +49,7 @@ export const Welcome = () => {
 
       <Divider />
 
-      <View>
+      <View style={styles.footer}>
         <ContinueWithCloudButton />
 
         <View style={styles.orDivider}>
