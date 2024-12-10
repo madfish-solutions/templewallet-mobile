@@ -3,9 +3,22 @@ import { createUseStyles, createUseStylesConfig } from 'src/styles/create-use-st
 import { formatSize } from 'src/styles/format-size';
 
 export const useWelcomeStyles = createUseStyles(({ colors, typography }) => ({
+  scrollViewContentContainer: {
+    paddingTop: 0,
+    paddingHorizontal: 0
+  },
+  bg: {
+    flex: 1
+  },
   imageView: {
-    marginTop: formatSize(108),
+    marginTop: formatSize(96),
     alignItems: 'center'
+  },
+  logo: {
+    backgroundColor: colors.pageBG
+  },
+  footer: {
+    paddingHorizontal: formatSize(16)
   },
   orDivider: {
     height: formatSize(18),

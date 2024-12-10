@@ -14,6 +14,7 @@ import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { PERSONA_ADS_ENABLED } from 'src/utils/env.utils';
 
 import { usePromotionItemStyles } from './styles';
 
@@ -102,6 +103,12 @@ export const PromotionItem = forwardRef<View, Props>(
       }
     }, [handleAdError, onlyOptimalAd]);
     const handleHypelabError = useCallback(() => {
+      if (!PERSONA_ADS_ENABLED) {
+        handleAdError();
+
+        return;
+      }
+
       if (variant === PromotionVariantEnum.Text) {
         handleAdError();
       } else {

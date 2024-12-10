@@ -1,14 +1,16 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ImageBackground } from 'react-native';
 
 import { ButtonDelegatePrimary } from 'src/components/button/button-large/button-delegate-primary/button-delegate-primary';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
-import { Icon } from 'src/components/icon/icon';
+import ChristmasBgLight from 'src/components/icon/assets/background/christmas-bg-light.png';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { LogoWithText } from 'src/components/icon/logo-with-text';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { isIOS } from 'src/config/system';
 import { useABTestingLoading } from 'src/hooks/use-ab-testing-loading.hook';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -29,20 +31,25 @@ export const Welcome = () => {
   useABTestingLoading();
 
   return (
-    <ScreenContainer isFullScreenMode={true}>
-      <View style={styles.imageView}>
+    <ScreenContainer contentContainerStyle={styles.scrollViewContentContainer} isFullScreenMode={true}>
+      <ImageBackground resizeMode={isIOS ? 'contain' : 'cover'} source={ChristmasBgLight} style={styles.bg}>
         <InsetSubstitute />
-        <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
 
-        <Divider size={formatSize(60)} />
+        <View style={styles.imageView}>
+          <LogoWithText width={formatSize(248)} height={formatSize(104)} style={styles.logo} />
+        </View>
+
+        <Divider size={formatSize(131)} />
 
         <Quote
           quote="The only function of economic forecasting is to make astrology look more respectable."
           author="John Kenneth Galbraith"
         />
-      </View>
+      </ImageBackground>
 
-      <View>
+      <Divider />
+
+      <View style={styles.footer}>
         <ContinueWithCloudButton />
 
         <View style={styles.orDivider}>
