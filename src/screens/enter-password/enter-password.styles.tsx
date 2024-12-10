@@ -9,9 +9,22 @@ export const useEnterPasswordStyles = createUseStyles(({ colors, typography }) =
     ...StyleSheet.absoluteFillObject,
     zIndex: zIndexEnum.PasswordLockScreen
   },
+  scrollViewContentContainer: {
+    paddingTop: 0,
+    paddingHorizontal: 0
+  },
+  bg: {
+    flex: 1
+  },
   imageView: {
-    marginTop: formatSize(108),
+    marginTop: formatSize(96),
     alignItems: 'center'
+  },
+  logo: {
+    backgroundColor: colors.pageBG
+  },
+  footer: {
+    paddingHorizontal: formatSize(16)
   },
   bottomText: {
     ...typography.caption13Regular,

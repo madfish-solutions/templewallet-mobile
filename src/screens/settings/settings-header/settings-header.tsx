@@ -3,8 +3,8 @@ import { Text, View } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
 
 import { HeaderCard } from 'src/components/header-card/header-card';
-import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { LogoWithText } from 'src/components/icon/logo-with-text';
 import { SocialButton } from 'src/components/social-button';
 import { discordUrl, redditUrl, telegramUrl, twitterUrl, youTubeUrl } from 'src/config/socials';
 import { formatSize } from 'src/styles/format-size';
@@ -18,7 +18,7 @@ export const SettingsHeader = () => {
   return (
     <HeaderCard hasInsetTop={true}>
       <View style={styles.headerContainer}>
-        <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(104)} height={formatSize(32)} />
+        <LogoWithText width={formatSize(134)} height={formatSize(52)} />
         <Text style={styles.versionText}>{`VERSION: ${getVersion()}    BUILD: ${getBuildNumber()}`}</Text>
 
         <View style={styles.socialsContainer}>
