@@ -193,7 +193,7 @@ export const mapToRoute3ExecuteHops = (hops: Route3Hop[]): MichelsonMap<string, 
 
 export const getRoute3TokenSymbol = (token: TokenInterface) => {
   if (token.symbol === TEZ_TOKEN_METADATA.symbol) {
-    return 'xtz';
+    return 'XTZ';
   }
 
   return token.symbol;
