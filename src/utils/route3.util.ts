@@ -143,6 +143,12 @@ export const fetchRoute3LiquidityBakingParams = (
       }
     });
 
+export const isSirsSwap = (from: string | Pick<Route3Token, 'symbol'>, to: string | Pick<Route3Token, 'symbol'>) => {
+  return [from, to]
+    .map(symbolOrToken => (typeof symbolOrToken === 'string' ? symbolOrToken : symbolOrToken.symbol))
+    .includes(THREE_ROUTE_SIRS_TOKEN.symbol);
+};
+
 export const fetchRoute3SwapParams = ({
   fromSymbol,
   toSymbol,
@@ -153,7 +159,7 @@ export const fetchRoute3SwapParams = ({
   const isLbUnderlyingTokenSwap =
     intersection([fromSymbol, toSymbol], [THREE_ROUTE_TZBTC_TOKEN.symbol, THREE_ROUTE_XTZ_TOKEN.symbol]).length > 0;
 
-  return [fromSymbol, toSymbol].includes(THREE_ROUTE_SIRS_TOKEN.symbol)
+  return isSirsSwap(fromSymbol, toSymbol)
     ? fetchRoute3LiquidityBakingParams({
         fromSymbol,
         toSymbol,

@@ -1,14 +1,14 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { ROUTING_FEE_ADDRESS, SINGLE_SWAP_IN_BATCH_MAX_DEXES } from 'src/config/swap';
+import { MAIN_NON_SIRS_SWAP_MAX_DEXES, MAIN_SIRS_SWAP_MAX_DEXES, ROUTING_FEE_ADDRESS } from 'src/config/swap';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { Route3Token } from 'src/interfaces/route3.interface';
 import { ToastError } from 'src/toast/error-toast.utils';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { fetchRoute3SwapParams } from 'src/utils/route3.util';
+import { fetchRoute3SwapParams, isSirsSwap } from 'src/utils/route3.util';
 import {
   calculateSidePaymentsFromInput,
   calculateSlippageRatio,
@@ -51,7 +51,7 @@ export const createStakeTransfersParams = async (
     toSymbol: toRoute3Token.symbol,
     toTokenDecimals: toRoute3Token.decimals,
     amount: mutezToTz(swapInputMinusFeeAtomic, asset.decimals).toString(),
-    dexesLimit: SINGLE_SWAP_IN_BATCH_MAX_DEXES,
+    dexesLimit: isSirsSwap(fromRoute3Token, toRoute3Token) ? MAIN_SIRS_SWAP_MAX_DEXES : MAIN_NON_SIRS_SWAP_MAX_DEXES,
     rpcUrl: tezos.rpc.getRpcUrl()
   });
 

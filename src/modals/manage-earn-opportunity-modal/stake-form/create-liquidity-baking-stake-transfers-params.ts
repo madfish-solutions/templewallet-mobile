@@ -1,7 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { ROUTING_FEE_ADDRESS, SINGLE_SIRS_SWAP_MAX_DEXES } from 'src/config/swap';
+import { MAIN_SIRS_SWAP_MAX_DEXES, ROUTING_FEE_ADDRESS } from 'src/config/swap';
 import {
   THREE_ROUTE_SIRS_TOKEN,
   THREE_ROUTE_TZBTC_TOKEN,
@@ -43,8 +43,8 @@ export const createLiquidityBakingStakeTransfersParams = async (
     toTokenDecimals: THREE_ROUTE_SIRS_TOKEN.decimals,
     amount: mutezToTz(swapInputMinusFeeAtomic, inputToken.decimals).toFixed(),
     // Such swap has either XTZ or tzBTC hops
-    xtzDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
-    tzbtcDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
+    xtzDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
+    tzbtcDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
     rpcUrl
   });
   const slippageRatio = calculateSlippageRatio(slippageTolerancePercentage);
