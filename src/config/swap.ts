@@ -21,9 +21,10 @@ export const ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT = Math.ceil(
 );
 
 // These values have been set after some experimentation
-export const SINGLE_SWAP_IN_BATCH_MAX_DEXES = 12;
-const LB_OPERATION_DEXES_COST = 2;
-export const SINGLE_SIRS_SWAP_MAX_DEXES = SINGLE_SWAP_IN_BATCH_MAX_DEXES - LB_OPERATION_DEXES_COST;
+export const CASHBACK_SWAP_MAX_DEXES = 3;
+// Actually, at most 2 dexes for each of underlying SIRS -> tzBTC -> X swap and SIRS -> XTZ -> X swap
+export const MAIN_SIRS_SWAP_MAX_DEXES = 4;
+export const MAIN_NON_SIRS_SWAP_MAX_DEXES = 3;
 
 export const TEMPLE_TOKEN: Route3Token = {
   id: 138,

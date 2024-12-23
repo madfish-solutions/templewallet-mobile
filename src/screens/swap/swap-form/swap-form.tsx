@@ -15,11 +15,12 @@ import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn
 import {
   ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT,
   CASHBACK_RATIO,
+  CASHBACK_SWAP_MAX_DEXES,
+  MAIN_NON_SIRS_SWAP_MAX_DEXES,
+  MAIN_SIRS_SWAP_MAX_DEXES,
   ROUTING_FEE_ADDRESS,
   ROUTING_FEE_RATIO,
   ROUTING_FEE_SLIPPAGE_RATIO,
-  SINGLE_SIRS_SWAP_MAX_DEXES,
-  SINGLE_SWAP_IN_BATCH_MAX_DEXES,
   SWAP_THRESHOLD_TO_GET_CASHBACK,
   TEMPLE_TOKEN
 } from 'src/config/swap';
@@ -49,7 +50,7 @@ import {
 import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { KNOWN_TOKENS_SLUGS, TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
+import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -58,7 +59,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
 import { ZERO } from 'src/utils/number.util';
-import { fetchRoute3SwapParams, getRoute3TokenSymbol } from 'src/utils/route3.util';
+import { fetchRoute3SwapParams, getRoute3TokenSymbol, isSirsSwap } from 'src/utils/route3.util';
 import {
   calculateSidePaymentsFromInput,
   calculateOutputFeeAtomic,
@@ -115,19 +116,16 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       const isInputTokenTempleToken = inputAssetSlug === TEMPLE_TOKEN_SLUG;
       const isOutputTokenTempleToken = outputAssetSlug === TEMPLE_TOKEN_SLUG;
-      const isSirsSwap = inputAssetSlug === KNOWN_TOKENS_SLUGS.SIRS || outputAssetSlug === KNOWN_TOKENS_SLUGS.SIRS;
       const isSwapAmountMoreThreshold = inputAmountInUsd.isGreaterThanOrEqualTo(SWAP_THRESHOLD_TO_GET_CASHBACK);
-      const totalMaxDexes = isSirsSwap ? SINGLE_SIRS_SWAP_MAX_DEXES : SINGLE_SWAP_IN_BATCH_MAX_DEXES;
-      const cashbackSwapMaxDexes = Math.ceil(totalMaxDexes / (isSirsSwap ? 3 : 2));
-      const mainSwapMaxDexes =
-        totalMaxDexes - (isSwapAmountMoreThreshold && !isInputTokenTempleToken ? cashbackSwapMaxDexes : 0);
+      const mainSwapMaxDexes = isSirsSwap(inputAsset, newOutputValue.asset)
+        ? MAIN_SIRS_SWAP_MAX_DEXES
+        : MAIN_NON_SIRS_SWAP_MAX_DEXES;
 
       return {
         isInputTokenTempleToken,
         isOutputTokenTempleToken,
         isSwapAmountMoreThreshold,
-        mainSwapMaxDexes,
-        cashbackSwapMaxDexes
+        mainSwapMaxDexes
       };
     },
     [usdExchangeRates]
@@ -177,8 +175,10 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       swapParams.data
     );
 
-    const { isInputTokenTempleToken, isOutputTokenTempleToken, isSwapAmountMoreThreshold, cashbackSwapMaxDexes } =
-      getSwapWithFeeParams(inputAssets, outputAssets);
+    const { isInputTokenTempleToken, isOutputTokenTempleToken, isSwapAmountMoreThreshold } = getSwapWithFeeParams(
+      inputAssets,
+      outputAssets
+    );
 
     if (isInputTokenTempleToken && isSwapAmountMoreThreshold) {
       const routingInputFeeOpParams = await getRoutingFeeTransferParams(
@@ -204,7 +204,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         toSymbol: TEMPLE_TOKEN.symbol,
         toTokenDecimals: TEMPLE_TOKEN.decimals,
         amount: mutezToTz(routingFeeFromInputAtomic, fromRoute3Token.decimals).toFixed(),
-        dexesLimit: cashbackSwapMaxDexes,
+        dexesLimit: CASHBACK_SWAP_MAX_DEXES,
         rpcUrl: tezos.rpc.getRpcUrl()
       });
 
@@ -244,7 +244,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         toSymbol: TEMPLE_TOKEN.symbol,
         toTokenDecimals: TEMPLE_TOKEN.decimals,
         amount: mutezToTz(routingFeeFromOutputAtomic, toRoute3Token.decimals).toFixed(),
-        dexesLimit: cashbackSwapMaxDexes,
+        dexesLimit: CASHBACK_SWAP_MAX_DEXES,
         rpcUrl: tezos.rpc.getRpcUrl()
       });
 

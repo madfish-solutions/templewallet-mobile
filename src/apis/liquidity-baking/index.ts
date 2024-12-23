@@ -1,7 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { SINGLE_SIRS_SWAP_MAX_DEXES } from 'src/config/swap';
+import { MAIN_SIRS_SWAP_MAX_DEXES } from 'src/config/swap';
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking-storage.interface';
@@ -128,8 +128,8 @@ export const calculateUnstakeParams = async (
         toTokenDecimals: threeRouteOutputToken.decimals,
         amount: mutezToTz(swapInputMinusFeeAtomic, SIRS_TOKEN_METADATA.decimals).toFixed(),
         // Such swap has either XTZ or tzBTC hops
-        xtzDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
-        tzbtcDexesLimit: SINGLE_SIRS_SWAP_MAX_DEXES,
+        xtzDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
+        tzbtcDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
         rpcUrl
       });
 
