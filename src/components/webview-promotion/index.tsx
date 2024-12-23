@@ -23,9 +23,9 @@ import { openUrl } from 'src/utils/linking';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { BackgroundAsset, ImagePromotionView } from '../image-promotion-view';
-import { TextPromotionItemSelectors } from '../text-promotion-view/selectors';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
+import { WebviewPromotionItemSelectors } from './selectors';
 import { WebviewPromotionStyles } from './styles';
 
 interface WebViewPromotionProps extends SingleProviderPromotionProps {
@@ -220,7 +220,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
           <TouchableWithAnalytics
             style={WebviewPromotionStyles.closeButton}
             onPress={onClose}
-            testID={TextPromotionItemSelectors.closeButton}
+            testID={WebviewPromotionItemSelectors.closeButton}
           >
             <Icon name={IconNameEnum.X} size={formatSize(16)} color={colors.peach} />
           </TouchableWithAnalytics>

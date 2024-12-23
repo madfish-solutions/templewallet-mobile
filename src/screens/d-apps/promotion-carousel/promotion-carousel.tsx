@@ -1,30 +1,22 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
 import type { CarouselRenderItemInfo } from 'react-native-reanimated-carousel/lib/typescript/types';
 
-import { PromotionItem } from 'src/components/promotion-item';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
-import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { useActivePromotionSelector } from 'src/store/advertising/advertising-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { COMMON_PROMOTION_CAROUSEL_DATA } from './promotion-carousel.data';
-import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
 import { usePromotionCarouselStyles } from './promotion-carousel.styles';
-
-const PROMOTION_ID = 'carousel-promotion';
 
 export const PromotionCarousel = () => {
   const activePromotion = useActivePromotionSelector();
   const styles = usePromotionCarouselStyles();
-  const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
-  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
-  const shouldShowPartnersPromotion = partnersPromoShown && !promotionErrorOccurred;
   const adPageName = 'DApps';
   const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, undefined, true, 500);
 
@@ -42,30 +34,10 @@ export const PromotionCarousel = () => {
       );
     }
 
-    if (shouldShowPartnersPromotion) {
-      result.unshift(
-        <View style={styles.promotionItemWrapper}>
-          <PromotionItem
-            id={PROMOTION_ID}
-            testID={PromotionCarouselSelectors.optimalPromotionBanner}
-            pageName={adPageName}
-            shouldShowCloseButton={false}
-            style={styles.promotionItem}
-            onlyOptimalAd
-            onError={() => setPromotionErrorOccurred(true)}
-            onLoad={onAdLoad}
-          />
-        </View>
-      );
-    }
-
     return result;
-  }, [activePromotion, onAdLoad, shouldShowPartnersPromotion, styles]);
+  }, [activePromotion, onAdLoad, styles]);
 
-  const handleSnapToItem = useCallback(
-    (index: number) => onIsVisible(shouldShowPartnersPromotion && index === 0),
-    [onIsVisible, shouldShowPartnersPromotion]
-  );
+  const handleSnapToItem = useCallback((index: number) => onIsVisible(index === 0), [onIsVisible]);
 
   const height = formatSize(112);
   const { layoutWidth, handleLayout } = useLayoutSizes();
