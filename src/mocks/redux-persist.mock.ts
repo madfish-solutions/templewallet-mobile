@@ -5,6 +5,6 @@ jest.mock('redux-persist', () => {
 
   return {
     ...real,
-    persistReducer: jest.fn().mockImplementation((config, reducers) => reducers)
+    persistReducer: jest.fn().mockImplementation((_config, reducers) => reducers)
   };
 });

@@ -22,7 +22,7 @@ if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
 export const createStore = (...epics: Epic[]) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rootEpic = (action$: Observable<any>, store$: StateObservable<any>, dependencies: any) =>
-    combineEpics(...epics)(action$, store$, dependencies).pipe(catchError((error, source) => source));
+    combineEpics(...epics)(action$, store$, dependencies).pipe(catchError((_error, source) => source));
 
   const store = configureStore({
     reducer: persistedReducer,
