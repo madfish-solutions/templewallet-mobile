@@ -40,7 +40,6 @@ const parser = (origJSON: string): ReturnType<(typeof JSON)['parse']> => {
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest): string;
 function getRoute3ParametrizedUrlPart(params: Route3LbSwapParamsRequest): string;
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest | Route3LbSwapParamsRequest) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { fromSymbol, toSymbol, amount, toTokenDecimals, rpcUrl, ...queryParams } = params;
   const searchParams = new URLSearchParams(
     transform<typeof queryParams, StringRecord>(

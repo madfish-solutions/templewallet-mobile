@@ -124,7 +124,6 @@ export const calculateUnstakeParams = async (
     outputTokenIndexes.map(async outputTokenIndex => {
       const threeRouteOutputToken = THREE_ROUTE_LB_TOKENS[outputTokenIndex];
       const {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         input,
         output: rawOutput,
         ...hops

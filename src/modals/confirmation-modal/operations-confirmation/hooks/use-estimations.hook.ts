@@ -28,25 +28,15 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
       prevFailedOperationIndex = -1
     ): Observable<EstimationInterface[]> =>
       from(tezos.estimate.batch(currentOpParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
-        map(estimates => {
-          console.log(
-            'fuflo 1',
-            JSON.stringify({ estimates, currentOpParams, attemptCounter, prevFailedOperationIndex })
-          );
-
-          return estimates.map((estimate, i) => ({
+        map(estimates =>
+          estimates.map((estimate, i) => ({
             ...pick(estimate, 'gasLimit', 'storageLimit'),
             suggestedFeeMutez: getSuggestedFeeMutez(estimate, currentOpParams[i]),
             // @ts-expect-error: accessing private property
             minimalFeePerStorageByteMutez: Number(estimate.minimalFeePerStorageByteMutez)
-          }));
-        }),
+          }))
+        ),
         catchError(error => {
-          console.error(
-            'fuflo 2',
-            JSON.stringify({ error, currentOpParams, attemptCounter, prevFailedOperationIndex })
-          );
-
           if (
             error instanceof TezosOperationError &&
             error.errors.some(internalError => internalError.id.includes('gas_exhausted'))

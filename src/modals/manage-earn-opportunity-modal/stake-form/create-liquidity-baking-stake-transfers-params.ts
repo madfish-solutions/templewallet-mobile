@@ -35,7 +35,6 @@ export const createLiquidityBakingStakeTransfersParams = async (
   const inputToken = inputIsTezos ? THREE_ROUTE_XTZ_TOKEN : THREE_ROUTE_TZBTC_TOKEN;
   const { swapInputMinusFeeAtomic, inputFeeAtomic: routingFeeFromInputAtomic } = calculateSidePaymentsFromInput(amount);
   const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     input,
     output: rawSwapOutput,
     ...hops

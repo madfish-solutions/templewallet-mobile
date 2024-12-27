@@ -26,9 +26,7 @@ export const createLiquidityBakingWithdrawTransfersParams = async (
       threeRouteOutputToken,
       expectedOutputAtomic,
       routingFeeFromOutputAtomic,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       minOutputAtomic,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       outputAfterFeeAtomic,
       ...hops
     }
