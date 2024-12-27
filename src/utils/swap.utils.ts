@@ -41,7 +41,7 @@ export const getLbStorage = async (tezosOrRpc: string | TezosToolkit) => {
   return contract.storage<{ tokenPool: BigNumber; xtzPool: BigNumber; lqtTotal: BigNumber }>();
 };
 
-export const mapToRoute3ExecuteHops = (hops: Route3Hop[]): MichelsonMap<string, Hop> => {
+const mapToRoute3ExecuteHops = (hops: Route3Hop[]): MichelsonMap<string, Hop> => {
   const result = new MichelsonMap<string, Hop>();
 
   hops.forEach(({ dexId, tokenInAmount, tradingBalanceAmount, code, params }, index) =>
