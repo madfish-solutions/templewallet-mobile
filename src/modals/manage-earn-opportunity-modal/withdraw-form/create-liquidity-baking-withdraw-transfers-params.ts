@@ -6,7 +6,7 @@ import { ROUTING_FEE_ADDRESS } from 'src/config/swap';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { THREE_ROUTE_SIRS_TOKEN } from 'src/token/data/three-route-tokens';
 import { percentageToFraction } from 'src/utils/percentage.utils';
-import { getRoutingFeeTransferParams, getSwapTransferParams } from 'src/utils/swap.utils';
+import { calculateSlippageRatio, getRoutingFeeTransferParams, getSwapTransferParams } from 'src/utils/swap.utils';
 
 export const createLiquidityBakingWithdrawTransfersParams = async (
   tokenIndex: number,
@@ -24,10 +24,13 @@ export const createLiquidityBakingWithdrawTransfersParams = async (
       swapInputMinusFeeAtomic,
       routingFeeFromInputAtomic,
       threeRouteOutputToken,
-      outputAtomic,
+      expectedOutputAtomic,
       routingFeeFromOutputAtomic,
-      xtzHops,
-      tzbtcHops
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      minOutputAtomic,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      outputAfterFeeAtomic,
+      ...hops
     }
   ] = await calculateUnstakeParams([tokenIndex], lpAmount, slippageTolerancePercentage, tezos.rpc.getRpcUrl());
 
@@ -51,8 +54,9 @@ export const createLiquidityBakingWithdrawTransfersParams = async (
     THREE_ROUTE_SIRS_TOKEN,
     threeRouteOutputToken,
     swapInputMinusFeeAtomic,
-    outputAtomic,
-    { xtzHops, tzbtcHops },
+    expectedOutputAtomic,
+    calculateSlippageRatio(slippageTolerancePercentage),
+    hops,
     tezos,
     accountPkh
   );

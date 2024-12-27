@@ -15,7 +15,12 @@ import { tzktUrl } from 'src/utils/linking';
 import { ZERO } from 'src/utils/number.util';
 import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
-import { calculateSidePaymentsFromInput, calculateOutputFeeAtomic, calculateSlippageRatio } from 'src/utils/swap.utils';
+import {
+  calculateSidePaymentsFromInput,
+  calculateOutputFeeAtomic,
+  calculateSlippageRatio,
+  multiplyAtomicAmount
+} from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import {
@@ -119,9 +124,10 @@ export const calculateUnstakeParams = async (
     outputTokenIndexes.map(async outputTokenIndex => {
       const threeRouteOutputToken = THREE_ROUTE_LB_TOKENS[outputTokenIndex];
       const {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        input,
         output: rawOutput,
-        xtzHops,
-        tzbtcHops
+        ...hops
       } = await fetchRoute3LiquidityBakingParams({
         fromSymbol: SIRS_TOKEN_METADATA.symbol,
         toSymbol: threeRouteOutputToken.symbol,
@@ -130,28 +136,32 @@ export const calculateUnstakeParams = async (
         // Such swap has either XTZ or tzBTC hops
         xtzDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
         tzbtcDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
-        rpcUrl
+        rpcUrl,
+        showTree: true
       });
 
       if (rawOutput === ZERO.toFixed() || !isDefined(rawOutput)) {
         throw new Error(`Failed to calculate swap params for ${threeRouteOutputToken.symbol}`);
       }
 
-      const outputAtomic = tzToMutez(new BigNumber(rawOutput), threeRouteOutputToken.decimals)
-        .times(calculateSlippageRatio(slippageTolerancePercentage))
-        .integerValue(BigNumber.ROUND_DOWN);
-      const routingFeeFromOutputAtomic = calculateOutputFeeAtomic(lpAmount, outputAtomic);
-      const outputAfterFeeAtomic = outputAtomic.minus(routingFeeFromOutputAtomic);
+      const expectedOutputAtomic = tzToMutez(new BigNumber(rawOutput), threeRouteOutputToken.decimals);
+      const minOutputAtomic = multiplyAtomicAmount(
+        expectedOutputAtomic,
+        calculateSlippageRatio(slippageTolerancePercentage),
+        BigNumber.ROUND_DOWN
+      );
+      const routingFeeFromOutputAtomic = calculateOutputFeeAtomic(lpAmount, minOutputAtomic);
+      const outputAfterFeeAtomic = minOutputAtomic.minus(routingFeeFromOutputAtomic);
 
       return {
         swapInputMinusFeeAtomic,
         routingFeeFromInputAtomic,
         threeRouteOutputToken,
-        outputAtomic,
+        expectedOutputAtomic,
+        minOutputAtomic,
         routingFeeFromOutputAtomic,
         outputAfterFeeAtomic,
-        xtzHops,
-        tzbtcHops
+        ...hops
       };
     })
   );

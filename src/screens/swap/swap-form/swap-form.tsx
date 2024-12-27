@@ -64,7 +64,9 @@ import {
   calculateSidePaymentsFromInput,
   calculateOutputFeeAtomic,
   calculateSlippageRatio,
-  getRoutingFeeTransferParams
+  getRoutingFeeTransferParams,
+  multiplyAtomicAmount,
+  calculateOutputAmounts
 } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
@@ -139,7 +141,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       inputFeeAtomic: routingFeeFromInputAtomic,
       cashbackSwapInputAtomic: cashbackSwapInputFromInAtomic
     } = calculateSidePaymentsFromInput(inputAssets.amount);
-    const routingFeeFromOutputAtomic = calculateOutputFeeAtomic(inputAssets.amount, minimumReceivedAmountAtomic);
+    const routingFeeFromOutputAtomic = calculateOutputFeeAtomic(inputAssets.amount, minimumReceivedAtomic);
 
     const analyticsProperties = {
       inputAsset: inputAssetSlug,
@@ -161,7 +163,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     const allSwapParams: Array<TransferParams> = [];
     let routingOutputFeeTransferParams: TransferParams[] = await getRoutingFeeTransferParams(
       toRoute3Token,
-      routingFeeFromOutputAtomic,
+      outputFeeAtomicAmount,
       publicKeyHash,
       ROUTING_FEE_ADDRESS,
       tezos
@@ -171,7 +173,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       fromRoute3Token,
       toRoute3Token,
       swapInputMinusFeeAtomic,
-      minimumReceivedAmountAtomic,
+      outputAtomicAmountBeforeFee,
+      slippageRatio,
       swapParams.data
     );
 
@@ -208,15 +211,22 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         rpcUrl: tezos.rpc.getRpcUrl()
       });
 
-      const templeOutputAtomic = tzToMutez(new BigNumber(swapToTempleParams.output ?? ZERO), TEMPLE_TOKEN.decimals)
-        .multipliedBy(ROUTING_FEE_SLIPPAGE_RATIO)
-        .integerValue(BigNumber.ROUND_DOWN);
+      const templeExpectedOutputAtomic = tzToMutez(
+        new BigNumber(swapToTempleParams.output ?? ZERO),
+        TEMPLE_TOKEN.decimals
+      );
+      const templeMinOutputAtomic = multiplyAtomicAmount(
+        templeExpectedOutputAtomic,
+        ROUTING_FEE_SLIPPAGE_RATIO,
+        BigNumber.ROUND_DOWN
+      );
 
       const swapToTempleTokenOpParams = await getSwapParams(
         fromRoute3Token,
         TEMPLE_TOKEN,
         routingFeeFromInputAtomic,
-        templeOutputAtomic,
+        templeExpectedOutputAtomic,
+        ROUTING_FEE_SLIPPAGE_RATIO,
         swapToTempleParams
       );
 
@@ -224,7 +234,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       const routingFeeOpParams = await getRoutingFeeTransferParams(
         TEMPLE_TOKEN,
-        templeOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
+        templeMinOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
         publicKeyHash,
         BURN_ADDRESS,
         tezos
@@ -248,21 +258,28 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         rpcUrl: tezos.rpc.getRpcUrl()
       });
 
-      const templeOutputAtomic = tzToMutez(new BigNumber(swapToTempleParams.output ?? ZERO), TEMPLE_TOKEN.decimals)
-        .multipliedBy(ROUTING_FEE_SLIPPAGE_RATIO)
-        .integerValue(BigNumber.ROUND_DOWN);
+      const templeExpectedOutputAtomic = tzToMutez(
+        new BigNumber(swapToTempleParams.output ?? ZERO),
+        TEMPLE_TOKEN.decimals
+      );
+      const templeMinOutputAtomic = multiplyAtomicAmount(
+        templeExpectedOutputAtomic,
+        ROUTING_FEE_SLIPPAGE_RATIO,
+        BigNumber.ROUND_DOWN
+      );
 
       const swapToTempleTokenOpParams = await getSwapParams(
         toRoute3Token,
         TEMPLE_TOKEN,
         routingFeeFromOutputAtomic,
-        templeOutputAtomic,
+        templeExpectedOutputAtomic,
+        ROUTING_FEE_SLIPPAGE_RATIO,
         swapToTempleParams
       );
 
       const routingFeeOpParams = await getRoutingFeeTransferParams(
         TEMPLE_TOKEN,
-        templeOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
+        templeMinOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
         publicKeyHash,
         BURN_ADDRESS,
         tezos
@@ -318,16 +335,17 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
   const { values, setFieldValue, isValid, submitForm, submitCount, isSubmitting } = formik;
   const { inputAssets, outputAssets } = values;
-
-  const minimumReceivedAmountAtomic = useMemo(() => {
-    if (isDefined(swapParams.data.output)) {
-      return tzToMutez(new BigNumber(swapParams.data.output), outputAssets.asset.decimals)
-        .multipliedBy(slippageRatio)
-        .integerValue(BigNumber.ROUND_DOWN);
-    } else {
-      return ZERO;
-    }
-  }, [swapParams.data.output, outputAssets.asset.decimals, slippageRatio]);
+  const { outputAtomicAmountBeforeFee, minimumReceivedAtomic, outputFeeAtomicAmount } = useMemo(
+    () =>
+      calculateOutputAmounts(
+        inputAssets.amount,
+        inputAssets.asset.decimals,
+        swapParams.data.output,
+        outputAssets.asset.decimals,
+        slippageRatio
+      ),
+    [inputAssets, swapParams, outputAssets.asset.decimals, slippageRatio]
+  );
 
   const inputAssetSlug = tokenEqualityFn(inputAssets.asset, emptyTezosLikeToken)
     ? undefined
@@ -385,14 +403,19 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     if (currentOutput === undefined) {
       setFieldValue('outputAssets', { asset: outputAssets.asset, amount: undefined });
     } else {
-      const outputAtomicAmountPlusFee = tzToMutez(new BigNumber(currentOutput), outputAssets.asset.decimals);
-      const feeFromOutput = calculateOutputFeeAtomic(inputAssets.amount, outputAtomicAmountPlusFee);
+      const { expectedReceivedAtomic } = calculateOutputAmounts(
+        inputAssets.amount,
+        inputAssets.asset.decimals,
+        currentOutput,
+        outputAssets.asset.decimals,
+        slippageRatio
+      );
       setFieldValue('outputAssets', {
         asset: outputAssets.asset,
-        amount: outputAtomicAmountPlusFee.minus(feeFromOutput)
+        amount: expectedReceivedAtomic
       });
     }
-  }, [swapParams.data.output, inputAssets.amount, outputAssets.asset, setFieldValue]);
+  }, [swapParams.data.output, inputAssets, outputAssets.asset, setFieldValue, slippageRatio]);
 
   const handleInputAssetsValueChange = useCallback(
     (newInputValue: AssetAmountInterface) => {
