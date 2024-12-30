@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { AD_HIDING_TIMEOUT } from 'src/utils/optimal.utils';
+import { AD_HIDING_TIMEOUT } from 'src/hooks/use-ad-temporary-hiding.hook';
 
 import { hidePromotionAction, togglePartnersPromotionAction } from './partners-promotion-actions';
 import { partnersPromotionInitialState } from './partners-promotion-state';
