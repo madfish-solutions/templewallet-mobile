@@ -20,7 +20,12 @@ import {
   THREE_ROUTE_TZBTC_TOKEN,
   THREE_ROUTE_XTZ_TOKEN
 } from 'src/token/data/three-route-tokens';
-import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import {
+  SIRS_TOKEN_METADATA,
+  TEZ_TOKEN_METADATA,
+  TEZ_TOKEN_SLUG,
+  TZBTC_TOKEN_METADATA
+} from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 
@@ -265,12 +270,13 @@ export const fetchRoute3SwapParams = ({
 export const fetchRoute3Dexes$ = () =>
   from(route3Api.get<Array<Route3Dex>>('/dexes')).pipe(map(response => response.data));
 
+const route3TokenSymbols = {
+  [TEZ_TOKEN_METADATA.symbol]: THREE_ROUTE_XTZ_TOKEN.symbol,
+  [TZBTC_TOKEN_METADATA.symbol]: THREE_ROUTE_TZBTC_TOKEN.symbol,
+  [SIRS_TOKEN_METADATA.symbol]: THREE_ROUTE_SIRS_TOKEN.symbol
+};
 export const getRoute3TokenSymbol = (token: TokenInterface) => {
-  if (token.symbol === TEZ_TOKEN_METADATA.symbol) {
-    return 'XTZ';
-  }
-
-  return token.symbol;
+  return route3TokenSymbols[token.symbol] ?? token.symbol;
 };
 
 const getRoute3TokenSlug = ({ contract, tokenId }: Route3Token) => toTokenSlug(contract ?? '', tokenId ?? 0);
