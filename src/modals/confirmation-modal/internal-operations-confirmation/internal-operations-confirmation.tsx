@@ -1,5 +1,4 @@
 import { OpKind } from '@taquito/taquito';
-import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { of } from 'rxjs';
@@ -18,7 +17,7 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
-import { useCurrentAccountTezosBalance, useRawCurrentAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useRawCurrentAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -35,7 +34,7 @@ const NOT_ENOUGH_TEZ_ESTIMATION_ERRORS_KEYWORDS = [
   'storage_exhausted'
 ];
 
-const isNotEnoughTezForDelegationFeeError = (error: string, senderPkh: string): boolean => {
+const isTezBalanceTooLowError = (error: string, senderPkh: string): boolean => {
   /* An example of matching value: `HttpResponseError: Http error response: (500) [
     {"kind":"temporary","id":"proto.018-Proxford.contract.balance_too_low","contract":"tz1dmR1BEyVW8fYyHT4QjarrRXyMJ1F4DciT","balance":"20","amount":"374"},
     {"kind":"temporary","id":"proto.018-Proxford.tez.subtraction_underflow","amounts":["20","374"]}]`
@@ -93,7 +92,6 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
   const dispatch = useDispatch();
   const selectedAccount = useRawCurrentAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
-  const tezosBalance = useCurrentAccountTezosBalance();
   const lastSetOverlayStateRef = useRef<OnRampOverlayState | null>(null);
 
   const { confirmRequest, isLoading } = useRequestConfirmation(approveInternalOperationRequest);
@@ -132,19 +130,10 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
     (error: string) =>
       canUseOnRamp &&
       (NOT_ENOUGH_TEZ_ESTIMATION_ERRORS_KEYWORDS.some(keyword => error.includes(keyword)) ||
-        isNotEnoughTezForDelegationFeeError(error, selectedAccount!.publicKeyHash))
+        isTezBalanceTooLowError(error, selectedAccount!.publicKeyHash))
         ? updateOverlayState(OnRampOverlayState.Continue)
         : console.error(error),
     [canUseOnRamp, selectedAccount, updateOverlayState]
-  );
-
-  const handleTotalTezValue = useCallback(
-    (newValue: BigNumber) =>
-      void (
-        canUseOnRamp &&
-        updateOverlayState(newValue.gt(tezosBalance) ? OnRampOverlayState.Continue : OnRampOverlayState.Closed)
-      ),
-    [canUseOnRamp, tezosBalance, updateOverlayState]
   );
 
   return (
@@ -155,7 +144,6 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
           opParams={opParams}
           isLoading={isLoading}
           onEstimationError={handleEstimationError}
-          onTotalTezValue={handleTotalTezValue}
           onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
           testID={testID}
           disclaimer={disclaimer}
