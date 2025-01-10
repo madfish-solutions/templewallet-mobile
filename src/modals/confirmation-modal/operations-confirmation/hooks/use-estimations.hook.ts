@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/react-native';
-import { OpKind, ParamsWithKind, Estimate, TezosOperationError } from '@taquito/taquito';
+import { OpKind, ParamsWithKind, Estimate, TezosOperationError, GasConsumingOperation } from '@taquito/taquito';
 import { pick } from 'lodash-es';
-import { useEffect, useState } from 'react';
-import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { useCallback, useEffect, useState } from 'react';
+import { from, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { AccountInterface } from 'src/interfaces/account.interface';
@@ -21,36 +21,78 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
   });
   const tezos = useReadOnlyTezosToolkit(sender);
 
-  useEffect(() => {
-    const subscription = from(tezos.estimate.batch(opParams.map(param => ({ ...param, source: sender.publicKeyHash }))))
-      .pipe(
+  const estimate$ = useCallback(
+    (
+      currentOpParams: ParamsWithKind[],
+      attemptCounter = 0,
+      prevFailedOperationIndex = -1
+    ): Observable<EstimationInterface[]> =>
+      from(tezos.estimate.batch(currentOpParams.map(param => ({ ...param, source: sender.publicKeyHash })))).pipe(
         map(estimates =>
           estimates.map((estimate, i) => ({
             ...pick(estimate, 'gasLimit', 'storageLimit'),
-            suggestedFeeMutez: getSuggestedFeeMutez(estimate, opParams[i]),
-            // @ts-ignore
+            suggestedFeeMutez: getSuggestedFeeMutez(estimate, currentOpParams[i]),
+            // @ts-expect-error: accessing private property
             minimalFeePerStorageByteMutez: Number(estimate.minimalFeePerStorageByteMutez)
           }))
-        )
-      )
-      .subscribe({
-        next: value => setEstimationState({ isLoading: false, data: value }),
-        error: error => {
-          Sentry.captureException(error);
-          showErrorToast({
-            title: 'Warning!',
-            description: 'The transaction is likely to fail!',
-            isCopyButtonVisible: true,
-            onPress: () => copyStringToClipboard(error.toString())
-          });
+        ),
+        catchError(error => {
+          if (
+            error instanceof TezosOperationError &&
+            error.errors.some(internalError => internalError.id.includes('gas_exhausted'))
+          ) {
+            const { operationsWithResults } = error;
+            const firstSkippedOperationIndex = operationsWithResults.findIndex(
+              op =>
+                'metadata' in op &&
+                'operation_result' in op.metadata &&
+                op.metadata.operation_result.status === 'skipped'
+            );
+            // An internal operation of this operation may be marked as failed but this one as backtracked
+            const failedOperationIndex =
+              firstSkippedOperationIndex === -1 ? operationsWithResults.length - 1 : firstSkippedOperationIndex - 1;
+            const failedOperationWithResult = operationsWithResults[failedOperationIndex];
+            if ('gas_limit' in failedOperationWithResult) {
+              const newOpParams = Array.from(currentOpParams);
+              const failedOperation = newOpParams[failedOperationIndex] as GasConsumingOperation;
+              failedOperation.gasLimit =
+                Math.max(failedOperation.gasLimit ?? 0, Number(failedOperationWithResult.gas_limit)) * 2;
 
-          setEstimationState({
-            error: error instanceof TezosOperationError ? error.id : error.toString(),
-            isLoading: false,
-            data: []
-          });
-        }
-      });
+              if (attemptCounter < 3) {
+                return estimate$(
+                  newOpParams,
+                  failedOperationIndex > prevFailedOperationIndex ? 0 : attemptCounter + 1,
+                  Math.max(failedOperationIndex, prevFailedOperationIndex)
+                );
+              }
+            }
+          }
+
+          return from(Promise.reject(error));
+        })
+      ),
+    [sender.publicKeyHash, tezos]
+  );
+
+  useEffect(() => {
+    const subscription = estimate$(opParams).subscribe({
+      next: value => setEstimationState({ isLoading: false, data: value }),
+      error: error => {
+        Sentry.captureException(error);
+        showErrorToast({
+          title: 'Warning!',
+          description: 'The transaction is likely to fail!',
+          isCopyButtonVisible: true,
+          onPress: () => copyStringToClipboard(error.toString())
+        });
+
+        setEstimationState({
+          error: error instanceof TezosOperationError ? error.id : error.toString(),
+          isLoading: false,
+          data: []
+        });
+      }
+    });
 
     return () => subscription.unsubscribe();
   }, []);

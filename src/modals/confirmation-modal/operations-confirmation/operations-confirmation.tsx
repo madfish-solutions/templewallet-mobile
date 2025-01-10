@@ -1,7 +1,6 @@
 import { OpKind, ParamsWithKind } from '@taquito/taquito';
-import { BigNumber } from 'bignumber.js';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, ReactNode, useEffect, useMemo } from 'react';
+import React, { FC, ReactNode, useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
@@ -12,7 +11,7 @@ import { Divider } from 'src/components/divider/divider';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { emptyFn, EventFn } from 'src/config/general';
+import { emptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -43,8 +42,7 @@ interface Props extends TestIdProps {
   isLoading: boolean;
   disclaimer?: ReactNode;
   onEstimationError?: SyncFn<string>;
-  onTotalTezValue?: SyncFn<BigNumber>;
-  onSubmit: EventFn<ParamsWithKind[]>;
+  onSubmit: SyncFn<ParamsWithKind[]>;
 }
 
 export const OperationsConfirmation: FC<Props> = ({
@@ -52,7 +50,6 @@ export const OperationsConfirmation: FC<Props> = ({
   opParams,
   isLoading,
   onEstimationError = emptyFn,
-  onTotalTezValue = emptyFn,
   onSubmit,
   children,
   disclaimer,
@@ -116,26 +113,6 @@ export const OperationsConfirmation: FC<Props> = ({
     onSubmit: handleSubmit
   });
   const { values, isValid, setFieldValue, submitForm } = formik;
-
-  const totalTezValue = useMemo(
-    () =>
-      BigNumber.sum(
-        ...opParams.map(operation => {
-          if (operation.kind === OpKind.TRANSACTION) {
-            return operation.mutez === true
-              ? operation.amount
-              : tzToMutez(new BigNumber(operation.amount), metadata.decimals);
-          }
-
-          return 0;
-        })
-      )
-        .plus(tzToMutez(values.gasFeeSum ?? basicFees.gasFeeSum, metadata.decimals))
-        .plus((values.storageLimitSum ?? basicFees.storageLimitSum).times(minimalFeePerStorageByteMutez)),
-    [basicFees, opParams, values.gasFeeSum, values.storageLimitSum, minimalFeePerStorageByteMutez, metadata]
-  );
-
-  useEffect(() => onTotalTezValue(totalTezValue), [onTotalTezValue, totalTezValue]);
 
   useEffect(
     () => void (isDefined(estimations.error) && onEstimationError(estimations.error)),

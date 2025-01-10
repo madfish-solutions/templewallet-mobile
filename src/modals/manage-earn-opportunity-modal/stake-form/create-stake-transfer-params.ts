@@ -14,7 +14,8 @@ import {
   calculateSlippageRatio,
   calculateOutputFeeAtomic,
   getSwapTransferParams,
-  getRoutingFeeTransferParams
+  getRoutingFeeTransferParams,
+  multiplyAtomicAmount
 } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
@@ -59,10 +60,13 @@ export const createStakeTransfersParams = async (
     throw new ToastError('Failed to deposit', 'Please try depositing a bigger amount');
   }
 
+  const expectedReceivedAtomic = tzToMutez(new BigNumber(threeRouteSwapParams.output), stakedToken.metadata.decimals);
   const minimumReceivedAtomic = BigNumber.max(
-    tzToMutez(new BigNumber(threeRouteSwapParams.output), stakedToken.metadata.decimals)
-      .times(calculateSlippageRatio(slippageTolerancePercentage))
-      .integerValue(BigNumber.ROUND_DOWN),
+    multiplyAtomicAmount(
+      expectedReceivedAtomic,
+      calculateSlippageRatio(slippageTolerancePercentage),
+      BigNumber.ROUND_DOWN
+    ),
     1
   );
   const routingFeeFromOutputAtomic = calculateOutputFeeAtomic(amount, minimumReceivedAtomic);
@@ -70,7 +74,8 @@ export const createStakeTransfersParams = async (
     fromRoute3Token,
     toRoute3Token,
     swapInputMinusFeeAtomic,
-    minimumReceivedAtomic,
+    expectedReceivedAtomic,
+    slippageTolerancePercentage,
     threeRouteSwapParams,
     tezos,
     accountPkh

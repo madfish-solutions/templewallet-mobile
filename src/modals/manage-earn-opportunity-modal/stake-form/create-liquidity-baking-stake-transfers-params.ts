@@ -18,7 +18,8 @@ import {
   calculateSidePaymentsFromInput,
   calculateSlippageRatio,
   getSwapTransferParams,
-  getRoutingFeeTransferParams
+  getRoutingFeeTransferParams,
+  multiplyAtomicAmount
 } from 'src/utils/swap.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -34,9 +35,9 @@ export const createLiquidityBakingStakeTransfersParams = async (
   const inputToken = inputIsTezos ? THREE_ROUTE_XTZ_TOKEN : THREE_ROUTE_TZBTC_TOKEN;
   const { swapInputMinusFeeAtomic, inputFeeAtomic: routingFeeFromInputAtomic } = calculateSidePaymentsFromInput(amount);
   const {
+    input,
     output: rawSwapOutput,
-    tzbtcHops,
-    xtzHops
+    ...hops
   } = await fetchRoute3LiquidityBakingParams({
     fromSymbol: inputToken.symbol,
     toSymbol: THREE_ROUTE_SIRS_TOKEN.symbol,
@@ -45,11 +46,13 @@ export const createLiquidityBakingStakeTransfersParams = async (
     // Such swap has either XTZ or tzBTC hops
     xtzDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
     tzbtcDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
-    rpcUrl
+    rpcUrl,
+    showTree: true
   });
   const slippageRatio = calculateSlippageRatio(slippageTolerancePercentage);
+  const expectedSwapOutputAtomic = new BigNumber(rawSwapOutput ?? ZERO);
   const swapOutputAtomic = BigNumber.max(
-    new BigNumber(rawSwapOutput ?? ZERO).times(slippageRatio).integerValue(BigNumber.ROUND_DOWN),
+    multiplyAtomicAmount(expectedSwapOutputAtomic, slippageRatio, BigNumber.ROUND_DOWN),
     1
   );
   const routingFeeFromOutputAtomic = calculateOutputFeeAtomic(amount, swapOutputAtomic);
@@ -82,8 +85,9 @@ export const createLiquidityBakingStakeTransfersParams = async (
     inputToken,
     THREE_ROUTE_SIRS_TOKEN,
     swapInputMinusFeeAtomic,
-    swapOutputAtomic,
-    { tzbtcHops, xtzHops },
+    expectedSwapOutputAtomic,
+    slippageRatio,
+    hops,
     tezos,
     accountPkh
   );
