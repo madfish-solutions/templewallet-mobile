@@ -48,7 +48,11 @@
     "no-type-assertion/no-type-assertion": "warn",
     "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/strict-boolean-expressions": "warn",
-    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-unused-vars": ["error", {
+      "args": "all",
+      "argsIgnorePattern": "^_",
+      "ignoreRestSiblings": true
+    }],
     "@typescript-eslint/no-unnecessary-type-constraint": "warn",
     "@typescript-eslint/ban-ts-comment": "warn",
     "react-hooks/exhaustive-deps": ["warn", {

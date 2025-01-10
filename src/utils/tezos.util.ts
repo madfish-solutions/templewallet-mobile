@@ -15,20 +15,12 @@ export const RPC_RETRY_OPTIONS = {
   maxTimeout: 100
 };
 
-export const mutezToTz = (bigNum: BigNumber, decimals: number) => {
-  if (bigNum.isNaN()) {
-    return bigNum;
-  }
-
-  return bigNum.integerValue().div(new BigNumber(10).pow(decimals));
+export const mutezToTz = (x: BigNumber, decimals: number) => {
+  return new BigNumber(x).integerValue().shiftedBy(-decimals);
 };
 
-export const tzToMutez = (bigNum: BigNumber, decimals: number) => {
-  if (bigNum.isNaN()) {
-    return bigNum;
-  }
-
-  return bigNum.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
+export const tzToMutez = (x: BigNumber.Value, decimals: number) => {
+  return new BigNumber(x).shiftedBy(decimals).integerValue();
 };
 
 export const isCollectible = <T extends TokenMetadataInterface>(asset: T) => isDefined(asset.artifactUri);

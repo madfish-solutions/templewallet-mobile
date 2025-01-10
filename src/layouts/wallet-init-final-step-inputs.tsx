@@ -8,7 +8,7 @@ import { Divider } from 'src/components/divider/divider';
 import { AnalyticsField } from 'src/components/fields/analytics-field';
 import { ViewAdsField } from 'src/components/fields/view-ads-field';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { analyticsCollecting, privacyPolicy, termsOfUse } from 'src/config/socials';
+import { privacyPolicy, termsOfUse } from 'src/config/socials';
 import { FormBiometryCheckbox } from 'src/form/form-biometry-checkbox/form-biometry-checkbox';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { formatSize } from 'src/styles/format-size';
@@ -44,7 +44,7 @@ const analyticsAlertParams = {
   title: 'Usage Analytics',
   message: 'I agree to the anonymous analytics collecting',
   buttons: [
-    { text: 'Anonymous analytics', onPress: () => openUrl(analyticsCollecting) },
+    { text: 'Anonymous analytics', onPress: () => openUrl(privacyPolicy) },
     { text: 'Ok', isPreferred: true }
   ]
 };

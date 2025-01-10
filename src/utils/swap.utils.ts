@@ -1,25 +1,61 @@
-import { ContractMethod, ContractProvider, OpKind, TezosToolkit, TransferParams } from '@taquito/taquito';
+import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { firstValueFrom, map } from 'rxjs';
 
+import { ONE_MINUTE } from 'src/config/fixed-times';
 import {
   APP_ID,
   ATOMIC_INPUT_THRESHOLD_FOR_FEE_FROM_INPUT,
   CASHBACK_RATIO,
-  LIQUIDITY_BAKING_PROXY_CONTRACT,
   ROUTE3_CONTRACT,
-  ROUTING_FEE_RATIO
+  ROUTING_FEE_RATIO,
+  SIRS_LIQUIDITY_SLIPPAGE_RATIO
 } from 'src/config/swap';
-import { isSwapHops, Route3LiquidityBakingHops, Route3SwapHops, Route3Token } from 'src/interfaces/route3.interface';
+import {
+  Hop,
+  isSwapHops,
+  Route3Hop,
+  Route3LiquidityBakingHops,
+  Route3SwapHops,
+  Route3Token
+} from 'src/interfaces/route3.interface';
+import {
+  THREE_ROUTE_SIRS_TOKEN,
+  THREE_ROUTE_TZBTC_TOKEN,
+  THREE_ROUTE_XTZ_TOKEN
+} from 'src/token/data/three-route-tokens';
+import { LIQUIDITY_BAKING_DEX_ADDRESS } from 'src/token/data/token-slugs';
 
+import { isDefined } from './is-defined';
 import { ZERO } from './number.util';
-import { mapToRoute3ExecuteHops } from './route3.util';
 import { getReadOnlyContract } from './rpc/contract.utils';
-import { MINIMAL_FEE_PER_GAS_MUTEZ } from './tezos.util';
+import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
+import { tzToMutez } from './tezos.util';
 import { getTransferParams$ } from './transfer-params.utils';
 import { getTransferPermissions } from './transfer-permissions.util';
 
-const GAS_CAP = 1000;
+export const getLbStorage = async (tezosOrRpc: string | TezosToolkit) => {
+  const tezos = typeof tezosOrRpc === 'string' ? createReadOnlyTezosToolkit(tezosOrRpc) : tezosOrRpc;
+  const contract = await getReadOnlyContract(LIQUIDITY_BAKING_DEX_ADDRESS, tezos);
+
+  return contract.storage<{ tokenPool: BigNumber; xtzPool: BigNumber; lqtTotal: BigNumber }>();
+};
+
+const mapToRoute3ExecuteHops = (hops: Route3Hop[]): MichelsonMap<string, Hop> => {
+  const result = new MichelsonMap<string, Hop>();
+
+  hops.forEach(({ dexId, tokenInAmount, tradingBalanceAmount, code, params }, index) =>
+    result.set(index.toString(), {
+      dex_id: dexId,
+      code,
+      amount_from_token_in_reserves: new BigNumber(tokenInAmount),
+      amount_from_trading_balance: new BigNumber(tradingBalanceAmount),
+      params: params ?? ''
+    })
+  );
+
+  return result;
+};
 
 export const calculateSidePaymentsFromInput = (inputAmount: BigNumber | undefined) => {
   const swapInputAtomic = (inputAmount ?? ZERO).integerValue(BigNumber.ROUND_DOWN);
@@ -68,75 +104,208 @@ export const getSwapTransferParams = async (
   fromRoute3Token: Route3Token,
   toRoute3Token: Route3Token,
   inputAmountAtomic: BigNumber,
-  minimumReceivedAtomic: BigNumber,
-  hops: Route3LiquidityBakingHops | Route3SwapHops,
+  expectedReceivedAtomic: BigNumber,
+  slippageRatio: number,
+  chains: Route3LiquidityBakingHops | Route3SwapHops,
   tezos: TezosToolkit,
   accountPkh: string
 ) => {
-  const resultParams: Array<TransferParams> = [];
-  let swapMethod: ContractMethod<ContractProvider>;
+  const minimumReceivedAtomic = multiplyAtomicAmount(expectedReceivedAtomic, slippageRatio, BigNumber.ROUND_FLOOR);
+  let burnSirsParams: TransferParams[] = [];
+  let approvesParams: TransferParams[];
+  let swapParams: TransferParams[];
+  let revokesParams: TransferParams[];
+  let mintSirsParams: TransferParams[] = [];
 
-  if (isSwapHops(hops)) {
-    const swapContract = await getReadOnlyContract(ROUTE3_CONTRACT, tezos);
-    swapMethod = swapContract.methods.execute(
-      fromRoute3Token.id,
-      toRoute3Token.id,
-      minimumReceivedAtomic,
-      accountPkh,
-      mapToRoute3ExecuteHops(hops.hops),
-      APP_ID
-    );
-  } else {
-    const liquidityBakingProxyContract = await getReadOnlyContract(LIQUIDITY_BAKING_PROXY_CONTRACT, tezos);
-    swapMethod = liquidityBakingProxyContract.methods.swap(
-      fromRoute3Token.id,
-      toRoute3Token.id,
-      mapToRoute3ExecuteHops(hops.xtzHops),
-      mapToRoute3ExecuteHops(hops.tzbtcHops),
-      inputAmountAtomic,
-      minimumReceivedAtomic,
-      accountPkh,
-      APP_ID
-    );
-  }
+  const swapContract = await getReadOnlyContract(ROUTE3_CONTRACT, tezos);
+  const lbDexContract = await getReadOnlyContract(LIQUIDITY_BAKING_DEX_ADDRESS, tezos);
+  if (isSwapHops(chains)) {
+    const swapMethod = swapContract.methodsObject.execute({
+      token_in_id: fromRoute3Token.id,
+      token_out_id: toRoute3Token.id,
+      min_out: minimumReceivedAtomic,
+      receiver: accountPkh,
+      hops: mapToRoute3ExecuteHops(chains.hops),
+      app_id: APP_ID
+    });
 
-  if (fromRoute3Token.symbol.toLowerCase() === 'xtz') {
-    resultParams.push(
+    swapParams = [
       swapMethod.toTransferParams({
-        amount: inputAmountAtomic.toNumber(),
+        amount: fromRoute3Token.symbol.toLowerCase() === 'xtz' ? inputAmountAtomic.toNumber() : 0,
         mutez: true
       })
+    ];
+
+    const { approve, revoke } = await getTransferPermissions(
+      tezos,
+      ROUTE3_CONTRACT,
+      accountPkh,
+      fromRoute3Token,
+      inputAmountAtomic
     );
+    approvesParams = approve;
+    revokesParams = revoke;
+  } else if (fromRoute3Token.id === THREE_ROUTE_SIRS_TOKEN.id) {
+    const xtzFromBurnAmount = tzToMutez(chains.xtzTree.tokenInAmount, THREE_ROUTE_XTZ_TOKEN.decimals);
+    const tzbtcFromBurnAmount = tzToMutez(chains.tzbtcTree.tokenInAmount, THREE_ROUTE_TZBTC_TOKEN.decimals);
+    burnSirsParams = [
+      lbDexContract.methodsObject
+        .removeLiquidity({
+          to: accountPkh,
+          lqtBurned: inputAmountAtomic,
+          minXtzWithdrawn: xtzFromBurnAmount,
+          minTokensWithdrawn: tzbtcFromBurnAmount,
+          deadline: Math.floor(Date.now() / 1000) + ONE_MINUTE
+        })
+        .toTransferParams()
+    ];
+
+    const { approve: approveTzbtc, revoke: revokeTzbtc } = await getTransferPermissions(
+      tezos,
+      ROUTE3_CONTRACT,
+      accountPkh,
+      THREE_ROUTE_TZBTC_TOKEN,
+      tzbtcFromBurnAmount
+    );
+    approvesParams = approveTzbtc;
+    revokesParams = revokeTzbtc;
+    swapParams = [];
+    const xtzSwapOut = tzToMutez(chains.xtzTree.tokenOutAmount, toRoute3Token.decimals);
+    const tzbtcSwapOut = tzToMutez(chains.tzbtcTree.tokenOutAmount, toRoute3Token.decimals);
+    if (chains.tzbtcHops.length > 0) {
+      const tzbtcSwapMethod = swapContract.methodsObject.execute({
+        token_in_id: THREE_ROUTE_TZBTC_TOKEN.id,
+        token_out_id: toRoute3Token.id,
+        min_out: multiplyAtomicAmount(tzbtcSwapOut, slippageRatio, BigNumber.ROUND_FLOOR),
+        receiver: accountPkh,
+        hops: mapToRoute3ExecuteHops(chains.tzbtcHops),
+        app_id: APP_ID
+      });
+      swapParams.push(tzbtcSwapMethod.toTransferParams());
+    }
+    if (chains.xtzHops.length > 0) {
+      const xtzSwapMethod = swapContract.methodsObject.execute({
+        token_in_id: THREE_ROUTE_XTZ_TOKEN.id,
+        token_out_id: toRoute3Token.id,
+        min_out: multiplyAtomicAmount(xtzSwapOut, slippageRatio, BigNumber.ROUND_FLOOR),
+        receiver: accountPkh,
+        hops: mapToRoute3ExecuteHops(chains.xtzHops),
+        app_id: APP_ID
+      });
+      swapParams.push(xtzSwapMethod.toTransferParams({ amount: Number(chains.xtzTree.tokenInAmount), mutez: false }));
+    }
   } else {
-    resultParams.push(swapMethod.toTransferParams());
-  }
-
-  const { approve, revoke } = await getTransferPermissions(
-    tezos,
-    isSwapHops(hops) ? ROUTE3_CONTRACT : LIQUIDITY_BAKING_PROXY_CONTRACT,
-    accountPkh,
-    fromRoute3Token,
-    inputAmountAtomic
-  );
-
-  resultParams.unshift(...approve);
-  try {
-    const estimations = await tezos.estimate.batch(
-      resultParams.map(params => ({ kind: OpKind.TRANSACTION, ...params }))
+    const { approve: approveInputToken, revoke: revokeInputToken } = await getTransferPermissions(
+      tezos,
+      ROUTE3_CONTRACT,
+      accountPkh,
+      fromRoute3Token,
+      inputAmountAtomic
     );
-    estimations.forEach(({ suggestedFeeMutez, storageLimit, gasLimit }, index) => {
-      const currentParams = resultParams[index];
-      currentParams.fee = suggestedFeeMutez + GAS_CAP * MINIMAL_FEE_PER_GAS_MUTEZ;
-      currentParams.storageLimit = storageLimit;
-      currentParams.gasLimit = gasLimit + GAS_CAP;
-    });
-  } catch (e) {
-    console.error(e);
-  }
-  resultParams.push(...revoke);
+    approvesParams = approveInputToken;
+    revokesParams = revokeInputToken;
+    swapParams = [];
+    const xtzSwapOut = tzToMutez(chains.xtzTree.tokenOutAmount, THREE_ROUTE_XTZ_TOKEN.decimals);
+    const tzbtcSwapOut = tzToMutez(chains.tzbtcTree.tokenOutAmount, THREE_ROUTE_TZBTC_TOKEN.decimals);
+    const xtzIsSwapped = chains.xtzHops.length > 0;
+    const tzbtcIsSwapped = chains.tzbtcHops.length > 0;
+    const xtzSwapMinOut = xtzIsSwapped
+      ? multiplyAtomicAmount(xtzSwapOut, slippageRatio, BigNumber.ROUND_FLOOR)
+      : xtzSwapOut;
+    const tzbtcAddLiqInput = tzbtcIsSwapped
+      ? multiplyAtomicAmount(tzbtcSwapOut, slippageRatio, BigNumber.ROUND_FLOOR)
+      : tzbtcSwapOut;
+    if (xtzIsSwapped) {
+      const xtzSwapMethod = swapContract.methodsObject.execute({
+        token_in_id: fromRoute3Token.id,
+        token_out_id: THREE_ROUTE_XTZ_TOKEN.id,
+        min_out: xtzSwapMinOut,
+        receiver: accountPkh,
+        hops: mapToRoute3ExecuteHops(chains.xtzHops),
+        app_id: APP_ID
+      });
+      swapParams.push(xtzSwapMethod.toTransferParams());
+    }
+    if (tzbtcIsSwapped) {
+      const tzbtcSwapMethod = swapContract.methodsObject.execute({
+        token_in_id: fromRoute3Token.id,
+        token_out_id: THREE_ROUTE_TZBTC_TOKEN.id,
+        min_out: tzbtcAddLiqInput,
+        receiver: accountPkh,
+        hops: mapToRoute3ExecuteHops(chains.tzbtcHops),
+        app_id: APP_ID
+      });
+      swapParams.push(
+        tzbtcSwapMethod.toTransferParams({
+          amount: fromRoute3Token.id === THREE_ROUTE_XTZ_TOKEN.id ? Number(chains.tzbtcTree.tokenInAmount) : 0,
+          mutez: false
+        })
+      );
+    }
 
-  return resultParams;
+    const { approve: approveTzbtc, revoke: revokeTzbtc } = await getTransferPermissions(
+      tezos,
+      LIQUIDITY_BAKING_DEX_ADDRESS,
+      accountPkh,
+      THREE_ROUTE_TZBTC_TOKEN,
+      tzbtcAddLiqInput
+    );
+    // Prevent extra TEZ spending
+    const { xtzPool, lqtTotal } = await getLbStorage(tezos);
+    const xtzAddLiqInput = BigNumber.min(
+      xtzSwapMinOut,
+      xtzPool
+        .times(expectedReceivedAtomic)
+        .div(lqtTotal)
+        .div(SIRS_LIQUIDITY_SLIPPAGE_RATIO)
+        .integerValue(BigNumber.ROUND_CEIL)
+    );
+    mintSirsParams = approveTzbtc.concat(
+      lbDexContract.methodsObject
+        .addLiquidity({
+          owner: accountPkh,
+          minLqtMinted: minimumReceivedAtomic,
+          maxTokensDeposited: tzbtcAddLiqInput,
+          deadline: Math.floor(Date.now() / 1000) + ONE_MINUTE
+        })
+        .toTransferParams({ amount: xtzAddLiqInput.toNumber(), mutez: true }),
+      revokeTzbtc
+    );
+  }
+
+  return burnSirsParams.concat(approvesParams, swapParams, mintSirsParams, revokesParams);
 };
+
+export const calculateOutputAmounts = (
+  inputAmount: BigNumber.Value | undefined,
+  inputAssetDecimals: number,
+  route3OutputInTokens: string | undefined,
+  outputAssetDecimals: number,
+  slippageRatio: number
+) => {
+  const outputAtomicAmountBeforeFee = isDefined(route3OutputInTokens)
+    ? tzToMutez(new BigNumber(route3OutputInTokens), outputAssetDecimals)
+    : ZERO;
+  const minOutputAtomicBeforeFee = multiplyAtomicAmount(
+    outputAtomicAmountBeforeFee,
+    slippageRatio,
+    BigNumber.ROUND_FLOOR
+  );
+  const outputFeeAtomicAmount = calculateOutputFeeAtomic(
+    tzToMutez(inputAmount ?? ZERO, inputAssetDecimals),
+    minOutputAtomicBeforeFee
+  );
+  const expectedReceivedAtomic = outputAtomicAmountBeforeFee.minus(outputFeeAtomicAmount);
+  const minimumReceivedAtomic = minOutputAtomicBeforeFee.minus(outputFeeAtomicAmount);
+
+  return { outputAtomicAmountBeforeFee, expectedReceivedAtomic, minimumReceivedAtomic, outputFeeAtomicAmount };
+};
+
+export const multiplyAtomicAmount = (
+  amount: BigNumber,
+  multiplier: BigNumber.Value,
+  roundMode?: BigNumber.RoundingMode
+) => amount.times(multiplier).integerValue(roundMode);
 
 export const calculateSlippageRatio = (slippageTolerancePercentage: number) =>
   (100 - slippageTolerancePercentage) / 100;

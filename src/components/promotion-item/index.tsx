@@ -4,7 +4,6 @@ import { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { HypelabPromotion } from 'src/components/hypelab-promotion';
-import { OptimalPromotion } from 'src/components/optimal-promotion';
 import { PersonaPromotion } from 'src/components/persona-promotion';
 import { PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { isAndroid } from 'src/config/system';
@@ -23,7 +22,6 @@ interface Props {
   style?: StyleProp<ViewStyle>;
   shouldRefreshAd?: boolean;
   shouldShowCloseButton?: boolean;
-  onlyOptimalAd?: boolean;
   variant?: PromotionVariantEnum;
   testID: string;
   pageName: string;
@@ -41,7 +39,6 @@ export const PromotionItem = forwardRef<View, Props>(
       shouldShowCloseButton = true,
       testID,
       variant = PromotionVariantEnum.Image,
-      onlyOptimalAd = false,
       pageName,
       onError,
       onLoad,
@@ -58,7 +55,7 @@ export const PromotionItem = forwardRef<View, Props>(
     const isFocused = useIsFocused();
 
     const [adsState, setAdsState] = useState({
-      currentProvider: PromotionProviderEnum.Optimal,
+      currentProvider: PromotionProviderEnum.HypeLab,
       adError: false,
       adIsReady: false
     });
@@ -67,7 +64,7 @@ export const PromotionItem = forwardRef<View, Props>(
     useEffect(() => {
       if (!isFocused) {
         setAdsState({
-          currentProvider: PromotionProviderEnum.Optimal,
+          currentProvider: PromotionProviderEnum.HypeLab,
           adError: false,
           adIsReady: false
         });
@@ -81,7 +78,7 @@ export const PromotionItem = forwardRef<View, Props>(
         }
 
         setAdsState({
-          currentProvider: PromotionProviderEnum.Optimal,
+          currentProvider: PromotionProviderEnum.HypeLab,
           adError: false,
           adIsReady: false
         });
@@ -95,13 +92,6 @@ export const PromotionItem = forwardRef<View, Props>(
       onError && onError();
     }, [onError]);
 
-    const handleOptimalError = useCallback(() => {
-      if (onlyOptimalAd) {
-        handleAdError();
-      } else {
-        setAdsState(prevState => ({ ...prevState, currentProvider: PromotionProviderEnum.HypeLab }));
-      }
-    }, [handleAdError, onlyOptimalAd]);
     const handleHypelabError = useCallback(() => {
       if (!PERSONA_ADS_ENABLED) {
         handleAdError();
@@ -122,10 +112,6 @@ export const PromotionItem = forwardRef<View, Props>(
         onLoad && onLoad(provider);
       },
       [onLoad]
-    );
-    const handleOptimalAdReady = useMemo(
-      () => handleAdReadyFactory(PromotionProviderEnum.Optimal),
-      [handleAdReadyFactory]
     );
     const handleHypelabAdReady = useMemo(
       () => handleAdReadyFactory(PromotionProviderEnum.HypeLab),
@@ -170,14 +156,6 @@ export const PromotionItem = forwardRef<View, Props>(
         ref={ref}
         onLayout={onLayout}
       >
-        {currentProvider === PromotionProviderEnum.Optimal && isFocused && (
-          <OptimalPromotion
-            {...promotionCommonProps}
-            shouldRefreshAd={shouldRefreshAd}
-            onReady={handleOptimalAdReady}
-            onError={handleOptimalError}
-          />
-        )}
         {currentProvider === PromotionProviderEnum.HypeLab && isFocused && (
           <HypelabPromotion {...promotionCommonProps} onReady={handleHypelabAdReady} onError={handleHypelabError} />
         )}

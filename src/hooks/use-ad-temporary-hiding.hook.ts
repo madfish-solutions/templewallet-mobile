@@ -3,7 +3,8 @@ import { useDispatch } from 'react-redux';
 
 import { hidePromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { usePromotionHidingTimestampSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { AD_HIDING_TIMEOUT } from 'src/utils/optimal.utils';
+
+export const AD_HIDING_TIMEOUT = 12 * 3600 * 1000;
 
 const shouldBeHiddenTemporarily = (hiddenAt: number) => {
   return Date.now() - hiddenAt < AD_HIDING_TIMEOUT;
