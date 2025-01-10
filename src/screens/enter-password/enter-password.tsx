@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
-import React, { useEffect, useMemo } from 'react';
-import { ImageBackground, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ABTestGroup } from 'src/apis/temple-wallet';
@@ -8,27 +8,23 @@ import { useBiometryAvailability } from 'src/biometry/use-biometry-availability.
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLink } from 'src/components/button/button-link/button-link';
 import { Divider } from 'src/components/divider/divider';
-import ChristmasBgDark from 'src/components/icon/assets/background/christmas-bg-dark.png';
-import ChristmasBgLight from 'src/components/icon/assets/background/christmas-bg-light.png';
+import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { LogoWithText } from 'src/components/icon/logo-with-text';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { Quote } from 'src/components/quote/quote';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { MAX_PASSWORD_ATTEMPTS } from 'src/config/security';
-import { isIOS } from 'src/config/system';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
 import { useResetDataHandler } from 'src/hooks/use-reset-data-handler.hook';
-import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { OverlayEnum } from 'src/navigator/enums/overlay.enum';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { getUserTestingGroupNameActions } from 'src/store/ab-testing/ab-testing-actions';
 import { useUserTestingGroupNameSelector } from 'src/store/ab-testing/ab-testing-selectors';
-import { useBiometricsEnabledSelector, useThemeSelector } from 'src/store/settings/settings-selectors';
+import { useBiometricsEnabledSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { ToastProvider } from 'src/toast/toast-provider';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -43,7 +39,6 @@ import { EnterPasswordSelectors } from './enter-password.selectors';
 import { useEnterPasswordStyles } from './enter-password.styles';
 
 export const EnterPassword = () => {
-  const theme = useThemeSelector();
   const styles = useEnterPasswordStyles();
   const groupName = useUserTestingGroupNameSelector();
   const dispatch = useDispatch();
@@ -61,8 +56,6 @@ export const EnterPassword = () => {
   const isBiometryAvailable = isDefined(biometryType) && biometricsEnabled;
   const biometryIconName = biometryType === 'FaceID' ? IconNameEnum.FaceId : IconNameEnum.TouchId;
 
-  const christmasBgSource = useMemo(() => (theme === ThemesEnum.dark ? ChristmasBgDark : ChristmasBgLight), [theme]);
-
   const onSubmit = ({ password }: EnterPasswordFormValues) => void (!isDisabled && unlock(password));
 
   usePageAnalytic(OverlayEnum.EnterPassword);
@@ -79,30 +72,18 @@ export const EnterPassword = () => {
   }, [dispatch, groupName]);
 
   return (
-    <ScreenContainer
-      style={styles.root}
-      contentContainerStyle={styles.scrollViewContentContainer}
-      keyboardBehavior="padding"
-      isFullScreenMode={true}
-    >
-      <ImageBackground resizeMode={isIOS ? 'contain' : 'cover'} source={christmasBgSource} style={styles.bg}>
+    <ScreenContainer style={styles.root} keyboardBehavior="padding" isFullScreenMode={true}>
+      <View style={styles.imageView}>
         <InsetSubstitute />
-
-        <View style={styles.imageView}>
-          <LogoWithText width={formatSize(248)} height={formatSize(104)} style={styles.logo} />
-        </View>
-
-        <Divider size={formatSize(121)} />
-
-        <Quote
-          quote="The only function of economic forecasting is to make astrology look more respectable."
-          author="John Kenneth Galbraith"
-        />
-      </ImageBackground>
-
+        <Icon name={IconNameEnum.TempleLogoWithText} width={formatSize(208)} height={formatSize(64)} />
+      </View>
       <Divider />
-
-      <View style={styles.footer}>
+      <Quote
+        quote="The only function of economic forecasting is to make astrology look more respectable."
+        author="John Kenneth Galbraith"
+      />
+      <Divider />
+      <View>
         <Formik
           initialValues={enterPasswordInitialValues}
           validationSchema={enterPasswordValidationSchema}
@@ -153,7 +134,7 @@ export const EnterPassword = () => {
         <Text style={styles.bottomText}>Having troubles?</Text>
         <Divider size={formatSize(4)} />
         <ButtonLink
-          title="Reset a wallet"
+          title="Erase Data"
           onPress={handleResetDataButtonPress}
           testID={EnterPasswordSelectors.eraseDataButtonLink}
         />
