@@ -43,7 +43,6 @@ export const TokenEquityValue = memo<Props>(props => {
 
   useLayoutEffect(() => {
     if (errorBoundaryRef.current) {
-      console.log('restart');
       errorBoundaryRef.current.tryAgainIfNecessary();
     }
   }, []);
