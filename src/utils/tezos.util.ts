@@ -20,7 +20,7 @@ export const mutezToTz = (x: BigNumber, decimals: number) => {
     return x;
   }
 
-  return x.integerValue().div(new BigNumber(10).pow(decimals));
+  return new BigNumber(x).integerValue().shiftedBy(-decimals);
 };
 
 export const tzToMutez = (x: BigNumber, decimals: number) => {
@@ -28,7 +28,7 @@ export const tzToMutez = (x: BigNumber, decimals: number) => {
     return x;
   }
 
-  return x.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
+  return new BigNumber(x).shiftedBy(decimals).integerValue();
 };
 
 export const isCollectible = <T extends TokenMetadataInterface>(asset: T) => isDefined(asset.artifactUri);
