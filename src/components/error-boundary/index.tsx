@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
     if (this.state.error) {
       this.tryAgain();
     }
-  }
+  };
 
   tryAgain = () => {
     const { error } = this.state;
@@ -62,7 +62,11 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
     const errorMessage = error instanceof BoundaryError ? error.message : this.getDefaultErrorMessage();
 
     if (error) {
-      return Fallback ? <Fallback /> : <ErrorBoundaryContent errorMessage={errorMessage} onTryAgainClick={this.tryAgain} style={style} />;
+      return Fallback ? (
+        <Fallback />
+      ) : (
+        <ErrorBoundaryContent errorMessage={errorMessage} onTryAgainClick={this.tryAgain} style={style} />
+      );
     }
 
     return children;
