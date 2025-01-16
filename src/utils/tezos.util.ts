@@ -16,19 +16,19 @@ export const RPC_RETRY_OPTIONS = {
 };
 
 export const mutezToTz = (x: BigNumber, decimals: number) => {
-  try {
-    return new BigNumber(x).integerValue().shiftedBy(-decimals);
-  } catch (e) {
-    return new BigNumber(NaN);
+  if (x.isNaN()) {
+    return x;
   }
+
+  return x.integerValue().div(new BigNumber(10).pow(decimals));
 };
 
-export const tzToMutez = (x: BigNumber.Value, decimals: number) => {
-  try {
-    return new BigNumber(x).shiftedBy(decimals).integerValue();
-  } catch (e) {
-    return new BigNumber(NaN);
+export const tzToMutez = (x: BigNumber, decimals: number) => {
+  if (x.isNaN()) {
+    return x;
   }
+
+  return x.decimalPlaces(decimals).times(new BigNumber(10).pow(decimals));
 };
 
 export const isCollectible = <T extends TokenMetadataInterface>(asset: T) => isDefined(asset.artifactUri);

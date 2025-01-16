@@ -106,11 +106,14 @@ export const getKordFiUserDeposits$ = (
   );
 
 function safeDiv(a: BigNumber.Value, b: BigNumber.Value) {
-  try {
-    return new BigNumber(a).div(b);
-  } catch (e) {
+  const castA = new BigNumber(a);
+  const castB = new BigNumber(b);
+
+  if (castA.isNaN() || castB.isNaN()) {
     return new BigNumber(NaN);
   }
+
+  return castA.div(castB);
 }
 
 export const getKordFiItems$ = (rates: ExchangeRateRecord): Observable<Array<SavingsItem>> =>
