@@ -105,6 +105,14 @@ export const getKordFiUserDeposits$ = (
     })
   );
 
+function safeDiv(a: BigNumber.Value, b: BigNumber.Value) {
+  try {
+    return new BigNumber(a).div(b);
+  } catch (e) {
+    return new BigNumber(NaN);
+  }
+}
+
 export const getKordFiItems$ = (rates: ExchangeRateRecord): Observable<Array<SavingsItem>> =>
   getKordFiStats$().pipe(
     map(kordFiStats => {
@@ -124,7 +132,7 @@ export const getKordFiItems$ = (rates: ExchangeRateRecord): Observable<Array<Sav
         stakedToken: TEZOS_TOKEN,
         tokens: [TEZOS_TOKEN],
         rewardToken: TEZOS_TOKEN,
-        staked: new BigNumber(kordFiStats.xtzTotalSupplyUsd / tezExchangeRate)?.toFixed(),
+        staked: safeDiv(kordFiStats.xtzTotalSupplyUsd, tezExchangeRate).toFixed(),
         tvlInUsd: kordFiStats.xtzTotalSupplyUsd?.toFixed(),
         tvlInStakedToken: kordFiStats.xtzTotalSupplyUsd?.toFixed(),
         type: EarnOpportunityTypeEnum.KORD_FI_SAVING,
@@ -143,7 +151,7 @@ export const getKordFiItems$ = (rates: ExchangeRateRecord): Observable<Array<Sav
         stakedToken: TZBTC_TOKEN,
         tokens: [TZBTC_TOKEN],
         rewardToken: TZBTC_TOKEN,
-        staked: (kordFiStats.tzbtcTotalSupplyUsd / tzbtcExchangeRate)?.toFixed(),
+        staked: safeDiv(kordFiStats.tzbtcTotalSupplyUsd, tzbtcExchangeRate).toFixed(),
         tvlInUsd: kordFiStats.tzbtcTotalSupplyUsd?.toFixed(),
         tvlInStakedToken: kordFiStats.tzbtcTotalSupplyUsd?.toFixed(),
         type: EarnOpportunityTypeEnum.KORD_FI_SAVING,
