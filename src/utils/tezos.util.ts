@@ -16,7 +16,7 @@ export const RPC_RETRY_OPTIONS = {
 };
 
 export const mutezToTz = (x: BigNumber, decimals: number) => {
-  if (x.isNaN()) {
+  if (!x.isFinite()) {
     return x;
   }
 
@@ -24,7 +24,7 @@ export const mutezToTz = (x: BigNumber, decimals: number) => {
 };
 
 export const tzToMutez = (x: BigNumber, decimals: number) => {
-  if (x.isNaN()) {
+  if (!x.isFinite()) {
     return x;
   }
 
