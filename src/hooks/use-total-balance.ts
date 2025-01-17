@@ -1,6 +1,5 @@
 import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
-import { Alert } from 'react-native';
 
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
@@ -19,7 +18,6 @@ export const useTotalBalance = () => {
 
   const totalBalance = useMemo(() => {
     let dollarValue = new BigNumber(0);
-    let alertShown = false;
 
     for (const token of visibleTokens) {
       const exchangeRate = exchangeRates[getTokenSlug(token)];
@@ -31,15 +29,8 @@ export const useTotalBalance = () => {
       try {
         const tokenDollarValue = getDollarValue(token.balance, token.decimals, exchangeRate);
         dollarValue = dollarValue.plus(tokenDollarValue);
-        if (!dollarValue.isFinite() && !alertShown) {
-          Alert.alert('Something fucked up', JSON.stringify({ token, exchangeRate }));
-          alertShown = true;
-        }
       } catch (e) {
-        if (!alertShown) {
-          Alert.alert('Total balance calculation error', JSON.stringify({ token, exchangeRate }));
-          alertShown = true;
-        }
+        console.error(e);
       }
     }
 
