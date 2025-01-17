@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native';
 import React, { Component, PropsWithChildren, ErrorInfo, FC } from 'react';
-import { StyleProp, ViewStyle } from 'react-native';
+import { Alert, StyleProp, ViewStyle } from 'react-native';
 
 import { isString } from 'src/utils/is-string';
 
@@ -31,8 +31,10 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    Sentry.captureException(error);
+    Alert.alert('TODO: Remove this alert', errorInfo.componentStack);
+    const sentryId = Sentry.captureException(error);
     console.error(error.message, errorInfo.componentStack);
+    Alert.alert('TODO: Remove this alert 2', `Sentry ID: ${sentryId}`);
   }
 
   tryAgainIfNecessary = () => {
@@ -59,7 +61,9 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
     const { style, children, Fallback } = this.props;
     const { error } = this.state;
 
-    const errorMessage = error instanceof BoundaryError ? error.message : this.getDefaultErrorMessage();
+    const errorMessage =
+      error instanceof BoundaryError ? error.message : `${error?.message}\n${error?.name}\n${error?.stack}`;
+    // TODO: make this.getDefaultErrorMessage(); come back
 
     if (error) {
       return Fallback ? (
