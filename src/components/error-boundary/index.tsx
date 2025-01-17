@@ -2,8 +2,6 @@ import * as Sentry from '@sentry/react-native';
 import React, { Component, PropsWithChildren, ErrorInfo, FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
-import { isString } from 'src/utils/is-string';
-
 import { ErrorBoundaryContent } from './content';
 
 // TODO: export when it becomes necessary
@@ -49,23 +47,15 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
     this.setState({ error: null });
   };
 
-  getDefaultErrorMessage() {
-    const { whileMessage } = this.props;
-
-    return isString(whileMessage) ? `Something went wrong while ${whileMessage}` : 'Something went wrong';
-  }
-
   render() {
-    const { style, children, Fallback } = this.props;
+    const { style, children, Fallback, whileMessage } = this.props;
     const { error } = this.state;
-
-    const errorMessage = error instanceof BoundaryError ? error.message : this.getDefaultErrorMessage();
 
     if (error) {
       return Fallback ? (
         <Fallback />
       ) : (
-        <ErrorBoundaryContent errorMessage={errorMessage} onTryAgainClick={this.tryAgain} style={style} />
+        <ErrorBoundaryContent error={error} whileMessage={whileMessage} onTryAgainClick={this.tryAgain} style={style} />
       );
     }
 
