@@ -4,6 +4,7 @@ import { Alert } from 'react-native';
 
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import { isDefined } from 'src/utils/is-defined';
 
 import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
@@ -22,10 +23,15 @@ export const useTotalBalance = () => {
 
     for (const token of visibleTokens) {
       const exchangeRate = exchangeRates[getTokenSlug(token)];
+
+      if (!isDefined(token.decimals) || !isDefined(exchangeRate)) {
+        continue;
+      }
+
       try {
         const tokenDollarValue = getDollarValue(token.balance, token.decimals, exchangeRate);
         dollarValue = dollarValue.plus(tokenDollarValue);
-        if (!dollarValue.isFinite()) {
+        if (!dollarValue.isFinite() && !alertShown) {
           Alert.alert('Something fucked up', JSON.stringify({ token, exchangeRate }));
           alertShown = true;
         }
