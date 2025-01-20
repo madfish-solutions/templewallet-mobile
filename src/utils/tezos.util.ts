@@ -16,10 +16,18 @@ export const RPC_RETRY_OPTIONS = {
 };
 
 export const mutezToTz = (x: BigNumber, decimals: number) => {
+  if (!x.isFinite() || !Number.isFinite(decimals)) {
+    return x;
+  }
+
   return new BigNumber(x).integerValue().shiftedBy(-decimals);
 };
 
-export const tzToMutez = (x: BigNumber.Value, decimals: number) => {
+export const tzToMutez = (x: BigNumber, decimals: number) => {
+  if (!x.isFinite() || !Number.isFinite(decimals)) {
+    return x;
+  }
+
   return new BigNumber(x).shiftedBy(decimals).integerValue();
 };
 

@@ -141,7 +141,7 @@ export const fetchRoute3LiquidityBakingParams = async (
 
   if (params.fromSymbol === THREE_ROUTE_SIRS_TOKEN.symbol) {
     const { tokenPool, xtzPool, lqtTotal } = await getLbStorage(params.rpcUrl);
-    const sirsAtomicAmount = tzToMutez(params.amount, THREE_ROUTE_SIRS_TOKEN.decimals);
+    const sirsAtomicAmount = tzToMutez(new BigNumber(params.amount), THREE_ROUTE_SIRS_TOKEN.decimals);
     const tzbtcAtomicAmount = sirsAtomicAmount
       .times(tokenPool)
       .times(SIRS_LIQUIDITY_SLIPPAGE_RATIO)

@@ -20,6 +20,7 @@ export const useTotalBalance = () => {
 
     for (const token of visibleTokens) {
       const exchangeRate = exchangeRates[getTokenSlug(token)];
+
       const tokenDollarValue = getDollarValue(token.balance, token.decimals, exchangeRate);
       dollarValue = dollarValue.plus(tokenDollarValue);
     }

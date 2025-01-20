@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import { BiometryAvailabilityProvider } from 'src/biometry/biometry-availability.provider';
+import { ErrorBoundary } from 'src/components/error-boundary';
 import { HideBalanceProvider } from 'src/hooks/hide-balance/hide-balance.provider';
 import { HideBootsplashProvider } from 'src/hooks/use-hide-bootsplash';
 import { RootStackScreen } from 'src/navigator/root-stack';
@@ -34,7 +35,9 @@ export const App = () => (
               <SafeAreaProvider>
                 <TypographyProvider>
                   <HideBootsplashProvider>
-                    <RootStackScreen />
+                    <ErrorBoundary whileMessage="loading the app">
+                      <RootStackScreen />
+                    </ErrorBoundary>
                   </HideBootsplashProvider>
                   <ToastProvider />
                 </TypographyProvider>
