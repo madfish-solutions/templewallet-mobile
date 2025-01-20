@@ -21,9 +21,6 @@ interface ErrorBoundaryContentProps {
   onTryAgainClick: EmptyFn;
 }
 
-// TODO: set to `false` before release
-const SHOULD_SHOW_ERROR_DETAILS = true;
-
 export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
   ({ error, whileMessage, style, onTryAgainClick }) => {
     const errorMessage = isString(whileMessage) ? `Something went wrong while ${whileMessage}` : 'Something went wrong';
@@ -38,9 +35,9 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
           <Icon name={IconNameEnum.AlertTriangle} size={formatSize(64)} color={colors.destructive} />
           <Text style={styles.header}>Oops!</Text>
           <Text style={styles.errorText}>{errorMessage}</Text>
-          {SHOULD_SHOW_ERROR_DETAILS && <Text style={styles.errorText}>{error.message ?? 'No error message'}</Text>}
+          <Text style={styles.errorText}>{error.message ?? 'No error message'}</Text>
           <ButtonSmallTryAgain title="Try again" onPress={onTryAgainClick} />
-          {SHOULD_SHOW_ERROR_DETAILS && isDefined(error.stack) && (
+          {isDefined(error.stack) && (
             <ButtonMedium title="Copy error stack" iconName={IconNameEnum.Copy} onPress={copyErrorStack} />
           )}
         </View>
