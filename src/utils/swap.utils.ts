@@ -146,8 +146,14 @@ export const getSwapTransferParams = async (
     approvesParams = approve;
     revokesParams = revoke;
   } else if (fromRoute3Token.id === THREE_ROUTE_SIRS_TOKEN.id) {
-    const xtzFromBurnAmount = tzToMutez(chains.xtzTree.tokenInAmount, THREE_ROUTE_XTZ_TOKEN.decimals);
-    const tzbtcFromBurnAmount = tzToMutez(chains.tzbtcTree.tokenInAmount, THREE_ROUTE_TZBTC_TOKEN.decimals);
+    const xtzFromBurnAmount = tzToMutez(
+      new BigNumber(chains.xtzTree.tokenInAmount ?? ZERO),
+      THREE_ROUTE_XTZ_TOKEN.decimals
+    );
+    const tzbtcFromBurnAmount = tzToMutez(
+      new BigNumber(chains.tzbtcTree.tokenInAmount),
+      THREE_ROUTE_TZBTC_TOKEN.decimals
+    );
     burnSirsParams = [
       lbDexContract.methodsObject
         .removeLiquidity({
@@ -170,8 +176,8 @@ export const getSwapTransferParams = async (
     approvesParams = approveTzbtc;
     revokesParams = revokeTzbtc;
     swapParams = [];
-    const xtzSwapOut = tzToMutez(chains.xtzTree.tokenOutAmount, toRoute3Token.decimals);
-    const tzbtcSwapOut = tzToMutez(chains.tzbtcTree.tokenOutAmount, toRoute3Token.decimals);
+    const xtzSwapOut = tzToMutez(new BigNumber(chains.xtzTree.tokenOutAmount ?? ZERO), toRoute3Token.decimals);
+    const tzbtcSwapOut = tzToMutez(new BigNumber(chains.tzbtcTree.tokenOutAmount ?? ZERO), toRoute3Token.decimals);
     if (chains.tzbtcHops.length > 0) {
       const tzbtcSwapMethod = swapContract.methodsObject.execute({
         token_in_id: THREE_ROUTE_TZBTC_TOKEN.id,
@@ -205,8 +211,11 @@ export const getSwapTransferParams = async (
     approvesParams = approveInputToken;
     revokesParams = revokeInputToken;
     swapParams = [];
-    const xtzSwapOut = tzToMutez(chains.xtzTree.tokenOutAmount, THREE_ROUTE_XTZ_TOKEN.decimals);
-    const tzbtcSwapOut = tzToMutez(chains.tzbtcTree.tokenOutAmount, THREE_ROUTE_TZBTC_TOKEN.decimals);
+    const xtzSwapOut = tzToMutez(new BigNumber(chains.xtzTree.tokenOutAmount ?? ZERO), THREE_ROUTE_XTZ_TOKEN.decimals);
+    const tzbtcSwapOut = tzToMutez(
+      new BigNumber(chains.tzbtcTree.tokenOutAmount ?? ZERO),
+      THREE_ROUTE_TZBTC_TOKEN.decimals
+    );
     const xtzIsSwapped = chains.xtzHops.length > 0;
     const tzbtcIsSwapped = chains.tzbtcHops.length > 0;
     const xtzSwapMinOut = xtzIsSwapped
@@ -292,7 +301,7 @@ export const calculateOutputAmounts = (
     BigNumber.ROUND_FLOOR
   );
   const outputFeeAtomicAmount = calculateOutputFeeAtomic(
-    tzToMutez(inputAmount ?? ZERO, inputAssetDecimals),
+    tzToMutez(new BigNumber(inputAmount ?? ZERO), inputAssetDecimals),
     minOutputAtomicBeforeFee
   );
   const expectedReceivedAtomic = outputAtomicAmountBeforeFee.minus(outputFeeAtomicAmount);

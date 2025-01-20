@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import React, { memo } from 'react';
+import React, { memo, useLayoutEffect, useRef } from 'react';
 import { StyleProp, Text, TextStyle, View } from 'react-native';
 
 import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
@@ -14,6 +14,7 @@ import { formatAssetAmount } from 'src/utils/number.util';
 
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
+import { ErrorBoundary } from '../error-boundary';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
@@ -27,7 +28,33 @@ interface Props {
   forTotalBalance?: boolean;
 }
 
-export const TokenEquityValue = memo<Props>(({ token, forTotalBalance = false }) => {
+const ErrorBoundaryFallback = memo(() => {
+  const styles = useTokenEquityValueStyles();
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.mainValueText}>---</Text>
+    </View>
+  );
+});
+
+export const TokenEquityValue = memo<Props>(props => {
+  const errorBoundaryRef = useRef<ErrorBoundary>(null);
+
+  useLayoutEffect(() => {
+    if (errorBoundaryRef.current) {
+      errorBoundaryRef.current.tryAgainIfNecessary();
+    }
+  }, []);
+
+  return (
+    <ErrorBoundary Fallback={ErrorBoundaryFallback} ref={errorBoundaryRef}>
+      <TokenEquityValueContent {...props} />
+    </ErrorBoundary>
+  );
+});
+
+const TokenEquityValueContent = memo<Props>(({ token, forTotalBalance = false }) => {
   const styles = useTokenEquityValueStyles();
 
   const { isTezosNode } = useNetworkInfo();
