@@ -3,7 +3,7 @@ export const DISCLAIMER_MESSAGE =
 
 export const TEZ_LABEL = 'Delegate to Recommended Bakers';
 
-export const TEZ_DESCRIPTION = 'Click on the Baker you want to delegate funds to. This list is powered by TZKT.';
+export const TEZ_DESCRIPTION = 'Click on the Baker you want to delegate funds to. This list is powered by Baking Bad.';
 
 export const DCP_LABEL = 'Delegate to producer';
 

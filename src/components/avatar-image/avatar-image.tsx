@@ -8,15 +8,13 @@ import { useAvatarImageStyles } from './avatar-image.styles';
 interface Props {
   uri: string;
   size?: number;
-  onError?: EmptyFn;
 }
 
-export const AvatarImage: FC<Props> = ({ uri, size = formatSize(16), onError }) => {
+export const AvatarImage: FC<Props> = ({ uri, size = formatSize(16) }) => {
   const styles = useAvatarImageStyles();
 
   return (
     <FastImage
-      onError={onError}
       style={[styles.icon, { width: size, height: size }]}
       source={{ uri }}
       resizeMode={FastImage.resizeMode.cover}
