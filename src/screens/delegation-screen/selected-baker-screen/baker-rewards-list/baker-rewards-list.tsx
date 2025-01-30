@@ -30,7 +30,7 @@ interface Props {
   bakerRewards: BakerRewardInterface[];
 }
 
-const keyExtractor = (item: BakerRewardInterface) => item.cycle.toString();
+const keyExtractor = (item: BakerRewardInterface) => `${item.cycle},${item.baker.address}`;
 
 export const BakerRewardsList = memo<Props>(({ bakerRewards }) => {
   const styles = useBakerRewardsListStyles();

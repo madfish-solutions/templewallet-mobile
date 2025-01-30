@@ -55,18 +55,8 @@ export const getRewardsStats = (params: RewardsStatsCalculationParams) => {
     luck = calculateLuck(params, totalRewards);
   }
 
-  const feeHistory = bakerDetails?.config?.fee;
-  let bakerFeePart = bakerDetails?.fee ?? 0;
+  const bakerFeePart = bakerDetails?.delegation.fee ?? 0;
 
-  if (feeHistory) {
-    for (let i = 0; i < feeHistory.length; i++) {
-      const historyEntry = feeHistory[i];
-      if (cycle >= historyEntry.cycle) {
-        bakerFeePart = historyEntry.value;
-        break;
-      }
-    }
-  }
   const bakerFee = rewards.multipliedBy(bakerFeePart);
 
   return {
