@@ -6,7 +6,7 @@ import { toIntegerSeconds } from 'src/utils/date.utils';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { READ_ONLY_SIGNER_PUBLIC_KEY_HASH, TEMPLE_WALLET_STAKING_API_URL } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
+import { getReadOnlyContract, getContractStorage } from 'src/utils/rpc/contract.utils';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
 
 import { calculateStableswapLpTokenOutput, calculateStableswapWithdrawTokenOutput } from './stableswap-calculations';
@@ -51,8 +51,10 @@ const toArray = <T>(map: MichelsonMap<BigNumber, T>) =>
     .map(([, value]) => value);
 
 const getStableswapPool = async (tezos: TezosToolkit, stableswapContractAddress: string, poolId: number) => {
-  const stableswapContract = await getReadOnlyContract(stableswapContractAddress, tezos);
-  const { storage: internalPoolStorage } = await stableswapContract.storage<StableswapPoolStorage>();
+  const { storage: internalPoolStorage } = await getContractStorage<StableswapPoolStorage>(
+    tezos,
+    stableswapContractAddress
+  );
   const { pools: poolsFromRpc, factory_address } = internalPoolStorage;
   const poolFromRpc = await poolsFromRpc.get(new BigNumber(poolId));
   const factoryContract = await getReadOnlyContract(factory_address, tezos);

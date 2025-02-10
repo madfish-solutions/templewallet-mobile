@@ -14,7 +14,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking';
 import { ZERO } from 'src/utils/number.util';
 import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
-import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
+import { getContractStorage } from 'src/utils/rpc/contract.utils';
 import {
   calculateSidePaymentsFromInput,
   calculateOutputFeeAtomic,
@@ -30,12 +30,6 @@ import {
   THREE_ROUTE_LB_TOKENS
 } from './consts';
 import { LiquidityBakingFarmResponse } from './types';
-
-const getLiquidityBakingStorage = async (tezos: TezosToolkit) => {
-  const contract = await getReadOnlyContract(LIQUIDITY_BAKING_DEX_ADDRESS, tezos);
-
-  return await contract.storage<LiquidityBakingStorage>();
-};
 
 const toFarmToken = (token: TokenMetadataInterface) => ({
   contractAddress: token.address,
@@ -57,7 +51,10 @@ export const getLiquidityBakingFarm = async (
   tezExchangeRate?: number,
   tzbtcExchangeRate?: number
 ): Promise<LiquidityBakingFarmResponse> => {
-  const { xtzPool, tokenPool, lqtTotal } = await getLiquidityBakingStorage(tezos);
+  const { xtzPool, tokenPool, lqtTotal } = await getContractStorage<LiquidityBakingStorage>(
+    tezos,
+    LIQUIDITY_BAKING_DEX_ADDRESS
+  );
   const {
     liquidity_baking_subsidy: subsidyPerBlock = DEFAULT_LIQUIDITY_BAKING_SUBSIDY,
     minimal_block_delay: blockPeriod = DEFAULT_MINIMAL_BLOCK_DELAY

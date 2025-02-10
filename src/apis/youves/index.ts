@@ -15,7 +15,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { tzktUrl } from 'src/utils/linking';
 import { fractionToPercentage } from 'src/utils/percentage.utils';
-import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
+import { getContractStorage } from 'src/utils/rpc/contract.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -61,8 +61,7 @@ const getYOUTokenSavingItem = async (
     const tezos = createReadOnlyTezosToolkit(rpcUrl);
     const unifiedStaking = createUnifiedStaking(rpcUrl);
     const apr = await firstValueFrom(getYOUTokenApr$(youToUsdExchangeRate, youToUsdExchangeRate, rpcUrl));
-    const savingsContract = await getReadOnlyContract(unifiedStaking.stakingContract, tezos);
-    const savingsStorage = await savingsContract.storage<SavingsPoolStorage>();
+    const savingsStorage = await getContractStorage<SavingsPoolStorage>(tezos, unifiedStaking.stakingContract);
     const stakedToken = toEarnOpportunityToken(unifiedStaking.stakeToken);
     const tvlInStakedTokenAtoms = mutezToTz(
       savingsStorage.total_stake.times(savingsStorage.disc_factor),
@@ -108,8 +107,7 @@ const getSavingsItemByAssetDefinition = async (
     const { id, token, SAVINGS_V3_POOL_ADDRESS } = assetDefinition;
     const { decimals: tokenDecimals, contractAddress: tokenAddress, tokenId } = token;
     const apr = await firstValueFrom(getYouvesTokenApr$(assetDefinition, rpcUrl));
-    const savingsContract = await getReadOnlyContract(SAVINGS_V3_POOL_ADDRESS, tezos);
-    const savingsStorage = await savingsContract.storage<SavingsPoolStorage>();
+    const savingsStorage = await getContractStorage<SavingsPoolStorage>(tezos, SAVINGS_V3_POOL_ADDRESS);
     const tvlInStakedTokenAtoms = mutezToTz(
       savingsStorage.total_stake.times(savingsStorage.disc_factor),
       tokenDecimals

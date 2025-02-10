@@ -2,7 +2,7 @@ import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { estimateStableswapLpTokenOutput } from 'src/apis/quipuswap-staking';
-import { StableswapFarm } from 'src/apis/quipuswap-staking/types';
+import { StableswapFarm, StableswapPoolVersion } from 'src/apis/quipuswap-staking/types';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
@@ -13,6 +13,7 @@ import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { getTransferPermissions } from 'src/utils/transfer-permissions.util';
 
 import { STABLESWAP_REFERRAL } from '../constants';
+import { getYupanaRebalanceParams } from '../utils';
 
 export const createStableswapStakeTransfersParams = async (
   farm: StableswapFarm,
@@ -22,7 +23,7 @@ export const createStableswapStakeTransfersParams = async (
   accountPkh: string,
   stakeId?: string
 ) => {
-  const { contractAddress: farmAddress, stakedToken } = farm;
+  const { contractAddress: farmAddress, stakedToken, stableswapPoolVersion, tokens } = farm;
   const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
   const assetSlug = toTokenSlug(asset.address, asset.id);
   const shouldUseWtezToken = assetSlug === TEZ_TOKEN_SLUG;
@@ -30,6 +31,16 @@ export const createStableswapStakeTransfersParams = async (
   const [farmContract, poolContract] = await Promise.all(
     [farmAddress, poolAddress].map(async address => getReadOnlyContract(address, tezos))
   );
+
+  const yupanaRebalanceParams =
+    stableswapPoolVersion === StableswapPoolVersion.V2
+      ? await getYupanaRebalanceParams({
+          tezos,
+          stableswapContractAddress: poolAddress,
+          stableswapPoolId: poolId,
+          tokensInPool: tokens.length
+        })
+      : [];
 
   let convertToWTezParams: TransferParams[] = [];
   if (shouldUseWtezToken) {
@@ -78,6 +89,7 @@ export const createStableswapStakeTransfersParams = async (
   );
 
   return [
+    ...yupanaRebalanceParams,
     ...approveAsset,
     ...approveLp,
     ...convertToWTezParams,

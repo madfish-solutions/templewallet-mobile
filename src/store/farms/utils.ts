@@ -8,7 +8,7 @@ import { Farm } from 'src/types/farm';
 import { getLastElement } from 'src/utils/array.utils';
 import { calculateYouvesFarmingRewards } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
+import { getContractStorage, getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 import { getBalance } from 'src/utils/token-balance.utils';
 
 import { ExchangeRateRecord } from '../currency/currency-state';
@@ -56,8 +56,7 @@ export const getFarmStake = async (farm: Farm, tezos: TezosToolkit, accountPkh: 
         };
   }
 
-  const farmContractInstance = await tezos.contract.at(farm.contractAddress);
-  const farmContractStorage = await farmContractInstance.storage<FarmContractStorageInterface>();
+  const farmContractStorage = await getContractStorage<FarmContractStorageInterface>(tezos, farm.contractAddress);
   const stakesIds = await farmContractStorage.stakes_owner_lookup.get(accountPkh);
 
   const lastStakeId = getLastElement(stakesIds ?? []);

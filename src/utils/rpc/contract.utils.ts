@@ -7,3 +7,9 @@ export const getReadOnlyContract = memoize(
     normalizer: ([contractAddress, tezos]) => `${contractAddress}_${tezos.rpc.getRpcUrl()}`
   }
 );
+
+export const getContractStorage = async <T>(tezos: TezosToolkit, contractAddress: string) => {
+  const contract = await getReadOnlyContract(contractAddress, tezos);
+
+  return contract.storage<T>();
+};
