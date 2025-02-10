@@ -4,6 +4,7 @@ import memoize from 'memoizee';
 export const getReadOnlyContract = memoize(
   async (contractAddress: string, tezos: TezosToolkit) => tezos.contract.at(contractAddress),
   {
+    promise: true,
     normalizer: ([contractAddress, tezos]) => `${contractAddress}_${tezos.rpc.getRpcUrl()}`
   }
 );
