@@ -10,6 +10,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
+import { createEntity } from './create-entity';
 import type { RootState } from './types';
 
 type TypedPersistedRootState = Exclude<PersistedState, undefined> & RootState;
@@ -164,6 +165,16 @@ export const MIGRATIONS: MigrationManifest = {
     if (state.settings.selectedRpcUrl === MARIGOLD_RPC.url) {
       state.settings.selectedRpcUrl = TEMPLE_RPC.url;
     }
+
+    return state;
+  },
+  '7': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
+    if (!untypedState) {
+      return untypedState;
+    }
+    const state = untypedState as TypedPersistedRootState;
+    state.baking.selectedBaker = undefined;
+    state.baking.bakersList = createEntity([]);
 
     return state;
   }

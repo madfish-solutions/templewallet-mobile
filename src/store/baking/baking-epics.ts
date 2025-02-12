@@ -47,10 +47,8 @@ const loadBakersListEpic: Epic = action$ =>
       from(
         bakingBadApi.get<BakerInterface[]>('/bakers', {
           params: {
-            configs: true,
-            insurance: true,
-            contribution: true,
-            type: 'tezos_only,multiasset,tezos_dune'
+            status: 'active',
+            delegation: true
           }
         })
       ).pipe(

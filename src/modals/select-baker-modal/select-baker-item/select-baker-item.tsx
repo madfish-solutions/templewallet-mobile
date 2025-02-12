@@ -1,12 +1,11 @@
 import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { BakerInterface } from 'src/apis/baking-bad';
+import { BakerInterface, getBakerLogoUrl } from 'src/apis/baking-bad';
 import { AvatarImage } from 'src/components/avatar-image/avatar-image';
 import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
@@ -37,7 +36,9 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
-  const feeStr = formatToPercentStr(baker.fee);
+  const { fee, capacity, freeSpace } = baker.delegation;
+  const feeStr = formatToPercentStr(fee);
+  const stakingBalance = capacity - freeSpace;
 
   return (
     <TouchableOpacity
@@ -53,11 +54,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
 
       <View style={styles.upperContainer}>
         <View style={styles.bakerContainerData}>
-          {baker.logo ? (
-            <AvatarImage size={formatSize(32)} uri={baker.logo} />
-          ) : (
-            <RobotIcon size={formatSize(32)} seed={baker.address} />
-          )}
+          <AvatarImage size={formatSize(32)} uri={getBakerLogoUrl(baker.address)} />
           <Divider size={formatSize(10)} />
           <TruncatedText style={styles.nameText}>{baker.name}</TruncatedText>
         </View>
@@ -81,15 +78,13 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
           <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>
-              {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
+              {isDefined(freeSpace) ? freeSpace.toFixed(2) : '--'} {metadata.symbol}
             </Text>
           </View>
           <Divider size={formatSize(16)} />
           <View>
             <Text style={styles.cellTitle}>Staking:</Text>
-            <Text style={styles.cellValueText}>
-              {isTruthy(baker.stakingBalance) ? kFormatter(baker.stakingBalance) : '--'}
-            </Text>
+            <Text style={styles.cellValueText}>{isTruthy(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
           </View>
         </View>
       )}
