@@ -45,6 +45,8 @@ const getContractOperations = <T>(
     })
     .then(x => x.data);
 
+const paramsSerializer = (params: Record<string, any>) => stringify(params);
+
 const getTokenFa2Operations = (
   selectedRpcUrl: string,
   account: string,
@@ -54,7 +56,7 @@ const getTokenFa2Operations = (
 ) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa2Interface>>('operations/transactions', {
-      paramsSerializer: stringify,
+      paramsSerializer,
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
@@ -69,7 +71,7 @@ const getTokenFa2Operations = (
 const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastLevel?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationFa12Interface>>('operations/transactions', {
-      paramsSerializer: stringify,
+      paramsSerializer,
       params: {
         limit: OPERATION_LIMIT,
         entrypoint: 'transfer',
