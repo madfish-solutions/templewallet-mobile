@@ -1,16 +1,11 @@
 import React from 'react';
 
-import { madfishLink, quipuLink, supportUkraine, templeTapLink, yupanaLink } from 'src/config/socials';
+import { madfishLink, quipuLink, supportUkraine, yupanaLink } from 'src/config/socials';
 
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
 
 export const COMMON_PROMOTION_CAROUSEL_DATA = [
-  <PromotionCarouselItem
-    link={templeTapLink}
-    source={require('./banners/temple-tap.png')}
-    testID={PromotionCarouselSelectors.templeTapBanner}
-  />,
   <PromotionCarouselItem
     link={supportUkraine}
     source={require('./banners/ukraine.png')}

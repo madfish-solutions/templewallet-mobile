@@ -3,17 +3,18 @@ import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { getBakerLogoUrl } from 'src/apis/baking-bad';
 import { AvatarImage } from 'src/components/avatar-image/avatar-image';
 import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { isString } from 'src/utils/is-string';
 import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
@@ -105,14 +106,10 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
     <View style={styles.rewardContainer}>
       <View style={styles.rewardBasicInfoContainer}>
         <View style={styles.row}>
-          {bakerDetails && bakerDetails.logo ? (
-            <AvatarImage size={formatSize(44)} uri={bakerDetails.logo} />
-          ) : (
-            <RobotIcon size={formatSize(44)} seed={reward.baker.address} />
-          )}
+          <AvatarImage size={formatSize(44)} uri={getBakerLogoUrl(reward.baker.address)} />
           <Divider size={formatSize(10)} />
           <View style={styles.column}>
-            <Text style={styles.bakerAlias}>{reward.baker.alias}</Text>
+            <Text style={styles.bakerAlias}>{isString(reward.baker.alias) ? reward.baker.alias : 'Unknown baker'}</Text>
             <Divider size={formatSize(2)} />
             <View style={styles.row}>
               <PublicKeyHashText style={styles.accountPkh} publicKeyHash={reward.baker.address} />

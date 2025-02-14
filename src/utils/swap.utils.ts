@@ -28,7 +28,7 @@ import { LIQUIDITY_BAKING_DEX_ADDRESS } from 'src/token/data/token-slugs';
 
 import { isDefined } from './is-defined';
 import { ZERO } from './number.util';
-import { getReadOnlyContract } from './rpc/contract.utils';
+import { getReadOnlyContract, getContractStorage } from './rpc/contract.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 import { tzToMutez } from './tezos.util';
 import { getTransferParams$ } from './transfer-params.utils';
@@ -36,9 +36,11 @@ import { getTransferPermissions } from './transfer-permissions.util';
 
 export const getLbStorage = async (tezosOrRpc: string | TezosToolkit) => {
   const tezos = typeof tezosOrRpc === 'string' ? createReadOnlyTezosToolkit(tezosOrRpc) : tezosOrRpc;
-  const contract = await getReadOnlyContract(LIQUIDITY_BAKING_DEX_ADDRESS, tezos);
 
-  return contract.storage<{ tokenPool: BigNumber; xtzPool: BigNumber; lqtTotal: BigNumber }>();
+  return getContractStorage<{ tokenPool: BigNumber; xtzPool: BigNumber; lqtTotal: BigNumber }>(
+    tezos,
+    LIQUIDITY_BAKING_DEX_ADDRESS
+  );
 };
 
 const mapToRoute3ExecuteHops = (hops: Route3Hop[]): MichelsonMap<string, Hop> => {

@@ -2,7 +2,7 @@ import { MichelsonMap, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { estimateDivestOneCoinOutputs } from 'src/apis/quipuswap-staking';
-import { StableswapFarm, TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
+import { StableswapFarm, StableswapPoolVersion, TooLowPoolReservesError } from 'src/apis/quipuswap-staking/types';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
@@ -11,6 +11,7 @@ import { convertEarnOpportunityToken } from 'src/utils/earn.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
 
 import { STABLESWAP_REFERRAL } from '../constants';
+import { getYupanaRebalanceParams } from '../utils';
 
 export const createStableswapWithdrawTransfersParams = async (
   farm: StableswapFarm,
@@ -19,7 +20,7 @@ export const createStableswapWithdrawTransfersParams = async (
   accountPkh: string,
   stake: UserStakeValueInterface
 ) => {
-  const { contractAddress: farmAddress, stakedToken } = farm;
+  const { contractAddress: farmAddress, stakedToken, stableswapPoolVersion, tokens } = farm;
   const { contractAddress: poolAddress, fa2TokenId: poolId = 0 } = stakedToken;
   const asset = convertEarnOpportunityToken(farm.tokens[tokenIndex]);
   const assetSlug = toTokenSlug(asset.address, asset.id);
@@ -37,6 +38,16 @@ export const createStableswapWithdrawTransfersParams = async (
     throw new Error('Failed to estimate token output');
   }
 
+  const yupanaRebalanceParams =
+    stableswapPoolVersion === StableswapPoolVersion.V2
+      ? await getYupanaRebalanceParams({
+          tezos,
+          stableswapContractAddress: poolAddress,
+          stableswapPoolId: poolId,
+          tokensInPool: tokens.length
+        })
+      : [];
+
   const tokensOutput = new MichelsonMap<BigNumber, BigNumber>();
   tokensOutput.set(new BigNumber(tokenIndex), tokenOutput);
 
@@ -51,5 +62,5 @@ export const createStableswapWithdrawTransfersParams = async (
     .divest_imbalanced(poolId, tokensOutput, depositAmount, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)
     .toTransferParams();
 
-  return [withdrawTransferParams, divestOneCoinTransferParams, ...burnWTezParams];
+  return [...yupanaRebalanceParams, withdrawTransferParams, divestOneCoinTransferParams, ...burnWTezParams];
 };

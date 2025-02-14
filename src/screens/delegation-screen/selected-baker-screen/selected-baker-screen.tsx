@@ -1,7 +1,7 @@
 import React, { FC, useCallback } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { BakerInterface } from 'src/apis/baking-bad';
+import { BakerInterface, getBakerLogoUrl } from 'src/apis/baking-bad';
 import { AvatarImage } from 'src/components/avatar-image/avatar-image';
 import { ButtonSmallDelegate } from 'src/components/button/button-small/button-small-delegate/button-small-delegate';
 import { Divider } from 'src/components/divider/divider';
@@ -9,7 +9,6 @@ import { ExternalLinkButton } from 'src/components/icon/external-link-button/ext
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
@@ -45,7 +44,9 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
   const openUrlInAppBrowser = useOpenUrlInAppBrowser();
   const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
 
-  const feeStr = formatToPercentStr(baker.fee);
+  const { fee, capacity, freeSpace } = baker.delegation;
+  const feeStr = formatToPercentStr(fee);
+  const stakingBalance = capacity - freeSpace;
 
   const handleStakingPress = useCallback(
     () => (isInAppBrowserEnabled ? openUrlInAppBrowser(STAKING_DAPP_LINK) : openUrl(STAKING_DAPP_LINK)),
@@ -57,11 +58,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
       <View style={styles.card}>
         <View style={styles.upperContainer}>
           <View style={styles.mainContentContainer}>
-            {baker.logo ? (
-              <AvatarImage size={formatSize(44)} uri={baker.logo} />
-            ) : (
-              <RobotIcon size={formatSize(44)} seed={baker.address} />
-            )}
+            <AvatarImage size={formatSize(44)} uri={getBakerLogoUrl(baker.address)} />
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
               <Text style={styles.nameText} numberOfLines={1}>
@@ -100,15 +97,13 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
             <View>
               <Text style={styles.cellTitle}>Space:</Text>
               <Text style={styles.cellValueText}>
-                {isDefined(baker.freeSpace) ? baker.freeSpace.toFixed(2) : '--'} {metadata.symbol}
+                {isDefined(freeSpace) ? freeSpace.toFixed(2) : '--'} {metadata.symbol}
               </Text>
             </View>
             <Divider size={formatSize(16)} />
             <View>
               <Text style={styles.cellTitle}>Staking:</Text>
-              <Text style={styles.cellValueText}>
-                {isDefined(baker.stakingBalance) ? kFormatter(baker.stakingBalance) : '--'}
-              </Text>
+              <Text style={styles.cellValueText}>{isDefined(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
             </View>
           </View>
         )}

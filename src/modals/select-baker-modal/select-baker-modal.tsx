@@ -75,7 +75,7 @@ export const SelectBakerModal = memo(() => {
   const accountPkh = useCurrentAccountPkhSelector();
 
   const bakersList = useBakersListSelector();
-  const activeBakers = useMemo(() => bakersList.filter(baker => baker.serviceHealth === 'active'), [bakersList]);
+  const activeBakers = useMemo(() => bakersList.filter(baker => baker.status === 'active'), [bakersList]);
 
   const [allBakers, setFilteredBakersList] = useState(activeBakers);
   const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Rank);
@@ -163,11 +163,13 @@ export const SelectBakerModal = memo(() => {
       case BakersSortFieldEnum.Rank:
         return filteredBakersList;
       case BakersSortFieldEnum.Fee:
-        return [...filteredBakersList].sort((a, b) => a.fee - b.fee);
+        return [...filteredBakersList].sort((a, b) => a.delegation.fee - b.delegation.fee);
       case BakersSortFieldEnum.Staking:
-        return [...filteredBakersList].sort((a, b) => (b.stakingBalance ?? 0) - (a.stakingBalance ?? 0));
+        return [...filteredBakersList].sort(
+          (a, b) => b.delegation.capacity - b.delegation.freeSpace - (a.delegation.capacity - a.delegation.freeSpace)
+        );
       default:
-        return [...filteredBakersList].sort((a, b) => (b.freeSpace ?? 0) - (a.freeSpace ?? 0));
+        return [...filteredBakersList].sort((a, b) => b.delegation.freeSpace - a.delegation.freeSpace);
     }
   }, [filteredBakersList, sortValue]);
 
