@@ -12,7 +12,7 @@ enum FarmVersionEnum {
   V3 = 'v3'
 }
 
-enum StableswapPoolVersion {
+export enum StableswapPoolVersion {
   V1 = 'v1',
   V2 = 'v2'
 }
