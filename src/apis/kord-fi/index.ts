@@ -62,6 +62,8 @@ const getKordFiStats$ = (): Observable<KordFiLendStats> =>
     )
   );
 
+const acceptableNotFoundPayloads = [{ detail: 'User not found' }, { detail: 'No open deposits' }];
+
 export const getKordFiUserDeposits$ = (
   address: string
 ): Observable<{ [key: string]: UserStakeValueInterface | null }> =>
@@ -94,7 +96,7 @@ export const getKordFiUserDeposits$ = (
       if (
         axios.isAxiosError(error) &&
         error.response?.status === 404 &&
-        isEqual(error.response.data, { detail: 'User not found' })
+        acceptableNotFoundPayloads.some(payload => isEqual(error.response!.data, payload))
       ) {
         return of({ [KORDFI_TEZOS_CONTRACT_ADDRESS]: null, [TZBTC_CONTRACT_ADDRESS]: null });
       }
