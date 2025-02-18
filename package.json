@@ -180,6 +180,7 @@
     "minimist": "^1.2.6",
     "bl": "^5.0.0",
     "ansi-regex": "^5.0.1",
+    "elliptic": "6.6.1",
     "nanoid": "^3.1.31",
     "node-fetch": "^2.6.7",
     "yargs": "^17.4.0",
