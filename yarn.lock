@@ -38,15 +38,12 @@
 
 "@airgap/beacon-dapp@4.0.10":
   version "0.0.0"
-  uid ""
 
 "@airgap/beacon-dapp@^4.3.3":
   version "0.0.0"
-  uid ""
 
 "@airgap/beacon-dapp@link:./node_modules/.cache/null":
   version "0.0.0"
-  uid ""
 
 "@airgap/beacon-sdk@4.0.10":
   version "4.0.10"
@@ -101,11 +98,9 @@
 
 "@airgap/beacon-ui@4.0.10":
   version "0.0.0"
-  uid ""
 
 "@airgap/beacon-ui@link:./node_modules/.cache/null":
   version "0.0.0"
-  uid ""
 
 "@airgap/beacon-utils@4.0.10":
   version "4.0.10"
