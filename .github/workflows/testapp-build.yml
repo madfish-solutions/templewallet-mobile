@@ -130,7 +130,7 @@ jobs:
           project-path: ios/TempleWallet.xcodeproj
           workspace-path: ios/TempleWallet.xcworkspace
           scheme: TempleWallet
-          export-method: development
+          export-method: ad-hoc
           export-options: ios/TempleWallet/TestAppExportOptions.plist
           configuration: Release
           output-path: ios/build/TempleWallet.ipa
