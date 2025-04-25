@@ -1,7 +1,6 @@
 import { useFormik } from 'formik';
 import { useCallback } from 'react';
 
-import { createOrder as createAliceBobOrder } from 'src/apis/alice-bob';
 import { getSignedMoonPayUrl } from 'src/apis/moonpay';
 import { createOrder as createUtorgOrder } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
@@ -83,18 +82,9 @@ export const useBuyWithCreditCardFormik = () => {
               inputSymbol
             );
             break;
-          case TopUpProviderEnum.Utorg:
+          default:
             urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, publicKeyHash, outputSymbol);
             break;
-          default:
-            const { payUrl } = await createAliceBobOrder(
-              inputAmount.toFixed(),
-              inputSymbol,
-              outputSymbol,
-              userId,
-              publicKeyHash
-            );
-            urlToOpen = payUrl;
         }
         openUrl(urlToOpen);
       } catch (error) {

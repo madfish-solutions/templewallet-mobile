@@ -3,7 +3,6 @@ import { catchError, forkJoin, from, map, Observable, of, switchMap, withLatestF
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getAliceBobPairsInfo } from 'src/apis/alice-bob';
 import { getMoonPayCurrencies } from 'src/apis/moonpay';
 import { getCurrenciesInfo as getUtorgCurrenciesInfo } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
@@ -18,7 +17,7 @@ import type { RootState } from '../types';
 
 import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
 import { TopUpProviderCurrencies } from './state';
-import { mapAliceBobProviderCurrencies, mapMoonPayProviderCurrencies, mapUtorgProviderCurrencies } from './utils';
+import { mapMoonPayProviderCurrencies, mapUtorgProviderCurrencies } from './utils';
 
 const getCurrencies$ = <T>(
   fetchFn: () => Promise<T>,
@@ -37,7 +36,7 @@ const getCurrencies$ = <T>(
     })
   );
 
-const allTopUpProviderEnums = [TopUpProviderEnum.MoonPay, TopUpProviderEnum.Utorg, TopUpProviderEnum.AliceBob];
+const allTopUpProviderEnums = [TopUpProviderEnum.MoonPay, TopUpProviderEnum.Utorg];
 
 const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -45,14 +44,12 @@ const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
     switchMap(() =>
       forkJoin([
         getCurrencies$(getMoonPayCurrencies, mapMoonPayProviderCurrencies),
-        getCurrencies$(getUtorgCurrenciesInfo, mapUtorgProviderCurrencies),
-        getCurrencies$(getAliceBobPairsInfo, mapAliceBobProviderCurrencies)
+        getCurrencies$(getUtorgCurrenciesInfo, mapUtorgProviderCurrencies)
       ]).pipe(
-        map(([moonpayCurrencies, utorgCurrencies, tezUahPairInfo]) =>
+        map(([moonpayCurrencies, utorgCurrencies]) =>
           loadAllCurrenciesActions.success({
             [TopUpProviderEnum.MoonPay]: moonpayCurrencies,
-            [TopUpProviderEnum.Utorg]: utorgCurrencies,
-            [TopUpProviderEnum.AliceBob]: tezUahPairInfo
+            [TopUpProviderEnum.Utorg]: utorgCurrencies
           })
         )
       )
@@ -97,8 +94,7 @@ const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<Ro
             cryptoSymbol,
             limits: {
               [TopUpProviderEnum.MoonPay]: moonPayData,
-              [TopUpProviderEnum.Utorg]: utorgData,
-              [TopUpProviderEnum.AliceBob]: aliceBobData
+              [TopUpProviderEnum.Utorg]: utorgData
             }
           })
         )

@@ -18,9 +18,8 @@ const useCurrenciesByProviderLoadingSelector = (topUpProvider: TopUpProviderEnum
 export const useCurrenciesLoadingSelector = () => {
   const moonPayLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.MoonPay);
   const utorgLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.Utorg);
-  const aliceBobLoading = useCurrenciesByProviderLoadingSelector(TopUpProviderEnum.AliceBob);
 
-  return moonPayLoading || utorgLoading || aliceBobLoading;
+  return moonPayLoading || utorgLoading;
 };
 export const useProviderCurrenciesErrorSelector = (topUpProvider: TopUpProviderEnum) =>
   useSelector(({ buyWithCreditCard }) => buyWithCreditCard.currencies[topUpProvider].error);

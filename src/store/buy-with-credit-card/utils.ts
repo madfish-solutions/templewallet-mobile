@@ -1,6 +1,5 @@
 import FiatCurrencyInfo from 'currency-codes';
 
-import { PairsInfoResponse as AliceBobPairsInfoResponse } from 'src/apis/alice-bob/types';
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
 import {
   CurrencyType as MoonPayCurrencyType,
@@ -13,55 +12,10 @@ import { CurrencyInfoType as UtorgCurrencyType, UtorgCurrencyInfo } from 'src/ap
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-interface AliceBobFiatCurrency {
-  name: string;
-  code: string;
-  icon: string;
-  precision: number;
-}
-
 const getCurrencyNameByCode = (code: string) => {
-  const customCurrencyNames: Record<string, string> = {
-    UAH: 'Ukrainian Hryvnia',
-    KZT: 'Kazakhstani Tenge'
-  };
-
-  if (isDefined(customCurrencyNames[code])) {
-    return customCurrencyNames[code];
-  }
-
   const currencyInfo = FiatCurrencyInfo.code(code);
 
   return isDefined(currencyInfo) ? currencyInfo.currency : '???';
-};
-
-const knownAliceBobFiatCurrencies: Record<string, AliceBobFiatCurrency> = {
-  UAH: {
-    name: getCurrencyNameByCode('UAH'),
-    code: 'UAH',
-    icon: '',
-    precision: 2
-  },
-  MYR: {
-    name: getCurrencyNameByCode('MYR'),
-    code: 'MYR',
-    icon: `${UTORG_FIAT_ICONS_BASE_URL}MY.svg`,
-    precision: 2
-  },
-  KZT: {
-    name: getCurrencyNameByCode('KZT'),
-    code: 'KZT',
-    icon: '',
-    precision: 2
-  }
-};
-
-const aliceBobTezos = {
-  name: 'Tezos',
-  code: 'XTZ',
-  icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/xtz.svg`,
-  precision: 6,
-  slug: 'tez'
 };
 
 export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
@@ -117,30 +71,4 @@ export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => (
       precision,
       slug: '' // TODO: implement making correct slug as soon as any Tezos token is supported by Utorg
     }))
-});
-
-export const mapAliceBobProviderCurrencies = ({ pairsInfo }: AliceBobPairsInfoResponse) => ({
-  fiat: pairsInfo.map(pair => {
-    const [minAmountString, code] = pair.minamount.split(' ');
-    const minAmount = Number(minAmountString);
-    const maxAmount = Number(pair.maxamount.split(' ')[0]);
-
-    if (isDefined(knownAliceBobFiatCurrencies[code])) {
-      return {
-        ...knownAliceBobFiatCurrencies[code],
-        minAmount,
-        maxAmount
-      };
-    }
-
-    return {
-      name: getCurrencyNameByCode(code),
-      code,
-      icon: `https://static.moonpay.com/widget/currencies/${code.toLowerCase()}.svg`,
-      precision: 2,
-      minAmount,
-      maxAmount
-    };
-  }),
-  crypto: [aliceBobTezos]
 });

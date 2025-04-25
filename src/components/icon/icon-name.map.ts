@@ -7,7 +7,6 @@ import AlertMonochromeIcon from './assets/alert-monochrome.svg';
 import ShieldIcon from './assets/alert-shield.svg';
 import AlertTriangleIcon from './assets/alert-triangle.svg';
 import AlertIcon from './assets/alert.svg';
-import AliceBobIcon from './assets/alice-bob.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
@@ -169,7 +168,6 @@ import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
-import UahIcon from './assets/uah.svg';
 import UkraineIcon from './assets/ukraine.svg';
 import UpdateIcon from './assets/update.svg';
 import UtorgIcon from './assets/utorg.svg';
@@ -252,7 +250,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TezToken]: TezTokenIcon,
   [IconNameEnum.FilmToken]: FilmTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
-  [IconNameEnum.Uah]: UahIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   [IconNameEnum.InfoFilledAlt]: InfoFilledAltIcon,
   [IconNameEnum.Github]: GithubIcon,
@@ -262,7 +259,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
-  [IconNameEnum.AliceBob]: AliceBobIcon,
   [IconNameEnum.Utorg]: UtorgIcon,
   [IconNameEnum.Ramp]: RampIcon,
   [IconNameEnum.BlurEyeBlack]: BlurEyeBlack,
