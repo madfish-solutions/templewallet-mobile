@@ -88,7 +88,7 @@ const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<Ro
           return of(createEntity(undefined, false, PAIR_NOT_FOUND_MESSAGE));
         })
       ).pipe(
-        map(([moonPayData, utorgData, aliceBobData]) =>
+        map(([moonPayData, utorgData]) =>
           updatePairLimitsActions.success({
             fiatSymbol,
             cryptoSymbol,
