@@ -2,7 +2,6 @@ import { BigNumber } from 'bignumber.js';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { estimateAliceBobOutput } from 'src/apis/alice-bob';
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
 import { convertFiatAmountToCrypto } from 'src/apis/utorg';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -58,9 +57,7 @@ const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunctio
     return quoteCurrencyAmount;
   },
   [TopUpProviderEnum.Utorg]: (inputAmount, inputAsset, outputAsset) =>
-    convertFiatAmountToCrypto(inputAsset.code, outputAsset.code, inputAmount.toNumber()),
-  [TopUpProviderEnum.AliceBob]: (inputAmount, inputAsset, outputAsset) =>
-    estimateAliceBobOutput(inputAmount.toString(), inputAsset.code, outputAsset.code)
+    convertFiatAmountToCrypto(inputAsset.code, outputAsset.code, inputAmount.toNumber())
 };
 
 const initialPaymentProvidersData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
@@ -75,12 +72,6 @@ const initialPaymentProvidersData: Record<TopUpProviderEnum, PaymentProviderInit
     id: TopUpProviderEnum.Utorg,
     iconName: IconNameEnum.Utorg,
     kycRequired: true
-  },
-  [TopUpProviderEnum.AliceBob]: {
-    name: 'Alice&Bob',
-    id: TopUpProviderEnum.AliceBob,
-    iconName: IconNameEnum.AliceBob,
-    kycRequired: false
   }
 };
 

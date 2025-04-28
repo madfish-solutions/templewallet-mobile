@@ -24,34 +24,23 @@ export const usePaymentProviders = (
     errors: utorgErrors,
     updateOutputAmount: updateUtorgOutputAmount
   } = usePaymentProvider(TopUpProviderEnum.Utorg, inputAmount, inputAsset, outputAsset);
-  const {
-    provider: aliceBobProvider,
-    outputAmountLoading: aliceBobLoading,
-    errors: aliceBobErrors,
-    updateOutputAmount: updateAliceBobOutputAmount
-  } = usePaymentProvider(TopUpProviderEnum.AliceBob, inputAmount, inputAsset, outputAsset);
 
-  const allPaymentProviders = useMemo(
-    () => [moonPayProvider, utorgProvider, aliceBobProvider],
-    [moonPayProvider, utorgProvider, aliceBobProvider]
-  );
+  const allPaymentProviders = useMemo(() => [moonPayProvider, utorgProvider], [moonPayProvider, utorgProvider]);
 
   const providersErrors = useMemo(
     () => ({
       [TopUpProviderEnum.MoonPay]: moonPayErrors,
-      [TopUpProviderEnum.Utorg]: utorgErrors,
-      [TopUpProviderEnum.AliceBob]: aliceBobErrors
+      [TopUpProviderEnum.Utorg]: utorgErrors
     }),
-    [moonPayErrors, utorgErrors, aliceBobErrors]
+    [moonPayErrors, utorgErrors]
   );
 
   const providersOutputsLoading = useMemo(
     () => ({
       [TopUpProviderEnum.MoonPay]: moonPayLoading,
-      [TopUpProviderEnum.Utorg]: utorgLoading,
-      [TopUpProviderEnum.AliceBob]: aliceBobLoading
+      [TopUpProviderEnum.Utorg]: utorgLoading
     }),
-    [moonPayLoading, utorgLoading, aliceBobLoading]
+    [moonPayLoading, utorgLoading]
   );
 
   const paymentProvidersToDisplay = useMemo(
@@ -65,21 +54,19 @@ export const usePaymentProviders = (
       newInputAsset: TopUpInputInterface,
       newOutputAsset: TopUpInputInterface
     ) => {
-      const [moonPayOutputAmount, utorgOutputAmount, aliceBobOutputAmount] = await Promise.all([
+      const [moonPayOutputAmount, utorgOutputAmount] = await Promise.all([
         updateMoonPayOutputAmount(newInputAmount, newInputAsset, newOutputAsset),
-        updateUtorgOutputAmount(newInputAmount, newInputAsset, newOutputAsset),
-        updateAliceBobOutputAmount(newInputAmount, newInputAsset, newOutputAsset)
+        updateUtorgOutputAmount(newInputAmount, newInputAsset, newOutputAsset)
       ]);
 
       return {
         [TopUpProviderEnum.MoonPay]: moonPayOutputAmount,
-        [TopUpProviderEnum.Utorg]: utorgOutputAmount,
-        [TopUpProviderEnum.AliceBob]: aliceBobOutputAmount
+        [TopUpProviderEnum.Utorg]: utorgOutputAmount
       };
     },
-    [updateMoonPayOutputAmount, updateUtorgOutputAmount, updateAliceBobOutputAmount]
+    [updateMoonPayOutputAmount, updateUtorgOutputAmount]
   );
-  const loading = moonPayLoading || utorgLoading || aliceBobLoading;
+  const loading = moonPayLoading || utorgLoading;
 
   return { allPaymentProviders, paymentProvidersToDisplay, updateOutputAmounts, loading };
 };
