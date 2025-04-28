@@ -42,10 +42,6 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
     const styles = useTopUpTokenDropdownItemStyles();
 
     const tokenIcon = useMemo(() => {
-      if (token?.code === 'UAH') {
-        return <Icon name={IconNameEnum.Uah} size={iconSize} />;
-      }
-
       if (token?.code === 'XTZ') {
         return <Icon name={IconNameEnum.TezToken} size={iconSize} />;
       }

@@ -7,8 +7,7 @@ import { BuyWithCreditCardState } from './state';
 export const mockBuyWithCreditCardState: BuyWithCreditCardState = {
   currencies: {
     [TopUpProviderEnum.MoonPay]: createEntity({ fiat: [], crypto: [] }),
-    [TopUpProviderEnum.Utorg]: createEntity({ fiat: [], crypto: [] }),
-    [TopUpProviderEnum.AliceBob]: createEntity({ fiat: [], crypto: [] })
+    [TopUpProviderEnum.Utorg]: createEntity({ fiat: [], crypto: [] })
   },
   pairLimits: {}
 };
