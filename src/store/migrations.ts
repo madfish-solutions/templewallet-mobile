@@ -1,6 +1,7 @@
 import { isEqual } from 'lodash-es';
 import type { MigrationManifest, PersistedState } from 'redux-persist';
 
+import { isIOS } from 'src/config/system';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
 import type { AccountInterface } from 'src/interfaces/account.interface';
@@ -175,6 +176,17 @@ export const MIGRATIONS: MigrationManifest = {
     const state = untypedState as TypedPersistedRootState;
     state.baking.selectedBaker = undefined;
     state.baking.bakersList = createEntity([]);
+
+    return state;
+  },
+  '8': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
+    if (!untypedState) {
+      return untypedState;
+    }
+    const state = untypedState as TypedPersistedRootState;
+    if (isIOS) {
+      state.settings.isInAppBrowserEnabled = true;
+    }
 
     return state;
   }

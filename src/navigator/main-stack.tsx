@@ -10,7 +10,7 @@ import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-
 import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-bar';
 import { emptyFn } from 'src/config/general';
 import { transparent } from 'src/config/styles';
-import { isAndroid } from 'src/config/system';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { useMainHooks } from 'src/hooks/main-hooks';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { SecurityUpdate } from 'src/modals/security-update';
@@ -217,7 +217,7 @@ export const MainStackScreen = memo(() => {
               />
 
               {/** Swap stack **/}
-              {isAndroid && (
+              {!LIMIT_FIN_FEATURES && (
                 <>
                   <MainStack.Screen
                     name={ScreensEnum.SwapScreen}
