@@ -1,7 +1,7 @@
 import { nanoid } from '@reduxjs/toolkit';
 import { Appearance } from 'react-native';
 
-import { isAndroid } from 'src/config/system';
+import { LIMIT_DAPPS_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { RpcInterface } from 'src/interfaces/rpc.interface';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
@@ -61,5 +61,5 @@ export const settingsInitialState: SettingsState = {
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,
   isInAppUpdateAvailable: false,
-  isInAppBrowserEnabled: isAndroid
+  isInAppBrowserEnabled: !LIMIT_DAPPS_FEATURES
 };
