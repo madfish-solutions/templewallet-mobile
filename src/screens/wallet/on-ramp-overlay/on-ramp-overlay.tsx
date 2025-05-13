@@ -1,5 +1,5 @@
-import React, { FC, memo, useCallback, useEffect, useRef } from 'react';
-import { Text, View } from 'react-native';
+import React, { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
@@ -29,73 +29,97 @@ interface OnRampOverlayProps extends OverlayBodyProps {
 }
 
 const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
+  const [isLinkLoading, setIsLinkLoading] = useState(false);
+
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
   const dispatch = useDispatch();
   const publicKeyHash = useCurrentAccountPkhSelector();
 
+  const handleClose = useCallback(() => {
+    setIsLinkLoading(false);
+    dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Closed));
+  }, [dispatch]);
+
   const handleOnRampButtonPress = useCallback(
-    (amount = 0) => {
-      dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Closed));
-      openUrl(getWertLink(publicKeyHash, amount));
+    async (amount = 0) => {
+      try {
+        setIsLinkLoading(true);
+
+        const url = await getWertLink(publicKeyHash, amount);
+
+        handleClose();
+
+        openUrl(url);
+      } catch {
+        handleClose();
+      }
     },
-    [dispatch, publicKeyHash]
+    [handleClose, publicKeyHash]
   );
 
   return (
-    <View style={[dropdownBottomSheetStyles.headerContainer, styles.root]}>
-      <Text style={styles.title}>{isStart ? 'Jump in Tezos right now!' : 'Insufficient TEZ balance'}</Text>
-      <Divider size={formatSize(8)} />
-      {isStart ? (
-        <Text style={styles.description}>
-          Buy TEZ using <Text style={styles.bold}>credit card</Text> and start working with the Tezos blockchain
-          immediately.
-        </Text>
+    <TouchableOpacity style={[dropdownBottomSheetStyles.headerContainer, styles.root]}>
+      {isLinkLoading ? (
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" />
+        </View>
       ) : (
-        <Text style={styles.description}>
-          Buy TEZ using <Text style={styles.bold}>credit card</Text> and continue your Tezos blockchain journey without
-          delay.
-        </Text>
+        <>
+          <Text style={styles.title}>{isStart ? 'Jump in Tezos right now!' : 'Insufficient TEZ balance'}</Text>
+          <Divider size={formatSize(8)} />
+          {isStart ? (
+            <Text style={styles.description}>
+              Buy TEZ using <Text style={styles.bold}>credit card</Text> and start working with the Tezos blockchain
+              immediately.
+            </Text>
+          ) : (
+            <Text style={styles.description}>
+              Buy TEZ using <Text style={styles.bold}>credit card</Text> and continue your Tezos blockchain journey
+              without delay.
+            </Text>
+          )}
+
+          <View style={styles.buttonsContainer}>
+            <OnRampSmileButton
+              smileIconName={IconNameEnum.Smile}
+              title="50$"
+              onPress={() => handleOnRampButtonPress(50)}
+              testID={OnRampOverlaySelectors.fiftyDollarButton}
+            />
+            <Divider size={formatSize(8)} />
+            <OnRampSmileButton
+              smileIconName={IconNameEnum.SmileWithGlasses}
+              title="100$"
+              style={styles.backgroundPeach}
+              titleStyle={styles.textWhite}
+              onPress={() => handleOnRampButtonPress(100)}
+              testID={OnRampOverlaySelectors.oneHundredDollarButton}
+            />
+            <Divider size={formatSize(8)} />
+            <OnRampSmileButton
+              smileIconName={IconNameEnum.SmileWithDollar}
+              title="200$"
+              onPress={() => handleOnRampButtonPress(200)}
+              testID={OnRampOverlaySelectors.twoHundredDollarButton}
+            />
+          </View>
+
+          <OnRampTextButton
+            title="Custom amount"
+            iconName={IconNameEnum.DetailsArrowRight}
+            onPress={() => handleOnRampButtonPress()}
+            testID={OnRampOverlaySelectors.customAmountButton}
+          />
+
+          <Divider size={formatSize(24)} />
+
+          <Text style={[styles.description, styles.disclaimer]}>
+            The token exchange feature is provided by third-party.
+          </Text>
+        </>
       )}
-
-      <View style={styles.buttonsContainer}>
-        <OnRampSmileButton
-          smileIconName={IconNameEnum.Smile}
-          title="50$"
-          onPress={() => handleOnRampButtonPress(50)}
-          testID={OnRampOverlaySelectors.fiftyDollarButton}
-        />
-        <Divider size={formatSize(8)} />
-        <OnRampSmileButton
-          smileIconName={IconNameEnum.SmileWithGlasses}
-          title="100$"
-          style={styles.backgroundPeach}
-          titleStyle={styles.textWhite}
-          onPress={() => handleOnRampButtonPress(100)}
-          testID={OnRampOverlaySelectors.oneHundredDollarButton}
-        />
-        <Divider size={formatSize(8)} />
-        <OnRampSmileButton
-          smileIconName={IconNameEnum.SmileWithDollar}
-          title="200$"
-          onPress={() => handleOnRampButtonPress(200)}
-          testID={OnRampOverlaySelectors.twoHundredDollarButton}
-        />
-      </View>
-
-      <OnRampTextButton
-        title="Custom amount"
-        iconName={IconNameEnum.DetailsArrowRight}
-        onPress={() => handleOnRampButtonPress()}
-        testID={OnRampOverlaySelectors.customAmountButton}
-      />
-
-      <Divider size={formatSize(24)} />
-
-      <Text style={[styles.description, styles.disclaimer]}>
-        The token exchange feature is provided by third-party.
-      </Text>
-    </View>
+    </TouchableOpacity>
   );
 });
 
