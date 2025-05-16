@@ -4,7 +4,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import { catchError, lastValueFrom, of, Subject, switchMap, tap } from 'rxjs';
 
-import { isAndroid } from 'src/config/system';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { hideLoaderAction, setOnRampOverlayStateAction, showLoaderAction } from 'src/store/settings/settings-actions';
@@ -64,7 +64,7 @@ export const createImportAccountSubscription = (
         lastValueFrom(loadTezosBalance$(rpcUrl, publicData.publicKeyHash)).then(
           balance =>
             void (
-              isAndroid &&
+              !LIMIT_FIN_FEATURES &&
               new BigNumber(balance).isEqualTo(0) &&
               !isDcpNode(rpcUrl) &&
               dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start))

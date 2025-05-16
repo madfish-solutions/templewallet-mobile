@@ -3,7 +3,7 @@ import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { isAndroid, isIOS } from 'src/config/system';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
@@ -56,7 +56,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       : 'Balance is zero';
 
   const emptyBalance = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
-  const disabledSendButton = emptyBalance && isIOS;
+  const disabledSendButton = emptyBalance && LIMIT_FIN_FEATURES;
 
   const actionButtonStylesOverrides = useMemo(
     () => ({
@@ -129,7 +129,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
         testID={WalletSelectors.receiveButton}
       />
 
-      {isAndroid && (
+      {!LIMIT_FIN_FEATURES && (
         <>
           <Divider size={formatSize(8)} />
           <ButtonMedium
