@@ -1,7 +1,10 @@
+import { StyleSheet } from 'react-native';
+
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 export const useOnRampOverlayStyles = createUseStyles(({ colors, typography }) => ({
   root: {
+    flexGrow: 1,
     backgroundColor: colors.pageBG
   },
   title: {
@@ -44,5 +47,9 @@ export const useOnRampOverlayStyles = createUseStyles(({ colors, typography }) =
   notNowButtonTitle: {
     ...typography.body17Semibold,
     color: colors.peach
+  },
+  loaderContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center'
   }
 }));
