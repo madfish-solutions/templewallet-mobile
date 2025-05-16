@@ -144,7 +144,7 @@ export const DApps = () => {
 
             <IntegratedDApp
               iconName={IconNameEnum.EarnDapp}
-              title={`Earn up to ${maxRoundedApr}% APR`}
+              title={`Earn up to ${maxRoundedApr} APR`}
               description="Unlock on-chain earning potential"
               onPress={() => navigate(ScreensEnum.Earn)}
               testID={DAppsSelectors.earnButton}

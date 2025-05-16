@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { isIOS } from 'src/config/system';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addFavouriteToken, deleteFavouriteToken } from 'src/store/market/market-actions';
@@ -56,7 +56,7 @@ export const RightSwipeView = memo<Props>(({ id, onPress }) => {
 
   return (
     <View style={styles.rootContainer}>
-      {!isIOS && (
+      {!LIMIT_FIN_FEATURES && (
         <HiddenButton
           iconName={IconNameEnum.Buy}
           text="Buy"

@@ -7,7 +7,7 @@ import { catchError, delay, map, switchMap, concatMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { BLOCK_DURATION } from 'src/config/fixed-times';
-import { isAndroid } from 'src/config/system';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -84,7 +84,7 @@ const loadTezosBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) 
         concatMap(([balance, overlayState]) => {
           const successAction = loadTezosBalanceActions.success(balance);
           const showOnRampAction =
-            isAndroid &&
+            !LIMIT_FIN_FEATURES &&
             !isDcpNode(rpcUrl) &&
             overlayState === OnRampOverlayState.Closed &&
             new BigNumber(balance).isZero()
