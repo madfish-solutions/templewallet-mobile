@@ -1,8 +1,11 @@
 import React, { ComponentType, memo } from 'react';
+import { View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import { SvgXml } from 'react-native-svg';
+import { WebView } from 'react-native-webview';
 
 import { AssetMediaURIs } from 'src/utils/assets/types';
-import { isImgUriDataUri } from 'src/utils/image.utils';
+import { isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import { ActivityIndicator } from '../activity-indicator';
 import { BrokenImage } from '../broken-image';
@@ -50,6 +53,43 @@ export const CollectibleImage = memo<Props>(
           onError={onFail}
         />
       );
+    }
+
+    if (artifactUri && isSvgDataUriInBase64Encoding(artifactUri)) {
+      const base64Data = artifactUri.replace(/^data:image\/svg\+xml;base64,/, '');
+      const svgXml = Buffer.from(base64Data, 'base64').toString('utf8');
+
+      const containsForeignObject = svgXml.includes('<foreignObject');
+
+      if (containsForeignObject) {
+        const html = `
+    <html>
+      <body style="margin:0;padding:0;background:transparent;">
+        <img src="data:image/svg+xml;base64,${base64Data}" style="width:100%;height:100%;" />
+      </body>
+    </html>
+  `;
+
+        return (
+          <View style={{ width: size, height: size }}>
+            <WebView
+              source={{ html }}
+              style={{ width: size, height: size }}
+              onError={onFail}
+              onLoad={onSuccess}
+              scrollEnabled={false}
+              pointerEvents="none"
+            />
+            {isLoading && <ActivityIndicator size={isFullView ? 'large' : 'small'} style={{ position: 'absolute' }} />}
+          </View>
+        );
+      } else {
+        return (
+          <View style={{ width: size, height: size }}>
+            <SvgXml xml={svgXml} width={size} height={size} onError={onFail} onLoad={onSuccess} />
+          </View>
+        );
+      }
     }
 
     return (

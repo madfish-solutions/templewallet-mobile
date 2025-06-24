@@ -12,6 +12,7 @@ import {
 } from 'src/store/collectibles/collectibles-selectors';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { formatNumber } from 'src/utils/format-price';
+import { isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -64,7 +65,11 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
         <CollectibleItemImage
           slug={slug}
           size={size}
-          artifactUri={collectible.artifactUri ?? details?.artifactUri}
+          artifactUri={
+            details?.artifactUri != null && isSvgDataUriInBase64Encoding(details?.artifactUri)
+              ? details?.artifactUri
+              : collectible.artifactUri
+          }
           displayUri={collectible.displayUri ?? details?.displayUri}
           thumbnailUri={collectible.thumbnailUri ?? details?.thumbnailUri}
           areDetailsLoading={areDetailsLoading && details === undefined}

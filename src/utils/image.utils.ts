@@ -159,6 +159,7 @@ export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SI
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 
 const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
+const SVG_DATA_URI_BASE64_PREFIX = 'data:image/svg+xml;base64,';
 
 const assureGetDataUriImage = (uri?: string) => (uri?.startsWith('data:image/') ? uri : undefined);
 
@@ -166,6 +167,9 @@ export const isImgUriDataUri = (uri: string) => isSvgDataUriInUtf8Encoding(uri);
 
 const isSvgDataUriInUtf8Encoding = (uri: string) =>
   uri.slice(0, SVG_DATA_URI_UTF8_PREFIX.length).toLowerCase() === SVG_DATA_URI_UTF8_PREFIX;
+
+export const isSvgDataUriInBase64Encoding = (uri: string) =>
+  uri.slice(0, SVG_DATA_URI_BASE64_PREFIX.length).toLowerCase() === SVG_DATA_URI_BASE64_PREFIX;
 
 export const isImageRectangular = (uri?: string) => {
   if (isString(uri) && isSvgDataUriInUtf8Encoding(uri)) {

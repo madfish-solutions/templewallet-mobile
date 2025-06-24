@@ -1,9 +1,9 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
 import BigNumber from 'bignumber.js';
 import React, { memo, useMemo, useState } from 'react';
-import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Text, TouchableOpacity, View, Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { SvgUri } from 'react-native-svg';
+import { SvgUri, SvgXml } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
@@ -38,7 +38,7 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { useInterval } from 'src/utils/hooks';
-import { formatImgUri } from 'src/utils/image.utils';
+import { formatImgUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 import { openUrl } from 'src/utils/linking';
 import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams } from 'src/utils/objkt';
@@ -144,7 +144,10 @@ export const CollectibleModal = memo(() => {
   }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, accountPkh, selectedRpc, navigate]);
 
   const name = metadata?.name ?? details?.name;
-  const artifactUri = metadata?.artifactUri ?? details?.artifactUri;
+  const artifactUri =
+    details?.artifactUri != null && isSvgDataUriInBase64Encoding(details?.artifactUri)
+      ? details?.artifactUri
+      : metadata?.artifactUri;
   const thumbnailUri = metadata?.thumbnailUri ?? details?.thumbnailUri;
   const displayUri = metadata?.displayUri ?? details?.displayUri;
 
@@ -162,7 +165,6 @@ export const CollectibleModal = memo(() => {
         : { values: [SegmentControlNamesEnum.properties], current: 'properties' },
     [attributes.length, segmentControlIndex]
   );
-
   const collection = useMemo(() => {
     if (!details) {
       return null;
@@ -175,6 +177,7 @@ export const CollectibleModal = memo(() => {
       if (!collection.logo) {
         return null;
       }
+
       if (collection.logo.endsWith('.svg')) {
         return (
           <SvgUri
@@ -184,6 +187,20 @@ export const CollectibleModal = memo(() => {
             style={styles.collectionLogo}
           />
         );
+      }
+
+      if (isSvgDataUriInBase64Encoding(collection.logo)) {
+        const base64Data = collection.logo.replace(/^data:image\/svg\+xml;base64,/, '');
+        const svgXml = Buffer.from(base64Data, 'base64').toString('utf8');
+
+        return (
+          <View style={styles.collectionLogo}>
+            <SvgXml xml={svgXml} width={COLLECTION_ICON_SIZE} height={COLLECTION_ICON_SIZE} />
+          </View>
+        );
+      }
+      if (formatImgUri(collection.logo) == null) {
+        return <Image source={{ uri: collection.logo }} style={styles.collectionLogo} />;
       }
 
       return <FastImage source={{ uri: formatImgUri(collection.logo) }} style={styles.collectionLogo} />;
