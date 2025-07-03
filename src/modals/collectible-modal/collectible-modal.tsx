@@ -144,10 +144,15 @@ export const CollectibleModal = memo(() => {
   }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, accountPkh, selectedRpc, navigate]);
 
   const name = metadata?.name ?? details?.name;
-  const artifactUri =
-    details?.artifactUri != null && isSvgDataUriInBase64Encoding(details?.artifactUri)
-      ? details?.artifactUri
-      : metadata?.artifactUri;
+  let artifactUri: string | undefined;
+  if (
+    details?.artifactUri != null &&
+    (isSvgDataUriInBase64Encoding(details.artifactUri) || metadata?.artifactUri === 'UNSUPPORTED_EXTENSION')
+  ) {
+    artifactUri = details.artifactUri;
+  } else {
+    artifactUri = metadata?.artifactUri;
+  }
   const thumbnailUri = metadata?.thumbnailUri ?? details?.thumbnailUri;
   const displayUri = metadata?.displayUri ?? details?.displayUri;
 

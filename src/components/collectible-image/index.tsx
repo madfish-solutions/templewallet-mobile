@@ -33,7 +33,7 @@ export const CollectibleImage = memo<Props>(
       isFullView
     );
 
-    if (isStackFailed) {
+    if (isStackFailed && artifactUri == null) {
       return Fallback ? (
         <Fallback isFullView={isFullView} />
       ) : (
@@ -96,7 +96,7 @@ export const CollectibleImage = memo<Props>(
       <>
         <FastImage
           style={[styles.image, { height: size, width: size }]}
-          source={{ uri: src }}
+          source={{ uri: src ?? artifactUri }}
           resizeMode="contain"
           onError={onFail}
           onLoad={onSuccess}

@@ -66,8 +66,9 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
           slug={slug}
           size={size}
           artifactUri={
-            details?.artifactUri != null && isSvgDataUriInBase64Encoding(details?.artifactUri)
-              ? details?.artifactUri
+            details?.artifactUri != null &&
+            (isSvgDataUriInBase64Encoding(details.artifactUri) || collectible.artifactUri === 'UNSUPPORTED_EXTENSION')
+              ? details.artifactUri
               : collectible.artifactUri
           }
           displayUri={collectible.displayUri ?? details?.displayUri}

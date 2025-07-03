@@ -48,10 +48,10 @@ export const buildCollectibleImagesStack = (
       ]
     : [
         /* There are performance issues with these on Collectibles screen with many <SvgXml /> components.
-        assureGetDataUriImage(thumbnailUri),
-        assureGetDataUriImage(displayUri),
-        assureGetDataUriImage(artifactUri),
-        */
+      assureGetDataUriImage(thumbnailUri),
+      assureGetDataUriImage(displayUri),
+      assureGetDataUriImage(artifactUri),
+      */
 
         // Some image of video asset (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) only available through this option:
         buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288'),
@@ -149,7 +149,7 @@ const buildIpfsMediaUriByInfo = (
 
   if (useMediaHost && uri.startsWith('http')) {
     // This option also serves as a proxy for any `http` source
-    return `${MEDIA_HOST}/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
+    return uri;
   }
 };
 
