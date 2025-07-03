@@ -149,7 +149,7 @@ const buildIpfsMediaUriByInfo = (
 
   if (useMediaHost && uri.startsWith('http')) {
     // This option also serves as a proxy for any `http` source
-    return uri
+    return uri;
   }
 };
 
