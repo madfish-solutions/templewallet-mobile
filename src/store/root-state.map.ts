@@ -1,5 +1,4 @@
 import { abTestingReducer } from './ab-testing/ab-testing-reducers';
-import { advertisingReducers } from './advertising/advertising-reducers';
 import { bakingReducers } from './baking/baking-reducers';
 import { buyWithCreditCardReducer } from './buy-with-credit-card/reducers';
 import { collectiblesPersistedReducer } from './collectibles/collectibles-reducers';
@@ -29,7 +28,6 @@ export const rootStateReducersMap = {
   dApps: dAppsReducers,
   currency: currencyReducers,
   exolix: exolixReducers,
-  advertising: advertisingReducers,
   market: marketReducers,
   notifications: notificationsReducers,
   swap: swapPersistedReducer,

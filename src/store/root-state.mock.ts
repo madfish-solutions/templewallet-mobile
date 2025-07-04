@@ -1,5 +1,4 @@
 import { mockABTestingState } from './ab-testing/ab-testing-state.mock';
-import { mockAdvertisingState } from './advertising/advertising-state.mock';
 import { mockBakingState } from './baking/baking-state.mock';
 import { mockBuyWithCreditCardState } from './buy-with-credit-card/state.mock';
 import { mockCollectiblesState } from './collectibles/collectibles-state.mock';
@@ -30,7 +29,6 @@ export const mockRootState: RootState = {
   dApps: mockDAppsState,
   currency: mockCurrencyState,
   exolix: mockExolixState,
-  advertising: mockAdvertisingState,
   market: mockMarketState,
   notifications: mockNotificationsState,
   swap: mockSwapState,

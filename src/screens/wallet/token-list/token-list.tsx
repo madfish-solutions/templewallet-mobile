@@ -23,7 +23,6 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsInAppUpdateAvailableSelector } from 'src/store/settings/settings-selectors';
@@ -111,12 +110,6 @@ export const TokensList = memo(() => {
       removeNavigationListener('focus', listener);
     };
   }, [dispatch, addNavigationListener, removeNavigationListener, partnersPromoShown]);
-
-  useEffect(() => {
-    if (partnersPromoShown) {
-      dispatch(loadAdvertisingPromotionActions.submit());
-    }
-  }, [dispatch, partnersPromoShown]);
 
   const leadingAssets = useMemo(() => {
     if (isTezosNode) {

@@ -1,5 +1,4 @@
 import { abTestingEpics } from './ab-testing/ab-testing-epics';
-import { advertisingEpics } from './advertising/advertising-epics';
 import { bakingEpics } from './baking/baking-epics';
 import { buyWithCreditCardEpics } from './buy-with-credit-card/epics';
 import { collectiblesEpics } from './collectibles/collectibles-epics';
@@ -30,7 +29,6 @@ export const { store, persistor } = createStore(
   settingsEpic,
   currencyEpics,
   securityEpics,
-  advertisingEpics,
   marketEpics,
   notificationsEpics,
   swapEpics,
