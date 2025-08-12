@@ -4,7 +4,6 @@ import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { Divider } from 'src/components/divider/divider';
-import { ErrorDisclaimerMessage } from 'src/components/error-disclaimer-message/error-disclaimer-message';
 import { EarnOpportunitySearchPanel } from 'src/components/earn-opportunity-search-panel';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { useFilteredSavings } from 'src/hooks/use-filtered-savings.hook';
@@ -12,7 +11,7 @@ import { useLoadOnEachBlock } from 'src/hooks/use-load-on-each-block.hook';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
-import { useSavingsErrorSelector, useSavingsStakesLoadingSelector, useSavingsStakes } from 'src/store/savings/selectors';
+import { useSavingsStakesLoadingSelector, useSavingsStakes } from 'src/store/savings/selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import {
@@ -29,7 +28,6 @@ import { useSavingsStyles } from './styles';
 export const Savings: FC = () => {
   const stakes = useSavingsStakes();
   const stakesLoading = useSavingsStakesLoadingSelector();
-  const savingsError = useSavingsErrorSelector();
   const styles = useSavingsStyles();
   const {
     sortField,
@@ -67,14 +65,6 @@ export const Savings: FC = () => {
     <>
       <MainInfo />
       <HorizontalBorder />
-      {!!savingsError && (
-        <>
-          <Divider size={formatSize(8)} />
-          <ErrorDisclaimerMessage title="Savings data is temporarily unavailable">
-            {savingsError}
-          </ErrorDisclaimerMessage>
-        </>
-      )}
       <EarnOpportunitySearchPanel
         checkboxTestID={SavingsSelectorsEnum.depositedOnlyCheckbox}
         searchTestID={SavingsSelectorsEnum.search}

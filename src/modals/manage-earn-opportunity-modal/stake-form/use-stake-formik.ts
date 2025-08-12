@@ -38,7 +38,6 @@ export interface StakeFormValues {
 }
 
 const forbidSubmitEventEarnOpportunityTypes: Array<EarnOpportunityTypeEnum | undefined> = [
-  // KordFi removed
   EarnOpportunityTypeEnum.YOUVES_SAVING
 ];
 

@@ -146,7 +146,7 @@ export const EarnOpportunityItem = memo<Props>(
 
           <View style={[styles.row, styles.mb16]}>
             <StatsItem
-              title={'Your deposit:'}
+              title="Your deposit:"
               amounts={depositAmounts}
               wasLoading={stakeWasLoading}
               fiatEquivalentIsMain={itemIsFarm}

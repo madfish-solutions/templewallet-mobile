@@ -147,19 +147,7 @@ export const ManageEarnOpportunityModal: FC = () => {
 
   usePageAnalytic(route.name, undefined, route.params);
 
-  const isKordFi = false;
-  const amountToWithdraw = isDefined(stake) && isDefined(stake.fullReward) && +stake.fullReward > 0;
-  const disabledTabSwitcherIndices = useMemo(() => {
-    if (isDefined(stake)) {
-      if (false && amountToWithdraw) {
-        return [];
-      } else if (!isKordFi && isDefined(stake.lastStakeId)) {
-        return [];
-      }
-    }
-
-    return [1];
-  }, [isKordFi, amountToWithdraw, stake]);
+  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
 
   const stakeButtonTestIdProperties = useMemo(() => {
     if (stakeFormErrorsPresent) {
