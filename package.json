@@ -189,6 +189,8 @@
     "levelup": "^5.1.1",
     "bignumber.js": "9.1.1",
     "follow-redirects": "^1.15.4",
-    "sp-react-native-in-app-updates/semver": "^7.5.2"
+    "sp-react-native-in-app-updates/semver": "^7.5.2",
+    "tar-fs": "^3.0.9",
+    "pbkdf2": "^3.1.3"
   }
 }
