@@ -27,6 +27,15 @@ export const useSavingsItem = (id: string, contractAddress: string) => {
 export const useSavingsItemsLoadingSelector = () =>
   useSelector(({ savings }) => Object.values(savings.allSavingsItems).some(({ isLoading }) => isLoading));
 
+export const useSavingsErrorSelector = (): string | undefined =>
+  useSelector(({ savings }) => {
+    const errors = Object.values(savings.allSavingsItems)
+      .map(({ error }) => error)
+      .filter((e): e is string => isDefined(e));
+
+    return errors[0];
+  });
+
 export const useSavingsItemStakeSelector = (itemAddress: string): UserStakeValueInterface | undefined =>
   useSelector(
     ({ savings, wallet }) => savings.stakes[wallet.selectedAccountPublicKeyHash]?.[itemAddress]?.data ?? undefined

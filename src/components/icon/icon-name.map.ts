@@ -90,7 +90,6 @@ import InvertedCheckboxOffIcon from './assets/inverted-checkbox-off.svg';
 import InvertedCheckboxOnIcon from './assets/inverted-checkbox-on.svg';
 import IosSearchIcon from './assets/ios-search.svg';
 import KeyIcon from './assets/key.svg';
-import KordFiEarnSource from './assets/kord-fi-earn-source.svg';
 import LbDappIcon from './assets/lb-dapp-icon.svg';
 import LbTokenIcon from './assets/lb-token-icon.svg';
 import LinkIcon from './assets/link.svg';
@@ -356,7 +355,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.YouvesEarnSource]: YouvesEarnSourceIcon,
   [IconNameEnum.YouvesEarnSourceDark]: YouvesEarnSourceDarkIcon,
   [IconNameEnum.YouvesEarnSourceLarge]: YouvesEarnSourceLargeIcon,
-  [IconNameEnum.KordFiEarnSource]: KordFiEarnSource,
   [IconNameEnum.Sync]: SyncIcon,
   [IconNameEnum.FileUpload]: FileUploadIcon,
   [IconNameEnum.Docs]: DocsIcon,

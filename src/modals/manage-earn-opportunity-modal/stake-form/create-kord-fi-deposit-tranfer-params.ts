@@ -1,7 +1,7 @@
 import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
-import { KORDFI_TEZOS_CONTRACT_ADDRESS } from 'src/apis/kord-fi';
+// KordFi removed
 import { ONE_MINUTE } from 'src/config/fixed-times';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { Route3Token } from 'src/interfaces/route3.interface';
@@ -24,7 +24,7 @@ const getDepositTransferParams = async (
     stakeContract
   } = await prepareToTransferParams(earnOpportunity, amount, tezos, accountPkh);
 
-  if (earnOpportunity.contractAddress === KORDFI_TEZOS_CONTRACT_ADDRESS) {
+  if (false) {
     const depositTransferParams = stakeContract.methods
       .depositLending(minDepositShares, deadline)
       .toTransferParams({ mutez: true, amount: +amount });

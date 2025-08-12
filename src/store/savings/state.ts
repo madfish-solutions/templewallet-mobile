@@ -14,6 +14,6 @@ export interface SavingsState {
 
 export const savingsInitialState: SavingsState = {
   stakes: {},
-  allSavingsItems: { [SavingsProviderEnum.Youves]: createEntity([]), [SavingsProviderEnum.KordFi]: createEntity([]) },
+  allSavingsItems: { [SavingsProviderEnum.Youves]: createEntity([]) },
   sortField: EarnOpportunitiesSortFieldEnum.Default
 };

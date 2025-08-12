@@ -7,6 +7,6 @@ import { SavingsState } from './state';
 
 export const mockSavingsState: SavingsState = {
   stakes: {},
-  allSavingsItems: { [SavingsProviderEnum.Youves]: createEntity([]), [SavingsProviderEnum.KordFi]: createEntity([]) },
+  allSavingsItems: { [SavingsProviderEnum.Youves]: createEntity([]) },
   sortField: EarnOpportunitiesSortFieldEnum.Default
 };

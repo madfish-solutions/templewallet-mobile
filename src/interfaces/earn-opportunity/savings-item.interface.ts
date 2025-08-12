@@ -6,6 +6,5 @@ export interface SavingsItem extends EarnOpportunityBase {
   discFactor: string;
   type:
     | EarnOpportunityTypeEnum.YOUVES_SAVING
-    | EarnOpportunityTypeEnum.YOUVES_STAKING
-    | EarnOpportunityTypeEnum.KORD_FI_SAVING;
+    | EarnOpportunityTypeEnum.YOUVES_STAKING;
 }

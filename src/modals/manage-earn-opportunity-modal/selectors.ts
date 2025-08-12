@@ -1,5 +1,5 @@
 export enum ManageEarnOpportunityModalSelectors {
-  kordFiDepositButton = 'KordFi/Deposit button',
+  // KordFi removed
   youvesSavingsDepositButton = 'Youves/Deposit button',
   depositButton = 'Manage earn opportunity/Deposit button',
   tabSwitch = 'Manage earn opportunity/Tab switch',
@@ -7,7 +7,7 @@ export enum ManageEarnOpportunityModalSelectors {
   mainRisksQuestion = 'Manage earn opportunity/Main risks question',
   acceptRisksCheckbox = 'Manage earn opportunity/Accept risks checkbox',
   claimRewardsButton = 'Manage earn opportunity/Claim rewards button',
-  kordFiWithdrawButton = 'KordFi/Withdraw button',
+  // KordFi removed
   youvesSavingsWithdrawButton = 'Youves/Withdraw button',
   withdrawButton = 'Manage earn opportunity/Withdraw button',
   sharesAmountInput = 'Manage earn opportunity/Shares amount input',
