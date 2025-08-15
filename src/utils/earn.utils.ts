@@ -7,7 +7,7 @@ import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
-import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { Farm } from 'src/types/farm';
@@ -93,22 +93,3 @@ export const isFarm = (earnOpportunity: EarnOpportunity): earnOpportunity is Far
 
 export const getFirstAccountActivityTime = async (address: string) =>
   tzktApi.get<{ firstActivityTime: string }>(`/accounts/${address}`).then(response => response.data.firstActivityTime);
-
-export const toEarnOpportunityToken = (
-  token: TokenMetadataInterface,
-  type: EarnOpportunityTokenStandardEnum,
-  isWhitelisted: boolean,
-  categories: Array<string>
-): EarnOpportunityToken => ({
-  type,
-  isWhitelisted,
-  fa2TokenId: token.id,
-  contractAddress: token.address,
-  metadata: {
-    decimals: token.decimals,
-    symbol: token.symbol,
-    name: token.name,
-    thumbnailUri: token.thumbnailUri,
-    categories
-  }
-});

@@ -1,9 +1,8 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { catchError, forkJoin, from, map, merge, mergeMap, of, switchMap } from 'rxjs';
+import { catchError, from, map, merge, mergeMap, of, switchMap } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { getKordFiItems$ } from 'src/apis/kord-fi';
 import { getYouvesSavingsItems$ } from 'src/apis/youves';
 import { SavingsProviderEnum } from 'src/enums/savings-provider.enum';
 import { showErrorToast, showErrorToastByError } from 'src/toast/error-toast.utils';
@@ -56,19 +55,15 @@ const loadAllSavingsItems: Epic<Action, Action, RootState> = (action$, state$) =
     ofType(loadAllSavingsAction),
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([[, rpcUrl], rates]) => forkJoin([getYouvesSavingsItems$(rates, rpcUrl), getKordFiItems$(rates)])),
-    switchMap(([youvesSavings, kordFiSavings]) =>
-      of(
-        loadSavingsByProviderActions.success({ data: youvesSavings, provider: SavingsProviderEnum.Youves }),
-        loadSavingsByProviderActions.success({ data: kordFiSavings, provider: SavingsProviderEnum.KordFi })
-      )
+    switchMap(([[, rpcUrl], rates]) => getYouvesSavingsItems$(rates, rpcUrl)),
+    switchMap(youvesSavings =>
+      of(loadSavingsByProviderActions.success({ data: youvesSavings, provider: SavingsProviderEnum.Youves }))
     ),
     catchError(err => {
       showErrorToastByError(err, undefined, true);
 
       return of(
-        loadSavingsByProviderActions.fail({ provider: SavingsProviderEnum.Youves, error: (err as Error).message }),
-        loadSavingsByProviderActions.fail({ provider: SavingsProviderEnum.KordFi, error: (err as Error).message })
+        loadSavingsByProviderActions.fail({ provider: SavingsProviderEnum.Youves, error: (err as Error).message })
       );
     })
   );
@@ -79,9 +74,7 @@ const loadSavingsItemsByProvider: Epic<Action, Action, RootState> = (action$, st
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
     switchMap(([[{ payload: savingsProvider }, rpcUrl], rates]) =>
-      from(
-        savingsProvider === SavingsProviderEnum.KordFi ? getKordFiItems$(rates) : getYouvesSavingsItems$(rates, rpcUrl)
-      ).pipe(
+      from(getYouvesSavingsItems$(rates, rpcUrl)).pipe(
         map(data => loadSavingsByProviderActions.success({ data, provider: savingsProvider })),
         catchError(err => {
           showErrorToast({ description: getAxiosQueryErrorMessage(err) });
@@ -118,17 +111,6 @@ const loadAllSavingsItemsAndStakes: Epic<Action, Action, RootState> = (action$, 
             )
           ),
           catchError(makeSavingsListErrorHandler(SavingsProviderEnum.Youves))
-        ),
-        getKordFiItems$(rates).pipe(
-          switchMap(kordFiSavings =>
-            of(
-              loadSavingsByProviderActions.success({ data: kordFiSavings, provider: SavingsProviderEnum.KordFi }),
-              ...kordFiSavings.map(savingsItem =>
-                loadSingleSavingStakeActions.submit({ item: savingsItem, accountPkh })
-              )
-            )
-          ),
-          catchError(makeSavingsListErrorHandler(SavingsProviderEnum.KordFi))
         )
       );
     })

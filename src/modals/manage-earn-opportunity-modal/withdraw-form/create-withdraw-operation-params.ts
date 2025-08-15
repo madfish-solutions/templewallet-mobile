@@ -2,7 +2,6 @@ import { TezosToolkit, TransferParams } from '@taquito/taquito';
 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { getKordFiWithdrawTransferParams } from 'src/modals/manage-earn-opportunity-modal/withdraw-form/create-kordfi-withdraw-transfer-params';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { parseTransferParamsToParamsWithKind } from 'src/utils/transfer-params.utils';
 
@@ -31,9 +30,6 @@ export const createWithdrawOperationParams = async (
         slippageTolerancePercentage,
         percentage
       );
-      break;
-    case EarnOpportunityTypeEnum.KORD_FI_SAVING:
-      transfersParams = await getKordFiWithdrawTransferParams(earnOpportunity, percentage, tezos, stake);
       break;
     case EarnOpportunityTypeEnum.STABLESWAP:
       transfersParams = await createStableswapWithdrawTransfersParams(

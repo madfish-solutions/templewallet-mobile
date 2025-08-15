@@ -26,15 +26,11 @@ const youvesSavingsTypes = [EarnOpportunityTypeEnum.YOUVES_SAVING, EarnOpportuni
 export const DetailsSection = memo<Props>(({ earnOpportunityItem, stake, shouldShowClaimRewardsButton, loading }) => {
   const styles = useDetailsSectionStyles();
   const isLiquidityBaking = earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
-  const isKordFi = earnOpportunityItem.type === EarnOpportunityTypeEnum.KORD_FI_SAVING;
 
   const savingDetailsText = useMemo(() => {
     let appName = '';
 
     switch (earnOpportunityItem.type) {
-      case EarnOpportunityTypeEnum.KORD_FI_SAVING:
-        appName = 'Kord.Fi';
-        break;
       case EarnOpportunityTypeEnum.YOUVES_SAVING:
       case EarnOpportunityTypeEnum.YOUVES_STAKING:
         appName = 'Youves';
@@ -62,11 +58,6 @@ export const DetailsSection = memo<Props>(({ earnOpportunityItem, stake, shouldS
             <Icon name={IconNameEnum.YouvesEarnSourceLarge} size={formatSize(24)} />
           </View>
         )}
-        {isKordFi && (
-          <View style={styles.youvesIconWrapper}>
-            <Icon name={IconNameEnum.KordFiEarnSource} size={formatSize(24)} />
-          </View>
-        )}
         <Divider size={formatSize(8)} />
         <Text style={styles.detailsTitleText}>
           {isLiquidityBaking && 'Liquidity Baking Details'}
@@ -82,7 +73,6 @@ export const DetailsSection = memo<Props>(({ earnOpportunityItem, stake, shouldS
         stake={stake}
         shouldShowClaimRewardsButton={shouldShowClaimRewardsButton}
         loading={loading}
-        isNeedToShowMoreDetails={earnOpportunityItem.type !== EarnOpportunityTypeEnum.KORD_FI_SAVING}
       />
     </>
   );

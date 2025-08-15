@@ -50,12 +50,10 @@ const tabs = ['Deposit', 'Withdraw'];
 const tabAnalyticsPropertiesFn = (tabName: string) => ({ tabName });
 
 const stakeButtonTestIds: Partial<Record<EarnOpportunityTypeEnum, string>> = {
-  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiDepositButton,
   [EarnOpportunityTypeEnum.YOUVES_SAVING]: ManageEarnOpportunityModalSelectors.youvesSavingsDepositButton
 };
 
 const withdrawButtonTestIds: Partial<Record<EarnOpportunityTypeEnum, string>> = {
-  [EarnOpportunityTypeEnum.KORD_FI_SAVING]: ManageEarnOpportunityModalSelectors.kordFiWithdrawButton,
   [EarnOpportunityTypeEnum.YOUVES_SAVING]: ManageEarnOpportunityModalSelectors.youvesSavingsWithdrawButton
 };
 
@@ -149,19 +147,7 @@ export const ManageEarnOpportunityModal: FC = () => {
 
   usePageAnalytic(route.name, undefined, route.params);
 
-  const isKordFi = earnOpportunityItem?.type === EarnOpportunityTypeEnum.KORD_FI_SAVING;
-  const amountToWithdraw = isDefined(stake) && isDefined(stake.fullReward) && +stake.fullReward > 0;
-  const disabledTabSwitcherIndices = useMemo(() => {
-    if (isDefined(stake)) {
-      if (isKordFi && amountToWithdraw) {
-        return [];
-      } else if (!isKordFi && isDefined(stake.lastStakeId)) {
-        return [];
-      }
-    }
-
-    return [1];
-  }, [isKordFi, amountToWithdraw, stake]);
+  const disabledTabSwitcherIndices = useMemo(() => (isDefined(stake?.lastStakeId) ? [] : [1]), [stake]);
 
   const stakeButtonTestIdProperties = useMemo(() => {
     if (stakeFormErrorsPresent) {

@@ -169,7 +169,6 @@ export enum IconNameEnum {
   YouvesEarnSource = 'YouvesEarnSource',
   YouvesEarnSourceDark = 'YouvesEarnSourceDark',
   YouvesEarnSourceLarge = 'YouvesEarnSourceLarge',
-  KordFiEarnSource = 'KordFiEarnSource',
   Sync = 'Sync',
   FileUpload = 'FileUpload',
   Docs = 'Docs',
