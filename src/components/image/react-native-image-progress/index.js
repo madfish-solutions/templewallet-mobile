@@ -8,23 +8,23 @@ const styles = StyleSheet.create({
   centered: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 });
 
 const DefaultIndicator = ActivityIndicator;
 
-const getSourceKey = (source) => (source && source.uri) || String(source);
+const getSourceKey = source => (source && source.uri) || String(source);
 
 // ts-prune-ignore-next
-export const createImageProgress = (ImageComponent) =>
+export const createImageProgress = ImageComponent =>
   class ImageProgress extends Component {
     /* static propTypes = { *CUSTOM* }; */
 
     static defaultProps = {
       indicatorContainerStyle: styles.centered,
       errorContainerStyle: styles.centered,
-      threshold: 50,
+      threshold: 50
     };
 
     static prefetch = Image.prefetch;
@@ -39,14 +39,14 @@ export const createImageProgress = (ImageComponent) =>
           sourceKey,
           error: null,
           loading: false,
-          progress: 0,
+          progress: 0
         };
       }
 
       if (props.imageStyle !== state.imageStyle[1]) {
         update = {
           ...update,
-          imageStyle: [StyleSheet.absoluteFill, props.imageStyle],
+          imageStyle: [StyleSheet.absoluteFill, props.imageStyle]
         };
       }
 
@@ -62,7 +62,7 @@ export const createImageProgress = (ImageComponent) =>
         loading: false,
         progress: 0,
         thresholdReached: !props.threshold,
-        imageStyle: [StyleSheet.absoluteFill, props.imageStyle],
+        imageStyle: [StyleSheet.absoluteFill, props.imageStyle]
       };
     }
 
@@ -94,7 +94,7 @@ export const createImageProgress = (ImageComponent) =>
     }
 
     ref = null;
-    handleRef = (ref) => {
+    handleRef = ref => {
       this.ref = ref;
     };
 
@@ -109,13 +109,13 @@ export const createImageProgress = (ImageComponent) =>
         this.setState({
           error: null,
           loading: true,
-          progress: 0,
+          progress: 0
         });
       }
       this.bubbleEvent('onLoadStart');
     };
 
-    handleProgress = (event) => {
+    handleProgress = event => {
       const progress = event.nativeEvent.loaded / event.nativeEvent.total;
       // RN is a bit buggy with these events, sometimes a loaded event and then a few
       // 100% progress – sometimes in an infinite loop. So we just assume 100% progress
@@ -123,35 +123,35 @@ export const createImageProgress = (ImageComponent) =>
       if (progress !== this.state.progress && this.state.progress !== 1) {
         this.setState({
           loading: progress < 1,
-          progress,
+          progress
         });
       }
       this.bubbleEvent('onProgress', event);
     };
 
-    handleError = (event) => {
+    handleError = event => {
       this.setState({
         loading: false,
-        error: event.nativeEvent,
+        error: event.nativeEvent
       });
       this.bubbleEvent('onError', event);
     };
 
-    handleLoad = (event) => {
+    handleLoad = event => {
       if (this.state.progress !== 1) {
         this.setState({
           error: null,
           loading: false,
-          progress: 1,
+          progress: 1
         });
       }
       this.bubbleEvent('onLoad', event);
     };
 
-    handleLoadEnd = (event) => {
+    handleLoadEnd = event => {
       this.setState({
         loading: false,
-        progress: 1,
+        progress: 1
       });
       this.bubbleEvent('onLoadEnd', event);
     };
@@ -181,34 +181,24 @@ export const createImageProgress = (ImageComponent) =>
           </View>
         );
       }
-      const { progress, sourceKey, thresholdReached, loading, error } =
-        this.state;
+      const { progress, sourceKey, thresholdReached, loading, error } = this.state;
 
       let indicatorElement;
 
       if (error) {
         if (renderError) {
-          indicatorElement = (
-            <View style={errorContainerStyle}>{renderError(error)}</View>
-          );
+          indicatorElement = <View style={errorContainerStyle}>{renderError(error)}</View>;
         }
       } else if ((loading || progress < 1) && thresholdReached) {
         if (renderIndicator) {
           indicatorElement = renderIndicator(progress, !loading || !progress);
         } else {
-          const IndicatorComponent =
-            typeof indicator === 'function' ? indicator : DefaultIndicator;
+          const IndicatorComponent = typeof indicator === 'function' ? indicator : DefaultIndicator;
           indicatorElement = (
-            <IndicatorComponent
-              progress={progress}
-              indeterminate={!loading || !progress}
-              {...indicatorProps}
-            />
+            <IndicatorComponent progress={progress} indeterminate={!loading || !progress} {...indicatorProps} />
           );
         }
-        indicatorElement = (
-          <View style={indicatorContainerStyle}>{indicatorElement}</View>
-        );
+        indicatorElement = <View style={indicatorContainerStyle}>{indicatorElement}</View>;
       }
 
       return (
@@ -222,9 +212,10 @@ export const createImageProgress = (ImageComponent) =>
             onLoad={this.handleLoad}
             onLoadEnd={this.handleLoadEnd}
             source={source}
-            style={indicatorElement
-              ? { display: 'none' } // *CUSTOM*
-              : imageStyle
+            style={
+              indicatorElement
+                ? { display: 'none' } // *CUSTOM*
+                : imageStyle
             }
           />
           {indicatorElement}
