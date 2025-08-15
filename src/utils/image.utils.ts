@@ -48,10 +48,10 @@ export const buildCollectibleImagesStack = (
       ]
     : [
         /* There are performance issues with these on Collectibles screen with many <SvgXml /> components.
-        assureGetDataUriImage(thumbnailUri),
-        assureGetDataUriImage(displayUri),
-        assureGetDataUriImage(artifactUri),
-        */
+      assureGetDataUriImage(thumbnailUri),
+      assureGetDataUriImage(displayUri),
+      assureGetDataUriImage(artifactUri),
+      */
 
         // Some image of video asset (see: KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton_773019) only available through this option:
         buildObjktMediaUriForItemPath(`${address}/${id}`, 'thumb288'),
@@ -149,7 +149,7 @@ const buildIpfsMediaUriByInfo = (
 
   if (useMediaHost && uri.startsWith('http')) {
     // This option also serves as a proxy for any `http` source
-    return `${MEDIA_HOST}/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
+    return uri;
   }
 };
 
@@ -159,6 +159,7 @@ export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SI
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 
 const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
+const SVG_DATA_URI_BASE64_PREFIX = 'data:image/svg+xml;base64,';
 
 const assureGetDataUriImage = (uri?: string) => (uri?.startsWith('data:image/') ? uri : undefined);
 
@@ -166,6 +167,9 @@ export const isImgUriDataUri = (uri: string) => isSvgDataUriInUtf8Encoding(uri);
 
 const isSvgDataUriInUtf8Encoding = (uri: string) =>
   uri.slice(0, SVG_DATA_URI_UTF8_PREFIX.length).toLowerCase() === SVG_DATA_URI_UTF8_PREFIX;
+
+export const isSvgDataUriInBase64Encoding = (uri: string) =>
+  uri.slice(0, SVG_DATA_URI_BASE64_PREFIX.length).toLowerCase() === SVG_DATA_URI_BASE64_PREFIX;
 
 export const isImageRectangular = (uri?: string) => {
   if (isString(uri) && isSvgDataUriInUtf8Encoding(uri)) {
