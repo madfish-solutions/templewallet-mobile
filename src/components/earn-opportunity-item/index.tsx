@@ -56,7 +56,6 @@ export const EarnOpportunityItem = memo<Props>(
     const { stakeTokens, rewardToken } = useEarnOpportunityTokens(item);
     const itemIsFarm = isFarm(item);
     const isLiquidityBaking = itemType === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
-    const isKordFi = itemType === EarnOpportunityTypeEnum.KORD_FI_SAVING;
     const allTokensAreStablecoins = useMemo(
       () =>
         item.tokens.every(token =>
@@ -69,8 +68,6 @@ export const EarnOpportunityItem = memo<Props>(
         case EarnOpportunityTypeEnum.YOUVES_SAVING:
         case EarnOpportunityTypeEnum.YOUVES_STAKING:
           return 'Youves';
-        case EarnOpportunityTypeEnum.KORD_FI_SAVING:
-          return 'Kord.Fi';
         case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
           return 'Liquidity Baking';
 
@@ -83,8 +80,6 @@ export const EarnOpportunityItem = memo<Props>(
         case EarnOpportunityTypeEnum.YOUVES_SAVING:
         case EarnOpportunityTypeEnum.YOUVES_STAKING:
           return theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
-        case EarnOpportunityTypeEnum.KORD_FI_SAVING:
-          return IconNameEnum.KordFiEarnSource;
 
         default:
           return IconNameEnum.QsEarnSource;
@@ -151,13 +146,13 @@ export const EarnOpportunityItem = memo<Props>(
 
           <View style={[styles.row, styles.mb16]}>
             <StatsItem
-              title={isKordFi ? 'Your deposit & Rewards:' : 'Your deposit:'}
+              title="Your deposit:"
               amounts={depositAmounts}
               wasLoading={stakeWasLoading}
               fiatEquivalentIsMain={itemIsFarm}
               tokenSymbol={stakedToken.metadata.symbol}
             />
-            {!depositIsZero && !isLiquidityBaking && !isKordFi && (
+            {!depositIsZero && !isLiquidityBaking && (
               <StatsItem
                 title="Claimable rewards:"
                 amounts={claimableRewardsAmounts}

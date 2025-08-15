@@ -84,12 +84,10 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
 
       const { tokenOption, amountOptionIndex } = values;
       const { token } = tokenOption;
-      if (earnOpportunity.type !== EarnOpportunityTypeEnum.KORD_FI_SAVING) {
-        trackEvent('WITHDRAW_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
-          farmAddress: earnOpportunity.contractAddress,
-          token: token.symbol
-        });
-      }
+      trackEvent('WITHDRAW_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, {
+        farmAddress: earnOpportunity.contractAddress,
+        token: token.symbol
+      });
 
       const doWithdraw = async () => {
         setIsSubmitting(true);
