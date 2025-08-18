@@ -3,12 +3,12 @@
 buildscript {
     ext {
         buildToolsVersion = "33.0.0"
-        minSdkVersion = 26
-        compileSdkVersion = 34
-        targetSdkVersion = 34
+        minSdkVersion = 35
+        compileSdkVersion = 35
+        targetSdkVersion = 35
 
-        Themis_compileSdkVersion = 34
-        Themis_targetSdkVersion = 34
+        Themis_compileSdkVersion = 35
+        Themis_targetSdkVersion = 35
 
         kotlinVersion = "1.9.20"
         glideVersion = "4.16.0"
