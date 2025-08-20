@@ -14,6 +14,8 @@ export const getRewardsStats = (params: RewardsStatsCalculationParams) => {
 
   const balance = new BigNumber(delegatedBalance).plus(stakedBalance ?? 0);
 
+  const { totalRewards, totalCurrentRewards, totalFutureRewards } = getTotalRewards(reward);
+
   const cycleStatus: CycleStatus = (() => {
     switch (true) {
       case totalFutureRewards.eq(0) && (currentCycle === undefined || cycle <= currentCycle - 6):
@@ -26,7 +28,6 @@ export const getRewardsStats = (params: RewardsStatsCalculationParams) => {
         return CycleStatus.IN_PROGRESS;
     }
   })();
-  const { totalRewards, totalCurrentRewards, totalFutureRewards } = getTotalRewards(reward);
   const rewards = totalRewards.multipliedBy(balance).div(ownDelegatedBalance);
 
   let luck = expectedBlocks + expectedAttestations > 0 ? new BigNumber(-1) : new BigNumber(0);

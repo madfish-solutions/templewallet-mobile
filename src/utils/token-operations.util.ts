@@ -83,7 +83,7 @@ const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contrac
     })
     .then(x => x.data);
 
-const getTezosOperations = (selectedRpcUrl: string, account: string, lastId?: number) =>
+const getTezosOperations = (selectedRpcUrl: string, account: string, lastLevel?: number) =>
   getTzktApi(selectedRpcUrl)
     .get<Array<OperationInterface>>('operations/transactions', {
       params: {
@@ -91,7 +91,7 @@ const getTezosOperations = (selectedRpcUrl: string, account: string, lastId?: nu
         limit: OPERATION_LIMIT,
         'sort.desc': 'id',
         'amount.ne': '0',
-        ...(isDefined(lastId) ? { lastId } : undefined)
+        ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
       }
     })
     .then(x => x.data);
@@ -174,7 +174,7 @@ const loadOperations = async (
 
   if (isDefined(tokenSlug)) {
     if (tokenSlug === TEZ_TOKEN_SLUG) {
-      return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
+      return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.level);
     }
 
     if (contractAddress === LIQUIDITY_BAKING_DEX_ADDRESS) {
