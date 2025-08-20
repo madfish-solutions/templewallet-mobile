@@ -12,10 +12,27 @@ import { mutezToTz } from 'src/utils/tezos.util';
 
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
-export const Endorsements: FC<Pick<BakerRewardInterface, 'endorsements' | 'endorsementRewards'>> = ({
-  endorsements,
-  endorsementRewards
+export const Endorsements: FC<
+  Pick<
+    BakerRewardInterface['bakerRewards'],
+    | 'attestations'
+    | 'attestationRewardsDelegated'
+    | 'attestationRewardsStakedEdge'
+    | 'attestationRewardsStakedOwn'
+    | 'attestationRewardsStakedShared'
+  >
+> = ({
+  attestations,
+  attestationRewardsDelegated,
+  attestationRewardsStakedEdge,
+  attestationRewardsStakedOwn,
+  attestationRewardsStakedShared
 }) => {
+  const endorsementRewards = new BigNumber(attestationRewardsDelegated)
+    .plus(attestationRewardsStakedEdge)
+    .plus(attestationRewardsStakedOwn)
+    .plus(attestationRewardsStakedShared);
+
   const styles = useBakerRewardItemStyles();
   const { metadata } = useNetworkInfo();
 
@@ -37,13 +54,11 @@ export const Endorsements: FC<Pick<BakerRewardInterface, 'endorsements' | 'endor
               <Text style={styles.cellTitle}>Payout:</Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textGreen}>
-                +
-                {mutezToTz(new BigNumber(endorsementRewards), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() +
-                  ' '}
+                +{mutezToTz(endorsementRewards, 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
-                  for <Text style={styles.textBlack}>{endorsements.toString()} slots</Text>
+                  for <Text style={styles.textBlack}>{attestations.toString()} slots</Text>
                 </Text>
               </Text>
             </View>

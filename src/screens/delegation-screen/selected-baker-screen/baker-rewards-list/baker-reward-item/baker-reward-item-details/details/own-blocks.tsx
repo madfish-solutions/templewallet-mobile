@@ -12,11 +12,29 @@ import { formatSize } from '../../../../../../../styles/format-size';
 import { mutezToTz } from '../../../../../../../utils/tezos.util';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
-export const OwnBlocks: FC<Pick<BakerRewardInterface, 'ownBlocks' | 'ownBlockRewards' | 'ownBlockFees'>> = ({
-  ownBlocks,
-  ownBlockRewards,
-  ownBlockFees
+export const OwnBlocks: FC<
+  Pick<
+    BakerRewardInterface['bakerRewards'],
+    | 'blocks'
+    | 'blockRewardsDelegated'
+    | 'blockRewardsStakedEdge'
+    | 'blockRewardsStakedOwn'
+    | 'blockRewardsStakedShared'
+    | 'blockFees'
+  >
+> = ({
+  blocks,
+  blockRewardsDelegated,
+  blockRewardsStakedEdge,
+  blockRewardsStakedOwn,
+  blockRewardsStakedShared,
+  blockFees
 }) => {
+  const ownBlockRewards = new BigNumber(blockRewardsDelegated)
+    .plus(blockRewardsStakedEdge)
+    .plus(blockRewardsStakedOwn)
+    .plus(blockRewardsStakedShared);
+
   const styles = useBakerRewardItemStyles();
   const { metadata } = useNetworkInfo();
 
@@ -38,16 +56,16 @@ export const OwnBlocks: FC<Pick<BakerRewardInterface, 'ownBlocks' | 'ownBlockRew
               <Text style={styles.cellTitle}>Payout:</Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textGreen}>
-                +{mutezToTz(new BigNumber(ownBlockRewards), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
+                +{mutezToTz(ownBlockRewards, 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
-                  for <Text style={styles.textBlack}>{ownBlocks.toString()} blocks</Text>
+                  for <Text style={styles.textBlack}>{blocks.toString()} blocks</Text>
                 </Text>
               </Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textBlack}>
-                +{mutezToTz(new BigNumber(ownBlockFees), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
+                +{mutezToTz(new BigNumber(blockFees), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}> fees</Text>
               </Text>

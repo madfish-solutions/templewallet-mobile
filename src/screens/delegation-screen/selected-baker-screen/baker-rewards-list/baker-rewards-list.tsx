@@ -39,22 +39,41 @@ export const BakerRewardsList = memo<Props>(({ bakerRewards }) => {
     () =>
       bakerRewards.map(historyItem => {
         const {
-          endorsements,
-          endorsementRewards,
+          attestations,
+          attestationRewardsDelegated,
+          attestationRewardsStakedEdge,
+          attestationRewardsStakedOwn,
+          attestationRewardsStakedShared,
           futureBlocks,
           futureBlockRewards,
-          futureEndorsements,
-          futureEndorsementRewards,
-          ownBlocks,
-          ownBlockRewards
-        } = historyItem;
-        const rewardPerOwnBlock = ownBlocks === 0 ? undefined : new BigNumber(ownBlockRewards).div(ownBlocks);
+          futureAttestations,
+          futureAttestationRewards,
+          blocks,
+          blockRewardsDelegated,
+          blockRewardsStakedEdge,
+          blockRewardsStakedOwn,
+          blockRewardsStakedShared
+        } = historyItem.bakerRewards;
+        const rewardPerOwnBlock =
+          blocks === 0
+            ? undefined
+            : new BigNumber(blockRewardsDelegated)
+                .plus(blockRewardsStakedOwn)
+                .plus(blockRewardsStakedEdge)
+                .plus(blockRewardsStakedShared)
+                .div(blocks);
         const rewardPerEndorsement =
-          endorsements === 0 ? undefined : new BigNumber(endorsementRewards).div(endorsements);
+          attestations === 0
+            ? undefined
+            : new BigNumber(attestationRewardsDelegated)
+                .plus(attestationRewardsStakedOwn)
+                .plus(attestationRewardsStakedEdge)
+                .plus(attestationRewardsStakedShared)
+                .div(attestations);
         const rewardPerFutureBlock =
           futureBlocks === 0 ? undefined : new BigNumber(futureBlockRewards).div(futureBlocks);
         const rewardPerFutureEndorsement =
-          futureEndorsements === 0 ? undefined : new BigNumber(futureEndorsementRewards).div(futureEndorsements);
+          futureAttestations === 0 ? undefined : new BigNumber(futureAttestationRewards).div(futureAttestations);
 
         return {
           rewardPerOwnBlock,
@@ -84,12 +103,28 @@ export const BakerRewardsList = memo<Props>(({ bakerRewards }) => {
 
   const currentCycle = useMemo(
     () =>
-      bakerRewards?.find(({ extraBlockRewards, endorsementRewards, ownBlockRewards, ownBlockFees, extraBlockFees }) => {
-        const totalCurrentRewards = new BigNumber(extraBlockRewards)
-          .plus(endorsementRewards)
-          .plus(ownBlockRewards)
-          .plus(ownBlockFees)
-          .plus(extraBlockFees);
+      bakerRewards?.find(({ bakerRewards }) => {
+        const {
+          blockRewardsDelegated,
+          blockRewardsStakedEdge,
+          blockRewardsStakedOwn,
+          blockRewardsStakedShared,
+          attestationRewardsDelegated,
+          attestationRewardsStakedEdge,
+          attestationRewardsStakedOwn,
+          attestationRewardsStakedShared,
+          blockFees
+        } = bakerRewards;
+
+        const totalCurrentRewards = new BigNumber(blockRewardsDelegated)
+          .plus(blockRewardsStakedOwn)
+          .plus(blockRewardsStakedEdge)
+          .plus(blockRewardsStakedShared)
+          .plus(attestationRewardsDelegated)
+          .plus(attestationRewardsStakedOwn)
+          .plus(attestationRewardsStakedEdge)
+          .plus(attestationRewardsStakedShared)
+          .plus(blockFees);
 
         return totalCurrentRewards.gt(0);
       })?.cycle,

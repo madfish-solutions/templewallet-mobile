@@ -11,40 +11,59 @@ export const calculateLuck = (params: RewardsStatsCalculationParams, totalReward
     fallbackRewardPerFutureEndorsement
   } = params;
   const {
-    ownBlockRewards,
+    blockRewardsDelegated,
+    blockRewardsStakedShared,
+    blockRewardsStakedOwn,
+    blockRewardsStakedEdge,
     futureBlockRewards,
-    endorsementRewards,
-    futureEndorsementRewards,
+    futureAttestationRewards,
+    attestationRewardsDelegated,
+    attestationRewardsStakedShared,
+    attestationRewardsStakedOwn,
+    attestationRewardsStakedEdge,
     expectedBlocks,
-    expectedEndorsements,
-    ownBlocks,
+    expectedAttestations,
+    blocks,
     futureBlocks,
-    futureEndorsements,
-    endorsements
-  } = reward;
-  const rewardPerOwnBlock = ownBlocks === 0 ? fallbackRewardPerOwnBlock : new BigNumber(ownBlockRewards).div(ownBlocks);
+    futureAttestations,
+    attestations
+  } = reward.bakerRewards;
+  const rewardPerOwnBlock =
+    blocks === 0
+      ? fallbackRewardPerOwnBlock
+      : new BigNumber(blockRewardsDelegated)
+          .plus(blockRewardsStakedOwn)
+          .plus(blockRewardsStakedEdge)
+          .plus(blockRewardsStakedShared)
+          .div(blocks);
   const rewardPerEndorsement =
-    endorsements === 0 ? fallbackRewardPerEndorsement : new BigNumber(endorsementRewards).div(endorsements);
+    attestations === 0
+      ? fallbackRewardPerEndorsement
+      : new BigNumber(attestationRewardsDelegated)
+          .plus(attestationRewardsStakedOwn)
+          .plus(attestationRewardsStakedEdge)
+          .plus(attestationRewardsStakedShared)
+          .div(attestations);
   const asIfNoFutureExpectedBlockRewards = new BigNumber(expectedBlocks).multipliedBy(rewardPerOwnBlock);
-  const asIfNoFutureExpectedEndorsementRewards = new BigNumber(expectedEndorsements).multipliedBy(rewardPerEndorsement);
+  const asIfNoFutureExpectedEndorsementRewards = new BigNumber(expectedAttestations).multipliedBy(rewardPerEndorsement);
   const asIfNoFutureExpectedRewards = asIfNoFutureExpectedBlockRewards.plus(asIfNoFutureExpectedEndorsementRewards);
 
   const rewardPerFutureBlock =
     futureBlocks === 0 ? fallbackRewardPerFutureBlock : new BigNumber(futureBlockRewards).div(futureBlocks);
   const rewardPerFutureEndorsement =
-    futureEndorsements === 0
+    futureAttestations === 0
       ? fallbackRewardPerFutureEndorsement
-      : new BigNumber(futureEndorsementRewards).div(futureEndorsements);
+      : new BigNumber(futureAttestationRewards).div(futureAttestations);
   const asIfNoCurrentExpectedBlockRewards = new BigNumber(expectedBlocks).multipliedBy(rewardPerFutureBlock);
-  const asIfNoCurrentExpectedEndorsementRewards = new BigNumber(expectedEndorsements).multipliedBy(
+  const asIfNoCurrentExpectedEndorsementRewards = new BigNumber(expectedAttestations).multipliedBy(
     rewardPerFutureEndorsement
   );
   const asIfNoCurrentExpectedRewards = asIfNoCurrentExpectedBlockRewards.plus(asIfNoCurrentExpectedEndorsementRewards);
 
   const weights =
-    endorsements + futureEndorsements === 0
-      ? { current: ownBlocks, future: futureBlocks }
-      : { current: endorsements, future: futureEndorsements };
+    attestations + futureAttestations === 0
+      ? { current: blocks, future: futureBlocks }
+      : { current: attestations, future: futureAttestations };
   const totalExpectedRewards =
     weights.current + weights.future === 0
       ? new BigNumber(0)

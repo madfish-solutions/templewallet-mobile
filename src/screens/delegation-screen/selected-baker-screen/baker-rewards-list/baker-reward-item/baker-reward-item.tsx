@@ -52,7 +52,7 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
     [bakersList, bakerAddress]
   );
 
-  const { ownBlocks, endorsements, missedOwnBlocks, missedEndorsements } = reward;
+  const { blocks, attestations, missedBlocks, missedAttestations } = reward.bakerRewards;
 
   const { balance, rewards, luck, bakerFeePart, bakerFee, cycleStatus, efficiency } = getRewardsStats({
     reward,
@@ -95,8 +95,8 @@ export const BakerRewardItem: FC<Omit<RewardsStatsCalculationParams, 'bakerDetai
   })();
 
   const isDetailsButtonVisible = useMemo(
-    () => ownBlocks > 0 || endorsements > 0 || missedOwnBlocks > 0 || missedEndorsements > 0,
-    [ownBlocks, endorsements, missedOwnBlocks, missedEndorsements]
+    () => blocks > 0 || attestations > 0 || missedBlocks > 0 || missedAttestations > 0,
+    [blocks, attestations, missedBlocks, missedAttestations]
   );
 
   const feeStr = formatToPercentStr(bakerFeePart);

@@ -5,36 +5,15 @@ import { RewardsStatsCalculationParams } from '../interfaces/rewards-stats-calcu
 import { calculateLuck } from './calculate-luck';
 import { getBakingEfficiency } from './get-baking-efficiency';
 import { CycleStatus } from './get-cycle-status-icon';
+import { getTotalRewards } from './get-total-rewards';
 
 export const getRewardsStats = (params: RewardsStatsCalculationParams) => {
   const { reward, bakerDetails, currentCycle } = params;
-  const {
-    cycle,
-    balance,
-    ownBlockRewards,
-    extraBlockRewards,
-    futureBlockRewards,
-    endorsementRewards,
-    futureEndorsementRewards,
-    stakingBalance,
-    expectedBlocks,
-    expectedEndorsements,
-    ownBlockFees,
-    extraBlockFees,
-    revelationRewards,
-    doubleBakingRewards,
-    doubleEndorsingRewards
-  } = reward;
+  const { cycle, delegatedBalance, stakedBalance, bakerRewards } = reward;
+  const { ownDelegatedBalance, expectedBlocks, expectedAttestations } = bakerRewards;
 
-  const totalFutureRewards = new BigNumber(futureEndorsementRewards).plus(futureBlockRewards);
-  const totalCurrentRewards = new BigNumber(extraBlockRewards)
-    .plus(endorsementRewards)
-    .plus(ownBlockRewards)
-    .plus(ownBlockFees)
-    .plus(extraBlockFees)
-    .plus(revelationRewards)
-    .plus(doubleBakingRewards)
-    .plus(doubleEndorsingRewards);
+  const balance = new BigNumber(delegatedBalance).plus(stakedBalance ?? 0);
+
   const cycleStatus: CycleStatus = (() => {
     switch (true) {
       case totalFutureRewards.eq(0) && (currentCycle === undefined || cycle <= currentCycle - 6):
@@ -47,10 +26,10 @@ export const getRewardsStats = (params: RewardsStatsCalculationParams) => {
         return CycleStatus.IN_PROGRESS;
     }
   })();
-  const totalRewards = totalFutureRewards.plus(totalCurrentRewards);
-  const rewards = totalRewards.multipliedBy(balance).div(stakingBalance);
+  const { totalRewards, totalCurrentRewards, totalFutureRewards } = getTotalRewards(reward);
+  const rewards = totalRewards.multipliedBy(balance).div(ownDelegatedBalance);
 
-  let luck = expectedBlocks + expectedEndorsements > 0 ? new BigNumber(-1) : new BigNumber(0);
+  let luck = expectedBlocks + expectedAttestations > 0 ? new BigNumber(-1) : new BigNumber(0);
   if (totalFutureRewards.plus(totalCurrentRewards).gt(0)) {
     luck = calculateLuck(params, totalRewards);
   }

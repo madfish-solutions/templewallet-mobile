@@ -13,38 +13,59 @@ interface Props {
 
 export const BakerRewardItemDetails: FC<Props> = ({ reward }) => {
   const {
-    ownBlockRewards,
-    endorsementRewards,
-    ownBlocks,
-    endorsements,
-    ownBlockFees,
-    missedEndorsementRewards,
-    missedOwnBlockFees,
-    missedOwnBlockRewards,
-    missedOwnBlocks,
-    missedEndorsements
-  } = reward;
+    blockRewardsDelegated,
+    blockRewardsStakedShared,
+    blockRewardsStakedOwn,
+    blockRewardsStakedEdge,
+    attestationRewardsDelegated,
+    attestationRewardsStakedShared,
+    attestationRewardsStakedOwn,
+    attestationRewardsStakedEdge,
+    blocks,
+    attestations,
+    blockFees,
+    missedAttestationRewards,
+    missedBlockFees,
+    missedBlockRewards,
+    missedBlocks,
+    missedAttestations
+  } = reward.bakerRewards;
 
   return (
     <>
-      {ownBlocks > 0 && (
-        <OwnBlocks ownBlocks={ownBlocks} ownBlockRewards={ownBlockRewards} ownBlockFees={ownBlockFees} />
-      )}
-
-      {endorsements > 0 && <Endorsements endorsements={endorsements} endorsementRewards={endorsementRewards} />}
-
-      {missedOwnBlocks > 0 && (
-        <MissedOwnBlocks
-          missedOwnBlocks={missedOwnBlocks}
-          missedOwnBlockRewards={missedOwnBlockRewards}
-          missedOwnBlockFees={missedOwnBlockFees}
+      {blocks > 0 && (
+        <OwnBlocks
+          blocks={blocks}
+          blockFees={blockFees}
+          blockRewardsDelegated={blockRewardsDelegated}
+          blockRewardsStakedEdge={blockRewardsStakedEdge}
+          blockRewardsStakedOwn={blockRewardsStakedOwn}
+          blockRewardsStakedShared={blockRewardsStakedShared}
         />
       )}
 
-      {missedEndorsements > 0 && (
+      {attestations > 0 && (
+        <Endorsements
+          attestations={attestations}
+          attestationRewardsDelegated={attestationRewardsDelegated}
+          attestationRewardsStakedEdge={attestationRewardsStakedEdge}
+          attestationRewardsStakedOwn={attestationRewardsStakedOwn}
+          attestationRewardsStakedShared={attestationRewardsStakedShared}
+        />
+      )}
+
+      {missedBlocks > 0 && (
+        <MissedOwnBlocks
+          missedBlocks={missedBlocks}
+          missedBlockRewards={missedBlockRewards}
+          missedBlockFees={missedBlockFees}
+        />
+      )}
+
+      {missedAttestations > 0 && (
         <MissedEndorsements
-          missedEndorsements={missedEndorsements}
-          missedEndorsementRewards={missedEndorsementRewards}
+          missedAttestations={missedAttestations}
+          missedAttestationRewards={missedAttestationRewards}
         />
       )}
     </>

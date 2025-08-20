@@ -13,8 +13,8 @@ import { mutezToTz } from '../../../../../../../utils/tezos.util';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
 export const MissedOwnBlocks: FC<
-  Pick<BakerRewardInterface, 'missedOwnBlocks' | 'missedOwnBlockRewards' | 'missedOwnBlockFees'>
-> = ({ missedOwnBlocks, missedOwnBlockRewards, missedOwnBlockFees }) => {
+  Pick<BakerRewardInterface['bakerRewards'], 'missedBlockFees' | 'missedBlockRewards' | 'missedBlocks'>
+> = ({ missedBlockFees, missedBlockRewards, missedBlocks }) => {
   const styles = useBakerRewardItemStyles();
   const { metadata } = useNetworkInfo();
 
@@ -37,19 +37,17 @@ export const MissedOwnBlocks: FC<
               <Divider size={formatSize(2)} />
               <Text style={styles.textRed}>
                 -
-                {mutezToTz(new BigNumber(missedOwnBlockRewards), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() +
+                {mutezToTz(new BigNumber(missedBlockRewards), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() +
                   ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
-                  for <Text style={styles.textBlack}>{missedOwnBlocks.toString()} blocks</Text>
+                  for <Text style={styles.textBlack}>{missedBlocks.toString()} blocks</Text>
                 </Text>
               </Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textBlack}>
-                -
-                {mutezToTz(new BigNumber(missedOwnBlockFees), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() +
-                  ' '}
+                -{mutezToTz(new BigNumber(missedBlockFees), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}> fees</Text>
               </Text>

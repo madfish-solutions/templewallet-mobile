@@ -12,10 +12,9 @@ import { formatSize } from '../../../../../../../styles/format-size';
 import { mutezToTz } from '../../../../../../../utils/tezos.util';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
-export const MissedEndorsements: FC<Pick<BakerRewardInterface, 'missedEndorsements' | 'missedEndorsementRewards'>> = ({
-  missedEndorsements,
-  missedEndorsementRewards
-}) => {
+export const MissedEndorsements: FC<
+  Pick<BakerRewardInterface['bakerRewards'], 'missedAttestations' | 'missedAttestationRewards'>
+> = ({ missedAttestations, missedAttestationRewards }) => {
   const styles = useBakerRewardItemStyles();
   const { metadata } = useNetworkInfo();
 
@@ -38,13 +37,13 @@ export const MissedEndorsements: FC<Pick<BakerRewardInterface, 'missedEndorsemen
               <Divider size={formatSize(2)} />
               <Text style={styles.textRed}>
                 -
-                {mutezToTz(new BigNumber(missedEndorsementRewards), 6)
+                {mutezToTz(new BigNumber(missedAttestationRewards), 6)
                   .decimalPlaces(2, BigNumber.ROUND_FLOOR)
                   .toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
-                  for <Text style={styles.textBlack}>{missedEndorsements.toString()} slots</Text>
+                  for <Text style={styles.textBlack}>{missedAttestations.toString()} slots</Text>
                 </Text>
               </Text>
             </View>
