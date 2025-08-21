@@ -1,4 +1,4 @@
-import { transparent } from '../../config/styles';
+import { DEFAULT_BORDER_WIDTH, transparent } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -39,7 +39,7 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     paddingTop: formatSize(12),
     paddingBottom: formatSize(12),
     borderColor: colors.lines,
-    borderRightWidth: formatSize(0.5)
+    borderRightWidth: DEFAULT_BORDER_WIDTH
   },
   maxButtonText: {
     ...typography.tagline13Tag,

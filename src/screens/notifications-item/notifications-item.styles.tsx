@@ -1,3 +1,4 @@
+import { DEFAULT_BORDER_WIDTH } from '../../config/styles';
 import { createUseStyles } from '../../styles/create-use-styles';
 import { formatSize } from '../../styles/format-size';
 
@@ -8,7 +9,7 @@ export const useNotificationsItemStyles = createUseStyles(({ colors, typography 
     paddingHorizontal: formatSize(16),
     paddingTop: formatSize(8),
     borderColor: colors.lines,
-    borderTopWidth: formatSize(0.5)
+    borderTopWidth: DEFAULT_BORDER_WIDTH
   },
   title: {
     ...typography.body20Bold,

@@ -1,3 +1,4 @@
+import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -52,8 +53,8 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     paddingVertical: formatSize(8),
     paddingHorizontal: formatSize(16),
     borderColor: colors.lines,
-    borderBottomWidth: formatSize(0.5),
-    borderTopWidth: formatSize(0.5),
+    borderBottomWidth: DEFAULT_BORDER_WIDTH,
+    borderTopWidth: DEFAULT_BORDER_WIDTH,
     backgroundColor: colors.pageBG,
     height: formatSize(40)
   },

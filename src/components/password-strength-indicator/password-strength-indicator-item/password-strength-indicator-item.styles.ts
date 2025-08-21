@@ -2,10 +2,12 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { hexa } from 'src/utils/style.util';
 
+import { DEFAULT_BORDER_WIDTH } from '../../../config/styles';
+
 export const usePasswordStrengthIndicatorItemStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     borderRadius: formatSize(4),
-    borderWidth: formatSize(0.5),
+    borderWidth: DEFAULT_BORDER_WIDTH,
     paddingVertical: formatSize(4),
     paddingHorizontal: formatSize(10)
   },

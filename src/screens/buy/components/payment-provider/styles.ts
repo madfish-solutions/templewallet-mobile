@@ -1,4 +1,4 @@
-import { white } from 'src/config/styles';
+import { DEFAULT_BORDER_WIDTH, white } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -33,7 +33,7 @@ export const usePaymentProviderStyles = createUseStyles(({ colors, typography })
     alignItems: 'center'
   },
   logoContainer: {
-    borderWidth: formatSize(0.5),
+    borderWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
     borderRadius: formatSize(8),
     padding: formatSize(6),
