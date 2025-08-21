@@ -1,7 +1,6 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 import { useMemo } from 'react';
 
-import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 import { useColors } from 'src/styles/use-colors';
 

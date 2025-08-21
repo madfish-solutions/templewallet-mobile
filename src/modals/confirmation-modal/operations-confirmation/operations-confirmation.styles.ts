@@ -1,6 +1,5 @@
 import { DEFAULT_BORDER_WIDTH } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
 
 export const useOperationsConfirmationStyles = createUseStyles(({ colors, typography }) => ({
   loadingMessage: {
