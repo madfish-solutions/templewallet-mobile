@@ -5,10 +5,10 @@ buildscript {
         buildToolsVersion = "33.0.0"
         minSdkVersion = 26
         compileSdkVersion = 34
-        targetSdkVersion = 34
+        targetSdkVersion = 35
 
         Themis_compileSdkVersion = 34
-        Themis_targetSdkVersion = 34
+        Themis_targetSdkVersion = 35
 
         kotlinVersion = "1.9.20"
         glideVersion = "4.16.0"
