@@ -1,4 +1,4 @@
-import { black } from 'src/config/styles';
+import { black, DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -12,12 +12,12 @@ export const useDetailsSectionStyles = createUseStylesMemoized(({ colors, typogr
     padding: formatSize(4),
     borderRadius: formatSize(4),
     backgroundColor: colors.black,
-    border: formatSize(0.5),
+    border: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines
   },
   youvesIconWrapper: {
     borderRadius: formatSize(6),
-    border: formatSize(0.5),
+    border: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
     backgroundColor: colors.darkGreen
   },

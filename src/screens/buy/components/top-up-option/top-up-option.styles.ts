@@ -1,6 +1,8 @@
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
+import { DEFAULT_BORDER_WIDTH } from '../../../../config/styles';
+
 export const useTopUpOptionStyles = createUseStyles(({ colors, typography }) => ({
   content: {
     padding: formatSize(16),
@@ -8,7 +10,7 @@ export const useTopUpOptionStyles = createUseStyles(({ colors, typography }) => 
   },
   divider: {
     width: '100%',
-    borderBottomWidth: formatSize(0.5),
+    borderBottomWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
     marginVertical: formatSize(12.5)
   },

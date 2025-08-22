@@ -1,9 +1,10 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 import { useMemo } from 'react';
 
-import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
 import { useColors } from 'src/styles/use-colors';
+
+import { DEFAULT_BORDER_WIDTH } from '../../config/styles';
 
 export const useStackNavigatorStyleOptions = (): StackNavigationOptions => {
   const colors = useColors();
@@ -13,7 +14,7 @@ export const useStackNavigatorStyleOptions = (): StackNavigationOptions => {
       headerStyle: {
         ...generateShadow(1, colors.lines),
         backgroundColor: colors.navigation,
-        borderBottomWidth: formatSize(0.5),
+        borderBottomWidth: DEFAULT_BORDER_WIDTH,
         borderBottomColor: colors.lines
       },
       headerTitleStyle: { color: colors.black },
