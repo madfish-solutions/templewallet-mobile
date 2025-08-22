@@ -1,3 +1,5 @@
+import { DEFAULT_BORDER_WIDTH } from '../config/styles';
+
 import { createUseStyles } from './create-use-styles';
 import { formatSize } from './format-size';
 
@@ -6,7 +8,7 @@ export const useSetPasswordScreensCommonStyles = createUseStyles(({ colors, typo
     marginTop: 'auto'
   },
   fixedButtonContainer: {
-    borderTopWidth: formatSize(0.5),
+    borderTopWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),

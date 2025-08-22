@@ -1,3 +1,4 @@
+import { DEFAULT_BORDER_WIDTH } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 
@@ -8,7 +9,7 @@ export const useNotificationPreviewItemStyles = createUseStyles(({ colors, typog
     paddingLeft: formatSize(20),
     paddingRight: formatSize(22),
     paddingVertical: formatSize(16),
-    borderBottomWidth: formatSize(0.5),
+    borderBottomWidth: DEFAULT_BORDER_WIDTH,
     borderBottomColor: colors.lines
   },
   containerRead: {

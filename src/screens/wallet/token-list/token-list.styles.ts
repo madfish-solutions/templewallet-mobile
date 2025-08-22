@@ -1,3 +1,4 @@
+import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -16,7 +17,7 @@ export const useTokenListStyles = createUseStylesMemoized(({ colors, typography 
     paddingRight: formatSize(16),
     paddingLeft: formatSize(28),
     borderBottomColor: colors.lines,
-    borderBottomWidth: formatSize(0.5)
+    borderBottomWidth: DEFAULT_BORDER_WIDTH
   },
   hideZeroBalanceContainer: {
     flexDirection: 'row',

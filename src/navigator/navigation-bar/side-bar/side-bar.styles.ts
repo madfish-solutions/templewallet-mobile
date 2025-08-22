@@ -1,4 +1,4 @@
-import { black, SIDEBAR_WIDTH } from '../../../config/styles';
+import { black, DEFAULT_BORDER_WIDTH, SIDEBAR_WIDTH } from '../../../config/styles';
 import { createUseStyles } from '../../../styles/create-use-styles';
 import { formatSize } from '../../../styles/format-size';
 import { generateShadow } from '../../../styles/generate-shadow';
@@ -13,7 +13,7 @@ export const useSideBarStyles = createUseStyles(({ colors }) => ({
       zIndex: 1
     }),
     ...androidStyles({
-      borderRightWidth: formatSize(0.5),
+      borderRightWidth: DEFAULT_BORDER_WIDTH,
       borderRightColor: colors.lines
     })
   },

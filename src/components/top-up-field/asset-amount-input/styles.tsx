@@ -1,4 +1,4 @@
-import { transparent } from 'src/config/styles';
+import { DEFAULT_BORDER_WIDTH, transparent } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -38,7 +38,7 @@ export const useTopUpAssetAmountInputStyles = createUseStyles(({ colors, typogra
     paddingTop: formatSize(12),
     paddingBottom: formatSize(12),
     borderColor: colors.lines,
-    borderRightWidth: formatSize(0.5)
+    borderRightWidth: DEFAULT_BORDER_WIDTH
   },
   disabledInput: {
     ...typography.numbersMedium22,

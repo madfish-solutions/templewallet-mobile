@@ -1,6 +1,8 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
+import { DEFAULT_BORDER_WIDTH } from '../../config/styles';
+
 export const useEarnOpportunityModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
   background: {
     backgroundColor: colors.pageBG,
@@ -37,7 +39,7 @@ export const useEarnOpportunityModalStyles = createUseStylesMemoized(({ colors, 
     padding: formatSize(4),
     borderRadius: formatSize(4),
     backgroundColor: colors.black,
-    border: formatSize(0.5),
+    border: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines
   }
 }));
