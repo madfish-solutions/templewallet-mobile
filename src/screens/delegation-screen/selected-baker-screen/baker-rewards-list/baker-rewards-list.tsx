@@ -8,6 +8,7 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { showErrorToast } from 'src/toast/toast.utils';
 
 import { BakerRewardItem } from './baker-reward-item/baker-reward-item';
 import { useBakerRewardsListStyles } from './baker-rewards-list.styles';
@@ -56,28 +57,34 @@ export const BakerRewardsList = memo(() => {
 
   const getBakingHistory = useCallback(
     async ([, accountPkh, , selectedRpcUrl]: [string, string, string | nullish, string]) => {
-      const [rewards, cycles, protocol] = await Promise.all([
-        getDelegatorRewards(selectedRpcUrl, { address: accountPkh, limit: 30 }).then(res => res || []),
-        getCycles(selectedRpcUrl),
-        getProtocol(selectedRpcUrl)
-      ]);
-      const bakersAddresses = uniq(rewards.map(({ baker }) => baker.address));
-      const setParamsOperationsValues = await Promise.all(
-        bakersAddresses.map(address =>
-          fetchSetDelegateParametersOperations(selectedRpcUrl, { sender: address, 'sort.desc': 'level' })
-        )
-      );
-      const storiesValues = await Promise.all(bakersAddresses.map(address => bakingBadGetBakerStory({ address })));
+      try {
+        const [rewards, cycles, protocol] = await Promise.all([
+          getDelegatorRewards(selectedRpcUrl, { address: accountPkh, limit: 30 }).then(res => res || []),
+          getCycles(selectedRpcUrl),
+          getProtocol(selectedRpcUrl)
+        ]);
+        const bakersAddresses = uniq(rewards.map(({ baker }) => baker.address));
+        const setParamsOperationsValues = await Promise.all(
+          bakersAddresses.map(address =>
+            fetchSetDelegateParametersOperations(selectedRpcUrl, { sender: address, 'sort.desc': 'level' })
+          )
+        );
+        const storiesValues = await Promise.all(bakersAddresses.map(address => bakingBadGetBakerStory({ address })));
 
-      return {
-        rewards,
-        cycles: Object.fromEntries(cycles.map(cycle => [cycle.index, cycle])),
-        protocol,
-        setParamsOperations: Object.fromEntries(
-          bakersAddresses.map((address, i) => [address, setParamsOperationsValues[i]])
-        ),
-        stories: Object.fromEntries(bakersAddresses.map((address, i) => [address, storiesValues[i]]))
-      };
+        return {
+          rewards,
+          cycles: Object.fromEntries(cycles.map(cycle => [cycle.index, cycle])),
+          protocol,
+          setParamsOperations: Object.fromEntries(
+            bakersAddresses.map((address, i) => [address, setParamsOperationsValues[i]])
+          ),
+          stories: Object.fromEntries(bakersAddresses.map((address, i) => [address, storiesValues[i]]))
+        };
+      } catch {
+        showErrorToast({ description: 'Failed to load rewards history' });
+
+        return undefined;
+      }
     },
     []
   );
@@ -89,7 +96,11 @@ export const BakerRewardsList = memo(() => {
   );
 
   const bakingHistory = useMemo(() => {
-    const { rewards, cycles, protocol, setParamsOperations, stories } = bakingHistoryInput!;
+    if (!bakingHistoryInput) {
+      return [];
+    }
+
+    const { rewards, cycles, protocol, setParamsOperations, stories } = bakingHistoryInput;
 
     const nowDate = new Date().toISOString();
     const currentCycleIndex = Object.values(cycles).find(
