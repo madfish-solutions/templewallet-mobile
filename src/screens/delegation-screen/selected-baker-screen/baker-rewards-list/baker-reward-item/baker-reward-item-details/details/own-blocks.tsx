@@ -2,39 +2,20 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { formatSize } from 'src/styles/format-size';
 
-import { Divider } from '../../../../../../../components/divider/divider';
-import { Icon } from '../../../../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../../../../components/icon/icon-name.enum';
-import { BakerRewardInterface } from '../../../../../../../interfaces/baker-reward.interface';
-import { formatSize } from '../../../../../../../styles/format-size';
-import { mutezToTz } from '../../../../../../../utils/tezos.util';
+import { BakingHistoryEntry } from '../../../interfaces/baking-history-entry';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
-export const OwnBlocks: FC<
-  Pick<
-    BakerRewardInterface['bakerRewards'],
-    | 'blocks'
-    | 'blockRewardsDelegated'
-    | 'blockRewardsStakedEdge'
-    | 'blockRewardsStakedOwn'
-    | 'blockRewardsStakedShared'
-    | 'blockFees'
-  >
-> = ({
+export const OwnBlocks: FC<Pick<BakingHistoryEntry, 'blocks' | 'blockRewards' | 'blockFees'>> = ({
   blocks,
-  blockRewardsDelegated,
-  blockRewardsStakedEdge,
-  blockRewardsStakedOwn,
-  blockRewardsStakedShared,
+  blockRewards,
   blockFees
 }) => {
-  const ownBlockRewards = new BigNumber(blockRewardsDelegated)
-    .plus(blockRewardsStakedEdge)
-    .plus(blockRewardsStakedOwn)
-    .plus(blockRewardsStakedShared);
-
   const styles = useBakerRewardItemStyles();
   const { metadata } = useNetworkInfo();
 
@@ -56,7 +37,7 @@ export const OwnBlocks: FC<
               <Text style={styles.cellTitle}>Payout:</Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textGreen}>
-                +{mutezToTz(ownBlockRewards, 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
+                +{blockRewards.decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
@@ -65,7 +46,7 @@ export const OwnBlocks: FC<
               </Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textBlack}>
-                +{mutezToTz(new BigNumber(blockFees), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
+                +{blockFees.decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}> fees</Text>
               </Text>

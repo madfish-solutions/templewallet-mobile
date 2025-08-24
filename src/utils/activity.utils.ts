@@ -1,6 +1,6 @@
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { ActivityGroup, ActivityInterface, emptyActivity } from '../interfaces/activity.interface';
-import { TzktTokenTransfer } from '../interfaces/tzkt.interface';
+import { TzktTokenTransfer } from '../interfaces/tzkt/token-transfer.interface';
 
 import { isDefined } from './is-defined';
 

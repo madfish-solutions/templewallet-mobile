@@ -1,8 +1,8 @@
-type TzktQuoteCurrency = 'None' | 'Btc' | 'Eur' | 'Usd' | 'Cny' | 'Jpy' | 'Krw';
+export type TzktQuoteCurrency = 'None' | 'Btc' | 'Eur' | 'Usd' | 'Cny' | 'Jpy' | 'Krw';
 
-type TzktQuote = Partial<Record<TzktQuoteCurrency, number>>;
+export type TzktQuote = Partial<Record<TzktQuoteCurrency, number>>;
 
-export interface BakerRewardInterface {
+export interface TzktRewardsEntry {
   cycle: number;
   baker: {
     alias?: string;

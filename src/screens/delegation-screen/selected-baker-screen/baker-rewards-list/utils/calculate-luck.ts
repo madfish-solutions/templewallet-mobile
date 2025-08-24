@@ -1,15 +1,10 @@
 import { BigNumber } from 'bignumber.js';
 
+import { ZERO } from 'src/utils/number.util';
+
 import { RewardsStatsCalculationParams } from '../interfaces/rewards-stats-calculation-params';
 
-export const calculateLuck = (params: RewardsStatsCalculationParams, totalRewards: BigNumber) => {
-  const {
-    reward,
-    fallbackRewardPerOwnBlock,
-    fallbackRewardPerEndorsement,
-    fallbackRewardPerFutureBlock,
-    fallbackRewardPerFutureEndorsement
-  } = params;
+export const calculateLuck = (rewardsEntry: RewardsStatsCalculationParams['rewardsEntry'], totalRewards: number) => {
   const {
     blockRewardsDelegated,
     blockRewardsStakedShared,
@@ -27,10 +22,10 @@ export const calculateLuck = (params: RewardsStatsCalculationParams, totalReward
     futureBlocks,
     futureAttestations,
     attestations
-  } = reward.bakerRewards;
+  } = rewardsEntry.bakerRewards;
   const rewardPerOwnBlock =
     blocks === 0
-      ? fallbackRewardPerOwnBlock
+      ? ZERO
       : new BigNumber(blockRewardsDelegated)
           .plus(blockRewardsStakedOwn)
           .plus(blockRewardsStakedEdge)
@@ -38,7 +33,7 @@ export const calculateLuck = (params: RewardsStatsCalculationParams, totalReward
           .div(blocks);
   const rewardPerEndorsement =
     attestations === 0
-      ? fallbackRewardPerEndorsement
+      ? ZERO
       : new BigNumber(attestationRewardsDelegated)
           .plus(attestationRewardsStakedOwn)
           .plus(attestationRewardsStakedEdge)
@@ -48,12 +43,9 @@ export const calculateLuck = (params: RewardsStatsCalculationParams, totalReward
   const asIfNoFutureExpectedEndorsementRewards = new BigNumber(expectedAttestations).multipliedBy(rewardPerEndorsement);
   const asIfNoFutureExpectedRewards = asIfNoFutureExpectedBlockRewards.plus(asIfNoFutureExpectedEndorsementRewards);
 
-  const rewardPerFutureBlock =
-    futureBlocks === 0 ? fallbackRewardPerFutureBlock : new BigNumber(futureBlockRewards).div(futureBlocks);
+  const rewardPerFutureBlock = futureBlocks === 0 ? ZERO : new BigNumber(futureBlockRewards).div(futureBlocks);
   const rewardPerFutureEndorsement =
-    futureAttestations === 0
-      ? fallbackRewardPerFutureEndorsement
-      : new BigNumber(futureAttestationRewards).div(futureAttestations);
+    futureAttestations === 0 ? ZERO : new BigNumber(futureAttestationRewards).div(futureAttestations);
   const asIfNoCurrentExpectedBlockRewards = new BigNumber(expectedBlocks).multipliedBy(rewardPerFutureBlock);
   const asIfNoCurrentExpectedEndorsementRewards = new BigNumber(expectedAttestations).multipliedBy(
     rewardPerFutureEndorsement
@@ -72,5 +64,5 @@ export const calculateLuck = (params: RewardsStatsCalculationParams, totalReward
           .plus(asIfNoCurrentExpectedRewards.multipliedBy(weights.future))
           .div(new BigNumber(weights.current).plus(weights.future));
 
-  return totalRewards.minus(totalExpectedRewards).div(totalExpectedRewards);
+  return new BigNumber(totalRewards).minus(totalExpectedRewards).div(totalExpectedRewards);
 };

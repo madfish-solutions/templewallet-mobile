@@ -2,19 +2,19 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { formatSize } from 'src/styles/format-size';
 
-import { Divider } from '../../../../../../../components/divider/divider';
-import { Icon } from '../../../../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../../../../components/icon/icon-name.enum';
-import { BakerRewardInterface } from '../../../../../../../interfaces/baker-reward.interface';
-import { formatSize } from '../../../../../../../styles/format-size';
-import { mutezToTz } from '../../../../../../../utils/tezos.util';
+import { BakingHistoryEntry } from '../../../interfaces/baking-history-entry';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
-export const MissedEndorsements: FC<
-  Pick<BakerRewardInterface['bakerRewards'], 'missedAttestations' | 'missedAttestationRewards'>
-> = ({ missedAttestations, missedAttestationRewards }) => {
+export const MissedEndorsements: FC<Pick<BakingHistoryEntry, 'missedAttestations' | 'missedAttestationRewards'>> = ({
+  missedAttestations,
+  missedAttestationRewards
+}) => {
   const styles = useBakerRewardItemStyles();
   const { metadata } = useNetworkInfo();
 
@@ -36,10 +36,7 @@ export const MissedEndorsements: FC<
               <Text style={styles.cellTitle}>Payout:</Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textRed}>
-                -
-                {mutezToTz(new BigNumber(missedAttestationRewards), 6)
-                  .decimalPlaces(2, BigNumber.ROUND_FLOOR)
-                  .toString() + ' '}
+                -{missedAttestationRewards.decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}

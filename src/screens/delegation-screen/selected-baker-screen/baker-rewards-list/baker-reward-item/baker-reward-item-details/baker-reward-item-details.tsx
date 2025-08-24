@@ -1,26 +1,16 @@
 import React, { FC } from 'react';
 
-import { BakerRewardInterface } from '../../../../../../interfaces/baker-reward.interface';
+import { BakingHistoryEntry } from '../../interfaces/baking-history-entry';
 
 import { Endorsements } from './details/endorsements';
 import { MissedEndorsements } from './details/missed-endorsements';
 import { MissedOwnBlocks } from './details/missed-own-blocks';
 import { OwnBlocks } from './details/own-blocks';
 
-interface Props {
-  reward: BakerRewardInterface;
-}
-
-export const BakerRewardItemDetails: FC<Props> = ({ reward }) => {
+export const BakerRewardItemDetails: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
   const {
-    blockRewardsDelegated,
-    blockRewardsStakedShared,
-    blockRewardsStakedOwn,
-    blockRewardsStakedEdge,
-    attestationRewardsDelegated,
-    attestationRewardsStakedShared,
-    attestationRewardsStakedOwn,
-    attestationRewardsStakedEdge,
+    blockRewards,
+    attestationRewards,
     blocks,
     attestations,
     blockFees,
@@ -29,30 +19,13 @@ export const BakerRewardItemDetails: FC<Props> = ({ reward }) => {
     missedBlockRewards,
     missedBlocks,
     missedAttestations
-  } = reward.bakerRewards;
+  } = item;
 
   return (
     <>
-      {blocks > 0 && (
-        <OwnBlocks
-          blocks={blocks}
-          blockFees={blockFees}
-          blockRewardsDelegated={blockRewardsDelegated}
-          blockRewardsStakedEdge={blockRewardsStakedEdge}
-          blockRewardsStakedOwn={blockRewardsStakedOwn}
-          blockRewardsStakedShared={blockRewardsStakedShared}
-        />
-      )}
+      {blocks > 0 && <OwnBlocks blocks={blocks} blockFees={blockFees} blockRewards={blockRewards} />}
 
-      {attestations > 0 && (
-        <Endorsements
-          attestations={attestations}
-          attestationRewardsDelegated={attestationRewardsDelegated}
-          attestationRewardsStakedEdge={attestationRewardsStakedEdge}
-          attestationRewardsStakedOwn={attestationRewardsStakedOwn}
-          attestationRewardsStakedShared={attestationRewardsStakedShared}
-        />
-      )}
+      {attestations > 0 && <Endorsements attestations={attestations} attestationRewards={attestationRewards} />}
 
       {missedBlocks > 0 && (
         <MissedOwnBlocks

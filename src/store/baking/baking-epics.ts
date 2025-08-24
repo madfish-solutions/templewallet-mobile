@@ -5,17 +5,13 @@ import { from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { ofType } from 'ts-action-operators';
 
-import { getTzktApi } from 'src/api.service';
 import { BakerInterface, bakingBadApi, fetchBaker, buildUnknownBaker } from 'src/apis/baking-bad';
-import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
 import type { RootState } from 'src/store/types';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { RPC_RETRY_OPTIONS } from 'src/utils/tezos.util';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import { loadBakerRewardsListActions, loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
-
-const NUMBER_OF_BAKER_REWARDS_TO_LOAD = 30;
+import { loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 
 const loadSelectedBakerAddressEpic: Epic<Action, Action, RootState> = (action$, state$) =>
   action$.pipe(
@@ -62,21 +58,4 @@ const loadBakersListEpic: Epic = action$ =>
     )
   );
 
-const loadBakerRewardsListEpic: Epic<Action, Action, RootState> = (action$, state$) =>
-  action$.pipe(
-    ofType(loadBakerRewardsListActions.submit),
-    withSelectedAccount(state$),
-    withSelectedRpcUrl(state$),
-    switchMap(([[, selectedAccount], selectedRpcUrl]) =>
-      from(
-        getTzktApi(selectedRpcUrl).get<BakerRewardInterface[]>(`/rewards/delegators/${selectedAccount.publicKeyHash}`, {
-          params: { limit: NUMBER_OF_BAKER_REWARDS_TO_LOAD }
-        })
-      ).pipe(
-        map(({ data }) => loadBakerRewardsListActions.success(data)),
-        catchError(err => of(loadBakerRewardsListActions.fail(err.message)))
-      )
-    )
-  );
-
-export const bakingEpics = combineEpics(loadSelectedBakerAddressEpic, loadBakersListEpic, loadBakerRewardsListEpic);
+export const bakingEpics = combineEpics(loadSelectedBakerAddressEpic, loadBakersListEpic);

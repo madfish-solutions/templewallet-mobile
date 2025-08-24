@@ -1,149 +1,154 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import { BigNumber } from 'bignumber.js';
+import { identity, uniq } from 'lodash';
 import React, { memo, useCallback, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
+import useSWR from 'swr';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
-import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 
 import { BakerRewardItem } from './baker-reward-item/baker-reward-item';
 import { useBakerRewardsListStyles } from './baker-rewards-list.styles';
-import { reduceFunction } from './utils/reduce-function';
-
-type RewardsPerEventHistoryItem = Partial<
-  Record<
-    'rewardPerOwnBlock' | 'rewardPerEndorsement' | 'rewardPerFutureBlock' | 'rewardPerFutureEndorsement',
-    BigNumber
-  >
->;
-
-const allRewardsPerEventKeys: (keyof RewardsPerEventHistoryItem)[] = [
-  'rewardPerOwnBlock',
-  'rewardPerEndorsement',
-  'rewardPerFutureBlock',
-  'rewardPerFutureEndorsement'
-];
+import { BakingBadStory } from './interfaces/baking-bad';
+import { BakingHistoryEntry } from './interfaces/baking-history-entry';
+import { TzktSetDelegateParamsOperation } from './interfaces/tzkt';
+import { bakingBadGetBakerStory } from './utils/baking-bad';
+import { CycleStatus } from './utils/get-cycle-status-icon';
+import { getRewardsStats } from './utils/get-rewards-stats';
+import { fetchSetDelegateParametersOperations, getCycles, getDelegatorRewards, getProtocol } from './utils/tzkt';
 
 const AVERAGE_ITEM_HEIGHT = 280;
 
-interface Props {
-  bakerRewards: BakerRewardInterface[];
-}
+const FALLBACK_STORY: BakingBadStory = {
+  address: '',
+  name: [{ cycle: 0, value: '' }],
+  status: [{ cycle: 0, value: 'active' }],
+  delegationEnabled: [{ cycle: 0, value: true }],
+  delegationFee: [{ cycle: 0, value: 0 }],
+  delegationMinBalance: [{ cycle: 0, value: 0 }],
+  stakingEnabled: [{ cycle: 0, value: true }],
+  stakingFee: [{ cycle: 0, value: 0 }],
+  stakingLimit: [{ cycle: 0, value: 0 }]
+};
 
-const keyExtractor = (item: BakerRewardInterface) => `${item.cycle},${item.baker.address}`;
+const keyExtractor = (item: BakingHistoryEntry) => `${item.cycle},${item.bakerAddress}`;
 
-export const BakerRewardsList = memo<Props>(({ bakerRewards }) => {
+const getCycleValue = <T, U>(
+  entries: T[],
+  cycle: number,
+  getCycle: (entry: T) => number,
+  getValue: (entry: T) => U,
+  defaultValue: U
+) => {
+  const prevEntry = entries.find(entry => getCycle(entry) < cycle);
+
+  return prevEntry ? getValue(prevEntry) : defaultValue;
+};
+
+export const BakerRewardsList = memo(() => {
+  const selectedBaker = useSelectedBakerSelector();
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const accountPkh = useCurrentAccountPkhSelector();
+
   const styles = useBakerRewardsListStyles();
 
-  const rewardsPerEventHistory = useMemo(
-    () =>
-      bakerRewards.map(historyItem => {
-        const {
-          attestations,
-          attestationRewardsDelegated,
-          attestationRewardsStakedEdge,
-          attestationRewardsStakedOwn,
-          attestationRewardsStakedShared,
-          futureBlocks,
-          futureBlockRewards,
-          futureAttestations,
-          futureAttestationRewards,
-          blocks,
-          blockRewardsDelegated,
-          blockRewardsStakedEdge,
-          blockRewardsStakedOwn,
-          blockRewardsStakedShared
-        } = historyItem.bakerRewards;
-        const rewardPerOwnBlock =
-          blocks === 0
-            ? undefined
-            : new BigNumber(blockRewardsDelegated)
-                .plus(blockRewardsStakedOwn)
-                .plus(blockRewardsStakedEdge)
-                .plus(blockRewardsStakedShared)
-                .div(blocks);
-        const rewardPerEndorsement =
-          attestations === 0
-            ? undefined
-            : new BigNumber(attestationRewardsDelegated)
-                .plus(attestationRewardsStakedOwn)
-                .plus(attestationRewardsStakedEdge)
-                .plus(attestationRewardsStakedShared)
-                .div(attestations);
-        const rewardPerFutureBlock =
-          futureBlocks === 0 ? undefined : new BigNumber(futureBlockRewards).div(futureBlocks);
-        const rewardPerFutureEndorsement =
-          futureAttestations === 0 ? undefined : new BigNumber(futureAttestationRewards).div(futureAttestations);
+  const getBakingHistory = useCallback(
+    async ([, accountPkh, , selectedRpcUrl]: [string, string, string | nullish, string]) => {
+      const [rewards, cycles, protocol] = await Promise.all([
+        getDelegatorRewards(selectedRpcUrl, { address: accountPkh, limit: 30 }).then(res => res || []),
+        getCycles(selectedRpcUrl),
+        getProtocol(selectedRpcUrl)
+      ]);
+      const bakersAddresses = uniq(rewards.map(({ baker }) => baker.address));
+      const setParamsOperationsValues = await Promise.all(
+        bakersAddresses.map(address =>
+          fetchSetDelegateParametersOperations(selectedRpcUrl, { sender: address, 'sort.desc': 'level' })
+        )
+      );
+      const storiesValues = await Promise.all(bakersAddresses.map(address => bakingBadGetBakerStory({ address })));
 
-        return {
-          rewardPerOwnBlock,
-          rewardPerEndorsement,
-          rewardPerFutureBlock,
-          rewardPerFutureEndorsement
-        };
-      }),
-    [bakerRewards]
+      return {
+        rewards,
+        cycles: Object.fromEntries(cycles.map(cycle => [cycle.index, cycle])),
+        protocol,
+        setParamsOperations: Object.fromEntries(
+          bakersAddresses.map((address, i) => [address, setParamsOperationsValues[i]])
+        ),
+        stories: Object.fromEntries(bakersAddresses.map((address, i) => [address, storiesValues[i]]))
+      };
+    },
+    []
   );
 
-  const fallbackRewardsPerEvents = useMemo(() => {
-    return rewardsPerEventHistory.map(historyItem =>
-      allRewardsPerEventKeys.reduce(
-        (fallbackRewardsItem, key, index) => {
-          return reduceFunction(fallbackRewardsItem, key, index, historyItem, rewardsPerEventHistory);
-        },
-        {
-          rewardPerOwnBlock: new BigNumber(0),
-          rewardPerEndorsement: new BigNumber(0),
-          rewardPerFutureBlock: new BigNumber(0),
-          rewardPerFutureEndorsement: new BigNumber(0)
-        }
-      )
-    );
-  }, [rewardsPerEventHistory]);
-
-  const currentCycle = useMemo(
-    () =>
-      bakerRewards?.find(({ bakerRewards }) => {
-        const {
-          blockRewardsDelegated,
-          blockRewardsStakedEdge,
-          blockRewardsStakedOwn,
-          blockRewardsStakedShared,
-          attestationRewardsDelegated,
-          attestationRewardsStakedEdge,
-          attestationRewardsStakedOwn,
-          attestationRewardsStakedShared,
-          blockFees
-        } = bakerRewards;
-
-        const totalCurrentRewards = new BigNumber(blockRewardsDelegated)
-          .plus(blockRewardsStakedOwn)
-          .plus(blockRewardsStakedEdge)
-          .plus(blockRewardsStakedShared)
-          .plus(attestationRewardsDelegated)
-          .plus(attestationRewardsStakedOwn)
-          .plus(attestationRewardsStakedEdge)
-          .plus(attestationRewardsStakedShared)
-          .plus(blockFees);
-
-        return totalCurrentRewards.gt(0);
-      })?.cycle,
-    [bakerRewards]
+  const { data: bakingHistoryInput, isLoading } = useSWR(
+    ['baking-history', accountPkh, selectedBaker?.address, selectedRpcUrl],
+    getBakingHistory,
+    { suspense: true, errorRetryCount: 2 }
   );
 
-  const renderItem: ListRenderItem<BakerRewardInterface> = useCallback(
-    ({ item, index }) => (
-      <BakerRewardItem
-        currentCycle={currentCycle}
-        reward={item}
-        fallbackRewardPerEndorsement={fallbackRewardsPerEvents[index].rewardPerEndorsement}
-        fallbackRewardPerFutureBlock={fallbackRewardsPerEvents[index].rewardPerFutureBlock}
-        fallbackRewardPerFutureEndorsement={fallbackRewardsPerEvents[index].rewardPerFutureEndorsement}
-        fallbackRewardPerOwnBlock={fallbackRewardsPerEvents[index].rewardPerOwnBlock}
-      />
-    ),
-    [currentCycle, fallbackRewardsPerEvents]
-  );
+  const bakingHistory = useMemo(() => {
+    const { rewards, cycles, protocol, setParamsOperations, stories } = bakingHistoryInput!;
+
+    const nowDate = new Date().toISOString();
+    const currentCycleIndex = Object.values(cycles).find(
+      ({ startTime, endTime }) => startTime <= nowDate && endTime > nowDate
+    )!.index;
+
+    return rewards.map((reward): BakingHistoryEntry => {
+      const { cycle: cycleIndex, baker } = reward;
+      const { address: bakerAddress, alias: bakerName } = baker;
+      const cycle = cycles[cycleIndex];
+      const bakerSetParamsOperations = setParamsOperations[bakerAddress];
+      const { delegationMinBalance: minDelegationStory, delegationFee: delegationFeeStory } =
+        stories[bakerAddress] ?? FALLBACK_STORY;
+
+      const { limitOfStakingOverBaking, edgeOfBakingOverStaking } = getCycleValue<
+        TzktSetDelegateParamsOperation,
+        Record<'limitOfStakingOverBaking' | 'edgeOfBakingOverStaking', number>
+      >(bakerSetParamsOperations, cycleIndex, op => op.activationCycle, identity, {
+        limitOfStakingOverBaking: 0,
+        edgeOfBakingOverStaking: 1e9
+      });
+      const delegationFee = getCycleValue(
+        delegationFeeStory,
+        cycleIndex,
+        ({ cycle }) => cycle,
+        ({ value }) => value,
+        0
+      );
+      const minDelegation = getCycleValue(
+        minDelegationStory,
+        cycleIndex,
+        ({ cycle }) => cycle,
+        ({ value }) => value,
+        0
+      );
+
+      return {
+        ...getRewardsStats({
+          rewardsEntry: reward,
+          cycle,
+          protocol,
+          limitOfStakingOverBaking,
+          edgeOfBakingOverStaking,
+          delegationFee,
+          minDelegation
+        }),
+        bakerAddress,
+        bakerName,
+        status:
+          cycleIndex > currentCycleIndex
+            ? CycleStatus.FUTURE
+            : cycleIndex === currentCycleIndex
+            ? CycleStatus.IN_PROGRESS
+            : CycleStatus.UNLOCKED
+      };
+    });
+  }, [bakingHistoryInput]);
+
+  const renderItem: ListRenderItem<BakingHistoryEntry> = useCallback(({ item }) => <BakerRewardItem item={item} />, []);
 
   const ListEmptyComponent = useMemo(() => <DataPlaceholder text="No Rewards records were found" />, []);
 
@@ -153,14 +158,18 @@ export const BakerRewardsList = memo<Props>(({ bakerRewards }) => {
         <Text style={styles.rewardsText}>Rewards</Text>
       </View>
 
-      <FlashList
-        data={bakerRewards}
-        contentContainerStyle={styles.flatListContentContainer}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        estimatedItemSize={AVERAGE_ITEM_HEIGHT}
-        ListEmptyComponent={ListEmptyComponent}
-      />
+      {isLoading ? (
+        <ActivityIndicator style={styles.loader} size="large" />
+      ) : (
+        <FlashList
+          data={bakingHistory}
+          contentContainerStyle={styles.flatListContentContainer}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          estimatedItemSize={AVERAGE_ITEM_HEIGHT}
+          ListEmptyComponent={ListEmptyComponent}
+        />
+      )}
     </>
   );
 });
