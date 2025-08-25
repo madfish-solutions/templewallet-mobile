@@ -1,6 +1,6 @@
 import { useButtonLargePrimaryStyleConfig } from 'src/components/button/button-large/button-large-primary/button-large-primary.styles';
 import { useButtonLargeSecondaryStyleConfig } from 'src/components/button/button-large/button-large-secondary/button-large-secondary.styles';
-import { black } from 'src/config/styles';
+import { black, DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized, createUseStylesConfig } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
@@ -72,7 +72,7 @@ export const useEarnOpportunityItemStyles = createUseStylesMemoized(({ colors, t
     width: formatSize(12),
     height: formatSize(12),
     backgroundColor: colors.blue,
-    borderWidth: formatSize(0.5),
+    borderWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
     borderRadius: formatSize(4),
     justifyContent: 'center',

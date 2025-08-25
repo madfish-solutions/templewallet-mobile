@@ -1,6 +1,8 @@
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
+import { DEFAULT_BORDER_WIDTH } from '../../../../config/styles';
+
 export const useSelectedPaymentProviderStyles = createUseStyles(({ colors, typography }) => ({
   root: {
     flexDirection: 'row',
@@ -11,7 +13,7 @@ export const useSelectedPaymentProviderStyles = createUseStyles(({ colors, typog
     backgroundColor: colors.white
   },
   logoContainer: {
-    borderWidth: formatSize(0.5),
+    borderWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
     borderRadius: formatSize(8),
     padding: formatSize(6),

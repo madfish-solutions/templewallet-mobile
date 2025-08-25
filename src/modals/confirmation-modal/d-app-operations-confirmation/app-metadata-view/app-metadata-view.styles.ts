@@ -1,10 +1,10 @@
+import { DEFAULT_BORDER_WIDTH } from '../../../../config/styles';
 import { createUseStyles } from '../../../../styles/create-use-styles';
-import { formatSize } from '../../../../styles/format-size';
 
 export const useAppMetadataViewStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     borderColor: colors.lines,
-    borderBottomWidth: formatSize(0.5)
+    borderBottomWidth: DEFAULT_BORDER_WIDTH
   },
   appContainer: {
     flexDirection: 'row',

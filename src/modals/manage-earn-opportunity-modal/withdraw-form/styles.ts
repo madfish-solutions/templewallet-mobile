@@ -2,6 +2,8 @@ import { isIOS } from 'src/config/system';
 import { createUseStylesConfigMemoized, createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
+import { DEFAULT_BORDER_WIDTH } from '../../../config/styles';
+
 export const useWithdrawFormStyles = createUseStylesMemoized(({ colors, typography }) => ({
   tokenSelectorTitle: {
     ...typography.body15Semibold,
@@ -25,7 +27,7 @@ export const useAssetAmountInputStylesConfig = createUseStylesConfigMemoized(({ 
   amountInput: {
     backgroundColor: colors.disabled,
     borderRightWidth: formatSize(1),
-    marginBottom: isIOS ? formatSize(0.5) : 0
+    marginBottom: isIOS ? DEFAULT_BORDER_WIDTH : 0
   },
   inputContainer: {
     backgroundColor: colors.lines,

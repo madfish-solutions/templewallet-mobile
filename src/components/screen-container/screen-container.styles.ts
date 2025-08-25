@@ -1,3 +1,4 @@
+import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -19,7 +20,7 @@ export const useScreenContainerStyles = createUseStyles(({ colors }) => ({
     justifyContent: 'space-between'
   },
   fixedButtonContainer: {
-    borderTopWidth: formatSize(0.5),
+    borderTopWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
     paddingTop: formatSize(8),
     paddingBottom: formatSize(16),

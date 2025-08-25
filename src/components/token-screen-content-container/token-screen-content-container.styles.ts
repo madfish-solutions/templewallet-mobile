@@ -1,4 +1,4 @@
-import { white } from 'src/config/styles';
+import { DEFAULT_BORDER_WIDTH, white } from 'src/config/styles';
 import { basicLightColors } from 'src/styles/colors';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
@@ -10,7 +10,7 @@ export const useTokenScreenContentContainerStyles = createUseStylesMemoized(({ c
     alignItems: 'center',
     paddingVertical: formatSize(12),
     paddingHorizontal: formatSize(16),
-    borderBottomWidth: formatSize(0.5),
+    borderBottomWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines
   },
   headerText: {

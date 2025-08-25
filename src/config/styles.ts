@@ -1,5 +1,5 @@
 import { clamp } from 'lodash-es';
-import { Dimensions } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 const basicScreenWidth = 375;
 const maxLayoutScale = 1.2;
@@ -13,3 +13,5 @@ export const white = '#FFFFFF';
 export const transparent = 'transparent';
 
 export const SIDEBAR_WIDTH = 200;
+
+export const DEFAULT_BORDER_WIDTH = StyleSheet.hairlineWidth * 3;

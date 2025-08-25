@@ -6,6 +6,8 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { isDefined } from 'src/utils/is-defined';
 
+import { DEFAULT_BORDER_WIDTH } from '../../config/styles';
+
 import { HeaderCloseButton } from './header-close-button/header-close-button';
 import { HeaderTitle } from './header-title/header-title';
 
@@ -19,7 +21,7 @@ export const useModalOptions = (title?: string, disableAndroidGestures = false):
       headerStyle: {
         height: formatSize(60),
         backgroundColor: colors.navigation,
-        borderBottomWidth: formatSize(0.5),
+        borderBottomWidth: DEFAULT_BORDER_WIDTH,
         borderBottomColor: colors.lines,
         shadowOpacity: 0
       },
