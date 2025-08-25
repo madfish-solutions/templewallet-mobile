@@ -35,7 +35,7 @@ export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
     bakerFeeRatio,
     blocks,
     delegated,
-    blockRewards,
+    totalRewards,
     attestations,
     missedBlocks,
     missedAttestations,
@@ -110,7 +110,7 @@ export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
               <View style={styles.cellContainer}>
                 <Text style={styles.cellTitle}>Rewards & Luck:</Text>
                 <Text style={styles.textBlack}>
-                  {`${blockRewards.toString()} ${metadata.symbol} `}
+                  {`${totalRewards.toString()} ${metadata.symbol} `}
                   <Text style={luckTextStyle}>
                     ({luckPercentage.gt(0) ? '+' : ''}
                     {luckPercentage.decimalPlaces(0).toString()}%)

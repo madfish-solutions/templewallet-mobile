@@ -13,6 +13,7 @@ export interface BakingHistoryEntry {
   efficiency: BigNumber;
   luck: BigNumber;
   blockRewards: BigNumber;
+  totalRewards: BigNumber;
   blocks: number;
   blockFees: BigNumber;
   missedBlockRewards: BigNumber;

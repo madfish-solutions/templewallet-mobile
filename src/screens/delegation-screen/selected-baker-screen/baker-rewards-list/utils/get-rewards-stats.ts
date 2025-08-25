@@ -230,6 +230,7 @@ export function getRewardsStats(params: RewardsStatsCalculationParams) {
     blockRewards: localMutezToTz(
       blockRewardsDelegated + blockRewardsStakedOwn + blockRewardsStakedEdge + blockRewardsStakedShared
     ),
+    totalRewards: localMutezToTz(totalRewards),
     blocks,
     luck,
     blockFees: localMutezToTz(blockFees),
