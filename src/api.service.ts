@@ -11,8 +11,7 @@ import {
 } from './utils/env.utils';
 import { isDcpNode } from './utils/network.utils';
 
-//TODO: revert after test
-export const tzktApi = axios.create({ baseURL: 'https://staging.api.tzkt.io/v1' });
+export const tzktApi = axios.create({ baseURL: 'https://api.mainnet.tzkt.io/v1' });
 const dcpTzktApi = axios.create({ baseURL: 'https://explorer-api.tlnt.net/v1' });
 
 export const getTzktApi = (selectedRpcUrl: string) => (isDcpNode(selectedRpcUrl) ? dcpTzktApi : tzktApi);
