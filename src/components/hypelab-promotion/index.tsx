@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { SingleProviderPromotionProps } from 'src/types/promotion';
-import { HYPELAB_NATIVE_PLACEMENT_SLUG, HYPELAB_SMALL_PLACEMENT_SLUG } from 'src/utils/env.utils';
+import { HYPELAB_NATIVE_PLACEMENT_SLUG, HYPELAB_MEDIUM_PLACEMENT_SLUG } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WebViewPromotion } from '../webview-promotion';
@@ -27,9 +27,9 @@ export const HypelabPromotion = memo<SingleProviderPromotionProps>(({ variant, .
       {...restProps}
       variant={variant}
       provider={PromotionProviderEnum.HypeLab}
-      placementSlug={isImageAd ? HYPELAB_SMALL_PLACEMENT_SLUG : HYPELAB_NATIVE_PLACEMENT_SLUG}
+      placementSlug={isImageAd ? HYPELAB_MEDIUM_PLACEMENT_SLUG : HYPELAB_NATIVE_PLACEMENT_SLUG}
       initialOriginalWidth={isImageAd ? 320 : undefined}
-      initialOriginalHeight={isImageAd ? 50 : 80}
+      initialOriginalHeight={isImageAd ? 100 : 80}
       adChanged={adChanged}
     />
   );
