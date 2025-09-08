@@ -65,7 +65,7 @@ export const useSelectBakerItemStyles = createUseStyles(({ colors, typography })
     color: colors.gray1
   },
   cellValueText: {
-    ...typography.numbersRegular15,
+    ...typography.numbersRegular13,
     color: colors.black
   },
   accountPkh: {

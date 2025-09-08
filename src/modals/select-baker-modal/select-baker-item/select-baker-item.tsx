@@ -7,7 +7,6 @@ import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TruncatedText } from 'src/components/truncated-text';
-import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
@@ -15,7 +14,7 @@ import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
-import { HELP_UKRAINE_BAKER_ADDRESS, RECOMMENDED_BAKER_ADDRESS } from 'src/utils/known-bakers';
+import { HELP_UKRAINE_BAKER_ADDRESS, EVERSTAKE_BAKER_ADDRESS, TEMPLE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { tzktUrl } from 'src/utils/linking';
 import { formatToPercentStr } from 'src/utils/number-format.utils';
 import { kFormatter } from 'src/utils/number.util';
@@ -30,13 +29,13 @@ interface Props extends TestIdProps {
 
 export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID }) => {
   const styles = useSelectBakerItemStyles();
-  const isRecommendedBaker = baker.address === RECOMMENDED_BAKER_ADDRESS;
+  const isRecommendedBaker = baker.address === TEMPLE_BAKER_ADDRESS || baker.address === EVERSTAKE_BAKER_ADDRESS;
   const isHelpUkraineBaker = baker.address === HELP_UKRAINE_BAKER_ADDRESS;
   const { metadata, isDcpNode } = useNetworkInfo();
 
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
-  const { fee, capacity, freeSpace } = baker.delegation;
+  const { fee, capacity, freeSpace, minBalance } = baker.delegation;
   const feeStr = formatToPercentStr(fee);
   const stakingBalance = capacity - freeSpace;
 
@@ -71,8 +70,8 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
       {!isDcpNode && (
         <View style={styles.lowerContainer}>
           <View>
-            <Text style={styles.cellTitle}>Baker fee:</Text>
-            <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+            <Text style={styles.cellTitle}>Delegated:</Text>
+            <Text style={styles.cellValueText}>{isTruthy(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
           </View>
           <Divider size={formatSize(16)} />
           <View>
@@ -83,8 +82,13 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
           </View>
           <Divider size={formatSize(16)} />
           <View>
-            <Text style={styles.cellTitle}>Staking:</Text>
-            <Text style={styles.cellValueText}>{isTruthy(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
+            <Text style={styles.cellTitle}>Baker fee:</Text>
+            <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+          </View>
+          <Divider size={formatSize(16)} />
+          <View>
+            <Text style={styles.cellTitle}>Min Balance:</Text>
+            <Text style={styles.cellValueText}>{isDefined(minBalance) ? `${minBalance} TEZ` : '--'}</Text>
           </View>
         </View>
       )}

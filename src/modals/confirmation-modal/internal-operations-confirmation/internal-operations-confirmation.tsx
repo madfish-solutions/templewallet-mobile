@@ -22,7 +22,7 @@ import { showSuccessToast } from 'src/toast/toast.utils';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
-import { RECOMMENDED_BAKER_ADDRESS } from 'src/utils/known-bakers';
+import { EVERSTAKE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
@@ -67,7 +67,7 @@ const approveInternalOperationRequest = ({
 }: ApproveInternalOperationRequestActionPayloadInterface) =>
   sendTransaction$(rpcUrl, sender.publicKeyHash, opParams).pipe(
     switchMap(({ hash }) =>
-      opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === RECOMMENDED_BAKER_ADDRESS
+      opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === EVERSTAKE_BAKER_ADDRESS
         ? of(
             everstakeApi.post('/delegations', {
               link_id: TEMPLE_WALLET_EVERSTAKE_LINK_ID,

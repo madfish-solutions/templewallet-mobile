@@ -44,7 +44,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
   const openUrlInAppBrowser = useOpenUrlInAppBrowser();
   const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
 
-  const { fee, capacity, freeSpace } = baker.delegation;
+  const { fee, capacity, freeSpace, minBalance } = baker.delegation;
   const feeStr = formatToPercentStr(fee);
   const stakingBalance = capacity - freeSpace;
 
@@ -90,8 +90,8 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
         {!isDcpNode && (
           <View style={styles.lowerContainer}>
             <View>
-              <Text style={styles.cellTitle}>Baker fee:</Text>
-              <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+              <Text style={styles.cellTitle}>Delegated:</Text>
+              <Text style={styles.cellValueText}>{isDefined(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
             </View>
             <Divider size={formatSize(16)} />
             <View>
@@ -102,8 +102,13 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
             </View>
             <Divider size={formatSize(16)} />
             <View>
-              <Text style={styles.cellTitle}>Staking:</Text>
-              <Text style={styles.cellValueText}>{isDefined(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
+              <Text style={styles.cellTitle}>Baker fee:</Text>
+              <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+            </View>
+            <Divider size={formatSize(16)} />
+            <View>
+              <Text style={styles.cellTitle}>Min Balance:</Text>
+              <Text style={styles.cellValueText}>{isDefined(minBalance) ? `${minBalance} TEZ` : '--'}</Text>
             </View>
           </View>
         )}

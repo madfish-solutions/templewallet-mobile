@@ -41,7 +41,7 @@ export const useSelectedBakerScreenStyles = createUseStyles(({ colors, typograph
     color: colors.gray1
   },
   cellValueText: {
-    ...typography.numbersRegular15,
+    ...typography.numbersRegular13,
     color: colors.black
   },
   accountPkh: {
