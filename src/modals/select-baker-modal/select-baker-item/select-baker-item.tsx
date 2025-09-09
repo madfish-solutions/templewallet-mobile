@@ -77,7 +77,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
           <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>
-              {isDefined(freeSpace) ? freeSpace.toFixed(2) : '--'} {metadata.symbol}
+              {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {metadata.symbol}
             </Text>
           </View>
           <Divider size={formatSize(16)} />
