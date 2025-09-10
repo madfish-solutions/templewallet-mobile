@@ -33,13 +33,13 @@ const getContractOperations = <T>(
   lastLevel?: number
 ) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<T>>(`accounts/${contractAddress}/operations`, {
+    .get<Array<T>>('/operations/transactions', {
       params: {
-        type: 'transaction',
-        limit: OPERATION_LIMIT,
-        sort: '1',
+        target: contractAddress,
         initiator: account,
+        limit: OPERATION_LIMIT,
         entrypoint: 'mintOrBurn',
+        'sort.desc': 'level',
         ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
       }
     })
@@ -83,25 +83,26 @@ const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contrac
     })
     .then(x => x.data);
 
-const getTezosOperations = (selectedRpcUrl: string, account: string, lastId?: number) =>
+const getTezosOperations = (selectedRpcUrl: string, account: string, lastLevel?: number) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
+    .get<Array<OperationInterface>>('operations/transactions', {
       params: {
+        'anyof.sender.target.initiator': account,
         limit: OPERATION_LIMIT,
-        type: ActivityTypeEnum.Transaction,
-        sort: '1',
-        'parameter.null': true,
-        ...(isDefined(lastId) ? { lastId } : undefined)
+        'sort.desc': 'id',
+        'amount.ne': '0',
+        ...(isDefined(lastLevel) ? { 'level.lt': lastLevel } : undefined)
       }
     })
     .then(x => x.data);
 
 const getAccountOperations = (selectedRpcUrl: string, account: string, lastId?: number) =>
   getTzktApi(selectedRpcUrl)
-    .get<Array<OperationInterface>>(`accounts/${account}/operations`, {
+    .get<Array<OperationInterface>>('accounts/activity', {
       params: {
+        addresses: account,
         limit: OPERATION_LIMIT,
-        type: `${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`,
+        types: `${ActivityTypeEnum.Delegation},${ActivityTypeEnum.Origination},${ActivityTypeEnum.Transaction}`,
         sort: '1',
         ...(isDefined(lastId) ? { lastId } : undefined)
       }
@@ -173,10 +174,10 @@ const loadOperations = async (
 
   if (isDefined(tokenSlug)) {
     if (tokenSlug === TEZ_TOKEN_SLUG) {
-      return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
+      return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.level);
     }
 
-    if (tokenSlug === LIQUIDITY_BAKING_DEX_ADDRESS) {
+    if (contractAddress === LIQUIDITY_BAKING_DEX_ADDRESS) {
       return getContractOperations<OperationLiquidityBakingInterface>(
         selectedRpcUrl,
         selectedAccount.publicKeyHash,

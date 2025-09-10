@@ -15,5 +15,8 @@ export const useBakerRewardsListStyles = createUseStyles(({ colors, typography }
   },
   flatListContentContainer: {
     paddingLeft: formatSize(16)
+  },
+  loader: {
+    marginTop: formatSize(100)
   }
 }));

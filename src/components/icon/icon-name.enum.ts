@@ -12,7 +12,6 @@ export enum IconNameEnum {
   DetailsArrowRight = 'DetailsArrowRight',
   CycleStatusInProgress = 'CycleStatusInProgress',
   CycleStatusUnlocked = 'CycleStatusUnlocked',
-  CycleStatusLocked = 'CycleStatusLocked',
   CycleStatusFuture = 'CycleStatusFuture',
   BookOpen = 'BookOpen',
   Terminal = 'Terminal',

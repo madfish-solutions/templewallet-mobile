@@ -8,5 +8,3 @@ export const useSelectedBakerSelector = () => {
 };
 
 export const useBakersListSelector = () => useSelector(state => state.baking.bakersList.data);
-
-export const useBakerRewardsListSelector = () => useSelector(state => state.baking.bakerRewardsList.data);

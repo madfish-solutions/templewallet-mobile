@@ -1,17 +1,14 @@
-import { BigNumber } from 'bignumber.js';
+import { TzktCycle } from 'src/interfaces/tzkt/cycle.interface';
+import { TzktProtocol } from 'src/interfaces/tzkt/protocol.interface';
+import { TzktRewardsEntry } from 'src/interfaces/tzkt/rewards-entry.interface';
 
-import { BakerInterface } from 'src/apis/baking-bad';
-import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
+import { TzktSetDelegateParamsOperation } from './tzkt';
 
 export interface RewardsStatsCalculationParams
-  extends Record<
-    | 'fallbackRewardPerOwnBlock'
-    | 'fallbackRewardPerEndorsement'
-    | 'fallbackRewardPerFutureBlock'
-    | 'fallbackRewardPerFutureEndorsement',
-    BigNumber
-  > {
-  reward: BakerRewardInterface;
-  bakerDetails?: BakerInterface;
-  currentCycle?: number;
+  extends Pick<TzktSetDelegateParamsOperation, 'limitOfStakingOverBaking' | 'edgeOfBakingOverStaking'> {
+  rewardsEntry: TzktRewardsEntry;
+  cycle: TzktCycle;
+  protocol: TzktProtocol;
+  delegationFee: number;
+  minDelegation: number;
 }
