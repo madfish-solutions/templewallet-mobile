@@ -5,7 +5,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadBakersListActions } from 'src/store/baking/baking-actions';
-import { useBakerRewardsListSelector, useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
+import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { AboutDelegationScreen } from './about-delegation-screen/about-delegation-screen';
@@ -16,8 +16,6 @@ export const DelegationScreen = () => {
   const { navigate } = useNavigation();
   const currentBaker = useSelectedBakerSelector();
 
-  const bakerRewardsList = useBakerRewardsListSelector();
-
   const handleDelegatePress = () => navigate(ModalsEnum.SelectBaker);
 
   usePageAnalytic(ScreensEnum.Delegation);
@@ -27,11 +25,7 @@ export const DelegationScreen = () => {
   return (
     <>
       {currentBaker ? (
-        <SelectedBakerScreen
-          baker={currentBaker}
-          bakerRewardsList={bakerRewardsList}
-          onRedelegatePress={handleDelegatePress}
-        />
+        <SelectedBakerScreen baker={currentBaker} onRedelegatePress={handleDelegatePress} />
       ) : (
         <AboutDelegationScreen onDelegatePress={handleDelegatePress} />
       )}

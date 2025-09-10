@@ -6,15 +6,14 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
 import { formatSize } from 'src/styles/format-size';
-import { mutezToTz } from 'src/utils/tezos.util';
 
+import { BakingHistoryEntry } from '../../../interfaces/baking-history-entry';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
-export const Endorsements: FC<Pick<BakerRewardInterface, 'endorsements' | 'endorsementRewards'>> = ({
-  endorsements,
-  endorsementRewards
+export const Endorsements: FC<Pick<BakingHistoryEntry, 'attestations' | 'attestationRewards'>> = ({
+  attestations,
+  attestationRewards
 }) => {
   const styles = useBakerRewardItemStyles();
   const { metadata } = useNetworkInfo();
@@ -37,13 +36,11 @@ export const Endorsements: FC<Pick<BakerRewardInterface, 'endorsements' | 'endor
               <Text style={styles.cellTitle}>Payout:</Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textGreen}>
-                +
-                {mutezToTz(new BigNumber(endorsementRewards), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() +
-                  ' '}
+                +{attestationRewards.decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
-                  for <Text style={styles.textBlack}>{endorsements.toString()} slots</Text>
+                  for <Text style={styles.textBlack}>{attestations.toString()} slots</Text>
                 </Text>
               </Text>
             </View>

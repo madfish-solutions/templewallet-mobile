@@ -40,7 +40,6 @@ import CopyIcon from './assets/copy.svg';
 import CreditCardIcon from './assets/credit-card.svg';
 import CycleStatusFutureIcon from './assets/cycle-status-future.svg';
 import CycleStatusInProgressIcon from './assets/cycle-status-in-progress.svg';
-import CycleStatusLockedIcon from './assets/cycle-status-locked.svg';
 import CycleStatusUnlockedIcon from './assets/cycle-status-unlocked.svg';
 import DAppsIcon from './assets/dapps.svg';
 import DataIcon from './assets/data.svg';
@@ -201,7 +200,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.MissedOwnBlocks]: MissedOwnBlocksIcon,
   [IconNameEnum.CycleStatusFuture]: CycleStatusFutureIcon,
   [IconNameEnum.CycleStatusInProgress]: CycleStatusInProgressIcon,
-  [IconNameEnum.CycleStatusLocked]: CycleStatusLockedIcon,
   [IconNameEnum.CycleStatusUnlocked]: CycleStatusUnlockedIcon,
   [IconNameEnum.BookOpen]: BookOpenIcon,
   [IconNameEnum.Terminal]: TerminalIcon,

@@ -11,7 +11,6 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
 import { useIsInAppBrowserEnabledSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -29,11 +28,10 @@ const STAKING_DAPP_LINK = 'https://stake.tezos.com/';
 
 interface Props {
   baker: BakerInterface;
-  bakerRewardsList: BakerRewardInterface[];
   onRedelegatePress: EmptyFn;
 }
 
-export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRedelegatePress }) => {
+export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => {
   const styles = useSelectedBakerScreenStyles();
   const colors = useColors();
 
@@ -135,7 +133,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
 
       <Divider size={formatSize(16)} />
 
-      <BakerRewardsList bakerRewards={bakerRewardsList} />
+      <BakerRewardsList />
     </>
   );
 };
