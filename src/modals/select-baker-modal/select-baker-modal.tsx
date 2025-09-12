@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { debounce } from 'lodash-es';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { ListRenderItem, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
@@ -33,7 +33,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
-import { RECOMMENDED_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
+import { EVERSTAKE_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS, TEMPLE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { isValidAddress } from 'src/utils/tezos.util';
 
 import { BakerListItem } from './baker-list-item/baker-list-item';
@@ -42,19 +42,21 @@ import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
 const bakersSortFieldsLabels: Record<BakersSortFieldEnum, string> = {
-  [BakersSortFieldEnum.Fee]: 'Fee',
-  [BakersSortFieldEnum.Rank]: 'Rank',
+  [BakersSortFieldEnum.Delegated]: 'Delegated',
   [BakersSortFieldEnum.Space]: 'Space',
-  [BakersSortFieldEnum.Staking]: 'Staking'
+  [BakersSortFieldEnum.Fee]: 'Baker Fee',
+  [BakersSortFieldEnum.MinBalance]: 'Min Balance'
 };
 const bakersSortFieldsOptions = [
+  BakersSortFieldEnum.Delegated,
   BakersSortFieldEnum.Space,
   BakersSortFieldEnum.Fee,
-  BakersSortFieldEnum.Rank,
-  BakersSortFieldEnum.Staking
+  BakersSortFieldEnum.MinBalance
 ];
 
 const keyExtractor = (item: BakerInterface) => item.address;
+
+const sponsoredBakersAddresses = [TEMPLE_BAKER_ADDRESS, EVERSTAKE_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS];
 
 export const SelectBakerModal = memo(() => {
   const { goBack, navigate } = useNavigation();
@@ -74,29 +76,11 @@ export const SelectBakerModal = memo(() => {
 
   const accountPkh = useCurrentAccountPkhSelector();
 
-  const bakersList = useBakersListSelector();
-  const activeBakers = useMemo(() => bakersList.filter(baker => baker.status === 'active'), [bakersList]);
+  const knownBakers = useBakersListSelector();
 
-  const [allBakers, setFilteredBakersList] = useState(activeBakers);
-  const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Rank);
+  const [sortValue, setSortValue] = useState(BakersSortFieldEnum.Delegated);
   const [searchValue, setSearchValue] = useState<string>();
   const [selectedBaker, setSelectedBaker] = useState<BakerInterface>();
-
-  const recommendedBakers = useMemo(
-    () =>
-      allBakers.filter(
-        baker => baker.address === RECOMMENDED_BAKER_ADDRESS || baker.address === HELP_UKRAINE_BAKER_ADDRESS
-      ),
-    [allBakers]
-  );
-
-  const filteredBakersList = useMemo(
-    () =>
-      allBakers.filter(
-        baker => baker.address !== RECOMMENDED_BAKER_ADDRESS && baker.address !== HELP_UKRAINE_BAKER_ADDRESS
-      ),
-    [allBakers]
-  );
 
   const debouncedSetSearchValue = debounce((value: string) => {
     setSearchValue(value);
@@ -107,16 +91,14 @@ export const SelectBakerModal = memo(() => {
 
   const handleNextPress = () => {
     if (isDefined(selectedBaker)) {
-      const isRecommendedBakerSelected = selectedBaker.address === RECOMMENDED_BAKER_ADDRESS;
-      const isHelpUkraineBakerSelected = selectedBaker.address === RECOMMENDED_BAKER_ADDRESS;
+      const isTempleBakerSelected = selectedBaker.address === TEMPLE_BAKER_ADDRESS;
+      const isEverstakeBakerSelected = selectedBaker.address === EVERSTAKE_BAKER_ADDRESS;
+      const isHelpUkraineBakerSelected = selectedBaker.address === HELP_UKRAINE_BAKER_ADDRESS;
 
-      if (isRecommendedBakerSelected) {
-        trackEvent('RECOMMENDED_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
-      }
-
-      if (isHelpUkraineBakerSelected) {
-        trackEvent('HELP_UKRAINE_BAKER_SELECTED', AnalyticsEventCategory.ButtonPress);
-      }
+      trackEvent(
+        `${isTempleBakerSelected ? 'TEMPLE' : isEverstakeBakerSelected ? 'EVERSTAKE' : 'HELP_UKRAINE'}_BAKER_SELECTED`,
+        AnalyticsEventCategory.ButtonPress
+      );
 
       if (currentBaker?.address === selectedBaker.address) {
         showErrorToast({
@@ -129,7 +111,8 @@ export const SelectBakerModal = memo(() => {
         navigate(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
           opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: accountPkh }],
-          ...(isRecommendedBakerSelected && { testID: 'RECOMMENDED_BAKER_DELEGATION' }),
+          ...(isTempleBakerSelected && { testID: 'TEMPLE_BAKER_DELEGATION' }),
+          ...(isEverstakeBakerSelected && { testID: 'EVERSTAKE_BAKER_DELEGATION' }),
           ...(isHelpUkraineBakerSelected && { testID: 'HELP_UKRAINE_BAKER_DELEGATION' }),
           ...(Boolean(selectedBaker.isUnknownBaker) && !isDcpNode && { disclaimerMessage: DISCLAIMER_MESSAGE })
         });
@@ -139,43 +122,40 @@ export const SelectBakerModal = memo(() => {
 
   const handleSortValueChange = (value: BakersSortFieldEnum) => setSortValue(value);
 
-  useEffect(() => {
-    if (isString(searchValue)) {
-      const lowerCaseSearchValue = searchValue.toLowerCase();
-      const result: BakerInterface[] = [];
+  const sortedKnownBakers = useMemo(
+    () =>
+      [...searchBakers(knownBakers, searchValue)]
+        .sort(({ delegation: a, address: aAddress }, { delegation: b, address: bAddress }) => {
+          const aSponsoredIndex = sponsoredBakersAddresses.indexOf(aAddress);
+          const bSponsoredIndex = sponsoredBakersAddresses.indexOf(bAddress);
 
-      for (const baker of activeBakers) {
-        const { name, address } = baker;
+          const aIsSponsored = aSponsoredIndex !== -1;
+          const bIsSponsored = bSponsoredIndex !== -1;
 
-        if (name.toLowerCase().includes(lowerCaseSearchValue) || address.toLowerCase().includes(lowerCaseSearchValue)) {
-          result.push(baker);
-        }
-      }
+          if (aIsSponsored && bIsSponsored) {
+            return aSponsoredIndex - bSponsoredIndex;
+          }
 
-      setFilteredBakersList(result);
-    } else {
-      setFilteredBakersList(activeBakers);
-    }
-  }, [searchValue, activeBakers]);
+          if (aIsSponsored) {
+            return -1;
+          }
+          if (bIsSponsored) {
+            return 1;
+          }
 
-  const sortedBakersList = useMemo(() => {
-    switch (sortValue) {
-      case BakersSortFieldEnum.Rank:
-        return filteredBakersList;
-      case BakersSortFieldEnum.Fee:
-        return [...filteredBakersList].sort((a, b) => a.delegation.fee - b.delegation.fee);
-      case BakersSortFieldEnum.Staking:
-        return [...filteredBakersList].sort(
-          (a, b) => b.delegation.capacity - b.delegation.freeSpace - (a.delegation.capacity - a.delegation.freeSpace)
-        );
-      default:
-        return [...filteredBakersList].sort((a, b) => b.delegation.freeSpace - a.delegation.freeSpace);
-    }
-  }, [filteredBakersList, sortValue]);
-
-  const finalBakersList = useMemo(
-    () => recommendedBakers.concat(sortedBakersList),
-    [recommendedBakers, sortedBakersList]
+          switch (sortValue) {
+            case BakersSortFieldEnum.Delegated:
+              return b.capacity - b.freeSpace - (a.capacity - a.freeSpace);
+            case BakersSortFieldEnum.Space:
+              return b.freeSpace - a.freeSpace;
+            case BakersSortFieldEnum.Fee:
+              return a.fee - b.fee;
+            default:
+              return a.minBalance - b.minBalance;
+          }
+        })
+        .filter(({ address }) => address !== currentBaker?.address),
+    [knownBakers, searchValue, sortValue, currentBaker?.address]
   );
 
   const isValidBakerAddress = isDefined(selectedBaker) && !isValidAddress(selectedBaker.address);
@@ -247,7 +227,7 @@ export const SelectBakerModal = memo(() => {
 
       {isTezosNode && (
         <FlatList
-          data={finalBakersList}
+          data={sortedKnownBakers}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           style={styles.flatList}
@@ -284,3 +264,22 @@ export const SelectBakerModal = memo(() => {
     </>
   );
 });
+
+const searchBakers = (knownBakers: BakerInterface[], searchValue?: string) => {
+  if (!isString(searchValue)) {
+    return knownBakers;
+  }
+
+  const preparedSearchValue = searchValue.trim().toLowerCase();
+  const result: BakerInterface[] = [];
+
+  for (const baker of knownBakers) {
+    const { name, address } = baker;
+
+    if (name.toLowerCase().includes(preparedSearchValue) || address.toLowerCase().includes(preparedSearchValue)) {
+      result.push(baker);
+    }
+  }
+
+  return result;
+};
