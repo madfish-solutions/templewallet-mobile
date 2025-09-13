@@ -1,4 +1,4 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/rpc';
 import { BigNumber } from 'bignumber.js';
 import { debounce } from 'lodash-es';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';

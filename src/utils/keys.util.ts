@@ -1,5 +1,5 @@
 import { InMemorySigner } from '@taquito/signer';
-import { b58cencode, prefix } from '@taquito/utils';
+import { b58Encode, PrefixV2 } from '@taquito/utils';
 import { entropyToMnemonic } from 'bip39';
 import { Buffer } from 'buffer';
 import { derivePath } from 'ed25519-hd-key';
@@ -14,7 +14,7 @@ const TEZOS_BIP44_COINTYPE = 1729;
 export const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
   const derivedSeed = isString(derivationPath) ? deriveSeed(seed, derivationPath) : seed;
 
-  return b58cencode(derivedSeed.slice(0, 32), prefix.edsk2);
+  return b58Encode(derivedSeed.slice(0, 32), PrefixV2.Ed25519Seed);
 };
 
 const deriveSeed = (seed: Buffer, derivationPath: string) => {

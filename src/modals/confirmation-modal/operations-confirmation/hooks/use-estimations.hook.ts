@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native';
-import { OpKind, ParamsWithKind, Estimate, TezosOperationError, GasConsumingOperation } from '@taquito/taquito';
+import { OpKind } from '@taquito/rpc';
+import { ParamsWithKind, Estimate, TezosOperationError, GasConsumingOperation } from '@taquito/taquito';
 import { pick } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
 import { from, Observable } from 'rxjs';
