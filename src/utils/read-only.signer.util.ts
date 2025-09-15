@@ -1,7 +1,11 @@
+import { RawSignResult } from '@taquito/core';
+import { InMemorySigner } from '@taquito/signer';
 import { Signer } from '@taquito/taquito';
+import { firstValueFrom } from 'rxjs';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
+import { Shelter } from '../shelter/shelter';
 
 import { READ_ONLY_SIGNER_PUBLIC_KEY, READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from './env.utils';
 
@@ -24,6 +28,16 @@ export class ReadOnlySigner implements Signer {
     sbytes: string;
   }> {
     throw new Error('Cannot sign');
+  }
+
+  async provePossession(): Promise<RawSignResult> {
+    if (!this.pkh.startsWith('tz4')) {
+      throw new Error('Only BLS keys can prove possession');
+    }
+
+    const realSigner: InMemorySigner = await firstValueFrom(Shelter.getSigner$(this.pkh));
+
+    return realSigner.provePossession();
   }
 }
 
