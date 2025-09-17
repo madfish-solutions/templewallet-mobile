@@ -1,6 +1,6 @@
 export enum BakersSortFieldEnum {
-  Rank = 'rank',
+  Delegated = 'delegated',
   Space = 'space',
   Fee = 'fee',
-  Staking = 'staking'
+  MinBalance = 'minBalance'
 }

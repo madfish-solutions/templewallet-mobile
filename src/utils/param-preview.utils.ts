@@ -1,4 +1,5 @@
-import { OpKind, ParamsWithKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/rpc';
+import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { ParamPreviewTypeEnum } from '../enums/param-preview-type.enum';

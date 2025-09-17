@@ -2,19 +2,18 @@ import { BigNumber } from 'bignumber.js';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { formatSize } from 'src/styles/format-size';
 
-import { Divider } from '../../../../../../../components/divider/divider';
-import { Icon } from '../../../../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../../../../components/icon/icon-name.enum';
-import { BakerRewardInterface } from '../../../../../../../interfaces/baker-reward.interface';
-import { formatSize } from '../../../../../../../styles/format-size';
-import { mutezToTz } from '../../../../../../../utils/tezos.util';
+import { BakingHistoryEntry } from '../../../interfaces/baking-history-entry';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
 
 export const MissedOwnBlocks: FC<
-  Pick<BakerRewardInterface, 'missedOwnBlocks' | 'missedOwnBlockRewards' | 'missedOwnBlockFees'>
-> = ({ missedOwnBlocks, missedOwnBlockRewards, missedOwnBlockFees }) => {
+  Pick<BakingHistoryEntry, 'missedBlockFees' | 'missedBlockRewards' | 'missedBlocks'>
+> = ({ missedBlockFees, missedBlockRewards, missedBlocks }) => {
   const styles = useBakerRewardItemStyles();
   const { metadata } = useNetworkInfo();
 
@@ -36,20 +35,16 @@ export const MissedOwnBlocks: FC<
               <Text style={styles.cellTitle}>Payout:</Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textRed}>
-                -
-                {mutezToTz(new BigNumber(missedOwnBlockRewards), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() +
-                  ' '}
+                -{missedBlockRewards.decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}>
                   {' '}
-                  for <Text style={styles.textBlack}>{missedOwnBlocks.toString()} blocks</Text>
+                  for <Text style={styles.textBlack}>{missedBlocks.toString()} blocks</Text>
                 </Text>
               </Text>
               <Divider size={formatSize(2)} />
               <Text style={styles.textBlack}>
-                -
-                {mutezToTz(new BigNumber(missedOwnBlockFees), 6).decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() +
-                  ' '}
+                -{missedBlockFees.decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
                 {metadata.symbol}
                 <Text style={styles.textGray}> fees</Text>
               </Text>

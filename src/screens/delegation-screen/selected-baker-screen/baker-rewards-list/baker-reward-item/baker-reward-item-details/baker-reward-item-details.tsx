@@ -1,50 +1,44 @@
 import React, { FC } from 'react';
 
-import { BakerRewardInterface } from '../../../../../../interfaces/baker-reward.interface';
+import { BakingHistoryEntry } from '../../interfaces/baking-history-entry';
 
 import { Endorsements } from './details/endorsements';
 import { MissedEndorsements } from './details/missed-endorsements';
 import { MissedOwnBlocks } from './details/missed-own-blocks';
 import { OwnBlocks } from './details/own-blocks';
 
-interface Props {
-  reward: BakerRewardInterface;
-}
-
-export const BakerRewardItemDetails: FC<Props> = ({ reward }) => {
+export const BakerRewardItemDetails: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
   const {
-    ownBlockRewards,
-    endorsementRewards,
-    ownBlocks,
-    endorsements,
-    ownBlockFees,
-    missedEndorsementRewards,
-    missedOwnBlockFees,
-    missedOwnBlockRewards,
-    missedOwnBlocks,
-    missedEndorsements
-  } = reward;
+    blockRewards,
+    attestationRewards,
+    blocks,
+    attestations,
+    blockFees,
+    missedAttestationRewards,
+    missedBlockFees,
+    missedBlockRewards,
+    missedBlocks,
+    missedAttestations
+  } = item;
 
   return (
     <>
-      {ownBlocks > 0 && (
-        <OwnBlocks ownBlocks={ownBlocks} ownBlockRewards={ownBlockRewards} ownBlockFees={ownBlockFees} />
-      )}
+      {blocks > 0 && <OwnBlocks blocks={blocks} blockFees={blockFees} blockRewards={blockRewards} />}
 
-      {endorsements > 0 && <Endorsements endorsements={endorsements} endorsementRewards={endorsementRewards} />}
+      {attestations > 0 && <Endorsements attestations={attestations} attestationRewards={attestationRewards} />}
 
-      {missedOwnBlocks > 0 && (
+      {missedBlocks > 0 && (
         <MissedOwnBlocks
-          missedOwnBlocks={missedOwnBlocks}
-          missedOwnBlockRewards={missedOwnBlockRewards}
-          missedOwnBlockFees={missedOwnBlockFees}
+          missedBlocks={missedBlocks}
+          missedBlockRewards={missedBlockRewards}
+          missedBlockFees={missedBlockFees}
         />
       )}
 
-      {missedEndorsements > 0 && (
+      {missedAttestations > 0 && (
         <MissedEndorsements
-          missedEndorsements={missedEndorsements}
-          missedEndorsementRewards={missedEndorsementRewards}
+          missedAttestations={missedAttestations}
+          missedAttestationRewards={missedAttestationRewards}
         />
       )}
     </>

@@ -11,7 +11,6 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { BakerRewardInterface } from 'src/interfaces/baker-reward.interface';
 import { useIsInAppBrowserEnabledSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -29,11 +28,10 @@ const STAKING_DAPP_LINK = 'https://stake.tezos.com/';
 
 interface Props {
   baker: BakerInterface;
-  bakerRewardsList: BakerRewardInterface[];
   onRedelegatePress: EmptyFn;
 }
 
-export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRedelegatePress }) => {
+export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => {
   const styles = useSelectedBakerScreenStyles();
   const colors = useColors();
 
@@ -44,7 +42,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
   const openUrlInAppBrowser = useOpenUrlInAppBrowser();
   const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
 
-  const { fee, capacity, freeSpace } = baker.delegation;
+  const { fee, capacity, freeSpace, minBalance } = baker.delegation;
   const feeStr = formatToPercentStr(fee);
   const stakingBalance = capacity - freeSpace;
 
@@ -90,20 +88,25 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
         {!isDcpNode && (
           <View style={styles.lowerContainer}>
             <View>
-              <Text style={styles.cellTitle}>Baker fee:</Text>
-              <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+              <Text style={styles.cellTitle}>Delegated:</Text>
+              <Text style={styles.cellValueText}>{isDefined(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
             </View>
             <Divider size={formatSize(16)} />
             <View>
               <Text style={styles.cellTitle}>Space:</Text>
               <Text style={styles.cellValueText}>
-                {isDefined(freeSpace) ? freeSpace.toFixed(2) : '--'} {metadata.symbol}
+                {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {metadata.symbol}
               </Text>
             </View>
             <Divider size={formatSize(16)} />
             <View>
-              <Text style={styles.cellTitle}>Staking:</Text>
-              <Text style={styles.cellValueText}>{isDefined(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
+              <Text style={styles.cellTitle}>Baker fee:</Text>
+              <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+            </View>
+            <Divider size={formatSize(16)} />
+            <View>
+              <Text style={styles.cellTitle}>Min Balance:</Text>
+              <Text style={styles.cellValueText}>{isDefined(minBalance) ? `${minBalance} TEZ` : '--'}</Text>
             </View>
           </View>
         )}
@@ -135,7 +138,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, bakerRewardsList, onRede
 
       <Divider size={formatSize(16)} />
 
-      <BakerRewardsList bakerRewards={bakerRewardsList} />
+      <BakerRewardsList />
     </>
   );
 };
