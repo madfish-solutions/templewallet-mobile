@@ -32,14 +32,19 @@ export const getDelegatorRewards = (
     })
     .then(x => x.data);
 
-export const getCycles = (selectedRpcUrl: string) =>
+export const getCycles = (selectedRpcUrl: string, offset?: number, limit?: number) =>
   getTzktApi(selectedRpcUrl)
-    .get<TzktCycle[]>('/cycles')
+    .get<TzktCycle[]>('/cycles', { params: { offset, limit } })
     .then(x => x.data);
 
 export const getProtocol = (selectedRpcUrl: string) =>
   getTzktApi(selectedRpcUrl)
     .get<TzktProtocol>('/protocols/current')
+    .then(x => x.data);
+
+export const getProtocolByCycle = (selectedRpcUrl: string, cycle: number) =>
+  getTzktApi(selectedRpcUrl)
+    .get<TzktProtocol>(`/protocols/cycles/${cycle}`)
     .then(x => x.data);
 
 export const fetchSetDelegateParametersOperations = (

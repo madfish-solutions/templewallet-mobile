@@ -18,7 +18,13 @@ import { TzktSetDelegateParamsOperation } from './interfaces/tzkt';
 import { bakingBadGetBakerStory } from './utils/baking-bad';
 import { CycleStatus } from './utils/get-cycle-status-icon';
 import { getRewardsStats } from './utils/get-rewards-stats';
-import { fetchSetDelegateParametersOperations, getCycles, getDelegatorRewards, getProtocol } from './utils/tzkt';
+import {
+  fetchSetDelegateParametersOperations,
+  getCycles,
+  getDelegatorRewards,
+  getProtocol,
+  getProtocolByCycle
+} from './utils/tzkt';
 
 const AVERAGE_ITEM_HEIGHT = 280;
 
@@ -58,11 +64,21 @@ export const BakerRewardsList = memo(() => {
   const getBakingHistory = useCallback(
     async ([, accountPkh, , selectedRpcUrl]: [string, string, string | nullish, string]) => {
       try {
-        const [rewards, cycles, protocol] = await Promise.all([
-          getDelegatorRewards(selectedRpcUrl, { address: accountPkh, limit: 30 }).then(res => res || []),
-          getCycles(selectedRpcUrl),
-          getProtocol(selectedRpcUrl)
-        ]);
+        const rewards = await getDelegatorRewards(selectedRpcUrl, { address: accountPkh, limit: 30 }).then(
+          res => res || []
+        );
+        const [newestCycle] = await getCycles(selectedRpcUrl, undefined, 1);
+        const [cycles, protocol] =
+          rewards.length === 0
+            ? await Promise.all([getCycles(selectedRpcUrl), getProtocol(selectedRpcUrl)])
+            : await Promise.all([
+                getCycles(
+                  selectedRpcUrl,
+                  newestCycle.index - rewards[0].cycle,
+                  rewards[0].cycle - rewards.at(-1)!.cycle + 1
+                ),
+                getProtocolByCycle(selectedRpcUrl, rewards[0].cycle)
+              ]);
         const bakersAddresses = uniq(rewards.map(({ baker }) => baker.address));
         const setParamsOperationsValues = await Promise.all(
           bakersAddresses.map(address =>
@@ -102,10 +118,7 @@ export const BakerRewardsList = memo(() => {
 
     const { rewards, cycles, protocol, setParamsOperations, stories } = bakingHistoryInput;
 
-    const nowDate = new Date().toISOString();
-    const currentCycleIndex = Object.values(cycles).find(
-      ({ startTime, endTime }) => startTime <= nowDate && endTime > nowDate
-    )!.index;
+    const nowDate = new Date();
 
     return rewards.map((reward): BakingHistoryEntry => {
       const { cycle: cycleIndex, baker } = reward;
@@ -150,9 +163,9 @@ export const BakerRewardsList = memo(() => {
         bakerAddress,
         bakerName,
         status:
-          cycleIndex > currentCycleIndex
+          new Date(cycle.startTime) > nowDate
             ? CycleStatus.FUTURE
-            : cycleIndex === currentCycleIndex
+            : new Date(cycle.endTime) > nowDate
             ? CycleStatus.IN_PROGRESS
             : CycleStatus.UNLOCKED
       };
