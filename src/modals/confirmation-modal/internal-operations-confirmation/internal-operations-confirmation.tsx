@@ -1,4 +1,4 @@
-import { OpKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/rpc';
 import React, { FC, useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { of } from 'rxjs';

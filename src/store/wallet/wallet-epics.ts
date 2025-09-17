@@ -1,4 +1,5 @@
-import { OpKind, ParamsWithKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/rpc';
+import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { Action } from 'redux';
 import { Epic, combineEpics } from 'redux-observable';

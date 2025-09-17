@@ -1,4 +1,5 @@
-import { OpKind, ParamsWithKind } from '@taquito/taquito';
+import { OpKind } from '@taquito/rpc';
+import { ParamsWithKind } from '@taquito/taquito';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, ReactNode, useEffect } from 'react';
 import { Text, View } from 'react-native';

@@ -1,5 +1,5 @@
-import { OpKind, ParamsWithKind, TezosToolkit } from '@taquito/taquito';
-import { TransferParams } from '@taquito/taquito/dist/types/operations/types';
+import { OpKind } from '@taquito/rpc';
+import { ParamsWithKind, TezosToolkit, TransferParams } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
