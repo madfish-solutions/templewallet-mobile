@@ -24,6 +24,7 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { buildSafeURL } from 'src/utils/url.utils';
 
 import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
 
@@ -57,6 +58,13 @@ export const EditCustomRpcModal: FC = () => {
 
     const otherItems = [...rpcList];
     otherItems.splice(index, 1);
+
+    const isUrlValid = buildSafeURL(values.url?.trim());
+    if (!isUrlValid) {
+      showErrorToast({ description: 'App loading failed due to RPC URL. Verify the URL and try again.' });
+
+      return;
+    }
 
     if (confirmUniqueRPC(otherItems, values) === false) {
       return;

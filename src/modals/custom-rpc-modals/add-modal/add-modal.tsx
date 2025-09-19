@@ -18,7 +18,9 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addCustomRpc, setSelectedRpcUrl } from 'src/store/settings/settings-actions';
 import { useRpcListSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { buildSafeURL } from 'src/utils/url.utils';
 
 import { formInitialValues, formValidationSchema, confirmUniqueRPC } from '../form.utils';
 
@@ -30,6 +32,13 @@ export const AddCustomRpcModal: FC = () => {
   const rpcList = useRpcListSelector();
 
   const handleSubmit = (newRpc: RpcInterface) => {
+    const isUrlValid = buildSafeURL(newRpc.url?.trim());
+    if (!isUrlValid) {
+      showErrorToast({ description: 'App loading failed due to RPC URL. Verify the URL and try again.' });
+
+      return;
+    }
+
     if (confirmUniqueRPC(rpcList, newRpc) === false) {
       return;
     }
