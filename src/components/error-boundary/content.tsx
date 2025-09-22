@@ -22,7 +22,7 @@ import { RpcList } from 'src/utils/rpc/rpc-list';
 
 import { ButtonLargePrimary } from '../button/button-large/button-large-primary/button-large-primary';
 import { ButtonMedium } from '../button/button-medium/button-medium';
-import { useButtonSmallTryAgainStyles } from '../button/button-small/button-small-try-again/button-small-try-again.styles';
+import { ButtonSmallTryAgain } from '../button/button-small/button-small-try-again';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
 import { Disclaimer } from '../disclaimer/disclaimer';
 import { Icon } from '../icon/icon';
@@ -61,8 +61,6 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
       onTryAgainClick();
     }, [dispatch, onTryAgainClick]);
 
-    const styleConfig = useButtonSmallTryAgainStyles();
-
     return (
       <View style={[styles.root, style]}>
         <View style={styles.contentWrapper}>
@@ -78,11 +76,11 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
 
             <ButtonsContainer style={styles.buttonsRow}>
               {isDefined(error.stack) && (
-                <ButtonMedium
+                <ButtonSmallTryAgain
+                  buttonStyle={styles.iconGap}
                   title="Copy Error"
                   iconName={IconNameEnum.Copy}
                   onPress={copyErrorStack}
-                  styleConfigOverrides={styleConfig}
                 />
               )}
               <ButtonMedium

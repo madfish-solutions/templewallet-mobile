@@ -56,6 +56,7 @@ export const useErrorBoundaryContentStyles = createUseStyles(({ colors, typograp
     shadowRadius: 9,
     elevation: 6,
     height: formatSize(26),
+    gap: formatSize(4),
     borderRadius: formatSize(17)
   },
   border: {
@@ -70,6 +71,9 @@ export const useErrorBoundaryContentStyles = createUseStyles(({ colors, typograp
   },
   revertButton: {
     paddingHorizontal: formatSize(16)
+  },
+  iconGap: {
+    gap: formatSize(6)
   },
   footer: {
     marginBottom: formatSize(32),
