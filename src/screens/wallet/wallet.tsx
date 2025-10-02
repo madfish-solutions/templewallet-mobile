@@ -1,5 +1,5 @@
 import { StackActions, useFocusEffect } from '@react-navigation/native';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -53,14 +53,8 @@ export const Wallet = memo(() => {
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
 
-  const [shouldCrash, setShouldCrash] = useState(false);
-
   useApkBuildIdEvent();
   usePushNotificationsEvent();
-
-  if (shouldCrash) {
-    throw new Error('Test Wallet crash');
-  }
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
 
@@ -112,9 +106,6 @@ export const Wallet = memo(() => {
 
           <NotificationsBell />
 
-          <Divider size={formatSize(24)} />
-
-          <TouchableIcon name={IconNameEnum.AlertTriangle} onPress={() => setShouldCrash(true)} />
           <Divider size={formatSize(24)} />
 
           <Settings />
