@@ -60,7 +60,7 @@
     "@taquito/tzip16": "^23.0.0",
     "@taquito/utils": "^23.0.0",
     "@temple-wallet/wallet-address-validator": "^0.4.3",
-    "@temple-wallet/youves-sdk": "0.0.13-beta.0",
+    "@temple-wallet/youves-sdk": "../youves-sdk",
     "@tezos-domains/core": "1.26.0",
     "@tezos-domains/taquito-client": "1.26.0",
     "@types/async-retry": "^1.4.8",
@@ -134,6 +134,7 @@
     "text-encoding": "^0.7.0",
     "ts-action": "^11.0.0",
     "ts-action-operators": "^9.1.2",
+    "youves-sdk": "^0.0.6",
     "yup": "^0.32.11"
   },
   "devDependencies": {
