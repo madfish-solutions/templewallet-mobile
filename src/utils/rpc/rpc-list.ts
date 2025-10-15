@@ -7,7 +7,7 @@ export const DCP_RPC: RpcInterface = {
 
 export const TEMPLE_RPC: RpcInterface = {
   name: 'Tezos Mainnet',
-  url: 'https://prod.tcinfra.net/rpc/mainnet'
+  url: 'https://broken.net/rpc/mainnet' // TODO: change to https://prod.tcinfra.net/rpc/mainnet after test
 };
 
 export const MARIGOLD_RPC: RpcInterface = {
