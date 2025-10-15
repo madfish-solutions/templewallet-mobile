@@ -4089,10 +4089,10 @@
     crc "^3.8.0"
     jssha "2.3.1"
 
-"@temple-wallet/youves-sdk@0.0.13-beta.0":
-  version "0.0.13-beta.0"
-  resolved "https://registry.yarnpkg.com/@temple-wallet/youves-sdk/-/youves-sdk-0.0.13-beta.0.tgz#456740a564b454f99e3d5e2baa82d0aac833cf74"
-  integrity sha512-eMrY576DLeDZmmDmottgT4PmtGLL7wliSem5E1z2+tFiuikYSyKxHywn9FPSRYSNm6K3c0kpeKyYymkZmFFmCg==
+"@temple-wallet/youves-sdk@^1.0.0-beta.0":
+  version "1.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@temple-wallet/youves-sdk/-/youves-sdk-1.0.0-beta.0.tgz#253c50dc3bb3ef0dbdf85495d45f16e38f2dae3d"
+  integrity sha512-j+NL6QNlSDekQrDTTWpruZ6XcMq55EabmNTpuXSW5V3bh2Cm6hcG0LCDIe9vJBLzvNAHPE39NcKOarpUEHQgCQ==
   dependencies:
     "@taquito/contracts-library" "^23.0.0"
     "@taquito/taquito" "^23.0.0"
