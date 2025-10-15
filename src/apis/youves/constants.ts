@@ -2,7 +2,7 @@ import { mainnetTokens } from '@temple-wallet/youves-sdk/dist/networks.mainnet';
 
 import { YouvesTokensEnum } from './enums';
 
-const YOUVES_INDEXER_URL = 'https://youves-mainnet-indexer.prod.gke.papers.tech/v1/graphql';
+const YOUVES_INDEXER_URL = 'https://indexer.youves.com/v1/graphql';
 export const YOUVES_TOKENS: string[] = [YouvesTokensEnum.YOU, YouvesTokensEnum.UBTC, YouvesTokensEnum.UUSD];
 export const INITIAL_APR_VALUE = 0;
 export const INDEXER_CONFIG = { url: YOUVES_INDEXER_URL, headCheckUrl: '' };
