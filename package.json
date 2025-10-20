@@ -1,6 +1,6 @@
 {
   "name": "temple-wallet",
-  "version": "1.48",
+  "version": "1.49",
   "private": true,
   "scripts": {
     "postinstall": "rn-nodeify --install 'react-native-randombytes' --hack && bash postinstall.sh",
@@ -50,7 +50,7 @@
     "@react-navigation/native": "6.1.8",
     "@react-navigation/stack": "6.3.18",
     "@reduxjs/toolkit": "^1.8.5",
-    "@sentry/react-native": "^5.33.1",
+    "@sentry/react-native": "^6.22.0",
     "@shopify/flash-list": "^1.7",
     "@taquito/local-forging": "^23.0.0",
     "@taquito/rpc": "^23.0.0",
@@ -60,7 +60,7 @@
     "@taquito/tzip16": "^23.0.0",
     "@taquito/utils": "^23.0.0",
     "@temple-wallet/wallet-address-validator": "^0.4.3",
-    "@temple-wallet/youves-sdk": "0.0.13-beta.0",
+    "@temple-wallet/youves-sdk": "^1.0.0-beta.0",
     "@tezos-domains/core": "1.26.0",
     "@tezos-domains/taquito-client": "1.26.0",
     "@types/async-retry": "^1.4.8",
