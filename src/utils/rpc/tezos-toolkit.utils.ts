@@ -9,12 +9,12 @@ import { ReadOnlySigner } from 'src/utils/read-only.signer.util';
 
 import { isDefined } from '../is-defined';
 
-import { getFastRpcClient } from './fast-rpc';
+import { getFallbackRpcClient } from './fallback-rpc';
 
 const michelEncoder = new MichelCodecPacker();
 
 export const createTezosToolkit = (rpcUrl: string) => {
-  const tezosToolkit = new TezosToolkit(getFastRpcClient(rpcUrl));
+  const tezosToolkit = new TezosToolkit(getFallbackRpcClient(rpcUrl));
   tezosToolkit.setPackerProvider(michelEncoder);
   tezosToolkit.setForgerProvider(new CompositeForger([tezosToolkit.getFactory(RpcForger)(), localForger]));
   tezosToolkit.addExtension(new Tzip16Module());

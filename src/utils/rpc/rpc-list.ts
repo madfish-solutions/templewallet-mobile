@@ -29,3 +29,11 @@ export const RpcList: RpcInterface[] = [
   },
   DCP_RPC
 ];
+
+export const FALLBACK_RPC_LIST = [
+  'https://mainnet.smartpy.io',
+  'https://mainnet.api.tez.ie',
+  'https://rpc.tzkt.io/mainnet',
+  'https://rpc.tzbeta.net',
+  'https://mainnet.tezos.ecadinfra.com'
+];
