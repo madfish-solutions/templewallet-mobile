@@ -14,6 +14,7 @@ import { PromotionItem } from 'src/components/promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { Search } from 'src/components/search/search';
 import { isAndroid } from 'src/config/system';
+import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
@@ -83,7 +84,7 @@ export const TokensList = memo(() => {
   const visibleTokensList = useCurrentAccountTokens(true);
   const isInAppUpdateAvailable = useIsInAppUpdateAvailableSelector();
   const publicKeyHash = useCurrentAccountPkhSelector();
-  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
+  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID, PromotionProviderEnum.HypeLab);
   const { isTezosNode } = useNetworkInfo();
 
   const adPageName = 'Home page';

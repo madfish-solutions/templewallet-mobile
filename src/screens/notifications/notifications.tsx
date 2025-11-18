@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { PromotionItem } from 'src/components/promotion-item';
+import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
@@ -33,7 +34,7 @@ const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
 export const Notifications = () => {
   const notifications = useNotificationsSelector();
   const dispatch = useDispatch();
-  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID);
+  const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID, PromotionProviderEnum.HypeLab);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
   const adRef = useRef<View>(null);

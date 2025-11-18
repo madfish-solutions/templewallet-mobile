@@ -1,6 +1,6 @@
 import { catchError, from, map, of } from 'rxjs';
 
-import { templeWalletApi } from '../../api.service';
+import { templeAdsApi, templeWalletApi } from '../../api.service';
 
 export enum ABTestGroup {
   A = 'A',
@@ -17,3 +17,6 @@ export const getABGroup$ = () =>
     map(response => response.data.ab),
     catchError(() => of(ABTestGroup.Unknown))
   );
+
+export const fetchEnableInternalHypelabAds = () =>
+  templeAdsApi.get<boolean>('/ads-rules/2.0.13/enable-internal-hypelab-ads').then(response => response.data);

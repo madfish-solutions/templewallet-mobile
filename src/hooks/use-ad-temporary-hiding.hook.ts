@@ -1,27 +1,35 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import useSWR from 'swr';
 
+import { fetchEnableInternalHypelabAds } from 'src/apis/temple-wallet';
+import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { hidePromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { usePromotionHidingTimestampSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { MS_IN_SECOND, SECONDS_IN_MINUTE } from 'src/utils/date.utils';
 
 export const AD_HIDING_TIMEOUT = 12 * 3600 * 1000;
 
-const shouldBeHiddenTemporarily = (hiddenAt: number) => {
+const shouldBeHiddenByTimeout = (hiddenAt: number) => {
   return Date.now() - hiddenAt < AD_HIDING_TIMEOUT;
 };
 
-export const useAdTemporaryHiding = (id: string) => {
+export const useAdTemporaryHiding = (
+  id: string,
+  provider: PromotionProviderEnum,
+  onHypelabAdsEnabled?: SyncFn<boolean>
+) => {
   const dispatch = useDispatch();
   const hiddenAt = usePromotionHidingTimestampSelector(id);
-  const [isHiddenTemporarily, setIsHiddenTemporarily] = useState(shouldBeHiddenTemporarily(hiddenAt));
+  const [isHiddenByTimeout, setIsHiddenByTimeout] = useState(shouldBeHiddenByTimeout(hiddenAt));
 
   useEffect(() => {
-    const newIsHiddenTemporarily = shouldBeHiddenTemporarily(hiddenAt);
-    setIsHiddenTemporarily(newIsHiddenTemporarily);
+    const newIsHiddenByTimeout = shouldBeHiddenByTimeout(hiddenAt);
+    setIsHiddenByTimeout(newIsHiddenByTimeout);
 
-    if (newIsHiddenTemporarily) {
+    if (newIsHiddenByTimeout) {
       const timeout = setTimeout(() => {
-        setIsHiddenTemporarily(false);
+        setIsHiddenByTimeout(false);
       }, Math.max(Date.now() - hiddenAt + AD_HIDING_TIMEOUT, 0));
 
       return () => clearTimeout(timeout);
@@ -33,6 +41,35 @@ export const useAdTemporaryHiding = (id: string) => {
   const hidePromotion = useCallback(() => {
     dispatch(hidePromotionAction({ timestamp: Date.now(), id }));
   }, [id, dispatch]);
+
+  const { data: enableInternalHypelabAds, isLoading: isLoadingEnableInternalHypelabAds } = useSWR<boolean>(
+    'enable-internal-hypelab-ads',
+    fetchEnableInternalHypelabAds,
+    {
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
+      revalidateOnReconnect: false,
+      refreshInterval: (5 * SECONDS_IN_MINUTE + 1) * MS_IN_SECOND
+    }
+  );
+  const prevEnableInternalHypelabAdsRef = useRef(enableInternalHypelabAds);
+
+  const isHiddenTemporarily =
+    isHiddenByTimeout ||
+    (isLoadingEnableInternalHypelabAds &&
+      enableInternalHypelabAds === undefined &&
+      provider === PromotionProviderEnum.HypeLab);
+
+  useEffect(() => {
+    const prevEnableInternalHypelabAds = prevEnableInternalHypelabAdsRef.current;
+    prevEnableInternalHypelabAdsRef.current = enableInternalHypelabAds;
+    if (enableInternalHypelabAds === false && provider === PromotionProviderEnum.HypeLab) {
+      onHypelabAdsEnabled?.(false);
+    }
+    if (prevEnableInternalHypelabAds === false && enableInternalHypelabAds) {
+      onHypelabAdsEnabled?.(true);
+    }
+  }, [enableInternalHypelabAds, onHypelabAdsEnabled, provider]);
 
   return { isHiddenTemporarily, hidePromotion };
 };

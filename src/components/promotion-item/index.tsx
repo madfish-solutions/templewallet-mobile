@@ -51,7 +51,6 @@ export const PromotionItem = forwardRef<View, Props>(
     const isImageAd = variant === PromotionVariantEnum.Image;
     const styles = usePromotionItemStyles();
     const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
-    const { isHiddenTemporarily, hidePromotion } = useAdTemporaryHiding(id);
     const isFocused = useIsFocused();
 
     const [adsState, setAdsState] = useState({
@@ -60,6 +59,37 @@ export const PromotionItem = forwardRef<View, Props>(
       adIsReady: false
     });
     const { adError, currentProvider, adIsReady } = adsState;
+
+    const handleAdError = useCallback(() => {
+      setAdsState(prevState => ({ ...prevState, adError: true }));
+      onError?.();
+    }, [onError]);
+
+    const handleHypelabError = useCallback(() => {
+      if (!PERSONA_ADS_ENABLED) {
+        handleAdError();
+
+        return;
+      }
+
+      if (variant === PromotionVariantEnum.Text) {
+        handleAdError();
+      } else {
+        setAdsState(prevState => ({ ...prevState, currentProvider: PromotionProviderEnum.Persona }));
+      }
+    }, [handleAdError, variant]);
+
+    const handleHypelabAdsEnabled = useCallback(
+      (enabled: boolean) => {
+        if (enabled) {
+          setAdsState({ currentProvider: PromotionProviderEnum.HypeLab, adError: false, adIsReady: false });
+        } else {
+          handleHypelabError();
+        }
+      },
+      [handleHypelabError]
+    );
+    const { isHiddenTemporarily, hidePromotion } = useAdTemporaryHiding(id, currentProvider, handleHypelabAdsEnabled);
 
     useEffect(() => {
       if (!isFocused) {
@@ -86,25 +116,6 @@ export const PromotionItem = forwardRef<View, Props>(
       PROMO_SYNC_INTERVAL,
       [partnersPromotionEnabled, isHiddenTemporarily, shouldRefreshAd]
     );
-
-    const handleAdError = useCallback(() => {
-      setAdsState(prevState => ({ ...prevState, adError: true }));
-      onError && onError();
-    }, [onError]);
-
-    const handleHypelabError = useCallback(() => {
-      if (!PERSONA_ADS_ENABLED) {
-        handleAdError();
-
-        return;
-      }
-
-      if (variant === PromotionVariantEnum.Text) {
-        handleAdError();
-      } else {
-        setAdsState(prevState => ({ ...prevState, currentProvider: PromotionProviderEnum.Persona }));
-      }
-    }, [handleAdError, variant]);
 
     const handleAdReadyFactory = useCallback(
       (provider: PromotionProviderEnum) => () => {
