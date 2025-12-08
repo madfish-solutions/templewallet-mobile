@@ -39,7 +39,9 @@ export const fetchRoute3Tokens$ = () =>
 const parser = (origJSON: string): ReturnType<(typeof JSON)['parse']> => {
   const stringedJSON = origJSON.replace(/(input|output|tokenInAmount|tokenOutAmount)":\s*([-+Ee0-9.]+)/g, '$1":"$2"');
 
-  return JSON.parse(stringedJSON);
+  try {
+    return JSON.parse(stringedJSON);
+  } catch {}
 };
 
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest): string;
