@@ -79,6 +79,11 @@ export const sendTransaction$ = (rpcUrl: string, senderPkh: string, opParams: Pa
           throw new Error('The balance of TEZ is not enough to make a transaction.');
         }
       } catch {}
+
+      if (typeof err?.body === 'string' && /<\s*html/i.test(err.body)) {
+        throw new Error('Http error: unknown html response. Change RPC and try again');
+      }
+
       throw new Error(err.message);
     })
   );

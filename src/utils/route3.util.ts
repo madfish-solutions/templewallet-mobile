@@ -41,7 +41,9 @@ const parser = (origJSON: string): ReturnType<(typeof JSON)['parse']> => {
 
   try {
     return JSON.parse(stringedJSON);
-  } catch {}
+  } catch {
+    throw new Error('Http error: unknown html response. Change RPC and try again');
+  }
 };
 
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest): string;
