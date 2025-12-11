@@ -18,6 +18,8 @@ import { isDefined } from '../is-defined';
 import { FastRpcClient, getFastRpcClient } from './fast-rpc';
 import { FALLBACK_RPC_LIST, TEMPLE_RPC } from './rpc-list';
 
+const SIMULATED_HTML_RESPONSE = '<html><body>Simulated HTML</body></html>';
+
 /**
  * A lightweight fallback client that sequentially tries multiple FastRpcClient instances
  * until one succeeds. Inspired by Viem's fallback transport policy.
@@ -39,7 +41,15 @@ class FallbackRpcClient extends RpcClient {
       const idx = (start + i) % total;
       const client = this.clients[idx];
       try {
-        const result = await method(client);
+        const result = await simulateHtmlIfGoogle(client, method);
+        if (isHtmlResponse(result)) {
+          const htmlError = new Error('Http error: unknown html response. Change RPC and try again');
+          if (!shouldFallbackToNext(htmlError) || i === total - 1) {
+            throw htmlError;
+          }
+          continue;
+        }
+
         this.preferredIndex = idx;
 
         return result;
@@ -172,6 +182,24 @@ class FallbackRpcClient extends RpcClient {
   async runView(param: RPCRunViewParam, opts?: RPCOptions) {
     return this.callWithFallback(client => client.runView(param, opts));
   }
+}
+
+function isHtmlResponse(result: unknown) {
+  if (typeof result !== 'string') {
+    return false;
+  }
+
+  const normalized = result.trim().toLowerCase();
+
+  return normalized.startsWith('<!doctype html') || normalized.startsWith('<html');
+}
+
+async function simulateHtmlIfGoogle<T>(client: FastRpcClient, method: (client: FastRpcClient) => Promise<T>) {
+  if (client.getRpcUrl().includes('google.com')) {
+    return SIMULATED_HTML_RESPONSE as unknown as T;
+  }
+
+  return method(client);
 }
 
 function shouldFallbackToNext(error: any): boolean {

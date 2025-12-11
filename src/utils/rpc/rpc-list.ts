@@ -6,8 +6,8 @@ export const DCP_RPC: RpcInterface = {
 };
 
 export const TEMPLE_RPC: RpcInterface = {
-  name: 'Tezos Mainnet',
-  url: 'https://prod.tcinfra.net/rpc/mainnet'
+  name: 'Tezos Mainnet (google)',
+  url: 'https://www.google.com'
 };
 
 export const MARIGOLD_RPC: RpcInterface = {
