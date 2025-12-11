@@ -1,20 +1,17 @@
-import { TezosToolkit } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 
 import { MAIN_SIRS_SWAP_MAX_DEXES } from 'src/config/swap';
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
-import { LiquidityBakingStorage } from 'src/op-params/liquidity-baking-storage.interface';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, SIRS_TOKEN } from 'src/token/data/token-slugs';
 import { SIRS_TOKEN_METADATA, TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
-import { APPROXIMATE_DAYS_IN_YEAR, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking';
 import { ZERO } from 'src/utils/number.util';
 import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
-import { getContractStorage } from 'src/utils/rpc/contract.utils';
+import { TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 import {
   calculateSidePaymentsFromInput,
   calculateOutputFeeAtomic,
@@ -23,12 +20,9 @@ import {
 } from 'src/utils/swap.utils';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
-import {
-  DEFAULT_LIQUIDITY_BAKING_SUBSIDY,
-  DEFAULT_MINIMAL_BLOCK_DELAY,
-  liquidityBakingStakingId,
-  THREE_ROUTE_LB_TOKENS
-} from './consts';
+import { getLiquidityBakingStats } from '../temple-wallet';
+
+import { liquidityBakingStakingId, THREE_ROUTE_LB_TOKENS } from './consts';
 import { LiquidityBakingFarmResponse } from './types';
 
 const toFarmToken = (token: TokenMetadataInterface) => ({
@@ -46,47 +40,15 @@ const toFarmToken = (token: TokenMetadataInterface) => ({
   }
 });
 
-export const getLiquidityBakingFarm = async (
-  tezos: TezosToolkit,
-  tezExchangeRate?: number,
-  tzbtcExchangeRate?: number
-): Promise<LiquidityBakingFarmResponse> => {
-  const { xtzPool, tokenPool, lqtTotal } = await getContractStorage<LiquidityBakingStorage>(
-    tezos,
-    LIQUIDITY_BAKING_DEX_ADDRESS
-  );
-  const {
-    liquidity_baking_subsidy: subsidyPerBlock = DEFAULT_LIQUIDITY_BAKING_SUBSIDY,
-    minimal_block_delay: blockPeriod = DEFAULT_MINIMAL_BLOCK_DELAY
-  } = await tezos.rpc.getConstants();
-  const dailyDistributionAtomic = subsidyPerBlock.times(SECONDS_IN_DAY).div(blockPeriod);
-  const dailyDistribution = mutezToTz(dailyDistributionAtomic, TEZ_TOKEN_METADATA.decimals);
-  const annualSubsidy = dailyDistributionAtomic.times(APPROXIMATE_DAYS_IN_YEAR);
-
-  const tezosPoolInTokens = mutezToTz(xtzPool, TEZ_TOKEN_METADATA.decimals);
-  const tzBtcPoolInTokens = mutezToTz(tokenPool, TZBTC_TOKEN_METADATA.decimals);
-  const tvlInUsd =
-    isDefined(tezExchangeRate) && isDefined(tzbtcExchangeRate)
-      ? tezosPoolInTokens.times(tezExchangeRate).plus(tzBtcPoolInTokens.times(tzbtcExchangeRate))
-      : null;
-  const depositExchangeRate = isDefined(tvlInUsd) && lqtTotal.isGreaterThan(0) ? tvlInUsd.div(lqtTotal) : null;
-  const { hash, level, timestamp } = await tezos.rpc.getBlockHeader();
+export const getLiquidityBakingFarm = async (): Promise<LiquidityBakingFarmResponse> => {
+  const { stats, blockInfo } = await getLiquidityBakingStats();
 
   return {
     item: {
       type: EarnOpportunityTypeEnum.LIQUIDITY_BAKING,
       id: liquidityBakingStakingId,
-      contractAddress: LIQUIDITY_BAKING_DEX_ADDRESS,
-      apr: xtzPool.plus(annualSubsidy).div(xtzPool).minus(1).div(2).times(100).toFixed(),
-      depositExchangeRate: depositExchangeRate?.toFixed() ?? null,
-      depositTokenUrl: `${tzktUrl(tezos.rpc.getRpcUrl(), SIRS_TOKEN.address)}`,
-      dailyDistribution: dailyDistribution.toFixed(),
-      dailyDistributionDollarEquivalent: isDefined(tezExchangeRate)
-        ? dailyDistribution.times(tezExchangeRate).toFixed()
-        : '0',
-      earnExchangeRate: tezExchangeRate?.toString() ?? null,
-      vestingPeriodSeconds: '0',
-      stakeUrl: `${tzktUrl(tezos.rpc.getRpcUrl(), LIQUIDITY_BAKING_DEX_ADDRESS)}`,
+      depositTokenUrl: `${tzktUrl(TEMPLE_RPC.url, SIRS_TOKEN.address)}`,
+      stakeUrl: `${tzktUrl(TEMPLE_RPC.url, LIQUIDITY_BAKING_DEX_ADDRESS)}`,
       stakedToken: {
         contractAddress: SIRS_TOKEN.address,
         type: EarnOpportunityTokenStandardEnum.Fa12,
@@ -95,16 +57,10 @@ export const getLiquidityBakingFarm = async (
       },
       tokens: [toFarmToken(TEZ_TOKEN_METADATA), toFarmToken(TZBTC_TOKEN_METADATA)],
       rewardToken: toFarmToken(TEZ_TOKEN_METADATA),
-      staked: lqtTotal.toFixed(),
-      tvlInUsd: tvlInUsd?.toFixed() ?? null,
-      tvlInStakedToken: lqtTotal.toFixed(),
-      firstActivityTime: await getFirstAccountActivityTime(LIQUIDITY_BAKING_DEX_ADDRESS)
+      firstActivityTime: await getFirstAccountActivityTime(LIQUIDITY_BAKING_DEX_ADDRESS),
+      ...stats
     },
-    blockInfo: {
-      hash,
-      level,
-      timestamp
-    }
+    blockInfo
   };
 };
 
