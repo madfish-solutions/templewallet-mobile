@@ -129,89 +129,8 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   WTEZ_TOKEN_METADATA
 ];
 
-const YUPANA_TOKENS_METADATA_TEMPLATE: Array<Omit<TokenMetadataInterface, 'address'>> = [
-  {
-    id: 0,
-    name: 'Yupana XTZ',
-    symbol: 'y-XTZ',
-    decimals: 6,
-    thumbnailUri: 'ipfs://QmRukmxJkSmu9v2mUutSU7FNMegPramzVgsZ6YfRSWjdnV',
-    standard: TokenStandardsEnum.Fa2
-  },
-  {
-    id: 1,
-    name: 'Yupana cTez',
-    symbol: 'y-cTez',
-    decimals: 6,
-    thumbnailUri: 'ipfs://Qmb75waMQiExVM8AvVm6VAhJXpA9rP3etUARzzzLTozy1i',
-    standard: TokenStandardsEnum.Fa2
-  },
-  {
-    id: 2,
-    name: 'Yupana kUSD',
-    symbol: 'y-kUSD',
-    decimals: 18,
-    thumbnailUri: 'ipfs://QmbUocmW1Numv648rcVXx46FxEg91pwPpUHYMW7yc7KVF2',
-    standard: TokenStandardsEnum.Fa2
-  },
-  {
-    id: 3,
-    name: 'Yupana uUSD',
-    symbol: 'y-uUSD',
-    decimals: 12,
-    thumbnailUri: 'ipfs://QmbQDxZF5kXm8uFhWv4hb4qQcXEkEqgmGfX2J8EVW64BDf',
-    standard: TokenStandardsEnum.Fa2
-  },
-  {
-    id: 4,
-    name: 'Yupana tzBTC',
-    symbol: 'y-tzBTC',
-    decimals: 8,
-    thumbnailUri: 'ipfs://QmeMiZkN5X7WSVwT32pnaCNCT37BpFXofZUoAn44sLXwoF'
-  },
-  {
-    id: 5,
-    name: 'Yupana uBTC',
-    symbol: 'y-uBTC',
-    decimals: 12,
-    thumbnailUri: 'ipfs://QmeNXkS5uDx1Akjp1yXBipw99fkAHvhcm7sXwKfjjVcVEU'
-  },
-  {
-    id: 6,
-    name: 'Yupana USDT',
-    symbol: 'y-USDT',
-    decimals: 6,
-    thumbnailUri: 'ipfs://QmYbAvqLYd7KjEuBmZwiuME39gM7Ze99CMMyyK1VPP7VmD'
-  },
-  {
-    id: 7,
-    name: 'Yupana SIRS',
-    symbol: 'y-SIRS',
-    decimals: 0,
-    thumbnailUri: 'ipfs://QmVP7fmUwFQJR6kswZCKe85V19SL7RSiK2hTHrsBJsSACb'
-  },
-  {
-    id: 8,
-    name: 'Yupana uXTZ',
-    symbol: 'y-uXTZ',
-    decimals: 6,
-    thumbnailUri: 'ipfs://QmcCJVPDBNwCWPK42RTYGtmq91KXJC17756FgkUhDcXRtG'
-  }
-];
-
-const YUPANA_V1_TOKENS_METADATA = YUPANA_TOKENS_METADATA_TEMPLATE.map(metadata => ({
-  ...metadata,
-  address: 'KT1Rk86CX85DjBKmuyBhrCyNsHyudHVtASec'
-}));
-const YUPANA_V2_TOKENS_METADATA = YUPANA_TOKENS_METADATA_TEMPLATE.map(metadata => ({
-  ...metadata,
-  address: 'KT1CojtgtVHVarS135fnV3y4z8TiKXrsRHJr'
-}));
-
 export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
   DEPRECATED_TKEY_METADATA,
-  ...YUPANA_V1_TOKENS_METADATA,
-  ...YUPANA_V2_TOKENS_METADATA,
   {
     id: 0,
     address: 'KT1KEsRsSMvSkgZ9CwYy5fPA1e4j3TEpuiKK',

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { madfishLink, quipuLink, supportUkraine, yupanaLink } from 'src/config/socials';
+import { madfishLink, quipuLink, supportUkraine } from 'src/config/socials';
 
 import { PromotionCarouselItem } from './promotion-carousel-item/promotion-carousel-item';
 import { PromotionCarouselSelectors } from './promotion-carousel.selectors';
@@ -15,11 +15,6 @@ export const COMMON_PROMOTION_CAROUSEL_DATA = [
     link={madfishLink}
     source={require('./banners/madfish.png')}
     testID={PromotionCarouselSelectors.madFishBlogBanner}
-  />,
-  <PromotionCarouselItem
-    link={yupanaLink}
-    source={require('./banners/yupana.png')}
-    testID={PromotionCarouselSelectors.yupanaBanner}
   />,
   <PromotionCarouselItem
     link={quipuLink}
