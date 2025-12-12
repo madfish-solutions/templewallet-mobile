@@ -49,6 +49,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     onClose,
     onReady,
     onError,
+    onImpression,
     ...testIDProps
   }) => {
     const { testID, testIDProperties } = testIDProps;
@@ -130,15 +131,13 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
                   width: creativeSet.video.width,
                   height: creativeSet.video.height
                 });
-              } else {
-                setBackgroundAsset(
-                  creativeSet && {
-                    type: 'image',
-                    uri: creativeSet.image.url,
-                    width: creativeSet.image.width,
-                    height: creativeSet.image.height
-                  }
-                );
+              } else if (creativeSet && 'image' in creativeSet) {
+                setBackgroundAsset({
+                  type: 'image',
+                  uri: creativeSet.image.url,
+                  width: creativeSet.image.width,
+                  height: creativeSet.image.height
+                });
               }
               if (adChanged(adHref, ctaUrl)) {
                 onReady();
@@ -152,12 +151,16 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
                 trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
                 openUrl(adHref);
               }
+              break;
+            case AdFrameMessageType.Impression:
+              onImpression();
+              break;
           }
         } catch (err) {
           console.error(err);
         }
       },
-      [adHref, onError, onReady, testID, testIDProperties, trackEvent, adChanged]
+      [adHref, onError, onReady, testID, testIDProperties, trackEvent, adChanged, onImpression]
     );
 
     const webViewCommonProps = useMemo(

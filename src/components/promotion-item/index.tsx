@@ -27,6 +27,7 @@ interface Props {
   pageName: string;
   onError?: EmptyFn;
   onLoad?: SyncFn<PromotionProviderEnum>;
+  onImpression?: SyncFn<PromotionProviderEnum>;
   onLayout?: ViewProps['onLayout'];
 }
 
@@ -42,6 +43,7 @@ export const PromotionItem = forwardRef<View, Props>(
       pageName,
       onError,
       onLoad,
+      onImpression,
       onLayout
     },
     ref
@@ -133,6 +135,21 @@ export const PromotionItem = forwardRef<View, Props>(
       [handleAdReadyFactory]
     );
 
+    const handleAdImpressionFactory = useCallback(
+      (provider: PromotionProviderEnum) => () => {
+        onImpression?.(provider);
+      },
+      [onImpression]
+    );
+    const handleHypelabAdImpression = useMemo(
+      () => handleAdImpressionFactory(PromotionProviderEnum.HypeLab),
+      [handleAdImpressionFactory]
+    );
+    const handlePersonaAdImpression = useMemo(
+      () => handleAdImpressionFactory(PromotionProviderEnum.Persona),
+      [handleAdImpressionFactory]
+    );
+
     const testIDProperties = useMemo(
       () => ({
         variant,
@@ -168,10 +185,20 @@ export const PromotionItem = forwardRef<View, Props>(
         onLayout={onLayout}
       >
         {currentProvider === PromotionProviderEnum.HypeLab && isFocused && (
-          <HypelabPromotion {...promotionCommonProps} onReady={handleHypelabAdReady} onError={handleHypelabError} />
+          <HypelabPromotion
+            {...promotionCommonProps}
+            onReady={handleHypelabAdReady}
+            onError={handleHypelabError}
+            onImpression={handleHypelabAdImpression}
+          />
         )}
         {currentProvider === PromotionProviderEnum.Persona && isFocused && (
-          <PersonaPromotion {...promotionCommonProps} onReady={handlePersonaAdReady} onError={handleAdError} />
+          <PersonaPromotion
+            {...promotionCommonProps}
+            onReady={handlePersonaAdReady}
+            onError={handleAdError}
+            onImpression={handlePersonaAdImpression}
+          />
         )}
         {!adIsReady && (
           <View style={styles.loaderContainer}>

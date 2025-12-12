@@ -7,7 +7,7 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { HorizontalBorder } from 'src/components/horizontal-border';
 import { PromotionItem } from 'src/components/promotion-item';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
-import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useInternalAdsAnalyticsWithImpressionCallback } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
@@ -40,7 +40,7 @@ export const Notifications = () => {
   const adRef = useRef<View>(null);
 
   const adPageName = 'Notifications';
-  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName);
+  const { onAdLoad, onIsVisible, onAdImpression } = useInternalAdsAnalyticsWithImpressionCallback(adPageName);
   const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
 
   const handlePromotionItemError = useCallback(() => setPromotionErrorOccurred(true), []);
@@ -65,12 +65,20 @@ export const Notifications = () => {
             onError={handlePromotionItemError}
             onLayout={onElementOrParentLayout}
             onLoad={onAdLoad}
+            onImpression={onAdImpression}
             style={NotificationsStyles.ads}
           />
           <HorizontalBorder />
         </>
       ) : undefined,
-    [handlePromotionItemError, onAdLoad, onElementOrParentLayout, partnersPromoShown, promotionErrorOccurred]
+    [
+      handlePromotionItemError,
+      onAdLoad,
+      onElementOrParentLayout,
+      partnersPromoShown,
+      promotionErrorOccurred,
+      onAdImpression
+    ]
   );
 
   return (
