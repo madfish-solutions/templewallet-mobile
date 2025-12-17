@@ -4,6 +4,7 @@ import { Platform } from 'react-native';
 import { concatUrlPath } from 'src/utils/url.utils';
 
 import {
+  TEMPLE_ADS_API_URL,
   TEMPLE_WALLET_API_URL,
   TEMPLE_WALLET_EVERSTAKE_API_KEY,
   TEMPLE_WALLET_EXOLIX_API_KEY,
@@ -22,6 +23,8 @@ export const templeWalletApi = axios.create({
     platform: Platform.OS
   }
 });
+
+export const templeAdsApi = axios.create({ baseURL: TEMPLE_ADS_API_URL });
 
 export const tezosMetadataApi = axios.create({ baseURL: TEZOS_METADATA_API_URL });
 

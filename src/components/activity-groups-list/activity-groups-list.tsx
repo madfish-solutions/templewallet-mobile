@@ -6,6 +6,7 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { PromotionItem } from 'src/components/promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { emptyFn } from 'src/config/general';
+import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
@@ -45,7 +46,7 @@ export const ActivityGroupsList: FC<Props> = ({
   const styles = useActivityGroupsListStyles();
 
   const partnersPromotionEnabled = useIsPartnersPromoEnabledSelector();
-  const { isHiddenTemporarily } = useAdTemporaryHiding(PROMOTION_ID);
+  const { isHiddenTemporarily } = useAdTemporaryHiding(PROMOTION_ID, PromotionProviderEnum.HypeLab);
   const fakeRefreshControlProps = useFakeRefreshControlProps();
   const [endIsReached, setEndIsReached] = useState(false);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);

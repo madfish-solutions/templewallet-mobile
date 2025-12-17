@@ -39,7 +39,11 @@ export const fetchRoute3Tokens$ = () =>
 const parser = (origJSON: string): ReturnType<(typeof JSON)['parse']> => {
   const stringedJSON = origJSON.replace(/(input|output|tokenInAmount|tokenOutAmount)":\s*([-+Ee0-9.]+)/g, '$1":"$2"');
 
-  return JSON.parse(stringedJSON);
+  try {
+    return JSON.parse(stringedJSON);
+  } catch {
+    throw new Error('Http error: unknown html response. Change RPC and try again');
+  }
 };
 
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest): string;

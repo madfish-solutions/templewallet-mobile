@@ -40,6 +40,14 @@ class FallbackRpcClient extends RpcClient {
       const client = this.clients[idx];
       try {
         const result = await method(client);
+        if (isHtmlResponse(result)) {
+          const htmlError = new Error('Http error: unknown html response. Change RPC and try again');
+          if (!shouldFallbackToNext(htmlError) || i === total - 1) {
+            throw htmlError;
+          }
+          continue;
+        }
+
         this.preferredIndex = idx;
 
         return result;
@@ -172,6 +180,16 @@ class FallbackRpcClient extends RpcClient {
   async runView(param: RPCRunViewParam, opts?: RPCOptions) {
     return this.callWithFallback(client => client.runView(param, opts));
   }
+}
+
+function isHtmlResponse(result: unknown) {
+  if (typeof result !== 'string') {
+    return false;
+  }
+
+  const normalized = result.trim().toLowerCase();
+
+  return normalized.startsWith('<!doctype html') || normalized.startsWith('<html');
 }
 
 function shouldFallbackToNext(error: any): boolean {

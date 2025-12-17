@@ -21,7 +21,7 @@ import {
   loadPermissionsActions,
   removePermissionAction
 } from './d-apps-actions';
-import { fetchUSDTApy$, fetchKUSDApy$, fetchTzBtcApy$, fetchUBTCApr$, fetchUUSDCApr$, fetchYOUApr$ } from './utils';
+import { fetchUBTCApr$, fetchUUSDCApr$, fetchYOUApr$ } from './utils';
 
 const loadPermissionsEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -112,14 +112,9 @@ const loadTokensApyEpic: Epic = (action$: Observable<Action>, state$: Observable
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
     switchMap(([[, rpcUrl], tokenUsdExchangeRates]) =>
-      forkJoin([
-        fetchUSDTApy$(),
-        fetchTzBtcApy$(),
-        fetchKUSDApy$(),
-        fetchUBTCApr$(rpcUrl),
-        fetchUUSDCApr$(rpcUrl),
-        fetchYOUApr$(tokenUsdExchangeRates, rpcUrl)
-      ]).pipe(map(responses => loadTokensApyActions.success(Object.assign({}, ...responses))))
+      forkJoin([fetchUBTCApr$(rpcUrl), fetchUUSDCApr$(rpcUrl), fetchYOUApr$(tokenUsdExchangeRates, rpcUrl)]).pipe(
+        map(responses => loadTokensApyActions.success(Object.assign({}, ...responses)))
+      )
     )
   );
 
