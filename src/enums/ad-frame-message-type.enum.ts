@@ -2,5 +2,6 @@ export enum AdFrameMessageType {
   Resize = 'resize',
   Ready = 'ready',
   Click = 'click',
-  Error = 'error'
+  Error = 'error',
+  Impression = 'impression'
 }

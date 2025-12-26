@@ -9,7 +9,7 @@ import { emptyFn } from 'src/config/general';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
-import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useInternalAdsAnalyticsWithImpressionCallback } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useOutsideOfListIntersection } from 'src/hooks/use-outside-of-list-intersection.hook';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
@@ -87,7 +87,7 @@ export const ActivityGroupsList: FC<Props> = ({
 
   const adRef = useRef<View>(null);
 
-  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(pageName);
+  const { onAdLoad, onIsVisible, onAdImpression } = useInternalAdsAnalyticsWithImpressionCallback(pageName);
 
   const { onElementOrParentLayout } = useOutsideOfListIntersection(undefined, adRef, onIsVisible);
 
@@ -103,9 +103,10 @@ export const ActivityGroupsList: FC<Props> = ({
           onLayout={onElementOrParentLayout}
           onError={handlePromotionError}
           onLoad={onAdLoad}
+          onImpression={onAdImpression}
         />
       ) : undefined,
-    [shouldShowPromotion, styles, onElementOrParentLayout, pageName, handlePromotionError, onAdLoad]
+    [shouldShowPromotion, styles, onElementOrParentLayout, pageName, handlePromotionError, onAdLoad, onAdImpression]
   );
 
   const ListEmptyComponent = useMemo(

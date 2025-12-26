@@ -18,7 +18,7 @@ import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
-import { useInternalAdsAnalytics } from 'src/hooks/use-internal-ads-analytics.hook';
+import { useInternalAdsAnalyticsWithImpressionCallback } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useListElementIntersection } from 'src/hooks/use-list-element-intersection.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
@@ -88,8 +88,10 @@ export const TokensList = memo(() => {
   const { isTezosNode } = useNetworkInfo();
 
   const adPageName = 'Home page';
-  const adVariant = PromotionVariantEnum.Text;
-  const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, adVariant);
+  const { onAdLoad, onIsVisible, onAdImpression } = useInternalAdsAnalyticsWithImpressionCallback(
+    adPageName,
+    PromotionVariantEnum.Text
+  );
   const { onListScroll, onElementLayoutChange, onListLayoutChange } = useListElementIntersection(onIsVisible, refs);
 
   const handleHideZeroBalanceChange = useCallback((value: boolean) => {
@@ -163,12 +165,13 @@ export const TokensList = memo(() => {
             <View style={styles.promotionItemWrapper}>
               <PromotionItem
                 id={PROMOTION_ID}
-                variant={adVariant}
+                variant={PromotionVariantEnum.Text}
                 style={styles.promotionItem}
                 testID={WalletSelectors.promotion}
                 pageName={adPageName}
                 onError={handlePromotionError}
                 onLoad={onAdLoad}
+                onImpression={onAdImpression}
               />
             </View>
             {index !== 0 && <HorizontalBorder style={styles.promotionItemBorder} />}
@@ -188,7 +191,7 @@ export const TokensList = memo(() => {
 
       return <TokenListItem token={item} scam={scamTokenSlugsRecord[slug]} apy={apyRates[slug]} />;
     },
-    [apyRates, scamTokenSlugsRecord, handlePromotionError, onAdLoad, onElementLayoutChange, styles]
+    [apyRates, scamTokenSlugsRecord, handlePromotionError, onAdLoad, onElementLayoutChange, styles, onAdImpression]
   );
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
