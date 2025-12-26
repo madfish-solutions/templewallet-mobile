@@ -8,7 +8,6 @@ import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { AdFrameMessage, SingleProviderPromotionProps } from 'src/types/promotion';
@@ -29,7 +28,7 @@ import { WebviewPromotionItemSelectors } from './selectors';
 import { WebviewPromotionStyles } from './styles';
 
 interface WebViewPromotionProps extends SingleProviderPromotionProps {
-  provider: PromotionProviderEnum.HypeLab | PromotionProviderEnum.Persona;
+  provider: PromotionProviderEnum.HypeLab;
   placementSlug: string;
   initialOriginalWidth?: number;
   initialOriginalHeight?: number;
@@ -53,7 +52,6 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
   }) => {
     const { testID, testIDProperties } = testIDProps;
     const isImageAd = variant === PromotionVariantEnum.Image;
-    const accountPkh = useCurrentAccountPkhSelector();
     const colors = useColors();
     const theme = useThemeSelector();
     const { trackEvent } = useAnalytics();
@@ -95,12 +93,9 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
         h: initialSize.h.toString(),
         ap: provider.toLowerCase()
       });
-      if (provider === PromotionProviderEnum.Persona) {
-        searchParams.set('a', accountPkh);
-      }
 
       return { uri: `${HYPELAB_AD_FRAME_URL}/?${searchParams.toString()}` };
-    }, [theme, initialSize, placementSlug, provider, accountPkh]);
+    }, [theme, initialSize, placementSlug, provider]);
 
     const handleContainerLayout = useCallback((e: LayoutChangeEvent) => {
       e.persist();
