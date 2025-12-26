@@ -73,9 +73,17 @@ export const sendTransaction$ = (rpcUrl: string, senderPkh: string, opParams: Pa
       return tezos.contract.batch(opParams).send();
     }),
     catchError(err => {
-      if (JSON.parse(err.body)[0].id.indexOf('empty_implicit_contract') > -1) {
-        throw new Error('The balance of TEZ is not enough to make a transaction.');
+      try {
+        const errorBody = JSON.parse(err.body);
+        if (Array.isArray(errorBody) && errorBody[0]?.id?.includes('empty_implicit_contract')) {
+          throw new Error('The balance of TEZ is not enough to make a transaction.');
+        }
+      } catch {}
+
+      if (typeof err?.body === 'string' && /<\s*html/i.test(err.body)) {
+        throw new Error('Http error: unknown html response. Change RPC and try again');
       }
+
       throw new Error(err.message);
     })
   );

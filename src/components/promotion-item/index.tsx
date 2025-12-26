@@ -4,7 +4,6 @@ import { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { HypelabPromotion } from 'src/components/hypelab-promotion';
-import { PersonaPromotion } from 'src/components/persona-promotion';
 import { PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { isAndroid } from 'src/config/system';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
@@ -13,7 +12,6 @@ import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
-import { PERSONA_ADS_ENABLED } from 'src/utils/env.utils';
 
 import { usePromotionItemStyles } from './styles';
 
@@ -68,18 +66,8 @@ export const PromotionItem = forwardRef<View, Props>(
     }, [onError]);
 
     const handleHypelabError = useCallback(() => {
-      if (!PERSONA_ADS_ENABLED) {
-        handleAdError();
-
-        return;
-      }
-
-      if (variant === PromotionVariantEnum.Text) {
-        handleAdError();
-      } else {
-        setAdsState(prevState => ({ ...prevState, currentProvider: PromotionProviderEnum.Persona }));
-      }
-    }, [handleAdError, variant]);
+      handleAdError();
+    }, [handleAdError]);
 
     const handleHypelabAdsEnabled = useCallback(
       (enabled: boolean) => {
@@ -130,10 +118,6 @@ export const PromotionItem = forwardRef<View, Props>(
       () => handleAdReadyFactory(PromotionProviderEnum.HypeLab),
       [handleAdReadyFactory]
     );
-    const handlePersonaAdReady = useMemo(
-      () => handleAdReadyFactory(PromotionProviderEnum.Persona),
-      [handleAdReadyFactory]
-    );
 
     const handleAdImpressionFactory = useCallback(
       (provider: PromotionProviderEnum) => () => {
@@ -143,10 +127,6 @@ export const PromotionItem = forwardRef<View, Props>(
     );
     const handleHypelabAdImpression = useMemo(
       () => handleAdImpressionFactory(PromotionProviderEnum.HypeLab),
-      [handleAdImpressionFactory]
-    );
-    const handlePersonaAdImpression = useMemo(
-      () => handleAdImpressionFactory(PromotionProviderEnum.Persona),
       [handleAdImpressionFactory]
     );
 
@@ -190,14 +170,6 @@ export const PromotionItem = forwardRef<View, Props>(
             onReady={handleHypelabAdReady}
             onError={handleHypelabError}
             onImpression={handleHypelabAdImpression}
-          />
-        )}
-        {currentProvider === PromotionProviderEnum.Persona && isFocused && (
-          <PersonaPromotion
-            {...promotionCommonProps}
-            onReady={handlePersonaAdReady}
-            onError={handleAdError}
-            onImpression={handlePersonaAdImpression}
           />
         )}
         {!adIsReady && (

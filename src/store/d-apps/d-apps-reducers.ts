@@ -31,9 +31,5 @@ export const dAppsReducers = createReducer<DAppsState>(dAppsInitialState, builde
     ...state,
     dappsList: createEntity([], false, error)
   }));
-  builder.addCase(loadTokensApyActions.success, (state, { payload: loadedRates }) => {
-    const tokensApyRates = { ...state.tokensApyRates, ...loadedRates };
-
-    return { ...state, tokensApyRates };
-  });
+  builder.addCase(loadTokensApyActions.success, (state, { payload: tokensApyRates }) => ({ ...state, tokensApyRates }));
 });
