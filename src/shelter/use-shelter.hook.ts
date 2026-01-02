@@ -5,6 +5,7 @@ import { EMPTY, Subject } from 'rxjs';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
+import { useAnalytics } from '../utils/analytics/use-analytics.hook';
 
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
@@ -20,6 +21,7 @@ export const useShelter = () => {
   const accounts = useAccountsListSelector();
   const { navigate, dispatch: navigationDispatch } = useNavigation();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const { trackErrorEvent } = useAnalytics();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
   const createHdAccount$ = useMemo(() => new Subject(), []);
@@ -32,13 +34,29 @@ export const useShelter = () => {
     const subscriptions = [
       importWalletSubscription(importWallet$, dispatch),
       createHdAccountSubscription(createHdAccount$, accounts, dispatch),
-      createImportAccountSubscription(createImportedAccount$, accounts, dispatch, navigationDispatch, selectedRpcUrl),
+      createImportAccountSubscription(
+        createImportedAccount$,
+        accounts,
+        dispatch,
+        navigationDispatch,
+        selectedRpcUrl,
+        (error, accountPkh) =>
+          trackErrorEvent('CreateImportAccountError', error, accountPkh ? [accountPkh] : [], { selectedRpcUrl })
+      ),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
       enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
     ];
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [dispatch, importWallet$, revealSecretKey$, createHdAccount$, accounts.length, revealSeedPhrase$]);
+  }, [
+    dispatch,
+    importWallet$,
+    revealSecretKey$,
+    createHdAccount$,
+    accounts.length,
+    revealSeedPhrase$,
+    trackErrorEvent
+  ]);
 
   const importWallet = (params: ImportWalletParams) => importWallet$.next(params);
   const createHdAccount = () => createHdAccount$.next(EMPTY);

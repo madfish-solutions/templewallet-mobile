@@ -5,6 +5,7 @@ import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { useAnalytics } from '../utils/analytics/use-analytics.hook';
 import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
 
@@ -17,6 +18,7 @@ interface ContractActivityState {
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const { trackErrorEvent } = useAnalytics();
 
   const lastActivityRef = useRef<string>('');
 
@@ -34,6 +36,11 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         fetchedActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
       } catch (error) {
         console.error(error);
+        trackErrorEvent('InitialLoadContractActivityError', error, [selectedAccount.publicKeyHash], {
+          tokenSlug,
+          selectedRpcUrl,
+          refresh
+        });
         isError = true;
       } finally {
         setState(prevState => {
@@ -56,7 +63,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         });
       }
     },
-    [selectedRpcUrl, selectedAccount, tokenSlug]
+    [selectedRpcUrl, selectedAccount, tokenSlug, trackErrorEvent]
   );
 
   useEffect(() => {
@@ -70,26 +77,27 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   const handleUpdate = async () => {
     let newActivities: Array<ActivityGroup> = [];
     const wasLoading = isLoading;
+    const lastItem = activities
+      .at(-1)
+      ?.sort((a, b) => b.id - a.id)
+      .at(-1);
     try {
-      if (activities.length > 0 && !isAllLoaded) {
-        const lastActivityGroup = activities[activities.length - 1].sort((a, b) => b.id - a.id);
+      if (lastItem && lastItem.hash !== lastActivityRef.current && !isAllLoaded) {
+        lastActivityRef.current = lastItem.hash;
 
-        if (lastActivityGroup.length > 0) {
-          const lastItem = lastActivityGroup[lastActivityGroup.length - 1];
+        if (!isLoading) {
+          setState(prev => ({ ...prev, isLoading: true }));
 
-          if (lastItem.hash !== lastActivityRef.current) {
-            lastActivityRef.current = lastItem.hash;
-
-            if (isDefined(lastItem) && !isLoading) {
-              setState(prev => ({ ...prev, isLoading: true }));
-
-              newActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
-            }
-          }
+          newActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
         }
       }
     } catch (error) {
       console.error(error);
+      trackErrorEvent('HandleUpdateContractActivityError', error, [selectedAccount.publicKeyHash], {
+        tokenSlug,
+        selectedRpcUrl,
+        lastItem
+      });
     } finally {
       if (wasLoading) {
         return;

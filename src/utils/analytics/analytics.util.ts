@@ -1,7 +1,10 @@
 import { jitsuClient } from '@jitsu/sdk-js/packages/javascript-sdk';
 import fetch from 'cross-fetch';
+import { Platform } from 'react-native';
+import { getBuildNumber, getVersion } from 'react-native-device-info';
 
 import { JITSU_ANALYTICS_KEY, JITSU_TRACKING_HOST } from '../env.utils';
+import { getErrorDerivedEventProps, hideAddresses } from '../error-analytics-data.utils';
 
 import { AnalyticsEventCategory } from './analytics-event.enum';
 
@@ -34,4 +37,20 @@ export const sendAnalyticsEvent = (
       ABTestingCategory,
       ...additionalProperties
     }
+  });
+
+export const sendErrorAnalyticsEvent = (
+  event: string,
+  error: unknown,
+  addressesToHide: string[] = [],
+  userAnalyticsId: UserAnalyticsId = {},
+  additionalProperties: AnalyticsEventProperties = {}
+) =>
+  sendAnalyticsEvent(event, AnalyticsEventCategory.Error, userAnalyticsId, {
+    ...getErrorDerivedEventProps(error, addressesToHide),
+    ...(hideAddresses(additionalProperties, addressesToHide) as AnalyticsEventProperties),
+    appVersion: getVersion(),
+    buildId: getBuildNumber(),
+    os: Platform.OS,
+    osVersion: Platform.Version
   });

@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 
 import { ExchangePayload } from 'src/types/exolix.types';
+import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { loadExolixRate } from 'src/utils/exolix.util';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -35,6 +36,7 @@ const loadUSDTRate = async (coinTo: string, coinToNetwork: string) => {
 // executed only once per changed pair to determine min, max
 export const loadMinMaxFields = async (
   setFieldValue: setFieldType,
+  onAnalyticsError: SyncFn<AnalyticsError>,
   inputAssetCode = 'BTC',
   inputAssetNetwork = 'BTC',
   outputAssetCode = 'XTZ',
@@ -103,13 +105,21 @@ export const loadMinMaxFields = async (
     );
   } catch (error) {
     console.error({ error });
+
+    if (error instanceof AnalyticsError) {
+      onAnalyticsError(error);
+    } else {
+      onAnalyticsError(
+        new AnalyticsError(error, [], { inputAssetCode, inputAssetNetwork, outputAssetCode, outputAssetNetwork })
+      );
+    }
   }
 };
 
 export const updateOutputInputValue = (
   requestData: Omit<ExchangePayload, 'withdrawalAddress' | 'withdrawalExtraId'>,
   setFieldValue: setFieldType
-) => {
+) =>
   loadExolixRate(requestData).then(responseData => {
     if (isDefined(responseData.toAmount) && responseData.toAmount > 0) {
       setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
@@ -128,4 +138,3 @@ export const updateOutputInputValue = (
       setFieldValue('rate', responseData.rate);
     }
   });
-};

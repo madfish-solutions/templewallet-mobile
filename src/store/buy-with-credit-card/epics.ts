@@ -7,7 +7,9 @@ import { getMoonPayCurrencies } from 'src/apis/moonpay';
 import { getCurrenciesInfo as getUtorgCurrenciesInfo } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { PAIR_NOT_FOUND_MESSAGE } from 'src/utils/constants/buy-with-credit-card';
+import { UserAnalyticsCredentials, withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { getUpdatedFiatLimits } from 'src/utils/get-updated-fiat-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -22,6 +24,8 @@ import { mapMoonPayProviderCurrencies, mapUtorgProviderCurrencies } from './util
 const getCurrencies$ = <T>(
   fetchFn: () => Promise<T>,
   transformFn: (data: T) => TopUpProviderCurrencies,
+  providerId: TopUpProviderEnum,
+  { userId, ABTestingCategory, isAnalyticsEnabled }: UserAnalyticsCredentials,
   shouldShowErrorToast = true
 ) =>
   from(fetchFn()).pipe(
@@ -32,19 +36,34 @@ const getCurrencies$ = <T>(
         showErrorToast({ description: errorMessage });
       }
 
+      if (isAnalyticsEnabled) {
+        sendErrorAnalyticsEvent('LoadAllCurrenciesEpicError', err, [], { userId, ABTestingCategory }, { providerId });
+      }
+
       return of(createEntity<TopUpProviderCurrencies>({ fiat: [], crypto: [] }, false, errorMessage));
     })
   );
 
 const allTopUpProviderEnums = [TopUpProviderEnum.MoonPay, TopUpProviderEnum.Utorg];
 
-const loadAllCurrenciesEpic = (action$: Observable<Action>) =>
+const loadAllCurrenciesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
   action$.pipe(
     ofType(loadAllCurrenciesActions.submit),
-    switchMap(() =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([, userAnalyticsCredentials]) =>
       forkJoin([
-        getCurrencies$(getMoonPayCurrencies, mapMoonPayProviderCurrencies),
-        getCurrencies$(getUtorgCurrenciesInfo, mapUtorgProviderCurrencies)
+        getCurrencies$(
+          getMoonPayCurrencies,
+          mapMoonPayProviderCurrencies,
+          TopUpProviderEnum.MoonPay,
+          userAnalyticsCredentials
+        ),
+        getCurrencies$(
+          getUtorgCurrenciesInfo,
+          mapUtorgProviderCurrencies,
+          TopUpProviderEnum.Utorg,
+          userAnalyticsCredentials
+        )
       ]).pipe(
         map(([moonpayCurrencies, utorgCurrencies]) =>
           loadAllCurrenciesActions.success({
@@ -60,7 +79,8 @@ const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<Ro
   action$.pipe(
     ofType(updatePairLimitsActions.submit),
     withLatestFrom(state$),
-    switchMap(([{ payload }, rootState]) => {
+    withUserAnalyticsCredentials(state$),
+    switchMap(([[{ payload }, rootState], { userId, ABTestingCategory, isAnalyticsEnabled }]) => {
       const { fiatSymbol, cryptoSymbol } = payload;
       const { currencies } = rootState.buyWithCreditCard;
       const currentLimits = rootState.buyWithCreditCard.pairLimits[fiatSymbol]?.[cryptoSymbol];
@@ -82,7 +102,23 @@ const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<Ro
           const cryptoCurrency = cryptoCurrencies.find(({ code }) => code === cryptoSymbol);
 
           if (isDefined(fiatCurrency) && isDefined(cryptoCurrency)) {
-            return from(getUpdatedFiatLimits(fiatCurrency, cryptoCurrency, providerId));
+            return from(
+              getUpdatedFiatLimits(
+                fiatCurrency,
+                cryptoCurrency,
+                providerId,
+                isAnalyticsEnabled
+                  ? err =>
+                      sendErrorAnalyticsEvent(
+                        'UpdatePairLimitsEpicError',
+                        err,
+                        [],
+                        { userId, ABTestingCategory },
+                        { fiatSymbol, cryptoSymbol, providerId }
+                      )
+                  : undefined
+              )
+            );
           }
 
           return of(createEntity(undefined, false, PAIR_NOT_FOUND_MESSAGE));

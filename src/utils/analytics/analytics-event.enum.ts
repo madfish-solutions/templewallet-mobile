@@ -5,5 +5,6 @@ export enum AnalyticsEventCategory {
   FormSubmit = 'FormSubmit',
   FormSubmitSuccess = 'FormSubmitSuccess',
   FormSubmitFail = 'FormSubmitFail',
-  PageOpened = 'PageOpened'
+  PageOpened = 'PageOpened',
+  Error = 'Error'
 }

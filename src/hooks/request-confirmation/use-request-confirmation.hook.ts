@@ -5,10 +5,13 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 
 import { Action } from 'src/interfaces/action.interface';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 
 export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
   project: (value: T, index: number) => O
 ) => {
+  const { trackErrorEvent } = useAnalytics();
   const dispatch = useDispatch();
 
   const isConfirmed = useRef(false);
@@ -27,6 +30,13 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
             catchError(err => {
               setIsLoading(false);
               showErrorToast({ description: err.message });
+
+              if (err instanceof AnalyticsError) {
+                const { error, additionalProperties, addressesToHide } = err;
+                trackErrorEvent('RequestConfirmationError', error, addressesToHide, additionalProperties);
+              } else {
+                trackErrorEvent('RequestConfirmationError', err, [], { description: err.message });
+              }
 
               return EMPTY;
             })

@@ -1,5 +1,5 @@
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -16,6 +16,8 @@ import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { getProperNetworkFullName } from 'src/utils/topup';
@@ -37,6 +39,7 @@ interface InitialStepProps {
 export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const dispatch = useDispatch();
   const styles = useInitialStepStyles();
+  const { trackErrorEvent } = useAnalytics();
 
   const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue } =
     useFilteredCurrenciesList();
@@ -69,15 +72,24 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const inputCurrency = values.coinFrom.asset;
   const outputCurrency = values.coinTo.asset;
 
+  const handleAnalyticsError = useCallback(
+    (error: AnalyticsError) => {
+      const { error: internalError, additionalProperties, addressesToHide } = error;
+      trackErrorEvent('ExolixLoadMinMaxFieldsError', internalError, addressesToHide, additionalProperties);
+    },
+    [trackErrorEvent]
+  );
+
   useEffect(() => {
     loadMinMaxFields(
       setFieldValue,
+      handleAnalyticsError,
       inputCurrency.code,
       inputCurrency.network?.code,
       outputCurrency.code,
       outputCurrency.network?.code
     );
-  }, [inputCurrency, outputCurrency]);
+  }, [inputCurrency, outputCurrency, handleAnalyticsError]);
 
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
     const inputAssetCode = inputCurrency.asset.code;
@@ -96,7 +108,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
       amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0
     };
 
-    updateOutputInputValue(requestData, setFieldValue);
+    updateOutputInputValue(requestData, setFieldValue).catch(
+      error => void trackErrorEvent('ExolixHandleInputValueChangeError', error, [], requestData)
+    );
   };
 
   const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
@@ -116,7 +130,9 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
       amount: isDefined(values.coinFrom.amount) ? values.coinFrom.amount.toNumber() : 0
     };
 
-    updateOutputInputValue(requestData, setFieldValue);
+    updateOutputInputValue(requestData, setFieldValue).catch(
+      error => void trackErrorEvent('ExolixHandleOutputValueChangeError', error, [], requestData)
+    );
   };
 
   const disclaimerMessage = useMemo(

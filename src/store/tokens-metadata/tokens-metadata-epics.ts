@@ -1,13 +1,14 @@
-import { Action } from 'redux';
-import { combineEpics, Epic } from 'redux-observable';
+import { combineEpics } from 'redux-observable';
 import { of, map } from 'rxjs';
 import { catchError, concatMap, switchMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { loadScamlist$, loadTokenMetadata$, loadTokensMetadata$, loadWhitelist$ } from 'src/utils/token-metadata.utils';
 import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import type { RootState } from '../types';
+import type { AnyActionEpic } from '../types';
 
 import {
   putTokenMetadataAction,
@@ -18,34 +19,55 @@ import {
   loadScamlistAction
 } from './tokens-metadata-actions';
 
-const loadWhitelistEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+const loadWhitelistEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadWhitelistAction.submit),
     withSelectedRpcUrl(state$),
-    switchMap(([, selectedRpcUrl]) =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([[, selectedRpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       loadWhitelist$(selectedRpcUrl).pipe(
         concatMap(updatedTokensMetadata => [loadWhitelistAction.success(updatedTokensMetadata)]),
-        catchError(err => of(loadWhitelistAction.fail(err.message)))
+        catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent(
+              'LoadWhitelistEpicError',
+              err,
+              [],
+              { userId, ABTestingCategory },
+              { selectedRpcUrl }
+            );
+          }
+
+          return of(loadWhitelistAction.fail(err.message));
+        })
       )
     )
   );
 
-const loadScamlistEpic: Epic<Action, Action, RootState> = action$ =>
+const loadScamlistEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadScamlistAction.submit),
-    switchMap(() =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       loadScamlist$().pipe(
         concatMap(scamSlugs => [loadScamlistAction.success(scamSlugs)]),
-        catchError(err => of(loadScamlistAction.fail(err.message)))
+        catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent('LoadScamlistEpicError', err, [], { userId, ABTestingCategory });
+          }
+
+          return of(loadScamlistAction.fail(err.message));
+        })
       )
     )
   );
 
-const loadTokenSuggestionEpic: Epic = action$ =>
+const loadTokenSuggestionEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTokenSuggestionActions.submit),
     toPayload(),
-    switchMap(({ id, address }) =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([{ id, address }, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       loadTokenMetadata$(address, id).pipe(
         concatMap(tokenMetadata => [
           loadTokenSuggestionActions.success(tokenMetadata),
@@ -54,35 +76,65 @@ const loadTokenSuggestionEpic: Epic = action$ =>
         catchError(error => {
           console.error(error);
 
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent(
+              'LoadTokenSuggestionEpicError',
+              error,
+              [],
+              { userId, ABTestingCategory },
+              { id, address }
+            );
+          }
+
           return of(loadTokenSuggestionActions.fail(error.message));
         })
       )
     )
   );
 
-const loadTokenMetadataEpic: Epic = action$ =>
+const loadTokenMetadataEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTokenMetadataActions.submit),
     toPayload(),
-    concatMap(({ id, address }) =>
+    withUserAnalyticsCredentials(state$),
+    concatMap(([{ id, address }, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       loadTokenMetadata$(address, id).pipe(
         concatMap(tokenMetadata => [
           loadTokenMetadataActions.success(tokenMetadata),
           putTokenMetadataAction(tokenMetadata)
         ]),
-        catchError(err => of(loadTokenMetadataActions.fail(err.message)))
+        catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent(
+              'LoadTokenMetadataEpicError',
+              err,
+              [],
+              { userId, ABTestingCategory },
+              { id, address }
+            );
+          }
+
+          return of(loadTokenMetadataActions.fail(err.message));
+        })
       )
     )
   );
 
-const loadTokensMetadataEpic: Epic = action$ =>
+const loadTokensMetadataEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTokensMetadataActions.submit),
     toPayload(),
-    switchMap(slugs =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([slugs, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       loadTokensMetadata$(slugs).pipe(
         map(tokensMetadata => loadTokensMetadataActions.success(tokensMetadata)),
-        catchError(err => of(loadTokensMetadataActions.fail(err.message)))
+        catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent('LoadTokensMetadataEpicError', err, [], { userId, ABTestingCategory }, { slugs });
+          }
+
+          return of(loadTokensMetadataActions.fail(err.message));
+        })
       )
     )
   );

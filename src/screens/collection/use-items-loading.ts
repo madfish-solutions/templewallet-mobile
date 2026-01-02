@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 import { fetchCollectiblesOfCollection } from 'src/apis/objkt';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useDidMount } from 'src/utils/hooks/use-did-mount';
 
 export const useCollectionItemsLoading = (contract: string, accountPkh: string, galleryPk?: number) => {
@@ -10,6 +11,7 @@ export const useCollectionItemsLoading = (contract: string, accountPkh: string, 
   const [reachedTheEnd, setReachedTheEnd] = useState(false);
   const [collectionSize, setCollectionSize] = useState<number>();
   const [isLoading, setIsLoading] = useState(false);
+  const { trackErrorEvent } = useAnalytics();
 
   const loadMore = useCallback(() => {
     if (reachedTheEnd || isLoading) {
@@ -31,11 +33,16 @@ export const useCollectionItemsLoading = (contract: string, accountPkh: string, 
         },
         error => {
           console.error(error);
+          trackErrorEvent('LoadMoreCollectionItemsError', error, [accountPkh], {
+            contract,
+            galleryPk,
+            offset: collectibles.length
+          });
           showErrorToast({ description: 'Failed to load collection items' });
         }
       )
       .finally(() => setIsLoading(false));
-  }, [reachedTheEnd, isLoading, collectibles.length]);
+  }, [reachedTheEnd, isLoading, collectibles.length, trackErrorEvent]);
 
   useDidMount(loadMore);
 

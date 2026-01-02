@@ -6,6 +6,7 @@ import { fetchEnableInternalHypelabAds } from 'src/apis/temple-wallet';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { hidePromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { usePromotionHidingTimestampSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { MS_IN_SECOND, SECONDS_IN_MINUTE } from 'src/utils/date.utils';
 
 export const AD_HIDING_TIMEOUT = 12 * 3600 * 1000;
@@ -19,6 +20,7 @@ export const useAdTemporaryHiding = (
   provider: PromotionProviderEnum,
   onHypelabAdsEnabled?: SyncFn<boolean>
 ) => {
+  const { trackErrorEvent } = useAnalytics();
   const dispatch = useDispatch();
   const hiddenAt = usePromotionHidingTimestampSelector(id);
   const [isHiddenByTimeout, setIsHiddenByTimeout] = useState(shouldBeHiddenByTimeout(hiddenAt));
@@ -42,17 +44,23 @@ export const useAdTemporaryHiding = (
     dispatch(hidePromotionAction({ timestamp: Date.now(), id }));
   }, [id, dispatch]);
 
-  const { data: enableInternalHypelabAds, isLoading: isLoadingEnableInternalHypelabAds } = useSWR<boolean>(
-    'enable-internal-hypelab-ads',
-    fetchEnableInternalHypelabAds,
-    {
-      revalidateOnFocus: false,
-      revalidateOnMount: true,
-      revalidateOnReconnect: false,
-      refreshInterval: (5 * SECONDS_IN_MINUTE + 1) * MS_IN_SECOND
-    }
-  );
+  const {
+    data: enableInternalHypelabAds,
+    isLoading: isLoadingEnableInternalHypelabAds,
+    error: enableInternalHypelabAdsError
+  } = useSWR<boolean>('enable-internal-hypelab-ads', fetchEnableInternalHypelabAds, {
+    revalidateOnFocus: false,
+    revalidateOnMount: true,
+    revalidateOnReconnect: false,
+    refreshInterval: (5 * SECONDS_IN_MINUTE + 1) * MS_IN_SECOND
+  });
   const prevEnableInternalHypelabAdsRef = useRef(enableInternalHypelabAds);
+
+  useEffect(() => {
+    if (enableInternalHypelabAdsError) {
+      trackErrorEvent('EnableInternalHypelabAdsError', enableInternalHypelabAdsError);
+    }
+  }, [enableInternalHypelabAdsError, trackErrorEvent]);
 
   const isHiddenTemporarily =
     isHiddenByTimeout ||

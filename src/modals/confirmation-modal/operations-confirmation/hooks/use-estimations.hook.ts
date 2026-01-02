@@ -16,7 +16,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { MINIMAL_FEE_PER_GAS_MUTEZ } from 'src/utils/tezos.util';
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
-  const [estimationState, setEstimationState] = useState<LoadableEntityState<EstimationInterface[]>>({
+  const [estimationState, setEstimationState] = useState<LoadableEntityState<EstimationInterface[], unknown>>({
     isLoading: true,
     data: []
   });
@@ -87,11 +87,7 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
           onPress: () => copyStringToClipboard(error.toString())
         });
 
-        setEstimationState({
-          error: error instanceof TezosOperationError ? error.id : error.toString(),
-          isLoading: false,
-          data: []
-        });
+        setEstimationState({ error, isLoading: false, data: [] });
       }
     });
 

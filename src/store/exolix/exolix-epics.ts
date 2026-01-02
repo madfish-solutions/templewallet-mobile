@@ -1,15 +1,14 @@
-import { combineEpics, Epic, StateObservable } from 'redux-observable';
-import { from, Observable, of } from 'rxjs';
+import { combineEpics } from 'redux-observable';
+import { from, of } from 'rxjs';
 import { catchError, concatMap, map, switchMap } from 'rxjs/operators';
-import { Action } from 'ts-action';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { showErrorToast } from 'src/toast/toast.utils';
-import { sendAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import { AnalyticsError, withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { loadExolixCurrencies, loadExolixExchangeData, submitExolixExchange } from 'src/utils/exolix.util';
-import { withSelectedIsAnalyticsEnabled, withSelectedUserId } from 'src/utils/security.utils';
 
-import type { RootState } from '../types';
+import type { AnyActionEpic } from '../types';
 
 import {
   loadExolixCurrenciesAction,
@@ -18,42 +17,67 @@ import {
   setExolixStepAction
 } from './exolix-actions';
 
-const loadExolixCurrenciesEpic: Epic = (action$: Observable<Action>) =>
+const loadExolixCurrenciesEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadExolixCurrenciesAction.submit),
-    switchMap(() =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([, { isAnalyticsEnabled, ABTestingCategory, userId }]) =>
       from(loadExolixCurrencies()).pipe(
         map(currencies => loadExolixCurrenciesAction.success(currencies)),
-        catchError(() => of(loadExolixCurrenciesAction.fail()))
+        catchError(e => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent(
+              'LoadExolixCurrenciesEpicError',
+              e instanceof AnalyticsError ? e.error : e,
+              [],
+              { ABTestingCategory, userId },
+              e instanceof AnalyticsError ? e.additionalProperties : {}
+            );
+          }
+
+          return of(loadExolixCurrenciesAction.fail());
+        })
       )
     )
   );
 
-const refreshExolixExchangeDataEpic: Epic = (action$: Observable<Action>) =>
+const refreshExolixExchangeDataEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(refreshExolixExchangeDataAction),
     toPayload(),
-    switchMap(id =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([id, { userId, ABTestingCategory, isAnalyticsEnabled }]) =>
       from(loadExolixExchangeData(id)).pipe(
         map(({ data: exchangeData }) => loadExolixExchangeDataActions.success(exchangeData)),
-        catchError(() => of(loadExolixExchangeDataActions.fail()))
+        catchError(error => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent('RefreshExolixExchangeDataEpicError', error, [], { userId, ABTestingCategory });
+          }
+
+          return of(loadExolixExchangeDataActions.fail());
+        })
       )
     )
   );
 
-const loadExolixExchangeDataEpic: Epic = (action$: Observable<Action>, state$: StateObservable<RootState>) =>
+const loadExolixExchangeDataEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadExolixExchangeDataActions.submit),
     toPayload(),
-    withSelectedUserId(state$),
-    withSelectedIsAnalyticsEnabled(state$),
-    switchMap(([[requestPayload, userId], isAnalyticsEnabled]) =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([requestPayload, { userId, ABTestingCategory, isAnalyticsEnabled }]) =>
       from(submitExolixExchange(requestPayload)).pipe(
         map(({ data }) => data),
         concatMap(exchangeData => [loadExolixExchangeDataActions.success(exchangeData), setExolixStepAction(1)]),
         catchError(err => {
           isAnalyticsEnabled &&
-            sendAnalyticsEvent('SubmitExolixExchangeError', undefined, { userId }, { message: err.message });
+            sendErrorAnalyticsEvent(
+              'LoadExolixExchangeDataEpicError',
+              err,
+              [requestPayload.withdrawalAddress, requestPayload.withdrawalExtraId],
+              { userId, ABTestingCategory },
+              { requestPayload }
+            );
 
           showErrorToast({ description: 'Ooops, something went wrong' });
 

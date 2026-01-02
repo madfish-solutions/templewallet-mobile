@@ -7,6 +7,8 @@ import { ContractType } from 'src/interfaces/contract.type';
 import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
 import { getTokenType, toTokenSlug } from 'src/token/utils/token.utils';
 
+import { sendErrorAnalyticsEvent } from './analytics/analytics.util';
+import { UserAnalyticsCredentials } from './error-analytics-data.utils';
 import { isDefined } from './is-defined';
 import { readOnlySignerAccount } from './read-only.signer.util';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
@@ -74,7 +76,12 @@ export const getBalance = async (
   }
 };
 
-export const loadAssetBalance$ = (rpcUrl: string, publicKeyHash: string, assetSlug: string) => {
+export const loadAssetBalance$ = (
+  rpcUrl: string,
+  publicKeyHash: string,
+  assetSlug: string,
+  { isAnalyticsEnabled, userId, ABTestingCategory }: UserAnalyticsCredentials
+) => {
   const tezos = createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount);
   const [assetAddress, assetId = '0'] = assetSlug.split('_');
 
@@ -95,7 +102,17 @@ export const loadAssetBalance$ = (rpcUrl: string, publicKeyHash: string, assetSl
 
       return returnValue;
     }),
-    catchError(() => {
+    catchError(error => {
+      if (isAnalyticsEnabled) {
+        sendErrorAnalyticsEvent(
+          'LoadAssetBalanceError',
+          error,
+          [publicKeyHash],
+          { userId, ABTestingCategory },
+          { rpcUrl, assetSlug }
+        );
+      }
+
       return of(undefined);
     })
   );

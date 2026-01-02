@@ -8,7 +8,7 @@ import { useAnalyticsEnabledSelector, useUserIdSelector } from 'src/store/settin
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
 import { AnalyticsEventCategory } from './analytics-event.enum';
-import { AnalyticsEventProperties, jitsu, sendAnalyticsEvent } from './analytics.util';
+import { AnalyticsEventProperties, jitsu, sendAnalyticsEvent, sendErrorAnalyticsEvent } from './analytics.util';
 
 export const useAnalytics = () => {
   const userId = useUserIdSelector();
@@ -16,6 +16,25 @@ export const useAnalytics = () => {
   const isAuthorized = useIsAuthorisedSelector();
   const defaultShouldSendAnalytics = analyticsEnabled && isAuthorized;
   const testGroupName = useUserTestingGroupNameSelector();
+
+  const trackErrorEvent = useCallback(
+    (
+      name: string,
+      error: unknown,
+      addressesToHide: string[] = [],
+      additionalProperties: AnalyticsEventProperties = {},
+      shouldSendAnalytics: boolean = defaultShouldSendAnalytics
+    ) =>
+      shouldSendAnalytics &&
+      sendErrorAnalyticsEvent(
+        name,
+        error,
+        addressesToHide,
+        { userId, ABTestingCategory: testGroupName },
+        additionalProperties
+      ),
+    [defaultShouldSendAnalytics, userId, testGroupName]
+  );
 
   const trackEvent = useCallback(
     async (
@@ -52,7 +71,8 @@ export const useAnalytics = () => {
 
   return {
     trackEvent,
-    pageEvent
+    pageEvent,
+    trackErrorEvent
   };
 };
 
