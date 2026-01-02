@@ -60,8 +60,12 @@ export const PermissionItem = memo<Props>(({ permission }) => {
           <Text style={styles.networkText}>
             Network: <Text style={styles.networkValue}>{permission.network.type}</Text>
           </Text>
-          <Divider size={formatSize(4)} />
-          <PublicKeyHashText publicKeyHash={permission.publicKey} testID={PermissionItemSelectors.publicKeyHash} />
+          {permission.publicKey && (
+            <>
+              <Divider size={formatSize(4)} />
+              <PublicKeyHashText publicKeyHash={permission.publicKey} testID={PermissionItemSelectors.publicKeyHash} />
+            </>
+          )}
         </View>
       </View>
       <TouchableIcon
