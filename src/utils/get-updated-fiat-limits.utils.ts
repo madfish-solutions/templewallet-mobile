@@ -31,7 +31,8 @@ const getInputAmountFunctions: Partial<
 export const getUpdatedFiatLimits = async (
   fiatCurrency: TopUpInterfaceBase,
   cryptoCurrency: TopUpInterfaceBase,
-  providerId: TopUpProviderEnum
+  providerId: TopUpProviderEnum,
+  trackErrorEvent?: (error: unknown) => void
 ): Promise<PairLimitsRecord[TopUpProviderEnum]> => {
   const { minAmount: minCryptoAmount, maxAmount: maxCryptoAmount } = cryptoCurrency;
 
@@ -49,6 +50,7 @@ export const getUpdatedFiatLimits = async (
             return createEntity(undefined);
           }
 
+          trackErrorEvent?.(err);
           const message = getAxiosQueryErrorMessage(err);
           showErrorToast({ description: message });
 

@@ -42,7 +42,7 @@ interface Props extends TestIdProps {
   opParams: ParamsWithKind[];
   isLoading: boolean;
   disclaimer?: ReactNode;
-  onEstimationError?: SyncFn<string>;
+  onEstimationError?: SyncFn<unknown>;
   onSubmit: SyncFn<ParamsWithKind[]>;
 }
 

@@ -88,7 +88,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const dispatch = useDispatch();
   const getSwapParams = useSwap();
 
-  const { trackEvent } = useAnalytics();
+  const { trackEvent, trackErrorEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const publicKeyHash = useCurrentAccountPkhSelector();
@@ -160,143 +160,176 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       return;
     }
 
+    const fetchedData: Record<string, unknown> = {};
     const allSwapParams: Array<TransferParams> = [];
-    let routingOutputFeeTransferParams: TransferParams[] = await getRoutingFeeTransferParams(
-      toRoute3Token,
-      outputFeeAtomicAmount,
-      publicKeyHash,
-      ROUTING_FEE_ADDRESS,
-      tezos
-    );
-
-    const route3SwapOpParams = await getSwapParams(
-      fromRoute3Token,
-      toRoute3Token,
-      swapInputMinusFeeAtomic,
-      outputAtomicAmountBeforeFee,
-      slippageRatio,
-      swapParams.data
-    );
-
-    const { isInputTokenTempleToken, isOutputTokenTempleToken, isSwapAmountMoreThreshold } = getSwapWithFeeParams(
-      inputAssets,
-      outputAssets
-    );
-
-    if (isInputTokenTempleToken && isSwapAmountMoreThreshold) {
-      const routingInputFeeOpParams = await getRoutingFeeTransferParams(
-        fromRoute3Token,
-        routingFeeFromInputAtomic.minus(cashbackSwapInputFromInAtomic),
-        publicKeyHash,
-        BURN_ADDRESS,
-        tezos
-      );
-      allSwapParams.push(...routingInputFeeOpParams);
-    } else if (isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
-      const routingInputFeeOpParams = await getRoutingFeeTransferParams(
-        TEMPLE_TOKEN,
-        routingFeeFromInputAtomic,
-        publicKeyHash,
-        ROUTING_FEE_ADDRESS,
-        tezos
-      );
-      allSwapParams.push(...routingInputFeeOpParams);
-    } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold && routingFeeFromInputAtomic.gt(0)) {
-      const swapToTempleParams = await fetchRoute3SwapParams({
-        fromSymbol: fromRoute3Token.symbol,
-        toSymbol: TEMPLE_TOKEN.symbol,
-        toTokenDecimals: TEMPLE_TOKEN.decimals,
-        amount: mutezToTz(routingFeeFromInputAtomic, fromRoute3Token.decimals).toFixed(),
-        dexesLimit: CASHBACK_SWAP_MAX_DEXES,
-        rpcUrl: tezos.rpc.getRpcUrl()
-      });
-
-      const templeExpectedOutputAtomic = tzToMutez(
-        new BigNumber(swapToTempleParams.output ?? ZERO),
-        TEMPLE_TOKEN.decimals
-      );
-      const templeMinOutputAtomic = multiplyAtomicAmount(
-        templeExpectedOutputAtomic,
-        ROUTING_FEE_SLIPPAGE_RATIO,
-        BigNumber.ROUND_DOWN
-      );
-
-      const swapToTempleTokenOpParams = await getSwapParams(
-        fromRoute3Token,
-        TEMPLE_TOKEN,
-        routingFeeFromInputAtomic,
-        templeExpectedOutputAtomic,
-        ROUTING_FEE_SLIPPAGE_RATIO,
-        swapToTempleParams
-      );
-
-      allSwapParams.push(...swapToTempleTokenOpParams);
-
-      const routingFeeOpParams = await getRoutingFeeTransferParams(
-        TEMPLE_TOKEN,
-        templeMinOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
-        publicKeyHash,
-        BURN_ADDRESS,
-        tezos
-      );
-      allSwapParams.push(...routingFeeOpParams);
-    } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold && isOutputTokenTempleToken) {
-      routingOutputFeeTransferParams = await getRoutingFeeTransferParams(
-        TEMPLE_TOKEN,
-        routingFeeFromOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
-        publicKeyHash,
-        BURN_ADDRESS,
-        tezos
-      );
-    } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold) {
-      const swapToTempleParams = await fetchRoute3SwapParams({
-        fromSymbol: toRoute3Token.symbol,
-        toSymbol: TEMPLE_TOKEN.symbol,
-        toTokenDecimals: TEMPLE_TOKEN.decimals,
-        amount: mutezToTz(routingFeeFromOutputAtomic, toRoute3Token.decimals).toFixed(),
-        dexesLimit: CASHBACK_SWAP_MAX_DEXES,
-        rpcUrl: tezos.rpc.getRpcUrl()
-      });
-
-      const templeExpectedOutputAtomic = tzToMutez(
-        new BigNumber(swapToTempleParams.output ?? ZERO),
-        TEMPLE_TOKEN.decimals
-      );
-      const templeMinOutputAtomic = multiplyAtomicAmount(
-        templeExpectedOutputAtomic,
-        ROUTING_FEE_SLIPPAGE_RATIO,
-        BigNumber.ROUND_DOWN
-      );
-
-      const swapToTempleTokenOpParams = await getSwapParams(
+    try {
+      let routingOutputFeeTransferParams: TransferParams[] = await getRoutingFeeTransferParams(
         toRoute3Token,
-        TEMPLE_TOKEN,
-        routingFeeFromOutputAtomic,
-        templeExpectedOutputAtomic,
-        ROUTING_FEE_SLIPPAGE_RATIO,
-        swapToTempleParams
-      );
-
-      const routingFeeOpParams = await getRoutingFeeTransferParams(
-        TEMPLE_TOKEN,
-        templeMinOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
-        publicKeyHash,
-        BURN_ADDRESS,
-        tezos
-      );
-      routingOutputFeeTransferParams = [...swapToTempleTokenOpParams, ...routingFeeOpParams];
-    } else if (!isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
-      const routingInputFeeOpParams = await getRoutingFeeTransferParams(
-        fromRoute3Token,
-        routingFeeFromInputAtomic,
+        outputFeeAtomicAmount,
         publicKeyHash,
         ROUTING_FEE_ADDRESS,
         tezos
       );
-      allSwapParams.push(...routingInputFeeOpParams);
-    }
+      fetchedData.routingOutputFeeTransferParams = routingOutputFeeTransferParams;
 
-    allSwapParams.push(...route3SwapOpParams, ...routingOutputFeeTransferParams);
+      const route3SwapOpParams = await getSwapParams(
+        fromRoute3Token,
+        toRoute3Token,
+        swapInputMinusFeeAtomic,
+        outputAtomicAmountBeforeFee,
+        slippageRatio,
+        swapParams.data
+      );
+      fetchedData.route3SwapOpParams = route3SwapOpParams;
+
+      const { isInputTokenTempleToken, isOutputTokenTempleToken, isSwapAmountMoreThreshold } = getSwapWithFeeParams(
+        inputAssets,
+        outputAssets
+      );
+
+      if (isInputTokenTempleToken && isSwapAmountMoreThreshold) {
+        const routingInputFeeOpParams = await getRoutingFeeTransferParams(
+          fromRoute3Token,
+          routingFeeFromInputAtomic.minus(cashbackSwapInputFromInAtomic),
+          publicKeyHash,
+          BURN_ADDRESS,
+          tezos
+        );
+        fetchedData.routingInputFeeOpParams = routingInputFeeOpParams;
+        allSwapParams.push(...routingInputFeeOpParams);
+      } else if (isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
+        const routingInputFeeOpParams = await getRoutingFeeTransferParams(
+          TEMPLE_TOKEN,
+          routingFeeFromInputAtomic,
+          publicKeyHash,
+          ROUTING_FEE_ADDRESS,
+          tezos
+        );
+        fetchedData.routingInputFeeOpParams = routingInputFeeOpParams;
+        allSwapParams.push(...routingInputFeeOpParams);
+      } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold && routingFeeFromInputAtomic.gt(0)) {
+        const swapToTempleParams = await fetchRoute3SwapParams({
+          fromSymbol: fromRoute3Token.symbol,
+          toSymbol: TEMPLE_TOKEN.symbol,
+          toTokenDecimals: TEMPLE_TOKEN.decimals,
+          amount: mutezToTz(routingFeeFromInputAtomic, fromRoute3Token.decimals).toFixed(),
+          dexesLimit: CASHBACK_SWAP_MAX_DEXES,
+          rpcUrl: tezos.rpc.getRpcUrl()
+        });
+        fetchedData.swapToTempleParams = swapToTempleParams;
+
+        const templeExpectedOutputAtomic = tzToMutez(
+          new BigNumber(swapToTempleParams.output ?? ZERO),
+          TEMPLE_TOKEN.decimals
+        );
+        const templeMinOutputAtomic = multiplyAtomicAmount(
+          templeExpectedOutputAtomic,
+          ROUTING_FEE_SLIPPAGE_RATIO,
+          BigNumber.ROUND_DOWN
+        );
+
+        const swapToTempleTokenOpParams = await getSwapParams(
+          fromRoute3Token,
+          TEMPLE_TOKEN,
+          routingFeeFromInputAtomic,
+          templeExpectedOutputAtomic,
+          ROUTING_FEE_SLIPPAGE_RATIO,
+          swapToTempleParams
+        );
+        fetchedData.swapToTempleTokenOpParams = swapToTempleTokenOpParams;
+
+        allSwapParams.push(...swapToTempleTokenOpParams);
+
+        const routingFeeOpParams = await getRoutingFeeTransferParams(
+          TEMPLE_TOKEN,
+          templeMinOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
+          publicKeyHash,
+          BURN_ADDRESS,
+          tezos
+        );
+        fetchedData.routingFeeOpParams = routingFeeOpParams;
+        allSwapParams.push(...routingFeeOpParams);
+      } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold && isOutputTokenTempleToken) {
+        routingOutputFeeTransferParams = await getRoutingFeeTransferParams(
+          TEMPLE_TOKEN,
+          routingFeeFromOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
+          publicKeyHash,
+          BURN_ADDRESS,
+          tezos
+        );
+        fetchedData.routingOutputFeeTransferParams = routingOutputFeeTransferParams;
+      } else if (!isInputTokenTempleToken && isSwapAmountMoreThreshold) {
+        const swapToTempleParams = await fetchRoute3SwapParams({
+          fromSymbol: toRoute3Token.symbol,
+          toSymbol: TEMPLE_TOKEN.symbol,
+          toTokenDecimals: TEMPLE_TOKEN.decimals,
+          amount: mutezToTz(routingFeeFromOutputAtomic, toRoute3Token.decimals).toFixed(),
+          dexesLimit: CASHBACK_SWAP_MAX_DEXES,
+          rpcUrl: tezos.rpc.getRpcUrl()
+        });
+        fetchedData.swapToTempleParams = swapToTempleParams;
+
+        const templeExpectedOutputAtomic = tzToMutez(
+          new BigNumber(swapToTempleParams.output ?? ZERO),
+          TEMPLE_TOKEN.decimals
+        );
+        const templeMinOutputAtomic = multiplyAtomicAmount(
+          templeExpectedOutputAtomic,
+          ROUTING_FEE_SLIPPAGE_RATIO,
+          BigNumber.ROUND_DOWN
+        );
+
+        const swapToTempleTokenOpParams = await getSwapParams(
+          toRoute3Token,
+          TEMPLE_TOKEN,
+          routingFeeFromOutputAtomic,
+          templeExpectedOutputAtomic,
+          ROUTING_FEE_SLIPPAGE_RATIO,
+          swapToTempleParams
+        );
+        fetchedData.swapToTempleTokenOpParams = swapToTempleTokenOpParams;
+
+        const routingFeeOpParams = await getRoutingFeeTransferParams(
+          TEMPLE_TOKEN,
+          templeMinOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
+          publicKeyHash,
+          BURN_ADDRESS,
+          tezos
+        );
+        fetchedData.routingFeeOpParams = routingFeeOpParams;
+
+        routingOutputFeeTransferParams = [...swapToTempleTokenOpParams, ...routingFeeOpParams];
+      } else if (!isInputTokenTempleToken && !isSwapAmountMoreThreshold) {
+        const routingInputFeeOpParams = await getRoutingFeeTransferParams(
+          fromRoute3Token,
+          routingFeeFromInputAtomic,
+          publicKeyHash,
+          ROUTING_FEE_ADDRESS,
+          tezos
+        );
+        fetchedData.routingInputFeeOpParams = routingInputFeeOpParams;
+        allSwapParams.push(...routingInputFeeOpParams);
+      }
+
+      allSwapParams.push(...route3SwapOpParams, ...routingOutputFeeTransferParams);
+    } catch (error) {
+      trackErrorEvent('SwapFormSubmitError', error, [publicKeyHash], {
+        fetchedData,
+        input: {
+          inputAssets,
+          outputAssets,
+          outputFeeAtomicAmount
+        },
+        fromRoute3Token,
+        toRoute3Token,
+        swapInputMinusFeeAtomic,
+        routingFeeFromInputAtomic,
+        cashbackSwapInputFromInAtomic,
+        routingFeeFromOutputAtomic
+      });
+
+      throw error;
+    }
 
     const opParams: Array<ParamsWithKind> = allSwapParams.map(transferParams => ({
       ...transferParams,
@@ -305,6 +338,22 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
     if (opParams.length === 0) {
       showErrorToast({ description: 'Transaction params not loaded' });
+      trackErrorEvent('SwapFormSubmitFail', new Error('Transaction params not loaded'), [publicKeyHash], {
+        input: {
+          inputAssets,
+          outputAssets,
+          slippageRatio
+        },
+        outputFeeAtomicAmount,
+        outputAtomicAmountBeforeFee,
+        minimumReceivedAtomic,
+        fromRoute3Token,
+        toRoute3Token,
+        swapInputMinusFeeAtomic,
+        routingFeeFromInputAtomic,
+        cashbackSwapInputFromInAtomic,
+        routingFeeFromOutputAtomic
+      });
       trackEvent('SWAP_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
     } else {
       trackEvent('SWAP_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);

@@ -2,6 +2,9 @@ import * as Sentry from '@sentry/react-native';
 import React, { Component, PropsWithChildren, ErrorInfo, FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
+import { store } from 'src/store';
+import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+
 import { ErrorBoundaryContent } from './content';
 
 // TODO: export when it becomes necessary
@@ -30,6 +33,14 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     Sentry.captureException(error);
+    const { settings, abTesting } = store.getState();
+    sendErrorAnalyticsEvent(
+      'GenericRenderError',
+      error,
+      [],
+      { userId: settings.userId, ABTestingCategory: abTesting.groupName },
+      { componentStack: errorInfo.componentStack }
+    );
     console.error(error.message, errorInfo.componentStack);
   }
 

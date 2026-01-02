@@ -13,6 +13,7 @@ import { FormTextInput } from 'src/form/form-text-input';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addNewsletterEmailAction } from 'src/store/newsletter/newsletter-actions';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { IMAGE_HEIGHT, IMAGE_URI } from './constants';
 import { NewsletterModalSelectors } from './newsletter-modal.selectors';
@@ -36,6 +37,7 @@ export const Newsletter: FC = () => {
   const validationSchema = useNewsletterValidationSchema();
   const formik = useRef<FormikProps<{ email: string }>>(null);
   const { goBack } = useNavigation();
+  const { trackErrorEvent } = useAnalytics();
 
   const onSubmit = ({ email }: FormData, formikHelpers: FormikHelpers<FormData>) =>
     newsletterApi
@@ -49,7 +51,11 @@ export const Newsletter: FC = () => {
         formikHelpers.resetForm();
         goBack();
       })
-      .catch(() => showErrorToast(ERROR_TOAST_DESCRIPTION));
+      .catch(error => {
+        // TODO: consider removing email from the error event properties
+        trackErrorEvent('NewsletterSubscribeError', error, [email]);
+        showErrorToast(ERROR_TOAST_DESCRIPTION);
+      });
 
   return (
     <Formik innerRef={formik} initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>

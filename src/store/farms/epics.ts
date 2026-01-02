@@ -1,6 +1,5 @@
-import { combineEpics, Epic } from 'redux-observable';
+import { combineEpics } from 'redux-observable';
 import { catchError, delay, exhaustMap, forkJoin, from, map, merge, mergeMap, of, switchMap } from 'rxjs';
-import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
 import { getLiquidityBakingFarm } from 'src/apis/liquidity-baking';
@@ -8,11 +7,17 @@ import { getV3FarmsList } from 'src/apis/quipuswap-staking';
 import { FarmsProviderEnum } from 'src/enums/farms-provider.enum';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { showFailedStakeLoadWarning } from 'src/toast/toast.utils';
+import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import {
+  AnalyticsError,
+  UserAnalyticsCredentials,
+  withUserAnalyticsCredentials
+} from 'src/utils/error-analytics-data.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
-import type { RootState } from '../types';
+import type { AnyActionEpic } from '../types';
 
 import {
   loadAllFarmsAction,
@@ -23,11 +28,31 @@ import {
 } from './actions';
 import { getFarmStake, GetFarmStakeError, toUserStakeValueInterface } from './utils';
 
-const loadSingleFarmLastStake: Epic<Action, Action, RootState> = (action$, state$) =>
+const makeFarmsListErrorHandlerBase =
+  (event: string) =>
+  (err: unknown, userAnalyticsCredentials: UserAnalyticsCredentials, farmsProvider?: FarmsProviderEnum) => {
+    const { userId, ABTestingCategory, isAnalyticsEnabled } = userAnalyticsCredentials;
+    const internalError = err instanceof AnalyticsError ? err.error : err;
+    const additionalProperties = err instanceof AnalyticsError ? err.additionalProperties : {};
+    showErrorToast({ description: getAxiosQueryErrorMessage(internalError) });
+
+    if (isAnalyticsEnabled) {
+      sendErrorAnalyticsEvent(
+        event,
+        internalError,
+        [],
+        { userId, ABTestingCategory },
+        { provider: farmsProvider, ...additionalProperties }
+      );
+    }
+  };
+
+const loadSingleFarmLastStake: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSingleFarmStakeActions.submit),
     withSelectedRpcUrl(state$),
-    mergeMap(([{ payload }, rpcUrl]) => {
+    withUserAnalyticsCredentials(state$),
+    mergeMap(([[{ payload }, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) => {
       const { farm, accountPkh } = payload;
       const tezos = createReadOnlyTezosToolkit(rpcUrl);
 
@@ -40,6 +65,16 @@ const loadSingleFarmLastStake: Epic<Action, Action, RootState> = (action$, state
           })
         ),
         catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent(
+              'LoadSingleFarmLastStakeEpicError',
+              err,
+              [accountPkh],
+              { userId, ABTestingCategory },
+              { farm }
+            );
+          }
+
           throw new GetFarmStakeError(farm.contractAddress, accountPkh, (err as Error).message);
         })
       );
@@ -52,30 +87,40 @@ const loadSingleFarmLastStake: Epic<Action, Action, RootState> = (action$, state
     })
   );
 
-const loadAllFarms: Epic = action$ =>
+const loadAllFarmsErrorHandlerBase = makeFarmsListErrorHandlerBase('LoadAllFarmsEpicError');
+const loadAllFarms: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadAllFarmsAction),
-    switchMap(() => forkJoin([getLiquidityBakingFarm(), getV3FarmsList()])),
-    switchMap(([lbFarm, v3Farms]) =>
-      of(
-        loadFarmsByProviderActions.success({ data: [lbFarm], provider: FarmsProviderEnum.LiquidityBaking }),
-        loadFarmsByProviderActions.success({ data: v3Farms, provider: FarmsProviderEnum.Quipuswap })
-      )
-    ),
-    catchError(err => {
-      showErrorToast({ description: getAxiosQueryErrorMessage(err) });
+    withUserAnalyticsCredentials(state$),
+    switchMap(([, userAnalyticsCredentials]) =>
+      forkJoin([getLiquidityBakingFarm(), getV3FarmsList()]).pipe(
+        switchMap(([lbFarm, v3Farms]) =>
+          of(
+            loadFarmsByProviderActions.success({ data: [lbFarm], provider: FarmsProviderEnum.LiquidityBaking }),
+            loadFarmsByProviderActions.success({ data: v3Farms, provider: FarmsProviderEnum.Quipuswap })
+          )
+        ),
+        catchError(err => {
+          loadAllFarmsErrorHandlerBase(err, userAnalyticsCredentials);
 
-      return of(
-        loadFarmsByProviderActions.fail({ provider: FarmsProviderEnum.LiquidityBaking, error: (err as Error).message }),
-        loadFarmsByProviderActions.fail({ provider: FarmsProviderEnum.Quipuswap, error: (err as Error).message })
-      );
-    })
+          return of(
+            loadFarmsByProviderActions.fail({
+              provider: FarmsProviderEnum.LiquidityBaking,
+              error: (err as Error).message
+            }),
+            loadFarmsByProviderActions.fail({ provider: FarmsProviderEnum.Quipuswap, error: (err as Error).message })
+          );
+        })
+      )
+    )
   );
 
-const loadFarmsByProvider: Epic = action$ =>
+const loadFarmsByProviderErrorHandlerBase = makeFarmsListErrorHandlerBase('LoadFarmsByProviderEpicError');
+const loadFarmsByProvider: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadFarmsByProviderActions.submit),
-    switchMap(({ payload: farmsProvider }) => {
+    withUserAnalyticsCredentials(state$),
+    switchMap(([{ payload: farmsProvider }, userAnalyticsCredentials]) => {
       return from(
         farmsProvider === FarmsProviderEnum.LiquidityBaking
           ? getLiquidityBakingFarm().then(lbFarm => [lbFarm])
@@ -83,7 +128,7 @@ const loadFarmsByProvider: Epic = action$ =>
       ).pipe(
         map(data => loadFarmsByProviderActions.success({ data, provider: farmsProvider })),
         catchError(err => {
-          showErrorToast({ description: getAxiosQueryErrorMessage(err) });
+          loadFarmsByProviderErrorHandlerBase(err, userAnalyticsCredentials, farmsProvider);
 
           return of(loadFarmsByProviderActions.fail({ provider: farmsProvider, error: (err as Error).message }));
         })
@@ -91,12 +136,14 @@ const loadFarmsByProvider: Epic = action$ =>
     })
   );
 
-const loadAllFarmsAndStakes: Epic = action$ =>
+const loadAllFarmsAndStakesErrorHandlerBase = makeFarmsListErrorHandlerBase('LoadAllFarmsAndStakesEpicError');
+const loadAllFarmsAndStakes: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadAllFarmsAndStakesAction),
-    exhaustMap(({ payload: accountPkh }) => {
+    withUserAnalyticsCredentials(state$),
+    exhaustMap(([{ payload: accountPkh }, userAnalyticsCredentials]) => {
       const makeFarmsListErrorHandler = (farmsProvider: FarmsProviderEnum) => (err: unknown) => {
-        showErrorToast({ description: getAxiosQueryErrorMessage(err) });
+        loadAllFarmsAndStakesErrorHandlerBase(err, userAnalyticsCredentials, farmsProvider);
 
         return of(
           loadFarmsByProviderActions.fail({ provider: farmsProvider, error: (err as Error).message }),

@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import { getSignedMoonPayUrl } from 'src/apis/moonpay';
 import { createOrder as createUtorgOrder } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { useUserIdSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -47,9 +46,8 @@ const initialValues: BuyWithCreditCardFormValues = {
 };
 
 export const useBuyWithCreditCardFormik = () => {
-  const { trackEvent } = useAnalytics();
+  const { trackEvent, trackErrorEvent } = useAnalytics();
   const publicKeyHash = useCurrentAccountPkhSelector();
-  const userId = useUserIdSelector();
 
   const handleSubmit = useCallback(
     async (values: BuyWithCreditCardFormValues) => {
@@ -88,10 +86,11 @@ export const useBuyWithCreditCardFormik = () => {
         }
         openUrl(urlToOpen);
       } catch (error) {
+        trackErrorEvent('BuyWithCreditCardFormSubmitError', error, [publicKeyHash], { values });
         showErrorToast({ description: getAxiosQueryErrorMessage(error) });
       }
     },
-    [publicKeyHash, trackEvent, userId]
+    [publicKeyHash, trackEvent, trackErrorEvent]
   );
 
   return useFormik<BuyWithCreditCardFormValues>({

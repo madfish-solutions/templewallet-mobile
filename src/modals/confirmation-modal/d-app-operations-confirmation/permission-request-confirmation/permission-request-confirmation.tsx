@@ -42,7 +42,8 @@ const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionReque
       network: message.network,
       scopes: message.scopes,
       id: message.id,
-      publicKey
+      publicKey,
+      walletType: 'implicit'
     })
   ).pipe(
     map(() => {

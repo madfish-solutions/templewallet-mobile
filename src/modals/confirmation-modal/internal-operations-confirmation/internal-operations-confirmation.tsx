@@ -19,44 +19,16 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
 import { useRawCurrentAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isTooLowTezBalanceError } from 'src/utils/is-too-low-tez-balance-error';
 import { isTruthy } from 'src/utils/is-truthy';
 import { EVERSTAKE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
-
-const NOT_ENOUGH_TEZ_ESTIMATION_ERRORS_KEYWORDS = [
-  'empty_implicit_contract',
-  'empty_implicit_delegated_contract',
-  'storage_exhausted'
-];
-
-const isTezBalanceTooLowError = (error: string, senderPkh: string): boolean => {
-  /* An example of matching value: `HttpResponseError: Http error response: (500) [
-    {"kind":"temporary","id":"proto.018-Proxford.contract.balance_too_low","contract":"tz1dmR1BEyVW8fYyHT4QjarrRXyMJ1F4DciT","balance":"20","amount":"374"},
-    {"kind":"temporary","id":"proto.018-Proxford.tez.subtraction_underflow","amounts":["20","374"]}]`
-  */
-
-  if (!error.startsWith('HttpResponseError') || !error.includes('balance_too_low')) {
-    return false;
-  }
-
-  const firstLine = error.split('\n')[0];
-  const rawResponseBody = firstLine.slice(firstLine.indexOf(')') + 1).trim();
-  try {
-    const responseBody = JSON.parse(rawResponseBody);
-
-    return (
-      Array.isArray(responseBody) &&
-      responseBody.some(({ id, contract }) => id.includes('balance_too_low') && contract === senderPkh)
-    );
-  } catch (e) {
-    return false;
-  }
-};
 
 type Props = Omit<InternalOperationsConfirmationModalParams, 'type'>;
 
@@ -93,6 +65,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
   const selectedAccount = useRawCurrentAccountSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
   const lastSetOverlayStateRef = useRef<OnRampOverlayState | null>(null);
+  const { trackErrorEvent } = useAnalytics();
 
   const { confirmRequest, isLoading } = useRequestConfirmation(approveInternalOperationRequest);
 
@@ -127,13 +100,21 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
   );
 
   const handleEstimationError = useCallback(
-    (error: string) =>
-      canUseOnRamp &&
-      (NOT_ENOUGH_TEZ_ESTIMATION_ERRORS_KEYWORDS.some(keyword => error.includes(keyword)) ||
-        isTezBalanceTooLowError(error, selectedAccount!.publicKeyHash))
-        ? updateOverlayState(OnRampOverlayState.Continue)
-        : console.error(error),
-    [canUseOnRamp, selectedAccount, updateOverlayState]
+    (error: unknown) => {
+      if (canUseOnRamp && isTooLowTezBalanceError(error)) {
+        updateOverlayState(OnRampOverlayState.Continue);
+      } else {
+        console.error(error);
+
+        trackErrorEvent(
+          'InternalOperationsConfirmationEstimationError',
+          error,
+          opParams.map(op => ('source' in op ? op.source : null)).filter(isDefined),
+          { opParams, testID }
+        );
+      }
+    },
+    [canUseOnRamp, updateOverlayState, opParams, testID, trackErrorEvent]
   );
 
   return (

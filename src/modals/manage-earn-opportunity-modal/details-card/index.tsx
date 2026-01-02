@@ -75,7 +75,7 @@ export const DetailsCard = memo<DetailsCardProps>(
     const dispatch = useDispatch();
     const tezos = useReadOnlyTezosToolkit();
     const tokens = useEarnOpportunityTokens(earnOpportunityItem);
-    const { trackEvent } = useAnalytics();
+    const { trackEvent, trackErrorEvent } = useAnalytics();
     const rewardTokenDecimals = rewardToken.metadata.decimals;
     const rewardTokenSymbol = rewardToken.metadata.symbol;
 
@@ -123,6 +123,9 @@ export const DetailsCard = memo<DetailsCardProps>(
           );
         } catch (e) {
           showErrorToastByError(e);
+          trackErrorEvent('EarnOpportunityClaimRewardsError', e, [], {
+            claimRewardsInput: { rpcUrl: tezos.rpc.getRpcUrl(), contractAddress, lastStakeId }
+          });
         } finally {
           setClaimPending(false);
         }
@@ -159,7 +162,16 @@ export const DetailsCard = memo<DetailsCardProps>(
       } else {
         void claimRewards();
       }
-    }, [lastStakeId, dispatch, contractAddress, tezos, msToVestingEnd, earnOpportunityItem, trackEvent]);
+    }, [
+      lastStakeId,
+      dispatch,
+      contractAddress,
+      tezos,
+      msToVestingEnd,
+      earnOpportunityItem,
+      trackEvent,
+      trackErrorEvent
+    ]);
 
     const { assetAmount: depositAmount, usdEquivalent: depositUsdEquivalent } = useAssetAmount(
       depositAmountAtomic,

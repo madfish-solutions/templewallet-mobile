@@ -30,7 +30,7 @@ exports[`mapBeaconToTaquitoParams should map params of other kinds correctly 1`]
     "fee": 1,
     "gasLimit": 2,
     "kind": "ballot",
-    "period": "4",
+    "period": 4,
     "proposal": "mockProposal",
     "source": "account1",
     "storageLimit": 3,
@@ -57,6 +57,7 @@ exports[`mapBeaconToTaquitoParams should map params of other kinds correctly 1`]
     "proposals": [
       "mockProposal",
     ],
+    "source": "account1",
     "storageLimit": 3,
   },
   {
@@ -70,7 +71,7 @@ exports[`mapBeaconToTaquitoParams should map params of other kinds correctly 1`]
     "fee": undefined,
     "gasLimit": undefined,
     "kind": "seed_nonce_revelation",
-    "level": "666",
+    "level": 666,
     "nonce": "667",
     "storageLimit": undefined,
   },
