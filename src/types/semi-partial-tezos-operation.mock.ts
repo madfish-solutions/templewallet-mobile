@@ -41,7 +41,7 @@ export const mockOtherTypesOperations: SemiPartialTezosOperation[] = [
   {
     kind: TezosOperationType.BALLOT,
     source: 'account1',
-    period: '4',
+    period: 4,
     proposal: 'mockProposal',
     ballot: 'yay',
     fee: '1',
@@ -64,6 +64,7 @@ export const mockOtherTypesOperations: SemiPartialTezosOperation[] = [
   },
   {
     kind: TezosOperationType.PROPOSALS,
+    source: 'account1',
     period: '4',
     proposals: ['mockProposal'],
     fee: '1',
@@ -79,7 +80,7 @@ export const mockOtherTypesOperations: SemiPartialTezosOperation[] = [
   },
   {
     kind: TezosOperationType.SEED_NONCE_REVELATION,
-    level: '666',
+    level: 666,
     nonce: '667'
   }
 ];
