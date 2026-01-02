@@ -27,8 +27,8 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "4.0.10",
-    "@airgap/beacon-transport-walletconnect": "4.0.10",
+    "@airgap/beacon-sdk": "4.6.4",
+    "@airgap/beacon-transport-walletconnect": "4.6.4",
     "@apollo/client": "^3.7.1",
     "@babel/preset-typescript": "^7.18.6",
     "@dicebear/avatars": "4.10.1",
