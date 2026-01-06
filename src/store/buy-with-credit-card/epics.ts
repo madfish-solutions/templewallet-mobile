@@ -1,5 +1,5 @@
 import { combineEpics } from 'redux-observable';
-import { catchError, forkJoin, from, map, Observable, of, switchMap, withLatestFrom } from 'rxjs';
+import { catchError, forkJoin, from, map, of, switchMap, withLatestFrom } from 'rxjs';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
@@ -15,7 +15,7 @@ import { getUpdatedFiatLimits } from 'src/utils/get-updated-fiat-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { createEntity } from '../create-entity';
-import type { RootState } from '../types';
+import type { AnyActionEpic, RootState } from '../types';
 
 import { loadAllCurrenciesActions, updatePairLimitsActions } from './actions';
 import { TopUpProviderCurrencies } from './state';
@@ -46,7 +46,7 @@ const getCurrencies$ = <T>(
 
 const allTopUpProviderEnums = [TopUpProviderEnum.MoonPay, TopUpProviderEnum.Utorg];
 
-const loadAllCurrenciesEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadAllCurrenciesEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadAllCurrenciesActions.submit),
     withUserAnalyticsCredentials(state$),
@@ -75,7 +75,7 @@ const loadAllCurrenciesEpic = (action$: Observable<Action>, state$: Observable<R
     )
   );
 
-const updatePairLimitsEpic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const updatePairLimitsEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(updatePairLimitsActions.submit),
     withLatestFrom(state$),

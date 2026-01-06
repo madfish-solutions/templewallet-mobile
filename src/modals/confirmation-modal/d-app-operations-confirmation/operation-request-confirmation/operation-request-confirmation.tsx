@@ -67,9 +67,13 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
 
   const handleEstimationError = useCallback(
     (error: unknown) => {
-      trackErrorEvent('DAppOperationsConfirmationEstimateError', error, [sender.publicKeyHash], { opParams, rpcUrl });
+      trackErrorEvent('DAppOperationsConfirmationEstimateError', error, [sender.publicKeyHash], {
+        opParams,
+        rpcUrl,
+        appMetadata: message.appMetadata
+      });
     },
-    [trackErrorEvent, sender.publicKeyHash, opParams, rpcUrl]
+    [trackErrorEvent, sender.publicKeyHash, opParams, rpcUrl, message.appMetadata]
   );
 
   return (
