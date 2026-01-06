@@ -1,5 +1,6 @@
 import { jitsuClient } from '@jitsu/sdk-js/packages/javascript-sdk';
 import fetch from 'cross-fetch';
+import { noop } from 'lodash-es';
 import { Platform } from 'react-native';
 import { getBuildNumber, getVersion } from 'react-native-device-info';
 
@@ -27,17 +28,19 @@ export const sendAnalyticsEvent = (
   { userId, ABTestingCategory }: UserAnalyticsId = {},
   additionalProperties: AnalyticsEventProperties = {}
 ) =>
-  jitsu.track(category, {
-    userId,
-    event,
-    timestamp: Date.now(),
-    properties: {
+  jitsu
+    .track(category, {
+      userId,
       event,
-      category,
-      ABTestingCategory,
-      ...additionalProperties
-    }
-  });
+      timestamp: Date.now(),
+      properties: {
+        event,
+        category,
+        ABTestingCategory,
+        ...additionalProperties
+      }
+    })
+    .catch(noop);
 
 export const sendErrorAnalyticsEvent = (
   event: string,

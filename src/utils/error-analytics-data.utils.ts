@@ -2,6 +2,7 @@ import { ServerError, ServerParseError } from '@apollo/client';
 import { HttpResponseError } from '@taquito/http-utils';
 import { TezosOperationError } from '@taquito/taquito';
 import { AxiosError } from 'axios';
+import BigNumber from 'bignumber.js';
 import { pick } from 'lodash-es';
 import { Observable, withLatestFrom } from 'rxjs';
 
@@ -10,6 +11,10 @@ import { RootState } from 'src/store/types';
 export const hideAddresses = (data: unknown, addressesToHide: string[]): unknown => {
   if (Array.isArray(data)) {
     return data.map(item => hideAddresses(item, addressesToHide));
+  }
+
+  if (data instanceof BigNumber) {
+    return data.toFixed();
   }
 
   if (typeof data === 'object' && data !== null) {
@@ -79,10 +84,17 @@ export const withUserAnalyticsCredentials =
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, state): [T, UserAnalyticsCredentials] => {
-        const { settings, abTesting } = state;
+        const { settings, abTesting, wallet } = state;
         const { userId, isAnalyticsEnabled } = settings;
 
-        return [value, { userId, ABTestingCategory: abTesting.groupName, isAnalyticsEnabled }];
+        return [
+          value,
+          {
+            userId,
+            ABTestingCategory: abTesting.groupName,
+            isAnalyticsEnabled: isAnalyticsEnabled && wallet.accounts.length > 0
+          }
+        ];
       })
     );
 

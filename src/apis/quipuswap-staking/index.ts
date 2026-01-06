@@ -129,9 +129,9 @@ export const estimateDivestOneCoinOutputs = async (
   shares: BigNumber,
   poolId: number
 ) => {
-  const { devFee, pool } = await getStableswapPool(tezos, stableswapContractAddress, poolId);
-
   try {
+    const { devFee, pool } = await getStableswapPool(tezos, stableswapContractAddress, poolId);
+
     return tokenIndexes.map(tokenIndex => {
       try {
         return calculateStableswapWithdrawTokenOutput(shares, tokenIndex, pool, devFee);
@@ -142,7 +142,7 @@ export const estimateDivestOneCoinOutputs = async (
   } catch (error) {
     throw new AnalyticsError(error, [], {
       estimateDivestOneCoinOutputsInput: {
-        rpcUrl: tezos.rpc.getRpcUrl(),
+        rpcUrl: tezos?.rpc?.getRpcUrl(),
         stableswapContractAddress,
         tokenIndexes,
         shares,
@@ -173,7 +173,7 @@ export const estimateStableswapLpTokenOutput = async (
   } catch (error) {
     throw new AnalyticsError(error, [], {
       estimateStableswapLpTokenOutputInput: {
-        rpcUrl: tezos.rpc.getRpcUrl(),
+        rpcUrl: tezos?.rpc?.getRpcUrl(),
         stableswapContractAddress,
         investedTokenIndex,
         amount,

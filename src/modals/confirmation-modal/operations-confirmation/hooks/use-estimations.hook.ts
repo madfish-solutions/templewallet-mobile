@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native';
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind, Estimate, TezosOperationError, GasConsumingOperation } from '@taquito/taquito';
 import { pick } from 'lodash-es';
@@ -79,7 +78,6 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
     const subscription = estimate$(opParams).subscribe({
       next: value => setEstimationState({ isLoading: false, data: value }),
       error: error => {
-        Sentry.captureException(error);
         showErrorToast({
           title: 'Warning!',
           description: 'The transaction is likely to fail!',

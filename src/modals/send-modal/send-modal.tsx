@@ -23,12 +23,12 @@ import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
-import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
 import { useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -67,8 +67,8 @@ export const SendModal: FC = () => {
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, true, true, leadingAssets);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
-  const tezos = useReadOnlyTezosToolkit();
-  const resolver = useMemo(() => tezosDomainsResolver(tezos), [tezos]);
+  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const resolver = useMemo(() => tezosDomainsResolver(selectedRpcUrl), [selectedRpcUrl]);
 
   const isTransferDisabled = filteredReceiversList.length === 0;
   const recipient = filteredReceiversList[0]?.data[0];
