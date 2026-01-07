@@ -25,6 +25,7 @@ interface Props {
   pageName: string;
   onError?: EmptyFn;
   onLoad?: SyncFn<PromotionProviderEnum>;
+  onImpression?: SyncFn<PromotionProviderEnum>;
   onLayout?: ViewProps['onLayout'];
 }
 
@@ -40,6 +41,7 @@ export const PromotionItem = forwardRef<View, Props>(
       pageName,
       onError,
       onLoad,
+      onImpression,
       onLayout
     },
     ref
@@ -116,6 +118,18 @@ export const PromotionItem = forwardRef<View, Props>(
       () => handleAdReadyFactory(PromotionProviderEnum.HypeLab),
       [handleAdReadyFactory]
     );
+
+    const handleAdImpressionFactory = useCallback(
+      (provider: PromotionProviderEnum) => () => {
+        onImpression?.(provider);
+      },
+      [onImpression]
+    );
+    const handleHypelabAdImpression = useMemo(
+      () => handleAdImpressionFactory(PromotionProviderEnum.HypeLab),
+      [handleAdImpressionFactory]
+    );
+
     const testIDProperties = useMemo(
       () => ({
         variant,
@@ -151,7 +165,12 @@ export const PromotionItem = forwardRef<View, Props>(
         onLayout={onLayout}
       >
         {currentProvider === PromotionProviderEnum.HypeLab && isFocused && (
-          <HypelabPromotion {...promotionCommonProps} onReady={handleHypelabAdReady} onError={handleHypelabError} />
+          <HypelabPromotion
+            {...promotionCommonProps}
+            onReady={handleHypelabAdReady}
+            onError={handleHypelabError}
+            onImpression={handleHypelabAdImpression}
+          />
         )}
         {!adIsReady && (
           <View style={styles.loaderContainer}>
