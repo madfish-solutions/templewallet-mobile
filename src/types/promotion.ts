@@ -8,6 +8,7 @@ export interface SingleProviderPromotionProps extends TestIdProps {
   shouldShowCloseButton: boolean;
   onClose: EmptyFn;
   onReady: EmptyFn;
+  onImpression: EmptyFn;
   onError: EmptyFn;
 }
 
@@ -53,4 +54,8 @@ interface ClickAdMessage extends AdFrameMessageBase {
   type: AdFrameMessageType.Click;
 }
 
-export type AdFrameMessage = ResizeAdMessage | ReadyAdMessage | ErrorAdMessage | ClickAdMessage;
+interface ImpressionAdMessage extends AdFrameMessageBase {
+  type: AdFrameMessageType.Impression;
+}
+
+export type AdFrameMessage = ResizeAdMessage | ReadyAdMessage | ErrorAdMessage | ClickAdMessage | ImpressionAdMessage;

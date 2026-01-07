@@ -20,7 +20,7 @@ export const useInternalAdsAnalytics = (
   page: string,
   variant = PromotionVariantEnum.Image,
   initialAdAreaIsVisible = false,
-  seenTimeout = 200
+  seenTimeout: number
 ) => {
   const accountPkh = useCurrentAccountPkhSelector();
   const isFocused = useIsFocused();
@@ -75,4 +75,51 @@ export const useInternalAdsAnalytics = (
   );
 
   return { onAdLoad, resetAdState, onIsVisible };
+};
+
+const useUpdatableRef = <T>(value: T) => {
+  const ref = useRef<T>(value);
+  ref.current = value;
+
+  return ref;
+};
+
+export const useInternalAdsAnalyticsWithImpressionCallback = (
+  page: string,
+  variant = PromotionVariantEnum.Image,
+  initialAdAreaIsVisible = false
+) => {
+  const accountPkh = useCurrentAccountPkhSelector();
+  const isFocused = useIsFocused();
+  const { trackEvent } = useAnalytics();
+  const [loadedPromotionProvider, setLoadedPromotionProvider] = useState<PromotionProviderEnum | undefined>();
+  const loadedPromotionProviderRef = useUpdatableRef(loadedPromotionProvider);
+  const [adAreaIsVisible, setAdAreaIsVisible] = useState(initialAdAreaIsVisible);
+  const adIsVisible = adAreaIsVisible && isDefined(loadedPromotionProvider) && isFocused;
+  const adIsVisibleRef = useUpdatableRef(adIsVisible);
+
+  useEffect(() => void (!isFocused && setLoadedPromotionProvider(undefined)), [isFocused]);
+
+  const onAdLoad = useCallback(
+    (provider: PromotionProviderEnum) => {
+      setLoadedPromotionProvider(provider);
+    },
+    [setLoadedPromotionProvider]
+  );
+
+  const onAdImpression = useCallback(
+    (provider: PromotionProviderEnum) => {
+      if (adIsVisibleRef.current && provider === loadedPromotionProviderRef.current) {
+        trackEvent(
+          'Internal Ads Activity',
+          AnalyticsEventCategory.General,
+          { variant, page, provider, accountPkh },
+          true
+        );
+      }
+    },
+    [accountPkh, adIsVisibleRef, loadedPromotionProviderRef, page, trackEvent, variant]
+  );
+
+  return { onAdLoad, onIsVisible: setAdAreaIsVisible, onAdImpression };
 };
