@@ -10,11 +10,13 @@ import { getErrorDerivedEventProps } from 'src/utils/error-analytics-data.utils'
 const allowInDevMode = false;
 
 setJSExceptionHandler((error, isFatal) => {
-  const { wallet } = store.getState();
+  const { settings, wallet } = store.getState();
   const activeAccountPkh = wallet?.selectedAccountPublicKeyHash;
-  Sentry.captureException(error.originalError ?? error, {
-    extra: getErrorDerivedEventProps(error, [activeAccountPkh].filter(Boolean))
-  });
+  if (settings?.isAnalyticsEnabled && wallet?.accounts.length > 0) {
+    Sentry.captureException(error.originalError ?? error, {
+      extra: getErrorDerivedEventProps(error, [activeAccountPkh].filter(Boolean))
+    });
+  }
 
   isFatal &&
     Alert.alert(

@@ -33,14 +33,16 @@ export class ErrorBoundary extends Component<Props, ErrorBoundaryState> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     Sentry.captureException(error);
-    const { settings, abTesting } = store.getState();
-    sendErrorAnalyticsEvent(
-      'GenericRenderError',
-      error,
-      [],
-      { userId: settings.userId, ABTestingCategory: abTesting.groupName },
-      { componentStack: errorInfo.componentStack }
-    );
+    const { settings, abTesting, wallet } = store.getState();
+    if (settings?.isAnalyticsEnabled && wallet?.accounts.length > 0) {
+      sendErrorAnalyticsEvent(
+        'GenericRenderError',
+        error,
+        [],
+        { userId: settings.userId, ABTestingCategory: abTesting.groupName },
+        { componentStack: errorInfo.componentStack }
+      );
+    }
     console.error(error.message, errorInfo.componentStack);
   }
 
