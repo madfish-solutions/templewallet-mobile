@@ -52,7 +52,7 @@ const removePermissionEpic: Epic = (action$: Observable<Action>) =>
               )
             )
           ).pipe(
-            switchMap(() => BeaconHandler.removePermission(accountIdentifier)),
+            switchMap(() => BeaconHandler.removePermission(accountIdentifier, senderId)),
             map(() => {
               showSuccessToast({ description: 'Permission successfully removed!' });
 

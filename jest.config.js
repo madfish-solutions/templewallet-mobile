@@ -32,6 +32,13 @@ module.exports = {
   moduleNameMapper: {
     '^src/(.*)': '<rootDir>/src/$1',
     '\\.svg': '<rootDir>/src/mocks/svg.mock.js',
-    '^react-native-themis': '<rootDir>/node_modules/react-native-themis/src/index.js'
+    '^react-native-themis': '<rootDir>/node_modules/react-native-themis/src/index.js',
+    '^@stablelib/wipe$': '<rootDir>/src/mocks/stablelib/wipe.mock.ts',
+    '^@stablelib/nacl$': '<rootDir>/src/mocks/stablelib/nacl.mock.ts',
+    '^@stablelib/random$': '<rootDir>/src/mocks/stablelib/random.mock.ts',
+    '^@stablelib/utf8$': '<rootDir>/src/mocks/stablelib/utf8.mock.ts',
+    '^@stablelib/ed25519$': '<rootDir>/src/mocks/stablelib/ed25519.mock.ts',
+    '^@stablelib/bytes$': '<rootDir>/src/mocks/stablelib/bytes.mock.ts',
+    '^@stablelib/x25519-session$': '<rootDir>/src/mocks/stablelib/x25519-session.mock.ts'
   }
 };
