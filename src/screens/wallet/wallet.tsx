@@ -15,6 +15,7 @@ import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
+import { KoloCryptoCardPreview } from 'src/modals/kolo-card';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -25,8 +26,8 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
-import { walletOpenedAction } from 'src/store/settings/settings-actions';
-import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
+import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
+import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -52,6 +53,11 @@ export const Wallet = memo(() => {
   const contactsAddresses = useContactsAddressesSelector();
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
+  const isKoloCardAnimationShown = useIsKoloCardAnimationShownSelector();
+
+  const handleKoloCardAnimationComplete = useCallback(() => {
+    dispatch(setKoloCardAnimationShownAction());
+  }, [dispatch]);
 
   useApkBuildIdEvent();
   usePushNotificationsEvent();
@@ -114,6 +120,14 @@ export const Wallet = memo(() => {
         <TokenEquityValue token={tezosToken} forTotalBalance={true} />
 
         <HeaderCardActionButtons token={tezosToken} />
+
+        <View style={WalletStyles.cryptoCardContainer}>
+          <KoloCryptoCardPreview
+            onPress={() => navigate(ModalsEnum.KoloCard)}
+            shouldAnimate={!isKoloCardAnimationShown}
+            onAnimationComplete={handleKoloCardAnimationComplete}
+          />
+        </View>
       </HeaderCard>
 
       <TokensList />

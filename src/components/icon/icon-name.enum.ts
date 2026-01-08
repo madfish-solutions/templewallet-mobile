@@ -176,5 +176,6 @@ export enum IconNameEnum {
   Key = 'Key',
   NoConnection = 'NoConnection',
   ScamInfo = 'ScamInfo',
-  Stake = 'Stake'
+  Stake = 'Stake',
+  MessageCircle = 'MessageCircle'
 }

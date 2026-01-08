@@ -37,6 +37,8 @@ export interface SettingsState {
   isShowCollectibleInfo: boolean;
   isInAppUpdateAvailable: boolean;
   isInAppBrowserEnabled: boolean;
+  isKoloCardAnimationShown: boolean;
+  koloForceLogoutOnNextOpen: boolean;
 }
 
 export const settingsInitialState: SettingsState = {
@@ -61,5 +63,7 @@ export const settingsInitialState: SettingsState = {
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,
   isInAppUpdateAvailable: false,
-  isInAppBrowserEnabled: !LIMIT_DAPPS_FEATURES
+  isInAppBrowserEnabled: !LIMIT_DAPPS_FEATURES,
+  isKoloCardAnimationShown: false,
+  koloForceLogoutOnNextOpen: false
 };

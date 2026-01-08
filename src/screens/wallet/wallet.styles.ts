@@ -5,5 +5,8 @@ export const WalletStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  cryptoCardContainer: {
+    zIndex: -1
   }
 });

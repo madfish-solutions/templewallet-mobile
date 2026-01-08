@@ -97,6 +97,7 @@ import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import ManualBackupIcon from './assets/manual-backup.svg';
 import MarketIcon from './assets/market.svg';
+import MessageCircleIcon from './assets/message-circle.svg';
 import MinusIcon from './assets/minus-icon.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
 import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
@@ -361,5 +362,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Key]: KeyIcon,
   [IconNameEnum.NoConnection]: NoConnectionIcon,
   [IconNameEnum.ScamInfo]: ScamInfoIcon,
-  [IconNameEnum.Stake]: StakeIcon
+  [IconNameEnum.Stake]: StakeIcon,
+  [IconNameEnum.MessageCircle]: MessageCircleIcon
 };

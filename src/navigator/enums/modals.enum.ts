@@ -29,7 +29,8 @@ export enum ModalsEnum {
   ConfirmSync = 'ConfirmSync',
   ChooseAccountImportType = 'ChooseAccountImportType',
   ImportAccountFromSeedPhrase = 'ImportAccountFromSeedPhrase',
-  ImportAccountFromPrivateKey = 'ImportAccountFromPrivateKey'
+  ImportAccountFromPrivateKey = 'ImportAccountFromPrivateKey',
+  KoloCard = 'KoloCard'
 }
 
 export type ModalsParamList = {
@@ -59,4 +60,5 @@ export type ModalsParamList = {
   [ModalsEnum.ChooseAccountImportType]: undefined;
   [ModalsEnum.ImportAccountFromSeedPhrase]: undefined;
   [ModalsEnum.ImportAccountFromPrivateKey]: undefined;
+  [ModalsEnum.KoloCard]: { forceLogout?: boolean } | undefined;
 };
