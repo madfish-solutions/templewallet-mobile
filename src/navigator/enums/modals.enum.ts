@@ -60,5 +60,5 @@ export type ModalsParamList = {
   [ModalsEnum.ChooseAccountImportType]: undefined;
   [ModalsEnum.ImportAccountFromSeedPhrase]: undefined;
   [ModalsEnum.ImportAccountFromPrivateKey]: undefined;
-  [ModalsEnum.KoloCard]: { forceLogout?: boolean } | undefined;
+  [ModalsEnum.KoloCard]: undefined;
 };

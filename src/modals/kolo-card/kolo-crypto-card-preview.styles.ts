@@ -12,9 +12,8 @@ export const useKoloCryptoCardPreviewStyles = createUseStylesMemoized(({ typogra
     alignItems: 'flex-start',
     borderRadius: formatSize(8),
     height: formatSize(96),
-    marginTop: formatSize(24),
     marginHorizontal: formatSize(8),
-    marginBottom: formatSize(-64),
+    marginBottom: formatSize(-48),
     paddingHorizontal: formatSize(16),
     paddingVertical: formatSize(12)
   },

@@ -1,8 +1,7 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import retry from 'async-retry';
-import React, { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, BackHandler, ScrollView, Text, View, ViewStyle } from 'react-native';
-import { WebView, WebViewNavigation } from 'react-native-webview';
+import React, { FC, useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, Text, View, ViewStyle } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { useDispatch } from 'react-redux';
 
 import { getKoloWidgetUrl } from 'src/apis/kolo';
@@ -12,8 +11,7 @@ import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
-import { isAndroid } from 'src/config/system';
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { setKoloForceLogoutOnNextOpenAction } from 'src/store/settings/settings-actions';
 import { useKoloForceLogoutOnNextOpenSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -31,19 +29,14 @@ interface HeaderMenuButtonProps {
   style?: ViewStyle;
 }
 
-const HeaderMenuButton: FC<HeaderMenuButtonProps> = memo(({ onPress, style }) => (
+const HeaderMenuButton: FC<HeaderMenuButtonProps> = ({ onPress, style }) => (
   <TouchableIcon name={IconNameEnum.MoreHorizontal} onPress={onPress} style={style} />
-));
+);
 
-export const KoloCardWidgetModal: FC = memo(() => {
-  const route = useRoute<RouteProp<ModalsParamList, ModalsEnum.KoloCard>>();
-  const { forceLogout: forceLogoutParam = false } = route.params ?? {};
-
+export const KoloCardWidgetModal: FC = () => {
   const dispatch = useDispatch();
   const styles = useKoloCardWidgetModalStyles();
-  const koloForceLogoutOnNextOpen = useKoloForceLogoutOnNextOpenSelector();
-
-  const forceLogout = forceLogoutParam || koloForceLogoutOnNextOpen;
+  const forceLogout = useKoloForceLogoutOnNextOpenSelector();
 
   usePageAnalytic(ModalsEnum.KoloCard);
 
@@ -52,11 +45,6 @@ export const KoloCardWidgetModal: FC = memo(() => {
   const [error, setError] = useState<string | null>(null);
   const [emailOverride, setEmailOverride] = useState<string | null>(null);
   const [logoutReinitStage, setLogoutReinitStage] = useState<0 | 1 | 2>(0);
-  const [webViewKey, setWebViewKey] = useState(0);
-  const [navState, setNavState] = useState<WebViewNavigation>();
-
-  const webViewRef = useRef<WebView>(null);
-  const canGoBack = navState?.canGoBack ?? false;
 
   const menuBottomSheetController = useBottomSheetController();
 
@@ -71,7 +59,6 @@ export const KoloCardWidgetModal: FC = memo(() => {
     setWidgetUrl(null);
     setError(null);
     setLoading(false);
-    setWebViewKey(prev => prev + 1);
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -102,24 +89,6 @@ export const KoloCardWidgetModal: FC = memo(() => {
   );
 
   useNavigationSetOptions({ headerLeft }, [headerLeft]);
-
-  useEffect(() => {
-    if (!isAndroid) {
-      return;
-    }
-
-    const backListener = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (canGoBack) {
-        webViewRef.current?.goBack();
-
-        return true;
-      }
-
-      return false;
-    });
-
-    return () => void backListener.remove();
-  }, [canGoBack]);
 
   useEffect(() => {
     if (widgetUrl != null || loading || error != null) {
@@ -170,7 +139,6 @@ export const KoloCardWidgetModal: FC = memo(() => {
       setEmailOverride(null);
       setWidgetUrl(null);
       setError(null);
-      setWebViewKey(prev => prev + 1);
     }, 1000);
   }, [logoutReinitStage, dispatch]);
 
@@ -194,11 +162,8 @@ export const KoloCardWidgetModal: FC = memo(() => {
         {!loading && error == null && Boolean(widgetUrl) && (
           <View style={[styles.webView, isLogoutInProgress && styles.webViewHidden]}>
             <WebView
-              key={webViewKey}
-              ref={webViewRef}
               source={{ uri: widgetUrl as string }}
               style={styles.webView}
-              onNavigationStateChange={setNavState}
               setSupportMultipleWindows={false}
               allowsBackForwardNavigationGestures={true}
               bounces={false}
@@ -232,4 +197,4 @@ export const KoloCardWidgetModal: FC = memo(() => {
       </BottomSheet>
     </>
   );
-});
+};
