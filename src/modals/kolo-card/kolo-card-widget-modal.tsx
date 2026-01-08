@@ -165,7 +165,6 @@ export const KoloCardWidgetModal: FC = () => {
               source={{ uri: widgetUrl as string }}
               style={styles.webView}
               setSupportMultipleWindows={false}
-              allowsBackForwardNavigationGestures={true}
               bounces={false}
               overScrollMode="never"
               onLoad={handleWidgetLoad}
