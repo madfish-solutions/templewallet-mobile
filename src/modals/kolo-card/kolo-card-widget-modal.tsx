@@ -16,6 +16,7 @@ import { setKoloForceLogoutOnNextOpenAction } from 'src/store/settings/settings-
 import { useKoloForceLogoutOnNextOpenSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
 
 import { useKoloCardWidgetModalStyles } from './kolo-card-widget-modal.styles';
@@ -27,6 +28,12 @@ const KOLO_SUPPORT_URL = 'https://t.me/KoloHelpBot';
 interface HeaderMenuButtonProps {
   onPress: EmptyFn;
   style?: ViewStyle;
+}
+
+enum LogoutReinitStage {
+  Idle = 0,
+  LoadWithMockEmail = 1,
+  ReloadWithoutOverride = 2
 }
 
 const HeaderMenuButton: FC<HeaderMenuButtonProps> = ({ onPress, style }) => (
@@ -44,7 +51,7 @@ export const KoloCardWidgetModal: FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [emailOverride, setEmailOverride] = useState<string | null>(null);
-  const [logoutReinitStage, setLogoutReinitStage] = useState<0 | 1 | 2>(0);
+  const [logoutReinitStage, setLogoutReinitStage] = useState<LogoutReinitStage>(LogoutReinitStage.Idle);
 
   const menuBottomSheetController = useBottomSheetController();
 
@@ -54,7 +61,7 @@ export const KoloCardWidgetModal: FC = () => {
      stage 1: load once with mock email to drop KOLO session
      stage 2: auto reload without email, so KOLO can prefill from its account data
     */
-    setLogoutReinitStage(1);
+    setLogoutReinitStage(LogoutReinitStage.LoadWithMockEmail);
     setEmailOverride(KOLO_MOCK_EMAIL);
     setWidgetUrl(null);
     setError(null);
@@ -95,8 +102,8 @@ export const KoloCardWidgetModal: FC = () => {
       return;
     }
 
-    if (forceLogout && logoutReinitStage === 0) {
-      setLogoutReinitStage(1);
+    if (forceLogout && logoutReinitStage === LogoutReinitStage.Idle) {
+      setLogoutReinitStage(LogoutReinitStage.LoadWithMockEmail);
       setEmailOverride(KOLO_MOCK_EMAIL);
 
       return;
@@ -129,20 +136,20 @@ export const KoloCardWidgetModal: FC = () => {
   }, [widgetUrl, loading, error, emailOverride, forceLogout, logoutReinitStage]);
 
   const handleWidgetLoad = useCallback(() => {
-    if (logoutReinitStage !== 1) {
+    if (logoutReinitStage !== LogoutReinitStage.LoadWithMockEmail) {
       return;
     }
     dispatch(setKoloForceLogoutOnNextOpenAction(false));
 
     setTimeout(() => {
-      setLogoutReinitStage(2);
+      setLogoutReinitStage(LogoutReinitStage.ReloadWithoutOverride);
       setEmailOverride(null);
       setWidgetUrl(null);
       setError(null);
     }, 1000);
   }, [logoutReinitStage, dispatch]);
 
-  const isLogoutInProgress = logoutReinitStage === 1;
+  const isLogoutInProgress = logoutReinitStage === LogoutReinitStage.LoadWithMockEmail;
 
   return (
     <>
@@ -159,10 +166,10 @@ export const KoloCardWidgetModal: FC = () => {
           </View>
         )}
 
-        {!loading && error == null && Boolean(widgetUrl) && (
+        {!loading && error == null && isDefined(widgetUrl) && (
           <View style={[styles.webView, isLogoutInProgress && styles.webViewHidden]}>
             <WebView
-              source={{ uri: widgetUrl as string }}
+              source={{ uri: widgetUrl }}
               style={styles.webView}
               setSupportMultipleWindows={false}
               bounces={false}
