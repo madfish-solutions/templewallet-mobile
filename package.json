@@ -1,6 +1,6 @@
 {
   "name": "temple-wallet",
-  "version": "1.50",
+  "version": "1.51",
   "private": true,
   "scripts": {
     "postinstall": "rn-nodeify --install 'react-native-randombytes' --hack && bash postinstall.sh",
@@ -20,15 +20,15 @@
     "clear:ios": "rm -rf ios/Pods && rm -rf ios/build && pod cache clean --all",
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true",
     "clear:watchman": "if [ -x \"$(command -v watchman)\" ]; then watchman watch-del-all; fi",
-    "find-deadcode": "ts-prune --error",
+    "find-deadcode": "ts-prune --error --ignore 'node_modules|src/mocks/stablelib'",
     "audit-deps": "node ./audit-deps.mjs"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "4.0.10",
-    "@airgap/beacon-transport-walletconnect": "4.0.10",
+    "@airgap/beacon-sdk": "4.6.4",
+    "@airgap/beacon-transport-walletconnect": "4.6.4",
     "@apollo/client": "^3.7.1",
     "@babel/preset-typescript": "^7.18.6",
     "@dicebear/avatars": "4.10.1",

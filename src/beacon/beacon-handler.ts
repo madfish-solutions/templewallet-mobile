@@ -74,9 +74,9 @@ export class BeaconHandler {
     return Promise.reject(WALLET_CLIENT_ERROR);
   };
 
-  public static removePermission = (accountIdentifier: string) => {
+  public static removePermission = (accountIdentifier: string, senderId: string) => {
     if (isDefined(BeaconHandler._walletClient)) {
-      return BeaconHandler._walletClient.removePermission(accountIdentifier);
+      return BeaconHandler._walletClient.removePermission(accountIdentifier, senderId);
     }
 
     return Promise.reject(WALLET_CLIENT_ERROR);
