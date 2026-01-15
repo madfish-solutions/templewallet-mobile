@@ -1,8 +1,7 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { Action } from 'redux';
-import { Epic, combineEpics } from 'redux-observable';
+import { combineEpics } from 'redux-observable';
 import { EMPTY, from, of } from 'rxjs';
 import { catchError, delay, map, switchMap, concatMap } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
@@ -13,6 +12,8 @@ import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
 import { isDcpNode } from 'src/utils/network.utils';
@@ -23,7 +24,7 @@ import { withOnRampOverlayState, withSelectedAccount, withSelectedRpcUrl } from 
 
 import { navigateAction } from '../root-state.actions';
 import { setOnRampOverlayStateAction } from '../settings/settings-actions';
-import type { RootState } from '../types';
+import type { AnyActionEpic } from '../types';
 
 import {
   highPriorityLoadTokenBalanceAction,
@@ -33,13 +34,14 @@ import {
   waitForOperationCompletionAction
 } from './wallet-actions';
 
-const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+const highPriorityLoadTokenBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(highPriorityLoadTokenBalanceAction),
     toPayload(),
     withSelectedRpcUrl(state$),
-    switchMap(([payload, selectedRpcUrl]) =>
-      loadAssetBalance$(selectedRpcUrl, payload.publicKeyHash, payload.slug).pipe(
+    withUserAnalyticsCredentials(state$),
+    switchMap(([[payload, selectedRpcUrl], userAnalyticsCredentials]) =>
+      loadAssetBalance$(selectedRpcUrl, payload.publicKeyHash, payload.slug, userAnalyticsCredentials).pipe(
         map(balance =>
           isDefined(balance)
             ? loadAssetsBalancesActions.success({
@@ -53,12 +55,13 @@ const highPriorityLoadTokenBalanceEpic: Epic<Action, Action, RootState> = (actio
     )
   );
 
-const loadTokensBalancesEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadAssetsBalancesActions.submit),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[_, selectedAccount], selectedRpcUrl]) =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([[[_, selectedAccount], selectedRpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       from(fetchAllAssetsBalancesFromTzkt(selectedRpcUrl, selectedAccount.publicKeyHash)).pipe(
         map(data =>
           loadAssetsBalancesActions.success({
@@ -66,20 +69,33 @@ const loadTokensBalancesEpic: Epic<Action, Action, RootState> = (action$, state$
             balances: data,
             selectedRpcUrl
           })
-        )
+        ),
+        catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent(
+              'LoadTokensBalancesError',
+              err,
+              [selectedAccount.publicKeyHash],
+              { userId, ABTestingCategory },
+              { selectedRpcUrl }
+            );
+          }
+
+          return of(loadAssetsBalancesActions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(
+            delay(5)
+          );
+        })
       )
-    ),
-    catchError(([selectedAccount]) =>
-      of(loadAssetsBalancesActions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(delay(5))
     )
   );
 
-const loadTezosBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[, selectedAccount], rpcUrl]) =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([[[, selectedAccount], rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       loadTezosBalance$(rpcUrl, selectedAccount.publicKeyHash).pipe(
         withOnRampOverlayState(state$),
         concatMap(([balance, overlayState]) => {
@@ -94,12 +110,24 @@ const loadTezosBalanceEpic: Epic<Action, Action, RootState> = (action$, state$) 
 
           return showOnRampAction ? [successAction, showOnRampAction] : [successAction];
         }),
-        catchError(err => of(loadTezosBalanceActions.fail(err.message)))
+        catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent(
+              'LoadTezosBalanceError',
+              err,
+              [selectedAccount.publicKeyHash],
+              { userId, ABTestingCategory },
+              { rpcUrl }
+            );
+          }
+
+          return of(loadTezosBalanceActions.fail(err.message));
+        })
       )
     )
   );
 
-const sendAssetEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+const sendAssetEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
@@ -121,18 +149,29 @@ const sendAssetEpic: Epic<Action, Action, RootState> = (action$, state$) =>
     )
   );
 
-const waitForOperationCompletionEpic: Epic<Action, Action, RootState> = (action$, state$) =>
+const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(waitForOperationCompletionAction),
     toPayload(),
     withSelectedRpcUrl(state$),
-    switchMap(([{ opHash, sender }, rpcUrl]) =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([[{ opHash, sender }, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
         switchMap(operation => operation.confirmation(1)),
         catchError(err => {
           if (err.message === 'Confirmation polling timed out') {
             return of(undefined);
           } else {
+            if (isAnalyticsEnabled) {
+              sendErrorAnalyticsEvent(
+                'WaitForOperationCompletionEpicError',
+                err,
+                [sender.publicKeyHash],
+                { userId, ABTestingCategory },
+                { rpcUrl }
+              );
+            }
+
             throw new Error(err.message);
           }
         }),

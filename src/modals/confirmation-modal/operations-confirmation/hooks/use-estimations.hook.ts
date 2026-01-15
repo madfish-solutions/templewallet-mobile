@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native';
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind, Estimate, TezosOperationError, GasConsumingOperation } from '@taquito/taquito';
 import { pick } from 'lodash-es';
@@ -16,7 +15,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { MINIMAL_FEE_PER_GAS_MUTEZ } from 'src/utils/tezos.util';
 
 export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKind[]) => {
-  const [estimationState, setEstimationState] = useState<LoadableEntityState<EstimationInterface[]>>({
+  const [estimationState, setEstimationState] = useState<LoadableEntityState<EstimationInterface[], unknown>>({
     isLoading: true,
     data: []
   });
@@ -79,7 +78,6 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
     const subscription = estimate$(opParams).subscribe({
       next: value => setEstimationState({ isLoading: false, data: value }),
       error: error => {
-        Sentry.captureException(error);
         showErrorToast({
           title: 'Warning!',
           description: 'The transaction is likely to fail!',
@@ -87,11 +85,7 @@ export const useEstimations = (sender: AccountInterface, opParams: ParamsWithKin
           onPress: () => copyStringToClipboard(error.toString())
         });
 
-        setEstimationState({
-          error: error instanceof TezosOperationError ? error.id : error.toString(),
-          isLoading: false,
-          data: []
-        });
+        setEstimationState({ error, isLoading: false, data: [] });
       }
     });
 

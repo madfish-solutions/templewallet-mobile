@@ -55,7 +55,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     const isImageAd = variant === PromotionVariantEnum.Image;
     const colors = useColors();
     const theme = useThemeSelector();
-    const { trackEvent } = useAnalytics();
+    const { trackEvent, trackErrorEvent } = useAnalytics();
     const [adHref, setAdHref] = useState<string>();
     const [backgroundAsset, setBackgroundAsset] = useState<BackgroundAsset | undefined>();
 
@@ -153,9 +153,10 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
           }
         } catch (err) {
           console.error(err);
+          trackErrorEvent('WebviewPromotionError', err, [], { eventData: e.nativeEvent.data });
         }
       },
-      [adHref, onError, onReady, testID, testIDProperties, trackEvent, adChanged, onImpression]
+      [adHref, onError, onReady, testID, testIDProperties, trackEvent, adChanged, onImpression, trackErrorEvent]
     );
 
     const webViewCommonProps = useMemo(

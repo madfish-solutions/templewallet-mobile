@@ -17,6 +17,7 @@ import {
 } from 'src/store/buy-with-credit-card/selectors';
 import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { getUpdatedFiatLimits } from 'src/utils/get-updated-fiat-limits.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -92,6 +93,7 @@ export const usePaymentProvider = (
   const initialData = initialPaymentProvidersData[providerId];
   const getOutputAmount = getOutputAmountFunctions[providerId];
   const dispatch = useDispatch();
+  const { trackErrorEvent } = useAnalytics();
 
   const updateOutputAmount = useCallback(
     async (
@@ -104,7 +106,20 @@ export const usePaymentProvider = (
       const currentProviderCryptoCurrency = cryptoCurrencies.find(({ code }) => code === newOutputAsset.code);
       const updatedPairLimits =
         isDefined(currentProviderFiatCurrency) && isDefined(currentProviderCryptoCurrency)
-          ? (await getUpdatedFiatLimits(currentProviderFiatCurrency, currentProviderCryptoCurrency, providerId)).data
+          ? (
+              await getUpdatedFiatLimits(
+                currentProviderFiatCurrency,
+                currentProviderCryptoCurrency,
+                providerId,
+                error =>
+                  trackErrorEvent('OnePaymentProviderUpdateOutputAmountError', error, [], {
+                    newInputAmount: newInputAmount?.toFixed(),
+                    newInputAsset,
+                    newOutputAsset,
+                    providerId
+                  })
+              )
+            ).data
           : undefined;
 
       if (isDefined(updatedPairLimits)) {
@@ -135,6 +150,12 @@ export const usePaymentProvider = (
         setOutputAmountLoading(true);
         newOutputAmount = await getOutputAmount(newInputAmount, newInputAsset, newOutputAsset);
       } catch (error) {
+        trackErrorEvent('UpdatePaymentProviderOutputAmountError', error, [], {
+          inputAmount: newInputAmount?.toFixed(),
+          newInputAsset,
+          newOutputAsset,
+          providerId
+        });
         showErrorToast({ description: getAxiosQueryErrorMessage(error) });
         setIsError(true);
         newOutputAmount = undefined;
@@ -145,7 +166,7 @@ export const usePaymentProvider = (
 
       return newOutputAmount;
     },
-    [getOutputAmount, providerId, fiatCurrencies, cryptoCurrencies, dispatch]
+    [getOutputAmount, providerId, fiatCurrencies, cryptoCurrencies, dispatch, trackErrorEvent]
   );
 
   const provider = useMemo<PaymentProviderInterface>(
