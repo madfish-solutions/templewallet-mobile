@@ -23,11 +23,13 @@ export const getTransferPermissions = async (
 
   const assetContract = await tezos.wallet.at(tokenToSpend.contract);
   if (tokenToSpend.standard === Route3TokenStandardEnum.fa12) {
-    const reset = assetContract.methods.approve(spender, 0).toTransferParams({ mutez: true });
-    const spend = assetContract.methods.approve(spender, amountToSpendAtomic).toTransferParams({ mutez: true });
+    const reset = assetContract.methodsObject.approve({ spender, value: 0 }).toTransferParams({ mutez: true });
+    const spend = assetContract.methodsObject
+      .approve({ spender, value: amountToSpendAtomic })
+      .toTransferParams({ mutez: true });
     permissions.approve.push(reset, spend);
   } else if (tokenToSpend.standard === Route3TokenStandardEnum.fa2) {
-    const spend = assetContract.methods
+    const spend = assetContract.methodsObject
       .update_operators([
         {
           add_operator: {
@@ -38,7 +40,7 @@ export const getTransferPermissions = async (
         }
       ])
       .toTransferParams({ mutez: true });
-    const reset = assetContract.methods
+    const reset = assetContract.methodsObject
       .update_operators([
         {
           remove_operator: {

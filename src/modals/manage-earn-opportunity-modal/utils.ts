@@ -109,7 +109,7 @@ export const getYupanaRebalanceParams = async ({
 
     const lid = tokenInvestmentInfo?.lending_market_id;
     if (lid) {
-      return yupanaContract.methods.updateInterest(lid).toTransferParams();
+      return yupanaContract.methodsObject.updateInterest(lid).toTransferParams();
     }
 
     return null;

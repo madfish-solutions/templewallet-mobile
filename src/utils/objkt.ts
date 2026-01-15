@@ -1,6 +1,6 @@
 import {
   ContractAbstraction,
-  ContractMethod,
+  ContractMethodObject,
   ContractProvider,
   OpKind,
   ParamsWithKind,
@@ -126,13 +126,13 @@ const getObjktMarketplaceListingContract = (tezos: TezosToolkit, address: string
 
 interface ObjktListingContractInterface extends ContractAbstraction<ContractProvider> {
   methods: {
-    fulfill_offer: (offer_id: number, token_id: number) => ContractMethod<ContractProvider>;
+    fulfill_offer: (offer_id: number, token_id: number) => ContractMethodObject<ContractProvider>;
   };
 }
 
 interface FxHashListingContractInterface extends ContractAbstraction<ContractProvider> {
   methods: {
-    offer_accept: (offer_id: number) => ContractMethod<ContractProvider>;
+    offer_accept: (offer_id: number) => ContractMethodObject<ContractProvider>;
   };
 }
 
@@ -141,12 +141,12 @@ const getObjktMarketplaceBuyingContract = (tezos: TezosToolkit, address: string)
 
 interface ObjktBuyCollectibleContractInterface extends ContractAbstraction<ContractProvider> {
   methods: {
-    fulfill_ask: (ask_id: number) => ContractMethod<ContractProvider>;
+    fulfill_ask: (ask_id: number) => ContractMethodObject<ContractProvider>;
   };
 }
 
 interface FxHashBuyCollectibleContractInterface extends ContractAbstraction<ContractProvider> {
   methods: {
-    listing_accept: (listing_id: number, amount: number) => ContractMethod<ContractProvider>;
+    listing_accept: (listing_id: number, amount: number) => ContractMethodObject<ContractProvider>;
   };
 }
