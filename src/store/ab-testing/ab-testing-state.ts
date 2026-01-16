@@ -1,4 +1,4 @@
-import { ABTestGroup } from '../../apis/temple-wallet';
+import { ABTestGroup } from 'src/apis/temple-wallet';
 
 export interface ABTestingState {
   groupName: ABTestGroup;

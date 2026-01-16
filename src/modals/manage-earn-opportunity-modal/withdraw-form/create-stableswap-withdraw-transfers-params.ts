@@ -54,12 +54,27 @@ export const createStableswapWithdrawTransfersParams = async (
   let burnWTezParams: TransferParams[] = [];
   if (shouldBurnWtezToken) {
     const wTezContract = await getReadOnlyContract(WTEZ_TOKEN_METADATA.address, tezos);
-    burnWTezParams = [wTezContract.methods.burn(accountPkh, accountPkh, tokenOutput).toTransferParams()];
+    burnWTezParams = [
+      wTezContract.methodsObject
+        .burn({
+          from_: accountPkh,
+          receiver: accountPkh,
+          amount: tokenOutput
+        })
+        .toTransferParams()
+    ];
   }
 
-  const withdrawTransferParams = farmContract.methods.withdraw(stake.lastStakeId).toTransferParams();
-  const divestOneCoinTransferParams = poolContract.methods
-    .divest_imbalanced(poolId, tokensOutput, depositAmount, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)
+  const withdrawTransferParams = farmContract.methodsObject.withdraw(stake.lastStakeId).toTransferParams();
+  const divestOneCoinTransferParams = poolContract.methodsObject
+    .divest_imbalanced({
+      pool_id: poolId,
+      amounts_out: tokensOutput,
+      max_shares: depositAmount,
+      deadline: getTransactionTimeoutDate(),
+      receiver: null,
+      referral: STABLESWAP_REFERRAL
+    })
     .toTransferParams();
 
   return [...yupanaRebalanceParams, withdrawTransferParams, divestOneCoinTransferParams, ...burnWTezParams];

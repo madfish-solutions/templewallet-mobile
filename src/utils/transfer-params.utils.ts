@@ -71,7 +71,9 @@ export function getTransferParams$(
                   ]
                 }
               }
-            : contract.methods.transfer(senderPkh, receiverPublicKeyHash, amount).toTransferParams()
+            : contract.methodsObject
+                .transfer({ from: senderPkh, to: receiverPublicKeyHash, value: amount })
+                .toTransferParams()
         )
       )
     : of({

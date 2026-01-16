@@ -1,14 +1,15 @@
 import React, { Fragment } from 'react';
 
-import { DataPlaceholder } from '../../../components/data-placeholder/data-placeholder';
-import { Divider } from '../../../components/divider/divider';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { SearchInput } from '../../../components/search-input/search-input';
-import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
-import { ModalsEnum } from '../../../navigator/enums/modals.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useImportedAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
+import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { Divider } from 'src/components/divider/divider';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { SearchInput } from 'src/components/search-input/search-input';
+import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useImportedAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item/manage-account-item';
 

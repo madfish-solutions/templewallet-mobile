@@ -1,22 +1,23 @@
 import { FormikProps } from 'formik/dist/types';
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
-import { AccountFormDropdown } from '../../../components/account-dropdown/account-form-dropdown';
-import { Disclaimer } from '../../../components/disclaimer/disclaimer';
-import { Divider } from '../../../components/divider/divider';
-import { Label } from '../../../components/label/label';
-import { ModalStatusBar } from '../../../components/modal-status-bar/modal-status-bar';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { FormTextInput } from '../../../form/form-text-input';
-import { useHdAccountListSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { getDerivationPath } from '../../../utils/keys.util';
+import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { Divider } from 'src/components/divider/divider';
+import { Label } from 'src/components/label/label';
+import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { FormTextInput } from 'src/form/form-text-input';
+import { useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { getDerivationPath } from 'src/utils/keys.util';
+
 import { RevealSeedPhraseModalFormValues } from '../reveal-seed-phrase-modal.form';
 import { RevealSeedPharaseSelectors } from '../reveal-seed-phrase.selectors';
 
 import { RevealSeedPhraseView } from './reveal-seed-phrase-view/reveal-seed-phrase-view';
 
-export const RevealSeedPhraseFormContent: FC<FormikProps<RevealSeedPhraseModalFormValues>> = ({
+export const RevealSeedPhraseFormContent: SyncFC<FormikProps<RevealSeedPhraseModalFormValues>> = ({
   values,
   setFieldValue
 }) => {

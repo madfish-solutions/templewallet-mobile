@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { EmptyFn } from '../../../config/general';
-import { TestIdProps } from '../../../interfaces/test-id.props';
-import { copyStringToClipboard } from '../../../utils/clipboard.utils';
-import { isString } from '../../../utils/is-string';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { isString } from 'src/utils/is-string';
+
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { StyledTextInput } from '../../styled-text-input/styled-text-input';
 import { StyledTextInputStyles } from '../../styled-text-input/styled-text-input.styles';

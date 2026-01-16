@@ -1,4 +1,4 @@
-import React, { Children, FC, Fragment } from 'react';
+import React, { Children, Fragment } from 'react';
 import { View } from 'react-native';
 
 import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
@@ -8,7 +8,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 
-export const WalletInitButtonsFloatingContainer: FC = ({ children }) => {
+export const WalletInitButtonsFloatingContainer: FCWithChildren = ({ children }) => {
   const styles = useSetPasswordScreensCommonStyles();
 
   return (

@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
-import { SvgCssUri } from 'react-native-svg';
+import { SvgCssUri } from 'react-native-svg/css';
 
 import { ImageTypeEnum } from 'src/enums/image-type.enum';
 import { useImageType } from 'src/hooks/use-image-type.hook';

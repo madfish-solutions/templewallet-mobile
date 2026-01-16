@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { AnyAction, configureStore, ThunkMiddleware } from '@reduxjs/toolkit';
 import type { Middleware } from 'redux';
-import createDebugger from 'redux-flipper';
+import { createLogger } from 'redux-logger';
 import { combineEpics, createEpicMiddleware, Epic, StateObservable } from 'redux-observable';
 import { persistStore } from 'redux-persist';
 import { Observable } from 'rxjs';
@@ -9,14 +9,13 @@ import { catchError } from 'rxjs/operators';
 import { isDefined } from 'src/utils/is-defined';
 
 import persistedReducer from './root-state.reducers';
-import type { RootState } from './types';
+import { RootState } from './types';
 
 const epicMiddleware = createEpicMiddleware();
-// eslint-disable-next-line @typescript-eslint/ban-types
-const middlewares: Array<Middleware<{}, RootState>> = [epicMiddleware];
+const middlewares: Middleware<object, RootState>[] = [epicMiddleware];
 
 if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
-  middlewares.push(createDebugger());
+  middlewares.push(createLogger({ collapsed: true }));
 }
 
 export const createStore = (...epics: Epic[]) => {
@@ -30,7 +29,7 @@ export const createStore = (...epics: Epic[]) => {
       return getDefaultMiddleware({
         serializableCheck: false,
         immutableCheck: false
-      }).concat(middlewares);
+      }).concat(middlewares as ThunkMiddleware<RootState, AnyAction>[]);
     }
   });
 

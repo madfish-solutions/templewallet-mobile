@@ -2,7 +2,7 @@ import { noop } from 'lodash-es';
 import React, { memo, useEffect, useMemo } from 'react';
 import { StyleProp, FlexStyle, TransformsStyle, ShadowStyleIOS } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { SvgCssUri } from 'react-native-svg';
+import { SvgCssUri } from 'react-native-svg/css';
 
 import { ImageTypeEnum } from 'src/enums/image-type.enum';
 import { useImageType } from 'src/hooks/use-image-type.hook';

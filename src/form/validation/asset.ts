@@ -1,8 +1,8 @@
 import { object, SchemaOf } from 'yup';
 
-import { tokenEqualityFn } from '../../components/token-dropdown/token-equality-fn';
-import { emptyTezosLikeToken, TokenInterface } from '../../token/interfaces/token.interface';
-import { isDefined } from '../../utils/is-defined';
+import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
+import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { isDefined } from 'src/utils/is-defined';
 
 import { makeRequiredErrorMessage } from './messages';
 

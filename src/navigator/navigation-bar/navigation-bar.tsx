@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Dimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import Orientation, { useOrientationChange } from 'react-native-orientation-locker';
@@ -22,7 +22,7 @@ const screensWithoutTabBar = [
   ScreensEnum.SecurityUpdate
 ];
 
-export const NavigationBar: FC = ({ children }) => {
+export const NavigationBar: FCWithChildren = ({ children }) => {
   const isAuthorised = useIsAuthorisedSelector();
   const currentRouteName = useContext(CurrentRouteNameContext);
 

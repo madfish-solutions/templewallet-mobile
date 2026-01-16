@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { LoadError, OnLoadData as NativeOnLoadData } from 'react-native-video';
+import { OnLoadData as NativeOnLoadData, OnVideoErrorData } from 'react-native-video';
 import VideoPlayer from 'react-native-video-controls';
 import { WebView } from 'react-native-webview';
 
@@ -16,7 +16,7 @@ interface Props {
   width: number;
   height: number;
   style?: StyleProp<ViewStyle>;
-  onError?: SyncFn<LoadError>;
+  onError?: SyncFn<OnVideoErrorData>;
   onLoad?: EmptyFn;
   isVideo?: boolean;
   shouldShowLoader?: boolean;
@@ -60,7 +60,7 @@ export const SimplePlayer = memo<Props>(
     }, [onLoad]);
 
     const handleWebViewError = useCallback(() => {
-      onError({ error: { '': '', errorString: 'Failed to load video, it may be invalid or unsupported' } });
+      onError({ error: { errorString: 'Failed to load video, it may be invalid or unsupported' } });
     }, [onError]);
 
     return (

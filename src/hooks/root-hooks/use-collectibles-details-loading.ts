@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 import { useDispatch } from 'react-redux';
 
 import { COLLECTIBLES_DETAILS_SYNC_INTERVAL } from 'src/config/fixed-times';

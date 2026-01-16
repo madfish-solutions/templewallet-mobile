@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 
 import { useApyStyles } from 'src/components/token-screen-content-container/apy.styles';
@@ -12,7 +12,7 @@ interface DelegateTagContainerProps {
   scam?: boolean;
 }
 
-export const TokenTagContainer: FC<DelegateTagContainerProps> = ({ token, scam, children }) => {
+export const TokenTagContainer: FCWithChildren<DelegateTagContainerProps> = ({ token, scam, children }) => {
   const styles = useTokenTagContainerStyles();
   const apyStyles = useApyStyles();
 

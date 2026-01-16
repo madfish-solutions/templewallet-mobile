@@ -1,4 +1,4 @@
-import { FlashList, ListRenderItem } from '@shopify/flash-list';
+import { FlashList, FlashListRef, ListRenderItem } from '@shopify/flash-list';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -54,7 +54,6 @@ type ListItem = TokenInterface | typeof AD_PLACEHOLDER;
 const ITEMS_BEFORE_AD = 4;
 /** padding size + icon size */
 const ITEM_HEIGHT = formatSize(24 + 32);
-const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
 
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
@@ -71,7 +70,7 @@ export const TokensList = memo(() => {
   const [listHeight, setListHeight] = useState(0);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
-  const flashListRef = useRef<FlashList<ListItem>>(null);
+  const flashListRef = useRef<FlashListRef<ListItem>>(null);
   const adListItemRef = useRef<View>(null);
   const flashListWrapperRef = useRef<View>(null);
   const refs = useMemo(() => ({ parent: flashListWrapperRef, element: adListItemRef }), []);
@@ -244,7 +243,6 @@ export const TokensList = memo(() => {
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           getItemType={getItemType}
-          estimatedItemSize={FLOORED_ITEM_HEIGHT}
           refreshControl={refreshControl}
           onScroll={onListScroll}
           onLayout={onListLayoutChange}

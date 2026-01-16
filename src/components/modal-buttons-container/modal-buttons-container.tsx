@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
@@ -6,7 +6,7 @@ import { InsetSubstitute } from '../inset-substitute/inset-substitute';
 
 import { useModalButtonsContainerStyles } from './modal-buttons-container.styles';
 
-export const ModalButtonsContainer: FC = ({ children }) => {
+export const ModalButtonsContainer: FCWithChildren = ({ children }) => {
   const styles = useModalButtonsContainerStyles();
 
   return (

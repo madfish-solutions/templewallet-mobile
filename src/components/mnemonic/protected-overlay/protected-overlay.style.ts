@@ -1,12 +1,12 @@
 import { StyleSheet } from 'react-native';
 
-import { black } from '../../../config/styles';
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { black } from 'src/config/styles';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useProtectedOverlayStyle = createUseStyles(({ colors, typography }) => ({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: formatSize(8),
     overflow: 'hidden'
   },
@@ -16,7 +16,7 @@ export const useProtectedOverlayStyle = createUseStyles(({ colors, typography })
     height: '100%'
   },
   touchableOpacity: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center',
     alignItems: 'center'
   },

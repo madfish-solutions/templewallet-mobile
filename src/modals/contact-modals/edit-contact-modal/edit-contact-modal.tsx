@@ -21,8 +21,8 @@ import { editContactAction, loadContactTezosBalance } from 'src/store/contact-bo
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { tezosDomainsResolver } from 'src/utils/dns.utils';
 
-import { tezosDomainsResolver } from '../../../utils/dns.utils';
 import { handleContactSubmission } from '../utils/handle-contact-submission.util';
 import { useEditContactFormValidationSchema } from '../validation-schema';
 

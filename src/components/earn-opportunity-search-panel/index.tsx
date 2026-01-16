@@ -5,7 +5,6 @@ import { Checkbox } from 'src/components/checkbox/checkbox';
 import { Divider } from 'src/components/divider/divider';
 import { Search } from 'src/components/search/search';
 import { Sorter } from 'src/components/sorter/sorter';
-import { EventFn } from 'src/config/general';
 import { EarnOpportunitiesSortFieldEnum } from 'src/enums/earn-opportunities-sort-fields.enum';
 import { formatSize } from 'src/styles/format-size';
 
@@ -17,9 +16,9 @@ interface Props {
   sorterTestID?: string;
   sortField: EarnOpportunitiesSortFieldEnum;
   depositedOnly: boolean;
-  handleToggleDepositOnly: EventFn<boolean>;
-  setSearchValue: EventFn<string | undefined>;
-  handleSetSortField: EventFn<EarnOpportunitiesSortFieldEnum>;
+  handleToggleDepositOnly: SyncFn<boolean>;
+  setSearchValue: SyncFn<string | undefined>;
+  handleSetSortField: SyncFn<EarnOpportunitiesSortFieldEnum>;
 }
 
 const earnSortFieldsLabels = {

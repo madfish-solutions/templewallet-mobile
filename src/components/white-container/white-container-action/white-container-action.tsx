@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 
 import { TouchableOpacityComponentProps, TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -8,7 +8,13 @@ import { WhiteContainerActionStyles } from './white-container-action.styles';
 
 type Props = Pick<TouchableOpacityComponentProps, 'disabled' | 'onPress'> & TestIdProps;
 
-export const WhiteContainerAction: FC<Props> = ({ disabled, onPress, children, testID, testIDProperties }) => (
+export const WhiteContainerAction: FCWithChildren<Props> = ({
+  disabled,
+  onPress,
+  children,
+  testID,
+  testIDProperties
+}) => (
   <TouchableWithAnalytics
     style={WhiteContainerActionStyles.container}
     disabled={disabled}

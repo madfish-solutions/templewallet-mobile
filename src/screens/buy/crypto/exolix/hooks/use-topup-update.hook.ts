@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { emptyFn } from '../../../../../config/general';
-import { refreshExolixExchangeDataAction } from '../../../../../store/exolix/exolix-actions';
-import { useExolixExchangeData } from '../../../../../store/exolix/exolix-selectors';
-import { isDefined } from '../../../../../utils/is-defined';
+import { emptyFn } from 'src/config/general';
+import { refreshExolixExchangeDataAction } from 'src/store/exolix/exolix-actions';
+import { useExolixExchangeData } from 'src/store/exolix/exolix-selectors';
+import { isDefined } from 'src/utils/is-defined';
 
 const useTopUpUpdate = (setIsError: (isError: boolean) => void) => {
   const exchangeData = useExolixExchangeData();
@@ -26,7 +26,7 @@ const useTopUpUpdate = (setIsError: (isError: boolean) => void) => {
     try {
       setExchangeData(exchangeData.id);
       timeoutId.current = setTimeout(repeat, 3000);
-    } catch (e) {
+    } catch {
       setIsError(true);
     }
   };

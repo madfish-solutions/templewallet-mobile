@@ -1,4 +1,4 @@
-import Keychain from 'react-native-keychain';
+import { type STORAGE_TYPE, UserCredentials } from 'react-native-keychain';
 
 export const mockCorrectPassword = 'mockCorrectPassword';
 export const mockCorrectUserCredentialsValue = 'mockCorrectUserCredentials';
@@ -6,12 +6,12 @@ export const mockCorrectUserCredentials = {
   username: 'mockUsername',
   password: JSON.stringify(mockCorrectUserCredentialsValue),
   service: 'mockService',
-  storage: 'mockStorage'
+  storage: 'KeystoreAESGCM_NoAuth' as STORAGE_TYPE
 };
 
 export const mockKeychain = {
   ...jest.requireActual('react-native-keychain'),
-  getGenericPassword: jest.fn(() => Promise.resolve<Keychain.UserCredentials>(mockCorrectUserCredentials)),
+  getGenericPassword: jest.fn(() => Promise.resolve<UserCredentials>(mockCorrectUserCredentials)),
   setGenericPassword: jest.fn(() => Promise.resolve()),
   getSupportedBiometryType: jest.fn(() => Promise.resolve('FaceID')),
   resetGenericPassword: jest.fn(() => Promise.resolve()),

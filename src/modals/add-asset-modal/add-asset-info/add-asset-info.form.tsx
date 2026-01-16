@@ -1,7 +1,7 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { object, SchemaOf, string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../../form/validation/messages';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 
 export type AddTokenInfoFormValues = {
   symbol: string;

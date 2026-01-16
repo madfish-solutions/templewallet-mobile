@@ -1,5 +1,5 @@
-import { BigNumber } from 'bignumber.js';
-import React, { FC, ReactChild, useMemo } from 'react';
+import BigNumber from 'bignumber.js';
+import React, { FC, ReactNode, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { FormattedAmount } from 'src/components/formatted-amount';
@@ -14,7 +14,7 @@ import { useStatsItemStyles } from './styles';
 interface StatsItemProps {
   title: string;
   loading: boolean;
-  value: ReactChild | ReactChild[];
+  value: ReactNode | ReactNode[];
   usdEquivalent?: BigNumber;
 }
 

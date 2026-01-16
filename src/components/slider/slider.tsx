@@ -2,9 +2,10 @@ import RNSlider, { SliderProps } from '@react-native-community/slider';
 import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 
-import { greyLight200, orangeLight200 } from '../../config/styles';
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
+import { greyLight200, orangeLight200 } from 'src/config/styles';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 

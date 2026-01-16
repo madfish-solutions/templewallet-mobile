@@ -1,8 +1,8 @@
 import { BottomSheetSectionList, TouchableOpacity } from '@gorhom/bottom-sheet';
-import React, { FC, memo, useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { FlatListProps, ListRenderItemInfo, Text, View } from 'react-native';
 
-import { EmptyFn, EventFn, emptyComponent, emptyFn } from 'src/config/general';
+import { emptyComponent, emptyFn } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -24,7 +24,7 @@ export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps
   list: Array<SectionDropdownDataInterface<T>>;
   isSearchable?: boolean;
   itemHeight?: number;
-  setSearchValue?: EventFn<string>;
+  setSearchValue?: SyncFn<string>;
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
@@ -37,22 +37,22 @@ interface SectionDropdownValueProps<T> {
   itemHeight?: number;
   list: Array<SectionDropdownDataInterface<T>>;
   disabled?: boolean;
-  onValueChange: EventFn<T | undefined>;
+  onValueChange: SyncFn<T | undefined>;
 }
 
 type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
-type DropdownValueComponent<T> = FC<{
+type DropdownValueComponent<T> = SyncFC<{
   value?: T;
   disabled?: boolean;
 }>;
 
-type DropdownListItemComponent<T> = FC<{
+type DropdownListItemComponent<T> = SyncFC<{
   item: T;
   isSelected: boolean;
 }>;
 
-type DropdownActionButtonsComponent = FC<{
+type DropdownActionButtonsComponent = SyncFC<{
   onPress: EmptyFn;
 }>;
 
@@ -146,6 +146,7 @@ const SectionDropdownComponent = <T extends unknown>({
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
+            // @ts-expect-error - TODO: fix this
             renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
             ListEmptyComponent={<DataPlaceholder text="No assets found." />}
           />

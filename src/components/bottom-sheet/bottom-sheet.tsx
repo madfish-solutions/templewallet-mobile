@@ -5,7 +5,7 @@ import GorhomBottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
 import { max } from 'lodash-es';
-import React, { FC, PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import { BackHandler, Keyboard, Text, View } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -30,7 +30,7 @@ interface Props extends BottomSheetControllerProps {
   isInitiallyOpen?: boolean;
 }
 
-export const BottomSheet: FC<Props> = ({
+export const BottomSheet: FCWithChildren<Props> = ({
   title,
   description,
   cancelButtonText = 'Cancel',

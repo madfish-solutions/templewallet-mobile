@@ -4,12 +4,11 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
-
-import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
-import { useNavigation } from '../../../hooks/use-navigation.hook';
 
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 

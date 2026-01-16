@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { FormikProvider } from 'formik';
 import React, { FC, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';

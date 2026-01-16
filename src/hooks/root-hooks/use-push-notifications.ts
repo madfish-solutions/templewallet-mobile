@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import { useCallback, useEffect } from 'react';
 import { PermissionsAndroid } from 'react-native';
-/* eslint-disable-next-line import/no-named-as-default */
+/* eslint-disable-next-line import/default */
 import PushNotification from 'react-native-push-notification';
 import { useDispatch } from 'react-redux';
 

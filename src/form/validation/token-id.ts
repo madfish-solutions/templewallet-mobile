@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { object, SchemaOf } from 'yup';
 
-import { isDefined } from '../../utils/is-defined';
+import { isDefined } from 'src/utils/is-defined';
 
 export const tokenIdValidation: SchemaOf<BigNumber> = object()
   .shape({})

@@ -1,4 +1,5 @@
-import { AdvertisingPromotion } from '../../interfaces/advertising-promotion.interface';
+import { AdvertisingPromotion } from 'src/interfaces/advertising-promotion.interface';
+
 import { createEntity } from '../create-entity';
 import { LoadableEntityState } from '../types';
 

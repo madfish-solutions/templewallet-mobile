@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import Config from 'react-native-config';
 
 import { TEZOS_DEXES_API_URL } from 'src/utils/env.utils';
 
@@ -21,7 +22,7 @@ const BLOCK_UPDATE_API_URL = `${TEZOS_DEXES_API_URL}/block`;
  * ```
  */
 export const useBlockSubscription = () => {
-  const webSocketRef = useRef<WebSocket>();
+  const webSocketRef = useRef<WebSocket>(undefined);
   const refreshControlRef = useRef(Math.random());
 
   const [block, setBlock] = useState<BlockInterface>(EMPTY_BLOCK);
@@ -34,6 +35,7 @@ export const useBlockSubscription = () => {
   };
 
   useEffect(() => {
+    console.log('BLOCK_UPDATE_API_URL', BLOCK_UPDATE_API_URL, Config);
     webSocketRef.current = new WebSocket(BLOCK_UPDATE_API_URL);
 
     webSocketRef.current.onerror = () => {

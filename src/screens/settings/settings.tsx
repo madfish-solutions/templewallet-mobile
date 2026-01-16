@@ -31,12 +31,11 @@ import {
 } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-
-import { showErrorToast } from '../../toast/toast.utils';
-import { copyStringToClipboard } from '../../utils/clipboard.utils';
-import { getTempleUniversalLink } from '../../utils/universal-links';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { getTempleUniversalLink } from 'src/utils/universal-links';
 
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
@@ -72,13 +71,14 @@ export const Settings = () => {
       });
 
       await trackEvent(SettingsSelectors.shareSuccess, AnalyticsEventCategory.ButtonPress);
-    } catch (e: any) {
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unknown error';
       showErrorToast({
-        description: e.message,
+        description: message,
         isCopyButtonVisible: true,
-        onPress: () => copyStringToClipboard(e.message)
+        onPress: () => copyStringToClipboard(message)
       });
-      await trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress, { errorMessage: e.message });
+      await trackEvent(SettingsSelectors.shareError, AnalyticsEventCategory.ButtonPress, { errorMessage: message });
     }
   }, [trackEvent]);
 

@@ -1,11 +1,14 @@
 import 'react-native-gesture-handler/jestSetup';
 
+import './src/hooks/hide-balance/hide-balance.hook.mock';
+
 import './src/mocks/memoization.mock';
 
 import './src/mocks/react-native-community/netinfo.mock';
 
 import './src/mocks/react-native-config.mock';
 
+import './src/mocks/airgap-beacontransport-postmessage.mock';
 import './src/mocks/taquito-signer.mock';
 import './src/mocks/native-modules.mock';
 

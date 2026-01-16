@@ -2,9 +2,9 @@ import { AppMetadata } from '@airgap/beacon-sdk';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AppMetadataIcon } from '../../../../components/app-metadata-icon/app-metadata-icon';
-import { Divider } from '../../../../components/divider/divider';
-import { formatSize } from '../../../../styles/format-size';
+import { AppMetadataIcon } from 'src/components/app-metadata-icon/app-metadata-icon';
+import { Divider } from 'src/components/divider/divider';
+import { formatSize } from 'src/styles/format-size';
 
 import { useAppMetadataViewStyles } from './app-metadata-view.styles';
 

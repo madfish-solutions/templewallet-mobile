@@ -1,4 +1,4 @@
-import React, { FC, RefObject } from 'react';
+import React, { ReactNode, RefObject } from 'react';
 import {
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
@@ -29,16 +29,16 @@ interface Props extends TestIdProps {
   scrollViewRefreshControl?: ScrollViewProps['refreshControl'];
   isFullScreenMode?: boolean;
   fixedFooterContainer?: {
-    cancelButton?: JSX.Element;
-    submitButton?: JSX.Element;
+    cancelButton?: ReactNode;
+    submitButton?: ReactNode;
   };
-  scrollViewRef?: RefObject<ScrollView>;
+  scrollViewRef?: RefObject<ScrollView | null>;
   style?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
   scrollEnabled?: boolean;
 }
 
-export const ScreenContainer: FC<Props> = ({
+export const ScreenContainer: FCWithChildren<Props> = ({
   keyboardBehavior = isAndroid ? 'height' : 'padding',
   scrollViewRefreshControl,
   isFullScreenMode = false,

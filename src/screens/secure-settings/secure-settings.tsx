@@ -1,30 +1,30 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { openSecuritySettings } from '../../biometry/biometry.utils';
-import { useBiometryAvailability } from '../../biometry/use-biometry-availability.hook';
-import { Divider } from '../../components/divider/divider';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { Switch } from '../../components/switch/switch';
-import { WhiteContainer } from '../../components/white-container/white-container';
-import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
-import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
+import { openSecuritySettings } from 'src/biometry/biometry.utils';
+import { useBiometryAvailability } from 'src/biometry/use-biometry-availability.hook';
+import { Divider } from 'src/components/divider/divider';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { Switch } from 'src/components/switch/switch';
+import { WhiteContainer } from 'src/components/white-container/white-container';
+import { WhiteContainerAction } from 'src/components/white-container/white-container-action/white-container-action';
+import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import {
   disableBiometryPassword,
   setIsAnalyticsEnabled,
   setIsBalanceHidden
-} from '../../store/settings/settings-actions';
+} from 'src/store/settings/settings-actions';
 import {
   useAnalyticsEnabledSelector,
   useBalanceHiddenSelector,
   useBiometricsEnabledSelector
-} from '../../store/settings/settings-selectors';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../utils/is-defined';
+} from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
 
 import { SecureSettingsSelectors } from './secure-settings.selectors';
 

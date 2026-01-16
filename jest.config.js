@@ -39,6 +39,8 @@ module.exports = {
     '^@stablelib/utf8$': '<rootDir>/src/mocks/stablelib/utf8.mock.ts',
     '^@stablelib/ed25519$': '<rootDir>/src/mocks/stablelib/ed25519.mock.ts',
     '^@stablelib/bytes$': '<rootDir>/src/mocks/stablelib/bytes.mock.ts',
-    '^@stablelib/x25519-session$': '<rootDir>/src/mocks/stablelib/x25519-session.mock.ts'
+    '^@stablelib/x25519-session$': '<rootDir>/src/mocks/stablelib/x25519-session.mock.ts',
+    '@airgap/beacon-dapp': '<rootDir>/src/mocks/airgap-beacon-dapp.mock.js',
+    '@airgap/beacon-ui': '<rootDir>/src/mocks/airgap-beacon-ui.mock.js'
   }
 };

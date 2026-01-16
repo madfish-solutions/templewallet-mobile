@@ -1,4 +1,4 @@
-import React, { createContext, FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { Dimensions, ScaledSize } from 'react-native';
 
 import { FontsEnum } from './fonts-enum';
@@ -7,7 +7,7 @@ import { Typography } from './typography.types';
 
 const TypographyContext = createContext<Typography>({} as Typography);
 
-export const TypographyProvider: FC = ({ children }) => {
+export const TypographyProvider: FCWithChildren = ({ children }) => {
   const [fontScale, setFontScale] = useState(Dimensions.get('window').fontScale);
 
   useEffect(() => {

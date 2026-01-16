@@ -1,8 +1,7 @@
 import { debounce } from 'lodash-es';
-import React, { FC, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, TextInput } from 'react-native';
 
-import { EventFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -18,10 +17,10 @@ import { useSearchStyles } from './search.styles';
 interface Props extends TestIdProps {
   placeholder?: string;
   dividerSize?: number;
-  onChange: EventFn<string | undefined>;
+  onChange: SyncFn<string | undefined>;
 }
 
-export const Search: FC<Props> = ({
+export const Search: FCWithChildren<Props> = ({
   dividerSize = 24,
   placeholder = 'Search token',
   testID,

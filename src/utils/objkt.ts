@@ -1,6 +1,6 @@
 import {
   ContractAbstraction,
-  ContractMethod,
+  ContractMethodObject,
   ContractProvider,
   OpKind,
   ParamsWithKind,
@@ -40,9 +40,9 @@ export const buildBuyCollectibleParams = async (
   const params = isTezosCurrency ? { amount: listing.price, mutez: true, source: accountPkh } : {};
 
   const methodCallResult =
-    'fulfill_ask' in contract.methods
-      ? contract.methods.fulfill_ask(listing.bigmap_key)
-      : contract.methods.listing_accept(listing.bigmap_key, 1);
+    'fulfill_ask' in contract.methodsObject
+      ? contract.methodsObject.fulfill_ask({ ask_id: listing.bigmap_key })
+      : contract.methodsObject.listing_accept({ listing_id: listing.bigmap_key, amount: 1 });
 
   const transferParams = [methodCallResult.toTransferParams(params)];
 
@@ -88,9 +88,9 @@ export const buildSellCollectibleParams = async (
   });
 
   const methodCallResult =
-    'fulfill_offer' in contract.methods
-      ? contract.methods.fulfill_offer(objktOffer.bigmap_key, Number(tokenId))
-      : contract.methods.offer_accept(objktOffer.bigmap_key);
+    'fulfill_offer' in contract.methodsObject
+      ? contract.methodsObject.fulfill_offer({ offer_id: objktOffer.bigmap_key, token_id: Number(tokenId) })
+      : contract.methodsObject.offer_accept({ offer_id: objktOffer.bigmap_key });
 
   const transferParams = [methodCallResult.toTransferParams()];
 
@@ -125,14 +125,14 @@ const getObjktMarketplaceListingContract = (tezos: TezosToolkit, address: string
   tezos.contract.at<ObjktListingContractInterface | FxHashListingContractInterface>(address);
 
 interface ObjktListingContractInterface extends ContractAbstraction<ContractProvider> {
-  methods: {
-    fulfill_offer: (offer_id: number, token_id: number) => ContractMethod<ContractProvider>;
+  methodsObject: {
+    fulfill_offer: (params: { offer_id: number; token_id: number }) => ContractMethodObject<ContractProvider>;
   };
 }
 
 interface FxHashListingContractInterface extends ContractAbstraction<ContractProvider> {
   methods: {
-    offer_accept: (offer_id: number) => ContractMethod<ContractProvider>;
+    offer_accept: (params: { offer_id: number }) => ContractMethodObject<ContractProvider>;
   };
 }
 
@@ -141,12 +141,12 @@ const getObjktMarketplaceBuyingContract = (tezos: TezosToolkit, address: string)
 
 interface ObjktBuyCollectibleContractInterface extends ContractAbstraction<ContractProvider> {
   methods: {
-    fulfill_ask: (ask_id: number) => ContractMethod<ContractProvider>;
+    fulfill_ask: (params: { ask_id: number; proxy?: string }) => ContractMethodObject<ContractProvider>;
   };
 }
 
 interface FxHashBuyCollectibleContractInterface extends ContractAbstraction<ContractProvider> {
   methods: {
-    listing_accept: (listing_id: number, amount: number) => ContractMethod<ContractProvider>;
+    listing_accept: (params: { listing_id: number; amount: number }) => ContractMethodObject<ContractProvider>;
   };
 }

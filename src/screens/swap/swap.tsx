@@ -2,11 +2,10 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { loadSwapDexesAction, loadSwapTokensAction, resetSwapParamsAction } from 'src/store/swap/swap-actions';
-
-import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../utils/is-defined';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
 
 import { SwapForm } from './swap-form/swap-form';
 

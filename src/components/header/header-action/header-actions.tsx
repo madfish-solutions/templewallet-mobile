@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { ScreensEnum } from '../../../navigator/enums/screens.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { formatSize } from '../../../styles/format-size';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { TouchableIcon } from '../../icon/touchable-icon/touchable-icon';
 

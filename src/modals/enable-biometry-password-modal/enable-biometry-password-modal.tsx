@@ -2,15 +2,15 @@ import { Formik } from 'formik';
 import React from 'react';
 import { View } from 'react-native';
 
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from '../../components/button/buttons-container/buttons-container';
-import { InsetSubstitute } from '../../components/inset-substitute/inset-substitute';
-import { Label } from '../../components/label/label';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { FormPasswordInput } from '../../form/form-password-input';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { useShelter } from '../../shelter/use-shelter.hook';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
+import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { FormPasswordInput } from 'src/form/form-password-input';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useShelter } from 'src/shelter/use-shelter.hook';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import {
   EnableBiometryPasswordModalFormValues,

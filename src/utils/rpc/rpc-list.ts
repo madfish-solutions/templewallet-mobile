@@ -1,4 +1,4 @@
-import { RpcInterface } from '../../interfaces/rpc.interface';
+import { RpcInterface } from 'src/interfaces/rpc.interface';
 
 export const DCP_RPC: RpcInterface = {
   name: 'T4L3NT Mainnet',

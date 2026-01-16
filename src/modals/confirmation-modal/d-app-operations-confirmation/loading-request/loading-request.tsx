@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 
-import { ButtonLargeSecondary } from '../../../../components/button/button-large/button-large-secondary/button-large-secondary';
-import { Disclaimer } from '../../../../components/disclaimer/disclaimer';
-import { LoadingPlaceholder } from '../../../../components/loading-placeholder/loading-placeholder';
-import { ModalButtonsContainer } from '../../../../components/modal-buttons-container/modal-buttons-container';
-import { ScreenContainer } from '../../../../components/screen-container/screen-container';
-import { useNavigation } from '../../../../navigator/hooks/use-navigation.hook';
+import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
+import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 
 import { useLoadingRequestStyles } from './loading-request.styles';
 

@@ -6,8 +6,8 @@
 */
 
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { ComponentProps, FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, BackHandler } from 'react-native';
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ScrollView, BackHandler, NativeScrollEvent } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -69,8 +69,9 @@ export const InAppBrowser: FC = memo(() => {
   // PTR (pull-to-refresh)
   const [ptrEnabled, setPtrEnabled] = useState(true);
 
-  const onScroll: ComponentProps<typeof WebView>['onScroll'] = useCallback(
-    event => void setPtrEnabled(event.nativeEvent.contentOffset.y === 0),
+  const onScroll = useCallback(
+    (event: { nativeEvent: Pick<NativeScrollEvent, 'contentOffset'> }) =>
+      setPtrEnabled(event.nativeEvent.contentOffset.y === 0),
     []
   );
 

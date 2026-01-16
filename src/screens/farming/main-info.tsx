@@ -82,7 +82,7 @@ export const MainInfo: FC = () => {
       stakesEntriesWithEndedRewards.map(([address, stakeRecord]) =>
         tezos.wallet
           .at(address)
-          .then(contractInstance => contractInstance.methods.claim(stakeRecord.lastStakeId).toTransferParams())
+          .then(contractInstance => contractInstance.methodsObject.claim(stakeRecord.lastStakeId).toTransferParams())
       )
     );
 

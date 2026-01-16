@@ -1,19 +1,20 @@
 import React, { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { BottomSheet } from '../../../components/bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
-import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
-import { Divider } from '../../../components/divider/divider';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { SearchInput } from '../../../components/search-input/search-input';
-import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
-import { AccountInterface, emptyAccount } from '../../../interfaces/account.interface';
-import { ModalsEnum } from '../../../navigator/enums/modals.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
+import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
+import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
+import { ButtonSmallSecondary } from 'src/components/button/button-small/button-small-secondary/button-small-secondary';
+import { Divider } from 'src/components/divider/divider';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { SearchInput } from 'src/components/search-input/search-input';
+import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
+import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useHdAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+
 import { InfoText } from '../info-text/info-text';
 
 import { ManageAccountItem } from './manage-account-item/manage-account-item';

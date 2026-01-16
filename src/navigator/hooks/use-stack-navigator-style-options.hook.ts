@@ -1,10 +1,9 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 import { useMemo } from 'react';
 
+import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { generateShadow } from 'src/styles/generate-shadow';
 import { useColors } from 'src/styles/use-colors';
-
-import { DEFAULT_BORDER_WIDTH } from '../../config/styles';
 
 export const useStackNavigatorStyleOptions = (): StackNavigationOptions => {
   const colors = useColors();

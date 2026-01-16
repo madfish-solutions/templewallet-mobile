@@ -1,6 +1,6 @@
+import { keepLocalCopy, pick } from '@react-native-documents/picker';
 import React, { FC } from 'react';
 import { Text, TouchableOpacity } from 'react-native';
-import { pickSingle } from 'react-native-document-picker';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -33,9 +33,20 @@ export const FileInput: FC<FileInputProps> = ({ value, onChange }) => {
 
   const selectFile = async () => {
     try {
-      const pickResult = await pickSingle({ copyTo: 'cachesDirectory' });
+      // copyTo: 'cachesDirectory'
+      const [file] = await pick({});
 
-      onChange({ fileName: pickResult.name ?? '', uri: normalizeFileUri(pickResult.uri) });
+      const [localCopy] = await keepLocalCopy({
+        files: [
+          {
+            uri: file.uri,
+            fileName: file.name ?? 'fallbackName'
+          }
+        ],
+        destination: 'cachesDirectory'
+      });
+
+      onChange({ fileName: file.name ?? '', uri: normalizeFileUri(localCopy.sourceUri) });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       if (e.message !== 'User canceled document picker') {

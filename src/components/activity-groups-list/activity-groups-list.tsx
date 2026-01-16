@@ -25,7 +25,6 @@ type ListItem = string | ActivityGroup;
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'sectionHeader' : 'row');
 const keyExtractor = (item: ListItem) => (typeof item === 'string' ? item : item[0].hash);
 
-const AVERAGE_ITEM_HEIGHT = 150;
 const PROMOTION_ID = 'activities-promotion';
 
 interface Props {
@@ -154,7 +153,6 @@ export const ActivityGroupsList: FC<Props> = ({
         onEndReached={handleEndReached}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        estimatedItemSize={AVERAGE_ITEM_HEIGHT}
         getItemType={getItemType}
         ListHeaderComponent={ListHeaderComponent}
         ListEmptyComponent={ListEmptyComponent}

@@ -1,4 +1,4 @@
-export const mockReactNativeSha256 = {
+const mockReactNativeSha256 = {
   sha256: jest.fn()
 };
 

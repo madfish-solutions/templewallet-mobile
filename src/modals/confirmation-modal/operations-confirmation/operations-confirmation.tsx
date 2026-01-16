@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { Text, View } from 'react-native';
 
 import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
@@ -42,11 +42,11 @@ interface Props extends TestIdProps {
   opParams: ParamsWithKind[];
   isLoading: boolean;
   disclaimer?: ReactNode;
-  onEstimationError?: SyncFn<unknown>;
+  onEstimationError?: SyncFn<string>;
   onSubmit: SyncFn<ParamsWithKind[]>;
 }
 
-export const OperationsConfirmation: FC<Props> = ({
+export const OperationsConfirmation: FCWithChildren<Props> = ({
   sender,
   opParams,
   isLoading,

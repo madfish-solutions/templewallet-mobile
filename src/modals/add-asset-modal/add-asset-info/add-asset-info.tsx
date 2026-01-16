@@ -11,7 +11,6 @@ import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { EmptyFn } from 'src/config/general';
 import { FormNumericInput } from 'src/form/form-numeric-input/form-numeric-input';
 import { FormTextInput } from 'src/form/form-text-input';
 import { putTokenMetadataAction } from 'src/store/tokens-metadata/tokens-metadata-actions';

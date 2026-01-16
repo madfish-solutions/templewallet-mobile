@@ -3,6 +3,7 @@ import { StyleProp, Text, View, ViewStyle, Appearance } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { useInsetStyles } from 'src/hooks/use-inset-styles';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import {
   changeTheme,
@@ -45,6 +46,7 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
       : 'Oops! Something unexpected happened.';
     const styles = useErrorBoundaryContentStyles();
     const colors = useColors();
+    const insetStyles = useInsetStyles();
 
     const copyErrorStack = useCallback(() => copyStringToClipboard(error.stack), [error.stack]);
 
@@ -62,7 +64,7 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
     }, [dispatch, onTryAgainClick]);
 
     return (
-      <View style={[styles.root, style]}>
+      <View style={[styles.root, insetStyles, style]}>
         <View style={styles.contentWrapper}>
           <View style={styles.centerContent}>
             <Icon

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -22,7 +22,7 @@ interface Props extends TestIdProps {
 const ANIMATION_CONFIGURATION = { duration: ANIMATION_DURATION, useNativeDriver: false };
 const CHEVRON_ANIMATION_INTERPOLATION = { outputRange: ['180deg', '0deg'] };
 
-export const QuestionAccordion: FC<Props> = ({ question, children, testID, testIDProperties }) => {
+export const QuestionAccordion: FCWithChildren<Props> = ({ question, children, testID, testIDProperties }) => {
   const [isOpen, setIsOpen] = useState(false);
   const styles = useQuestionAccordionStyles();
   const animation = useAnimationRef(isOpen);

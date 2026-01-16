@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { SeedPhraseWordGiven } from '../../../../components/seed-phrase-word-given/seed-phrase-word-given';
-import { SeedPhraseWordInput } from '../../../../components/seed-phrase-word-input/seed-phrase-word-input';
+import { SeedPhraseWordGiven } from 'src/components/seed-phrase-word-given/seed-phrase-word-given';
+import { SeedPhraseWordInput } from 'src/components/seed-phrase-word-input/seed-phrase-word-input';
 
 import { useVerifySeedPhraseRowStyles } from './verify-seed-phrase-row.styles';
 

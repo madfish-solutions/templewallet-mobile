@@ -13,7 +13,6 @@ interface Props {
 }
 
 // TODO: use this component to display a route
-// ts-prune-ignore-next
 export const DexIcon: FC<Props> = ({ dexType }) => {
   const styles = useDexIconStyles();
 

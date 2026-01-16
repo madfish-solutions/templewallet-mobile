@@ -28,15 +28,16 @@ export const useShareNFT = (slug: string, image?: string, title?: string, descri
       });
 
       await trackEvent(CollectibleModalSelectors.shareNFTSuccess, AnalyticsEventCategory.ButtonPress);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
       showErrorToast({
-        description: error.message,
+        description: message,
         isCopyButtonVisible: true,
-        onPress: () => copyStringToClipboard(error.message)
+        onPress: () => copyStringToClipboard(message)
       });
 
       await trackEvent(CollectibleModalSelectors.shareNFTFailed, AnalyticsEventCategory.ButtonPress, {
-        errorMessage: error.message
+        errorMessage: message
       });
     }
   }, [description, image, slug, title, trackEvent]);

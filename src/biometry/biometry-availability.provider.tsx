@@ -1,5 +1,5 @@
 import { noop } from 'lodash-es';
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import ReactNativeBiometrics, { BiometryType } from 'react-native-biometrics';
 
 import { useAppStateStatus } from '../hooks/use-app-state-status.hook';
@@ -9,7 +9,7 @@ import { BiometryAvailabilityContext } from './biometry-availability.context';
 const rnBiometrics = new ReactNativeBiometrics();
 const biometryUnavailableErrorList = ['BIOMETRIC_ERROR_NO_HARDWARE', 'Unsupported android version'];
 
-export const BiometryAvailabilityProvider: FC = ({ children }) => {
+export const BiometryAvailabilityProvider: FCWithChildren = ({ children }) => {
   const [isHardwareAvailable, setIsHardwareAvailable] = useState(false);
   const [biometryType, setBiometryType] = useState<BiometryType>();
 

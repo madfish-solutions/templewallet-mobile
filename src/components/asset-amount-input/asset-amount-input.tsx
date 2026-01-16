@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
@@ -137,7 +137,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const hasExchangeRate = isDefined(value.asset.exchangeRate);
     const exchangeRate = value.asset.exchangeRate ?? 1;
 
-    const inputValueRef = useRef<BigNumber>();
+    const inputValueRef = useRef<BigNumber>(undefined);
 
     const numericInputValue = useMemo(() => {
       const newNumericInputValue = (() => {
@@ -179,7 +179,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     );
 
     const onChange = useCallback(
-      newInputValue => {
+      (newInputValue: BigNumber | undefined) => {
         inputValueRef.current = newInputValue;
 
         onValueChange({

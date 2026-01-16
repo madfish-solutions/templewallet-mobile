@@ -83,7 +83,7 @@ const AssetAmountInputComponent: FC<
 
   const amount = value.amount;
 
-  const inputValueRef = useRef<BigNumber>();
+  const inputValueRef = useRef<BigNumber>(undefined);
 
   const numericInputValue = useMemo(() => {
     const newNumericInputValue = amount;
@@ -94,7 +94,7 @@ const AssetAmountInputComponent: FC<
   }, [amount]);
 
   const onChange = useCallback(
-    newInputValue => {
+    (newInputValue: BigNumber | undefined) => {
       inputValueRef.current = newInputValue;
 
       onValueChange(newValueFn(value, value.asset, newInputValue));

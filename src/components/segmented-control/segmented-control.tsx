@@ -2,7 +2,6 @@ import React, { FC, PropsWithChildren, useCallback, useEffect, useRef } from 're
 import { Animated, StyleProp, View, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { EventFn } from 'src/config/general';
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
@@ -16,7 +15,7 @@ export interface SegmentedControlProps<T> extends TestIdProps {
   selectedIndex: number;
   values: T[];
   width?: number;
-  onChange: EventFn<number>;
+  onChange: SyncFn<number>;
   style?: StyleProp<ViewStyle>;
   optionAnalyticsPropertiesFn?: (value: T, index: number) => object | undefined;
 }

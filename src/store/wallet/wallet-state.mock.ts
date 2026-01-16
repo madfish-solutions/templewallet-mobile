@@ -1,5 +1,5 @@
-import { mockAccountState } from '../../interfaces/account-state.interface.mock';
-import { mockHdAccount } from '../../interfaces/account.interface.mock';
+import { mockAccountState } from 'src/interfaces/account-state.interface.mock';
+import { mockHdAccount } from 'src/interfaces/account.interface.mock';
 
 import { WalletState } from './wallet-state';
 

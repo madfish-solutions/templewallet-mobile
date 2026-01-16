@@ -1,14 +1,14 @@
 import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Divider } from '../../../../components/divider/divider';
-import { Icon } from '../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { formatSize } from '../../../../styles/format-size';
-import { useColors } from '../../../../styles/use-colors';
-import { conditionalStyle } from '../../../../utils/conditional-style';
-import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
-import { useNavigation } from '../../../hooks/use-navigation.hook';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { useSideBarButtonStyles } from './side-bar-button.styles';
 

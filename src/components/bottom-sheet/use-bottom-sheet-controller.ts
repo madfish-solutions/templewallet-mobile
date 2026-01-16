@@ -1,8 +1,7 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { RefObject, useMemo, useRef } from 'react';
 
-import { EmptyFn } from '../../config/general';
-import { isDefined } from '../../utils/is-defined';
+import { isDefined } from 'src/utils/is-defined';
 
 interface BottomSheetController {
   ref: RefObject<BottomSheetModal>;
@@ -20,5 +19,5 @@ export const useBottomSheetController = (): BottomSheetController => {
   const open = () => void (isDefined(ref.current) && ref.current.expand());
   const close = () => void (isDefined(ref.current) && ref.current.close());
 
-  return useMemo(() => ({ ref, open, close }), []);
+  return useMemo(() => ({ ref: ref as RefObject<BottomSheetModal>, open, close }), []);
 };

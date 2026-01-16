@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 import { CycleStatus } from '../utils/get-cycle-status-icon';
 

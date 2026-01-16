@@ -1,15 +1,12 @@
 import { object, SchemaOf, string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../form/validation/messages';
-import { AccountBaseInterface } from '../../interfaces/account.interface';
-import {
-  useContactsAddressesSelector,
-  useContactsNamesSelector
-} from '../../store/contact-book/contact-book-selectors';
-import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
-import { isTezosDomainNameValid } from '../../utils/dns.utils';
-import { isDefined } from '../../utils/is-defined';
-import { isValidAddress } from '../../utils/tezos.util';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { useContactsAddressesSelector, useContactsNamesSelector } from 'src/store/contact-book/contact-book-selectors';
+import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { isTezosDomainNameValid } from 'src/utils/dns.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isValidAddress } from 'src/utils/tezos.util';
 
 const baseValidationSchema = ({
   contactsNames,

@@ -60,7 +60,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
     [initialPassword]
   );
 
-  const formik = useFormik({
+  const formik = useFormik<CreateNewPasswordFormValues>({
     initialValues: createNewPasswordInitialValues,
     validationSchema: createNewPasswordValidationSchema,
     onSubmit: handleSubmit

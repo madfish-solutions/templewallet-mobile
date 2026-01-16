@@ -1,4 +1,4 @@
-import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -54,16 +54,16 @@ export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
-export type DropdownValueComponent<T> = FC<
+export type DropdownValueComponent<T> = SyncFC<
   { value?: T; disabled?: boolean; isCollectibleScreen?: boolean } & TestIdProps
 >;
 
-export type DropdownListItemComponent<T> = FC<{
+export type DropdownListItemComponent<T> = SyncFC<{
   item: T;
   isSelected: boolean;
 }>;
 
-export type DropdownActionButtonsComponent = FC<{
+export type DropdownActionButtonsComponent = SyncFC<{
   onPress: EmptyFn;
 }>;
 

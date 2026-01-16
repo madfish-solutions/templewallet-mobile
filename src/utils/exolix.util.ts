@@ -11,7 +11,6 @@ import {
   SubmitExchangePayload
 } from 'src/types/exolix.types';
 
-import { AnalyticsError } from './error-analytics-data.utils';
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';
 
@@ -19,35 +18,30 @@ const currenciesLimit = 100;
 
 export const loadExolixCurrencies = async (): Promise<TopUpWithNetworkInterface[]> => {
   let page = 1;
-  let totalData: ExolixCurrenciesResponseInterface['data'] = [];
-  try {
-    let result = await loadCurrency(page);
-    totalData = result.data;
-    while (isDefined(result) && isDefined(result.data) && result.data.length === currenciesLimit) {
-      page++;
-      result = await loadCurrency(page);
-      if (isDefined(result) && isDefined(result.data)) {
-        totalData = totalData.concat(result.data);
-      }
+  let result = await loadCurrency(page);
+  let totalData = result.data;
+  while (isDefined(result) && isDefined(result.data) && result.data.length === currenciesLimit) {
+    page++;
+    result = await loadCurrency(page);
+    if (isDefined(result) && isDefined(result.data)) {
+      totalData = totalData.concat(result.data);
     }
-
-    return totalData
-      .map(({ code, icon, name, networks }) =>
-        networks.map(network => ({
-          code,
-          icon,
-          name,
-          network: {
-            code: network.network,
-            fullName: network.name,
-            shortName: isTruthy(network.shortName) ? network.shortName : undefined
-          }
-        }))
-      )
-      .flat();
-  } catch (e) {
-    throw new AnalyticsError(e, [], { page, totalData });
   }
+
+  return totalData
+    .map(({ code, icon, name, networks }) =>
+      networks.map(network => ({
+        code,
+        icon,
+        name,
+        network: {
+          code: network.network,
+          fullName: network.name,
+          shortName: isTruthy(network.shortName) ? network.shortName : undefined
+        }
+      }))
+    )
+    .flat();
 };
 
 const loadCurrency = async (page = 1) =>

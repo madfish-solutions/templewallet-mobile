@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useHeaderProgressStyles = createUseStyles(({ colors, typography }) => ({
   container: {
@@ -21,7 +21,7 @@ export const useHeaderProgressStyles = createUseStyles(({ colors, typography }) 
     backgroundColor: colors.lines
   },
   progressLine: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: formatSize(4),
     backgroundColor: colors.black
   }

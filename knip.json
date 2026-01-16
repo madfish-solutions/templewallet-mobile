@@ -1,0 +1,18 @@
+{
+  "entry": ["shim.js", "handle-js-exception.js"],
+  "project": ["src/**/*.{ts,tsx,js,jsx}"],
+  "ignoreFiles": ["src/screens/swap/swap-form/dex-icon/**", "src/mocks/airgap-beacon-*.mock.metro.js"],
+  "ignoreDependencies": [
+    "@airgap/beacon-transport-walletconnect",
+    "@react-native-masked-view/masked-view",
+    "@babel/preset-env",
+    "@react-native-community/cli*"
+  ],
+  "ignoreBinaries": ["pod", "watchman"],
+  "ignoreIssues": {
+    "src/**": ["enumMembers", "duplicates", "unlisted"],
+    ".eslintrc.json": ["unresolved"],
+    "metro.config.js": ["unresolved"]
+  },
+  "tags": ["-knipignore"]
+}

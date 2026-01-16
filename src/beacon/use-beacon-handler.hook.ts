@@ -4,7 +4,6 @@ import { EmitterSubscription, Linking } from 'react-native';
 
 import { getUrlQueryParams } from 'src/utils/url.utils';
 
-import { EmptyFn, EventFn } from '../config/general';
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
@@ -16,7 +15,7 @@ import { BeaconHandler, isBeaconMessage } from './beacon-handler';
 export const beaconDeepLinkHandler = async (
   url: string | null,
   onValidDataCallback: EmptyFn,
-  onError: EventFn<string>
+  onError: SyncFn<string>
 ) => {
   try {
     const searchParams = getUrlQueryParams(url ?? '');

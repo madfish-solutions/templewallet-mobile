@@ -12,7 +12,6 @@ import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { Switch } from 'src/components/switch/switch';
 import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { EventFn } from 'src/config/general';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -28,7 +27,7 @@ import { useManageAccountItemStyles } from './manage-account-item.styles';
 interface Props {
   account: AccountInterface;
   selectedAccount: AccountInterface;
-  onRevealButtonPress: EventFn<AccountInterface>;
+  onRevealButtonPress: SyncFn<AccountInterface>;
 }
 
 export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {

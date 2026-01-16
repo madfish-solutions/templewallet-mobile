@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 import { Route3DexTypeEnum, Route3TokenStandardEnum } from 'src/enums/route3.enum';
 

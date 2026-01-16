@@ -2,17 +2,17 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React from 'react';
 
-import { AccountFormDropdown } from '../../components/account-dropdown/account-form-dropdown';
-import { Disclaimer } from '../../components/disclaimer/disclaimer';
-import { Divider } from '../../components/divider/divider';
-import { Label } from '../../components/label/label';
-import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { emptyFn } from '../../config/general';
-import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { Divider } from 'src/components/divider/divider';
+import { Label } from 'src/components/label/label';
+import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { emptyFn } from 'src/config/general';
+import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import {
   RevealPrivateKeyModalFormValues,

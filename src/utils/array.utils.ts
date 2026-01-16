@@ -1,4 +1,4 @@
-export const getLastElement = <T>(array: Array<T>): T | undefined => array[array.length - 1];
+export const getLastElement = <T>(array: Array<T>) => array.at(-1);
 
 export const filterByStringProperty = <T extends { [key in K]: string }, K extends string>(array: T[], key: K): T[] => {
   const usedKeyValues: string[] = [];

@@ -1,6 +1,6 @@
 import React, { FC, memo, useMemo } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { SvgWithCss } from 'react-native-svg';
+import { SvgWithCss } from 'react-native-svg/css';
 import { WebView } from 'react-native-webview';
 
 import { fixSvgXml, getXmlFromSvgDataUriInUtf8Encoding, isImgUriDataUri } from 'src/utils/image.utils';
