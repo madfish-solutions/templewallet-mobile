@@ -19,8 +19,8 @@ module.exports = withSentryConfig(
         /* This is a way to account for TS aliases (tsconfig paths) */
         src: path.resolve(__dirname, 'src'),
         /* Mock browser-specific beacon packages */
-        '@airgap/beacon-dapp': path.resolve(__dirname, 'src/mocks/airgap-beacon-dapp.mock.metro.js'),
-        '@airgap/beacon-ui': path.resolve(__dirname, 'src/mocks/airgap-beacon-ui.mock.metro.js')
+        '@airgap/beacon-dapp': path.resolve(__dirname, 'src/mocks/airgap-beacon-dapp.mock.js'),
+        '@airgap/beacon-ui': path.resolve(__dirname, 'src/mocks/airgap-beacon-ui.mock.js')
       },
       assetExts: assetExts.filter(ext => ext !== 'svg'),
       sourceExts: [...sourceExts, 'svg']

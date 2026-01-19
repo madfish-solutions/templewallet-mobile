@@ -88,6 +88,7 @@ android {
           - https://github.com/google/android-fhir/issues/534#issuecomment-1067098894
         */
         exclude 'META-INF/DEPENDENCIES'
+        pickFirst '**/react-native-worklets/**/libworklets.so'
     }
 
     namespace "com.templewallet"

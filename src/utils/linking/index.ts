@@ -7,7 +7,9 @@ import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { isDcpNode } from '../network.utils';
 
 export const openUrl = (url: string) => {
-  Linking.canOpenURL(url).then(() => Linking.openURL(url));
+  Linking.canOpenURL(url)
+    .then(() => Linking.openURL(url))
+    .catch(e => console.error(e));
 };
 
 export const useOpenUrlInAppBrowser = () => {
