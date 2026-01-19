@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Config from 'react-native-config';
 
 import { TEZOS_DEXES_API_URL } from 'src/utils/env.utils';
 
@@ -35,7 +34,6 @@ export const useBlockSubscription = () => {
   };
 
   useEffect(() => {
-    console.log('BLOCK_UPDATE_API_URL', BLOCK_UPDATE_API_URL, Config);
     webSocketRef.current = new WebSocket(BLOCK_UPDATE_API_URL);
 
     webSocketRef.current.onerror = () => {

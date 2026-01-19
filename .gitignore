@@ -56,6 +56,13 @@ yarn-error.log
 **/fastlane/Preview.html
 **/fastlane/screenshots
 **/fastlane/test_output
+builds/*
+*.xcarchive
+*.cer
+*.mobileprovision
+*.dSYM.zip
+api-*.json
+**/authkey.json
 
 # Bundle artifact
 *.jsbundle

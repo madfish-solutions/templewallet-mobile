@@ -4,7 +4,7 @@ import { RefObject, useMemo, useRef } from 'react';
 import { isDefined } from 'src/utils/is-defined';
 
 interface BottomSheetController {
-  ref: RefObject<BottomSheetModal>;
+  ref: RefObject<BottomSheetModal | null>;
   open: EmptyFn;
   close: EmptyFn;
 }
@@ -19,5 +19,5 @@ export const useBottomSheetController = (): BottomSheetController => {
   const open = () => void (isDefined(ref.current) && ref.current.expand());
   const close = () => void (isDefined(ref.current) && ref.current.close());
 
-  return useMemo(() => ({ ref: ref as RefObject<BottomSheetModal>, open, close }), []);
+  return useMemo(() => ({ ref, open, close }), []);
 };
