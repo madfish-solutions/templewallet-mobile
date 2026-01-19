@@ -16,7 +16,7 @@ export const mockLinking = {
   }))
 };
 
-export const mockPlatform = {
+const mockPlatform = {
   OS: 'android' as const,
   select: jest.fn(platformSelect)
 };
