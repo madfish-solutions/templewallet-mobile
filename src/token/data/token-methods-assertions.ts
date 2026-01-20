@@ -1,17 +1,26 @@
-import { ContractType } from '../../interfaces/contract.type';
-import { TokenTypeEnum } from '../../interfaces/token-type.enum';
-import { assert } from '../../utils/assert.utils';
+import { TokenSchema } from '@taquito/michelson-encoder';
+import { isEqual } from 'lodash-es';
+
+import { ContractType } from 'src/interfaces/contract.type';
+import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
+import { assert } from 'src/utils/assert.utils';
+
 import { TokenMethodsAssertionInterface } from '../interfaces/token-methods-assertion.interface';
 
+const extractArgsTypes = (schema: TokenSchema): string[] => {
+  if (schema.__michelsonType === 'pair') {
+    return Object.values(schema.schema).flatMap(extractArgsTypes);
+  }
+
+  return [schema.__michelsonType];
+};
+
 const signatureAssertionFactory = (name: string, args: string[]) => (contract: ContractType) => {
-  const signatures = contract.parameterSchema.ExtractSignatures();
-  const receivedSignature = signatures.find(signature => signature[0] === name);
+  const schema = contract.parameterSchema.generateSchema();
+  const receivedSchema = schema.__michelsonType === 'or' ? schema.schema[name] : undefined;
 
-  assert(receivedSignature);
-  const receivedArgs = receivedSignature.slice(1);
-
-  assert(receivedArgs.length === args.length);
-  receivedArgs.forEach((receivedArg, index) => assert(receivedArg === args[index]));
+  assert(receivedSchema);
+  assert(isEqual(extractArgsTypes(receivedSchema), args));
 };
 
 const FA_1_2_TOKEN_METHODS_ASSERTIONS: TokenMethodsAssertionInterface[] = [

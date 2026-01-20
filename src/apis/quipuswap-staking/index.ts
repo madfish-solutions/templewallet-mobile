@@ -47,7 +47,7 @@ export const getHarvestAssetsTransferParams = async (
   stakeId: BigNumber.Value
 ) => {
   const farmingContract = await getReadOnlyContract(farmAddress, tezos);
-  const claimParams = farmingContract.methods.claim(stakeId).toTransferParams();
+  const claimParams = farmingContract.methodsObject.claim(stakeId).toTransferParams();
 
   return parseTransferParamsToParamsWithKind(claimParams);
 };

@@ -16,7 +16,7 @@ const assertTokenContractType = (contract: ContractType, tokenType: TokenTypeEnu
     for (const assertion of TokenMethodsAssertionsMap[tokenType]) {
       const { name, assertionFn } = assertion;
 
-      if (typeof contract.methods[name] !== 'function') {
+      if (typeof contract.methodsObject[name] !== 'function') {
         throw new Error(`'${name}' method isn't defined in contract`);
       }
 

@@ -20,7 +20,9 @@ const getDepositTransferParams = async (
     stakeContract
   } = await prepareToTransferParams(earnOpportunity, amount, tezos, accountPkh);
 
-  const depositTransferParams = stakeContract.methods.deposit(new BigNumber(stakeId ?? 0), amount).toTransferParams();
+  const depositTransferParams = stakeContract.methodsObject
+    .deposit({ stake_id: new BigNumber(stakeId ?? 0), token_amount: amount })
+    .toTransferParams();
 
   return [...approve, depositTransferParams, ...revoke];
 };

@@ -12,8 +12,8 @@ const mockRpcUrl = 'https://rpc-url.mock/mainnet';
 
 describe('getTransferParams$', () => {
   beforeEach(() => {
-    mockFA1_2Contract.methods.transfer.mockReset();
-    mockFA2Contract.methods.transfer.mockReset();
+    mockFA1_2Contract.methodsObject.transfer.mockReset();
+    mockFA2Contract.methodsObject.transfer.mockReset();
   });
 
   it('should create params for transferring TEZ', done => {
@@ -49,7 +49,7 @@ describe('getTransferParams$', () => {
   });
 
   it('should create params for transferring FA1.2 tokens', done => {
-    mockFA1_2Contract.methods.transfer.mockReturnValueOnce({ toTransferParams: jest.fn(), send: jest.fn() });
+    mockFA1_2Contract.methodsObject.transfer.mockReturnValueOnce({ toTransferParams: jest.fn(), send: jest.fn() });
     mockToolkitMethods.contractAt.mockResolvedValueOnce(mockFA1_2Contract);
 
     const mockInputAmount = new BigNumber(0.01);
@@ -62,17 +62,17 @@ describe('getTransferParams$', () => {
       mockInputAmount
     ).subscribe(
       rxJsTestingHelper(() => {
-        expect(mockFA1_2Contract.methods.transfer).toBeCalledWith(
-          mockHdAccount.publicKeyHash,
-          'receiverPublicKeyHash',
-          mockInputAmount
-        );
+        expect(mockFA1_2Contract.methodsObject.transfer).toBeCalledWith({
+          from: mockHdAccount.publicKeyHash,
+          to: 'receiverPublicKeyHash',
+          value: mockInputAmount
+        });
       }, done)
     );
   });
 
   it('should create params for transferring FA2 tokens', done => {
-    mockFA2Contract.methods.transfer.mockReturnValueOnce({ toTransferParams: jest.fn(), send: jest.fn() });
+    mockFA2Contract.methodsObject.transfer.mockReturnValueOnce({ toTransferParams: jest.fn(), send: jest.fn() });
     mockToolkitMethods.contractAt.mockResolvedValueOnce(mockFA2Contract);
 
     const mockInputAmount = new BigNumber(0.001);
