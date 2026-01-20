@@ -4,20 +4,24 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useTokenListStyles = createUseStylesMemoized(({ colors, typography }) => ({
   listContainer: {
-    flexGrow: 1
+    flexGrow: 1,
+    backgroundColor: colors.pageBG
   },
   listContainerWithAd: {
-    height: formatSize(100)
+    height: formatSize(100),
+    backgroundColor: colors.pageBG
   },
   headerContainer: {
-    height: formatSize(40),
+    height: formatSize(48),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingRight: formatSize(16),
     paddingLeft: formatSize(28),
     borderBottomColor: colors.lines,
-    borderBottomWidth: DEFAULT_BORDER_WIDTH
+    borderBottomWidth: DEFAULT_BORDER_WIDTH,
+    backgroundColor: colors.pageBG,
+    zIndex: 1
   },
   hideZeroBalanceContainer: {
     flexDirection: 'row',
