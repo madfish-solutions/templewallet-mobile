@@ -65,6 +65,12 @@ export const useIsInAppBrowserEnabledSelector = () => useSelector(({ settings })
 
 export const useIsShowCollectibleInfoSelector = () => useSelector(({ settings }) => settings.isShowCollectibleInfo);
 
+export const useIsKoloCardAnimationShownSelector = () =>
+  useSelector(({ settings }) => settings.isKoloCardAnimationShown);
+
+export const useKoloForceLogoutOnNextOpenSelector = () =>
+  useSelector(({ settings }) => settings.koloForceLogoutOnNextOpen);
+
 export const useAssetExchangeRate = (slug: string) => {
   const assetUsdExchangeRate = useSelector(state => state.currency.usdToTokenRates.data[slug]);
   const fiatToUsdRate = useFiatToUsdRateSelector();

@@ -22,5 +22,9 @@ export const createYouvesWithdrawTransfersParams = async (
   const ratioDenominator = new BigNumber(100).shiftedBy(percentageDecimalPlaces);
   const contract = await getReadOnlyContract(youvesSavingsItem.contractAddress, tezos);
 
-  return [contract.methods.withdraw(ratioDenominator, ratioNumerator, stake.lastStakeId).toTransferParams()];
+  return [
+    contract.methodsObject
+      .withdraw({ ratio_denominator: ratioDenominator, ratio_numerator: ratioNumerator, stake_id: stake.lastStakeId })
+      .toTransferParams()
+  ];
 };

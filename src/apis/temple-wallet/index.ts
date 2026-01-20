@@ -1,4 +1,4 @@
-import { catchError, from, map, of } from 'rxjs';
+import { from, map } from 'rxjs';
 
 import { templeAdsApi, templeWalletApi } from 'src/api.service';
 import { BlockInfo } from 'src/interfaces/block-info.interface';
@@ -16,10 +16,7 @@ interface GetABGroupResponse {
 }
 
 export const getABGroup$ = () =>
-  from(templeWalletApi.get<GetABGroupResponse>('/abtest')).pipe(
-    map(response => response.data.ab),
-    catchError(() => of(ABTestGroup.Unknown))
-  );
+  from(templeWalletApi.get<GetABGroupResponse>('/abtest')).pipe(map(response => response.data.ab));
 
 export const fetchEnableInternalHypelabAds = () =>
   templeAdsApi.get<boolean>('/ads-rules/2.0.13/enable-internal-hypelab-ads').then(response => response.data);

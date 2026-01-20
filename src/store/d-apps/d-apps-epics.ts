@@ -9,10 +9,12 @@ import { templeWalletApi } from 'src/api.service';
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { CustomDAppsInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
+import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { emptyAction } from '../root-state.actions';
-import type { RootState } from '../types';
+import type { AnyActionEpic } from '../types';
 
 import {
   loadTokensApyActions,
@@ -95,25 +97,40 @@ const abortRequestEpic: Epic = (action$: Observable<Action>) =>
     )
   );
 
-const loadDAppsListEpic: Epic = (action$: Observable<Action>) =>
+const loadDAppsListEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadDAppsListActions.submit),
-    switchMap(() =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       from(templeWalletApi.get<CustomDAppsInfo>('/dapps')).pipe(
         map(({ data }) => loadDAppsListActions.success(data.dApps)),
-        catchError(err => of(loadDAppsListActions.fail(err.message)))
+        catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent('LoadDAppsListEpicError', err, [], { userId, ABTestingCategory });
+          }
+
+          return of(loadDAppsListActions.fail(err.message));
+        })
       )
     )
   );
 
-const loadTokensApyEpic: Epic = (action$: Observable<Action>, state$: Observable<RootState>) =>
+const loadTokensApyEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTokensApyActions.submit),
     withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
-    switchMap(([[, rpcUrl], tokenUsdExchangeRates]) =>
+    withUserAnalyticsCredentials(state$),
+    switchMap(([[[, rpcUrl], tokenUsdExchangeRates], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       forkJoin([fetchUBTCApr$(rpcUrl), fetchUUSDCApr$(rpcUrl), fetchYOUApr$(tokenUsdExchangeRates, rpcUrl)]).pipe(
-        map(responses => loadTokensApyActions.success(Object.assign({}, ...responses)))
+        map(responses => loadTokensApyActions.success(Object.assign({}, ...responses))),
+        catchError(err => {
+          if (isAnalyticsEnabled) {
+            sendErrorAnalyticsEvent('LoadTokensApyEpicError', err, [], { userId, ABTestingCategory });
+          }
+
+          return EMPTY;
+        })
       )
     )
   );

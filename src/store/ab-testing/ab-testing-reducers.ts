@@ -1,5 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { ABTestGroup } from 'src/apis/temple-wallet';
+
 import { getUserTestingGroupNameActions } from './ab-testing-actions';
 import { ABTestingState, abTestingInitialState } from './ab-testing-state';
 
@@ -7,5 +9,9 @@ export const abTestingReducer = createReducer<ABTestingState>(abTestingInitialSt
   builder.addCase(getUserTestingGroupNameActions.success, (state, { payload: testingGroupName }) => ({
     ...state,
     groupName: testingGroupName
+  }));
+  builder.addCase(getUserTestingGroupNameActions.fail, state => ({
+    ...state,
+    groupName: ABTestGroup.Unknown
   }));
 });

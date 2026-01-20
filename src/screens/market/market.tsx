@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { HeaderCard } from 'src/components/header-card/header-card';
-import { MARKET_SYNC_INTERVAL } from 'src/config/fixed-times';
+import { APIS_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadMarketTokensSlugsActions } from 'src/store/market/market-actions';
@@ -14,7 +14,7 @@ import { TopTokensTable } from './top-coins-table/top-tokens-table';
 export const Market = () => {
   const dispatch = useDispatch();
 
-  useAuthorisedInterval(() => dispatch(loadMarketTokensSlugsActions.submit()), MARKET_SYNC_INTERVAL);
+  useAuthorisedInterval(() => dispatch(loadMarketTokensSlugsActions.submit()), APIS_SYNC_INTERVAL);
 
   usePageAnalytic(ScreensEnum.Market);
 

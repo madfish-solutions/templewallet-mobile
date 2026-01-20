@@ -11,6 +11,7 @@ import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { openUrl } from 'src/utils/linking';
 
 import { OnRampOverlaySelectors } from './on-ramp-overlay.selectors';
@@ -30,6 +31,7 @@ interface OnRampOverlayProps extends OverlayBodyProps {
 
 const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
   const [isLinkLoading, setIsLinkLoading] = useState(false);
+  const { trackErrorEvent } = useAnalytics();
 
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
@@ -51,11 +53,12 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
         handleClose();
 
         openUrl(url);
-      } catch {
+      } catch (e) {
+        trackErrorEvent('GetWertLinkError', e, [publicKeyHash], { amount });
         handleClose();
       }
     },
-    [handleClose, publicKeyHash]
+    [handleClose, publicKeyHash, trackErrorEvent]
   );
 
   return (

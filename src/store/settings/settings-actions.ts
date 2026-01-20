@@ -53,3 +53,9 @@ export const switchIsShowCollectibleInfoAction = createAction('settings/SET_IS_S
 export const setIsInAppUpdateAvailableAction = createAction<boolean>('settings/SET_IS_IN_APP_UPDATE_AVAILABLE_ACTION');
 
 export const setIsInAppBrowserEnabledAction = createAction<boolean>('settings/SET_IS_IN_APP_BROWSER_ENABLED_ACTION');
+
+export const setKoloCardAnimationShownAction = createAction('settings/SET_KOLO_CARD_ANIMATION_SHOWN_ACTION');
+
+export const setKoloForceLogoutOnNextOpenAction = createAction<boolean>(
+  'settings/SET_KOLO_FORCE_LOGOUT_ON_NEXT_OPEN_ACTION'
+);

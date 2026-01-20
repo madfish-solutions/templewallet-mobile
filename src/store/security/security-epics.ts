@@ -10,8 +10,9 @@ import { ofType } from 'ts-action-operators';
 import { templeWalletApi } from 'src/api.service';
 import { isIOS } from 'src/config/system';
 import { VersionsInterface } from 'src/interfaces/versions.interface';
-import { sendAnalyticsEvent } from 'src/utils/analytics/analytics.util';
-import { withSelectedIsAnalyticsEnabled, withSelectedIsAuthorized, withSelectedUserId } from 'src/utils/security.utils';
+import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
+import { withSelectedIsAuthorized } from 'src/utils/security.utils';
 
 import type { RootState } from '../types';
 
@@ -26,28 +27,19 @@ const appCheck = firebase.appCheck();
 const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootState>) =>
   action$.pipe(
     ofType(checkApp.submit),
-    withSelectedUserId(state$),
-    withSelectedIsAnalyticsEnabled(state$),
+    withUserAnalyticsCredentials(state$),
     withSelectedIsAuthorized(state$),
-    switchMap(([[[, userId], isAnalyticsEnabled], isAuthorized]) =>
+    switchMap(([[, { isAnalyticsEnabled, userId, ABTestingCategory }], isAuthorized]) =>
       from(appCheck.activate('ignored', false)).pipe(
         switchMap(() => appCheck.getToken()),
         map(appCheck => appCheck.token),
-        catchError(err => {
-          isAnalyticsEnabled &&
-            isAuthorized &&
-            sendAnalyticsEvent('AppCheckError', undefined, { userId }, { message: err.message });
-
-          return of(JSON.stringify(err));
-        })
-      )
-    ),
-    switchMap(appCheckToken =>
-      from(
-        templeWalletApi.get<appCheckPayload>('/mobile-check', {
-          params: { platform: Platform.OS, appCheckToken }
-        })
-      ).pipe(
+        switchMap(appCheckToken =>
+          from(
+            templeWalletApi.get<appCheckPayload>('/mobile-check', {
+              params: { platform: Platform.OS, appCheckToken }
+            })
+          )
+        ),
         switchMap(({ data }) => {
           const isAppCheckFailed = data.isAppCheckFailed;
 
@@ -68,9 +60,15 @@ const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootS
             }
           }
 
-          return [checkApp.success({ isForceUpdateNeeded, isAppCheckFailed })];
+          return of(checkApp.success({ isForceUpdateNeeded, isAppCheckFailed }));
         }),
-        catchError(err => of(checkApp.fail(err.message)))
+        catchError(err => {
+          isAnalyticsEnabled &&
+            isAuthorized &&
+            sendErrorAnalyticsEvent('AppCheckError', err, [], { userId, ABTestingCategory });
+
+          return of(checkApp.fail(err.message));
+        })
       )
     )
   );

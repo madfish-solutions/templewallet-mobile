@@ -22,7 +22,8 @@ export const createImportAccountSubscription = (
   accounts: AccountInterface[],
   dispatch: Dispatch,
   navigationDispatch: (action: NavigationAction) => void,
-  rpcUrl: string
+  rpcUrl: string,
+  trackErrorEvent: (error: unknown, accountPkh?: string) => void
 ) =>
   createImportedAccount$
     .pipe(
@@ -69,7 +70,10 @@ export const createImportAccountSubscription = (
               !isDcpNode(rpcUrl) &&
               dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start))
             ),
-          error => console.error(error)
+          error => {
+            console.error(error);
+            trackErrorEvent(error, publicData.publicKeyHash);
+          }
         );
       }
     });

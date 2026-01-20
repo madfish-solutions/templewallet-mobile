@@ -1,5 +1,5 @@
 import { BeaconMessageType, OperationRequestOutput } from '@airgap/beacon-sdk';
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 import { from } from 'rxjs';
 import { mapTo, switchMap } from 'rxjs/operators';
 
@@ -13,6 +13,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { mapBeaconToTaquitoParams } from 'src/utils/beacon.utils';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
@@ -53,6 +54,7 @@ const approveOperationRequest = ({
 export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
   const accounts = useAccountsListSelector();
   const rpcUrl = useSelectedRpcUrlSelector();
+  const { trackErrorEvent } = useAnalytics();
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveOperationRequest);
 
@@ -63,12 +65,24 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
 
   const opParams = useMemo(() => message.operationDetails.map(mapBeaconToTaquitoParams), [message]);
 
+  const handleEstimationError = useCallback(
+    (error: unknown) => {
+      trackErrorEvent('DAppOperationsConfirmationEstimateError', error, [sender.publicKeyHash], {
+        opParams,
+        rpcUrl,
+        appMetadata: message.appMetadata
+      });
+    },
+    [trackErrorEvent, sender.publicKeyHash, opParams, rpcUrl, message.appMetadata]
+  );
+
   return (
     <OperationsConfirmation
       sender={sender}
       opParams={opParams}
       isLoading={isLoading}
       onSubmit={newOpParams => confirmRequest({ rpcUrl, sender, opParams: newOpParams, message })}
+      onEstimationError={handleEstimationError}
     >
       <AppMetadataView appMetadata={message.appMetadata} />
       <Divider />

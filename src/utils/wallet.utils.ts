@@ -17,6 +17,7 @@ import {
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
+import { AnalyticsError } from './error-analytics-data.utils';
 import { getNetworkGasTokenMetadata } from './network.utils';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
@@ -73,18 +74,21 @@ export const sendTransaction$ = (rpcUrl: string, senderPkh: string, opParams: Pa
       return tezos.contract.batch(opParams).send();
     }),
     catchError(err => {
+      const makeAnalyticsError = (message?: string) =>
+        new AnalyticsError(err, [senderPkh], { rpcUrl, opParams }, message);
+
       try {
         const errorBody = JSON.parse(err.body);
         if (Array.isArray(errorBody) && errorBody[0]?.id?.includes('empty_implicit_contract')) {
-          throw new Error('The balance of TEZ is not enough to make a transaction.');
+          throw makeAnalyticsError('The balance of TEZ is not enough to make a transaction.');
         }
       } catch {}
 
       if (typeof err?.body === 'string' && /<\s*html/i.test(err.body)) {
-        throw new Error('Http error: unknown html response. Change RPC and try again');
+        throw makeAnalyticsError('Http error: unknown html response. Change RPC and try again');
       }
 
-      throw new Error(err.message);
+      throw makeAnalyticsError();
     })
   );
 

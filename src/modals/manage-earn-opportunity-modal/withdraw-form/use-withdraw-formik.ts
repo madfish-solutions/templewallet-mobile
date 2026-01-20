@@ -23,6 +23,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { formatTimespan, MS_IN_SECOND, SECONDS_IN_DAY } from 'src/utils/date.utils';
 import { isFarm } from 'src/utils/earn.utils';
+import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -53,7 +54,7 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
   const publicKeyHash = useCurrentAccountPkhSelector();
   const tezos = useReadOnlyTezosToolkit();
   const dispatch = useDispatch();
-  const { trackEvent } = useAnalytics();
+  const { trackEvent, trackErrorEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -116,6 +117,19 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
         } catch (error) {
           showErrorToastByError(error, undefined, true);
           trackEvent('WITHDRAW_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
+          const internalError = error instanceof AnalyticsError ? error.error : error;
+          const additionalProperties = error instanceof AnalyticsError ? error.additionalProperties : {};
+          trackErrorEvent('EarnOpportunityDoWithdrawError', internalError, [publicKeyHash], {
+            doWithdrawInput: {
+              earnOpportunity,
+              tokenIndex,
+              rpcUrl: tezos.rpc.getRpcUrl(),
+              stake,
+              percentage: PERCENTAGE_OPTIONS[amountOptionIndex],
+              slippageTolerance
+            },
+            ...additionalProperties
+          });
         } finally {
           setIsSubmitting(false);
         }
@@ -153,7 +167,17 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
         );
       }
     },
-    [stakeTokens, earnOpportunity, tezos, publicKeyHash, stake, dispatch, trackEvent, slippageTolerance]
+    [
+      stakeTokens,
+      earnOpportunity,
+      tezos,
+      publicKeyHash,
+      stake,
+      dispatch,
+      trackEvent,
+      slippageTolerance,
+      trackErrorEvent
+    ]
   );
 
   const formik = useFormik<WithdrawFormValues>({

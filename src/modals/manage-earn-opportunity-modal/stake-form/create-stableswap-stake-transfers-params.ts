@@ -46,7 +46,7 @@ export const createStableswapStakeTransfersParams = async (
   if (shouldUseWtezToken) {
     const wTezContract = await getReadOnlyContract(WTEZ_TOKEN_METADATA.address, tezos);
     convertToWTezParams = [
-      wTezContract.methods.mint(accountPkh).toTransferParams({ amount: amount.toNumber(), mutez: true })
+      wTezContract.methodsObject.mint(accountPkh).toTransferParams({ amount: amount.toNumber(), mutez: true })
     ];
   }
 
@@ -58,11 +58,20 @@ export const createStableswapStakeTransfersParams = async (
 
   const lpAmount = await estimateStableswapLpTokenOutput(tezos, poolAddress, tokenIndex, amount, poolId);
 
-  const investTransferParams = poolContract.methods
-    .invest(stakedToken.fa2TokenId, lpAmount, michelsonAmounts, getTransactionTimeoutDate(), null, STABLESWAP_REFERRAL)
+  const investTransferParams = poolContract.methodsObject
+    .invest({
+      pool_id: stakedToken.fa2TokenId,
+      shares: lpAmount,
+      in_amounts: michelsonAmounts,
+      deadline: getTransactionTimeoutDate(),
+      receiver: null,
+      referral: STABLESWAP_REFERRAL
+    })
     .toTransferParams();
 
-  const depositTransferParams = farmContract.methods.deposit(new BigNumber(stakeId ?? 0), lpAmount).toTransferParams();
+  const depositTransferParams = farmContract.methodsObject
+    .deposit({ stake_id: new BigNumber(stakeId ?? 0), token_amount: lpAmount })
+    .toTransferParams();
 
   const { approve: approveAsset, revoke: revokeAsset } = await getTransferPermissions(
     tezos,

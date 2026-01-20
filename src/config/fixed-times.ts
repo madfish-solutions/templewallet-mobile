@@ -1,8 +1,8 @@
 /* (!) Numeric Separators (underscores, as in `1_000`) are not supported */
 
-export const BLOCK_DURATION = 10000;
+export const BLOCK_DURATION = 6000;
 
-export const MARKET_SYNC_INTERVAL = 4 * BLOCK_DURATION;
+export const APIS_SYNC_INTERVAL = 4 * BLOCK_DURATION;
 
 export const SELECTED_BAKER_SYNC_INTERVAL = 2 * BLOCK_DURATION;
 

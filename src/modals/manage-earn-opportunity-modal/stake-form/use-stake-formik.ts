@@ -25,6 +25,7 @@ import { toTokenSlug } from 'src/token/utils/token.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
@@ -52,7 +53,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const tezos = useReadOnlyTezosToolkit();
   const slippageTolerancePercentage = useSlippageSelector();
   const dispatch = useDispatch();
-  const { trackEvent } = useAnalytics();
+  const { trackEvent, trackErrorEvent } = useAnalytics();
 
   const initialValues = useMemo(
     () => ({
@@ -133,6 +134,20 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
       } catch (error) {
         showErrorToastByError(error, undefined, true);
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
+        const internalError = error instanceof AnalyticsError ? error.error : error;
+        const additionalProperties = error instanceof AnalyticsError ? error.additionalProperties : {};
+        trackErrorEvent('EarnOpportunityStakeError', internalError, [accountPkh], {
+          stakeFormInput: {
+            earnOpportunity,
+            amount,
+            asset,
+            rpcUrl: tezos.rpc.getRpcUrl(),
+            lastStakeId: stake?.lastStakeId,
+            threeRouteTokens,
+            slippageTolerancePercentage
+          },
+          ...additionalProperties
+        });
       }
     },
     [
@@ -141,6 +156,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
       tezosBalance,
       dispatch,
       trackEvent,
+      trackErrorEvent,
       tezos,
       accountPkh,
       stake?.lastStakeId,

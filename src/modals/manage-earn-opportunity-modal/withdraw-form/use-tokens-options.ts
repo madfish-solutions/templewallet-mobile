@@ -10,12 +10,15 @@ import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.h
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WithdrawTokenOption } from './use-withdraw-formik';
 
 export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?: BigNumber) => {
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunityItem);
+  const { trackErrorEvent } = useAnalytics();
   const tezos = useReadOnlyTezosToolkit();
   const [atomicAmounts, setAtomicAmounts] = useState<(BigNumber | null | undefined)[]>();
   const prevLpAmountRef = useRef(lpAmount);
@@ -65,13 +68,26 @@ export const useTokensOptions = (earnOpportunityItem: EarnOpportunity, lpAmount?
         catchError(error => {
           showErrorToastByError(error);
 
+          const internalError = error instanceof AnalyticsError ? error.error : error;
+          const additionalProperties = error instanceof AnalyticsError ? error.additionalProperties : {};
+          trackErrorEvent('UseTokensOptionsError', internalError, [], {
+            topLevelInput: {
+              rpcUrl: tezos.rpc.getRpcUrl(),
+              lpAmount: lpAmount?.toFixed(),
+              tokensIndexes,
+              slippageTolerance,
+              earnOpportunityItem
+            },
+            ...additionalProperties
+          });
+
           return of(undefined);
         })
       )
       .subscribe(value => setAtomicAmounts(value));
 
     return () => subscription.unsubscribe();
-  }, [earnOpportunityItem, lpAmount, tezos, slippageTolerance]);
+  }, [earnOpportunityItem, lpAmount, tezos, slippageTolerance, trackErrorEvent]);
 
   const options = useMemo(() => {
     const shouldFilterOutFailingOptions = isDefined(atomicAmounts) && atomicAmounts.some(amount => amount !== null);

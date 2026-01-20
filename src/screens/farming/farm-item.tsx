@@ -30,7 +30,7 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const tezos = useReadOnlyTezosToolkit();
-  const { trackEvent } = useAnalytics();
+  const { trackEvent, trackErrorEvent } = useAnalytics();
 
   const stakeWasLoading = useFarmStakeWasLoadingSelector(contractAddress);
 
@@ -56,29 +56,43 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
       return;
     }
 
-    const opParams = await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId);
+    try {
+      const opParams = await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId);
 
-    if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
-      const modalAnswerAnalyticsProperties = {
-        page: ScreensEnum.Farming,
-        farmId: id,
-        farmContractAddress: contractAddress
-      };
+      if ((lastStakeRecord?.rewardsDueDate ?? 0) > Date.now()) {
+        const modalAnswerAnalyticsProperties = {
+          page: ScreensEnum.Farming,
+          farmId: id,
+          farmContractAddress: contractAddress
+        };
 
-      doAfterConfirmation(
-        HARVEST_CONFIRMATION_TEXT,
-        'Claim rewards',
-        () => {
-          trackEvent('CLAIM_REWARDS_MODAL_CONFIRM', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties);
-          navigateHarvestFarm(opParams);
-        },
-        () =>
-          trackEvent('CLAIM_REWARDS_MODAL_CANCEL', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties)
-      );
-    } else {
-      navigateHarvestFarm(opParams);
+        doAfterConfirmation(
+          HARVEST_CONFIRMATION_TEXT,
+          'Claim rewards',
+          () => {
+            trackEvent(
+              'CLAIM_REWARDS_MODAL_CONFIRM',
+              AnalyticsEventCategory.ButtonPress,
+              modalAnswerAnalyticsProperties
+            );
+            navigateHarvestFarm(opParams);
+          },
+          () =>
+            trackEvent('CLAIM_REWARDS_MODAL_CANCEL', AnalyticsEventCategory.ButtonPress, modalAnswerAnalyticsProperties)
+        );
+      } else {
+        navigateHarvestFarm(opParams);
+      }
+    } catch (e) {
+      trackErrorEvent('FarmHarvestAssetsError', e, [], {
+        harvestAssetsInput: {
+          rpcUrl: tezos.rpc.getRpcUrl(),
+          contractAddress,
+          lastStakeId
+        }
+      });
     }
-  }, [lastStakeId, lastStakeRecord?.rewardsDueDate, id, contractAddress, tezos, trackEvent]);
+  }, [lastStakeId, lastStakeRecord?.rewardsDueDate, id, contractAddress, tezos, trackEvent, trackErrorEvent]);
 
   return (
     <EarnOpportunityItem
