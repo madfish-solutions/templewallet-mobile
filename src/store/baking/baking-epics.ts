@@ -60,8 +60,7 @@ const loadBakersListEpic: AnyActionEpic = (action$, state$) =>
       from(
         bakingBadApi.get<BakerInterface[]>('/bakers', {
           params: {
-            status: 'active',
-            delegation: true
+            status: 'active'
           }
         })
       ).pipe(
