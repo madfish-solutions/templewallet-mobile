@@ -85,14 +85,6 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     [trackErrorEvent]
   );
 
-  const handleAnalyticsError = useCallback(
-    (error: AnalyticsError) => {
-      const { error: internalError, additionalProperties, addressesToHide } = error;
-      trackErrorEvent('ExolixLoadMinMaxFieldsError', internalError, addressesToHide, additionalProperties);
-    },
-    [trackErrorEvent]
-  );
-
   useEffect(() => {
     loadMinMaxFields(
       setFieldValue,
