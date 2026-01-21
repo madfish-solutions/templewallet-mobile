@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 
 import { TopUpWithNetworkInterface } from 'src/interfaces/topup.interface';
-import { useExolixCurrencies } from 'src/store/exolix/exolix-selectors';
+import { useExolixCurrencies, useExolixCurrenciesLoading } from 'src/store/exolix/exolix-selectors';
 import { isString } from 'src/utils/is-string';
 
 export const useFilteredCurrenciesList = () => {
   const allCurrencies = useExolixCurrencies();
+  const currenciesLoading = useExolixCurrenciesLoading();
   const [searchValue, setSearchValue] = useState<string>();
 
   const { inputCurrencies, outputCurrencies } = useMemo(() => {
@@ -48,6 +49,7 @@ export const useFilteredCurrenciesList = () => {
     allCurrencies,
     inputCurrencies,
     outputCurrencies,
+    currenciesLoading,
     filteredInputCurrenciesList,
     searchValue,
     setSearchValue
