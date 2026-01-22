@@ -1,6 +1,8 @@
 import { BigNumber } from 'bignumber.js';
+import { BehaviorSubject, catchError, EMPTY, from, of, switchMap } from 'rxjs';
 
-import { ExchangePayload } from 'src/types/exolix.types';
+import { GetRateRequestData } from 'src/types/exolix.types';
+import type { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { loadExolixRate } from 'src/utils/exolix.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -116,25 +118,68 @@ export const loadMinMaxFields = async (
   }
 };
 
-export const updateOutputInputValue = (
-  requestData: Omit<ExchangePayload, 'withdrawalAddress' | 'withdrawalExtraId'>,
-  setFieldValue: setFieldType
+class LoadRateError extends Error {
+  constructor(
+    public readonly error: Error,
+    public readonly requestData: GetRateRequestData,
+    public readonly errorName: string
+  ) {
+    super(error.message);
+  }
+}
+
+export const makeUpdateOutputInputValuePipeline$ = (
+  payload$: BehaviorSubject<(GetRateRequestData & { errorName: string }) | null>,
+  setFieldValue: setFieldType,
+  setLoading: SyncFn<boolean>,
+  trackErrorEvent: ReturnType<typeof useAnalytics>['trackErrorEvent']
 ) =>
-  loadExolixRate(requestData).then(responseData => {
-    if (isDefined(responseData.toAmount) && responseData.toAmount > 0) {
-      setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
-    } else {
-      setFieldValue('coinTo.amount', new BigNumber(0));
-    }
+  payload$.pipe(
+    switchMap(payload => {
+      if (!payload) {
+        return EMPTY;
+      }
 
-    if ('minAmount' in responseData) {
-      setFieldValue('coinFrom.min', new BigNumber(responseData.minAmount));
-    }
-    if ('maxAmount' in responseData) {
-      setFieldValue('coinFrom.max', new BigNumber(responseData.maxAmount));
-    }
+      const { errorName, ...requestData } = payload;
+      setLoading(true);
 
-    if ('rate' in responseData) {
-      setFieldValue('rate', responseData.rate);
-    }
-  });
+      return from(
+        loadExolixRate(requestData).catch(error => {
+          throw new LoadRateError(error, requestData, errorName);
+        })
+      );
+    }),
+    switchMap(responseData => {
+      if (isDefined(responseData.toAmount) && responseData.toAmount > 0) {
+        setFieldValue('coinTo.amount', new BigNumber(responseData.toAmount));
+      } else {
+        setFieldValue('coinTo.amount', new BigNumber(0));
+      }
+
+      if ('minAmount' in responseData) {
+        setFieldValue('coinFrom.min', new BigNumber(responseData.minAmount));
+      }
+      if ('maxAmount' in responseData) {
+        setFieldValue('coinFrom.max', new BigNumber(responseData.maxAmount));
+      }
+
+      if ('rate' in responseData) {
+        setFieldValue('rate', responseData.rate);
+      }
+
+      setLoading(false);
+
+      return of(undefined);
+    }),
+    catchError(error => {
+      setLoading(false);
+
+      if (error instanceof LoadRateError) {
+        trackErrorEvent(error.errorName, error.error, [], error.requestData);
+      } else {
+        trackErrorEvent('ExolixUpdateOutputInputValueError', error, []);
+      }
+
+      return of(undefined);
+    })
+  );

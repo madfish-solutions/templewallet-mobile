@@ -1,7 +1,8 @@
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { BehaviorSubject } from 'rxjs';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
@@ -12,14 +13,15 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { BlackTextLink } from 'src/components/text-link/black-text-link';
 import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
+import { emptyFn } from 'src/config/general';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
+import { ExchangePayload } from 'src/types/exolix.types';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { isTruthy } from 'src/utils/is-truthy';
 import { getProperNetworkFullName } from 'src/utils/topup';
 
 import { ErrorComponent } from '../../components/error-component';
@@ -29,7 +31,7 @@ import { useFilteredCurrenciesList } from '../../hooks/use-filtered-currencies-l
 
 import { InitialStepSelectors } from './initial-step.selectors';
 import { useInitialStepStyles } from './initial-step.styles';
-import { loadMinMaxFields, updateOutputInputValue } from './initial-step.utils';
+import { loadMinMaxFields, makeUpdateOutputInputValuePipeline$ } from './initial-step.utils';
 
 interface InitialStepProps {
   isError: boolean;
@@ -41,9 +43,11 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const styles = useInitialStepStyles();
   const { trackErrorEvent } = useAnalytics();
 
-  const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue } =
+  const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue, currenciesLoading } =
     useFilteredCurrenciesList();
+  const prevCurrenciesLoading = useRef(currenciesLoading);
   const publicKeyHash = useCurrentAccountPkhSelector();
+  const [outputLoading, setOutputLoading] = useState(false);
 
   const handleSubmit = () => {
     if (!isDefined(values.coinFrom.amount)) {
@@ -68,9 +72,10 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     onSubmit: handleSubmit
   });
   const { values, isValid, submitForm, setFieldValue, submitCount } = formik;
+  const { coinFrom, coinTo } = values;
 
-  const inputCurrency = values.coinFrom.asset;
-  const outputCurrency = values.coinTo.asset;
+  const inputCurrency = coinFrom.asset;
+  const outputCurrency = coinTo.asset;
 
   const handleAnalyticsError = useCallback(
     (error: AnalyticsError) => {
@@ -91,48 +96,86 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
     );
   }, [inputCurrency, outputCurrency, handleAnalyticsError]);
 
+  const updateValuesPayload$ = useMemo(
+    () =>
+      new BehaviorSubject<
+        (Omit<ExchangePayload, 'withdrawalAddress' | 'withdrawalExtraId'> & { errorName: string }) | null
+      >(null),
+    []
+  );
+  useEffect(() => {
+    const pipeline$ = makeUpdateOutputInputValuePipeline$(
+      updateValuesPayload$,
+      setFieldValue,
+      setOutputLoading,
+      trackErrorEvent
+    );
+
+    const sub = pipeline$.subscribe(emptyFn);
+
+    return () => sub.unsubscribe();
+  }, [updateValuesPayload$, trackErrorEvent, setFieldValue]);
+
+  useEffect(() => {
+    if (
+      prevCurrenciesLoading.current &&
+      !currenciesLoading &&
+      !isDefined(coinTo.amount) &&
+      isDefined(coinFrom.amount)
+    ) {
+      updateValuesPayload$.next({
+        coinFrom: inputCurrency.code,
+        coinFromNetwork: inputCurrency.network.code,
+        coinTo: outputCurrency.code,
+        coinToNetwork: outputCurrency.network.code,
+        amount: isDefined(coinFrom.amount) ? coinFrom.amount.toNumber() : 0,
+        errorName: 'ExolixHandleCurrenciesLoadError'
+      });
+    }
+
+    prevCurrenciesLoading.current = currenciesLoading;
+  }, [coinFrom.amount, coinTo.amount, currenciesLoading, inputCurrency, outputCurrency, updateValuesPayload$]);
+
   const handleInputValueChange = (inputCurrency: TopUpAssetAmountInterface) => {
     const inputAssetCode = inputCurrency.asset.code;
     const inputAsset = inputCurrencies.find(item => item.code === inputAssetCode);
-    if (!isTruthy(inputAsset)) {
+    if (!inputAsset && !currenciesLoading) {
       showErrorToast({ description: 'Selected asset not found' });
+    }
 
+    if (!inputAsset) {
       return;
     }
 
-    const requestData = {
+    updateValuesPayload$.next({
       coinFrom: inputAssetCode,
       coinFromNetwork: inputAsset.network.code,
       coinTo: outputCurrency.code,
       coinToNetwork: outputCurrency.network.code,
-      amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0
-    };
-
-    updateOutputInputValue(requestData, setFieldValue).catch(
-      error => void trackErrorEvent('ExolixHandleInputValueChangeError', error, [], requestData)
-    );
+      amount: isDefined(inputCurrency.amount) ? inputCurrency.amount.toNumber() : 0,
+      errorName: 'ExolixHandleInputValueChangeError'
+    });
   };
 
   const handleOutputValueChange = (outputCurrency: TopUpAssetAmountInterface) => {
     const outputAssetCode = outputCurrency.asset.code;
     const outputAsset = outputCurrencies.find(item => item.code === outputAssetCode);
-    if (!isTruthy(outputAsset)) {
+    if (!outputAsset && !currenciesLoading) {
       showErrorToast({ description: 'Selected asset not found' });
+    }
 
+    if (!outputAsset) {
       return;
     }
 
-    const requestData = {
+    updateValuesPayload$.next({
       coinFrom: inputCurrency.code,
       coinFromNetwork: inputCurrency.network.code,
       coinTo: outputAssetCode,
       coinToNetwork: outputAsset.network.code,
-      amount: isDefined(values.coinFrom.amount) ? values.coinFrom.amount.toNumber() : 0
-    };
-
-    updateOutputInputValue(requestData, setFieldValue).catch(
-      error => void trackErrorEvent('ExolixHandleOutputValueChangeError', error, [], requestData)
-    );
+      amount: isDefined(coinFrom.amount) ? coinFrom.amount.toNumber() : 0,
+      errorName: 'ExolixHandleOutputValueChangeError'
+    });
   };
 
   const disclaimerMessage = useMemo(
@@ -142,6 +185,8 @@ Otherwise, you may lose your assets permanently.`
     ],
     [inputCurrency]
   );
+
+  const isLoading = currenciesLoading || outputLoading;
 
   return (
     <>
@@ -204,7 +249,12 @@ Otherwise, you may lose your assets permanently.`
             </View>
           </ScreenContainer>
           <ButtonsFloatingContainer>
-            <ButtonLargePrimary title="Top Up" disabled={submitCount !== 0 && !isValid} onPress={submitForm} />
+            <ButtonLargePrimary
+              title={isLoading ? '' : 'Top Up'}
+              disabled={submitCount !== 0 && !isValid}
+              isLoading={isLoading}
+              onPress={submitForm}
+            />
           </ButtonsFloatingContainer>
         </>
       ) : (
