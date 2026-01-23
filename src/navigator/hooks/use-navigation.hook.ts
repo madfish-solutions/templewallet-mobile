@@ -14,7 +14,7 @@ import { MainStackParams, NestedNavigationStacksParamList, StacksEnum, StacksPar
 
 export type NavigationParamList = StacksParamList & ScreensParamList & ModalsParamList;
 
-export type NestedNavigationParamList = NestedNavigationStacksParamList & ModalsParamList;
+type NestedNavigationParamList = NestedNavigationStacksParamList & ModalsParamList;
 
 export const useNavigation = () => {
   const { navigate } = useUntypedNavigation<NavigationProp<NestedNavigationParamList>>();
