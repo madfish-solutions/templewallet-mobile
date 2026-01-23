@@ -12,7 +12,7 @@ import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useInAppUpdate } from 'src/hooks/use-in-app-update.hook';
 import { useNFTUniversalLinks } from 'src/hooks/use-nft-universal-links.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import { loadSelectedBakerActions } from 'src/store/baking/baking-actions';
 import { loadExchangeRates } from 'src/store/currency/currency-actions';
@@ -33,7 +33,7 @@ export const useMainHooks = (isLocked: boolean, isAuthorised: boolean) => {
   const selectedAccountPkh = useCurrentAccountPkhSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const exchangeRates = useUsdToTokenRates();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const atBootsplash = useAtBootsplash();
 
   useInAppUpdate();
@@ -65,7 +65,7 @@ export const useMainHooks = (isLocked: boolean, isAuthorised: boolean) => {
       Shelter.getShelterVersion()
     ]).subscribe(([shouldDoSomeMigrations, shelterVersion]) => {
       if (shouldDoSomeMigrations && shouldMoveToSoftwareInV1 && shelterVersion === 0) {
-        navigate(ScreensEnum.SecurityUpdate);
+        navigateToScreen({ screen: ScreensEnum.SecurityUpdate });
       } else if (shouldDoSomeMigrations) {
         Shelter.doMigrations$().subscribe({
           error: e => console.error(e)
@@ -74,7 +74,7 @@ export const useMainHooks = (isLocked: boolean, isAuthorised: boolean) => {
     });
 
     return () => shelterMigrationSubscription.unsubscribe();
-  }, [navigate, isLocked, atBootsplash]);
+  }, [navigateToScreen, isLocked, atBootsplash]);
 
   useAuthorisedInterval(() => dispatch(loadTokensApyActions.submit()), RATES_SYNC_INTERVAL, [exchangeRates]);
   useAuthorisedInterval(() => dispatch(loadSelectedBakerActions.submit()), SELECTED_BAKER_SYNC_INTERVAL, [

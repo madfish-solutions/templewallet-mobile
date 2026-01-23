@@ -138,7 +138,7 @@ dependencies {
     }
 
     // Animated WEBP support. See: https://github.com/DylanVann/react-native-fast-image/issues/92#issuecomment-1680704556
-    implementation "com.github.zjupure:webpdecoder:2.6.${rootProject.ext.glideVersion}"
+    implementation "com.github.zjupure:webpdecoder:2.7.${rootProject.ext.glideVersion}"
 
     implementation 'com.google.firebase:firebase-analytics:17.3.0'
 }

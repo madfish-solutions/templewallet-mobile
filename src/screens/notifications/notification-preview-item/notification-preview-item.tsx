@@ -9,7 +9,7 @@ import { NotificationStatus } from 'src/enums/notification-status.enum';
 import { NotificationType } from 'src/enums/notification-type.enum';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -32,9 +32,10 @@ interface Props {
 export const NotificationPreviewItem: FC<Props> = ({ notification }) => {
   const styles = useNotificationPreviewItemStyles();
   const colors = useColors();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
-  const handlePress = () => navigate(ScreensEnum.NotificationsItem, { id: notification.id });
+  const handlePress = () =>
+    navigateToScreen({ screen: ScreensEnum.NotificationsItem, params: { id: notification.id } });
 
   return (
     <TouchableOpacity

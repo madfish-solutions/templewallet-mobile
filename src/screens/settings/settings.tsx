@@ -22,7 +22,7 @@ import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useResetDataHandler } from 'src/hooks/use-reset-data-handler.hook';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { changeTheme } from 'src/store/settings/settings-actions';
 import {
   useFiatCurrencySelector,
@@ -46,7 +46,7 @@ const SHARE_CONTENT = 'Hey friend! You should download Temple and discover the T
 export const Settings = () => {
   const styles = useSettingsStyles();
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const handleLogoutButtonPress = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
@@ -98,7 +98,7 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction
-              onPress={() => navigate(ScreensEnum.ManageAccounts)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.ManageAccounts })}
               testID={SettingsSelectors.accountsButton}
             >
               <View style={styles.actionsContainer}>
@@ -109,7 +109,7 @@ export const Settings = () => {
             </WhiteContainerAction>
 
             <WhiteContainerAction
-              onPress={() => navigate(ScreensEnum.Contacts)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.Contacts })}
               testID={SettingsSelectors.contactsButton}
             >
               <WhiteContainerText text="Contacts" />
@@ -119,7 +119,7 @@ export const Settings = () => {
             {showBackupButton && (
               <>
                 <WhiteContainerDivider />
-                <WhiteContainerAction onPress={() => navigate(ScreensEnum.Backup)}>
+                <WhiteContainerAction onPress={() => navigateToScreen({ screen: ScreensEnum.Backup })}>
                   <View style={styles.actionsContainer}>
                     <WhiteContainerText text="Backup" />
                   </View>
@@ -136,7 +136,7 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction
-              onPress={() => navigate(ScreensEnum.FiatSettings)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.FiatSettings })}
               testID={SettingsSelectors.defaultCurrencyButton}
             >
               <WhiteContainerText text="Default Currency" />
@@ -165,7 +165,7 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction
-              onPress={() => navigate(ScreensEnum.NotificationsSettings)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.NotificationsSettings })}
               testID={SettingsSelectors.notificationsButton}
             >
               <View style={styles.actionsContainer}>
@@ -177,7 +177,7 @@ export const Settings = () => {
             <WhiteContainerDivider />
 
             <WhiteContainerAction
-              onPress={() => navigate(ScreensEnum.SecureSettings)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.SecureSettings })}
               testID={SettingsSelectors.secureButton}
             >
               <View style={styles.actionsContainer}>
@@ -189,7 +189,7 @@ export const Settings = () => {
             <WhiteContainerDivider />
 
             <WhiteContainerAction
-              onPress={() => navigate(ScreensEnum.DAppsSettings)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.DAppsSettings })}
               testID={SettingsSelectors.authorizedDAppsButton}
             >
               <WhiteContainerText text="Authorized DApps" />
@@ -199,7 +199,7 @@ export const Settings = () => {
             <WhiteContainerDivider />
 
             <WhiteContainerAction
-              onPress={() => navigate(ScreensEnum.NodeSettings)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.NodeSettings })}
               testID={SettingsSelectors.defaultNodeRPCButton}
             >
               <WhiteContainerText text="Default node (RPC)" />
@@ -210,7 +210,10 @@ export const Settings = () => {
           <Divider size={formatSize(16)} />
 
           <WhiteContainer>
-            <WhiteContainerAction onPress={() => navigate(ScreensEnum.About)} testID={SettingsSelectors.aboutButton}>
+            <WhiteContainerAction
+              onPress={() => navigateToScreen({ screen: ScreensEnum.About })}
+              testID={SettingsSelectors.aboutButton}
+            >
               <WhiteContainerText text="About" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>

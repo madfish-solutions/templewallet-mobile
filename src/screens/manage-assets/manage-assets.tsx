@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 
@@ -10,8 +9,8 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation, useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -24,9 +23,7 @@ const manageTokensIndex = 0;
 export const ManageAssets = () => {
   const { navigate } = useNavigation();
   const styles = useManageAssetsStyles();
-  const {
-    params: { collectibles }
-  } = useRoute<RouteProp<ScreensParamList, ScreensEnum.ManageAssets>>();
+  const { collectibles } = useScreenParams<ScreensEnum.ManageAssets>();
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(collectibles ? 1 : 0);
   const showManageTokens = segmentedControlIndex === manageTokensIndex;

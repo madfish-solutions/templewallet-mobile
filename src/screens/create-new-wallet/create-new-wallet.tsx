@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
 import { FormikProvider, useFormik } from 'formik';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, ScrollView } from 'react-native';
@@ -9,7 +8,8 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { WalletInitButtonsFloatingContainer } from 'src/layouts/wallet-init-buttons-floating-container';
 import { WalletInitNewPasswordInputs } from 'src/layouts/wallet-init-new-password-inputs';
-import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { scrollToField } from 'src/utils/form.utils';
 import { isString } from 'src/utils/is-string';
@@ -23,7 +23,7 @@ import {
 import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 
 export const CreateNewWallet = () => {
-  const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
+  const { backupToCloud, cloudBackupId } = useScreenParams<ScreensEnum.CreateAccount>();
 
   const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = useRestoredCloudBackup(cloudBackupId);
 

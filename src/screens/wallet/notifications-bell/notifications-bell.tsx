@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsNewNotificationsAvailableSelector } from 'src/store/notifications/notifications-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -15,14 +15,14 @@ import { NotificationsBellStyles } from './notifications-bell.styles';
 
 export const NotificationsBell = memo(() => {
   const colors = useColors();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const isNewNotificationsAvailable = useIsNewNotificationsAvailableSelector();
 
   return (
     <TouchableOpacity
       style={NotificationsBellStyles.iconContainer}
-      onPress={() => navigate(ScreensEnum.Notifications)}
+      onPress={() => navigateToScreen({ screen: ScreensEnum.Notifications })}
       testID={WalletSelectors.notificationsButton}
     >
       {isNewNotificationsAvailable && (

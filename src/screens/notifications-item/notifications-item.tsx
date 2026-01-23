@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { SvgCssUri } from 'react-native-svg/css';
@@ -11,8 +10,8 @@ import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextLink } from 'src/components/text-link/text-link';
-import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation, useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { readNotificationsItemAction } from 'src/store/notifications/notifications-actions';
 import { useNotificationsItemSelector } from 'src/store/notifications/notifications-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -30,8 +29,8 @@ export const NotificationsItem: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
 
-  const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.NotificationsItem>>();
-  const notification = useNotificationsItemSelector(params.id);
+  const { id } = useScreenParams<ScreensEnum.NotificationsItem>();
+  const notification = useNotificationsItemSelector(id);
 
   const [imageUri, setImageUri] = useState(notification?.mobileImageUrl ?? '');
 

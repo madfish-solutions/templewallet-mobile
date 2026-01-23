@@ -23,7 +23,7 @@ import { useListElementIntersection } from 'src/hooks/use-list-element-intersect
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
@@ -61,7 +61,8 @@ const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' 
 export const TokensList = memo(() => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
-  const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
+  const { addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
   const styles = useTokenListStyles();
 
   const apyRates = useTokensApyRatesSelector();
@@ -217,13 +218,13 @@ export const TokensList = memo(() => {
           <TouchableIcon
             name={IconNameEnum.Clock}
             size={formatSize(16)}
-            onPress={() => navigate(ScreensEnum.Activity)}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.Activity })}
           />
           <Divider size={formatSize(24)} />
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
-            onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: false })}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.ManageAssets, params: { collectibles: false } })}
           />
         </Search>
       </View>

@@ -20,7 +20,11 @@ module.exports = withSentryConfig(
         src: path.resolve(__dirname, 'src'),
         /* Mock browser-specific beacon packages */
         '@airgap/beacon-dapp': path.resolve(__dirname, 'src/mocks/airgap-beacon-dapp.mock.js'),
-        '@airgap/beacon-ui': path.resolve(__dirname, 'src/mocks/airgap-beacon-ui.mock.js')
+        '@airgap/beacon-ui': path.resolve(__dirname, 'src/mocks/airgap-beacon-ui.mock.js'),
+        '@airgap/beacon-transport-postmessage': path.resolve(
+          __dirname,
+          'src/mocks/airgap-beacon-transport-postmessage.mock.js'
+        )
       },
       assetExts: assetExts.filter(ext => ext !== 'svg'),
       sourceExts: [...sourceExts, 'svg']

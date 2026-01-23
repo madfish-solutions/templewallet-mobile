@@ -43,7 +43,7 @@ type TokenIconImageProps = Props & {
 };
 
 const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size }) => {
-  const { imageType, svgFailed, onRasterRenderError, onSvgRenderError } = useImageType(thumbnailUri ?? '');
+  const { imageType, onRasterRenderError, onSvgRenderError } = useImageType(thumbnailUri ?? '');
 
   const colors = useColors();
 
@@ -64,7 +64,5 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
       return <DataUriImage width={size} height={size} dataUri={thumbnailUri} />;
   }
 
-  return (
-    <LoadableTokenIconImage uri={thumbnailUri} size={size} onError={onRasterRenderError} useOriginal={svgFailed} />
-  );
+  return <LoadableTokenIconImage uri={thumbnailUri} size={size} onError={onRasterRenderError} />;
 };

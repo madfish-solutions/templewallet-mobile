@@ -6,7 +6,7 @@ import { isAndroid, isIOS } from 'src/config/system';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { cloudTitle } from 'src/utils/cloud-backup';
 import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
@@ -19,19 +19,21 @@ export const ContinueWithCloudButton = () => {
 
   const theme = useThemeSelector();
 
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const cloudIsAvailable = useIsCloudAvailable();
 
-  const iconName = getCloudIconEnum(theme, cloudIsAvailable);
+  const iconName = getCloudIconEnum(theme, cloudIsAvailable !== false);
 
   return (
     <ButtonLargeSecondary
       title={`Continue with ${cloudTitle}`}
       iconName={iconName}
       activeColorStyleConfig={cloudBtnActiveColorStyleConfig[isAndroid ? 'googleDrive' : 'iCloud']}
-      disabled={!cloudIsAvailable}
-      onPress={useCallbackIfOnline(() => navigate(ScreensEnum.ContinueWithCloud))}
+      disabled={cloudIsAvailable === false}
+      onPress={useCallbackIfOnline(
+        () => void (cloudIsAvailable && navigateToScreen({ screen: ScreensEnum.ContinueWithCloud }))
+      )}
       testID={WelcomeSelectors.continueWithCloudButton}
       testIDProperties={{ cloud: cloudTitle }}
     />

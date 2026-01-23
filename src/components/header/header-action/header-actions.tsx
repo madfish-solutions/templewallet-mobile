@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 
 import { IconNameEnum } from '../../icon/icon-name.enum';
@@ -12,7 +12,7 @@ import { useHeaderTitleStyles } from './header-actions.styles';
 
 export const HeaderAction: FC = () => {
   const styles = useHeaderTitleStyles();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   return (
     <View style={styles.container}>
@@ -20,7 +20,7 @@ export const HeaderAction: FC = () => {
         style={styles.icons}
         size={formatSize(20)}
         name={IconNameEnum.SwapSettings}
-        onPress={() => navigate(ScreensEnum.SwapSettingsScreen)}
+        onPress={() => navigateToScreen({ screen: ScreensEnum.SwapSettingsScreen })}
       />
     </View>
   );

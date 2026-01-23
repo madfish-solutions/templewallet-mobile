@@ -66,13 +66,12 @@
     axios "^1.8.4"
 
 "@airgap/beacon-transport-postmessage@4.6.4":
-  version "4.6.4"
-  resolved "https://registry.yarnpkg.com/@airgap/beacon-transport-postmessage/-/beacon-transport-postmessage-4.6.4.tgz#d7d142625618c2433a0e2d04ad98fceb79c8213f"
-  integrity sha512-IwLWw/zSBw2zm9PDfRXpIHWTkOOBfx3M51OniA7i/wJ815h7hsZ31rDFGj4bjQgLl7wpPDKlQxVuYrkUx4kNmw==
-  dependencies:
-    "@airgap/beacon-core" "4.6.4"
-    "@airgap/beacon-types" "4.6.4"
-    "@airgap/beacon-utils" "4.6.4"
+  version "0.0.0"
+  uid ""
+
+"@airgap/beacon-transport-postmessage@link:./node_modules/.cache/null":
+  version "0.0.0"
+  uid ""
 
 "@airgap/beacon-transport-walletconnect@4.6.4":
   version "4.6.4"
@@ -1797,10 +1796,10 @@
   resolved "https://registry.yarnpkg.com/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.5.tgz#39cf5a600450cb42f1f0b507cc385459bf103b27"
   integrity sha512-+uGNN7rkfn41HLO0vekTFhTxk61eKa8mTpRGLO0QSqlQdKvIoGAvLp3ppdVIWbTGYJWM6Kp0iN+PjMIOcnVqTw==
 
-"@gorhom/bottom-sheet@4.5.1":
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-4.5.1.tgz#1ac4b234a80e7dff263f0b7ac207f92e41562849"
-  integrity sha512-4Qy6hzvN32fXu2hDxDXOIS0IBGBT6huST7J7+K1V5bXemZ08KIx5ZffyLgwhCUl+CnyeG2KG6tqk6iYLkIwi7Q==
+"@gorhom/bottom-sheet@^5":
+  version "5.2.8"
+  resolved "https://registry.yarnpkg.com/@gorhom/bottom-sheet/-/bottom-sheet-5.2.8.tgz#25e49122c30ffe83d3813b3bcf3dec39f3359aeb"
+  integrity sha512-+N27SMpbBxXZQ/IA2nlEV6RGxL/qSFHKfdFKcygvW+HqPG5jVNb1OqehLQsGfBP+Up42i0gW5ppI+DhpB7UCzA==
   dependencies:
     "@gorhom/portal" "1.0.14"
     invariant "^2.2.4"
@@ -2248,6 +2247,11 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@notifee/react-native@^9.1.8":
+  version "9.1.8"
+  resolved "https://registry.yarnpkg.com/@notifee/react-native/-/react-native-9.1.8.tgz#3d55cb3fbcc21f9e35931e366afdf64b294da891"
+  integrity sha512-Az/dueoPerJsbbjRxu8a558wKY+gONUrfoy3Hs++5OqbeMsR0dYe6P+4oN6twrLFyzAhEA1tEoZRvQTFDRmvQg==
+
 "@oxc-resolver/binding-android-arm-eabi@11.16.3":
   version "11.16.3"
   resolved "https://registry.yarnpkg.com/@oxc-resolver/binding-android-arm-eabi/-/binding-android-arm-eabi-11.16.3.tgz#536ad397111ac45b95327a437973aec68da31c0b"
@@ -2412,13 +2416,6 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
-
-"@react-native-async-storage/async-storage@^1.13.4":
-  version "1.24.0"
-  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.24.0.tgz#888efbc62a26f7d9464b32f4d3027b7f2771999b"
-  integrity sha512-W4/vbwUOYOjco0x3toB8QCr7EjIP6nE9G7o8PMguvvjYT5Awg09lyV4enACRx4s++PPulBiBSjL0KTFx2u0Z/g==
-  dependencies:
-    merge-options "^3.0.4"
 
 "@react-native-async-storage/async-storage@^2.2.0":
   version "2.2.0"
@@ -2629,13 +2626,6 @@
   version "11.4.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-11.4.1.tgz#a3c247aceab35f75dd0aa4bfa85d2be5a4508688"
   integrity sha512-B0BYAkghz3Q2V09BF88RA601XursIEA111tnc2JOaN7axJWmNefmfjZqw/KdSxKZp7CZUuPpjBmz/WCR9uaHYg==
-
-"@react-native-community/push-notification-ios@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@react-native-community/push-notification-ios/-/push-notification-ios-1.12.0.tgz#d5ee6bb52b5952b0d0a5c139d34c0e5138fe0892"
-  integrity sha512-nu6ctimVlK4E3id3QHs9yZJ4vCP5UG3lRaBvSboJZ2IWU0XROcIJnNVIXsSH7C3hTlb84lNwPWir3y/TxRj0oA==
-  dependencies:
-    invariant "^2.2.4"
 
 "@react-native-community/slider@^5.1.1":
   version "5.1.1"
@@ -3919,11 +3909,6 @@
   version "6.14.0"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.14.0.tgz#d8b60cecf62f2db0fb68e5e006077b9178b85de5"
   integrity sha512-eOunJqu0K1923aExK6y8p6fsihYEn/BYuQ4g0CxAAgFc4b/ZLN4CrsRZ55srTdqoiLzU2B2evC+apEIxprEzkQ==
-
-"@types/react-native-push-notification@^8.1.4":
-  version "8.1.4"
-  resolved "https://registry.yarnpkg.com/@types/react-native-push-notification/-/react-native-push-notification-8.1.4.tgz#5adcddab82beeac6f1256eeb54160bca1714d080"
-  integrity sha512-qXu/NcQ7YSk5ZveDMNKFBQkLt9W5FCde3be+h8fYbEnmvd5O+v5m318XGhh8AMPXURAV9pSB5Ads08Wc0KTS7A==
 
 "@types/react-test-renderer@^19.1.0":
   version "19.1.0"
@@ -9663,7 +9648,7 @@ prompts@^2.0.1, prompts@^2.4.2:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@^15.5.10, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.0, prop-types@^15.8.1:
+prop-types@^15.7.2, prop-types@^15.8.0, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -9898,13 +9883,6 @@ react-native-bootsplash@^6.3.11:
     ts-dedent "^2.2.0"
     xml-formatter "^3.6.5"
 
-react-native-camera@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-4.2.1.tgz#caf74081f055e89d7e9b0cd5108965d808c60e90"
-  integrity sha512-+Vkql24PFYQfsPRznJCvPwJQfyzCnjlcww/iZ4Ej80bgivKjL9eU0IMQIXp4yi6XCrKi4voWXxIDPMupQZKeIQ==
-  dependencies:
-    prop-types "^15.6.2"
-
 react-native-cloud-fs@madfish-solutions/react-native-cloud-fs#1d64024c39e529c1d4c46ca9996e42a2d80bf67f:
   version "2.6.0"
   resolved "https://codeload.github.com/madfish-solutions/react-native-cloud-fs/tar.gz/1d64024c39e529c1d4c46ca9996e42a2d80bf67f"
@@ -10002,29 +9980,10 @@ react-native-orientation-locker@^1.7.0:
   resolved "https://registry.yarnpkg.com/react-native-orientation-locker/-/react-native-orientation-locker-1.7.0.tgz#47ef2b9c24618e40f0a521f184b51270e576b028"
   integrity sha512-2PhG4UyRJktb3KCTISStuu8/q+Q3q3oPesGg9DhdY0b6Cu/ZzxkCvkbJte2TPWRYkS0JpClimvqVaonulGvDrA==
 
-react-native-permissions@^2.0.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-2.2.2.tgz#3d2a63f6b7d6be52fc86e30f77412a9566283028"
-  integrity sha512-ihf4shQDSX5Oo9ChQXb9kr13mmyyNem5MaEvOpr3dCjhBOBWyEMztXm9/uPK1Qg5PsNpaYLa1KpcPZDCw87LXg==
-
 react-native-permissions@^5.4.4:
   version "5.4.4"
   resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-5.4.4.tgz#8a63b001fc0f9e88426c36b21a6fe379c4533b04"
   integrity sha512-WB5lRCBGXETfuaUhem2vgOceb9+URCeyfKpLGFSwoOffLuyJCA6+NTR3l1KLkrK4Ykxsig37z16/shUVufmt7A==
-
-react-native-push-notification@^8.1.1:
-  version "8.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz#a41d20c70ea5a7709417e96261b225461f8dc73a"
-  integrity sha512-XpBtG/w+a6WXTxu6l1dNYyTiHnbgnvjoc3KxPTxYkaIABRmvuJZkFxqruyGvfCw7ELAlZEAJO+dthdTabCe1XA==
-
-react-native-qrcode-scanner@^1.5.5:
-  version "1.5.5"
-  resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-1.5.5.tgz#0d20101712715da108742a2bbbd0397569031b01"
-  integrity sha512-il79uStkFqUvofqXJQfOL30qgQyU17MUKxj7IGHv6oT2OxIY/vutTwuPPDbsivtv0yTMHP4dGx/79oys4eAuNw==
-  dependencies:
-    "@react-native-async-storage/async-storage" "^1.13.4"
-    prop-types "^15.5.10"
-    react-native-permissions "^2.0.2"
 
 react-native-qrcode-svg@^6.3.21:
   version "6.3.21"
@@ -10040,9 +9999,9 @@ react-native-quick-actions@^0.3.13:
   resolved "https://registry.yarnpkg.com/react-native-quick-actions/-/react-native-quick-actions-0.3.13.tgz#74431b0b30e98ac896e44cc1024c38864cfe2bbc"
   integrity sha512-Vz13a0+NV0mzCh/29tNt0qDzWPh8i2srTQW8eCSzGFDArnVm1COTOhTD0FY0hWHlxRY0ahvX+BlezTDvsyAuMA==
 
-react-native-randombytes@^3.5.1, react-native-randombytes@madfish-solutions/react-native-randombytes:
+react-native-randombytes@^3.5.1, react-native-randombytes@madfish-solutions/react-native-randombytes#cf4f237e0affbef3f23d444478bd271b28936ac0:
   version "3.6.2"
-  resolved "https://codeload.github.com/madfish-solutions/react-native-randombytes/tar.gz/02b3daad7bf01d44558fce07c7aa27682a27bae0"
+  resolved "https://codeload.github.com/madfish-solutions/react-native-randombytes/tar.gz/cf4f237e0affbef3f23d444478bd271b28936ac0"
   dependencies:
     fast-base64-decode "^1.0.0"
 
@@ -10077,10 +10036,9 @@ react-native-screens@^4.19.0:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-scrypt@^1.2.1:
+react-native-scrypt@madfish-solutions/react-native-scrypt#120e21ee291ed6bbb51acd251e09f9efeedba3c2:
   version "1.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-scrypt/-/react-native-scrypt-1.2.1.tgz#22323d56fec370a9fb6ece143a5104e32af39195"
-  integrity sha512-y03UtSmpY6RtdNB4Ne3yxe7xFNl2BYQMB59p+/iJGch+9eJ05Lw8DObX9dOA/bldlCljtP3KsCiZmf/rwrzeSA==
+  resolved "https://codeload.github.com/madfish-solutions/react-native-scrypt/tar.gz/120e21ee291ed6bbb51acd251e09f9efeedba3c2"
   dependencies:
     "@types/node" "^14.14.35"
     buffer "^5.6.0"
@@ -10152,6 +10110,11 @@ react-native-video@^6.18.0:
   version "6.18.0"
   resolved "https://registry.yarnpkg.com/react-native-video/-/react-native-video-6.18.0.tgz#2f8fc0fff27e270f592e5a15a05972f88b20e8b0"
   integrity sha512-9BjAtAh1uGq6h/GNCCh5yzb/iI9qJHuflwNGExyhoUxbhPD1s+15h+CdpJ2MKKJTXw6J7w+nQOp1Ywa54R8w7Q==
+
+react-native-vision-camera@^4.7.3:
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-4.7.3.tgz#ed03cedabcaec54774f5aa40e69afa30069924d4"
+  integrity sha512-g1/neOyjSqn1kaAa2FxI/qp5KzNvPcF0bnQw6NntfbxH6tm0+8WFZszlgb5OV+iYlB6lFUztCbDtyz5IpL47OA==
 
 react-native-webview@^13.16.0:
   version "13.16.0"

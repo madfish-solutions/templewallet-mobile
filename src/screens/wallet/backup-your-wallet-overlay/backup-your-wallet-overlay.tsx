@@ -6,7 +6,7 @@ import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-shee
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { cloudIconName, cloudTitle } from 'src/utils/cloud-backup';
 import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
 
@@ -14,7 +14,7 @@ import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.s
 import { BackupYourWalletSelectors } from './backup-your-wallet.selectors';
 
 export const BackupYourWalletOverlay = () => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const styles = useBackupYourWalletOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
@@ -48,8 +48,8 @@ export const BackupYourWalletOverlay = () => {
             iconLeftName={cloudIconName}
             style={styles.actionButton}
             titleStyle={styles.actionButtonText}
-            disabled={!cloudIsAvailable}
-            onPress={() => navigate(ScreensEnum.CloudBackup)}
+            disabled={cloudIsAvailable === false}
+            onPress={() => void (cloudIsAvailable && navigateToScreen({ screen: ScreensEnum.CloudBackup }))}
             testID={BackupYourWalletSelectors.cloudBackupButton}
           />
 
@@ -58,7 +58,7 @@ export const BackupYourWalletOverlay = () => {
             iconLeftName={IconNameEnum.ManualBackup}
             style={[styles.actionButton, styles.manualBackupButton]}
             titleStyle={styles.actionButtonText}
-            onPress={() => navigate(ScreensEnum.ManualBackup)}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.ManualBackup })}
             testID={BackupYourWalletSelectors.manuallyBackupButton}
           />
         </Animated.View>

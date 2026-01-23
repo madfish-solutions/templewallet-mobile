@@ -17,11 +17,11 @@ import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addBlacklistedContactAction } from 'src/store/contact-book/contact-book-actions';
 import {
   useContactCandidateAddressSelector,
-  useContactsAddressesSelector,
+  useContactsAddresses,
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
@@ -43,13 +43,14 @@ export const Wallet = memo(() => {
   const dispatch = useDispatch();
   const { pageEvent } = useAnalytics();
   const { navigate, dispatch: navigationDispatch, getState } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const accounts = useAccountsListSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const contactCandidateAddress = useContactCandidateAddressSelector();
   const ignoredAddresses = useIgnoredAddressesSelector();
-  const contactsAddresses = useContactsAddressesSelector();
+  const contactsAddresses = useContactsAddresses();
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
 
@@ -98,7 +99,7 @@ export const Wallet = memo(() => {
 
           <TouchableIcon
             name={IconNameEnum.QrScanner}
-            onPress={() => navigate(ScreensEnum.ScanQrCode)}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
             testID={WalletSelectors.scanQRButton}
           />
 

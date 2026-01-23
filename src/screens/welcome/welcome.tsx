@@ -13,7 +13,7 @@ import { useABTestingLoading } from 'src/hooks/use-ab-testing-loading.hook';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -23,6 +23,7 @@ import { useWelcomeStyles } from './welcome.styles';
 
 export const Welcome = () => {
   const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const styles = useWelcomeStyles();
 
   usePageAnalytic(ScreensEnum.Welcome);
@@ -54,7 +55,7 @@ export const Welcome = () => {
         <ButtonLargePrimary
           title="Create New Wallet"
           iconName={IconNameEnum.PlusSquare}
-          onPress={useCallbackIfOnline(() => navigate(ScreensEnum.CreateAccount, {}))}
+          onPress={useCallbackIfOnline(() => navigateToScreen({ screen: ScreensEnum.CreateAccount, params: {} }))}
           testID={WelcomeSelectors.createNewWalletButton}
         />
 

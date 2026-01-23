@@ -7,12 +7,8 @@ import { isTruthy } from './is-truthy';
 const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
 const IPFS_GATE = 'https://ipfs.io/ipfs';
-const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
-type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
 type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
-
-const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
 export const buildCollectibleImagesStack = (
   slug: string,
@@ -34,15 +30,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'display'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'display'),
 
-        buildIpfsMediaUriByInfo(displayInfo, 'raw'),
-        buildIpfsMediaUriByInfo(displayInfo, 'large'),
-        buildIpfsMediaUriByInfo(displayInfo, 'medium'),
-        buildIpfsMediaUriByInfo(displayInfo, 'small'),
+        buildIpfsMediaUriByInfo(displayInfo),
 
-        buildIpfsMediaUriByInfo(artifactInfo, 'raw'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'large'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'medium'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'small'),
+        buildIpfsMediaUriByInfo(artifactInfo),
 
         assureGetDataUriImage(thumbnailUri)
       ]
@@ -60,14 +50,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'thumb288'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'thumb288'),
 
-        buildIpfsMediaUriByInfo(thumbnailInfo, 'medium'),
-        buildIpfsMediaUriByInfo(thumbnailInfo, 'small'),
-
-        buildIpfsMediaUriByInfo(displayInfo, 'medium'),
-        buildIpfsMediaUriByInfo(displayInfo, 'small'),
-
-        buildIpfsMediaUriByInfo(artifactInfo, 'medium'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'small')
+        buildIpfsMediaUriByInfo(thumbnailInfo),
+        buildIpfsMediaUriByInfo(displayInfo),
+        buildIpfsMediaUriByInfo(artifactInfo)
       ];
 
   return uniq(stack.filter(isTruthy));
@@ -132,29 +117,22 @@ const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTai
 
 const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
-const buildIpfsMediaUriByInfo = (
-  { uri, ipfs: ipfsInfo }: MediaUriInfo,
-  size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE,
-  useMediaHost = true
-) => {
+const buildIpfsMediaUriByInfo = ({ uri, ipfs: ipfsInfo }: MediaUriInfo) => {
   if (!uri) {
     return;
   }
 
   if (ipfsInfo) {
-    return useMediaHost
-      ? `${MEDIA_HOST}/${size}/ipfs/${ipfsInfo.path}${ipfsInfo.search}`
-      : `${IPFS_GATE}/${ipfsInfo.path}${ipfsInfo.search}`;
+    return `${IPFS_GATE}/${ipfsInfo.path}${ipfsInfo.search}`;
   }
 
-  if (useMediaHost && uri.startsWith('http')) {
+  if (uri.startsWith('http')) {
     // This option also serves as a proxy for any `http` source
     return uri;
   }
 };
 
-export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) =>
-  buildIpfsMediaUriByInfo(getMediaUriInfo(uri), size, useMediaHost);
+export const formatImgUri = (uri = '') => buildIpfsMediaUriByInfo(getMediaUriInfo(uri));
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 

@@ -9,7 +9,7 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -18,15 +18,15 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
 
 export const TezosTokenScreen = () => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const accountPkh = useCurrentAccountPkhSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
 
   usePageAnalytic(ScreensEnum.TezosTokenScreen);
 
   const handleInfoIconClick = useCallback(
-    () => navigate(ScreensEnum.TokenInfo, { token: tezosToken }),
-    [navigate, tezosToken]
+    () => navigateToScreen({ screen: ScreensEnum.TokenInfo, params: { token: tezosToken } }),
+    [navigateToScreen, tezosToken]
   );
 
   useNavigationSetOptions(

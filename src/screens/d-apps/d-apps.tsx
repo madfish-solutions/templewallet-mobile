@@ -19,7 +19,7 @@ import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { loadDAppsListActions } from 'src/store/d-apps/d-apps-actions';
 import { useDAppsListSelector } from 'src/store/d-apps/d-apps-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -42,7 +42,7 @@ const ListEmptyComponent = <DataPlaceholder text="No records found." />;
 
 export const DApps = () => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const { width: windowWidth } = useWindowDimensions();
 
@@ -143,7 +143,7 @@ export const DApps = () => {
               iconName={IconNameEnum.EarnDapp}
               title={`Earn up to ${maxRoundedApr} APR`}
               description="Unlock on-chain earning potential"
-              onPress={() => navigate(ScreensEnum.Earn)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
               testID={DAppsSelectors.earnButton}
               testIDProperties={{
                 isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)

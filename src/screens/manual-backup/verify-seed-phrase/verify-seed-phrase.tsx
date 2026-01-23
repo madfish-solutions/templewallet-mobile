@@ -17,7 +17,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { madeManualBackupAction, setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
@@ -37,7 +37,7 @@ const WORDS_TO_FILL = 2;
 export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
   const dispatch = useDispatch();
   const styles = useVerifySeedPhraseStyles();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const { revealSeedPhrase } = useShelter();
   const canUseOnRamp = useCanUseOnRamp();
 
@@ -111,7 +111,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
   );
 
   const handleSubmit = () => {
-    navigate(ScreensEnum.Wallet);
+    navigateToScreen({ screen: ScreensEnum.Wallet });
     dispatch(madeManualBackupAction());
     showSuccessToast({ description: 'You have successfully verified seed phrase!' });
 

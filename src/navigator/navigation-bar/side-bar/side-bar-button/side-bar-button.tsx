@@ -5,7 +5,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -40,7 +40,7 @@ export const SideBarButton: FC<Props> = ({
 }) => {
   const colors = useColors();
   const styles = useSideBarButtonStyles();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const color = useMemo(() => {
     let value = colors.gray1;
@@ -55,9 +55,9 @@ export const SideBarButton: FC<Props> = ({
       disabledOnPress?.();
     } else {
       if (routeName === ScreensEnum.SwapScreen) {
-        navigate(routeName, swapScreenParams);
+        navigateToScreen({ screen: routeName, params: swapScreenParams });
       } else {
-        navigate(routeName);
+        navigateToScreen({ screen: routeName });
       }
     }
   };

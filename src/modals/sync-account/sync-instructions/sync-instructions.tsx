@@ -11,7 +11,7 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -30,7 +30,7 @@ interface Props {
 }
 
 export const SyncInstructions = memo<Props>(({ onBackPress }) => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const styles = useSyncInstructionsStyles();
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Sync with Extension Wallet" /> }, []);
@@ -63,7 +63,7 @@ export const SyncInstructions = memo<Props>(({ onBackPress }) => {
           <View style={styles.flex}>
             <ButtonLargePrimary
               title="Scan QR"
-              onPress={() => navigate(ScreensEnum.ScanQrCode)}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
               testID={SyncInstructionsSelectors.scanQRButton}
             />
           </View>

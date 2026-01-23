@@ -12,7 +12,7 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { removeTokenAction } from 'src/store/wallet/wallet-actions';
 import { formatSize } from 'src/styles/format-size';
@@ -40,6 +40,7 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
   const styles = useTokenScreenContentContainerStyles();
   const apyStyles = useApyStyles();
   const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const currentBaker = useSelectedBakerSelector();
   const { trackEvent } = useAnalytics();
   const isTezos = token.address === '';
@@ -47,7 +48,9 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
   const { isDcpNode } = useNetworkInfo();
 
   const navigationFlow = () => {
-    isDcpNode && !currentBaker ? navigate(ModalsEnum.SelectBaker) : navigate(ScreensEnum.Delegation);
+    isDcpNode && !currentBaker
+      ? navigate(ModalsEnum.SelectBaker)
+      : navigateToScreen({ screen: ScreensEnum.Delegation });
   };
 
   const { rate: apyRate = INITIAL_APR_VALUE, link: apyLink } = useTokenApyInfo(tokenSlug);
@@ -72,7 +75,7 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
             style: 'destructive',
             onPress: () => {
               dispatch(removeTokenAction(tokenSlug));
-              navigate(ScreensEnum.Wallet);
+              navigateToScreen({ screen: ScreensEnum.Wallet });
             }
           }
         ]

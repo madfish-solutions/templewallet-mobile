@@ -10,13 +10,12 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props {
-  useOriginal?: boolean;
   uri: string;
   size: number;
   onError?: EmptyFn;
 }
 
-export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOriginal = false }) => {
+export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError }) => {
   const lastItemId = useRef(uri);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -34,10 +33,7 @@ export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOrig
     [isShowPlaceholder, size]
   );
 
-  const source = useMemo<Source>(
-    () => (isString(uri) ? { uri: formatImgUri(uri, 'small', !useOriginal) } : {}),
-    [uri, useOriginal]
-  );
+  const source = useMemo<Source>(() => (isString(uri) ? { uri: formatImgUri(uri) } : {}), [uri]);
 
   const handleError = useCallback(() => {
     setIsFailed(true);

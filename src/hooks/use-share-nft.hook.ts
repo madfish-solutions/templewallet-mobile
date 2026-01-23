@@ -17,7 +17,7 @@ export const useShareNFT = (slug: string, image?: string, title?: string, descri
   return useCallback(async () => {
     const linkUrl = buildCollectibleUniversalLink(
       slug,
-      isDefined(image) ? formatImgUri(image, 'raw') : image,
+      isDefined(image) ? formatImgUri(image) : image,
       title,
       description
     );
