@@ -22,6 +22,7 @@ import { AddCustomRpcModal } from 'src/modals/custom-rpc-modals/add-modal/add-mo
 import { EditCustomRpcModal } from 'src/modals/custom-rpc-modals/edit-modal/edit-modal';
 import { EnableBiometryPasswordModal } from 'src/modals/enable-biometry-password-modal/enable-biometry-password-modal';
 import { InAppBrowser } from 'src/modals/in-app-browser';
+import { KoloCardWidgetModal } from 'src/modals/kolo-card';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
@@ -176,6 +177,11 @@ export const RootStackScreen = () => {
               name={ModalsEnum.InAppBrowser}
               component={InAppBrowser}
               options={useModalOptions('In-App Browser')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.KoloCard}
+              component={KoloCardWidgetModal}
+              options={useModalOptions('Crypto Card')}
             />
             <RootStack.Screen
               name={ModalsEnum.ChooseAccountImportType}

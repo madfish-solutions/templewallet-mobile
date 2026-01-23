@@ -27,5 +27,7 @@ export const mockSettingsState: SettingsState = {
   isPushNotificationsEnabledEventFired: false,
   isShowCollectibleInfo: false,
   isInAppUpdateAvailable: false,
-  isInAppBrowserEnabled: true
+  isInAppBrowserEnabled: true,
+  isKoloCardAnimationShown: false,
+  koloForceLogoutOnNextOpen: false
 };

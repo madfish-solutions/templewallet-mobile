@@ -12,7 +12,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
-import { BLOCK_DURATION } from 'src/config/fixed-times';
+import { APIS_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
@@ -32,8 +32,6 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { IMAGE_SIZE, navigateToObjktForBuy } from '../utils';
 
 import { useCollectibleItemStyles } from './collectible-item.styles';
-
-const DETAILS_SYNC_INTERVAL = 4 * BLOCK_DURATION;
 
 interface Props {
   item: CollectionItemInterface;
@@ -70,7 +68,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
     () => fetchCollectibleExtraDetails(item.address, item.id),
     {
       errorRetryCount: 2,
-      refreshInterval: DETAILS_SYNC_INTERVAL
+      refreshInterval: APIS_SYNC_INTERVAL
     }
   );
 

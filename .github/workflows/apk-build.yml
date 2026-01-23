@@ -57,6 +57,8 @@ jobs:
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          KOLO_API_PUBLIC_KEY: ${{ secrets.KOLO_API_PUBLIC_KEY }}
+          KOLO_BASE_URL: ${{ vars.KOLO_BASE_URL }}
           APK_BUILD_ID: ${{ github.event.inputs.build-identifier }}
 
       - name: Setup Java SDK

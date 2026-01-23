@@ -17,7 +17,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TruncatedText } from 'src/components/truncated-text';
-import { BLOCK_DURATION } from 'src/config/fixed-times';
+import { APIS_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
@@ -56,8 +56,6 @@ import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 import { useAttributesWithRarity } from './utils/use-attributes-with-rarity.hook';
 import { useBurnCollectible } from './utils/use-burn-collectible.hook';
 
-const DETAILS_SYNC_INTERVAL = 4 * BLOCK_DURATION;
-
 enum SegmentControlNamesEnum {
   attributes = 'Attributes',
   properties = 'Properties'
@@ -93,7 +91,7 @@ export const CollectibleModal = memo(() => {
 
   const creators = details?.creators;
 
-  useInterval(() => void dispatch(loadCollectiblesDetailsActions.submit([slug])), DETAILS_SYNC_INTERVAL, [slug], true);
+  useInterval(() => void dispatch(loadCollectiblesDetailsActions.submit([slug])), APIS_SYNC_INTERVAL, [slug], true);
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 

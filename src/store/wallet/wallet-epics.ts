@@ -13,6 +13,7 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
+import { MS_IN_SECOND } from 'src/utils/date.utils';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
@@ -155,9 +156,14 @@ const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>
     toPayload(),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[{ opHash, sender }, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      from(createReadOnlyTezosToolkit(rpcUrl, sender).operation.createOperation(opHash)).pipe(
-        switchMap(operation => operation.confirmation(1)),
+    switchMap(([[{ opHash, sender }, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) => {
+      const tezos = createReadOnlyTezosToolkit(rpcUrl, sender);
+
+      return from(
+        Promise.all([tezos.operation.createOperation(opHash), tezos.rpc.getConstants()]).then(
+          ([operation, constants]) => Promise.all([operation.confirmation(1), Promise.resolve(constants)])
+        )
+      ).pipe(
         catchError(err => {
           if (err.message === 'Confirmation polling timed out') {
             return of(undefined);
@@ -175,15 +181,21 @@ const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>
             throw new Error(err.message);
           }
         }),
-        delay(BLOCK_DURATION),
-        concatMap(() => [loadTezosBalanceActions.submit(), loadAssetsBalancesActions.submit()]),
+        switchMap(results => {
+          const rawDelay = results && results[1].minimal_block_delay;
+
+          return of(true).pipe(
+            delay(rawDelay ? rawDelay.toNumber() * MS_IN_SECOND : BLOCK_DURATION),
+            concatMap(() => [loadTezosBalanceActions.submit(), loadAssetsBalancesActions.submit()])
+          );
+        }),
         catchError(err => {
           showErrorToast({ description: err.message });
 
           return EMPTY;
         })
-      )
-    )
+      );
+    })
   );
 
 export const walletEpics = combineEpics(

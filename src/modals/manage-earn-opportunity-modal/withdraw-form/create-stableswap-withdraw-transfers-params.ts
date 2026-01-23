@@ -56,11 +56,7 @@ export const createStableswapWithdrawTransfersParams = async (
     const wTezContract = await getReadOnlyContract(WTEZ_TOKEN_METADATA.address, tezos);
     burnWTezParams = [
       wTezContract.methodsObject
-        .burn({
-          from_: accountPkh,
-          receiver: accountPkh,
-          amount: tokenOutput
-        })
+        .burn({ from_: accountPkh, receiver: accountPkh, amount: tokenOutput })
         .toTransferParams()
     ];
   }

@@ -30,7 +30,9 @@ import {
   switchIsShowCollectibleInfoAction,
   setIsInAppUpdateAvailableAction,
   setIsInAppBrowserEnabledAction,
-  resetPermanentInitialSettingsAction
+  resetPermanentInitialSettingsAction,
+  setKoloCardAnimationShownAction,
+  setKoloForceLogoutOnNextOpenAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -152,5 +154,15 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   builder.addCase(setIsInAppBrowserEnabledAction, (state, { payload }) => ({
     ...state,
     isInAppBrowserEnabled: payload
+  }));
+
+  builder.addCase(setKoloCardAnimationShownAction, state => ({
+    ...state,
+    isKoloCardAnimationShown: true
+  }));
+
+  builder.addCase(setKoloForceLogoutOnNextOpenAction, (state, { payload }) => ({
+    ...state,
+    koloForceLogoutOnNextOpen: payload
   }));
 });

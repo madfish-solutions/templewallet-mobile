@@ -58,11 +58,12 @@ jobs:
           TEMPLE_ADS_API_URL: ${{ vars.TEMPLE_ADS_API_URL }}
           HYPELAB_MEDIUM_PLACEMENT_SLUG: ${{ vars.HYPELAB_MEDIUM_PLACEMENT_SLUG }}
           HYPELAB_NATIVE_PLACEMENT_SLUG: ${{ vars.HYPELAB_NATIVE_PLACEMENT_SLUG }}
-          PERSONA_PLACEMENT_SLUG: ${{ vars.PERSONA_PLACEMENT_SLUG }}
           APPSTORE_AUTHKEY: ${{ secrets.APPSTORE_AUTHKEY }}
           GOOGLE_PLAY_AUTHKEY: ${{ secrets.GOOGLE_PLAY_AUTHKEY }}
           KEYSTORE_KEY: ${{ secrets.KEYSTORE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          KOLO_API_PUBLIC_KEY: ${{ secrets.KOLO_API_PUBLIC_KEY }}
+          KOLO_BASE_URL: ${{ vars.KOLO_BASE_URL }}
 
       # Android
 

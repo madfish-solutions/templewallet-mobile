@@ -19,10 +19,20 @@ export const exolixReducers = createReducer<ExolixState>(exolixInitialState, bui
     step
   }));
 
+  builder.addCase(loadExolixCurrenciesAction.submit, state => ({
+    ...state,
+    currenciesLoading: true
+  }));
   builder.addCase(loadExolixCurrenciesAction.success, (state, { payload: currencies }) => ({
     ...state,
-    currencies
+    currencies,
+    currenciesLoading: false
   }));
+  builder.addCase(loadExolixCurrenciesAction.fail, state => ({
+    ...state,
+    currenciesLoading: false
+  }));
+
   builder.addCase(loadExolixExchangeDataActions.success, (state, { payload: exchangeData }) => ({
     ...state,
     exchangeData
