@@ -177,7 +177,7 @@
     "@types/react-native": "0.72.2",
     "@airgap/beacon-dapp": "link:./node_modules/.cache/null",
     "@airgap/beacon-ui": "link:./node_modules/.cache/null",
-    "axios": "1.13.5",
+    "axios": "^1.13.5",
     "minimist": "^1.2.6",
     "bl": "^5.0.0",
     "ansi-regex": "^5.0.1",
