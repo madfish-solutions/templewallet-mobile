@@ -112,7 +112,6 @@ import NotificationDotIcon from './assets/notification-dot.svg';
 import OwnBlocksIcon from './assets/own-blocks.svg';
 import OXtzIcon from './assets/oxtz.svg';
 import PlentyIcon from './assets/plenty.svg';
-import PlusCircleNewIcon from './assets/plus-circle-new.svg';
 import PlusCircleIcon from './assets/plus-circle.svg';
 import PlusIconOrange from './assets/plus-icon-orange.svg';
 import PlusIcon from './assets/plus-icon.svg';
@@ -217,7 +216,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.InvertedCheckboxOn]: InvertedCheckboxOnIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.PlusCircle]: PlusCircleIcon,
-  [IconNameEnum.PlusCircleNew]: PlusCircleNewIcon,
   [IconNameEnum.HelpCircle]: HelpCircleIcon,
   [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,

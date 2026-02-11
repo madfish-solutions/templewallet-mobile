@@ -112,23 +112,3 @@ export const useCollectionButtonStyles = createUseStylesMemoized(({ colors, typo
     ...typography.caption10Regular
   }
 }));
-
-export const useCollectiblesHomeProfileStyles = createUseStylesMemoized(({ colors, typography }) => ({
-  profileActions: {
-    flexDirection: 'row'
-  },
-  profileActionButton: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  profileText: {
-    ...typography.tagline13Tag,
-    color: colors.orange,
-    marginLeft: formatSize(4),
-    marginRight: formatSize(24)
-  },
-  socialsIcon: {
-    width: formatSize(24),
-    height: formatSize(24)
-  }
-}));
