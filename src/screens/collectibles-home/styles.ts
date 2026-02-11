@@ -23,24 +23,23 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
   accountContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginLeft: formatSize(16)
+    alignItems: 'center'
   },
   profileContainer: {
-    paddingVertical: formatSize(12),
-    marginHorizontal: formatSize(16)
+    paddingTop: formatSize(16),
+    paddingBottom: formatSize(12)
   },
   collectionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: formatSize(16),
-    marginBottom: formatSize(12)
+    paddingVertical: formatSize(4)
   },
   collectionsLabel: {
     ...typography.body15Semibold,
     color: colors.black
   },
   collectionsContainer: {
+    paddingTop: formatSize(8),
     paddingLeft: formatSize(4)
   },
   buttonDisabled: {
