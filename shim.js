@@ -11,12 +11,6 @@ if (!isDefined(global.localStorage)) {
   };
 }
 
-if (!isDefined(global.document)) {
-  global.document = {
-    addEventListener: () => null
-  };
-}
-
 if (typeof __dirname === 'undefined') {
   global.__dirname = '/';
 }
