@@ -37,20 +37,6 @@ export const buildGetCollectionsQuery = (creatorPkh: string) => gql`
   }
 `;
 
-export const buildGetHoldersInfoQuery = (address: string) => gql`
-  query MyQuery {
-    holder_by_pk(address: "${address}") {
-      alias
-      discord
-      github
-      logo
-      twitter
-      tzdomain
-      website
-    }
-  }
-`;
-
 export const buildGetCollectiblesByCollectionQuery = (contract: string, address: string, offset: number) => gql`
   query MyQuery {
     token(

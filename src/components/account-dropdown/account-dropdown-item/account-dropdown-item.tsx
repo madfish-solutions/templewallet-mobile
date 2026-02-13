@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
-import React, { memo, useEffect, useMemo, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
@@ -15,15 +14,12 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
-import { formatImgUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
-import { useTzProfile } from 'src/utils/tz-profiles';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
@@ -44,26 +40,10 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
   }) => {
     const styles = useAccountDropdownItemStyles();
     const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
-    const selectedAccountPkh = useCurrentAccountPkhSelector();
-    const tzProfile = useTzProfile(selectedAccountPkh);
-    const [userLogo, setUserLogo] = useState(tzProfile?.logo);
-
-    useEffect(() => setUserLogo(tzProfile?.logo), [tzProfile]);
 
     return (
       <View style={styles.root}>
-        {isDefined(userLogo) && isCollectibleScreen ? (
-          <FastImage
-            style={styles.image}
-            source={{ uri: formatImgUri(userLogo) }}
-            onError={() => setUserLogo(undefined)}
-          />
-        ) : (
-          <RobotIcon
-            seed={account.publicKeyHash}
-            size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined}
-          />
-        )}
+        <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
         <View style={styles.infoContainer}>
           <View
             style={[
@@ -72,9 +52,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
               conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
             ]}
           >
-            <TruncatedText style={styles.name}>
-              {isCollectibleScreen && tzProfile?.alias ? tzProfile.alias : account.name}
-            </TruncatedText>
+            <TruncatedText style={styles.name}>{account.name}</TruncatedText>
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
           </View>
           <View style={styles.lowerContainer}>
