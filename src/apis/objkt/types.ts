@@ -81,20 +81,6 @@ export interface QueryResponse {
   }[];
 }
 
-interface TzProfile {
-  alias?: string | nullish;
-  discord?: string | nullish;
-  github?: string | nullish;
-  logo?: string | nullish;
-  twitter?: string | nullish;
-  tzdomain?: string | nullish;
-  website?: string | nullish;
-}
-
-export interface TzProfilesQueryResponse {
-  holder_by_pk: TzProfile;
-}
-
 export interface CollectiblesByCollectionResponse {
   token: ObjktCollectionItem[];
 }

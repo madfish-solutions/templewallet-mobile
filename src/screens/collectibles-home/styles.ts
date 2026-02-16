@@ -26,19 +26,20 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     alignItems: 'center'
   },
   profileContainer: {
-    paddingVertical: formatSize(12)
+    paddingTop: formatSize(16),
+    paddingBottom: formatSize(12)
   },
   collectionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: formatSize(16),
-    marginBottom: formatSize(12)
+    paddingVertical: formatSize(4)
   },
   collectionsLabel: {
     ...typography.body15Semibold,
     color: colors.black
   },
   collectionsContainer: {
+    paddingTop: formatSize(8),
     paddingLeft: formatSize(4)
   },
   buttonDisabled: {
@@ -108,25 +109,5 @@ export const useCollectionButtonStyles = createUseStylesMemoized(({ colors, typo
     textAlign: 'center',
     color: colors.black,
     ...typography.caption10Regular
-  }
-}));
-
-export const useCollectiblesHomeProfileStyles = createUseStylesMemoized(({ colors, typography }) => ({
-  profileActions: {
-    flexDirection: 'row'
-  },
-  profileActionButton: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  profileText: {
-    ...typography.tagline13Tag,
-    color: colors.orange,
-    marginLeft: formatSize(4),
-    marginRight: formatSize(24)
-  },
-  socialsIcon: {
-    width: formatSize(24),
-    height: formatSize(24)
   }
 }));

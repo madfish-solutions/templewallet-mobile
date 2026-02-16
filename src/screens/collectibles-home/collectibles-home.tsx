@@ -29,7 +29,6 @@ import { formatObjktLogoUri } from 'src/utils/image.utils';
 
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
-import { TzProfileView } from './tz-profile';
 
 export const CollectiblesHome = memo(() => {
   const { navigate } = useNavigation();
@@ -91,8 +90,6 @@ export const CollectiblesHome = memo(() => {
           onLayout={event => void setProfileHeight(event.nativeEvent.layout.height)}
           style={styles.profileContainer}
         >
-          <TzProfileView accountPkh={accountPkh} />
-
           {collections.length > 0 ? (
             <>
               <View style={styles.collectionsHeader}>
