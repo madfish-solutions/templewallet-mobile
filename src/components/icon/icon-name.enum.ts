@@ -30,7 +30,6 @@ export enum IconNameEnum {
   PlusSquare = 'PlusSquare',
   HelpCircle = 'HelpCircle',
   PlusCircle = 'PlusCircle',
-  PlusCircleNew = 'PlusCircleNew',
   InputXCircle = 'InputXCircle',
   X = 'X',
   XBold = 'XBold',
