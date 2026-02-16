@@ -11,7 +11,7 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
@@ -39,7 +39,7 @@ const CHAINBITS_URL = 'https://buy.chainbits.com';
 
 export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const navigateToScreen = useNavigateToScreen();
   const { isLocked } = useAppLock();
   const atBootsplash = useAtBootsplash();
@@ -112,7 +112,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   const handleSendButton = () => {
     if (!emptyBalance) {
-      return navigate(ModalsEnum.Send, { token });
+      return navigateToModal(ModalsEnum.Send, { token });
     }
 
     showErrorToast({ description: errorMessage });
@@ -124,7 +124,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
       <ButtonMedium
         title="Receive"
         iconName={IconNameEnum.ArrowDown}
-        onPress={() => navigate(ModalsEnum.Receive, { token })}
+        onPress={() => navigateToModal(ModalsEnum.Receive, { token })}
         styleConfigOverrides={actionButtonStylesOverrides}
         style={styles.buttonContainer}
         testID={WalletSelectors.receiveButton}

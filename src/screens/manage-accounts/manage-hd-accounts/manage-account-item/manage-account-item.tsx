@@ -14,7 +14,7 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { setAccountVisibility } from 'src/store/wallet/wallet-actions';
 import { useIsAccountVisibleSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -32,7 +32,7 @@ interface Props {
 
 export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const styles = useManageAccountItemStyles();
   const tezosToken = useTezosTokenOfKnownAccount(account.publicKeyHash);
   const isVisible = useIsAccountVisibleSelector(account.publicKeyHash) ?? true;
@@ -55,7 +55,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
-            onPress={() => navigate(ModalsEnum.RenameAccount, { account })}
+            onPress={() => navigateToModal(ModalsEnum.RenameAccount, { account })}
             testID={ManageAccountItemSelectors.editButton}
           />
           <Divider size={formatSize(16)} />

@@ -117,6 +117,7 @@ export const TypographyProvider: FCWithChildren = ({ children }) => {
       },
       body17Regular: {
         fontFamily: FontsEnum.interRegular,
+        fontWeight: '400',
         fontSize: formatTextSize(17)
       },
       body15Semibold: {

@@ -14,7 +14,7 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -28,7 +28,7 @@ import { ManageImportedAccounts } from './manage-imported-accounts/manage-import
 const manageHdAccountsIndex = 0;
 
 export const ManageAccounts = () => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const { createHdAccount } = useShelter();
   const { trackEvent } = useAnalytics();
 
@@ -85,7 +85,7 @@ export const ManageAccounts = () => {
           key="import-an-account"
           title="Import an account"
           onPress={useCallbackIfOnline(() => {
-            navigate(ModalsEnum.ChooseAccountImportType);
+            navigateToModal(ModalsEnum.ChooseAccountImportType);
             revealSelectBottomSheetController.close();
           })}
           testID={ManageAccountsSelectors.importAnAccountButton}

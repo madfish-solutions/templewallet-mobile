@@ -11,7 +11,7 @@ import { WhiteContainerAction } from 'src/components/white-container/white-conta
 import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import {
   disableBiometryPassword,
   setIsAnalyticsEnabled,
@@ -30,7 +30,7 @@ import { SecureSettingsSelectors } from './secure-settings.selectors';
 
 export const SecureSettings = () => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const { isHardwareAvailable, biometryType } = useBiometryAvailability();
 
   const analyticsEnabled = useAnalyticsEnabledSelector();
@@ -43,7 +43,7 @@ export const SecureSettings = () => {
 
   const handleBiometrySwitch = (newValue: boolean) => {
     if (isDefined(biometryType)) {
-      newValue ? navigate(ModalsEnum.EnableBiometryPassword) : dispatch(disableBiometryPassword());
+      newValue ? navigateToModal(ModalsEnum.EnableBiometryPassword) : dispatch(disableBiometryPassword());
     } else {
       openSecuritySettings();
     }

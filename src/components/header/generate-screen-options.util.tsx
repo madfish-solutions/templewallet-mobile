@@ -11,6 +11,7 @@ export const generateScreenOptions = (
   headerLeft = true,
   customHeaderStyle?: StackNavigationOptions['headerStyle']
 ): StackNavigationOptions => ({
+  animation: 'scale_from_center',
   headerTitleAlign: 'center',
   headerLeft: () => headerLeft && <HeaderBackButton />,
   headerTitle: () => headerTitleElement,

@@ -1,6 +1,6 @@
 import { debounce } from 'lodash-es';
 import React, { useMemo, useState } from 'react';
-import { View, TextInput } from 'react-native';
+import { View } from 'react-native';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
@@ -11,6 +11,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { Divider } from '../divider/divider';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
+import { PatchedTextInput } from '../patched-text-input';
 
 import { useSearchStyles } from './search.styles';
 
@@ -57,7 +58,7 @@ export const Search: FCWithChildren<Props> = ({
     <View style={styles.container}>
       {isSearchMode ? (
         <>
-          <TextInput
+          <PatchedTextInput
             autoFocus={true}
             style={styles.searchInput}
             placeholder={placeholder}

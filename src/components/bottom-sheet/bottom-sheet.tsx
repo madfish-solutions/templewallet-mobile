@@ -1,11 +1,11 @@
 import GorhomBottomSheet, {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
+  BottomSheetView,
   TouchableOpacity
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
-import { max } from 'lodash-es';
-import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
 import { BackHandler, Keyboard, Text, View } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -50,18 +50,22 @@ export const BottomSheet: FCWithChildren<Props> = ({
   const insets = useSafeAreaInsets();
   const [isOpened, setIsOpened] = useState(false);
 
-  const bottomInset = max([insets.bottom, formatSize(8)]);
+  const wasAnimatedRef = useRef(false);
+  const handleAnimate = useCallback(() => {
+    wasAnimatedRef.current = true;
+  }, []);
+
   const renderBackdropComponent = useCallback(
     (props: PropsWithChildren<BottomSheetBackdropProps>) => (
       <BottomSheetBackdrop
         {...props}
         style={[props.style, styles.backdrop]}
-        opacity={0.16}
+        opacity={wasAnimatedRef.current || isInitiallyOpen ? 0.16 : 0}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
       />
     ),
-    [styles.backdrop]
+    [styles.backdrop, isInitiallyOpen]
   );
 
   const handleChange = (index: number) => {
@@ -101,14 +105,15 @@ export const BottomSheet: FCWithChildren<Props> = ({
           index={isInitiallyOpen ? 0 : -1}
           snapPoints={[contentHeight]}
           enablePanDownToClose={true}
-          bottomInset={bottomInset}
+          bottomInset={insets.bottom + formatSize(8)}
           handleComponent={emptyComponent}
           backgroundComponent={emptyComponent}
           backdropComponent={renderBackdropComponent}
+          onAnimate={handleAnimate}
           onChange={handleChange}
           onClose={handleClose}
         >
-          <View style={styles.root}>
+          <BottomSheetView style={styles.root}>
             {(isDefined(title) || isDefined(description)) && (
               <View style={styles.headerContainer}>
                 {isDefined(title) && <Text style={styles.title}>{title}</Text>}
@@ -126,7 +131,7 @@ export const BottomSheet: FCWithChildren<Props> = ({
             >
               <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
             </TouchableWithAnalytics>
-          </View>
+          </BottomSheetView>
         </GorhomBottomSheet>
       )}
     </Portal>

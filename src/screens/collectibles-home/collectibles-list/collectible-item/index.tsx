@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import {
   useCollectibleDetailsLoadingSelector,
   useCollectibleDetailsSelector
@@ -29,7 +29,7 @@ interface Props {
 }
 
 export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInfo = false, style }) => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
 
   const styles = useCollectibleItemStyles();
 
@@ -57,7 +57,10 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
     return { floorPriceDisplayed, symbol: currency.symbol };
   }, [details]);
 
-  const handleNavigate = useCallback(() => navigate(ModalsEnum.CollectibleModal, { slug }), [slug, navigate]);
+  const handleNavigate = useCallback(
+    () => navigateToModal(ModalsEnum.CollectibleModal, { slug }),
+    [slug, navigateToModal]
+  );
 
   return (
     <TouchableOpacity activeOpacity={0.7} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>

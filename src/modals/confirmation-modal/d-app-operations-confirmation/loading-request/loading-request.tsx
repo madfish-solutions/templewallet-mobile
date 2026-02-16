@@ -3,8 +3,8 @@ import React, { FC } from 'react';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
-import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 
 import { useLoadingRequestStyles } from './loading-request.styles';
@@ -25,9 +25,9 @@ export const LoadingRequest: FC = () => {
         <LoadingPlaceholder text="Operation is loading..." />
         <Disclaimer title="If loading takes too long:" texts={texts} />
       </ScreenContainer>
-      <ModalButtonsContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary title="Close" onPress={goBack} />
-      </ModalButtonsContainer>
+      </ModalButtonsFloatingContainer>
     </>
   );
 };

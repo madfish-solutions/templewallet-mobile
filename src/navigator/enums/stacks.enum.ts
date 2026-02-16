@@ -4,8 +4,8 @@ export enum StacksEnum {
   MainStack = 'MainStack'
 }
 
-type MainStackParamsPart<T extends ScreensEnum> = ScreensParamList[T] extends undefined
-  ? { screen: T; params?: undefined }
+type MainStackParamsPart<T extends ScreensEnum> = undefined extends ScreensParamList[T]
+  ? { screen: T; params?: ScreensParamList[T] }
   : { screen: T; params: ScreensParamList[T] };
 
 export type MainStackParams =

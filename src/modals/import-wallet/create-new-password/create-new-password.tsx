@@ -8,7 +8,7 @@ import { ButtonLargeSecondary } from 'src/components/button/button-large/button-
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
-import { WalletInitButtonsFloatingContainer } from 'src/layouts/wallet-init-buttons-floating-container';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { WalletInitNewPasswordInputs } from 'src/layouts/wallet-init-new-password-inputs';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
@@ -108,7 +108,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
         onAcceptTermsLayout={handleAcceptTermsLayout}
       />
 
-      <WalletInitButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary title="Back" onPress={onGoBackPress} />
         <ButtonLargePrimary
           title="Import"
@@ -126,7 +126,7 @@ export const CreateNewPassword = memo<Props>(({ onGoBackPress, seedPhrase, initi
           })}
           testID={CreateNewPasswordSelectors.createButton}
         />
-      </WalletInitButtonsFloatingContainer>
+      </ModalButtonsFloatingContainer>
     </FormikProvider>
   );
 });

@@ -6,7 +6,7 @@ import { getUrlQueryParams } from 'src/utils/url.utils';
 
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
-import { useNavigation } from '../navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { showErrorToast } from '../toast/toast.utils';
 import { isDefined } from '../utils/is-defined';
 
@@ -35,14 +35,15 @@ export const beaconDeepLinkHandler = async (
 };
 
 export const useBeaconHandler = () => {
-  const { navigate, goBack } = useNavigation();
+  const navigateToModal = useNavigateToModal();
+  const { goBack } = useNavigation();
 
   useEffect(() => {
     const listener = ({ url }: { url: string | null }) =>
       beaconDeepLinkHandler(
         url ?? '',
         () =>
-          navigate(ModalsEnum.Confirmation, {
+          navigateToModal(ModalsEnum.Confirmation, {
             type: ConfirmationTypeEnum.DAppOperations,
             message: null,
             loading: true
@@ -56,7 +57,7 @@ export const useBeaconHandler = () => {
     let emitter: EmitterSubscription;
 
     BeaconHandler.init(message =>
-      navigate(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message })
+      navigateToModal(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.DAppOperations, message })
     ).then(() => {
       emitter = Linking.addEventListener('url', listener);
       Linking.getInitialURL().then(url => listener({ url }));

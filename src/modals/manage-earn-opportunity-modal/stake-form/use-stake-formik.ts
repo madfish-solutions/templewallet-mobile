@@ -124,10 +124,13 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         );
 
         dispatch(
-          navigateAction(ModalsEnum.Confirmation, {
-            type: ConfirmationTypeEnum.InternalOperations,
-            opParams,
-            testID: 'STAKE_TRANSACTION_SENT'
+          navigateAction({
+            screen: ModalsEnum.Confirmation,
+            params: {
+              type: ConfirmationTypeEnum.InternalOperations,
+              opParams,
+              testID: 'STAKE_TRANSACTION_SENT'
+            }
           })
         );
         trackEvent('STAKE_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);

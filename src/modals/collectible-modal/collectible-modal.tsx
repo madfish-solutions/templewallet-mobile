@@ -1,8 +1,7 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
+import FastImage from '@d11/react-native-fast-image';
 import BigNumber from 'bignumber.js';
 import React, { memo, useMemo, useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View, Image } from 'react-native';
-import FastImage from 'react-native-fast-image';
 import { SvgUri, SvgXml } from 'react-native-svg';
 import { useDispatch } from 'react-redux';
 
@@ -22,8 +21,9 @@ import { emptyFn } from 'src/config/general';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
 import {
   useCollectibleDetailsLoadingSelector,
@@ -62,7 +62,8 @@ enum SegmentControlNamesEnum {
 }
 
 export const CollectibleModal = memo(() => {
-  const { slug } = useRoute<RouteProp<ModalsParamList, ModalsEnum.CollectibleModal>>().params;
+  const { slug } = useModalParams<ModalsEnum.CollectibleModal>();
+  const navigateToModal = useNavigateToModal();
 
   const [address, id] = fromTokenSlug(slug);
   const accountPkh = useCurrentAccountPkhSelector();
@@ -95,14 +96,12 @@ export const CollectibleModal = memo(() => {
 
   const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
 
-  const { navigate } = useNavigation();
-
   const button = useMemo(() => {
     if (isAccountHolder) {
       return {
         title: 'Send',
         disabled: !metadata,
-        onPress: metadata ? (): void => navigate(ModalsEnum.Send, { token: metadata }) : undefined
+        onPress: metadata ? () => navigateToModal(ModalsEnum.Send, { token: metadata }) : undefined
       };
     }
 
@@ -133,13 +132,13 @@ export const CollectibleModal = memo(() => {
       onPress: () =>
         void buildBuyCollectibleParams(createTezosToolkit(selectedRpc), accountPkh, listing, purchaseCurrency).then(
           opParams =>
-            navigate(ModalsEnum.Confirmation, {
+            navigateToModal(ModalsEnum.Confirmation, {
               type: ConfirmationTypeEnum.InternalOperations,
               opParams
             })
         )
     };
-  }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, accountPkh, selectedRpc, navigate]);
+  }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, accountPkh, selectedRpc, navigateToModal]);
 
   const name = metadata?.name ?? details?.name;
   let artifactUri: string | undefined;
@@ -213,109 +212,106 @@ export const CollectibleModal = memo(() => {
   }, [details, styles.collectionLogo]);
 
   return (
-    <ScreenContainer
-      fixedFooterContainer={{
-        submitButton: (
-          <ButtonLargePrimary
-            disabled={button.disabled}
-            title={button.title}
-            isLoading={button.loading}
-            onPress={button.onPress || emptyFn}
-            testID={CollectibleModalSelectors.sendButton}
-          />
-        )
-      }}
-      isFullScreenMode={true}
-      scrollEnabled={scrollEnabled}
-    >
-      <ModalStatusBar />
+    <>
+      <ScreenContainer isFullScreenMode={true} scrollEnabled={scrollEnabled}>
+        <ModalStatusBar />
 
-      <View>
-        <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
-          <CollectibleMedia
-            slug={slug}
-            artifactUri={artifactUri}
-            displayUri={displayUri}
-            thumbnailUri={thumbnailUri}
-            mime={details?.mime}
-            size={imageSize}
-            areDetailsLoading={areDetailsLoading && details === undefined}
-            setScrollEnabled={setScrollEnabled}
-          />
-        </View>
-
-        <Divider size={formatSize(12)} />
-
-        <View style={styles.collectionContainer}>
-          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {collection?.logo ?? <View style={[styles.collectionLogo, styles.logoFallBack]} />}
-
-            <TruncatedText style={styles.collectionName}>{collection?.title ?? 'Unknown collection'}</TruncatedText>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-            <Icon name={IconNameEnum.Share} />
-            <Divider size={formatSize(4)} />
-            <Text style={styles.shareButtonText}>Share</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.nameContainer}>
-          <Text style={styles.name}>{name ?? '---'}</Text>
-        </View>
-
-        {details?.description ? (
-          <View style={styles.descriptionContainer}>
-            <Text style={styles.description}>{details.description}</Text>
+        <View>
+          <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
+            <CollectibleMedia
+              slug={slug}
+              artifactUri={artifactUri}
+              displayUri={displayUri}
+              thumbnailUri={thumbnailUri}
+              mime={details?.mime}
+              size={imageSize}
+              areDetailsLoading={areDetailsLoading && details === undefined}
+              setScrollEnabled={setScrollEnabled}
+            />
           </View>
-        ) : null}
 
-        {creators?.length ? (
-          <View style={styles.creatorsContainer}>
-            <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
+          <Divider size={formatSize(12)} />
 
-            {creators.map(({ holder }, index) => (
-              <LinkWithIcon
-                key={holder.address}
-                text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                link={getObjktProfileLink(holder.address)}
-                valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                style={[
-                  styles.linkWithIcon,
-                  conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
-                ]}
-              />
-            ))}
+          <View style={styles.collectionContainer}>
+            <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+              {collection?.logo ?? <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+
+              <TruncatedText style={styles.collectionName}>{collection?.title ?? 'Unknown collection'}</TruncatedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+              <Icon name={IconNameEnum.Share} />
+              <Divider size={formatSize(4)} />
+              <Text style={styles.shareButtonText}>Share</Text>
+            </TouchableOpacity>
           </View>
-        ) : null}
 
-        {segments.values.length ? (
-          <TextSegmentControl
-            selectedIndex={segmentControlIndex}
-            values={segments.values}
-            onChange={setSegmentControlIndex}
-            style={styles.segmentControl}
-          />
-        ) : null}
+          <View style={styles.nameContainer}>
+            <Text style={styles.name}>{name ?? '---'}</Text>
+          </View>
 
-        {segments.current === 'properties' ? (
-          <CollectibleProperties contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
-        ) : null}
+          {details?.description ? (
+            <View style={styles.descriptionContainer}>
+              <Text style={styles.description}>{details.description}</Text>
+            </View>
+          ) : null}
 
-        {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
+          {creators?.length ? (
+            <View style={styles.creatorsContainer}>
+              <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
 
-        {isAccountHolder ? (
-          <TouchableWithAnalytics
-            Component={TouchableOpacity}
-            onPress={burnCollectible}
-            style={styles.burnButton}
-            testID={CollectibleModalSelectors.burnButton}
-          >
-            <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
-            <Icon name={IconNameEnum.Burn} />
-          </TouchableWithAnalytics>
-        ) : null}
-      </View>
-    </ScreenContainer>
+              {creators.map(({ holder }, index) => (
+                <LinkWithIcon
+                  key={holder.address}
+                  text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                  link={getObjktProfileLink(holder.address)}
+                  valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                  style={[
+                    styles.linkWithIcon,
+                    conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
+                  ]}
+                />
+              ))}
+            </View>
+          ) : null}
+
+          {segments.values.length ? (
+            <TextSegmentControl
+              selectedIndex={segmentControlIndex}
+              values={segments.values}
+              onChange={setSegmentControlIndex}
+              style={styles.segmentControl}
+            />
+          ) : null}
+
+          {segments.current === 'properties' ? (
+            <CollectibleProperties contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
+          ) : null}
+
+          {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
+
+          {isAccountHolder ? (
+            <TouchableWithAnalytics
+              Component={TouchableOpacity}
+              onPress={burnCollectible}
+              style={styles.burnButton}
+              testID={CollectibleModalSelectors.burnButton}
+            >
+              <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
+              <Icon name={IconNameEnum.Burn} />
+            </TouchableWithAnalytics>
+          ) : null}
+        </View>
+      </ScreenContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
+        <ButtonLargePrimary
+          disabled={button.disabled}
+          title={button.title}
+          isLoading={button.loading}
+          onPress={button.onPress || emptyFn}
+          testID={CollectibleModalSelectors.sendButton}
+        />
+      </ModalButtonsFloatingContainer>
+    </>
   );
 });

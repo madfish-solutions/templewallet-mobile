@@ -51,15 +51,21 @@
                 <data android:scheme="@string/temple_url_scheme" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="true">
+            <!-- <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="app.templewallet.com" />
                 <data android:scheme="http" android:host="app.templewallet.com" />
-            </intent-filter>
+            </intent-filter> -->
 
-            <!-- Development version of deeplinks handler: development\-\-templewallet-deeplinks-nextjs.netlify.app -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="development--templewallet-deeplinks-nextjs.netlify.app" />
+                <data android:scheme="http" android:host="development--templewallet-deeplinks-nextjs.netlify.app" />
+            </intent-filter>
         </activity>
     </application>
 </manifest>

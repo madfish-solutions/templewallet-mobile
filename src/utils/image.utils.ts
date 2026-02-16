@@ -10,6 +10,11 @@ const IPFS_GATE = 'https://ipfs.io/ipfs';
 
 type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
+const buildIpfsMediaUrisByInfo = (info: MediaUriInfo) => [
+  buildIpfsMediaUriByInfo(info),
+  buildIpfsMediaUriByInfo(info, 'https://ipfs.filebase.io/ipfs')
+];
+
 export const buildCollectibleImagesStack = (
   slug: string,
   { artifactUri, displayUri, thumbnailUri }: AssetMediaURIs,
@@ -30,9 +35,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'display'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'display'),
 
-        buildIpfsMediaUriByInfo(displayInfo),
+        ...buildIpfsMediaUrisByInfo(displayInfo),
 
-        buildIpfsMediaUriByInfo(artifactInfo),
+        ...buildIpfsMediaUrisByInfo(artifactInfo),
 
         assureGetDataUriImage(thumbnailUri)
       ]
@@ -50,9 +55,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'thumb288'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'thumb288'),
 
-        buildIpfsMediaUriByInfo(thumbnailInfo),
-        buildIpfsMediaUriByInfo(displayInfo),
-        buildIpfsMediaUriByInfo(artifactInfo)
+        ...buildIpfsMediaUrisByInfo(thumbnailInfo),
+        ...buildIpfsMediaUrisByInfo(displayInfo),
+        ...buildIpfsMediaUrisByInfo(artifactInfo)
       ];
 
   return uniq(stack.filter(isTruthy));
@@ -117,13 +122,19 @@ const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTai
 
 const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
-const buildIpfsMediaUriByInfo = ({ uri, ipfs: ipfsInfo }: MediaUriInfo) => {
+const CLOUDFLARE_IPFS_REGEX = /^https?:\/\/cloudflare-ipfs\.com/;
+
+const buildIpfsMediaUriByInfo = ({ uri, ipfs: ipfsInfo }: MediaUriInfo, ipfsGate = IPFS_GATE) => {
   if (!uri) {
     return;
   }
 
   if (ipfsInfo) {
-    return `${IPFS_GATE}/${ipfsInfo.path}${ipfsInfo.search}`;
+    return `${ipfsGate}/${ipfsInfo.path}${ipfsInfo.search}`;
+  }
+
+  if (CLOUDFLARE_IPFS_REGEX.test(uri)) {
+    return `${ipfsGate}/${uri.replace(CLOUDFLARE_IPFS_REGEX, '')}`;
   }
 
   if (uri.startsWith('http')) {

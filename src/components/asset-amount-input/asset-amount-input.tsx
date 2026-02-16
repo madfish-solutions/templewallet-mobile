@@ -26,6 +26,7 @@ import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
+import { PatchedTextInput } from '../patched-text-input';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
@@ -281,7 +282,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
             style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding), configInputPaddingStyles]}
           />
 
-          <TextInput
+          <PatchedTextInput
             ref={amountInputRef}
             value={stringValue}
             placeholder="0.00"

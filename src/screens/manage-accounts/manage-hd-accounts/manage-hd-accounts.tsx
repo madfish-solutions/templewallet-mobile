@@ -11,7 +11,7 @@ import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
 import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useHdAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
@@ -22,7 +22,7 @@ import { ManageHdAccountsSelectors } from './manage-hd-accounts.selectors';
 import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 
 export const ManageHdAccounts = () => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
@@ -38,12 +38,12 @@ export const ManageHdAccounts = () => {
   };
 
   const handleRevealPrivateKeyButtonPress = () => {
-    navigate(ModalsEnum.RevealPrivateKey, { account: managedAccount });
+    navigateToModal(ModalsEnum.RevealPrivateKey, { account: managedAccount });
     revealSelectBottomSheetController.close();
   };
 
   const handleRevealSeedPhraseButtonPress = () => {
-    navigate(ModalsEnum.RevealSeedPhrase, { account: managedAccount });
+    navigateToModal(ModalsEnum.RevealSeedPhrase, { account: managedAccount });
     revealSelectBottomSheetController.close();
   };
 
@@ -62,7 +62,7 @@ export const ManageHdAccounts = () => {
           title="Seed phrase"
           marginTop={formatSize(4)}
           marginBottom={formatSize(4)}
-          onPress={() => navigate(ModalsEnum.RevealSeedPhrase, {})}
+          onPress={() => navigateToModal(ModalsEnum.RevealSeedPhrase, {})}
           testID={ManageHdAccountsSelectors.seedPhraseButton}
         />
       </View>

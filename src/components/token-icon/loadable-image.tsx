@@ -1,5 +1,5 @@
+import FastImage, { OnErrorEvent, Source } from '@d11/react-native-fast-image';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
-import FastImage, { Source } from 'react-native-fast-image';
 
 import { formatImgUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
@@ -12,7 +12,7 @@ import { TokenIconStyles } from './token-icon.styles';
 interface Props {
   uri: string;
   size: number;
-  onError?: EmptyFn;
+  onError?: SyncFn<OnErrorEvent>;
 }
 
 export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError }) => {
@@ -35,10 +35,13 @@ export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError }) => {
 
   const source = useMemo<Source>(() => (isString(uri) ? { uri: formatImgUri(uri) } : {}), [uri]);
 
-  const handleError = useCallback(() => {
-    setIsFailed(true);
-    onError?.();
-  }, [onError]);
+  const handleError = useCallback(
+    (e: OnErrorEvent) => {
+      setIsFailed(true);
+      onError?.(e);
+    },
+    [onError]
+  );
   const handleLoadEnd = useCallback(() => setIsLoading(false), []);
 
   return (

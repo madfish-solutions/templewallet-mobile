@@ -11,12 +11,12 @@ import { Divider } from 'src/components/divider/divider';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { Label } from 'src/components/label/label';
-import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { useParseSignPayload } from 'src/hooks/use-parse-sign-payload.hook';
 import { emptyAccount } from 'src/interfaces/account.interface';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import { navigateBackAction } from 'src/store/root-state.actions';
@@ -97,21 +97,20 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
           {isPayloadParsed ? (isPayloadPreviewType ? payloadPreview : message.payload) : message.payload}
         </Text>
       </ScreenContainer>
-      <ModalButtonsContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary
           title="Cancel"
           disabled={isLoading}
           onPress={goBack}
           testID={SignPayloadRequestConfirmationSelectors.cancelButton}
         />
-        <Divider size={formatSize(16)} />
         <ButtonLargePrimary
           title="Sign"
           disabled={isLoading}
           onPress={() => confirmRequest(message)}
           testID={SignPayloadRequestConfirmationSelectors.signButton}
         />
-      </ModalButtonsContainer>
+      </ModalButtonsFloatingContainer>
     </>
   );
 };

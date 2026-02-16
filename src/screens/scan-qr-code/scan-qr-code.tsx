@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Camera,
   CameraPosition,
@@ -11,13 +12,14 @@ import {
 
 import { beaconDeepLinkHandler } from 'src/beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { useInsetStyles } from 'src/hooks/use-inset-styles';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useSuggestedHeaderHeight } from 'src/hooks/use-suggested-header-height.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -28,6 +30,7 @@ import { isValidAddress } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { ScanQrCodeAnalyticsEvents } from './analytics-events';
+import CustomMarker from './custom-marker.svg';
 import { EmptyQrCode } from './empty-qr-code';
 import { useScanQrCodeStyles } from './scan-qr-code.styles';
 
@@ -37,7 +40,7 @@ export const ScanQrCode = () => {
   const { hasPermission, requestPermission } = useCameraPermission();
   const [permissionWasRequested, setPermissionWasRequested] = useState(false);
   const styles = useScanQrCodeStyles();
-  const { marginBottom } = useInsetStyles();
+  const { bottom: marginBottom } = useSafeAreaInsets();
 
   useEffect(() => {
     if (permissionWasRequested || hasPermission) {
@@ -56,10 +59,12 @@ export const ScanQrCode = () => {
 
 const CameraView = () => {
   const styles = useScanQrCodeStyles();
-  const { navigate, goBack } = useNavigation();
+  const navigateToModal = useNavigateToModal();
+  const { goBack } = useNavigation();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const isAuthorised = useIsAuthorisedSelector();
   const { trackEvent } = useAnalytics();
+  const { top: topInset } = useSafeAreaInsets();
 
   const { metadata } = useNetworkInfo();
 
@@ -79,7 +84,7 @@ const CameraView = () => {
       if (isAuthorised) {
         if (isValidAddress(data)) {
           if (Number(tezosToken.balance) > 0) {
-            navigate(ModalsEnum.Send, { token: metadata, receiverPublicKeyHash: data });
+            navigateToModal(ModalsEnum.Send, { token: metadata, receiverPublicKeyHash: data });
           } else {
             trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_ZERO_BALANCE, AnalyticsEventCategory.General);
             showErrorToast({ description: `You need to have ${metadata.symbol} to pay gas fee` });
@@ -90,7 +95,7 @@ const CameraView = () => {
             data,
             () => {
               dataWasIgnored = false;
-              navigate(ModalsEnum.Confirmation, {
+              navigateToModal(ModalsEnum.Confirmation, {
                 type: ConfirmationTypeEnum.DAppOperations,
                 message: null,
                 loading: true
@@ -114,17 +119,24 @@ const CameraView = () => {
         }
       } else {
         if (isSyncPayload(data)) {
-          navigate(ModalsEnum.ConfirmSync, { payload: data });
+          navigateToModal(ModalsEnum.ConfirmSync, { payload: data });
         } else {
           trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_INVALID_QR_CODE, AnalyticsEventCategory.General);
           showErrorToast({ description: 'Invalid QR code' });
         }
       }
     },
-    [goBack, navigate, trackEvent, tezosToken, metadata, isAuthorised]
+    [goBack, navigateToModal, trackEvent, tezosToken, metadata, isAuthorised]
   );
 
-  useNavigationSetOptions({ headerTransparent: true }, []);
+  const headerHeight = useSuggestedHeaderHeight(false);
+  useNavigationSetOptions(
+    {
+      headerTransparent: true,
+      headerStyle: { height: headerHeight - topInset, shadowOpacity: 0 }
+    },
+    [headerHeight]
+  );
 
   const cameraDevices = useCameraDevices();
   const cameraDevice = useMemo(
@@ -141,8 +153,10 @@ const CameraView = () => {
 
   return (
     <>
-      {/* TODO: add marker */}
       <Camera style={styles.camera} codeScanner={codeScanner} device={cameraDevice} isActive />
+      <View style={[styles.markerContainer, { top: topInset }]}>
+        <CustomMarker width={formatSize(223)} height={formatSize(223)} />
+      </View>
     </>
   );
 };

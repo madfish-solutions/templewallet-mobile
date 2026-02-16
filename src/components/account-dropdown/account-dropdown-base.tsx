@@ -5,7 +5,7 @@ import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -19,7 +19,7 @@ import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from
 import { accountEqualityFn } from './account-equality-fn';
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const navigateToScreen = useNavigateToScreen();
   const { trackEvent } = useAnalytics();
   const { createHdAccount } = useShelter();
@@ -36,7 +36,7 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   };
 
   const handleImportAccountButtonPress = () => {
-    navigate(ModalsEnum.ChooseAccountImportType);
+    navigateToModal(ModalsEnum.ChooseAccountImportType);
     onPress();
   };
 

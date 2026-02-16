@@ -12,7 +12,7 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { removeTokenAction } from 'src/store/wallet/wallet-actions';
 import { formatSize } from 'src/styles/format-size';
@@ -39,7 +39,7 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
   const dispatch = useDispatch();
   const styles = useTokenScreenContentContainerStyles();
   const apyStyles = useApyStyles();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const navigateToScreen = useNavigateToScreen();
   const currentBaker = useSelectedBakerSelector();
   const { trackEvent } = useAnalytics();
@@ -49,7 +49,7 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
 
   const navigationFlow = () => {
     isDcpNode && !currentBaker
-      ? navigate(ModalsEnum.SelectBaker)
+      ? navigateToModal(ModalsEnum.SelectBaker)
       : navigateToScreen({ screen: ScreensEnum.Delegation });
   };
 

@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -13,7 +12,8 @@ import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { useDomainName } from 'src/hooks/use-domain-name.hook';
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { toggleDomainAddressShown } from 'src/store/settings/settings-actions';
 import { useIsShownDomainNameSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
@@ -31,7 +31,7 @@ export const ReceiveModal: FC = () => {
   const colors = useColors();
   const styles = useReceiveModalStyles();
   const publicKeyHash = useCurrentAccountPkhSelector();
-  const { token } = useRoute<RouteProp<ModalsParamList, ModalsEnum.Receive>>().params;
+  const { token } = useModalParams<ModalsEnum.Receive>();
 
   const { name, symbol } = token;
 

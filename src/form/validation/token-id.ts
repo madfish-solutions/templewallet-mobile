@@ -1,12 +1,10 @@
-import { BigNumber } from 'bignumber.js';
-import { object, SchemaOf } from 'yup';
+import BigNumber from 'bignumber.js';
 
-import { isDefined } from 'src/utils/is-defined';
+import { bigNumberSchema } from './big-number';
 
-export const tokenIdValidation: SchemaOf<BigNumber> = object()
-  .shape({})
+export const tokenIdValidation = bigNumberSchema()
   .test('non-negative', 'Should be non-negative integer', value => {
-    if (isDefined(value) && value instanceof BigNumber) {
+    if (value instanceof BigNumber) {
       return value.integerValue().eq(value) && value.gte(0);
     }
 

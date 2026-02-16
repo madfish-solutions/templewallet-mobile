@@ -13,10 +13,10 @@ import { Divider } from 'src/components/divider/divider';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { Label } from 'src/components/label/label';
-import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ApprovePermissionRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-permission-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
@@ -92,21 +92,20 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
             <Label label="Account" description="To be connected with dApp." />
             <AccountFormDropdown name="approver" list={accounts} />
           </ScreenContainer>
-          <ModalButtonsContainer>
+          <ModalButtonsFloatingContainer variant="bordered">
             <ButtonLargeSecondary
               title="Cancel"
               disabled={isLoading}
               onPress={goBack}
               testID={PermissionRequestConfirmationSelectors.cancelButton}
             />
-            <Divider size={formatSize(16)} />
             <ButtonLargePrimary
               title="Confirm"
               disabled={isLoading}
               onPress={submitForm}
               testID={PermissionRequestConfirmationSelectors.confirmButton}
             />
-          </ModalButtonsContainer>
+          </ModalButtonsFloatingContainer>
         </>
       )}
     </Formik>

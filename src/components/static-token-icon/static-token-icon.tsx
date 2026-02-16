@@ -1,6 +1,6 @@
+import FastImage, { ImageStyle } from '@d11/react-native-fast-image';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, View } from 'react-native';
-import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';

@@ -9,7 +9,7 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 
 import { ContactItem } from './contact-item/contact-item';
@@ -18,7 +18,7 @@ import { ContactsSelectors } from './contacts.selectors';
 const keyExtractor = (item: AccountBaseInterface) => item.publicKeyHash;
 
 export const Contacts = memo(() => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const contacts = useContactsSelector();
 
   useNavigationSetOptions(
@@ -26,7 +26,7 @@ export const Contacts = memo(() => {
       <HeaderTitle title="Contacts" />,
       <HeaderButton
         iconName={IconNameEnum.PlusIconOrange}
-        onPress={() => navigate(ModalsEnum.AddContact)}
+        onPress={() => navigateToModal(ModalsEnum.AddContact)}
         testID={ContactsSelectors.addContactButton}
       />
     ),

@@ -16,4 +16,4 @@ export const assetValidation: SchemaOf<TokenInterface> = object()
     }
 
     return true;
-  }) as SchemaOf<TokenInterface>;
+  });

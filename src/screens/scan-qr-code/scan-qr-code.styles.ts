@@ -1,3 +1,5 @@
+import { StyleSheet } from 'react-native';
+
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -16,5 +18,10 @@ export const useScanQrCodeStyles = createUseStyles(() => ({
     justifyContent: 'flex-end',
     flexDirection: 'column',
     flex: 1
+  },
+  markerContainer: {
+    ...StyleSheet.absoluteFill,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }));

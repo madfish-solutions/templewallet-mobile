@@ -9,7 +9,6 @@ export interface AddTokenAddressFormValues {
   id?: BigNumber;
 }
 
-// @ts-ignore
 export const addTokenAddressFormValidationSchema: SchemaOf<AddTokenAddressFormValues> = object().shape({
   address: tokenAddressValidation,
   id: tokenIdValidation

@@ -1,6 +1,6 @@
+import FastImage from '@d11/react-native-fast-image';
 import React, { FC, useCallback, useState } from 'react';
 import { View } from 'react-native';
-import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';

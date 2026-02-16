@@ -28,7 +28,7 @@ export const NavigationBar: FCWithChildren = ({ children }) => {
 
   const [isShowTabletNavigation, setIsShowTabletNavigation] = useState(false);
 
-  const isShowNavigationBar = isAuthorised && !screensWithoutTabBar.includes(currentRouteName);
+  const isShowNavigationBar = isAuthorised && !screensWithoutTabBar.includes(currentRouteName as ScreensEnum);
 
   useEffect(() => void (!isTablet() && Orientation.lockToPortrait()), []);
 

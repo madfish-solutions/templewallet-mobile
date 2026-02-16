@@ -6,7 +6,7 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
-import { WalletInitButtonsFloatingContainer } from 'src/layouts/wallet-init-buttons-floating-container';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { WalletInitNewPasswordInputs } from 'src/layouts/wallet-init-new-password-inputs';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
@@ -102,7 +102,7 @@ export const CreateNewWallet = () => {
         onAcceptTermsLayout={handleAcceptTermsLayout}
       />
 
-      <WalletInitButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargePrimary
           title="Create"
           onPress={useCallbackIfOnline(() => {
@@ -118,7 +118,7 @@ export const CreateNewWallet = () => {
           })}
           testID={CreateNewWalletSelectors.createButton}
         />
-      </WalletInitButtonsFloatingContainer>
+      </ModalButtonsFloatingContainer>
     </FormikProvider>
   );
 };

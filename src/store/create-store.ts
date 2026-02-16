@@ -15,7 +15,7 @@ const epicMiddleware = createEpicMiddleware();
 const middlewares: Middleware<object, RootState>[] = [epicMiddleware];
 
 if (__DEV__ && !isDefined(process.env.JEST_WORKER_ID)) {
-  middlewares.push(createLogger({ collapsed: true }));
+  middlewares.push(createLogger({ diff: true, collapsed: true }));
 }
 
 export const createStore = (...epics: Epic[]) => {

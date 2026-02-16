@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 import { object } from 'yup';
 
-import { bigNumberValidation } from 'src/form/validation/big-number';
+import { bigNumberSchema } from 'src/form/validation/big-number';
 import { EstimationInterface } from 'src/interfaces/estimation.interface';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -33,22 +33,24 @@ export const useFeeForm = (opParams: ParamsWithKind[], estimationsList: Estimati
     () => ({
       formInitialValues: estimationsApplied ? basicFees : {},
       formValidationSchema: object().shape({
-        gasFeeSum: bigNumberValidation.clone().test('min-gas-fee', 'Gas fee must be positive', value => {
+        gasFeeSum: bigNumberSchema().test('min-gas-fee', 'Gas fee must be positive', value => {
           if (estimationsApplied) {
             return BigNumber.isBigNumber(value) && value.isGreaterThan(0);
           }
 
           return true;
         }),
-        storageLimitSum: bigNumberValidation
-          .clone()
-          .test('required-if-only-one-operation', 'Storage limit is required', value => {
+        storageLimitSum: bigNumberSchema().test(
+          'required-if-only-one-operation',
+          'Storage limit is required',
+          value => {
             if (onlyOneOperation && estimationsApplied) {
               return BigNumber.isBigNumber(value) && value.gte(0);
             }
 
             return true;
-          })
+          }
+        )
       })
     }),
     [basicFees]

@@ -6,7 +6,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useImportedAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
@@ -16,7 +16,7 @@ import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item/man
 import { ManageImportedAccountsSelectors } from './manage-imported-accounts.selectors';
 
 export const ManageImportedAccounts = () => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
 
   const selectedAccount = useSelectedAccountSelector();
   const importedAccounts = useImportedAccountListSelector();
@@ -39,7 +39,7 @@ export const ManageImportedAccounts = () => {
             <ManageAccountItem
               account={account}
               selectedAccount={selectedAccount}
-              onRevealButtonPress={() => navigate(ModalsEnum.RevealPrivateKey, { account })}
+              onRevealButtonPress={() => navigateToModal(ModalsEnum.RevealPrivateKey, { account })}
             />
             <Divider size={formatSize(16)} />
           </Fragment>

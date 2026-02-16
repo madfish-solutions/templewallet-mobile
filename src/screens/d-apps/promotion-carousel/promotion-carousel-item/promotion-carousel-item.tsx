@@ -1,6 +1,6 @@
+import FastImage, { Source } from '@d11/react-native-fast-image';
 import { noop } from 'lodash-es';
 import React, { FC, memo } from 'react';
-import FastImage, { Source } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
 import { ImagePromotionView } from 'src/components/image-promotion-view';

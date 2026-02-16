@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React from 'react';
 import { View } from 'react-native';
@@ -6,24 +5,22 @@ import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { Divider } from 'src/components/divider/divider';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormTextInput } from 'src/form/form-text-input';
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { updateAccountAction } from 'src/store/wallet/wallet-actions';
-import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { RenameAccountModalFormValues, renameAccountModalValidationSchema } from './rename-account-modal.form';
 import { RenameAccountModalSelectors } from './rename-account-modal.selectors';
 
 export const RenameAccountModal = () => {
-  const account = useRoute<RouteProp<ModalsParamList, ModalsEnum.RenameAccount>>().params.account;
+  const { account } = useModalParams<ModalsEnum.RenameAccount>();
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
 
@@ -46,25 +43,21 @@ export const RenameAccountModal = () => {
       onSubmit={onSubmit}
     >
       {({ submitForm }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <ModalStatusBar />
-          <View>
-            <Label label="Name" description="Rename your account by any name you wish." />
-            <FormTextInput name="name" testID={RenameAccountModalSelectors.nameInput} />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <ModalStatusBar />
+            <View>
+              <Label label="Name" description="Rename your account by any name you wish." />
+              <FormTextInput name="name" testID={RenameAccountModalSelectors.nameInput} />
 
-            <Divider />
-          </View>
-
-          <View>
-            <ButtonsContainer>
-              <ButtonLargeSecondary title="Close" onPress={goBack} testID={RenameAccountModalSelectors.closeButton} />
-              <Divider size={formatSize(16)} />
-              <ButtonLargePrimary title="Save" onPress={submitForm} testID={RenameAccountModalSelectors.saveButton} />
-            </ButtonsContainer>
-
-            <InsetSubstitute type="bottom" />
-          </View>
-        </ScreenContainer>
+              <Divider />
+            </View>
+          </ScreenContainer>
+          <ModalButtonsFloatingContainer>
+            <ButtonLargeSecondary title="Close" onPress={goBack} testID={RenameAccountModalSelectors.closeButton} />
+            <ButtonLargePrimary title="Save" onPress={submitForm} testID={RenameAccountModalSelectors.saveButton} />
+          </ModalButtonsFloatingContainer>
+        </>
       )}
     </Formik>
   );

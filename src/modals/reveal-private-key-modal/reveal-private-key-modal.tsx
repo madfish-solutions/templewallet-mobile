@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React from 'react';
 
@@ -9,7 +8,8 @@ import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { emptyFn } from 'src/config/general';
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -22,7 +22,7 @@ import { RevealPrivateKeyView } from './reveal-private-key-view/reveal-private-k
 import { RevealPrivateKeySelectors } from './reveal-private-key.selectors';
 
 export const RevealPrivateKeyModal = () => {
-  const account = useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealPrivateKey>>().params.account;
+  const { account } = useModalParams<ModalsEnum.RevealPrivateKey>();
 
   const accounts = useAccountsListSelector();
 

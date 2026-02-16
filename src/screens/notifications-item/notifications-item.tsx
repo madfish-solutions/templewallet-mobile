@@ -4,7 +4,6 @@ import { SvgCssUri } from 'react-native-svg/css';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -73,9 +72,7 @@ export const NotificationsItem: FC = () => {
         </View>
       </ScreenContainer>
       <ButtonsFloatingContainer>
-        <ButtonsContainer>
-          <ButtonLargePrimary title="Got it" onPress={() => goBack()} testID={NotificationItemSelectors.gotItButton} />
-        </ButtonsContainer>
+        <ButtonLargePrimary title="Got it" onPress={() => goBack()} testID={NotificationItemSelectors.gotItButton} />
         <InsetSubstitute type="bottom" />
       </ButtonsFloatingContainer>
     </>

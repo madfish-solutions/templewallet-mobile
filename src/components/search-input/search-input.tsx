@@ -1,6 +1,6 @@
 import { debounce } from 'lodash-es';
 import React, { FC, useMemo } from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import { TextInputProps, View } from 'react-native';
 
 import { emptyFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -12,6 +12,7 @@ import { setTestID } from 'src/utils/test-id.utils';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
+import { PatchedTextInput } from '../patched-text-input';
 
 import { useSearchInputStyles } from './search-input.styles';
 
@@ -37,7 +38,7 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = empt
       <View style={styles.iconContainer}>
         <Icon name={IconNameEnum.IosSearch} size={formatSize(14)} color={colors.gray2} />
       </View>
-      <TextInput
+      <PatchedTextInput
         value={value}
         style={styles.input}
         placeholder={placeholder}

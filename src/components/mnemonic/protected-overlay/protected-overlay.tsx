@@ -1,6 +1,6 @@
+import FastImage from '@d11/react-native-fast-image';
 import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
 
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';

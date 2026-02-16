@@ -36,7 +36,7 @@ module.exports = withSentryConfig(
             type: 'sourceFile'
           };
         }
-  
+
         return context.resolveRequest(context, moduleName, platform);
       }
     }

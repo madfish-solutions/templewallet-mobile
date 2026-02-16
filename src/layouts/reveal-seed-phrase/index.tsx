@@ -3,7 +3,6 @@ import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
@@ -89,14 +88,12 @@ export const RevealSeedPhrase: FC<Props> = ({
             <Divider />
           </View>
           <View>
-            <ButtonsContainer>
-              <ButtonLargePrimary
-                title={submitButtonTitle}
-                disabled={!isValid}
-                onPress={submitForm}
-                testID={RevealSeedPhraseSelectors.nextButton}
-              />
-            </ButtonsContainer>
+            <ButtonLargePrimary
+              title={submitButtonTitle}
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={RevealSeedPhraseSelectors.nextButton}
+            />
             <InsetSubstitute type="bottom" />
           </View>
         </ScreenContainer>

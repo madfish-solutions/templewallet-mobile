@@ -112,6 +112,7 @@ export const CollectiblesHome = memo(() => {
 
       {snapPoints ? (
         <BottomSheet
+          enableDynamicSizing={false}
           snapPoints={snapPoints}
           handleStyle={styles.handleStyle}
           style={styles.bottomSheet}

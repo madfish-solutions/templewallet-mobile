@@ -3,8 +3,8 @@ import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useSyncInstructionsStyles = createUseStyles(({ colors, typography }) => ({
   container: {
-    flex: 1,
-    paddingTop: formatSize(16)
+    paddingHorizontal: 0,
+    justifyContent: 'flex-start'
   },
   titleContainer: {
     paddingVertical: formatSize(12),

@@ -15,6 +15,8 @@ declare module '*.svg' {
 
 type FCWithChildren<P extends object = object> = import('react').FC<import('react').PropsWithChildren<P>>;
 
+type FCWithRef<R, P extends object = object> = import('react').FC<P & { ref?: import('react').ForwardedRef<R> }>;
+
 interface SyncFC<P extends object = object> {
   (props: P): import('react').ReactNode;
   /**
@@ -52,7 +54,12 @@ declare module '@temple-wallet/wallet-address-validator' {
 
 declare module 'react-native-video-controls' {
   import { Component } from 'react';
+  import { StyleProp, ViewStyle } from 'react-native';
   import { ReactVideoProps } from 'react-native-video';
+
+  interface DuckNavigator {
+    pop: () => void;
+  }
 
   interface VideoPlayerProps extends ReactVideoProps {
     /** If true, clicking the fullscreen button will toggle the <Video /> component between cover/contain, set to false if you want to customize fullscreen behaviour */

@@ -3,16 +3,13 @@ import { View, Text } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
-import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
-import { Divider } from 'src/components/divider/divider';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
-import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { SyncInstructionsSelectors } from './sync-instructions.selectors';
@@ -39,7 +36,7 @@ export const SyncInstructions = memo<Props>(({ onBackPress }) => {
 
   return (
     <>
-      <View style={styles.container}>
+      <ScreenContainer isFullScreenMode={true} contentContainerStyle={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Steps to sync with Temple Wallet extension</Text>
         </View>
@@ -52,24 +49,16 @@ export const SyncInstructions = memo<Props>(({ onBackPress }) => {
             </View>
           ))}
         </View>
-      </View>
+      </ScreenContainer>
 
-      <ButtonsFloatingContainer>
-        <ButtonsContainer style={styles.buttonsContainer}>
-          <View style={styles.flex}>
-            <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={SyncInstructionsSelectors.backButton} />
-          </View>
-          <Divider size={formatSize(15)} />
-          <View style={styles.flex}>
-            <ButtonLargePrimary
-              title="Scan QR"
-              onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
-              testID={SyncInstructionsSelectors.scanQRButton}
-            />
-          </View>
-        </ButtonsContainer>
-        <InsetSubstitute type="bottom" />
-      </ButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
+        <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={SyncInstructionsSelectors.backButton} />
+        <ButtonLargePrimary
+          title="Scan QR"
+          onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
+          testID={SyncInstructionsSelectors.scanQRButton}
+        />
+      </ModalButtonsFloatingContainer>
     </>
   );
 });
