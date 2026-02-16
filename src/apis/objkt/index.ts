@@ -23,7 +23,6 @@ import {
   buildGetCollectionsQuery,
   buildGetFA2AttributeCountQuery,
   buildGetGalleryAttributeCountQuery,
-  buildGetHoldersInfoQuery,
   buildGetCollectiblesQuery,
   buildGetCollectiblesByGalleryQuery,
   buildGetCollectibleExtraQuery
@@ -36,7 +35,6 @@ import {
   GalleryAttributeCountQueryResponse,
   ObjktCollectibleExtra,
   QueryResponse,
-  TzProfilesQueryResponse,
   CollectiblesBySlugsResponse
 } from './types';
 import { transformObjktCollectionItem } from './utils';
@@ -68,20 +66,6 @@ export const fetchCollections$ = (accountPkh: string): Observable<Collection[]> 
     catchError(() => of([]))
   );
 };
-
-export const fetchTzProfilesInfo = (address: string) =>
-  apolloObjktClient
-    .fetch<TzProfilesQueryResponse>(buildGetHoldersInfoQuery(address), undefined, {
-      // @ts-ignore // TODO: Figure-out, what `nextFetchPolicy` was intended to do
-      nextFetchPolicy: 'no-cache'
-    })
-    .then(data => {
-      if (!data) {
-        throw new Error('No data');
-      }
-
-      return data.holder_by_pk;
-    });
 
 export const fetchCollectiblesOfCollection = (
   contract: string,

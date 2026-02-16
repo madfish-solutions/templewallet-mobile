@@ -27,7 +27,18 @@ module.exports = withSentryConfig(
         )
       },
       assetExts: assetExts.filter(ext => ext !== 'svg'),
-      sourceExts: [...sourceExts, 'svg']
+      sourceExts: [...sourceExts, 'svg', 'cjs'],
+      resolveRequest: (context, moduleName, platform) => {
+        // Use axios browser build so Node-only deps (e.g. http2) are never pulled in
+        if (moduleName === 'axios' || moduleName.includes('axios/dist/node/')) {
+          return {
+            filePath: require.resolve('axios/dist/browser/axios.cjs'),
+            type: 'sourceFile'
+          };
+        }
+  
+        return context.resolveRequest(context, moduleName, platform);
+      }
     }
   })
 );
