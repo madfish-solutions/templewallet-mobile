@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
 import FastImage from '@d11/react-native-fast-image';
+import React, { FC } from 'react';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';

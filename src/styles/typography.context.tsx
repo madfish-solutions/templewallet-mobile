@@ -78,6 +78,10 @@ export const TypographyProvider: FCWithChildren = ({ children }) => {
         fontFamily: FontsEnum.rubikMedium,
         fontSize: formatTextSize(11)
       },
+      body18Semibold: {
+        fontFamily: FontsEnum.interSemiBold,
+        fontSize: formatTextSize(18)
+      },
       numbersStatus8: {
         fontFamily: FontsEnum.rubikSemiBold,
         fontSize: formatTextSize(8)

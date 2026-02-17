@@ -128,8 +128,7 @@ export const ManageEarnOpportunityModal: FC = () => {
   }, [earnOpportunityItem, dispatch, accountPkh]);
 
   const handleDepositClick = useCallback(() => {
-    const scrollView = scrollViewRef.current;
-    const nativeScrollRef = scrollView?.getNativeScrollRef?.();
+    const nativeScrollRef = scrollViewRef.current?.getNativeScrollRef?.();
     if (
       isDefined(stakeFormErrors.acceptRisks) &&
       !isDefined(stakeFormErrors.assetAmount) &&

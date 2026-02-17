@@ -6,9 +6,7 @@ export const useAboutDelegationScreenStyles = createUseStyles(({ colors, typogra
     alignItems: 'center'
   },
   title: {
-    ...typography.numbersRegular22,
-    fontSize: formatTextSize(18),
-    fontWeight: '700',
+    ...typography.body18Semibold,
     color: colors.black,
     letterSpacing: formatSize(0.38),
     lineHeight: formatTextSize(25),
