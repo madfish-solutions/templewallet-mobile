@@ -61,17 +61,17 @@
       <string>itms-apps</string>
     </array>
     <key>LSRequiresIPhoneOS</key>
-    <true/>
+    <true />
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSAllowsArbitraryLoads</key>
-      <true/>
+      <true />
       <key>NSAllowsArbitraryLoadsForMedia</key>
-      <true/>
+      <true />
       <key>NSAllowsArbitraryLoadsInWebContent</key>
-      <true/>
+      <true />
       <key>NSAllowsLocalNetworking</key>
-      <true/>
+      <true />
     </dict>
     <key>NSCameraUsageDescription</key>
     <string>Allow to use camera for QR-code scan</string>
@@ -82,7 +82,7 @@
       <key>iCloud.$(PRODUCT_BUNDLE_IDENTIFIER)</key>
       <dict>
         <key>NSUbiquitousContainerIsDocumentScopePublic</key>
-        <true/>
+        <true />
         <key>NSUbiquitousContainerName</key>
         <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
         <key>NSUbiquitousContainerSupportedFolderLevels</key>
@@ -110,7 +110,7 @@
       <string>armv7</string>
     </array>
     <key>UIRequiresFullScreen</key>
-    <true/>
+    <true />
     <key>UISupportedInterfaceOrientations</key>
     <array>
       <string>UIInterfaceOrientationPortrait</string>
@@ -119,12 +119,12 @@
       <string>UIInterfaceOrientationPortraitUpsideDown</string>
     </array>
     <key>UIViewControllerBasedStatusBarAppearance</key>
-    <false/>
+    <false />
     <key>CADisableMinimumFrameDurationOnPhone</key>
-    <true/>
+    <true />
     <key>LSApplicationCategoryType</key>
     <string></string>
     <key>RCTNewArchEnabled</key>
-    <true/>
+    <true />
   </dict>
 </plist>
