@@ -34,6 +34,7 @@ import './src/mocks/react-native-toast-message.mock';
 import './src/mocks/react-navigation.mock';
 import './src/mocks/react-native-firebase-app.mock';
 import './src/mocks/notifee-react-native.mock';
+import './src/mocks/react-native-vision-camera.mock';
 
 import './src/mocks/react-redux.mock';
 import './src/mocks/redux-persist.mock';
