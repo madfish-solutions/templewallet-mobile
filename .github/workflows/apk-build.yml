@@ -65,7 +65,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
 
       - name: Update Android version
         uses: damienaicheh/update-android-version-gradle-action@v1.0.0
