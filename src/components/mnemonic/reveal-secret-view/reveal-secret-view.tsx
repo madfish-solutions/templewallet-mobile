@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { View } from 'react-native';
+import { StyleProp, TextStyle, View } from 'react-native';
 
 import { EmptyFn } from '../../../config/general';
 import { TestIdProps } from '../../../interfaces/test-id.props';
@@ -16,15 +16,16 @@ import { RevealSecretViewSelectors } from './reveal-secret-view.selectors';
 interface Props extends TestIdProps {
   value?: string;
   onProtectedOverlayPress: EmptyFn;
+  style?: StyleProp<TextStyle>;
 }
 
-export const RevealSecretView: FC<Props> = ({ value, onProtectedOverlayPress, testID }) => (
+export const RevealSecretView: FC<Props> = ({ value, onProtectedOverlayPress, style, testID }) => (
   <View style={MnemonicStyles.container}>
     <StyledTextInput
       value={value}
       editable={false}
       multiline={true}
-      style={StyledTextInputStyles.mnemonicInput}
+      style={[StyledTextInputStyles.mnemonicInput, style]}
       testID={testID}
     />
     <View style={MnemonicStyles.buttonsContainer}>

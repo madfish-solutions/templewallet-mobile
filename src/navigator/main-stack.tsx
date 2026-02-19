@@ -41,6 +41,7 @@ import { NodeSettings } from 'src/screens/node-settings/node-settings';
 import { Notifications } from 'src/screens/notifications/notifications';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
 import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
+import { Sapling } from 'src/screens/sapling';
 import { Savings } from 'src/screens/savings';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
@@ -192,6 +193,12 @@ export const MainStackScreen = memo(() => {
                 name={ScreensEnum.Savings}
                 component={Savings}
                 options={generateScreenOptions(<HeaderTitle title="Savings" />)}
+              />
+
+              <MainStack.Screen
+                name={ScreensEnum.Sapling}
+                component={Sapling}
+                options={generateScreenOptions(<HeaderTitle title="Sapling" />)}
               />
 
               <MainStack.Screen name={ScreensEnum.Exolix} component={Exolix} options={exolixScreenOptions()} />
