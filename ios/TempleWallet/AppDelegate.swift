@@ -20,7 +20,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   ) -> Bool {
     RNFBAppCheckModule.sharedInstance()
     FirebaseApp.configure()
-    RNNotifications.startMonitorNotifications()
     let delegate = ReactNativeDelegate()
     let factory = RCTReactNativeFactory(delegate: delegate)
     delegate.dependencyProvider = RCTAppDependencyProvider()
@@ -48,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(
     _ application: UIApplication,
-    performActionForShortcutItem shortcutItem: UIApplicationShortcutItem,
+    performActionFor shortcutItem: UIApplicationShortcutItem,
     completionHandler: @escaping (Bool) -> Void
   ) {
     RNQuickActionManager.onQuickActionPress(shortcutItem, completionHandler: completionHandler)

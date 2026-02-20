@@ -68,13 +68,45 @@ target 'TempleWallet' do
     # See: https://github.com/mapbox/mapbox-maps-ios/issues/2233#issuecomment-2345562101
 
     themis_paths = [
-      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_armv7/themis.framework/themis',
-      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_i386_x86_64-simulator/themis.framework/themis'
+      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64/themis.framework/themis',
+      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_x86_64-simulator/themis.framework/themis'
     ]
 
     themis_paths.each do |path|
       puts "Stripping bitcode from: #{path}"
       system("xcrun -sdk iphoneos bitcode_strip -r #{path} -o #{path}")
+    end
+
+    # Fix "multiple commands produce" for react-native-themis: the pod's source_files
+    # glob (ios/**/*.h) picks up headers from every xcframework slice, so the same
+    # header is copied multiple times to the same output path. Keep only one copy of
+    # each header in the Headers build phase.
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'react-native-themis'
+      headers_phase = target.headers_build_phase
+      next unless headers_phase
+      seen = {}
+      headers_phase.files.to_a.each do |build_file|
+        name = build_file.file_ref&.path || build_file.file_ref&.name
+        next unless name
+        if seen[name]
+          headers_phase.remove_build_file(build_file)
+        else
+          seen[name] = true
+        end
+      end
+      break
+    end
+
+    # Ensure RNExitApp can find React-Codegen spec header (generated at build time)
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'RNExitApp'
+      target.build_configurations.each do |config|
+        config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited)'
+        codegen_headers = '$(PODS_ROOT)/../build/generated/ios/ReactCodegen'
+        config.build_settings['HEADER_SEARCH_PATHS'] = [config.build_settings['HEADER_SEARCH_PATHS'], "\"#{codegen_headers}\""].flatten.join(' ')
+      end
+      break
     end
   end
 end
