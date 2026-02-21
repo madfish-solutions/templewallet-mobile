@@ -173,7 +173,8 @@
     "@airgap/beacon-ui": "link:./node_modules/.cache/null",
     "@airgap/beacon-transport-postmessage": "link:./node_modules/.cache/null",
     "axios": "0.30.0",
-    "node-libs-react-native/react-native-randombytes": "madfish-solutions/react-native-randombytes#cf4f237e0affbef3f23d444478bd271b28936ac0"
+    "node-libs-react-native/react-native-randombytes": "madfish-solutions/react-native-randombytes#cf4f237e0affbef3f23d444478bd271b28936ac0",
+    "fast-xml-parser": "5.3.7"
   },
   "engines": {
     "node": ">=20"
