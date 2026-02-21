@@ -3,6 +3,8 @@ apply plugin: "com.google.gms.google-services"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+// So release build reads .env from repo root (dotenv uses project.rootDir/../ + defaultEnvFile)
+project.ext.set("defaultEnvFile", "../.env")
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 /**
@@ -96,7 +98,7 @@ android {
         applicationId "com.templewallet"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1027
+        versionCode 1460
         versionName "1.53"
 
         missingDimensionStrategy 'react-native-camera', 'general'
