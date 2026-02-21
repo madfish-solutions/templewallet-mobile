@@ -1,4 +1,4 @@
-import { Roi } from '../../interfaces/roi.interface';
+import { Roi } from 'src/interfaces/roi.interface';
 
 export interface MarketToken {
   id: string;

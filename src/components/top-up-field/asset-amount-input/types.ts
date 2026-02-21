@@ -1,7 +1,5 @@
-import type { BigNumber } from 'bignumber.js';
 import type { TextInputProps } from 'react-native';
 
-import type { EmptyFn, EventFn } from 'src/config/general';
 import type { TestIdProps } from 'src/interfaces/test-id.props';
 import type { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 
@@ -30,13 +28,13 @@ export interface TopUpFormAssetAmountInputProps extends TestIdProps {
     newAsset: TopUpInterfaceBase,
     newAmount: BigNumber | undefined
   ) => TopUpAssetAmountInterface;
-  setSearchValue?: EventFn<string>;
+  setSearchValue?: SyncFn<string>;
   onBlur?: EmptyFn;
   onFocus?: TextInputProps['onFocus'];
-  onValueChange?: EventFn<TopUpAssetAmountInterface>;
+  onValueChange?: SyncFn<TopUpAssetAmountInterface>;
 }
 
 export interface TopUpAssetAmountInputProps extends TopUpFormAssetAmountInputProps {
   value: TopUpAssetAmountInterface;
-  onValueChange: EventFn<TopUpAssetAmountInterface>;
+  onValueChange: SyncFn<TopUpAssetAmountInterface>;
 }

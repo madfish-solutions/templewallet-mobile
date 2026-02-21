@@ -1,13 +1,11 @@
 /* Changes to original `react-native-image-progress` are marked as `*CUSTOM*` */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type React from 'react';
 import type { StyleProp } from 'react-native';
 
 // ts-prune-ignore-next
-type ImageProgressComponent<
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  P = {}
-> = React.ComponentType<
+type ImageProgressComponent<P = object> = React.ComponentType<
   P & {
     errorContainerStyle?: StyleProp<any>;
     indicator?: React.ComponentType;
@@ -21,5 +19,4 @@ type ImageProgressComponent<
   }
 >;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function createImageProgress<P = {}>(ImageComponent: React.ComponentType<P>): ImageProgressComponent<P>;
+export function createImageProgress<P = object>(ImageComponent: React.ComponentType<P>): ImageProgressComponent<P>;

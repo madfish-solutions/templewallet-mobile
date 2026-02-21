@@ -46,13 +46,13 @@ import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
-import { StacksEnum } from './enums/stacks.enum';
+import { NestedNavigationStacksParamList, StacksEnum } from './enums/stacks.enum';
 import { globalNavigationRef } from './global-nav-ref';
 import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
 import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
 
-export type RootStackParamList = { MainStack: undefined } & ModalsParamList;
+export type RootStackParamList = NestedNavigationStacksParamList & ModalsParamList;
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -73,10 +73,10 @@ export const RootStackScreen = () => {
   const theme = useNavigationContainerTheme();
   const screenOptions = useStackNavigationOptions();
 
-  const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
+  const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum | ModalsEnum>(ScreensEnum.Welcome);
 
   const handleNavigationContainerStateChange = () =>
-    setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+    setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum | ModalsEnum);
 
   return (
     <NavigationContainer

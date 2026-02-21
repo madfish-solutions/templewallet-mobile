@@ -1,4 +1,4 @@
-import { mockAccountBase } from '../../interfaces/account.interface.mock';
+import { mockAccountBase } from 'src/interfaces/account.interface.mock';
 
 import { ContactBookState } from './contact-book-state';
 

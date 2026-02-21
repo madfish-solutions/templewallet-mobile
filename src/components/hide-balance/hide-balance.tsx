@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { StyleProp, TextStyle } from 'react-native';
 
 import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
@@ -11,7 +11,7 @@ interface Props {
 
 const hideSymbol = '•••••••';
 
-export const HideBalance: FC<Props> = ({ style, children }) => {
+export const HideBalance: FCWithChildren<Props> = ({ style, children }) => {
   const { isBalanceHidden } = useHideBalance();
 
   return <TruncatedText style={style}>{isBalanceHidden ? hideSymbol : children}</TruncatedText>;

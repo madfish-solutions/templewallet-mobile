@@ -9,7 +9,6 @@ import { ExternalLinkButton } from 'src/components/icon/external-link-button/ext
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { EmptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsInAppBrowserEnabledSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';

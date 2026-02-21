@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { pick } from 'lodash-es';
 import { Observable, withLatestFrom } from 'rxjs';
 
-import { RootState } from 'src/store/types';
+import type { RootState } from 'src/store/types';
 
 export const hideAddresses = (data: unknown, addressesToHide: string[]): unknown => {
   if (Array.isArray(data)) {
@@ -68,6 +68,8 @@ export const getErrorDerivedEventProps = (error: unknown, addressesToHide: strin
 
   if (error instanceof Error) {
     propsBeforeAnonymization.stack = error.stack;
+  } else {
+    propsBeforeAnonymization = { error };
   }
 
   return hideAddresses(propsBeforeAnonymization, addressesToHide) as StringRecord<unknown>;

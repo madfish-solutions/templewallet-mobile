@@ -1,6 +1,6 @@
+import FastImage from '@d11/react-native-fast-image';
 import React, { ComponentType, memo } from 'react';
 import { View } from 'react-native';
-import FastImage from 'react-native-fast-image';
 import { SvgXml } from 'react-native-svg';
 import { WebView } from 'react-native-webview';
 

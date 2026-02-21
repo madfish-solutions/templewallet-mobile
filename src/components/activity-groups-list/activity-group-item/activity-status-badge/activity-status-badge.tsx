@@ -1,8 +1,8 @@
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { ActivityStatusEnum } from '../../../../enums/activity-status.enum';
-import { useColors } from '../../../../styles/use-colors';
+import { ActivityStatusEnum } from 'src/enums/activity-status.enum';
+import { useColors } from 'src/styles/use-colors';
 
 import { useActivityStatusBadgeStyles } from './activity-status-badge.styles';
 

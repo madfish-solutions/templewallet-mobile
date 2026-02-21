@@ -21,7 +21,7 @@ const BLOCK_UPDATE_API_URL = `${TEZOS_DEXES_API_URL}/block`;
  * ```
  */
 export const useBlockSubscription = () => {
-  const webSocketRef = useRef<WebSocket>();
+  const webSocketRef = useRef<WebSocket>(undefined);
   const refreshControlRef = useRef(Math.random());
 
   const [block, setBlock] = useState<BlockInterface>(EMPTY_BLOCK);

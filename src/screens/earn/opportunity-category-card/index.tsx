@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
@@ -9,7 +9,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OptionalFormattedAmount } from 'src/components/optional-formatted-amount';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { formatOptionalPercentage } from 'src/utils/earn-opportunities/format.utils';
 
@@ -27,10 +27,10 @@ interface OpportunityCategoryCardProps extends TestIdProps {
 
 export const OpportunityCategoryCard = memo<OpportunityCategoryCardProps>(
   ({ title, description, screen, depositAmountInFiat, iconName, netApr, maxApr }) => {
-    const { navigate } = useNavigation();
+    const navigateToScreen = useNavigateToScreen();
     const styles = useOpportunityCategoryCardStyles();
 
-    const handlePress = useCallback(() => navigate(screen), [navigate, screen]);
+    const handlePress = useCallback(() => navigateToScreen({ screen }), [navigateToScreen, screen]);
     const netAprFormatted = useMemo(() => formatOptionalPercentage(netApr), [netApr]);
     const maxAprFormatted = useMemo(() => formatOptionalPercentage(maxApr), [maxApr]);
 

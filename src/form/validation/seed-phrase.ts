@@ -1,7 +1,7 @@
 import { validateMnemonic } from 'bip39';
 import { string } from 'yup';
 
-import { isDefined } from '../../utils/is-defined';
+import { isDefined } from 'src/utils/is-defined';
 
 import { makeRequiredErrorMessage } from './messages';
 

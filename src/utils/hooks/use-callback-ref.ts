@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import { useIsomorphicLayoutEffect } from './use-iso-layout-effect';
 
-export function useCallbackRef(callback: () => any) {
+export function useCallbackRef<T extends unknown>(callback: () => T) {
   const callbackRef = useRef(callback);
 
   useIsomorphicLayoutEffect(() => {

@@ -1,5 +1,5 @@
-import { isEqual } from 'lodash';
-import { useEffect, MutableRefObject } from 'react';
+import { isEqual } from 'lodash-es';
+import { useEffect, RefObject } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
@@ -8,7 +8,7 @@ import { isDefined } from 'src/utils/is-defined';
 export const useUpdateCurrentProvider = (
   paymentProvidersToDisplay: PaymentProviderInterface[],
   topUpProvider: PaymentProviderInterface | undefined,
-  manuallySelectedProviderIdRef: MutableRefObject<TopUpProviderEnum | undefined>,
+  manuallySelectedProviderIdRef: RefObject<TopUpProviderEnum | undefined>,
   setProvider: (provider: PaymentProviderInterface | undefined) => void,
   isLoading: boolean
 ) => {

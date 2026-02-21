@@ -1,7 +1,7 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
-import { EventFn } from '../../config/general';
-import { TestIdProps } from '../../interfaces/test-id.props';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+
 import { StyledTextInputProps } from '../styled-text-input/styled-text-input.props';
 
 export interface StyledNumericInputProps
@@ -11,5 +11,5 @@ export interface StyledNumericInputProps
   minValue?: BigNumber.Value;
   maxValue?: BigNumber.Value;
   decimals?: number;
-  onChange?: EventFn<BigNumber | undefined>;
+  onChange?: SyncFn<BigNumber | undefined>;
 }

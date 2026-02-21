@@ -7,7 +7,7 @@ import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { passwordValidation } from 'src/form/validation/password';
 import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import {
   hideLoaderAction,
@@ -42,7 +42,8 @@ export const EnterCloudPasswordInitialValues: EnterCloudPasswordFormValues = {
 };
 
 export const useHandleSubmit = () => {
-  const { goBack, navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
+  const { goBack } = useNavigation();
   const dispatch = useDispatch();
   const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
   const { trackEvent } = useAnalytics();
@@ -101,7 +102,7 @@ export const useHandleSubmit = () => {
               trackEvent(CloudBackupSelectors.ReplaceBackupButton, AnalyticsEventCategory.ButtonPress);
             },
             () => {
-              navigate(ScreensEnum.ManualBackup);
+              navigateToScreen({ screen: ScreensEnum.ManualBackup });
               trackEvent(CloudBackupSelectors.BackupManuallyButton, AnalyticsEventCategory.ButtonPress);
             },
             () => {
@@ -119,7 +120,7 @@ export const useHandleSubmit = () => {
         trackCloudError(error);
       }
     },
-    [dispatch, navigate, trackCloudError, proceedWithSaving, trackEvent]
+    [dispatch, navigateToScreen, trackCloudError, proceedWithSaving, trackEvent]
   );
 
   return ({ password }: EnterCloudPasswordFormValues) => void submit(password);

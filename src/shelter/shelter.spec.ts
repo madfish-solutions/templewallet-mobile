@@ -108,11 +108,11 @@ describe('Shelter', () => {
             expect(accounts?.[0].publicKey).toEqual(mockAccountCredentials.publicKey);
             expect(accounts?.[0].publicKeyHash).toEqual(mockAccountCredentials.publicKeyHash);
 
-            expect(mockCryptoUtil.encryptString$).toBeCalledWith(
+            expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
               mockAccountCredentials.seedPhrase,
               mockCorrectPasswordHash
             );
-            expect(mockKeychain.setGenericPassword).toBeCalledWith(
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
               'seedPhrase',
               JSON.stringify(mockEncryptedData),
               getKeychainOptions('seedPhrase', 0)
@@ -146,11 +146,11 @@ describe('Shelter', () => {
             expect(account?.publicKey).toEqual(mockHDAccountCredentials.publicKey);
             expect(account?.publicKeyHash).toEqual(mockHDAccountCredentials.publicKeyHash);
 
-            expect(mockCryptoUtil.encryptString$).toBeCalledWith(
+            expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
               mockHDAccountCredentials.privateKey,
               mockCorrectPasswordHash
             );
-            expect(mockKeychain.setGenericPassword).toBeCalledWith(
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
               mockHDAccountCredentials.publicKeyHash,
               JSON.stringify(mockEncryptedData),
               getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
@@ -171,11 +171,11 @@ describe('Shelter', () => {
             expect(account?.publicKey).toEqual(mockHDAccountCredentials.publicKey);
             expect(account?.publicKeyHash).toEqual(mockHDAccountCredentials.publicKeyHash);
 
-            expect(mockCryptoUtil.encryptString$).toBeCalledWith(
+            expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
               mockHDAccountCredentials.privateKey,
               mockCorrectPasswordHash
             );
-            expect(mockKeychain.setGenericPassword).toBeCalledWith(
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
               mockHDAccountCredentials.publicKeyHash,
               JSON.stringify(mockEncryptedData),
               getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
@@ -191,11 +191,11 @@ describe('Shelter', () => {
           rxJsTestingHelper(decryptResult => {
             expect(decryptResult).toEqual(mockCorrectDecryptResult);
 
-            expect(mockCryptoUtil.decryptString$).toBeCalledWith(
+            expect(mockCryptoUtil.decryptString$).toHaveBeenCalledWith(
               mockCorrectUserCredentialsValue,
               mockCorrectPasswordHash
             );
-            expect(mockKeychain.getGenericPassword).toBeCalledWith(getKeychainOptions('seedPhrase', 0));
+            expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(getKeychainOptions('seedPhrase', 0));
           }, done)
         );
     });
@@ -207,11 +207,11 @@ describe('Shelter', () => {
           rxJsTestingHelper(decryptResult => {
             expect(decryptResult).toEqual(mockAccountCredentials.privateKey);
 
-            expect(mockCryptoUtil.decryptString$).toBeCalledWith(
+            expect(mockCryptoUtil.decryptString$).toHaveBeenCalledWith(
               mockCorrectUserCredentialsValue,
               mockCorrectPasswordHash
             );
-            expect(mockKeychain.getGenericPassword).toBeCalledWith(
+            expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
               getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
           }, done)
@@ -227,11 +227,11 @@ describe('Shelter', () => {
             await expect(signer.publicKey()).resolves.toEqual(mockAccountCredentials.publicKey);
             await expect(signer.publicKeyHash()).resolves.toEqual(mockAccountCredentials.publicKeyHash);
 
-            expect(mockCryptoUtil.decryptString$).toBeCalledWith(
+            expect(mockCryptoUtil.decryptString$).toHaveBeenCalledWith(
               mockCorrectUserCredentialsValue,
               mockCorrectPasswordHash
             );
-            expect(mockKeychain.getGenericPassword).toBeCalledWith(
+            expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
               getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
           }, done)
@@ -243,7 +243,7 @@ describe('Shelter', () => {
     it('should save password into Keychain if biometry enabled', done => {
       Shelter.enableBiometryPassword$(mockCorrectPassword).subscribe(
         rxJsTestingHelper(() => {
-          expect(mockKeychain.setGenericPassword).toBeCalledWith(
+          expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
             PASSWORD_STORAGE_KEY,
             JSON.stringify(mockCorrectPassword),
             getBiometryKeychainOptions(0)
@@ -257,20 +257,20 @@ describe('Shelter', () => {
 
       Shelter.enableBiometryPassword$(mockCorrectPassword).subscribe(
         rxJsTestingHelper(() => {
-          expect(mockKeychain.setGenericPassword).not.toBeCalled();
+          expect(mockKeychain.setGenericPassword).not.toHaveBeenCalled();
         }, done)
       );
     });
 
     it('should reveal password from Keychain', async () => {
       await expect(Shelter.getBiometryPassword()).resolves.toEqual(mockCorrectUserCredentials);
-      expect(mockKeychain.getGenericPassword).toBeCalledWith(getBiometryKeychainOptions(0));
+      expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(getBiometryKeychainOptions(0));
     });
 
     it('should remove password from Keychain', done => {
       Shelter.disableBiometryPassword$().subscribe(
         rxJsTestingHelper(() => {
-          expect(mockKeychain.resetGenericPassword).toBeCalledWith(getKeychainOptions(PASSWORD_STORAGE_KEY, 0));
+          expect(mockKeychain.resetGenericPassword).toHaveBeenCalledWith(getKeychainOptions(PASSWORD_STORAGE_KEY, 0));
         }, done)
       );
     });

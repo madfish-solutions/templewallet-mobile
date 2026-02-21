@@ -62,3 +62,36 @@ export type ModalsParamList = {
   [ModalsEnum.ImportAccountFromPrivateKey]: undefined;
   [ModalsEnum.KoloCard]: undefined;
 };
+
+type ModalParamsPart<T extends ModalsEnum> = undefined extends ModalsParamList[T]
+  ? { screen: T; params?: ModalsParamList[T] }
+  : { screen: T; params: ModalsParamList[T] };
+
+export type ModalParams =
+  | ModalParamsPart<ModalsEnum.Receive>
+  | ModalParamsPart<ModalsEnum.Send>
+  | ModalParamsPart<ModalsEnum.AddAsset>
+  | ModalParamsPart<ModalsEnum.RenameAccount>
+  | ModalParamsPart<ModalsEnum.SelectBaker>
+  | ModalParamsPart<ModalsEnum.Confirmation>
+  | ModalParamsPart<ModalsEnum.RevealSeedPhrase>
+  | ModalParamsPart<ModalsEnum.RevealPrivateKey>
+  | ModalParamsPart<ModalsEnum.EnableBiometryPassword>
+  | ModalParamsPart<ModalsEnum.CollectibleModal>
+  | ModalParamsPart<ModalsEnum.AddCustomRpc>
+  | ModalParamsPart<ModalsEnum.EditCustomRpc>
+  | ModalParamsPart<ModalsEnum.AddContact>
+  | ModalParamsPart<ModalsEnum.EditContact>
+  | ModalParamsPart<ModalsEnum.ManageFarmingPool>
+  | ModalParamsPart<ModalsEnum.ManageSavingsPool>
+  | ModalParamsPart<ModalsEnum.Newsletter>
+  | ModalParamsPart<ModalsEnum.InAppBrowser>
+  | ModalParamsPart<ModalsEnum.ChooseWalletImportType>
+  | ModalParamsPart<ModalsEnum.ImportWalletFromSeedPhrase>
+  | ModalParamsPart<ModalsEnum.ImportWalletFromKeystoreFile>
+  | ModalParamsPart<ModalsEnum.SyncInstructions>
+  | ModalParamsPart<ModalsEnum.ConfirmSync>
+  | ModalParamsPart<ModalsEnum.ChooseAccountImportType>
+  | ModalParamsPart<ModalsEnum.ImportAccountFromSeedPhrase>
+  | ModalParamsPart<ModalsEnum.ImportAccountFromPrivateKey>
+  | ModalParamsPart<ModalsEnum.KoloCard>;

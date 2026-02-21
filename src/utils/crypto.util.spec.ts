@@ -15,8 +15,8 @@ it('encryptString$ should encrypt a message with a given password', done => {
   encryptString$(mockUnencryptedString, mockPassphrase).subscribe(
     rxJsTestingHelper(encryptionOutput => {
       expect(encryptionOutput).toEqual(expectedEncryptionOutput);
-      expect(mockReactNativeThemis.symmetricKey64).toBeCalledWith();
-      expect(mockReactNativeThemis.secureCellSealWithPassphraseEncrypt64).toBeCalledWith(
+      expect(mockReactNativeThemis.symmetricKey64).toHaveBeenCalledWith();
+      expect(mockReactNativeThemis.secureCellSealWithPassphraseEncrypt64).toHaveBeenCalledWith(
         mockPassphrase,
         mockUnencryptedString,
         mockSymmetricKey64
@@ -29,7 +29,7 @@ it('decryptString$ should decrypt a message with correct password', done => {
   decryptString$(expectedEncryptionOutput, mockPassphrase).subscribe(
     rxJsTestingHelper(decryptionOutput => {
       expect(decryptionOutput).toEqual(mockUnencryptedString);
-      expect(mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64).toBeCalledWith(
+      expect(mockReactNativeThemis.secureCellSealWithPassphraseDecrypt64).toHaveBeenCalledWith(
         mockPassphrase,
         mockEncryptedString,
         mockSymmetricKey64

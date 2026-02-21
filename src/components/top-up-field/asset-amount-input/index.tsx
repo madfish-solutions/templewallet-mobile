@@ -8,6 +8,7 @@ import { Dropdown, DropdownValueComponent } from 'src/components/dropdown/dropdo
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Label } from 'src/components/label/label';
+import { PatchedTextInput } from 'src/components/patched-text-input';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
 import { TopUpInterfaceBase } from 'src/interfaces/topup.interface';
 import { formatSize } from 'src/styles/format-size';
@@ -44,7 +45,8 @@ const defaultNewValueFn: TopUpAssetAmountInputProps['newValueFn'] = (
 });
 const topUpInputEqualityFn = (a: TopUpInterfaceBase, b?: TopUpInterfaceBase) =>
   a.code === b?.code && a.network?.code === b.network?.code;
-const topUpInputKeyExtractor = (token: TopUpInterfaceBase, index: number) => `${index}_${token.code}_${token.network}`;
+const topUpInputKeyExtractor = (token: TopUpInterfaceBase, index: number) =>
+  `${index}_${token.code}_${token.network?.code}`;
 
 const AssetAmountInputComponent: FC<
   TopUpAssetAmountInputProps & { meta: FieldMetaProps<TopUpAssetAmountInterface> }
@@ -83,7 +85,7 @@ const AssetAmountInputComponent: FC<
 
   const amount = value.amount;
 
-  const inputValueRef = useRef<BigNumber>();
+  const inputValueRef = useRef<BigNumber>(undefined);
 
   const numericInputValue = useMemo(() => {
     const newNumericInputValue = amount;
@@ -94,7 +96,7 @@ const AssetAmountInputComponent: FC<
   }, [amount]);
 
   const onChange = useCallback(
-    newInputValue => {
+    (newInputValue: BigNumber | undefined) => {
       inputValueRef.current = newInputValue;
 
       onValueChange(newValueFn(value, value.asset, newInputValue));
@@ -133,7 +135,7 @@ const AssetAmountInputComponent: FC<
 
       <View style={[styles.inputContainer, conditionalStyle(isError, styles.inputContainerError)]} testID={testID}>
         <View style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding)]} />
-        <TextInput
+        <PatchedTextInput
           ref={amountInputRef}
           value={stringValue}
           placeholder="0.00"

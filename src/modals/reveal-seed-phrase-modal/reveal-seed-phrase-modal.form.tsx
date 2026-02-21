@@ -1,6 +1,6 @@
 import { object, SchemaOf, string } from 'yup';
 
-import { AccountInterface } from '../../interfaces/account.interface';
+import { AccountInterface } from 'src/interfaces/account.interface';
 
 export type RevealSeedPhraseModalFormValues = {
   account: AccountInterface;

@@ -8,7 +8,9 @@ export const useCheckboxGroupStyles = createUseStylesMemoized(({ colors }) => ({
     backgroundColor: colors.cardBG,
     ...generateShadow(1, black),
     paddingLeft: formatSize(12),
-    borderRadius: formatSize(10)
+    borderRadius: formatSize(10),
+    borderWidth: formatSize(1),
+    borderColor: colors.cardBG
   },
   error: {
     borderWidth: formatSize(1),

@@ -1,10 +1,10 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsAnyBackupMadeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -13,16 +13,16 @@ import { SettingsSelectors } from './settings.selectors';
 import { SettingsStyles } from './settings.styles';
 
 export const Settings = () => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const colors = useColors();
 
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
 
-  const navigateToSettings = () => navigate(ScreensEnum.Settings);
-  const navigateToDebugMode = () => navigate(ScreensEnum.Debug);
+  const navigateToSettings = () => navigateToScreen({ screen: ScreensEnum.Settings });
+  const navigateToDebugMode = () => navigateToScreen({ screen: ScreensEnum.Debug });
 
   return (
-    <TouchableOpacity
+    <SafeTouchableOpacity
       onPress={navigateToSettings}
       onLongPress={navigateToDebugMode}
       delayLongPress={4000}
@@ -39,6 +39,6 @@ export const Settings = () => {
         />
       )}
       <Icon name={IconNameEnum.Settings} size={formatSize(24)} />
-    </TouchableOpacity>
+    </SafeTouchableOpacity>
   );
 };

@@ -7,12 +7,13 @@ import { isTruthy } from './is-truthy';
 const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
 const IPFS_GATE = 'https://ipfs.io/ipfs';
-const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
-type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
 type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
-const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
+const buildIpfsMediaUrisByInfo = (info: MediaUriInfo) => [
+  buildIpfsMediaUriByInfo(info),
+  buildIpfsMediaUriByInfo(info, 'https://ipfs.filebase.io/ipfs')
+];
 
 export const buildCollectibleImagesStack = (
   slug: string,
@@ -34,15 +35,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'display'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'display'),
 
-        buildIpfsMediaUriByInfo(displayInfo, 'raw'),
-        buildIpfsMediaUriByInfo(displayInfo, 'large'),
-        buildIpfsMediaUriByInfo(displayInfo, 'medium'),
-        buildIpfsMediaUriByInfo(displayInfo, 'small'),
+        ...buildIpfsMediaUrisByInfo(displayInfo),
 
-        buildIpfsMediaUriByInfo(artifactInfo, 'raw'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'large'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'medium'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'small'),
+        ...buildIpfsMediaUrisByInfo(artifactInfo),
 
         assureGetDataUriImage(thumbnailUri)
       ]
@@ -60,14 +55,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'thumb288'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'thumb288'),
 
-        buildIpfsMediaUriByInfo(thumbnailInfo, 'medium'),
-        buildIpfsMediaUriByInfo(thumbnailInfo, 'small'),
-
-        buildIpfsMediaUriByInfo(displayInfo, 'medium'),
-        buildIpfsMediaUriByInfo(displayInfo, 'small'),
-
-        buildIpfsMediaUriByInfo(artifactInfo, 'medium'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'small')
+        ...buildIpfsMediaUrisByInfo(thumbnailInfo),
+        ...buildIpfsMediaUrisByInfo(displayInfo),
+        ...buildIpfsMediaUrisByInfo(artifactInfo)
       ];
 
   return uniq(stack.filter(isTruthy));
@@ -132,29 +122,28 @@ const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTai
 
 const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
-const buildIpfsMediaUriByInfo = (
-  { uri, ipfs: ipfsInfo }: MediaUriInfo,
-  size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE,
-  useMediaHost = true
-) => {
+const CLOUDFLARE_IPFS_REGEX = /^https?:\/\/cloudflare-ipfs\.com/;
+
+const buildIpfsMediaUriByInfo = ({ uri, ipfs: ipfsInfo }: MediaUriInfo, ipfsGate = IPFS_GATE) => {
   if (!uri) {
     return;
   }
 
   if (ipfsInfo) {
-    return useMediaHost
-      ? `${MEDIA_HOST}/${size}/ipfs/${ipfsInfo.path}${ipfsInfo.search}`
-      : `${IPFS_GATE}/${ipfsInfo.path}${ipfsInfo.search}`;
+    return `${ipfsGate}/${ipfsInfo.path}${ipfsInfo.search}`;
   }
 
-  if (useMediaHost && uri.startsWith('http')) {
+  if (CLOUDFLARE_IPFS_REGEX.test(uri)) {
+    return `${ipfsGate}/${uri.replace(CLOUDFLARE_IPFS_REGEX, '')}`;
+  }
+
+  if (uri.startsWith('http')) {
     // This option also serves as a proxy for any `http` source
     return uri;
   }
 };
 
-export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) =>
-  buildIpfsMediaUriByInfo(getMediaUriInfo(uri), size, useMediaHost);
+export const formatImgUri = (uri = '') => buildIpfsMediaUriByInfo(getMediaUriInfo(uri));
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 

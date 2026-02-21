@@ -1,28 +1,44 @@
 # Resolve react_native_pods.rb with node to allow for hoisting
+def node_require(script)
+  # Resolve script with node to allow for hoisting
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
+end
 
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+# Use it to require both react-native's and this package's scripts:
+node_require('react-native/scripts/react_native_pods.rb')
+node_require('react-native-permissions/scripts/setup.rb')
 
-pod 'Firebase', :modular_headers => true
-pod 'FirebaseCore', :modular_headers => true
-pod 'GoogleUtilities', :modular_headers => true
-
-platform :ios, '17'
+platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
-# because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
-#
-# To fix this you can also exclude `react-native-flipper` using a `react-native.config.js`
-# ```js
-# module.exports = {
-#   dependencies: {
-#     ...(process.env.NO_FLIPPER ? { 'react-native-flipper': { platforms: { ios: null } } } : {}),
-# ```
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+# ⬇️ uncomment the permissions you need
+setup_permissions([
+  # 'AppTrackingTransparency',
+  # 'Bluetooth',
+  # 'Calendars',
+  # 'CalendarsWriteOnly',
+  'Camera',
+  # 'Contacts',
+  'FaceID',
+  # 'LocationAccuracy',
+  # 'LocationAlways',
+  # 'LocationWhenInUse',
+  # 'MediaLibrary',
+  # 'Microphone',
+  # 'Motion',
+  # 'Notifications',
+  # 'PhotoLibrary',
+  # 'PhotoLibraryAddOnly',
+  # 'Reminders',
+  # 'Siri',
+  # 'SpeechRecognition',
+  # 'StoreKit',
+])
+
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
@@ -31,60 +47,66 @@ end
 
 target 'TempleWallet' do
   config = use_native_modules!
-
-  # Flags change depending on the env values.
-  flags = get_default_flags()
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
 
   use_react_native!(
     :path => config[:reactNativePath],
-    # Hermes is now enabled by default. Disable by setting this flag to false.
-    :hermes_enabled => false, # flags[:hermes_enabled],
-    :fabric_enabled => flags[:fabric_enabled],
-    # Enables Flipper.
-    #
-    # Note that if you have use_frameworks! enabled, Flipper will not work and
-    # you should disable the next line.
-    :flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'TempleWalletTests' do
-    inherit! :complete
-    # Pods for testing
-  end
-
   post_install do |installer|
-    # https://github.com/facebook/react-native/issues/37748#issuecomment-1580589448
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', '_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION']
-      end
-    end
-
-    # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
     )
-    __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
     # Patch to fix fastlane artifact upload.
     # See: https://github.com/mapbox/mapbox-maps-ios/issues/2233#issuecomment-2345562101
 
     themis_paths = [
-      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_armv7/themis.framework/themis',
-      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_i386_x86_64-simulator/themis.framework/themis'
+      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64/themis.framework/themis',
+      '../node_modules/react-native-themis/ios/themis.xcframework/ios-arm64_x86_64-simulator/themis.framework/themis'
     ]
 
     themis_paths.each do |path|
       puts "Stripping bitcode from: #{path}"
       system("xcrun -sdk iphoneos bitcode_strip -r #{path} -o #{path}")
     end
+
+    # Fix "multiple commands produce" for react-native-themis: the pod's source_files
+    # glob (ios/**/*.h) picks up headers from every xcframework slice, so the same
+    # header is copied multiple times to the same output path. Keep only one copy of
+    # each header in the Headers build phase.
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'react-native-themis'
+      headers_phase = target.headers_build_phase
+      next unless headers_phase
+      seen = {}
+      headers_phase.files.to_a.each do |build_file|
+        name = build_file.file_ref&.path || build_file.file_ref&.name
+        next unless name
+        if seen[name]
+          headers_phase.remove_build_file(build_file)
+        else
+          seen[name] = true
+        end
+      end
+      break
+    end
+
+    # Ensure RNExitApp can find React-Codegen spec header (generated at build time)
+    installer.pods_project.targets.each do |target|
+      next unless target.name == 'RNExitApp'
+      target.build_configurations.each do |config|
+        config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited)'
+        codegen_headers = '$(PODS_ROOT)/../build/generated/ios/ReactCodegen'
+        config.build_settings['HEADER_SEARCH_PATHS'] = [config.build_settings['HEADER_SEARCH_PATHS'], "\"#{codegen_headers}\""].flatten.join(' ')
+      end
+      break
+    end
   end
-
-  permissions_path = '../node_modules/react-native-permissions/ios'
-
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
 end

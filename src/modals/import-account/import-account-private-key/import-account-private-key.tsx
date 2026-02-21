@@ -5,16 +5,14 @@ import { View } from 'react-native';
 import { AndroidKeyboardDisclaimer } from 'src/components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
-import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
@@ -22,7 +20,6 @@ import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { useImportAccountFromPrivateKeyStyles } from './import-account-from-private-key.styles';
 import {
   importAccountPrivateKeyInitialValues,
   importAccountPrivateKeyValidationSchema
@@ -37,7 +34,6 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
   const { createImportedAccount } = useShelter();
   const accountIndex = useAccountsListSelector().length + 1;
   const { goBack } = useNavigation();
-  const styles = useImportAccountFromPrivateKeyStyles();
 
   usePageAnalytic(ModalsEnum.ImportAccountFromPrivateKey);
 
@@ -72,27 +68,15 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
           <AndroidKeyboardDisclaimer />
         </View>
       </ScreenContainer>
-      <ButtonsFloatingContainer>
-        <ButtonsContainer style={styles.buttonsContainer}>
-          <View style={styles.flex}>
-            <ButtonLargeSecondary
-              title="Back"
-              onPress={onBackPress}
-              testID={ImportAccountPrivateKeySelectors.backButton}
-            />
-          </View>
-          <Divider size={formatSize(15)} />
-          <View style={styles.flex}>
-            <ButtonLargePrimary
-              title="Import"
-              disabled={!formik.isValid}
-              onPress={useCallbackIfOnline(formik.submitForm)}
-              testID={ImportAccountPrivateKeySelectors.importButton}
-            />
-          </View>
-        </ButtonsContainer>
-        <InsetSubstitute type="bottom" />
-      </ButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer>
+        <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={ImportAccountPrivateKeySelectors.backButton} />
+        <ButtonLargePrimary
+          title="Import"
+          disabled={!formik.isValid}
+          onPress={useCallbackIfOnline(formik.submitForm)}
+          testID={ImportAccountPrivateKeySelectors.importButton}
+        />
+      </ModalButtonsFloatingContainer>
     </FormikProvider>
   );
 });

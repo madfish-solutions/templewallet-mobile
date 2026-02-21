@@ -9,13 +9,12 @@ import { formatAssetAmount } from 'src/utils/number.util';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import { assetValidation } from './asset';
-import { bigNumberValidation } from './big-number';
+import { bigNumberSchema } from './big-number';
 import { makeRequiredErrorMessage } from './messages';
 
 export const assetAmountValidation = object().shape({
   asset: assetValidation,
-  amount: bigNumberValidation
-    .clone()
+  amount: bigNumberSchema()
     .required(makeRequiredErrorMessage('Amount'))
     .test('is-greater-than', 'Should be greater than 0', (value: unknown) => {
       if (value instanceof BigNumber) {

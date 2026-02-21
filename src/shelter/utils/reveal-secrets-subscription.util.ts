@@ -1,8 +1,8 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { catchError, map, merge, of, Subject, switchMap, tap } from 'rxjs';
 
-import { EventFn } from '../../config/general';
-import { hideLoaderAction, showLoaderAction } from '../../store/settings/settings-actions';
+import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
+
 import { RevealSecretKeyParams } from '../interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from '../interfaces/reveal-seed-phrase.params';
 import { Shelter } from '../shelter';
@@ -17,7 +17,7 @@ export const revealSecretsSubscription = (
       tap(() => dispatch(showLoaderAction())),
       switchMap(({ publicKeyHash, successCallback }) =>
         Shelter.revealSecretKey$(publicKeyHash).pipe(
-          map((secretKey): [string | undefined, EventFn<string>] => [secretKey, successCallback])
+          map((secretKey): [string | undefined, SyncFn<string>] => [secretKey, successCallback])
         )
       ),
       tap(() => dispatch(hideLoaderAction()))
@@ -27,7 +27,7 @@ export const revealSecretsSubscription = (
       switchMap(({ successCallback }) =>
         Shelter.revealSeedPhrase$()
           .pipe(catchError(() => of(undefined)))
-          .pipe(map((seedPhrase): [string | undefined, EventFn<string>] => [seedPhrase, successCallback]))
+          .pipe(map((seedPhrase): [string | undefined, SyncFn<string>] => [seedPhrase, successCallback]))
       ),
       tap(() => dispatch(hideLoaderAction()))
     )

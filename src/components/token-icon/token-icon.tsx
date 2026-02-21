@@ -1,14 +1,11 @@
 import React, { FC, useMemo } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
-import { SvgCssUri } from 'react-native-svg';
 
-import { ImageTypeEnum } from 'src/enums/image-type.enum';
-import { useImageType } from 'src/hooks/use-image-type.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
-import { isImageRectangular, formatImgUri } from 'src/utils/image.utils';
+import { isImageRectangular, isImgUriDataUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
@@ -43,7 +40,7 @@ type TokenIconImageProps = Props & {
 };
 
 const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size }) => {
-  const { imageType, svgFailed, onRasterRenderError, onSvgRenderError } = useImageType(thumbnailUri ?? '');
+  const isDataUri = useMemo(() => isImgUriDataUri(thumbnailUri ?? ''), [thumbnailUri]);
 
   const colors = useColors();
 
@@ -57,14 +54,9 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
     return <Icon name={IconNameEnum.NoNameToken} size={size} />;
   }
 
-  switch (imageType) {
-    case ImageTypeEnum.RemoteSvg:
-      return <SvgCssUri width={size} height={size} uri={formatImgUri(thumbnailUri)!} onError={onSvgRenderError} />;
-    case ImageTypeEnum.DataUri:
-      return <DataUriImage width={size} height={size} dataUri={thumbnailUri} />;
-  }
-
-  return (
-    <LoadableTokenIconImage uri={thumbnailUri} size={size} onError={onRasterRenderError} useOriginal={svgFailed} />
+  return isDataUri ? (
+    <DataUriImage width={size} height={size} dataUri={thumbnailUri} />
+  ) : (
+    <LoadableTokenIconImage uri={thumbnailUri} size={size} />
   );
 };

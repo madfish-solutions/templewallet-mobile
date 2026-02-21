@@ -13,8 +13,7 @@ import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { viewAllNotificationsAction } from 'src/store/notifications/notifications-actions';
-import { useNotificationsSelector } from 'src/store/notifications/notifications-selectors';
-import { formatSize } from 'src/styles/format-size';
+import { useNotifications } from 'src/store/notifications/notifications-selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { NotificationPreviewItem } from './notification-preview-item/notification-preview-item';
@@ -22,7 +21,6 @@ import { NotificationsSelectors } from './notifications.selectors';
 import { NotificationsStyles } from './notifications.styles';
 
 const VIEW_ALL_NOTIFICATIONS_TIMEOUT = 5 * 1000;
-const AVERAGE_NOTIFICATION_ITEM_HEIGHT = Math.round(formatSize(132));
 const PROMOTION_ID = 'notifications-promotion';
 
 const keyExtractor = (item: NotificationInterface) => item.id.toString();
@@ -32,7 +30,7 @@ const renderItem: ListRenderItem<NotificationInterface> = ({ item }) => <Notific
 const ListEmptyComponent = <DataPlaceholder text="Notifications not found" />;
 
 export const Notifications = () => {
-  const notifications = useNotificationsSelector();
+  const notifications = useNotifications();
   const dispatch = useDispatch();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID, PromotionProviderEnum.HypeLab);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
@@ -87,7 +85,6 @@ export const Notifications = () => {
         data={notifications}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
-        estimatedItemSize={AVERAGE_NOTIFICATION_ITEM_HEIGHT}
         ListHeaderComponent={ListHeaderComponent}
         ListEmptyComponent={ListEmptyComponent}
       />

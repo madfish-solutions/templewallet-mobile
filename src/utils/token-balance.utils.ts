@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 

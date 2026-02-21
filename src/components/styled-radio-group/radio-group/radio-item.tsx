@@ -59,8 +59,8 @@ export const RadioItem: React.FC<RadioItemProps> = ({
       {buttons && buttons.length && (
         <>
           <Divider size={formatSize(17)} />
-          {buttons?.map(button => (
-            <ItemButton {...button} />
+          {buttons?.map(({ key, ...button }) => (
+            <ItemButton key={key} {...button} />
           ))}
         </>
       )}

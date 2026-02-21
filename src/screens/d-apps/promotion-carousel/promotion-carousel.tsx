@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 import { View } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import type { ILayoutConfig } from 'react-native-reanimated-carousel/lib/typescript/layouts/parallax';
@@ -20,7 +20,7 @@ export const PromotionCarousel = () => {
   const adPageName = 'DApps';
   const { onAdLoad, onIsVisible } = useInternalAdsAnalytics(adPageName, undefined, true, 500);
 
-  const data = useMemo<Array<JSX.Element>>(() => {
+  const data = useMemo<Array<ReactElement>>(() => {
     const result = [...COMMON_PROMOTION_CAROUSEL_DATA];
 
     if (isDefined(activePromotion)) {
@@ -52,7 +52,7 @@ export const PromotionCarousel = () => {
     []
   );
 
-  const renderItem = useCallback((info: CarouselRenderItemInfo<JSX.Element>) => info.item, []);
+  const renderItem = useCallback((info: CarouselRenderItemInfo<ReactElement>) => info.item, []);
 
   const style = useMemo(() => [styles.container, { height }], [styles.container, height]);
 

@@ -11,7 +11,7 @@ describe('image utils', () => {
 
     it('should convert ipfs:// uri to https://', () => {
       const mockIpfsUri = 'ipfs://mockFileHash';
-      const mockHttpsUri = 'https://static.tcinfra.net/media/small/ipfs/mockFileHash';
+      const mockHttpsUri = 'https://ipfs.io/ipfs/mockFileHash';
 
       expect(formatImgUri(mockIpfsUri)).toEqual(mockHttpsUri);
     });

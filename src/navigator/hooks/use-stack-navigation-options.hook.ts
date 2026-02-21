@@ -1,6 +1,7 @@
 import { StackNavigationOptions, TransitionPresets } from '@react-navigation/stack';
 import { useMemo } from 'react';
 
+import { useSuggestedHeaderHeight } from 'src/hooks/use-suggested-header-height.hook';
 import { useColors } from 'src/styles/use-colors';
 
 /**
@@ -14,6 +15,7 @@ import { useColors } from 'src/styles/use-colors';
  */
 export const useStackNavigationOptions = () => {
   const colors = useColors();
+  const headerHeight = useSuggestedHeaderHeight(true);
 
   return useMemo<StackNavigationOptions>(
     () => ({
@@ -21,10 +23,13 @@ export const useStackNavigationOptions = () => {
       cardOverlayEnabled: true,
       gestureEnabled: true,
       ...TransitionPresets.ModalPresentationIOS,
+      headerStyle: {
+        height: headerHeight
+      },
       cardStyle: {
         backgroundColor: colors.pageBG
       }
     }),
-    [colors.pageBG]
+    [colors.pageBG, headerHeight]
   );
 };

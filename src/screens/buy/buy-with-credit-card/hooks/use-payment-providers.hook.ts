@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { useCallback, useMemo } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';

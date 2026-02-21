@@ -6,7 +6,7 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { addFavouriteToken, deleteFavouriteToken } from 'src/store/market/market-actions';
 import { useFavouriteTokensIdsSelector, useMarketTokenSlugSelector } from 'src/store/market/market-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -32,7 +32,7 @@ export const RightSwipeView = memo<Props>(({ id, onPress }) => {
   const outputToken = useAccountTokenBySlug(marketCoinSlug);
 
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const isFavourite = useMemo<boolean>(() => favouriteTokensIds.includes(id), [favouriteTokensIds]);
   const favouriteIconColor = isFavourite ? colors.peach : colors.peach10;
@@ -51,7 +51,7 @@ export const RightSwipeView = memo<Props>(({ id, onPress }) => {
   const handleFavoritePress = isFavourite ? handleDeleteFromFavourites : handleAddToFavourites;
 
   const handleBuyPress = () => {
-    navigate(ScreensEnum.SwapScreen, { outputToken: outputToken });
+    navigateToScreen({ screen: ScreensEnum.SwapScreen, params: { outputToken } });
   };
 
   return (
