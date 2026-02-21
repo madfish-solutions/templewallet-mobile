@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { ViewStyle } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { MarginProps } from 'src/interfaces/margin.props';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 
+import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { TruncatedText } from '../truncated-text';
 
@@ -37,7 +37,7 @@ export const PublicKeyHashText: FC<Props> = ({
 
   return (
     <TouchableWithAnalytics
-      Component={TouchableOpacity}
+      Component={SafeTouchableOpacity}
       style={[styles.container, style, { marginTop, marginRight, marginBottom, marginLeft }]}
       disabled={disabled}
       shouldTrackLongPress={longPress}

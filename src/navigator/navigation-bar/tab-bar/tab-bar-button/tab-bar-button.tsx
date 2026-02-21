@@ -1,9 +1,9 @@
 import React, { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
@@ -66,7 +66,7 @@ export const TabBarButton = memo<Props>(
     };
 
     return (
-      <TouchableOpacity
+      <SafeTouchableOpacity
         style={[styles.container, conditionalStyle(disabled, { borderLeftColor: color })]}
         onPress={handlePress}
       >
@@ -83,7 +83,7 @@ export const TabBarButton = memo<Props>(
           <Icon name={iconName} width={iconWidth} height={formatSize(28)} color={color} />
         </View>
         <Text style={[styles.label, { color }]}>{label}</Text>
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
     );
   }
 );

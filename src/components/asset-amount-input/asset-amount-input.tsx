@@ -69,6 +69,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     value,
     label,
     assetsList,
+    balance: balanceFromProps,
     balanceLabel,
     frozenBalance,
     isError = false,
@@ -114,12 +115,16 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
     const balance = useMemo(() => {
+      if (isDefined(balanceFromProps)) {
+        return balanceFromProps;
+      }
+
       if (tokenEqualityFn(value.asset, emptyTezosLikeToken)) {
         return DEFAULT_BALANCE;
       }
 
       return slug === TEZ_TOKEN_SLUG ? tezosBalance : getTokenBalance(slug) ?? '0';
-    }, [getTokenBalance, slug, tezosBalance, value.asset]);
+    }, [getTokenBalance, slug, tezosBalance, value.asset, balanceFromProps]);
 
     const { isTezosNode } = useNetworkInfo();
     const selectedRpcUrl = useSelectedRpcUrlSelector();

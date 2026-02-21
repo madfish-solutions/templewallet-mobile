@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useColors } from 'src/styles/use-colors';
@@ -24,7 +24,7 @@ export const ExternalLinkButton: FC<Props> = ({ url, testID, style, onPress }) =
 
   return (
     <TouchableWithAnalytics
-      Component={TouchableOpacity}
+      Component={SafeTouchableOpacity}
       style={[styles.container, style]}
       testID={testID}
       onPress={() => {

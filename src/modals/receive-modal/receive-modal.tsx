@@ -1,6 +1,5 @@
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import QRCode from 'react-native-qrcode-svg';
 import { useDispatch } from 'react-redux';
 
@@ -9,6 +8,7 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { useDomainName } from 'src/hooks/use-domain-name.hook';
@@ -91,13 +91,13 @@ export const ReceiveModal: FC = () => {
       </View>
       <Divider size={formatSize(8)} />
 
-      <TouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyButtonPress} testID={testID}>
+      <SafeTouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyButtonPress} testID={testID}>
         {isShownDomainName && isString(domainName) ? (
           <Text style={styles.publicKeyHash}>{domainName}</Text>
         ) : (
           <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
         )}
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
       <Divider />
 
       <View style={styles.buttonsContainer}>

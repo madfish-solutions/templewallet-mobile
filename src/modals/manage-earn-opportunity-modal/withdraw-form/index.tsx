@@ -182,6 +182,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
           value={lpInputValue}
           label="Amount"
           assetsList={amountInputAssetsList}
+          balance={depositAmountAtomic.toFixed()}
           balanceLabel="Current deposit:"
           toUsdToggle={false}
           editable={false}

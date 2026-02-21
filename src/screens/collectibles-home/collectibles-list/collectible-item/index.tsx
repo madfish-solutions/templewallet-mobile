@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import {
@@ -63,7 +63,7 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
   );
 
   return (
-    <TouchableOpacity activeOpacity={0.7} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
+    <SafeTouchableOpacity activeOpacity={0.7} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
       <View style={[styles.image, { width: size, height: size }]}>
         <CollectibleItemImage
           slug={slug}
@@ -93,6 +93,6 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
           </Text>
         </View>
       ) : null}
-    </TouchableOpacity>
+    </SafeTouchableOpacity>
   );
 });

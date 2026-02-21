@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { white } from 'src/config/styles';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
@@ -97,9 +98,9 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
 
   if (isTezos) {
     return (
-      <TouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
+      <SafeTouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
         <Text style={styles.delegateText}>{currentBaker ? 'Delegate & Stake' : 'Not Delegated'}</Text>
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
     );
   }
 

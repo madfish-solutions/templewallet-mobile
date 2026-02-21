@@ -1,12 +1,12 @@
 import React, { FC, useCallback } from 'react';
 import { View, Text } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
 import { ErrorDisclaimerMessage } from 'src/components/error-disclaimer-message/error-disclaimer-message';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { restartExolixTopupAction } from 'src/store/exolix/exolix-actions';
@@ -62,7 +62,7 @@ export const ErrorComponent: FC<ErrorComponentProps> = ({ setIsError }) => {
           </View>
           <Divider size={formatSize(16)} />
           <ButtonsFloatingContainer>
-            <TouchableOpacity
+            <SafeTouchableOpacity
               style={styles.textContainer}
               onPress={() => {
                 handleTrackSupportSubmit();
@@ -70,7 +70,7 @@ export const ErrorComponent: FC<ErrorComponentProps> = ({ setIsError }) => {
               }}
             >
               <Text style={styles.actionsContainer}>SUPPORT</Text>
-            </TouchableOpacity>
+            </SafeTouchableOpacity>
           </ButtonsFloatingContainer>
           <ButtonsFloatingContainer />
         </ScreenContainer>

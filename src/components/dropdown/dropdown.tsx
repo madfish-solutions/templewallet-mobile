@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
@@ -14,6 +14,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
+import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { SearchInput } from '../search-input/search-input';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
@@ -108,7 +109,7 @@ const DropdownComponent = <T extends unknown>({
 
       return (
         <TouchableWithAnalytics
-          Component={TouchableOpacity}
+          Component={SafeTouchableOpacity}
           key={index}
           onPress={handlePress}
           testID={DropdownSelectors.option}
@@ -142,7 +143,7 @@ const DropdownComponent = <T extends unknown>({
 
   return (
     <>
-      <TouchableOpacity
+      <SafeTouchableOpacity
         style={styles.valueContainer}
         disabled={disabled}
         onPress={() => {
@@ -156,7 +157,7 @@ const DropdownComponent = <T extends unknown>({
         testID={testID}
       >
         {renderValue({ value, disabled, isCollectibleScreen })}
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>

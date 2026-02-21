@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
@@ -41,7 +41,7 @@ export const SocialButton: FC<Props> = ({ iconName, url, style, size = formatSiz
 
   return (
     <TouchableWithAnalytics
-      Component={TouchableOpacity}
+      Component={SafeTouchableOpacity}
       style={[styles.container, style]}
       onPress={handleOnPress}
       testID={testID}

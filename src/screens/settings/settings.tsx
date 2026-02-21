@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { Share, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from 'src/components/divider/divider';
@@ -11,6 +10,7 @@ import { NotificationCounter } from 'src/components/notification-counter/notific
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
 import { Quote } from 'src/components/quote/quote';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
@@ -229,7 +229,7 @@ export const Settings = () => {
           <Divider />
 
           <TouchableWithAnalytics
-            Component={TouchableOpacity}
+            Component={SafeTouchableOpacity}
             style={styles.logoutButton}
             onPress={handleLogoutButtonPress}
             testID={SettingsSelectors.resetWalletButton}

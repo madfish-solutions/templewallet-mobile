@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { ANIMATION_DURATION } from 'src/config/animation';
 import { useAnimationInterpolate } from 'src/hooks/use-animation-interpolate.hook';
@@ -34,7 +34,7 @@ export const QuestionAccordion: FCWithChildren<Props> = ({ question, children, t
   return (
     <View style={styles.container}>
       <TouchableWithAnalytics
-        Component={TouchableOpacity}
+        Component={SafeTouchableOpacity}
         testID={testID}
         testIDProperties={testIDProperties}
         style={styles.switcher}

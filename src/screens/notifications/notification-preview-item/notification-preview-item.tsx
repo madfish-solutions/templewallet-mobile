@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { NotificationStatus } from 'src/enums/notification-status.enum';
 import { NotificationType } from 'src/enums/notification-type.enum';
 import { NotificationInterface } from 'src/interfaces/notification.interface';
@@ -38,7 +38,7 @@ export const NotificationPreviewItem: FC<Props> = ({ notification }) => {
     navigateToScreen({ screen: ScreensEnum.NotificationsItem, params: { id: notification.id } });
 
   return (
-    <TouchableOpacity
+    <SafeTouchableOpacity
       style={[
         styles.container,
         conditionalStyle(notification.status === NotificationStatus.Read, styles.containerRead)
@@ -76,6 +76,6 @@ export const NotificationPreviewItem: FC<Props> = ({ notification }) => {
           </View>
         </View>
       </View>
-    </TouchableOpacity>
+    </SafeTouchableOpacity>
   );
 };

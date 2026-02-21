@@ -1,12 +1,13 @@
 import React, { FC, PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import { Animated, StyleProp, View, ViewStyle } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { useLayoutSizes } from 'src/hooks/use-layout-sizes.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+
+import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 
 import { tileMargin, useSegmentedControlStyles } from './segmented-control.styles';
 
@@ -67,7 +68,7 @@ export const SegmentedControl = <T extends unknown>({
       const isDisabled = disabledIndexes?.includes(index) ?? false;
 
       return (
-        <TouchableOpacity
+        <SafeTouchableOpacity
           disabled={isDisabled}
           key={index}
           style={[styles.itemContainer, { width: tileWidth }]}
@@ -86,7 +87,7 @@ export const SegmentedControl = <T extends unknown>({
           }}
         >
           <ValueComponent item={item} isDisabled={isDisabled} isSelected={index === selectedIndex} />
-        </TouchableOpacity>
+        </SafeTouchableOpacity>
       );
     },
     [

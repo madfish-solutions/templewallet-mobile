@@ -19,6 +19,7 @@ export interface AssetAmountInputProps extends TestIdProps {
   value: AssetAmountInterface;
   label: string;
   assetsList: TokenInterface[];
+  balance?: string;
   balanceLabel?: string;
   frozenBalance?: string;
   isError?: boolean;
