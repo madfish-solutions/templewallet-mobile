@@ -59,7 +59,14 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
 
   switch (imageType) {
     case ImageTypeEnum.RemoteSvg:
-      return <SvgCssUri width={size} height={size} uri={formatImgUri(thumbnailUri)!} onError={onSvgRenderError} />;
+      return (
+        <SvgCssUri
+          width={size}
+          height={size}
+          uri={formatImgUri(thumbnailUri, 'small', false)!}
+          onError={onSvgRenderError}
+        />
+      );
     case ImageTypeEnum.DataUri:
       return <DataUriImage width={size} height={size} dataUri={thumbnailUri} />;
   }
