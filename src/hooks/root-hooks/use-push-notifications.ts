@@ -11,12 +11,14 @@ import {
   onMessage,
   Messaging
 } from '@react-native-firebase/messaging';
+import memoizee from 'memoizee';
 import { useCallback, useEffect, useState } from 'react';
 import { PermissionsAndroid } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid } from 'src/config/system';
 import { setShouldRedirectToNotificationsAction } from 'src/store/notifications/notifications-actions';
+import { AnalyticsEventProperties } from 'src/utils/analytics/analytics.util';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getFirebaseApp } from 'src/utils/firebase-app.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -40,7 +42,7 @@ export const usePushNotifications = () => {
       .then(([app]) => {
         const messaging = getMessaging(app);
         const handleRemoteMessage = () => void dispatch(setShouldRedirectToNotificationsAction(true));
-        unsubscribeFromFgNotifications = handleForegroundNotifications(messaging);
+        unsubscribeFromFgNotifications = handleForegroundNotifications(messaging, trackErrorEvent);
         unsubscribeFromNotificationOpenedApp = onNotificationOpenedApp(messaging, handleRemoteMessage);
 
         getInitialNotification(messaging)
@@ -89,25 +91,44 @@ const requestUserPermission = async (getFcmToken: () => void) => {
   }
 };
 
-const handleForegroundNotifications = (messaging: Messaging) => {
+const getChannelId = memoizee(() => notifee.createChannel({ id: 'central-channel', name: 'Central Channel' }), {
+  promise: true
+});
+
+const handleForegroundNotifications = (
+  messaging: Messaging,
+  trackErrorEvent: (
+    name: string,
+    error: unknown,
+    addressesToHide?: string[],
+    additionalProperties?: AnalyticsEventProperties
+  ) => void
+) => {
   const unsubscribe = onMessage(messaging, async remoteMessage => {
     const { messageId, notification, data } = remoteMessage;
 
     if (isDefined(notification) && isDefined(notification.body)) {
       const { title, body, android = {}, ios = {} } = notification;
-
-      notifee.displayNotification({
-        id: messageId,
-        title,
-        subtitle: isAndroid ? undefined : ios.subtitle,
-        body,
-        data,
-        android,
-        ios: {
-          ...ios,
-          sound: typeof ios.sound === 'string' ? ios.sound : ios.sound?.name
+      try {
+        if (isAndroid && !isDefined(android.channelId)) {
+          android.channelId = await getChannelId();
         }
-      });
+
+        return await notifee.displayNotification({
+          id: messageId,
+          title,
+          subtitle: isAndroid ? undefined : ios.subtitle,
+          body,
+          data,
+          android,
+          ios: {
+            ...ios,
+            sound: typeof ios.sound === 'string' ? ios.sound : ios.sound?.name
+          }
+        });
+      } catch (error) {
+        trackErrorEvent('DisplayNotificationError', error, undefined, { remoteMessage });
+      }
     }
   });
 

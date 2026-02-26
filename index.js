@@ -6,6 +6,6 @@ import './handle-js-exception';
 import { AppRegistry } from 'react-native';
 
 import { name as appName } from './app.json';
-import { App } from './src/app/app';
+import { AppBootstrap } from './src/app/bootstrap';
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => AppBootstrap);

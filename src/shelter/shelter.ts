@@ -334,11 +334,13 @@ export class Shelter {
     forkJoin([Shelter.getShelterVersion(), getSupportedBiometryType()]).pipe(
       switchMap(([shelterVersion, supportedBiometryType]) =>
         isDefined(supportedBiometryType)
-          ? setGenericPassword(
-              PASSWORD_STORAGE_KEY,
-              JSON.stringify(password),
-              getBiometryKeychainOptions(shelterVersion)
-            )
+          ? setGenericPassword(PASSWORD_STORAGE_KEY, JSON.stringify(password), {
+              ...getBiometryKeychainOptions(shelterVersion),
+              authenticationPrompt: {
+                title: 'Authenticate to enable biometry',
+                cancel: 'Cancel'
+              }
+            })
           : of(false)
       ),
       catchError(() => of(false))
