@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import FastImage, { Source } from 'react-native-fast-image';
 
+import { useTokenImagesStack } from 'src/hooks/use-images-stack';
 import { formatImgUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 
