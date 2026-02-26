@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import FastImage from 'react-native-fast-image';
 
-import { useTokenImageStack } from 'src/hooks/use-images-stack';
+import { useTokenImagesStack } from 'src/hooks/use-images-stack';
 import { useDidUpdate } from 'src/utils/hooks';
 
 import { Icon } from '../icon/icon';
@@ -17,7 +17,7 @@ interface Props {
 }
 
 export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOriginal = false }) => {
-  const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImageStack(uri, useOriginal);
+  const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImagesStack(uri, useOriginal);
 
   useDidUpdate(() => {
     if (isStackFailed) {

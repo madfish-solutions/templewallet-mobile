@@ -18,14 +18,11 @@ export const useCollectibleImagesStack = (
   return useImagesStack(sourcesStack);
 };
 
-export const useTokenImageStack = (url: string, preferDirectSource = false) => {
+export const useTokenImagesStack = (url: string, preferDirectSource = false) => {
   const sourcesStack = useMemo(() => buildTokenImagesStack(url, preferDirectSource), [url, preferDirectSource]);
 
   return useImagesStack(sourcesStack);
 };
-
-/** @deprecated use `useTokenImageStack` */
-export const useTokenImagesStack = useTokenImageStack;
 
 const useImagesStack = (sourcesStack: string[]) => {
   const emptyStack = sourcesStack.length < 1;
