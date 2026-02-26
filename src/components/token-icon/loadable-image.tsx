@@ -1,9 +1,8 @@
-import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
-import FastImage, { Source } from 'react-native-fast-image';
+import React, { memo, useMemo } from 'react';
+import FastImage from 'react-native-fast-image';
 
-import { useTokenImagesStack } from 'src/hooks/use-images-stack';
-import { formatImgUri } from 'src/utils/image.utils';
-import { isString } from 'src/utils/is-string';
+import { useTokenImageStack } from 'src/hooks/use-images-stack';
+import { useDidUpdate } from 'src/utils/hooks';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -18,38 +17,25 @@ interface Props {
 }
 
 export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOriginal = false }) => {
-  const lastItemId = useRef(uri);
+  const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImageStack(uri, useOriginal);
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isFailed, setIsFailed] = useState(false);
-  if (uri !== lastItemId.current) {
-    lastItemId.current = uri;
-    setIsLoading(true);
-    setIsFailed(false);
-  }
+  useDidUpdate(() => {
+    if (isStackFailed) {
+      onError?.();
+    }
+  }, [isStackFailed, onError]);
 
-  const isShowPlaceholder = useMemo(() => isLoading || isFailed, [isLoading, isFailed]);
+  const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
 
   const style = useMemo(
     () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: size, height: size }],
     [isShowPlaceholder, size]
   );
 
-  const source = useMemo<Source>(
-    () => (isString(uri) ? { uri: formatImgUri(uri, 'small', !useOriginal) } : {}),
-    [uri, useOriginal]
-  );
-
-  const handleError = useCallback(() => {
-    setIsFailed(true);
-    onError?.();
-  }, [onError]);
-  const handleLoadEnd = useCallback(() => setIsLoading(false), []);
-
   return (
     <>
       {isShowPlaceholder && <Icon name={IconNameEnum.NoNameToken} size={size} />}
-      <FastImage style={style} source={source} onError={handleError} onLoadEnd={handleLoadEnd} />
+      <FastImage style={style} source={{ uri: src }} onError={onFail} onLoad={onSuccess} />
     </>
   );
 });

@@ -157,7 +157,7 @@ const buildIpfsMediaUriByInfo = (
 export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) =>
   buildIpfsMediaUriByInfo(getMediaUriInfo(uri), size, useMediaHost);
 
-export const buildTokenImagesStack = (url?: string): string[] => {
+export const buildTokenImagesStack = (url?: string, preferDirectSource = false): string[] => {
   if (!isDefined(url)) {
     return [];
   }
@@ -165,12 +165,11 @@ export const buildTokenImagesStack = (url?: string): string[] => {
   if (url.startsWith(IPFS_PROTOCOL) || url.startsWith('http')) {
     const uriInfo = getMediaUriInfo(url);
     const directFallback = uriInfo.ipfs ? buildIpfsMediaUriByInfo(uriInfo, 'small', false) : uriInfo.uri;
+    const mediaHostSources = [buildIpfsMediaUriByInfo(uriInfo, 'small'), buildIpfsMediaUriByInfo(uriInfo, 'medium')];
 
-    return [
-      buildIpfsMediaUriByInfo(uriInfo, 'small'),
-      buildIpfsMediaUriByInfo(uriInfo, 'medium'),
-      directFallback
-    ].filter(isTruthy);
+    return (preferDirectSource ? [directFallback, ...mediaHostSources] : [...mediaHostSources, directFallback]).filter(
+      isTruthy
+    );
   }
 
   if (url.startsWith('data:image/')) {

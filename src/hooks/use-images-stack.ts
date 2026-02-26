@@ -18,11 +18,14 @@ export const useCollectibleImagesStack = (
   return useImagesStack(sourcesStack);
 };
 
-export const useTokenImagesStack = (url: string) => {
-  const sourcesStack = useMemo(() => buildTokenImagesStack(url), [url]);
+export const useTokenImageStack = (url: string, preferDirectSource = false) => {
+  const sourcesStack = useMemo(() => buildTokenImagesStack(url, preferDirectSource), [url, preferDirectSource]);
 
   return useImagesStack(sourcesStack);
 };
+
+/** @deprecated use `useTokenImageStack` */
+export const useTokenImagesStack = useTokenImageStack;
 
 const useImagesStack = (sourcesStack: string[]) => {
   const emptyStack = sourcesStack.length < 1;
@@ -40,7 +43,7 @@ const useImagesStack = (sourcesStack: string[]) => {
 
   const [index, setIndex] = useState(emptyStack ? -1 : 0);
 
-  const src = sourcesStack[index] as string | undefined;
+  const src = sourcesStack[index];
 
   const onSuccess = useCallback(() => void setIsLoading(false), []);
 
