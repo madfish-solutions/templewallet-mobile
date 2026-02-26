@@ -11,6 +11,7 @@ export const useSettingsHeaderStyles = createUseStyles(({ colors, typography }) 
     marginVertical: formatSize(8)
   },
   socialsContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginBottom: formatSize(8)
   }
 }));
