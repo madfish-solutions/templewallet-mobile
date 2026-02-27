@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useDidUpdate } from 'src/utils/hooks';
-import { buildCollectibleImagesStack } from 'src/utils/image.utils';
+import { buildCollectibleImagesStack, buildTokenImagesStack } from 'src/utils/image.utils';
 
 export const useCollectibleImagesStack = (
   assetSlug: string,
@@ -15,6 +15,16 @@ export const useCollectibleImagesStack = (
     [assetSlug, artifactUri, displayUri, thumbnailUri, isFullView]
   );
 
+  return useImagesStack(sourcesStack);
+};
+
+export const useTokenImagesStack = (url: string, preferDirectSource = false) => {
+  const sourcesStack = useMemo(() => buildTokenImagesStack(url, preferDirectSource), [url, preferDirectSource]);
+
+  return useImagesStack(sourcesStack);
+};
+
+const useImagesStack = (sourcesStack: string[]) => {
   const emptyStack = sourcesStack.length < 1;
 
   const [isLoading, setIsLoading] = useState(emptyStack === false);
@@ -30,7 +40,7 @@ export const useCollectibleImagesStack = (
 
   const [index, setIndex] = useState(emptyStack ? -1 : 0);
 
-  const src = sourcesStack[index] as string | undefined;
+  const src = sourcesStack[index];
 
   const onSuccess = useCallback(() => void setIsLoading(false), []);
 
