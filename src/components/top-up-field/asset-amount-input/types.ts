@@ -22,6 +22,7 @@ export interface TopUpFormAssetAmountInputProps extends TestIdProps {
   isError?: boolean;
   editable?: boolean;
   isSearchable?: boolean;
+  isLoading?: boolean;
   selectionOptions?: TextInputProps['selection'];
   precision?: number;
   tokenTestID?: string;
