@@ -19,7 +19,7 @@ import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.u
 export const useShelter = () => {
   const dispatch = useDispatch();
   const accounts = useAccountsListSelector();
-  const { navigate, dispatch: navigationDispatch } = useNavigation();
+  const { dispatch: navigationDispatch } = useNavigation();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
 
@@ -44,7 +44,7 @@ export const useShelter = () => {
           trackErrorEvent('CreateImportAccountError', error, accountPkh ? [accountPkh] : [], { selectedRpcUrl })
       ),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
-      enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
+      enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch)
     ];
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());

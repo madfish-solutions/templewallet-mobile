@@ -2,16 +2,13 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { of, Subject, switchMap, tap } from 'rxjs';
 
 import { StacksEnum } from 'src/navigator/enums/stacks.enum';
+import { navigateAction } from 'src/store/root-state.actions';
 import { hideLoaderAction, setIsBiometricsEnabled, showLoaderAction } from 'src/store/settings/settings-actions';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 
 import { Shelter } from '../shelter';
 
-export const enableBiometryPasswordSubscription = (
-  enableBiometryPassword$: Subject<string>,
-  dispatch: Dispatch,
-  navigate: (screen: StacksEnum) => void
-) =>
+export const enableBiometryPasswordSubscription = (enableBiometryPassword$: Subject<string>, dispatch: Dispatch) =>
   enableBiometryPassword$
     .pipe(
       tap(() => dispatch(showLoaderAction())),
@@ -29,6 +26,6 @@ export const enableBiometryPasswordSubscription = (
         showSuccessToast({ description: 'Successfully enabled!' });
 
         dispatch(setIsBiometricsEnabled(true));
-        navigate(StacksEnum.MainStack);
+        dispatch(navigateAction({ screen: StacksEnum.MainStack }));
       }
     });
