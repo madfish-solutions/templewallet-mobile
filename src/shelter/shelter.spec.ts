@@ -246,7 +246,10 @@ describe('Shelter', () => {
           expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
             PASSWORD_STORAGE_KEY,
             JSON.stringify(mockCorrectPassword),
-            getBiometryKeychainOptions(0)
+            {
+              ...getBiometryKeychainOptions(0),
+              authenticationPrompt: { cancel: 'Cancel', title: 'Authenticate to enable biometry' }
+            }
           );
         }, done)
       );

@@ -7,6 +7,7 @@ import { mockNavigationDispatch, mockNavigate } from '../mocks/react-navigation.
 import { mockUseDispatch } from '../mocks/react-redux.mock';
 import { mockInMemorySigner } from '../mocks/taquito-signer.mock';
 import { StacksEnum } from '../navigator/enums/stacks.enum';
+import { navigateAction } from '../store/root-state.actions';
 import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
@@ -115,7 +116,7 @@ describe('useShelter', () => {
 
     expect(mockShowSuccessToast).toHaveBeenCalledWith({ description: 'Successfully enabled!' });
     expect(mockUseDispatch).toHaveBeenCalledWith(setIsBiometricsEnabled(true));
-    expect(mockNavigate).toHaveBeenCalledWith(StacksEnum.MainStack);
+    expect(mockUseDispatch).toHaveBeenCalledWith(navigateAction({ screen: StacksEnum.MainStack }));
   });
 
   it('should not enable biometry password for incorrect password', () => {
