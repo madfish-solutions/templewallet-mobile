@@ -7,12 +7,13 @@ import { useDispatch } from 'react-redux';
 import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { white } from 'src/config/styles';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { removeTokenAction } from 'src/store/wallet/wallet-actions';
 import { formatSize } from 'src/styles/format-size';
@@ -39,7 +40,8 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
   const dispatch = useDispatch();
   const styles = useTokenScreenContentContainerStyles();
   const apyStyles = useApyStyles();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
+  const navigateToScreen = useNavigateToScreen();
   const currentBaker = useSelectedBakerSelector();
   const { trackEvent } = useAnalytics();
   const isTezos = token.address === '';
@@ -47,7 +49,9 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
   const { isDcpNode } = useNetworkInfo();
 
   const navigationFlow = () => {
-    isDcpNode && !currentBaker ? navigate(ModalsEnum.SelectBaker) : navigate(ScreensEnum.Delegation);
+    isDcpNode && !currentBaker
+      ? navigateToModal(ModalsEnum.SelectBaker)
+      : navigateToScreen({ screen: ScreensEnum.Delegation });
   };
 
   const { rate: apyRate = INITIAL_APR_VALUE, link: apyLink } = useTokenApyInfo(tokenSlug);
@@ -72,7 +76,7 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
             style: 'destructive',
             onPress: () => {
               dispatch(removeTokenAction(tokenSlug));
-              navigate(ScreensEnum.Wallet);
+              navigateToScreen({ screen: ScreensEnum.Wallet });
             }
           }
         ]
@@ -94,9 +98,9 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
 
   if (isTezos) {
     return (
-      <TouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
+      <SafeTouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
         <Text style={styles.delegateText}>{currentBaker ? 'Delegate & Stake' : 'Not Delegated'}</Text>
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
     );
   }
 

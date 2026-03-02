@@ -5,15 +5,13 @@ import { View } from 'react-native';
 import { AndroidKeyboardDisclaimer } from 'src/components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
-import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ImportWalletProps } from 'src/modals/import-wallet/interfaces';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { formatSize } from 'src/styles/format-size';
@@ -41,7 +39,7 @@ export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit, o
 
   return (
     <FormikProvider value={formik}>
-      <ScreenContainer>
+      <ScreenContainer isFullScreenMode={true}>
         <Divider size={formatSize(16)} />
 
         <View style={styles.seedPhraseInputContainer}>
@@ -51,27 +49,19 @@ export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit, o
         </View>
       </ScreenContainer>
 
-      <ButtonsFloatingContainer>
-        <ButtonsContainer style={styles.buttonsContainer}>
-          <View style={styles.flex}>
-            <ButtonLargeSecondary
-              title="Back"
-              onPress={onBackPress}
-              testID={ImportWalletFromSeedPhraseSelectors.backButton}
-            />
-          </View>
-          <Divider size={formatSize(15)} />
-          <View style={styles.flex}>
-            <ButtonLargePrimary
-              title="Next"
-              disabled={!formik.isValid}
-              onPress={formik.submitForm}
-              testID={ImportWalletFromSeedPhraseSelectors.nextButton}
-            />
-          </View>
-        </ButtonsContainer>
-        <InsetSubstitute type="bottom" />
-      </ButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
+        <ButtonLargeSecondary
+          title="Back"
+          onPress={onBackPress}
+          testID={ImportWalletFromSeedPhraseSelectors.backButton}
+        />
+        <ButtonLargePrimary
+          title="Next"
+          disabled={!formik.isValid}
+          onPress={formik.submitForm}
+          testID={ImportWalletFromSeedPhraseSelectors.nextButton}
+        />
+      </ModalButtonsFloatingContainer>
     </FormikProvider>
   );
 });

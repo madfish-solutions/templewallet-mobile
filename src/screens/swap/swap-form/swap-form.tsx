@@ -358,10 +358,13 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     } else {
       trackEvent('SWAP_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);
       dispatch(
-        navigateAction(ModalsEnum.Confirmation, {
-          type: ConfirmationTypeEnum.InternalOperations,
-          opParams,
-          testID: 'SWAP_TRANSACTION_SENT'
+        navigateAction({
+          screen: ModalsEnum.Confirmation,
+          params: {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams,
+            testID: 'SWAP_TRANSACTION_SENT'
+          }
         })
       );
     }

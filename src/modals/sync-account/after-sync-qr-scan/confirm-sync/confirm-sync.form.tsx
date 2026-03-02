@@ -1,12 +1,11 @@
 import { object, SchemaOf } from 'yup';
 
+import { acceptTermsValidation } from 'src/form/validation/accept-terms';
+import { analyticsValidation } from 'src/form/validation/analytics';
+import { passwordValidation } from 'src/form/validation/password';
+import { useBiometryValidation } from 'src/form/validation/use-biometry';
+import { usePrevPasswordValidation } from 'src/form/validation/use-previous-password';
 import { viewAdsValidation } from 'src/form/validation/view-ads';
-
-import { acceptTermsValidation } from '../../../../form/validation/accept-terms';
-import { analyticsValidation } from '../../../../form/validation/analytics';
-import { passwordValidation } from '../../../../form/validation/password';
-import { useBiometryValidation } from '../../../../form/validation/use-biometry';
-import { usePrevPasswordValidation } from '../../../../form/validation/use-previous-password';
 
 export type ConfirmSyncFormValues = {
   password: string;

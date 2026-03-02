@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { number, object, SchemaOf, string } from 'yup';
 
-import { bigNumberValidation, withMinMaxBignumberValidation } from 'src/form/validation/big-number';
+import { bigNumberSchema, withMinMaxBignumberValidation } from 'src/form/validation/big-number';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { PaymentProviderInterface } from 'src/interfaces/payment-provider';
 import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
@@ -27,7 +27,7 @@ const assetSchema = object()
   })
   .required();
 
-export const BuyWithCreditCardValidationSchema = object().shape({
+export const BuyWithCreditCardValidationSchema: SchemaOf<BuyWithCreditCardFormValues> = object().shape({
   sendInput: object().shape({
     asset: assetSchema.clone(),
     amount: withMinMaxBignumberValidation.clone().required(makeRequiredErrorMessage('Amount')),
@@ -36,7 +36,7 @@ export const BuyWithCreditCardValidationSchema = object().shape({
   }),
   getOutput: object().shape({
     asset: assetSchema.clone(),
-    amount: bigNumberValidation.clone().test({
+    amount: bigNumberSchema().test({
       name: 'is-positive',
       exclusive: false,
       params: {},
@@ -53,4 +53,4 @@ export const BuyWithCreditCardValidationSchema = object().shape({
       iconName: string().required()
     })
     .required('Please select payment provider')
-}) as unknown as SchemaOf<BuyWithCreditCardFormValues>;
+});

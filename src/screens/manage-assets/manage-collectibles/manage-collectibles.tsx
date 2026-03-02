@@ -6,16 +6,12 @@ import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholde
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
-
-/** padding + icon size **/
-const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(24) * 2);
 
 const keyExtractor = (item: TokenInterface) => getTokenSlug(item);
 const renderItem: ListRenderItem<TokenInterface> = ({ item }) => <ManageAssetsItem asset={item} />;
@@ -40,7 +36,6 @@ export const ManageCollectibles = memo(() => {
         data={filteredAssetsList}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        estimatedItemSize={FLOORED_ITEM_HEIGHT}
         contentContainerStyle={styles.contentContainerStyle}
         ListEmptyComponent={ListEmptyComponent}
       />

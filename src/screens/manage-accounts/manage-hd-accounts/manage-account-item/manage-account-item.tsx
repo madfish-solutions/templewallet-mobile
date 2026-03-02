@@ -12,10 +12,9 @@ import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { Switch } from 'src/components/switch/switch';
 import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { EventFn } from 'src/config/general';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { setAccountVisibility } from 'src/store/wallet/wallet-actions';
 import { useIsAccountVisibleSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -28,12 +27,12 @@ import { useManageAccountItemStyles } from './manage-account-item.styles';
 interface Props {
   account: AccountInterface;
   selectedAccount: AccountInterface;
-  onRevealButtonPress: EventFn<AccountInterface>;
+  onRevealButtonPress: SyncFn<AccountInterface>;
 }
 
 export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const styles = useManageAccountItemStyles();
   const tezosToken = useTezosTokenOfKnownAccount(account.publicKeyHash);
   const isVisible = useIsAccountVisibleSelector(account.publicKeyHash) ?? true;
@@ -56,7 +55,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
-            onPress={() => navigate(ModalsEnum.RenameAccount, { account })}
+            onPress={() => navigateToModal(ModalsEnum.RenameAccount, { account })}
             testID={ManageAccountItemSelectors.editButton}
           />
           <Divider size={formatSize(16)} />

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 
 import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
@@ -12,7 +12,12 @@ import { TruncatedText } from '../truncated-text';
 import { TokenContainerProps } from './token-container.props';
 import { useTokenContainerStyles } from './token-container.styles';
 
-export const TokenContainer: FC<TokenContainerProps> = ({ token, apy = INITIAL_APR_VALUE, scam, children }) => {
+export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
+  token,
+  apy = INITIAL_APR_VALUE,
+  scam,
+  children
+}) => {
   const styles = useTokenContainerStyles();
 
   return (

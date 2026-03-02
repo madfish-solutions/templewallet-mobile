@@ -73,7 +73,7 @@ const transformDataToTokenMetadata = (
 ): TokenMetadataInterface => ({
   id,
   address,
-  decimals: token.decimals,
+  decimals: token.decimals ?? 0,
   symbol: token.symbol ?? token.name?.substring(0, 8) ?? '???',
   name: token.name ?? token.symbol ?? 'Unknown Token',
   thumbnailUri: token.thumbnailUri,

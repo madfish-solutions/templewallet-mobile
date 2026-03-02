@@ -2,9 +2,10 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import React, { FC, useRef, useState } from 'react';
 import { TextInput, View } from 'react-native';
 
-import { emptyFn } from '../../../config/general';
-import { autocorrectDisableProps } from '../../../utils/autocorrect-disable.utils';
-import { isString } from '../../../utils/is-string';
+import { emptyFn } from 'src/config/general';
+import { autocorrectDisableProps } from 'src/utils/autocorrect-disable.utils';
+import { isString } from 'src/utils/is-string';
+
 import { ButtonSmallSecondary } from '../../button/button-small/button-small-secondary/button-small-secondary';
 import { StyledTextInput } from '../../styled-text-input/styled-text-input';
 import { StyledTextInputStyles } from '../../styled-text-input/styled-text-input.styles';

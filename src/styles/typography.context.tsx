@@ -1,4 +1,4 @@
-import React, { createContext, FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { Dimensions, ScaledSize } from 'react-native';
 
 import { FontsEnum } from './fonts-enum';
@@ -7,7 +7,7 @@ import { Typography } from './typography.types';
 
 const TypographyContext = createContext<Typography>({} as Typography);
 
-export const TypographyProvider: FC = ({ children }) => {
+export const TypographyProvider: FCWithChildren = ({ children }) => {
   const [fontScale, setFontScale] = useState(Dimensions.get('window').fontScale);
 
   useEffect(() => {
@@ -78,6 +78,10 @@ export const TypographyProvider: FC = ({ children }) => {
         fontFamily: FontsEnum.rubikMedium,
         fontSize: formatTextSize(11)
       },
+      body18Semibold: {
+        fontFamily: FontsEnum.interSemiBold,
+        fontSize: formatTextSize(18)
+      },
       numbersStatus8: {
         fontFamily: FontsEnum.rubikSemiBold,
         fontSize: formatTextSize(8)
@@ -117,6 +121,7 @@ export const TypographyProvider: FC = ({ children }) => {
       },
       body17Regular: {
         fontFamily: FontsEnum.interRegular,
+        fontWeight: '400',
         fontSize: formatTextSize(17)
       },
       body15Semibold: {

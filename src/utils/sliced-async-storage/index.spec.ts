@@ -5,7 +5,6 @@ import { isDefined } from 'src/utils/is-defined';
 
 import { SlicedAsyncStorage, SlicedAsyncStorageError } from '.';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
 const nonStringValues = [undefined, null, 0, 1, true, false, {}, [], () => {}, Symbol('test')];
 const nonSlicedValue = 'a'.repeat(1e6);
 
@@ -72,7 +71,7 @@ describe('SlicedAsyncStorage', () => {
     it('should throw SlicedAsyncStorageError in case the passed key is not a string', async () => {
       for (const value of nonStringValues) {
         // eslint-disable-next-line no-type-assertion/no-type-assertion,@typescript-eslint/no-explicit-any
-        await expect(() => SlicedAsyncStorage.getItem(value as any)).rejects.toThrowError(SlicedAsyncStorageError);
+        await expect(() => SlicedAsyncStorage.getItem(value as any)).rejects.toThrow(SlicedAsyncStorageError);
       }
     });
   });
@@ -136,7 +135,7 @@ describe('SlicedAsyncStorage', () => {
     it('should throw SlicedAsyncStorageError in case the passed key is not a string', async () => {
       for (const value of nonStringValues) {
         // eslint-disable-next-line no-type-assertion/no-type-assertion,@typescript-eslint/no-explicit-any
-        await expect(() => SlicedAsyncStorage.setItem(value as any, nonSlicedValue)).rejects.toThrowError(
+        await expect(() => SlicedAsyncStorage.setItem(value as any, nonSlicedValue)).rejects.toThrow(
           SlicedAsyncStorageError
         );
       }
@@ -145,9 +144,7 @@ describe('SlicedAsyncStorage', () => {
     it('should throw SlicedAsyncStorageError in case the passed value is not a string', async () => {
       for (const value of nonStringValues) {
         // eslint-disable-next-line no-type-assertion/no-type-assertion,@typescript-eslint/no-explicit-any
-        await expect(() => SlicedAsyncStorage.setItem(testKey, value as any)).rejects.toThrowError(
-          SlicedAsyncStorageError
-        );
+        await expect(() => SlicedAsyncStorage.setItem(testKey, value as any)).rejects.toThrow(SlicedAsyncStorageError);
       }
     });
   });
@@ -183,7 +180,7 @@ describe('SlicedAsyncStorage', () => {
     it('should throw SlicedAsyncStorageError in case the passed key is not a string', async () => {
       for (const value of nonStringValues) {
         // eslint-disable-next-line no-type-assertion/no-type-assertion,@typescript-eslint/no-explicit-any
-        await expect(() => SlicedAsyncStorage.removeItem(value as any)).rejects.toThrowError(SlicedAsyncStorageError);
+        await expect(() => SlicedAsyncStorage.removeItem(value as any)).rejects.toThrow(SlicedAsyncStorageError);
       }
     });
   });

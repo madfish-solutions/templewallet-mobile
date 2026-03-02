@@ -140,10 +140,13 @@ const sendAssetEpic: AnyActionEpic = (action$, state$) =>
         map(opParams => {
           const modalTitle = receiverPublicKeyHash === BURN_ADDRESS ? 'Confirm Burn' : 'Confirm Send';
 
-          return navigateAction(ModalsEnum.Confirmation, {
-            type: ConfirmationTypeEnum.InternalOperations,
-            opParams,
-            modalTitle
+          return navigateAction({
+            screen: ModalsEnum.Confirmation,
+            params: {
+              type: ConfirmationTypeEnum.InternalOperations,
+              opParams,
+              modalTitle
+            }
           });
         })
       )

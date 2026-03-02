@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 
-import { ModalStatusBar } from '../../components/modal-status-bar/modal-status-bar';
-import { useInnerScreenProgress } from '../../hooks/use-inner-screen-progress';
-import { ModalsEnum } from '../../navigator/enums/modals.enum';
-import { useNavigation } from '../../navigator/hooks/use-navigation.hook';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
+import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { AddAssetAddress } from './add-asset-address/add-asset-address';
 import { AddAssetInfo } from './add-asset-info/add-asset-info';

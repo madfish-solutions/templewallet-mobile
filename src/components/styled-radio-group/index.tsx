@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
 
+import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useColors } from 'src/styles/use-colors';
-
-import { TestIdProps } from '../../interfaces/test-id.props';
 
 import { RadioItemInterface, RadioGroup } from './radio-group';
 import { useStyledRadioButtonsGroupStyles } from './styles';

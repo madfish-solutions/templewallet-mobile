@@ -1,5 +1,5 @@
-import { createUseStylesConfig } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStylesConfig } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useSeedPhraseWordGivenStyles = createUseStylesConfig(({ colors, typography }) => ({
   container: {

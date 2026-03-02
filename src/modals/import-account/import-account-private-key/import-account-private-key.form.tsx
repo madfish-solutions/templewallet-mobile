@@ -1,6 +1,6 @@
 import { object, string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../../form/validation/messages';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 
 export const importAccountPrivateKeyValidationSchema = object().shape({
   privateKey: string().required(makeRequiredErrorMessage('Private key'))

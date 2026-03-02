@@ -1,7 +1,8 @@
-import { black } from '../../../config/styles';
-import { createUseStylesConfig } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
-import { generateShadow } from '../../../styles/generate-shadow';
+import { black } from 'src/config/styles';
+import { createUseStylesConfig } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
+import { generateShadow } from 'src/styles/generate-shadow';
+
 import { ButtonStyleConfig } from '../button-style.config';
 
 export const useButtonSmallSharedStyleConfig = createUseStylesConfig<Omit<ButtonStyleConfig, 'activeColorConfig'>>(

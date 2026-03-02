@@ -1,12 +1,11 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { loadSwapDexesAction, loadSwapTokensAction, resetSwapParamsAction } from 'src/store/swap/swap-actions';
-
-import { ScreensEnum, ScreensParamList } from '../../navigator/enums/screens.enum';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { isDefined } from '../../utils/is-defined';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
 
 import { SwapForm } from './swap-form/swap-form';
 
@@ -15,7 +14,7 @@ export const SwapScreen: FC = () => {
 
   usePageAnalytic(ScreensEnum.SwapScreen);
 
-  const { params } = useRoute<RouteProp<ScreensParamList, ScreensEnum.SwapScreen>>();
+  const params = useScreenParams<ScreensEnum.SwapScreen>();
 
   useEffect(() => {
     dispatch(resetSwapParamsAction());

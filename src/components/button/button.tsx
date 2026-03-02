@@ -1,6 +1,5 @@
 import React, { FC, useMemo } from 'react';
 import { Animated, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -9,6 +8,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { setTestID } from 'src/utils/test-id.utils';
 
 import { Icon } from '../icon/icon';
+import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 
 import { ButtonSharedProps } from './button-shared.props';
 import { ButtonStyleConfig } from './button-style.config';
@@ -85,7 +85,7 @@ export const Button: FC<Props> = ({
 
   return (
     <View style={[conditionalStyle(isFullWidth, ButtonStyles.container), style]}>
-      <TouchableOpacity
+      <SafeTouchableOpacity
         disabled={disabled}
         style={[
           ButtonStyles.touchableOpacity,
@@ -106,7 +106,7 @@ export const Button: FC<Props> = ({
             <ActivityIndicator size="small" />
           </View>
         )}
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
     </View>
   );
 };

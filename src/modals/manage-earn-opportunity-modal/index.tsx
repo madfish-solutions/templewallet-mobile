@@ -2,12 +2,11 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { BigNumber } from 'bignumber.js';
 import { noop } from 'lodash-es';
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, findNodeHandle, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
-import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
@@ -15,6 +14,7 @@ import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { loadAllFarmsAction, loadSingleFarmStakeActions } from 'src/store/farms/actions';
@@ -128,15 +128,15 @@ export const ManageEarnOpportunityModal: FC = () => {
   }, [earnOpportunityItem, dispatch, accountPkh]);
 
   const handleDepositClick = useCallback(() => {
-    const scrollViewHandle = findNodeHandle(scrollViewRef.current);
+    const nativeScrollRef = scrollViewRef.current?.getNativeScrollRef?.();
     if (
       isDefined(stakeFormErrors.acceptRisks) &&
       !isDefined(stakeFormErrors.assetAmount) &&
       isDefined(acceptRisksRef.current) &&
-      isDefined(scrollViewHandle)
+      isDefined(nativeScrollRef)
     ) {
       acceptRisksRef.current.measureLayout(
-        scrollViewHandle,
+        nativeScrollRef,
         (_, y) => scrollViewRef.current?.scrollTo({ y, animated: true }),
         noop
       );
@@ -216,7 +216,7 @@ export const ManageEarnOpportunityModal: FC = () => {
           </View>
         )}
       </ScreenContainer>
-      <ModalButtonsContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         {tabIndex === 0 ? (
           <ButtonLargePrimary
             title="Deposit"
@@ -236,7 +236,7 @@ export const ManageEarnOpportunityModal: FC = () => {
             testIDProperties={withdrawButtonTestIdProperties}
           />
         )}
-      </ModalButtonsContainer>
+      </ModalButtonsFloatingContainer>
       <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </>
   );

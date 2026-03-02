@@ -68,10 +68,13 @@ export const MainInfo: FC = () => {
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>
       dispatch(
-        navigateAction(ModalsEnum.Confirmation, {
-          type: ConfirmationTypeEnum.InternalOperations,
-          opParams,
-          testID: 'CLAIM_REWARDS'
+        navigateAction({
+          screen: ModalsEnum.Confirmation,
+          params: {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams,
+            testID: 'CLAIM_REWARDS'
+          }
         })
       ),
     []

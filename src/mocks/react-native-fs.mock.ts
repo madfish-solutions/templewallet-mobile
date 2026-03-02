@@ -1,4 +1,4 @@
-export const mockReactNativeFs = {
+const mockReactNativeFs = {
   readFile: jest.fn()
 };
 

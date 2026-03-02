@@ -1,14 +1,13 @@
 import React, { FC } from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 
-import { Icon } from '../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { EmptyFn } from '../../../../config/general';
-import { TestIdProps } from '../../../../interfaces/test-id.props';
-import { formatSize } from '../../../../styles/format-size';
-import { AnalyticsEventCategory } from '../../../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../../../utils/analytics/use-analytics.hook';
-import { conditionalStyle } from '../../../../utils/conditional-style';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { useHiddenButtonStyles } from './hidden-button.styles';
 

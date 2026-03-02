@@ -5,9 +5,8 @@
   https://lonelycpp.github.io/react-native-youtube-iframe/navigation-crash/#2-tweak-webview-props
 */
 
-import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { ComponentProps, FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, BackHandler } from 'react-native';
+import React, { FC, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ScrollView, BackHandler, NativeScrollEvent } from 'react-native';
 import { WebView, WebViewNavigation } from 'react-native-webview';
 
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -15,15 +14,15 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { isAndroid } from 'src/config/system';
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { getUrlHostname } from 'src/utils/url.utils';
 
 import { useInAppBrowserStyles } from './styles';
 
 export const InAppBrowser: FC = memo(() => {
-  const { uri } = useRoute<RouteProp<ModalsParamList, ModalsEnum.InAppBrowser>>().params;
+  const { uri } = useModalParams<ModalsEnum.InAppBrowser>();
   const source = useMemo(() => ({ uri }), [uri]);
 
   usePageAnalytic(ModalsEnum.InAppBrowser);
@@ -69,8 +68,9 @@ export const InAppBrowser: FC = memo(() => {
   // PTR (pull-to-refresh)
   const [ptrEnabled, setPtrEnabled] = useState(true);
 
-  const onScroll: ComponentProps<typeof WebView>['onScroll'] = useCallback(
-    event => void setPtrEnabled(event.nativeEvent.contentOffset.y === 0),
+  const onScroll = useCallback(
+    (event: { nativeEvent: Pick<NativeScrollEvent, 'contentOffset'> }) =>
+      setPtrEnabled(event.nativeEvent.contentOffset.y === 0),
     []
   );
 

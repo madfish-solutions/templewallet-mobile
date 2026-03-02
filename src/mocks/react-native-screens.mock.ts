@@ -1,4 +1,4 @@
-export const mockReactNativeScreens = {
+const mockReactNativeScreens = {
   ...jest.requireActual('react-native-screens'),
   enableScreens: jest.fn()
 };

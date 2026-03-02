@@ -1,14 +1,12 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize, formatTextSize } from '../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useAboutDelegationScreenStyles = createUseStyles(({ colors, typography }) => ({
   content: {
     alignItems: 'center'
   },
   title: {
-    ...typography.numbersRegular22,
-    fontSize: formatTextSize(18),
-    fontWeight: '700',
+    ...typography.body18Semibold,
     color: colors.black,
     letterSpacing: formatSize(0.38),
     lineHeight: formatTextSize(25),

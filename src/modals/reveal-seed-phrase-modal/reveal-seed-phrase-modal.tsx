@@ -1,12 +1,12 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import { Formik } from 'formik';
 import React, { useMemo } from 'react';
 
-import { emptyFn } from '../../config/general';
-import { AccountTypeEnum } from '../../enums/account-type.enum';
-import { ModalsEnum, ModalsParamList } from '../../navigator/enums/modals.enum';
-import { useHdAccountListSelector, useSelectedAccountSelector } from '../../store/wallet/wallet-selectors';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { emptyFn } from 'src/config/general';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
+import { useHdAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { RevealSeedPhraseFormContent } from './reveal-seed-phrase-form-content/reveal-seed-phrase-form-content';
 import {
@@ -17,7 +17,7 @@ import {
 export const RevealSeedPhraseModal = () => {
   const selectedAccount = useSelectedAccountSelector();
   const hdAccounts = useHdAccountListSelector();
-  const accountFromRouteProps = useRoute<RouteProp<ModalsParamList, ModalsEnum.RevealSeedPhrase>>().params.account;
+  const { account: accountFromRouteProps } = useModalParams<ModalsEnum.RevealSeedPhrase>();
 
   const account = useMemo(() => {
     const selectedHdAccount =

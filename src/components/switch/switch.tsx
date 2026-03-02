@@ -2,18 +2,18 @@ import React, { FC } from 'react';
 import { TouchableOpacity, Animated } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
-import { ANIMATION_DURATION_FAST } from '../../config/animation';
-import { emptyFn, EventFn } from '../../config/general';
-import { white } from '../../config/styles';
-import { useAnimationInterpolate } from '../../hooks/use-animation-interpolate.hook';
-import { useAnimationRef } from '../../hooks/use-animation-ref.hook';
-import { useUpdateAnimation } from '../../hooks/use-update-animation.hook';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { formatSize } from '../../styles/format-size';
-import { generateHitSlop } from '../../styles/generate-hit-slop';
-import { useColors } from '../../styles/use-colors';
-import { AnalyticsEventCategory } from '../../utils/analytics/analytics-event.enum';
-import { useAnalytics } from '../../utils/analytics/use-analytics.hook';
+import { ANIMATION_DURATION_FAST } from 'src/config/animation';
+import { emptyFn } from 'src/config/general';
+import { white } from 'src/config/styles';
+import { useAnimationInterpolate } from 'src/hooks/use-animation-interpolate.hook';
+import { useAnimationRef } from 'src/hooks/use-animation-ref.hook';
+import { useUpdateAnimation } from 'src/hooks/use-update-animation.hook';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { formatSize } from 'src/styles/format-size';
+import { generateHitSlop } from 'src/styles/generate-hit-slop';
+import { useColors } from 'src/styles/use-colors';
+import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { useSwitchStyles } from './switch.styles';
 
@@ -23,7 +23,7 @@ const hapticFeedbackOptions = { enableVibrateFallback: false, ignoreAndroidSyste
 interface Props extends TestIdProps {
   value: boolean;
   disabled?: boolean;
-  onChange?: EventFn<boolean>;
+  onChange?: SyncFn<boolean>;
 }
 
 export const Switch: FC<Props> = ({ value, disabled = false, testID, testIDProperties, onChange = emptyFn }) => {

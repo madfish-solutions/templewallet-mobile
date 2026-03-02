@@ -1,12 +1,11 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
 import React, { useMemo } from 'react';
 
+import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { isIOS } from 'src/config/system';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { isDefined } from 'src/utils/is-defined';
-
-import { DEFAULT_BORDER_WIDTH } from '../../config/styles';
 
 import { HeaderCloseButton } from './header-close-button/header-close-button';
 import { HeaderTitle } from './header-title/header-title';

@@ -1,6 +1,6 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
-import { mutezToTz, tzToMutez } from '../../utils/tezos.util';
+import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 export const tokenToDollarAmount = (tokenMutezAmount: BigNumber, decimals: number, exchangeRate: number) =>
   mutezToTz(tokenMutezAmount, decimals).multipliedBy(exchangeRate).decimalPlaces(decimals);

@@ -1,6 +1,6 @@
-import React, { FC, memo, useCallback, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
@@ -14,6 +14,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
+import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { SearchInput } from '../search-input/search-input';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
@@ -54,16 +55,16 @@ export type DropdownValueBaseProps<T> = DropdownValueProps<T> & {
 
 export type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
 
-export type DropdownValueComponent<T> = FC<
+export type DropdownValueComponent<T> = SyncFC<
   { value?: T; disabled?: boolean; isCollectibleScreen?: boolean } & TestIdProps
 >;
 
-export type DropdownListItemComponent<T> = FC<{
+export type DropdownListItemComponent<T> = SyncFC<{
   item: T;
   isSelected: boolean;
 }>;
 
-export type DropdownActionButtonsComponent = FC<{
+export type DropdownActionButtonsComponent = SyncFC<{
   onPress: EmptyFn;
 }>;
 
@@ -108,7 +109,7 @@ const DropdownComponent = <T extends unknown>({
 
       return (
         <TouchableWithAnalytics
-          Component={TouchableOpacity}
+          Component={SafeTouchableOpacity}
           key={index}
           onPress={handlePress}
           testID={DropdownSelectors.option}
@@ -132,12 +133,17 @@ const DropdownComponent = <T extends unknown>({
     if (foundIndex >= list.length) {
       return void 0;
     }
-    ref.current.scrollToIndex({ index, animated: true });
+
+    try {
+      ref.current.scrollToIndex({ index, animated: true });
+    } catch (e) {
+      console.error(e);
+    }
   }, [value, list]);
 
   return (
     <>
-      <TouchableOpacity
+      <SafeTouchableOpacity
         style={styles.valueContainer}
         disabled={disabled}
         onPress={() => {
@@ -151,7 +157,7 @@ const DropdownComponent = <T extends unknown>({
         testID={testID}
       >
         {renderValue({ value, disabled, isCollectibleScreen })}
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>

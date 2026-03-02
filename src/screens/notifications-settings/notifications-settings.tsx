@@ -1,21 +1,20 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { Divider } from 'src/components/divider/divider';
+import { Label } from 'src/components/label/label';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { Switch } from 'src/components/switch/switch';
+import { WhiteContainer } from 'src/components/white-container/white-container';
+import { WhiteContainerAction } from 'src/components/white-container/white-container-action/white-container-action';
+import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
 import { usePromotionAfterConfirmation } from 'src/hooks/use-disable-promotion-after-confirmation.hook';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { setIsNewsEnabledAction } from 'src/store/notifications/notifications-actions';
+import { useIsNewsEnabledSelector } from 'src/store/notifications/notifications-selectors';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-
-import { Divider } from '../../components/divider/divider';
-import { Label } from '../../components/label/label';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { Switch } from '../../components/switch/switch';
-import { WhiteContainer } from '../../components/white-container/white-container';
-import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
-import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { setIsNewsEnabledAction } from '../../store/notifications/notifications-actions';
-import { useIsNewsEnabledSelector } from '../../store/notifications/notifications-selectors';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { NotificationsSettingsSelectors } from './notifications-settings.selectors';
 

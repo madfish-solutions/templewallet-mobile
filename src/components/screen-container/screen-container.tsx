@@ -1,26 +1,20 @@
-import React, { FC, RefObject } from 'react';
+import React, { RefObject, useEffect, useState } from 'react';
 import {
+  Keyboard,
   KeyboardAvoidingView,
   KeyboardAvoidingViewProps,
   ScrollView,
   ScrollViewProps,
-  StatusBar,
   StyleProp,
-  View,
   ViewStyle
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { isAndroid } from 'src/config/system';
+import { isAndroid, isIOS } from 'src/config/system';
 import { useHeaderHeight } from 'src/hooks/use-header-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { formatSize } from 'src/styles/format-size';
 import { conditionalStyle } from 'src/utils/conditional-style';
-import { isDefined } from 'src/utils/is-defined';
 import { setTestID } from 'src/utils/test-id.utils';
-
-import { ButtonsContainer } from '../button/buttons-container/buttons-container';
-import { Divider } from '../divider/divider';
-import { InsetSubstitute } from '../inset-substitute/inset-substitute';
 
 import { useScreenContainerStyles } from './screen-container.styles';
 
@@ -28,35 +22,38 @@ interface Props extends TestIdProps {
   keyboardBehavior?: KeyboardAvoidingViewProps['behavior'];
   scrollViewRefreshControl?: ScrollViewProps['refreshControl'];
   isFullScreenMode?: boolean;
-  fixedFooterContainer?: {
-    cancelButton?: JSX.Element;
-    submitButton?: JSX.Element;
-  };
-  scrollViewRef?: RefObject<ScrollView>;
+  scrollViewRef?: RefObject<ScrollView | null>;
   style?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
   scrollEnabled?: boolean;
 }
 
-export const ScreenContainer: FC<Props> = ({
+export const ScreenContainer: FCWithChildren<Props> = ({
   keyboardBehavior = isAndroid ? 'height' : 'padding',
   scrollViewRefreshControl,
   isFullScreenMode = false,
   scrollViewRef,
   style,
   contentContainerStyle,
-  fixedFooterContainer,
   scrollEnabled = true,
   children,
   testID
 }) => {
+  const [keyboardWasVisible, setKeyboardWasVisible] = useState(Keyboard.isVisible());
   const styles = useScreenContainerStyles();
   const headerHeight = useHeaderHeight();
-  const statusBarHeight = isAndroid ? StatusBar.currentHeight : 0;
-  const keyboardVerticalOffset = headerHeight + (statusBarHeight ?? 0);
+  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
+  const keyboardVerticalOffset = headerHeight + (keyboardWasVisible && isAndroid ? -topInset - bottomInset : 0);
 
-  const isCancelButtonExist = isDefined(fixedFooterContainer?.cancelButton);
-  const isSubmitButtonExist = isDefined(fixedFooterContainer?.submitButton);
+  useEffect(() => {
+    const showSub = Keyboard.addListener(isIOS ? 'keyboardWillShow' : 'keyboardDidShow', () => {
+      setKeyboardWasVisible(true);
+    });
+
+    return () => {
+      showSub.remove();
+    };
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -78,18 +75,6 @@ export const ScreenContainer: FC<Props> = ({
       >
         {children}
       </ScrollView>
-
-      {isDefined(fixedFooterContainer) && (
-        <View style={styles.fixedButtonContainer}>
-          <ButtonsContainer>
-            {isCancelButtonExist && fixedFooterContainer.cancelButton}
-            {isCancelButtonExist && isSubmitButtonExist && <Divider size={formatSize(16)} />}
-            {isSubmitButtonExist && fixedFooterContainer.submitButton}
-          </ButtonsContainer>
-
-          <InsetSubstitute type="bottom" />
-        </View>
-      )}
     </KeyboardAvoidingView>
   );
 };

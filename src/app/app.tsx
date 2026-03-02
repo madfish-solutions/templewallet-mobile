@@ -1,6 +1,6 @@
 import 'react-native-url-polyfill/auto';
 
-import React from 'react';
+import * as Sentry from '@sentry/react-native';
 import { LogBox } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -25,7 +25,7 @@ initSentry();
 enableScreens();
 LogBox.ignoreAllLogs();
 
-export const App = () => (
+const NoSentryApp = () => (
   <GestureHandlerRootView style={AppStyles.root}>
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={null}>
@@ -49,3 +49,5 @@ export const App = () => (
     </Provider>
   </GestureHandlerRootView>
 );
+
+export const App = __DEV__ ? NoSentryApp : Sentry.wrap(NoSentryApp);

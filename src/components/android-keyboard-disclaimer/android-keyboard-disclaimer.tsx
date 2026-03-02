@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
 
-import { isAndroid } from '../../config/system';
-import { formatSize } from '../../styles/format-size';
+import { isAndroid } from 'src/config/system';
+import { formatSize } from 'src/styles/format-size';
+
 import { Disclaimer } from '../disclaimer/disclaimer';
 import { Divider } from '../divider/divider';
 

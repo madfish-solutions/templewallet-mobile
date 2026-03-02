@@ -14,7 +14,7 @@ import { ImageWithIndicator } from 'src/components/image';
 import { Search } from 'src/components/search/search';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
@@ -31,7 +31,7 @@ import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
 
 export const CollectiblesHome = memo(() => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
   const dispatch = useDispatch();
@@ -112,6 +112,7 @@ export const CollectiblesHome = memo(() => {
 
       {snapPoints ? (
         <BottomSheet
+          enableDynamicSizing={false}
           snapPoints={snapPoints}
           handleStyle={styles.handleStyle}
           style={styles.bottomSheet}
@@ -129,7 +130,7 @@ export const CollectiblesHome = memo(() => {
               <Search onChange={setSearchValue} dividerSize={16}>
                 <TouchableIcon
                   name={IconNameEnum.EditNew}
-                  onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: true })}
+                  onPress={() => navigateToScreen({ screen: ScreensEnum.ManageAssets, params: { collectibles: true } })}
                 />
               </Search>
             </View>
@@ -147,14 +148,17 @@ interface CollectionLogoProps {
 }
 
 const CollectionButton = memo<CollectionLogoProps>(({ item }) => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const handleCollectionPress = () =>
-    navigate(ScreensEnum.Collection, {
-      collectionContract: item.contract,
-      collectionName: item.name,
-      type: item.type,
-      galleryPk: item.galleryPk
+    navigateToScreen({
+      screen: ScreensEnum.Collection,
+      params: {
+        collectionContract: item.contract,
+        collectionName: item.name,
+        type: item.type,
+        galleryPk: item.galleryPk
+      }
     });
 
   const styles = useCollectionButtonStyles();

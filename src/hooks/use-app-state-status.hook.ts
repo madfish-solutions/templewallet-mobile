@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 
-import { emptyFn, EmptyFn } from '../config/general';
+import { emptyFn } from '../config/general';
 
 enum BasicAppStateStatus {
   Active = 'active',

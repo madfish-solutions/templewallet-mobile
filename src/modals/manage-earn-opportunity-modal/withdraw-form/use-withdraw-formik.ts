@@ -107,10 +107,13 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
             slippageTolerance
           );
           dispatch(
-            navigateAction(ModalsEnum.Confirmation, {
-              type: ConfirmationTypeEnum.InternalOperations,
-              opParams,
-              testID: 'WITHDRAW_TRANSACTION_SENT'
+            navigateAction({
+              screen: ModalsEnum.Confirmation,
+              params: {
+                type: ConfirmationTypeEnum.InternalOperations,
+                opParams,
+                testID: 'WITHDRAW_TRANSACTION_SENT'
+              }
             })
           );
           trackEvent('WITHDRAW_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);

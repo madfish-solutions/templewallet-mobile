@@ -1,16 +1,17 @@
 import { StackNavigationOptions } from '@react-navigation/stack';
-import React, { FC } from 'react';
+import React from 'react';
 
 import { isDefined } from 'src/utils/is-defined';
 
 import { HeaderBackButton } from './header-back-button/header-back-button';
 
 export const generateScreenOptions = (
-  headerTitleElement: ReturnType<FC>,
-  headerRightElement: ReturnType<FC> = null,
+  headerTitleElement: ReturnType<SyncFC>,
+  headerRightElement: ReturnType<SyncFC> = null,
   headerLeft = true,
   customHeaderStyle?: StackNavigationOptions['headerStyle']
 ): StackNavigationOptions => ({
+  animation: 'scale_from_center',
   headerTitleAlign: 'center',
   headerLeft: () => headerLeft && <HeaderBackButton />,
   headerTitle: () => headerTitleElement,

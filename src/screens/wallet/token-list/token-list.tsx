@@ -1,4 +1,4 @@
-import { FlashList, ListRenderItem } from '@shopify/flash-list';
+import { FlashList, FlashListRef, ListRenderItem } from '@shopify/flash-list';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -23,7 +23,7 @@ import { useListElementIntersection } from 'src/hooks/use-list-element-intersect
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
@@ -54,7 +54,6 @@ type ListItem = TokenInterface | typeof AD_PLACEHOLDER;
 const ITEMS_BEFORE_AD = 4;
 /** padding size + icon size */
 const ITEM_HEIGHT = formatSize(24 + 32);
-const FLOORED_ITEM_HEIGHT = Math.floor(ITEM_HEIGHT);
 
 const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
@@ -62,7 +61,8 @@ const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' 
 export const TokensList = memo(() => {
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
-  const { navigate, addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
+  const { addListener: addNavigationListener, removeListener: removeNavigationListener } = useNavigation();
   const styles = useTokenListStyles();
 
   const apyRates = useTokensApyRatesSelector();
@@ -71,7 +71,7 @@ export const TokensList = memo(() => {
   const [listHeight, setListHeight] = useState(0);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
 
-  const flashListRef = useRef<FlashList<ListItem>>(null);
+  const flashListRef = useRef<FlashListRef<ListItem>>(null);
   const adListItemRef = useRef<View>(null);
   const flashListWrapperRef = useRef<View>(null);
   const refs = useMemo(() => ({ parent: flashListWrapperRef, element: adListItemRef }), []);
@@ -218,13 +218,13 @@ export const TokensList = memo(() => {
           <TouchableIcon
             name={IconNameEnum.Clock}
             size={formatSize(16)}
-            onPress={() => navigate(ScreensEnum.Activity)}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.Activity })}
           />
           <Divider size={formatSize(24)} />
           <TouchableIcon
             name={IconNameEnum.Edit}
             size={formatSize(16)}
-            onPress={() => navigate(ScreensEnum.ManageAssets, { collectibles: false })}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.ManageAssets, params: { collectibles: false } })}
           />
         </Search>
       </View>
@@ -244,7 +244,6 @@ export const TokensList = memo(() => {
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           getItemType={getItemType}
-          estimatedItemSize={FLOORED_ITEM_HEIGHT}
           refreshControl={refreshControl}
           onScroll={onListScroll}
           onLayout={onListLayoutChange}

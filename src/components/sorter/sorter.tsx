@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
-import { EventFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -20,7 +19,7 @@ interface Props<T extends string> extends TestIdProps {
   description: string;
   sortFieldsOptions: Array<T>;
   sortFieldsLabels: Record<T, string>;
-  onSetSortValue: EventFn<T>;
+  onSetSortValue: SyncFn<T>;
   bottomSheetContentHeight?: number;
   style?: ViewStyle;
 }

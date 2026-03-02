@@ -1,6 +1,6 @@
+import FastImage from '@d11/react-native-fast-image';
 import React, { FC, memo, useMemo } from 'react';
 import { ImageRequireSource, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
 
 import { Divider } from 'src/components/divider/divider';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';

@@ -7,7 +7,7 @@ on:
     inputs:
       version:
         description: Version
-        default: "1.49"
+        default: "1.53"
         required: true
       build-number:
         description: Build number
@@ -32,6 +32,7 @@ jobs:
       - name: Secrets setup
         uses: ./.github/workflows/secrets-setup
         with:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           READ_ONLY_SIGNER_PUBLIC_KEY: ${{ vars.READ_ONLY_SIGNER_PUBLIC_KEY }}
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH: ${{ vars.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           JITSU_ANALYTICS_KEY: ${{ vars.JITSU_ANALYTICS_KEY }}
@@ -65,7 +66,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
 
       - name: Update Android version
         uses: damienaicheh/update-android-version-gradle-action@v1.0.0

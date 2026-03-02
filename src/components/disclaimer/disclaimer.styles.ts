@@ -1,4 +1,4 @@
-import { createUseStyles } from '../../styles/create-use-styles';
+import { createUseStyles } from 'src/styles/create-use-styles';
 
 export const useDisclaimerStyles = createUseStyles(({ colors, typography }) => ({
   description: {

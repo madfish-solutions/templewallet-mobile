@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { NonZeroAmounts } from '../../../../interfaces/non-zero-amounts.interface';
-import { conditionalStyle } from '../../../../utils/conditional-style';
-import { FormattedAmount } from '../../../formatted-amount';
+import { FormattedAmount } from 'src/components/formatted-amount';
+import { NonZeroAmounts } from 'src/interfaces/non-zero-amounts.interface';
+import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { useActivityGroupDollarAmountChangeStyles } from './activity-group-dollar-amount-change.styles';
 

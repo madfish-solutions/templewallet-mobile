@@ -69,7 +69,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const validationSchema = useMemo<SchemaOf<StakeFormValues>>(
     () =>
       objectSchema().shape({
-        assetAmount: (objectSchema<any>() as SchemaOf<AssetAmountInterface>).when(value => {
+        assetAmount: (objectSchema() as SchemaOf<AssetAmountInterface>).when(value => {
           const selectedAsset = value?.asset;
           const isGasToken =
             isDefined(selectedAsset) && toTokenSlug(selectedAsset.address, selectedAsset.id) === TEZ_TOKEN_SLUG;
@@ -124,10 +124,13 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         );
 
         dispatch(
-          navigateAction(ModalsEnum.Confirmation, {
-            type: ConfirmationTypeEnum.InternalOperations,
-            opParams,
-            testID: 'STAKE_TRANSACTION_SENT'
+          navigateAction({
+            screen: ModalsEnum.Confirmation,
+            params: {
+              type: ConfirmationTypeEnum.InternalOperations,
+              opParams,
+              testID: 'STAKE_TRANSACTION_SENT'
+            }
           })
         );
         trackEvent('STAKE_FORM_SUBMIT_SUCCESS', AnalyticsEventCategory.FormSubmitSuccess);

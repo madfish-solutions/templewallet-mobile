@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { Search } from '../../../../components/search/search';
-import { TextSegmentControl } from '../../../../components/segmented-control/text-segment-control/text-segment-control';
-import { Sorter } from '../../../../components/sorter/sorter';
-import { EventFn } from '../../../../config/general';
-import { MarketTokensSortFieldEnum } from '../../../../enums/market-tokens-sort-field.enum';
-import { formatSize } from '../../../../styles/format-size';
+import { Search } from 'src/components/search/search';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { Sorter } from 'src/components/sorter/sorter';
+import { MarketTokensSortFieldEnum } from 'src/enums/market-tokens-sort-field.enum';
+import { formatSize } from 'src/styles/format-size';
+
 import { MarketSelectors } from '../../market.selectors';
 
 import { useFilterStyles } from './filter.styles';
@@ -26,9 +26,9 @@ const marketTokensSortFieldsOptions: Array<MarketTokensSortFieldEnum> = [
 interface Props {
   segmentControlIndex: number;
   sortFiled: MarketTokensSortFieldEnum;
-  onSetSortValue: EventFn<MarketTokensSortFieldEnum>;
-  onSelectorChange: EventFn<number>;
-  onSearchValueChange: EventFn<string | undefined>;
+  onSetSortValue: SyncFn<MarketTokensSortFieldEnum>;
+  onSelectorChange: SyncFn<number>;
+  onSearchValueChange: SyncFn<string | undefined>;
 }
 
 export const Filters: FC<Props> = ({

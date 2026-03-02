@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { emptyFn, EmptyFn } from '../../config/general';
+import { emptyFn } from 'src/config/general';
 
 interface HideBalanceContextValues {
   isBalanceHidden: boolean;

@@ -13,7 +13,11 @@ export const buildApolloClient = (uri: string) =>
   });
 
 class TempleApolloClient<TCacheShape> extends ApolloClient<TCacheShape> {
-  async fetch<T, TVars = OperationVariables>(query: DocumentNode, variables?: TVars, options?: QueryOptions<TVars, T>) {
+  async fetch<T, TVars extends OperationVariables = OperationVariables>(
+    query: DocumentNode,
+    variables?: TVars,
+    options?: QueryOptions<TVars, T>
+  ) {
     const result: FetchResult<T> = await super.query<T, TVars>({
       query,
       variables,
@@ -25,7 +29,11 @@ class TempleApolloClient<TCacheShape> extends ApolloClient<TCacheShape> {
     return result.data;
   }
 
-  fetch$<T, TVars = OperationVariables>(query: DocumentNode, variables?: TVars, options?: QueryOptions<TVars, T>) {
+  fetch$<T, TVars extends OperationVariables = OperationVariables>(
+    query: DocumentNode,
+    variables?: TVars,
+    options?: QueryOptions<TVars, T>
+  ) {
     return from(this.fetch<T, TVars>(query, variables, options)).pipe(filter(isDefined));
   }
 }

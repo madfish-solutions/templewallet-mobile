@@ -18,7 +18,7 @@ import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
@@ -43,7 +43,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
   const slug = getTokenSlug(item);
 
   const styles = useCollectibleItemStyles();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const selectedRpc = useSelectedRpcUrlSelector();
 
   const lastPrice = useMemo(() => {
@@ -123,13 +123,21 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
           highestOffer,
           currency
         ).then(opParams =>
-          navigate(ModalsEnum.Confirmation, {
+          navigateToModal(ModalsEnum.Confirmation, {
             type: ConfirmationTypeEnum.InternalOperations,
             opParams
           })
         )
     };
-  }, [accountPkh, selectedRpc, isAccountHolder, collectionContract, item.id, extraDetails?.offers_active, navigate]);
+  }, [
+    accountPkh,
+    selectedRpc,
+    isAccountHolder,
+    collectionContract,
+    item.id,
+    extraDetails?.offers_active,
+    navigateToModal
+  ]);
 
   const secondButton = useMemo(() => {
     if (LIMIT_NFT_FEATURES) {
@@ -188,14 +196,13 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
       onPress: () =>
         void buildBuyCollectibleParams(createTezosToolkit(selectedRpc), accountPkh, listing, purchaseCurrency).then(
           opParams =>
-            navigate(ModalsEnum.Confirmation, {
+            navigateToModal(ModalsEnum.Confirmation, {
               type: ConfirmationTypeEnum.InternalOperations,
               opParams
             })
         )
     };
   }, [
-    slug,
     accountPkh,
     selectedRpc,
     isAccountHolder,
@@ -203,12 +210,12 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
     item.id,
     item.holders,
     item.listingsActive,
-    navigate
+    navigateToModal
   ]);
 
   const handleShare = useShareNFT(slug, item.thumbnailUri, item.name, item.description);
 
-  const navigateToCollectibleModal = () => navigate(ModalsEnum.CollectibleModal, { slug });
+  const navigateToCollectibleModal = () => navigateToModal(ModalsEnum.CollectibleModal, { slug });
 
   const imageSize = formatSize(IMAGE_SIZE);
 

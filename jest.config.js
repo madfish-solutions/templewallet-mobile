@@ -26,7 +26,7 @@ module.exports = {
   preset: 'react-native',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?@react-native|react-native|react-native-themis|react-navigation|@react-navigation/.*|rxjs|lodash-es|@sentry/.*))'
+    'node_modules/(?!((jest-)?@react-native|react-native|react-native-themis|react-navigation|@react-navigation/.*|rxjs|lodash-es|@sentry/.*|@dicebear/.*|@shopify/flash-list)|(@d11/react-native-fast-image))'
   ],
   setupFiles: ['<rootDir>/jest.setup.js', 'jest-date-mock'],
   moduleNameMapper: {
@@ -39,6 +39,9 @@ module.exports = {
     '^@stablelib/utf8$': '<rootDir>/src/mocks/stablelib/utf8.mock.ts',
     '^@stablelib/ed25519$': '<rootDir>/src/mocks/stablelib/ed25519.mock.ts',
     '^@stablelib/bytes$': '<rootDir>/src/mocks/stablelib/bytes.mock.ts',
-    '^@stablelib/x25519-session$': '<rootDir>/src/mocks/stablelib/x25519-session.mock.ts'
+    '^@stablelib/x25519-session$': '<rootDir>/src/mocks/stablelib/x25519-session.mock.ts',
+    '@airgap/beacon-dapp': '<rootDir>/src/mocks/airgap-beacon-dapp.mock.js',
+    '@airgap/beacon-ui': '<rootDir>/src/mocks/airgap-beacon-ui.mock.js',
+    '@airgap/beacon-transport-postmessage': '<rootDir>/src/mocks/airgap-beacon-transport-postmessage.mock.js'
   }
 };

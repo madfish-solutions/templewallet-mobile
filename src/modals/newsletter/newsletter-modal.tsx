@@ -52,7 +52,6 @@ export const Newsletter: FC = () => {
         goBack();
       })
       .catch(error => {
-        // TODO: consider removing email from the error event properties
         trackErrorEvent('NewsletterSubscribeError', error, [email]);
         showErrorToast(ERROR_TOAST_DESCRIPTION);
       });

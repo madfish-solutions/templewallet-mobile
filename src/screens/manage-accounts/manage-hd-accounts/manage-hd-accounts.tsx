@@ -1,19 +1,20 @@
 import React, { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { BottomSheet } from '../../../components/bottom-sheet/bottom-sheet';
-import { BottomSheetActionButton } from '../../../components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
-import { useBottomSheetController } from '../../../components/bottom-sheet/use-bottom-sheet-controller';
-import { ButtonSmallSecondary } from '../../../components/button/button-small/button-small-secondary/button-small-secondary';
-import { Divider } from '../../../components/divider/divider';
-import { ScreenContainer } from '../../../components/screen-container/screen-container';
-import { SearchInput } from '../../../components/search-input/search-input';
-import { useFilteredAccountList } from '../../../hooks/use-filtered-account-list.hook';
-import { AccountInterface, emptyAccount } from '../../../interfaces/account.interface';
-import { ModalsEnum } from '../../../navigator/enums/modals.enum';
-import { useNavigation } from '../../../navigator/hooks/use-navigation.hook';
-import { useHdAccountListSelector, useSelectedAccountSelector } from '../../../store/wallet/wallet-selectors';
-import { formatSize } from '../../../styles/format-size';
+import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
+import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
+import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
+import { ButtonSmallSecondary } from 'src/components/button/button-small/button-small-secondary/button-small-secondary';
+import { Divider } from 'src/components/divider/divider';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { SearchInput } from 'src/components/search-input/search-input';
+import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
+import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
+import { useHdAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+
 import { InfoText } from '../info-text/info-text';
 
 import { ManageAccountItem } from './manage-account-item/manage-account-item';
@@ -21,7 +22,7 @@ import { ManageHdAccountsSelectors } from './manage-hd-accounts.selectors';
 import { useManageHdAccountsStyles } from './manage-hd-accounts.styles';
 
 export const ManageHdAccounts = () => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
@@ -37,12 +38,12 @@ export const ManageHdAccounts = () => {
   };
 
   const handleRevealPrivateKeyButtonPress = () => {
-    navigate(ModalsEnum.RevealPrivateKey, { account: managedAccount });
+    navigateToModal(ModalsEnum.RevealPrivateKey, { account: managedAccount });
     revealSelectBottomSheetController.close();
   };
 
   const handleRevealSeedPhraseButtonPress = () => {
-    navigate(ModalsEnum.RevealSeedPhrase, { account: managedAccount });
+    navigateToModal(ModalsEnum.RevealSeedPhrase, { account: managedAccount });
     revealSelectBottomSheetController.close();
   };
 
@@ -61,7 +62,7 @@ export const ManageHdAccounts = () => {
           title="Seed phrase"
           marginTop={formatSize(4)}
           marginBottom={formatSize(4)}
-          onPress={() => navigate(ModalsEnum.RevealSeedPhrase, {})}
+          onPress={() => navigateToModal(ModalsEnum.RevealSeedPhrase, {})}
           testID={ManageHdAccountsSelectors.seedPhraseButton}
         />
       </View>

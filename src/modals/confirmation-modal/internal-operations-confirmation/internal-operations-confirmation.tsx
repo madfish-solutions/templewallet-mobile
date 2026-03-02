@@ -55,7 +55,10 @@ const approveInternalOperationRequest = ({
         title: 'Success!'
       });
 
-      return [navigateAction(StacksEnum.MainStack), waitForOperationCompletionAction({ opHash: hash, sender })];
+      return [
+        navigateAction({ screen: StacksEnum.MainStack }),
+        waitForOperationCompletionAction({ opHash: hash, sender })
+      ];
     })
   );
 

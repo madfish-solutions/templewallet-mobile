@@ -9,7 +9,7 @@ interface FormFieldCoordinateY {
 }
 
 export const scrollToField = (
-  refScrollView: RefObject<ScrollView>,
+  refScrollView: RefObject<ScrollView | null>,
   errors: FormFieldErrors,
   yCoordinates: FormFieldCoordinateY
 ) => {

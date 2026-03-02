@@ -12,19 +12,19 @@ describe('copyStringToClipboard', () => {
 
   it('should do nothing if variable is undefined', () => {
     copyStringToClipboard();
-    expect(mockReactNativeClipboard.setString).not.toBeCalled();
-    expect(mockReactNativeToastMessage.show).not.toBeCalled();
+    expect(mockReactNativeClipboard.setString).not.toHaveBeenCalled();
+    expect(mockReactNativeToastMessage.show).not.toHaveBeenCalled();
   });
 
   it('should do nothing if variable is empty string', () => {
     copyStringToClipboard('');
-    expect(mockReactNativeClipboard.setString).not.toBeCalled();
-    expect(mockReactNativeToastMessage.show).not.toBeCalled();
+    expect(mockReactNativeClipboard.setString).not.toHaveBeenCalled();
+    expect(mockReactNativeToastMessage.show).not.toHaveBeenCalled();
   });
 
   it("should change clipboard content and show 'Copied' toast if variable is non-empty string", () => {
     copyStringToClipboard('test');
-    expect(mockReactNativeClipboard.setString).toBeCalledWith('test');
-    expect(mockReactNativeToastMessage.show).toBeCalledWith({ type: ToastTypeEnum.Copied });
+    expect(mockReactNativeClipboard.setString).toHaveBeenCalledWith('test');
+    expect(mockReactNativeToastMessage.show).toHaveBeenCalledWith({ type: ToastTypeEnum.Copied });
   });
 });

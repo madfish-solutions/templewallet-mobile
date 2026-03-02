@@ -13,6 +13,39 @@ declare module '*.svg' {
   export default content;
 }
 
+type FCWithChildren<P extends object = object> = import('react').FC<import('react').PropsWithChildren<P>>;
+
+type FCWithRef<R, P extends object = object> = import('react').FC<P & { ref?: import('react').ForwardedRef<R> }>;
+
+interface SyncFC<P extends object = object> {
+  (props: P): import('react').ReactNode;
+  /**
+   * Ignored by React.
+   * @deprecated Only kept in types for backwards compatibility. Will be removed in a future major release.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  propTypes?: any;
+  /**
+   * Used in debugging messages. You might want to set it
+   * explicitly if you want to display a different name for
+   * debugging purposes.
+   *
+   * @see {@link https://legacy.reactjs.org/docs/react-component.html#displayname Legacy React Docs}
+   *
+   * @example
+   *
+   * ```tsx
+   *
+   * const MyComponent: FC = () => {
+   *   return <div>Hello!</div>
+   * }
+   *
+   * MyComponent.displayName = 'MyAwesomeComponent'
+   * ```
+   */
+  displayName?: string | undefined;
+}
+
 declare module 'node-forge';
 
 declare module '@temple-wallet/wallet-address-validator' {
@@ -22,13 +55,13 @@ declare module '@temple-wallet/wallet-address-validator' {
 declare module 'react-native-video-controls' {
   import { Component } from 'react';
   import { StyleProp, ViewStyle } from 'react-native';
-  import Video, { LoadError, VideoProperties } from 'react-native-video';
+  import { ReactVideoProps } from 'react-native-video';
 
   interface DuckNavigator {
     pop: () => void;
   }
 
-  interface VideoPlayerProperties extends VideoProperties {
+  interface VideoPlayerProps extends ReactVideoProps {
     /** If true, clicking the fullscreen button will toggle the <Video /> component between cover/contain, set to false if you want to customize fullscreen behaviour */
     toggleResizeModeOnFullscreen?: boolean;
     /** The amountof time (in milliseconds) to animate the controls in and out. */
@@ -83,23 +116,7 @@ declare module 'react-native-video-controls' {
     disableBack?: boolean;
   }
 
-  export default class VideoPlayer extends Component<VideoPlayerProperties> {
-    /**
-     * Seek to a time in the video.
-     *
-     * @param {number} time time to seek to in ms
-     */
-    seekTo(time?: number): void;
-    /**
-     * Exposing player object for the ref.
-     */
-    player: {
-      /**
-       * The ref of underlying Video coomponent from
-       * 'react-native-video'.
-       * Can be used for various imperative tasks.
-       */
-      ref: Video;
-    };
+  export default class VideoPlayer extends Component<VideoPlayerProps> {
+    // TODO: add custom methods here
   }
 }

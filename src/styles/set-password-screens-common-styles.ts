@@ -42,6 +42,8 @@ export const useSetPasswordScreensCommonStyles = createUseStyles(({ colors, typo
     marginRight: formatSize(12)
   },
   buttonsFloatingContainer: {
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
+    flexDirection: 'row',
+    paddingHorizontal: formatSize(16)
   }
 }));

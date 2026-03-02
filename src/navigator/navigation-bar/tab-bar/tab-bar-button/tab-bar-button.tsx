@@ -1,15 +1,14 @@
 import React, { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
+import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
-
-import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
-import { useNavigation } from '../../../hooks/use-navigation.hook';
 
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 
@@ -44,7 +43,7 @@ export const TabBarButton = memo<Props>(
   }) => {
     const colors = useColors();
     const styles = useTabBarButtonStyles();
-    const { navigate } = useNavigation();
+    const navigateToScreen = useNavigateToScreen();
 
     const color = useMemo(() => {
       let value = colors.gray1;
@@ -60,14 +59,14 @@ export const TabBarButton = memo<Props>(
       }
 
       if (routeName === ScreensEnum.SwapScreen) {
-        navigate(routeName, swapScreenParams);
+        navigateToScreen({ screen: routeName, params: swapScreenParams });
       } else {
-        navigate(routeName);
+        navigateToScreen({ screen: routeName });
       }
     };
 
     return (
-      <TouchableOpacity
+      <SafeTouchableOpacity
         style={[styles.container, conditionalStyle(disabled, { borderLeftColor: color })]}
         onPress={handlePress}
       >
@@ -84,7 +83,7 @@ export const TabBarButton = memo<Props>(
           <Icon name={iconName} width={iconWidth} height={formatSize(28)} color={color} />
         </View>
         <Text style={[styles.label, { color }]}>{label}</Text>
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
     );
   }
 );

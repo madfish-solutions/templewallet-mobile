@@ -2,7 +2,7 @@ import { FieldMetaProps } from 'formik';
 import React from 'react';
 import { Text } from 'react-native';
 
-import { hasError } from '../../utils/has-error';
+import { hasError } from 'src/utils/has-error';
 
 import { useErrorMessageStyles } from './error-message.styles';
 

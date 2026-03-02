@@ -7,6 +7,7 @@ import { mockNavigationDispatch, mockNavigate } from '../mocks/react-navigation.
 import { mockUseDispatch } from '../mocks/react-redux.mock';
 import { mockInMemorySigner } from '../mocks/taquito-signer.mock';
 import { StacksEnum } from '../navigator/enums/stacks.enum';
+import { navigateAction } from '../store/root-state.actions';
 import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
@@ -41,15 +42,15 @@ describe('useShelter', () => {
 
     result.current.importWallet({ seedPhrase: mockAccountCredentials.seedPhrase, password: mockCorrectPassword });
 
-    expect(mockShelter.importHdAccount$).toBeCalledWith(
+    expect(mockShelter.importHdAccount$).toHaveBeenCalledWith(
       mockAccountCredentials.seedPhrase,
       mockCorrectPassword,
       undefined
     );
-    expect(mockShelter.enableBiometryPassword$).not.toBeCalled();
+    expect(mockShelter.enableBiometryPassword$).not.toHaveBeenCalled();
 
-    expect(mockUseDispatch).toBeCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
-    expect(mockUseDispatch).toBeCalledWith(addHdAccountAction(mockHdAccount));
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
   });
 
   it('should import wallet and enable biometry password', () => {
@@ -61,12 +62,12 @@ describe('useShelter', () => {
       useBiometry: true
     });
 
-    expect(mockShelter.importHdAccount$).toBeCalledWith(
+    expect(mockShelter.importHdAccount$).toHaveBeenCalledWith(
       mockAccountCredentials.seedPhrase,
       mockCorrectPassword,
       undefined
     );
-    expect(mockShelter.enableBiometryPassword$).toBeCalledWith(mockCorrectPassword);
+    expect(mockShelter.enableBiometryPassword$).toHaveBeenCalledWith(mockCorrectPassword);
   });
 
   it('should create HD account', () => {
@@ -74,13 +75,13 @@ describe('useShelter', () => {
 
     result.current.createHdAccount();
 
-    expect(mockShelter.createHdAccount$).toBeCalledWith(
+    expect(mockShelter.createHdAccount$).toHaveBeenCalledWith(
       `Account ${mockRootState.wallet.accounts.length + 1}`,
       mockRootState.wallet.accounts.length
     );
 
-    expect(mockUseDispatch).toBeCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
-    expect(mockUseDispatch).toBeCalledWith(addHdAccountAction(mockHdAccount));
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
   });
 
   it('should reveal secret key', () => {
@@ -91,8 +92,8 @@ describe('useShelter', () => {
       successCallback: mockSuccessCallback
     });
 
-    expect(mockShelter.revealSecretKey$).toBeCalledWith(mockAccountCredentials.publicKeyHash);
-    expect(mockSuccessCallback).toBeCalledWith(mockRevealedSecretKey);
+    expect(mockShelter.revealSecretKey$).toHaveBeenCalledWith(mockAccountCredentials.publicKeyHash);
+    expect(mockSuccessCallback).toHaveBeenCalledWith(mockRevealedSecretKey);
   });
 
   it('should reveal seed phrase', () => {
@@ -102,8 +103,8 @@ describe('useShelter', () => {
       successCallback: mockSuccessCallback
     });
 
-    expect(mockShelter.revealSeedPhrase$).toBeCalled();
-    expect(mockSuccessCallback).toBeCalledWith(mockRevealedSeedPhrase);
+    expect(mockShelter.revealSeedPhrase$).toHaveBeenCalled();
+    expect(mockSuccessCallback).toHaveBeenCalledWith(mockRevealedSeedPhrase);
   });
 
   it('should enable biometry password', () => {
@@ -111,11 +112,11 @@ describe('useShelter', () => {
 
     result.current.enableBiometryPassword(mockCorrectPassword);
 
-    expect(mockShelter.enableBiometryPassword$).toBeCalledWith(mockCorrectPassword);
+    expect(mockShelter.enableBiometryPassword$).toHaveBeenCalledWith(mockCorrectPassword);
 
-    expect(mockShowSuccessToast).toBeCalledWith({ description: 'Successfully enabled!' });
-    expect(mockUseDispatch).toBeCalledWith(setIsBiometricsEnabled(true));
-    expect(mockNavigate).toBeCalledWith(StacksEnum.MainStack);
+    expect(mockShowSuccessToast).toHaveBeenCalledWith({ description: 'Successfully enabled!' });
+    expect(mockUseDispatch).toHaveBeenCalledWith(setIsBiometricsEnabled(true));
+    expect(mockUseDispatch).toHaveBeenCalledWith(navigateAction({ screen: StacksEnum.MainStack }));
   });
 
   it('should not enable biometry password for incorrect password', () => {
@@ -123,8 +124,8 @@ describe('useShelter', () => {
 
     result.current.enableBiometryPassword('mockIncorrectPassword');
 
-    expect(mockShowErrorToast).toBeCalledWith({ description: 'Wrong password, please, try again' });
-    expect(mockShelter.enableBiometryPassword$).not.toBeCalled();
+    expect(mockShowErrorToast).toHaveBeenCalledWith({ description: 'Wrong password, please, try again' });
+    expect(mockShelter.enableBiometryPassword$).not.toHaveBeenCalled();
   });
 
   it('should create imported account', async () => {
@@ -134,12 +135,15 @@ describe('useShelter', () => {
     result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
     await jest.runAllTimersAsync();
 
-    expect(mockShelter.createImportedAccount$).toBeCalledWith(mockAccountCredentials.privateKey, mockHdAccount.name);
+    expect(mockShelter.createImportedAccount$).toHaveBeenCalledWith(
+      mockAccountCredentials.privateKey,
+      mockHdAccount.name
+    );
 
-    expect(mockUseDispatch).toBeCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
-    expect(mockUseDispatch).toBeCalledWith(addHdAccountAction(mockHdAccount));
-    expect(mockShowSuccessToast).toBeCalledWith({ description: 'Account Imported!' });
-    expect(mockNavigationDispatch).toBeCalledWith({ type: 'POP_TO_TOP' });
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
+    expect(mockShowSuccessToast).toHaveBeenCalledWith({ description: 'Account Imported!' });
+    expect(mockNavigationDispatch).toHaveBeenCalledWith({ type: 'POP_TO_TOP' });
   });
 
   it('should not create account with invalid private key', async () => {
@@ -148,9 +152,9 @@ describe('useShelter', () => {
     result.current.createImportedAccount({ privateKey: mockInvalidPrivateKey, name: mockHdAccount.name });
     await jest.runAllTimersAsync();
 
-    expect(mockShelter.createImportedAccount$).not.toBeCalled();
+    expect(mockShelter.createImportedAccount$).not.toHaveBeenCalled();
 
-    expect(mockShowErrorToast).toBeCalledWith({
+    expect(mockShowErrorToast).toHaveBeenCalledWith({
       title: 'Failed to import account.',
       description: 'This may happen because provided Key is invalid.'
     });
@@ -162,8 +166,8 @@ describe('useShelter', () => {
     result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
     await jest.runAllTimersAsync();
 
-    expect(mockShelter.createImportedAccount$).not.toBeCalled();
+    expect(mockShelter.createImportedAccount$).not.toHaveBeenCalled();
 
-    expect(mockShowWarningToast).toBeCalledWith({ description: 'Account already exist' });
+    expect(mockShowWarningToast).toHaveBeenCalledWith({ description: 'Account already exist' });
   });
 });

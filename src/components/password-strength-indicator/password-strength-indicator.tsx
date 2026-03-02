@@ -7,8 +7,8 @@ import {
   AT_LEAST_ONE_UPPER_CASE_REGX,
   MIN_CHARS_REGX,
   SPECIAL_CHARACTER_REGX
-} from '../../config/security';
-import { isDefined } from '../../utils/is-defined';
+} from 'src/config/security';
+import { isDefined } from 'src/utils/is-defined';
 
 import {
   PasswordStrengthIndicatorItem,

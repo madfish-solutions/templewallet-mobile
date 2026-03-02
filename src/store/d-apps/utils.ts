@@ -1,11 +1,11 @@
 import { BigNumber } from 'bignumber.js';
 import { map } from 'rxjs/operators';
 
+import { getYOUTokenApr$, getYouvesTokenApr$ } from 'src/apis/youves';
+import { YouvesTokensEnum } from 'src/apis/youves/enums';
+import { youvesTokensRecord } from 'src/apis/youves/utils';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 
-import { getYOUTokenApr$, getYouvesTokenApr$ } from '../../apis/youves';
-import { YouvesTokensEnum } from '../../apis/youves/enums';
-import { youvesTokensRecord } from '../../apis/youves/utils';
 import { ExchangeRateRecord } from '../currency/currency-state';
 
 export const fetchUBTCApr$ = (rpcUrl: string) => {

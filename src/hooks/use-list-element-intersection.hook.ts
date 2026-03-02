@@ -27,9 +27,9 @@ export const useListElementIntersection = (
   refs?: IntersectionHookRefs,
   threshold = DEFAULT_INTERSECTION_THRESHOLD
 ) => {
-  const lastLayoutRectangleRef = useRef<LayoutRectangle>();
-  const lastNativeScrollConfigRef = useRef<Omit<NativeScrollEvent, 'contentSize' | 'zoomScale'>>();
-  const isIntersectedRef = useRef<boolean>();
+  const lastLayoutRectangleRef = useRef<LayoutRectangle>(undefined);
+  const lastNativeScrollConfigRef = useRef<Omit<NativeScrollEvent, 'contentSize' | 'zoomScale'>>(undefined);
+  const isIntersectedRef = useRef<boolean>(undefined);
 
   const onUnmount = useCallback(() => {
     isIntersectedRef.current = false;

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native';
 
 import { InsetSubstitute } from '../inset-substitute/inset-substitute';
@@ -11,7 +11,7 @@ interface Props {
   onLayout?: (event: LayoutChangeEvent) => void;
 }
 
-export const HeaderCard: FC<Props> = ({ hasInsetTop = false, style, children, onLayout }) => {
+export const HeaderCard: FCWithChildren<Props> = ({ hasInsetTop = false, style, children, onLayout }) => {
   const styles = useHeaderCardStyles();
 
   return (

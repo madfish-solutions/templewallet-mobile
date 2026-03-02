@@ -1,14 +1,14 @@
 import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { Divider } from '../../../../components/divider/divider';
-import { Icon } from '../../../../components/icon/icon';
-import { IconNameEnum } from '../../../../components/icon/icon-name.enum';
-import { formatSize } from '../../../../styles/format-size';
-import { useColors } from '../../../../styles/use-colors';
-import { conditionalStyle } from '../../../../utils/conditional-style';
-import { ScreensEnum, ScreensParamList } from '../../../enums/screens.enum';
-import { useNavigation } from '../../../hooks/use-navigation.hook';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { useSideBarButtonStyles } from './side-bar-button.styles';
 
@@ -40,7 +40,7 @@ export const SideBarButton: FC<Props> = ({
 }) => {
   const colors = useColors();
   const styles = useSideBarButtonStyles();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const color = useMemo(() => {
     let value = colors.gray1;
@@ -55,9 +55,9 @@ export const SideBarButton: FC<Props> = ({
       disabledOnPress?.();
     } else {
       if (routeName === ScreensEnum.SwapScreen) {
-        navigate(routeName, swapScreenParams);
+        navigateToScreen({ screen: routeName, params: swapScreenParams });
       } else {
-        navigate(routeName);
+        navigateToScreen({ screen: routeName });
       }
     }
   };

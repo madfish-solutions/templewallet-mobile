@@ -1,8 +1,7 @@
 import { ViewStyle } from 'react-native';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-
-import { TestIdProps } from '../../../interfaces/test-id.props';
+import { TestIdProps } from 'src/interfaces/test-id.props';
 
 type StyleType = ViewStyle | (ViewStyle | undefined)[];
 

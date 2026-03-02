@@ -9,7 +9,6 @@ import {
 } from '@airgap/beacon-sdk';
 import type { ExtendedP2PPairingResponse } from '@airgap/beacon-types';
 
-import { EventFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
 
 import { BeaconStorage } from './storage';
@@ -19,7 +18,7 @@ const WALLET_CLIENT_ERROR = 'Wallet client not defined!';
 export class BeaconHandler {
   private static _walletClient: WalletClient | undefined;
 
-  static async init(onBeaconRequest: EventFn<BeaconRequestOutputMessage>) {
+  static async init(onBeaconRequest: SyncFn<BeaconRequestOutputMessage>) {
     if (!isDefined(BeaconHandler._walletClient)) {
       BeaconHandler._walletClient = new WalletClient({
         name: 'Temple Wallet',

@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
 
 import { Route3SwapHops, Route3LiquidityBakingHops, Route3Token } from 'src/interfaces/route3.interface';

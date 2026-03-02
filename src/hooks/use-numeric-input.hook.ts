@@ -1,8 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
-import { NativeSyntheticEvent, TextInputFocusEventData, TextInputProps } from 'react-native';
+import { FocusEvent, TextInputProps } from 'react-native';
 
-import { emptyFn, EmptyFn, EventFn } from '../config/general';
+import { emptyFn } from '../config/general';
 import { isDefined } from '../utils/is-defined';
 
 const DEFAULT_MIN_VALUE = 0;
@@ -13,7 +13,7 @@ export const useNumericInput = (
   decimals: number,
   minValue: BigNumber.Value = DEFAULT_MIN_VALUE,
   maxValue: BigNumber.Value = DEFAULT_MAX_VALUE,
-  onChange: EventFn<BigNumber | undefined>,
+  onChange: SyncFn<BigNumber | undefined>,
   onBlur: EmptyFn = emptyFn,
   onFocus: TextInputProps['onFocus'] = emptyFn
 ) => {
@@ -51,7 +51,7 @@ export const useNumericInput = (
   );
 
   const handleFocus = useCallback(
-    (evt: NativeSyntheticEvent<TextInputFocusEventData>) => {
+    (evt: FocusEvent) => {
       setFocused(true);
       onFocus(evt);
     },

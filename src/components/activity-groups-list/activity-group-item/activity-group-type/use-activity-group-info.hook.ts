@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ActivityTypeEnum } from 'src/enums/activity-type.enum';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { useColors } from 'src/styles/use-colors';
 import { isString } from 'src/utils/is-string';
-
-import { IconNameEnum } from '../../../icon/icon-name.enum';
 
 export const useActivityGroupInfo = (group: ActivityGroup) => {
   const colors = useColors();

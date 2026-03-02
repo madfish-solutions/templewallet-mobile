@@ -1,5 +1,4 @@
 import React, { memo, useCallback } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Path, Rect, Svg } from 'react-native-svg';
 
 import { Icon } from 'src/components/icon/icon';
@@ -11,6 +10,8 @@ import { useColors } from 'src/styles/use-colors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { setTestID } from 'src/utils/test-id.utils';
+
+import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 
 import { CheckboxProps } from './checkbox.props';
 import { CheckboxStyles } from './checkbox.styles';
@@ -35,7 +36,7 @@ export const Checkbox = memo<CheckboxProps>(
     }, [value, testID, trackEvent, onChange]);
 
     return (
-      <TouchableOpacity
+      <SafeTouchableOpacity
         disabled={disabled}
         style={CheckboxStyles.container}
         activeOpacity={1}
@@ -68,7 +69,7 @@ export const Checkbox = memo<CheckboxProps>(
           </Svg>
         )}
         {children}
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
     );
   }
 );

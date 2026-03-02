@@ -1,8 +1,9 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
-import { isDefined } from '../../utils/is-defined';
+import { formatSize } from 'src/styles/format-size';
+import { isDefined } from 'src/utils/is-defined';
+
 import { Divider } from '../divider/divider';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -14,7 +15,7 @@ interface Props {
   iconName?: IconNameEnum;
 }
 
-export const AttentionMessage: FC<Props> = ({ children, title, iconName = IconNameEnum.Alert }) => {
+export const AttentionMessage: FCWithChildren<Props> = ({ children, title, iconName = IconNameEnum.Alert }) => {
   const styles = useAttentionMessageStyles();
 
   return (

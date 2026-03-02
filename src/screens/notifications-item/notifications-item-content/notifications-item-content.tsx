@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { Text } from 'react-native';
 
-import { TextLink } from '../../../components/text-link/text-link';
-import { NotificationInterface } from '../../../interfaces/notification.interface';
+import { TextLink } from 'src/components/text-link/text-link';
+import { NotificationInterface } from 'src/interfaces/notification.interface';
 
 import { useNotificationsItemContentStyles } from './notifications-item-content.styles';
 

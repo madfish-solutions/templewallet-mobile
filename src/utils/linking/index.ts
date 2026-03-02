@@ -2,18 +2,20 @@ import { useCallback } from 'react';
 import { Linking } from 'react-native';
 
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 
 import { isDcpNode } from '../network.utils';
 
 export const openUrl = (url: string) => {
-  Linking.canOpenURL(url).then(() => Linking.openURL(url));
+  Linking.canOpenURL(url)
+    .then(() => Linking.openURL(url))
+    .catch(e => console.error(e));
 };
 
 export const useOpenUrlInAppBrowser = () => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
 
-  return useCallback((uri: string) => void navigate(ModalsEnum.InAppBrowser, { uri }), [navigate]);
+  return useCallback((uri: string) => void navigateToModal(ModalsEnum.InAppBrowser, { uri }), [navigateToModal]);
 };
 
 export const tzktUrl = (rpcUrl: string, address: string) =>

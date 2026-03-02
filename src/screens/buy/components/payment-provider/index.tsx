@@ -1,5 +1,5 @@
-import { ComponentProps, useMemo } from 'react';
-import React, { Text, View } from 'react-native';
+import React, { ComponentProps, useMemo } from 'react';
+import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';

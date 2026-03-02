@@ -1,12 +1,12 @@
-import { BigNumber } from 'bignumber.js';
-import React, { memo, useMemo } from 'react';
+import BigNumber from 'bignumber.js';
+import React, { memo, ReactNode, useMemo } from 'react';
 import { Text } from 'react-native';
 
 import { FormattedAmount, FormattedAmountProps } from './formatted-amount';
 
 interface OptionalFormattedAmountProps extends Omit<FormattedAmountProps, 'amount'> {
   amount?: BigNumber;
-  renderLoader?: () => JSX.Element;
+  renderLoader?: () => ReactNode;
 }
 
 export const OptionalFormattedAmount = memo<OptionalFormattedAmountProps>(

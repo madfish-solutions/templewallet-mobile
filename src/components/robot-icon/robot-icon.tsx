@@ -1,10 +1,11 @@
-import { createAvatar } from '@dicebear/avatars';
-import * as botttsSprites from '@dicebear/avatars-bottts-sprites';
+import * as bottts from '@dicebear/bottts';
+import { createAvatar } from '@dicebear/core';
 import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
-import { formatSize } from '../../styles/format-size';
+import { formatSize } from 'src/styles/format-size';
+import { fractionToPercentage } from 'src/utils/percentage.utils';
 
 import { useRobotIconStyles } from './robot-icon.styles';
 
@@ -18,12 +19,14 @@ export const RobotIcon: FC<Props> = ({ seed, size = formatSize(44) }) => {
 
   const xml = useMemo(
     () =>
-      createAvatar(botttsSprites, {
+      createAvatar(bottts, {
         seed,
-        margin: formatSize(4),
-        width: size,
-        height: size
-      }).replace('undefined', ''),
+        size,
+        scale: fractionToPercentage((size - formatSize(8)) / size).toNumber(),
+        clip: false
+      })
+        .toString()
+        .replace('undefined', ''),
     [seed, size]
   );
 

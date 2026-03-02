@@ -1,12 +1,13 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { useNetworkInfo } from '../../../hooks/use-network-info.hook';
-import { useNonZeroAmounts } from '../../../hooks/use-non-zero-amounts.hook';
-import { ActivityGroup, emptyActivity } from '../../../interfaces/activity.interface';
-import { useSelectedRpcUrlSelector } from '../../../store/settings/settings-selectors';
-import { formatSize } from '../../../styles/format-size';
-import { tzktUrl } from '../../../utils/linking';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useNonZeroAmounts } from 'src/hooks/use-non-zero-amounts.hook';
+import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { tzktUrl } from 'src/utils/linking';
+
 import { Divider } from '../../divider/divider';
 import { ExternalLinkButton } from '../../icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from '../../public-key-hash-text/public-key-hash-text';

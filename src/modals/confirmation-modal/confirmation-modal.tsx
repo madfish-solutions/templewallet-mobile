@@ -1,11 +1,11 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { FC } from 'react';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { DAppOperationsConfirmation } from './d-app-operations-confirmation/d-app-operations-confirmation';
@@ -19,7 +19,7 @@ export const ConfirmationModal: FC = () => (
 );
 
 const ConfirmationModalContent: FC = () => {
-  const params = useRoute<RouteProp<ModalsParamList, ModalsEnum.Confirmation>>().params;
+  const params = useModalParams<ModalsEnum.Confirmation>();
 
   usePageAnalytic(ModalsEnum.Confirmation);
 

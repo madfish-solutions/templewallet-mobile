@@ -32,7 +32,14 @@ export const isTooLowTezBalanceError = (error: unknown): boolean => {
       if (
         Array.isArray(body) &&
         body.length > 0 &&
-        body.every(item => isObject(item) && 'kind' in item && 'id' in item)
+        body.every(
+          item =>
+            isObject(item) &&
+            'kind' in item &&
+            'id' in item &&
+            typeof item.kind === 'string' &&
+            typeof item.id === 'string'
+        )
       ) {
         return isTooLowTezBalanceError(new TezosOperationError(body, '', []));
       }

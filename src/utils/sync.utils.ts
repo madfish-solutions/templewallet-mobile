@@ -32,7 +32,7 @@ export const parseSyncPayload = async (payload: string, password: string): Promi
       mnemonic,
       hdAccountsLength
     };
-  } catch (_err) {
+  } catch {
     throw new Error(FAILED_TO_DECRYPT_ERROR);
   }
 };
@@ -43,7 +43,7 @@ export const isSyncPayload = (payload: string): boolean => {
       const prefix = Buffer.from(payload.slice(0, 16), 'base64').toString('utf8');
 
       return prefix === TEMPLE_SYNC_PREFIX;
-    } catch (_err) {}
+    } catch {}
   }
 
   return false;

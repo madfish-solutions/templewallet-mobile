@@ -1,5 +1,5 @@
 import { TezosToolkit } from '@taquito/taquito';
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';

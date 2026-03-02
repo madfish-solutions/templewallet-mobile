@@ -2,15 +2,14 @@ import { NameResolver } from '@tezos-domains/resolver';
 import { FormikProps } from 'formik/dist/types';
 import { RefObject } from 'react';
 
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { isTezosDomainNameValid } from 'src/utils/dns.utils';
 import { isValidAddress } from 'src/utils/tezos.util';
 
-import { AccountBaseInterface } from '../../../interfaces/account.interface';
-
 export const handleContactSubmission = async (
   contact: AccountBaseInterface,
-  formik: RefObject<FormikProps<AccountBaseInterface>>,
+  formik: RefObject<FormikProps<AccountBaseInterface> | null>,
   resolver: NameResolver,
   setIsLoading: (isLoading: boolean) => void,
   callback: (contact: AccountBaseInterface) => void

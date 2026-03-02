@@ -86,7 +86,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
   );
   const tokensOptions = useTokensOptions(earnOpportunityItem, lpAmountAtomic);
   const assetAmountInputStylesConfig = useAssetAmountInputStylesConfig();
-  const prevTokensOptionsRef = useRef<WithdrawTokenOption[]>();
+  const prevTokensOptionsRef = useRef<WithdrawTokenOption[]>(undefined);
   const [tokenSearchValue, setTokenSearchValue] = useState('');
   const filteredTokensOptions = useMemo(
     () => tokensOptions.filter(({ token }) => isAssetSearched(token, tokenSearchValue.toLowerCase())),
@@ -182,6 +182,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
           value={lpInputValue}
           label="Amount"
           assetsList={amountInputAssetsList}
+          balance={depositAmountAtomic.toFixed()}
           balanceLabel="Current deposit:"
           toUsdToggle={false}
           editable={false}
