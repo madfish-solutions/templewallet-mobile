@@ -1,11 +1,10 @@
-import React, { FC, useCallback, useContext, useEffect, useRef } from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { Animated, Text, useWindowDimensions, View } from 'react-native';
 import { Defs, LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
 
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { CurrentRouteNameContext } from 'src/navigator/current-route-name.context';
-import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { formatSize } from 'src/styles/format-size';
 
 import KoloLogo from './assets/kolo-logo.svg';
@@ -28,7 +27,7 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
   shouldAnimate = true,
   onAnimationComplete
 }) => {
-  const currentRouteName = useContext(CurrentRouteNameContext);
+  const isFocused = useIsFocused();
   const styles = useKoloCryptoCardPreviewStyles();
   const { width: screenWidth } = useWindowDimensions();
   const cardWidth = screenWidth - CARD_MARGIN_HORIZONTAL * 2;
@@ -71,10 +70,10 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
   }, [translateY, rotateZ, onAnimationComplete]);
 
   useEffect(() => {
-    if (shouldAnimate && currentRouteName === ScreensEnum.Wallet) {
+    if (shouldAnimate && isFocused) {
       playAnimation();
     }
-  }, [shouldAnimate, playAnimation, currentRouteName]);
+  }, [shouldAnimate, playAnimation, isFocused]);
 
   const animatedStyle = {
     transform: [

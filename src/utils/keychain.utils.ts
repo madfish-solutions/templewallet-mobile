@@ -9,7 +9,7 @@ import {
 } from 'react-native-keychain';
 import { of } from 'rxjs';
 
-import { isAndroid, manufacturer } from '../config/system';
+import { isAndroid, isIOS, manufacturer } from '../config/system';
 
 const APP_IDENTIFIER = 'com.madfish.temple-wallet';
 
@@ -48,11 +48,17 @@ export const getGenericPasswordOptions = (passwordService: string, shelterVersio
 // pseudo async function as we don't need to wait until Keychain will remove all data
 // (common async solution stops reset process)
 export const resetKeychain$ = () => {
-  getAllGenericPasswordServices()
-    .then(keychainServicesArray => {
+  const keychainServicesPromise = isIOS
+    ? getAllGenericPasswordServices({ skipUIAuth: true }).then(services =>
+        services.concat(`${APP_IDENTIFIER}/${PASSWORD_STORAGE_KEY}`)
+      )
+    : getAllGenericPasswordServices();
+
+  keychainServicesPromise
+    .then(async keychainServicesArray => {
       if (keychainServicesArray.length > 0) {
         AsyncStorage.removeItem(SHELTER_VERSION_STORAGE_KEY);
-        Promise.all(keychainServicesArray.map(service => resetGenericPassword({ service })));
+        await Promise.all(keychainServicesArray.map(service => resetGenericPassword({ service })));
       }
     })
     .catch(() => void 0);
