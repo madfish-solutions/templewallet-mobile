@@ -331,7 +331,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = D653UWS37K;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "TempleWallet/Debug-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -369,7 +369,7 @@
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = D653UWS37K;
 				INFOPLIST_FILE = TempleWallet/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
