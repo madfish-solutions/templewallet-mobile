@@ -4,6 +4,7 @@ import FastImage from 'react-native-fast-image';
 import { SvgXml } from 'react-native-svg';
 import { WebView } from 'react-native-webview';
 
+import { useCollectibleImagesStack } from 'src/hooks/use-images-stack';
 import { AssetMediaURIs } from 'src/utils/assets/types';
 import { isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
@@ -12,7 +13,6 @@ import { BrokenImage } from '../broken-image';
 import { DataUriImage } from '../data-uri-image';
 
 import { useCollectibleImageStyles } from './styles';
-import { useCollectibleImagesStack } from './use-images-stack';
 
 interface Props extends AssetMediaURIs {
   slug: string;
