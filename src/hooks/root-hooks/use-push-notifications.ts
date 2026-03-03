@@ -1,4 +1,4 @@
-import notifee from '@notifee/react-native';
+import notifee, { IOSNotificationSetting } from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getMessaging,
@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Alert, PermissionsAndroid } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { isAndroid } from 'src/config/system';
+import { isAndroid, isIOS } from 'src/config/system';
 import { setShouldRedirectToNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { AnalyticsEventProperties } from 'src/utils/analytics/analytics.util';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -84,6 +84,15 @@ const requestUserPermission = async (getFcmToken: () => void) => {
     const messaging = getMessaging(await getFirebaseApp());
     const iosAuthStatus = await requestPermission(messaging);
     enabled = iosAuthStatus === AuthorizationStatus.AUTHORIZED || iosAuthStatus === AuthorizationStatus.PROVISIONAL;
+
+    const { authorizationStatus, ios } = await notifee.getNotificationSettings();
+    if (
+      (authorizationStatus !== AuthorizationStatus.AUTHORIZED &&
+        authorizationStatus !== AuthorizationStatus.PROVISIONAL) ||
+      (isIOS && ios.inAppNotificationSettings === IOSNotificationSetting.DISABLED)
+    ) {
+      await notifee.requestPermission();
+    }
   }
 
   if (enabled) {
