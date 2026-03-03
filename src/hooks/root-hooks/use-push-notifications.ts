@@ -91,6 +91,7 @@ const requestUserPermission = async (getFcmToken: () => void) => {
         authorizationStatus !== AuthorizationStatus.PROVISIONAL) ||
       (isIOS && ios.inAppNotificationSettings === IOSNotificationSetting.DISABLED)
     ) {
+      Alert.alert('Please enable notifications in the settings');
       await notifee.requestPermission();
     }
   }
@@ -100,9 +101,10 @@ const requestUserPermission = async (getFcmToken: () => void) => {
   }
 };
 
-const getChannelId = memoizee(() => notifee.createChannel({ id: 'central-channel', name: 'Central Channel' }), {
-  promise: true
-});
+const getChannelId = memoizee(
+  () => notifee.createChannel({ id: 'temple-notifications', name: 'Temple Notifications' }),
+  { promise: true }
+);
 
 const handleForegroundNotifications = (
   messaging: Messaging,
