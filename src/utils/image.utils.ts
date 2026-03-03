@@ -15,10 +15,16 @@ type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
 const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
-const buildIpfsMediaUrisByInfo = (info: MediaUriInfo) => [
-  buildIpfsMediaUriByInfo({ info }),
-  buildIpfsMediaUriByInfo({ info, useMediaHost: false, ipfsGate: 'https://ipfs.filebase.io/ipfs' })
-];
+const buildIpfsMediaUrisByInfo = (info: MediaUriInfo, isFullView: boolean) => {
+  const sizes: TcInfraMediaSize[] = isFullView ? ['raw', 'large', 'medium', 'small'] : ['medium', 'small'];
+
+  return sizes
+    .map(size => buildIpfsMediaUriByInfo({ info, size }))
+    .concat(
+      buildIpfsMediaUriByInfo({ info, useMediaHost: false }),
+      buildIpfsMediaUriByInfo({ info, useMediaHost: false, ipfsGate: 'https://ipfs.filebase.io/ipfs' })
+    );
+};
 
 export const buildCollectibleImagesStack = (
   slug: string,
@@ -40,9 +46,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'display'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'display'),
 
-        ...buildIpfsMediaUrisByInfo(displayInfo),
+        ...buildIpfsMediaUrisByInfo(displayInfo, true),
 
-        ...buildIpfsMediaUrisByInfo(artifactInfo),
+        ...buildIpfsMediaUrisByInfo(artifactInfo, true),
 
         assureGetDataUriImage(thumbnailUri)
       ]
@@ -60,9 +66,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'thumb288'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'thumb288'),
 
-        ...buildIpfsMediaUrisByInfo(thumbnailInfo),
-        ...buildIpfsMediaUrisByInfo(displayInfo),
-        ...buildIpfsMediaUrisByInfo(artifactInfo)
+        ...buildIpfsMediaUrisByInfo(thumbnailInfo, false),
+        ...buildIpfsMediaUrisByInfo(displayInfo, false),
+        ...buildIpfsMediaUrisByInfo(artifactInfo, false)
       ];
 
   return uniq(stack.filter(isTruthy));
