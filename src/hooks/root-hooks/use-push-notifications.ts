@@ -1,4 +1,4 @@
-import notifee, { IOSNotificationSetting } from '@notifee/react-native';
+import notifee from '@notifee/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   getMessaging,
@@ -13,7 +13,7 @@ import {
 } from '@react-native-firebase/messaging';
 import memoizee from 'memoizee';
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, PermissionsAndroid } from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, isIOS } from 'src/config/system';
@@ -82,17 +82,17 @@ const requestUserPermission = async (getFcmToken: () => void) => {
     enabled = (await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)) === 'granted';
   } else {
     const messaging = getMessaging(await getFirebaseApp());
-    const iosAuthStatus = await requestPermission(messaging);
-    enabled = iosAuthStatus === AuthorizationStatus.AUTHORIZED || iosAuthStatus === AuthorizationStatus.PROVISIONAL;
-
-    const { authorizationStatus, ios } = await notifee.getNotificationSettings();
-    if (
-      (authorizationStatus !== AuthorizationStatus.AUTHORIZED &&
-        authorizationStatus !== AuthorizationStatus.PROVISIONAL) ||
-      (isIOS && ios.inAppNotificationSettings === IOSNotificationSetting.DISABLED)
-    ) {
-      Alert.alert('Please enable notifications in the settings');
-      await notifee.requestPermission();
+    const { authorizationStatus } = await notifee.requestPermission({
+      alert: true,
+      badge: true,
+      sound: true
+    });
+    enabled =
+      authorizationStatus === AuthorizationStatus.AUTHORIZED || authorizationStatus === AuthorizationStatus.PROVISIONAL;
+    if (!enabled) {
+      const firebaseAuthStatus = await requestPermission(messaging);
+      enabled =
+        firebaseAuthStatus === AuthorizationStatus.AUTHORIZED || firebaseAuthStatus === AuthorizationStatus.PROVISIONAL;
     }
   }
 
@@ -121,10 +121,6 @@ const handleForegroundNotifications = (
     if (isDefined(notification) && isDefined(notification.body)) {
       const { title, body, android = {}, ios = {} } = notification;
       try {
-        Alert.alert(
-          'Debug info',
-          JSON.stringify({ notificationSettings: await notifee.getNotificationSettings(), notification })
-        );
         if (isAndroid && !isDefined(android.channelId)) {
           android.channelId = await getChannelId();
         }
@@ -138,7 +134,15 @@ const handleForegroundNotifications = (
           android,
           ios: {
             ...ios,
-            sound: typeof ios.sound === 'string' ? ios.sound : ios.sound?.name
+            sound: typeof ios.sound === 'string' ? ios.sound : ios.sound?.name,
+            ...(isIOS && {
+              foregroundPresentationOptions: {
+                banner: true,
+                list: true,
+                sound: true,
+                badge: true
+              }
+            })
           }
         });
       } catch (error) {
