@@ -13,7 +13,7 @@ import {
 } from '@react-native-firebase/messaging';
 import memoizee from 'memoizee';
 import { useCallback, useEffect, useState } from 'react';
-import { PermissionsAndroid } from 'react-native';
+import { Alert, PermissionsAndroid } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid } from 'src/config/system';
@@ -110,6 +110,10 @@ const handleForegroundNotifications = (
     if (isDefined(notification) && isDefined(notification.body)) {
       const { title, body, android = {}, ios = {} } = notification;
       try {
+        Alert.alert(
+          'Debug info',
+          JSON.stringify({ notificationSettings: await notifee.getNotificationSettings(), notification })
+        );
         if (isAndroid && !isDefined(android.channelId)) {
           android.channelId = await getChannelId();
         }
