@@ -5,6 +5,14 @@ import { isObject } from 'lodash-es';
 
 import { isKTAddress } from './tezos.util';
 
+const BALANCE_TOO_LOW_ERROR_MESSAGES = [
+  'balance_too_low',
+  'empty_implicit_delegated_contract',
+  'empty_delegate_account',
+  'cannot_pay_storage_fee',
+  'empty_implicit_contract'
+];
+
 interface TezosGenericOperationErrorWithExtraFields extends TezosGenericOperationError {
   contract?: string;
   with?: MichelsonV1Expression;
@@ -14,7 +22,7 @@ interface TezosGenericOperationErrorWithExtraFields extends TezosGenericOperatio
 export const isTooLowTezBalanceError = (error: unknown): boolean => {
   if (error instanceof TezosOperationError) {
     const balanceTooLowError: TezosGenericOperationErrorWithExtraFields | undefined = error.errors.find(err =>
-      err.id.includes('balance_too_low')
+      BALANCE_TOO_LOW_ERROR_MESSAGES.some(message => err.id.includes(message))
     );
 
     if (!balanceTooLowError) {

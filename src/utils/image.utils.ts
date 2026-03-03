@@ -1,18 +1,23 @@
 import { uniq } from 'lodash-es';
 
 import { AssetMediaURIs } from './assets/types';
+import { isDefined } from './is-defined';
 import { isString } from './is-string';
 import { isTruthy } from './is-truthy';
 
 const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
 const IPFS_GATE = 'https://ipfs.io/ipfs';
+const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
+type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
 type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
+const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
+
 const buildIpfsMediaUrisByInfo = (info: MediaUriInfo) => [
-  buildIpfsMediaUriByInfo(info),
-  buildIpfsMediaUriByInfo(info, 'https://ipfs.filebase.io/ipfs')
+  buildIpfsMediaUriByInfo({ info }),
+  buildIpfsMediaUriByInfo({ info, useMediaHost: false, ipfsGate: 'https://ipfs.filebase.io/ipfs' })
 ];
 
 export const buildCollectibleImagesStack = (
@@ -124,13 +129,29 @@ const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => 
 
 const CLOUDFLARE_IPFS_REGEX = /^https?:\/\/cloudflare-ipfs\.com/;
 
-const buildIpfsMediaUriByInfo = ({ uri, ipfs: ipfsInfo }: MediaUriInfo, ipfsGate = IPFS_GATE) => {
+interface MediaUriInput {
+  info: MediaUriInfo;
+  size?: TcInfraMediaSize;
+  useMediaHost?: boolean;
+  ipfsGate?: string;
+}
+
+const buildIpfsMediaUriByInfo = ({
+  info,
+  size = DEFAULT_MEDIA_SIZE,
+  useMediaHost = true,
+  ipfsGate = IPFS_GATE
+}: MediaUriInput) => {
+  const { uri, ipfs: ipfsInfo } = info;
+
   if (!uri) {
     return;
   }
 
   if (ipfsInfo) {
-    return `${ipfsGate}/${ipfsInfo.path}${ipfsInfo.search}`;
+    return useMediaHost
+      ? `${MEDIA_HOST}/${size}/ipfs/${ipfsInfo.path}${ipfsInfo.search}`
+      : `${ipfsGate}/${ipfsInfo.path}${ipfsInfo.search}`;
   }
 
   if (CLOUDFLARE_IPFS_REGEX.test(uri)) {
@@ -143,7 +164,35 @@ const buildIpfsMediaUriByInfo = ({ uri, ipfs: ipfsInfo }: MediaUriInfo, ipfsGate
   }
 };
 
-export const formatImgUri = (uri = '') => buildIpfsMediaUriByInfo(getMediaUriInfo(uri));
+export const formatImgUri = (uri = '', size?: TcInfraMediaSize, useMediaHost?: boolean) =>
+  buildIpfsMediaUriByInfo({ info: getMediaUriInfo(uri), size, useMediaHost });
+
+export const buildTokenImagesStack = (url?: string, preferDirectSource = false): string[] => {
+  if (!isDefined(url)) {
+    return [];
+  }
+
+  if (url.startsWith(IPFS_PROTOCOL) || url.startsWith('http')) {
+    const uriInfo = getMediaUriInfo(url);
+    const directFallback = uriInfo.ipfs
+      ? buildIpfsMediaUriByInfo({ info: uriInfo, size: 'small', useMediaHost: false })
+      : uriInfo.uri;
+    const mediaHostSources = [
+      buildIpfsMediaUriByInfo({ info: uriInfo, size: 'small' }),
+      buildIpfsMediaUriByInfo({ info: uriInfo, size: 'medium' })
+    ];
+
+    return (preferDirectSource ? [directFallback, ...mediaHostSources] : [...mediaHostSources, directFallback]).filter(
+      isTruthy
+    );
+  }
+
+  if (url.startsWith('data:image/')) {
+    return [url];
+  }
+
+  return [];
+};
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 

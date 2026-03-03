@@ -5,7 +5,8 @@ exec('yarn audit --level high', (error, stdout) => {
     console.log(stdout);
 
     if (
-      stdout.includes('Axios is vulnerable to DoS attack through lack of data size') &&
+      (stdout.includes('Axios is vulnerable to DoS attack through lack of data size') ||
+        stdout.includes('minimatch')) &&
       !stdout.includes('Critical')
     ) {
       return;

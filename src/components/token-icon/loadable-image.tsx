@@ -1,8 +1,8 @@
-import FastImage, { OnErrorEvent, Source } from '@d11/react-native-fast-image';
-import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import FastImage from '@d11/react-native-fast-image';
+import React, { memo, useMemo } from 'react';
 
-import { formatImgUri } from 'src/utils/image.utils';
-import { isString } from 'src/utils/is-string';
+import { useTokenImagesStack } from 'src/hooks/use-images-stack';
+import { useDidUpdate } from 'src/utils/hooks';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -10,44 +10,32 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props {
+  useOriginal?: boolean;
   uri: string;
   size: number;
-  onError?: SyncFn<OnErrorEvent>;
+  onError?: EmptyFn;
 }
 
-export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError }) => {
-  const lastItemId = useRef(uri);
+export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOriginal = false }) => {
+  const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImagesStack(uri, useOriginal);
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isFailed, setIsFailed] = useState(false);
-  if (uri !== lastItemId.current) {
-    lastItemId.current = uri;
-    setIsLoading(true);
-    setIsFailed(false);
-  }
+  useDidUpdate(() => {
+    if (isStackFailed) {
+      onError?.();
+    }
+  }, [isStackFailed, onError]);
 
-  const isShowPlaceholder = useMemo(() => isLoading || isFailed, [isLoading, isFailed]);
+  const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
 
   const style = useMemo(
     () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: size, height: size }],
     [isShowPlaceholder, size]
   );
 
-  const source = useMemo<Source>(() => (isString(uri) ? { uri: formatImgUri(uri) } : {}), [uri]);
-
-  const handleError = useCallback(
-    (e: OnErrorEvent) => {
-      setIsFailed(true);
-      onError?.(e);
-    },
-    [onError]
-  );
-  const handleLoadEnd = useCallback(() => setIsLoading(false), []);
-
   return (
     <>
       {isShowPlaceholder && <Icon name={IconNameEnum.NoNameToken} size={size} />}
-      <FastImage style={style} source={source} onError={handleError} onLoadEnd={handleLoadEnd} />
+      <FastImage style={style} source={{ uri: src }} onError={onFail} onLoad={onSuccess} />
     </>
   );
 });
