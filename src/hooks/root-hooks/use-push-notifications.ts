@@ -13,7 +13,7 @@ import {
 } from '@react-native-firebase/messaging';
 import memoizee from 'memoizee';
 import { useCallback, useEffect, useState } from 'react';
-import { PermissionsAndroid } from 'react-native';
+import { Alert, PermissionsAndroid } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, isIOS } from 'src/config/system';
@@ -125,7 +125,7 @@ const handleForegroundNotifications = (
           android.channelId = await getChannelId();
         }
 
-        return await notifee.displayNotification({
+        const notification = {
           id: messageId,
           title,
           subtitle: isAndroid ? undefined : ios.subtitle,
@@ -144,7 +144,10 @@ const handleForegroundNotifications = (
               }
             })
           }
-        });
+        };
+        Alert.alert('Notification', JSON.stringify(notification));
+
+        return await notifee.displayNotification(notification);
       } catch (error) {
         trackErrorEvent('DisplayNotificationError', error, undefined, { remoteMessage });
       }
