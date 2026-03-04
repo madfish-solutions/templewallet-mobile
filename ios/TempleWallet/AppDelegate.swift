@@ -1,5 +1,4 @@
 import UIKit
-import UserNotifications
 import RNFBAppCheck
 import FirebaseCore
 import React
@@ -9,7 +8,7 @@ import Firebase
 import RNBootSplash
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
 
   var reactNativeDelegate: ReactNativeDelegate?
@@ -19,8 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
-    UNUserNotificationCenter.current().delegate = self
-
     RNFBAppCheckModule.sharedInstance()
     FirebaseApp.configure()
     let delegate = ReactNativeDelegate()
@@ -39,20 +36,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     )
 
     return true
-  }
-
-  func userNotificationCenter(
-    _ center: UNUserNotificationCenter,
-    willPresent notification: UNNotification,
-    withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-  ) {
-    if notification.request.trigger is UNPushNotificationTrigger {
-      // Remote push — suppress banner so onMessage + Notifee handles display
-      completionHandler([])
-    } else {
-      // Local notification from Notifee — show it
-      completionHandler([.banner, .list, .sound, .badge])
-    }
   }
 
   func application(

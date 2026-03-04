@@ -16,7 +16,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { PermissionsAndroid } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { isAndroid, isIOS } from 'src/config/system';
+import { isAndroid } from 'src/config/system';
 import { setShouldRedirectToNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { AnalyticsEventProperties } from 'src/utils/analytics/analytics.util';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -116,37 +116,26 @@ const handleForegroundNotifications = (
   ) => void
 ) => {
   const unsubscribe = onMessage(messaging, async remoteMessage => {
+    if (!isAndroid) {
+      return;
+    }
+
     const { messageId, notification, data } = remoteMessage;
 
     if (isDefined(notification) && isDefined(notification.body)) {
-      const { title, body, android = {}, ios = {} } = notification;
+      const { title, body, android = {} } = notification;
       try {
-        if (isAndroid && !isDefined(android.channelId)) {
+        if (!isDefined(android.channelId)) {
           android.channelId = await getChannelId();
         }
 
-        const notification = {
+        return await notifee.displayNotification({
           id: messageId,
           title,
-          subtitle: isAndroid ? undefined : ios.subtitle,
           body,
           data,
-          android,
-          ios: {
-            ...ios,
-            sound: typeof ios.sound === 'string' ? ios.sound : ios.sound?.name,
-            ...(isIOS && {
-              foregroundPresentationOptions: {
-                banner: true,
-                list: true,
-                sound: true,
-                badge: true
-              }
-            })
-          }
-        };
-
-        return await notifee.displayNotification(notification);
+          android
+        });
       } catch (error) {
         trackErrorEvent('DisplayNotificationError', error, undefined, { remoteMessage });
       }
