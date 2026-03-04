@@ -1,11 +1,10 @@
+import FastImage, { ImageStyle } from '@d11/react-native-fast-image';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, View } from 'react-native';
-import FastImage, { ImageStyle } from 'react-native-fast-image';
 import { SvgUri } from 'react-native-svg';
 
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
 import { DataUriImage } from 'src/components/data-uri-image';
-import { isIOS } from 'src/config/system';
 import { formatSize } from 'src/styles/format-size';
 import { isImgUriDataUri } from 'src/utils/image.utils';
 
@@ -29,8 +28,8 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSize(32) }) 
   const isLoading = loadedIconUri !== uri;
 
   const imageStyle = useMemo<StyleProp<ImageStyle>>(
-    () => ({ width: size, height: size, display: (isFailed || isLoading) && isIOS ? 'none' : 'flex' }),
-    [size, isFailed, isLoading]
+    () => ({ width: size, height: size, display: isFailed ? 'none' : 'flex' }),
+    [size, isFailed]
   );
   const svgImageStyle = useMemo<StyleProp<ImageStyle>>(
     () => ({ display: isFailed || isLoading ? 'none' : 'flex' }),

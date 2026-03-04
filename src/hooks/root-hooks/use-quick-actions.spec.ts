@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHookAsync, renderHook } from '@testing-library/react-native';
 
 import { mockReactNativeQuickActions } from 'src/mocks/react-native-quick-actions.mock';
 import { mockDeviceEventEmitter, mockDeviceEventEmitterInstance } from 'src/mocks/react-native.mock';
@@ -6,10 +6,10 @@ import { mockDeviceEventEmitter, mockDeviceEventEmitterInstance } from 'src/mock
 import { useQuickActions } from './use-quick-actions';
 
 describe('useQuickActions', () => {
-  it('should set shortcut items and add quick action shortcut listener on start', () => {
-    renderHook(() => useQuickActions());
+  it('should set shortcut items and add quick action shortcut listener on start', async () => {
+    await renderHookAsync(() => useQuickActions());
 
-    expect(mockReactNativeQuickActions.setShortcutItems).toBeCalledWith([
+    expect(mockReactNativeQuickActions.setShortcutItems).toHaveBeenCalledWith([
       {
         type: 'Hide balance',
         title: 'Hide balance',
@@ -17,18 +17,18 @@ describe('useQuickActions', () => {
         userInfo: { url: '' }
       }
     ]);
-    expect(mockDeviceEventEmitter.addListener).toBeCalled();
+    expect(mockDeviceEventEmitter.addListener).toHaveBeenCalled();
 
-    expect(mockReactNativeQuickActions.clearShortcutItems).not.toBeCalled();
-    expect(mockDeviceEventEmitterInstance.remove).not.toBeCalled();
+    expect(mockReactNativeQuickActions.clearShortcutItems).not.toHaveBeenCalled();
+    expect(mockDeviceEventEmitterInstance.remove).not.toHaveBeenCalled();
   });
 
-  it('should clear shortcut items and remove quick action shortcut listener on unmount', () => {
+  it('should clear shortcut items and remove quick action shortcut listener on unmount', async () => {
     const { unmount } = renderHook(() => useQuickActions());
 
     unmount();
 
-    expect(mockReactNativeQuickActions.clearShortcutItems).toBeCalled();
-    expect(mockDeviceEventEmitterInstance.remove).toBeCalled();
+    expect(mockReactNativeQuickActions.clearShortcutItems).toHaveBeenCalled();
+    expect(mockDeviceEventEmitterInstance.remove).toHaveBeenCalled();
   });
 });

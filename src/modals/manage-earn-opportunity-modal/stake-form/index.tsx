@@ -33,7 +33,7 @@ interface StakeFormProps {
   earnOpportunityItem: EarnOpportunity;
   stake?: UserStakeValueInterface;
   formik: FormikProps<StakeFormValues>;
-  acceptRisksRef?: RefObject<View>;
+  acceptRisksRef?: RefObject<View | null>;
 }
 
 export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, stake, acceptRisksRef }) => {

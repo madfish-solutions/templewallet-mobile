@@ -1,8 +1,7 @@
+import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { isIOS } from 'src/config/system';
 import { createUseStylesConfigMemoized, createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
-
-import { DEFAULT_BORDER_WIDTH } from '../../../config/styles';
 
 export const useWithdrawFormStyles = createUseStylesMemoized(({ colors, typography }) => ({
   tokenSelectorTitle: {

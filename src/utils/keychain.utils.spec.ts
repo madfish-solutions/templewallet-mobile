@@ -3,7 +3,6 @@ import { getBiometryKeychainOptions, getKeychainOptions } from './keychain.utils
 const mockBiometryKeychainOptions = {
   service: 'com.madfish.temple-wallet/biometry-protected-app-password',
   accessControl: 'BiometryCurrentSet',
-  authenticationType: 'AuthenticationWithBiometrics',
   accessible: 'AccessibleWhenPasscodeSetThisDeviceOnly'
 };
 

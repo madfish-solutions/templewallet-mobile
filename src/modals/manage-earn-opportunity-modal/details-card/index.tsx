@@ -115,10 +115,13 @@ export const DetailsCard = memo<DetailsCardProps>(
         try {
           setClaimPending(true);
           dispatch(
-            navigateAction(ModalsEnum.Confirmation, {
-              type: ConfirmationTypeEnum.InternalOperations,
-              opParams: await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId),
-              testID: 'CLAIM_REWARDS'
+            navigateAction({
+              screen: ModalsEnum.Confirmation,
+              params: {
+                type: ConfirmationTypeEnum.InternalOperations,
+                opParams: await getHarvestAssetsTransferParams(tezos, contractAddress, lastStakeId),
+                testID: 'CLAIM_REWARDS'
+              }
             })
           );
         } catch (e) {

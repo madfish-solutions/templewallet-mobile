@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { ObservableInput } from 'rxjs';
 
-import { Action } from '../../interfaces/action.interface';
-import { abortRequestAction } from '../../store/d-apps/d-apps-actions';
+import { Action } from 'src/interfaces/action.interface';
+import { abortRequestAction } from 'src/store/d-apps/d-apps-actions';
 
 import { useRequestConfirmation } from './use-request-confirmation.hook';
 

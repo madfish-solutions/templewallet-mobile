@@ -28,7 +28,7 @@ export interface WalletInitFinalStepInputsProps<T extends WalletInitFormValuesBa
   useBiometricsToUnlockCheckBoxTestID: string;
   viewAdsCheckboxTestID: string;
   formik: ReturnType<typeof useFormik<T>>;
-  refScrollView?: RefObject<ScrollView>;
+  refScrollView?: RefObject<ScrollView | null>;
   children?: ReactNode | ReactNode[];
   onMainPartLayout?: (event: LayoutChangeEvent) => void;
   onAcceptTermsLayout?: (event: LayoutChangeEvent) => void;

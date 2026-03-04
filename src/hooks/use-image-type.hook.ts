@@ -21,6 +21,7 @@ export const useImageType = (imgUri: string) => {
   if (imgUri !== lastImgUri.current) {
     lastImgUri.current = imgUri;
     setSvgFailed(false);
+    setRasterFailed(false);
   }
 
   const onRasterRenderError = useCallback(() => {
@@ -38,12 +39,12 @@ export const useImageType = (imgUri: string) => {
   }, [imgUri, mayBeUnknownSvg, dispatch]);
 
   const imageType = useMemo(() => {
-    if ((isImgUriSvg(imgUri) || (isKnownSvg && !svgFailed)) && isString(formatImgUri(imgUri))) {
-      return ImageTypeEnum.RemoteSvg;
+    if ((!isImgUriSvg(imgUri) && (!isKnownSvg || !rasterFailed)) || !isString(formatImgUri(imgUri))) {
+      return ImageTypeEnum.RemoteRaster;
     }
 
-    return isImgUriDataUri(imgUri) ? ImageTypeEnum.DataUri : ImageTypeEnum.RemoteRaster;
-  }, [imgUri, isKnownSvg, svgFailed]);
+    return isImgUriDataUri(imgUri) ? ImageTypeEnum.DataUri : ImageTypeEnum.RemoteSvg;
+  }, [imgUri, isKnownSvg, rasterFailed]);
 
-  return { imageType, rasterFailed, svgFailed, onRasterRenderError, onSvgRenderError };
+  return { imageType, svgFailed, rasterFailed, onRasterRenderError, onSvgRenderError };
 };

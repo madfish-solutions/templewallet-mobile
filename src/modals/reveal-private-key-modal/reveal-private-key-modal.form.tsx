@@ -1,6 +1,6 @@
 import { object, SchemaOf } from 'yup';
 
-import { AccountInterface } from '../../interfaces/account.interface';
+import { AccountInterface } from 'src/interfaces/account.interface';
 
 export type RevealPrivateKeyModalFormValues = {
   account: AccountInterface;

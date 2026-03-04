@@ -1,21 +1,22 @@
-import React, { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Subject } from 'rxjs';
 import { delay, switchMap, tap } from 'rxjs/operators';
 
-import { EmptyFn, emptyFn, EventFn } from '../../config/general';
-import { usePasswordDelay } from '../../hooks/use-password-delay.hook';
-import { enterPassword } from '../../store/security/security-actions';
-import { usePasswordAttempt } from '../../store/security/security-selectors';
-import { hideLoaderAction, showLoaderAction } from '../../store/settings/settings-actions';
-import { showErrorToast } from '../../toast/toast.utils';
-import { isDefined } from '../../utils/is-defined';
+import { emptyFn } from 'src/config/general';
+import { usePasswordDelay } from 'src/hooks/use-password-delay.hook';
+import { enterPassword } from 'src/store/security/security-actions';
+import { usePasswordAttempt } from 'src/store/security/security-selectors';
+import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { Shelter } from '../shelter';
 
 interface AppLockContextValue {
   isLocked: boolean;
   lock: EmptyFn;
-  unlock: EventFn<string, void>;
+  unlock: SyncFn<string, void>;
   unlockWithBiometry: EmptyFn;
 }
 
@@ -28,7 +29,7 @@ const AppLockContext = createContext<AppLockContextValue>({
 
 export const useAppLock = () => useContext(AppLockContext);
 
-export const AppLockContextProvider: FC = ({ children }) => {
+export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const [isLocked, setIsLocked] = useState(Shelter.getIsLocked());
   const dispatch = useDispatch();
   const attempt = usePasswordAttempt();

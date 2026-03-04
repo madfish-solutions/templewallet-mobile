@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { TextInputProps, TextStyle, ViewStyle } from 'react-native';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -19,6 +19,7 @@ export interface AssetAmountInputProps extends TestIdProps {
   value: AssetAmountInterface;
   label: string;
   assetsList: TokenInterface[];
+  balance?: string;
   balanceLabel?: string;
   frozenBalance?: string;
   isError?: boolean;

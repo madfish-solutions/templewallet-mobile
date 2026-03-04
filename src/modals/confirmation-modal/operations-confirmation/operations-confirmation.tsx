@@ -1,7 +1,7 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { FormikProvider, useFormik } from 'formik';
-import React, { FC, ReactNode, useEffect, useMemo } from 'react';
+import React, { ReactNode, useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
@@ -11,12 +11,12 @@ import { DelegateDisclaimer } from 'src/components/delegate-disclaimer/delegate-
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
-import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { emptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -51,7 +51,7 @@ interface Props extends TestIdProps {
   onSubmit: SyncFn<ParamsWithKind[]>;
 }
 
-export const OperationsConfirmation: FC<Props> = ({
+export const OperationsConfirmation: FCWithChildren<Props> = ({
   sender,
   opParams,
   isLoading,
@@ -192,21 +192,20 @@ export const OperationsConfirmation: FC<Props> = ({
         <Divider />
       </ScreenContainer>
 
-      <ModalButtonsContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary
           title="Back"
           disabled={isLoading}
           onPress={goBack}
           testID={ConfirmationModalSelectors.backButton}
         />
-        <Divider size={formatSize(16)} />
         <ButtonLargePrimary
           title="Confirm"
           disabled={estimations.isLoading || isLoading || !isValid}
           onPress={submitForm}
           testID={ConfirmationModalSelectors.confirmButton}
         />
-      </ModalButtonsContainer>
+      </ModalButtonsFloatingContainer>
     </FormikProvider>
   );
 };

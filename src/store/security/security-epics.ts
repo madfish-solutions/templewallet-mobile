@@ -1,4 +1,4 @@
-import { firebase } from '@react-native-firebase/app-check';
+import { initializeAppCheck } from '@react-native-firebase/app-check';
 import { Platform } from 'react-native';
 import { getReadableVersion } from 'react-native-device-info';
 import { combineEpics, StateObservable } from 'redux-observable';
@@ -12,6 +12,7 @@ import { isIOS } from 'src/config/system';
 import { VersionsInterface } from 'src/interfaces/versions.interface';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
+import { getFirebaseApp } from 'src/utils/firebase-app.util';
 import { withSelectedIsAuthorized } from 'src/utils/security.utils';
 
 import type { RootState } from '../types';
@@ -22,17 +23,15 @@ interface appCheckPayload extends VersionsInterface {
   isAppCheckFailed: boolean;
 }
 
-const appCheck = firebase.appCheck();
-
 const CheckAppEpic = (action$: Observable<Action>, state$: StateObservable<RootState>) =>
   action$.pipe(
     ofType(checkApp.submit),
     withUserAnalyticsCredentials(state$),
     withSelectedIsAuthorized(state$),
     switchMap(([[, { isAnalyticsEnabled, userId, ABTestingCategory }], isAuthorized]) =>
-      from(appCheck.activate('ignored', false)).pipe(
-        switchMap(() => appCheck.getToken()),
-        map(appCheck => appCheck.token),
+      from(getFirebaseApp().then(app => initializeAppCheck(app))).pipe(
+        switchMap(appCheck => appCheck.getToken()),
+        map(result => result.token),
         switchMap(appCheckToken =>
           from(
             templeWalletApi.get<appCheckPayload>('/mobile-check', {

@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { ActivityGroup } from '../../../../interfaces/activity.interface';
-import { formatSize } from '../../../../styles/format-size';
-import { Divider } from '../../../divider/divider';
-import { Icon } from '../../../icon/icon';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { ActivityGroup } from 'src/interfaces/activity.interface';
+import { formatSize } from 'src/styles/format-size';
 
 import { useActivityGroupTypeStyles } from './activity-group-type.styles';
 import { useActivityGroupInfo } from './use-activity-group-info.hook';

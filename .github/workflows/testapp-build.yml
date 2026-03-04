@@ -7,7 +7,7 @@ on:
     inputs:
       version:
         description: Version
-        default: "1.49"
+        default: "1.53"
         required: true
       build-number:
         description: Build number
@@ -26,7 +26,7 @@ on:
 jobs:
   testapp-build:
     name: Create new iOS / Android builds and upload them via TestApp
-    runs-on: macos-14
+    runs-on: macos-15
     environment: testapp
     steps:
       - name: Clone repository
@@ -38,6 +38,7 @@ jobs:
       - name: Secrets setup
         uses: ./.github/workflows/secrets-setup
         with:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           READ_ONLY_SIGNER_PUBLIC_KEY: ${{ vars.READ_ONLY_SIGNER_PUBLIC_KEY }}
           READ_ONLY_SIGNER_PUBLIC_KEY_HASH: ${{ vars.READ_ONLY_SIGNER_PUBLIC_KEY_HASH }}
           JITSU_ANALYTICS_KEY: ${{ vars.JITSU_ANALYTICS_KEY }}
@@ -72,7 +73,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
 
       - name: Update Android version
         if: ${{ github.event.inputs.android == 'true' }}
@@ -110,6 +111,11 @@ jobs:
 
       - name: Enable automatic code signing
         run: cd ios && ./enable_automatic_code_signing.sh
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "26.2"
 
       - name: Install Pods
         if: ${{ github.event.inputs.ios == 'true' }}

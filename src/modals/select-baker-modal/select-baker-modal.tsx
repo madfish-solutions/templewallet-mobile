@@ -11,7 +11,6 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
-import { ModalButtonsContainer } from 'src/components/modal-buttons-container/modal-buttons-container';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { Sorter } from 'src/components/sorter/sorter';
@@ -21,8 +20,9 @@ import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { useBakersListSelector, useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
@@ -59,7 +59,8 @@ const keyExtractor = (item: BakerInterface) => item.address;
 const sponsoredBakersAddresses = [TEMPLE_BAKER_ADDRESS, EVERSTAKE_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS];
 
 export const SelectBakerModal = memo(() => {
-  const { goBack, navigate } = useNavigation();
+  const { goBack } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const styles = useSelectBakerModalStyles();
   const currentBaker = useSelectedBakerSelector();
   const { isTezosNode, isDcpNode } = useNetworkInfo();
@@ -108,7 +109,7 @@ export const SelectBakerModal = memo(() => {
       } else if (new BigNumber(tezosBalance).isZero() && canUseOnRamp) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       } else {
-        navigate(ModalsEnum.Confirmation, {
+        navigateToModal(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
           opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: accountPkh }],
           ...(isTempleBakerSelected && { testID: 'TEMPLE_BAKER_DELEGATION' }),
@@ -247,18 +248,15 @@ export const SelectBakerModal = memo(() => {
         </View>
       )}
 
-      <View style={isDcpNode && styles.buttons}>
-        <ModalButtonsContainer>
-          <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
-          <Divider size={formatSize(16)} />
-          <ButtonLargePrimary
-            title="Next"
-            disabled={!isDefined(selectedBaker) || !isValidAddress(selectedBaker.address)}
-            onPress={handleNextPress}
-            testID={SelectBakerModalSelectors.nextButton}
-          />
-        </ModalButtonsContainer>
-      </View>
+      <ModalButtonsFloatingContainer variant="bordered" style={isDcpNode && styles.buttons}>
+        <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
+        <ButtonLargePrimary
+          title="Next"
+          disabled={!isDefined(selectedBaker) || !isValidAddress(selectedBaker.address)}
+          onPress={handleNextPress}
+          testID={SelectBakerModalSelectors.nextButton}
+        />
+      </ModalButtonsFloatingContainer>
 
       <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </>

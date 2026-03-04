@@ -45,7 +45,7 @@ const getContractOperations = <T>(
     })
     .then(x => x.data);
 
-const paramsSerializer = (params: Record<string, any>) => stringify(params);
+const paramsSerializer = (params: Record<string, unknown>) => stringify(params);
 
 const getTokenFa2Operations = (
   selectedRpcUrl: string,

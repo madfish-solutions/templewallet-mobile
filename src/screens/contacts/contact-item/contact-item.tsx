@@ -10,7 +10,7 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { deleteContactAction } from 'src/store/contact-book/contact-book-actions';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -27,7 +27,7 @@ interface Props {
 
 export const ContactItem: FC<Props> = ({ contact, index }) => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const styles = useContactItemStyles();
   const { trackEvent } = useAnalytics();
 
@@ -48,7 +48,7 @@ export const ContactItem: FC<Props> = ({ contact, index }) => {
       }
     ]);
 
-  const hadleEditItem = () => navigate(ModalsEnum.EditContact, { contact, index });
+  const hadleEditItem = () => navigateToModal(ModalsEnum.EditContact, { contact, index });
 
   return (
     <View style={styles.root}>

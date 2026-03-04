@@ -1,15 +1,12 @@
 import { object, SchemaOf, string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../form/validation/messages';
-import { AccountBaseInterface } from '../../interfaces/account.interface';
-import {
-  useContactsAddressesSelector,
-  useContactsNamesSelector
-} from '../../store/contact-book/contact-book-selectors';
-import { useAccountsListSelector } from '../../store/wallet/wallet-selectors';
-import { isTezosDomainNameValid } from '../../utils/dns.utils';
-import { isDefined } from '../../utils/is-defined';
-import { isValidAddress } from '../../utils/tezos.util';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { useContactsAddresses, useContactsNames } from 'src/store/contact-book/contact-book-selectors';
+import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { isTezosDomainNameValid } from 'src/utils/dns.utils';
+import { isDefined } from 'src/utils/is-defined';
+import { isValidAddress } from 'src/utils/tezos.util';
 
 const baseValidationSchema = ({
   contactsNames,
@@ -43,16 +40,16 @@ const baseValidationSchema = ({
 
 export const useAddContactFormValidationSchema = (): SchemaOf<AccountBaseInterface> => {
   const ownAccounts = useAccountsListSelector().map(({ publicKeyHash }) => publicKeyHash);
-  const contactsNames = useContactsNamesSelector();
-  const contactsAddresses = useContactsAddressesSelector();
+  const contactsNames = useContactsNames();
+  const contactsAddresses = useContactsAddresses();
 
   return baseValidationSchema({ contactsNames, contactsAddresses, ownAccounts });
 };
 
 export const useEditContactFormValidationSchema = (editContactIndex: number): SchemaOf<AccountBaseInterface> => {
   const ownAccounts = useAccountsListSelector().map(({ publicKeyHash }) => publicKeyHash);
-  const contactsNames = useContactsNamesSelector().filter((_, index) => editContactIndex !== index);
-  const contactsAddresses = useContactsAddressesSelector().filter((_, index) => editContactIndex !== index);
+  const contactsNames = useContactsNames().filter((_, index) => editContactIndex !== index);
+  const contactsAddresses = useContactsAddresses().filter((_, index) => editContactIndex !== index);
 
   return baseValidationSchema({ contactsNames, contactsAddresses, ownAccounts });
 };

@@ -1,5 +1,5 @@
 import { TezosToolkit, TransferParams } from '@taquito/taquito';
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { Route3Token } from 'src/interfaces/route3.interface';

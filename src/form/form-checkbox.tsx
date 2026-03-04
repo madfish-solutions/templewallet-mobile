@@ -1,5 +1,5 @@
 import { useField } from 'formik';
-import React, { FC, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 import { Checkbox } from '../components/checkbox/checkbox';
 import { CheckboxProps } from '../components/checkbox/checkbox.props';
@@ -17,7 +17,7 @@ interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID' | 'in
   shouldShowError?: boolean;
 }
 
-export const FormCheckbox: FC<Props> = ({
+export const FormCheckbox: FCWithChildren<Props> = ({
   name,
   children,
   descriptionNode,

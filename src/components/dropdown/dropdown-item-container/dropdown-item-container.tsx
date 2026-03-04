@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
-import { conditionalStyle } from '../../../utils/conditional-style';
+import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { useDropdownItemContainerStyles } from './dropdown-item-container.styles';
 
@@ -11,7 +11,12 @@ interface Props {
   style?: StyleProp<ViewStyle>;
 }
 
-export const DropdownItemContainer: FC<Props> = ({ hasMargin = false, isSelected = false, style, children }) => {
+export const DropdownItemContainer: FCWithChildren<Props> = ({
+  hasMargin = false,
+  isSelected = false,
+  style,
+  children
+}) => {
   const styles = useDropdownItemContainerStyles();
 
   return (

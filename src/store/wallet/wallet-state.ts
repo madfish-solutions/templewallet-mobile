@@ -1,6 +1,7 @@
-import { AccountStateInterface } from '../../interfaces/account-state.interface';
-import { AccountInterface } from '../../interfaces/account.interface';
-import { TokenMetadataInterface } from '../../token/interfaces/token-metadata.interface';
+import { AccountStateInterface } from 'src/interfaces/account-state.interface';
+import { AccountInterface } from 'src/interfaces/account.interface';
+import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+
 import { LoadableEntityState } from '../types';
 
 export interface WalletState {

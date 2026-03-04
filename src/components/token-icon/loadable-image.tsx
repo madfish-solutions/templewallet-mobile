@@ -1,5 +1,5 @@
+import FastImage from '@d11/react-native-fast-image';
 import React, { memo, useMemo } from 'react';
-import FastImage from 'react-native-fast-image';
 
 import { useTokenImagesStack } from 'src/hooks/use-images-stack';
 import { useDidUpdate } from 'src/utils/hooks';

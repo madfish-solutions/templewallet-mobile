@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { FC, memo, useCallback, useMemo } from 'react';
 import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -6,7 +5,8 @@ import { FlatList } from 'react-native-gesture-handler';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
-import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
@@ -27,9 +27,7 @@ const keyExtractor = (item: CollectionItemInterface) => `${item.address}_${item.
 export const Collection = memo(() => {
   const styles = useCollectionStyles();
   const accountPkh = useCurrentAccountPkhSelector();
-  const {
-    params: { collectionContract, galleryPk }
-  } = useRoute<RouteProp<ScreensParamList, ScreensEnum.Collection>>();
+  const { collectionContract, galleryPk } = useScreenParams<ScreensEnum.Collection>();
 
   const { collectibles, isLoading, collectionSize, loadMore } = useCollectionItemsLoading(
     collectionContract,
