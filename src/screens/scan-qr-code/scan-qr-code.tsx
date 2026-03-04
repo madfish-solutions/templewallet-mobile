@@ -12,6 +12,7 @@ import {
 
 import { beaconDeepLinkHandler } from 'src/beacon/use-beacon-handler.hook';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { isIOS } from 'src/config/system';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useSuggestedHeaderHeight } from 'src/hooks/use-suggested-header-height.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -133,7 +134,7 @@ const CameraView = () => {
   useNavigationSetOptions(
     {
       headerTransparent: true,
-      headerStyle: { height: headerHeight - topInset, shadowOpacity: 0 }
+      headerStyle: isIOS ? { height: headerHeight } : { height: headerHeight - topInset, shadowOpacity: 0 }
     },
     [headerHeight]
   );
