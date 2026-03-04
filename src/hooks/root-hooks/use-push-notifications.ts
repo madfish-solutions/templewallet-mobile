@@ -81,19 +81,9 @@ const requestUserPermission = async (getFcmToken: () => void) => {
   if (isAndroid) {
     enabled = (await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS)) === 'granted';
   } else {
-    const messaging = getMessaging(await getFirebaseApp());
-    const { authorizationStatus } = await notifee.requestPermission({
-      alert: true,
-      badge: true,
-      sound: true
-    });
+    const firebaseAuthStatus = await requestPermission(getMessaging(await getFirebaseApp()));
     enabled =
-      authorizationStatus === AuthorizationStatus.AUTHORIZED || authorizationStatus === AuthorizationStatus.PROVISIONAL;
-    if (!enabled) {
-      const firebaseAuthStatus = await requestPermission(messaging);
-      enabled =
-        firebaseAuthStatus === AuthorizationStatus.AUTHORIZED || firebaseAuthStatus === AuthorizationStatus.PROVISIONAL;
-    }
+      firebaseAuthStatus === AuthorizationStatus.AUTHORIZED || firebaseAuthStatus === AuthorizationStatus.PROVISIONAL;
   }
 
   if (enabled) {
@@ -116,6 +106,7 @@ const handleForegroundNotifications = (
   ) => void
 ) => {
   const unsubscribe = onMessage(messaging, async remoteMessage => {
+    // Firebase displays notifications on iOS itself due to the firebase.json config file
     if (!isAndroid) {
       return;
     }
