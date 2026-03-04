@@ -13,7 +13,7 @@ import {
 } from '@react-native-firebase/messaging';
 import memoizee from 'memoizee';
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, PermissionsAndroid } from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { isAndroid, isIOS } from 'src/config/system';
@@ -145,7 +145,6 @@ const handleForegroundNotifications = (
             })
           }
         };
-        Alert.alert('Notification', JSON.stringify(notification));
 
         return await notifee.displayNotification(notification);
       } catch (error) {
