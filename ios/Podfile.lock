@@ -3414,7 +3414,7 @@ PODS:
     - Yoga
   - RNScrypt (1.2.1):
     - React
-  - RNSentry (7.8.0):
+  - RNSentry (7.13.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3441,7 +3441,7 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - Sentry/HybridSDK (= 8.57.3)
+    - Sentry/HybridSDK (= 8.58.0)
     - SocketRocket
     - Yoga
   - RNSha256 (1.4.10):
@@ -3603,7 +3603,7 @@ PODS:
   - SDWebImageWebPCoder (0.15.0):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
-  - Sentry/HybridSDK (8.57.3)
+  - Sentry/HybridSDK (8.58.0)
   - SocketRocket (0.7.1)
   - VisionCamera (4.7.3):
     - VisionCamera/Core (= 4.7.3)
@@ -4026,7 +4026,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   GTMAppAuth: 217a876b249c3c585a54fd6f73e6b58c4f5c4238
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
-  hermes-engine: 65fa7549d0b97596efed8e8da0bfe431d8dbd3a8
+  hermes-engine: 634ac8a8aa3de8a2b2c1d2e1a5c4845ac6e98558
   libavif: 84bbb62fb232c3018d6f1bab79beea87e35de7b7
   libdav1d: 23581a4d8ec811ff171ed5e2e05cd27bad64c39f
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
@@ -4132,13 +4132,13 @@ SPEC CHECKSUMS:
   RNGoogleSignin: 9c5c73089b78fd865f9a6758fc05ef7da7bd2be2
   RNKeychain: d0bdaca4688ae123909b137de08491f49a6cf6b1
   RNNotifee: 4a6ee5c7deaf00e005050052d73ee6315dff7ec9
-  RNPermissions: 0030fec278f656b761372afec4436a99d967c682
+  RNPermissions: d5c31fdf7f0368d8740f2d3aefe212ed007e6cca
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReactNativeHapticFeedback: 43c09eb41d8321be2e1375cb87ae734e58f677b0
   RNReanimated: 0a23a0a9721f450580f0fdf04b9ae928cd22915a
   RNScreens: c73f6bcfc19e209736c4e069f62b0f274535214b
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
-  RNSentry: caee054a8a2394eb73adf7744fe39f475263b788
+  RNSentry: f3c0498f67c1a7ff86155b66b74318cdfcaeb693
   RNSha256: e1bc64e9e50b293d5282bb4caa1b2043931f1c9d
   RNSVG: 5bd1e478698eb9e5cc8f926157333ac814468064
   RNWorklets: b94f5c1b61a985c309dcc0092aacf41515cc39d6
@@ -4146,11 +4146,11 @@ SPEC CHECKSUMS:
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: 0e06e365080397465cc73a7a9b472d8a3bd0f377
-  Sentry: c643eb180df401dd8c734c5036ddd9dd9218daa6
+  Sentry: d587a8fe91ca13503ecd69a1905f3e8a0fcf61be
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   VisionCamera: 3ea10c46a5c612f5f89fb46a54bef4a0de8b58a7
   Yoga: b6cd6b017b2fb1ae4e59cf1d102911f572efdcb7
 
-PODFILE CHECKSUM: 475fe4c84ded0cf8f79719a9bf79e4c1b0e50197
+PODFILE CHECKSUM: 4e4202063d4c545458ad710928e9f3f72a8c7293
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
