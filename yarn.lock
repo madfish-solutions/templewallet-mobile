@@ -4112,66 +4112,77 @@
     deepmerge "^4.2.2"
     svgo "^2.5.0"
 
-"@taquito/core@npm:@tezos-x/octez.js-core@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-core/-/octez.js-core-0.9.0.tgz#bc2d15165549b051fdea76b7f436947de3e50c82"
-  integrity sha512-X/LsiZ2/YhP0WOEKJYRzzFs9YkmIQjMs07SZxxmE6vPMBtpJvijXVl8dKhmQO9tv+AajAmymVcexwoWf4XrDyQ==
+"@taquito/contracts-library@^24.0.1":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/contracts-library/-/contracts-library-24.2.0.tgz#4bc027ed61f4e13f1e8b8f0fa0779367eb58db59"
+  integrity sha512-aRnq70bi1p78syfEA7CNENhoklmObm58spfJeW+j+ozdcpiFUvDT825yy60Qk6I7LsW9AJCiopIFZ29y7IQKWg==
+  dependencies:
+    "@taquito/core" "^24.2.0"
+    "@taquito/rpc" "^24.2.0"
+    "@taquito/taquito" "^24.2.0"
+    "@taquito/utils" "^24.2.0"
+    bignumber.js "^9.1.2"
+
+"@taquito/core@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/core/-/core-24.2.0.tgz#2643b534ecf3a439e10e094d344002852156f4b5"
+  integrity sha512-Yo+lWWn1NrSawDDoRwgumnSTto8y9Z4EBz9pbURdl+KczGSwyEDXLTR6m7jQ1Hh1XhRYScadlyDr+AH95CdMeA==
   dependencies:
     json-stringify-safe "^5.0.1"
 
-"@taquito/http-utils@npm:@tezos-x/octez.js-http-utils":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-http-utils/-/octez.js-http-utils-0.9.0.tgz#57a760b26593fcd92ab1c7726422bcc8f4c89145"
-  integrity sha512-8ddu8B/PBolRlJBh81I3FULipbzl3r0mKvJik+AQ6ZjDPxeOzIOojHanBsKLrcVrdu3l9TA/U/fRDB/8NZdCkg==
+"@taquito/http-utils@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/http-utils/-/http-utils-24.2.0.tgz#bf68cbaa89687b5e6778ca6718412121734726b4"
+  integrity sha512-+QXvH4BQxwvBNO0jPL4viICfH8YlJlsWVnBl7H5IFXiH9CxypXWgi4LS+awsZYCBf2yqJ/5irT4yS1KtnYjR3g==
   dependencies:
-    "@tezos-x/octez.js-core" "*"
+    "@taquito/core" "^24.2.0"
     node-fetch "^2.7.0"
 
-"@taquito/local-forging@npm:@tezos-x/octez.js-local-forging@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-local-forging/-/octez.js-local-forging-0.9.0.tgz#13cb7a18638c30912bdfdf4994c06bbb5ede95a0"
-  integrity sha512-WWD5jJQB2K6fmGvZy38sRJ9kJTyQB2rsB81FlDs4LUKAXxJ6bJ3m9tC+ynknLuVQQA1HL9Sff0VrCsAWPNO+fw==
+"@taquito/local-forging@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/local-forging/-/local-forging-24.2.0.tgz#61f3ca38797fe46a751c9649f3e83267707c016f"
+  integrity sha512-BHwFpbiTvLg+qsDSLaFvLHlqokf2HGpFb/No85RcYvzuDAK7cSxJFpRdnn1U/GFIo8eXUAd2Rlo1VlStrS1rxA==
   dependencies:
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-utils" "*"
+    "@taquito/core" "^24.2.0"
+    "@taquito/utils" "^24.2.0"
     bignumber.js "^9.1.2"
     fast-text-encoding "^1.0.6"
     whatwg-url "^15.1.0"
 
-"@taquito/michel-codec@npm:@tezos-x/octez.js-michel-codec@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-michel-codec/-/octez.js-michel-codec-0.9.0.tgz#451b384b8c6b06b268b6cd9251dfd242ca1a2ab0"
-  integrity sha512-xiabM+dHoQ/8cTQeQePiggMQsAeOC+kceRzk0W2eBTzQqgBONti8WchMtMVRLZL6ZN2k5WseTCdBDyrJyYSp5A==
+"@taquito/michel-codec@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/michel-codec/-/michel-codec-24.2.0.tgz#84fa8d6c745a81112d4e6d1469eaf25477882a63"
+  integrity sha512-+pTGzEHjWY21ybcUF9qutnYedjqJGqr5vuxpnTeajrNiWymHDHOb0vSlhwVrEPcGZTydMxN7Kth6zRDxwqxW8w==
   dependencies:
-    "@tezos-x/octez.js-core" "*"
+    "@taquito/core" "^24.2.0"
 
-"@taquito/michelson-encoder@npm:@tezos-x/octez.js-michelson-encoder@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-michelson-encoder/-/octez.js-michelson-encoder-0.9.0.tgz#4c5b31772da99b581d1896d628785aa98a9c477b"
-  integrity sha512-DvnO7skOvz/qQ9e+pZD4SjFUqJX30E+mNQt+3ZZUQnx4/kCXauW1+G69CITT/qfg5xIhi9vkNRzuQy/7QfEOLw==
+"@taquito/michelson-encoder@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/michelson-encoder/-/michelson-encoder-24.2.0.tgz#b199b321cd2b8ed9dfb56a656b84212f0886ea30"
+  integrity sha512-6/gViqi5HEx89BHvo9hxiZvrIbA4gnRlg//vZeRwsWwm8smKD/JXR4l/5FKQZwAeHDzeduNN668S5gqp8ayM+g==
   dependencies:
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-rpc" "*"
-    "@tezos-x/octez.js-signer" "*"
-    "@tezos-x/octez.js-utils" "*"
+    "@taquito/core" "^24.2.0"
+    "@taquito/rpc" "^24.2.0"
+    "@taquito/signer" "^24.2.0"
+    "@taquito/utils" "^24.2.0"
     bignumber.js "^9.1.2"
     fast-json-stable-stringify "^2.1.0"
 
-"@taquito/rpc@npm:@tezos-x/octez.js-rpc@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-rpc/-/octez.js-rpc-0.9.0.tgz#24b552a475b0a07e2b343c742da0cb63dcd6e404"
-  integrity sha512-WmY2ZHH4YbVu6cMa2sYEShyYj2EvU9JbaUAQcPZjDS1wFNxnJCA9UMuhQ0p3gP1SvczJaI+k6QGEUiGhrStWDQ==
+"@taquito/rpc@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/rpc/-/rpc-24.2.0.tgz#3040f805962e57ffbfd6931dcadee3ac24c77f49"
+  integrity sha512-KiPO6/Sk3x+fuDnlJwgPx1K+W7QqdbbC/QdZvI1vdSnvnImlwvre3ecA1ssL15UlEjH/iFfT2B2+YM2eYcByig==
   dependencies:
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-http-utils" "*"
-    "@tezos-x/octez.js-utils" "*"
+    "@taquito/core" "^24.2.0"
+    "@taquito/http-utils" "^24.2.0"
+    "@taquito/utils" "^24.2.0"
     bignumber.js "^9.1.2"
     whatwg-url "^15.1.0"
 
-"@taquito/signer@npm:@tezos-x/octez.js-signer@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-signer/-/octez.js-signer-0.9.0.tgz#44e13171333ddc079396cebb17efed8e94b520eb"
-  integrity sha512-VkL837FzzIPFsKzh33gslDFcM9xL4hOcbUkYxwr+pWCe21hGLD8EqGJUPdVDgytuk4s/OXz9eIFFKmRw9twgjA==
+"@taquito/signer@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/signer/-/signer-24.2.0.tgz#bbc3ace9cd08657914d10dfdf77e688283876144"
+  integrity sha512-wInvqnAlYMIj2FUL2YYEYSE1MRvtMesL964+4ZOI7rR9ugK5ZeEYsOab2UQzLvfwsk2z63Cc1sgxwV1HCzOGfQ==
   dependencies:
     "@noble/curves" "^1.9.7"
     "@stablelib/blake2b" "^1.0.1"
@@ -4180,64 +4191,64 @@
     "@stablelib/nacl" "^1.0.4"
     "@stablelib/pbkdf2" "^1.0.1"
     "@stablelib/sha512" "^1.0.1"
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-utils" "*"
+    "@taquito/core" "^24.2.0"
+    "@taquito/utils" "^24.2.0"
     "@types/bn.js" "^5.1.5"
     bip39 "3.1.0"
     bn.js "^5.2.2"
     pbkdf2 "^3.1.2"
     typedarray-to-buffer "^4.0.0"
 
-"@taquito/taquito@npm:@tezos-x/octez.js@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js/-/octez.js-0.9.0.tgz#db1152111d41e824bcfcee98fef8f946f4752e2c"
-  integrity sha512-3AJIt+puxEb8QvGDLNygXmU9LmNDu2ZzkrRC53ab2LCLoWDO9Zijnw3la2vQk1KeNNNAHlC05O7SxGvc+1WEQg==
+"@taquito/taquito@^24.0.1", "@taquito/taquito@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/taquito/-/taquito-24.2.0.tgz#ea5ac63e63968282144b93d291976f1b53130ee1"
+  integrity sha512-gHRQDEq98+HASNF5gd2yHpi8qW7IXSakmpIh1oxbj8KIE99Tgm64k1ViPSsdnT/socw4e743AQNddfPAemZCeQ==
   dependencies:
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-http-utils" "*"
-    "@tezos-x/octez.js-local-forging" "*"
-    "@tezos-x/octez.js-michel-codec" "*"
-    "@tezos-x/octez.js-michelson-encoder" "*"
-    "@tezos-x/octez.js-rpc" "*"
-    "@tezos-x/octez.js-signer" "*"
-    "@tezos-x/octez.js-utils" "*"
+    "@taquito/core" "^24.2.0"
+    "@taquito/http-utils" "^24.2.0"
+    "@taquito/local-forging" "^24.2.0"
+    "@taquito/michel-codec" "^24.2.0"
+    "@taquito/michelson-encoder" "^24.2.0"
+    "@taquito/rpc" "^24.2.0"
+    "@taquito/signer" "^24.2.0"
+    "@taquito/utils" "^24.2.0"
     bignumber.js "^9.1.2"
     rxjs "^7.8.2"
 
-"@taquito/tzip12@npm:@tezos-x/octez.js-tzip12@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-tzip12/-/octez.js-tzip12-0.9.0.tgz#e6c90b144b6faf5077362408e48032853eb726af"
-  integrity sha512-s6xy8WAls0CILpTbqwFGOHtWDyBUpN0AGtcv2xmMfWBR2khFtJiCbf1rJDDk3lfLZYMeaKpmqwhNKelDTYeGZw==
+"@taquito/tzip12@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/tzip12/-/tzip12-24.2.0.tgz#05d0f57013d875c7e9079cf754e170747725b2f1"
+  integrity sha512-PaEnY5Uozjs/rUqg7tM98PRAvRNs3EipBUr5c8r/byIHdKi4jR33krKW746m+F06ngvh9pwaamdeBbVRylcHEg==
   dependencies:
-    "@tezos-x/octez.js" "*"
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-michelson-encoder" "*"
-    "@tezos-x/octez.js-tzip16" "*"
+    "@taquito/core" "^24.2.0"
+    "@taquito/michelson-encoder" "^24.2.0"
+    "@taquito/taquito" "^24.2.0"
+    "@taquito/tzip16" "^24.2.0"
 
-"@taquito/tzip16@npm:@tezos-x/octez.js-tzip16@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-tzip16/-/octez.js-tzip16-0.9.0.tgz#06222f667943f0c8e2afa6cfbccfcf340850b8bb"
-  integrity sha512-/jK17QbJPLp2k/WyCtj/bOWjp1rpG9SyeagzXwWVRoVEj1eVwNuIo/7hzwTWWwyhICPbcybTZPDp93WJZZNxYQ==
+"@taquito/tzip16@^24.0.1", "@taquito/tzip16@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/tzip16/-/tzip16-24.2.0.tgz#6475effb54f0f8fe75462e341d74c2a8aaa8df1d"
+  integrity sha512-q560MEb4/s7MTRohQd/ZtORwcnFG/uInw7KEz7/KtADB93SAb+1gVoHb7T14CV4stxwy6P/3HfB7HYBNOFftLw==
   dependencies:
-    "@tezos-x/octez.js" "*"
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-http-utils" "*"
-    "@tezos-x/octez.js-michelson-encoder" "*"
-    "@tezos-x/octez.js-rpc" "*"
-    "@tezos-x/octez.js-utils" "*"
+    "@taquito/core" "^24.2.0"
+    "@taquito/http-utils" "^24.2.0"
+    "@taquito/michelson-encoder" "^24.2.0"
+    "@taquito/rpc" "^24.2.0"
+    "@taquito/taquito" "^24.2.0"
+    "@taquito/utils" "^24.2.0"
     bignumber.js "^9.1.2"
     crypto-js "^4.2.0"
     whatwg-url "^15.1.0"
 
-"@taquito/utils@npm:@tezos-x/octez.js-utils@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-utils/-/octez.js-utils-0.9.0.tgz#04f37e2ea388ba370bc08896457f8ee488d9212b"
-  integrity sha512-if00nGaJPNIBLWwBzE1kAHH+Q9uWbABRbAN2p/g1oiPIv5fHWRcaSRfdaSQfI6UlonOXs+N8wAeZqZAKG3iEmA==
+"@taquito/utils@^24.2.0":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/utils/-/utils-24.2.0.tgz#16b2bd0c0cef176ef73d82a48a97f34e39ab2f3f"
+  integrity sha512-/X10WVGe7Ztx8+/FCLu5wA6zVx09Py4/wnOCo0lFJxsMKrUmBCsGeBZYb948FbX8CvLidgGy2kQTntS9wFQAsA==
   dependencies:
     "@noble/curves" "^1.9.7"
     "@stablelib/blake2b" "^1.0.1"
     "@stablelib/ed25519" "^1.0.3"
-    "@tezos-x/octez.js-core" "*"
+    "@taquito/core" "^24.2.0"
     "@types/bs58check" "^2.1.2"
     bignumber.js "^9.1.2"
     blakejs "^1.2.1"
@@ -4255,15 +4266,15 @@
     crc "^3.8.0"
     jssha "2.3.1"
 
-"@temple-wallet/youves-sdk@^2.0.0-beta.2":
-  version "2.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@temple-wallet/youves-sdk/-/youves-sdk-2.0.0-beta.2.tgz#6b9440713ea6ffe3c73ee1a9c06df848694fecee"
-  integrity sha512-bZWOPaJ/aQ9t6o60K0OkAHZ+OJktoYMpuQ8Av8j4Rux9/zjRAXPyE7qAsO/H9x3W9E9XPZyOsBppA7zi8Y+ncw==
+"@temple-wallet/youves-sdk@2.0.0-beta.1":
+  version "2.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@temple-wallet/youves-sdk/-/youves-sdk-2.0.0-beta.1.tgz#45ac6641469fbb9caafb0f596a123d40f64c1322"
+  integrity sha512-n6h3P2XPQNFsCHtby6+Z8Y/SROzBT1+SeqlaTdwtcQ31Rf6anBUkUlW+chqUJbw5iWEiAd/oXOP+FZO1P1hE3g==
   dependencies:
-    "@tezos-x/octez.js" "^0.9.0"
-    "@tezos-x/octez.js-contracts-library" "^0.9.0"
-    "@tezos-x/octez.js-tzip16" "^0.9.0"
-    axios "^1.13.5"
+    "@taquito/contracts-library" "^24.0.1"
+    "@taquito/taquito" "^24.0.1"
+    "@taquito/tzip16" "^24.0.1"
+    axios "^0.30.0"
     graphql "^15.5.1"
     graphql-request "^3.5.0"
 
@@ -4322,140 +4333,6 @@
     "@tezos-domains/core" "^1.33.1"
     bignumber.js "^9.1.2"
     node-cache "^5.1.2"
-
-"@tezos-x/octez.js-contracts-library@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-contracts-library/-/octez.js-contracts-library-0.9.0.tgz#1b0fd04b4d9b5fcff7a1f021025f5df721b4eb1b"
-  integrity sha512-afpMPeyNxOkwqaNMJ9NXM1/odVihEl+MhfQqMEELX81fWQqsrSdVUJsS3t5ApPls7TDgsOgFn88Cc5gspDWrNw==
-  dependencies:
-    "@tezos-x/octez.js" "*"
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-rpc" "*"
-    "@tezos-x/octez.js-utils" "*"
-    bignumber.js "^9.1.2"
-
-"@tezos-x/octez.js-core@*":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-core/-/octez.js-core-0.9.0.tgz#bc2d15165549b051fdea76b7f436947de3e50c82"
-  integrity sha512-X/LsiZ2/YhP0WOEKJYRzzFs9YkmIQjMs07SZxxmE6vPMBtpJvijXVl8dKhmQO9tv+AajAmymVcexwoWf4XrDyQ==
-  dependencies:
-    json-stringify-safe "^5.0.1"
-
-"@tezos-x/octez.js-http-utils@*":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-http-utils/-/octez.js-http-utils-0.9.0.tgz#57a760b26593fcd92ab1c7726422bcc8f4c89145"
-  integrity sha512-8ddu8B/PBolRlJBh81I3FULipbzl3r0mKvJik+AQ6ZjDPxeOzIOojHanBsKLrcVrdu3l9TA/U/fRDB/8NZdCkg==
-  dependencies:
-    "@tezos-x/octez.js-core" "*"
-    node-fetch "^2.7.0"
-
-"@tezos-x/octez.js-local-forging@*":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-local-forging/-/octez.js-local-forging-0.9.0.tgz#13cb7a18638c30912bdfdf4994c06bbb5ede95a0"
-  integrity sha512-WWD5jJQB2K6fmGvZy38sRJ9kJTyQB2rsB81FlDs4LUKAXxJ6bJ3m9tC+ynknLuVQQA1HL9Sff0VrCsAWPNO+fw==
-  dependencies:
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-utils" "*"
-    bignumber.js "^9.1.2"
-    fast-text-encoding "^1.0.6"
-    whatwg-url "^15.1.0"
-
-"@tezos-x/octez.js-michel-codec@*":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-michel-codec/-/octez.js-michel-codec-0.9.0.tgz#451b384b8c6b06b268b6cd9251dfd242ca1a2ab0"
-  integrity sha512-xiabM+dHoQ/8cTQeQePiggMQsAeOC+kceRzk0W2eBTzQqgBONti8WchMtMVRLZL6ZN2k5WseTCdBDyrJyYSp5A==
-  dependencies:
-    "@tezos-x/octez.js-core" "*"
-
-"@tezos-x/octez.js-michelson-encoder@*":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-michelson-encoder/-/octez.js-michelson-encoder-0.9.0.tgz#4c5b31772da99b581d1896d628785aa98a9c477b"
-  integrity sha512-DvnO7skOvz/qQ9e+pZD4SjFUqJX30E+mNQt+3ZZUQnx4/kCXauW1+G69CITT/qfg5xIhi9vkNRzuQy/7QfEOLw==
-  dependencies:
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-rpc" "*"
-    "@tezos-x/octez.js-signer" "*"
-    "@tezos-x/octez.js-utils" "*"
-    bignumber.js "^9.1.2"
-    fast-json-stable-stringify "^2.1.0"
-
-"@tezos-x/octez.js-rpc@*":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-rpc/-/octez.js-rpc-0.9.0.tgz#24b552a475b0a07e2b343c742da0cb63dcd6e404"
-  integrity sha512-WmY2ZHH4YbVu6cMa2sYEShyYj2EvU9JbaUAQcPZjDS1wFNxnJCA9UMuhQ0p3gP1SvczJaI+k6QGEUiGhrStWDQ==
-  dependencies:
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-http-utils" "*"
-    "@tezos-x/octez.js-utils" "*"
-    bignumber.js "^9.1.2"
-    whatwg-url "^15.1.0"
-
-"@tezos-x/octez.js-signer@*":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-signer/-/octez.js-signer-0.9.0.tgz#44e13171333ddc079396cebb17efed8e94b520eb"
-  integrity sha512-VkL837FzzIPFsKzh33gslDFcM9xL4hOcbUkYxwr+pWCe21hGLD8EqGJUPdVDgytuk4s/OXz9eIFFKmRw9twgjA==
-  dependencies:
-    "@noble/curves" "^1.9.7"
-    "@stablelib/blake2b" "^1.0.1"
-    "@stablelib/ed25519" "^1.0.3"
-    "@stablelib/hmac" "^1.0.1"
-    "@stablelib/nacl" "^1.0.4"
-    "@stablelib/pbkdf2" "^1.0.1"
-    "@stablelib/sha512" "^1.0.1"
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-utils" "*"
-    "@types/bn.js" "^5.1.5"
-    bip39 "3.1.0"
-    bn.js "^5.2.2"
-    pbkdf2 "^3.1.2"
-    typedarray-to-buffer "^4.0.0"
-
-"@tezos-x/octez.js-tzip16@*", "@tezos-x/octez.js-tzip16@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-tzip16/-/octez.js-tzip16-0.9.0.tgz#06222f667943f0c8e2afa6cfbccfcf340850b8bb"
-  integrity sha512-/jK17QbJPLp2k/WyCtj/bOWjp1rpG9SyeagzXwWVRoVEj1eVwNuIo/7hzwTWWwyhICPbcybTZPDp93WJZZNxYQ==
-  dependencies:
-    "@tezos-x/octez.js" "*"
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-http-utils" "*"
-    "@tezos-x/octez.js-michelson-encoder" "*"
-    "@tezos-x/octez.js-rpc" "*"
-    "@tezos-x/octez.js-utils" "*"
-    bignumber.js "^9.1.2"
-    crypto-js "^4.2.0"
-    whatwg-url "^15.1.0"
-
-"@tezos-x/octez.js-utils@*":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js-utils/-/octez.js-utils-0.9.0.tgz#04f37e2ea388ba370bc08896457f8ee488d9212b"
-  integrity sha512-if00nGaJPNIBLWwBzE1kAHH+Q9uWbABRbAN2p/g1oiPIv5fHWRcaSRfdaSQfI6UlonOXs+N8wAeZqZAKG3iEmA==
-  dependencies:
-    "@noble/curves" "^1.9.7"
-    "@stablelib/blake2b" "^1.0.1"
-    "@stablelib/ed25519" "^1.0.3"
-    "@tezos-x/octez.js-core" "*"
-    "@types/bs58check" "^2.1.2"
-    bignumber.js "^9.1.2"
-    blakejs "^1.2.1"
-    bs58check "^3.0.1"
-    buffer "^6.0.3"
-    typedarray-to-buffer "^4.0.0"
-
-"@tezos-x/octez.js@*", "@tezos-x/octez.js@^0.9.0":
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/@tezos-x/octez.js/-/octez.js-0.9.0.tgz#db1152111d41e824bcfcee98fef8f946f4752e2c"
-  integrity sha512-3AJIt+puxEb8QvGDLNygXmU9LmNDu2ZzkrRC53ab2LCLoWDO9Zijnw3la2vQk1KeNNNAHlC05O7SxGvc+1WEQg==
-  dependencies:
-    "@tezos-x/octez.js-core" "*"
-    "@tezos-x/octez.js-http-utils" "*"
-    "@tezos-x/octez.js-local-forging" "*"
-    "@tezos-x/octez.js-michel-codec" "*"
-    "@tezos-x/octez.js-michelson-encoder" "*"
-    "@tezos-x/octez.js-rpc" "*"
-    "@tezos-x/octez.js-signer" "*"
-    "@tezos-x/octez.js-utils" "*"
-    bignumber.js "^9.1.2"
-    rxjs "^7.8.2"
 
 "@trysound/sax@0.2.0":
   version "0.2.0"
@@ -5474,7 +5351,7 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-axios@^0.21.4, axios@^1.13.5, axios@^1.8.4:
+axios@^0.21.4, axios@^0.30.0, axios@^1.13.5, axios@^1.8.4:
   version "1.13.5"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.5.tgz#5e464688fa127e11a660a2c49441c009f6567a43"
   integrity sha512-cz4ur7Vb0xS4/KUN0tPWe44eqxrIu31me+fbang3ijiNscE129POzipJJA6zniq2C/Z6sJCjMimjS8Lc/GAs8Q==
@@ -13104,10 +12981,10 @@ uncrypto@^0.1.3:
   resolved "https://registry.yarnpkg.com/uncrypto/-/uncrypto-0.1.3.tgz#e1288d609226f2d02d8d69ee861fa20d8348ef2b"
   integrity sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==
 
-underscore@1.12.1:
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.12.1.tgz#7bb8cc9b3d397e201cf8553336d262544ead829e"
-  integrity sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw==
+underscore@1.12.1, underscore@^1.13.8:
+  version "1.13.8"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.8.tgz#a93a21186c049dbf0e847496dba72b7bd8c1e92b"
+  integrity sha512-DXtD3ZtEQzc7M8m4cXotyHR+FAS18C64asBYY5vqZexfYryNNnDc02W4hKg3rdQuqOYas1jkseX0+nZXjTXnvQ==
 
 undici@5.28.4:
   version "5.28.4"
