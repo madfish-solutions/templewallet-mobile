@@ -86,7 +86,7 @@ export const RootStackScreen = () => {
       onStateChange={handleNavigationContainerStateChange}
     >
       <PortalProvider>
-        <CurrentRouteNameContext.Provider value={currentRouteName}>
+        <CurrentRouteNameContext value={currentRouteName}>
           <RootStack.Navigator screenOptions={screenOptions}>
             <RootStack.Screen
               name={StacksEnum.MainStack}
@@ -199,7 +199,7 @@ export const RootStackScreen = () => {
               options={useModalOptions('Confirm Sync')}
             />
           </RootStack.Navigator>
-        </CurrentRouteNameContext.Provider>
+        </CurrentRouteNameContext>
       </PortalProvider>
 
       {isSplash && <SplashModal />}

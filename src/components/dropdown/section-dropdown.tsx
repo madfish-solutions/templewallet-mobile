@@ -120,6 +120,11 @@ const SectionDropdownComponent = <T extends unknown>({
     }
   }, [value, list]);
 
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: { title: string } }) => <Text style={styles.sectionHeaderText}>{section.title}</Text>,
+    [styles.sectionHeaderText]
+  );
+
   return (
     <>
       <TouchableWithAnalytics
@@ -146,8 +151,7 @@ const SectionDropdownComponent = <T extends unknown>({
             contentContainerStyle={styles.flatListContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
-            // @ts-expect-error - TODO: fix this
-            renderSectionHeader={({ section: { title } }) => <Text style={styles.sectionHeaderText}>{title}</Text>}
+            renderSectionHeader={renderSectionHeader}
             ListEmptyComponent={<DataPlaceholder text="No assets found." />}
           />
         </View>

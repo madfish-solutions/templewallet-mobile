@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import React, { ReactNode, RefObject } from 'react';
+import React, { ReactNode, Ref } from 'react';
 import { LayoutChangeEvent, ScrollView, Text, View } from 'react-native';
 
 import { CheckboxGroup } from 'src/components/checkbox-group';
@@ -28,7 +28,7 @@ export interface WalletInitFinalStepInputsProps<T extends WalletInitFormValuesBa
   useBiometricsToUnlockCheckBoxTestID: string;
   viewAdsCheckboxTestID: string;
   formik: ReturnType<typeof useFormik<T>>;
-  refScrollView?: RefObject<ScrollView | null>;
+  refScrollView?: Ref<ScrollView>;
   children?: ReactNode | ReactNode[];
   onMainPartLayout?: (event: LayoutChangeEvent) => void;
   onAcceptTermsLayout?: (event: LayoutChangeEvent) => void;

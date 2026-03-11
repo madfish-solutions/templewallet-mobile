@@ -13,5 +13,5 @@ export const HideBalanceProvider: FCWithChildren = ({ children }) => {
   const toggleHideBalance = useCallback(() => setIsBalanceHidden(prevValue => !prevValue), []);
   const value = useMemo(() => ({ isBalanceHidden, toggleHideBalance }), [isBalanceHidden, toggleHideBalance]);
 
-  return <HideBalanceContext.Provider value={value}>{children}</HideBalanceContext.Provider>;
+  return <HideBalanceContext value={value}>{children}</HideBalanceContext>;
 };

@@ -4,7 +4,6 @@
 import type React from 'react';
 import type { StyleProp } from 'react-native';
 
-// ts-prune-ignore-next
 type ImageProgressComponent<P = object> = React.ComponentType<
   P & {
     errorContainerStyle?: StyleProp<any>;

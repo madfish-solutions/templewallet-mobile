@@ -1,4 +1,4 @@
-import React, { RefObject, useEffect, useState } from 'react';
+import React, { Ref, useEffect, useState } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -22,7 +22,7 @@ interface Props extends TestIdProps {
   keyboardBehavior?: KeyboardAvoidingViewProps['behavior'];
   scrollViewRefreshControl?: ScrollViewProps['refreshControl'];
   isFullScreenMode?: boolean;
-  scrollViewRef?: RefObject<ScrollView | null>;
+  scrollViewRef?: Ref<ScrollView>;
   style?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<ViewStyle>;
   scrollEnabled?: boolean;

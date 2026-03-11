@@ -170,7 +170,7 @@ export const TypographyProvider: FCWithChildren = ({ children }) => {
     [fontScale]
   );
 
-  return <TypographyContext.Provider value={value}>{children}</TypographyContext.Provider>;
+  return <TypographyContext value={value}>{children}</TypographyContext>;
 };
 
 export const useTypography = () => useContext(TypographyContext);

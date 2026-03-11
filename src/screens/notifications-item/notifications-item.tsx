@@ -72,7 +72,7 @@ export const NotificationsItem: FC = () => {
         </View>
       </ScreenContainer>
       <ButtonsFloatingContainer>
-        <ButtonLargePrimary title="Got it" onPress={() => goBack()} testID={NotificationItemSelectors.gotItButton} />
+        <ButtonLargePrimary title="Got it" onPress={goBack} testID={NotificationItemSelectors.gotItButton} />
         <InsetSubstitute type="bottom" />
       </ButtonsFloatingContainer>
     </>

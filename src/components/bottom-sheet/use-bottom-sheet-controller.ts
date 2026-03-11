@@ -1,10 +1,10 @@
 import BottomSheet from '@gorhom/bottom-sheet';
-import { RefObject, useMemo, useRef } from 'react';
+import { Ref, useMemo, useRef } from 'react';
 
 import { isDefined } from 'src/utils/is-defined';
 
 interface BottomSheetController {
-  ref: RefObject<BottomSheet | null>;
+  ref: Ref<BottomSheet>;
   open: EmptyFn;
   close: EmptyFn;
 }

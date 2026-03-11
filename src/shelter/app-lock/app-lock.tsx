@@ -84,5 +84,5 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [unlock$, attempt]);
 
-  return <AppLockContext.Provider value={value}>{children}</AppLockContext.Provider>;
+  return <AppLockContext value={value}>{children}</AppLockContext>;
 };

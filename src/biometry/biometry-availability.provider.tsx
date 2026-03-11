@@ -26,8 +26,6 @@ export const BiometryAvailabilityProvider: FCWithChildren = ({ children }) => {
   useAppStateStatus({ onAppActiveState: updateBiometryAvailability });
 
   return (
-    <BiometryAvailabilityContext.Provider value={{ isHardwareAvailable, biometryType }}>
-      {children}
-    </BiometryAvailabilityContext.Provider>
+    <BiometryAvailabilityContext value={{ isHardwareAvailable, biometryType }}>{children}</BiometryAvailabilityContext>
   );
 };
