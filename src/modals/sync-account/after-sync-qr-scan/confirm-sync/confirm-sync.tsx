@@ -13,7 +13,7 @@ import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { usePasswordLock } from 'src/hooks/use-password-lock.hook';
-import { WalletInitButtonsFloatingContainer } from 'src/layouts/wallet-init-buttons-floating-container';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { WalletInitFinalStepInputs } from 'src/layouts/wallet-init-final-step-inputs';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -80,7 +80,7 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
         </View>
       </WalletInitFinalStepInputs>
 
-      <WalletInitButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary title="Back" onPress={goBack} />
         <ButtonLargePrimary
           title={values.usePrevPassword === true ? 'Sync' : 'Next'}
@@ -88,7 +88,7 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
           onPress={useCallbackIfOnline(submitForm)}
           testID={values.usePrevPassword === true ? ConfirmSyncSelectors.syncButton : ConfirmSyncSelectors.nextButton}
         />
-      </WalletInitButtonsFloatingContainer>
+      </ModalButtonsFloatingContainer>
     </FormikProvider>
   );
 });

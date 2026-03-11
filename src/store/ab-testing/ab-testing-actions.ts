@@ -1,4 +1,5 @@
-import { ABTestGroup } from '../../apis/temple-wallet';
+import { ABTestGroup } from 'src/apis/temple-wallet';
+
 import { createActions } from '../create-actions';
 
 export const getUserTestingGroupNameActions = createActions<void, ABTestGroup, string>(

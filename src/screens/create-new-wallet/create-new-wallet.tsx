@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
 import { FormikProvider, useFormik } from 'formik';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, ScrollView } from 'react-native';
@@ -7,9 +6,10 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
-import { WalletInitButtonsFloatingContainer } from 'src/layouts/wallet-init-buttons-floating-container';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { WalletInitNewPasswordInputs } from 'src/layouts/wallet-init-new-password-inputs';
-import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useRestoredCloudBackup } from 'src/utils/cloud-backup';
 import { scrollToField } from 'src/utils/form.utils';
 import { isString } from 'src/utils/is-string';
@@ -23,7 +23,7 @@ import {
 import { CreateNewWalletSelectors } from './create-new-wallet.selectors';
 
 export const CreateNewWallet = () => {
-  const { backupToCloud, cloudBackupId } = useRoute<RouteProp<ScreensParamList, ScreensEnum.CreateAccount>>().params;
+  const { backupToCloud, cloudBackupId } = useScreenParams<ScreensEnum.CreateAccount>();
 
   const { mnemonic: cloudBackupMnemonic, password: cloudBackupPassword } = useRestoredCloudBackup(cloudBackupId);
 
@@ -102,7 +102,7 @@ export const CreateNewWallet = () => {
         onAcceptTermsLayout={handleAcceptTermsLayout}
       />
 
-      <WalletInitButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargePrimary
           title="Create"
           onPress={useCallbackIfOnline(() => {
@@ -118,7 +118,7 @@ export const CreateNewWallet = () => {
           })}
           testID={CreateNewWalletSelectors.createButton}
         />
-      </WalletInitButtonsFloatingContainer>
+      </ModalButtonsFloatingContainer>
     </FormikProvider>
   );
 };

@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import { RefObject } from 'react';
 import { View } from 'react-native';
 
-export type IntersectionHookRef = MutableRefObject<View | null>;
+export type IntersectionHookRef = RefObject<View | null>;

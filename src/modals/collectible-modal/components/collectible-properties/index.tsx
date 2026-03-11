@@ -1,4 +1,4 @@
-import React, { FC, isValidElement, memo, useMemo } from 'react';
+import React, { FC, isValidElement, memo, ReactElement, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { LinkWithIcon } from 'src/components/link-with-icon/link-with-icon';
@@ -76,7 +76,7 @@ export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, 
 
 interface CollectiblePropertyProps {
   name: string;
-  value: JSX.Element | number | string | null;
+  value: ReactElement | number | string | null;
 }
 
 const CollectibleProperty: FC<CollectiblePropertyProps> = ({ name, value }) => {

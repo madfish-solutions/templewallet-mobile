@@ -1,8 +1,9 @@
+import { useIsFocused } from '@react-navigation/native';
 import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { Animated, Text, useWindowDimensions, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Defs, LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
 
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 
@@ -26,6 +27,7 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
   shouldAnimate = true,
   onAnimationComplete
 }) => {
+  const isFocused = useIsFocused();
   const styles = useKoloCryptoCardPreviewStyles();
   const { width: screenWidth } = useWindowDimensions();
   const cardWidth = screenWidth - CARD_MARGIN_HORIZONTAL * 2;
@@ -68,10 +70,10 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
   }, [translateY, rotateZ, onAnimationComplete]);
 
   useEffect(() => {
-    if (shouldAnimate) {
+    if (shouldAnimate && isFocused) {
       playAnimation();
     }
-  }, [shouldAnimate, playAnimation]);
+  }, [shouldAnimate, playAnimation, isFocused]);
 
   const animatedStyle = {
     transform: [
@@ -87,7 +89,7 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
 
   return (
     <Animated.View style={animatedStyle}>
-      <TouchableOpacity
+      <SafeTouchableOpacity
         onPress={onPress}
         activeOpacity={0.9}
         testID={KoloCardSelectors.cryptoCardButton}
@@ -110,7 +112,7 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
         <View>
           <KoloLogo width={formatSize(44)} height={formatSize(16)} />
         </View>
-      </TouchableOpacity>
+      </SafeTouchableOpacity>
     </Animated.View>
   );
 };

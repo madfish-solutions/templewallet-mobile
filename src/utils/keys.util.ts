@@ -22,7 +22,7 @@ const deriveSeed = (seed: Buffer, derivationPath: string) => {
     const { key } = derivePath(derivationPath, seed.toString('hex'));
 
     return key;
-  } catch (_err) {
+  } catch {
     throw new Error('Invalid derivation path');
   }
 };

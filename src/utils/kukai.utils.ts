@@ -27,7 +27,7 @@ const decrypt_v2 = async (chipher: string, password: string, salt: string) => {
     } else {
       return null;
     }
-  } catch (err) {
+  } catch {
     return null;
   }
 };

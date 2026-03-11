@@ -1,3 +1,4 @@
+import { ReactElement } from 'react';
 import { ListRenderItem } from 'react-native';
 
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
@@ -9,8 +10,8 @@ export const earnOpportunityKeyExtractor = (item: EarnOpportunity | typeof LOADE
 
 export const getRenderEarnOpportunityFn =
   <T extends EarnOpportunity>(
-    renderPlaceholder: () => JSX.Element,
-    renderItem: (item: T) => JSX.Element
+    renderPlaceholder: () => ReactElement,
+    renderItem: (item: T) => ReactElement
   ): ListRenderItem<T | typeof LOADER_PLACEHOLDER> =>
   ({ item }) =>
     item === LOADER_PLACEHOLDER ? renderPlaceholder() : renderItem(item);

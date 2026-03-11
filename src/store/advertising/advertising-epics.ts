@@ -4,8 +4,8 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { Action } from 'ts-action';
 import { ofType } from 'ts-action-operators';
 
-import { templeWalletApi } from '../../api.service';
-import { GetAdvertisingInfoResponse } from '../../interfaces/advertising-promotion.interface';
+import { templeWalletApi } from 'src/api.service';
+import { GetAdvertisingInfoResponse } from 'src/interfaces/advertising-promotion.interface';
 
 import { loadAdvertisingPromotionActions } from './advertising-actions';
 

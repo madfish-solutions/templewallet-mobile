@@ -1,9 +1,10 @@
-import React, { FC } from 'react';
+import React from 'react';
 import { Text, View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
-import { useColors } from '../../styles/use-colors';
-import { isDefined } from '../../utils/is-defined';
+import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
+import { isDefined } from 'src/utils/is-defined';
+
 import { Divider } from '../divider/divider';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -14,7 +15,7 @@ interface Props {
   title?: string;
 }
 
-export const ErrorDisclaimerMessage: FC<Props> = ({ children, title }) => {
+export const ErrorDisclaimerMessage: FCWithChildren<Props> = ({ children, title }) => {
   const styles = useErrorDisclaimerMessageStyles();
   const colors = useColors();
 

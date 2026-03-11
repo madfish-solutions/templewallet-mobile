@@ -1,8 +1,8 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
 import React, { memo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { togglePartnersPromotionAction } from 'src/store/partners-promotion/partners-promotion-actions';
 import { enterPassword } from 'src/store/security/security-actions';
@@ -24,7 +24,7 @@ export const AfterSyncQRScan = memo(() => {
   const [hdAccountsLength, setHdAccountsLength] = useState(0);
   const [innerScreenIndex, setInnerScreenIndex] = useState(0);
 
-  const { payload } = useRoute<RouteProp<ModalsParamList, ModalsEnum.ConfirmSync>>().params;
+  const { payload } = useModalParams<ModalsEnum.ConfirmSync>();
   usePageAnalytic(ModalsEnum.ConfirmSync);
 
   const handleConfirmSyncFormSubmit = ({

@@ -6,7 +6,8 @@ export const useImportWalletFromSeedPhraseStyles = createUseStyles(() => ({
     flexGrow: 1
   },
   buttonsContainer: {
-    paddingHorizontal: formatSize(8)
+    paddingHorizontal: formatSize(8),
+    flexDirection: 'row'
   },
   flex: {
     flex: 1

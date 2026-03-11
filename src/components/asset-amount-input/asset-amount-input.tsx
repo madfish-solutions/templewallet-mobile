@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
@@ -26,6 +26,7 @@ import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { Label } from '../label/label';
+import { PatchedTextInput } from '../patched-text-input';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
@@ -68,6 +69,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     value,
     label,
     assetsList,
+    balance: balanceFromProps,
     balanceLabel,
     frozenBalance,
     isError = false,
@@ -113,12 +115,16 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
 
     const balance = useMemo(() => {
+      if (isDefined(balanceFromProps)) {
+        return balanceFromProps;
+      }
+
       if (tokenEqualityFn(value.asset, emptyTezosLikeToken)) {
         return DEFAULT_BALANCE;
       }
 
       return slug === TEZ_TOKEN_SLUG ? tezosBalance : getTokenBalance(slug) ?? '0';
-    }, [getTokenBalance, slug, tezosBalance, value.asset]);
+    }, [getTokenBalance, slug, tezosBalance, value.asset, balanceFromProps]);
 
     const { isTezosNode } = useNetworkInfo();
     const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -137,7 +143,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const hasExchangeRate = isDefined(value.asset.exchangeRate);
     const exchangeRate = value.asset.exchangeRate ?? 1;
 
-    const inputValueRef = useRef<BigNumber>();
+    const inputValueRef = useRef<BigNumber>(undefined);
 
     const numericInputValue = useMemo(() => {
       const newNumericInputValue = (() => {
@@ -179,7 +185,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     );
 
     const onChange = useCallback(
-      newInputValue => {
+      (newInputValue: BigNumber | undefined) => {
         inputValueRef.current = newInputValue;
 
         onValueChange({
@@ -281,7 +287,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
             style={[styles.inputPadding, conditionalStyle(!editable, styles.disabledPadding), configInputPaddingStyles]}
           />
 
-          <TextInput
+          <PatchedTextInput
             ref={amountInputRef}
             value={stringValue}
             placeholder="0.00"

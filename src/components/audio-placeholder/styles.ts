@@ -5,7 +5,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useAudioPlaceholderStyles = createUseStyles(({ colors }) => ({
   root: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     width: '100%',
     height: '100%',
     borderRadius: formatSize(4),

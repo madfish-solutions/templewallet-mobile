@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/core';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -7,9 +6,7 @@ import { useDispatch } from 'react-redux';
 import { AccountFormSectionDropdown } from 'src/components/account-dropdown/account-form-section-dropdown';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { Divider } from 'src/components/divider/divider';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -23,8 +20,9 @@ import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
-import { ModalsEnum, ModalsParamList } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
@@ -50,7 +48,7 @@ export const SendModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { token: initialToken, receiverPublicKeyHash: initialRecieverPublicKeyHash = '' } =
-    useRoute<RouteProp<ModalsParamList, ModalsEnum.Send>>().params;
+    useModalParams<ModalsEnum.Send>();
   const { goBack } = useNavigation();
 
   const styles = useSendModalStyles();
@@ -206,27 +204,21 @@ export const SendModal: FC = () => {
 
           <Divider />
         </View>
-
-        <View>
-          <ButtonsContainer>
-            <ButtonLargeSecondary
-              title="Close"
-              onPress={goBack}
-              disabled={isLoading}
-              testID={SendModalSelectors.closeButton}
-            />
-            <Divider size={formatSize(16)} />
-            <ButtonLargePrimary
-              title="Send"
-              onPress={submitForm}
-              disabled={isLoading || Object.keys(errors).length > 0}
-              testID={SendModalSelectors.sendButton}
-            />
-          </ButtonsContainer>
-
-          <InsetSubstitute type="bottom" />
-        </View>
       </ScreenContainer>
+      <ModalButtonsFloatingContainer>
+        <ButtonLargeSecondary
+          title="Close"
+          onPress={goBack}
+          disabled={isLoading}
+          testID={SendModalSelectors.closeButton}
+        />
+        <ButtonLargePrimary
+          title="Send"
+          onPress={submitForm}
+          disabled={isLoading || Object.keys(errors).length > 0}
+          testID={SendModalSelectors.sendButton}
+        />
+      </ModalButtonsFloatingContainer>
       <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </FormikProvider>
   );

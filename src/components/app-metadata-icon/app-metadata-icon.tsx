@@ -1,7 +1,8 @@
 import { AppMetadata } from '@airgap/beacon-sdk';
 import React, { FC } from 'react';
 
-import { isDefined } from '../../utils/is-defined';
+import { isDefined } from 'src/utils/is-defined';
+
 import { AvatarImage } from '../avatar-image/avatar-image';
 import { RobotIcon } from '../robot-icon/robot-icon';
 

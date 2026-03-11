@@ -10,7 +10,8 @@
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript",
-    "plugin:jest/recommended"
+    "plugin:jest/recommended",
+    "plugin:prettier/recommended"
   ],
   "plugins": ["@typescript-eslint", "import", "no-type-assertion", "jest", "jsx-expressions"],
   "settings": {
@@ -55,6 +56,11 @@
     }],
     "@typescript-eslint/no-unnecessary-type-constraint": "warn",
     "@typescript-eslint/ban-ts-comment": "warn",
+    "@typescript-eslint/no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
+    "@typescript-eslint/no-require-imports": [
+      "error",
+      { "allow": [".gif$", ".png$"] }
+    ],
     "react-hooks/exhaustive-deps": ["warn", {
       "additionalHooks": "(useMemoWithCompare|useDidUpdate)"
     }],

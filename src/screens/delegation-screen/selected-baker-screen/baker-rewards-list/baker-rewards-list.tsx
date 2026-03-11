@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import { identity, uniq } from 'lodash';
+import { identity, uniq } from 'lodash-es';
 import React, { memo, useCallback, useMemo } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 import useSWR from 'swr';
@@ -26,8 +26,6 @@ import {
   getProtocol,
   getProtocolByCycle
 } from './utils/tzkt';
-
-const AVERAGE_ITEM_HEIGHT = 280;
 
 const FALLBACK_STORY: BakingBadStory = {
   address: '',
@@ -204,7 +202,6 @@ export const BakerRewardsList = memo(() => {
           contentContainerStyle={styles.flatListContentContainer}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
-          estimatedItemSize={AVERAGE_ITEM_HEIGHT}
           ListEmptyComponent={ListEmptyComponent}
         />
       )}

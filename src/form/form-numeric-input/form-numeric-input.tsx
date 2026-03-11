@@ -1,13 +1,14 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { useField } from 'formik';
 import React, { FC } from 'react';
 
-import { StyledNumericInput } from '../../components/styled-numberic-input/styled-numeric-input';
-import { StyledNumericInputProps } from '../../components/styled-numberic-input/styled-numeric-input.props';
-import { useNetworkInfo } from '../../hooks/use-network-info.hook';
-import { TestIdProps } from '../../interfaces/test-id.props';
-import { hasError } from '../../utils/has-error';
-import { isDefined } from '../../utils/is-defined';
+import { StyledNumericInput } from 'src/components/styled-numberic-input/styled-numeric-input';
+import { StyledNumericInputProps } from 'src/components/styled-numberic-input/styled-numeric-input.props';
+import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { TestIdProps } from 'src/interfaces/test-id.props';
+import { hasError } from 'src/utils/has-error';
+import { isDefined } from 'src/utils/is-defined';
+
 import { ErrorMessage } from '../error-message/error-message';
 
 import { FormNumericInputButtons } from './form-numeric-input-buttons/form-numeric-input-buttons';

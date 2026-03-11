@@ -19,9 +19,7 @@ export const useTokenType = (address: string) => {
 
         const type = getTokenType(contract);
         setTokenType(type);
-      } catch (error) {
-        setLoading(false);
-      }
+      } catch {}
       setLoading(false);
     }
 
