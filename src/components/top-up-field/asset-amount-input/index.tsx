@@ -56,6 +56,7 @@ const AssetAmountInputComponent: FC<
   assetsList = [],
   singleAsset = false,
   isSearchable = false,
+  isLoading = false,
   isError = false,
   editable = true,
   selectionOptions = undefined,
@@ -161,6 +162,7 @@ const AssetAmountInputComponent: FC<
               value={value.asset}
               list={assetsList}
               isSearchable={isSearchable}
+              isLoading={isLoading}
               equalityFn={topUpInputEqualityFn}
               setSearchValue={setSearchValue}
               renderValue={renderTokenValue}
