@@ -1,6 +1,7 @@
 import { uniq } from 'lodash-es';
 
 import { AssetMediaURIs } from './assets/types';
+import { isDefined } from './is-defined';
 import { isString } from './is-string';
 import { isTruthy } from './is-truthy';
 
@@ -155,6 +156,28 @@ const buildIpfsMediaUriByInfo = (
 
 export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) =>
   buildIpfsMediaUriByInfo(getMediaUriInfo(uri), size, useMediaHost);
+
+export const buildTokenImagesStack = (url?: string, preferDirectSource = false): string[] => {
+  if (!isDefined(url)) {
+    return [];
+  }
+
+  if (url.startsWith(IPFS_PROTOCOL) || url.startsWith('http')) {
+    const uriInfo = getMediaUriInfo(url);
+    const directFallback = uriInfo.ipfs ? buildIpfsMediaUriByInfo(uriInfo, 'small', false) : uriInfo.uri;
+    const mediaHostSources = [buildIpfsMediaUriByInfo(uriInfo, 'small'), buildIpfsMediaUriByInfo(uriInfo, 'medium')];
+
+    return (preferDirectSource ? [directFallback, ...mediaHostSources] : [...mediaHostSources, directFallback]).filter(
+      isTruthy
+    );
+  }
+
+  if (url.startsWith('data:image/')) {
+    return [url];
+  }
+
+  return [];
+};
 
 export const isImgUriSvg = (url: string) => url.endsWith('.svg');
 

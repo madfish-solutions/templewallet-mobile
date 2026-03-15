@@ -201,6 +201,7 @@ Otherwise, you may lose your assets permanently.`
                   name="coinFrom"
                   label="Send"
                   isSearchable
+                  isLoading={currenciesLoading}
                   assetsList={filteredInputCurrenciesList}
                   onValueChange={handleInputValueChange}
                   tokenTestID={InitialStepSelectors.sendTokenChange}
