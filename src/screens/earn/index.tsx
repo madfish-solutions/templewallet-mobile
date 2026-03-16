@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { Text, TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from 'src/components/divider/divider';
@@ -7,6 +8,7 @@ import { APR_REFRESH_INTERVAL } from 'src/config/fixed-times';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
@@ -18,6 +20,7 @@ import { OpportunityCategoryCard } from './opportunity-category-card';
 import { EarnPageSelectors } from './selectors';
 
 export const Earn: FC = () => {
+  const { navigate } = useNavigation();
   const dispatch = useDispatch();
   const {
     netApr: farmsNetApr,
@@ -65,6 +68,9 @@ export const Earn: FC = () => {
         maxApr={farmsMaxApr}
         testID={EarnPageSelectors.FarmingCard}
       />
+      <TouchableOpacity onPress={() => navigate(ScreensEnum.Sapling)}>
+        <Text>Go to Sapling</Text>
+      </TouchableOpacity>
     </>
   );
 };
