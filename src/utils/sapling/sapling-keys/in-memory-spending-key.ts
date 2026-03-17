@@ -12,6 +12,7 @@ import { bufToUint8Array, toBase64 } from '../helpers';
 import { ParametersSpendProof, ParametersSpendSig, SaplingSpendDescription, SaplingTransactionInput } from '../types';
 
 import { decryptKey } from './helpers';
+// eslint-disable-next-line import/no-cycle
 import { InMemoryViewingKey } from './in-memory-viewing-key';
 
 /**

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { migrateLegacyAsyncStorageIfNeeded } from 'src/utils/legacy-async-storage-migration';
+import { SaplingParams } from 'src/utils/sapling';
 import { setSaplingParamsProvider } from 'src/utils/sapling/sapling-params-provider';
 
 /**
@@ -11,7 +12,9 @@ export const AppBootstrap: React.FC = () => {
   const [App, setApp] = useState<React.ComponentType | null>(null);
 
   useEffect(() => {
-    setSaplingParamsProvider(() => import('src/utils/sapling/sapling-params').then(m => m.default));
+    setSaplingParamsProvider(() =>
+      import('src/utils/sapling/sapling-params.json').then(m => m.default as SaplingParams)
+    );
     let cancelled = false;
     migrateLegacyAsyncStorageIfNeeded()
       .then(() => (cancelled ? null : import('./app')))
