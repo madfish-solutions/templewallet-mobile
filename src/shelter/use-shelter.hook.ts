@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { EMPTY, Subject } from 'rxjs';
 
@@ -58,10 +58,16 @@ export const useShelter = () => {
     trackErrorEvent
   ]);
 
-  const importWallet = (params: ImportWalletParams) => importWallet$.next(params);
-  const createHdAccount = () => createHdAccount$.next(EMPTY);
-  const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
-  const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
+  const importWallet = useCallback((params: ImportWalletParams) => importWallet$.next(params), [importWallet$]);
+  const createHdAccount = useCallback(() => createHdAccount$.next(EMPTY), [createHdAccount$]);
+  const revealSecretKey = useCallback(
+    (params: RevealSecretKeyParams) => revealSecretKey$.next(params),
+    [revealSecretKey$]
+  );
+  const revealSeedPhrase = useCallback(
+    (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params),
+    [revealSeedPhrase$]
+  );
 
   const enableBiometryPassword = (password: string) => enableBiometryPassword$.next(password);
 
