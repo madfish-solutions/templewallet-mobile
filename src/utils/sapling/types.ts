@@ -154,12 +154,6 @@ export interface ChosenSpendableInputs {
   sumSelectedInputs: BigNumber;
 }
 
-export interface SaplingTransactionParamsTxBuilder {
-  root: string;
-  saplingTransactionParams: SaplingTransactionParams[];
-  boundData: Buffer;
-}
-
 export interface SaplingTransactionParams {
   to: string;
   amount: string;

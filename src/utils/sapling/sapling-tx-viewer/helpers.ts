@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 
 import { Input } from '../types';
 
-export function memoHexToUtf8(memo: string) {
+function memoHexToUtf8(memo: string) {
   const memoNoPadding = removeZeroPaddedBytesRight(memo);
 
   return memoNoPadding === '' ? memoNoPadding : bytesToString(memoNoPadding);

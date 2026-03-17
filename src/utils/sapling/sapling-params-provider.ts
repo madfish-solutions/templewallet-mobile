@@ -1,7 +1,5 @@
 import { SaplingParams } from './types';
 
-export type { SaplingParams } from './types';
-
 type SaplingParamsProvider = () => Promise<SaplingParams>;
 
 let paramsProvider: SaplingParamsProvider | undefined;

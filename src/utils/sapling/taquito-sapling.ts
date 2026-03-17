@@ -32,14 +32,6 @@ import {
   SaplingContractId
 } from './types';
 
-export { setSaplingParamsProvider } from './sapling-params-provider';
-export type { SaplingParams } from './types';
-
-export { SaplingTransactionViewer } from './sapling-tx-viewer';
-export { InMemoryViewingKey } from './sapling-keys/in-memory-viewing-key';
-export { InMemorySpendingKey } from './sapling-keys/in-memory-spending-key';
-export { InMemoryProvingKey } from './sapling-keys/in-memory-proving-key';
-
 /**
  * @description Class that surfaces all of the sapling capability allowing to read from a sapling state and prepare transactions
  *
