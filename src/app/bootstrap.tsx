@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { migrateLegacyAsyncStorageIfNeeded } from 'src/utils/legacy-async-storage-migration';
+import { setSaplingParamsProvider } from 'src/utils/sapling/sapling-params-provider';
 
 /**
  * Runs one-time legacy AsyncStorage migration (RKStorage → current) before loading the app,
@@ -10,6 +11,7 @@ export const AppBootstrap: React.FC = () => {
   const [App, setApp] = useState<React.ComponentType | null>(null);
 
   useEffect(() => {
+    setSaplingParamsProvider(() => import('src/utils/sapling/sapling-params').then(m => m.default));
     let cancelled = false;
     migrateLegacyAsyncStorageIfNeeded()
       .then(() => (cancelled ? null : import('./app')))
