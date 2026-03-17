@@ -26,6 +26,7 @@ import './src/mocks/react-native-permissions.mock';
 import './src/mocks/react-native-quick-actions.mock';
 import './src/mocks/react-native-reanimated.mock';
 import './src/mocks/react-native-screens.mock';
+import './src/mocks/react-native-sapling.mock';
 import './src/mocks/react-native-webview.mock';
 import './src/mocks/react-native-sha256.mock';
 import './src/mocks/react-native-themis.mock';
