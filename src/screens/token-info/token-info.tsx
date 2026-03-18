@@ -26,7 +26,7 @@ export const TokenInfo = () => {
   return (
     <ScreenContainer contentContainerStyle={styles.contentContainerStyle}>
       <Label label="Decimals" description={`Decimals of ${symbol} token.`} />
-      <StyledTextInput placeholder={token.decimals.toString()} editable={false} />
+      <StyledTextInput placeholder={token.decimals?.toString() ?? '0'} editable={false} />
 
       {!isTezos && (
         <>
