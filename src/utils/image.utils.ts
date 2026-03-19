@@ -7,7 +7,7 @@ import { isTruthy } from './is-truthy';
 
 const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
-const IPFS_GATE = 'https://ipfs.io/ipfs';
+const IPFS_GATE = 'https://ipfs.filebase.io/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
 type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
@@ -133,6 +133,9 @@ const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTai
 
 const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
+const buildMediaHostWebUri = (uri: string, size: TcInfraMediaSize) =>
+  `${MEDIA_HOST}/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
+
 const buildIpfsMediaUriByInfo = (
   { uri, ipfs: ipfsInfo }: MediaUriInfo,
   size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE,
@@ -148,9 +151,9 @@ const buildIpfsMediaUriByInfo = (
       : `${IPFS_GATE}/${ipfsInfo.path}${ipfsInfo.search}`;
   }
 
-  if (useMediaHost && uri.startsWith('http')) {
+  if (uri.startsWith('http')) {
     // This option also serves as a proxy for any `http` source
-    return uri;
+    return useMediaHost ? buildMediaHostWebUri(uri, size) : uri;
   }
 };
 
@@ -179,7 +182,7 @@ export const buildTokenImagesStack = (url?: string, preferDirectSource = false):
   return [];
 };
 
-export const isImgUriSvg = (url: string) => url.endsWith('.svg');
+export const isImgUriSvg = (url: string) => /\.svg(?:$|[?#])/i.test(url);
 
 const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
 const SVG_DATA_URI_BASE64_PREFIX = 'data:image/svg+xml;base64,';
