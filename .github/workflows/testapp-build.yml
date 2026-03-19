@@ -66,6 +66,9 @@ jobs:
           KOLO_API_PUBLIC_KEY: ${{ secrets.KOLO_API_PUBLIC_KEY }}
           KOLO_BASE_URL: ${{ vars.KOLO_BASE_URL }}
 
+      - name: Update Sapling Proxy
+        run: yarn update-sapling-proxy
+
       # Android
 
       - name: Setup Java SDK

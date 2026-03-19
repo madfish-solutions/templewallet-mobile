@@ -1,19 +1,21 @@
 import { randomBytes } from '@stablelib/random';
 import {
   randR as nativeRandR,
-  getOutgoingViewingKey as nativeGetOutgoingViewingKey,
   preparePartialOutputDescription as nativePreparePartialOutputDescription,
   getDiversifierFromRawPaymentAddress as nativeGetDiversifierFromRawPaymentAddress,
-  getPkdFromRawPaymentAddress as nativeGetPkdFromRawPaymentAddress,
-  keyAgreement as nativeKeyAgreement,
   createBindingSignature as nativeCreateBindingSignature,
   initParameters as nativeInitParameters,
   initProvingContext,
-  dropProvingContext,
-  deriveEpkFromEsk
+  dropProvingContext
 } from 'react-native-sapling';
 
 import { toBase64 } from './helpers';
+import {
+  deriveEpkFromEsk,
+  getOutgoingViewingKey,
+  keyAgreement as getKeyAgreement,
+  getPkdFromRawPaymentAddress
+} from './sapling-functions-supplement';
 import { getSaplingParams } from './sapling-params-provider';
 import { ParametersOutputProof } from './types';
 
@@ -39,7 +41,7 @@ export class SaplingWrapper {
   }
 
   async getOutgoingViewingKey(vk: Buffer) {
-    return Buffer.from(await nativeGetOutgoingViewingKey(toBase64(vk)), 'base64');
+    return Buffer.from(await getOutgoingViewingKey(toBase64(vk)), 'base64');
   }
 
   async preparePartialOutputDescription(parametersOutputProof: ParametersOutputProof) {
@@ -70,11 +72,11 @@ export class SaplingWrapper {
   }
 
   async getPkdFromRawPaymentAddress(destination: Uint8Array) {
-    return Buffer.from(await nativeGetPkdFromRawPaymentAddress(toBase64(destination)), 'base64');
+    return Buffer.from(await getPkdFromRawPaymentAddress(toBase64(destination)), 'base64');
   }
 
   async keyAgreement(p: Buffer, sk: Buffer) {
-    return Buffer.from(await nativeKeyAgreement(toBase64(p), toBase64(sk)), 'base64');
+    return Buffer.from(await getKeyAgreement(toBase64(p), toBase64(sk)), 'base64');
   }
 
   async createBindingSignature(saplingContext: string, balance: string, transactionSigHash: Uint8Array) {

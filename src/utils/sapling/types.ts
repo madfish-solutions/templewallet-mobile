@@ -174,3 +174,24 @@ export interface SaplingStateTree {
 }
 
 export type MerkleTree = undefined | string | [string, MerkleTree, MerkleTree];
+
+type Base64 = string;
+
+export interface SaplingFunctionsSupplement {
+  getProofAuthorizingKey: (spendingKey: Base64) => Promise<Base64>;
+  prepareSpendDescriptionWithAuthorizingKey: (
+    saplingContext: string,
+    provingKey: Base64,
+    address: Base64,
+    randomCommitmentTrapdoor: Base64,
+    publicKeyReRandomization: Base64,
+    amount: number,
+    root: Base64,
+    witness: Base64
+  ) => Promise<Record<'cv' | 'nf' | 'rk' | 'rt' | 'proof', Base64>>;
+  deriveEpkFromEsk: (diversifier: Base64, esk: Base64) => Promise<Base64>;
+  getOutgoingViewingKey: (spendingKey: Base64) => Promise<Base64>;
+  getRawPaymentAddress: (viewingKey: Base64, diversifier: Base64) => Promise<Base64>;
+  keyAgreement: (p: Base64, sk: Base64) => Promise<Base64>;
+  getPkdFromRawPaymentAddress: (address: Base64) => Promise<Base64>;
+}

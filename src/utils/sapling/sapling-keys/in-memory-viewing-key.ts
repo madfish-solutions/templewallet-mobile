@@ -1,11 +1,8 @@
 import { b58Encode, PrefixV2 } from '@taquito/utils';
-import {
-  getOutgoingViewingKey as nativeGetOutgoingViewingKey,
-  getIncomingViewingKey as nativeGetIncomingViewingKey,
-  getPaymentAddress
-} from 'react-native-sapling';
+import { getIncomingViewingKey as nativeGetIncomingViewingKey, getPaymentAddress } from 'react-native-sapling';
 
 import { bufToUint8Array, toBase64 } from '../helpers';
+import { getOutgoingViewingKey } from '../sapling-functions-supplement';
 
 import { bufferFromNumberOfLength } from './helpers';
 // eslint-disable-next-line import/no-cycle
@@ -52,7 +49,7 @@ export class InMemoryViewingKey {
    *
    */
   async getOutgoingViewingKey() {
-    return Buffer.from(await nativeGetOutgoingViewingKey(toBase64(this.#fullViewingKey)), 'base64');
+    return Buffer.from(await getOutgoingViewingKey(toBase64(this.#fullViewingKey)), 'base64');
   }
 
   /**

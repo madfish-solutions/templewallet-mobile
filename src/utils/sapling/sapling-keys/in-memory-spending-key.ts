@@ -4,11 +4,11 @@ import {
   getExtendedSpendingKey,
   getExtendedFullViewingKeyFromSpendingKey,
   prepareSpendDescriptionWithSpendingKey,
-  signSpendDescription as nativeSignSpendDescription,
-  getProofAuthorizingKey
+  signSpendDescription as nativeSignSpendDescription
 } from 'react-native-sapling';
 
 import { bufToUint8Array, toBase64 } from '../helpers';
+import { getProofAuthorizingKey } from '../sapling-functions-supplement';
 import { ParametersSpendProof, ParametersSpendSig, SaplingSpendDescription, SaplingTransactionInput } from '../types';
 
 import { decryptKey } from './helpers';
