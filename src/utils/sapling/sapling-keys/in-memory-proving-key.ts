@@ -1,5 +1,6 @@
+import { getProofAuthorizingKey, prepareSpendDescriptionWithAuthorizingKey } from 'react-native-sapling';
+
 import { toBase64 } from '../helpers';
-import { getProofAuthorizingKey, prepareSpendDescriptionWithAuthorizingKey } from '../sapling-functions-supplement';
 import { ParametersSpendProof, SaplingSpendDescription } from '../types';
 
 import { decryptKey } from './helpers';
@@ -49,23 +50,25 @@ export class InMemoryProvingKey {
   async prepareSpendDescription(
     parametersSpendProof: Omit<ParametersSpendProof, 'spendingKey'>
   ): Promise<Omit<SaplingSpendDescription, 'signature'>> {
-    const { cv, nf, rk, rt, proof } = await prepareSpendDescriptionWithAuthorizingKey(
-      parametersSpendProof.saplingContext,
-      toBase64(this.#provingKey),
-      toBase64(parametersSpendProof.address),
-      toBase64(parametersSpendProof.randomCommitmentTrapdoor),
-      toBase64(parametersSpendProof.publicKeyReRandomization),
-      Number(parametersSpendProof.amount),
-      Buffer.from(parametersSpendProof.root, 'hex').toString('base64'),
-      Buffer.from(parametersSpendProof.witness, 'hex').toString('base64')
+    const spendDescription = Buffer.from(
+      await prepareSpendDescriptionWithAuthorizingKey(
+        parametersSpendProof.saplingContext,
+        toBase64(this.#provingKey),
+        toBase64(parametersSpendProof.address),
+        toBase64(parametersSpendProof.randomCommitmentTrapdoor),
+        toBase64(parametersSpendProof.publicKeyReRandomization),
+        Number(parametersSpendProof.amount),
+        Buffer.from(parametersSpendProof.root, 'hex').toString('base64'),
+        Buffer.from(parametersSpendProof.witness, 'hex').toString('base64')
+      )
     );
 
     return {
-      commitmentValue: Buffer.from(cv, 'base64'),
-      nullifier: Buffer.from(nf, 'base64'),
-      publicKeyReRandomization: Buffer.from(rk, 'base64'),
-      rtAnchor: Buffer.from(rt, 'base64'),
-      proof: Buffer.from(proof, 'base64')
+      commitmentValue: spendDescription.slice(0, 32),
+      nullifier: spendDescription.slice(64, 96),
+      publicKeyReRandomization: spendDescription.slice(96, 128),
+      rtAnchor: spendDescription.slice(32, 64),
+      proof: spendDescription.slice(128, 320)
     };
   }
 }

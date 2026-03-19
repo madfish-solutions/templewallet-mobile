@@ -4,12 +4,16 @@ import { TzReadProvider } from '@taquito/taquito';
 import { hex2buf, mergebuf } from '@taquito/utils';
 import BigNumber from 'bignumber.js';
 import blake from 'blakejs';
-import { verifyCommitment, computeNullifier } from 'react-native-sapling';
+import {
+  keyAgreement as nativeKeyAgreement,
+  getRawPaymentAddress,
+  verifyCommitment,
+  computeNullifier
+} from 'react-native-sapling';
 
 import { KDF_KEY, OCK_KEY } from '../constants';
 import { SaplingTransactionViewerError } from '../errors';
 import { bufToUint8Array, toBase64 } from '../helpers';
-import { getRawPaymentAddress, keyAgreement as getKeyAgreement } from '../sapling-functions-supplement';
 import { InMemoryViewingKey } from '../sapling-keys/in-memory-viewing-key';
 import { Input, SaplingContractId, SaplingIncomingAndOutgoingTransaction } from '../types';
 
@@ -200,7 +204,7 @@ export class SaplingTransactionViewer {
 
     const incomingViewingKey = await this.#viewingKeyProvider.getIncomingViewingKey();
     const keyAgreement = bufToUint8Array(
-      Buffer.from(await getKeyAgreement(toBase64(Buffer.from(epk, 'hex')), toBase64(incomingViewingKey)), 'base64')
+      Buffer.from(await nativeKeyAgreement(toBase64(Buffer.from(epk, 'hex')), toBase64(incomingViewingKey)), 'base64')
     );
     const keyAgreementHash = blake.blake2b(keyAgreement, bufToUint8Array(Buffer.from(KDF_KEY)), 32);
 
@@ -250,7 +254,7 @@ export class SaplingTransactionViewer {
     if (decryptedOut) {
       const { recipientDiversifiedTransmissionKey: pkd, ephemeralPrivateKey: esk } =
         this.extractPkdAndEsk(decryptedOut);
-      const keyAgreement = await getKeyAgreement(toBase64(pkd), toBase64(esk));
+      const keyAgreement = await nativeKeyAgreement(toBase64(pkd), toBase64(esk));
       const keyAgreementHash = blake.blake2b(keyAgreement, bufToUint8Array(Buffer.from(KDF_KEY)), 32);
 
       const decryptedEnc = await this.decryptCiphertext(keyAgreementHash, hex2buf(nonce_enc), hex2buf(payload_enc));

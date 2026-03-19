@@ -88,5 +88,3 @@ api-*.json
 ios/sentry.properties
 android/sentry.properties
 .vscode/
-
-tezos-sapling-proxy/

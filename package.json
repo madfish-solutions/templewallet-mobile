@@ -20,7 +20,6 @@
     "clear:ios": "rm -rf ios/Pods && rm -rf ios/build && pod cache clean --all",
     "clear:metro": "rm -rf $TMPDIR/haste-map-* || true && rm -rf $TMPDIR/metro-* || true",
     "clear:watchman": "if [ -x \"$(command -v watchman)\" ]; then watchman watch-del-all; fi",
-    "update-sapling-proxy": "bash update-tezos-sapling-proxy.sh",
     "find-deadcode": "knip",
     "audit-deps": "node ./audit-deps.mjs"
   },
@@ -103,7 +102,7 @@
     "react-native-reanimated-carousel": "^4.0.3",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-sapling": "1.0.0-beta.1",
+    "react-native-sapling": "^0.0.1",
     "react-native-screens": "^4.19.0",
     "react-native-scrypt": "madfish-solutions/react-native-scrypt#120e21ee291ed6bbb51acd251e09f9efeedba3c2",
     "react-native-sha256": "^1.4.10",

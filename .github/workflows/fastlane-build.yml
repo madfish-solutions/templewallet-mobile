@@ -56,9 +56,6 @@ jobs:
           KOLO_API_PUBLIC_KEY: ${{ secrets.KOLO_API_PUBLIC_KEY }}
           KOLO_BASE_URL: ${{ vars.KOLO_BASE_URL }}
 
-      - name: Update Sapling Proxy
-        run: yarn update-sapling-proxy
-
       - name: Prepare changelog
         id: changelog
         run: echo "##[set-output name=log;]$(git log --pretty=format:'%s' origin/master..origin/$(echo ${GITHUB_REF#refs/heads/}))"

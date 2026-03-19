@@ -1,17 +1,17 @@
 import { OpKind, RpcClient } from '@taquito/rpc';
 import { RpcReadAdapter } from '@taquito/taquito';
 import { b58DecodeAndCheckPrefix } from '@taquito/utils';
-import axios, { AxiosError } from 'axios';
 import BigNumber from 'bignumber.js';
-import { entropyToMnemonic } from 'bip39';
+import Bip39 from 'bip39';
 import bs58check from 'bs58check';
 import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
-import WebView from 'react-native-webview';
-import type { WebViewErrorEvent } from 'react-native-webview/lib/WebViewTypes';
 import { useDispatch } from 'react-redux';
 import useSWR from 'swr';
 
+import { AddressInput } from 'src/components/address-input/address-input';
+import { AssetAmountInput, AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonSmallSecondary } from 'src/components/button/button-small/button-small-secondary/button-small-secondary';
 import { Divider } from 'src/components/divider/divider';
 import { OVERLAY_SHOW_TIMEOUT } from 'src/components/mnemonic/mnemonic.config';
@@ -20,8 +20,8 @@ import { RevealSecretView } from 'src/components/mnemonic/reveal-secret-view/rev
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { StyledTextInput } from 'src/components/styled-text-input/styled-text-input';
 import { StyledTextInputStyles } from 'src/components/styled-text-input/styled-text-input.styles';
-import { isAndroid } from 'src/config/system';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useActiveTimer } from 'src/hooks/use-active-timer.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -34,9 +34,11 @@ import {
   useRawCurrentAccountSelector
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast, showErrorToastByError } from 'src/toast/toast.utils';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { ZERO } from 'src/utils/number.util';
 import {
   InMemorySpendingKey,
   InMemoryViewingKey,
@@ -47,18 +49,12 @@ import {
 import { SaplingToolkit } from 'src/utils/sapling/taquito-sapling';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { SaplingForm } from './sapling-form';
-import { ShieldForm } from './shield-form';
-import { UnshieldForm } from './unshield-form';
-import { useSetSaplingFunctionsSupplement } from './use-set-sapling-functions-supplement';
-
 export const Sapling: FC = () => {
   const { revealSeedPhrase, revealSecretKey } = useShelter();
   const account = useRawCurrentAccountSelector()!;
   const hdAccounts = useHdAccountListSelector();
   const [saplingCredentials, setSaplingCredentials] = useState<SaplingCredentials | null>(null);
   const [isLoadError, setIsLoadError] = useState(false);
-  const { isReady, webViewRef, handleWebViewMessage } = useSetSaplingFunctionsSupplement();
 
   const hdIndex = useMemo(
     () => hdAccounts.findIndex(a => a.publicKeyHash === account.publicKeyHash),
@@ -66,10 +62,6 @@ export const Sapling: FC = () => {
   );
 
   useEffect(() => {
-    if (!isReady) {
-      return;
-    }
-
     const handleSaplingMnemonic = async (mnemonic: string, hdIndex?: number) => {
       try {
         const spendingKey = await InMemorySpendingKey.fromMnemonic(
@@ -85,45 +77,22 @@ export const Sapling: FC = () => {
         });
       } catch (e) {
         console.error(e);
-        showErrorToastByError(e);
+        showErrorToast(e instanceof Error ? { description: e.message } : { description: 'Something went wrong' });
         setIsLoadError(true);
       }
     };
 
     if (account.type === AccountTypeEnum.HD_ACCOUNT) {
       revealSeedPhrase({
-        successCallback: mnemonic => void handleSaplingMnemonic(mnemonic, hdIndex === 0 ? undefined : hdIndex)
+        successCallback: mnemonic => handleSaplingMnemonic(mnemonic, hdIndex === 0 ? undefined : hdIndex)
       });
     } else {
       revealSecretKey({
         publicKeyHash: account.publicKeyHash,
-        successCallback: privateKey => void handleSaplingMnemonic(getMnemonicFromSecretKey(privateKey))
+        successCallback: privateKey => handleSaplingMnemonic(getMnemonicFromSecretKey(privateKey))
       });
     }
-  }, [account.publicKeyHash, account.type, hdIndex, revealSecretKey, revealSeedPhrase, isReady]);
-
-  const handleWebViewError = useCallback((e: WebViewErrorEvent) => {
-    console.error(e);
-    showErrorToast({
-      title: 'Failed to load proxy',
-      description: e.nativeEvent.description
-    });
-    setIsLoadError(true);
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get(isAndroid ? 'file:///android_asset/custom/index.js' : './resources/index.js')
-      .then(response => {
-        console.log(typeof response.data);
-      })
-      .catch(error => {
-        console.error(error);
-        if (error instanceof AxiosError) {
-          console.error(error.code, error.message);
-        }
-      });
-  }, []);
+  }, [account.publicKeyHash, account.type, hdIndex, revealSecretKey, revealSeedPhrase]);
 
   return (
     <ScreenContainer>
@@ -134,18 +103,6 @@ export const Sapling: FC = () => {
       ) : (
         <Text>Loading...</Text>
       )}
-      <WebView
-        ref={webViewRef}
-        originWhitelist={['*']}
-        javaScriptEnabled
-        domStorageEnabled
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        source={require('src/assets/sapling-proxy/index.html')}
-        webviewDebuggingEnabled={__DEV__}
-        onError={handleWebViewError}
-        onMessage={handleWebViewMessage}
-        containerStyle={{ width: 0, height: 0 }}
-      />
     </ScreenContainer>
   );
 };
@@ -161,7 +118,7 @@ function getMnemonicFromSecretKey(secretKey: string) {
     throw new Error('Invalid secret key');
   }
 
-  return entropyToMnemonic(Buffer.from(entropy));
+  return Bip39.entropyToMnemonic(Buffer.from(entropy));
 }
 
 function getEntropyFromEdsk(edskString: string) {
@@ -194,6 +151,7 @@ interface AccountState {
 }
 
 const SaplingPageContent = memo(({ saplingCredentials }: SaplingPageContentProps) => {
+  const account = useRawCurrentAccountSelector()!;
   const { viewingKey, saplingAddress, spendingKey } = saplingCredentials;
   const [displayedViewingKey, setDisplayedViewingKey] = useState<string>();
   const { activeTimer, clearActiveTimer } = useActiveTimer();
@@ -201,6 +159,10 @@ const SaplingPageContent = memo(({ saplingCredentials }: SaplingPageContentProps
   const saplingContract = 'KT1KzAPQdpziH3bxxJXQNmNQA46oo8tnDQfj';
   const rpcUrl = useSelectedRpcUrlSelector();
   const dispatch = useDispatch();
+  const assetToShield = useMemo(
+    () => ({ ...TEZ_TOKEN_METADATA, balance: rawUnshieldedBalance, visibility: VisibilityEnum.Visible }),
+    [rawUnshieldedBalance]
+  );
 
   const unshieldedBalance = useMemo(
     () =>
@@ -250,6 +212,30 @@ const SaplingPageContent = memo(({ saplingCredentials }: SaplingPageContentProps
     errorRetryCount: 2
   });
 
+  const assetToUnshield = useMemo(
+    () => ({
+      ...TEZ_TOKEN_METADATA,
+      balance: (accountState ? new BigNumber(accountState.shieldedBalance) : ZERO).toFixed(),
+      visibility: VisibilityEnum.Visible
+    }),
+    [accountState]
+  );
+  const [shieldInputValue, setShieldInputValue] = useState<AssetAmountInterface>({
+    asset: assetToShield,
+    amount: ZERO
+  });
+  const [saplingInputValue, setSaplingInputValue] = useState<AssetAmountInterface>({
+    asset: assetToUnshield,
+    amount: ZERO
+  });
+  const [unshieldInputValue, setUnshieldInputValue] = useState<AssetAmountInterface>({
+    asset: assetToUnshield,
+    amount: ZERO
+  });
+  const [saplingDestinationAddress, setSaplingDestinationAddress] = useState<string>('');
+
+  const shieldAmountInputAssetsList = useMemo<TokenInterface[]>(() => [assetToShield], [assetToShield]);
+  const unshieldAmountInputAssetsList = useMemo<TokenInterface[]>(() => [assetToUnshield], [assetToUnshield]);
   const saplingToolkit = useMemo(
     () =>
       new SaplingToolkit(
@@ -284,10 +270,48 @@ const SaplingPageContent = memo(({ saplingCredentials }: SaplingPageContentProps
     [dispatch]
   );
 
+  const handleShieldPress = useCallback(async () => {
+    try {
+      const txData = await saplingToolkit.prepareShieldedTransaction([
+        { to: saplingAddress, amount: shieldInputValue.amount?.toNumber() ?? 0, mutez: true }
+      ]);
+      goToSaplingConfirmation(shieldInputValue.amount ?? ZERO, txData, 'SHIELD_TRANSACTION_SENT');
+    } catch (e) {
+      console.error(e);
+      showErrorToast(e instanceof Error ? { description: e.message } : { description: 'Something went wrong' });
+    }
+  }, [goToSaplingConfirmation, saplingAddress, saplingToolkit, shieldInputValue.amount]);
+
+  const handleSaplingTxPress = useCallback(async () => {
+    try {
+      const txData = await saplingToolkit.prepareSaplingTransaction([
+        { to: saplingDestinationAddress, amount: saplingInputValue.amount?.toNumber() ?? 0, mutez: true }
+      ]);
+      goToSaplingConfirmation(ZERO, txData, 'SAPLING_TRANSACTION_SENT');
+    } catch (e) {
+      console.error(e);
+      showErrorToast(e instanceof Error ? { description: e.message } : { description: 'Something went wrong' });
+    }
+  }, [goToSaplingConfirmation, saplingDestinationAddress, saplingToolkit, saplingInputValue.amount]);
+
+  const handleUnshieldPress = useCallback(async () => {
+    try {
+      const txData = await saplingToolkit.prepareUnshieldedTransaction({
+        to: account.publicKeyHash,
+        amount: unshieldInputValue.amount?.toNumber() ?? 0,
+        mutez: true
+      });
+      goToSaplingConfirmation(ZERO, txData, 'UNSHIELD_TRANSACTION_SENT');
+    } catch (e) {
+      console.error(e);
+      showErrorToast(e instanceof Error ? { description: e.message } : { description: 'Something went wrong' });
+    }
+  }, [account.publicKeyHash, goToSaplingConfirmation, saplingToolkit, unshieldInputValue.amount]);
+
   useEffect(() => {
     if (error) {
       console.error(error);
-      showErrorToastByError(error);
+      showErrorToast(error instanceof Error ? { description: error.message } : { description: 'Something went wrong' });
     }
   }, [error]);
 
@@ -328,27 +352,49 @@ const SaplingPageContent = memo(({ saplingCredentials }: SaplingPageContentProps
         <>
           <Divider size={formatSize(12)} />
 
-          <ShieldForm
-            saplingToolkit={saplingToolkit}
-            saplingAddress={saplingAddress}
-            goToSaplingConfirmation={goToSaplingConfirmation}
+          <AssetAmountInput
+            value={shieldInputValue}
+            label="Shield"
+            assetsList={shieldAmountInputAssetsList}
+            balanceLabel="TEZ balance:"
+            toUsdToggle={false}
+            isSingleAsset={true}
+            onValueChange={setShieldInputValue}
           />
+          <ButtonLargePrimary title="Shield" onPress={handleShieldPress} />
 
           <Divider size={formatSize(12)} />
 
-          <SaplingForm
-            saplingToolkit={saplingToolkit}
-            goToSaplingConfirmation={goToSaplingConfirmation}
-            shieldedBalance={accountState.shieldedBalance}
+          <AssetAmountInput
+            balance={accountState.shieldedBalance.toFixed()}
+            value={saplingInputValue}
+            label="Sapling"
+            assetsList={unshieldAmountInputAssetsList}
+            balanceLabel="Shielded TEZ balance:"
+            toUsdToggle={false}
+            isSingleAsset={true}
+            onValueChange={setSaplingInputValue}
           />
+          <AddressInput
+            value={saplingDestinationAddress}
+            placeholder="Destination address"
+            onChangeText={setSaplingDestinationAddress}
+          />
+          <ButtonLargePrimary title="Sapling" onPress={handleSaplingTxPress} />
 
           <Divider size={formatSize(12)} />
 
-          <UnshieldForm
-            saplingToolkit={saplingToolkit}
-            shieldedBalance={accountState.shieldedBalance}
-            goToSaplingConfirmation={goToSaplingConfirmation}
+          <AssetAmountInput
+            balance={accountState.shieldedBalance.toFixed()}
+            value={unshieldInputValue}
+            label="Unshield"
+            assetsList={unshieldAmountInputAssetsList}
+            balanceLabel="Shielded TEZ balance:"
+            toUsdToggle={false}
+            isSingleAsset={true}
+            onValueChange={setUnshieldInputValue}
           />
+          <ButtonLargePrimary title="Unshield" onPress={handleUnshieldPress} />
         </>
       )}
     </>

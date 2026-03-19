@@ -10048,10 +10048,10 @@ react-native-safe-area-context@^5.5.2:
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-5.6.2.tgz#283e006f5b434fb247fcb4be0971ad7473d5c560"
   integrity sha512-4XGqMNj5qjUTYywJqpdWZ9IG8jgkS3h06sfVjfw5yZQZfWnRFXczi0GnYyFyCc2EBps/qFmoCH8fez//WumdVg==
 
-react-native-sapling@1.0.0-beta.1:
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/react-native-sapling/-/react-native-sapling-1.0.0-beta.1.tgz#9298bbfd722485e0ba5a7043ef921a6fd5c33a53"
-  integrity sha512-ZtWq7PqWdHnNzduinsiYJGRfSvtk4vnukOprEa+rnMcj8KNJ5QOwNONR3mIJ192E4BpsJLypV8X9C9lh9ExeDg==
+react-native-sapling@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-sapling/-/react-native-sapling-0.0.1.tgz#864e4c2cd276fd695581bf5308a1540ac7b2ed57"
+  integrity sha512-W+SfEOaogAVVBlXNZHHyG5LkmbT088UvbQJrS1IbHdNzgmPJPqLVXzkJ4kAzlSR+PUfG8ZGGpPi/HjL114aHEA==
 
 react-native-screens@^4.19.0:
   version "4.19.0"

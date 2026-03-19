@@ -2210,7 +2210,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-sapling (1.0.0-beta.1):
+  - react-native-sapling (0.0.0):
     - React-Core
   - react-native-slider (5.1.1):
     - boost
@@ -4084,7 +4084,7 @@ SPEC CHECKSUMS:
   react-native-orientation-locker: cc6f357b289a2e0dd2210fea0c52cb8e0727fdaa
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: 0a3b034bb63a5b684dd2f5fffd3c90ef6ed41ee8
-  react-native-sapling: 0954161c9df75835d0690d641995d4554935f72c
+  react-native-sapling: a6f56e0e516e82bfbf3d15ed32bcc2a35a4b8fe2
   react-native-slider: 05e7080478df08489251c2a6739a0d5628b7c198
   react-native-themis: b681fd9654ec2b55b9fb81d086159d974f752d6c
   react-native-video: 624deff94be379ffaba289bed13fc0917f01abcb
