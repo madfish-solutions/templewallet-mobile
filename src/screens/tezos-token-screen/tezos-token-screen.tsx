@@ -8,8 +8,10 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
+import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -23,6 +25,8 @@ export const TezosTokenScreen = () => {
   const tezosToken = useTezosTokenOfCurrentAccount();
 
   usePageAnalytic(ScreensEnum.TezosTokenScreen);
+
+  const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const handleInfoIconClick = useCallback(
     () => navigate(ScreensEnum.TokenInfo, { token: tezosToken }),
@@ -47,6 +51,8 @@ export const TezosTokenScreen = () => {
       </HeaderCard>
 
       <TokenScreenContentContainer historyComponent={<TezosTokenHistory />} token={tezosToken} />
+
+      <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </>
   );
 };
