@@ -2,7 +2,7 @@ import { OpKind, RpcClient } from '@taquito/rpc';
 import { RpcReadAdapter } from '@taquito/taquito';
 import { b58DecodeAndCheckPrefix } from '@taquito/utils';
 import BigNumber from 'bignumber.js';
-import Bip39 from 'bip39';
+import { entropyToMnemonic } from 'bip39';
 import bs58check from 'bs58check';
 import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -118,7 +118,7 @@ function getMnemonicFromSecretKey(secretKey: string) {
     throw new Error('Invalid secret key');
   }
 
-  return Bip39.entropyToMnemonic(Buffer.from(entropy));
+  return entropyToMnemonic(Buffer.from(entropy));
 }
 
 function getEntropyFromEdsk(edskString: string) {

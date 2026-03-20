@@ -102,7 +102,7 @@
     "react-native-reanimated-carousel": "^4.0.3",
     "react-native-restart": "^0.0.27",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-sapling": "^0.0.1",
+    "react-native-sapling": "^0.0.2",
     "react-native-screens": "^4.19.0",
     "react-native-scrypt": "madfish-solutions/react-native-scrypt#120e21ee291ed6bbb51acd251e09f9efeedba3c2",
     "react-native-sha256": "^1.4.10",
