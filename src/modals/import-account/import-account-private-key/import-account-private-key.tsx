@@ -14,7 +14,6 @@ import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -33,7 +32,6 @@ interface Props {
 export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
   const { createImportedAccount } = useShelter();
   const accountIndex = useAccountsListSelector().length + 1;
-  const { goBack } = useNavigation();
 
   usePageAnalytic(ModalsEnum.ImportAccountFromPrivateKey);
 
@@ -44,8 +42,6 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
       privateKey,
       name: `Account ${accountIndex}`
     });
-
-    goBack();
   }, []);
 
   const formik = useFormik({

@@ -7,7 +7,7 @@ import { isTruthy } from './is-truthy';
 
 const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
-const IPFS_GATE = 'https://ipfs.io/ipfs';
+const IPFS_GATE = 'https://ipfs.filebase.io/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
 type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
@@ -18,12 +18,7 @@ const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 const buildIpfsMediaUrisByInfo = (info: MediaUriInfo, isFullView: boolean) => {
   const sizes: TcInfraMediaSize[] = isFullView ? ['raw', 'large', 'medium', 'small'] : ['medium', 'small'];
 
-  return sizes
-    .map(size => buildIpfsMediaUriByInfo({ info, size }))
-    .concat(
-      buildIpfsMediaUriByInfo({ info, useMediaHost: false }),
-      buildIpfsMediaUriByInfo({ info, useMediaHost: false, ipfsGate: 'https://ipfs.filebase.io/ipfs' })
-    );
+  return sizes.map(size => buildIpfsMediaUriByInfo(info, size)).concat(buildIpfsMediaUriByInfo(info, undefined, false));
 };
 
 export const buildCollectibleImagesStack = (
@@ -134,22 +129,14 @@ const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTai
 const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
 const CLOUDFLARE_IPFS_REGEX = /^https?:\/\/cloudflare-ipfs\.com/;
+const buildMediaHostWebUri = (uri: string, size: TcInfraMediaSize) =>
+  `${MEDIA_HOST}/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
 
-interface MediaUriInput {
-  info: MediaUriInfo;
-  size?: TcInfraMediaSize;
-  useMediaHost?: boolean;
-  ipfsGate?: string;
-}
-
-const buildIpfsMediaUriByInfo = ({
-  info,
-  size = DEFAULT_MEDIA_SIZE,
-  useMediaHost = true,
-  ipfsGate = IPFS_GATE
-}: MediaUriInput) => {
-  const { uri, ipfs: ipfsInfo } = info;
-
+const buildIpfsMediaUriByInfo = (
+  { uri, ipfs: ipfsInfo }: MediaUriInfo,
+  size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE,
+  useMediaHost = true
+) => {
   if (!uri) {
     return;
   }
@@ -157,21 +144,21 @@ const buildIpfsMediaUriByInfo = ({
   if (ipfsInfo) {
     return useMediaHost
       ? `${MEDIA_HOST}/${size}/ipfs/${ipfsInfo.path}${ipfsInfo.search}`
-      : `${ipfsGate}/${ipfsInfo.path}${ipfsInfo.search}`;
+      : `${IPFS_GATE}/${ipfsInfo.path}${ipfsInfo.search}`;
   }
 
   if (CLOUDFLARE_IPFS_REGEX.test(uri)) {
-    return `${ipfsGate}/${uri.replace(CLOUDFLARE_IPFS_REGEX, '')}`;
+    return `${IPFS_GATE}/${uri.replace(CLOUDFLARE_IPFS_REGEX, '')}`;
   }
 
   if (uri.startsWith('http')) {
     // This option also serves as a proxy for any `http` source
-    return uri;
+    return useMediaHost ? buildMediaHostWebUri(uri, size) : uri;
   }
 };
 
 export const formatImgUri = (uri = '', size?: TcInfraMediaSize, useMediaHost?: boolean) =>
-  buildIpfsMediaUriByInfo({ info: getMediaUriInfo(uri), size, useMediaHost });
+  buildIpfsMediaUriByInfo(getMediaUriInfo(uri), size, useMediaHost);
 
 export const buildTokenImagesStack = (url?: string, preferDirectSource = false): string[] => {
   if (!isDefined(url)) {
@@ -180,13 +167,8 @@ export const buildTokenImagesStack = (url?: string, preferDirectSource = false):
 
   if (url.startsWith(IPFS_PROTOCOL) || url.startsWith('http')) {
     const uriInfo = getMediaUriInfo(url);
-    const directFallback = uriInfo.ipfs
-      ? buildIpfsMediaUriByInfo({ info: uriInfo, size: 'small', useMediaHost: false })
-      : uriInfo.uri;
-    const mediaHostSources = [
-      buildIpfsMediaUriByInfo({ info: uriInfo, size: 'small' }),
-      buildIpfsMediaUriByInfo({ info: uriInfo, size: 'medium' })
-    ];
+    const directFallback = uriInfo.ipfs ? buildIpfsMediaUriByInfo(uriInfo, 'small', false) : uriInfo.uri;
+    const mediaHostSources = [buildIpfsMediaUriByInfo(uriInfo, 'small'), buildIpfsMediaUriByInfo(uriInfo, 'medium')];
 
     return (preferDirectSource ? [directFallback, ...mediaHostSources] : [...mediaHostSources, directFallback]).filter(
       isTruthy
@@ -200,7 +182,7 @@ export const buildTokenImagesStack = (url?: string, preferDirectSource = false):
   return [];
 };
 
-export const isImgUriSvg = (url: string) => url.endsWith('.svg');
+export const isImgUriSvg = (url: string) => /\.svg(?:$|[?#])/i.test(url);
 
 const SVG_DATA_URI_UTF8_PREFIX = 'data:image/svg+xml;charset=utf-8,';
 const SVG_DATA_URI_BASE64_PREFIX = 'data:image/svg+xml;base64,';
