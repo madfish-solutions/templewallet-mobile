@@ -128,7 +128,7 @@ const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTai
 
 const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
-const CLOUDFLARE_IPFS_REGEX = /^https?:\/\/cloudflare-ipfs\.com/;
+const CLOUDFLARE_IPFS_REGEX = /^https?:\/\/cloudflare-ipfs\.com\/ipfs/;
 const buildMediaHostWebUri = (uri: string, size: TcInfraMediaSize) =>
   `${MEDIA_HOST}/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
 
@@ -148,7 +148,7 @@ const buildIpfsMediaUriByInfo = (
   }
 
   if (CLOUDFLARE_IPFS_REGEX.test(uri)) {
-    return `${IPFS_GATE}/${uri.replace(CLOUDFLARE_IPFS_REGEX, '')}`;
+    return `${IPFS_GATE}${uri.replace(CLOUDFLARE_IPFS_REGEX, '')}`;
   }
 
   if (uri.startsWith('http')) {
