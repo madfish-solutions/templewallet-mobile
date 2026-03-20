@@ -1,6 +1,6 @@
 {
   "name": "temple-wallet",
-  "version": "1.53",
+  "version": "1.54",
   "private": true,
   "scripts": {
     "postinstall": "bash postinstall.sh",
