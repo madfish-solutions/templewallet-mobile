@@ -15,6 +15,12 @@ type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
 const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
+const buildIpfsMediaUrisByInfo = (info: MediaUriInfo, isFullView: boolean) => {
+  const sizes: TcInfraMediaSize[] = isFullView ? ['raw', 'large', 'medium', 'small'] : ['medium', 'small'];
+
+  return sizes.map(size => buildIpfsMediaUriByInfo(info, size)).concat(buildIpfsMediaUriByInfo(info, undefined, false));
+};
+
 export const buildCollectibleImagesStack = (
   slug: string,
   { artifactUri, displayUri, thumbnailUri }: AssetMediaURIs,
@@ -35,15 +41,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'display'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'display'),
 
-        buildIpfsMediaUriByInfo(displayInfo, 'raw'),
-        buildIpfsMediaUriByInfo(displayInfo, 'large'),
-        buildIpfsMediaUriByInfo(displayInfo, 'medium'),
-        buildIpfsMediaUriByInfo(displayInfo, 'small'),
+        ...buildIpfsMediaUrisByInfo(displayInfo, true),
 
-        buildIpfsMediaUriByInfo(artifactInfo, 'raw'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'large'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'medium'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'small'),
+        ...buildIpfsMediaUrisByInfo(artifactInfo, true),
 
         assureGetDataUriImage(thumbnailUri)
       ]
@@ -61,14 +61,9 @@ export const buildCollectibleImagesStack = (
         buildObjktMediaURI(displayInfo.ipfs, 'thumb288'),
         buildObjktMediaURI(thumbnailInfo.ipfs, 'thumb288'),
 
-        buildIpfsMediaUriByInfo(thumbnailInfo, 'medium'),
-        buildIpfsMediaUriByInfo(thumbnailInfo, 'small'),
-
-        buildIpfsMediaUriByInfo(displayInfo, 'medium'),
-        buildIpfsMediaUriByInfo(displayInfo, 'small'),
-
-        buildIpfsMediaUriByInfo(artifactInfo, 'medium'),
-        buildIpfsMediaUriByInfo(artifactInfo, 'small')
+        ...buildIpfsMediaUrisByInfo(thumbnailInfo, false),
+        ...buildIpfsMediaUrisByInfo(displayInfo, false),
+        ...buildIpfsMediaUrisByInfo(artifactInfo, false)
       ];
 
   return uniq(stack.filter(isTruthy));
@@ -133,6 +128,7 @@ const buildObjktMediaURI = (ipfsInfo: IpfsUriInfo | nullish, tail: ObjktMediaTai
 
 const buildObjktMediaUriForItemPath = (itemId: string, tail: ObjktMediaTail) => `${OBJKT_MEDIA_HOST}/${itemId}/${tail}`;
 
+const CLOUDFLARE_IPFS_REGEX = /^https?:\/\/cloudflare-ipfs\.com\/ipfs/;
 const buildMediaHostWebUri = (uri: string, size: TcInfraMediaSize) =>
   `${MEDIA_HOST}/${size}/web/${uri.replace(/^https?:\/\//, '')}`;
 
@@ -149,6 +145,10 @@ const buildIpfsMediaUriByInfo = (
     return useMediaHost
       ? `${MEDIA_HOST}/${size}/ipfs/${ipfsInfo.path}${ipfsInfo.search}`
       : `${IPFS_GATE}/${ipfsInfo.path}${ipfsInfo.search}`;
+  }
+
+  if (CLOUDFLARE_IPFS_REGEX.test(uri)) {
+    return `${IPFS_GATE}${uri.replace(CLOUDFLARE_IPFS_REGEX, '')}`;
   }
 
   if (uri.startsWith('http')) {

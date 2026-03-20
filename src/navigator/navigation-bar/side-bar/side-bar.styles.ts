@@ -1,8 +1,8 @@
-import { black, DEFAULT_BORDER_WIDTH, SIDEBAR_WIDTH } from '../../../config/styles';
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
-import { generateShadow } from '../../../styles/generate-shadow';
-import { androidStyles, iosStyles } from '../../../utils/conditional-style';
+import { black, DEFAULT_BORDER_WIDTH, SIDEBAR_WIDTH } from 'src/config/styles';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
+import { generateShadow } from 'src/styles/generate-shadow';
+import { androidStyles, iosStyles } from 'src/utils/conditional-style';
 
 export const useSideBarStyles = createUseStyles(({ colors }) => ({
   container: {

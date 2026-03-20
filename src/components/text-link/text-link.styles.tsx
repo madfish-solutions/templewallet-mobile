@@ -1,4 +1,4 @@
-import { createUseStyles } from '../../styles/create-use-styles';
+import { createUseStyles } from 'src/styles/create-use-styles';
 
 export const useTextLinkStyles = createUseStyles(({ colors, typography }) => ({
   text: {

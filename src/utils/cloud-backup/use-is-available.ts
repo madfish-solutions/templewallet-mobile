@@ -7,7 +7,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { cloudTitle, isCloudAvailable } from './index';
 
 export const useIsCloudAvailable = () => {
-  const [isAvailable, setIsAvailable] = useState(false);
+  const [isAvailable, setIsAvailable] = useState<boolean | undefined>(undefined);
 
   const { trackEvent } = useAnalytics();
 

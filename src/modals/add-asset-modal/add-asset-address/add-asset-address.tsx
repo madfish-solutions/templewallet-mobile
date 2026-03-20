@@ -5,18 +5,15 @@ import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
 import { Divider } from 'src/components/divider/divider';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { EmptyFn } from 'src/config/general';
 import { FormAddressInput } from 'src/form/form-address-input';
 import { FormNumericInput } from 'src/form/form-numeric-input/form-numeric-input';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { loadTokenSuggestionActions } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { useCurrentAccountStoredAssetsListSelector } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { showErrorToast, showWarningToast } from 'src/toast/toast.utils';
 import { getTokenSlug, isValidTokenContract } from 'src/token/utils/token.utils';
 
@@ -64,40 +61,36 @@ export const AddAssetAddress: FC<Props> = ({ onCloseButtonPress, onFormSubmitted
       onSubmit={onSubmit}
     >
       {({ isValid, submitForm }) => (
-        <ScreenContainer isFullScreenMode={true}>
-          <View>
-            <Label label="Address" description="Address of deployed token contract." />
-            <FormAddressInput name="address" testID={AddAssetAddressSelectors.addressInput} />
+        <>
+          <ScreenContainer isFullScreenMode={true}>
+            <View>
+              <Label label="Address" description="Address of deployed token contract." />
+              <FormAddressInput name="address" testID={AddAssetAddressSelectors.addressInput} />
 
-            <Label
-              label="Token ID"
-              description="A non negative integer number that identifies the token inside FA2 contract"
-              isOptional={true}
+              <Label
+                label="Token ID"
+                description="A non negative integer number that identifies the token inside FA2 contract"
+                isOptional={true}
+              />
+              <FormNumericInput name="id" decimals={0} testID={AddAssetAddressSelectors.tokenIdInput} />
+
+              <Divider />
+            </View>
+          </ScreenContainer>
+          <ModalButtonsFloatingContainer>
+            <ButtonLargeSecondary
+              title="Close"
+              onPress={onCloseButtonPress}
+              testID={AddAssetAddressSelectors.closeButton}
             />
-            <FormNumericInput name="id" decimals={0} testID={AddAssetAddressSelectors.tokenIdInput} />
-
-            <Divider />
-          </View>
-
-          <View>
-            <ButtonsContainer>
-              <ButtonLargeSecondary
-                title="Close"
-                onPress={onCloseButtonPress}
-                testID={AddAssetAddressSelectors.closeButton}
-              />
-              <Divider size={formatSize(16)} />
-              <ButtonLargePrimary
-                title="Next"
-                disabled={!isValid}
-                onPress={submitForm}
-                testID={AddAssetAddressSelectors.nextButton}
-              />
-            </ButtonsContainer>
-
-            <InsetSubstitute type="bottom" />
-          </View>
-        </ScreenContainer>
+            <ButtonLargePrimary
+              title="Next"
+              disabled={!isValid}
+              onPress={submitForm}
+              testID={AddAssetAddressSelectors.nextButton}
+            />
+          </ModalButtonsFloatingContainer>
+        </>
       )}
     </Formik>
   );

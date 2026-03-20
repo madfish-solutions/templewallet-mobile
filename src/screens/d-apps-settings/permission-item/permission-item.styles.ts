@@ -1,7 +1,6 @@
+import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
-
-import { DEFAULT_BORDER_WIDTH } from '../../../config/styles';
 
 export const usePermissionItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {

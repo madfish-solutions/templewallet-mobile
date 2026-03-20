@@ -9,6 +9,7 @@ import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { BlackTextLink } from 'src/components/text-link/black-text-link';
 import { ONE_MINUTE } from 'src/config/fixed-times';
@@ -143,9 +144,9 @@ export const ApproveStep: FC<ApproveStepProps> = ({ isError, setIsError }) => {
             <Text style={styles.depositText}>Deposit {exchangeData.coinFrom.networkName} address:</Text>
           </View>
           <Divider size={formatSize(8)} />
-          <TouchableOpacity style={styles.addressContainer} onPress={handleCopyTransactionPress}>
+          <SafeTouchableOpacity style={styles.addressContainer} onPress={handleCopyTransactionPress}>
             <Text style={styles.publicKeyHash}>{exchangeData.depositAddress}</Text>
-          </TouchableOpacity>
+          </SafeTouchableOpacity>
           <Divider size={formatSize(8)} />
           <View style={styles.rowCenterContainer}>
             <View style={styles.buttonsContainer}>

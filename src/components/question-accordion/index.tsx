@@ -1,10 +1,10 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Animated, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { ANIMATION_DURATION } from 'src/config/animation';
 import { useAnimationInterpolate } from 'src/hooks/use-animation-interpolate.hook';
@@ -22,7 +22,7 @@ interface Props extends TestIdProps {
 const ANIMATION_CONFIGURATION = { duration: ANIMATION_DURATION, useNativeDriver: false };
 const CHEVRON_ANIMATION_INTERPOLATION = { outputRange: ['180deg', '0deg'] };
 
-export const QuestionAccordion: FC<Props> = ({ question, children, testID, testIDProperties }) => {
+export const QuestionAccordion: FCWithChildren<Props> = ({ question, children, testID, testIDProperties }) => {
   const [isOpen, setIsOpen] = useState(false);
   const styles = useQuestionAccordionStyles();
   const animation = useAnimationRef(isOpen);
@@ -34,7 +34,7 @@ export const QuestionAccordion: FC<Props> = ({ question, children, testID, testI
   return (
     <View style={styles.container}>
       <TouchableWithAnalytics
-        Component={TouchableOpacity}
+        Component={SafeTouchableOpacity}
         testID={testID}
         testIDProperties={testIDProperties}
         style={styles.switcher}

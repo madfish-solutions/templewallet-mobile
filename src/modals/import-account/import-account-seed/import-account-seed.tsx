@@ -7,19 +7,16 @@ import { useDispatch } from 'react-redux';
 import { AndroidKeyboardDisclaimer } from 'src/components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { ButtonsContainer } from 'src/components/button/buttons-container/buttons-container';
-import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
+import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { showLoaderAction } from 'src/store/settings/settings-actions';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
@@ -43,7 +40,6 @@ interface Props {
 
 export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   const dispatch = useDispatch();
-  const { goBack } = useNavigation();
   const styles = useImportAccountFromSeedStyles();
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
@@ -52,21 +48,22 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Seed Phrase" /> }, []);
 
-  const onSubmit = useCallback(({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
-    dispatch(showLoaderAction());
+  const onSubmit = useCallback(
+    ({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
+      dispatch(showLoaderAction());
 
-    setTimeout(() => {
-      const seed = mnemonicToSeedSync(seedPhrase, password);
-      const privateKey = seedToPrivateKey(seed, isString(derivationPath) ? derivationPath : undefined);
+      setTimeout(() => {
+        const seed = mnemonicToSeedSync(seedPhrase, password);
+        const privateKey = seedToPrivateKey(seed, isString(derivationPath) ? derivationPath : undefined);
 
-      createImportedAccount({
-        name: `Account ${accountsIndex}`,
-        privateKey
-      });
-
-      goBack();
-    }, 0);
-  }, []);
+        createImportedAccount({
+          name: `Account ${accountsIndex}`,
+          privateKey
+        });
+      }, 0);
+    },
+    [accountsIndex, createImportedAccount, dispatch]
+  );
 
   const formik = useFormik({
     initialValues: importAccountSeedInitialValues,
@@ -101,23 +98,15 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
           <Divider size={formatSize(12)} />
         </View>
       </ScreenContainer>
-      <ButtonsFloatingContainer>
-        <ButtonsContainer style={styles.buttonsContainer}>
-          <View style={styles.flex}>
-            <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={ImportAccountSeedSelectors.backButton} />
-          </View>
-          <Divider size={formatSize(15)} />
-          <View style={styles.flex}>
-            <ButtonLargePrimary
-              title="Import"
-              disabled={!formik.isValid}
-              onPress={useCallbackIfOnline(formik.submitForm)}
-              testID={ImportAccountSeedSelectors.importButton}
-            />
-          </View>
-        </ButtonsContainer>
-        <InsetSubstitute type="bottom" />
-      </ButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
+        <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={ImportAccountSeedSelectors.backButton} />
+        <ButtonLargePrimary
+          title="Import"
+          disabled={!formik.isValid}
+          onPress={useCallbackIfOnline(formik.submitForm)}
+          testID={ImportAccountSeedSelectors.importButton}
+        />
+      </ModalButtonsFloatingContainer>
     </FormikProvider>
   );
 });

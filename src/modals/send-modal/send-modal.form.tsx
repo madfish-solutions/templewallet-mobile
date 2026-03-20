@@ -1,10 +1,10 @@
 import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from 'yup';
 
-import { AssetAmountInterface } from '../../components/asset-amount-input/asset-amount-input';
-import { assetAmountValidation } from '../../form/validation/asset-amount';
-import { makeRequiredErrorMessage } from '../../form/validation/messages';
-import { walletAddressValidation } from '../../form/validation/wallet-address';
-import { AccountBaseInterface } from '../../interfaces/account.interface';
+import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { assetAmountValidation } from 'src/form/validation/asset-amount';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
+import { walletAddressValidation } from 'src/form/validation/wallet-address';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 
 export interface SendModalFormValues {
   assetAmount: AssetAmountInterface;

@@ -32,7 +32,6 @@ export const RadioGroup = <T extends string>({
     };
 
     return items.map(item => ({
-      key: item.value,
       ...item,
       selected: item.value === currentValue,
       onPress: (value: string) =>
@@ -49,11 +48,12 @@ export const RadioGroup = <T extends string>({
     <View style={groupStyles.container}>
       {itemsLocal.map(item => (
         <RadioItem
-          {...item}
+          key={item.value}
           color={isDefined(item.disabledMessage) ? disabledColor : color}
           containerStyle={itemContainerStyle}
           labelStyle={isDefined(item.disabledMessage) ? totalDisabledLabelStyle : itemLabelStyle}
           testID={testID}
+          {...item}
         />
       ))}
     </View>

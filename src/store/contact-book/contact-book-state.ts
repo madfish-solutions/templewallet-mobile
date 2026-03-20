@@ -1,4 +1,4 @@
-import { AccountBaseInterface } from '../../interfaces/account.interface';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 
 interface ContactStateInterface {
   tezosBalance: string;

@@ -10,7 +10,7 @@ import { WhiteContainerDivider } from 'src/components/white-container/white-cont
 import { isIOS } from 'src/config/system';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsBackupMadeSelector } from 'src/store/settings/settings-selectors';
 import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -25,7 +25,7 @@ const iconSize = formatSize(32);
 export const Backup = () => {
   const colors = useColors();
   const styles = useBackupStyles();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const account = useSelectedAccountSelector();
   const { isManualBackupMade } = useIsBackupMadeSelector();
@@ -56,7 +56,10 @@ export const Backup = () => {
 
           <WhiteContainerDivider />
 
-          <TouchableOpacity style={styles.actionButtonContainer} onPress={() => navigate(ScreensEnum.ManualBackup)}>
+          <TouchableOpacity
+            style={styles.actionButtonContainer}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.ManualBackup })}
+          >
             <Text style={styles.actionButtonText}>Backup manually</Text>
           </TouchableOpacity>
         </WhiteContainer>

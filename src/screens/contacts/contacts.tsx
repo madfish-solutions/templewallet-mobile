@@ -9,20 +9,16 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { formatSize } from 'src/styles/format-size';
 
 import { ContactItem } from './contact-item/contact-item';
 import { ContactsSelectors } from './contacts.selectors';
 
-/** padding size + robot icon size */
-const FLOORED_ITEM_HEIGHT = Math.floor(formatSize(20) + formatSize(44));
-
 const keyExtractor = (item: AccountBaseInterface) => item.publicKeyHash;
 
 export const Contacts = memo(() => {
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const contacts = useContactsSelector();
 
   useNavigationSetOptions(
@@ -30,7 +26,7 @@ export const Contacts = memo(() => {
       <HeaderTitle title="Contacts" />,
       <HeaderButton
         iconName={IconNameEnum.PlusIconOrange}
-        onPress={() => navigate(ModalsEnum.AddContact)}
+        onPress={() => navigateToModal(ModalsEnum.AddContact)}
         testID={ContactsSelectors.addContactButton}
       />
     ),
@@ -49,7 +45,6 @@ export const Contacts = memo(() => {
       data={contacts}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
-      estimatedItemSize={FLOORED_ITEM_HEIGHT}
       ListEmptyComponent={ListEmptyComponent}
       testID={ContactsSelectors.contactItem}
     />

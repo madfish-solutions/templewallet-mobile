@@ -1,5 +1,5 @@
 import { MichelsonMap } from '@taquito/taquito';
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { BigMap } from 'src/interfaces/big-map.interface';

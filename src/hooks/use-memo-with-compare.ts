@@ -22,5 +22,5 @@ export const useMemoWithCompare = <T>(
     if (comparator(prevVal, nextVal)) return prevVal;
 
     return (valueRef.current = nextVal);
-  }, deps);
+  }, deps ?? []);
 };

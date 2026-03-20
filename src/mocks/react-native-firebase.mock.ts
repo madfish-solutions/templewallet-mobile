@@ -1,4 +1,4 @@
-export const mockReactNativeFirebaseMessaging = {
+const mockReactNativeFirebaseMessaging = {
   messaging: jest.fn(() => ({
     getToken: jest.fn(),
     registerDeviceForRemoteMessages: jest.fn(),
@@ -6,7 +6,7 @@ export const mockReactNativeFirebaseMessaging = {
   }))
 };
 
-export const mockReactNativeFirebaseAppCheck = {
+const mockReactNativeFirebaseAppCheck = {
   firebase: {
     appCheck: jest.fn(() => ({
       activate: jest.fn(),
