@@ -157,7 +157,7 @@ const buildIpfsMediaUriByInfo = (
   }
 };
 
-export const formatImgUri = (uri = '', size?: TcInfraMediaSize, useMediaHost?: boolean) =>
+export const formatImgUri = (uri = '', size: TcInfraMediaSize = DEFAULT_MEDIA_SIZE, useMediaHost = true) =>
   buildIpfsMediaUriByInfo(getMediaUriInfo(uri), size, useMediaHost);
 
 export const buildTokenImagesStack = (url?: string, preferDirectSource = false): string[] => {
