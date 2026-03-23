@@ -189,5 +189,20 @@ export const MIGRATIONS: MigrationManifest = {
     }
 
     return state;
+  },
+  '9': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
+    if (!untypedState) {
+      return untypedState;
+    }
+    const state = untypedState as TypedPersistedRootState;
+
+    state.sapling = {
+      accountsRecord: {},
+      hasSeenAnnouncement: false,
+      isPreparing: false,
+      preparedOpParams: null
+    };
+
+    return state;
   }
 };

@@ -24,6 +24,8 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { Divider } from '../../components/divider/divider.tsx';
+
 export const TokenScreen = () => {
   const { token: initialToken } = useScreenParams<ScreensEnum.TokenScreen>();
 
@@ -75,7 +77,7 @@ export const TokenScreen = () => {
     <>
       <HeaderCard>
         <TokenEquityValue token={token} />
-
+        <Divider size={formatSize(4)} />
         <PublicKeyHashText publicKeyHash={accountPkh} marginBottom={formatSize(16)} />
 
         <HeaderCardActionButtons token={token} />

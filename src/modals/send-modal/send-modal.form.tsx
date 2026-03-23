@@ -1,6 +1,7 @@
 import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { SAPLING_MEMO_SIZE } from 'src/config/sapling';
 import { assetAmountValidation } from 'src/form/validation/asset-amount';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { walletAddressValidation } from 'src/form/validation/wallet-address';
@@ -11,6 +12,7 @@ export interface SendModalFormValues {
   receiverPublicKeyHash: string;
   recipient: AccountBaseInterface;
   transferBetweenOwnAccounts: boolean;
+  memo: string;
 }
 
 export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object().shape({
@@ -25,5 +27,6 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
     .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>
       value ? schema.required(makeRequiredErrorMessage('To')) : schema
     ) as SchemaOf<AccountBaseInterface>,
-  transferBetweenOwnAccounts: boolean().required()
+  transferBetweenOwnAccounts: boolean().required(),
+  memo: string().max(SAPLING_MEMO_SIZE, `Memo must be at most ${SAPLING_MEMO_SIZE} symbols`).ensure()
 });

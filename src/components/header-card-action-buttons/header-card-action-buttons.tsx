@@ -33,11 +33,12 @@ import { useHeaderCardActionButtonsStyles } from './header-card-action-buttons.s
 
 interface Props {
   token: TokenInterface;
+  onSendPress?: () => void;
 }
 
 const CHAINBITS_URL = 'https://buy.chainbits.com';
 
-export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
+export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   const dispatch = useDispatch();
   const navigateToModal = useNavigateToModal();
   const navigateToScreen = useNavigateToScreen();
@@ -112,6 +113,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ token }) => {
 
   const handleSendButton = () => {
     if (!emptyBalance) {
+      if (onSendPress) {
+        return onSendPress();
+      }
+
       return navigateToModal(ModalsEnum.Send, { token });
     }
 

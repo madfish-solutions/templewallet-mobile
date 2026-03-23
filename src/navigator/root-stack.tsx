@@ -25,12 +25,14 @@ import { InAppBrowser } from 'src/modals/in-app-browser';
 import { KoloCardWidgetModal } from 'src/modals/kolo-card';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
+import { RebalanceModal } from 'src/modals/rebalance-modal/rebalance-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
 import { SendModal } from 'src/modals/send-modal/send-modal';
+import { ShieldedAnnouncementModal } from 'src/modals/shielded-announcement-modal/shielded-announcement-modal';
 import { SplashModal } from 'src/modals/splash-modal/splash-modal';
 import { AfterSyncQRScan } from 'src/modals/sync-account/after-sync-qr-scan/after-sync-qr-scan';
 import { AppCheckWarning } from 'src/screens/app-check/app-check-warning';
@@ -197,6 +199,16 @@ export const RootStackScreen = () => {
               name={ModalsEnum.ConfirmSync}
               component={AfterSyncQRScan}
               options={useModalOptions('Confirm Sync')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.Rebalance}
+              component={RebalanceModal}
+              options={useModalOptions('Rebalance')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ShieldedAnnouncement}
+              component={ShieldedAnnouncementModal}
+              options={useModalOptions('Announcement')}
             />
           </RootStack.Navigator>
         </CurrentRouteNameContext>

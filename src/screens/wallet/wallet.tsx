@@ -1,6 +1,6 @@
 import { StackActions, useFocusEffect } from '@react-navigation/native';
 import React, { memo, useCallback, useEffect } from 'react';
-import { View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
@@ -121,6 +121,7 @@ export const Wallet = memo(() => {
         </View>
 
         <TokenEquityValue token={tezosToken} forTotalBalance={true} />
+        <Divider size={formatSize(16)} />
 
         <HeaderCardActionButtons token={tezosToken} />
 
@@ -134,6 +135,14 @@ export const Wallet = memo(() => {
       </HeaderCard>
 
       <TokensList />
+
+      {/* TODO: Remove — temporary debug buttons */}
+      <TouchableOpacity
+        onPress={() => navigateToModal(ModalsEnum.ShieldedAnnouncement)}
+        style={{ padding: 12, margin: 8, backgroundColor: '#ff6b00', borderRadius: 8, alignItems: 'center' }}
+      >
+        <Text style={{ color: '#fff', fontWeight: '600' }}>Show Announcement</Text>
+      </TouchableOpacity>
 
       <WalletOverlay />
 
