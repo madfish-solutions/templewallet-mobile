@@ -7,11 +7,12 @@ import { useIsKnownSvgSelector } from 'src/store/tokens-metadata/tokens-metadata
 import { formatImgUri, isImgUriDataUri, isImgUriSvg } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 
-const ENDS_WITH_EXTENSION_REGEX = /\.[a-z0-9]+$/i;
+const HAS_EXTENSION_REGEX = /\.[a-z0-9]+(?:$|[?#])/i;
+const IPFS_BACKED_URI_REGEX = /^(ipfs:\/\/|https?:\/\/[^?#]+\/ipfs\/)/i;
 
 export const useImageType = (imgUri: string) => {
   const dispatch = useDispatch();
-  const mayBeUnknownSvg = !ENDS_WITH_EXTENSION_REGEX.test(imgUri);
+  const mayBeUnknownSvg = !HAS_EXTENSION_REGEX.test(imgUri) && IPFS_BACKED_URI_REGEX.test(imgUri);
   const isKnownSvg = useIsKnownSvgSelector(imgUri);
 
   const lastImgUri = useRef(imgUri);
@@ -39,12 +40,15 @@ export const useImageType = (imgUri: string) => {
   }, [imgUri, mayBeUnknownSvg, dispatch]);
 
   const imageType = useMemo(() => {
-    if ((!isImgUriSvg(imgUri) && (!isKnownSvg || !rasterFailed)) || !isString(formatImgUri(imgUri))) {
+    if (
+      (!isImgUriSvg(imgUri) && (!mayBeUnknownSvg || !isKnownSvg || !rasterFailed)) ||
+      !isString(formatImgUri(imgUri))
+    ) {
       return ImageTypeEnum.RemoteRaster;
     }
 
     return isImgUriDataUri(imgUri) ? ImageTypeEnum.DataUri : ImageTypeEnum.RemoteSvg;
-  }, [imgUri, isKnownSvg, rasterFailed]);
+  }, [imgUri, isKnownSvg, rasterFailed, mayBeUnknownSvg]);
 
   return { imageType, svgFailed, rasterFailed, onRasterRenderError, onSvgRenderError };
 };

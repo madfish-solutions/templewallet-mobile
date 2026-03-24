@@ -52,10 +52,9 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   const defaultStyleConfig = useButtonMediumStyleConfig();
   const isLoaderBeingShown = useIsShowLoaderSelector();
 
-  const errorMessage =
-    isDefined(token.address) && tezosToken.balance === emptyToken.balance
-      ? `You need to have ${metadata.symbol} to pay gas fee`
-      : 'Balance is zero';
+  const isTezBalanceTooLow =
+    isDefined(token.address) && token.address === tezosToken.address && tezosToken.balance === emptyToken.balance;
+  const errorMessage = isTezBalanceTooLow ? `You need to have ${metadata.symbol} to pay gas fee` : 'Balance is zero';
 
   const emptyBalance = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
   const disabledSendButton = emptyBalance && LIMIT_FIN_FEATURES;
@@ -121,7 +120,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
     }
 
     showErrorToast({ description: errorMessage });
-    canUseOnRamp && dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
+
+    if (isTezBalanceTooLow && canUseOnRamp) {
+      dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
+    }
   };
 
   return (

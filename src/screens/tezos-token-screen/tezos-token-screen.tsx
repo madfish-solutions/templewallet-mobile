@@ -19,9 +19,11 @@ import { TokenDropdownItem } from 'src/components/token-dropdown/token-dropdown-
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
+import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useIsSaplingCredentialsLoadedSelector, useShieldedBalanceSelector } from 'src/store/sapling';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
@@ -101,6 +103,8 @@ export const TezosTokenScreen = () => {
 
   usePageAnalytic(ScreensEnum.TezosTokenScreen);
 
+  const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
+
   const handleInfoIconClick = useCallback(
     () => navigateToScreen({ screen: ScreensEnum.TokenInfo, params: { token: tezosToken } }),
     [navigateToScreen, tezosToken]
@@ -179,6 +183,8 @@ export const TezosTokenScreen = () => {
           )}
         </View>
       </BottomSheet>
+
+      <OnRampOverlay isStart={false} onClose={onOnRampOverlayClose} isOpen={onRampOverlayIsOpened} />
     </>
   );
 };
