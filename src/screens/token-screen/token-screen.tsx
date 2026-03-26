@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
+import { Divider } from 'src/components/divider/divider';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
@@ -23,8 +24,6 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
-
-import { Divider } from 'src/components/divider/divider';
 
 export const TokenScreen = () => {
   const { token: initialToken } = useScreenParams<ScreensEnum.TokenScreen>();

@@ -22,7 +22,6 @@ export enum ScreensEnum {
   Notifications = 'Notifications',
   NotificationsItem = 'NotificationsItem',
   Collection = 'Collection',
-  Sapling = 'Sapling',
 
   /** DApps stack **/
   DApps = 'DApps',
@@ -76,8 +75,6 @@ export type ScreensParamList = {
   [ScreensEnum.Delegation]: undefined;
   [ScreensEnum.ManageAssets]: { collectibles: boolean };
   [ScreensEnum.Activity]: undefined;
-  [ScreensEnum.Sapling]: undefined;
-
   [ScreensEnum.ScanQrCode]: undefined;
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };
