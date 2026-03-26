@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -15,6 +15,7 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from 'src/components/token-dropdown/token-dropdown-item/token-dropdown-item';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
@@ -25,7 +26,8 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { navigateAction } from 'src/store/root-state.actions';
-import { useIsSaplingCredentialsLoadedSelector, useShieldedBalanceSelector } from 'src/store/sapling';
+import { useShieldedBalanceSelector } from 'src/store/sapling';
+import { loadSaplingTransactionHistoryActions } from 'src/store/sapling/sapling-actions';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -36,8 +38,12 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { PrivateTezosTokenHistory } from './private-tezos-token-history/private-tezos-token-history';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
 import { useTezosTokenScreenStyles } from './tezos-token-screen.styles';
+
+const HISTORY_TAB_VALUES = ['Public', 'Private'];
+const PUBLIC_TAB_INDEX = 0;
 
 export const TezosTokenScreen = () => {
   const dispatch = useDispatch();
@@ -46,42 +52,34 @@ export const TezosTokenScreen = () => {
   const accountPkh = useCurrentAccountPkhSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
-  const isCredentialsLoaded = useIsSaplingCredentialsLoadedSelector();
   const styles = useTezosTokenScreenStyles();
   const colors = useColors();
   const sendAssetsSheetController = useBottomSheetController();
   const tezExchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
 
-  const showBalanceSplit = isCredentialsLoaded;
+  const [historyTabIndex, setHistoryTabIndex] = useState(PUBLIC_TAB_INDEX);
 
   const combinedToken = useMemo(() => {
-    if (!showBalanceSplit) {
-      return tezosToken;
-    }
-
     const combinedBalance = new BigNumber(tezosToken.balance).plus(shieldedBalanceMutez).toFixed();
 
     return { ...tezosToken, balance: combinedBalance };
-  }, [tezosToken, shieldedBalanceMutez, showBalanceSplit]);
+  }, [tezosToken, shieldedBalanceMutez]);
 
   const formattedPublicBalance = useMemo(() => {
-    if (!showBalanceSplit || !tezosToken.balance) {
+    if (!tezosToken.balance) {
       return '';
     }
 
     return mutezToTz(new BigNumber(tezosToken.balance), TEZ_TOKEN_METADATA.decimals).toFormat();
-  }, [showBalanceSplit, tezosToken.balance]);
+  }, [tezosToken.balance]);
 
-  const formattedShieldedBalance = useMemo(() => {
-    if (!showBalanceSplit) {
-      return '';
-    }
-
-    return mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_METADATA.decimals).toFormat();
-  }, [showBalanceSplit, shieldedBalanceMutez]);
+  const formattedShieldedBalance = useMemo(
+    () => mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_METADATA.decimals).toFormat(),
+    [shieldedBalanceMutez]
+  );
 
   const shieldedTezToken: TokenInterface | undefined = useMemo(() => {
-    if (!showBalanceSplit || shieldedBalanceMutez === '0') {
+    if (shieldedBalanceMutez === '0') {
       return undefined;
     }
 
@@ -91,7 +89,7 @@ export const TezosTokenScreen = () => {
       exchangeRate: tezExchangeRate,
       visibility: VisibilityEnum.Visible
     };
-  }, [showBalanceSplit, shieldedBalanceMutez, tezExchangeRate]);
+  }, [shieldedBalanceMutez, tezExchangeRate]);
 
   const publicTezToken: TokenInterface = useMemo(
     () => ({
@@ -113,6 +111,18 @@ export const TezosTokenScreen = () => {
   const handleRebalancePress = useCallback(() => {
     dispatch(navigateAction({ screen: ModalsEnum.Rebalance }));
   }, [dispatch]);
+
+  const handleHistoryTabChange = useCallback(
+    (index: number) => {
+      setHistoryTabIndex(index);
+      if (index !== PUBLIC_TAB_INDEX) {
+        dispatch(loadSaplingTransactionHistoryActions.submit());
+      }
+    },
+    [dispatch]
+  );
+
+  const isPrivateTab = historyTabIndex !== PUBLIC_TAB_INDEX;
 
   const handleSendPress = useCallback(() => {
     if (shieldedTezToken) {
@@ -144,28 +154,38 @@ export const TezosTokenScreen = () => {
         <Divider size={formatSize(4)} />
         <PublicKeyHashText publicKeyHash={accountPkh} marginTop={0} />
 
-        {showBalanceSplit && (
-          <View style={styles.balanceSplitRow}>
-            <View style={styles.balancePill}>
-              <Text style={styles.balancePillText}>Public:</Text>
-              <HideBalance style={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
-            </View>
-
-            <TouchableOpacity onPress={handleRebalancePress} style={styles.rebalanceButton}>
-              <Icon name={IconNameEnum.SwapArrow} size={formatSize(16)} color={colors.blue} />
-            </TouchableOpacity>
-
-            <View style={styles.balancePill}>
-              <Text style={styles.balancePillText}>Shielded:</Text>
-              <HideBalance style={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
-            </View>
+        <View style={styles.balanceSplitRow}>
+          <View style={styles.balancePill}>
+            <Text style={styles.balancePillText}>Public:</Text>
+            <HideBalance style={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
           </View>
-        )}
+
+          <TouchableOpacity onPress={handleRebalancePress} style={styles.rebalanceButton}>
+            <Icon name={IconNameEnum.SwapArrow} size={formatSize(16)} color={colors.blue} />
+          </TouchableOpacity>
+
+          <View style={styles.balancePill}>
+            <Text style={styles.balancePillText}>Shielded:</Text>
+            <HideBalance style={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
+          </View>
+        </View>
 
         <HeaderCardActionButtons token={tezosToken} onSendPress={shieldedTezToken ? handleSendPress : undefined} />
       </HeaderCard>
 
-      <TokenScreenContentContainer historyComponent={<TezosTokenHistory />} token={tezosToken} />
+      <TokenScreenContentContainer
+        historyComponent={isPrivateTab ? <PrivateTezosTokenHistory /> : <TezosTokenHistory />}
+        token={tezosToken}
+        headerLeft={
+          <TextSegmentControl
+            selectedIndex={historyTabIndex}
+            values={HISTORY_TAB_VALUES}
+            width={formatSize(132)}
+            onChange={handleHistoryTabChange}
+            testID="TezosTokenScreen/HistoryTab"
+          />
+        }
+      />
 
       <BottomSheet description="Assets" contentHeight={formatSize(258)} controller={sendAssetsSheetController}>
         <View style={styles.sendAssetsListContainer}>

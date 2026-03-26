@@ -1,12 +1,16 @@
+import { ParamsWithKind } from '@taquito/taquito';
+
+import type { SaplingTransactionHistoryItem } from 'src/interfaces/sapling-service.interface';
+
 export interface SaplingAccountState {
   saplingAddress: string | null;
   viewingKey: string | null;
   shieldedBalance: string;
   isCredentialsLoaded: boolean;
   isBalanceLoading: boolean;
+  transactionHistory: SaplingTransactionHistoryItem[];
+  isHistoryLoading: boolean;
 }
-
-import type { ParamsWithKind } from '@taquito/taquito';
 
 export interface SaplingState {
   accountsRecord: Record<string, SaplingAccountState>;
@@ -20,12 +24,14 @@ export const initialSaplingAccountState: SaplingAccountState = {
   viewingKey: null,
   shieldedBalance: '0',
   isCredentialsLoaded: false,
-  isBalanceLoading: false
+  isBalanceLoading: false,
+  transactionHistory: [],
+  isHistoryLoading: false
 };
 
 export const saplingInitialState: SaplingState = {
   accountsRecord: {},
-  hasSeenAnnouncement: false,
+  hasSeenAnnouncement: true,
   isPreparing: false,
   preparedOpParams: null
 };

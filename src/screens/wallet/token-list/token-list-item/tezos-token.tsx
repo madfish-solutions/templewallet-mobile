@@ -12,14 +12,13 @@ import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
-import { useIsSaplingCredentialsLoadedSelector, useShieldedBalanceSelector } from 'src/store/sapling';
+import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { useTezosTokenBalanceSplitStyles } from './tezos-token.styles';
-import { TokenListItem } from './token-list-item';
 import { useTokenListItemStyles } from './token-list-item.styles';
 
 const SHIELDED_BALANCE_INFO_TITLE = 'Public and Shielded balance';
@@ -32,33 +31,25 @@ export const TezosToken = memo(() => {
   const navigateToScreen = useNavigateToScreen();
   const { isTezosNode } = useNetworkInfo();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
-  const showBalanceSplit = useIsSaplingCredentialsLoadedSelector();
 
   const combinedToken = useMemo(() => {
-    if (!showBalanceSplit) {
-      return tezosToken;
-    }
-
     const combinedBalance = new BigNumber(tezosToken.balance).plus(shieldedBalanceMutez).toFixed();
 
     return { ...tezosToken, balance: combinedBalance };
-  }, [tezosToken, shieldedBalanceMutez, showBalanceSplit]);
+  }, [tezosToken, shieldedBalanceMutez]);
 
   const formattedPublicBalance = useMemo(() => {
-    if (!showBalanceSplit || !tezosToken.balance) {
+    if (!tezosToken.balance) {
       return null;
     }
 
     return mutezToTz(new BigNumber(tezosToken.balance), TEZ_TOKEN_METADATA.decimals).toFormat();
-  }, [showBalanceSplit, tezosToken.balance]);
+  }, [tezosToken.balance]);
 
-  const formattedShieldedBalance = useMemo(() => {
-    if (!showBalanceSplit) {
-      return null;
-    }
-
-    return mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_METADATA.decimals).toFormat();
-  }, [showBalanceSplit, shieldedBalanceMutez]);
+  const formattedShieldedBalance = useMemo(
+    () => mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_METADATA.decimals).toFormat(),
+    [shieldedBalanceMutez]
+  );
 
   const onPress = useCallback(() => navigateToScreen({ screen: ScreensEnum.TezosTokenScreen }), [navigateToScreen]);
 
@@ -68,16 +59,6 @@ export const TezosToken = memo(() => {
 
   const styles = useTezosTokenBalanceSplitStyles();
   const tokenListItemStyles = useTokenListItemStyles();
-
-  if (!showBalanceSplit) {
-    return (
-      <TokenListItem
-        token={combinedToken}
-        apy={isTezosNode && currentBaker ? delegationApy : undefined}
-        onPress={onPress}
-      />
-    );
-  }
 
   const apy = isTezosNode && currentBaker ? delegationApy : undefined;
 

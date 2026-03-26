@@ -20,6 +20,7 @@ import {
   cancelSaplingPreparationAction,
   clearSaplingCredentialsAction,
   loadSaplingCredentialsActions,
+  loadSaplingTransactionHistoryActions,
   loadShieldedBalanceActions,
   prepareSaplingTransactionActions,
   PrepareSaplingTxPayload
@@ -181,7 +182,8 @@ async function prepareSaplingTx(
 
   switch (payload.type) {
     case 'shield': {
-      const saplingAddress = state$.value.sapling.accountsRecord[publicKeyHash]?.saplingAddress;
+      const saplingAddress =
+        payload.recipientAddress || state$.value.sapling.accountsRecord[publicKeyHash]?.saplingAddress;
 
       if (saplingAddress == null) {
         throw new Error('Sapling address not available');
@@ -192,7 +194,8 @@ async function prepareSaplingTx(
         hdIndex: saplingMnemonic.hdIndex,
         saplingAddress,
         amount,
-        rpcUrl
+        rpcUrl,
+        memo: payload.memo
       });
 
       return result.opParams;
@@ -224,6 +227,40 @@ async function prepareSaplingTx(
       throw new Error(`Unknown sapling transaction type: ${payload.type}`);
   }
 }
+
+const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
+  action$.pipe(
+    ofType(loadSaplingTransactionHistoryActions.submit),
+    withSelectedAccount(state$),
+    withSelectedRpcUrl(state$),
+    switchMap(([[, selectedAccount], rpcUrl]) => {
+      const saplingState = state$.value.sapling.accountsRecord[selectedAccount.publicKeyHash];
+
+      if (saplingState?.viewingKey == null) {
+        return EMPTY;
+      }
+
+      return from(saplingService.getTransactionHistory(saplingState.viewingKey, rpcUrl)).pipe(
+        concatMap(history => {
+          const allTransactions = [...history.incoming, ...history.outgoing].sort((a, b) => b.position - a.position);
+
+          return of(
+            loadSaplingTransactionHistoryActions.success({
+              publicKeyHash: selectedAccount.publicKeyHash,
+              transactions: allTransactions
+            })
+          );
+        }),
+        catchError(err => {
+          showErrorToast({
+            description: err instanceof Error ? err.message : 'Failed to load transaction history'
+          });
+
+          return of(loadSaplingTransactionHistoryActions.fail(err instanceof Error ? err.message : 'Unknown error'));
+        })
+      );
+    })
+  );
 
 const clearCacheOnAccountSwitchEpic: AnyActionEpic = action$ =>
   action$.pipe(
@@ -288,6 +325,7 @@ const autoLoadBalanceAfterCredentialsEpic: AnyActionEpic = action$ =>
 export const saplingEpics = combineEpics(
   loadSaplingCredentialsEpic,
   loadShieldedBalanceEpic,
+  loadSaplingTransactionHistoryEpic,
   prepareSaplingTransactionEpic,
   clearCacheOnAccountSwitchEpic,
   clearCacheOnLockEpic,

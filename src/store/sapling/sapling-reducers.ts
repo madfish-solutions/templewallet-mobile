@@ -6,6 +6,7 @@ import {
   clearPreparedOpParamsAction,
   clearSaplingCredentialsAction,
   loadSaplingCredentialsActions,
+  loadSaplingTransactionHistoryActions,
   loadShieldedBalanceActions,
   prepareSaplingTransactionActions,
   setHasSeenAnnouncementAction
@@ -58,6 +59,7 @@ export const saplingReducers = createReducer<SaplingState>(saplingInitialState, 
 
   builder.addCase(prepareSaplingTransactionActions.success, (state, { payload }) => {
     state.isPreparing = false;
+    // @ts-expect-error: Immer's Draft<ParamsWithKind[]> exceeds TS type depth limit
     state.preparedOpParams = payload;
   });
 
@@ -69,6 +71,26 @@ export const saplingReducers = createReducer<SaplingState>(saplingInitialState, 
   builder.addCase(cancelSaplingPreparationAction, state => {
     state.isPreparing = false;
     state.preparedOpParams = null;
+  });
+
+  builder.addCase(loadSaplingTransactionHistoryActions.submit, (state, _action) => {
+    for (const pkh of Object.keys(state.accountsRecord)) {
+      if (state.accountsRecord[pkh].isCredentialsLoaded) {
+        state.accountsRecord[pkh].isHistoryLoading = true;
+      }
+    }
+  });
+
+  builder.addCase(loadSaplingTransactionHistoryActions.success, (state, { payload }) => {
+    const { publicKeyHash, transactions } = payload;
+    state.accountsRecord[publicKeyHash].transactionHistory = transactions;
+    state.accountsRecord[publicKeyHash].isHistoryLoading = false;
+  });
+
+  builder.addCase(loadSaplingTransactionHistoryActions.fail, (state, { payload: _error }) => {
+    for (const pkh of Object.keys(state.accountsRecord)) {
+      state.accountsRecord[pkh].isHistoryLoading = false;
+    }
   });
 
   builder.addCase(clearPreparedOpParamsAction, state => {

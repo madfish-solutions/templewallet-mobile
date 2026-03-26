@@ -16,7 +16,7 @@ import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { useDomainName } from 'src/hooks/use-domain-name.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
-import { useSaplingAddressSelector, useIsSaplingCredentialsLoadedSelector } from 'src/store/sapling';
+import { useSaplingAddressSelector } from 'src/store/sapling';
 import { toggleDomainAddressShown } from 'src/store/settings/settings-actions';
 import { useIsShownDomainNameSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
@@ -43,8 +43,7 @@ export const ReceiveModal = () => {
   const domainName = useDomainName(publicKeyHash);
 
   const saplingAddress = useSaplingAddressSelector();
-  const isCredentialsLoaded = useIsSaplingCredentialsLoadedSelector();
-  const showShieldedPage = isCredentialsLoaded && isString(saplingAddress);
+  const showShieldedPage = isString(saplingAddress);
 
   const [activePageIndex, setActivePageIndex] = useState(0);
 

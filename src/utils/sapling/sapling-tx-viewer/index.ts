@@ -254,7 +254,9 @@ export class SaplingTransactionViewer {
     if (decryptedOut) {
       const { recipientDiversifiedTransmissionKey: pkd, ephemeralPrivateKey: esk } =
         this.extractPkdAndEsk(decryptedOut);
-      const keyAgreement = await nativeKeyAgreement(toBase64(pkd), toBase64(esk));
+      const keyAgreement = bufToUint8Array(
+        Buffer.from(await nativeKeyAgreement(toBase64(pkd), toBase64(esk)), 'base64')
+      );
       const keyAgreementHash = blake.blake2b(keyAgreement, bufToUint8Array(Buffer.from(KDF_KEY)), 32);
 
       const decryptedEnc = await this.decryptCiphertext(keyAgreementHash, hex2buf(nonce_enc), hex2buf(payload_enc));
@@ -270,7 +272,7 @@ export class SaplingTransactionViewer {
 
         try {
           const isValid = await verifyCommitment(
-            commitment,
+            toBase64(Buffer.from(commitment, 'hex')),
             toBase64(paymentAddress),
             convertValueToBigNumber(value).toNumber(),
             toBase64(rcm)

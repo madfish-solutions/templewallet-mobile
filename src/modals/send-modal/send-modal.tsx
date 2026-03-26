@@ -28,7 +28,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
-import { useShieldedBalanceSelector, useIsSaplingCredentialsLoadedSelector } from 'src/store/sapling';
+import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useAssetExchangeRate, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
@@ -69,12 +69,11 @@ export const SendModal: FC = () => {
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const shieldedBalanceMutez = useShieldedBalanceSelector();
-  const isCredentialsLoaded = useIsSaplingCredentialsLoadedSelector();
 
   const shieldedExchangeRate = useAssetExchangeRate(TEZ_SHIELDED_TOKEN_SLUG);
 
   const shieldedTezToken: TokenInterface | undefined = useMemo(() => {
-    if (!isCredentialsLoaded || shieldedBalanceMutez === '0') {
+    if (shieldedBalanceMutez === '0') {
       return undefined;
     }
 
@@ -84,7 +83,7 @@ export const SendModal: FC = () => {
       exchangeRate: shieldedExchangeRate,
       visibility: VisibilityEnum.Visible
     };
-  }, [isCredentialsLoaded, shieldedBalanceMutez, shieldedExchangeRate]);
+  }, [shieldedBalanceMutez, shieldedExchangeRate]);
 
   const assets = useMemo(() => {
     const base = tokens.concat(collectibles);

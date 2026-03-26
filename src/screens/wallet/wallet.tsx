@@ -1,6 +1,6 @@
 import { StackActions, useFocusEffect } from '@react-navigation/native';
 import React, { memo, useCallback, useEffect } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
@@ -26,6 +26,7 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
+import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
@@ -55,6 +56,7 @@ export const Wallet = memo(() => {
   const contactsAddresses = useContactsAddresses();
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
+  const hasSeenAnnouncement = useHasSeenAnnouncementSelector();
   const isKoloCardAnimationShown = useIsKoloCardAnimationShownSelector();
 
   const handleKoloCardAnimationComplete = useCallback(() => {
@@ -88,6 +90,12 @@ export const Wallet = memo(() => {
       navigateToModal(ModalsEnum.Newsletter);
     }
   }, [shouldShowNewsletterModal, isAnyBackupMade]);
+
+  useEffect(() => {
+    if (!hasSeenAnnouncement) {
+      navigateToModal(ModalsEnum.ShieldedAnnouncement);
+    }
+  }, [hasSeenAnnouncement]);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');
@@ -135,14 +143,6 @@ export const Wallet = memo(() => {
       </HeaderCard>
 
       <TokensList />
-
-      {/* TODO: Remove — temporary debug buttons */}
-      <TouchableOpacity
-        onPress={() => navigateToModal(ModalsEnum.ShieldedAnnouncement)}
-        style={{ padding: 12, margin: 8, backgroundColor: '#ff6b00', borderRadius: 8, alignItems: 'center' }}
-      >
-        <Text style={{ color: '#fff', fontWeight: '600' }}>Show Announcement</Text>
-      </TouchableOpacity>
 
       <WalletOverlay />
 

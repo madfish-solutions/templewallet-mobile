@@ -25,6 +25,7 @@ export interface ShieldParams {
   saplingAddress: string;
   amount: BigNumber;
   rpcUrl: string;
+  memo?: string;
 }
 
 export interface UnshieldParams {

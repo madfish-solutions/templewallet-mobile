@@ -136,7 +136,7 @@ class SaplingService implements SaplingServiceInterface {
     const toolkit = createSaplingToolkit(spendingKey, params.rpcUrl);
 
     const txData = await toolkit.prepareShieldedTransaction([
-      { to: params.saplingAddress, amount: params.amount.toNumber(), mutez: true }
+      { to: params.saplingAddress, amount: params.amount.toNumber(), mutez: true, memo: params.memo }
     ]);
 
     return {
