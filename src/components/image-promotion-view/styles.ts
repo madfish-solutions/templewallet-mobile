@@ -32,7 +32,7 @@ export const useImagePromotionViewStyles = createUseStylesMemoized(({ colors }) 
   invisible: {
     opacity: 0,
     height: 0,
-    overflow: 'hidden' as const
+    overflow: 'hidden'
   },
   bageContainer: {
     position: 'absolute',

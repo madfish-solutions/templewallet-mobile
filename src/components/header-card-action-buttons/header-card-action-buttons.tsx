@@ -33,7 +33,7 @@ import { useHeaderCardActionButtonsStyles } from './header-card-action-buttons.s
 
 interface Props {
   token: TokenInterface;
-  onSendPress?: () => void;
+  onSendPress?: EmptyFn;
 }
 
 const CHAINBITS_URL = 'https://buy.chainbits.com';

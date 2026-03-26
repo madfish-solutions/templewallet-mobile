@@ -1,5 +1,10 @@
 import React, { FC } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+
+import { formatSize } from 'src/styles/format-size';
+
+import { Icon } from '../icon/icon';
+import { IconNameEnum } from '../icon/icon-name.enum';
 
 import { useLoadingPlaceholderStyles } from './loading-placeholder.styles';
 
@@ -12,7 +17,7 @@ export const LoadingPlaceholder: FC<Props> = ({ text }) => {
 
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" />
+      <Icon name={IconNameEnum.HourGlasses} size={formatSize(120)} />
       <Text style={styles.text}>{text}</Text>
     </View>
   );

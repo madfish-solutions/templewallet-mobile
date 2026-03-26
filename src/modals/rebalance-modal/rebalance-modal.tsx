@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { AssetAmountInput, AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
@@ -20,6 +20,7 @@ import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-acti
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountTezosBalance, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { TEZ_TOKEN_SLUG, TEZ_TOKEN_METADATA, TEZ_SHIELDED_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -27,15 +28,9 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { RebalanceDirection } from './rebalance-modal.form';
 import { RebalanceModalSelectors } from './rebalance-modal.selectors';
+import { useRebalanceModalStyles } from './rebalance-modal.styles';
 
 const selectionOptions = { start: 0, end: 0 };
-
-const swapButtonStyles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-});
 
 const createToken = (metadata: typeof TEZ_TOKEN_METADATA, balance: string, exchangeRate?: number): TokenInterface => ({
   ...metadata,
@@ -46,6 +41,8 @@ const createToken = (metadata: typeof TEZ_TOKEN_METADATA, balance: string, excha
 
 export const RebalanceModal: FC = () => {
   const dispatch = useDispatch();
+  const colors = useColors();
+  const styles = useRebalanceModalStyles();
 
   const [direction, setDirection] = useState<RebalanceDirection>('shield');
   const [sourceAmount, setSourceAmount] = useState<BigNumber | undefined>(undefined);
@@ -157,12 +154,12 @@ export const RebalanceModal: FC = () => {
           testID={RebalanceModalSelectors.sourceInput}
         />
 
-        <View style={swapButtonStyles.container}>
+        <View style={styles.swapButtonContainer}>
           <TouchableIcon
             onPress={handleSwapDirection}
             name={IconNameEnum.SwapArrow}
             size={formatSize(24)}
-            color="#FF5B00"
+            color={colors.orange}
             testID={RebalanceModalSelectors.swapDirectionButton}
           />
         </View>

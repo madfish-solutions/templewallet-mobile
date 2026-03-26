@@ -7,7 +7,6 @@ import { Action } from 'src/interfaces/action.interface';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
-import { isTooLowTezBalanceError } from 'src/utils/is-too-low-tez-balance-error';
 
 export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
   project: (value: T, index: number) => O
@@ -30,11 +29,7 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
             tap(() => setIsLoading(false)),
             catchError(err => {
               setIsLoading(false);
-              showErrorToast({
-                description: isTooLowTezBalanceError(err)
-                  ? 'Insufficient balance to cover the amount and fees'
-                  : err.message
-              });
+              showErrorToast({ description: err.message });
 
               if (err instanceof AnalyticsError) {
                 const { error, additionalProperties, addressesToHide } = err;
