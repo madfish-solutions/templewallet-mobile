@@ -323,10 +323,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TempleWallet/TempleWallet.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+        "CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+        CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1027;
 				DEVELOPMENT_TEAM = D653UWS37K;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = D653UWS37K;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -517,7 +519,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.madfish.temple-wallet";
 				PRODUCT_NAME = TempleWallet;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.madfish.temple-wallet";
+        "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.madfish.temple-wallet";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
