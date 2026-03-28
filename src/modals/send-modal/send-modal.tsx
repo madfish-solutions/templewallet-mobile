@@ -130,6 +130,9 @@ export const SendModal: FC = () => {
   const formik = useFormik({
     initialValues: sendModalInitialValues,
     validationSchema: sendModalValidationSchema,
+    validateOnChange: true,
+    validateOnBlur: false,
+    validateOnMount: false,
     onSubmit
   });
 

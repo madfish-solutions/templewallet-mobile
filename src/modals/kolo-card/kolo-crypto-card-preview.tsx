@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import React, { FC, useCallback, useEffect, useRef } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Text, useWindowDimensions, View } from 'react-native';
 import { Defs, LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
 
@@ -31,11 +31,13 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
   const styles = useKoloCryptoCardPreviewStyles();
   const { width: screenWidth } = useWindowDimensions();
   const cardWidth = screenWidth - CARD_MARGIN_HORIZONTAL * 2;
+  const [startedPlaying, setStartedPlaying] = useState(false);
 
   const translateY = useRef(new Animated.Value(0)).current;
   const rotateZ = useRef(new Animated.Value(0)).current;
 
   const playAnimation = useCallback(() => {
+    setStartedPlaying(true);
     translateY.setValue(0);
     rotateZ.setValue(0);
 
@@ -70,10 +72,10 @@ export const KoloCryptoCardPreview: FC<KoloCryptoCardPreviewProps> = ({
   }, [translateY, rotateZ, onAnimationComplete]);
 
   useEffect(() => {
-    if (shouldAnimate && isFocused) {
+    if (shouldAnimate && isFocused && !startedPlaying) {
       playAnimation();
     }
-  }, [shouldAnimate, playAnimation, isFocused]);
+  }, [shouldAnimate, playAnimation, isFocused, startedPlaying]);
 
   const animatedStyle = {
     transform: [

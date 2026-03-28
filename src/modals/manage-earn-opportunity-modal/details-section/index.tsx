@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -21,24 +21,11 @@ interface Props {
   loading: boolean;
 }
 
-const youvesSavingsTypes = [EarnOpportunityTypeEnum.YOUVES_SAVING, EarnOpportunityTypeEnum.YOUVES_STAKING];
+const youvesSavingsTypes = [EarnOpportunityTypeEnum.YOUVES_SAVING];
 
 export const DetailsSection = memo<Props>(({ earnOpportunityItem, stake, shouldShowClaimRewardsButton, loading }) => {
   const styles = useDetailsSectionStyles();
   const isLiquidityBaking = earnOpportunityItem.type === EarnOpportunityTypeEnum.LIQUIDITY_BAKING;
-
-  const savingDetailsText = useMemo(() => {
-    let appName = '';
-
-    switch (earnOpportunityItem.type) {
-      case EarnOpportunityTypeEnum.YOUVES_SAVING:
-      case EarnOpportunityTypeEnum.YOUVES_STAKING:
-        appName = 'Youves';
-        break;
-    }
-
-    return `${appName} Savings Details`;
-  }, [earnOpportunityItem.type]);
 
   return (
     <>
@@ -62,7 +49,7 @@ export const DetailsSection = memo<Props>(({ earnOpportunityItem, stake, shouldS
         <Text style={styles.detailsTitleText}>
           {isLiquidityBaking && 'Liquidity Baking Details'}
           {!isLiquidityBaking && isFarm(earnOpportunityItem) && 'Quipuswap Farming Details'}
-          {!isFarm(earnOpportunityItem) && savingDetailsText}
+          {!isFarm(earnOpportunityItem) && 'Youves Savings Details'}
         </Text>
       </View>
 

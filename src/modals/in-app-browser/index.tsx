@@ -86,6 +86,7 @@ export const InAppBrowser: FC = memo(() => {
     >
       <WebView
         ref={webViewRef}
+        webviewDebuggingEnabled={__DEV__}
         source={source}
         style={styles.container}
         containerStyle={styles.container}

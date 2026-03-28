@@ -20,6 +20,10 @@ export const useActivityGroupInfo = (group: ActivityGroup) => {
 
     switch (firstActivity.type) {
       case ActivityTypeEnum.Transaction:
+        if (Number(firstActivity.amount) === 0) {
+          return [IconNameEnum.Clipboard, colors.gray1, 'Interaction'];
+        }
+
         if (firstActivity.source.address !== publicKeyHash) {
           return [IconNameEnum.ArrowDown, colors.adding, firstActivity.source.alias ?? 'Received'];
         }

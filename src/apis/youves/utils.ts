@@ -5,7 +5,6 @@ import {
   mainnetNetworkConstants,
   mainnetTokens,
   UnifiedSavings,
-  UnifiedStaking,
   Storage,
   StorageKey,
   StorageKeyReturnType,
@@ -92,17 +91,6 @@ export const createUnifiedSavings = memoize(
   {
     normalizer: ([rpcUrl, assetDefinition, account]) =>
       getCreateUnifiedSavingsCacheKey(rpcUrl, assetDefinition, account)
-  }
-);
-
-const getCreateUnifiedStakingCacheKey = (rpcUrl: string, account?: AccountInterface) =>
-  [rpcUrl, account?.publicKey].join('_');
-
-export const createUnifiedStaking = memoize(
-  (rpcUrl: string, account?: AccountInterface) =>
-    new UnifiedStaking(createReadOnlyTezosToolkit(rpcUrl, account), INDEXER_CONFIG, mainnetNetworkConstants),
-  {
-    normalizer: ([rpcUrl, account]) => getCreateUnifiedStakingCacheKey(rpcUrl, account)
   }
 );
 

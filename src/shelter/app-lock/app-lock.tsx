@@ -7,7 +7,6 @@ import { emptyFn } from 'src/config/general';
 import { usePasswordDelay } from 'src/hooks/use-password-delay.hook';
 import { enterPassword } from 'src/store/security/security-actions';
 import { usePasswordAttempt } from 'src/store/security/security-selectors';
-import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -18,19 +17,22 @@ interface AppLockContextValue {
   lock: EmptyFn;
   unlock: SyncFn<string, void>;
   unlockWithBiometry: EmptyFn;
+  unlockInProgress: boolean;
 }
 
 const AppLockContext = createContext<AppLockContextValue>({
   isLocked: true,
   lock: emptyFn,
   unlock: emptyFn,
-  unlockWithBiometry: emptyFn
+  unlockWithBiometry: emptyFn,
+  unlockInProgress: false
 });
 
 export const useAppLock = () => useContext(AppLockContext);
 
 export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const [isLocked, setIsLocked] = useState(Shelter.getIsLocked());
+  const [unlockInProgress, setUnlockInProgress] = useState(false);
   const dispatch = useDispatch();
   const attempt = usePasswordAttempt();
   const passwordDelay = usePasswordDelay();
@@ -53,8 +55,8 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   }, [unlock]);
 
   const value = useMemo(
-    () => ({ isLocked, lock, unlock, unlockWithBiometry }),
-    [isLocked, lock, unlock, unlockWithBiometry]
+    () => ({ isLocked, lock, unlock, unlockWithBiometry, unlockInProgress }),
+    [isLocked, lock, unlock, unlockWithBiometry, unlockInProgress]
   );
 
   useEffect(() => {
@@ -62,10 +64,10 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
       Shelter.isLocked$.subscribe(value => setIsLocked(value)),
       unlock$
         .pipe(
-          tap(() => dispatch(showLoaderAction())),
+          tap(() => setUnlockInProgress(true)),
           delay(passwordDelay),
           switchMap(password => Shelter.unlockApp$(password)),
-          tap(() => dispatch(hideLoaderAction()))
+          tap(() => setUnlockInProgress(false))
         )
         .subscribe(success => {
           if (success) {

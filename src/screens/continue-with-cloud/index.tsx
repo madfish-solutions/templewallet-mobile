@@ -2,16 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { catchThrowToastError, showErrorToastByError } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import {
-  EncryptedBackupObject,
-  FAILED_TO_LOGIN_ERR_TITLE,
-  fetchCloudBackup,
-  requestSignInToCloud
-} from 'src/utils/cloud-backup';
+import { EncryptedBackupObject, fetchCloudBackup } from 'src/utils/cloud-backup';
 import { useCloudAnalytics } from 'src/utils/cloud-backup/use-cloud-analytics';
 import { isTruthy } from 'src/utils/is-truthy';
 
@@ -21,42 +16,20 @@ import { RestoreFromCloud } from './restore-from-backup';
 export const ContinueWithCloud = () => {
   usePageAnalytic(ScreensEnum.ContinueWithCloud);
 
-  const { navigate, goBack } = useNavigation();
+  const { backup: initialEncryptedBackup, error } = useScreenParams<ScreensEnum.ContinueWithCloud>();
   const dispatch = useDispatch();
   const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
 
-  const [encryptedBackup, setEncryptedBackup] = useState<EncryptedBackupObject>();
+  const [encryptedBackup, setEncryptedBackup] = useState<EncryptedBackupObject | undefined>(initialEncryptedBackup);
 
-  const initialLoad = useCallback(async () => {
-    try {
-      dispatch(showLoaderAction());
-
-      const isLoggedIn = await requestSignInToCloud().catch(catchThrowToastError(FAILED_TO_LOGIN_ERR_TITLE, true));
-
-      if (!isLoggedIn) {
-        dispatch(hideLoaderAction());
-        goBack();
-
-        return;
-      }
-
-      const backup = await fetchCloudBackup().catch(catchThrowToastError('Failed to read from cloud', true));
-
-      dispatch(hideLoaderAction());
-
-      if (isTruthy(backup)) {
-        setEncryptedBackup(backup);
-      }
-
+  useEffect(() => {
+    if (isTruthy(initialEncryptedBackup)) {
       trackCloudSuccess('Backup retrieval');
-    } catch (error) {
-      goBack();
-      dispatch(hideLoaderAction());
+    } else if (isTruthy(error)) {
       showErrorToastByError(error);
-
       trackCloudError(error);
     }
-  }, [dispatch, trackCloudSuccess, trackCloudError]);
+  }, [error, initialEncryptedBackup, trackCloudError, trackCloudSuccess]);
 
   const retryBackupLoad = useCallback(async () => {
     try {
@@ -71,15 +44,13 @@ export const ContinueWithCloud = () => {
       }
 
       trackCloudSuccess('Backup retrieval retry');
-    } catch (error) {
+    } catch (err) {
       dispatch(hideLoaderAction());
-      showErrorToastByError(error);
+      showErrorToastByError(err);
 
-      trackCloudError(error);
+      trackCloudError(err);
     }
-  }, [dispatch, navigate, trackCloudError, trackCloudSuccess]);
-
-  useEffect(() => void initialLoad(), []);
+  }, [dispatch, trackCloudError, trackCloudSuccess]);
 
   if (encryptedBackup) {
     return <RestoreFromCloud encryptedBackup={encryptedBackup} />;
