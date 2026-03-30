@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -7,6 +8,7 @@ import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface'
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { useColors } from 'src/styles/use-colors';
 import { isString } from 'src/utils/is-string';
+import { ZERO } from 'src/utils/number.util';
 
 const SHIELDED_TRANSFER_LABEL = 'Shielded transfer';
 
@@ -27,9 +29,7 @@ export const useActivityGroupInfo = (group: ActivityGroup) => {
 
       const isShielding = group.some(
         activity =>
-          activity.amount.startsWith('-') &&
-          activity.amount !== '-0' &&
-          activity.destination?.address === SAPLING_CONTRACT_ADDRESS
+          new BigNumber(activity.amount).lt(ZERO) && activity.destination?.address === SAPLING_CONTRACT_ADDRESS
       );
 
       if (isShielding) {

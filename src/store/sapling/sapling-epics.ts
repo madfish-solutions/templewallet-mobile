@@ -68,25 +68,23 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSaplingCredentialsActions.submit),
     withSelectedAccount(state$),
-    switchMap(([, selectedAccount]) => {
-      return from(
-        getSaplingMnemonic(selectedAccount, state$.value.wallet.accounts).then(async ({ mnemonic, hdIndex }) => {
-          const credentials = await saplingService.deriveCredentials(mnemonic, hdIndex);
-
-          return loadSaplingCredentialsActions.success({
+    switchMap(([, selectedAccount]) =>
+      from(getSaplingMnemonic(selectedAccount, state$.value.wallet.accounts)).pipe(
+        switchMap(({ mnemonic, hdIndex }) => from(saplingService.deriveCredentials(mnemonic, hdIndex))),
+        map(({ saplingAddress, viewingKey }) =>
+          loadSaplingCredentialsActions.success({
             publicKeyHash: selectedAccount.publicKeyHash,
-            saplingAddress: credentials.saplingAddress,
-            viewingKey: credentials.viewingKey
-          });
-        })
-      ).pipe(
+            saplingAddress,
+            viewingKey
+          })
+        ),
         catchError(err => {
           showErrorToast({ description: err instanceof Error ? err.message : 'Failed to load sapling credentials' });
 
           return of(loadSaplingCredentialsActions.fail(err instanceof Error ? err.message : 'Unknown error'));
         })
-      );
-    })
+      )
+    )
   );
 
 const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>

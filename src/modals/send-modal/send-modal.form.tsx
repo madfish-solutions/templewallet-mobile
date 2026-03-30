@@ -28,5 +28,8 @@ export const sendModalValidationSchema: SchemaOf<SendModalFormValues> = object()
       value ? schema.required(makeRequiredErrorMessage('To')) : schema
     ) as SchemaOf<AccountBaseInterface>,
   transferBetweenOwnAccounts: boolean().required(),
-  memo: string().max(SAPLING_MEMO_SIZE, `Memo must be at most ${SAPLING_MEMO_SIZE} symbols`).ensure()
+  memo: string()
+    .max(SAPLING_MEMO_SIZE, `Memo must be at most ${SAPLING_MEMO_SIZE} symbols`)
+    .matches(/^[\x00-\x7F]*$/, 'Memo must contain only ASCII characters')
+    .ensure()
 });
