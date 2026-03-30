@@ -31,7 +31,7 @@ export const initialSaplingAccountState: SaplingAccountState = {
 
 export const saplingInitialState: SaplingState = {
   accountsRecord: {},
-  hasSeenAnnouncement: true,
+  hasSeenAnnouncement: false,
   isPreparing: false,
   preparedOpParams: null
 };
