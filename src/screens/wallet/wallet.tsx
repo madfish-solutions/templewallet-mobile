@@ -26,6 +26,7 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
+import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
@@ -55,6 +56,7 @@ export const Wallet = memo(() => {
   const contactsAddresses = useContactsAddresses();
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
+  const hasSeenAnnouncement = useHasSeenAnnouncementSelector();
   const isKoloCardAnimationShown = useIsKoloCardAnimationShownSelector();
 
   const handleKoloCardAnimationComplete = useCallback(() => {
@@ -89,6 +91,12 @@ export const Wallet = memo(() => {
     }
   }, [shouldShowNewsletterModal, isAnyBackupMade]);
 
+  useEffect(() => {
+    if (!hasSeenAnnouncement) {
+      navigateToModal(ModalsEnum.ShieldedAnnouncement);
+    }
+  }, [hasSeenAnnouncement]);
+
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');
   }, []);
@@ -121,6 +129,7 @@ export const Wallet = memo(() => {
         </View>
 
         <TokenEquityValue token={tezosToken} forTotalBalance={true} />
+        <Divider size={formatSize(16)} />
 
         <HeaderCardActionButtons token={tezosToken} />
 

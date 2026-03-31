@@ -48,8 +48,7 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.CloudBackup>
   | MainStackParamsPart<ScreensEnum.NotificationsSettings>
   | MainStackParamsPart<ScreensEnum.Debug>
-  | MainStackParamsPart<ScreensEnum.Blank>
-  | MainStackParamsPart<ScreensEnum.Sapling>;
+  | MainStackParamsPart<ScreensEnum.Blank>;
 
 export type NestedNavigationStacksParamList = {
   [StacksEnum.MainStack]: MainStackParams | undefined;

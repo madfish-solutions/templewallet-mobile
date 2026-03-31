@@ -16,12 +16,13 @@ export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
   token,
   apy = INITIAL_APR_VALUE,
   scam,
+  style,
   children
 }) => {
   const styles = useTokenContainerStyles();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={styles.leftContainer}>
         <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
         <Divider size={formatSize(8)} />

@@ -1,4 +1,5 @@
 import { OpKind } from '@taquito/rpc';
+import { ParamsWithKind } from '@taquito/taquito';
 import React, { FC, useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { of } from 'rxjs';
@@ -30,7 +31,10 @@ import { sendTransaction$ } from 'src/utils/wallet.utils';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
 
-type Props = Omit<InternalOperationsConfirmationModalParams, 'type'>;
+type Props = Omit<InternalOperationsConfirmationModalParams, 'type'> & {
+  renderPreview?: (opParams: ParamsWithKind[]) => React.ReactNode;
+  onEstimationComplete?: EmptyFn;
+};
 
 const approveInternalOperationRequest = ({
   rpcUrl,
@@ -62,7 +66,14 @@ const approveInternalOperationRequest = ({
     })
   );
 
-export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle, disclaimerMessage, testID }) => {
+export const InternalOperationsConfirmation: FC<Props> = ({
+  opParams,
+  modalTitle,
+  disclaimerMessage,
+  testID,
+  renderPreview,
+  onEstimationComplete
+}) => {
   const canUseOnRamp = useCanUseOnRamp();
   const dispatch = useDispatch();
   const selectedAccount = useRawCurrentAccountSelector();
@@ -131,6 +142,8 @@ export const InternalOperationsConfirmation: FC<Props> = ({ opParams, modalTitle
           onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
           testID={testID}
           disclaimer={disclaimer}
+          renderPreview={renderPreview}
+          onEstimationComplete={onEstimationComplete}
         />
       )}
     </>
