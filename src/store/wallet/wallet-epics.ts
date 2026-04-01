@@ -19,9 +19,14 @@ import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
 import { isDcpNode } from 'src/utils/network.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
-import { loadAssetBalance$, loadTezosBalance$, fetchAllAssetsBalancesFromTzkt } from 'src/utils/token-balance.utils';
+import { loadAssetBalance$, fetchAllAssetsBalancesFromTzkt, loadTezosBalances$ } from 'src/utils/token-balance.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
-import { withOnRampOverlayState, withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import {
+  withAllAccounts,
+  withOnRampOverlayState,
+  withSelectedAccount,
+  withSelectedRpcUrl
+} from 'src/utils/wallet.utils';
 
 import { navigateAction } from '../root-state.actions';
 import { setOnRampOverlayStateAction } from '../settings/settings-actions';
@@ -93,18 +98,24 @@ const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
 const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
+    withAllAccounts(state$),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[[, selectedAccount], rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadTezosBalance$(rpcUrl, selectedAccount.publicKeyHash).pipe(
+    switchMap(([[[[, allAccounts], selectedAccount], rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
+      loadTezosBalances$(
+        rpcUrl,
+        allAccounts.map(account => account.publicKeyHash)
+      ).pipe(
         withOnRampOverlayState(state$),
-        concatMap(([balance, overlayState]) => {
-          const successAction = loadTezosBalanceActions.success(balance);
+        concatMap(([balances, overlayState]) => {
+          const successAction = loadTezosBalanceActions.success(balances);
+          const balance = balances[selectedAccount.publicKeyHash];
           const showOnRampAction =
             !LIMIT_FIN_FEATURES &&
             !isDcpNode(rpcUrl) &&
             overlayState === OnRampOverlayState.Closed &&
+            isDefined(balance) &&
             new BigNumber(balance).isZero()
               ? setOnRampOverlayStateAction(OnRampOverlayState.Start)
               : null;
