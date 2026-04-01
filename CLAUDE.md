@@ -1,6 +1,6 @@
 # CLAUDE.md – Working Effectively In This Repo
 
-This repository is the Temple Wallet mobile app codebase. Temple Wallet is an open-source multichain wallet for Tezos blockchain, focusing on security and seamless UX.
+This repository is the Temple Wallet mobile app codebase. Temple Wallet is an open-source wallet for Tezos blockchain, focusing on security and seamless UX.
 
 Tech stack: React Native CLI 0.83.1, React v19, TypeScript, Redux Toolkit, RxJS with Redux Observable
 
