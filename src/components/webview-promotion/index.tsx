@@ -14,7 +14,6 @@ import { AdFrameMessage, SingleProviderPromotionProps } from 'src/types/promotio
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { HYPELAB_AD_FRAME_URL } from 'src/utils/env.utils';
-import { useTimeout } from 'src/utils/hooks';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { openUrl } from 'src/utils/linking';
@@ -103,8 +102,6 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
       setLayoutRect(e.nativeEvent.layout);
     }, []);
 
-    useTimeout(() => void (!isString(adHrefRef.current) && onError()), 30000, [onError]);
-
     const handleAdFrameMessage = useCallback(
       (e: WebViewMessageEvent) => {
         try {
@@ -139,7 +136,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
               }
               break;
             case AdFrameMessageType.Error:
-              onError();
+              console.error(message);
               break;
             case AdFrameMessageType.Click:
               if (isString(adHref)) {
@@ -156,7 +153,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
           trackErrorEvent('WebviewPromotionError', err, [], { eventData: e.nativeEvent.data });
         }
       },
-      [adHref, onError, onReady, testID, testIDProperties, trackEvent, adChanged, onImpression, trackErrorEvent]
+      [adHref, onReady, testID, testIDProperties, trackEvent, adChanged, onImpression, trackErrorEvent]
     );
 
     const webViewCommonProps = useMemo(
