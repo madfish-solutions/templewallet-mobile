@@ -40,6 +40,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     variant,
     isVisible,
     shouldShowCloseButton,
+    blacklistedCampaignSlugs,
     provider,
     initialOriginalWidth,
     initialOriginalHeight,
@@ -61,6 +62,9 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
 
     const adHrefRef = useRef<string | undefined>(adHref);
     useEffect(() => void (adHrefRef.current = adHref), [adHref]);
+
+    const blacklistedCampaignSlugsRef = useRef(blacklistedCampaignSlugs);
+    blacklistedCampaignSlugsRef.current = blacklistedCampaignSlugs;
 
     const [layoutRect, setLayoutRect] = useState<LayoutRectangle | undefined>();
     const initialSize = useMemo(() => {
@@ -117,7 +121,11 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
               }
               break;
             case AdFrameMessageType.Ready:
-              const { cta_url: ctaUrl, creative_set: creativeSet } = message.ad;
+              const { cta_url: ctaUrl, campaign_slug: campaignSlug, creative_set: creativeSet } = message.ad;
+              if (campaignSlug && blacklistedCampaignSlugsRef.current?.includes(campaignSlug)) {
+                onError();
+                break;
+              }
               setAdHref(ctaUrl);
               if (creativeSet && 'video' in creativeSet) {
                 setBackgroundAsset({
