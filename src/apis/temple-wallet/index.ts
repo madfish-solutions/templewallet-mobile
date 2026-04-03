@@ -19,7 +19,10 @@ export const getABGroup$ = () =>
   from(templeWalletApi.get<GetABGroupResponse>('/abtest')).pipe(map(response => response.data.ab));
 
 export const fetchEnableInternalHypelabAds = () =>
-  templeAdsApi.get<boolean>('/ads-rules/2.0.13/enable-internal-hypelab-ads').then(response => response.data);
+  templeAdsApi.get<boolean>('/ads-rules/2.0.25/enable-internal-hypelab-ads').then(response => response.data);
+
+export const fetchInternalBlacklistedHypelabCampaignsSlugs = () =>
+  templeAdsApi.get<string[]>('/ads-rules/2.0.25/hypelab-campaigns-blacklist-internal').then(response => response.data);
 
 interface LiquidityBakingStatsResponse {
   stats: Pick<
