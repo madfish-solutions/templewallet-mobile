@@ -14,6 +14,16 @@ export const TEMPLE_TOKEN_METADATA: TokenMetadataInterface = {
   thumbnailUri: 'ipfs://Qmb9QUXYn1PW8e7E2CwpBMgEur7gFAPPpq2Zh7H2D7eQcT'
 };
 
+export const WR_TOKEN_METADATA: TokenMetadataInterface = {
+  id: 0,
+  address: 'KT193FiCoUkthuDXcZ6Chr1J19TRoJqjWSYu',
+  name: 'Wristory Token',
+  symbol: 'WR',
+  decimals: 6,
+  thumbnailUri: 'ipfs://bafybeibiohfmkqcslplibgrn4giwrhuw4r4jqkhhdm7ozj4ufk7ch46fxe',
+  standard: TokenStandardsEnum.Fa2
+};
+
 export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
   ...emptyTokenMetadata,
   name: 'Tezos',
@@ -256,7 +266,8 @@ export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     decimals: 6,
     thumbnailUri: 'ipfs://QmNwMXAL5tVaPxauq7W4mXMhFGNVsstBfQ87AwUUo94thL',
     standard: TokenStandardsEnum.Fa2
-  }
+  },
+  WR_TOKEN_METADATA
 ];
 
 export const PREDEFINED_DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
