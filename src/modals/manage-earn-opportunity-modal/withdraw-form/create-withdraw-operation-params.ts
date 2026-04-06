@@ -41,7 +41,6 @@ export const createWithdrawOperationParams = async (
       );
       break;
     case EarnOpportunityTypeEnum.YOUVES_SAVING:
-    case EarnOpportunityTypeEnum.YOUVES_STAKING:
       transfersParams = await createYouvesWithdrawTransfersParams(earnOpportunity, tezos, stake, percentage);
       break;
     default:

@@ -25,7 +25,6 @@ const liquidityBakingRisksPoints = [
 
 export const earnOpportunitiesRisksPoints: Record<EarnOpportunityTypeEnum, string[]> = {
   [EarnOpportunityTypeEnum.YOUVES_SAVING]: youvesSavingsRisksPoints,
-  [EarnOpportunityTypeEnum.YOUVES_STAKING]: youvesSavingsRisksPoints,
   [EarnOpportunityTypeEnum.DEX_TWO]: quipuswapFarmsRisksPoints,
   [EarnOpportunityTypeEnum.STABLESWAP]: quipuswapFarmsRisksPoints,
   [EarnOpportunityTypeEnum.LIQUIDITY_BAKING]: liquidityBakingRisksPoints

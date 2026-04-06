@@ -14,6 +14,7 @@ type TypographyKey =
   | 'numbersMedium13'
   | 'numbersMedium11'
   | 'numbersStatus8'
+  | 'body18Semibold'
   | 'headline1Bold40'
   | 'headline2Bold34'
   | 'headline3Bold28'

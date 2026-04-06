@@ -2,13 +2,13 @@ import React from 'react';
 import { View } from 'react-native';
 import { appDetailsSettings } from 'react-native-android-open-settings';
 
-import { ButtonLargePrimary } from '../../components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsFloatingContainer } from '../../components/button/buttons-floating-container/buttons-floating-container';
-import { Disclaimer } from '../../components/disclaimer/disclaimer';
-import { Divider } from '../../components/divider/divider';
-import { isAndroid } from '../../config/system';
-import { formatSize } from '../../styles/format-size';
-import { openUrl } from '../../utils/linking';
+import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
+import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { Divider } from 'src/components/divider/divider';
+import { isAndroid } from 'src/config/system';
+import { formatSize } from 'src/styles/format-size';
+import { openUrl } from 'src/utils/linking';
 
 import { useScanQrCodeStyles } from './scan-qr-code.styles';
 

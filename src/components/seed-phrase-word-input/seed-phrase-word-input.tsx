@@ -2,8 +2,9 @@ import { useField } from 'formik';
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
-import { setTestID } from '../../utils/test-id.utils';
+import { formatSize } from 'src/styles/format-size';
+import { setTestID } from 'src/utils/test-id.utils';
+
 import { Divider } from '../divider/divider';
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 

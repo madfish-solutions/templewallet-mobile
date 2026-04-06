@@ -2,15 +2,15 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 
-import { Divider } from '../../components/divider/divider';
-import { Icon } from '../../components/icon/icon';
-import { IconNameEnum } from '../../components/icon/icon-name.enum';
-import { OctopusWithLove } from '../../components/octopus-with-love/octopus-with-love';
-import { ScreenContainer } from '../../components/screen-container/screen-container';
-import { WhiteContainer } from '../../components/white-container/white-container';
-import { WhiteContainerAction } from '../../components/white-container/white-container-action/white-container-action';
-import { WhiteContainerDivider } from '../../components/white-container/white-container-divider/white-container-divider';
-import { WhiteContainerText } from '../../components/white-container/white-container-text/white-container-text';
+import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
+import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { WhiteContainer } from 'src/components/white-container/white-container';
+import { WhiteContainerAction } from 'src/components/white-container/white-container-action/white-container-action';
+import { WhiteContainerDivider } from 'src/components/white-container/white-container-divider/white-container-divider';
+import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
 import {
   contact,
   featureRequest,
@@ -19,11 +19,11 @@ import {
   repository,
   termsOfUse,
   website
-} from '../../config/socials';
-import { ScreensEnum } from '../../navigator/enums/screens.enum';
-import { formatSize } from '../../styles/format-size';
-import { usePageAnalytic } from '../../utils/analytics/use-analytics.hook';
-import { openUrl } from '../../utils/linking';
+} from 'src/config/socials';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { openUrl } from 'src/utils/linking';
 
 import { useAboutStyles } from './about.styles';
 import { AboutPageSelectors } from './selectors';

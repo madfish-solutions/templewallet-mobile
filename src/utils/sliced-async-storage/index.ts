@@ -79,7 +79,7 @@ export const SlicedAsyncStorage: Pick<AsyncStorageStatic, 'getItem' | 'setItem' 
       const slicesPairs = await AsyncStorage.multiGet(slicesKeys);
 
       // (!) Don't use `Array.join('')` here - it is slower
-      return slicesPairs.reduce((acc, [, val]) => acc + val ?? '', '');
+      return slicesPairs.reduce((acc, [, val]) => acc + (val ?? ''), '');
     }
 
     return rootValue;

@@ -50,7 +50,7 @@ export const useRequestConfirmation = <T, O extends ObservableInput<Action>>(
       });
 
     return () => subscription.unsubscribe();
-  }, [confirmRequest$, project]);
+  }, [confirmRequest$, project, trackErrorEvent]);
 
   return {
     confirmRequest: (value: T) => confirmRequest$.next(value),

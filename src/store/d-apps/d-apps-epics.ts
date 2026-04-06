@@ -11,7 +11,7 @@ import { CustomDAppsInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
-import { withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
+import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { emptyAction } from '../root-state.actions';
 import type { AnyActionEpic } from '../types';
@@ -23,7 +23,7 @@ import {
   loadPermissionsActions,
   removePermissionAction
 } from './d-apps-actions';
-import { fetchUBTCApr$, fetchUUSDCApr$, fetchYOUApr$ } from './utils';
+import { fetchUBTCApr$, fetchUUSDCApr$ } from './utils';
 
 const loadPermissionsEpic: Epic = (action$: Observable<Action>) =>
   action$.pipe(
@@ -119,10 +119,9 @@ const loadTokensApyEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTokensApyActions.submit),
     withSelectedRpcUrl(state$),
-    withUsdToTokenRates(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[[, rpcUrl], tokenUsdExchangeRates], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      forkJoin([fetchUBTCApr$(rpcUrl), fetchUUSDCApr$(rpcUrl), fetchYOUApr$(tokenUsdExchangeRates, rpcUrl)]).pipe(
+    switchMap(([[, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
+      forkJoin([fetchUBTCApr$(rpcUrl), fetchUUSDCApr$(rpcUrl)]).pipe(
         map(responses => loadTokensApyActions.success(Object.assign({}, ...responses))),
         catchError(err => {
           if (isAnalyticsEnabled) {

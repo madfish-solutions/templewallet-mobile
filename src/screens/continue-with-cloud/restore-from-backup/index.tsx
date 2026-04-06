@@ -11,7 +11,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormPasswordInput } from 'src/form/form-password-input';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
@@ -27,7 +27,7 @@ interface Props {
 }
 
 export const RestoreFromCloud = ({ encryptedBackup }: Props) => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const dispatch = useDispatch();
   const { trackCloudError, trackCloudSuccess } = useCloudAnalytics();
 
@@ -46,7 +46,7 @@ export const RestoreFromCloud = ({ encryptedBackup }: Props) => {
 
         dispatch(hideLoaderAction());
 
-        navigate(ScreensEnum.CreateAccount, { cloudBackupId });
+        navigateToScreen({ screen: ScreensEnum.CreateAccount, params: { cloudBackupId } });
 
         trackCloudSuccess('Wallet was restored');
       } catch (error) {
@@ -56,7 +56,7 @@ export const RestoreFromCloud = ({ encryptedBackup }: Props) => {
         trackCloudError(error);
       }
     },
-    [encryptedBackup, dispatch, navigate, trackCloudError, trackCloudSuccess]
+    [encryptedBackup, dispatch, navigateToScreen, trackCloudError, trackCloudSuccess]
   );
 
   return (

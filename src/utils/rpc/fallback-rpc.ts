@@ -51,7 +51,7 @@ class FallbackRpcClient extends RpcClient {
         this.preferredIndex = idx;
 
         return result;
-      } catch (err: any) {
+      } catch (err) {
         if (!shouldFallbackToNext(err) || i === total - 1) {
           throw err;
         }
@@ -192,7 +192,7 @@ function isHtmlResponse(result: unknown) {
   return normalized.startsWith('<!doctype html') || normalized.startsWith('<html');
 }
 
-function shouldFallbackToNext(error: any): boolean {
+function shouldFallbackToNext(error: unknown): boolean {
   if (isCounterError(error)) {
     // Counter errors should NOT fallback - they indicate invalid operation data
     // that needs to be rebuilt with a fresh counter, not retried on another RPC
@@ -218,7 +218,7 @@ function shouldFallbackToNext(error: any): boolean {
 
 const COUNTER_ERROR_MESSAGES = ['counter_in_the_past', 'counter_in_the_future'];
 
-function isCounterError(error: any): boolean {
+function isCounterError(error: unknown): boolean {
   if (error instanceof HttpResponseError) {
     return COUNTER_ERROR_MESSAGES.some(m => error.message.includes(m));
   }
@@ -239,7 +239,7 @@ function includesKnownNonRetryableTezId(id: string): boolean {
   return NON_RETRYABLE_TEZ_ERROR_ID_SUBSTRINGS.some(substr => id.includes(substr));
 }
 
-function isNonRetryableTezosError(error: any): boolean {
+function isNonRetryableTezosError(error: unknown): boolean {
   if (error instanceof TezosOperationError) {
     return error.errors.some(e => includesKnownNonRetryableTezId(e.id));
   }

@@ -10,7 +10,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { StyledRadioGroup } from 'src/components/styled-radio-group';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { setSelectedRpcUrl } from 'src/store/settings/settings-actions';
 import { useRpcListSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -21,7 +21,7 @@ import { NodeSettingsSelectors } from './node-settings.selectors';
 
 export const NodeSettings = () => {
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
 
   const rpcList = useRpcListSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -36,7 +36,7 @@ export const NodeSettings = () => {
             key: 'edit',
             iconName: IconNameEnum.Edit,
             disabled: rpc.url === TEMPLE_RPC.url || isDcpNode(rpc.url) ? true : undefined,
-            onPress: () => void navigate(ModalsEnum.EditCustomRpc, { url: rpc.url })
+            onPress: () => void navigateToModal(ModalsEnum.EditCustomRpc, { url: rpc.url })
           }
         ],
         disabledMessage: isDcpNode(rpc.url) ? 'The T4L3NT Mainnet RPC is temporarily unavailable.' : undefined
@@ -51,7 +51,7 @@ export const NodeSettings = () => {
       <HeaderTitle title="Default node (RPC)" />,
       <HeaderButton
         iconName={IconNameEnum.PlusIconOrange}
-        onPress={() => navigate(ModalsEnum.AddCustomRpc)}
+        onPress={() => navigateToModal(ModalsEnum.AddCustomRpc)}
         testID={NodeSettingsSelectors.addNodeButton}
       />
     ),

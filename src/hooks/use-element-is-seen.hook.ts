@@ -13,7 +13,7 @@ export const useElementIsSeen = (isVisible: boolean, seenTimeoutDuration: number
   const [isSeen, setIsSeen] = useState(false);
   const resetWasCalledRef = useRef(false);
   const isVisibleRef = useRef(isVisible);
-  const seenTimeoutRef = useRef<NodeJS.Timeout>();
+  const seenTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
     if (shouldResetOnScreenBlur && !isFocused) {

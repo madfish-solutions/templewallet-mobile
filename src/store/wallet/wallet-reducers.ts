@@ -71,9 +71,17 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   }));
 
   builder.addCase(loadTezosBalanceActions.success, (state, { payload }) => {
-    const accountState = retrieveAccountState(state);
-    if (accountState) {
-      accountState.tezosBalance = payload;
+    for (const pkh in payload) {
+      const newBalance = payload[pkh];
+
+      if (!newBalance) {
+        return;
+      }
+
+      const accountState = retrieveAccountState(state, pkh);
+      if (accountState) {
+        accountState.tezosBalance = newBalance;
+      }
     }
   });
 

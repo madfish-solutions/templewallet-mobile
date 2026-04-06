@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -54,6 +54,23 @@ export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
   from(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
     map(balance => balance.toFixed())
   );
+
+export const loadTezosBalances$ = (rpcUrl: string, publicKeyHashes: string[]) => {
+  const tezos = createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount);
+
+  return from(Promise.allSettled(publicKeyHashes.map(publicKeyHash => tezos.tz.getBalance(publicKeyHash)))).pipe(
+    map(results =>
+      Object.fromEntries(
+        results
+          .map((result, index) => [
+            publicKeyHashes[index],
+            result.status === 'fulfilled' ? result.value.toFixed() : undefined
+          ])
+          .filter((entry): entry is [string, string] => isDefined(entry[1]))
+      )
+    )
+  );
+};
 
 type cachedAssetBalance = {
   time: number;

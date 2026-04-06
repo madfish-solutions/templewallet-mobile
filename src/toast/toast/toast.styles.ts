@@ -1,8 +1,8 @@
-import { black } from '../../config/styles';
-import { zIndexEnum } from '../../enums/z-index.enum';
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize, formatTextSize } from '../../styles/format-size';
-import { generateShadow } from '../../styles/generate-shadow';
+import { black } from 'src/config/styles';
+import { zIndexEnum } from 'src/enums/z-index.enum';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
+import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useToastStyles = createUseStyles(({ colors, typography }) => ({
   container: {

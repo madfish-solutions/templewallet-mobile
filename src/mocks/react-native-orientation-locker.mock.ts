@@ -1,4 +1,4 @@
-export const mockReactNativeOrientationLocker = {
+const mockReactNativeOrientationLocker = {
   useOrientationChange: jest.fn(),
   unlockAllOrientations: jest.fn(),
   lockToPortrait: jest.fn()

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { isAndroid } from 'src/config/system';
 import { formatSize } from 'src/styles/format-size';
@@ -26,7 +26,7 @@ export const TouchableIcon: FC<Props> = ({
   onPress
 }) => (
   <TouchableWithAnalytics
-    Component={TouchableOpacity}
+    Component={SafeTouchableOpacity}
     style={[TouchableIconStyles.container, { width: size, height: size }, style]}
     disabled={disabled}
     hitSlop={generateHitSlop(formatSize(4))}

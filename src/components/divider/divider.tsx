@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import { formatSize } from '../../styles/format-size';
+import { formatSize } from 'src/styles/format-size';
 
 interface Props {
   size?: number;

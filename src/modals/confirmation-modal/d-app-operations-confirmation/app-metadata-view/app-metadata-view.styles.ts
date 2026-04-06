@@ -1,5 +1,5 @@
-import { DEFAULT_BORDER_WIDTH } from '../../../../config/styles';
-import { createUseStyles } from '../../../../styles/create-use-styles';
+import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
+import { createUseStyles } from 'src/styles/create-use-styles';
 
 export const useAppMetadataViewStyles = createUseStyles(({ colors, typography }) => ({
   container: {

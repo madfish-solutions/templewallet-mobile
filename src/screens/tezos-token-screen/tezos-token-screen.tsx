@@ -10,7 +10,7 @@ import { TokenEquityValue } from 'src/components/token-equity-value/token-equity
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -20,7 +20,7 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
 
 export const TezosTokenScreen = () => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
   const accountPkh = useCurrentAccountPkhSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
 
@@ -29,8 +29,8 @@ export const TezosTokenScreen = () => {
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const handleInfoIconClick = useCallback(
-    () => navigate(ScreensEnum.TokenInfo, { token: tezosToken }),
-    [navigate, tezosToken]
+    () => navigateToScreen({ screen: ScreensEnum.TokenInfo, params: { token: tezosToken } }),
+    [navigateToScreen, tezosToken]
   );
 
   useNavigationSetOptions(

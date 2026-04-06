@@ -1,9 +1,3 @@
-/** @deprecated // Use `SyncFn` */
-export type EventFn<T, K = void> = (event: T) => K;
-
-/** @deprecated // Declared globally */
-export type EmptyFn = () => void;
-
 export const emptyFn = () => void 0;
 export const emptyComponent = () => null;
 

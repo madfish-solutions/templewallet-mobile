@@ -1,8 +1,8 @@
-import { renderHook } from '@testing-library/react-hooks';
-import { act } from 'react-test-renderer';
+import { renderHook, act } from '@testing-library/react-hooks';
 
-import { mockCorrectPassword, mockCorrectUserCredentialsValue } from '../../mocks/react-native-keychain.mock';
-import { mockReactNativeToastMessage } from '../../mocks/react-native-toast-message.mock';
+import { mockCorrectPassword, mockCorrectUserCredentialsValue } from 'src/mocks/react-native-keychain.mock';
+import { mockReactNativeToastMessage } from 'src/mocks/react-native-toast-message.mock';
+
 import { mockShelter } from '../shelter.mock';
 
 import { useAppLock } from './app-lock';
@@ -42,7 +42,7 @@ describe.skip('useAppLock', () => {
       await jest.runAllTimersAsync();
 
       expect(result.current.isLocked).toEqual(false);
-      expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectPassword);
+      expect(mockShelter.unlockApp$).toHaveBeenCalledWith(mockCorrectPassword);
     });
 
     it('should show error toast if an incorrect password is given', async () => {
@@ -53,8 +53,8 @@ describe.skip('useAppLock', () => {
       await jest.runAllTimersAsync();
 
       expect(result.current.isLocked).toEqual(true);
-      expect(mockShelter.unlockApp$).toBeCalledWith(mockIncorrectPassword);
-      expect(mockReactNativeToastMessage.show).toBeCalled();
+      expect(mockShelter.unlockApp$).toHaveBeenCalledWith(mockIncorrectPassword);
+      expect(mockReactNativeToastMessage.show).toHaveBeenCalled();
     });
   });
 
@@ -68,8 +68,8 @@ describe.skip('useAppLock', () => {
       await act(() => result.current.unlockWithBiometry());
       await jest.runAllTimersAsync();
 
-      expect(mockShelter.getBiometryPassword).toBeCalled();
-      expect(mockShelter.unlockApp$).toBeCalledWith(mockCorrectUserCredentialsValue);
+      expect(mockShelter.getBiometryPassword).toHaveBeenCalled();
+      expect(mockShelter.unlockApp$).toHaveBeenCalledWith(mockCorrectUserCredentialsValue);
     });
 
     it('should do nothing if biometry authentication fails', async () => {
@@ -79,8 +79,8 @@ describe.skip('useAppLock', () => {
       await act(() => result.current.unlockWithBiometry());
       await jest.runAllTimersAsync();
 
-      expect(mockShelter.getBiometryPassword).toBeCalled();
-      expect(mockShelter.unlockApp$).not.toBeCalled();
+      expect(mockShelter.getBiometryPassword).toHaveBeenCalled();
+      expect(mockShelter.unlockApp$).not.toHaveBeenCalled();
     });
   });
 
@@ -94,7 +94,7 @@ describe.skip('useAppLock', () => {
 
       act(() => result.current.lock());
 
-      expect(mockShelter.lockApp).toBeCalled();
+      expect(mockShelter.lockApp).toHaveBeenCalled();
       expect(result.current.isLocked).toEqual(true);
     });
   });

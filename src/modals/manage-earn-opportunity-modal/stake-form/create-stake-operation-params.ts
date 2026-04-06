@@ -1,5 +1,5 @@
 import { TezosToolkit, TransferParams } from '@taquito/taquito';
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { Route3Token } from 'src/interfaces/route3.interface';
@@ -45,7 +45,6 @@ export const createStakeOperationParams = async (
       );
       break;
     case EarnOpportunityTypeEnum.YOUVES_SAVING:
-    case EarnOpportunityTypeEnum.YOUVES_STAKING:
       transfersParams = await createYouvesStakeTransfersParams(
         earnOpportunity,
         amount,

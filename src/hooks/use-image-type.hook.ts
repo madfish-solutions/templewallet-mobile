@@ -40,12 +40,15 @@ export const useImageType = (imgUri: string) => {
   }, [imgUri, mayBeUnknownSvg, dispatch]);
 
   const imageType = useMemo(() => {
-    if ((isImgUriSvg(imgUri) || (mayBeUnknownSvg && isKnownSvg && !svgFailed)) && isString(formatImgUri(imgUri))) {
-      return ImageTypeEnum.RemoteSvg;
+    if (
+      (!isImgUriSvg(imgUri) && (!mayBeUnknownSvg || !isKnownSvg || !rasterFailed)) ||
+      !isString(formatImgUri(imgUri))
+    ) {
+      return ImageTypeEnum.RemoteRaster;
     }
 
-    return isImgUriDataUri(imgUri) ? ImageTypeEnum.DataUri : ImageTypeEnum.RemoteRaster;
-  }, [imgUri, isKnownSvg, mayBeUnknownSvg, svgFailed]);
+    return isImgUriDataUri(imgUri) ? ImageTypeEnum.DataUri : ImageTypeEnum.RemoteSvg;
+  }, [imgUri, isKnownSvg, rasterFailed, mayBeUnknownSvg]);
 
-  return { imageType, rasterFailed, svgFailed, onRasterRenderError, onSvgRenderError };
+  return { imageType, svgFailed, rasterFailed, onRasterRenderError, onSvgRenderError };
 };

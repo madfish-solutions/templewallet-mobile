@@ -6,7 +6,7 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { TokenContainer } from 'src/components/token-container/token-container';
 import { TokenContainerProps } from 'src/components/token-container/token-container.props';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 
 import { useTokenListItemStyles } from './token-list-item.styles';
 
@@ -16,7 +16,7 @@ interface Props extends TokenContainerProps {
 
 export const TokenListItem = memo<Props>(({ token, scam, apy, onPress }) => {
   const styles = useTokenListItemStyles();
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const handleOnPress = useCallback(() => {
     if (onPress) {
@@ -24,8 +24,8 @@ export const TokenListItem = memo<Props>(({ token, scam, apy, onPress }) => {
 
       return;
     }
-    navigate(ScreensEnum.TokenScreen, { token });
-  }, [token, onPress, navigate]);
+    navigateToScreen({ screen: ScreensEnum.TokenScreen, params: { token } });
+  }, [token, onPress, navigateToScreen]);
 
   return (
     <TouchableOpacity onPress={handleOnPress} style={styles.container}>
