@@ -1,7 +1,8 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import React, { useState } from 'react';
+import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
@@ -58,6 +59,18 @@ export type RootStackParamList = NestedNavigationStacksParamList & ModalsParamLi
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
+const mainStackScreenOptions = Platform.select({
+  android: {
+    headerShown: false,
+    // forModalPresentationIOS applies scale + translateY to the background card
+    // (driven by next.progress) when a modal opens on top, then reverses on dismiss.
+    // This reverse animation makes screens behind modals appear to "zoom in" like a modal
+    // presentation. Overriding to forNoAnimation keeps MainStack stationary at all times.
+    cardStyleInterpolator: CardStyleInterpolators.forNoAnimation
+  },
+  default: { headerShown: false }
+});
+
 export const RootStackScreen = () => {
   const dispatch = useDispatch();
   const { isLocked } = useAppLock();
@@ -93,7 +106,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={StacksEnum.MainStack}
               component={MainStackScreen}
-              options={{ headerShown: false }}
+              options={mainStackScreenOptions}
             />
 
             {/* MODALS */}

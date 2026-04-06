@@ -70,7 +70,7 @@ const navigateEpic = (action$: Observable<Action>) =>
       if (isNavigationToScreen(navigationParams)) {
         globalNavigationRef.current?.navigate(StacksEnum.MainStack, navigationParams);
       } else {
-        // @ts-expect-error
+        // @ts-expect-error navigate typings don't cover all modal param shapes
         globalNavigationRef.current?.navigate(navigationParams.screen, navigationParams.params);
       }
 

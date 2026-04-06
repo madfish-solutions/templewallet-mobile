@@ -66,7 +66,6 @@ export const EarnOpportunityItem = memo<Props>(
     const earnSourceText = useMemo(() => {
       switch (item.type) {
         case EarnOpportunityTypeEnum.YOUVES_SAVING:
-        case EarnOpportunityTypeEnum.YOUVES_STAKING:
           return 'Youves';
         case EarnOpportunityTypeEnum.LIQUIDITY_BAKING:
           return 'Liquidity Baking';
@@ -78,7 +77,6 @@ export const EarnOpportunityItem = memo<Props>(
     const earnSourceIcon = useMemo(() => {
       switch (item.type) {
         case EarnOpportunityTypeEnum.YOUVES_SAVING:
-        case EarnOpportunityTypeEnum.YOUVES_STAKING:
           return theme === ThemesEnum.light ? IconNameEnum.YouvesEarnSource : IconNameEnum.YouvesEarnSourceDark;
 
         default:

@@ -4,3 +4,4 @@
 
 #import "Orientation.h"
 #import "RNQuickActionManager.h"
+#import <React/RCTLinkingManager.h>

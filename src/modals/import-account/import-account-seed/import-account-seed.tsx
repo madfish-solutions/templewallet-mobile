@@ -68,6 +68,9 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   const formik = useFormik({
     initialValues: importAccountSeedInitialValues,
     validationSchema: importAccountSeedValidationSchema,
+    validateOnBlur: false,
+    validateOnChange: true,
+    validateOnMount: false,
     onSubmit
   });
 

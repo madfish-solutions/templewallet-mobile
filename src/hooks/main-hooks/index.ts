@@ -51,7 +51,7 @@ export const useMainHooks = (isLocked: boolean, isAuthorised: boolean) => {
 
     dispatch(loadTezosBalanceActions.submit());
     dispatch(loadAssetsBalancesActions.submit());
-  }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl]);
+  }, [blockSubscription.block.header.level, selectedAccountPkh, selectedRpcUrl, dispatch]);
 
   useMetadataLoading();
 

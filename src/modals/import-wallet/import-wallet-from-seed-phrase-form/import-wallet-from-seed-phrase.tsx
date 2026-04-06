@@ -34,6 +34,9 @@ export const ImportWalletFromSeedPhrase = memo<ImportWalletProps>(({ onSubmit, o
   const formik = useFormik({
     initialValues: importWalletFromSeedPhraseInitialValues,
     validationSchema: importWalletFromSeedPhraseValidationSchema,
+    validateOnBlur: false,
+    validateOnChange: true,
+    validateOnMount: false,
     onSubmit
   });
 

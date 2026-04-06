@@ -1,3 +1,4 @@
+import { noop } from 'lodash-es';
 import React, { useCallback } from 'react';
 import { Share, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
@@ -47,7 +48,7 @@ export const Settings = () => {
   const styles = useSettingsStyles();
   const dispatch = useDispatch();
   const navigateToScreen = useNavigateToScreen();
-  const handleLogoutButtonPress = useResetDataHandler();
+  const { resetInProgress, resetData: handleLogoutButtonPress } = useResetDataHandler();
   const fiatCurrency = useFiatCurrencySelector();
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
 
@@ -231,7 +232,7 @@ export const Settings = () => {
           <TouchableWithAnalytics
             Component={SafeTouchableOpacity}
             style={styles.logoutButton}
-            onPress={handleLogoutButtonPress}
+            onPress={resetInProgress ? noop : handleLogoutButtonPress}
             testID={SettingsSelectors.resetWalletButton}
           >
             <Text style={styles.logoutButtonText}>Reset wallet</Text>

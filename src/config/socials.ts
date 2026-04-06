@@ -11,7 +11,7 @@ export const website = 'https://templewallet.com';
 export const repository = 'https://github.com/madfish-solutions/templewallet-mobile';
 export const privacyPolicy = 'https://templewallet.com/privacy';
 export const termsOfUse = 'https://templewallet.com/terms';
-export const contact = 'https://templewallet.com/contact';
+export const contact = 'https://www.templewallet.com';
 
 export const supportUkraine = 'https://donate.mad.fish/';
 export const quipuLink = 'https://quipuswap.com/farming';

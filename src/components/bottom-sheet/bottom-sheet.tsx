@@ -101,6 +101,7 @@ export const BottomSheet: FCWithChildren<Props> = ({
     <Portal>
       {!isLocked && (
         <GorhomBottomSheet
+          containerStyle={styles.bottomSheetContainer}
           ref={controller.ref}
           index={isInitiallyOpen ? 0 : -1}
           snapPoints={[contentHeight]}

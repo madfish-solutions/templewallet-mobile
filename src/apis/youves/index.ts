@@ -7,7 +7,6 @@ import { AccountInterface } from 'src/interfaces/account.interface';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ExchangeRateRecord } from 'src/store/currency/currency-state';
-import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { getLastElement } from 'src/utils/array.utils';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
@@ -21,24 +20,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 
 import { INITIAL_APR_VALUE } from './constants';
 import { SavingsPoolStorage } from './types';
-import { createEngineMemoized, createUnifiedSavings, createUnifiedStaking, toEarnOpportunityToken } from './utils';
-
-export const getYOUTokenApr$ = (
-  assetToUsdExchangeRate: BigNumber,
-  governanceToUsdExchangeRate: BigNumber,
-  rpcUrl: string
-): Observable<number> => {
-  const unifiedStaking = createUnifiedStaking(rpcUrl);
-
-  return from(unifiedStaking.getAPR(assetToUsdExchangeRate, governanceToUsdExchangeRate)).pipe(
-    map(value => fractionToPercentage(value).toNumber()),
-    catchError(() => {
-      createUnifiedStaking.delete(rpcUrl);
-
-      return of(INITIAL_APR_VALUE);
-    })
-  );
-};
+import { createEngineMemoized, createUnifiedSavings, toEarnOpportunityToken } from './utils';
 
 export const getYouvesTokenApr$ = (token: AssetDefinition, rpcUrl: string): Observable<number> => {
   const youves = createEngineMemoized(rpcUrl, token);
@@ -51,50 +33,6 @@ export const getYouvesTokenApr$ = (token: AssetDefinition, rpcUrl: string): Obse
       return of(INITIAL_APR_VALUE);
     })
   );
-};
-
-const getYOUTokenSavingItem = async (
-  youToUsdExchangeRate: BigNumber,
-  rpcUrl: string
-): Promise<SavingsItem | undefined> => {
-  try {
-    const tezos = createReadOnlyTezosToolkit(rpcUrl);
-    const unifiedStaking = createUnifiedStaking(rpcUrl);
-    const apr = await firstValueFrom(getYOUTokenApr$(youToUsdExchangeRate, youToUsdExchangeRate, rpcUrl));
-    const savingsStorage = await getContractStorage<SavingsPoolStorage>(tezos, unifiedStaking.stakingContract);
-    const stakedToken = toEarnOpportunityToken(unifiedStaking.stakeToken);
-    const tvlInStakedTokenAtoms = mutezToTz(
-      savingsStorage.total_stake.times(savingsStorage.disc_factor),
-      unifiedStaking.stakeToken.decimals
-    ).integerValue(BigNumber.ROUND_DOWN);
-    const tvlInStakedToken = mutezToTz(tvlInStakedTokenAtoms, unifiedStaking.stakeToken.decimals);
-    const firstActivityTime = await getFirstAccountActivityTime(unifiedStaking.stakingContract);
-
-    return {
-      id: unifiedStaking.stakeToken.id,
-      contractAddress: unifiedStaking.stakingContract,
-      apr: apr.toString(),
-      depositExchangeRate: youToUsdExchangeRate.toFixed(),
-      depositTokenUrl: tzktUrl(rpcUrl, unifiedStaking.stakeToken.contractAddress),
-      discFactor: savingsStorage.disc_factor.toFixed(),
-      earnExchangeRate: youToUsdExchangeRate.toFixed(),
-      vestingPeriodSeconds: savingsStorage.max_release_period.toFixed(),
-      stakeUrl: tzktUrl(rpcUrl, unifiedStaking.stakingContract),
-      stakedToken,
-      tokens: [stakedToken],
-      rewardToken: stakedToken,
-      staked: tvlInStakedTokenAtoms.toFixed(),
-      tvlInUsd: tvlInStakedToken.times(youToUsdExchangeRate).toFixed(),
-      tvlInStakedToken: tvlInStakedToken.toFixed(),
-      type: EarnOpportunityTypeEnum.YOUVES_STAKING,
-      firstActivityTime
-    };
-  } catch (error) {
-    createUnifiedStaking.delete(rpcUrl);
-    console.error(error);
-
-    return undefined;
-  }
 };
 
 const getSavingsItemByAssetDefinition = async (
@@ -145,12 +83,11 @@ const getSavingsItemByAssetDefinition = async (
 };
 
 export const getYouvesSavingsItems$ = (tokenUsdExchangeRates: ExchangeRateRecord, rpcUrl: string) =>
-  forkJoin([
-    getYOUTokenSavingItem(new BigNumber(tokenUsdExchangeRates[KNOWN_TOKENS_SLUGS.YOU] ?? 1), rpcUrl),
-    ...contracts.mainnet
+  forkJoin(
+    contracts.mainnet
       .filter(({ SAVINGS_V3_POOL_ADDRESS, token }) => isString(SAVINGS_V3_POOL_ADDRESS) && token.id !== 'uXTZ')
       .map(assetDefinition => getSavingsItemByAssetDefinition(assetDefinition, tokenUsdExchangeRates, rpcUrl))
-  ]).pipe(map(items => items.filter(isDefined)));
+  ).pipe(map(items => items.filter(isDefined)));
 
 export const getUserStake = async (
   account: AccountInterface,
@@ -162,16 +99,6 @@ export const getUserStake = async (
   let lastStake: UnifiedStakeExtendedItem | undefined;
 
   switch (type) {
-    case EarnOpportunityTypeEnum.YOUVES_STAKING:
-      try {
-        const unifiedStaking = createUnifiedStaking(rpcUrl, account);
-        lastStake = getLastElement(await unifiedStaking.getOwnStakesWithExtraInfo());
-      } catch (e) {
-        createUnifiedStaking.delete(rpcUrl, account);
-
-        throw e;
-      }
-      break;
     case EarnOpportunityTypeEnum.YOUVES_SAVING:
       if (!isDefined(assetDefinition)) {
         throw new Error(`Unknown saving with id ${stakingOrSavingId}`);

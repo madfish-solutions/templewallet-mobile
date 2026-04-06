@@ -45,7 +45,6 @@ export const createStakeOperationParams = async (
       );
       break;
     case EarnOpportunityTypeEnum.YOUVES_SAVING:
-    case EarnOpportunityTypeEnum.YOUVES_STAKING:
       transfersParams = await createYouvesStakeTransfersParams(
         earnOpportunity,
         amount,

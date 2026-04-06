@@ -36,8 +36,17 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
     const source = sender;
     let destination: MemberInterface = { address: '' };
     let amount = '0';
-    let tokenId = null;
     let contractAddress = null;
+
+    const activityBase = {
+      id,
+      type,
+      hash,
+      status: stringToActivityStatusEnum(status),
+      entrypoint,
+      level,
+      timestamp: new Date(timestamp).getTime()
+    };
 
     switch (type) {
       case ActivityTypeEnum.Transaction:
@@ -53,35 +62,68 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
           Array.isArray(fa2Parameter.value) &&
           isDefined(fa2Parameter.value[0].txs)
         ) {
-          contractAddress = target.address;
-          let isUserSenderOrReceiverOfFa2Operation = false;
-          if (fa2Parameter.value[0].from_ === address) {
-            amount = fa2Parameter.value[0].txs.reduce((acc, tx) => acc.plus(tx.amount), new BigNumber(0)).toFixed();
-            source.address = address;
-            isUserSenderOrReceiverOfFa2Operation = true;
-            tokenId = fa2Parameter.value[0].txs[0].token_id;
-          }
-          for (const param of fa2Parameter.value) {
-            const val = param.txs.find(tx => {
-              return tx.to_ === address && (amount = tx.amount);
-            });
-            if (isDefined(val)) {
-              isUserSenderOrReceiverOfFa2Operation = true;
-              amount = val.amount;
-              tokenId = val.token_id;
+          const receivals: StringRecord<{ amount: BigNumber; from: string }> = {};
+          const sendings: StringRecord<{ amount: BigNumber; to: string }> = {};
+
+          for (const { from_, txs } of fa2Parameter.value) {
+            for (const { amount, to_, token_id } of txs) {
+              const parsedAmount = new BigNumber(amount);
+              if (from_ === to_ || parsedAmount.isZero()) {
+                continue;
+              }
+
+              if (from_ === address && sendings[token_id]) {
+                sendings[token_id].amount = sendings[token_id].amount.plus(parsedAmount);
+              } else if (from_ === address) {
+                sendings[token_id] = { amount: parsedAmount, to: to_ };
+              } else if (to_ === address && receivals[token_id]) {
+                receivals[token_id].amount = receivals[token_id].amount.plus(parsedAmount);
+              } else if (to_ === address) {
+                receivals[token_id] = { amount: parsedAmount, from: from_ };
+              }
             }
           }
-          if (!isUserSenderOrReceiverOfFa2Operation) {
-            continue;
+
+          if (Object.keys(receivals).length > 0 || Object.keys(sendings).length > 0) {
+            for (const tokenId in receivals) {
+              const { amount, from } = receivals[tokenId];
+              activities.push({
+                ...activityBase,
+                tokenId,
+                address: target.address,
+                source: { address: from },
+                destination: target,
+                amount: amount.toFixed()
+              });
+            }
+            for (const tokenId in sendings) {
+              const { amount } = sendings[tokenId];
+              activities.push({
+                ...activityBase,
+                tokenId,
+                address: target.address,
+                source: { address },
+                destination: target,
+                amount: amount.negated().toFixed()
+              });
+            }
           }
+
+          continue;
         } else if (isDefined(fa12Parameter) && isDefined(fa12Parameter.value.value)) {
           if (fa12Parameter.entrypoint === 'approve') {
             continue;
           }
           if (isDefined(fa12Parameter.value.from) || isDefined(fa12Parameter.value.to)) {
-            if (fa12Parameter.value.from === address) {
+            const { from, to } = fa12Parameter.value;
+
+            if (from === to) {
+              continue;
+            }
+
+            if (from === address) {
               source.address = address;
-            } else if (fa12Parameter.value.to === address) {
+            } else if (to === address) {
               source.address = fa12Parameter.value.from;
             } else {
               continue;
@@ -102,12 +144,7 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
                 (isDefined(parameter) && (parameter as ParameterFa12).value.to === address)
               ? tokenOrTezAmount
               : `-${tokenOrTezAmount}`;
-        }
-        if (
-          !isDefined(operation.parameter) &&
-          operation.target.address !== address &&
-          operation.sender.address !== address
-        ) {
+        } else if (operation.target.address !== address && operation.sender.address !== address) {
           continue;
         }
         break;
@@ -129,18 +166,11 @@ export const mapOperationsToActivities = (address: string, operations: Array<Ope
     }
 
     activities.push({
-      ...(isDefined(tokenId) ? { tokenId } : {}),
       ...(isDefined(contractAddress) ? { address: contractAddress } : {}),
-      id,
-      type,
-      hash,
-      status: stringToActivityStatusEnum(status),
+      ...activityBase,
       source,
-      entrypoint,
-      level,
       destination,
-      amount: source.address === address ? `-${amount}` : amount,
-      timestamp: new Date(timestamp).getTime()
+      amount: source.address === address ? `-${amount}` : amount
     });
   }
 
