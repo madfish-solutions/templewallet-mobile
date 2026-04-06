@@ -112,11 +112,11 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
 
   const handleSendButton = () => {
     if (!emptyBalance) {
-        if (onSendPress) {
-            return onSendPress();
-        }
+      if (onSendPress) {
+        return onSendPress();
+      }
 
-        return navigateToModal(ModalsEnum.Send, { token });
+      return navigateToModal(ModalsEnum.Send, { token });
     }
 
     showErrorToast({ description: errorMessage });
