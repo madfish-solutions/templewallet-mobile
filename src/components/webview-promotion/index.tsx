@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { LayoutChangeEvent, LayoutRectangle, View } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
@@ -6,6 +6,7 @@ import { layoutScale } from 'src/config/styles';
 import { AdFrameMessageType } from 'src/enums/ad-frame-message-type.enum';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
+import { useUpdatableRef } from 'src/hooks/use-updatable-ref.hook';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -56,14 +57,11 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
     const colors = useColors();
     const theme = useThemeSelector();
     const { trackEvent, trackErrorEvent } = useAnalytics();
+    const [adIsBanned, setAdIsBanned] = useState(false);
     const [adHref, setAdHref] = useState<string>();
     const [backgroundAsset, setBackgroundAsset] = useState<BackgroundAsset | undefined>();
 
-    const adHrefRef = useRef<string | undefined>(adHref);
-    useEffect(() => void (adHrefRef.current = adHref), [adHref]);
-
-    const blacklistedCampaignSlugsRef = useRef(blacklistedCampaignSlugs);
-    blacklistedCampaignSlugsRef.current = blacklistedCampaignSlugs;
+    const blacklistedCampaignSlugsRef = useUpdatableRef(blacklistedCampaignSlugs);
 
     const [layoutRect, setLayoutRect] = useState<LayoutRectangle | undefined>();
     const initialSize = useMemo(() => {
@@ -117,12 +115,13 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
                 setSize({ w: Math.round(message.width / layoutScale), h: Math.round(message.height / layoutScale) });
               }
               break;
-            case AdFrameMessageType.Ready:
+            case AdFrameMessageType.Ready: {
               const { cta_url: ctaUrl, campaign_slug: campaignSlug, creative_set: creativeSet } = message.ad;
               if (campaignSlug && blacklistedCampaignSlugsRef.current?.includes(campaignSlug)) {
-                onError();
+                setAdIsBanned(true);
                 break;
               }
+              setAdIsBanned(false);
               setAdHref(ctaUrl);
               if (creativeSet && 'video' in creativeSet) {
                 setBackgroundAsset({
@@ -143,6 +142,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
                 onReady();
               }
               break;
+            }
             case AdFrameMessageType.Error:
               console.error(message);
               break;
@@ -161,7 +161,17 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
           trackErrorEvent('WebviewPromotionError', err, [], { eventData: e.nativeEvent.data });
         }
       },
-      [adHref, onReady, testID, testIDProperties, trackEvent, adChanged, onImpression, trackErrorEvent]
+      [
+        adHref,
+        onReady,
+        testID,
+        testIDProperties,
+        trackEvent,
+        adChanged,
+        onImpression,
+        trackErrorEvent,
+        blacklistedCampaignSlugsRef
+      ]
     );
 
     const webViewCommonProps = useMemo(
@@ -184,7 +194,7 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
           onClose={onClose}
           shouldShowCloseButton={shouldShowCloseButton}
           href={adHref ?? ''}
-          isVisible={isVisible}
+          isVisible={isVisible && !adIsBanned}
           shouldShowAdBage
           backgroundAsset={backgroundAsset}
           {...testIDProps}
@@ -210,7 +220,10 @@ export const WebViewPromotion = memo<WebViewPromotionProps>(
 
     return (
       <View
-        style={[WebviewPromotionStyles.textAdFrameContainer, !isVisible && WebviewPromotionStyles.invisible]}
+        style={[
+          WebviewPromotionStyles.textAdFrameContainer,
+          (!isVisible || adIsBanned) && WebviewPromotionStyles.invisible
+        ]}
         onLayout={handleContainerLayout}
       >
         {adFrameSource && size && (
