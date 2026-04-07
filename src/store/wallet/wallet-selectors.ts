@@ -3,6 +3,8 @@ import { useCallback, useMemo } from 'react';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
+import { WR_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { toTokenSlug } from 'src/token/utils/token.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible } from 'src/utils/tezos.util';
@@ -99,7 +101,8 @@ export const useCurrentAccountStoredAssetsSelector = (type: 'tokens' | 'collecti
           return false;
         }
 
-        const assetIsCollectible = isCollectible(metadata);
+        const assetIsCollectible =
+          isCollectible(metadata) && asset.slug !== toTokenSlug(WR_TOKEN_METADATA.address, WR_TOKEN_METADATA.id);
 
         return type === 'collectibles' ? assetIsCollectible : assetIsCollectible === false;
       });

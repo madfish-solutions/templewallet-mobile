@@ -21,6 +21,11 @@ import { AnalyticsError } from './error-analytics-data.utils';
 import { getNetworkGasTokenMetadata } from './network.utils';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
+export const withAllAccounts =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(withLatestFrom(state$, (value, { wallet }): [T, AccountInterface[]] => [value, wallet.accounts]));
+
 export const withSelectedAccount =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>

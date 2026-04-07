@@ -6,6 +6,7 @@ export interface SingleProviderPromotionProps extends TestIdProps {
   variant: PromotionVariantEnum;
   isVisible: boolean;
   shouldShowCloseButton: boolean;
+  blacklistedCampaignSlugs?: string[];
   onClose: EmptyFn;
   onReady: EmptyFn;
   onImpression: EmptyFn;
@@ -42,7 +43,7 @@ type CreativeSet = ImageCreativeSet | VideoCreativeSet;
 
 interface ReadyAdMessage extends AdFrameMessageBase {
   type: AdFrameMessageType.Ready;
-  ad: { cta_url: string; creative_set?: CreativeSet };
+  ad: { cta_url: string; campaign_slug?: string; creative_set?: CreativeSet };
 }
 
 interface ErrorAdMessage extends AdFrameMessageBase {

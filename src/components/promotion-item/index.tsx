@@ -1,7 +1,9 @@
 import { useIsFocused } from '@react-navigation/native';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleProp, View, ViewProps, ViewStyle } from 'react-native';
+import useSWR from 'swr';
 
+import { fetchInternalBlacklistedHypelabCampaignsSlugs } from 'src/apis/temple-wallet';
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { HypelabPromotion } from 'src/components/hypelab-promotion';
 import { PROMO_SYNC_INTERVAL } from 'src/config/fixed-times';
@@ -12,6 +14,7 @@ import { useAdTemporaryHiding } from 'src/hooks/use-ad-temporary-hiding.hook';
 import { useAuthorisedInterval } from 'src/hooks/use-authed-interval';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { MS_IN_SECOND, SECONDS_IN_MINUTE } from 'src/utils/date.utils';
 
 import { usePromotionItemStyles } from './styles';
 
@@ -77,6 +80,17 @@ export const PromotionItem: FCWithRef<View, Props> = ({
     [handleHypelabError]
   );
   const { isHiddenTemporarily, hidePromotion } = useAdTemporaryHiding(id, currentProvider, handleHypelabAdsEnabled);
+
+  const { data: blacklistedCampaignSlugs } = useSWR(
+    'blacklisted-internal-hypelab-campaigns-slugs',
+    fetchInternalBlacklistedHypelabCampaignsSlugs,
+    {
+      revalidateOnFocus: false,
+      revalidateOnMount: true,
+      revalidateOnReconnect: false,
+      refreshInterval: (5 * SECONDS_IN_MINUTE + 1) * MS_IN_SECOND
+    }
+  );
 
   useEffect(() => {
     if (!isFocused) {
@@ -147,6 +161,7 @@ export const PromotionItem: FCWithRef<View, Props> = ({
     variant,
     isVisible: adIsReady,
     shouldShowCloseButton,
+    blacklistedCampaignSlugs,
     onClose: hidePromotion
   };
 
