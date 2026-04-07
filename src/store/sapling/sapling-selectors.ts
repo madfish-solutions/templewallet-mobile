@@ -11,6 +11,8 @@ const useSaplingAccountState = (): SaplingAccountState => {
 
 export const useSaplingAddressSelector = () => useSaplingAccountState().saplingAddress;
 export const useShieldedBalanceSelector = () => useSaplingAccountState().shieldedBalance;
+export const useIsSaplingCredentialsLoadedSelector = () => useSaplingAccountState().isCredentialsLoaded;
+export const useIsSaplingBalanceLoadingSelector = () => useSaplingAccountState().isBalanceLoading;
 export const useSaplingTransactionHistorySelector = () => useSaplingAccountState().transactionHistory;
 export const useIsSaplingHistoryLoadingSelector = () => useSaplingAccountState().isHistoryLoading;
 export const useHasSeenAnnouncementSelector = () => useSelector(({ sapling }) => sapling.hasSeenAnnouncement);

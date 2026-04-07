@@ -47,7 +47,6 @@ export const StyledTextInputStyles = StyleSheet.create({
     textAlignVertical: 'top',
     paddingTop: formatSize(16),
     paddingBottom: formatSize(16),
-    minHeight: formatSize(80),
-    maxHeight: formatSize(80)
+    minHeight: formatSize(80)
   }
 });

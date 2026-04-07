@@ -26,7 +26,11 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { navigateAction } from 'src/store/root-state.actions';
-import { useShieldedBalanceSelector } from 'src/store/sapling';
+import {
+  useShieldedBalanceSelector,
+  useIsSaplingCredentialsLoadedSelector,
+  useIsSaplingBalanceLoadingSelector
+} from 'src/store/sapling';
 import { loadSaplingTransactionHistoryActions } from 'src/store/sapling/sapling-actions';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
@@ -52,6 +56,8 @@ export const TezosTokenScreen = () => {
   const accountPkh = useCurrentAccountPkhSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
+  const isSaplingCredentialsLoaded = useIsSaplingCredentialsLoadedSelector();
+  const isSaplingBalanceLoading = useIsSaplingBalanceLoadingSelector();
   const styles = useTezosTokenScreenStyles();
   const colors = useColors();
   const sendAssetsSheetController = useBottomSheetController();
@@ -124,13 +130,15 @@ export const TezosTokenScreen = () => {
 
   const isPrivateTab = historyTabIndex !== PUBLIC_TAB_INDEX;
 
+  const isSaplingAvailable = isSaplingCredentialsLoaded || isSaplingBalanceLoading || shieldedBalanceMutez !== '0';
+
   const handleSendPress = useCallback(() => {
-    if (shieldedTezToken) {
+    if (isSaplingAvailable) {
       sendAssetsSheetController.open();
     } else {
       navigateToModal(ModalsEnum.Send, { token: tezosToken });
     }
-  }, [shieldedTezToken, sendAssetsSheetController, navigateToModal, tezosToken]);
+  }, [isSaplingAvailable, sendAssetsSheetController, navigateToModal, tezosToken]);
 
   const handleSendAsset = useCallback(
     (token: TokenInterface) => {
@@ -170,7 +178,7 @@ export const TezosTokenScreen = () => {
           </View>
         </View>
 
-        <HeaderCardActionButtons token={tezosToken} onSendPress={shieldedTezToken ? handleSendPress : undefined} />
+        <HeaderCardActionButtons token={tezosToken} onSendPress={isSaplingAvailable ? handleSendPress : undefined} />
       </HeaderCard>
 
       <TokenScreenContentContainer

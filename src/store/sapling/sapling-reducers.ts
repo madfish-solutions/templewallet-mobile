@@ -98,7 +98,11 @@ export const saplingReducers = createReducer<SaplingState>(saplingInitialState, 
   });
 
   builder.addCase(clearSaplingCredentialsAction, state => {
-    state.accountsRecord = {};
+    for (const pkh of Object.keys(state.accountsRecord)) {
+      state.accountsRecord[pkh].viewingKey = null;
+      state.accountsRecord[pkh].isCredentialsLoaded = false;
+      state.accountsRecord[pkh].isBalanceLoading = false;
+    }
   });
 
   // Clear transient preparation state on app restart/rehydration
