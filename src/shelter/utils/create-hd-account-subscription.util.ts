@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { EMPTY, expand, first, Subject, switchMap, tap } from 'rxjs';
+import { EMPTY, expand, first, of, Subject, switchMap, tap } from 'rxjs';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
@@ -8,6 +8,8 @@ import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-a
 import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 
 import { Shelter } from '../shelter';
+
+const MAX_HD_SKIP_ATTEMPTS = 10;
 
 export const createHdAccountSubscription = (
   createHdAccount$: Subject<unknown>,
@@ -22,11 +24,18 @@ export const createHdAccountSubscription = (
       tap(() => dispatch(showLoaderAction())),
       switchMap(() => {
         let nextIndex = hdAccountsCount;
+        let attempts = 0;
 
         return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex).pipe(
           expand(publicData => {
             if (publicData === undefined || !existingPublicKeyHashes.has(publicData.publicKeyHash)) {
               return EMPTY;
+            }
+
+            attempts++;
+
+            if (attempts >= MAX_HD_SKIP_ATTEMPTS) {
+              return of(undefined);
             }
 
             nextIndex++;

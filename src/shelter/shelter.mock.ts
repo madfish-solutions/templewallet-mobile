@@ -1,7 +1,7 @@
 import Keychain from 'react-native-keychain';
 import { BehaviorSubject, of } from 'rxjs';
 
-import { mockHdAccount } from '../interfaces/account.interface.mock';
+import { mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
 import { getBiometryKeychainOptions } from '../utils/keychain.utils';
 
@@ -31,7 +31,8 @@ export const mockShelter = {
   }),
   importHdAccount$: jest.fn(() => of([mockHdAccount])),
   enableBiometryPassword$: jest.fn((password: string) => of(password === mockCorrectPassword)),
-  createHdAccount$: jest.fn(() => of(mockHdAccount)),
+  createHdAccount$: jest.fn(() => of(mockNewHdAccount)),
+  saveSaplingSpendingKey$: jest.fn(() => of(undefined)),
   revealSecretKey$: jest.fn(() => of(mockRevealedSecretKey)),
   revealSeedPhrase$: jest.fn(() => of(mockRevealedSeedPhrase)),
   isPasswordCorrect$: jest.fn((password: string) => of(password === mockCorrectPassword)),
