@@ -28,7 +28,10 @@ export const useShelter = () => {
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
-  const createImportedAccount$ = useMemo(() => new Subject<{ privateKey: string; name: string }>(), []);
+  const createImportedAccount$ = useMemo(
+    () => new Subject<{ privateKey: string; name: string; saplingSpendingKey?: string }>(),
+    []
+  );
 
   useEffect(() => {
     const subscriptions = [
@@ -71,7 +74,8 @@ export const useShelter = () => {
 
   const enableBiometryPassword = (password: string) => enableBiometryPassword$.next(password);
 
-  const createImportedAccount = (params: { privateKey: string; name: string }) => createImportedAccount$.next(params);
+  const createImportedAccount = (params: { privateKey: string; name: string; saplingSpendingKey?: string }) =>
+    createImportedAccount$.next(params);
 
   return {
     importWallet,

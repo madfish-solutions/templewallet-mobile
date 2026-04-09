@@ -1,15 +1,13 @@
 import { combineEpics } from 'redux-observable';
-import { concat, EMPTY, from, of } from 'rxjs';
+import { concat, EMPTY, firstValueFrom, from, of } from 'rxjs';
 import { catchError, concatMap, filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
-import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { Shelter } from 'src/shelter/shelter';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { getMnemonicFromSecretKey } from 'src/utils/sapling/secret-key-to-mnemonic';
 import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction, navigateBackAction } from '../root-state.actions';
@@ -27,41 +25,17 @@ import {
 } from './sapling-actions';
 import { saplingService, clearSaplingServiceCache } from './sapling-service';
 
-/**
- * Resolves the sapling mnemonic for any account type:
- * - HD accounts: wallet seed phrase and HD index
- * - Imported accounts: private key bytes used as BIP39 entropy (no HD index)
- */
-function getSaplingMnemonic(
-  selectedAccount: { publicKeyHash: string; type: string },
-  allAccounts: Array<{ publicKeyHash: string; type: string }>
-): Promise<{ mnemonic: string; hdIndex?: number }> {
-  if (selectedAccount.type === AccountTypeEnum.HD_ACCOUNT) {
-    return new Promise((resolve, reject) => {
-      Shelter.revealSeedPhrase$().subscribe({
-        next: mnemonic => {
-          if (mnemonic) {
-            const hdAccounts = allAccounts.filter(a => a.type === AccountTypeEnum.HD_ACCOUNT);
-            const hdIndex = hdAccounts.findIndex(a => a.publicKeyHash === selectedAccount.publicKeyHash);
+/** Reads the sapling spending key (sask) from the keychain. */
+function getSaplingSpendingKey(publicKeyHash: string) {
+  return Shelter.revealSaplingSpendingKey$(publicKeyHash).pipe(
+    switchMap(sask => {
+      if (sask === undefined) {
+        throw new Error('Sapling spending key not found');
+      }
 
-            resolve({ mnemonic, hdIndex: hdIndex <= 0 ? undefined : hdIndex });
-          }
-        },
-        error: reject
-      });
-    });
-  }
-
-  return new Promise((resolve, reject) => {
-    Shelter.revealSecretKey$(selectedAccount.publicKeyHash).subscribe({
-      next: secretKey => {
-        if (secretKey != null) {
-          resolve({ mnemonic: getMnemonicFromSecretKey(secretKey) });
-        }
-      },
-      error: reject
-    });
-  });
+      return of(sask);
+    })
+  );
 }
 
 const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
@@ -69,8 +43,8 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
     ofType(loadSaplingCredentialsActions.submit),
     withSelectedAccount(state$),
     switchMap(([, selectedAccount]) =>
-      from(getSaplingMnemonic(selectedAccount, state$.value.wallet.accounts)).pipe(
-        switchMap(({ mnemonic, hdIndex }) => from(saplingService.deriveCredentials(mnemonic, hdIndex))),
+      getSaplingSpendingKey(selectedAccount.publicKeyHash).pipe(
+        switchMap(sask => from(saplingService.deriveCredentials(sask))),
         map(({ saplingAddress, viewingKey }) =>
           loadSaplingCredentialsActions.success({
             publicKeyHash: selectedAccount.publicKeyHash,
@@ -163,17 +137,10 @@ async function prepareSaplingTx(
   state$: {
     value: {
       sapling: { accountsRecord: Record<string, { saplingAddress: string | null }> };
-      wallet: { accounts: Array<{ publicKeyHash: string; type: string }> };
     };
   }
 ) {
-  const selectedAccount = state$.value.wallet.accounts.find(a => a.publicKeyHash === publicKeyHash);
-
-  if (!selectedAccount) {
-    throw new Error('Account not found');
-  }
-
-  const saplingMnemonic = await getSaplingMnemonic(selectedAccount, state$.value.wallet.accounts);
+  const sask = await firstValueFrom(getSaplingSpendingKey(publicKeyHash));
 
   const { BigNumber } = await import('bignumber.js');
   const amount = new BigNumber(payload.amount);
@@ -188,8 +155,7 @@ async function prepareSaplingTx(
       }
 
       const result = await saplingService.prepareShieldTransaction({
-        mnemonic: saplingMnemonic.mnemonic,
-        hdIndex: saplingMnemonic.hdIndex,
+        spendingKey: sask,
         saplingAddress,
         amount,
         rpcUrl,
@@ -200,8 +166,7 @@ async function prepareSaplingTx(
     }
     case 'unshield': {
       const result = await saplingService.prepareUnshieldTransaction({
-        mnemonic: saplingMnemonic.mnemonic,
-        hdIndex: saplingMnemonic.hdIndex,
+        spendingKey: sask,
         recipientPublicKeyHash: payload.recipientAddress,
         amount,
         rpcUrl
@@ -211,8 +176,7 @@ async function prepareSaplingTx(
     }
     case 'transfer': {
       const result = await saplingService.prepareSaplingTransfer({
-        mnemonic: saplingMnemonic.mnemonic,
-        hdIndex: saplingMnemonic.hdIndex,
+        spendingKey: sask,
         recipientSaplingAddress: payload.recipientAddress,
         amount,
         memo: payload.memo,
@@ -276,7 +240,7 @@ const clearCacheOnLockEpic: AnyActionEpic = () =>
     map(() => {
       clearSaplingServiceCache();
 
-      return clearSaplingCredentialsAction();
+      return { type: 'sapling/CACHE_CLEARED' };
     })
   );
 

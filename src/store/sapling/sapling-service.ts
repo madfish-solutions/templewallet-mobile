@@ -1,7 +1,6 @@
 import { OpKind, RpcClient } from '@taquito/rpc';
 import { ParamsWithKind, RpcReadAdapter } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { mnemonicToEntropy } from 'bip39';
 
 import { SAPLING_CONTRACT_ADDRESS, SAPLING_MEMO_SIZE } from 'src/config/sapling';
 import {
@@ -20,16 +19,6 @@ import { SaplingToolkit } from 'src/utils/sapling/taquito-sapling';
 
 const spendingKeyCache = new Map<string, InMemorySpendingKey>();
 
-function getSpendingKeyCacheKey(mnemonic: string, hdIndex?: number): string {
-  const seed = mnemonicToEntropy(mnemonic);
-
-  return `${seed}:${hdIndex ?? 'default'}`;
-}
-
-function getDerivationPath(hdIndex?: number): string | undefined {
-  return hdIndex !== undefined ? `m/44'/1729'/${hdIndex}'/0'` : undefined;
-}
-
 function buildOpParams(saplingContractAddress: string, amountMutez: BigNumber, txData: string): ParamsWithKind[] {
   const opParam: ParamsWithKind = {
     kind: OpKind.TRANSACTION,
@@ -42,16 +31,15 @@ function buildOpParams(saplingContractAddress: string, amountMutez: BigNumber, t
   return [opParam];
 }
 
-async function getOrCreateSpendingKey(mnemonic: string, hdIndex?: number): Promise<InMemorySpendingKey> {
-  const cacheKey = getSpendingKeyCacheKey(mnemonic, hdIndex);
-  const cached = spendingKeyCache.get(cacheKey);
+function getOrCreateSpendingKey(sask: string): InMemorySpendingKey {
+  const cached = spendingKeyCache.get(sask);
 
   if (cached) {
     return cached;
   }
 
-  const spendingKey = await InMemorySpendingKey.fromMnemonic(mnemonic, getDerivationPath(hdIndex));
-  spendingKeyCache.set(cacheKey, spendingKey);
+  const spendingKey = new InMemorySpendingKey(sask);
+  spendingKeyCache.set(sask, spendingKey);
 
   return spendingKey;
 }
@@ -77,8 +65,8 @@ function createTxViewer(viewingKey: string, rpcUrl: string): SaplingTransactionV
 }
 
 class SaplingService implements SaplingServiceInterface {
-  async deriveCredentials(mnemonic: string, hdIndex?: number): Promise<SaplingCredentials> {
-    const spendingKey = await getOrCreateSpendingKey(mnemonic, hdIndex);
+  async deriveCredentials(sask: string): Promise<SaplingCredentials> {
+    const spendingKey = getOrCreateSpendingKey(sask);
     const viewingKeyProvider = await spendingKey.getSaplingViewingKeyProvider();
 
     return {
@@ -132,7 +120,7 @@ class SaplingService implements SaplingServiceInterface {
   }
 
   async prepareShieldTransaction(params: ShieldParams): Promise<SaplingOpParams> {
-    const spendingKey = await getOrCreateSpendingKey(params.mnemonic, params.hdIndex);
+    const spendingKey = getOrCreateSpendingKey(params.spendingKey);
     const toolkit = createSaplingToolkit(spendingKey, params.rpcUrl);
 
     const txData = await toolkit.prepareShieldedTransaction([
@@ -145,7 +133,7 @@ class SaplingService implements SaplingServiceInterface {
   }
 
   async prepareUnshieldTransaction(params: UnshieldParams): Promise<SaplingOpParams> {
-    const spendingKey = await getOrCreateSpendingKey(params.mnemonic, params.hdIndex);
+    const spendingKey = getOrCreateSpendingKey(params.spendingKey);
     const toolkit = createSaplingToolkit(spendingKey, params.rpcUrl);
 
     const txData = await toolkit.prepareUnshieldedTransaction({
@@ -160,7 +148,7 @@ class SaplingService implements SaplingServiceInterface {
   }
 
   async prepareSaplingTransfer(params: SaplingTransferParams): Promise<SaplingOpParams> {
-    const spendingKey = await getOrCreateSpendingKey(params.mnemonic, params.hdIndex);
+    const spendingKey = getOrCreateSpendingKey(params.spendingKey);
     const toolkit = createSaplingToolkit(spendingKey, params.rpcUrl);
 
     const txData = await toolkit.prepareSaplingTransaction([

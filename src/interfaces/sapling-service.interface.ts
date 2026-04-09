@@ -20,8 +20,7 @@ export interface SaplingTransactionHistory {
 }
 
 export interface ShieldParams {
-  mnemonic: string;
-  hdIndex?: number;
+  spendingKey: string;
   saplingAddress: string;
   amount: BigNumber;
   rpcUrl: string;
@@ -29,16 +28,14 @@ export interface ShieldParams {
 }
 
 export interface UnshieldParams {
-  mnemonic: string;
-  hdIndex?: number;
+  spendingKey: string;
   recipientPublicKeyHash: string;
   amount: BigNumber;
   rpcUrl: string;
 }
 
 export interface SaplingTransferParams {
-  mnemonic: string;
-  hdIndex?: number;
+  spendingKey: string;
   recipientSaplingAddress: string;
   amount: BigNumber;
   memo?: string;
@@ -50,8 +47,8 @@ export interface SaplingOpParams {
 }
 
 export interface SaplingServiceInterface {
-  /** Derive sapling credentials (viewing key and address) from a mnemonic */
-  deriveCredentials(mnemonic: string, hdIndex?: number): Promise<SaplingCredentials>;
+  /** Derive sapling credentials (viewing key and address) from a spending key */
+  deriveCredentials(spendingKey: string): Promise<SaplingCredentials>;
 
   /** Get the shielded balance in mutez for a given viewing key */
   getShieldedBalance(viewingKey: string, rpcUrl: string): Promise<string>;

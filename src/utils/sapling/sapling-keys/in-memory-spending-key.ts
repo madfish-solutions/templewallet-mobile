@@ -33,27 +33,21 @@ export class InMemorySpendingKey {
   }
 
   /**
-   *
-   * @param mnemonic string of words
-   * @param derivationPath tezos current standard 'm/'
-   * @returns InMemorySpendingKey class instantiated
+   * Derives a sask... string from a mnemonic without instantiating the class.
+   * Use this when you need to persist the spending key.
    */
-  static async fromMnemonic(mnemonic: string, derivationPath = 'm/') {
-    // no password passed here. password provided only changes from sask -> MMXj
+  static async deriveSaskFromMnemonic(mnemonic: string, derivationPath = 'm/'): Promise<string> {
     const fullSeed = await bip39.mnemonicToSeed(mnemonic);
 
     const first32: Buffer = fullSeed.slice(0, 32);
     const second32: Buffer = fullSeed.slice(32);
-    // reduce seed bytes must be 32 bytes reflecting both halves
     const seed = Buffer.from(first32.map((byte, index) => byte ^ second32[index]));
 
     const spendingKeyArr = bufToUint8Array(
       Buffer.from(await getExtendedSpendingKey(toBase64(seed), derivationPath), 'base64')
     );
 
-    const spendingKey = b58Encode(spendingKeyArr, PrefixV2.SaplingSpendingKey);
-
-    return new InMemorySpendingKey(spendingKey);
+    return b58Encode(spendingKeyArr, PrefixV2.SaplingSpendingKey);
   }
 
   /**

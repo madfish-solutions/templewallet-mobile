@@ -1,5 +1,5 @@
 import { Dispatch } from '@reduxjs/toolkit';
-import { Subject, switchMap, tap } from 'rxjs';
+import { EMPTY, expand, first, Subject, switchMap, tap } from 'rxjs';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
@@ -14,12 +14,28 @@ export const createHdAccountSubscription = (
   accounts: AccountInterface[],
   dispatch: Dispatch
 ) => {
-  const hdAccounts = accounts.filter(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
+  const existingPublicKeyHashes = new Set(accounts.map(a => a.publicKeyHash));
+  const hdAccountsCount = accounts.filter(({ type }) => type === AccountTypeEnum.HD_ACCOUNT).length;
 
   return createHdAccount$
     .pipe(
       tap(() => dispatch(showLoaderAction())),
-      switchMap(() => Shelter.createHdAccount$(`Account ${accounts.length + 1}`, hdAccounts.length)),
+      switchMap(() => {
+        let nextIndex = hdAccountsCount;
+
+        return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex).pipe(
+          expand(publicData => {
+            if (publicData === undefined || !existingPublicKeyHashes.has(publicData.publicKeyHash)) {
+              return EMPTY;
+            }
+
+            nextIndex++;
+
+            return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex);
+          }),
+          first(publicData => publicData === undefined || !existingPublicKeyHashes.has(publicData.publicKeyHash))
+        );
+      }),
       tap(() => dispatch(hideLoaderAction()))
     )
     .subscribe(publicData => {

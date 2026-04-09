@@ -1,8 +1,10 @@
 import { StackActions } from '@react-navigation/native';
 import type { NavigationAction } from '@react-navigation/routers';
 import { Dispatch } from '@reduxjs/toolkit';
+import { InMemorySigner } from '@taquito/signer';
 import { BigNumber } from 'bignumber.js';
-import { catchError, lastValueFrom, of, Subject, switchMap, tap } from 'rxjs';
+import Toast from 'react-native-toast-message';
+import { catchError, from, lastValueFrom, map, of, Subject, switchMap, tap } from 'rxjs';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -13,12 +15,22 @@ import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/w
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
 import { getPublicKeyAndHash$ } from 'src/utils/keys.util';
 import { isDcpNode } from 'src/utils/network.utils';
+import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys/in-memory-spending-key';
+import { getMnemonicFromSecretKey } from 'src/utils/sapling/secret-key-to-mnemonic';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
 
 import { Shelter } from '../shelter';
 
+const deriveSaskFromPrivateKey = async (privateKey: string): Promise<string> => {
+  const signer = await InMemorySigner.fromSecretKey(privateKey);
+  const secretKey = await signer.secretKey();
+  const fakeMnemonic = getMnemonicFromSecretKey(secretKey);
+
+  return InMemorySpendingKey.deriveSaskFromMnemonic(fakeMnemonic);
+};
+
 export const createImportAccountSubscription = (
-  createImportedAccount$: Subject<{ privateKey: string; name: string }>,
+  createImportedAccount$: Subject<{ privateKey: string; name: string; saplingSpendingKey?: string }>,
   accounts: AccountInterface[],
   dispatch: Dispatch,
   navigationDispatch: (action: NavigationAction) => void,
@@ -27,8 +39,11 @@ export const createImportAccountSubscription = (
 ) =>
   createImportedAccount$
     .pipe(
-      tap(() => dispatch(showLoaderAction())),
-      switchMap(({ privateKey, name }) =>
+      tap(() => {
+        Toast.hide();
+        dispatch(showLoaderAction());
+      }),
+      switchMap(({ privateKey, name, saplingSpendingKey }) =>
         getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey]) => {
             for (const account of accounts) {
@@ -39,7 +54,17 @@ export const createImportAccountSubscription = (
               }
             }
 
-            return Shelter.createImportedAccount$(privateKey, name);
+            return Shelter.createImportedAccount$(privateKey, name).pipe(
+              switchMap(publicData => {
+                const sask$ = saplingSpendingKey ? of(saplingSpendingKey) : from(deriveSaskFromPrivateKey(privateKey));
+
+                return sask$.pipe(
+                  switchMap(sask => Shelter.saveSaplingSpendingKey$(publicData.publicKeyHash, sask)),
+                  map(() => publicData),
+                  catchError(() => of(publicData))
+                );
+              })
+            );
           }),
           catchError(() => {
             showErrorToast({
@@ -59,8 +84,8 @@ export const createImportAccountSubscription = (
         dispatch(addHdAccountAction(publicData));
         dispatch(loadWhitelistAction.submit());
 
-        showSuccessToast({ description: 'Account Imported!' });
         navigationDispatch(StackActions.popToTop());
+        setTimeout(() => showSuccessToast({ description: 'Account Imported!' }), 100);
 
         lastValueFrom(loadTezosBalance$(rpcUrl, publicData.publicKeyHash)).then(
           balance =>

@@ -28,6 +28,8 @@ import {
 } from '../utils/keychain.utils';
 import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../utils/keys.util';
 import { throwError$ } from '../utils/rxjs.utils';
+import { getSaplingDerivationPath } from '../utils/sapling/address-utils';
+import { InMemorySpendingKey } from '../utils/sapling/sapling-keys';
 
 const EMPTY_PASSWORD_HASH = '';
 export const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to complete migration';
@@ -257,12 +259,19 @@ export class Shelter {
                   [publicKeyHash]: privateKey,
                   [PASSWORD_CHECK_KEY]: generateMnemonic(128)
                 }).pipe(
-                  mapTo({
-                    type: AccountTypeEnum.HD_ACCOUNT,
-                    name,
-                    publicKey,
-                    publicKeyHash
-                  })
+                  switchMap(() =>
+                    from(
+                      InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdAccountIndex))
+                    ).pipe(
+                      switchMap(sask => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
+                      mapTo({
+                        type: AccountTypeEnum.HD_ACCOUNT,
+                        name,
+                        publicKey,
+                        publicKeyHash
+                      })
+                    )
+                  )
                 )
               )
             );
@@ -302,12 +311,19 @@ export class Shelter {
         return getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey, publicKeyHash]) =>
             Shelter.saveSensitiveData$({ [publicKeyHash]: privateKey }).pipe(
-              mapTo({
-                name,
-                type: AccountTypeEnum.HD_ACCOUNT,
-                publicKey,
-                publicKeyHash
-              })
+              switchMap(() =>
+                from(
+                  InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(accountIndex))
+                ).pipe(
+                  switchMap(sask => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
+                  mapTo({
+                    name,
+                    type: AccountTypeEnum.HD_ACCOUNT,
+                    publicKey,
+                    publicKeyHash
+                  })
+                )
+              )
             )
           ),
           catchError(() => of(undefined))
@@ -323,6 +339,14 @@ export class Shelter {
     );
 
   static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._passwordHash$.getValue());
+
+  static saveSaplingSpendingKey$ = (publicKeyHash: string, sask: string) =>
+    Shelter.saveSensitiveData$({ [`sapling_sk_${publicKeyHash}`]: sask });
+
+  static revealSaplingSpendingKey$ = (publicKeyHash: string) =>
+    Shelter.decryptSensitiveData$(`sapling_sk_${publicKeyHash}`, Shelter._passwordHash$.getValue()).pipe(
+      catchError(() => of(undefined))
+    );
 
   static getSigner$ = (publicKeyHash: string) =>
     Shelter.revealSecretKey$(publicKeyHash).pipe(
