@@ -26,7 +26,7 @@ import {
 import { saplingService, clearSaplingServiceCache } from './sapling-service';
 
 /** Reads the sapling spending key (sask) from the keychain. */
-function getSaplingSpendingKey(publicKeyHash: string) {
+function getSaplingSpendingKey$(publicKeyHash: string) {
   return Shelter.revealSaplingSpendingKey$(publicKeyHash).pipe(
     switchMap(sask => {
       if (sask === undefined) {
@@ -43,7 +43,7 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
     ofType(loadSaplingCredentialsActions.submit),
     withSelectedAccount(state$),
     switchMap(([, selectedAccount]) =>
-      getSaplingSpendingKey(selectedAccount.publicKeyHash).pipe(
+      getSaplingSpendingKey$(selectedAccount.publicKeyHash).pipe(
         switchMap(sask => from(saplingService.deriveCredentials(sask))),
         map(({ saplingAddress, viewingKey }) =>
           loadSaplingCredentialsActions.success({
@@ -140,7 +140,7 @@ async function prepareSaplingTx(
     };
   }
 ) {
-  const sask = await firstValueFrom(getSaplingSpendingKey(publicKeyHash));
+  const sask = await firstValueFrom(getSaplingSpendingKey$(publicKeyHash));
 
   const { BigNumber } = await import('bignumber.js');
   const amount = new BigNumber(payload.amount);

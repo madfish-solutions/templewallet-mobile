@@ -254,24 +254,16 @@ export class Shelter {
 
             return getPublicKeyAndHash$(privateKey).pipe(
               switchMap(([publicKey, publicKeyHash]) =>
-                Shelter.saveSensitiveData$({
-                  seedPhrase,
-                  [publicKeyHash]: privateKey,
-                  [PASSWORD_CHECK_KEY]: generateMnemonic(128)
-                }).pipe(
-                  switchMap(() =>
-                    from(
-                      InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdAccountIndex))
-                    ).pipe(
-                      switchMap(sask => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
-                      mapTo({
-                        type: AccountTypeEnum.HD_ACCOUNT,
-                        name,
-                        publicKey,
-                        publicKeyHash
-                      })
-                    )
-                  )
+                forkJoin([
+                  InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdAccountIndex)),
+                  Shelter.saveSensitiveData$({
+                    seedPhrase,
+                    [publicKeyHash]: privateKey,
+                    [PASSWORD_CHECK_KEY]: generateMnemonic(128)
+                  })
+                ]).pipe(
+                  switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
+                  mapTo({ type: AccountTypeEnum.HD_ACCOUNT, name, publicKey, publicKeyHash })
                 )
               )
             );
@@ -310,20 +302,12 @@ export class Shelter {
 
         return getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey, publicKeyHash]) =>
-            Shelter.saveSensitiveData$({ [publicKeyHash]: privateKey }).pipe(
-              switchMap(() =>
-                from(
-                  InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(accountIndex))
-                ).pipe(
-                  switchMap(sask => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
-                  mapTo({
-                    name,
-                    type: AccountTypeEnum.HD_ACCOUNT,
-                    publicKey,
-                    publicKeyHash
-                  })
-                )
-              )
+            forkJoin([
+              InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(accountIndex)),
+              Shelter.saveSensitiveData$({ [publicKeyHash]: privateKey })
+            ]).pipe(
+              switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
+              mapTo({ name, type: AccountTypeEnum.HD_ACCOUNT, publicKey, publicKeyHash })
             )
           ),
           catchError(() => of(undefined))
