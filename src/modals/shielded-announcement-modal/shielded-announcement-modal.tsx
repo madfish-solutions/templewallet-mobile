@@ -1,4 +1,5 @@
-import React, { FC, useCallback } from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import React, { FC, useEffect } from 'react';
 import { Image, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -16,11 +17,13 @@ export const ShieldedAnnouncementModal: FC = () => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
   const styles = useShieldedAnnouncementStyles();
+  const isFocused = useIsFocused();
 
-  const handleGotIt = useCallback(() => {
-    dispatch(setHasSeenAnnouncementAction());
-    goBack();
-  }, [dispatch, goBack]);
+  useEffect(() => {
+    if (isFocused) {
+      dispatch(setHasSeenAnnouncementAction());
+    }
+  }, [dispatch, isFocused]);
 
   return (
     <>
@@ -48,7 +51,7 @@ export const ShieldedAnnouncementModal: FC = () => {
       </ScreenContainer>
 
       <ButtonsFloatingContainer>
-        <ButtonLargePrimary title="Got it" onPress={handleGotIt} />
+        <ButtonLargePrimary title="Got it" onPress={goBack} />
         <InsetSubstitute type="bottom" />
       </ButtonsFloatingContainer>
     </>

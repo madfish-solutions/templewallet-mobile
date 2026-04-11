@@ -84,18 +84,15 @@ export const TezosTokenScreen = () => {
     [shieldedBalanceMutez]
   );
 
-  const shieldedTezToken: TokenInterface | undefined = useMemo(() => {
-    if (shieldedBalanceMutez === '0') {
-      return undefined;
-    }
-
-    return {
+  const shieldedTezToken: TokenInterface | undefined = useMemo(
+    () => ({
       ...TEZ_SHIELDED_TOKEN_METADATA,
       balance: shieldedBalanceMutez,
       exchangeRate: tezExchangeRate,
       visibility: VisibilityEnum.Visible
-    };
-  }, [shieldedBalanceMutez, tezExchangeRate]);
+    }),
+    [shieldedBalanceMutez, tezExchangeRate]
+  );
 
   const publicTezToken: TokenInterface = useMemo(
     () => ({

@@ -324,12 +324,30 @@ export class Shelter {
 
   static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._passwordHash$.getValue());
 
+  private static getSaplingSkKey = (publicKeyHash: string) => `sapling_sk_${publicKeyHash}`;
+
   static saveSaplingSpendingKey$ = (publicKeyHash: string, sask: string) =>
-    Shelter.saveSensitiveData$({ [`sapling_sk_${publicKeyHash}`]: sask });
+    Shelter.saveSensitiveData$({ [this.getSaplingSkKey(publicKeyHash)]: sask });
 
   static revealSaplingSpendingKey$ = (publicKeyHash: string) =>
-    Shelter.decryptSensitiveData$(`sapling_sk_${publicKeyHash}`, Shelter._passwordHash$.getValue()).pipe(
+    Shelter.decryptSensitiveData$(this.getSaplingSkKey(publicKeyHash), Shelter._passwordHash$.getValue()).pipe(
       catchError(() => of(undefined))
+    );
+
+  static restoreSaplingSpendingKey$ = (hdAccountIndex: number) =>
+    Shelter.revealSeedPhrase$().pipe(
+      switchMap(seedPhrase => {
+        const seed = mnemonicToSeedSync(seedPhrase);
+        const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
+
+        return forkJoin([
+          InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdAccountIndex)),
+          getPublicKeyAndHash$(privateKey)
+        ] as const);
+      }),
+      switchMap(([sask, [, publicKeyHash]]) =>
+        this.saveSaplingSpendingKey$(publicKeyHash, sask).pipe(switchMap(() => of(sask)))
+      )
     );
 
   static getSigner$ = (publicKeyHash: string) =>
