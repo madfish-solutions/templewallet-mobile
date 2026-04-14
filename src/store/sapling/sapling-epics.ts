@@ -1,6 +1,7 @@
+import { Action } from '@reduxjs/toolkit';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { concat, EMPTY, firstValueFrom, from, of } from 'rxjs';
-import { catchError, concatMap, filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import { concat, EMPTY, from, Observable, of, throwError } from 'rxjs';
+import { catchError, concatMap, endWith, filter, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -11,6 +12,7 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { withSelectedAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction, navigateBackAction } from '../root-state.actions';
+import { hideLoaderAction, showLoaderAction } from '../settings/settings-actions';
 import type { AnyActionEpic, RootState } from '../types';
 import { addHdAccountAction, loadTezosBalanceActions, setSelectedAccountAction } from '../wallet/wallet-actions';
 
@@ -25,22 +27,39 @@ import {
 } from './sapling-actions';
 import { saplingService, clearSaplingServiceCache } from './sapling-service';
 
-/** Reads the sapling spending key (sask) from the keychain. */
-function getSaplingSpendingKey$(publicKeyHash: string, hdAccountIndex?: number) {
-  return Shelter.revealSaplingSpendingKey$(publicKeyHash).pipe(
+const withSaplingSpendingKey$ = (
+  publicKeyHash: string,
+  hdIndex: number | undefined,
+  next: (sask: string) => Observable<Action>,
+  cancel$?: Observable<unknown>
+) =>
+  Shelter.revealSaplingSpendingKey$(publicKeyHash).pipe(
     switchMap(sask => {
       if (sask) {
-        return of(sask);
+        return next(sask);
       }
 
-      if (hdAccountIndex === undefined) {
-        throw new Error('Sapling spending key not found');
-      }
+      const restoreSaplingSpendingKey$ =
+        hdIndex === undefined
+          ? Shelter.restoreImportedAccountSaplingSpendingKey$(publicKeyHash)
+          : Shelter.restoreHdAccountSaplingSpendingKey$(hdIndex);
+      const cancelableRestore$ = cancel$
+        ? restoreSaplingSpendingKey$.pipe(takeUntil(cancel$))
+        : restoreSaplingSpendingKey$;
 
-      return Shelter.restoreSaplingSpendingKey$(hdAccountIndex);
+      return cancelableRestore$.pipe(
+        switchMap(next),
+        startWith(showLoaderAction()),
+        endWith(hideLoaderAction()),
+        catchError(err =>
+          concat(
+            of(hideLoaderAction()),
+            throwError(() => err)
+          )
+        )
+      );
     })
   );
-}
 
 const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
@@ -48,16 +67,19 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
     withSelectedAccount(state$),
     withSelectedAccountHdIndex(state$),
     switchMap(([[, { publicKeyHash }], hdIndex]) =>
-      getSaplingSpendingKey$(publicKeyHash, hdIndex).pipe(
-        switchMap(sask => from(saplingService.deriveCredentials(sask))),
-        map(({ saplingAddress, viewingKey }) =>
-          loadSaplingCredentialsActions.success({ publicKeyHash, saplingAddress, viewingKey })
-        ),
-        catchError(err => {
-          showErrorToast({ description: err instanceof Error ? err.message : 'Failed to load sapling credentials' });
+      withSaplingSpendingKey$(publicKeyHash, hdIndex, sask =>
+        from(saplingService.deriveCredentials(sask)).pipe(
+          map(({ saplingAddress, viewingKey }) =>
+            loadSaplingCredentialsActions.success({ publicKeyHash, saplingAddress, viewingKey })
+          ),
+          catchError(err => {
+            showErrorToast({
+              description: err instanceof Error ? err.message : 'Failed to load sapling credentials'
+            });
 
-          return of(loadSaplingCredentialsActions.fail(err instanceof Error ? err.message : 'Unknown error'));
-        })
+            return of(loadSaplingCredentialsActions.fail(err instanceof Error ? err.message : 'Unknown error'));
+          })
+        )
       )
     )
   );
@@ -100,6 +122,7 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
     withSelectedRpcUrl(state$),
     withSelectedAccountHdIndex(state$),
     switchMap(([[[payload, selectedAccount], rpcUrl], hdIndex]) => {
+      const cancelPreparation$ = action$.pipe(ofType(cancelSaplingPreparationAction));
       const confirmationParams: ConfirmationModalParams =
         payload.isRebalance === true
           ? {
@@ -116,31 +139,35 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
 
       return concat(
         of(navigateAction({ screen: ModalsEnum.Confirmation, params: confirmationParams })),
-        from(prepareSaplingTx(payload, selectedAccount.publicKeyHash, rpcUrl, state$, hdIndex)).pipe(
-          takeUntil(action$.pipe(ofType(cancelSaplingPreparationAction))),
-          map(opParams => prepareSaplingTransactionActions.success(opParams)),
-          catchError(err => {
-            showErrorToast({ description: err instanceof Error ? err.message : 'Failed to prepare transaction' });
+        withSaplingSpendingKey$(
+          selectedAccount.publicKeyHash,
+          hdIndex,
+          sask =>
+            from(prepareSaplingTx(sask, payload, selectedAccount.publicKeyHash, rpcUrl, state$)).pipe(
+              takeUntil(cancelPreparation$),
+              map(opParams => prepareSaplingTransactionActions.success(opParams)),
+              catchError(err => {
+                showErrorToast({ description: err instanceof Error ? err.message : 'Failed to prepare transaction' });
 
-            return from([
-              prepareSaplingTransactionActions.fail(err instanceof Error ? err.message : 'Unknown error'),
-              navigateBackAction()
-            ]);
-          })
+                return from([
+                  prepareSaplingTransactionActions.fail(err instanceof Error ? err.message : 'Unknown error'),
+                  navigateBackAction()
+                ]);
+              })
+            ),
+          cancelPreparation$
         )
       );
     })
   );
 
 async function prepareSaplingTx(
+  sask: string,
   payload: PrepareSaplingTxPayload,
   publicKeyHash: string,
   rpcUrl: string,
-  state$: StateObservable<RootState>,
-  hdAccountIndex?: number
+  state$: StateObservable<RootState>
 ) {
-  const sask = await firstValueFrom(getSaplingSpendingKey$(publicKeyHash, hdAccountIndex));
-
   const { BigNumber } = await import('bignumber.js');
   const amount = new BigNumber(payload.amount);
 

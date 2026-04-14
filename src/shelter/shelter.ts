@@ -11,7 +11,7 @@ import {
   resetGenericPassword
 } from 'react-native-keychain';
 import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
+import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
@@ -30,6 +30,8 @@ import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../ut
 import { throwError$ } from '../utils/rxjs.utils';
 import { getSaplingDerivationPath } from '../utils/sapling/address-utils';
 import { InMemorySpendingKey } from '../utils/sapling/sapling-keys';
+
+import { deriveSaskFromPrivateKey } from './utils/derive-sask-from-private-key.util';
 
 const EMPTY_PASSWORD_HASH = '';
 export const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to complete migration';
@@ -154,12 +156,14 @@ export class Shelter {
 
   private static _passwordHash$ = new BehaviorSubject(EMPTY_PASSWORD_HASH);
 
-  private static saveSensitiveData$ = (data: Record<string, string>) =>
+  private static saveSensitiveData$ = (data: Record<string, string>, passwordHash?: string) =>
     Shelter.getShelterVersion$().pipe(
       switchMap(shelterVersion =>
         forkJoin(
           Object.entries(data).map(async ([key, value]) => {
-            const encryptedData = await firstValueFrom(encryptString$(value, Shelter._passwordHash$.getValue()));
+            const encryptedData = await firstValueFrom(
+              encryptString$(value, passwordHash ?? Shelter._passwordHash$.getValue())
+            );
             const result = await setGenericPassword(
               key,
               JSON.stringify(encryptedData),
@@ -211,19 +215,27 @@ export class Shelter {
 
   static lockApp = () => Shelter._passwordHash$.next(EMPTY_PASSWORD_HASH);
 
-  static unlockApp$ = (password: string) =>
+  static unlockApp$ = (password: string, currentAccountPkh: string, hdIndex: number | undefined) =>
     hashPassword$(password).pipe(
       switchMap(passwordHash =>
         Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, passwordHash).pipe(
-          map(value => {
-            if (value !== null) {
-              Shelter._passwordHash$.next(passwordHash);
+          switchMap(value =>
+            value === null
+              ? of(false)
+              : Shelter.revealSaplingSpendingKey$(currentAccountPkh, passwordHash).pipe(
+                  switchMap(sask => {
+                    if (sask) {
+                      return of(sask);
+                    }
 
-              return true;
-            }
-
-            return false;
-          }),
+                    return hdIndex === undefined
+                      ? Shelter.restoreImportedAccountSaplingSpendingKey$(currentAccountPkh, passwordHash)
+                      : Shelter.restoreHdAccountSaplingSpendingKey$(hdIndex, passwordHash);
+                  }),
+                  tap(() => Shelter._passwordHash$.next(passwordHash)),
+                  map(() => true)
+                )
+          ),
           catchError(() => of(false))
         )
       )
@@ -315,27 +327,29 @@ export class Shelter {
       })
     );
 
-  static revealSecretKey$ = (publicKeyHash: string) =>
-    Shelter.decryptSensitiveData$(publicKeyHash, Shelter._passwordHash$.getValue()).pipe(
+  static revealSecretKey$ = (publicKeyHash: string, passwordHash?: string) =>
+    Shelter.decryptSensitiveData$(publicKeyHash, passwordHash ?? Shelter._passwordHash$.getValue()).pipe(
       switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
       switchMap(signer => signer.secretKey()),
       catchError(() => of(undefined))
     );
 
-  static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._passwordHash$.getValue());
+  static revealSeedPhrase$ = (passwordHash?: string) =>
+    Shelter.decryptSensitiveData$('seedPhrase', passwordHash ?? Shelter._passwordHash$.getValue());
 
   private static getSaplingSkKey = (publicKeyHash: string) => `sapling_sk_${publicKeyHash}`;
 
-  static saveSaplingSpendingKey$ = (publicKeyHash: string, sask: string) =>
-    Shelter.saveSensitiveData$({ [this.getSaplingSkKey(publicKeyHash)]: sask });
+  static saveSaplingSpendingKey$ = (publicKeyHash: string, sask: string, passwordHash?: string) =>
+    Shelter.saveSensitiveData$({ [this.getSaplingSkKey(publicKeyHash)]: sask }, passwordHash);
 
-  static revealSaplingSpendingKey$ = (publicKeyHash: string) =>
-    Shelter.decryptSensitiveData$(this.getSaplingSkKey(publicKeyHash), Shelter._passwordHash$.getValue()).pipe(
-      catchError(() => of(undefined))
-    );
+  static revealSaplingSpendingKey$ = (publicKeyHash: string, passwordHash?: string) =>
+    Shelter.decryptSensitiveData$(
+      this.getSaplingSkKey(publicKeyHash),
+      passwordHash ?? Shelter._passwordHash$.getValue()
+    ).pipe(catchError(() => of(undefined)));
 
-  static restoreSaplingSpendingKey$ = (hdAccountIndex: number) =>
-    Shelter.revealSeedPhrase$().pipe(
+  static restoreHdAccountSaplingSpendingKey$ = (hdAccountIndex: number, passwordHash?: string) =>
+    Shelter.revealSeedPhrase$(passwordHash).pipe(
       switchMap(seedPhrase => {
         const seed = mnemonicToSeedSync(seedPhrase);
         const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
@@ -346,8 +360,20 @@ export class Shelter {
         ] as const);
       }),
       switchMap(([sask, [, publicKeyHash]]) =>
-        this.saveSaplingSpendingKey$(publicKeyHash, sask).pipe(switchMap(() => of(sask)))
+        this.saveSaplingSpendingKey$(publicKeyHash, sask, passwordHash).pipe(map(() => sask))
       )
+    );
+
+  static restoreImportedAccountSaplingSpendingKey$ = (accountPkh: string, passwordHash?: string) =>
+    Shelter.revealSecretKey$(accountPkh, passwordHash).pipe(
+      switchMap(privateKey => {
+        if (privateKey) {
+          return from(deriveSaskFromPrivateKey(privateKey));
+        }
+
+        throw new Error('Failed to reveal private key');
+      }),
+      switchMap(sask => this.saveSaplingSpendingKey$(accountPkh, sask, passwordHash).pipe(map(() => sask)))
     );
 
   static getSigner$ = (publicKeyHash: string) =>
