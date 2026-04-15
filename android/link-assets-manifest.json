@@ -24,6 +24,14 @@
     {
       "path": "src/assets/fonts/Rubik-SemiBold.ttf",
       "sha1": "9d4fd31cf2f584928fd5335aff1b7bc6de83f8d0"
+    },
+    {
+      "path": "src/assets/sapling-output.params",
+      "sha1": "0ebc5a1ef3653948e1c46cf7a16071eac4b7e352"
+    },
+    {
+      "path": "src/assets/sapling-spend.params",
+      "sha1": "a15ab54c2888880e53c823a3063820c728444126"
     }
   ]
 }

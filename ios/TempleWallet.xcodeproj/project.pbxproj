@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		23836A1DDDC14C5F9274E738 /* sapling-spend.params in Resources */ = {isa = PBXBuildFile; fileRef = 59303EBE52B24906887ED67D /* sapling-spend.params */; };
 		3858021FB1B395AB59FD9D78 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		7B0549E02F166976000A1B6D /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B0549DF2F166976000A1B6D /* BootSplash.storyboard */; };
@@ -19,6 +20,7 @@
 		7B0549E72F166DA5000A1B6D /* Rubik-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B736EB72F0E66F600E1BA97 /* Rubik-Medium.ttf */; };
 		7B0549E82F166DA5000A1B6D /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B736EB82F0E66F600E1BA97 /* Rubik-Regular.ttf */; };
 		7B0549E92F166DA5000A1B6D /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B736EB92F0E66F600E1BA97 /* Rubik-SemiBold.ttf */; };
+		D334BC1CF6E64801A9C54B30 /* sapling-output.params in Resources */ = {isa = PBXBuildFile; fileRef = 7121AA32532846A4ADC03ABA /* sapling-output.params */; };
 		E728B459BA0A044259287FD0 /* Pods_TempleWallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04C712DE3D2201161BE195D8 /* Pods_TempleWallet.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +32,8 @@
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = TempleWallet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-TempleWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.release.xcconfig"; sourceTree = "<group>"; };
+		59303EBE52B24906887ED67D /* sapling-spend.params */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "sapling-spend.params"; path = "../src/assets/sapling-spend.params"; sourceTree = "<group>"; };
+		7121AA32532846A4ADC03ABA /* sapling-output.params */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "sapling-output.params"; path = "../src/assets/sapling-output.params"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TempleWallet/AppDelegate.swift; sourceTree = "<group>"; };
 		7B0549DF2F166976000A1B6D /* BootSplash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = TempleWallet/BootSplash.storyboard; sourceTree = "<group>"; };
 		7B736E972F0E4E0A00E1BA97 /* TempleWallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = TempleWallet.entitlements; path = TempleWallet/TempleWallet.entitlements; sourceTree = "<group>"; };
@@ -78,6 +82,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		3982DD07D7AC4602972B1D7B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				59303EBE52B24906887ED67D /* sapling-spend.params */,
+				7121AA32532846A4ADC03ABA /* sapling-output.params */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -101,6 +115,10 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+<<<<<<< HEAD
+				3982DD07D7AC4602972B1D7B /* Resources */,
+=======
+>>>>>>> eb791c7c4dffbb1e18d380a4353a0e48fc091653
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -197,6 +215,11 @@
 				7B0549E72F166DA5000A1B6D /* Rubik-Medium.ttf in Resources */,
 				7B0549E82F166DA5000A1B6D /* Rubik-Regular.ttf in Resources */,
 				7B0549E62F166DA5000A1B6D /* Inter-SemiBold.ttf in Resources */,
+<<<<<<< HEAD
+				23836A1DDDC14C5F9274E738 /* sapling-spend.params in Resources */,
+				D334BC1CF6E64801A9C54B30 /* sapling-output.params in Resources */,
+=======
+>>>>>>> eb791c7c4dffbb1e18d380a4353a0e48fc091653
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
