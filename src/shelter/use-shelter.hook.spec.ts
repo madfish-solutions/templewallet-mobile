@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 
-import { mockHdAccount } from '../interfaces/account.interface.mock';
+import { mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
 import { mockAccountCredentials, mockInvalidPrivateKey } from '../mocks/account-credentials.mock';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
 import { mockNavigationDispatch, mockNavigate } from '../mocks/react-navigation.mock';
@@ -80,8 +80,8 @@ describe('useShelter', () => {
       mockRootState.wallet.accounts.length
     );
 
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockNewHdAccount.publicKeyHash));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockNewHdAccount));
   });
 
   it('should reveal secret key', () => {

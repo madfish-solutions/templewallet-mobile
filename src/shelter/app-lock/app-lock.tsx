@@ -7,6 +7,7 @@ import { emptyFn } from 'src/config/general';
 import { usePasswordDelay } from 'src/hooks/use-password-delay.hook';
 import { enterPassword } from 'src/store/security/security-actions';
 import { usePasswordAttempt } from 'src/store/security/security-selectors';
+import { useCurrentAccountPkhSelector, useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -37,6 +38,14 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const attempt = usePasswordAttempt();
   const passwordDelay = usePasswordDelay();
   const unlock$ = useMemo(() => new Subject<string>(), []);
+  const currentAccountPkh = useCurrentAccountPkhSelector();
+  const hdAccounts = useHdAccountListSelector();
+
+  const hdIndex = useMemo(() => {
+    const rawIndex = hdAccounts.findIndex(account => account.publicKeyHash === currentAccountPkh);
+
+    return rawIndex >= 0 ? rawIndex : undefined;
+  }, [hdAccounts, currentAccountPkh]);
 
   const lock = useCallback(() => Shelter.lockApp(), []);
   const unlock = useCallback((password: string) => unlock$.next(password), [unlock$]);
@@ -66,7 +75,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
         .pipe(
           tap(() => setUnlockInProgress(true)),
           delay(passwordDelay),
-          switchMap(password => Shelter.unlockApp$(password)),
+          switchMap(password => Shelter.unlockApp$(password, currentAccountPkh, hdIndex)),
           tap(() => setUnlockInProgress(false))
         )
         .subscribe(success => {
@@ -84,7 +93,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [unlock$, attempt]);
+  }, [unlock$, attempt, currentAccountPkh, hdIndex]);
 
   return <AppLockContext value={value}>{children}</AppLockContext>;
 };

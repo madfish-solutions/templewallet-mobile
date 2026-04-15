@@ -2210,6 +2210,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-sapling (0.0.2):
+    - React-Core
   - react-native-slider (5.1.1):
     - boost
     - DoubleConversion
@@ -3668,6 +3670,7 @@ DEPENDENCIES:
   - react-native-orientation-locker (from `../node_modules/react-native-orientation-locker`)
   - react-native-restart (from `../node_modules/react-native-restart`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-sapling (from `../node_modules/react-native-sapling`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-themis (from `../node_modules/react-native-themis`)
   - react-native-video (from `../node_modules/react-native-video`)
@@ -3873,6 +3876,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-restart"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-sapling:
+    :path: "../node_modules/react-native-sapling"
   react-native-slider:
     :path: "../node_modules/@react-native-community/slider"
   react-native-themis:
@@ -4079,6 +4084,7 @@ SPEC CHECKSUMS:
   react-native-orientation-locker: 5819fd23ca89cbac0d736fb4314745f62716d517
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: fea29ae0275beaa22f72d0a8be1eb0ab09c3feae
+  react-native-sapling: 36b28bc90d96e6ccc754c515d0dd3ba99049a094
   react-native-slider: f44eb4f327db65c7c0519cc91aefb7b0d50f1615
   react-native-themis: 52e1ff00dbd17ca8ddec02c6e071259602f4b5c7
   react-native-video: f9758cda5b9dd6fd378389002f28f3f19017a406

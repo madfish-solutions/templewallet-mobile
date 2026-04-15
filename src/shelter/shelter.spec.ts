@@ -41,7 +41,7 @@ describe('Shelter', () => {
     });
 
     it('should not unlock app with incorrect password & be unable to decrypt data', done => {
-      Shelter.unlockApp$(mockIncorrectPassword)
+      Shelter.unlockApp$(mockIncorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(
           switchMap(() =>
             Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
@@ -56,7 +56,7 @@ describe('Shelter', () => {
     });
 
     it('should unlock app with correct password & be able to decrypt data', done => {
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(
           switchMap(() =>
             Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
@@ -71,7 +71,7 @@ describe('Shelter', () => {
     });
 
     it('should lock app & be unable to decrypt data', done => {
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(
           switchMap(() =>
             Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
@@ -137,7 +137,7 @@ describe('Shelter', () => {
     it('should create HD account', done => {
       const mockName = 'mockName';
 
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.createHdAccount$(mockName, mockHDAccountCredentials.mockAccountIndex)))
         .subscribe(
           rxJsTestingHelper(account => {
@@ -162,7 +162,7 @@ describe('Shelter', () => {
     it('should create Imported account', done => {
       const mockName = 'mockName';
 
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.createImportedAccount$(mockHDAccountCredentials.privateKey, mockName)))
         .subscribe(
           rxJsTestingHelper(account => {
@@ -185,7 +185,7 @@ describe('Shelter', () => {
     });
 
     it('should reveal HD account seed phrase', done => {
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.revealSeedPhrase$()))
         .subscribe(
           rxJsTestingHelper(decryptResult => {
@@ -201,7 +201,7 @@ describe('Shelter', () => {
     });
 
     it('should reveal account private key', done => {
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash)))
         .subscribe(
           rxJsTestingHelper(decryptResult => {
@@ -219,7 +219,7 @@ describe('Shelter', () => {
     });
 
     it('should return signer with private key', done => {
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.getSigner$(mockAccountCredentials.publicKeyHash)))
         .subscribe(
           rxJsTestingHelper(async signer => {
@@ -305,7 +305,7 @@ describe('Shelter', () => {
     });
 
     it('should return "false" for empty string & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.isPasswordCorrect$('')))
         .subscribe(
           rxJsTestingHelper(isPasswordCorrect => {
@@ -315,7 +315,7 @@ describe('Shelter', () => {
     });
 
     it('should return "false" for correct password & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.isPasswordCorrect$(mockIncorrectPassword)))
         .subscribe(
           rxJsTestingHelper(isPasswordCorrect => {
@@ -325,7 +325,7 @@ describe('Shelter', () => {
     });
 
     it('should return "true" for correct password & unlocked app', done => {
-      Shelter.unlockApp$(mockCorrectPassword)
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.isPasswordCorrect$(mockCorrectPassword)))
         .subscribe(
           rxJsTestingHelper(isPasswordCorrect => {

@@ -13,6 +13,7 @@ import { farmsEpics } from './farms/epics';
 import { marketEpics } from './market/market-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
 import { rootStateEpics } from './root-state.epics';
+import { saplingEpics } from './sapling';
 import { savingsEpics } from './savings/epics';
 import { securityEpics } from './security/security-epics';
 import { settingsEpic } from './settings/settings-epic';
@@ -40,5 +41,6 @@ export const { store, persistor } = createStore(
   abTestingEpics,
   collectiblesEpics,
   farmsEpics,
-  savingsEpics
+  savingsEpics,
+  saplingEpics
 );
