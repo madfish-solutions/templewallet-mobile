@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { EMPTY, Subject } from 'rxjs';
 
@@ -19,7 +19,7 @@ import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.u
 export const useShelter = () => {
   const dispatch = useDispatch();
   const accounts = useAccountsListSelector();
-  const { navigate, dispatch: navigationDispatch } = useNavigation();
+  const { dispatch: navigationDispatch } = useNavigation();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
 
@@ -28,7 +28,10 @@ export const useShelter = () => {
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
-  const createImportedAccount$ = useMemo(() => new Subject<{ privateKey: string; name: string }>(), []);
+  const createImportedAccount$ = useMemo(
+    () => new Subject<{ privateKey: string; name: string; saplingSpendingKey?: string }>(),
+    []
+  );
 
   useEffect(() => {
     const subscriptions = [
@@ -44,7 +47,7 @@ export const useShelter = () => {
           trackErrorEvent('CreateImportAccountError', error, accountPkh ? [accountPkh] : [], { selectedRpcUrl })
       ),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
-      enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch, navigate)
+      enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch)
     ];
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());
@@ -58,14 +61,21 @@ export const useShelter = () => {
     trackErrorEvent
   ]);
 
-  const importWallet = (params: ImportWalletParams) => importWallet$.next(params);
-  const createHdAccount = () => createHdAccount$.next(EMPTY);
-  const revealSecretKey = (params: RevealSecretKeyParams) => revealSecretKey$.next(params);
-  const revealSeedPhrase = (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params);
+  const importWallet = useCallback((params: ImportWalletParams) => importWallet$.next(params), [importWallet$]);
+  const createHdAccount = useCallback(() => createHdAccount$.next(EMPTY), [createHdAccount$]);
+  const revealSecretKey = useCallback(
+    (params: RevealSecretKeyParams) => revealSecretKey$.next(params),
+    [revealSecretKey$]
+  );
+  const revealSeedPhrase = useCallback(
+    (params: RevealSeedPhraseParams) => revealSeedPhrase$.next(params),
+    [revealSeedPhrase$]
+  );
 
   const enableBiometryPassword = (password: string) => enableBiometryPassword$.next(password);
 
-  const createImportedAccount = (params: { privateKey: string; name: string }) => createImportedAccount$.next(params);
+  const createImportedAccount = (params: { privateKey: string; name: string; saplingSpendingKey?: string }) =>
+    createImportedAccount$.next(params);
 
   return {
     importWallet,

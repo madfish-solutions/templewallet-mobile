@@ -18,14 +18,15 @@ import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-even
 import { KoloCryptoCardPreview } from 'src/modals/kolo-card';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addBlacklistedContactAction } from 'src/store/contact-book/contact-book-actions';
 import {
   useContactCandidateAddressSelector,
-  useContactsAddressesSelector,
+  useContactsAddresses,
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
+import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
@@ -43,16 +44,19 @@ import { WalletStyles } from './wallet.styles';
 export const Wallet = memo(() => {
   const dispatch = useDispatch();
   const { pageEvent } = useAnalytics();
-  const { navigate, dispatch: navigationDispatch, getState } = useNavigation();
+  const navigateToModal = useNavigateToModal();
+  const { dispatch: navigationDispatch, getState } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const accounts = useAccountsListSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const contactCandidateAddress = useContactCandidateAddressSelector();
   const ignoredAddresses = useIgnoredAddressesSelector();
-  const contactsAddresses = useContactsAddressesSelector();
+  const contactsAddresses = useContactsAddresses();
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
+  const hasSeenAnnouncement = useHasSeenAnnouncementSelector();
   const isKoloCardAnimationShown = useIsKoloCardAnimationShownSelector();
 
   const handleKoloCardAnimationComplete = useCallback(() => {
@@ -66,6 +70,7 @@ export const Wallet = memo(() => {
 
   useEffect(() => {
     if (
+      contactCandidateAddress &&
       !ignoredAddresses.includes(contactCandidateAddress) &&
       !contactsAddresses.includes(contactCandidateAddress) &&
       !accounts.find(({ publicKeyHash }) => publicKeyHash === contactCandidateAddress)
@@ -82,9 +87,15 @@ export const Wallet = memo(() => {
         navigationDispatch(StackActions.popToTop());
       }
 
-      navigate(ModalsEnum.Newsletter);
+      navigateToModal(ModalsEnum.Newsletter);
     }
   }, [shouldShowNewsletterModal, isAnyBackupMade]);
+
+  useEffect(() => {
+    if (!hasSeenAnnouncement) {
+      navigateToModal(ModalsEnum.ShieldedAnnouncement);
+    }
+  }, [hasSeenAnnouncement]);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');
@@ -104,7 +115,7 @@ export const Wallet = memo(() => {
 
           <TouchableIcon
             name={IconNameEnum.QrScanner}
-            onPress={() => navigate(ScreensEnum.ScanQrCode)}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
             testID={WalletSelectors.scanQRButton}
           />
 
@@ -118,12 +129,13 @@ export const Wallet = memo(() => {
         </View>
 
         <TokenEquityValue token={tezosToken} forTotalBalance={true} />
+        <Divider size={formatSize(16)} />
 
         <HeaderCardActionButtons token={tezosToken} />
 
         <View style={WalletStyles.cryptoCardContainer}>
           <KoloCryptoCardPreview
-            onPress={() => navigate(ModalsEnum.KoloCard)}
+            onPress={() => navigateToModal(ModalsEnum.KoloCard)}
             shouldAnimate={!isKoloCardAnimationShown}
             onAnimationComplete={handleKoloCardAnimationComplete}
           />
@@ -145,7 +157,10 @@ export const Wallet = memo(() => {
         <BottomSheetActionButton
           title="Add address"
           onPress={() => {
-            navigate(ModalsEnum.AddContact, { name: '', publicKeyHash: contactCandidateAddress });
+            navigateToModal(ModalsEnum.AddContact, {
+              name: '',
+              publicKeyHash: contactCandidateAddress
+            });
             bottomSheetController.close();
           }}
           testID={WalletSelectors.addAddressButton}

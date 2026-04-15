@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { catchError, from, of } from 'rxjs';
 

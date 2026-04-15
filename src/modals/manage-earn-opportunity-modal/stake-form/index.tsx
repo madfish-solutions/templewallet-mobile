@@ -1,6 +1,6 @@
 import { FormikProps, FormikProvider } from 'formik';
 import { uniqBy } from 'lodash-es';
-import React, { FC, RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { FC, Ref, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Text, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
@@ -33,7 +33,7 @@ interface StakeFormProps {
   earnOpportunityItem: EarnOpportunity;
   stake?: UserStakeValueInterface;
   formik: FormikProps<StakeFormValues>;
-  acceptRisksRef?: RefObject<View>;
+  acceptRisksRef?: Ref<View>;
 }
 
 export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, stake, acceptRisksRef }) => {

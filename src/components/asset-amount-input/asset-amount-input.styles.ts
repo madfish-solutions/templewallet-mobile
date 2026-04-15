@@ -1,6 +1,6 @@
-import { DEFAULT_BORDER_WIDTH, transparent } from '../../config/styles';
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { DEFAULT_BORDER_WIDTH, transparent } from 'src/config/styles';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }) => ({
   headerContainer: {
@@ -87,5 +87,9 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   balanceText: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  balanceValueText: {
+    ...typography.numbersRegular11,
+    color: colors.black
   }
 }));

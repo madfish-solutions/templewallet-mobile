@@ -1,12 +1,14 @@
 import { Portal } from '@gorhom/portal';
 import React, { useEffect, useRef } from 'react';
 import { Text, View, Animated } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BottomSheetActionButton } from 'src/components/bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { formatSize } from 'src/styles/format-size';
 import { cloudIconName, cloudTitle } from 'src/utils/cloud-backup';
 import { useIsCloudAvailable } from 'src/utils/cloud-backup/use-is-available';
 
@@ -14,8 +16,9 @@ import { useBackupYourWalletOverlayStyles } from './backup-your-wallet-overlay.s
 import { BackupYourWalletSelectors } from './backup-your-wallet.selectors';
 
 export const BackupYourWalletOverlay = () => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const styles = useBackupYourWalletOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
 
@@ -34,7 +37,11 @@ export const BackupYourWalletOverlay = () => {
     <Portal>
       <View style={styles.backdrop}>
         <Animated.View
-          style={[dropdownBottomSheetStyles.root, styles.root, { transform: [{ translateY: translation }] }]}
+          style={[
+            dropdownBottomSheetStyles.root,
+            styles.root,
+            { transform: [{ translateY: translation }], marginBottom: bottomInset + formatSize(8) }
+          ]}
         >
           <View style={dropdownBottomSheetStyles.headerContainer}>
             <Text style={dropdownBottomSheetStyles.title}>Backup your wallet</Text>
@@ -48,8 +55,8 @@ export const BackupYourWalletOverlay = () => {
             iconLeftName={cloudIconName}
             style={styles.actionButton}
             titleStyle={styles.actionButtonText}
-            disabled={!cloudIsAvailable}
-            onPress={() => navigate(ScreensEnum.CloudBackup)}
+            disabled={cloudIsAvailable === false}
+            onPress={() => void (cloudIsAvailable && navigateToScreen({ screen: ScreensEnum.CloudBackup }))}
             testID={BackupYourWalletSelectors.cloudBackupButton}
           />
 
@@ -58,7 +65,7 @@ export const BackupYourWalletOverlay = () => {
             iconLeftName={IconNameEnum.ManualBackup}
             style={[styles.actionButton, styles.manualBackupButton]}
             titleStyle={styles.actionButtonText}
-            onPress={() => navigate(ScreensEnum.ManualBackup)}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.ManualBackup })}
             testID={BackupYourWalletSelectors.manuallyBackupButton}
           />
         </Animated.View>

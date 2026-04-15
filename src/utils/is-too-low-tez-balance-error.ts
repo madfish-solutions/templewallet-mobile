@@ -10,7 +10,8 @@ const BALANCE_TOO_LOW_ERROR_MESSAGES = [
   'empty_implicit_delegated_contract',
   'empty_delegate_account',
   'cannot_pay_storage_fee',
-  'empty_implicit_contract'
+  'empty_implicit_contract',
+  'subtraction_underflow'
 ];
 
 interface TezosGenericOperationErrorWithExtraFields extends TezosGenericOperationError {
@@ -40,7 +41,14 @@ export const isTooLowTezBalanceError = (error: unknown): boolean => {
       if (
         Array.isArray(body) &&
         body.length > 0 &&
-        body.every(item => isObject(item) && 'kind' in item && 'id' in item)
+        body.every(
+          item =>
+            isObject(item) &&
+            'kind' in item &&
+            'id' in item &&
+            typeof item.kind === 'string' &&
+            typeof item.id === 'string'
+        )
       ) {
         return isTooLowTezBalanceError(new TezosOperationError(body, '', []));
       }

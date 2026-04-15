@@ -1,3 +1,4 @@
+import { isIOS } from 'src/config/system';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
 
@@ -41,6 +42,10 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
     paddingBottom: formatSize(4)
   },
   backdrop: {
-    backgroundColor: colors.black
+    backgroundColor: colors.black,
+    zIndex: isIOS ? 11 : undefined
+  },
+  bottomSheetContainer: {
+    zIndex: isIOS ? 11 : undefined
   }
 }));

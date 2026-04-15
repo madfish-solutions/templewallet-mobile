@@ -1,12 +1,16 @@
 import { BigNumber } from 'bignumber.js';
-import { object, SchemaOf } from 'yup';
+import { mixed } from 'yup';
 
 import { isDefined } from 'src/utils/is-defined';
 
-export const bigNumberValidation: SchemaOf<BigNumber> = object().shape({}) as SchemaOf<BigNumber>;
+export const bigNumberSchema = () =>
+  mixed<BigNumber>().test(
+    'is-big-number',
+    'Should be a valid BigNumber',
+    (value: unknown) => value instanceof BigNumber || !isDefined(value)
+  );
 
-export const withMinMaxBignumberValidation = bigNumberValidation
-  .clone()
+export const withMinMaxBignumberValidation = bigNumberSchema()
   .test({
     name: 'is-greater-than',
     exclusive: false,

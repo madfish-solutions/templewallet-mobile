@@ -1,4 +1,5 @@
 import { Formik } from 'formik';
+import { noop } from 'lodash-es';
 import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -45,10 +46,10 @@ export const EnterPassword = () => {
 
   const atBootsplash = useAtBootsplash();
 
-  const { unlock, unlockWithBiometry } = useAppLock();
+  const { unlock, unlockWithBiometry, unlockInProgress } = useAppLock();
 
   const { biometryType } = useBiometryAvailability();
-  const handleResetDataButtonPress = useResetDataHandler();
+  const { resetInProgress, resetData: handleResetDataButtonPress } = useResetDataHandler();
   const { isDisabled, timeleft } = usePasswordLock();
 
   const biometricsEnabled = useBiometricsEnabledSelector();
@@ -122,9 +123,10 @@ export const EnterPassword = () => {
 
               <Divider size={formatSize(8)} />
               <ButtonLargePrimary
-                title="Unlock"
+                title={unlockInProgress ? '' : 'Unlock'}
                 disabled={!isValid || isDisabled}
-                onPress={submitForm}
+                isLoading={unlockInProgress}
+                onPress={unlockInProgress ? noop : submitForm}
                 testID={EnterPasswordSelectors.unlockButton}
               />
               <Divider />
@@ -135,7 +137,7 @@ export const EnterPassword = () => {
         <Divider size={formatSize(4)} />
         <ButtonLink
           title="Erase Data"
-          onPress={handleResetDataButtonPress}
+          onPress={resetInProgress ? noop : handleResetDataButtonPress}
           testID={EnterPasswordSelectors.eraseDataButtonLink}
         />
         <InsetSubstitute type="bottom" />

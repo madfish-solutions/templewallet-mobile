@@ -2,9 +2,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InMemorySigner } from '@taquito/signer';
 import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
-import Keychain from 'react-native-keychain';
+import {
+  UserCredentials,
+  setGenericPassword,
+  getAllGenericPasswordServices,
+  getGenericPassword,
+  getSupportedBiometryType,
+  resetGenericPassword
+} from 'react-native-keychain';
 import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, mapTo, switchMap } from 'rxjs/operators';
+import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { AccountInterface } from '../interfaces/account.interface';
@@ -21,6 +28,10 @@ import {
 } from '../utils/keychain.utils';
 import { getDerivationPath, getPublicKeyAndHash$, seedToPrivateKey } from '../utils/keys.util';
 import { throwError$ } from '../utils/rxjs.utils';
+import { getSaplingDerivationPath } from '../utils/sapling/address-utils';
+import { InMemorySpendingKey } from '../utils/sapling/sapling-keys';
+
+import { deriveSaskFromPrivateKey } from './utils/derive-sask-from-private-key.util';
 
 const EMPTY_PASSWORD_HASH = '';
 export const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to complete migration';
@@ -30,13 +41,13 @@ const MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE = 'Please, try again.';
 interface PasswordServiceMigrationResultBase {
   isSuccess: boolean;
   error?: unknown;
-  readPassword: false | Keychain.UserCredentials;
+  readPassword: false | UserCredentials;
 }
 
 interface SuccessPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
   isSuccess: true;
   error?: undefined;
-  readPassword: Keychain.UserCredentials;
+  readPassword: UserCredentials;
 }
 
 interface FailedPasswordServiceMigrationResult extends PasswordServiceMigrationResultBase {
@@ -59,7 +70,7 @@ export class Shelter {
 
         if (migrationResult.isSuccess) {
           const { username, password } = migrationResult.readPassword;
-          const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
+          const result = await setGenericPassword(username, password, oldPasswordServiceOptions);
 
           if (result === false) {
             throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
@@ -84,7 +95,7 @@ export class Shelter {
           }
 
           const { username, password } = migrationResult.readPassword;
-          const result = await Keychain.setGenericPassword(username, password, oldPasswordServiceOptions);
+          const result = await setGenericPassword(username, password, oldPasswordServiceOptions);
 
           if (result === false) {
             throw new Error(FATAL_MIGRATION_ERROR_MESSAGE);
@@ -95,24 +106,24 @@ export class Shelter {
   };
 
   private static migrateFromChip = async () => {
-    const passwordServices = await Keychain.getAllGenericPasswordServices();
+    const passwordServices = await getAllGenericPasswordServices();
     const shelterVersion = await Shelter.getShelterVersion();
     const hasBiometry = passwordServices.some(serviceName => serviceName.includes(PASSWORD_STORAGE_KEY));
 
     const migrationResults = await Promise.all(
       passwordServices.map(async (passwordService): Promise<PasswordServiceMigrationResult> => {
-        let readPassword: false | Keychain.UserCredentials = false;
+        let readPassword: false | UserCredentials = false;
         try {
           const oldPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion);
-          readPassword = await Keychain.getGenericPassword(oldPasswordServiceOptions);
+          readPassword = await getGenericPassword(oldPasswordServiceOptions);
 
           if (readPassword === false) {
             return { isSuccess: false, readPassword };
           }
 
-          await Keychain.resetGenericPassword(oldPasswordServiceOptions);
+          await resetGenericPassword(oldPasswordServiceOptions);
           const newPasswordServiceOptions = getGenericPasswordOptions(passwordService, shelterVersion + 1);
-          const result = await Keychain.setGenericPassword(
+          const result = await setGenericPassword(
             readPassword.username,
             readPassword.password,
             newPasswordServiceOptions
@@ -145,13 +156,15 @@ export class Shelter {
 
   private static _passwordHash$ = new BehaviorSubject(EMPTY_PASSWORD_HASH);
 
-  private static saveSensitiveData$ = (data: Record<string, string>) =>
+  private static saveSensitiveData$ = (data: Record<string, string>, passwordHash?: string) =>
     Shelter.getShelterVersion$().pipe(
       switchMap(shelterVersion =>
         forkJoin(
           Object.entries(data).map(async ([key, value]) => {
-            const encryptedData = await firstValueFrom(encryptString$(value, Shelter._passwordHash$.getValue()));
-            const result = await Keychain.setGenericPassword(
+            const encryptedData = await firstValueFrom(
+              encryptString$(value, passwordHash ?? Shelter._passwordHash$.getValue())
+            );
+            const result = await setGenericPassword(
               key,
               JSON.stringify(encryptedData),
               getKeychainOptions(key, shelterVersion)
@@ -169,7 +182,7 @@ export class Shelter {
 
   private static decryptSensitiveData$ = (key: string, passwordHash: string) =>
     Shelter.getShelterVersion$().pipe(
-      switchMap(shelterVersion => from(Keychain.getGenericPassword(getKeychainOptions(key, shelterVersion)))),
+      switchMap(shelterVersion => from(getGenericPassword(getKeychainOptions(key, shelterVersion)))),
       switchMap(rawKeychainData =>
         rawKeychainData === false ? throwError$(`No record in Keychain [${key}]`) : of(rawKeychainData)
       ),
@@ -186,7 +199,7 @@ export class Shelter {
     }
 
     // TODO: modify the logic as new version appears if necessary
-    const passwordCheckKey = await Keychain.getGenericPassword(getKeychainOptions(PASSWORD_CHECK_KEY, 0));
+    const passwordCheckKey = await getGenericPassword(getKeychainOptions(PASSWORD_CHECK_KEY, 0));
     const shelterIsEmpty = passwordCheckKey === false;
 
     return shelterIsEmpty ? Shelter.migrations.length : 0;
@@ -202,19 +215,27 @@ export class Shelter {
 
   static lockApp = () => Shelter._passwordHash$.next(EMPTY_PASSWORD_HASH);
 
-  static unlockApp$ = (password: string) =>
+  static unlockApp$ = (password: string, currentAccountPkh: string, hdIndex: number | undefined) =>
     hashPassword$(password).pipe(
       switchMap(passwordHash =>
         Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, passwordHash).pipe(
-          map(value => {
-            if (value !== null) {
-              Shelter._passwordHash$.next(passwordHash);
+          switchMap(value =>
+            value === null
+              ? of(false)
+              : Shelter.revealSaplingSpendingKey$(currentAccountPkh, passwordHash).pipe(
+                  switchMap(sask => {
+                    if (sask) {
+                      return of(sask);
+                    }
 
-              return true;
-            }
-
-            return false;
-          }),
+                    return hdIndex === undefined
+                      ? Shelter.restoreImportedAccountSaplingSpendingKey$(currentAccountPkh, passwordHash)
+                      : Shelter.restoreHdAccountSaplingSpendingKey$(hdIndex, passwordHash);
+                  }),
+                  tap(() => Shelter._passwordHash$.next(passwordHash)),
+                  map(() => true)
+                )
+          ),
           catchError(() => of(false))
         )
       )
@@ -245,17 +266,16 @@ export class Shelter {
 
             return getPublicKeyAndHash$(privateKey).pipe(
               switchMap(([publicKey, publicKeyHash]) =>
-                Shelter.saveSensitiveData$({
-                  seedPhrase,
-                  [publicKeyHash]: privateKey,
-                  [PASSWORD_CHECK_KEY]: generateMnemonic(128)
-                }).pipe(
-                  mapTo({
-                    type: AccountTypeEnum.HD_ACCOUNT,
-                    name,
-                    publicKey,
-                    publicKeyHash
+                forkJoin([
+                  InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdAccountIndex)),
+                  Shelter.saveSensitiveData$({
+                    seedPhrase,
+                    [publicKeyHash]: privateKey,
+                    [PASSWORD_CHECK_KEY]: generateMnemonic(128)
                   })
+                ]).pipe(
+                  switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
+                  mapTo({ type: AccountTypeEnum.HD_ACCOUNT, name, publicKey, publicKeyHash })
                 )
               )
             );
@@ -294,13 +314,12 @@ export class Shelter {
 
         return getPublicKeyAndHash$(privateKey).pipe(
           switchMap(([publicKey, publicKeyHash]) =>
-            Shelter.saveSensitiveData$({ [publicKeyHash]: privateKey }).pipe(
-              mapTo({
-                name,
-                type: AccountTypeEnum.HD_ACCOUNT,
-                publicKey,
-                publicKeyHash
-              })
+            forkJoin([
+              InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(accountIndex)),
+              Shelter.saveSensitiveData$({ [publicKeyHash]: privateKey })
+            ]).pipe(
+              switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
+              mapTo({ name, type: AccountTypeEnum.HD_ACCOUNT, publicKey, publicKeyHash })
             )
           ),
           catchError(() => of(undefined))
@@ -308,14 +327,54 @@ export class Shelter {
       })
     );
 
-  static revealSecretKey$ = (publicKeyHash: string) =>
-    Shelter.decryptSensitiveData$(publicKeyHash, Shelter._passwordHash$.getValue()).pipe(
+  static revealSecretKey$ = (publicKeyHash: string, passwordHash?: string) =>
+    Shelter.decryptSensitiveData$(publicKeyHash, passwordHash ?? Shelter._passwordHash$.getValue()).pipe(
       switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
       switchMap(signer => signer.secretKey()),
       catchError(() => of(undefined))
     );
 
-  static revealSeedPhrase$ = () => Shelter.decryptSensitiveData$('seedPhrase', Shelter._passwordHash$.getValue());
+  static revealSeedPhrase$ = (passwordHash?: string) =>
+    Shelter.decryptSensitiveData$('seedPhrase', passwordHash ?? Shelter._passwordHash$.getValue());
+
+  private static getSaplingSkKey = (publicKeyHash: string) => `sapling_sk_${publicKeyHash}`;
+
+  static saveSaplingSpendingKey$ = (publicKeyHash: string, sask: string, passwordHash?: string) =>
+    Shelter.saveSensitiveData$({ [this.getSaplingSkKey(publicKeyHash)]: sask }, passwordHash);
+
+  static revealSaplingSpendingKey$ = (publicKeyHash: string, passwordHash?: string) =>
+    Shelter.decryptSensitiveData$(
+      this.getSaplingSkKey(publicKeyHash),
+      passwordHash ?? Shelter._passwordHash$.getValue()
+    ).pipe(catchError(() => of(undefined)));
+
+  static restoreHdAccountSaplingSpendingKey$ = (hdAccountIndex: number, passwordHash?: string) =>
+    Shelter.revealSeedPhrase$(passwordHash).pipe(
+      switchMap(seedPhrase => {
+        const seed = mnemonicToSeedSync(seedPhrase);
+        const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
+
+        return forkJoin([
+          InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdAccountIndex)),
+          getPublicKeyAndHash$(privateKey)
+        ] as const);
+      }),
+      switchMap(([sask, [, publicKeyHash]]) =>
+        this.saveSaplingSpendingKey$(publicKeyHash, sask, passwordHash).pipe(map(() => sask))
+      )
+    );
+
+  static restoreImportedAccountSaplingSpendingKey$ = (accountPkh: string, passwordHash?: string) =>
+    Shelter.revealSecretKey$(accountPkh, passwordHash).pipe(
+      switchMap(privateKey => {
+        if (privateKey) {
+          return from(deriveSaskFromPrivateKey(privateKey));
+        }
+
+        throw new Error('Failed to reveal private key');
+      }),
+      switchMap(sask => this.saveSaplingSpendingKey$(accountPkh, sask, passwordHash).pipe(map(() => sask)))
+    );
 
   static getSigner$ = (publicKeyHash: string) =>
     Shelter.revealSecretKey$(publicKeyHash).pipe(
@@ -324,14 +383,16 @@ export class Shelter {
     );
 
   static enableBiometryPassword$ = (password: string) =>
-    forkJoin([Shelter.getShelterVersion(), Keychain.getSupportedBiometryType()]).pipe(
+    forkJoin([Shelter.getShelterVersion(), getSupportedBiometryType()]).pipe(
       switchMap(([shelterVersion, supportedBiometryType]) =>
         isDefined(supportedBiometryType)
-          ? Keychain.setGenericPassword(
-              PASSWORD_STORAGE_KEY,
-              JSON.stringify(password),
-              getBiometryKeychainOptions(shelterVersion)
-            )
+          ? setGenericPassword(PASSWORD_STORAGE_KEY, JSON.stringify(password), {
+              ...getBiometryKeychainOptions(shelterVersion),
+              authenticationPrompt: {
+                title: 'Authenticate to enable biometry',
+                cancel: 'Cancel'
+              }
+            })
           : of(false)
       ),
       catchError(() => of(false))
@@ -339,15 +400,11 @@ export class Shelter {
 
   static disableBiometryPassword$ = () =>
     Shelter.getShelterVersion$().pipe(
-      switchMap(shelterVersion =>
-        from(Keychain.resetGenericPassword(getKeychainOptions(PASSWORD_STORAGE_KEY, shelterVersion)))
-      )
+      switchMap(shelterVersion => from(resetGenericPassword(getKeychainOptions(PASSWORD_STORAGE_KEY, shelterVersion))))
     );
 
   static getBiometryPassword = async () =>
-    Shelter.getShelterVersion().then(shelterVersion =>
-      Keychain.getGenericPassword(getBiometryKeychainOptions(shelterVersion))
-    );
+    Shelter.getShelterVersion().then(shelterVersion => getGenericPassword(getBiometryKeychainOptions(shelterVersion)));
 
   static isPasswordCorrect$ = (password: string) =>
     hashPassword$(password).pipe(map(passwordHash => passwordHash === Shelter._passwordHash$.getValue()));

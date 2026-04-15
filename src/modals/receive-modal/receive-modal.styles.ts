@@ -1,13 +1,24 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useReceiveModalStyles = createUseStyles(({ colors, typography }) => ({
   rootContainer: {
-    alignItems: 'center',
-    paddingVertical: formatSize(32)
+    paddingVertical: formatSize(16),
+    paddingHorizontal: formatSize(0)
+  },
+  shieldedContentContainer: {
+    paddingHorizontal: 0
+  },
+  page: {
+    alignItems: 'center'
+  },
+  pagerContainer: {
+    flexGrow: 0
   },
   tokenContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginBottom: formatSize(26),
+    gap: formatSize(4)
   },
   iconContainer: {
     width: formatSize(22),
@@ -19,7 +30,8 @@ export const useReceiveModalStyles = createUseStyles(({ colors, typography }) =>
     borderRadius: formatSize(4)
   },
   pkhWrapper: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   tokenInfoContainer: {
     justifyContent: 'center'
@@ -36,7 +48,16 @@ export const useReceiveModalStyles = createUseStyles(({ colors, typography }) =>
     ...typography.body15Semibold,
     color: colors.black
   },
+  card: {
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: colors.cardBG,
+    borderRadius: formatSize(16),
+    paddingVertical: formatSize(16),
+    paddingHorizontal: formatSize(12)
+  },
   publicKeyHashContainer: {
+    alignSelf: 'stretch',
     padding: formatSize(12),
     backgroundColor: colors.blue10,
     borderRadius: formatSize(8)
@@ -45,7 +66,40 @@ export const useReceiveModalStyles = createUseStyles(({ colors, typography }) =>
     ...typography.body17Regular,
     color: colors.blue
   },
-  buttonsContainer: {
-    width: '100%'
+  dotsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: formatSize(16)
+  },
+  dot: {
+    width: formatSize(8),
+    height: formatSize(8),
+    borderRadius: formatSize(4)
+  },
+  dotActive: {
+    backgroundColor: colors.orange
+  },
+  dotInactive: {
+    backgroundColor: colors.gray3
+  },
+  warningContainer: {
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.peach10,
+    borderRadius: formatSize(8),
+    paddingHorizontal: formatSize(16),
+    paddingVertical: formatSize(12),
+    gap: formatSize(8)
+  },
+  warningIcon: {
+    fontSize: formatSize(18),
+    color: colors.orange
+  },
+  warningText: {
+    ...typography.caption13Regular,
+    color: colors.black,
+    flex: 1
   }
 }));

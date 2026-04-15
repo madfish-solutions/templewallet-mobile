@@ -1,11 +1,10 @@
 import { object, SchemaOf } from 'yup';
 
+import { acceptTermsValidation } from 'src/form/validation/accept-terms';
+import { analyticsValidation } from 'src/form/validation/analytics';
+import { passwordConfirmationValidation, passwordValidation } from 'src/form/validation/password';
+import { useBiometryValidation } from 'src/form/validation/use-biometry';
 import { viewAdsValidation } from 'src/form/validation/view-ads';
-
-import { acceptTermsValidation } from '../../../form/validation/accept-terms';
-import { analyticsValidation } from '../../../form/validation/analytics';
-import { passwordConfirmationValidation, passwordValidation } from '../../../form/validation/password';
-import { useBiometryValidation } from '../../../form/validation/use-biometry';
 
 export type CreateNewPasswordFormValues = {
   password: string;

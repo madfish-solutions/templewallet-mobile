@@ -1,7 +1,7 @@
 import { string } from 'yup';
 
-import { isDefined } from '../../utils/is-defined';
-import { isKTAddress, isValidAddress } from '../../utils/tezos.util';
+import { isDefined } from 'src/utils/is-defined';
+import { isKTAddress, isValidAddress } from 'src/utils/tezos.util';
 
 import { makeRequiredErrorMessage } from './messages';
 

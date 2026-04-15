@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 
+import { FormDropdown } from 'src/form/form-dropdown';
+import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 
-import { FormDropdown } from '../../form/form-dropdown';
-import { AccountBaseInterface } from '../../interfaces/account.interface';
 import { DropdownValueComponent } from '../dropdown/dropdown';
 import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
 import { IconNameEnum } from '../icon/icon-name.enum';

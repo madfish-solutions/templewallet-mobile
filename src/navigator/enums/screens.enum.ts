@@ -1,5 +1,6 @@
 import { ObjktCollectionType } from 'src/apis/objkt/types';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { EncryptedBackupObject } from 'src/utils/cloud-backup';
 
 import { ModalsEnum } from './modals.enum';
 
@@ -63,7 +64,7 @@ export enum ScreensEnum {
 export type ScreensParamList = {
   [ScreensEnum.Welcome]: undefined;
   [ScreensEnum.CreateAccount]: { backupToCloud?: boolean; cloudBackupId?: number };
-  [ScreensEnum.ContinueWithCloud]: undefined;
+  [ScreensEnum.ContinueWithCloud]: { backup?: EncryptedBackupObject; error?: unknown };
   [ScreensEnum.SecurityUpdate]: undefined;
 
   /** Wallet stack **/
@@ -75,7 +76,6 @@ export type ScreensParamList = {
   [ScreensEnum.Delegation]: undefined;
   [ScreensEnum.ManageAssets]: { collectibles: boolean };
   [ScreensEnum.Activity]: undefined;
-
   [ScreensEnum.ScanQrCode]: undefined;
   [ScreensEnum.Notifications]: undefined;
   [ScreensEnum.NotificationsItem]: { id: number };

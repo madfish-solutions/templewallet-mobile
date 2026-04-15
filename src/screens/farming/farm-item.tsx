@@ -9,7 +9,7 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useFarmStakeWasLoadingSelector } from 'src/store/farms/selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { Farm } from 'src/types/farm';
@@ -28,26 +28,29 @@ interface Props {
 export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
   const { id, contractAddress } = farm;
   const dispatch = useDispatch();
-  const { navigate } = useNavigation();
+  const navigateToModal = useNavigateToModal();
   const tezos = useReadOnlyTezosToolkit();
   const { trackEvent, trackErrorEvent } = useAnalytics();
 
   const stakeWasLoading = useFarmStakeWasLoadingSelector(contractAddress);
 
   const navigateToFarm = useCallback(
-    () => navigate(ModalsEnum.ManageFarmingPool, { id: id, contractAddress: contractAddress }),
-    [id, contractAddress, navigate]
+    () => navigateToModal(ModalsEnum.ManageFarmingPool, { id, contractAddress }),
+    [id, contractAddress, navigateToModal]
   );
   const navigateHarvestFarm = useCallback(
     (opParams: Array<ParamsWithKind>) =>
       dispatch(
-        navigateAction(ModalsEnum.Confirmation, {
-          type: ConfirmationTypeEnum.InternalOperations,
-          opParams,
-          testID: 'CLAIM_REWARDS'
+        navigateAction({
+          screen: ModalsEnum.Confirmation,
+          params: {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams,
+            testID: 'CLAIM_REWARDS'
+          }
         })
       ),
-    []
+    [dispatch]
   );
 
   const lastStakeId = lastStakeRecord?.lastStakeId;
@@ -92,7 +95,16 @@ export const FarmItem: FC<Props> = ({ farm, lastStakeRecord }) => {
         }
       });
     }
-  }, [lastStakeId, lastStakeRecord?.rewardsDueDate, id, contractAddress, tezos, trackEvent, trackErrorEvent]);
+  }, [
+    lastStakeId,
+    lastStakeRecord?.rewardsDueDate,
+    id,
+    contractAddress,
+    tezos,
+    trackEvent,
+    trackErrorEvent,
+    navigateHarvestFarm
+  ]);
 
   return (
     <EarnOpportunityItem

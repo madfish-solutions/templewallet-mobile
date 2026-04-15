@@ -1,6 +1,6 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
-import { hexa } from '../../utils/style.util';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
+import { hexa } from 'src/utils/style.util';
 
 export const useSearchInputStyles = createUseStyles(({ colors, typography }) => ({
   container: {

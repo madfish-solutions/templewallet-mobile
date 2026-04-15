@@ -1,39 +1,51 @@
-import React, { createContext, FC, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Subject } from 'rxjs';
 import { delay, switchMap, tap } from 'rxjs/operators';
 
-import { EmptyFn, emptyFn, EventFn } from '../../config/general';
-import { usePasswordDelay } from '../../hooks/use-password-delay.hook';
-import { enterPassword } from '../../store/security/security-actions';
-import { usePasswordAttempt } from '../../store/security/security-selectors';
-import { hideLoaderAction, showLoaderAction } from '../../store/settings/settings-actions';
-import { showErrorToast } from '../../toast/toast.utils';
-import { isDefined } from '../../utils/is-defined';
+import { emptyFn } from 'src/config/general';
+import { usePasswordDelay } from 'src/hooks/use-password-delay.hook';
+import { enterPassword } from 'src/store/security/security-actions';
+import { usePasswordAttempt } from 'src/store/security/security-selectors';
+import { useCurrentAccountPkhSelector, useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
+import { showErrorToast } from 'src/toast/toast.utils';
+import { isDefined } from 'src/utils/is-defined';
+
 import { Shelter } from '../shelter';
 
 interface AppLockContextValue {
   isLocked: boolean;
   lock: EmptyFn;
-  unlock: EventFn<string, void>;
+  unlock: SyncFn<string, void>;
   unlockWithBiometry: EmptyFn;
+  unlockInProgress: boolean;
 }
 
 const AppLockContext = createContext<AppLockContextValue>({
   isLocked: true,
   lock: emptyFn,
   unlock: emptyFn,
-  unlockWithBiometry: emptyFn
+  unlockWithBiometry: emptyFn,
+  unlockInProgress: false
 });
 
 export const useAppLock = () => useContext(AppLockContext);
 
-export const AppLockContextProvider: FC = ({ children }) => {
+export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const [isLocked, setIsLocked] = useState(Shelter.getIsLocked());
+  const [unlockInProgress, setUnlockInProgress] = useState(false);
   const dispatch = useDispatch();
   const attempt = usePasswordAttempt();
   const passwordDelay = usePasswordDelay();
   const unlock$ = useMemo(() => new Subject<string>(), []);
+  const currentAccountPkh = useCurrentAccountPkhSelector();
+  const hdAccounts = useHdAccountListSelector();
+
+  const hdIndex = useMemo(() => {
+    const rawIndex = hdAccounts.findIndex(account => account.publicKeyHash === currentAccountPkh);
+
+    return rawIndex >= 0 ? rawIndex : undefined;
+  }, [hdAccounts, currentAccountPkh]);
 
   const lock = useCallback(() => Shelter.lockApp(), []);
   const unlock = useCallback((password: string) => unlock$.next(password), [unlock$]);
@@ -52,8 +64,8 @@ export const AppLockContextProvider: FC = ({ children }) => {
   }, [unlock]);
 
   const value = useMemo(
-    () => ({ isLocked, lock, unlock, unlockWithBiometry }),
-    [isLocked, lock, unlock, unlockWithBiometry]
+    () => ({ isLocked, lock, unlock, unlockWithBiometry, unlockInProgress }),
+    [isLocked, lock, unlock, unlockWithBiometry, unlockInProgress]
   );
 
   useEffect(() => {
@@ -61,10 +73,10 @@ export const AppLockContextProvider: FC = ({ children }) => {
       Shelter.isLocked$.subscribe(value => setIsLocked(value)),
       unlock$
         .pipe(
-          tap(() => dispatch(showLoaderAction())),
+          tap(() => setUnlockInProgress(true)),
           delay(passwordDelay),
-          switchMap(password => Shelter.unlockApp$(password)),
-          tap(() => dispatch(hideLoaderAction()))
+          switchMap(password => Shelter.unlockApp$(password, currentAccountPkh, hdIndex)),
+          tap(() => setUnlockInProgress(false))
         )
         .subscribe(success => {
           if (success) {
@@ -81,7 +93,7 @@ export const AppLockContextProvider: FC = ({ children }) => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [unlock$, attempt]);
+  }, [unlock$, attempt, currentAccountPkh, hdIndex]);
 
-  return <AppLockContext.Provider value={value}>{children}</AppLockContext.Provider>;
+  return <AppLockContext value={value}>{children}</AppLockContext>;
 };

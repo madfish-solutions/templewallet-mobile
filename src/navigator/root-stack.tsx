@@ -1,7 +1,8 @@
 import { PortalProvider } from '@gorhom/portal';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack';
 import React, { useState } from 'react';
+import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { useModalOptions } from 'src/components/header/use-modal-options.util';
@@ -25,12 +26,14 @@ import { InAppBrowser } from 'src/modals/in-app-browser';
 import { KoloCardWidgetModal } from 'src/modals/kolo-card';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
+import { RebalanceModal } from 'src/modals/rebalance-modal/rebalance-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
 import { SendModal } from 'src/modals/send-modal/send-modal';
+import { ShieldedAnnouncementModal } from 'src/modals/shielded-announcement-modal/shielded-announcement-modal';
 import { SplashModal } from 'src/modals/splash-modal/splash-modal';
 import { AfterSyncQRScan } from 'src/modals/sync-account/after-sync-qr-scan/after-sync-qr-scan';
 import { AppCheckWarning } from 'src/screens/app-check/app-check-warning';
@@ -46,15 +49,27 @@ import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { CurrentRouteNameContext } from './current-route-name.context';
 import { ModalsEnum, ModalsParamList } from './enums/modals.enum';
 import { ScreensEnum } from './enums/screens.enum';
-import { StacksEnum } from './enums/stacks.enum';
+import { NestedNavigationStacksParamList, StacksEnum } from './enums/stacks.enum';
 import { globalNavigationRef } from './global-nav-ref';
 import { useNavigationContainerTheme } from './hooks/use-navigation-container-theme.hook';
 import { useStackNavigationOptions } from './hooks/use-stack-navigation-options.hook';
 import { MainStackScreen } from './main-stack';
 
-export type RootStackParamList = { MainStack: undefined } & ModalsParamList;
+export type RootStackParamList = NestedNavigationStacksParamList & ModalsParamList;
 
 const RootStack = createStackNavigator<RootStackParamList>();
+
+const mainStackScreenOptions = Platform.select({
+  android: {
+    headerShown: false,
+    // forModalPresentationIOS applies scale + translateY to the background card
+    // (driven by next.progress) when a modal opens on top, then reverses on dismiss.
+    // This reverse animation makes screens behind modals appear to "zoom in" like a modal
+    // presentation. Overriding to forNoAnimation keeps MainStack stationary at all times.
+    cardStyleInterpolator: CardStyleInterpolators.forNoAnimation
+  },
+  default: { headerShown: false }
+});
 
 export const RootStackScreen = () => {
   const dispatch = useDispatch();
@@ -73,10 +88,10 @@ export const RootStackScreen = () => {
   const theme = useNavigationContainerTheme();
   const screenOptions = useStackNavigationOptions();
 
-  const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum>(ScreensEnum.Welcome);
+  const [currentRouteName, setCurrentRouteName] = useState<ScreensEnum | ModalsEnum>(ScreensEnum.Welcome);
 
   const handleNavigationContainerStateChange = () =>
-    setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum);
+    setCurrentRouteName(globalNavigationRef.current?.getCurrentRoute()?.name as ScreensEnum | ModalsEnum);
 
   return (
     <NavigationContainer
@@ -86,12 +101,12 @@ export const RootStackScreen = () => {
       onStateChange={handleNavigationContainerStateChange}
     >
       <PortalProvider>
-        <CurrentRouteNameContext.Provider value={currentRouteName}>
+        <CurrentRouteNameContext value={currentRouteName}>
           <RootStack.Navigator screenOptions={screenOptions}>
             <RootStack.Screen
               name={StacksEnum.MainStack}
               component={MainStackScreen}
-              options={{ headerShown: false }}
+              options={mainStackScreenOptions}
             />
 
             {/* MODALS */}
@@ -198,8 +213,18 @@ export const RootStackScreen = () => {
               component={AfterSyncQRScan}
               options={useModalOptions('Confirm Sync')}
             />
+            <RootStack.Screen
+              name={ModalsEnum.Rebalance}
+              component={RebalanceModal}
+              options={useModalOptions('Rebalance')}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.ShieldedAnnouncement}
+              component={ShieldedAnnouncementModal}
+              options={useModalOptions('Announcement')}
+            />
           </RootStack.Navigator>
-        </CurrentRouteNameContext.Provider>
+        </CurrentRouteNameContext>
       </PortalProvider>
 
       {isSplash && <SplashModal />}

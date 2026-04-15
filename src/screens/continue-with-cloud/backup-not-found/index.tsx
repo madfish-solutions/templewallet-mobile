@@ -8,10 +8,9 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { EmptyFn } from 'src/config/general';
 import { isIOS } from 'src/config/system';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useSetPasswordScreensCommonStyles } from 'src/styles/set-password-screens-common-styles';
 import { showWarningToast } from 'src/toast/toast.utils';
@@ -24,13 +23,13 @@ interface Props {
 }
 
 export const BackupNotFound = ({ retry }: Props) => {
-  const { navigate } = useNavigation();
+  const navigateToScreen = useNavigateToScreen();
 
   const commonStyles = useSetPasswordScreensCommonStyles();
   const styles = useBackupNotFoundStyles();
 
   const onCreateNewWalletBtnPress = () => {
-    navigate(ScreensEnum.CreateAccount, { backupToCloud: true });
+    navigateToScreen({ screen: ScreensEnum.CreateAccount, params: { backupToCloud: true } });
     showWarningToast({ description: 'Cloud backup will be made right after wallet creation automatically' });
   };
 

@@ -1,7 +1,7 @@
 import { object, SchemaOf, string } from 'yup';
 
-import { makeRequiredErrorMessage } from '../../../form/validation/messages';
-import { walletAddressValidation } from '../../../form/validation/wallet-address';
+import { makeRequiredErrorMessage } from 'src/form/validation/messages';
+import { walletAddressValidation } from 'src/form/validation/wallet-address';
 
 export type ImportWatchOnlyDebugValues = {
   name: string;

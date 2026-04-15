@@ -1,7 +1,8 @@
 import { PermissionInfo } from '@airgap/beacon-sdk';
 import { createAction } from '@reduxjs/toolkit';
 
-import { CustomDAppInfo } from '../../interfaces/custom-dapps-info.interface';
+import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
+
 import { createActions } from '../create-actions';
 
 export const loadPermissionsActions = createActions<void, PermissionInfo[], string>('d-apps/LOAD_PERMISSIONS');

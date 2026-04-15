@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
 
 export const useLabelStyles = createUseStyles(({ colors, typography }) => ({
   container: {

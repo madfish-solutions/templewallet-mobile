@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { getExchangeRateSlug } from 'src/token/data/tokens-metadata';
 import { FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -72,7 +73,8 @@ export const useKoloForceLogoutOnNextOpenSelector = () =>
   useSelector(({ settings }) => settings.koloForceLogoutOnNextOpen);
 
 export const useAssetExchangeRate = (slug: string) => {
-  const assetUsdExchangeRate = useSelector(state => state.currency.usdToTokenRates.data[slug]);
+  const rateSlug = getExchangeRateSlug(slug);
+  const assetUsdExchangeRate = useSelector(state => state.currency.usdToTokenRates.data[rateSlug]);
   const fiatToUsdRate = useFiatToUsdRateSelector();
 
   return isDefined(assetUsdExchangeRate) && isDefined(fiatToUsdRate) ? assetUsdExchangeRate * fiatToUsdRate : undefined;

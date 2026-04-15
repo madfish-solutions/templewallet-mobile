@@ -16,7 +16,6 @@ const DefaultIndicator = ActivityIndicator;
 
 const getSourceKey = source => (source && source.uri) || String(source);
 
-// ts-prune-ignore-next
 export const createImageProgress = ImageComponent =>
   class ImageProgress extends Component {
     /* static propTypes = { *CUSTOM* }; */

@@ -35,7 +35,7 @@ export const AssetValueText: FC<Props> = ({
 }) => {
   const { isDcpNode } = useNetworkInfo();
 
-  const hideText = convertToDollar && (!isDefined(asset.exchangeRate) || isDcpNode);
+  const hideText = convertToDollar && (!isDefined(asset.decimals) || isDcpNode);
 
   const visibleAmount = getDollarValue(amount, asset.decimals, convertToDollar ? asset.exchangeRate : 1);
   const isBurnReceiverAddress = receiver === BURN_ADDRESS;

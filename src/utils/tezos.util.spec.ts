@@ -77,7 +77,7 @@ describe('isCollectible', () => {
   it('should return true for collectible asset', () => {
     expect(isCollectible(mockCollectibleAsset)).toEqual(true);
   });
-  it('should return false for collectible asset', () => {
+  it('should return false for token asset', () => {
     expect(isCollectible(mockTokenAsset)).toEqual(false);
   });
 });

@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
@@ -8,14 +7,15 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { StyledTextInput } from 'src/components/styled-text-input/styled-text-input';
 import { useTokenType } from 'src/hooks/use-token-type';
 import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
-import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
+import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { useTokenInfoStyles } from './token-info.styles';
 
 export const TokenInfo = () => {
-  const { token } = useRoute<RouteProp<ScreensParamList, ScreensEnum.TokenInfo>>().params;
+  const { token } = useScreenParams<ScreensEnum.TokenInfo>();
 
   const styles = useTokenInfoStyles();
   const { tokenType, loading } = useTokenType(token.address);

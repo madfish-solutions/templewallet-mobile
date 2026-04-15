@@ -39,6 +39,30 @@ runs:
         APK_BUILD_ID=${{ inputs.APK_BUILD_ID }}
         EOF
 
+    - name: Write Sentry properties file for Android
+      shell: bash
+      run: |
+        cat << EOF > android/sentry.properties
+        auth.token=${{ inputs.SENTRY_AUTH_TOKEN }}
+
+        defaults.org=madfishsolutions
+        defaults.project=madfishsolutions
+
+        defaults.url=https://sentry.io/
+        EOF
+
+    - name: Write Sentry properties file for iOS
+      shell: bash
+      run: |
+        cat << EOF > ios/sentry.properties
+        auth.token=${{ inputs.SENTRY_AUTH_TOKEN }}
+
+        defaults.org=madfishsolutions
+        defaults.project=madfishsolutions
+
+        defaults.url=https://sentry.io/
+        EOF
+
     - name: Write secrets to google-services.json
       shell: bash
       run: |
