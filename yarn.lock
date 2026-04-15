@@ -3474,6 +3474,17 @@
     "@taquito/utils" "^24.2.0"
     bignumber.js "^9.1.2"
 
+"@taquito/contracts-library@^24.0.1":
+  version "24.2.0"
+  resolved "https://registry.yarnpkg.com/@taquito/contracts-library/-/contracts-library-24.2.0.tgz#4bc027ed61f4e13f1e8b8f0fa0779367eb58db59"
+  integrity sha512-aRnq70bi1p78syfEA7CNENhoklmObm58spfJeW+j+ozdcpiFUvDT825yy60Qk6I7LsW9AJCiopIFZ29y7IQKWg==
+  dependencies:
+    "@taquito/core" "^24.2.0"
+    "@taquito/rpc" "^24.2.0"
+    "@taquito/taquito" "^24.2.0"
+    "@taquito/utils" "^24.2.0"
+    bignumber.js "^9.1.2"
+
 "@taquito/core@^24.2.0":
   version "24.2.0"
   resolved "https://registry.yarnpkg.com/@taquito/core/-/core-24.2.0.tgz#2643b534ecf3a439e10e094d344002852156f4b5"
