@@ -115,10 +115,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
-<<<<<<< HEAD
 				3982DD07D7AC4602972B1D7B /* Resources */,
-=======
->>>>>>> eb791c7c4dffbb1e18d380a4353a0e48fc091653
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -215,11 +212,8 @@
 				7B0549E72F166DA5000A1B6D /* Rubik-Medium.ttf in Resources */,
 				7B0549E82F166DA5000A1B6D /* Rubik-Regular.ttf in Resources */,
 				7B0549E62F166DA5000A1B6D /* Inter-SemiBold.ttf in Resources */,
-<<<<<<< HEAD
 				23836A1DDDC14C5F9274E738 /* sapling-spend.params in Resources */,
 				D334BC1CF6E64801A9C54B30 /* sapling-output.params in Resources */,
-=======
->>>>>>> eb791c7c4dffbb1e18d380a4353a0e48fc091653
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
