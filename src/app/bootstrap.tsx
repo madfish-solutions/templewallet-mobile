@@ -25,10 +25,10 @@ export const AppBootstrap: React.FC = () => {
   useEffect(() => {
     setSaplingParamsProvider(async () => ({
       spend: {
-        saplingSpendParams: await readBundledBinary('sapling-spend-params.bin')
+        saplingSpendParams: await readBundledBinary('sapling-spend.params')
       },
       output: {
-        saplingOutputParams: await readBundledBinary('sapling-output-params.bin')
+        saplingOutputParams: await readBundledBinary('sapling-output.params')
       }
     }));
     let cancelled = false;
