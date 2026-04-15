@@ -6,6 +6,7 @@ import { useResetKeychainOnInstall } from './use-reset-keychain-on-install';
 import { useResetPermanentInitialSettings } from './use-reset-permanent-initial-settings';
 import { useScamlistLoading } from './use-scamlist-loading';
 import { useStorageAnalytics } from './use-storage-analytics';
+import { useSwapTokensLoading } from './use-swap-tokens-loading';
 import { useWhitelistLoading } from './use-whitelist-loading';
 
 export const useRootHooks = () => {
@@ -13,6 +14,7 @@ export const useRootHooks = () => {
 
   useWhitelistLoading();
   useScamlistLoading();
+  useSwapTokensLoading();
   useCollectiblesDetailsLoading();
   useQuickActions();
   useResetPermanentInitialSettings();
