@@ -3,9 +3,10 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useLoadingPlaceholderStyles = createUseStyles(({ colors, typography }) => ({
   container: {
-    margin: formatSize(40),
-    marginBottom: formatSize(24),
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: formatSize(40),
+    gap: formatSize(24)
   },
   text: {
     ...typography.caption13Regular,

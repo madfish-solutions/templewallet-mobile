@@ -10,7 +10,8 @@ const BALANCE_TOO_LOW_ERROR_MESSAGES = [
   'empty_implicit_delegated_contract',
   'empty_delegate_account',
   'cannot_pay_storage_fee',
-  'empty_implicit_contract'
+  'empty_implicit_contract',
+  'subtraction_underflow'
 ];
 
 interface TezosGenericOperationErrorWithExtraFields extends TezosGenericOperationError {

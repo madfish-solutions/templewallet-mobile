@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
@@ -36,6 +37,26 @@ export const withSelectedAccount =
           emptyAccount;
 
         return [value, selectedAccount];
+      })
+    );
+
+export const withSelectedAccountHdIndex =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(
+      withLatestFrom(state$, (value, { wallet }): [T, number | undefined] => {
+        const selectedAccount =
+          wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === wallet.selectedAccountPublicKeyHash) ??
+          emptyAccount;
+
+        if (selectedAccount.type !== AccountTypeEnum.HD_ACCOUNT) {
+          return [value, undefined];
+        }
+
+        const hdAccounts = wallet.accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT);
+        const hdIndex = hdAccounts.findIndex(({ publicKeyHash }) => publicKeyHash === selectedAccount.publicKeyHash);
+
+        return [value, hdIndex];
       })
     );
 

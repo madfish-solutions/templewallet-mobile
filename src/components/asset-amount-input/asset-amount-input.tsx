@@ -123,7 +123,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
         return DEFAULT_BALANCE;
       }
 
-      return slug === TEZ_TOKEN_SLUG ? tezosBalance : getTokenBalance(slug) ?? '0';
+      return slug === TEZ_TOKEN_SLUG ? tezosBalance : getTokenBalance(slug) ?? value.asset.balance ?? '0';
     }, [getTokenBalance, slug, tezosBalance, value.asset, balanceFromProps]);
 
     const { isTezosNode } = useNetworkInfo();
@@ -346,7 +346,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
                   <AssetValueText
                     amount={frozenBalance}
                     asset={value.asset}
-                    style={[styles.balanceText, configBalanceTextStyles]}
+                    style={[styles.balanceValueText, configBalanceTextStyles]}
                     convertToDollar={!isTokenInputType}
                   />
                 </View>
@@ -358,11 +358,11 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
                 {balanceLabel ?? (isLiquidityProviderToken ? 'Total Balance:' : 'Balance:')}
               </Text>
               <Divider size={formatSize(4)} />
-              <HideBalance style={styles.balanceText}>
+              <HideBalance style={styles.balanceValueText}>
                 <AssetValueText
                   amount={balance}
                   asset={value.asset}
-                  style={[styles.balanceText, configBalanceTextStyles]}
+                  style={[styles.balanceValueText, configBalanceTextStyles]}
                   convertToDollar={!isTokenInputType}
                 />
               </HideBalance>

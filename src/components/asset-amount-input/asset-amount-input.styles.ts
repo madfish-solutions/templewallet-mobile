@@ -87,5 +87,9 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   balanceText: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  balanceValueText: {
+    ...typography.numbersRegular11,
+    color: colors.black
   }
 }));
