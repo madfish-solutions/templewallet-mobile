@@ -1,9 +1,10 @@
 import { Action } from '@reduxjs/toolkit';
 import { combineEpics, StateObservable } from 'redux-observable';
-import { concat, EMPTY, from, Observable, of, throwError } from 'rxjs';
+import { concat, EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, endWith, filter, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { ofType, toPayload } from 'ts-action-operators';
 
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -31,6 +32,7 @@ const withSaplingSpendingKey$ = (
   publicKeyHash: string,
   hdIndex: number | undefined,
   next: (sask: string) => Observable<Action>,
+  error: (err: unknown) => Observable<Action>,
   cancel$?: Observable<unknown>
 ) =>
   Shelter.revealSaplingSpendingKey$(publicKeyHash).pipe(
@@ -51,12 +53,7 @@ const withSaplingSpendingKey$ = (
         switchMap(next),
         startWith(showLoaderAction()),
         endWith(hideLoaderAction()),
-        catchError(err =>
-          concat(
-            of(hideLoaderAction()),
-            throwError(() => err)
-          )
-        )
+        catchError(err => concat(of(hideLoaderAction()), error(err)))
       );
     })
   );
@@ -66,22 +63,39 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
     ofType(loadSaplingCredentialsActions.submit),
     withSelectedAccount(state$),
     withSelectedAccountHdIndex(state$),
-    switchMap(([[, { publicKeyHash }], hdIndex]) =>
-      withSaplingSpendingKey$(publicKeyHash, hdIndex, sask =>
-        from(saplingService.deriveCredentials(sask)).pipe(
-          map(({ saplingAddress, viewingKey }) =>
-            loadSaplingCredentialsActions.success({ publicKeyHash, saplingAddress, viewingKey })
-          ),
-          catchError(err => {
-            showErrorToast({
-              description: err instanceof Error ? err.message : 'Failed to load sapling credentials'
-            });
-
-            return of(loadSaplingCredentialsActions.fail(err instanceof Error ? err.message : 'Unknown error'));
+    switchMap(([[, { publicKeyHash, type }], hdIndex]) => {
+      if (type === AccountTypeEnum.WATCH_ONLY_DEBUG) {
+        return of(
+          loadSaplingCredentialsActions.fail({
+            publicKeyHash,
+            error: 'Cannot get sapling credentials for watch-only accounts'
           })
-        )
-      )
-    )
+        );
+      }
+
+      return withSaplingSpendingKey$(
+        publicKeyHash,
+        hdIndex,
+        sask =>
+          from(saplingService.deriveCredentials(sask)).pipe(
+            map(({ saplingAddress, viewingKey }) =>
+              loadSaplingCredentialsActions.success({ publicKeyHash, saplingAddress, viewingKey })
+            )
+          ),
+        err => {
+          showErrorToast({
+            description: err instanceof Error ? err.message : 'Failed to load sapling credentials'
+          });
+
+          return of(
+            loadSaplingCredentialsActions.fail({
+              publicKeyHash,
+              error: err instanceof Error ? err.message : 'Unknown error'
+            })
+          );
+        }
+      );
+    })
   );
 
 const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
@@ -145,16 +159,16 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
           sask =>
             from(prepareSaplingTx(sask, payload, selectedAccount.publicKeyHash, rpcUrl, state$)).pipe(
               takeUntil(cancelPreparation$),
-              map(opParams => prepareSaplingTransactionActions.success(opParams)),
-              catchError(err => {
-                showErrorToast({ description: err instanceof Error ? err.message : 'Failed to prepare transaction' });
-
-                return from([
-                  prepareSaplingTransactionActions.fail(err instanceof Error ? err.message : 'Unknown error'),
-                  navigateBackAction()
-                ]);
-              })
+              map(opParams => prepareSaplingTransactionActions.success(opParams))
             ),
+          err => {
+            showErrorToast({ description: err instanceof Error ? err.message : 'Failed to prepare transaction' });
+
+            return from([
+              prepareSaplingTransactionActions.fail(err instanceof Error ? err.message : 'Unknown error'),
+              navigateBackAction()
+            ]);
+          },
           cancelPreparation$
         )
       );
@@ -273,25 +287,44 @@ const clearCacheOnLockEpic: AnyActionEpic = () =>
 const refreshBalanceAfterTxEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.success),
-    filter(() => {
-      const pkh = state$.value.wallet.selectedAccountPublicKeyHash;
-      const saplingState = state$.value.sapling.accountsRecord[pkh];
+    withSelectedAccount(state$),
+    filter(([, selectedAccount]) => {
+      const { sapling } = state$.value;
+      const saplingState = sapling.accountsRecord[selectedAccount.publicKeyHash];
 
       return Boolean(saplingState?.isCredentialsLoaded);
     }),
     map(() => loadShieldedBalanceActions.submit())
   );
 
+const shouldAutoLoadCredentials = (state$: StateObservable<RootState>) => {
+  const { wallet, sapling } = state$.value;
+  const { selectedAccountPublicKeyHash, accounts } = wallet;
+  const saplingState = sapling.accountsRecord[selectedAccountPublicKeyHash];
+  const selectedAccount = accounts.find(account => account.publicKeyHash === selectedAccountPublicKeyHash);
+
+  return (
+    Boolean(selectedAccountPublicKeyHash) &&
+    !saplingState?.isCredentialsLoaded &&
+    !saplingState?.failedToLoadCredentials &&
+    selectedAccount?.type !== AccountTypeEnum.WATCH_ONLY_DEBUG
+  );
+};
+
+let prevLocked: boolean | undefined;
 /** Auto-load sapling credentials when the app is unlocked */
 const autoLoadCredentialsOnUnlockEpic: AnyActionEpic = (_action$, state$) =>
   Shelter.isLocked$.pipe(
-    filter(isLocked => !isLocked),
-    filter(() => {
-      const pkh = state$.value.wallet.selectedAccountPublicKeyHash;
-      const saplingState = state$.value.sapling.accountsRecord[pkh];
+    filter(isLocked => {
+      if (isLocked === prevLocked) {
+        return false;
+      }
 
-      return Boolean(pkh) && !saplingState?.isCredentialsLoaded;
+      prevLocked = isLocked;
+
+      return !isLocked;
     }),
+    filter(() => shouldAutoLoadCredentials(state$)),
     map(() => loadSaplingCredentialsActions.submit())
   );
 
@@ -299,7 +332,7 @@ const autoLoadCredentialsOnUnlockEpic: AnyActionEpic = (_action$, state$) =>
 const autoLoadCredentialsOnAccountSwitchEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(addHdAccountAction, setSelectedAccountAction),
-    filter(() => Boolean(state$.value.wallet.selectedAccountPublicKeyHash)),
+    filter(() => shouldAutoLoadCredentials(state$)),
     map(() => loadSaplingCredentialsActions.submit())
   );
 

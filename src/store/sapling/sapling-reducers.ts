@@ -24,8 +24,12 @@ export const saplingReducers = createReducer<SaplingState>(saplingInitialState, 
     };
   });
 
-  builder.addCase(loadSaplingCredentialsActions.fail, (_state, { payload: _error }) => {
-    // Credentials failed to load - the state remains unchanged
+  builder.addCase(loadSaplingCredentialsActions.fail, (state, { payload }) => {
+    const { publicKeyHash } = payload;
+    state.accountsRecord[publicKeyHash] = {
+      ...(state.accountsRecord[publicKeyHash] ?? initialSaplingAccountState),
+      failedToLoadCredentials: true
+    };
   });
 
   builder.addCase(loadShieldedBalanceActions.submit, (state, _action) => {

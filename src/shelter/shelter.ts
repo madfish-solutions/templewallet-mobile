@@ -228,9 +228,11 @@ export class Shelter {
                       return of(sask);
                     }
 
-                    return hdIndex === undefined
-                      ? Shelter.restoreImportedAccountSaplingSpendingKey$(currentAccountPkh, passwordHash)
-                      : Shelter.restoreHdAccountSaplingSpendingKey$(hdIndex, passwordHash);
+                    return (
+                      hdIndex === undefined
+                        ? Shelter.restoreImportedAccountSaplingSpendingKey$(currentAccountPkh, passwordHash)
+                        : Shelter.restoreHdAccountSaplingSpendingKey$(hdIndex, passwordHash)
+                    ).pipe(catchError(() => of(undefined)));
                   }),
                   tap(() => Shelter._passwordHash$.next(passwordHash)),
                   map(() => true)
