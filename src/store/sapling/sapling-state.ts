@@ -7,6 +7,7 @@ export interface SaplingAccountState {
   viewingKey: string | null;
   shieldedBalance: string;
   isCredentialsLoaded: boolean;
+  failedToLoadCredentials: boolean;
   isBalanceLoading: boolean;
   transactionHistory: SaplingTransactionHistoryItem[];
   isHistoryLoading: boolean;
@@ -24,6 +25,7 @@ export const initialSaplingAccountState: SaplingAccountState = {
   viewingKey: null,
   shieldedBalance: '0',
   isCredentialsLoaded: false,
+  failedToLoadCredentials: false,
   isBalanceLoading: false,
   transactionHistory: [],
   isHistoryLoading: false
