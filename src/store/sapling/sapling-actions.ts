@@ -8,7 +8,7 @@ import { createActions } from '../create-actions';
 export const loadSaplingCredentialsActions = createActions<
   void,
   { publicKeyHash: string; saplingAddress: string; viewingKey: string },
-  string
+  { publicKeyHash: string; error: string }
 >('sapling/LOAD_CREDENTIALS');
 
 export const loadShieldedBalanceActions = createActions<void, { publicKeyHash: string; balance: string }, string>(

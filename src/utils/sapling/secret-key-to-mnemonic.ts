@@ -9,7 +9,7 @@ import bs58check from 'bs58check';
 export function getMnemonicFromSecretKey(secretKey: string): string {
   let entropy: Uint8Array | Buffer;
 
-  if (secretKey.startsWith('spsk') || secretKey.startsWith('p2sk')) {
+  if (secretKey.startsWith('spsk') || secretKey.startsWith('p2sk') || secretKey.startsWith('BLsk')) {
     [entropy] = b58DecodeAndCheckPrefix(secretKey);
   } else if (secretKey.startsWith('edsk')) {
     entropy = getEntropyFromEdsk(secretKey);
