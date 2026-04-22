@@ -30,7 +30,9 @@ export enum ModalsEnum {
   ChooseAccountImportType = 'ChooseAccountImportType',
   ImportAccountFromSeedPhrase = 'ImportAccountFromSeedPhrase',
   ImportAccountFromPrivateKey = 'ImportAccountFromPrivateKey',
-  KoloCard = 'KoloCard'
+  KoloCard = 'KoloCard',
+  ShieldedAnnouncement = 'ShieldedAnnouncement',
+  Rebalance = 'Rebalance'
 }
 
 export type ModalsParamList = {
@@ -61,6 +63,8 @@ export type ModalsParamList = {
   [ModalsEnum.ImportAccountFromSeedPhrase]: undefined;
   [ModalsEnum.ImportAccountFromPrivateKey]: undefined;
   [ModalsEnum.KoloCard]: undefined;
+  [ModalsEnum.ShieldedAnnouncement]: undefined;
+  [ModalsEnum.Rebalance]: undefined;
 };
 
 type ModalParamsPart<T extends ModalsEnum> = undefined extends ModalsParamList[T]
@@ -94,4 +98,6 @@ export type ModalParams =
   | ModalParamsPart<ModalsEnum.ChooseAccountImportType>
   | ModalParamsPart<ModalsEnum.ImportAccountFromSeedPhrase>
   | ModalParamsPart<ModalsEnum.ImportAccountFromPrivateKey>
-  | ModalParamsPart<ModalsEnum.KoloCard>;
+  | ModalParamsPart<ModalsEnum.KoloCard>
+  | ModalParamsPart<ModalsEnum.ShieldedAnnouncement>
+  | ModalParamsPart<ModalsEnum.Rebalance>;

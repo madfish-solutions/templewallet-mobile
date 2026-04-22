@@ -96,7 +96,7 @@ jobs:
           automatic_release_tag: ${{ github.event.inputs.github-release-version }}(${{ github.event.inputs.build-number }})
           prerelease: false
           files: |
-            android/app/build/outputs/apk/release/app-release.apk
+            android/app/build/outputs/bundle/release/app-release.aab
 
       # iOS
 

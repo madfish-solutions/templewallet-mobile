@@ -32,6 +32,20 @@ export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.TezToken
 };
 
+export const TEZ_SHIELDED_TOKEN_SLUG = 'shielded_tez_0';
+
+/** Shielded TEZ shares the same exchange rate as public TEZ */
+export const getExchangeRateSlug = (slug: string) => (slug === TEZ_SHIELDED_TOKEN_SLUG ? TEZ_TOKEN_SLUG : slug);
+
+export const TEZ_SHIELDED_TOKEN_METADATA: TokenMetadataInterface = {
+  ...emptyTokenMetadata,
+  address: 'shielded_tez',
+  name: 'Shielded',
+  symbol: 'TEZ',
+  decimals: 6,
+  iconName: IconNameEnum.TezShieldedToken
+};
+
 export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
   ...emptyTokenMetadata,
   name: 'FILM',

@@ -49,6 +49,7 @@ target 'TempleWallet' do
   config = use_native_modules!
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
+  $VCEnableLocation = false
 
   use_react_native!(
     :path => config[:reactNativePath],

@@ -3,6 +3,7 @@ import { string as stringSchema } from 'yup';
 
 import { AddressValidationErrorEnum } from 'src/enums/address-validation-error.enum';
 import { isDefined } from 'src/utils/is-defined';
+import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 
 import { makeRequiredErrorMessage } from './messages';
 
@@ -38,5 +39,5 @@ otherNetworks.forEach(({ slug, name, errorType }) => {
 addressValidation = addressValidation.test(
   AddressValidationErrorEnum.INVALID_ADDRESS,
   invalidWalletAddressError,
-  value => !isDefined(value) || validate(value, 'tezos')
+  value => !isDefined(value) || validate(value, 'tezos') || isSaplingAddress(value)
 );

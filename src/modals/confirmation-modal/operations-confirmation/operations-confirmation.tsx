@@ -47,7 +47,9 @@ interface Props extends TestIdProps {
   opParams: ParamsWithKind[];
   isLoading: boolean;
   disclaimer?: ReactNode;
+  renderPreview?: (opParams: ParamsWithKind[]) => ReactNode;
   onEstimationError?: SyncFn<unknown>;
+  onEstimationComplete?: EmptyFn;
   onSubmit: SyncFn<ParamsWithKind[]>;
 }
 
@@ -56,9 +58,11 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
   opParams,
   isLoading,
   onEstimationError = emptyFn,
+  onEstimationComplete,
   onSubmit,
   children,
   disclaimer,
+  renderPreview,
   testID
 }) => {
   const styles = useOperationsConfirmationStyles();
@@ -127,6 +131,12 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
     [estimations.error, onEstimationError]
   );
 
+  useEffect(() => {
+    if (!estimations.isLoading && onEstimationComplete) {
+      onEstimationComplete();
+    }
+  }, [estimations.isLoading, onEstimationComplete]);
+
   const shouldShowDelegationDisabledDisclaimer = useMemo(() => {
     const targetBakerAddress =
       opParams[0]?.kind === OpKind.DELEGATION && isDefined(opParams[0]?.delegate) ? opParams[0].delegate : null;
@@ -166,7 +176,11 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
             <View style={styles.divider} />
             <Divider size={formatSize(8)} />
 
-            <OperationsPreview opParams={opParamsWithEstimations} />
+            {renderPreview ? (
+              renderPreview(opParamsWithEstimations)
+            ) : (
+              <OperationsPreview opParams={opParamsWithEstimations} />
+            )}
 
             {shouldShowDelegationDisabledDisclaimer ? (
               <>
