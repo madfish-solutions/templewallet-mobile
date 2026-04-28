@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
+import { Divider } from 'src/components/divider/divider';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
@@ -75,7 +76,7 @@ export const TokenScreen = () => {
     <>
       <HeaderCard>
         <TokenEquityValue token={token} />
-
+        <Divider size={formatSize(4)} />
         <PublicKeyHashText publicKeyHash={accountPkh} marginBottom={formatSize(16)} />
 
         <HeaderCardActionButtons token={token} />

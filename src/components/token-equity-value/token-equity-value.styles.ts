@@ -3,7 +3,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useTokenEquityValueStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {
-    marginVertical: formatSize(16)
+    marginTop: formatSize(16)
   },
   header: {
     flexDirection: 'row',

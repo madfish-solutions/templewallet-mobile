@@ -161,6 +161,7 @@ import TezWalletIcon from './assets/tez-wallet.svg';
 import FilmTokenIcon from './assets/tokens/film.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
 import SwapTokenPlaceholderIcon from './assets/tokens/swap-token-placeholder.svg';
+import TezShieldedTokenIcon from './assets/tokens/tez-shielded.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
 import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import TouchIdIcon from './assets/touch-id.svg';
@@ -244,6 +245,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.SoonBadge]: SoonBadgeIcon,
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
+  [IconNameEnum.TezShieldedToken]: TezShieldedTokenIcon,
   [IconNameEnum.FilmToken]: FilmTokenIcon,
   [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,

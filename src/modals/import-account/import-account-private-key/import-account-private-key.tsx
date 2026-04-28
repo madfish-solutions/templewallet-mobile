@@ -15,6 +15,7 @@ import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
+import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -32,6 +33,8 @@ interface Props {
 export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
   const { createImportedAccount } = useShelter();
   const accountIndex = useAccountsListSelector().length + 1;
+
+  const isLoading = useIsShowLoaderSelector();
 
   usePageAnalytic(ModalsEnum.ImportAccountFromPrivateKey);
 
@@ -68,7 +71,7 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
         <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={ImportAccountPrivateKeySelectors.backButton} />
         <ButtonLargePrimary
           title="Import"
-          disabled={!formik.isValid}
+          disabled={!formik.isValid || isLoading}
           onPress={useCallbackIfOnline(formik.submitForm)}
           testID={ImportAccountPrivateKeySelectors.importButton}
         />

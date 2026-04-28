@@ -9,6 +9,7 @@ import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { resetSwapParamsAction } from 'src/store/swap/swap-actions';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 
 import { SwapFormSelectors } from '../swap-form.selectors';
 
@@ -16,6 +17,7 @@ import { SwapAssetsButtonStyles } from './swap-assets-button.styles';
 
 export const SwapAssetsButton: FC = () => {
   const dispatch = useDispatch();
+  const colors = useColors();
   const { values, setValues } = useFormikContext<SwapFormValues>();
   const { inputAssets, outputAssets } = values;
 
@@ -37,6 +39,7 @@ export const SwapAssetsButton: FC = () => {
         onPress={() => swapAction(inputAssets, outputAssets)}
         name={IconNameEnum.SwapArrow}
         size={formatSize(24)}
+        color={colors.orange}
         testID={SwapFormSelectors.swapAssetsButton}
       />
     </View>

@@ -14,3 +14,10 @@ export const mockHdAccount: AccountInterface = {
   publicKey: mockAccountCredentials.publicKey,
   publicKeyHash: mockAccountCredentials.publicKeyHash
 };
+
+export const mockNewHdAccount: AccountInterface = {
+  name: 'Mock New HD Account',
+  type: AccountTypeEnum.HD_ACCOUNT,
+  publicKey: 'edpkNewMockPublicKey',
+  publicKeyHash: 'tz1NewMockPublicKeyHash'
+};

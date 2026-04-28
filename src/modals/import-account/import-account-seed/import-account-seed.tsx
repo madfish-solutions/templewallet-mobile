@@ -19,11 +19,14 @@ import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floatin
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { showLoaderAction } from 'src/store/settings/settings-actions';
+import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isString } from 'src/utils/is-string';
 import { seedToPrivateKey } from 'src/utils/keys.util';
+import { extractHdIndexFromDerivationPath, getSaplingDerivationPath } from 'src/utils/sapling/address-utils';
+import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys/in-memory-spending-key';
 
 import { useImportAccountFromSeedStyles } from './import-account-from-seed.styles';
 import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
@@ -44,6 +47,8 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   const { createImportedAccount } = useShelter();
   const accountsIndex = useAccountsListSelector().length + 1;
 
+  const isLoading = useIsShowLoaderSelector();
+
   usePageAnalytic(ModalsEnum.ImportAccountFromSeedPhrase);
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Seed Phrase" /> }, []);
@@ -52,13 +57,20 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
     ({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
       dispatch(showLoaderAction());
 
-      setTimeout(() => {
+      setTimeout(async () => {
         const seed = mnemonicToSeedSync(seedPhrase, password);
         const privateKey = seedToPrivateKey(seed, isString(derivationPath) ? derivationPath : undefined);
 
+        const hdIndex = extractHdIndexFromDerivationPath(derivationPath);
+        const saplingSpendingKey = await InMemorySpendingKey.deriveSaskFromMnemonic(
+          seedPhrase,
+          getSaplingDerivationPath(hdIndex)
+        );
+
         createImportedAccount({
           name: `Account ${accountsIndex}`,
-          privateKey
+          privateKey,
+          saplingSpendingKey
         });
       }, 0);
     },
@@ -105,7 +117,7 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
         <ButtonLargeSecondary title="Back" onPress={onBackPress} testID={ImportAccountSeedSelectors.backButton} />
         <ButtonLargePrimary
           title="Import"
-          disabled={!formik.isValid}
+          disabled={!formik.isValid || isLoading}
           onPress={useCallbackIfOnline(formik.submitForm)}
           testID={ImportAccountSeedSelectors.importButton}
         />
