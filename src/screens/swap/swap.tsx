@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
-import { loadSwapDexesAction, loadSwapTokensAction, resetSwapParamsAction } from 'src/store/swap/swap-actions';
+import { resetSwapParamsAction } from 'src/store/swap/swap-actions';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -18,9 +18,7 @@ export const SwapScreen: FC = () => {
 
   useEffect(() => {
     dispatch(resetSwapParamsAction());
-    dispatch(loadSwapTokensAction.submit());
-    dispatch(loadSwapDexesAction.submit());
-  });
+  }, []);
 
   return (
     <SwapForm
