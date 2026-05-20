@@ -5,7 +5,7 @@ import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useBackupYourWalletOverlayStyles = createUseStyles(({ colors }) => ({
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: colors.black16,
     flexDirection: 'column',
     justifyContent: 'flex-end'

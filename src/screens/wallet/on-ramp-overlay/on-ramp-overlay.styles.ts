@@ -49,7 +49,7 @@ export const useOnRampOverlayStyles = createUseStyles(({ colors, typography }) =
     color: colors.peach
   },
   loaderContainer: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'center'
   }
 }));

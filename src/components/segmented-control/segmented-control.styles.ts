@@ -16,7 +16,7 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
     padding: formatSize(2)
   },
   tile: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     ...generateShadow(1, black),
     zIndex: 1,
     margin: tileMargin,
@@ -24,7 +24,7 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
     backgroundColor: colors.navigation
   },
   contentContainer: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     ...generateShadow(2, transparent),
     zIndex: 2,
     flexDirection: 'row',
