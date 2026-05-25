@@ -11,7 +11,7 @@
     "ios": "react-native run-ios",
     "ios:pods": "cd ios && pod install",
     "ios:test-flight": "cd ios && bundle exec fastlane beta",
-    "lint": "eslint .",
+    "lint": "eslint --quiet src",
     "lint:format": "prettier \"src/**/*\" --write --ignore-unknown",
     "start": "react-native start",
     "test": "jest",
