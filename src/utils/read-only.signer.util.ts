@@ -42,8 +42,10 @@ export class ReadOnlySigner implements Signer {
 }
 
 export const readOnlySignerAccount: AccountInterface = {
+  id: READ_ONLY_SIGNER_PUBLIC_KEY_HASH,
   name: 'Read-only account',
   type: AccountTypeEnum.IMPORTED_ACCOUNT,
   publicKey: READ_ONLY_SIGNER_PUBLIC_KEY,
-  publicKeyHash: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
+  publicKeyHash: READ_ONLY_SIGNER_PUBLIC_KEY_HASH,
+  address: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
 };

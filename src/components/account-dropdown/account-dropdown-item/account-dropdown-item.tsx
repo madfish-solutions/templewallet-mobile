@@ -15,6 +15,7 @@ import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.i
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountBaseDisplayAddress } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
@@ -40,10 +41,11 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
   }) => {
     const styles = useAccountDropdownItemStyles();
     const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
+    const displayAddress = getAccountBaseDisplayAddress(account);
 
     return (
       <View style={styles.root}>
-        <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
+        <RobotIcon seed={displayAddress} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
         <View style={styles.infoContainer}>
           <View
             style={[
@@ -61,7 +63,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
             ) : (
               <WalletAddress
                 isLocalDomainNameShowing
-                publicKeyHash={account.publicKeyHash}
+                publicKeyHash={displayAddress}
                 isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
               />
             )}

@@ -7,6 +7,7 @@ import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { getAccountBaseId } from 'src/utils/account.utils';
 
 import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -34,8 +35,9 @@ export const CurrentAccountDropdown = memo<Props>(({ testID, testIDProperties, i
   const dispatch = useDispatch();
 
   const onValueChange = useCallback(
-    (value: AccountBaseInterface | undefined) => dispatch(setSelectedAccountAction(value?.publicKeyHash)),
-    []
+    (value: AccountBaseInterface | undefined) =>
+      dispatch(setSelectedAccountAction(value ? getAccountBaseId(value) ?? value.publicKeyHash : undefined)),
+    [dispatch]
   );
 
   return (

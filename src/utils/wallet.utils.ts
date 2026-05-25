@@ -18,6 +18,7 @@ import {
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
+import { getSelectedAccountFromWallet } from './account.utils';
 import { AnalyticsError } from './error-analytics-data.utils';
 import { getNetworkGasTokenMetadata } from './network.utils';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
@@ -32,9 +33,7 @@ export const withSelectedAccount =
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { wallet }): [T, AccountInterface] => {
-        const selectedAccount =
-          wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === wallet.selectedAccountPublicKeyHash) ??
-          emptyAccount;
+        const selectedAccount = getSelectedAccountFromWallet(wallet) ?? emptyAccount;
 
         return [value, selectedAccount];
       })
@@ -45,12 +44,14 @@ export const withSelectedAccountHdIndex =
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { wallet }): [T, number | undefined] => {
-        const selectedAccount =
-          wallet.accounts.find(({ publicKeyHash }) => publicKeyHash === wallet.selectedAccountPublicKeyHash) ??
-          emptyAccount;
+        const selectedAccount = getSelectedAccountFromWallet(wallet) ?? emptyAccount;
 
         if (selectedAccount.type !== AccountTypeEnum.HD_ACCOUNT) {
           return [value, undefined];
+        }
+
+        if (selectedAccount.hdIndex !== undefined) {
+          return [value, selectedAccount.hdIndex];
         }
 
         const hdAccounts = wallet.accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT);

@@ -2,13 +2,23 @@ import { isEqual } from 'lodash-es';
 import { useCallback, useMemo } from 'react';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
+import { emptyAccount } from 'src/interfaces/account.interface';
 import { WR_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
+import {
+  getAccountAddressForChain,
+  getAccountAddressForEvm,
+  getAccountAddressForTezos,
+  getAccountForChain,
+  getSelectedAccountFromWallet,
+  getSelectedAccountIdFromWallet
+} from 'src/utils/account.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible } from 'src/utils/tezos.util';
-import { getAccountState, getSelectedAccount } from 'src/utils/wallet-account-state.utils';
+import { getAccountState } from 'src/utils/wallet-account-state.utils';
 
 import { useSelector } from '../selector';
 import { useTokensMetadataSelector } from '../tokens-metadata/tokens-metadata-selectors';
@@ -18,7 +28,12 @@ export const useAccountsListSelector = () => useSelector(({ wallet }) => wallet.
 /** @deprecated */
 export const useVisibleAccountsListSelector = () =>
   useSelector(
-    ({ wallet }) => wallet.accounts.filter(account => getAccountState(wallet, account.publicKeyHash).isVisible),
+    ({ wallet }) =>
+      wallet.accounts.filter(account => {
+        const tezosAddress = getAccountAddressForTezos(account);
+
+        return tezosAddress ? getAccountState(wallet, tezosAddress).isVisible : true;
+      }),
     jsonEqualityFn
   );
 
@@ -40,25 +55,51 @@ export const useIsAuthorisedSelector = () => {
   return useMemo(() => accounts.length > 0, [accounts.length]);
 };
 
-export const useCurrentAccountPkhSelector = () => useSelector(state => state.wallet.selectedAccountPublicKeyHash);
+export const useSelectedAccountIdSelector = () => useSelector(({ wallet }) => getSelectedAccountIdFromWallet(wallet));
+
+/** @deprecated Use useCurrentAccountTezosAddressSelector for Tezos flows. */
+export const useCurrentAccountPkhSelector = () =>
+  useSelector(({ wallet }) => {
+    const account = getSelectedAccountFromWallet(wallet);
+
+    return account ? getAccountAddressForTezos(account) ?? '' : '';
+  });
 
 export const useIsAccountVisibleSelector = (publicKeyHash: string): boolean | undefined =>
   useSelector(state => state.wallet.accountsStateRecord[publicKeyHash]?.isVisible);
 
-export const useRawCurrentAccountSelector = () =>
-  useSelector(state => {
-    const pkh = state.wallet.selectedAccountPublicKeyHash;
+export const useRawCurrentAccountSelector = () => useSelector(({ wallet }) => getSelectedAccountFromWallet(wallet));
 
-    return state.wallet.accounts.find(acc => acc.publicKeyHash === pkh);
+export const useSelectedAccountSelector = () =>
+  useSelector(({ wallet }) => getSelectedAccountFromWallet(wallet) ?? emptyAccount, jsonEqualityFn);
+
+export const useCurrentAccountTezosAddressSelector = () =>
+  useSelector(({ wallet }) => {
+    const account = getSelectedAccountFromWallet(wallet);
+
+    return account ? getAccountAddressForTezos(account) : undefined;
   });
 
-/** @deprecated */
-export const useSelectedAccountSelector = () => useSelector(({ wallet }) => getSelectedAccount(wallet), jsonEqualityFn);
+export const useCurrentAccountEvmAddressSelector = () =>
+  useSelector(({ wallet }) => {
+    const account = getSelectedAccountFromWallet(wallet);
+
+    return account ? getAccountAddressForEvm(account) : undefined;
+  });
+
+export const useCurrentAccountForChainSelector = (chain: TempleChainKind) =>
+  useSelector(({ wallet }) => {
+    const account = getSelectedAccountFromWallet(wallet);
+
+    return account ? getAccountForChain(account, chain) : null;
+  }, jsonEqualityFn);
 
 export const useAllCurrentAccountAssetsSelector = () =>
   useSelector(
     state => {
-      const account = state.wallet.accountsStateRecord[state.wallet.selectedAccountPublicKeyHash];
+      const selectedAccount = getSelectedAccountFromWallet(state.wallet);
+      const tezosAddress = selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined;
+      const account = tezosAddress ? state.wallet.accountsStateRecord[tezosAddress] : undefined;
 
       if (!account) {
         return null;
@@ -130,7 +171,12 @@ export const useTokenBalanceGetter = () => {
 };
 
 export const useCurrentAccountTezosBalance = () =>
-  useSelector(({ wallet }) => wallet.accountsStateRecord[wallet.selectedAccountPublicKeyHash]?.tezosBalance ?? '0');
+  useSelector(({ wallet }) => {
+    const account = getSelectedAccountFromWallet(wallet);
+    const tezosAddress = account ? getAccountAddressForChain(account, TempleChainKind.Tezos) : undefined;
+
+    return tezosAddress ? wallet.accountsStateRecord[tezosAddress]?.tezosBalance ?? '0' : '0';
+  });
 
 export const useTezosBalanceOfKnownAccountSelector = (publicKeyHash: string) =>
   useSelector(state => {

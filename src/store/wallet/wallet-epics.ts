@@ -12,6 +12,7 @@ import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { MS_IN_SECOND } from 'src/utils/date.utils';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
@@ -103,14 +104,12 @@ const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
     switchMap(([[[[, allAccounts], selectedAccount], rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadTezosBalances$(
-        rpcUrl,
-        allAccounts.map(account => account.publicKeyHash)
-      ).pipe(
+      loadTezosBalances$(rpcUrl, allAccounts.map(getAccountAddressForTezos).filter(isDefined)).pipe(
         withOnRampOverlayState(state$),
         concatMap(([balances, overlayState]) => {
           const successAction = loadTezosBalanceActions.success(balances);
-          const balance = balances[selectedAccount.publicKeyHash];
+          const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
+          const balance = selectedTezosAddress ? balances[selectedTezosAddress] : undefined;
           const showOnRampAction =
             !LIMIT_FIN_FEATURES &&
             !isDcpNode(rpcUrl) &&

@@ -24,6 +24,7 @@ export const ImportWatchOnlyDebug: FC = () => {
 
   const onSubmit = (values: ImportWatchOnlyDebugValues) => {
     const publicData = {
+      id: values.address,
       name: values.name,
       type: AccountTypeEnum.WATCH_ONLY_DEBUG,
       publicKey: 'publicKey',

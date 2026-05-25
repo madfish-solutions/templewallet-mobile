@@ -8,6 +8,7 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useShelter } from 'src/shelter/use-shelter.hook';
+import { getAccountBaseDisplayAddress } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
@@ -68,7 +69,7 @@ export const AccountDropdownBase = memo<Props>(
     testIDProperties,
     isCollectibleScreen
   }) => {
-    const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(value.publicKeyHash);
+    const onLongPressHandler = () => isDefined(value) && copyStringToClipboard(getAccountBaseDisplayAddress(value));
 
     return (
       <Dropdown

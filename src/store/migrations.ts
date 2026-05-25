@@ -2,6 +2,9 @@ import { isEqual } from 'lodash-es';
 import type { MigrationManifest, PersistedState } from 'redux-persist';
 
 import { isIOS } from 'src/config/system';
+import { DEFAULT_HD_WALLET_ID, DEFAULT_HD_WALLET_NAME } from 'src/config/wallet.const';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
 import type { AccountInterface } from 'src/interfaces/account.interface';
@@ -186,6 +189,61 @@ export const MIGRATIONS: MigrationManifest = {
     const state = untypedState as TypedPersistedRootState;
     if (isIOS) {
       state.settings.isInAppBrowserEnabled = true;
+    }
+
+    return state;
+  },
+  '9': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
+    if (!untypedState) {
+      return untypedState;
+    }
+    const state = untypedState as TypedPersistedRootState;
+    let hdIndex = 0;
+
+    state.wallet.accounts = state.wallet.accounts.map(account => {
+      const id = account.id ?? account.publicKeyHash;
+
+      if (account.type === AccountTypeEnum.HD_ACCOUNT) {
+        return {
+          ...account,
+          id,
+          walletId: account.walletId ?? DEFAULT_HD_WALLET_ID,
+          hdIndex: account.hdIndex ?? hdIndex++,
+          tezosAddress: account.tezosAddress ?? account.publicKeyHash
+        };
+      }
+
+      if (account.type === AccountTypeEnum.IMPORTED_ACCOUNT) {
+        return {
+          ...account,
+          id,
+          chain: account.chain ?? TempleChainKind.Tezos,
+          address: account.address ?? account.publicKeyHash
+        };
+      }
+
+      return { ...account, id };
+    });
+
+    const selectedAccount =
+      state.wallet.accounts.find(
+        account =>
+          account.id === state.wallet.selectedAccountPublicKeyHash ||
+          account.publicKeyHash === state.wallet.selectedAccountPublicKeyHash
+      ) ?? state.wallet.accounts.find(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
+
+    state.wallet.selectedAccountId = selectedAccount?.id ?? '';
+    state.wallet.walletsSpecsRecord = state.wallet.walletsSpecsRecord ?? {};
+
+    if (
+      state.wallet.accounts.some(({ type }) => type === AccountTypeEnum.HD_ACCOUNT) &&
+      !state.wallet.walletsSpecsRecord[DEFAULT_HD_WALLET_ID]
+    ) {
+      state.wallet.walletsSpecsRecord[DEFAULT_HD_WALLET_ID] = {
+        id: DEFAULT_HD_WALLET_ID,
+        name: DEFAULT_HD_WALLET_NAME,
+        createdAt: Date.now()
+      };
     }
 
     return state;

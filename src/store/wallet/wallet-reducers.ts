@@ -1,8 +1,18 @@
 import { createReducer } from '@reduxjs/toolkit';
 
+import { DEFAULT_HD_WALLET_NAME } from 'src/config/wallet.const';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
+import { AccountInterface } from 'src/interfaces/account.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
+import {
+  findAccountByIdOrAddress,
+  getAccountAddressForTezos,
+  getAccountId,
+  getSelectedAccountFromWallet
+} from 'src/utils/account.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
@@ -16,24 +26,63 @@ import {
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadAssetsBalancesActions
+  loadAssetsBalancesActions,
+  setWalletSpecsAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
 
-export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
-  builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
-    ...state,
-    accounts: [...state.accounts, account],
-    accountsStateRecord: { ...state.accountsStateRecord, [account.publicKeyHash]: initialAccountState }
-  }));
+const normalizeAccount = (account: AccountInterface): AccountInterface => {
+  const tezosAddress = getAccountAddressForTezos(account);
+  const id = getAccountId(account);
 
-  builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => ({
-    ...state,
-    accounts: state.accounts.map(item =>
-      item.publicKeyHash === updatedAccount.publicKeyHash ? { ...item, ...updatedAccount } : item
-    )
-  }));
+  return {
+    ...account,
+    id,
+    publicKeyHash: account.publicKeyHash || tezosAddress || '',
+    tezosAddress: account.tezosAddress ?? (account.type === AccountTypeEnum.HD_ACCOUNT ? tezosAddress : undefined),
+    address: account.address ?? (account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? tezosAddress : undefined),
+    chain: account.chain ?? (account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? TempleChainKind.Tezos : undefined)
+  };
+};
+
+export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
+  builder.addCase(addHdAccountAction, (state, { payload }) => {
+    const account = normalizeAccount(payload);
+    const tezosAddress = getAccountAddressForTezos(account);
+
+    state.accounts.push(account);
+
+    if (tezosAddress) {
+      state.accountsStateRecord[tezosAddress] = initialAccountState;
+    }
+
+    if (
+      account.type === AccountTypeEnum.HD_ACCOUNT &&
+      account.walletId &&
+      !state.walletsSpecsRecord[account.walletId]
+    ) {
+      state.walletsSpecsRecord[account.walletId] = {
+        id: account.walletId,
+        name: DEFAULT_HD_WALLET_NAME,
+        createdAt: Date.now()
+      };
+    }
+  });
+
+  builder.addCase(updateAccountAction, (state, { payload }) => {
+    const updatedAccount = normalizeAccount(payload);
+
+    state.accounts = state.accounts.map(item =>
+      getAccountId(item) === getAccountId(updatedAccount) || item.publicKeyHash === updatedAccount.publicKeyHash
+        ? { ...item, ...updatedAccount }
+        : item
+    );
+  });
+
+  builder.addCase(setWalletSpecsAction, (state, { payload }) => {
+    state.walletsSpecsRecord[payload.id] = payload;
+  });
 
   builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) => {
     const accountState = retrieveAccountState(state, publicKeyHash);
@@ -65,10 +114,19 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }
   });
 
-  builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
-    ...state,
-    selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
-  }));
+  builder.addCase(setSelectedAccountAction, (state, { payload: accountIdOrAddress }) => {
+    const selectedAccount =
+      findAccountByIdOrAddress(state.accounts, accountIdOrAddress) ?? getSelectedAccountFromWallet(state);
+
+    state.selectedAccountId = selectedAccount ? getAccountId(selectedAccount) : accountIdOrAddress ?? '';
+
+    const tezosAddress = selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined;
+    if (tezosAddress) {
+      state.selectedAccountPublicKeyHash = tezosAddress;
+    } else if (accountIdOrAddress?.startsWith('tz')) {
+      state.selectedAccountPublicKeyHash = accountIdOrAddress;
+    }
+  });
 
   builder.addCase(loadTezosBalanceActions.success, (state, { payload }) => {
     for (const pkh in payload) {

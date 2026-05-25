@@ -13,7 +13,9 @@ import {
 import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
+import { DEFAULT_HD_WALLET_ID } from '../config/wallet.const';
 import { AccountTypeEnum } from '../enums/account-type.enum';
+import { TempleChainKind } from '../enums/temple-chain-kind.enum';
 import { AccountInterface } from '../interfaces/account.interface';
 import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
@@ -277,7 +279,16 @@ export class Shelter {
                   })
                 ]).pipe(
                   switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
-                  mapTo({ type: AccountTypeEnum.HD_ACCOUNT, name, publicKey, publicKeyHash })
+                  mapTo({
+                    id: publicKeyHash,
+                    type: AccountTypeEnum.HD_ACCOUNT,
+                    name,
+                    publicKey,
+                    publicKeyHash,
+                    tezosAddress: publicKeyHash,
+                    walletId: DEFAULT_HD_WALLET_ID,
+                    hdIndex: hdAccountIndex
+                  })
                 )
               )
             );
@@ -299,8 +310,11 @@ export class Shelter {
           [publicKeyHash]: privateKey
         }).pipe(
           mapTo({
+            id: publicKeyHash,
             name,
             type: AccountTypeEnum.IMPORTED_ACCOUNT,
+            chain: TempleChainKind.Tezos,
+            address: publicKeyHash,
             publicKey,
             publicKeyHash
           })
@@ -321,7 +335,16 @@ export class Shelter {
               Shelter.saveSensitiveData$({ [publicKeyHash]: privateKey })
             ]).pipe(
               switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(publicKeyHash, sask)),
-              mapTo({ name, type: AccountTypeEnum.HD_ACCOUNT, publicKey, publicKeyHash })
+              mapTo({
+                id: publicKeyHash,
+                name,
+                type: AccountTypeEnum.HD_ACCOUNT,
+                publicKey,
+                publicKeyHash,
+                tezosAddress: publicKeyHash,
+                walletId: DEFAULT_HD_WALLET_ID,
+                hdIndex: accountIndex
+              })
             )
           ),
           catchError(() => of(undefined))
