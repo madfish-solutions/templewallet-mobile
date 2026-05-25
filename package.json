@@ -128,7 +128,6 @@
     "ts-action": "^11.0.0",
     "ts-action-operators": "^9.1.2",
     "typedarray-to-buffer": "^4.0.0",
-    "viem": "^2.50.4",
     "yup": "^0.32.11"
   },
   "devDependencies": {
