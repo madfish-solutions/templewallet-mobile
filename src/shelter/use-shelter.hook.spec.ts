@@ -75,12 +75,13 @@ describe('useShelter', () => {
 
     result.current.createHdAccount();
 
-    expect(mockShelter.createHdAccount$).toHaveBeenCalledWith(
-      `Account ${mockRootState.wallet.accounts.length + 1}`,
-      mockRootState.wallet.accounts.length
-    );
+    expect(mockShelter.createHdAccount$).toHaveBeenCalledWith(`Account ${mockRootState.wallet.accounts.length + 1}`, {
+      walletId: mockRootState.wallet.accounts[0].walletId,
+      accountIndex: mockRootState.wallet.accounts.length,
+      existingAccounts: mockRootState.wallet.accounts
+    });
 
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockNewHdAccount.publicKeyHash));
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockNewHdAccount.id));
     expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockNewHdAccount));
   });
 
@@ -130,6 +131,7 @@ describe('useShelter', () => {
 
   it('should create imported account', async () => {
     mockInMemorySigner.publicKey.mockReturnValueOnce(Promise.resolve('another public key'));
+    mockInMemorySigner.publicKeyHash.mockReturnValueOnce(Promise.resolve('tz1AnotherPublicKeyHash'));
     const { result } = renderHook(() => useShelter());
 
     result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });

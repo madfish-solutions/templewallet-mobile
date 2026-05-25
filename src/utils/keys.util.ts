@@ -43,7 +43,7 @@ const deriveSeed = (seed: Buffer, derivationPath: string) => {
   }
 };
 
-const evmPrivateKeyToHex = (privateKey: Uint8Array | nullish) => {
+const evmPrivateKeyToHex = (privateKey: Uint8Array | null | undefined) => {
   if (!privateKey) {
     throw new Error('Failed to derive EVM private key');
   }

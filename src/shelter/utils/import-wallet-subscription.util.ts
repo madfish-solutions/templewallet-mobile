@@ -28,7 +28,7 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletPara
     .subscribe(([importedAccounts, isPasswordSaved]) => {
       if (importedAccounts !== undefined) {
         const firstAccount = importedAccounts[0];
-        dispatch(setSelectedAccountAction(firstAccount.publicKeyHash));
+        dispatch(setSelectedAccountAction(firstAccount.id));
 
         for (const account of importedAccounts) {
           dispatch(addHdAccountAction(account));

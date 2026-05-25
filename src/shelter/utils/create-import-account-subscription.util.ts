@@ -7,11 +7,13 @@ import { catchError, from, lastValueFrom, map, of, Subject, switchMap, tap } fro
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { hideLoaderAction, setOnRampOverlayStateAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
+import { getAccountAddressForChain } from 'src/utils/account.utils';
 import { getPublicKeyAndHash$ } from 'src/utils/keys.util';
 import { isDcpNode } from 'src/utils/network.utils';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
@@ -36,9 +38,9 @@ export const createImportAccountSubscription = (
       }),
       switchMap(({ privateKey, name, saplingSpendingKey }) =>
         getPublicKeyAndHash$(privateKey).pipe(
-          switchMap(([publicKey]) => {
+          switchMap(([, publicKeyHash]) => {
             for (const account of accounts) {
-              if (account.publicKey === publicKey) {
+              if (getAccountAddressForChain(account, TempleChainKind.Tezos) === publicKeyHash) {
                 showWarningToast({ description: 'Account already exist' });
 
                 return of(undefined);
