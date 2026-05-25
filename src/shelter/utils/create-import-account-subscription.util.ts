@@ -14,7 +14,7 @@ import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-a
 import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
 import { getAccountAddressForChain } from 'src/utils/account.utils';
-import { getPublicKeyAndHash$ } from 'src/utils/keys.util';
+import { AccountCreds, privateKeyToEvmAccountCreds, privateKeyToTezosAccountCreds } from 'src/utils/keys.util';
 import { isDcpNode } from 'src/utils/network.utils';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
 
@@ -22,8 +22,32 @@ import { Shelter } from '../shelter';
 
 import { deriveSaskFromPrivateKey } from './derive-sask-from-private-key.util';
 
+export interface CreateImportedAccountParams {
+  privateKey: string;
+  name: string;
+  chain?: TempleChainKind;
+  saplingSpendingKey?: string;
+}
+
+const normalizeAddressForCompare = (chain: TempleChainKind, address: string) =>
+  chain === TempleChainKind.EVM ? address.toLowerCase() : address;
+
+const hasSameChainAddress = (accounts: AccountInterface[], chain: TempleChainKind, address: string) =>
+  accounts.some(account => {
+    const accountAddress = getAccountAddressForChain(account, chain);
+
+    return accountAddress
+      ? normalizeAddressForCompare(chain, accountAddress) === normalizeAddressForCompare(chain, address)
+      : false;
+  });
+
+const deriveImportedAccountCreds = (privateKey: string, chain: TempleChainKind): Promise<AccountCreds> =>
+  chain === TempleChainKind.EVM
+    ? Promise.resolve().then(() => privateKeyToEvmAccountCreds(privateKey))
+    : privateKeyToTezosAccountCreds(privateKey);
+
 export const createImportAccountSubscription = (
-  createImportedAccount$: Subject<{ privateKey: string; name: string; saplingSpendingKey?: string }>,
+  createImportedAccount$: Subject<CreateImportedAccountParams>,
   accounts: AccountInterface[],
   dispatch: Dispatch,
   navigationDispatch: (action: NavigationAction) => void,
@@ -36,19 +60,21 @@ export const createImportAccountSubscription = (
         Toast.hide();
         dispatch(showLoaderAction());
       }),
-      switchMap(({ privateKey, name, saplingSpendingKey }) =>
-        getPublicKeyAndHash$(privateKey).pipe(
-          switchMap(([, publicKeyHash]) => {
-            for (const account of accounts) {
-              if (getAccountAddressForChain(account, TempleChainKind.Tezos) === publicKeyHash) {
-                showWarningToast({ description: 'Account already exist' });
+      switchMap(({ privateKey, name, chain = TempleChainKind.Tezos, saplingSpendingKey }) =>
+        from(deriveImportedAccountCreds(privateKey, chain)).pipe(
+          switchMap(({ address }) => {
+            if (hasSameChainAddress(accounts, chain, address)) {
+              showWarningToast({ description: 'Account already exist' });
 
-                return of(undefined);
-              }
+              return of(undefined);
             }
 
-            return Shelter.createImportedAccount$(privateKey, name).pipe(
+            return Shelter.createImportedAccount$(privateKey, name, chain).pipe(
               switchMap(publicData => {
+                if (chain === TempleChainKind.EVM) {
+                  return of(publicData);
+                }
+
                 const sask$ = saplingSpendingKey ? of(saplingSpendingKey) : from(deriveSaskFromPrivateKey(privateKey));
 
                 return sask$.pipe(
@@ -73,25 +99,30 @@ export const createImportAccountSubscription = (
     )
     .subscribe(publicData => {
       if (publicData !== undefined) {
-        dispatch(setSelectedAccountAction(publicData.publicKeyHash));
+        dispatch(setSelectedAccountAction(publicData.id));
         dispatch(addHdAccountAction(publicData));
-        dispatch(loadWhitelistAction.submit());
 
         navigationDispatch(StackActions.popToTop());
         setTimeout(() => showSuccessToast({ description: 'Account Imported!' }), 100);
 
-        lastValueFrom(loadTezosBalance$(rpcUrl, publicData.publicKeyHash)).then(
-          balance =>
-            void (
-              !LIMIT_FIN_FEATURES &&
-              new BigNumber(balance).isEqualTo(0) &&
-              !isDcpNode(rpcUrl) &&
-              dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start))
-            ),
-          error => {
-            console.error(error);
-            trackErrorEvent(error, publicData.publicKeyHash);
-          }
-        );
+        const tezosAddress = getAccountAddressForChain(publicData, TempleChainKind.Tezos);
+
+        if (tezosAddress) {
+          dispatch(loadWhitelistAction.submit());
+
+          lastValueFrom(loadTezosBalance$(rpcUrl, tezosAddress)).then(
+            balance =>
+              void (
+                !LIMIT_FIN_FEATURES &&
+                new BigNumber(balance).isEqualTo(0) &&
+                !isDcpNode(rpcUrl) &&
+                dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start))
+              ),
+            error => {
+              console.error(error);
+              trackErrorEvent(error, tezosAddress);
+            }
+          );
+        }
       }
     });

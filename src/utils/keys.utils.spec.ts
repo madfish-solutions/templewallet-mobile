@@ -8,6 +8,7 @@ import {
   getPublicKeyAndHash$,
   getTezosDerivationPath,
   isEvmDerivationPath,
+  isValidEvmDerivationPath,
   mnemonicToEvmAccountCreds,
   mnemonicToPrivateKey,
   mnemonicToTezosAccountCreds,
@@ -35,6 +36,12 @@ it('getEvmDerivationPath should return EVM derivation path, passing account inde
 it('isEvmDerivationPath should return true for EVM derivation path', () => {
   expect(isEvmDerivationPath("m/44'/60'/0'/0/1")).toEqual(true);
   expect(isEvmDerivationPath(mockAccountCredentials.derivationPath)).toEqual(false);
+});
+
+it('isValidEvmDerivationPath should validate custom EVM derivation paths', () => {
+  expect(isValidEvmDerivationPath("m/44'/60'/0'/0/0")).toEqual(true);
+  expect(isValidEvmDerivationPath("m/44'/60'/x")).toEqual(false);
+  expect(isValidEvmDerivationPath(mockAccountCredentials.derivationPath)).toEqual(false);
 });
 
 it('seedToPrivateKey should return private key, passing seed and derivation path', () => {

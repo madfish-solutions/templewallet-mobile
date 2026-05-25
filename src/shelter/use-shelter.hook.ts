@@ -11,7 +11,10 @@ import { ImportWalletParams } from './interfaces/import-wallet-params.interface'
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
 import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
-import { createImportAccountSubscription } from './utils/create-import-account-subscription.util';
+import {
+  createImportAccountSubscription,
+  CreateImportedAccountParams
+} from './utils/create-import-account-subscription.util';
 import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
 import { importWalletSubscription } from './utils/import-wallet-subscription.util';
 import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.util';
@@ -28,10 +31,7 @@ export const useShelter = () => {
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
-  const createImportedAccount$ = useMemo(
-    () => new Subject<{ privateKey: string; name: string; saplingSpendingKey?: string }>(),
-    []
-  );
+  const createImportedAccount$ = useMemo(() => new Subject<CreateImportedAccountParams>(), []);
 
   useEffect(() => {
     const subscriptions = [
@@ -52,12 +52,16 @@ export const useShelter = () => {
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [
-    dispatch,
-    importWallet$,
-    revealSecretKey$,
+    accounts,
     createHdAccount$,
-    accounts.length,
+    createImportedAccount$,
+    dispatch,
+    enableBiometryPassword$,
+    importWallet$,
+    navigationDispatch,
+    revealSecretKey$,
     revealSeedPhrase$,
+    selectedRpcUrl,
     trackErrorEvent
   ]);
 
@@ -74,8 +78,10 @@ export const useShelter = () => {
 
   const enableBiometryPassword = (password: string) => enableBiometryPassword$.next(password);
 
-  const createImportedAccount = (params: { privateKey: string; name: string; saplingSpendingKey?: string }) =>
-    createImportedAccount$.next(params);
+  const createImportedAccount = useCallback(
+    (params: CreateImportedAccountParams) => createImportedAccount$.next(params),
+    [createImportedAccount$]
+  );
 
   return {
     importWallet,

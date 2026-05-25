@@ -4,9 +4,8 @@ import React, { FC, useCallback } from 'react';
 import { ImportAccountDerivationEnum } from 'src/enums/account-type.enum';
 import { FormRadioButtonsGroup } from 'src/form/form-radio-buttons-group';
 import { FormTextInput } from 'src/form/form-text-input';
-import { getDerivationPath } from 'src/utils/keys.util';
 
-import { ImportAccountSeedValues } from './import-account-seed.form';
+import { getDefaultImportAccountSeedDerivationPath, ImportAccountSeedValues } from './import-account-seed.form';
 
 const derivationTypeButtons = [
   { value: ImportAccountDerivationEnum.DEFAULT, label: 'Default account (the first one)' },
@@ -20,11 +19,14 @@ interface Props {
 export const ImportAccountSeedDerivationPathForm: FC<Props> = ({ formValues }) => {
   const { setFieldValue } = useFormikContext();
 
-  const handleRadioButtonsPress = useCallback(() => {
-    if (formValues.derivationType === ImportAccountDerivationEnum.DEFAULT) {
-      setFieldValue('derivationPath', getDerivationPath(0));
-    }
-  }, [formValues.derivationType, setFieldValue]);
+  const handleRadioButtonsPress = useCallback(
+    (nextDerivationType: ImportAccountDerivationEnum) => {
+      if (nextDerivationType === ImportAccountDerivationEnum.DEFAULT) {
+        setFieldValue('derivationPath', getDefaultImportAccountSeedDerivationPath(formValues.chain));
+      }
+    },
+    [formValues.chain, setFieldValue]
+  );
 
   return (
     <>

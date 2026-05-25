@@ -58,6 +58,20 @@ export const getEvmDerivationPath = (accountIndex: number) => `m/44'/${EVM_BIP44
 export const isEvmDerivationPath = (path: string): path is `m/44'/${typeof EVM_BIP44_COINTYPE}'/${string}` =>
   path.startsWith(`m/44'/${EVM_BIP44_COINTYPE}'`);
 
+export const isValidEvmDerivationPath = (path: string) => {
+  if (!isEvmDerivationPath(path)) {
+    return false;
+  }
+
+  try {
+    hdKeyToAccount(HDKey.fromMasterSeed(new Uint8Array(64)), { path });
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 /** @deprecated Use getTezosDerivationPath instead. */
 export const getDerivationPath = getTezosDerivationPath;
 

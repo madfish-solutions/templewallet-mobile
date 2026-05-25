@@ -1,6 +1,8 @@
 import { renderHook } from '@testing-library/react-hooks';
+import { of } from 'rxjs';
 
-import { mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
+import { TempleChainKind } from '../enums/temple-chain-kind.enum';
+import { mockEvmImportedAccount, mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
 import { mockAccountCredentials, mockInvalidPrivateKey } from '../mocks/account-credentials.mock';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
 import { mockNavigationDispatch, mockNavigate } from '../mocks/react-navigation.mock';
@@ -10,8 +12,10 @@ import { StacksEnum } from '../navigator/enums/stacks.enum';
 import { navigateAction } from '../store/root-state.actions';
 import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
+import { loadWhitelistAction } from '../store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
 import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from '../toast/toast.utils.mock';
+import * as tokenBalanceUtils from '../utils/token-balance.utils';
 
 import { mockRevealedSecretKey, mockRevealedSeedPhrase, mockShelter } from './shelter.mock';
 import { useShelter } from './use-shelter.hook';
@@ -21,14 +25,19 @@ describe('useShelter', () => {
   afterAll(() => void jest.useRealTimers());
 
   const mockSuccessCallback = jest.fn();
+  const mockEvmPrivateKey = '0xec90061805584475c77bc57b9cf5a918f279dc4cddf365820dae472348bf405b';
+  let loadTezosBalanceSpy: jest.SpyInstance;
 
   beforeEach(() => {
+    jest.restoreAllMocks();
+    loadTezosBalanceSpy = jest.spyOn(tokenBalanceUtils, 'loadTezosBalance$').mockReturnValue(of('0'));
     mockShelter.importHdAccount$.mockClear();
     mockShelter.enableBiometryPassword$.mockClear();
     mockShelter.createHdAccount$.mockClear();
     mockShelter.revealSecretKey$.mockClear();
     mockShelter.revealSeedPhrase$.mockClear();
     mockShelter.createImportedAccount$.mockClear();
+    mockShelter.saveSaplingSpendingKey$.mockClear();
     mockUseDispatch.mockClear();
     mockNavigationDispatch.mockClear();
     mockNavigate.mockClear();
@@ -139,13 +148,37 @@ describe('useShelter', () => {
 
     expect(mockShelter.createImportedAccount$).toHaveBeenCalledWith(
       mockAccountCredentials.privateKey,
-      mockHdAccount.name
+      mockHdAccount.name,
+      TempleChainKind.Tezos
     );
 
     expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
     expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
     expect(mockShowSuccessToast).toHaveBeenCalledWith({ description: 'Account Imported!' });
     expect(mockNavigationDispatch).toHaveBeenCalledWith({ type: 'POP_TO_TOP' });
+  });
+
+  it('should create imported EVM account without Tezos side effects', async () => {
+    mockShelter.createImportedAccount$.mockReturnValueOnce(of(mockEvmImportedAccount));
+    const { result } = renderHook(() => useShelter());
+
+    result.current.createImportedAccount({
+      privateKey: mockEvmPrivateKey,
+      name: mockEvmImportedAccount.name,
+      chain: TempleChainKind.EVM
+    });
+    await jest.runAllTimersAsync();
+
+    expect(mockShelter.createImportedAccount$).toHaveBeenCalledWith(
+      mockEvmPrivateKey,
+      mockEvmImportedAccount.name,
+      TempleChainKind.EVM
+    );
+    expect(mockShelter.saveSaplingSpendingKey$).not.toHaveBeenCalled();
+    expect(loadTezosBalanceSpy).not.toHaveBeenCalled();
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockEvmImportedAccount.id));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockEvmImportedAccount));
+    expect(mockUseDispatch).not.toHaveBeenCalledWith(loadWhitelistAction.submit());
   });
 
   it('should not create account with invalid private key', async () => {
@@ -166,6 +199,21 @@ describe('useShelter', () => {
     const { result } = renderHook(() => useShelter());
 
     result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
+    await jest.runAllTimersAsync();
+
+    expect(mockShelter.createImportedAccount$).not.toHaveBeenCalled();
+
+    expect(mockShowWarningToast).toHaveBeenCalledWith({ description: 'Account already exist' });
+  });
+
+  it('should show error toast while creating the same EVM account', async () => {
+    const { result } = renderHook(() => useShelter());
+
+    result.current.createImportedAccount({
+      privateKey: '0x3925ef64b24414526bd9d28826c642a34d4d8fbb292b467a33f5376126632d3d',
+      name: mockEvmImportedAccount.name,
+      chain: TempleChainKind.EVM
+    });
     await jest.runAllTimersAsync();
 
     expect(mockShelter.createImportedAccount$).not.toHaveBeenCalled();

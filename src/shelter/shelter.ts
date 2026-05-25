@@ -35,6 +35,7 @@ import {
   getPublicKeyAndHash$,
   mnemonicToEvmAccountCreds,
   mnemonicToTezosAccountCreds,
+  privateKeyToEvmAccountCreds,
   privateKeyToTezosAccountCreds,
   seedToPrivateKey
 } from '../utils/keys.util';
@@ -394,24 +395,41 @@ export class Shelter {
     );
   };
 
-  static createImportedAccount$ = (privateKey: string, name: string) =>
-    from(privateKeyToTezosAccountCreds(privateKey)).pipe(
-      switchMap(tezosCreds =>
-        forkJoin([
-          Shelter.saveSensitiveData$({ [tezosCreds.address]: tezosCreds.privateKey }),
-          Shelter.saveAccountCreds$(tezosCreds)
+  static createImportedAccount$ = (privateKey: string, name: string, chain = TempleChainKind.Tezos) =>
+    (chain === TempleChainKind.EVM
+      ? from(Promise.resolve().then(() => privateKeyToEvmAccountCreds(privateKey)))
+      : from(privateKeyToTezosAccountCreds(privateKey))
+    ).pipe(
+      switchMap(creds => {
+        if (chain === TempleChainKind.EVM) {
+          return Shelter.saveAccountCreds$(creds).pipe(
+            mapTo({
+              id: creds.address,
+              name,
+              type: AccountTypeEnum.IMPORTED_ACCOUNT,
+              chain,
+              address: creds.address,
+              publicKey: '',
+              publicKeyHash: ''
+            })
+          );
+        }
+
+        return forkJoin([
+          Shelter.saveSensitiveData$({ [creds.address]: creds.privateKey }),
+          Shelter.saveAccountCreds$(creds)
         ]).pipe(
           mapTo({
-            id: tezosCreds.address,
+            id: creds.address,
             name,
             type: AccountTypeEnum.IMPORTED_ACCOUNT,
-            chain: TempleChainKind.Tezos,
-            address: tezosCreds.address,
-            publicKey: tezosCreds.publicKey,
-            publicKeyHash: tezosCreds.address
+            chain,
+            address: creds.address,
+            publicKey: creds.publicKey,
+            publicKeyHash: creds.address
           })
-        )
-      )
+        );
+      })
     );
 
   static createHdAccount$ = (

@@ -299,6 +299,49 @@ describe('Shelter', () => {
               JSON.stringify(mockEncryptedData),
               getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
             );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              `account_private_key_${mockHDAccountCredentials.publicKeyHash}`,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(`account_private_key_${mockHDAccountCredentials.publicKeyHash}`, 0)
+            );
+          }, done)
+        );
+    });
+
+    it('should create imported EVM account with address-keyed credentials only', done => {
+      const mockName = 'mockEvmName';
+
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+        .pipe(
+          switchMap(() => Shelter.createImportedAccount$(mockEvmCredentials.privateKey, mockName, TempleChainKind.EVM))
+        )
+        .subscribe(
+          rxJsTestingHelper(account => {
+            expect(account).toEqual({
+              id: mockEvmCredentials.address,
+              name: mockName,
+              type: AccountTypeEnum.IMPORTED_ACCOUNT,
+              chain: TempleChainKind.EVM,
+              address: mockEvmCredentials.address,
+              publicKey: '',
+              publicKeyHash: ''
+            });
+
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              `account_private_key_${mockEvmCredentials.address}`,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(`account_private_key_${mockEvmCredentials.address}`, 0)
+            );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              `account_public_key_${mockEvmCredentials.address}`,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(`account_public_key_${mockEvmCredentials.address}`, 0)
+            );
+            expect(mockKeychain.setGenericPassword).not.toHaveBeenCalledWith(
+              mockEvmCredentials.address,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockEvmCredentials.address, 0)
+            );
           }, done)
         );
     });
