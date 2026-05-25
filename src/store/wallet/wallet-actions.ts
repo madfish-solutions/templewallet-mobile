@@ -11,6 +11,12 @@ import { createActions } from '../create-actions';
 export const setSelectedAccountAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT');
 export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD_HD_ACCOUNT');
 export const setWalletSpecsAction = createAction<WalletSpecsInterface>('wallet/SET_WALLET_SPECS');
+export const completeEvmAccountsMigrationAction = createAction<{
+  accounts: AccountInterface[];
+  selectedAccountId: string;
+  selectedAccountPublicKeyHash: string;
+  walletsSpecsRecord: Record<string, WalletSpecsInterface>;
+}>('wallet/COMPLETE_EVM_ACCOUNTS_MIGRATION');
 
 export const updateAccountAction = createAction<AccountInterface>('wallet/UPDATE_ACCOUNT');
 

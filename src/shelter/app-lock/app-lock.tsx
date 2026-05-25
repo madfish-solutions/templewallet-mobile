@@ -44,7 +44,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const hdIndex = useMemo(() => {
     const rawIndex = hdAccounts.findIndex(account => account.publicKeyHash === currentAccountPkh);
 
-    return rawIndex >= 0 ? rawIndex : undefined;
+    return rawIndex >= 0 ? hdAccounts[rawIndex].hdIndex ?? rawIndex : undefined;
   }, [hdAccounts, currentAccountPkh]);
 
   const lock = useCallback(() => Shelter.lockApp(), []);

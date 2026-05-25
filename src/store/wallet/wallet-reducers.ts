@@ -27,7 +27,8 @@ import {
   updateAccountAction,
   setAccountVisibility,
   loadAssetsBalancesActions,
-  setWalletSpecsAction
+  setWalletSpecsAction,
+  completeEvmAccountsMigrationAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
@@ -82,6 +83,21 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
 
   builder.addCase(setWalletSpecsAction, (state, { payload }) => {
     state.walletsSpecsRecord[payload.id] = payload;
+  });
+
+  builder.addCase(completeEvmAccountsMigrationAction, (state, { payload }) => {
+    state.accounts = payload.accounts.map(normalizeAccount);
+    state.selectedAccountId = payload.selectedAccountId;
+    state.selectedAccountPublicKeyHash = payload.selectedAccountPublicKeyHash;
+    state.walletsSpecsRecord = payload.walletsSpecsRecord;
+
+    for (const account of state.accounts) {
+      const tezosAddress = getAccountAddressForTezos(account);
+
+      if (tezosAddress && !state.accountsStateRecord[tezosAddress]) {
+        state.accountsStateRecord[tezosAddress] = initialAccountState;
+      }
+    }
   });
 
   builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) => {

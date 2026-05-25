@@ -1,3 +1,4 @@
+import { nanoid } from '@reduxjs/toolkit';
 import { isEqual } from 'lodash-es';
 import type { MigrationManifest, PersistedState } from 'redux-persist';
 
@@ -198,17 +199,20 @@ export const MIGRATIONS: MigrationManifest = {
       return untypedState;
     }
     const state = untypedState as TypedPersistedRootState;
-    let hdIndex = 0;
+    let hdPosition = 0;
 
     state.wallet.accounts = state.wallet.accounts.map(account => {
-      const id = account.id ?? account.publicKeyHash;
+      const id = account.id ?? account.publicKeyHash ?? nanoid();
 
       if (account.type === AccountTypeEnum.HD_ACCOUNT) {
+        const hdIndex = account.hdIndex ?? hdPosition;
+        hdPosition++;
+
         return {
           ...account,
           id,
           walletId: account.walletId ?? DEFAULT_HD_WALLET_ID,
-          hdIndex: account.hdIndex ?? hdIndex++,
+          hdIndex,
           tezosAddress: account.tezosAddress ?? account.publicKeyHash
         };
       }
