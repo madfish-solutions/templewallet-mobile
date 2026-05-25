@@ -16,9 +16,11 @@ import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { openUrl } from 'src/utils/linking';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
@@ -45,19 +47,21 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   const { isLocked } = useAppLock();
   const atBootsplash = useAtBootsplash();
   const canUseOnRamp = useCanUseOnRamp();
+  const selectedAccount = useSelectedAccountSelector();
   const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const { balance } = useTotalBalance();
   const styles = useHeaderCardActionButtonsStyles();
   const defaultStyleConfig = useButtonMediumStyleConfig();
   const isLoaderBeingShown = useIsShowLoaderSelector();
+  const canUseTezos = Boolean(getAccountAddressForTezos(selectedAccount));
 
   const isTezBalanceTooLow =
     isDefined(token.address) && token.address === tezosToken.address && tezosToken.balance === emptyToken.balance;
   const errorMessage = isTezBalanceTooLow ? `You need to have ${metadata.symbol} to pay gas fee` : 'Balance is zero';
 
   const emptyBalance = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
-  const disabledSendButton = emptyBalance && LIMIT_FIN_FEATURES;
+  const disabledSendButton = !canUseTezos || (emptyBalance && LIMIT_FIN_FEATURES);
 
   const actionButtonStylesOverrides = useMemo(
     () => ({
@@ -141,6 +145,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
         <>
           <Divider size={formatSize(8)} />
           <ButtonMedium
+            disabled={!canUseTezos}
             title="Buy"
             iconName={IconNameEnum.ShoppingCard}
             onPress={() => (isTezosNode ? navigateToScreen({ screen: ScreensEnum.Buy }) : openUrl(CHAINBITS_URL))}
@@ -154,7 +159,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
       <Divider size={formatSize(8)} />
 
       <ButtonMedium
-        disabled={!isTezosNode || !isTezosMainnet}
+        disabled={!canUseTezos || !isTezosNode || !isTezosMainnet}
         title="Earn"
         iconName={IconNameEnum.Earn}
         onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
@@ -169,6 +174,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
       <Divider size={formatSize(8)} />
 
       <ButtonMedium
+        disabled={disabledSendButton}
         title="Send"
         iconName={IconNameEnum.ArrowUp}
         onPress={handleSendButton}

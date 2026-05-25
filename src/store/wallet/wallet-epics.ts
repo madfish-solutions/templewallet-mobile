@@ -68,11 +68,17 @@ const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[[_, selectedAccount], selectedRpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      from(fetchAllAssetsBalancesFromTzkt(selectedRpcUrl, selectedAccount.publicKeyHash)).pipe(
+    switchMap(([[[_, selectedAccount], selectedRpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) => {
+      const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
+
+      if (!selectedTezosAddress) {
+        return EMPTY;
+      }
+
+      return from(fetchAllAssetsBalancesFromTzkt(selectedRpcUrl, selectedTezosAddress)).pipe(
         map(data =>
           loadAssetsBalancesActions.success({
-            publicKeyHash: selectedAccount.publicKeyHash,
+            publicKeyHash: selectedTezosAddress,
             balances: data,
             selectedRpcUrl
           })
@@ -82,18 +88,16 @@ const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
             sendErrorAnalyticsEvent(
               'LoadTokensBalancesError',
               err,
-              [selectedAccount.publicKeyHash],
+              [selectedTezosAddress],
               { userId, ABTestingCategory },
               { selectedRpcUrl }
             );
           }
 
-          return of(loadAssetsBalancesActions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(
-            delay(5)
-          );
+          return of(loadAssetsBalancesActions.fail(`${selectedTezosAddress} balance load SKIPPED`)).pipe(delay(5));
         })
-      )
-    )
+      );
+    })
   );
 
 const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
@@ -126,7 +130,7 @@ const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
             sendErrorAnalyticsEvent(
               'LoadTezosBalanceError',
               err,
-              [selectedAccount.publicKeyHash],
+              [getAccountAddressForTezos(selectedAccount) ?? selectedAccount.id],
               { userId, ABTestingCategory },
               { rpcUrl }
             );
@@ -144,8 +148,14 @@ const sendAssetEpic: AnyActionEpic = (action$, state$) =>
     toPayload(),
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[{ asset, receiverPublicKeyHash, amount }, selectedAccount], rpcUrl]) =>
-      getTransferParams$(asset, rpcUrl, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
+    switchMap(([[{ asset, receiverPublicKeyHash, amount }, selectedAccount], rpcUrl]) => {
+      if (!getAccountAddressForTezos(selectedAccount)) {
+        showErrorToast({ description: 'Select a Tezos account to send this asset' });
+
+        return EMPTY;
+      }
+
+      return getTransferParams$(asset, rpcUrl, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams => {
           const modalTitle = receiverPublicKeyHash === BURN_ADDRESS ? 'Confirm Burn' : 'Confirm Send';
@@ -159,8 +169,8 @@ const sendAssetEpic: AnyActionEpic = (action$, state$) =>
             }
           });
         })
-      )
-    )
+      );
+    })
   );
 
 const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>

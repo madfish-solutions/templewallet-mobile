@@ -9,8 +9,10 @@ import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
 
+import { getAccountAddressForTezos } from './account.utils';
 import { isString } from './is-string';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
+import { throwError$ } from './rxjs.utils';
 
 export function getTransferParams$(
   asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
@@ -38,7 +40,11 @@ export function getTransferParams$(
     typeof rpcUrlOrTezos === 'string'
       ? createReadOnlyTezosToolkit(rpcUrlOrTezos, sender as AccountInterface)
       : rpcUrlOrTezos;
-  const senderPkh = typeof sender === 'string' ? sender : sender.publicKeyHash;
+  const senderPkh = typeof sender === 'string' ? sender : getAccountAddressForTezos(sender);
+
+  if (!senderPkh) {
+    return throwError$('Select a Tezos account to send this asset');
+  }
 
   return isString(address)
     ? from(tezos.contract.at(address)).pipe(

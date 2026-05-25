@@ -9,6 +9,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useImportedAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountId } from 'src/utils/account.utils';
 
 import { InfoText } from '../info-text/info-text';
 import { ManageAccountItem } from '../manage-hd-accounts/manage-account-item/manage-account-item';
@@ -35,7 +36,7 @@ export const ManageImportedAccounts = () => {
       <InfoText />
       <ScreenContainer>
         {filteredAccountList.map(account => (
-          <Fragment key={account.publicKeyHash}>
+          <Fragment key={getAccountId(account)}>
             <ManageAccountItem
               account={account}
               selectedAccount={selectedAccount}

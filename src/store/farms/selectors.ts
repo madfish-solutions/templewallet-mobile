@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { getAccountAddressForTezos, getSelectedAccountFromWallet } from 'src/utils/account.utils';
 import { nullableEntityWasLoading } from 'src/utils/earn-opportunities/store.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -35,9 +36,11 @@ export const useFarm = (id: string, contractAddress: string) => {
 };
 
 export const useFarmStakeSelector = (farmAddress: string): UserStakeValueInterface | undefined =>
-  useSelector(
-    ({ farms, wallet }) => farms.stakes[wallet.selectedAccountPublicKeyHash]?.[farmAddress]?.data ?? undefined
-  );
+  useSelector(({ farms, wallet }) => {
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+
+    return selectedTezosAddress ? farms.stakes[selectedTezosAddress]?.[farmAddress]?.data ?? undefined : undefined;
+  });
 
 export const useAllFarms = () => {
   const allFarmsStates = useSelector(({ farms }) => farms.allFarms);
@@ -57,7 +60,11 @@ export const useAllFarms = () => {
 };
 
 export const useLastFarmsStakes = () => {
-  const rawStakes = useSelector(({ farms, wallet }) => farms.stakes[wallet.selectedAccountPublicKeyHash]);
+  const rawStakes = useSelector(({ farms, wallet }) => {
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+
+    return selectedTezosAddress ? farms.stakes[selectedTezosAddress] : undefined;
+  });
 
   return useMemo(
     () => Object.fromEntries(Object.entries(rawStakes ?? {}).map(([key, { data }]) => [key, data ?? undefined])),
@@ -67,21 +74,27 @@ export const useLastFarmsStakes = () => {
 
 export const useFarmsStakesLoadingSelector = () =>
   useSelector(({ farms, wallet }) => {
-    const accountStakes = farms.stakes[wallet.selectedAccountPublicKeyHash] ?? {};
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+    const accountStakes = selectedTezosAddress ? farms.stakes[selectedTezosAddress] ?? {} : {};
 
     return Object.values(accountStakes).some(({ isLoading }) => isLoading);
   });
 
 export const useSomeFarmsStakesWereLoadingSelector = () =>
   useSelector(({ farms, wallet }) => {
-    const accountStakes = farms.stakes[wallet.selectedAccountPublicKeyHash] ?? {};
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+    const accountStakes = selectedTezosAddress ? farms.stakes[selectedTezosAddress] ?? {} : {};
 
     return Object.values(accountStakes).some(nullableEntityWasLoading);
   });
 
 export const useFarmStakeWasLoadingSelector = (farmAddress: string) =>
-  useSelector(({ farms, wallet }) =>
-    nullableEntityWasLoading(farms.stakes[wallet.selectedAccountPublicKeyHash]?.[farmAddress])
-  );
+  useSelector(({ farms, wallet }) => {
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+
+    return nullableEntityWasLoading(
+      selectedTezosAddress ? farms.stakes[selectedTezosAddress]?.[farmAddress] : undefined
+    );
+  });
 
 export const useFarmSortFieldSelector = () => useSelector(({ farms }) => farms.sortField);

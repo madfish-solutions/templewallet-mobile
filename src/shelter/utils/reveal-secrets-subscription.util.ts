@@ -1,6 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { catchError, map, merge, of, Subject, switchMap, tap } from 'rxjs';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 
 import { RevealSecretKeyParams } from '../interfaces/reveal-secret-key-params.interface';
@@ -15,10 +16,11 @@ export const revealSecretsSubscription = (
   merge(
     revealSecretKey$.pipe(
       tap(() => dispatch(showLoaderAction())),
-      switchMap(({ publicKeyHash, successCallback }) =>
-        Shelter.revealSecretKey$(publicKeyHash).pipe(
-          map((secretKey): [string | undefined, SyncFn<string>] => [secretKey, successCallback])
-        )
+      switchMap(({ address, publicKeyHash, chain = TempleChainKind.Tezos, successCallback }) =>
+        (chain === TempleChainKind.EVM
+          ? Shelter.revealAccountPrivateKey$(address ?? publicKeyHash ?? '').pipe(catchError(() => of(undefined)))
+          : Shelter.revealSecretKey$(address ?? publicKeyHash ?? '')
+        ).pipe(map((secretKey): [string | undefined, SyncFn<string>] => [secretKey, successCallback]))
       ),
       tap(() => dispatch(hideLoaderAction()))
     ),

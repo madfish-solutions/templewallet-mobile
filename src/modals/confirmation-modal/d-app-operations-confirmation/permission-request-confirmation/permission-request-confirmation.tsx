@@ -23,6 +23,7 @@ import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import { useAccountsListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
 
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
@@ -58,17 +59,18 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   const { goBack } = useNavigation();
   const accounts = useAccountsListSelector();
   const selectedAccount = useSelectedAccountSelector();
+  const tezosAccounts = useMemo(() => accounts.filter(account => getAccountAddressForTezos(account)), [accounts]);
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approvePermissionRequest);
 
   const formInitialValues = useMemo<PermissionRequestConfirmationFormValues>(
-    () => ({ approver: selectedAccount }),
-    [selectedAccount]
+    () => ({ approver: getAccountAddressForTezos(selectedAccount) ? selectedAccount : tezosAccounts[0] }),
+    [selectedAccount, tezosAccounts]
   );
 
   const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) => {
-    if (approver.publicKeyHash !== selectedAccount.publicKeyHash) {
-      dispatch(setSelectedAccountAction(approver.publicKeyHash));
+    if (getAccountId(approver) !== getAccountId(selectedAccount)) {
+      dispatch(setSelectedAccountAction(getAccountId(approver)));
     }
     confirmRequest({
       message,
@@ -90,7 +92,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
             <AppMetadataConnectionView appMetadata={message.appMetadata} />
             <Divider size={formatSize(24)} />
             <Label label="Account" description="To be connected with dApp." />
-            <AccountFormDropdown name="approver" list={accounts} />
+            <AccountFormDropdown name="approver" list={tezosAccounts} />
           </ScreenContainer>
           <ModalButtonsFloatingContainer variant="bordered">
             <ButtonLargeSecondary

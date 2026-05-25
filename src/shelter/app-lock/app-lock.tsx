@@ -7,8 +7,9 @@ import { emptyFn } from 'src/config/general';
 import { usePasswordDelay } from 'src/hooks/use-password-delay.hook';
 import { enterPassword } from 'src/store/security/security-actions';
 import { usePasswordAttempt } from 'src/store/security/security-selectors';
-import { useCurrentAccountPkhSelector, useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountTezosAddressSelector, useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { Shelter } from '../shelter';
@@ -38,11 +39,11 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const attempt = usePasswordAttempt();
   const passwordDelay = usePasswordDelay();
   const unlock$ = useMemo(() => new Subject<string>(), []);
-  const currentAccountPkh = useCurrentAccountPkhSelector();
+  const currentAccountPkh = useCurrentAccountTezosAddressSelector() ?? '';
   const hdAccounts = useHdAccountListSelector();
 
   const hdIndex = useMemo(() => {
-    const rawIndex = hdAccounts.findIndex(account => account.publicKeyHash === currentAccountPkh);
+    const rawIndex = hdAccounts.findIndex(account => getAccountAddressForTezos(account) === currentAccountPkh);
 
     return rawIndex >= 0 ? hdAccounts[rawIndex].hdIndex ?? rawIndex : undefined;
   }, [hdAccounts, currentAccountPkh]);

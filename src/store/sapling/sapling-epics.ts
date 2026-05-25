@@ -10,6 +10,7 @@ import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmat
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { Shelter } from 'src/shelter/shelter';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos, getSelectedAccountFromWallet } from 'src/utils/account.utils';
 import { withSelectedAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction, navigateBackAction } from '../root-state.actions';
@@ -63,7 +64,15 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
     ofType(loadSaplingCredentialsActions.submit),
     withSelectedAccount(state$),
     withSelectedAccountHdIndex(state$),
-    switchMap(([[, { publicKeyHash, type }], hdIndex]) => {
+    switchMap(([[, selectedAccount], hdIndex]) => {
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+
+      if (!publicKeyHash) {
+        return EMPTY;
+      }
+
+      const { type } = selectedAccount;
+
       if (type === AccountTypeEnum.WATCH_ONLY_DEBUG) {
         return of(
           loadSaplingCredentialsActions.fail({
@@ -104,7 +113,13 @@ const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) => {
-      const saplingState = state$.value.sapling.accountsRecord[selectedAccount.publicKeyHash];
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+
+      if (!publicKeyHash) {
+        return EMPTY;
+      }
+
+      const saplingState = state$.value.sapling.accountsRecord[publicKeyHash];
 
       if (saplingState?.viewingKey == null) {
         return EMPTY;
@@ -114,7 +129,7 @@ const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
         concatMap(balance =>
           of(
             loadShieldedBalanceActions.success({
-              publicKeyHash: selectedAccount.publicKeyHash,
+              publicKeyHash,
               balance
             })
           )
@@ -136,6 +151,14 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
     withSelectedRpcUrl(state$),
     withSelectedAccountHdIndex(state$),
     switchMap(([[[payload, selectedAccount], rpcUrl], hdIndex]) => {
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+
+      if (!publicKeyHash) {
+        showErrorToast({ description: 'Select a Tezos account to use Sapling' });
+
+        return EMPTY;
+      }
+
       const cancelPreparation$ = action$.pipe(ofType(cancelSaplingPreparationAction));
       const confirmationParams: ConfirmationModalParams =
         payload.isRebalance === true
@@ -154,10 +177,10 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
       return concat(
         of(navigateAction({ screen: ModalsEnum.Confirmation, params: confirmationParams })),
         withSaplingSpendingKey$(
-          selectedAccount.publicKeyHash,
+          publicKeyHash,
           hdIndex,
           sask =>
-            from(prepareSaplingTx(sask, payload, selectedAccount.publicKeyHash, rpcUrl, state$)).pipe(
+            from(prepareSaplingTx(sask, payload, publicKeyHash, rpcUrl, state$)).pipe(
               takeUntil(cancelPreparation$),
               map(opParams => prepareSaplingTransactionActions.success(opParams))
             ),
@@ -236,7 +259,13 @@ const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
     withSelectedAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) => {
-      const saplingState = state$.value.sapling.accountsRecord[selectedAccount.publicKeyHash];
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+
+      if (!publicKeyHash) {
+        return EMPTY;
+      }
+
+      const saplingState = state$.value.sapling.accountsRecord[publicKeyHash];
 
       if (saplingState?.viewingKey == null) {
         return EMPTY;
@@ -248,7 +277,7 @@ const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
 
           return of(
             loadSaplingTransactionHistoryActions.success({
-              publicKeyHash: selectedAccount.publicKeyHash,
+              publicKeyHash,
               transactions: allTransactions
             })
           );
@@ -290,7 +319,8 @@ const refreshBalanceAfterTxEpic: AnyActionEpic = (action$, state$) =>
     withSelectedAccount(state$),
     filter(([, selectedAccount]) => {
       const { sapling } = state$.value;
-      const saplingState = sapling.accountsRecord[selectedAccount.publicKeyHash];
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+      const saplingState = publicKeyHash ? sapling.accountsRecord[publicKeyHash] : undefined;
 
       return Boolean(saplingState?.isCredentialsLoaded);
     }),
@@ -299,9 +329,9 @@ const refreshBalanceAfterTxEpic: AnyActionEpic = (action$, state$) =>
 
 const shouldAutoLoadCredentials = (state$: StateObservable<RootState>) => {
   const { wallet, sapling } = state$.value;
-  const { selectedAccountPublicKeyHash, accounts } = wallet;
-  const saplingState = sapling.accountsRecord[selectedAccountPublicKeyHash];
-  const selectedAccount = accounts.find(account => account.publicKeyHash === selectedAccountPublicKeyHash);
+  const selectedAccount = getSelectedAccountFromWallet(wallet);
+  const selectedAccountPublicKeyHash = selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined;
+  const saplingState = selectedAccountPublicKeyHash ? sapling.accountsRecord[selectedAccountPublicKeyHash] : undefined;
 
   return (
     Boolean(selectedAccountPublicKeyHash) &&

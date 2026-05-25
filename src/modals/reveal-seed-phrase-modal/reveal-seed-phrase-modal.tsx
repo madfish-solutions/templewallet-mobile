@@ -29,8 +29,7 @@ export const RevealSeedPhraseModal = () => {
   usePageAnalytic(ModalsEnum.RevealSeedPhrase);
 
   const RevealPrivateKeyModalInitialValues: RevealSeedPhraseModalFormValues = {
-    account,
-    derivationPath: ''
+    account
   };
 
   return (

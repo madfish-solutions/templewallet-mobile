@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { getSignedMoonPayUrl } from 'src/apis/moonpay';
 import { createOrder as createUtorgOrder } from 'src/apis/utorg';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountTezosAddressSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -47,7 +47,7 @@ const initialValues: BuyWithCreditCardFormValues = {
 
 export const useBuyWithCreditCardFormik = () => {
   const { trackEvent, trackErrorEvent } = useAnalytics();
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const publicKeyHash = useCurrentAccountTezosAddressSelector();
 
   const handleSubmit = useCallback(
     async (values: BuyWithCreditCardFormValues) => {
@@ -69,6 +69,12 @@ export const useBuyWithCreditCardFormik = () => {
           return;
         }
 
+        if (!publicKeyHash) {
+          showErrorToast({ description: 'Select a Tezos account to buy Tezos assets' });
+
+          return;
+        }
+
         let urlToOpen: string;
         switch (values.paymentProvider?.id) {
           case TopUpProviderEnum.MoonPay:
@@ -86,7 +92,7 @@ export const useBuyWithCreditCardFormik = () => {
         }
         openUrl(urlToOpen);
       } catch (error) {
-        trackErrorEvent('BuyWithCreditCardFormSubmitError', error, [publicKeyHash], { values });
+        trackErrorEvent('BuyWithCreditCardFormSubmitError', error, publicKeyHash ? [publicKeyHash] : [], { values });
         showErrorToast({ description: getAxiosQueryErrorMessage(error) });
       }
     },

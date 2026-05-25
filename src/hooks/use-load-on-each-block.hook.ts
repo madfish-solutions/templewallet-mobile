@@ -16,6 +16,10 @@ export const useLoadOnEachBlock = <P, T extends string>(
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (!currentAccountPkh) {
+      return;
+    }
+
     if (!isLoading && prevBlockLevelRef.current !== blockLevel) {
       dispatch(actionFactory(currentAccountPkh));
       prevBlockLevelRef.current = blockLevel;

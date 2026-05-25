@@ -47,7 +47,10 @@ import {
   useSwapTokenBySlugSelector,
   useSwapTokensMetadataSelector
 } from 'src/store/swap/swap-selectors';
-import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
+import {
+  useCurrentAccountTezosAddressSelector,
+  useCurrentAccountTezosBalance
+} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
@@ -91,7 +94,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { trackEvent, trackErrorEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const publicKeyHash = useCurrentAccountTezosAddressSelector();
   const tezos = useReadOnlyTezosToolkit();
   const tezosBalance = useCurrentAccountTezosBalance();
   const blockLevel = useBlockLevel();
@@ -150,6 +153,12 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
     };
 
     trackEvent('SWAP_FORM_SUBMIT', AnalyticsEventCategory.FormSubmit, analyticsProperties);
+
+    if (!publicKeyHash) {
+      showErrorToast({ description: 'Select a Tezos account to swap assets' });
+
+      return;
+    }
 
     if (!inputAssets.amount || !fromRoute3Token || !toRoute3Token || swapInputMinusFeeAtomic.isEqualTo(ZERO)) {
       return;
@@ -554,7 +563,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             (submitCount !== 0 && !isValid) ||
             (submitCount !== 0 && chainsAreAbsent) ||
             swapParams.isLoading ||
-            isSubmitting
+            isSubmitting ||
+            !publicKeyHash
           }
           title={Boolean(swapParams.isLoading) ? 'Searching the best route' : 'Swap'}
           onPress={submitForm}

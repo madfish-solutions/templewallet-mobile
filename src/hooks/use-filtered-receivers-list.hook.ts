@@ -4,6 +4,8 @@ import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { useCurrentAccountPkhSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { isDefined } from 'src/utils/is-defined';
 
 export const useFilteredReceiversList = () => {
   const contacts = useContactsSelector();
@@ -14,8 +16,13 @@ export const useFilteredReceiversList = () => {
   const myVisibleAccounts = useMemo(
     () =>
       allVisibleAccounts
-        .filter(({ publicKeyHash }) => publicKeyHash !== accountPkh)
-        .map(({ name, publicKeyHash }) => ({ name, publicKeyHash })),
+        .map(account => {
+          const publicKeyHash = getAccountAddressForTezos(account);
+
+          return publicKeyHash ? { name: account.name, publicKeyHash } : undefined;
+        })
+        .filter(isDefined)
+        .filter(({ publicKeyHash }) => publicKeyHash !== accountPkh),
     [allVisibleAccounts, accountPkh]
   );
 

@@ -11,11 +11,11 @@ import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
+import { AccountBaseInterface, AccountInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { getAccountBaseDisplayAddress } from 'src/utils/account.utils';
+import { getAccountAddressForTezos, getAccountBaseDisplayAddress } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
@@ -40,7 +40,9 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
     isCollectibleScreen = false
   }) => {
     const styles = useAccountDropdownItemStyles();
-    const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
+    const tezosAddress =
+      'type' in account ? getAccountAddressForTezos(account as AccountInterface) : account.publicKeyHash;
+    const tezos = useTezosTokenOfKnownAccount(tezosAddress ?? '');
     const displayAddress = getAccountBaseDisplayAddress(account);
 
     return (

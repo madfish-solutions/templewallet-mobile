@@ -4,20 +4,24 @@ import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
 import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
+import { getAccountAddressForTezos, getSelectedAccountFromWallet } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WalletState } from './wallet-state';
 
-export const retrieveAccountState = (state: Draft<WalletState>, pkh = state.selectedAccountPublicKeyHash) => {
-  if (!pkh || pkh === EMPTY_PUBLIC_KEY_HASH) {
+export const retrieveAccountState = (state: Draft<WalletState>, pkh?: string) => {
+  const selectedAccount = getSelectedAccountFromWallet(state);
+  const resolvedPkh = pkh ?? (selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined) ?? '';
+
+  if (!resolvedPkh || resolvedPkh === EMPTY_PUBLIC_KEY_HASH) {
     return null;
   }
 
-  if (!state.accountsStateRecord[pkh]) {
-    state.accountsStateRecord[pkh] = initialAccountState;
+  if (!state.accountsStateRecord[resolvedPkh]) {
+    state.accountsStateRecord[resolvedPkh] = initialAccountState;
   }
 
-  return state.accountsStateRecord[pkh];
+  return state.accountsStateRecord[resolvedPkh];
 };
 
 export const pushOrUpdateTokensBalances = (

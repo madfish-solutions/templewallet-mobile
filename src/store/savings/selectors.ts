@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
+import { getAccountAddressForTezos, getSelectedAccountFromWallet } from 'src/utils/account.utils';
 import { nullableEntityWasLoading } from 'src/utils/earn-opportunities/store.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -28,9 +29,11 @@ export const useSavingsItemsLoadingSelector = () =>
   useSelector(({ savings }) => Object.values(savings.allSavingsItems).some(({ isLoading }) => isLoading));
 
 export const useSavingsItemStakeSelector = (itemAddress: string): UserStakeValueInterface | undefined =>
-  useSelector(
-    ({ savings, wallet }) => savings.stakes[wallet.selectedAccountPublicKeyHash]?.[itemAddress]?.data ?? undefined
-  );
+  useSelector(({ savings, wallet }) => {
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+
+    return selectedTezosAddress ? savings.stakes[selectedTezosAddress]?.[itemAddress]?.data ?? undefined : undefined;
+  });
 
 export const useSavingsItems = () => {
   const allSavingsItemsStates = useSelector(({ savings }) => savings.allSavingsItems);
@@ -45,7 +48,11 @@ export const useSavingsItems = () => {
 };
 
 export const useSavingsStakes = () => {
-  const rawStakes = useSelector(({ savings, wallet }) => savings.stakes[wallet.selectedAccountPublicKeyHash]);
+  const rawStakes = useSelector(({ savings, wallet }) => {
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+
+    return selectedTezosAddress ? savings.stakes[selectedTezosAddress] : undefined;
+  });
 
   return useMemo(
     () => Object.fromEntries(Object.entries(rawStakes ?? {}).map(([key, { data }]) => [key, data ?? undefined])),
@@ -57,19 +64,25 @@ export const useSavingsSortFieldSelector = () => useSelector(({ savings }) => sa
 
 export const useSavingsStakesLoadingSelector = () =>
   useSelector(({ savings, wallet }) => {
-    const accountStakes = savings.stakes[wallet.selectedAccountPublicKeyHash] ?? {};
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+    const accountStakes = selectedTezosAddress ? savings.stakes[selectedTezosAddress] ?? {} : {};
 
     return Object.values(accountStakes).some(({ isLoading }) => isLoading);
   });
 
 export const useSomeSavingsStakesWereLoadingSelector = () =>
   useSelector(({ savings, wallet }) => {
-    const accountStakes = savings.stakes[wallet.selectedAccountPublicKeyHash] ?? {};
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+    const accountStakes = selectedTezosAddress ? savings.stakes[selectedTezosAddress] ?? {} : {};
 
     return Object.values(accountStakes).some(nullableEntityWasLoading);
   });
 
 export const useSavingsItemStakeWasLoadingSelector = (itemAddress: string) =>
-  useSelector(({ savings, wallet }) =>
-    nullableEntityWasLoading(savings.stakes[wallet.selectedAccountPublicKeyHash]?.[itemAddress])
-  );
+  useSelector(({ savings, wallet }) => {
+    const selectedTezosAddress = getAccountAddressForTezos(getSelectedAccountFromWallet(wallet));
+
+    return nullableEntityWasLoading(
+      selectedTezosAddress ? savings.stakes[selectedTezosAddress]?.[itemAddress] : undefined
+    );
+  });

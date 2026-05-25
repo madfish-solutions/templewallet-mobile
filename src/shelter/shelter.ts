@@ -325,6 +325,11 @@ export class Shelter {
           switchMap(value =>
             value === null
               ? of(false)
+              : !currentAccountPkh
+              ? of(undefined).pipe(
+                  tap(() => Shelter._passwordHash$.next(passwordHash)),
+                  map(() => true)
+                )
               : Shelter.revealSaplingSpendingKey$(currentAccountPkh, passwordHash).pipe(
                   switchMap(sask => {
                     if (sask) {
@@ -473,6 +478,7 @@ export class Shelter {
       )
     );
 
+  /** @deprecated Use revealAccountPrivateKey$ for address-keyed credentials. */
   static revealSecretKey$ = (publicKeyHash: string, passwordHash?: string) =>
     Shelter.revealAccountPrivateKey$(publicKeyHash, passwordHash).pipe(
       catchError(() => Shelter.decryptSensitiveData$(publicKeyHash, passwordHash ?? Shelter._passwordHash$.getValue())),

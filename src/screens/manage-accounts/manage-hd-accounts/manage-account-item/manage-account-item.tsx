@@ -19,6 +19,7 @@ import { setAccountVisibility } from 'src/store/wallet/wallet-actions';
 import { useIsAccountVisibleSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos, getAccountBaseDisplayAddress, getAccountId } from 'src/utils/account.utils';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { ManageAccountItemSelectors } from './manage-account-item.selectors';
@@ -34,19 +35,30 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const dispatch = useDispatch();
   const navigateToModal = useNavigateToModal();
   const styles = useManageAccountItemStyles();
-  const tezosToken = useTezosTokenOfKnownAccount(account.publicKeyHash);
-  const isVisible = useIsAccountVisibleSelector(account.publicKeyHash) ?? true;
+  const tezosAddress = getAccountAddressForTezos(account);
+  const displayAddress = getAccountBaseDisplayAddress(account);
+  const tezosToken = useTezosTokenOfKnownAccount(tezosAddress ?? '');
+  const isVisible = useIsAccountVisibleSelector(tezosAddress ?? '') ?? true;
 
-  const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;
+  const isVisibilitySwitchDisabled = !tezosAddress || getAccountId(account) === getAccountId(selectedAccount);
+  const visibilityWarning = tezosAddress
+    ? {
+        title: 'Could not hide your selected account',
+        description: 'Switch to another account and try again'
+      }
+    : {
+        title: 'Could not hide this account',
+        description: 'EVM-only accounts stay visible until EVM account management is supported'
+      };
 
   return (
     <View style={styles.container}>
       <View style={styles.upperContainer}>
         <View style={styles.accountContainer}>
-          <RobotIcon seed={account.publicKeyHash} />
+          <RobotIcon seed={displayAddress} />
           <View style={styles.accountContainerData}>
             <TruncatedText style={styles.accountText}>{account.name}</TruncatedText>
-            <WalletAddress publicKeyHash={account.publicKeyHash} />
+            <WalletAddress publicKeyHash={displayAddress} />
           </View>
         </View>
 
@@ -60,24 +72,14 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           />
           <Divider size={formatSize(16)} />
 
-          <View
-            onTouchStart={() =>
-              void (
-                isVisibilitySwitchDisabled &&
-                showWarningToast({
-                  title: 'Could not hide your selected account',
-                  description: 'Switch to another account and try again'
-                })
-              )
-            }
-          >
+          <View onTouchStart={() => void (isVisibilitySwitchDisabled && showWarningToast(visibilityWarning))}>
             <Switch
               value={isVisible}
               disabled={isVisibilitySwitchDisabled}
               onChange={newIsVisible =>
                 dispatch(
                   setAccountVisibility({
-                    publicKeyHash: account.publicKeyHash,
+                    publicKeyHash: tezosAddress ?? '',
                     isVisible: newIsVisible
                   })
                 )

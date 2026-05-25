@@ -17,6 +17,7 @@ import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
 import { getTokenType } from '../token/utils/token.utils';
 
+import { getAccountAddressForTezos } from './account.utils';
 import { isDefined } from './is-defined';
 import { mapOperationsToActivities } from './operation.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
@@ -171,16 +172,21 @@ const loadOperations = async (
   lastItem?: ActivityInterface
 ) => {
   const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
+  const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
+
+  if (!selectedTezosAddress) {
+    return [];
+  }
 
   if (isDefined(tokenSlug)) {
     if (tokenSlug === TEZ_TOKEN_SLUG) {
-      return getTezosOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.level);
+      return getTezosOperations(selectedRpcUrl, selectedTezosAddress, lastItem?.level);
     }
 
     if (contractAddress === LIQUIDITY_BAKING_DEX_ADDRESS) {
       return getContractOperations<OperationLiquidityBakingInterface>(
         selectedRpcUrl,
-        selectedAccount.publicKeyHash,
+        selectedTezosAddress,
         contractAddress,
         lastItem?.level
       );
@@ -191,21 +197,15 @@ const loadOperations = async (
     const tokenType = getTokenType(contract);
 
     if (tokenType === TokenTypeEnum.FA_1_2) {
-      return getTokenFa12Operations(selectedRpcUrl, selectedAccount.publicKeyHash, contractAddress, lastItem?.level);
+      return getTokenFa12Operations(selectedRpcUrl, selectedTezosAddress, contractAddress, lastItem?.level);
     }
 
     if (tokenType === TokenTypeEnum.FA_2) {
-      return getTokenFa2Operations(
-        selectedRpcUrl,
-        selectedAccount.publicKeyHash,
-        contractAddress,
-        tokenId,
-        lastItem?.level
-      );
+      return getTokenFa2Operations(selectedRpcUrl, selectedTezosAddress, contractAddress, tokenId, lastItem?.level);
     }
   }
 
-  return getAllOperations(selectedRpcUrl, selectedAccount.publicKeyHash, lastItem?.id);
+  return getAllOperations(selectedRpcUrl, selectedTezosAddress, lastItem?.id);
 };
 
 export const loadActivity = async (
@@ -215,6 +215,12 @@ export const loadActivity = async (
   tokenSlug?: string,
   lastItem?: ActivityInterface
 ) => {
+  const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
+
+  if (!selectedTezosAddress) {
+    return [];
+  }
+
   const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
     .then(operations => operations.map(operation => operation.hash))
     .then(newHashes => uniq(newHashes.filter(x => x !== lastItem?.hash)));
@@ -227,5 +233,5 @@ export const loadActivity = async (
     await sleep(100);
   }
 
-  return operationGroups.map(group => mapOperationsToActivities(selectedAccount.publicKeyHash, group));
+  return operationGroups.map(group => mapOperationsToActivities(selectedTezosAddress, group));
 };

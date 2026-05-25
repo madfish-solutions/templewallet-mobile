@@ -27,6 +27,8 @@ Agents should not need detailed future-phase context. Future-phase docs are inte
 5. [Phase 5: Imported Account Flows](./phases/phase-5-imported-account-flows.md)
 6. [Phase 6: Cleanup And Guardrails](./phases/phase-6-cleanup-guardrails.md)
 
+Implementation reference: [EVM Account Foundation](./account-foundation.md)
+
 ## Source Of Truth From Extension
 
 Use the browser extension model as the compatibility target.

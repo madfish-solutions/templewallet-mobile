@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useRawCurrentAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
 export const useReadOnlyTezosToolkit = (sender?: AccountInterface) => {
@@ -13,15 +14,15 @@ export const useReadOnlyTezosToolkit = (sender?: AccountInterface) => {
   let publicKey = '';
 
   if (sender) {
-    publicKeyHash = sender.publicKeyHash;
+    publicKeyHash = getAccountAddressForTezos(sender) ?? '';
     publicKey = sender.publicKey;
   } else if (defaultSender) {
-    publicKeyHash = defaultSender.publicKeyHash;
+    publicKeyHash = getAccountAddressForTezos(defaultSender) ?? '';
     publicKey = defaultSender.publicKey;
   }
 
   return useMemo(
-    () => createReadOnlyTezosToolkit(selectedRpcUrl, { publicKey, publicKeyHash }),
+    () => createReadOnlyTezosToolkit(selectedRpcUrl, publicKeyHash ? { publicKey, publicKeyHash } : undefined),
     [selectedRpcUrl, publicKey, publicKeyHash]
   );
 };

@@ -19,9 +19,10 @@ import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useSaplingAddressSelector } from 'src/store/sapling';
 import { toggleDomainAddressShown } from 'src/store/settings/settings-actions';
 import { useIsShownDomainNameSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
@@ -34,16 +35,18 @@ export const ReceiveModal = () => {
   const colors = useColors();
   const styles = useReceiveModalStyles();
   const { width: screenWidth } = useWindowDimensions();
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const selectedAccount = useSelectedAccountSelector();
+  const tezosAddress = getAccountAddressForTezos(selectedAccount);
+  const publicAddress = tezosAddress ?? getAccountAddressForEvm(selectedAccount) ?? '';
   const { token } = useModalParams<ModalsEnum.Receive>();
 
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
   const isShownDomainName = useIsShownDomainNameSelector();
-  const domainName = useDomainName(publicKeyHash);
+  const domainName = useDomainName(tezosAddress ?? '');
 
   const saplingAddress = useSaplingAddressSelector();
-  const showShieldedPage = isString(saplingAddress);
+  const showShieldedPage = Boolean(tezosAddress) && isString(saplingAddress);
 
   const [activePageIndex, setActivePageIndex] = useState(0);
 
@@ -56,7 +59,7 @@ export const ReceiveModal = () => {
     [screenWidth]
   );
 
-  const currentAddress = activePageIndex === 0 ? publicKeyHash : saplingAddress ?? '';
+  const currentAddress = activePageIndex === 0 ? publicAddress : saplingAddress ?? '';
 
   const testID = useMemo(
     () =>
@@ -86,7 +89,7 @@ export const ReceiveModal = () => {
           </View>
         </View>
         <QRCode
-          value={publicKeyHash}
+          value={publicAddress}
           ecl="Q"
           size={formatSize(180)}
           color={colors.black}
@@ -111,7 +114,7 @@ export const ReceiveModal = () => {
           {isShownDomainName && isString(domainName) ? (
             <Text style={styles.publicKeyHash}>{domainName}</Text>
           ) : (
-            <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
+            <Text style={styles.publicKeyHash}>{publicAddress}</Text>
           )}
         </SafeTouchableOpacity>
       </View>

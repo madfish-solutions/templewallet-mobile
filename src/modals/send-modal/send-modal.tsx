@@ -33,7 +33,10 @@ import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-acti
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useAssetExchangeRate, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
-import { useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
+import {
+  useCurrentAccountTezosAddressSelector,
+  useCurrentAccountTezosBalance
+} from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
 import { TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
@@ -66,6 +69,7 @@ export const SendModal: FC = () => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
+  const tezosAddress = useCurrentAccountTezosAddressSelector();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const shieldedBalanceMutez = useShieldedBalanceSelector();
@@ -132,6 +136,12 @@ export const SendModal: FC = () => {
       transferBetweenOwnAccounts,
       memo
     }: SendModalFormValues) => {
+      if (!tezosAddress) {
+        showErrorToast({ description: 'Select a Tezos account to send assets' });
+
+        return;
+      }
+
       if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
         setIsLoading(true);
 
@@ -207,7 +217,7 @@ export const SendModal: FC = () => {
         );
       }
     },
-    [dispatch, tezosBalance, canUseOnRamp, resolver]
+    [dispatch, tezosBalance, canUseOnRamp, resolver, tezosAddress]
   );
 
   const formik = useFormik({
@@ -318,7 +328,7 @@ export const SendModal: FC = () => {
         <ButtonLargePrimary
           title="Send"
           onPress={submitForm}
-          disabled={isLoading || Object.keys(errors).length > 0}
+          disabled={!tezosAddress || isLoading || Object.keys(errors).length > 0}
           testID={SendModalSelectors.sendButton}
         />
       </ModalButtonsFloatingContainer>

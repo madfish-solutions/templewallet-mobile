@@ -5,6 +5,7 @@ import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
 import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { getAccountAddressForTezos } from '../utils/account.utils';
 import { useAnalytics } from '../utils/analytics/use-analytics.hook';
 import { isDefined } from '../utils/is-defined';
 import { loadActivity } from '../utils/token-operations.util';
@@ -19,6 +20,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
   const selectedAccount = useSelectedAccountSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
+  const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
 
   const lastActivityRef = useRef<string>('');
 
@@ -36,7 +38,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         fetchedActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
       } catch (error) {
         console.error(error);
-        trackErrorEvent('InitialLoadContractActivityError', error, [selectedAccount.publicKeyHash], {
+        trackErrorEvent('InitialLoadContractActivityError', error, selectedTezosAddress ? [selectedTezosAddress] : [], {
           tokenSlug,
           selectedRpcUrl,
           refresh
@@ -63,7 +65,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         });
       }
     },
-    [selectedRpcUrl, selectedAccount, tokenSlug, trackErrorEvent]
+    [selectedRpcUrl, selectedAccount, selectedTezosAddress, tokenSlug, trackErrorEvent]
   );
 
   useEffect(() => {
@@ -93,7 +95,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
       }
     } catch (error) {
       console.error(error);
-      trackErrorEvent('HandleUpdateContractActivityError', error, [selectedAccount.publicKeyHash], {
+      trackErrorEvent('HandleUpdateContractActivityError', error, selectedTezosAddress ? [selectedTezosAddress] : [], {
         tokenSlug,
         selectedRpcUrl,
         lastItem
