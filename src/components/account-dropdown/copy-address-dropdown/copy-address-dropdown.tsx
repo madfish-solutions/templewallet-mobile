@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View } from 'react-native';
 
-import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
@@ -39,10 +38,8 @@ export const CopyAddressDropdown = memo<Props>(({ isVisible, options, onClose })
             <View style={styles.container}>
               <Text style={styles.title}>Copy address</Text>
 
-              {options.map(({ label, address, iconName }, index) => (
+              {options.map(({ label, address, iconName }) => (
                 <React.Fragment key={label}>
-                  {index > 0 && <Divider />}
-
                   <SafeTouchableOpacity style={styles.option} onPress={() => handleOptionPress(address)}>
                     <View style={styles.optionInfo}>
                       <Text style={styles.optionLabel}>{label}</Text>
@@ -52,7 +49,7 @@ export const CopyAddressDropdown = memo<Props>(({ isVisible, options, onClose })
                     </View>
 
                     <View style={styles.iconContainer}>
-                      <Icon name={iconName} size={formatSize(22)} />
+                      <Icon name={iconName} size={formatSize(16)} />
                     </View>
                   </SafeTouchableOpacity>
                 </React.Fragment>
