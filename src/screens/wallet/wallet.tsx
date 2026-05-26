@@ -10,15 +10,13 @@ import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom
 import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
 import { KoloCryptoCardPreview } from 'src/modals/kolo-card';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToModal, useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addBlacklistedContactAction } from 'src/store/contact-book/contact-book-actions';
 import {
   useContactCandidateAddressSelector,
@@ -46,8 +44,6 @@ export const Wallet = memo(() => {
   const { pageEvent } = useAnalytics();
   const navigateToModal = useNavigateToModal();
   const { dispatch: navigationDispatch, getState } = useNavigation();
-  const navigateToScreen = useNavigateToScreen();
-
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
   const accounts = useAccountsListSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
@@ -112,14 +108,6 @@ export const Wallet = memo(() => {
           <CurrentAccountDropdown testID={WalletSelectors.accountDropdownButton} />
 
           <Divider />
-
-          <TouchableIcon
-            name={IconNameEnum.QrScanner}
-            onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
-            testID={WalletSelectors.scanQRButton}
-          />
-
-          <Divider size={formatSize(24)} />
 
           <NotificationsBell />
 

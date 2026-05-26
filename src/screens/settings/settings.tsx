@@ -99,6 +99,18 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction
+              onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
+              testID={SettingsSelectors.scanQRButton}
+            >
+              <WhiteContainerText text="Scan QR code" />
+              <Icon name={IconNameEnum.QrScanner} size={formatSize(24)} />
+            </WhiteContainerAction>
+          </WhiteContainer>
+
+          <Divider size={formatSize(16)} />
+
+          <WhiteContainer>
+            <WhiteContainerAction
               onPress={() => navigateToScreen({ screen: ScreensEnum.ManageAccounts })}
               testID={SettingsSelectors.accountsButton}
             >

@@ -1,4 +1,5 @@
 export enum SettingsSelectors {
+  scanQRButton = 'Settings/Scan QR Button',
   accountsButton = 'Settings/Accounts Button',
   contactsButton = 'Settings/Contacts Button',
   defaultCurrencyButton = 'Settings/Default Currency Button',
