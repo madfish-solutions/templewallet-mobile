@@ -31,14 +31,14 @@ import {
 } from '../utils/keychain.utils';
 import {
   AccountCreds,
-  getDerivationPath,
   getPublicKeyAndHash$,
+  getTezosDerivationPath,
   mnemonicToEvmAccountCreds,
   mnemonicToTezosAccountCreds,
   privateKeyToEvmAccountCreds,
   privateKeyToTezosAccountCreds,
   seedToPrivateKey
-} from '../utils/keys.util';
+} from '../utils/keys.utils';
 import { throwError$ } from '../utils/rxjs.utils';
 import { getSaplingDerivationPath } from '../utils/sapling/address-utils';
 import { InMemorySpendingKey } from '../utils/sapling/sapling-keys';
@@ -505,7 +505,7 @@ export class Shelter {
     Shelter.revealSeedPhrase$(passwordHash).pipe(
       switchMap(seedPhrase => {
         const seed = mnemonicToSeedSync(seedPhrase);
-        const privateKey = seedToPrivateKey(seed, getDerivationPath(hdAccountIndex));
+        const privateKey = seedToPrivateKey(seed, getTezosDerivationPath(hdAccountIndex));
 
         return forkJoin([
           InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdAccountIndex)),

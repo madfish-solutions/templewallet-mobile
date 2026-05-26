@@ -25,7 +25,7 @@ import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { mnemonicToPrivateKey } from 'src/utils/keys.util';
+import { mnemonicToPrivateKey } from 'src/utils/keys.utils';
 import { extractHdIndexFromDerivationPath, getSaplingDerivationPath } from 'src/utils/sapling/address-utils';
 import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys/in-memory-spending-key';
 

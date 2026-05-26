@@ -5,7 +5,7 @@ import { ImportAccountDerivationEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { seedPhraseValidation } from 'src/form/validation/seed-phrase';
 import { isDefined } from 'src/utils/is-defined';
-import { getEvmDerivationPath, getTezosDerivationPath, isValidEvmDerivationPath } from 'src/utils/keys.util';
+import { getEvmDerivationPath, getTezosDerivationPath, isValidEvmDerivationPath } from 'src/utils/keys.utils';
 
 export type ImportAccountSeedValues = {
   seedPhrase: string;

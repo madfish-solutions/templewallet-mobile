@@ -14,7 +14,7 @@ import {
   mnemonicToEvmAccountCreds,
   mnemonicToTezosAccountCreds,
   privateKeyToTezosAccountCreds
-} from 'src/utils/keys.util';
+} from 'src/utils/keys.utils';
 import { getSaplingDerivationPath } from 'src/utils/sapling/address-utils';
 import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys';
 

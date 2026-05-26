@@ -3,7 +3,6 @@ import { mockAccountCredentials } from '../mocks/account-credentials.mock';
 
 import {
   generateSeed,
-  getDerivationPath,
   getEvmDerivationPath,
   getPublicKeyAndHash$,
   getTezosDerivationPath,
@@ -14,7 +13,7 @@ import {
   mnemonicToTezosAccountCreds,
   privateKeyToEvmAccountCreds,
   seedToPrivateKey
-} from './keys.util';
+} from './keys.utils';
 import { rxJsTestingHelper } from './testing.utils';
 
 const mockEvmAddressIndexZero = '0xfDc237eff648793c9F3B976c702493f0EE056489';
@@ -22,11 +21,11 @@ const mockEvmPrivateKeyIndexZero = '0x3925ef64b24414526bd9d28826c642a34d4d8fbb29
 const mockEvmPrivateKeyIndexOne = '0xec90061805584475c77bc57b9cf5a918f279dc4cddf365820dae472348bf405b';
 
 it('getDerivationPath should return derivation path, passing account index', () => {
-  expect(getDerivationPath(1)).toEqual(mockAccountCredentials.derivationPath);
+  expect(getTezosDerivationPath(1)).toEqual(mockAccountCredentials.derivationPath);
 });
 
 it('getDerivationPath should return Tezos derivation path', () => {
-  expect(getDerivationPath(1)).toEqual(getTezosDerivationPath(1));
+  expect(getTezosDerivationPath(1)).toEqual(getTezosDerivationPath(1));
 });
 
 it('getEvmDerivationPath should return EVM derivation path, passing account index', () => {

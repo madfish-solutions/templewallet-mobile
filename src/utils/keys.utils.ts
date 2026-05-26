@@ -30,7 +30,7 @@ export interface MnemonicPrivateKey {
 export const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
   const derivedSeed = isString(derivationPath) ? deriveSeed(seed, derivationPath) : seed;
 
-  return b58Encode(derivedSeed.slice(0, 32), PrefixV2.Ed25519Seed);
+  return b58Encode(derivedSeed.subarray(0, 32), PrefixV2.Ed25519Seed);
 };
 
 const deriveSeed = (seed: Buffer, derivationPath: string) => {
@@ -43,7 +43,7 @@ const deriveSeed = (seed: Buffer, derivationPath: string) => {
   }
 };
 
-const evmPrivateKeyToHex = (privateKey: Uint8Array | null | undefined) => {
+const evmPrivateKeyToHex = (privateKey: Uint8Array | nullish) => {
   if (!privateKey) {
     throw new Error('Failed to derive EVM private key');
   }
@@ -71,9 +71,6 @@ export const isValidEvmDerivationPath = (path: string) => {
     return false;
   }
 };
-
-/** @deprecated Use getTezosDerivationPath instead. */
-export const getDerivationPath = getTezosDerivationPath;
 
 export const getPublicKeyAndHash$ = (privateKey: string) =>
   from(InMemorySigner.fromSecretKey(privateKey)).pipe(

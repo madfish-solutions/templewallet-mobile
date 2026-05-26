@@ -14,7 +14,7 @@ import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-a
 import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
 import { getAccountAddressForChain } from 'src/utils/account.utils';
-import { AccountCreds, privateKeyToEvmAccountCreds, privateKeyToTezosAccountCreds } from 'src/utils/keys.util';
+import { AccountCreds, privateKeyToEvmAccountCreds, privateKeyToTezosAccountCreds } from 'src/utils/keys.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
 
