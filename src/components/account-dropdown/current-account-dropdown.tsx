@@ -12,11 +12,11 @@ import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown
 import { IconNameEnum } from '../icon/icon-name.enum';
 
 import { AccountDropdownBase } from './account-dropdown-base';
-import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
+import { AccountDropdownTriggerItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { CurrentAccountDropdownStyles } from './current-account-dropdown.styles';
 
 const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ value, isCollectibleScreen }) => (
-  <AccountDropdownItem
+  <AccountDropdownTriggerItem
     account={value}
     showFullData={false}
     actionIconName={IconNameEnum.Copy}

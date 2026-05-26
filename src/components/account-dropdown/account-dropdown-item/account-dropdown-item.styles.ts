@@ -6,17 +6,16 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     flexDirection: 'row',
     alignItems: 'center'
   },
-  rootFullData: {
-    alignItems: 'flex-start',
-    minHeight: formatSize(92),
-    paddingHorizontal: formatSize(8),
-    paddingVertical: formatSize(10)
+  listItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  rootModal: {
-    margin: formatSize(8)
-  },
-  avatarContainer: {
-    marginTop: formatSize(2)
+  listItemHeaderInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: formatSize(10)
   },
   infoContainer: {
     flexGrow: 1,
@@ -24,21 +23,22 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     justifyContent: 'space-between',
     marginLeft: formatSize(10)
   },
-  smallInfoContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
-    marginLeft: formatSize(4)
-  },
   upperContainer: {
     flexDirection: 'row',
     alignItems: 'center'
   },
   upperContainerFullData: {
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    minHeight: formatSize(40)
   },
   name: {
     ...typography.body17Semibold,
+    flexShrink: 1,
+    marginRight: formatSize(10),
+    color: colors.black
+  },
+  listItemName: {
+    ...typography.body15Semibold,
     flexShrink: 1,
     marginRight: formatSize(10),
     color: colors.black
@@ -52,20 +52,26 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     ...typography.numbersRegular15,
     color: colors.black
   },
+  listItemBalanceText: {
+    ...typography.numbersRegular15,
+    flexShrink: 0,
+    color: colors.black
+  },
   addressesContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     alignItems: 'center',
-    gap: formatSize(10),
-    marginTop: formatSize(24)
+    gap: formatSize(12),
+    marginTop: formatSize(16),
+    marginLeft: formatSize(2)
   },
   addressChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    maxWidth: formatSize(132)
+    maxWidth: formatSize(100)
   },
   addressText: {
-    ...typography.numbersRegular15,
+    ...typography.caption13Regular,
     flexShrink: 1,
     marginLeft: formatSize(4),
     color: colors.blue

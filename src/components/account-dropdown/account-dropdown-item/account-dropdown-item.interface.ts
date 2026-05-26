@@ -9,3 +9,9 @@ export interface AccountDropdownItemProps {
   isPublicKeyHashTextDisabled?: boolean;
   isCollectibleScreen?: boolean;
 }
+
+export type AccountDropdownTriggerItemProps = AccountDropdownItemProps;
+
+export interface AccountDropdownListItemProps {
+  account?: AccountBaseInterface;
+}
