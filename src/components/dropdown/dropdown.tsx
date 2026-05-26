@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle, ActivityIndicator } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent } from 'src/config/general';
@@ -34,6 +34,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   equalityFn: DropdownEqualityFn<T>;
   renderValue: DropdownValueComponent<T>;
   renderListItem: DropdownListItemComponent<T>;
+  getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
   onLongPress?: EmptyFn;
 }
@@ -83,6 +84,7 @@ const DropdownComponent = <T extends unknown>({
   equalityFn,
   renderValue,
   renderListItem,
+  getListItemSectionTitle,
   renderActionButtons = emptyComponent,
   keyExtractor,
   onValueChange,
@@ -101,6 +103,10 @@ const DropdownComponent = <T extends unknown>({
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
       const isSelected = equalityFn(item, value);
+      const sectionTitle = getListItemSectionTitle?.(item);
+      const previousItem = index > 0 ? list[index - 1] : undefined;
+      const previousSectionTitle = previousItem ? getListItemSectionTitle?.(previousItem) : undefined;
+      const shouldRenderSectionTitle = isDefined(sectionTitle) && sectionTitle !== previousSectionTitle;
 
       const handlePress = () => {
         onValueChange(item);
@@ -108,20 +114,34 @@ const DropdownComponent = <T extends unknown>({
       };
 
       return (
-        <TouchableWithAnalytics
-          Component={SafeTouchableOpacity}
-          key={index}
-          onPress={handlePress}
-          testID={DropdownSelectors.option}
-          testIDProperties={itemTestIDPropertiesFn?.(item)}
-        >
-          <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
-            {renderListItem({ item, isSelected })}
-          </DropdownItemContainer>
-        </TouchableWithAnalytics>
+        <>
+          {shouldRenderSectionTitle && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
+          <TouchableWithAnalytics
+            Component={SafeTouchableOpacity}
+            key={index}
+            onPress={handlePress}
+            testID={DropdownSelectors.option}
+            testIDProperties={itemTestIDPropertiesFn?.(item)}
+          >
+            <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
+              {renderListItem({ item, isSelected })}
+            </DropdownItemContainer>
+          </TouchableWithAnalytics>
+        </>
       );
     },
-    [equalityFn, value, onValueChange, dropdownBottomSheetController.close, renderListItem, itemTestIDPropertiesFn]
+    [
+      equalityFn,
+      value,
+      getListItemSectionTitle,
+      list,
+      onValueChange,
+      dropdownBottomSheetController.close,
+      itemTestIDPropertiesFn,
+      styles.sectionHeaderText,
+      itemContainerStyle,
+      renderListItem
+    ]
   );
 
   const scroll = useCallback(() => {

@@ -1,5 +1,6 @@
 import React, { memo, useMemo, useState } from 'react';
 
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { AccountBaseInterface, AccountInterface } from 'src/interfaces/account.interface';
@@ -10,6 +11,7 @@ import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { useSaplingAddressSelector } from 'src/store/sapling';
+import { formatSize } from 'src/styles/format-size';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -49,6 +51,7 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   return (
     <>
       <BottomSheetActionButton
+        showTopBorder
         title="Create new account"
         onPress={useCallbackIfOnline(handleCreateNewAccountButtonPress)}
       />
@@ -65,6 +68,12 @@ type Props = DropdownValueBaseProps<AccountBaseInterface> & TestIdProps;
 
 const isAccountInterface = (account: AccountBaseInterface): account is AccountInterface => 'type' in account;
 
+const getAccountSectionTitle = (account: AccountBaseInterface) =>
+  isAccountInterface(account) && account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? 'Imported' : 'Created';
+
+const getAccountSectionWeight = (account: AccountBaseInterface) =>
+  getAccountSectionTitle(account) === 'Created' ? 0 : 1;
+
 export const AccountDropdownBase = memo<Props>(
   ({
     value,
@@ -78,6 +87,12 @@ export const AccountDropdownBase = memo<Props>(
   }) => {
     const [isCopyAddressDropdownVisible, setIsCopyAddressDropdownVisible] = useState(false);
     const saplingAddress = useSaplingAddressSelector();
+
+    const groupedList = useMemo(
+      () =>
+        [...list].sort((accountA, accountB) => getAccountSectionWeight(accountA) - getAccountSectionWeight(accountB)),
+      [list]
+    );
 
     const copyAddressOptions = useMemo<CopyAddressOption[]>(() => {
       if (!isDefined(value)) {
@@ -123,10 +138,12 @@ export const AccountDropdownBase = memo<Props>(
           testIDProperties={testIDProperties}
           description="Accounts"
           value={value}
-          list={list}
+          list={groupedList}
+          itemHeight={formatSize(116)}
           equalityFn={accountEqualityFn}
           renderValue={renderValue}
           renderListItem={renderAccountListItem}
+          getListItemSectionTitle={getAccountSectionTitle}
           renderActionButtons={ActionButtons}
           onValueChange={onValueChange}
           onLongPress={onLongPressHandler}

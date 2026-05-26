@@ -6,8 +6,17 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     flexDirection: 'row',
     alignItems: 'center'
   },
+  rootFullData: {
+    alignItems: 'flex-start',
+    minHeight: formatSize(92),
+    paddingHorizontal: formatSize(8),
+    paddingVertical: formatSize(10)
+  },
   rootModal: {
     margin: formatSize(8)
+  },
+  avatarContainer: {
+    marginTop: formatSize(2)
   },
   infoContainer: {
     flexGrow: 1,
@@ -30,6 +39,7 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
   },
   name: {
     ...typography.body17Semibold,
+    flexShrink: 1,
     marginRight: formatSize(10),
     color: colors.black
   },
@@ -39,8 +49,26 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     alignItems: 'center'
   },
   balanceText: {
-    ...typography.numbersRegular13,
+    ...typography.numbersRegular15,
     color: colors.black
+  },
+  addressesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: formatSize(10),
+    marginTop: formatSize(24)
+  },
+  addressChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    maxWidth: formatSize(132)
+  },
+  addressText: {
+    ...typography.numbersRegular15,
+    flexShrink: 1,
+    marginLeft: formatSize(4),
+    color: colors.blue
   },
   accountNameMargin: {
     marginLeft: formatSize(10)
