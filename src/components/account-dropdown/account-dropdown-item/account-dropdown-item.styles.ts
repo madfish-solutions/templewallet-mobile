@@ -3,7 +3,8 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   rootModal: {
     margin: formatSize(8)
@@ -28,7 +29,8 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     justifyContent: 'space-between'
   },
   name: {
-    ...typography.tagline13Tag,
+    ...typography.body17Semibold,
+    marginRight: formatSize(10),
     color: colors.black
   },
   lowerContainer: {

@@ -14,7 +14,7 @@ interface Props {
   size?: number;
 }
 
-export const RobotIcon: FC<Props> = ({ seed, size = formatSize(44) }) => {
+export const RobotIcon: FC<Props> = ({ seed, size = formatSize(40) }) => {
   const styles = useRobotIconStyles();
 
   const xml = useMemo(

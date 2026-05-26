@@ -9,7 +9,6 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
-import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AccountBaseInterface, AccountInterface, emptyAccountBase } from 'src/interfaces/account.interface';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
@@ -32,13 +31,7 @@ import {
 const COLLECTIBLES_ROBOT_ICON_SIZE = 76;
 
 export const AccountDropdownItem = memo<AccountDropdownItemProps>(
-  ({
-    account = emptyAccountBase,
-    showFullData = true,
-    actionIconName,
-    isPublicKeyHashTextDisabled,
-    isCollectibleScreen = false
-  }) => {
+  ({ account = emptyAccountBase, showFullData = true, actionIconName, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
     const tezosAddress =
       'type' in account ? getAccountAddressForTezos(account as AccountInterface) : account.publicKeyHash;
@@ -57,18 +50,10 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
             ]}
           >
             <TruncatedText style={styles.name}>{account.name}</TruncatedText>
-            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(22)} />}
           </View>
           <View style={styles.lowerContainer}>
-            {isCollectibleScreen ? (
-              <CollectiblesInfo />
-            ) : (
-              <WalletAddress
-                isLocalDomainNameShowing
-                publicKeyHash={displayAddress}
-                isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
-              />
-            )}
+            {isCollectibleScreen && <CollectiblesInfo />}
             {showFullData && !isCollectibleScreen && (
               <HideBalance style={styles.balanceText}>
                 <AssetValueText asset={tezos} amount={tezos.balance} />

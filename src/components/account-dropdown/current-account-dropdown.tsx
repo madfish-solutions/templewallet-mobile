@@ -2,7 +2,6 @@ import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { isAndroid } from 'src/config/system';
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
@@ -20,8 +19,7 @@ const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ valu
   <AccountDropdownItem
     account={value}
     showFullData={false}
-    actionIconName={IconNameEnum.TriangleDown}
-    isPublicKeyHashTextDisabled={isAndroid}
+    actionIconName={IconNameEnum.Copy}
     isCollectibleScreen={isCollectibleScreen}
   />
 );
