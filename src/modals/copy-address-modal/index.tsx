@@ -8,7 +8,7 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { formatSize } from 'src/styles/format-size';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 
-import { useCopyAddressDropdownStyles } from './copy-address-dropdown.styles';
+import { useCopyAddressModalStyles } from './styles';
 
 export interface CopyAddressOption {
   label: string;
@@ -22,8 +22,8 @@ interface Props {
   onClose: EmptyFn;
 }
 
-export const CopyAddressDropdown = memo<Props>(({ isVisible, options, onClose }) => {
-  const styles = useCopyAddressDropdownStyles();
+export const CopyAddressModal = memo<Props>(({ isVisible, options, onClose }) => {
+  const styles = useCopyAddressModalStyles();
 
   const handleOptionPress = (address: string) => {
     copyStringToClipboard(address);

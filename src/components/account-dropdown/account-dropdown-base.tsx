@@ -16,13 +16,13 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
+import { CopyAddressModal, CopyAddressOption } from '../../modals/copy-address-modal';
 import { isTruthy } from '../../utils/is-truthy.ts';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
 import { accountEqualityFn } from './account-equality-fn';
-import { CopyAddressDropdown, CopyAddressOption } from './copy-address-dropdown/copy-address-dropdown';
 
 const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   const navigateToModal = useNavigateToModal();
@@ -133,7 +133,7 @@ export const AccountDropdownBase = memo<Props>(
           isCollectibleScreen={isCollectibleScreen}
         />
 
-        <CopyAddressDropdown
+        <CopyAddressModal
           isVisible={isCopyAddressDropdownVisible}
           options={copyAddressOptions}
           onClose={closeCopyAddressDropdown}
