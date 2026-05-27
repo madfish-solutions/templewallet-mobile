@@ -11,8 +11,7 @@ const stateWithAccounts: WalletState = {
     [mockHdAccount.publicKeyHash]: mockAccountState,
     [mockTezosImportedAccount.publicKeyHash]: mockAccountState
   },
-  selectedAccountId: mockHdAccount.id,
-  walletsSpecsRecord: {}
+  selectedAccountId: mockHdAccount.id
 };
 
 describe('walletReducers account selection', () => {

@@ -1,6 +1,6 @@
 import type { PersistedState } from 'redux-persist';
 
-import { DEFAULT_HD_WALLET_ID, DEFAULT_HD_WALLET_NAME } from 'src/config/wallet.const';
+import { DEFAULT_HD_WALLET_ID } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 
@@ -11,7 +11,6 @@ interface TestMigratedState {
     accounts: unknown[];
     accountsStateRecord: unknown;
     selectedAccountId: string;
-    walletsSpecsRecord: Record<string, unknown>;
   };
   sapling: {
     accountsRecord: unknown;
@@ -45,8 +44,7 @@ describe('root persist migration 9', () => {
         accounts: [hdAccount, secondHdAccount, importedAccount],
         accountsStateRecord,
         selectedAccountPublicKeyHash: 'tz1Hd2',
-        selectedAccountId: '',
-        walletsSpecsRecord: {}
+        selectedAccountId: ''
       },
       sapling: {
         accountsRecord: saplingAccountsRecord
@@ -80,9 +78,5 @@ describe('root persist migration 9', () => {
     expect(migratedState.wallet.selectedAccountId).toBe('tz1Hd2');
     expect(migratedState.wallet.accountsStateRecord).toBe(accountsStateRecord);
     expect(migratedState.sapling.accountsRecord).toBe(saplingAccountsRecord);
-    expect(migratedState.wallet.walletsSpecsRecord[DEFAULT_HD_WALLET_ID]).toMatchObject({
-      id: DEFAULT_HD_WALLET_ID,
-      name: DEFAULT_HD_WALLET_NAME
-    });
   });
 });

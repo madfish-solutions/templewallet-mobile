@@ -3,7 +3,7 @@ import { isEqual } from 'lodash-es';
 import type { MigrationManifest, PersistedState } from 'redux-persist';
 
 import { isIOS } from 'src/config/system';
-import { DEFAULT_HD_WALLET_ID, DEFAULT_HD_WALLET_NAME } from 'src/config/wallet.const';
+import { DEFAULT_HD_WALLET_ID } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
@@ -211,7 +211,7 @@ export const MIGRATIONS: MigrationManifest = {
         return {
           ...account,
           id,
-          walletId: account.walletId ?? DEFAULT_HD_WALLET_ID,
+          walletId: DEFAULT_HD_WALLET_ID,
           hdIndex,
           tezosAddress: account.tezosAddress ?? account.publicKeyHash
         };
@@ -236,18 +236,6 @@ export const MIGRATIONS: MigrationManifest = {
       ) ?? state.wallet.accounts.find(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
 
     state.wallet.selectedAccountId = selectedAccount?.id ?? '';
-    state.wallet.walletsSpecsRecord = state.wallet.walletsSpecsRecord ?? {};
-
-    if (
-      state.wallet.accounts.some(({ type }) => type === AccountTypeEnum.HD_ACCOUNT) &&
-      !state.wallet.walletsSpecsRecord[DEFAULT_HD_WALLET_ID]
-    ) {
-      state.wallet.walletsSpecsRecord[DEFAULT_HD_WALLET_ID] = {
-        id: DEFAULT_HD_WALLET_ID,
-        name: DEFAULT_HD_WALLET_NAME,
-        createdAt: Date.now()
-      };
-    }
 
     return state;
   }

@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { DEFAULT_HD_WALLET_ID, DEFAULT_HD_WALLET_NAME } from 'src/config/wallet.const';
+import { DEFAULT_HD_WALLET_ID } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
@@ -73,13 +73,7 @@ describe('runEvmAccountsMigration', () => {
 
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch.mock.calls[0][0].payload).toMatchObject({
-      selectedAccountId: mockAccountCredentials.publicKeyHash,
-      walletsSpecsRecord: {
-        [DEFAULT_HD_WALLET_ID]: {
-          id: DEFAULT_HD_WALLET_ID,
-          name: DEFAULT_HD_WALLET_NAME
-        }
-      }
+      selectedAccountId: mockAccountCredentials.publicKeyHash
     });
     expect(dispatch.mock.calls[0][0].payload.accounts[0]).toMatchObject({
       id: mockAccountCredentials.publicKeyHash,

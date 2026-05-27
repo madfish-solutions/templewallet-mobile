@@ -2,11 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { nanoid } from '@reduxjs/toolkit';
 import { firstValueFrom } from 'rxjs';
 
-import { DEFAULT_HD_WALLET_ID, DEFAULT_HD_WALLET_NAME } from 'src/config/wallet.const';
+import { DEFAULT_HD_WALLET_ID } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
-import { WalletSpecsInterface } from 'src/interfaces/wallet-specs.interface';
 import { completeEvmAccountsMigrationAction } from 'src/store/wallet/wallet-actions';
 import { WalletState } from 'src/store/wallet/wallet-state';
 import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
@@ -61,15 +60,6 @@ export const accountNeedsEvmRuntimeMigration = (account: AccountInterface) => {
 
 export const walletNeedsEvmAccountsMigration = (wallet: WalletState) =>
   wallet.accounts.some(accountNeedsEvmRuntimeMigration);
-
-const getWalletId = (accounts: AccountInterface[], walletsSpecsRecord: Record<string, WalletSpecsInterface>) => {
-  const hdAccountWalletId = accounts.find(
-    ({ type, walletId }) => type === AccountTypeEnum.HD_ACCOUNT && walletId
-  )?.walletId;
-  const walletSpecsId = Object.keys(walletsSpecsRecord)[0];
-
-  return hdAccountWalletId ?? walletSpecsId ?? DEFAULT_HD_WALLET_ID;
-};
 
 const getSelectedAccountId = (wallet: WalletState, accounts: AccountInterface[]) => {
   const selectedAccount =
@@ -141,19 +131,11 @@ export const runEvmAccountsMigration = async ({
   }
 
   const startedAt = Date.now();
-  const walletId = getWalletId(wallet.accounts, wallet.walletsSpecsRecord);
-  const walletsSpecsRecord = { ...wallet.walletsSpecsRecord };
   const hasHdAccounts = wallet.accounts.some(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
 
-  if (hasHdAccounts && !walletsSpecsRecord[walletId]) {
-    walletsSpecsRecord[walletId] = {
-      id: walletId,
-      name: DEFAULT_HD_WALLET_NAME,
-      createdAt: Date.now()
-    };
-  }
-
-  const mnemonic = hasHdAccounts ? await firstValueFrom(Shelter.revealWalletMnemonic$(walletId)) : undefined;
+  const mnemonic = hasHdAccounts
+    ? await firstValueFrom(Shelter.revealWalletMnemonic$(DEFAULT_HD_WALLET_ID))
+    : undefined;
   let hdPosition = 0;
 
   const migratedAccounts: AccountInterface[] = [];
@@ -184,7 +166,7 @@ export const runEvmAccountsMigration = async ({
     migratedAccounts.push({
       ...account,
       id: account.id || tezosAddress || nanoid(),
-      walletId,
+      walletId: DEFAULT_HD_WALLET_ID,
       hdIndex,
       tezosAddress,
       evmAddress: evmCreds.address,
@@ -194,7 +176,7 @@ export const runEvmAccountsMigration = async ({
   }
 
   if (mnemonic) {
-    await firstValueFrom(Shelter.saveWalletMnemonic$(walletId, mnemonic));
+    await firstValueFrom(Shelter.saveWalletMnemonic$(DEFAULT_HD_WALLET_ID, mnemonic));
   }
 
   console.info(`[EVM account migration] Keychain writes completed in ${Date.now() - startedAt}ms`);
@@ -204,7 +186,6 @@ export const runEvmAccountsMigration = async ({
   dispatch(
     completeEvmAccountsMigrationAction({
       accounts: migratedAccounts,
-      walletsSpecsRecord,
       selectedAccountId
     })
   );

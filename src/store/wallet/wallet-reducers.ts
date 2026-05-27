@@ -1,6 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { DEFAULT_HD_WALLET_NAME } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
@@ -22,7 +21,6 @@ import {
   updateAccountAction,
   setAccountVisibility,
   loadAssetsBalancesActions,
-  setWalletSpecsAction,
   completeEvmAccountsMigrationAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
@@ -52,18 +50,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     if (tezosAddress) {
       state.accountsStateRecord[tezosAddress] = initialAccountState;
     }
-
-    if (
-      account.type === AccountTypeEnum.HD_ACCOUNT &&
-      account.walletId &&
-      !state.walletsSpecsRecord[account.walletId]
-    ) {
-      state.walletsSpecsRecord[account.walletId] = {
-        id: account.walletId,
-        name: DEFAULT_HD_WALLET_NAME,
-        createdAt: Date.now()
-      };
-    }
   });
 
   builder.addCase(updateAccountAction, (state, { payload }) => {
@@ -76,14 +62,9 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     );
   });
 
-  builder.addCase(setWalletSpecsAction, (state, { payload }) => {
-    state.walletsSpecsRecord[payload.id] = payload;
-  });
-
   builder.addCase(completeEvmAccountsMigrationAction, (state, { payload }) => {
     state.accounts = payload.accounts.map(normalizeAccount);
     state.selectedAccountId = payload.selectedAccountId;
-    state.walletsSpecsRecord = payload.walletsSpecsRecord;
 
     for (const account of state.accounts) {
       const tezosAddress = getAccountAddressForTezos(account);
