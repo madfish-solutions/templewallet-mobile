@@ -169,7 +169,7 @@ export const runEvmAccountsMigration = async ({
       walletId: DEFAULT_HD_WALLET_ID,
       hdIndex,
       tezosAddress,
-      evmAddress: evmCreds.address,
+      evmAddress: evmCreds.address as HexString,
       publicKey: account.publicKey || tezosCreds.publicKey,
       publicKeyHash: account.publicKeyHash || tezosAddress
     });

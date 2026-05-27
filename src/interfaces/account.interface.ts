@@ -6,8 +6,6 @@ import { AccountTokenInterface } from '../token/interfaces/account-token.interfa
 
 import { ActivityGroup } from './activity.interface';
 
-export type EvmAddress = `0x${string}`;
-
 export interface AccountBaseInterface {
   name: string;
   /** @deprecated Tezos compatibility alias. Use getAccountAddressForTezos(account). */
@@ -22,7 +20,7 @@ export interface AccountInterface extends AccountBaseInterface {
   walletId?: string;
   hdIndex?: number;
   tezosAddress?: string;
-  evmAddress?: EvmAddress | string;
+  evmAddress?: HexString;
   chain?: TempleChainKind;
   address?: string;
 

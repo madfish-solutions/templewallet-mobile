@@ -310,7 +310,7 @@ export class Shelter {
             publicKey: tezosCreds.publicKey,
             publicKeyHash: tezosCreds.address,
             tezosAddress: tezosCreds.address,
-            evmAddress: evmCreds.address,
+            evmAddress: evmCreds.address as HexString,
             walletId,
             hdIndex
           })
