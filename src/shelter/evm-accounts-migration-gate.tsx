@@ -84,7 +84,7 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
   }, [startMigration]);
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (status === 'idle' || status === 'checking') {
       return;
     }
 
@@ -98,7 +98,7 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
     lock();
   }, [lock]);
 
-  const isBlocking = status !== 'idle';
+  const isBlocking = status === 'migrating' || status === 'failed';
   const isFailed = status === 'failed';
 
   return (
