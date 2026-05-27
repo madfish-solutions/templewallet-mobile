@@ -16,6 +16,5 @@ export const mockWalletState: WalletState = {
       name: DEFAULT_HD_WALLET_NAME,
       createdAt: 0
     }
-  },
-  selectedAccountPublicKeyHash: mockHdAccount.publicKeyHash
+  }
 };

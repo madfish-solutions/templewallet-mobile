@@ -11,7 +11,7 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { hideLoaderAction, setOnRampOverlayStateAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
 import { getAccountAddressForChain } from 'src/utils/account.utils';
 import { AccountCreds, privateKeyToEvmAccountCreds, privateKeyToTezosAccountCreds } from 'src/utils/keys.utils';
@@ -99,7 +99,7 @@ export const createImportAccountSubscription = (
     )
     .subscribe(publicData => {
       if (publicData !== undefined) {
-        dispatch(setSelectedAccountAction(publicData.id));
+        dispatch(setSelectedAccountIdAction(publicData.id));
         dispatch(addHdAccountAction(publicData));
 
         navigationDispatch(StackActions.popToTop());

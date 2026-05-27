@@ -7,12 +7,7 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
 import { AccountInterface } from 'src/interfaces/account.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
-import {
-  findAccountByIdOrAddress,
-  getAccountAddressForTezos,
-  getAccountId,
-  getSelectedAccountFromWallet
-} from 'src/utils/account.utils';
+import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
@@ -22,7 +17,7 @@ import {
   addTokenAction,
   loadTezosBalanceActions,
   removeTokenAction,
-  setSelectedAccountAction,
+  setSelectedAccountIdAction,
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
@@ -88,7 +83,6 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(completeEvmAccountsMigrationAction, (state, { payload }) => {
     state.accounts = payload.accounts.map(normalizeAccount);
     state.selectedAccountId = payload.selectedAccountId;
-    state.selectedAccountPublicKeyHash = payload.selectedAccountPublicKeyHash;
     state.walletsSpecsRecord = payload.walletsSpecsRecord;
 
     for (const account of state.accounts) {
@@ -130,18 +124,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }
   });
 
-  builder.addCase(setSelectedAccountAction, (state, { payload: accountIdOrAddress }) => {
-    const selectedAccount =
-      findAccountByIdOrAddress(state.accounts, accountIdOrAddress) ?? getSelectedAccountFromWallet(state);
+  builder.addCase(setSelectedAccountIdAction, (state, { payload: accountId }) => {
+    if (!accountId) return;
 
-    state.selectedAccountId = selectedAccount ? getAccountId(selectedAccount) : accountIdOrAddress ?? '';
-
-    const tezosAddress = selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined;
-    if (tezosAddress) {
-      state.selectedAccountPublicKeyHash = tezosAddress;
-    } else if (accountIdOrAddress?.startsWith('tz')) {
-      state.selectedAccountPublicKeyHash = accountIdOrAddress;
-    }
+    state.selectedAccountId = accountId;
   });
 
   builder.addCase(loadTezosBalanceActions.success, (state, { payload }) => {

@@ -74,7 +74,6 @@ describe('runEvmAccountsMigration', () => {
     expect(dispatch).toHaveBeenCalledTimes(1);
     expect(dispatch.mock.calls[0][0].payload).toMatchObject({
       selectedAccountId: mockAccountCredentials.publicKeyHash,
-      selectedAccountPublicKeyHash: mockAccountCredentials.publicKeyHash,
       walletsSpecsRecord: {
         [DEFAULT_HD_WALLET_ID]: {
           id: DEFAULT_HD_WALLET_ID,

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { AccountBaseInterface } from 'src/interfaces/account.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
 import { getAccountBaseId } from 'src/utils/account.utils';
 
@@ -34,7 +34,7 @@ export const CurrentAccountDropdown = memo<Props>(({ testID, testIDProperties, i
 
   const onValueChange = useCallback(
     (value: AccountBaseInterface | undefined) =>
-      dispatch(setSelectedAccountAction(value ? getAccountBaseId(value) ?? value.publicKeyHash : undefined)),
+      dispatch(setSelectedAccountIdAction(value ? getAccountBaseId(value) : undefined)),
     [dispatch]
   );
 

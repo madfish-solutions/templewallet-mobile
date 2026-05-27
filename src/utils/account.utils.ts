@@ -66,7 +66,6 @@ export const findAccountByIdOrAddress = (accounts: AccountInterface[], accountId
 
 export const getSelectedAccountFromWallet = (wallet: WalletState) =>
   findAccountByIdOrAddress(wallet.accounts, wallet.selectedAccountId) ??
-  findAccountByIdOrAddress(wallet.accounts, wallet.selectedAccountPublicKeyHash) ??
   wallet.accounts.find(({ type }) => type === AccountTypeEnum.HD_ACCOUNT) ??
   wallet.accounts[0];
 

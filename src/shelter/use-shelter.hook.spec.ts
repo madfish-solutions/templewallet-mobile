@@ -13,7 +13,7 @@ import { navigateAction } from '../store/root-state.actions';
 import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { loadWhitelistAction } from '../store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from '../store/wallet/wallet-actions';
+import { addHdAccountAction, setSelectedAccountIdAction } from '../store/wallet/wallet-actions';
 import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from '../toast/toast.utils.mock';
 import * as tokenBalanceUtils from '../utils/token-balance.utils';
 
@@ -58,7 +58,7 @@ describe('useShelter', () => {
     );
     expect(mockShelter.enableBiometryPassword$).not.toHaveBeenCalled();
 
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
     expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
   });
 
@@ -90,7 +90,7 @@ describe('useShelter', () => {
       existingAccounts: mockRootState.wallet.accounts
     });
 
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockNewHdAccount.id));
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockNewHdAccount.id));
     expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockNewHdAccount));
   });
 
@@ -152,7 +152,7 @@ describe('useShelter', () => {
       TempleChainKind.Tezos
     );
 
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockHdAccount.publicKeyHash));
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
     expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
     expect(mockShowSuccessToast).toHaveBeenCalledWith({ description: 'Account Imported!' });
     expect(mockNavigationDispatch).toHaveBeenCalledWith({ type: 'POP_TO_TOP' });
@@ -176,7 +176,7 @@ describe('useShelter', () => {
     );
     expect(mockShelter.saveSaplingSpendingKey$).not.toHaveBeenCalled();
     expect(loadTezosBalanceSpy).not.toHaveBeenCalled();
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountAction(mockEvmImportedAccount.id));
+    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockEvmImportedAccount.id));
     expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockEvmImportedAccount));
     expect(mockUseDispatch).not.toHaveBeenCalledWith(loadWhitelistAction.submit());
   });

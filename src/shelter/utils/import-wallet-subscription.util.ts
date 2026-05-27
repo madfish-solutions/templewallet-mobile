@@ -8,7 +8,7 @@ import {
   showLoaderAction
 } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 
 import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
 import { Shelter } from '../shelter';
@@ -28,7 +28,7 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletPara
     .subscribe(([importedAccounts, isPasswordSaved]) => {
       if (importedAccounts !== undefined) {
         const firstAccount = importedAccounts[0];
-        dispatch(setSelectedAccountAction(firstAccount.id));
+        dispatch(setSelectedAccountIdAction(firstAccount.id));
 
         for (const account of importedAccounts) {
           dispatch(addHdAccountAction(account));

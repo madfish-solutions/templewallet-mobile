@@ -16,7 +16,7 @@ import { withSelectedAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } f
 import { navigateAction, navigateBackAction } from '../root-state.actions';
 import { hideLoaderAction, showLoaderAction } from '../settings/settings-actions';
 import type { AnyActionEpic, RootState } from '../types';
-import { addHdAccountAction, loadTezosBalanceActions, setSelectedAccountAction } from '../wallet/wallet-actions';
+import { addHdAccountAction, loadTezosBalanceActions, setSelectedAccountIdAction } from '../wallet/wallet-actions';
 
 import {
   cancelSaplingPreparationAction,
@@ -295,7 +295,7 @@ const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
 
 const clearCacheOnAccountSwitchEpic: AnyActionEpic = action$ =>
   action$.pipe(
-    ofType(setSelectedAccountAction, clearSaplingCredentialsAction),
+    ofType(setSelectedAccountIdAction, clearSaplingCredentialsAction),
     map(() => {
       clearSaplingServiceCache();
 
@@ -330,11 +330,11 @@ const refreshBalanceAfterTxEpic: AnyActionEpic = (action$, state$) =>
 const shouldAutoLoadCredentials = (state$: StateObservable<RootState>) => {
   const { wallet, sapling } = state$.value;
   const selectedAccount = getSelectedAccountFromWallet(wallet);
-  const selectedAccountPublicKeyHash = selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined;
-  const saplingState = selectedAccountPublicKeyHash ? sapling.accountsRecord[selectedAccountPublicKeyHash] : undefined;
+  const selectedTezosAddress = selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined;
+  const saplingState = selectedTezosAddress ? sapling.accountsRecord[selectedTezosAddress] : undefined;
 
   return (
-    Boolean(selectedAccountPublicKeyHash) &&
+    Boolean(selectedTezosAddress) &&
     !saplingState?.isCredentialsLoaded &&
     !saplingState?.failedToLoadCredentials &&
     selectedAccount?.type !== AccountTypeEnum.WATCH_ONLY_DEBUG
@@ -361,7 +361,7 @@ const autoLoadCredentialsOnUnlockEpic: AnyActionEpic = (_action$, state$) =>
 /** Auto-load credentials when account is added or selected account changes */
 const autoLoadCredentialsOnAccountSwitchEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
-    ofType(addHdAccountAction, setSelectedAccountAction),
+    ofType(addHdAccountAction, setSelectedAccountIdAction),
     filter(() => shouldAutoLoadCredentials(state$)),
     map(() => loadSaplingCredentialsActions.submit())
   );

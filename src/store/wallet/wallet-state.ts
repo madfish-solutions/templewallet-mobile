@@ -9,10 +9,10 @@ export interface WalletState {
   accounts: AccountInterface[];
   accountsStateRecord: Record<string, AccountStateInterface>;
   selectedAccountId: string;
-  /** @deprecated Use selectedAccountId. */
-  selectedAccountPublicKeyHash: string;
   walletsSpecsRecord: Record<string, WalletSpecsInterface>;
 
+  /** @deprecated */
+  selectedAccountPublicKeyHash?: string;
   /** @deprecated */
   tokensMetadata?: Record<string, TokenMetadataInterface>;
   /** @deprecated */
@@ -27,6 +27,5 @@ export const walletInitialState: WalletState = {
   accounts: [],
   accountsStateRecord: {},
   selectedAccountId: '',
-  walletsSpecsRecord: {},
-  selectedAccountPublicKeyHash: ''
+  walletsSpecsRecord: {}
 };

@@ -9,7 +9,7 @@ import { FormAddressInput } from 'src/form/form-address-input';
 import { FormTextInput } from 'src/form/form-text-input';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { showSuccessToast } from 'src/toast/toast.utils';
 
 import {
@@ -31,7 +31,7 @@ export const ImportWatchOnlyDebug: FC = () => {
       publicKeyHash: values.address
     };
 
-    dispatch(setSelectedAccountAction(publicData.publicKeyHash));
+    dispatch(setSelectedAccountIdAction(publicData.id));
     dispatch(addHdAccountAction(publicData));
     dispatch(loadWhitelistAction.submit());
     showSuccessToast({ description: 'Debug Account Imported!' });

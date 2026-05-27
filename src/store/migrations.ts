@@ -229,11 +229,10 @@ export const MIGRATIONS: MigrationManifest = {
       return { ...account, id };
     });
 
+    const legacySelectedTezosAddress = state.wallet.selectedAccountPublicKeyHash;
     const selectedAccount =
       state.wallet.accounts.find(
-        account =>
-          account.id === state.wallet.selectedAccountPublicKeyHash ||
-          account.publicKeyHash === state.wallet.selectedAccountPublicKeyHash
+        account => account.id === legacySelectedTezosAddress || account.publicKeyHash === legacySelectedTezosAddress
       ) ?? state.wallet.accounts.find(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
 
     state.wallet.selectedAccountId = selectedAccount?.id ?? '';

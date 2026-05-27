@@ -8,13 +8,12 @@ import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
 
 import { createActions } from '../create-actions';
 
-export const setSelectedAccountAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT');
+export const setSelectedAccountIdAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT_ID');
 export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD_HD_ACCOUNT');
 export const setWalletSpecsAction = createAction<WalletSpecsInterface>('wallet/SET_WALLET_SPECS');
 export const completeEvmAccountsMigrationAction = createAction<{
   accounts: AccountInterface[];
   selectedAccountId: string;
-  selectedAccountPublicKeyHash: string;
   walletsSpecsRecord: Record<string, WalletSpecsInterface>;
 }>('wallet/COMPLETE_EVM_ACCOUNTS_MIGRATION');
 

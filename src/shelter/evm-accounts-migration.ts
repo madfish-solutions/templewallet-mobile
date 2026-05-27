@@ -9,7 +9,7 @@ import { AccountInterface } from 'src/interfaces/account.interface';
 import { WalletSpecsInterface } from 'src/interfaces/wallet-specs.interface';
 import { completeEvmAccountsMigrationAction } from 'src/store/wallet/wallet-actions';
 import { WalletState } from 'src/store/wallet/wallet-state';
-import { getAccountAddressForTezos, getAccountId, getSelectedAccountFromWallet } from 'src/utils/account.utils';
+import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
 import {
   mnemonicToEvmAccountCreds,
   mnemonicToTezosAccountCreds,
@@ -71,16 +71,14 @@ const getWalletId = (accounts: AccountInterface[], walletsSpecsRecord: Record<st
   return hdAccountWalletId ?? walletSpecsId ?? DEFAULT_HD_WALLET_ID;
 };
 
-const getSelectedAccountIds = (wallet: WalletState, accounts: AccountInterface[]) => {
+const getSelectedAccountId = (wallet: WalletState, accounts: AccountInterface[]) => {
   const selectedAccount =
     accounts.find(account => getAccountId(account) === wallet.selectedAccountId) ??
     accounts.find(account => getAccountAddressForTezos(account) === wallet.selectedAccountPublicKeyHash) ??
-    getSelectedAccountFromWallet({ ...wallet, accounts });
-  const selectedAccountId = selectedAccount ? getAccountId(selectedAccount) : '';
-  const selectedAccountPublicKeyHash =
-    (selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined) ?? wallet.selectedAccountPublicKeyHash;
+    accounts.find(({ type }) => type === AccountTypeEnum.HD_ACCOUNT) ??
+    accounts[0];
 
-  return { selectedAccountId, selectedAccountPublicKeyHash };
+  return selectedAccount ? getAccountId(selectedAccount) : '';
 };
 
 const normalizeImportedAccount = (account: AccountInterface): AccountInterface => {
@@ -201,13 +199,13 @@ export const runEvmAccountsMigration = async ({
 
   console.info(`[EVM account migration] Keychain writes completed in ${Date.now() - startedAt}ms`);
 
-  const selectedAccountIds = getSelectedAccountIds(wallet, migratedAccounts);
+  const selectedAccountId = getSelectedAccountId(wallet, migratedAccounts);
 
   dispatch(
     completeEvmAccountsMigrationAction({
       accounts: migratedAccounts,
       walletsSpecsRecord,
-      ...selectedAccountIds
+      selectedAccountId
     })
   );
 

@@ -19,7 +19,7 @@ import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-d
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
-import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
+import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAccountsListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
@@ -70,7 +70,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
 
   const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) => {
     if (getAccountId(approver) !== getAccountId(selectedAccount)) {
-      dispatch(setSelectedAccountAction(getAccountId(approver)));
+      dispatch(setSelectedAccountIdAction(getAccountId(approver)));
     }
     confirmRequest({
       message,
