@@ -6,7 +6,7 @@ import { WalletState } from './wallet-state';
 export const mockWalletState: WalletState = {
   accounts: [mockHdAccount],
   accountsStateRecord: {
-    [mockHdAccount.publicKeyHash]: mockAccountState
+    [mockHdAccount.tezosAddress]: mockAccountState
   },
   selectedAccountId: mockHdAccount.id
 };

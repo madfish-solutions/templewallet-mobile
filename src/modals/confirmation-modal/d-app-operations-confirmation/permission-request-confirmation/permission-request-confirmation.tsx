@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
@@ -20,10 +20,11 @@ import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floatin
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
-import { useAccountsListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
+import { getReadOnlySignerPayload$ } from 'src/utils/read-only-signer-payload.utils';
 
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
@@ -36,17 +37,20 @@ interface Props {
   message: PermissionRequestOutput;
 }
 
-const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionRequestActionPayloadInterface) =>
-  from(
-    BeaconHandler.respond({
-      type: BeaconMessageType.PermissionResponse,
-      network: message.network,
-      scopes: message.scopes,
-      id: message.id,
-      publicKey,
-      walletType: 'implicit'
-    })
-  ).pipe(
+const approvePermissionRequest = ({ message, approver }: ApprovePermissionRequestActionPayloadInterface) =>
+  getReadOnlySignerPayload$(approver).pipe(
+    switchMap(({ publicKey }) =>
+      from(
+        BeaconHandler.respond({
+          type: BeaconMessageType.PermissionResponse,
+          network: message.network,
+          scopes: message.scopes,
+          id: message.id,
+          publicKey,
+          walletType: 'implicit'
+        })
+      )
+    ),
     map(() => {
       showSuccessToast({ description: 'Successfully approved!' });
 
@@ -57,8 +61,8 @@ const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionReque
 export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
-  const accounts = useAccountsListSelector();
-  const selectedAccount = useSelectedAccountSelector();
+  const accounts = useAllAccounts();
+  const selectedAccount = useAccount();
   const tezosAccounts = useMemo(() => accounts.filter(account => getAccountAddressForTezos(account)), [accounts]);
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approvePermissionRequest);
@@ -74,7 +78,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
     }
     confirmRequest({
       message,
-      publicKey: approver.publicKey
+      approver
     });
   };
 

@@ -5,7 +5,7 @@ import { emptyFn } from 'src/config/general';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
-import { useHdAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useHdAccountListSelector, useAccount } from 'src/store/wallet/wallet-selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { RevealSeedPhraseFormContent } from './reveal-seed-phrase-form-content/reveal-seed-phrase-form-content';
@@ -15,7 +15,7 @@ import {
 } from './reveal-seed-phrase-modal.form';
 
 export const RevealSeedPhraseModal = () => {
-  const selectedAccount = useSelectedAccountSelector();
+  const selectedAccount = useAccount();
   const hdAccounts = useHdAccountListSelector();
   const { account: accountFromRouteProps } = useModalParams<ModalsEnum.RevealSeedPhrase>();
 

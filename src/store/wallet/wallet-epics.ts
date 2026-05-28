@@ -22,12 +22,7 @@ import { isDcpNode } from 'src/utils/network.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { loadAssetBalance$, fetchAllAssetsBalancesFromTzkt, loadTezosBalances$ } from 'src/utils/token-balance.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
-import {
-  withAllAccounts,
-  withOnRampOverlayState,
-  withSelectedAccount,
-  withSelectedRpcUrl
-} from 'src/utils/wallet.utils';
+import { withAllAccounts, withOnRampOverlayState, withAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction } from '../root-state.actions';
 import { setOnRampOverlayStateAction } from '../settings/settings-actions';
@@ -65,7 +60,7 @@ const highPriorityLoadTokenBalanceEpic: AnyActionEpic = (action$, state$) =>
 const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadAssetsBalancesActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
     switchMap(([[[_, selectedAccount], selectedRpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) => {
@@ -104,7 +99,7 @@ const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     withAllAccounts(state$),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
     switchMap(([[[[, allAccounts], selectedAccount], rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
@@ -146,7 +141,7 @@ const sendAssetEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[{ asset, receiverPublicKeyHash, amount }, selectedAccount], rpcUrl]) => {
       if (!getAccountAddressForTezos(selectedAccount)) {
@@ -195,7 +190,7 @@ const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>
               sendErrorAnalyticsEvent(
                 'WaitForOperationCompletionEpicError',
                 err,
-                [sender.publicKeyHash],
+                [sender.tezosAddress],
                 { userId, ABTestingCategory },
                 { rpcUrl }
               );

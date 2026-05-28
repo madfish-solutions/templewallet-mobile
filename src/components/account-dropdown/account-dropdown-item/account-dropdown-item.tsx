@@ -10,9 +10,9 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { AccountBaseInterface, AccountInterface, emptyAccountBase } from 'src/interfaces/account.interface';
+import { AddressBookItem, emptyAddressBookItem } from 'src/interfaces/account.interfaces';
+import { Contact } from 'src/interfaces/contact.interface';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { useSelector } from 'src/store/selector';
@@ -20,7 +20,8 @@ import { formatSize } from 'src/styles/format-size';
 import {
   getAccountAddressForEvm,
   getAccountAddressForTezos,
-  getAccountBaseDisplayAddress
+  getAccountBaseDisplayAddress,
+  isAccount
 } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -45,10 +46,10 @@ const truncateAddress = (address: string) =>
   address.length > 10 ? `${address.slice(0, 3)}...${address.slice(-4)}` : address;
 
 export const AccountDropdownItem = memo<AccountDropdownItemProps>(
-  ({ account = emptyAccountBase, showFullData = true, actionIconName, isCollectibleScreen = false }) => {
+  ({ account, showFullData = true, actionIconName, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
-    const accountInterface = 'type' in account ? (account as AccountInterface) : undefined;
-    const tezosAddress = accountInterface ? getAccountAddressForTezos(accountInterface) : account.publicKeyHash;
+    const accountInterface = isAccount(account) ? account : undefined;
+    const tezosAddress = accountInterface ? getAccountAddressForTezos(accountInterface) : (account as Contact).address;
     const tezos = useTezosTokenOfKnownAccount(tezosAddress ?? '');
     const displayAddress = getAccountBaseDisplayAddress(account);
 
@@ -84,20 +85,17 @@ export const AccountDropdownTriggerItem = memo<AccountDropdownTriggerItemProps>(
   <AccountDropdownItem {...props} />
 ));
 
-export const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account = emptyAccountBase }) => {
+export const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account = emptyAddressBookItem }) => {
   const styles = useAccountDropdownItemStyles();
-  const accountInterface = 'type' in account ? (account as AccountInterface) : undefined;
-  const tezosAddress = accountInterface ? getAccountAddressForTezos(accountInterface) : account.publicKeyHash;
+  const accountInterface = isAccount(account) ? account : undefined;
+  const tezosAddress = accountInterface ? getAccountAddressForTezos(accountInterface) : (account as Contact).address;
   const evmAddress = accountInterface ? getAccountAddressForEvm(accountInterface) : undefined;
   const tezos = useTezosTokenOfKnownAccount(tezosAddress ?? '');
   const saplingAddress = useSelector(({ sapling }) =>
     tezosAddress ? sapling.accountsRecord[tezosAddress]?.saplingAddress : undefined
   );
   const displayAddress = getAccountBaseDisplayAddress(account);
-  const shouldRenderSaplingAddress =
-    accountInterface?.type === AccountTypeEnum.HD_ACCOUNT &&
-    accountInterface.chain !== TempleChainKind.EVM &&
-    isDefined(saplingAddress);
+  const shouldRenderSaplingAddress = accountInterface?.type === AccountTypeEnum.HD_ACCOUNT && isDefined(saplingAddress);
 
   return (
     <>
@@ -122,7 +120,7 @@ export const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ acc
   );
 });
 
-export const renderAccountListItem: DropdownListItemComponent<AccountBaseInterface> = ({ item }) => (
+export const renderAccountListItem: DropdownListItemComponent<AddressBookItem> = ({ item }) => (
   <AccountDropdownListItem account={item} />
 );
 

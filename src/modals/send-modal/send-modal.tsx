@@ -33,10 +33,7 @@ import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-acti
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useAssetExchangeRate, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
-import {
-  useCurrentAccountTezosAddressSelector,
-  useCurrentAccountTezosBalance
-} from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
 import { TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
@@ -69,7 +66,7 @@ export const SendModal: FC = () => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
-  const tezosAddress = useCurrentAccountTezosAddressSelector();
+  const tezosAddress = useAccountAddressForTezos();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const shieldedBalanceMutez = useShieldedBalanceSelector();
@@ -156,7 +153,7 @@ export const SendModal: FC = () => {
         }
       }
 
-      const resolvedAddress = transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash;
+      const resolvedAddress = transferBetweenOwnAccounts ? recipient.address : receiverPublicKeyHash;
       const isRecipientSapling = isSaplingAddress(resolvedAddress);
       const isSourceShielded = isShieldedTezSelected(asset);
 

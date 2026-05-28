@@ -1,9 +1,9 @@
 import { object, SchemaOf } from 'yup';
 
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 
 export type RevealSeedPhraseModalFormValues = {
-  account: AccountInterface;
+  account: Account;
 };
 
 export const revealSeedPhraseModalValidationSchema: SchemaOf<RevealSeedPhraseModalFormValues> = object().shape({

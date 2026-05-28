@@ -11,7 +11,9 @@ import {
 } from '@taquito/tzip16';
 import memoize from 'memoizee';
 
+import { Account } from 'src/interfaces/account.interfaces';
 import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { ReadOnlySigner } from 'src/utils/read-only.signer.util';
 
 import { isDefined } from '../is-defined';

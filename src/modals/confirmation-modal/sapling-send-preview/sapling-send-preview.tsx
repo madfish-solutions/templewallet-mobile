@@ -5,7 +5,7 @@ import { AssetValueText } from 'src/components/asset-value-text/asset-value-text
 import { Divider } from 'src/components/divider/divider';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useTezosToken } from 'src/utils/wallet.utils';
 
@@ -18,7 +18,7 @@ interface Props {
 
 export const SaplingSendPreview: FC<Props> = ({ amount, saplingType }) => {
   const styles = useOperationsPreviewItemStyles();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const amountToken = useTezosToken(amount);
 
   const label = saplingType === 'shield' ? 'TEZ sent' : 'Shielded TEZ sent';

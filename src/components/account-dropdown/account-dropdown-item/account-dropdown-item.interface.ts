@@ -1,9 +1,9 @@
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { AddressBookItem } from 'src/interfaces/account.interfaces';
 
 import { IconNameEnum } from '../../icon/icon-name.enum';
 
 export interface AccountDropdownItemProps {
-  account?: AccountBaseInterface;
+  account?: AddressBookItem;
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
   isPublicKeyHashTextDisabled?: boolean;
@@ -13,5 +13,5 @@ export interface AccountDropdownItemProps {
 export type AccountDropdownTriggerItemProps = AccountDropdownItemProps;
 
 export interface AccountDropdownListItemProps {
-  account?: AccountBaseInterface;
+  account?: AddressBookItem;
 }

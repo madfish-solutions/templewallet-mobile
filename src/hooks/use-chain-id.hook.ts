@@ -14,7 +14,7 @@ export const useChainId = () => {
   useEffect(() => {
     const tezos = createReadOnlyTezosToolkit(rpcUrl, {
       publicKey: READ_ONLY_SIGNER_PUBLIC_KEY,
-      publicKeyHash: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
+      tezosAddress: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
     });
     tezos.rpc.getChainId().then(setChainId).catch(noop);
   }, [rpcUrl]);

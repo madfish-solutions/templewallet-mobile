@@ -9,7 +9,7 @@ import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
 import { useSaplingAddressSelector } from 'src/store/sapling';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -27,7 +27,7 @@ interface Props {
 export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
   const styles = useOperationsPreviewItemStyles();
   const colors = useColors();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const saplingAddress = useSaplingAddressSelector();
   const amountToken = useTezosToken(amount);
   const exchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);

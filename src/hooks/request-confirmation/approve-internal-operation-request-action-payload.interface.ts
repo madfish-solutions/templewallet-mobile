@@ -1,9 +1,9 @@
 import { ParamsWithKind } from '@taquito/taquito';
 
-import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
+import { Account } from 'src/interfaces/account.interfaces';
 
 export interface ApproveInternalOperationRequestActionPayloadInterface {
   rpcUrl: string;
-  sender: ReadOnlySignerPayload;
+  sender: Account;
   opParams: ParamsWithKind[];
 }

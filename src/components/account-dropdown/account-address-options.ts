@@ -1,25 +1,24 @@
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { AccountBaseInterface, AccountInterface } from 'src/interfaces/account.interface';
+import { AddressBookItem, Account } from 'src/interfaces/account.interfaces';
 import { CopyAddressOption } from 'src/modals/copy-address-modal';
-import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
+import { getAccountAddressForEvm, getAccountAddressForTezos, isAccount } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { isTruthy } from 'src/utils/is-truthy';
 
 import { IconNameEnum } from '../icon/icon-name.enum';
 
-const isAccountInterface = (account: AccountBaseInterface): account is AccountInterface => 'type' in account;
+const isAccountItem = (account: AddressBookItem): account is Account => isAccount(account);
 
 export const buildAccountAddressOptions = (
-  account: AccountBaseInterface | undefined,
+  account: AddressBookItem | undefined,
   saplingAddress: string | null | undefined
 ): CopyAddressOption[] => {
   if (!isDefined(account)) {
     return [];
   }
 
-  const tezosAddress = isAccountInterface(account) ? getAccountAddressForTezos(account) : account.publicKeyHash;
-  const evmAddress = isAccountInterface(account) ? getAccountAddressForEvm(account) : undefined;
+  const tezosAddress = isAccountItem(account) ? getAccountAddressForTezos(account) : account.address;
+  const evmAddress = isAccountItem(account) ? getAccountAddressForEvm(account) : undefined;
 
   return [
     isString(tezosAddress) && {
@@ -28,8 +27,8 @@ export const buildAccountAddressOptions = (
       iconName: IconNameEnum.TezToken
     },
     isString(saplingAddress) &&
-      isAccountInterface(account) &&
-      account.chain !== TempleChainKind.EVM && {
+      isAccountItem(account) &&
+      getAccountAddressForTezos(account) !== undefined && {
         label: 'Shielded',
         address: saplingAddress,
         iconName: IconNameEnum.TezShieldedToken

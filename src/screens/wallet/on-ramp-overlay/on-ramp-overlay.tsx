@@ -9,7 +9,7 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useCurrentAccountTezosAddressSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { openUrl } from 'src/utils/linking';
@@ -36,7 +36,7 @@ const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
   const dispatch = useDispatch();
-  const publicKeyHash = useCurrentAccountTezosAddressSelector();
+  const publicKeyHash = useAccountAddressForTezos();
 
   const handleClose = useCallback(() => {
     setIsLinkLoading(false);

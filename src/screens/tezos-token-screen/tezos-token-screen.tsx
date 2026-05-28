@@ -33,7 +33,7 @@ import {
 } from 'src/store/sapling';
 import { loadSaplingTransactionHistoryActions } from 'src/store/sapling/sapling-actions';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
@@ -53,7 +53,7 @@ export const TezosTokenScreen = () => {
   const dispatch = useDispatch();
   const navigateToScreen = useNavigateToScreen();
   const navigateToModal = useNavigateToModal();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
   const isSaplingCredentialsLoaded = useIsSaplingCredentialsLoadedSelector();

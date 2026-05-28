@@ -8,8 +8,8 @@ import { WalletState } from './wallet-state';
 const stateWithAccounts: WalletState = {
   accounts: [mockHdAccount, mockTezosImportedAccount, mockEvmImportedAccount],
   accountsStateRecord: {
-    [mockHdAccount.publicKeyHash]: mockAccountState,
-    [mockTezosImportedAccount.publicKeyHash]: mockAccountState
+    [mockHdAccount.tezosAddress]: mockAccountState,
+    [mockTezosImportedAccount.address]: mockAccountState
   },
   selectedAccountId: mockHdAccount.id
 };
@@ -39,6 +39,6 @@ describe('walletReducers account selection', () => {
     const state = walletReducers(undefined, addHdAccountAction(mockHdAccount));
 
     expect(state.accounts[0].id).toEqual(mockHdAccount.id);
-    expect(state.accountsStateRecord[mockHdAccount.publicKeyHash]).toBeDefined();
+    expect(state.accountsStateRecord[mockHdAccount.tezosAddress]).toBeDefined();
   });
 });

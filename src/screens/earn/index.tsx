@@ -9,7 +9,7 @@ import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useInterval } from 'src/utils/hooks/use-interval';
@@ -29,7 +29,7 @@ export const Earn: FC = () => {
     totalStakedAmountInFiat: savingsTotalStakedAmountInFiat,
     maxApr: savingsMaxApr
   } = useUserSavingsStats();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
 
   usePageAnalytic(ScreensEnum.Earn);
 

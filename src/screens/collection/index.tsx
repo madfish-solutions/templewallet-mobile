@@ -7,7 +7,7 @@ import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { isDefined } from 'src/utils/is-defined';
@@ -26,7 +26,7 @@ const keyExtractor = (item: CollectionItemInterface) => `${item.address}_${item.
 
 export const Collection = memo(() => {
   const styles = useCollectionStyles();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const { collectionContract, galleryPk } = useScreenParams<ScreensEnum.Collection>();
 
   const { collectibles, isLoading, collectionSize, loadMore } = useCollectionItemsLoading(

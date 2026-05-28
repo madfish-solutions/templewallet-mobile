@@ -30,9 +30,10 @@ import {
   useIsAnyBackupMadeSelector,
   useThemeSelector
 } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { getAddressBookItemDisplayAddress } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
@@ -55,7 +56,7 @@ export const Settings = () => {
   const { trackEvent } = useAnalytics();
 
   const theme = useThemeSelector();
-  const account = useSelectedAccountSelector();
+  const account = useAccount();
 
   const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
 
@@ -115,7 +116,7 @@ export const Settings = () => {
               testID={SettingsSelectors.accountsButton}
             >
               <View style={styles.actionsContainer}>
-                <RobotIcon seed={account.publicKeyHash} size={formatSize(32)} />
+                <RobotIcon seed={getAddressBookItemDisplayAddress(account)} size={formatSize(32)} />
                 <WhiteContainerText text="Accounts" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />

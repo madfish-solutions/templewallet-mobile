@@ -21,7 +21,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -49,7 +49,7 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   const dispatch = useDispatch();
   const styles = useImportAccountFromSeedStyles();
   const { createImportedAccount } = useShelter();
-  const accountsIndex = useAccountsListSelector().length + 1;
+  const accountsIndex = useAllAccounts().length + 1;
 
   const isLoading = useIsShowLoaderSelector();
 

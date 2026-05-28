@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { SendAssetActionPayloadInterface } from 'src/interfaces/send-asset-action-payload.interface';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
@@ -8,13 +8,10 @@ import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
 import { createActions } from '../create-actions';
 
 export const setSelectedAccountIdAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT_ID');
-export const addHdAccountAction = createAction<AccountInterface>('wallet/ADD_HD_ACCOUNT');
-export const completeEvmAccountsMigrationAction = createAction<{
-  accounts: AccountInterface[];
-  selectedAccountId: string;
-}>('wallet/COMPLETE_EVM_ACCOUNTS_MIGRATION');
+export const addHdAccountAction = createAction<Account>('wallet/ADD_HD_ACCOUNT');
+export const completeEvmAccountsMigrationAction = createAction<Account[]>('wallet/COMPLETE_EVM_ACCOUNTS_MIGRATION');
 
-export const updateAccountAction = createAction<AccountInterface>('wallet/UPDATE_ACCOUNT');
+export const updateAccountAction = createAction<Account>('wallet/UPDATE_ACCOUNT');
 
 export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisible: boolean }>(
   'wallet/SET_ACCOUNT_VISIBILITY'

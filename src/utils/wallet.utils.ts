@@ -6,7 +6,7 @@ import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { Shelter } from 'src/shelter/shelter';
 import { ExchangeRateRecord } from 'src/store/currency/currency-state';
 import { useAssetExchangeRate, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
@@ -15,36 +15,37 @@ import {
   useCurrentAccountTezosBalance,
   useTezosBalanceOfKnownAccountSelector
 } from 'src/store/wallet/wallet-selectors';
+import { WalletState } from 'src/store/wallet/wallet-state.ts';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
-import { findAccountByIdOrAddress, getAccountId, getSelectedAccountFromWallet } from './account.utils';
+import { getAccountId } from './account.utils';
 import { AnalyticsError } from './error-analytics-data.utils';
 import { getNetworkGasTokenMetadata } from './network.utils';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
-export const withAllAccounts =
-  <T>(state$: Observable<RootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(withLatestFrom(state$, (value, { wallet }): [T, AccountInterface[]] => [value, wallet.accounts]));
-
-export const withSelectedAccount =
+export const withAccount =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
-      withLatestFrom(state$, (value, { wallet }): [T, AccountInterface] => {
-        const selectedAccount = getSelectedAccountFromWallet(wallet) ?? emptyAccount;
+      withLatestFrom(state$, (value, { wallet }): [T, Account] => {
+        const account = getSelectedAccountFromWallet(wallet);
 
-        return [value, selectedAccount];
+        return [value, account];
       })
     );
+
+export const withAllAccounts =
+  <T>(state$: Observable<RootState>) =>
+  (observable$: Observable<T>) =>
+    observable$.pipe(withLatestFrom(state$, (value, { wallet }): [T, Account[]] => [value, wallet.accounts]));
 
 export const withSelectedAccountHdIndex =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(
       withLatestFrom(state$, (value, { wallet }): [T, number | undefined] => {
-        const selectedAccount = getSelectedAccountFromWallet(wallet) ?? emptyAccount;
+        const selectedAccount = getSelectedAccountFromWallet(wallet);
 
         if (selectedAccount.type !== AccountTypeEnum.HD_ACCOUNT) {
           return [value, undefined];
@@ -59,17 +60,6 @@ export const withSelectedAccountHdIndex =
         const hdIndex = hdAccounts.findIndex(account => getAccountId(account) === selectedAccountId);
 
         return [value, hdIndex];
-      })
-    );
-
-export const withAccount =
-  <T>(state$: Observable<RootState>, getAccountPkh: (value: T) => string) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { wallet }): [T, AccountInterface] => {
-        const account = findAccountByIdOrAddress(wallet.accounts, getAccountPkh(value)) ?? emptyAccount;
-
-        return [value, account];
       })
     );
 
@@ -146,3 +136,6 @@ export const useTezosTokenOfKnownAccount = (publicKeyHash: string) => {
 
   return useTezosToken(balance);
 };
+
+export const getSelectedAccountFromWallet = (wallet: WalletState) =>
+  wallet.accounts.find(account => account.id === wallet.selectedAccountId) ?? wallet.accounts[0];

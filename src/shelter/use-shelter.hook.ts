@@ -4,7 +4,7 @@ import { EMPTY, Subject } from 'rxjs';
 
 import { useNavigation } from '../navigator/hooks/use-navigation.hook';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
+import { useAllAccounts } from '../store/wallet/wallet-selectors';
 import { useAnalytics } from '../utils/analytics/use-analytics.hook';
 
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
@@ -21,7 +21,7 @@ import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.u
 
 export const useShelter = () => {
   const dispatch = useDispatch();
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
   const { dispatch: navigationDispatch } = useNavigation();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();

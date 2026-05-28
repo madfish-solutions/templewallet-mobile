@@ -16,7 +16,7 @@ import { NewSeedPhraseAttention } from 'src/components/new-seed-phrase-attention
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { RevealSeedPhraseView } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-form-content/reveal-seed-phrase-view/reveal-seed-phrase-view';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
 import {
@@ -43,7 +43,7 @@ export const RevealSeedPhrase: FC<Props> = ({
   headerTitleText = 'Manual backup'
 }) => {
   const styles = useCreateNewWalletStyles();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
 
   useNavigationSetOptions(
     {

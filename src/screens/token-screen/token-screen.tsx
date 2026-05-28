@@ -17,7 +17,7 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen, useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -31,7 +31,7 @@ export const TokenScreen = () => {
   const navigateToScreen = useNavigateToScreen();
 
   const dispatch = useDispatch();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const tokensList = useCurrentAccountTokens();
   const tezosToken = useTezosTokenOfCurrentAccount();
 

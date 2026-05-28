@@ -10,6 +10,7 @@ import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 
 import { RevealSeedPhraseModalFormValues } from '../reveal-seed-phrase-modal.form';
 import { RevealSeedPharaseSelectors } from '../reveal-seed-phrase.selectors';
@@ -32,7 +33,7 @@ export const RevealSeedPhraseFormContent: SyncFC<FormikProps<RevealSeedPhraseMod
           label="Seed Phrase"
           description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts. Keep it in secret."
         />
-        <RevealSeedPhraseView publicKeyHash={values.account.publicKeyHash} />
+        <RevealSeedPhraseView publicKeyHash={getAccountAddressForTezos(values.account) ?? ''} />
         <Divider size={formatSize(16)} />
         <Disclaimer
           title="Attention!"

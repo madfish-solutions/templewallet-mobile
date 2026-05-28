@@ -47,10 +47,7 @@ import {
   useSwapTokenBySlugSelector,
   useSwapTokensMetadataSelector
 } from 'src/store/swap/swap-selectors';
-import {
-  useCurrentAccountTezosAddressSelector,
-  useCurrentAccountTezosBalance
-} from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
@@ -94,7 +91,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { trackEvent, trackErrorEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const publicKeyHash = useCurrentAccountTezosAddressSelector();
+  const publicKeyHash = useAccountAddressForTezos();
   const tezos = useReadOnlyTezosToolkit();
   const tezosBalance = useCurrentAccountTezosBalance();
   const blockLevel = useBlockLevel();

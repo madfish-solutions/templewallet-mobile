@@ -1,7 +1,7 @@
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { AccountBaseInterface, AccountInterface } from 'src/interfaces/account.interface';
-import { WalletState } from 'src/store/wallet/wallet-state';
+import { Account } from 'src/interfaces/account.interfaces';
+import { Contact } from 'src/interfaces/contact.interface';
 
 export interface AccountForChain<C extends TempleChainKind = TempleChainKind> {
   id: string;
@@ -11,66 +11,56 @@ export interface AccountForChain<C extends TempleChainKind = TempleChainKind> {
   name: string;
 }
 
-export const getAccountAddressForTezos = (account: AccountInterface): string | undefined =>
-  account.type === AccountTypeEnum.HD_ACCOUNT
-    ? account.tezosAddress ?? account.publicKeyHash
-    : account.chain === undefined || account.chain === TempleChainKind.Tezos
-    ? account.address ?? account.publicKeyHash
-    : undefined;
+export type AddressBookItem = Account | Contact;
 
-export const getAccountAddressForEvm = (account: AccountInterface): string | undefined =>
+export const isAccount = (item: AddressBookItem): item is Account => 'type' in item;
+
+export const isContact = (item: AddressBookItem): item is Contact => !isAccount(item);
+
+export const getAccountForTezos = (account: Account) => getAccountForChain(account, TempleChainKind.Tezos);
+
+export const getAccountForEvm = (account: Account) => getAccountForChain(account, TempleChainKind.EVM);
+
+export const getAccountAddressForTezos = (account: Account): string | undefined =>
   account.type === AccountTypeEnum.HD_ACCOUNT
-    ? account.evmAddress
-    : account.chain === TempleChainKind.EVM
+    ? account.tezosAddress
+    : account.chain === TempleChainKind.Tezos
     ? account.address
     : undefined;
 
-export const getAccountAddressForChain = (account: AccountInterface, chain: TempleChainKind): string | undefined =>
+export const getAccountAddressForEvm = (account: Account): HexString | undefined =>
+  account.type === AccountTypeEnum.HD_ACCOUNT
+    ? account.evmAddress
+    : account.chain === TempleChainKind.EVM
+    ? (account.address as HexString)
+    : undefined;
+
+export const getAccountAddressForChain = (account: Account, chain: TempleChainKind): string | undefined =>
   chain === TempleChainKind.Tezos ? getAccountAddressForTezos(account) : getAccountAddressForEvm(account);
 
 export const getAccountForChain = <C extends TempleChainKind>(
-  account: AccountInterface,
+  account: Account,
   chain: C
 ): AccountForChain<C> | null => {
   const address = getAccountAddressForChain(account, chain);
 
-  return address ? { id: getAccountId(account), chain, address, type: account.type, name: account.name } : null;
+  return address ? { id: account.id, chain, address, type: account.type, name: account.name } : null;
 };
 
-export const canUseAccountForChain = (account: AccountInterface, chain: TempleChainKind) =>
+export const canUseAccountForChain = (account: Account, chain: TempleChainKind) =>
   getAccountAddressForChain(account, chain) !== undefined;
 
-export const getAccountId = (account: AccountInterface) =>
-  account.id || getAccountAddressForTezos(account) || getAccountAddressForEvm(account) || account.publicKeyHash;
+export const getAccountId = (account: Account) => account.id;
 
-export const getAccountBaseId = (account: AccountBaseInterface) =>
-  'id' in account && typeof account.id === 'string' ? account.id : undefined;
+export const getContactAddress = (contact: Contact) => contact.address;
 
-export const getAccountBaseAddress = (account: AccountBaseInterface) =>
-  'address' in account && typeof account.address === 'string' ? account.address : undefined;
+export const getAddressBookItemAddress = (item: AddressBookItem) =>
+  isAccount(item)
+    ? getAccountAddressForTezos(item) || getAccountAddressForEvm(item) || item.id
+    : getContactAddress(item);
 
-export const getAccountBaseDisplayAddress = (account: AccountBaseInterface) =>
-  account.publicKeyHash || getAccountBaseAddress(account) || getAccountBaseId(account) || '';
+export const getAddressBookItemDisplayAddress = (item: AddressBookItem) => getAddressBookItemAddress(item) || '';
 
-export const findAccountByIdOrAddress = (accounts: AccountInterface[], accountIdOrAddress?: string) =>
-  accountIdOrAddress
-    ? accounts.find(
-        account =>
-          getAccountId(account) === accountIdOrAddress ||
-          account.publicKeyHash === accountIdOrAddress ||
-          account.tezosAddress === accountIdOrAddress ||
-          account.address === accountIdOrAddress ||
-          account.evmAddress === accountIdOrAddress
-      )
-    : undefined;
+export const getAccountBaseId = (item: AddressBookItem) => (isAccount(item) ? item.id : undefined);
 
-export const getSelectedAccountFromWallet = (wallet: WalletState) =>
-  findAccountByIdOrAddress(wallet.accounts, wallet.selectedAccountId) ??
-  wallet.accounts.find(({ type }) => type === AccountTypeEnum.HD_ACCOUNT) ??
-  wallet.accounts[0];
-
-export const getSelectedAccountIdFromWallet = (wallet: WalletState) => {
-  const selectedAccount = getSelectedAccountFromWallet(wallet);
-
-  return selectedAccount ? getAccountId(selectedAccount) : '';
-};
+export const getAccountBaseDisplayAddress = getAddressBookItemDisplayAddress;

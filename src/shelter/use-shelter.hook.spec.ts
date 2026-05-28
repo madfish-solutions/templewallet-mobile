@@ -85,7 +85,6 @@ describe('useShelter', () => {
     result.current.createHdAccount();
 
     expect(mockShelter.createHdAccount$).toHaveBeenCalledWith(`Account ${mockRootState.wallet.accounts.length + 1}`, {
-      walletId: mockRootState.wallet.accounts[0].walletId,
       accountIndex: mockRootState.wallet.accounts.length,
       existingAccounts: mockRootState.wallet.accounts
     });
@@ -159,7 +158,7 @@ describe('useShelter', () => {
   });
 
   it('should create imported EVM account without Tezos side effects', async () => {
-    mockShelter.createImportedAccount$.mockReturnValueOnce(of(mockEvmImportedAccount));
+    mockShelter.createImportedAccount$.mockReturnValueOnce(of(mockEvmImportedAccount as any));
     const { result } = renderHook(() => useShelter());
 
     result.current.createImportedAccount({

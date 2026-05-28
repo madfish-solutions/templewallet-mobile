@@ -11,14 +11,14 @@ import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { RPC_RETRY_OPTIONS } from 'src/utils/tezos.util';
-import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { withAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 
 const loadSelectedBakerAddressEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSelectedBakerActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
     switchMap(([[[, selectedAccount], rpcUrl], { userId, ABTestingCategory, isAnalyticsEnabled }]) => {

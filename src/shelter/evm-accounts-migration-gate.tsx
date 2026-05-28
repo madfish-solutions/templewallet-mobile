@@ -8,7 +8,6 @@ import { ButtonsContainer } from 'src/components/button/buttons-container/button
 import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
-import { persistor } from 'src/store';
 import { useSelector } from 'src/store/selector';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -17,9 +16,8 @@ import { useColors } from 'src/styles/use-colors';
 import { useAppLock } from './app-lock/app-lock';
 import {
   getEvmAccountsMigrationErrorMessage,
-  isEvmAccountsMigrationComplete,
   runEvmAccountsMigration,
-  walletNeedsEvmAccountsMigration
+  walletNeedsMigration
 } from './evm-accounts-migration';
 import { useEvmAccountsMigrationGateStyles } from './evm-accounts-migration-gate.styles';
 
@@ -42,9 +40,9 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
       return;
     }
 
-    const needsRuntimeMigration = walletNeedsEvmAccountsMigration(wallet);
+    const needsMigration = walletNeedsMigration(wallet);
 
-    if (completedCheckRef.current && !needsRuntimeMigration) {
+    if (completedCheckRef.current && !needsMigration) {
       return;
     }
 
@@ -53,9 +51,7 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
     setErrorMessage(undefined);
 
     try {
-      const markerComplete = await isEvmAccountsMigrationComplete();
-
-      if (markerComplete && !needsRuntimeMigration) {
+      if (!needsMigration) {
         completedCheckRef.current = true;
         setStatus('idle');
 
@@ -65,8 +61,7 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
       setStatus('migrating');
       await runEvmAccountsMigration({
         wallet,
-        dispatch,
-        flushPersistor: () => persistor.flush()
+        dispatch
       });
       completedCheckRef.current = true;
       setStatus('idle');

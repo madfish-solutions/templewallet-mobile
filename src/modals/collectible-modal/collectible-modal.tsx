@@ -31,7 +31,7 @@ import {
 } from 'src/store/collectibles/collectibles-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useAssetBalanceSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAssetBalanceSelector, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -66,7 +66,7 @@ export const CollectibleModal = memo(() => {
   const navigateToModal = useNavigateToModal();
 
   const [address, id] = fromTokenSlug(slug);
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const selectedRpc = useSelectedRpcUrlSelector();
 
   const { width } = Dimensions.get('window');

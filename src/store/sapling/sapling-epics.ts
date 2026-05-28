@@ -11,7 +11,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { Shelter } from 'src/shelter/shelter';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos, getSelectedAccountFromWallet } from 'src/utils/account.utils';
-import { withSelectedAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { withAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction, navigateBackAction } from '../root-state.actions';
 import { hideLoaderAction, showLoaderAction } from '../settings/settings-actions';
@@ -62,7 +62,7 @@ const withSaplingSpendingKey$ = (
 const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSaplingCredentialsActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedAccountHdIndex(state$),
     switchMap(([[, selectedAccount], hdIndex]) => {
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
@@ -110,7 +110,7 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
 const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadShieldedBalanceActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) => {
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
@@ -147,7 +147,7 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(prepareSaplingTransactionActions.submit),
     toPayload(),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     withSelectedAccountHdIndex(state$),
     switchMap(([[[payload, selectedAccount], rpcUrl], hdIndex]) => {
@@ -256,7 +256,7 @@ async function prepareSaplingTx(
 const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSaplingTransactionHistoryActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) => {
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
@@ -316,7 +316,7 @@ const clearCacheOnLockEpic: AnyActionEpic = () =>
 const refreshBalanceAfterTxEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.success),
-    withSelectedAccount(state$),
+    withAccount(state$),
     filter(([, selectedAccount]) => {
       const { sapling } = state$.value;
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);

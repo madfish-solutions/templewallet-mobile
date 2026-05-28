@@ -27,8 +27,9 @@ import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsl
 import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
@@ -45,7 +46,7 @@ export const Wallet = memo(() => {
   const navigateToModal = useNavigateToModal();
   const { dispatch: navigationDispatch, getState } = useNavigation();
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const contactCandidateAddress = useContactCandidateAddressSelector();
   const ignoredAddresses = useIgnoredAddressesSelector();
@@ -69,7 +70,7 @@ export const Wallet = memo(() => {
       contactCandidateAddress &&
       !ignoredAddresses.includes(contactCandidateAddress) &&
       !contactsAddresses.includes(contactCandidateAddress) &&
-      !accounts.find(({ publicKeyHash }) => publicKeyHash === contactCandidateAddress)
+      !accounts.find(account => getAccountAddressForTezos(account) === contactCandidateAddress)
     ) {
       bottomSheetController.open();
     }
@@ -147,7 +148,7 @@ export const Wallet = memo(() => {
           onPress={() => {
             navigateToModal(ModalsEnum.AddContact, {
               name: '',
-              publicKeyHash: contactCandidateAddress
+              address: contactCandidateAddress
             });
             bottomSheetController.close();
           }}

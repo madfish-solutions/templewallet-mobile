@@ -1,27 +1,26 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
 
-import { AccountInterface } from '../interfaces/account.interface';
+import { Account } from '../interfaces/account.interfaces';
 import { getAccountBaseDisplayAddress, getAccountId } from '../utils/account.utils';
 import { isString } from '../utils/is-string';
 
-export const useFilteredAccountList = (accountList: AccountInterface[]) => {
+export const useFilteredAccountList = (accountList: Account[]) => {
   const [searchValue, setSearchValue] = useState<string>();
 
-  const [filteredAccountList, setFilteredAccountList] = useState<AccountInterface[]>(accountList);
+  const [filteredAccountList, setFilteredAccountList] = useState<Account[]>(accountList);
 
   useEffect(() => {
-    const result: AccountInterface[] = [];
+    const result: Account[] = [];
 
     if (isString(searchValue)) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
 
       for (const account of accountList) {
-        const { name, publicKey } = account;
+        const { name } = account;
         const displayAddress = getAccountBaseDisplayAddress(account);
         if (
           name.toLowerCase().includes(lowerCaseSearchValue) ||
-          publicKey.toLowerCase().includes(lowerCaseSearchValue) ||
           displayAddress.toLowerCase().includes(lowerCaseSearchValue) ||
           getAccountId(account).toLowerCase().includes(lowerCaseSearchValue)
         ) {

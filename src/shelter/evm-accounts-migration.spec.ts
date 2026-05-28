@@ -1,9 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { DEFAULT_HD_WALLET_ID } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { mockAccountCredentials } from 'src/mocks/account-credentials.mock';
 import { mockKeychain } from 'src/mocks/react-native-keychain.mock';
 import { mockEncryptedData, mockCryptoUtil } from 'src/utils/crypto.util.mock';
@@ -22,16 +21,16 @@ const legacyHdAccount = {
   type: AccountTypeEnum.HD_ACCOUNT,
   publicKey: mockAccountCredentials.publicKey,
   publicKeyHash: mockAccountCredentials.publicKeyHash
-} as AccountInterface;
+} as unknown as Account;
 
 const legacyImportedAccount = {
   name: 'Imported',
   type: AccountTypeEnum.IMPORTED_ACCOUNT,
   publicKey: mockAccountCredentials.publicKey,
   publicKeyHash: mockAccountCredentials.publicKeyHash
-} as AccountInterface;
+} as unknown as Account;
 
-const createWalletState = (accounts: AccountInterface[]) => ({
+const createWalletState = (accounts: Account[]) => ({
   accounts,
   accountsStateRecord: {
     [mockAccountCredentials.publicKeyHash]: {
@@ -79,9 +78,6 @@ describe('runEvmAccountsMigration', () => {
       id: mockAccountCredentials.publicKeyHash,
       name: 'Account 1',
       type: AccountTypeEnum.HD_ACCOUNT,
-      publicKey: mockAccountCredentials.publicKey,
-      publicKeyHash: mockAccountCredentials.publicKeyHash,
-      walletId: DEFAULT_HD_WALLET_ID,
       hdIndex: 0,
       tezosAddress: mockAccountCredentials.publicKeyHash,
       evmAddress: mockEvmAddress

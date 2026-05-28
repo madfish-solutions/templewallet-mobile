@@ -1,9 +1,8 @@
 import React, { memo, useMemo, useState } from 'react';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
-import { AccountBaseInterface, AccountInterface } from 'src/interfaces/account.interface';
+import { AddressBookItem, Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -12,7 +11,7 @@ import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { useSaplingAddressSelector } from 'src/store/sapling';
 import { formatSize } from 'src/styles/format-size';
-import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
+import { getAccountAddressForEvm, getAccountAddressForTezos, isAccount } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
@@ -64,15 +63,14 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   );
 };
 
-type Props = DropdownValueBaseProps<AccountBaseInterface> & TestIdProps;
+type Props = DropdownValueBaseProps<AddressBookItem> & TestIdProps;
 
-const isAccountInterface = (account: AccountBaseInterface): account is AccountInterface => 'type' in account;
+const isAccountItem = (account: AddressBookItem): account is Account => isAccount(account);
 
-const getAccountSectionTitle = (account: AccountBaseInterface) =>
-  isAccountInterface(account) && account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? 'Imported' : 'Created';
+const getAccountSectionTitle = (account: AddressBookItem) =>
+  isAccountItem(account) && account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? 'Imported' : 'Created';
 
-const getAccountSectionWeight = (account: AccountBaseInterface) =>
-  getAccountSectionTitle(account) === 'Created' ? 0 : 1;
+const getAccountSectionWeight = (account: AddressBookItem) => (getAccountSectionTitle(account) === 'Created' ? 0 : 1);
 
 export const AccountDropdownBase = memo<Props>(
   ({
@@ -99,8 +97,8 @@ export const AccountDropdownBase = memo<Props>(
         return [];
       }
 
-      const tezosAddress = isAccountInterface(value) ? getAccountAddressForTezos(value) : value.publicKeyHash;
-      const evmAddress = isAccountInterface(value) ? getAccountAddressForEvm(value) : undefined;
+      const tezosAddress = isAccountItem(value) ? getAccountAddressForTezos(value) : value.address;
+      const evmAddress = isAccountItem(value) ? getAccountAddressForEvm(value) : undefined;
 
       return [
         isString(tezosAddress) && {
@@ -109,8 +107,8 @@ export const AccountDropdownBase = memo<Props>(
           iconName: IconNameEnum.TezToken
         },
         isString(saplingAddress) &&
-          isAccountInterface(value) &&
-          value.chain !== TempleChainKind.EVM && {
+          isAccountItem(value) &&
+          getAccountAddressForTezos(value) !== undefined && {
             label: 'Shielded',
             address: saplingAddress,
             iconName: IconNameEnum.TezShieldedToken

@@ -15,7 +15,7 @@ import { BlackTextLink } from 'src/components/text-link/black-text-link';
 import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
 import { emptyFn } from 'src/config/general';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { ExchangePayload } from 'src/types/exolix.types';
@@ -46,7 +46,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue, currenciesLoading } =
     useFilteredCurrenciesList();
   const prevCurrenciesLoading = useRef(currenciesLoading);
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const publicKeyHash = useAccountAddressForTezos();
   const [outputLoading, setOutputLoading] = useState(false);
 
   const handleSubmit = () => {

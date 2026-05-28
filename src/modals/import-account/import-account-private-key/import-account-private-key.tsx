@@ -16,7 +16,7 @@ import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floatin
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -35,7 +35,7 @@ interface Props {
 
 export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
   const { createImportedAccount } = useShelter();
-  const accountIndex = useAccountsListSelector().length + 1;
+  const accountIndex = useAllAccounts().length + 1;
 
   const isLoading = useIsShowLoaderSelector();
 

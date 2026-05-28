@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { AccountInterface } from '../interfaces/account.interface';
+import { Account } from '../interfaces/account.interfaces';
 import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
@@ -24,22 +24,20 @@ export function getTransferParams$(
 export function getTransferParams$(
   asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
   rpcUrl: string,
-  sender: AccountInterface,
+  sender: Account,
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams>;
 export function getTransferParams$(
   asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
   rpcUrlOrTezos: string | TezosToolkit,
-  sender: AccountInterface | string,
+  sender: Account | string,
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams> {
   const { id, address } = asset;
   const tezos =
-    typeof rpcUrlOrTezos === 'string'
-      ? createReadOnlyTezosToolkit(rpcUrlOrTezos, sender as AccountInterface)
-      : rpcUrlOrTezos;
+    typeof rpcUrlOrTezos === 'string' ? createReadOnlyTezosToolkit(rpcUrlOrTezos, sender as Account) : rpcUrlOrTezos;
   const senderPkh = typeof sender === 'string' ? sender : getAccountAddressForTezos(sender);
 
   if (!senderPkh) {

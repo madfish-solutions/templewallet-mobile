@@ -14,7 +14,7 @@ import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-p
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { emptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -43,7 +43,7 @@ const delegationDisabledDisclaimerMessage =
   'This baker doesn’t offer rewards for delegation. If you want to earn delegation rewards, please choose a different baker.';
 
 interface Props extends TestIdProps {
-  sender: AccountInterface;
+  sender: Account;
   opParams: ParamsWithKind[];
   isLoading: boolean;
   disclaimer?: ReactNode;

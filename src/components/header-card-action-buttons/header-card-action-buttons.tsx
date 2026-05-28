@@ -16,7 +16,7 @@ import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
@@ -47,7 +47,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   const { isLocked } = useAppLock();
   const atBootsplash = useAtBootsplash();
   const canUseOnRamp = useCanUseOnRamp();
-  const selectedAccount = useSelectedAccountSelector();
+  const selectedAccount = useAccount();
   const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const { balance } = useTotalBalance();

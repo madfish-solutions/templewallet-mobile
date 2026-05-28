@@ -5,8 +5,10 @@ import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { FormAddressInput } from 'src/form/form-address-input';
 import { FormTextInput } from 'src/form/form-text-input';
+import { WatchOnlyDebugAccount } from 'src/interfaces/account.interfaces';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
@@ -23,12 +25,12 @@ export const ImportWatchOnlyDebug: FC = () => {
   const { goBack } = useNavigation();
 
   const onSubmit = (values: ImportWatchOnlyDebugValues) => {
-    const publicData = {
+    const publicData: WatchOnlyDebugAccount = {
       id: values.address,
       name: values.name,
       type: AccountTypeEnum.WATCH_ONLY_DEBUG,
-      publicKey: 'publicKey',
-      publicKeyHash: values.address
+      chain: TempleChainKind.Tezos,
+      address: values.address
     };
 
     dispatch(setSelectedAccountIdAction(publicData.id));

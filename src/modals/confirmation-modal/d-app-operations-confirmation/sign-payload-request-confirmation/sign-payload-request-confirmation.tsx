@@ -15,14 +15,14 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { useParseSignPayload } from 'src/hooks/use-parse-sign-payload.hook';
-import { emptyAccount } from 'src/interfaces/account.interface';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { Shelter } from 'src/shelter/shelter';
 import { navigateBackAction } from 'src/store/root-state.actions';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 
@@ -56,7 +56,7 @@ const PAYLOAD_PREVIEW_TYPE_INDEX = 0;
 export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const styles = useSignPayloadRequestConfirmationStyles();
   const { goBack } = useNavigation();
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
 
   const { payloadPreview, isPayloadParsed } = useParseSignPayload(message);
 
@@ -66,7 +66,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveSignPayloadRequest);
 
   const approver = useMemo(
-    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyAccount,
+    () => accounts.find(account => getAccountAddressForTezos(account) === message.sourceAddress),
     [accounts, message.sourceAddress]
   );
 

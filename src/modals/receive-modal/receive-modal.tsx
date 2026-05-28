@@ -19,7 +19,7 @@ import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useSaplingAddressSelector } from 'src/store/sapling';
 import { toggleDomainAddressShown } from 'src/store/settings/settings-actions';
 import { useIsShownDomainNameSelector } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
@@ -35,7 +35,7 @@ export const ReceiveModal = () => {
   const colors = useColors();
   const styles = useReceiveModalStyles();
   const { width: screenWidth } = useWindowDimensions();
-  const selectedAccount = useSelectedAccountSelector();
+  const selectedAccount = useAccount();
   const tezosAddress = getAccountAddressForTezos(selectedAccount);
   const publicAddress = tezosAddress ?? getAccountAddressForEvm(selectedAccount) ?? '';
   const { token } = useModalParams<ModalsEnum.Receive>();

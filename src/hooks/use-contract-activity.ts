@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityGroup } from '../interfaces/activity.interface';
 import { UseActivityInterface } from '../interfaces/use-activity.interface';
 import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
+import { useAccount } from '../store/wallet/wallet-selectors';
 import { getAccountAddressForTezos } from '../utils/account.utils';
 import { useAnalytics } from '../utils/analytics/use-analytics.hook';
 import { isDefined } from '../utils/is-defined';
@@ -17,7 +17,7 @@ interface ContractActivityState {
 }
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
-  const selectedAccount = useSelectedAccountSelector();
+  const selectedAccount = useAccount();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
   const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);

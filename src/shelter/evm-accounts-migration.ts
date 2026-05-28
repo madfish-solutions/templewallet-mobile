@@ -1,14 +1,11 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { nanoid } from '@reduxjs/toolkit';
 import { firstValueFrom } from 'rxjs';
 
-import { DEFAULT_HD_WALLET_ID } from 'src/config/wallet.const';
+import { DEFAULT_HD_WALLET_ID, EVM_ADDRESS_PLACEHOLDER } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { completeEvmAccountsMigrationAction } from 'src/store/wallet/wallet-actions';
 import { WalletState } from 'src/store/wallet/wallet-state';
-import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
 import {
   mnemonicToEvmAccountCreds,
   mnemonicToTezosAccountCreds,
@@ -19,68 +16,70 @@ import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys';
 
 import { Shelter } from './shelter';
 
-export const EVM_ACCOUNTS_MIGRATION_VERSION_KEY = 'evmAccountsMigrationVersion';
-export const TARGET_EVM_ACCOUNTS_MIGRATION_VERSION = 1;
-
 interface EvmAccountsMigrationParams {
   wallet: WalletState;
   dispatch: (action: ReturnType<typeof completeEvmAccountsMigrationAction>) => void;
-  flushPersistor: EmptyFn | (() => Promise<unknown>);
 }
 
-interface EvmAccountsMigrationResult {
-  didRun: boolean;
-  accounts: AccountInterface[];
-}
-
-const getStoredMigrationVersion = async () => {
-  const rawVersion = await AsyncStorage.getItem(EVM_ACCOUNTS_MIGRATION_VERSION_KEY);
-
-  return rawVersion ? Number(rawVersion) : 0;
-};
-
-export const isEvmAccountsMigrationComplete = async () =>
-  (await getStoredMigrationVersion()) >= TARGET_EVM_ACCOUNTS_MIGRATION_VERSION;
-
-export const accountNeedsEvmRuntimeMigration = (account: AccountInterface) => {
-  if (!account.id) {
-    return true;
+export const runEvmAccountsMigration = async ({ wallet, dispatch }: EvmAccountsMigrationParams) => {
+  if (!walletNeedsMigration(wallet)) {
+    return;
   }
 
+  const mnemonic = await firstValueFrom(Shelter.revealWalletMnemonic$(DEFAULT_HD_WALLET_ID));
+  let hdPosition = 0;
+
+  const migratedAccounts: Account[] = [];
+
+  for (const account of wallet.accounts) {
+    if (account.type !== AccountTypeEnum.HD_ACCOUNT) {
+      continue;
+    }
+
+    const hdIndex = hdPosition;
+    hdPosition++;
+
+    await saveTezosAccountCredsIfPossible(mnemonic, hdIndex, account.tezosAddress);
+    const evmCreds = mnemonicToEvmAccountCreds(mnemonic, hdIndex);
+
+    await firstValueFrom(Shelter.saveAccountCreds$(evmCreds));
+    await restoreSaplingSpendingKeyIfMissing(mnemonic, hdIndex, account.tezosAddress);
+
+    migratedAccounts.push({
+      ...account,
+      evmAddress: evmCreds.address as HexString
+    });
+  }
+
+  if (mnemonic) {
+    await firstValueFrom(Shelter.saveWalletMnemonic$(DEFAULT_HD_WALLET_ID, mnemonic));
+  }
+
+  dispatch(completeEvmAccountsMigrationAction(migratedAccounts));
+};
+
+export const getEvmAccountsMigrationErrorMessage = (error: unknown) => {
+  if (error instanceof Error && /No record in Keychain.*seedPhrase|Seed phrase is required/.test(error.message)) {
+    return 'We could not read your seed phrase from secure storage. Lock the app, unlock again, and retry the update.';
+  }
+
+  return 'Unable to update wallet accounts. Please try again.';
+};
+
+export const accountNeedsMigration = (account: Account) => {
   if (account.type === AccountTypeEnum.HD_ACCOUNT) {
-    return !account.walletId || account.hdIndex === undefined || !account.tezosAddress || !account.evmAddress;
+    return account.evmAddress === EVM_ADDRESS_PLACEHOLDER;
   }
 
   if (account.type === AccountTypeEnum.IMPORTED_ACCOUNT) {
-    return !account.chain || !account.address;
+    return account.chain === TempleChainKind.EVM && account.address === EVM_ADDRESS_PLACEHOLDER;
   }
 
   return false;
 };
 
-export const walletNeedsEvmAccountsMigration = (wallet: WalletState) =>
-  wallet.accounts.some(accountNeedsEvmRuntimeMigration);
-
-const getSelectedAccountId = (wallet: WalletState, accounts: AccountInterface[]) => {
-  const selectedAccount =
-    accounts.find(account => getAccountId(account) === wallet.selectedAccountId) ??
-    accounts.find(account => getAccountAddressForTezos(account) === wallet.selectedAccountPublicKeyHash) ??
-    accounts.find(({ type }) => type === AccountTypeEnum.HD_ACCOUNT) ??
-    accounts[0];
-
-  return selectedAccount ? getAccountId(selectedAccount) : '';
-};
-
-const normalizeImportedAccount = (account: AccountInterface): AccountInterface => {
-  const address = account.address ?? account.publicKeyHash;
-
-  return {
-    ...account,
-    id: account.id || address || nanoid(),
-    chain: account.chain ?? TempleChainKind.Tezos,
-    address
-  };
-};
+export const walletNeedsMigration = (wallet: WalletState) =>
+  wallet.accounts.some(account => accountNeedsMigration(account));
 
 const saveTezosAccountCredsIfPossible = async (mnemonic: string, hdIndex: number, tezosAddress: string) => {
   const derivedCreds = await mnemonicToTezosAccountCreds(mnemonic, hdIndex);
@@ -116,92 +115,4 @@ const restoreSaplingSpendingKeyIfMissing = async (mnemonic: string, hdIndex: num
 
   const sask = await InMemorySpendingKey.deriveSaskFromMnemonic(mnemonic, getSaplingDerivationPath(hdIndex));
   await firstValueFrom(Shelter.saveSaplingSpendingKey$(tezosAddress, sask));
-};
-
-export const runEvmAccountsMigration = async ({
-  wallet,
-  dispatch,
-  flushPersistor
-}: EvmAccountsMigrationParams): Promise<EvmAccountsMigrationResult> => {
-  const markerVersion = await getStoredMigrationVersion();
-  const needsPublicDataMigration = walletNeedsEvmAccountsMigration(wallet);
-
-  if (markerVersion >= TARGET_EVM_ACCOUNTS_MIGRATION_VERSION && !needsPublicDataMigration) {
-    return { didRun: false, accounts: wallet.accounts };
-  }
-
-  const startedAt = Date.now();
-  const hasHdAccounts = wallet.accounts.some(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
-
-  const mnemonic = hasHdAccounts
-    ? await firstValueFrom(Shelter.revealWalletMnemonic$(DEFAULT_HD_WALLET_ID))
-    : undefined;
-  let hdPosition = 0;
-
-  const migratedAccounts: AccountInterface[] = [];
-
-  for (const account of wallet.accounts) {
-    if (account.type !== AccountTypeEnum.HD_ACCOUNT) {
-      migratedAccounts.push(
-        account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? normalizeImportedAccount(account) : account
-      );
-
-      continue;
-    }
-
-    if (!mnemonic) {
-      throw new Error('Seed phrase is required to migrate HD accounts');
-    }
-
-    const hdIndex = account.hdIndex ?? hdPosition;
-    hdPosition++;
-
-    const tezosAddress = account.tezosAddress ?? account.publicKeyHash;
-    const tezosCreds = await saveTezosAccountCredsIfPossible(mnemonic, hdIndex, tezosAddress);
-    const evmCreds = mnemonicToEvmAccountCreds(mnemonic, hdIndex);
-
-    await firstValueFrom(Shelter.saveAccountCreds$(evmCreds));
-    await restoreSaplingSpendingKeyIfMissing(mnemonic, hdIndex, tezosAddress);
-
-    migratedAccounts.push({
-      ...account,
-      id: account.id || tezosAddress || nanoid(),
-      walletId: DEFAULT_HD_WALLET_ID,
-      hdIndex,
-      tezosAddress,
-      evmAddress: evmCreds.address as HexString,
-      publicKey: account.publicKey || tezosCreds.publicKey,
-      publicKeyHash: account.publicKeyHash || tezosAddress
-    });
-  }
-
-  if (mnemonic) {
-    await firstValueFrom(Shelter.saveWalletMnemonic$(DEFAULT_HD_WALLET_ID, mnemonic));
-  }
-
-  console.info(`[EVM account migration] Keychain writes completed in ${Date.now() - startedAt}ms`);
-
-  const selectedAccountId = getSelectedAccountId(wallet, migratedAccounts);
-
-  dispatch(
-    completeEvmAccountsMigrationAction({
-      accounts: migratedAccounts,
-      selectedAccountId
-    })
-  );
-
-  await flushPersistor();
-  console.info(`[EVM account migration] Redux persistence completed in ${Date.now() - startedAt}ms`);
-
-  await AsyncStorage.setItem(EVM_ACCOUNTS_MIGRATION_VERSION_KEY, String(TARGET_EVM_ACCOUNTS_MIGRATION_VERSION));
-
-  return { didRun: true, accounts: migratedAccounts };
-};
-
-export const getEvmAccountsMigrationErrorMessage = (error: unknown) => {
-  if (error instanceof Error && /No record in Keychain.*seedPhrase|Seed phrase is required/.test(error.message)) {
-    return 'We could not read your seed phrase from secure storage. Lock the app, unlock again, and retry the update.';
-  }
-
-  return 'Unable to update wallet accounts. Please try again.';
 };

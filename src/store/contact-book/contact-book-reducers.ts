@@ -20,7 +20,7 @@ export const contactBookReducers = createReducer<ContactBookState>(contactBookIn
     state.contacts = contactsCopy;
   });
   builder.addCase(deleteContactAction, (state, { payload }) => {
-    state.contacts = state.contacts.filter(contact => contact.publicKeyHash !== payload.publicKeyHash);
+    state.contacts = state.contacts.filter(contact => contact.address !== payload.address);
   });
   builder.addCase(addContactCandidateAddressAction, (state, { payload }) => {
     state.contactCandidateAddress = payload;
@@ -28,10 +28,10 @@ export const contactBookReducers = createReducer<ContactBookState>(contactBookIn
   builder.addCase(addBlacklistedContactAction, (state, { payload }) => {
     state.ignoredAddresses = [...state.ignoredAddresses, payload];
   });
-  builder.addCase(loadContactTezosBalance.success, (state, { payload: { publicKeyHash, tezosBalance } }) => {
+  builder.addCase(loadContactTezosBalance.success, (state, { payload: { address, tezosBalance } }) => {
     state.contactsStateRecord = {
       ...state.contactsStateRecord,
-      [publicKeyHash]: { tezosBalance }
+      [address]: { tezosBalance }
     };
   });
 });

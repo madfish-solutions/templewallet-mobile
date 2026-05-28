@@ -8,12 +8,12 @@ import { catchError, from, lastValueFrom, map, of, Subject, switchMap, tap } fro
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { hideLoaderAction, setOnRampOverlayStateAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
-import { getAccountAddressForChain } from 'src/utils/account.utils';
+import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { AccountCreds, privateKeyToEvmAccountCreds, privateKeyToTezosAccountCreds } from 'src/utils/keys.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
@@ -32,7 +32,7 @@ export interface CreateImportedAccountParams {
 const normalizeAddressForCompare = (chain: TempleChainKind, address: string) =>
   chain === TempleChainKind.EVM ? address.toLowerCase() : address;
 
-const hasSameChainAddress = (accounts: AccountInterface[], chain: TempleChainKind, address: string) =>
+const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, address: string) =>
   accounts.some(account => {
     const accountAddress = getAccountAddressForChain(account, chain);
 
@@ -48,7 +48,7 @@ const deriveImportedAccountCreds = (privateKey: string, chain: TempleChainKind):
 
 export const createImportAccountSubscription = (
   createImportedAccount$: Subject<CreateImportedAccountParams>,
-  accounts: AccountInterface[],
+  accounts: Account[],
   dispatch: Dispatch,
   navigationDispatch: (action: NavigationAction) => void,
   rpcUrl: string,
@@ -78,7 +78,7 @@ export const createImportAccountSubscription = (
                 const sask$ = saplingSpendingKey ? of(saplingSpendingKey) : from(deriveSaskFromPrivateKey(privateKey));
 
                 return sask$.pipe(
-                  switchMap(sask => Shelter.saveSaplingSpendingKey$(publicData.publicKeyHash, sask)),
+                  switchMap(sask => Shelter.saveSaplingSpendingKey$(getAccountAddressForTezos(publicData) ?? '', sask)),
                   map(() => publicData),
                   catchError(() => of(publicData))
                 );

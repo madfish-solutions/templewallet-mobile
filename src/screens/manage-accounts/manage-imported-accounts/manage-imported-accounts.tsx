@@ -7,7 +7,7 @@ import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { useImportedAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useImportedAccountListSelector, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { getAccountId } from 'src/utils/account.utils';
 
@@ -19,7 +19,7 @@ import { ManageImportedAccountsSelectors } from './manage-imported-accounts.sele
 export const ManageImportedAccounts = () => {
   const navigateToModal = useNavigateToModal();
 
-  const selectedAccount = useSelectedAccountSelector();
+  const selectedAccount = useAccount();
   const importedAccounts = useImportedAccountListSelector();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(importedAccounts);
 

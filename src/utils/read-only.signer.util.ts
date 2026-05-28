@@ -3,9 +3,8 @@ import { InMemorySigner } from '@taquito/signer';
 import { Signer } from '@taquito/taquito';
 import { firstValueFrom } from 'rxjs';
 
-import { AccountTypeEnum } from '../enums/account-type.enum';
-import { AccountInterface } from '../interfaces/account.interface';
 import { Shelter } from '../shelter/shelter';
+import { ReadOnlySignerPayload } from '../types/read-only-signer-payload';
 
 import { READ_ONLY_SIGNER_PUBLIC_KEY, READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from './env.utils';
 
@@ -41,11 +40,7 @@ export class ReadOnlySigner implements Signer {
   }
 }
 
-export const readOnlySignerAccount: AccountInterface = {
-  id: READ_ONLY_SIGNER_PUBLIC_KEY_HASH,
-  name: 'Read-only account',
-  type: AccountTypeEnum.IMPORTED_ACCOUNT,
+export const readOnlySignerAccount: ReadOnlySignerPayload = {
   publicKey: READ_ONLY_SIGNER_PUBLIC_KEY,
-  publicKeyHash: READ_ONLY_SIGNER_PUBLIC_KEY_HASH,
-  address: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
+  tezosAddress: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
 };

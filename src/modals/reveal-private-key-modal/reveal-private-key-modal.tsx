@@ -11,7 +11,7 @@ import { emptyFn } from 'src/config/general';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -26,7 +26,7 @@ import { RevealPrivateKeySelectors } from './reveal-private-key.selectors';
 export const RevealPrivateKeyModal = () => {
   const { account } = useModalParams<ModalsEnum.RevealPrivateKey>();
 
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
 
   const RevealPrivateKeyModalInitialValues: RevealPrivateKeyModalFormValues = { account };
 

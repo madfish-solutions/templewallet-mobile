@@ -4,7 +4,7 @@ import { stringify } from 'qs';
 import { getTzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
-import { AccountInterface } from '../interfaces/account.interface';
+import { Account } from '../interfaces/account.interfaces';
 import { ActivityInterface } from '../interfaces/activity.interface';
 import {
   OperationFa12Interface,
@@ -167,7 +167,7 @@ const getAllOperations = async (
 
 const loadOperations = async (
   selectedRpcUrl: string,
-  selectedAccount: AccountInterface,
+  selectedAccount: Account,
   tokenSlug?: string,
   lastItem?: ActivityInterface
 ) => {
@@ -211,7 +211,7 @@ const loadOperations = async (
 export const loadActivity = async (
   selectedRpcUrl: string,
   /** @deprecated // Wanna pass PKH only */
-  selectedAccount: AccountInterface,
+  selectedAccount: Account,
   tokenSlug?: string,
   lastItem?: ActivityInterface
 ) => {

@@ -26,7 +26,7 @@ import { useNavigateToModal, useNavigation } from 'src/navigator/hooks/use-navig
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { useBakersListSelector, useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -75,7 +75,7 @@ export const SelectBakerModal = memo(() => {
 
   const { trackEvent } = useAnalytics();
 
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
 
   const knownBakers = useBakersListSelector();
 

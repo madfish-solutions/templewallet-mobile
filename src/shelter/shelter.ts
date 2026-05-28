@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { nanoid } from '@reduxjs/toolkit';
 import { InMemorySigner } from '@taquito/signer';
 import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
@@ -16,7 +17,7 @@ import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { DEFAULT_HD_WALLET_ID } from '../config/wallet.const';
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { TempleChainKind } from '../enums/temple-chain-kind.enum';
-import { AccountInterface } from '../interfaces/account.interface';
+import { Account } from '../interfaces/account.interfaces';
 import { getAccountAddressForChain } from '../utils/account.utils';
 import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
@@ -54,7 +55,7 @@ const MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE = 'Please, try again.';
 interface CreateHdAccountOptions {
   walletId?: string;
   accountIndex?: number;
-  existingAccounts?: AccountInterface[];
+  existingAccounts?: Account[];
   explicitAccountIndex?: boolean;
 }
 
@@ -65,7 +66,7 @@ const accountPublicKeyKey = (address: string) => `account_public_key_${address}`
 const normalizeAddressForCompare = (chain: TempleChainKind, address: string) =>
   chain === TempleChainKind.EVM ? address.toLowerCase() : address;
 
-const hasSameChainAddress = (accounts: AccountInterface[], chain: TempleChainKind, address: string, includeHd = true) =>
+const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, address: string, includeHd = true) =>
   accounts.some(account => {
     if (!includeHd && account.type === AccountTypeEnum.HD_ACCOUNT) {
       return false;
@@ -303,12 +304,10 @@ export class Shelter {
           Shelter.saveAccountCreds$(evmCreds, passwordHash)
         ]).pipe(
           switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(tezosCreds.address, sask, passwordHash)),
-          mapTo({
-            id: tezosCreds.address,
+          mapTo<Account>({
+            id: nanoid(),
             type: AccountTypeEnum.HD_ACCOUNT,
             name,
-            publicKey: tezosCreds.publicKey,
-            publicKeyHash: tezosCreds.address,
             tezosAddress: tezosCreds.address,
             evmAddress: evmCreds.address as HexString,
             walletId,
@@ -355,7 +354,7 @@ export class Shelter {
     seedPhrase: string,
     password: string,
     hdAccountsLength = 1
-  ): Observable<AccountInterface[] | undefined> => {
+  ): Observable<Account[] | undefined> => {
     if (!validateMnemonic(seedPhrase)) {
       return throwError$('Mnemonic not validated');
     }
@@ -400,7 +399,11 @@ export class Shelter {
     );
   };
 
-  static createImportedAccount$ = (privateKey: string, name: string, chain = TempleChainKind.Tezos) =>
+  static createImportedAccount$ = (
+    privateKey: string,
+    name: string,
+    chain = TempleChainKind.Tezos
+  ): Observable<Account> =>
     (chain === TempleChainKind.EVM
       ? from(Promise.resolve().then(() => privateKeyToEvmAccountCreds(privateKey)))
       : from(privateKeyToTezosAccountCreds(privateKey))
@@ -408,14 +411,12 @@ export class Shelter {
       switchMap(creds => {
         if (chain === TempleChainKind.EVM) {
           return Shelter.saveAccountCreds$(creds).pipe(
-            mapTo({
+            mapTo<Account>({
               id: creds.address,
               name,
               type: AccountTypeEnum.IMPORTED_ACCOUNT,
               chain,
-              address: creds.address,
-              publicKey: '',
-              publicKeyHash: ''
+              address: creds.address
             })
           );
         }
@@ -424,14 +425,12 @@ export class Shelter {
           Shelter.saveSensitiveData$({ [creds.address]: creds.privateKey }),
           Shelter.saveAccountCreds$(creds)
         ]).pipe(
-          mapTo({
+          mapTo<Account>({
             id: creds.address,
             name,
             type: AccountTypeEnum.IMPORTED_ACCOUNT,
             chain,
-            address: creds.address,
-            publicKey: creds.publicKey,
-            publicKeyHash: creds.address
+            address: creds.address
           })
         );
       })
@@ -445,7 +444,7 @@ export class Shelter {
       existingAccounts = [],
       explicitAccountIndex = false
     }: CreateHdAccountOptions = {}
-  ): Observable<AccountInterface | undefined> =>
+  ): Observable<Account | undefined> =>
     Shelter.revealWalletMnemonic$(walletId).pipe(
       switchMap(seedPhrase =>
         forkJoin([

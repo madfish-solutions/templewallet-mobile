@@ -27,7 +27,7 @@ import {
 } from 'src/store/savings/selectors';
 import { loadSwapTokensAction } from 'src/store/swap/swap-actions';
 import { useSwapTokensMetadataSelector } from 'src/store/swap/swap-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isFarm } from 'src/utils/earn.utils';
@@ -69,7 +69,7 @@ export const ManageEarnOpportunityModal: FC = () => {
   const earnOpportunityLoading = isFarmingPool ? farmIsLoading : savingsItemIsLoading;
   const { isLoading: isSwapMetadataLoading, data: swapMetadataData } = useSwapTokensMetadataSelector();
   const swapTokensMetadataLoading = isSwapMetadataLoading && swapMetadataData.length === 0;
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const pageIsLoading = (earnOpportunityLoading && !isDefined(earnOpportunityItem)) || swapTokensMetadataLoading;
   const farmStake = useFarmStakeSelector(contractAddress);
   const savingsStake = useSavingsItemStakeSelector(contractAddress);

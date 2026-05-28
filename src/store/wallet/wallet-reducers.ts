@@ -1,10 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { AccountTypeEnum } from 'src/enums/account-type.enum';
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
 import { isDcpNode } from 'src/utils/network.utils';
@@ -26,19 +24,7 @@ import {
 import { walletInitialState, WalletState } from './wallet-state';
 import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
 
-const normalizeAccount = (account: AccountInterface): AccountInterface => {
-  const tezosAddress = getAccountAddressForTezos(account);
-  const id = getAccountId(account);
-
-  return {
-    ...account,
-    id,
-    publicKeyHash: account.publicKeyHash || tezosAddress || '',
-    tezosAddress: account.tezosAddress ?? (account.type === AccountTypeEnum.HD_ACCOUNT ? tezosAddress : undefined),
-    address: account.address ?? (account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? tezosAddress : undefined),
-    chain: account.chain ?? (account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? TempleChainKind.Tezos : undefined)
-  };
-};
+const normalizeAccount = (account: Account): Account => account;
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addHdAccountAction, (state, { payload }) => {
@@ -56,23 +42,12 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     const updatedAccount = normalizeAccount(payload);
 
     state.accounts = state.accounts.map(item =>
-      getAccountId(item) === getAccountId(updatedAccount) || item.publicKeyHash === updatedAccount.publicKeyHash
-        ? { ...item, ...updatedAccount }
-        : item
+      getAccountId(item) === getAccountId(updatedAccount) ? updatedAccount : item
     );
   });
 
-  builder.addCase(completeEvmAccountsMigrationAction, (state, { payload }) => {
-    state.accounts = payload.accounts.map(normalizeAccount);
-    state.selectedAccountId = payload.selectedAccountId;
-
-    for (const account of state.accounts) {
-      const tezosAddress = getAccountAddressForTezos(account);
-
-      if (tezosAddress && !state.accountsStateRecord[tezosAddress]) {
-        state.accountsStateRecord[tezosAddress] = initialAccountState;
-      }
-    }
+  builder.addCase(completeEvmAccountsMigrationAction, (state, { payload: migratedAccounts }) => {
+    state.accounts = migratedAccounts;
   });
 
   builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) => {

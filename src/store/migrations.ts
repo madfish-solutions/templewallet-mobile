@@ -3,17 +3,18 @@ import { isEqual } from 'lodash-es';
 import type { MigrationManifest, PersistedState } from 'redux-persist';
 
 import { isIOS } from 'src/config/system';
-import { DEFAULT_HD_WALLET_ID } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
-import type { AccountInterface } from 'src/interfaces/account.interface';
+import type { Account, HDAccount, ImportedAccount, WatchOnlyDebugAccount } from 'src/interfaces/account.interfaces';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
+
+import { DEFAULT_HD_WALLET_ID, EVM_ADDRESS_PLACEHOLDER } from '../config/wallet.const.ts';
 
 import { createEntity } from './create-entity';
 import type { RootState } from './types';
@@ -120,26 +121,30 @@ export const MIGRATIONS: MigrationManifest = {
       return state;
     }
 
-    const accounts: AccountInterface[] = [];
+    const accounts: Account[] = [];
     const accountsStateRecord: StringRecord<AccountStateInterface> = {};
 
     for (const account of state.wallet.accounts) {
-      accountsStateRecord[account.publicKeyHash] = {
-        isVisible: account.isVisible ?? initialAccountState.isVisible,
-        tezosBalance: account.tezosBalance ?? initialAccountState.tezosBalance,
-        tokensList:
-          account.tokensList?.map(token =>
-            isDefined(token.isVisible)
-              ? {
-                  ...token,
-                  visibility: token.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden,
-                  isVisible: undefined
-                }
-              : token
-          ) ?? initialAccountState.tokensList,
-        dcpTokensList: initialAccountState.dcpTokensList,
-        removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
-      };
+      const currentPkh = account.publicKeyHash;
+
+      if (currentPkh) {
+        accountsStateRecord[currentPkh] = {
+          isVisible: account.isVisible ?? initialAccountState.isVisible,
+          tezosBalance: account.tezosBalance ?? initialAccountState.tezosBalance,
+          tokensList:
+            account.tokensList?.map(token =>
+              isDefined(token.isVisible)
+                ? {
+                    ...token,
+                    visibility: token.isVisible ? VisibilityEnum.Visible : VisibilityEnum.InitiallyHidden,
+                    isVisible: undefined
+                  }
+                : token
+            ) ?? initialAccountState.tokensList,
+          dcpTokensList: initialAccountState.dcpTokensList,
+          removedTokensList: account.removedTokensList ?? initialAccountState.removedTokensList
+        };
+      }
 
       accounts.push({
         ...account,
@@ -199,43 +204,75 @@ export const MIGRATIONS: MigrationManifest = {
       return untypedState;
     }
     const state = untypedState as TypedPersistedRootState;
-    let hdPosition = 0;
 
-    state.wallet.accounts = state.wallet.accounts.map(account => {
-      const id = account.id ?? account.publicKeyHash ?? nanoid();
+    let hdPosition = 0;
+    const migratedAccounts = state.wallet.accounts.map(account => {
+      const tezosAddress = account.publicKeyHash!;
+      const id = nanoid();
 
       if (account.type === AccountTypeEnum.HD_ACCOUNT) {
-        const hdIndex = account.hdIndex ?? hdPosition;
+        const hdIndex = hdPosition;
         hdPosition++;
 
         return {
-          ...account,
           id,
-          walletId: DEFAULT_HD_WALLET_ID,
+          name: account.name,
+          type: AccountTypeEnum.HD_ACCOUNT,
           hdIndex,
-          tezosAddress: account.tezosAddress ?? account.publicKeyHash
-        };
+          tezosAddress,
+          evmAddress: EVM_ADDRESS_PLACEHOLDER, // Will be populated with proper address later in runtime migration
+          walletId: DEFAULT_HD_WALLET_ID
+        } satisfies HDAccount;
       }
 
       if (account.type === AccountTypeEnum.IMPORTED_ACCOUNT) {
         return {
-          ...account,
           id,
-          chain: account.chain ?? TempleChainKind.Tezos,
-          address: account.address ?? account.publicKeyHash
-        };
+          name: account.name,
+          type: AccountTypeEnum.IMPORTED_ACCOUNT,
+          chain: TempleChainKind.Tezos,
+          address: tezosAddress
+        } satisfies ImportedAccount;
       }
 
-      return { ...account, id };
+      return {
+        id,
+        name: account.name,
+        type: AccountTypeEnum.WATCH_ONLY_DEBUG,
+        chain: TempleChainKind.Tezos,
+        address: tezosAddress
+      } satisfies WatchOnlyDebugAccount;
     });
 
-    const legacySelectedTezosAddress = state.wallet.selectedAccountPublicKeyHash;
-    const selectedAccount =
-      state.wallet.accounts.find(
-        account => account.id === legacySelectedTezosAddress || account.publicKeyHash === legacySelectedTezosAddress
-      ) ?? state.wallet.accounts.find(({ type }) => type === AccountTypeEnum.HD_ACCOUNT);
+    const migratedAccountsStateRecord = migratedAccounts.reduce<Record<string, AccountStateInterface>>(
+      (acc, account) => {
+        const tezosAddress = account.type === AccountTypeEnum.HD_ACCOUNT ? account.tezosAddress : account.address;
 
-    state.wallet.selectedAccountId = selectedAccount?.id ?? '';
+        const accountsStateRecord = state.wallet.accountsStateRecord;
+
+        if (accountsStateRecord?.[tezosAddress]) {
+          acc[account.id] = accountsStateRecord[tezosAddress];
+        }
+
+        return acc;
+      },
+      {}
+    );
+
+    state.wallet.accounts = migratedAccounts;
+    state.wallet.accountsStateRecord = migratedAccountsStateRecord;
+
+    const selectedPkh = state.wallet.selectedAccountPublicKeyHash!;
+    const selectedAccount = migratedAccounts.find(account => {
+      if (account.type === AccountTypeEnum.HD_ACCOUNT) {
+        return account.tezosAddress === selectedPkh;
+      }
+
+      return account.address === selectedPkh;
+    });
+
+    state.wallet.selectedAccountId = selectedAccount?.id ?? migratedAccounts[0]?.id;
+    delete state.wallet.selectedAccountPublicKeyHash;
 
     return state;
   }

@@ -7,7 +7,7 @@ import { emptyFn } from 'src/config/general';
 import { usePasswordDelay } from 'src/hooks/use-password-delay.hook';
 import { enterPassword } from 'src/store/security/security-actions';
 import { usePasswordAttempt } from 'src/store/security/security-selectors';
-import { useCurrentAccountTezosAddressSelector, useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -39,7 +39,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const attempt = usePasswordAttempt();
   const passwordDelay = usePasswordDelay();
   const unlock$ = useMemo(() => new Subject<string>(), []);
-  const currentAccountPkh = useCurrentAccountTezosAddressSelector() ?? '';
+  const currentAccountPkh = useAccountAddressForTezos() ?? '';
   const hdAccounts = useHdAccountListSelector();
 
   const hdIndex = useMemo(() => {

@@ -118,11 +118,8 @@ describe('Shelter', () => {
           rxJsTestingHelper(([accounts, isLocked]) => {
             expect(accounts?.[0].name).toEqual('Account 1');
             expect(accounts?.[0].type).toEqual(AccountTypeEnum.HD_ACCOUNT);
-            expect(accounts?.[0].publicKey).toEqual(mockAccountCredentials.publicKey);
-            expect(accounts?.[0].publicKeyHash).toEqual(mockAccountCredentials.publicKeyHash);
             expect(accounts?.[0]).toMatchObject({
               id: mockAccountCredentials.publicKeyHash,
-              walletId: 'default-hd-wallet',
               hdIndex: 0,
               tezosAddress: mockAccountCredentials.publicKeyHash,
               evmAddress: mockEvmCredentials.address
@@ -191,11 +188,12 @@ describe('Shelter', () => {
         )
         .subscribe(
           rxJsTestingHelper(account => {
-            expect(account?.name).toEqual(mockName);
-            expect(account?.type).toEqual(AccountTypeEnum.HD_ACCOUNT);
-            expect(account?.publicKey).toEqual(mockHDAccountCredentials.publicKey);
-            expect(account?.publicKeyHash).toEqual(mockHDAccountCredentials.publicKeyHash);
-            expect(account?.evmAddress).toEqual(mockEvmCredentialsIndex77.address);
+            expect(account).toMatchObject({
+              name: mockName,
+              type: AccountTypeEnum.HD_ACCOUNT,
+              tezosAddress: mockHDAccountCredentials.publicKeyHash,
+              evmAddress: mockEvmCredentialsIndex77.address
+            });
 
             expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
               mockHDAccountCredentials.privateKey,
@@ -227,8 +225,6 @@ describe('Shelter', () => {
                   id: mockEvmCredentialsIndex77.address,
                   name: 'Imported EVM',
                   type: AccountTypeEnum.IMPORTED_ACCOUNT,
-                  publicKey: '',
-                  publicKeyHash: '',
                   chain: TempleChainKind.EVM,
                   address: mockEvmCredentialsIndex77.address
                 }
@@ -260,8 +256,6 @@ describe('Shelter', () => {
                   id: mockEvmCredentialsIndex77.address,
                   name: 'Imported EVM',
                   type: AccountTypeEnum.IMPORTED_ACCOUNT,
-                  publicKey: '',
-                  publicKeyHash: '',
                   chain: TempleChainKind.EVM,
                   address: mockEvmCredentialsIndex77.address
                 }
@@ -285,10 +279,11 @@ describe('Shelter', () => {
         .pipe(switchMap(() => Shelter.createImportedAccount$(mockHDAccountCredentials.privateKey, mockName)))
         .subscribe(
           rxJsTestingHelper(account => {
-            expect(account?.name).toEqual(mockName);
-            expect(account?.type).toEqual(AccountTypeEnum.IMPORTED_ACCOUNT);
-            expect(account?.publicKey).toEqual(mockHDAccountCredentials.publicKey);
-            expect(account?.publicKeyHash).toEqual(mockHDAccountCredentials.publicKeyHash);
+            expect(account).toMatchObject({
+              name: mockName,
+              type: AccountTypeEnum.IMPORTED_ACCOUNT,
+              address: mockHDAccountCredentials.publicKeyHash
+            });
 
             expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
               mockHDAccountCredentials.privateKey,
@@ -322,9 +317,7 @@ describe('Shelter', () => {
               name: mockName,
               type: AccountTypeEnum.IMPORTED_ACCOUNT,
               chain: TempleChainKind.EVM,
-              address: mockEvmCredentials.address,
-              publicKey: '',
-              publicKeyHash: ''
+              address: mockEvmCredentials.address
             });
 
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(

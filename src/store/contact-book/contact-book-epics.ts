@@ -19,15 +19,15 @@ const loadContactTezosBalanceEpic = (action$: Observable<Action>, state$: Observ
     toPayload(),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[publicKeyHash, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadTezosBalance$(rpcUrl, publicKeyHash).pipe(
-        map(tezosBalance => loadContactTezosBalance.success({ publicKeyHash, tezosBalance })),
+    switchMap(([[address, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
+      loadTezosBalance$(rpcUrl, address).pipe(
+        map(tezosBalance => loadContactTezosBalance.success({ address, tezosBalance })),
         catchError(err => {
           if (isAnalyticsEnabled) {
             sendErrorAnalyticsEvent(
               'LoadContactTezosBalanceError',
               err,
-              [publicKeyHash],
+              [address],
               { userId, ABTestingCategory },
               { rpcUrl }
             );

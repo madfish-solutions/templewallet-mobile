@@ -20,7 +20,7 @@ import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-
 import { Collection } from 'src/store/collectons/collections-state';
 import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
@@ -38,7 +38,7 @@ export const CollectiblesHome = memo(() => {
 
   const collections = useCreatedCollectionsSelector();
   const collectibles = useCurrentAccountCollectibles(true);
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const styles = useCollectiblesHomeStyles();

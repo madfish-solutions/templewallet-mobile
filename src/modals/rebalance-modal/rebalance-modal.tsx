@@ -18,7 +18,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useShieldedBalanceSelector, useSaplingAddressSelector } from 'src/store/sapling';
 import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-actions';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountTezosBalance, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountTezosBalance, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -50,7 +50,7 @@ export const RebalanceModal: FC = () => {
   const publicBalanceMutez = useCurrentAccountTezosBalance();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
   const saplingAddress = useSaplingAddressSelector();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const tezExchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
 
   usePageAnalytic(ModalsEnum.Rebalance);

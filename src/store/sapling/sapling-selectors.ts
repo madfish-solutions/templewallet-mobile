@@ -1,10 +1,10 @@
 import { useSelector } from '../selector';
-import { useCurrentAccountTezosAddressSelector } from '../wallet/wallet-selectors';
+import { useAccountAddressForTezos } from '../wallet/wallet-selectors';
 
 import { initialSaplingAccountState, SaplingAccountState } from './sapling-state';
 
 const useSaplingAccountState = (): SaplingAccountState => {
-  const pkh = useCurrentAccountTezosAddressSelector();
+  const pkh = useAccountAddressForTezos();
 
   return useSelector(({ sapling }) => (pkh ? sapling.accountsRecord[pkh] : undefined) ?? initialSaplingAccountState);
 };

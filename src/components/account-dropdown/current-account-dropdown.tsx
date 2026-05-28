@@ -2,10 +2,10 @@ import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { AddressBookItem } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccount, useAllVisibleAccounts } from 'src/store/wallet/wallet-selectors';
 import { getAccountBaseId } from 'src/utils/account.utils';
 
 import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown';
@@ -15,7 +15,7 @@ import { AccountDropdownBase } from './account-dropdown-base';
 import { AccountDropdownTriggerItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { CurrentAccountDropdownStyles } from './current-account-dropdown.styles';
 
-const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ value, isCollectibleScreen }) => (
+const renderAccountValue: DropdownValueComponent<AddressBookItem> = ({ value, isCollectibleScreen }) => (
   <AccountDropdownTriggerItem
     account={value}
     showFullData={false}
@@ -24,16 +24,16 @@ const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ valu
   />
 );
 
-type Props = Omit<DropdownValueProps<AccountBaseInterface>, 'list' | 'value' | 'onValueChange'> & TestIdProps;
+type Props = Omit<DropdownValueProps<AddressBookItem>, 'list' | 'value' | 'onValueChange'> & TestIdProps;
 
 export const CurrentAccountDropdown = memo<Props>(({ testID, testIDProperties, isCollectibleScreen }) => {
-  const selectedAccount = useSelectedAccountSelector();
-  const visibleAccounts = useVisibleAccountsListSelector();
+  const selectedAccount = useAccount();
+  const visibleAccounts = useAllVisibleAccounts();
 
   const dispatch = useDispatch();
 
   const onValueChange = useCallback(
-    (value: AccountBaseInterface | undefined) =>
+    (value: AddressBookItem | undefined) =>
       dispatch(setSelectedAccountIdAction(value ? getAccountBaseId(value) : undefined)),
     [dispatch]
   );
