@@ -16,13 +16,22 @@ import { isString } from './is-string';
 const TEZOS_BIP44_COINTYPE = 1729;
 const EVM_BIP44_COINTYPE = 60;
 
-export interface AccountCreds {
-  address: string;
+interface AccountCredentialsBase {
   publicKey: string;
   privateKey: string;
 }
 
-export interface MnemonicPrivateKey {
+interface EvmAccountCredentials extends AccountCredentialsBase {
+  address: HexString;
+}
+
+interface TezosAccountCredentials extends AccountCredentialsBase {
+  address: string;
+}
+
+export type AccountCredentials = EvmAccountCredentials | TezosAccountCredentials;
+
+interface MnemonicPrivateKey {
   chain: TempleChainKind;
   privateKey: string;
 }
@@ -77,10 +86,10 @@ export const getPublicKeyAndHash$ = (privateKey: string) =>
     switchMap(signer => forkJoin([signer.publicKey(), signer.publicKeyHash()]))
   );
 
-export const privateKeyToTezosAccountCreds = async (
+export const privateKeyToTezosAccountCredentials = async (
   privateKey: string,
   encPassword?: string
-): Promise<AccountCreds> => {
+): Promise<AccountCredentials> => {
   const signer = await InMemorySigner.fromSecretKey(privateKey, encPassword);
   const [realPrivateKey, publicKey, address] = await Promise.all([
     encPassword ? signer.secretKey() : Promise.resolve(privateKey),
@@ -91,18 +100,18 @@ export const privateKeyToTezosAccountCreds = async (
   return { address, publicKey, privateKey: realPrivateKey };
 };
 
-export const mnemonicToTezosAccountCreds = (
+export const mnemonicToTezosAccountCredentials = (
   mnemonic: string,
   hdIndex: number,
   bip39Passphrase?: string
-): Promise<AccountCreds> => {
+): Promise<TezosAccountCredentials> => {
   const seed = mnemonicToSeedSync(mnemonic, bip39Passphrase);
   const privateKey = seedToPrivateKey(seed, getTezosDerivationPath(hdIndex));
 
-  return privateKeyToTezosAccountCreds(privateKey);
+  return privateKeyToTezosAccountCredentials(privateKey);
 };
 
-export const mnemonicToEvmAccountCreds = (mnemonic: string, hdIndex: number): AccountCreds => {
+export const mnemonicToEvmAccountCredentials = (mnemonic: string, hdIndex: number): EvmAccountCredentials => {
   const account = mnemonicToAccount(mnemonic, { addressIndex: hdIndex });
 
   return {
@@ -112,7 +121,7 @@ export const mnemonicToEvmAccountCreds = (mnemonic: string, hdIndex: number): Ac
   };
 };
 
-export const privateKeyToEvmAccountCreds = (privateKey: string): AccountCreds => {
+export const privateKeyToEvmAccountCredentials = (privateKey: string): AccountCredentials => {
   if (!isHex(privateKey)) {
     throw new Error('EVM private key must be a 0x-prefixed hex value');
   }

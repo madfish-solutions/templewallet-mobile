@@ -8,10 +8,10 @@ import {
   getTezosDerivationPath,
   isEvmDerivationPath,
   isValidEvmDerivationPath,
-  mnemonicToEvmAccountCreds,
+  mnemonicToEvmAccountCredentials,
   mnemonicToPrivateKey,
-  mnemonicToTezosAccountCreds,
-  privateKeyToEvmAccountCreds,
+  mnemonicToTezosAccountCredentials,
+  privateKeyToEvmAccountCredentials,
   seedToPrivateKey
 } from './keys.utils';
 import { rxJsTestingHelper } from './testing.utils';
@@ -65,7 +65,7 @@ it('getPublicKeyAndHash$ should return publicKey and publicKeyHash, passing priv
 });
 
 it('mnemonicToTezosAccountCreds should preserve Tezos derivation output', async () => {
-  await expect(mnemonicToTezosAccountCreds(mockAccountCredentials.seedPhrase, 0)).resolves.toEqual({
+  await expect(mnemonicToTezosAccountCredentials(mockAccountCredentials.seedPhrase, 0)).resolves.toEqual({
     address: mockAccountCredentials.publicKeyHash,
     publicKey: mockAccountCredentials.publicKey,
     privateKey: 'edsk42B5mxHfZWnnmEFAEHcZvMwD7CH673F3s2NQkCQ5n6SXD8Vxqp'
@@ -73,7 +73,7 @@ it('mnemonicToTezosAccountCreds should preserve Tezos derivation output', async 
 });
 
 it('mnemonicToEvmAccountCreds should return EVM account credentials for index 0', () => {
-  expect(mnemonicToEvmAccountCreds(mockAccountCredentials.seedPhrase, 0)).toEqual({
+  expect(mnemonicToEvmAccountCredentials(mockAccountCredentials.seedPhrase, 0)).toEqual({
     address: mockEvmAddressIndexZero,
     publicKey:
       '0x0499d1bccb7edd00944e5c0aec8375dc99faae3bbf1680b43facf89ad68f228592fd7118af99ae94d632b2a96593b8440253d8f4933c02b8725a97daa57d9a1aa9',
@@ -82,7 +82,9 @@ it('mnemonicToEvmAccountCreds should return EVM account credentials for index 0'
 });
 
 it("mnemonicToEvmAccountCreds should use m/44'/60'/0'/0/{index} for EVM account credentials", () => {
-  expect(mnemonicToEvmAccountCreds(mockAccountCredentials.seedPhrase, 1).privateKey).toEqual(mockEvmPrivateKeyIndexOne);
+  expect(mnemonicToEvmAccountCredentials(mockAccountCredentials.seedPhrase, 1).privateKey).toEqual(
+    mockEvmPrivateKeyIndexOne
+  );
   expect(
     mnemonicToPrivateKey(
       mockAccountCredentials.seedPhrase,
@@ -122,7 +124,7 @@ it('mnemonicToPrivateKey should return Tezos private key for custom Tezos deriva
 });
 
 it('privateKeyToEvmAccountCreds should return EVM account credentials from private key', () => {
-  expect(privateKeyToEvmAccountCreds(mockEvmPrivateKeyIndexZero)).toEqual({
+  expect(privateKeyToEvmAccountCredentials(mockEvmPrivateKeyIndexZero)).toEqual({
     address: mockEvmAddressIndexZero,
     publicKey:
       '0x0499d1bccb7edd00944e5c0aec8375dc99faae3bbf1680b43facf89ad68f228592fd7118af99ae94d632b2a96593b8440253d8f4933c02b8725a97daa57d9a1aa9',
@@ -131,13 +133,13 @@ it('privateKeyToEvmAccountCreds should return EVM account credentials from priva
 });
 
 it('privateKeyToEvmAccountCreds should throw a useful error for non-hex private key', () => {
-  expect(() => privateKeyToEvmAccountCreds('not-a-private-key')).toThrow(
+  expect(() => privateKeyToEvmAccountCredentials('not-a-private-key')).toThrow(
     'EVM private key must be a 0x-prefixed hex value'
   );
 });
 
 it('privateKeyToEvmAccountCreds should throw a useful error for invalid hex private key', () => {
-  expect(() => privateKeyToEvmAccountCreds('0x123')).toThrow('Invalid EVM private key');
+  expect(() => privateKeyToEvmAccountCredentials('0x123')).toThrow('Invalid EVM private key');
 });
 
 it('generateSeed should generate seed', async () => {

@@ -276,7 +276,7 @@ describe('Shelter', () => {
       const mockName = 'mockName';
 
       Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.createImportedAccount$(mockHDAccountCredentials.privateKey, mockName)))
+        .pipe(switchMap(() => Shelter.createImportedChainAccount$(mockHDAccountCredentials.privateKey, mockName)))
         .subscribe(
           rxJsTestingHelper(account => {
             expect(account).toMatchObject({
@@ -308,7 +308,9 @@ describe('Shelter', () => {
 
       Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(
-          switchMap(() => Shelter.createImportedAccount$(mockEvmCredentials.privateKey, mockName, TempleChainKind.EVM))
+          switchMap(() =>
+            Shelter.createImportedChainAccount$(mockEvmCredentials.privateKey, mockName, TempleChainKind.EVM)
+          )
         )
         .subscribe(
           rxJsTestingHelper(account => {
@@ -420,7 +422,7 @@ describe('Shelter', () => {
 
     it('should return signer with private key', done => {
       Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.getSigner$(mockAccountCredentials.publicKeyHash)))
+        .pipe(switchMap(() => Shelter.getTezosSigner$(mockAccountCredentials.publicKeyHash)))
         .subscribe(
           rxJsTestingHelper(async signer => {
             await expect(signer.secretKey()).resolves.toEqual(mockAccountCredentials.privateKey);

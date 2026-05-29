@@ -34,7 +34,7 @@ interface Props {
 }
 
 const approveSignPayloadRequest = (message: SignPayloadRequestOutput) =>
-  Shelter.getSigner$(message.sourceAddress).pipe(
+  Shelter.getTezosSigner$(message.sourceAddress).pipe(
     switchMap(signer => signer.sign(message.payload)),
     switchMap(({ prefixSig }) =>
       BeaconHandler.respond({

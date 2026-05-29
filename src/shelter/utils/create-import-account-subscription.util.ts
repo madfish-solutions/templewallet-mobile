@@ -14,7 +14,11 @@ import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-a
 import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/toast.utils';
 import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/account.utils';
-import { AccountCreds, privateKeyToEvmAccountCreds, privateKeyToTezosAccountCreds } from 'src/utils/keys.utils';
+import {
+  AccountCredentials,
+  privateKeyToEvmAccountCredentials,
+  privateKeyToTezosAccountCredentials
+} from 'src/utils/keys.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
 
@@ -41,10 +45,10 @@ const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, addres
       : false;
   });
 
-const deriveImportedAccountCreds = (privateKey: string, chain: TempleChainKind): Promise<AccountCreds> =>
+const deriveImportedAccountCredentials = (privateKey: string, chain: TempleChainKind): Promise<AccountCredentials> =>
   chain === TempleChainKind.EVM
-    ? Promise.resolve().then(() => privateKeyToEvmAccountCreds(privateKey))
-    : privateKeyToTezosAccountCreds(privateKey);
+    ? Promise.resolve().then(() => privateKeyToEvmAccountCredentials(privateKey))
+    : privateKeyToTezosAccountCredentials(privateKey);
 
 export const createImportAccountSubscription = (
   createImportedAccount$: Subject<CreateImportedAccountParams>,
@@ -61,7 +65,7 @@ export const createImportAccountSubscription = (
         dispatch(showLoaderAction());
       }),
       switchMap(({ privateKey, name, chain = TempleChainKind.Tezos, saplingSpendingKey }) =>
-        from(deriveImportedAccountCreds(privateKey, chain)).pipe(
+        from(deriveImportedAccountCredentials(privateKey, chain)).pipe(
           switchMap(({ address }) => {
             if (hasSameChainAddress(accounts, chain, address)) {
               showWarningToast({ description: 'Account already exist' });
@@ -69,7 +73,7 @@ export const createImportAccountSubscription = (
               return of(undefined);
             }
 
-            return Shelter.createImportedAccount$(privateKey, name, chain).pipe(
+            return Shelter.createImportedChainAccount$(privateKey, name, chain).pipe(
               switchMap(publicData => {
                 if (chain === TempleChainKind.EVM) {
                   return of(publicData);

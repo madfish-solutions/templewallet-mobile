@@ -14,7 +14,6 @@ import {
 import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
-import { DEFAULT_HD_WALLET_ID } from '../config/wallet.const';
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { TempleChainKind } from '../enums/temple-chain-kind.enum';
 import { Account } from '../interfaces/account.interfaces';
@@ -31,13 +30,13 @@ import {
   shouldMoveToSoftwareInV1
 } from '../utils/keychain.utils';
 import {
-  AccountCreds,
+  AccountCredentials,
   getPublicKeyAndHash$,
   getTezosDerivationPath,
-  mnemonicToEvmAccountCreds,
-  mnemonicToTezosAccountCreds,
-  privateKeyToEvmAccountCreds,
-  privateKeyToTezosAccountCreds,
+  mnemonicToEvmAccountCredentials,
+  mnemonicToTezosAccountCredentials,
+  privateKeyToEvmAccountCredentials,
+  privateKeyToTezosAccountCredentials,
   seedToPrivateKey
 } from '../utils/keys.utils';
 import { throwError$ } from '../utils/rxjs.utils';
@@ -47,7 +46,6 @@ import { InMemorySpendingKey } from '../utils/sapling/sapling-keys';
 import { deriveSaskFromPrivateKey } from './utils/derive-sask-from-private-key.util';
 
 const EMPTY_PASSWORD_HASH = '';
-const LEGACY_SEED_PHRASE_KEY = 'seedPhrase';
 export const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to complete migration';
 const MIGRATION_WITH_BIOMETRY_ERROR_MESSAGE = 'Confirm the migration using your biometrics and try again.';
 const MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE = 'Please, try again.';
@@ -59,16 +57,12 @@ interface CreateHdAccountOptions {
   explicitAccountIndex?: boolean;
 }
 
-const walletMnemonicKey = (walletId: string) => `wallet_mnemonic_${walletId}`;
-const accountPrivateKeyKey = (address: string) => `account_private_key_${address}`;
-const accountPublicKeyKey = (address: string) => `account_public_key_${address}`;
-
 const normalizeAddressForCompare = (chain: TempleChainKind, address: string) =>
   chain === TempleChainKind.EVM ? address.toLowerCase() : address;
 
 const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, address: string, includeHd = true) =>
   accounts.some(account => {
-    if (!includeHd && account.type === AccountTypeEnum.HD_ACCOUNT) {
+    if (!includeHd && account.type === AccountTypeEnum.HD) {
       return false;
     }
 
@@ -256,61 +250,47 @@ export class Shelter {
 
   static lockApp = () => Shelter._passwordHash$.next(EMPTY_PASSWORD_HASH);
 
-  static saveAccountCreds$ = (creds: AccountCreds, passwordHash?: string) =>
+  static saveAccountCredentials$ = (credentials: AccountCredentials, passwordHash?: string) =>
     Shelter.saveSensitiveData$(
       {
-        [accountPrivateKeyKey(creds.address)]: creds.privateKey,
-        [accountPublicKeyKey(creds.address)]: creds.publicKey
+        [credentials.address]: credentials.privateKey
       },
       passwordHash
     );
 
   static revealAccountPrivateKey$ = (address: string, passwordHash?: string) =>
-    Shelter.decryptSensitiveData$(accountPrivateKeyKey(address), passwordHash ?? Shelter._passwordHash$.getValue());
-
-  static revealAccountPublicKey$ = (address: string, passwordHash?: string) =>
-    Shelter.decryptSensitiveData$(accountPublicKeyKey(address), passwordHash ?? Shelter._passwordHash$.getValue());
-
-  static saveWalletMnemonic$ = (walletId: string, mnemonic: string, passwordHash?: string) =>
-    Shelter.saveSensitiveData$({ [walletMnemonicKey(walletId)]: mnemonic }, passwordHash);
-
-  static revealWalletMnemonic$ = (walletId = DEFAULT_HD_WALLET_ID, passwordHash?: string) =>
-    Shelter.decryptSensitiveData$(walletMnemonicKey(walletId), passwordHash ?? Shelter._passwordHash$.getValue()).pipe(
-      catchError(() => Shelter.revealSeedPhrase$(passwordHash))
-    );
+    Shelter.decryptSensitiveData$(address, passwordHash ?? Shelter._passwordHash$.getValue());
 
   private static deriveAndSaveHdAccount$ = ({
     seedPhrase,
     name,
-    walletId,
     hdIndex,
     passwordHash
   }: {
     seedPhrase: string;
     name: string;
-    walletId: string;
     hdIndex: number;
     passwordHash?: string;
   }) =>
     forkJoin([
-      from(mnemonicToTezosAccountCreds(seedPhrase, hdIndex)),
-      from(Promise.resolve().then(() => mnemonicToEvmAccountCreds(seedPhrase, hdIndex)))
+      from(mnemonicToTezosAccountCredentials(seedPhrase, hdIndex)),
+      from(Promise.resolve().then(() => mnemonicToEvmAccountCredentials(seedPhrase, hdIndex)))
     ]).pipe(
-      switchMap(([tezosCreds, evmCreds]) =>
+      switchMap(([tezosCredentials, evmCredentials]) =>
         forkJoin([
           InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdIndex)),
-          Shelter.saveSensitiveData$({ [tezosCreds.address]: tezosCreds.privateKey }, passwordHash),
-          Shelter.saveAccountCreds$(tezosCreds, passwordHash),
-          Shelter.saveAccountCreds$(evmCreds, passwordHash)
+          Shelter.saveAccountCredentials$(tezosCredentials, passwordHash),
+          Shelter.saveAccountCredentials$(evmCredentials, passwordHash)
         ]).pipe(
-          switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(tezosCreds.address, sask, passwordHash)),
+          switchMap(([sask]) => Shelter.saveSaplingSpendingKey$(tezosCredentials.address, sask, passwordHash)),
           mapTo<Account>({
             id: nanoid(),
-            type: AccountTypeEnum.HD_ACCOUNT,
+            type: AccountTypeEnum.HD,
             name,
-            tezosAddress: tezosCreds.address,
-            evmAddress: evmCreds.address as HexString,
-            walletId,
+            tezosAddress: tezosCredentials.address,
+            tezosPublicKey: tezosCredentials.publicKey,
+            evmAddress: evmCredentials.address,
+            evmPublicKey: evmCredentials.publicKey,
             hdIndex
           })
         )
@@ -366,12 +346,8 @@ export class Shelter {
       switchMap(([passwordHash]) => {
         Shelter._passwordHash$.next(passwordHash);
 
-        const walletId = DEFAULT_HD_WALLET_ID;
-
         return Shelter.saveSensitiveData$(
           {
-            [LEGACY_SEED_PHRASE_KEY]: seedPhrase,
-            [walletMnemonicKey(walletId)]: seedPhrase,
             [PASSWORD_CHECK_KEY]: generateMnemonic(128)
           },
           passwordHash
@@ -382,7 +358,6 @@ export class Shelter {
                 Shelter.deriveAndSaveHdAccount$({
                   seedPhrase,
                   name: `Account ${hdAccountIndex + 1}`,
-                  walletId,
                   hdIndex: hdAccountIndex,
                   passwordHash
                 })
@@ -399,38 +374,37 @@ export class Shelter {
     );
   };
 
-  static createImportedAccount$ = (
+  static createImportedChainAccount$ = (
     privateKey: string,
     name: string,
     chain = TempleChainKind.Tezos
   ): Observable<Account> =>
     (chain === TempleChainKind.EVM
-      ? from(Promise.resolve().then(() => privateKeyToEvmAccountCreds(privateKey)))
-      : from(privateKeyToTezosAccountCreds(privateKey))
+      ? from(Promise.resolve().then(() => privateKeyToEvmAccountCredentials(privateKey)))
+      : from(privateKeyToTezosAccountCredentials(privateKey))
     ).pipe(
-      switchMap(creds => {
+      switchMap(credentials => {
         if (chain === TempleChainKind.EVM) {
-          return Shelter.saveAccountCreds$(creds).pipe(
+          return Shelter.saveAccountCredentials$(credentials).pipe(
             mapTo<Account>({
-              id: creds.address,
+              id: nanoid(),
               name,
-              type: AccountTypeEnum.IMPORTED_ACCOUNT,
+              type: AccountTypeEnum.IMPORTED_CHAIN,
               chain,
-              address: creds.address
+              address: credentials.address,
+              publicKey: credentials.publicKey
             })
           );
         }
 
-        return forkJoin([
-          Shelter.saveSensitiveData$({ [creds.address]: creds.privateKey }),
-          Shelter.saveAccountCreds$(creds)
-        ]).pipe(
+        return forkJoin([Shelter.saveAccountCredentials$(credentials)]).pipe(
           mapTo<Account>({
-            id: creds.address,
+            id: nanoid(),
             name,
-            type: AccountTypeEnum.IMPORTED_ACCOUNT,
+            type: AccountTypeEnum.IMPORTED_CHAIN,
             chain,
-            address: creds.address
+            address: credentials.address,
+            publicKey: credentials.publicKey
           })
         );
       })
@@ -438,26 +412,21 @@ export class Shelter {
 
   static createHdAccount$ = (
     name: string,
-    {
-      walletId = DEFAULT_HD_WALLET_ID,
-      accountIndex = 0,
-      existingAccounts = [],
-      explicitAccountIndex = false
-    }: CreateHdAccountOptions = {}
+    { accountIndex = 0, existingAccounts = [], explicitAccountIndex = false }: CreateHdAccountOptions = {}
   ): Observable<Account | undefined> =>
-    Shelter.revealWalletMnemonic$(walletId).pipe(
+    Shelter.revealSeedPhrase$().pipe(
       switchMap(seedPhrase =>
         forkJoin([
-          from(mnemonicToTezosAccountCreds(seedPhrase, accountIndex)),
-          from(Promise.resolve().then(() => mnemonicToEvmAccountCreds(seedPhrase, accountIndex)))
+          from(mnemonicToTezosAccountCredentials(seedPhrase, accountIndex)),
+          from(Promise.resolve().then(() => mnemonicToEvmAccountCredentials(seedPhrase, accountIndex)))
         ]).pipe(
-          switchMap(([tezosCreds, evmCreds]) => {
+          switchMap(([tezosCredentials, evmCredentials]) => {
             const collisionAccounts = explicitAccountIndex
               ? existingAccounts
-              : existingAccounts.filter(({ type }) => type !== AccountTypeEnum.HD_ACCOUNT);
+              : existingAccounts.filter(({ type }) => type !== AccountTypeEnum.HD);
             const hasCollision =
-              hasSameChainAddress(collisionAccounts, TempleChainKind.Tezos, tezosCreds.address) ||
-              hasSameChainAddress(collisionAccounts, TempleChainKind.EVM, evmCreds.address);
+              hasSameChainAddress(collisionAccounts, TempleChainKind.Tezos, tezosCredentials.address) ||
+              hasSameChainAddress(collisionAccounts, TempleChainKind.EVM, evmCredentials.address);
 
             if (hasCollision) {
               return explicitAccountIndex ? throwError$('Account already exists') : of(undefined);
@@ -466,7 +435,6 @@ export class Shelter {
             return Shelter.deriveAndSaveHdAccount$({
               seedPhrase,
               name,
-              walletId,
               hdIndex: accountIndex
             });
           }),
@@ -477,26 +445,24 @@ export class Shelter {
       )
     );
 
-  /** @deprecated Use revealAccountPrivateKey$ for address-keyed credentials. */
-  static revealSecretKey$ = (publicKeyHash: string, passwordHash?: string) =>
-    Shelter.revealAccountPrivateKey$(publicKeyHash, passwordHash).pipe(
-      catchError(() => Shelter.decryptSensitiveData$(publicKeyHash, passwordHash ?? Shelter._passwordHash$.getValue())),
+  static revealSecretKey$ = (address: string, passwordHash?: string) =>
+    Shelter.decryptSensitiveData$(address, passwordHash ?? Shelter._passwordHash$.getValue()).pipe(
       switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
       switchMap(signer => signer.secretKey()),
       catchError(() => of(undefined))
     );
 
   static revealSeedPhrase$ = (passwordHash?: string) =>
-    Shelter.decryptSensitiveData$(LEGACY_SEED_PHRASE_KEY, passwordHash ?? Shelter._passwordHash$.getValue());
+    Shelter.decryptSensitiveData$('seedPhrase', passwordHash ?? Shelter._passwordHash$.getValue());
 
-  private static getSaplingSkKey = (publicKeyHash: string) => `sapling_sk_${publicKeyHash}`;
+  private static getSaplingSkKey = (address: string) => `sapling_sk_${address}`;
 
-  static saveSaplingSpendingKey$ = (publicKeyHash: string, sask: string, passwordHash?: string) =>
-    Shelter.saveSensitiveData$({ [this.getSaplingSkKey(publicKeyHash)]: sask }, passwordHash);
+  static saveSaplingSpendingKey$ = (address: string, sask: string, passwordHash?: string) =>
+    Shelter.saveSensitiveData$({ [this.getSaplingSkKey(address)]: sask }, passwordHash);
 
-  static revealSaplingSpendingKey$ = (publicKeyHash: string, passwordHash?: string) =>
+  static revealSaplingSpendingKey$ = (address: string, passwordHash?: string) =>
     Shelter.decryptSensitiveData$(
-      this.getSaplingSkKey(publicKeyHash),
+      this.getSaplingSkKey(address),
       passwordHash ?? Shelter._passwordHash$.getValue()
     ).pipe(catchError(() => of(undefined)));
 
@@ -511,13 +477,13 @@ export class Shelter {
           getPublicKeyAndHash$(privateKey)
         ] as const);
       }),
-      switchMap(([sask, [, publicKeyHash]]) =>
-        this.saveSaplingSpendingKey$(publicKeyHash, sask, passwordHash).pipe(map(() => sask))
+      switchMap(([sask, [, address]]) =>
+        this.saveSaplingSpendingKey$(address, sask, passwordHash).pipe(map(() => sask))
       )
     );
 
-  static restoreImportedAccountSaplingSpendingKey$ = (accountPkh: string, passwordHash?: string) =>
-    Shelter.revealSecretKey$(accountPkh, passwordHash).pipe(
+  static restoreImportedAccountSaplingSpendingKey$ = (address: string, passwordHash?: string) =>
+    Shelter.revealSecretKey$(address, passwordHash).pipe(
       switchMap(privateKey => {
         if (privateKey) {
           return from(deriveSaskFromPrivateKey(privateKey));
@@ -525,17 +491,14 @@ export class Shelter {
 
         throw new Error('Failed to reveal private key');
       }),
-      switchMap(sask => this.saveSaplingSpendingKey$(accountPkh, sask, passwordHash).pipe(map(() => sask)))
+      switchMap(sask => this.saveSaplingSpendingKey$(address, sask, passwordHash).pipe(map(() => sask)))
     );
 
-  static getTezosSigner$ = (tezosAddress: string) =>
-    Shelter.revealSecretKey$(tezosAddress).pipe(
+  static getTezosSigner$ = (address: string) =>
+    Shelter.revealSecretKey$(address).pipe(
       switchMap(value => (value === undefined ? throwError$('Failed to reveal private key') : of(value))),
       map(privateKey => new InMemorySigner(privateKey))
     );
-
-  /** @deprecated Use getTezosSigner$ instead. */
-  static getSigner$ = (publicKeyHash: string) => Shelter.getTezosSigner$(publicKeyHash);
 
   static enableBiometryPassword$ = (password: string) =>
     forkJoin([Shelter.getShelterVersion(), getSupportedBiometryType()]).pipe(

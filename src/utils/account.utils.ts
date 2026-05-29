@@ -21,22 +21,24 @@ export const getAccountForTezos = (account: Account) => getAccountForChain(accou
 
 export const getAccountForEvm = (account: Account) => getAccountForChain(account, TempleChainKind.EVM);
 
-export const getAccountAddressForTezos = (account: Account): string | undefined =>
-  account.type === AccountTypeEnum.HD_ACCOUNT
-    ? account.tezosAddress
-    : account.chain === TempleChainKind.Tezos
-    ? account.address
-    : undefined;
+export const getAccountAddressForTezos = (account: Account) =>
+  getAccountAddressForChain(account, TempleChainKind.Tezos);
 
-export const getAccountAddressForEvm = (account: Account): HexString | undefined =>
-  account.type === AccountTypeEnum.HD_ACCOUNT
-    ? account.evmAddress
-    : account.chain === TempleChainKind.EVM
-    ? (account.address as HexString)
-    : undefined;
+export const getAccountAddressForEvm = (account: Account) =>
+  getAccountAddressForChain(account, TempleChainKind.EVM) as HexString | null;
 
-export const getAccountAddressForChain = (account: Account, chain: TempleChainKind): string | undefined =>
-  chain === TempleChainKind.Tezos ? getAccountAddressForTezos(account) : getAccountAddressForEvm(account);
+export const getAccountAddressForChain = (account: Account, chain: TempleChainKind): string | null => {
+  switch (account.type) {
+    case AccountTypeEnum.HD:
+    case AccountTypeEnum.IMPORTED_MULTICHAIN:
+      return account[`${chain}Address`];
+    case AccountTypeEnum.IMPORTED_CHAIN:
+    case AccountTypeEnum.WATCH_ONLY_DEBUG:
+      return account.address;
+    default:
+      return null;
+  }
+};
 
 export const getAccountForChain = <C extends TempleChainKind>(
   account: Account,

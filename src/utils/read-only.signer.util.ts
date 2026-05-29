@@ -34,7 +34,7 @@ export class ReadOnlySigner implements Signer {
       throw new Error('Only BLS keys can prove possession');
     }
 
-    const realSigner: InMemorySigner = await firstValueFrom(Shelter.getSigner$(this.pkh));
+    const realSigner: InMemorySigner = await firstValueFrom(Shelter.getTezosSigner$(this.pkh));
 
     return realSigner.provePossession();
   }

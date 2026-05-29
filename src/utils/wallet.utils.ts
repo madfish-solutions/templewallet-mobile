@@ -83,7 +83,7 @@ export const withUsdToTokenRates =
     );
 
 export const sendTransaction$ = (rpcUrl: string, senderPkh: string, opParams: ParamsWithKind[]) =>
-  Shelter.getSigner$(senderPkh).pipe(
+  Shelter.getTezosSigner$(senderPkh).pipe(
     switchMap(signer => {
       const tezos = createTezosToolkit(rpcUrl);
       tezos.setSignerProvider(signer);
