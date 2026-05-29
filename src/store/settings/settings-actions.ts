@@ -59,3 +59,5 @@ export const setKoloCardAnimationShownAction = createAction('settings/SET_KOLO_C
 export const setKoloForceLogoutOnNextOpenAction = createAction<boolean>(
   'settings/SET_KOLO_FORCE_LOGOUT_ON_NEXT_OPEN_ACTION'
 );
+
+export const ensureOldRpcUrlsRemovedAction = createAction<void>('settings/ENSURE_OLD_RPC_URLS_REMOVED_ACTION');
