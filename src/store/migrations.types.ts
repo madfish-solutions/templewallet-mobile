@@ -8,7 +8,9 @@ import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.inte
 
 import type { RootState } from './types';
 
-export type MigratableAccount = WithLegacyProperties<Account, LegacyAccountInterface>;
+export const LEGACY_IMPORTED_ACCOUNT_TYPE = 'IMPORTED' as const;
+
+export type MigratableAccount = WithLegacyProperties<Account, LegacyAccountInterface> | LegacyImportedAccountInterface;
 export type TypedPersistedRootState = Exclude<PersistedState, undefined> & MigratableRootState;
 
 type WithLegacyProperties<Current extends object, Legacy extends object> = Current extends object
@@ -39,6 +41,11 @@ interface LegacyAccountInterface {
   activityGroups?: LoadableEntityState<ActivityGroup[]>;
   /** @deprecated */
   pendingActivities?: ActivityGroup[];
+}
+
+interface LegacyImportedAccountInterface extends LegacyAccountInterface {
+  name: string;
+  type: typeof LEGACY_IMPORTED_ACCOUNT_TYPE;
 }
 
 interface LegacyWalletState {

@@ -3,6 +3,7 @@ import { isEqual } from 'lodash-es';
 import type { MigrationManifest, PersistedState } from 'redux-persist';
 
 import { isIOS } from 'src/config/system';
+import { EVM_ADDRESS_PLACEHOLDER } from 'src/config/wallet.const.ts';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
@@ -14,10 +15,8 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
-import { EVM_ADDRESS_PLACEHOLDER } from '../config/wallet.const.ts';
-
 import { createEntity } from './create-entity';
-import { MigratableAccount, TypedPersistedRootState } from './migrations.types.ts';
+import { LEGACY_IMPORTED_ACCOUNT_TYPE, MigratableAccount, TypedPersistedRootState } from './migrations.types.ts';
 
 export const MIGRATIONS: MigrationManifest = {
   '2': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
@@ -227,7 +226,7 @@ export const MIGRATIONS: MigrationManifest = {
         } satisfies HDAccount;
       }
 
-      if (account.type === AccountTypeEnum.IMPORTED) {
+      if (account.type === LEGACY_IMPORTED_ACCOUNT_TYPE) {
         return {
           id,
           name: account.name,
@@ -263,9 +262,6 @@ export const MIGRATIONS: MigrationManifest = {
       {}
     );
 
-    state.wallet.accounts = migratedAccounts;
-    state.wallet.accountsStateRecord = migratedAccountsStateRecord;
-
     const selectedPkh = state.wallet.selectedAccountPublicKeyHash!;
     const selectedAccount = migratedAccounts.find(account => {
       if (account.type === AccountTypeEnum.HD) {
@@ -275,8 +271,11 @@ export const MIGRATIONS: MigrationManifest = {
       return account.address === selectedPkh;
     });
 
-    state.wallet.selectedAccountId = selectedAccount?.id ?? migratedAccounts[0]?.id;
-    delete state.wallet.selectedAccountPublicKeyHash;
+    state.wallet = {
+      accounts: migratedAccounts,
+      accountsStateRecord: migratedAccountsStateRecord,
+      selectedAccountId: selectedAccount?.id ?? migratedAccounts[0]?.id
+    };
 
     return state;
   }
