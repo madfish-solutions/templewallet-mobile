@@ -1,6 +1,6 @@
 import { firstValueFrom } from 'rxjs';
 
-import { DEFAULT_HD_WALLET_ID, EVM_ADDRESS_PLACEHOLDER } from 'src/config/wallet.const';
+import { EVM_ADDRESS_PLACEHOLDER } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces';

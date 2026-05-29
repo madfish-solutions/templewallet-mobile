@@ -1,41 +1,52 @@
-import { AccountTypeEnum } from '../enums/account-type.enum';
-import { TempleChainKind } from '../enums/temple-chain-kind.enum';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 
 import { Contact, emptyContact } from './contact.interface';
-import { LegacyAccountInterface } from './legacy-account.interface.ts';
 
-export interface BaseAccount extends LegacyAccountInterface {
+interface BaseAccount {
   id: string;
-  type: AccountTypeEnum;
   name: string;
 }
 
-export interface HDAccount extends BaseAccount {
-  type: AccountTypeEnum.HD_ACCOUNT;
-  hdIndex: number;
+interface MultichainAccount extends BaseAccount {
   tezosAddress: string;
+  tezosPublicKey: string;
   evmAddress: HexString;
-  walletId: string;
+  evmPublicKey: string;
 }
 
-export interface ImportedAccount extends BaseAccount {
-  type: AccountTypeEnum.IMPORTED_ACCOUNT;
+export interface HDAccount extends MultichainAccount {
+  type: AccountTypeEnum.HD;
+  hdIndex: number;
+}
+
+export interface ImportedMultichainAccount extends MultichainAccount {
+  type: AccountTypeEnum.IMPORTED_MULTICHAIN;
+}
+
+interface ChainAccount extends BaseAccount {
   chain: TempleChainKind;
   address: string;
+  publicKey: string;
 }
 
-export interface WatchOnlyDebugAccount extends BaseAccount {
+export interface ImportedChainAccount extends ChainAccount {
+  type: AccountTypeEnum.IMPORTED_CHAIN;
+}
+
+export interface WatchOnlyDebugAccount extends ChainAccount {
   type: AccountTypeEnum.WATCH_ONLY_DEBUG;
-  chain: TempleChainKind;
-  address: string;
 }
 
-export type Account = HDAccount | ImportedAccount | WatchOnlyDebugAccount;
+export type Account = HDAccount | ImportedMultichainAccount | ImportedChainAccount | WatchOnlyDebugAccount;
 
-export const isHdAccount = (account: Account): account is HDAccount => account.type === AccountTypeEnum.HD_ACCOUNT;
+export const isHdAccount = (account: Account): account is HDAccount => account.type === AccountTypeEnum.HD;
 
-export const isImportedAccount = (account: Account): account is ImportedAccount =>
-  account.type === AccountTypeEnum.IMPORTED_ACCOUNT;
+export const isImportedMnemonicAccount = (account: Account): account is ImportedMultichainAccount =>
+  account.type === AccountTypeEnum.IMPORTED_MULTICHAIN;
+
+export const isImportedPrivateKeyAccount = (account: Account): account is ImportedChainAccount =>
+  account.type === AccountTypeEnum.IMPORTED_CHAIN;
 
 export const isWatchOnlyDebugAccount = (account: Account): account is WatchOnlyDebugAccount =>
   account.type === AccountTypeEnum.WATCH_ONLY_DEBUG;

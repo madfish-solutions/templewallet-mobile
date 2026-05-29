@@ -7,19 +7,17 @@ import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { AccountStateInterface, initialAccountState } from 'src/interfaces/account-state.interface';
-import type { Account, HDAccount, ImportedAccount, WatchOnlyDebugAccount } from 'src/interfaces/account.interfaces';
+import type { HDAccount, ImportedChainAccount, WatchOnlyDebugAccount } from 'src/interfaces/account.interfaces';
 import { KNOWN_TOKENS_SLUGS } from 'src/token/data/token-slugs';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, PREDEFINED_DCP_TOKENS_METADATA } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
-import { DEFAULT_HD_WALLET_ID, EVM_ADDRESS_PLACEHOLDER } from '../config/wallet.const.ts';
+import { EVM_ADDRESS_PLACEHOLDER } from '../config/wallet.const.ts';
 
 import { createEntity } from './create-entity';
-import type { RootState } from './types';
-
-type TypedPersistedRootState = Exclude<PersistedState, undefined> & RootState;
+import { MigratableAccount, TypedPersistedRootState } from './migrations.types.ts';
 
 export const MIGRATIONS: MigrationManifest = {
   '2': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
@@ -121,7 +119,7 @@ export const MIGRATIONS: MigrationManifest = {
       return state;
     }
 
-    const accounts: Account[] = [];
+    const accounts: MigratableAccount[] = [];
     const accountsStateRecord: StringRecord<AccountStateInterface> = {};
 
     for (const account of state.wallet.accounts) {
@@ -208,31 +206,36 @@ export const MIGRATIONS: MigrationManifest = {
     let hdPosition = 0;
     const migratedAccounts = state.wallet.accounts.map(account => {
       const tezosAddress = account.publicKeyHash!;
+      const tezosPublicKey = account.publicKey!;
+
       const id = nanoid();
 
-      if (account.type === AccountTypeEnum.HD_ACCOUNT) {
+      if (account.type === AccountTypeEnum.HD) {
         const hdIndex = hdPosition;
         hdPosition++;
 
         return {
           id,
           name: account.name,
-          type: AccountTypeEnum.HD_ACCOUNT,
+          type: AccountTypeEnum.HD,
           hdIndex,
           tezosAddress,
-          evmAddress: EVM_ADDRESS_PLACEHOLDER, // Will be populated with proper address later in runtime migration
-          walletId: DEFAULT_HD_WALLET_ID
+          tezosPublicKey,
+          // Will be populated with proper values later in runtime migration
+          evmAddress: EVM_ADDRESS_PLACEHOLDER,
+          evmPublicKey: ''
         } satisfies HDAccount;
       }
 
-      if (account.type === AccountTypeEnum.IMPORTED_ACCOUNT) {
+      if (account.type === AccountTypeEnum.IMPORTED) {
         return {
           id,
           name: account.name,
-          type: AccountTypeEnum.IMPORTED_ACCOUNT,
+          type: AccountTypeEnum.IMPORTED_CHAIN,
           chain: TempleChainKind.Tezos,
-          address: tezosAddress
-        } satisfies ImportedAccount;
+          address: tezosAddress,
+          publicKey: tezosPublicKey
+        } satisfies ImportedChainAccount;
       }
 
       return {
@@ -240,13 +243,14 @@ export const MIGRATIONS: MigrationManifest = {
         name: account.name,
         type: AccountTypeEnum.WATCH_ONLY_DEBUG,
         chain: TempleChainKind.Tezos,
-        address: tezosAddress
+        address: tezosAddress,
+        publicKey: tezosPublicKey
       } satisfies WatchOnlyDebugAccount;
     });
 
     const migratedAccountsStateRecord = migratedAccounts.reduce<Record<string, AccountStateInterface>>(
       (acc, account) => {
-        const tezosAddress = account.type === AccountTypeEnum.HD_ACCOUNT ? account.tezosAddress : account.address;
+        const tezosAddress = account.type === AccountTypeEnum.HD ? account.tezosAddress : account.address;
 
         const accountsStateRecord = state.wallet.accountsStateRecord;
 
@@ -264,7 +268,7 @@ export const MIGRATIONS: MigrationManifest = {
 
     const selectedPkh = state.wallet.selectedAccountPublicKeyHash!;
     const selectedAccount = migratedAccounts.find(account => {
-      if (account.type === AccountTypeEnum.HD_ACCOUNT) {
+      if (account.type === AccountTypeEnum.HD) {
         return account.tezosAddress === selectedPkh;
       }
 
