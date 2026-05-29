@@ -1,9 +1,10 @@
 import { AddressBookItem } from 'src/interfaces/account.interfaces';
+import { AccountForChain } from 'src/utils/account.utils';
 
 import { IconNameEnum } from '../../icon/icon-name.enum';
 
 export interface AccountDropdownItemProps {
-  account?: AddressBookItem;
+  account?: AddressBookItem | AccountForChain;
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
   isPublicKeyHashTextDisabled?: boolean;

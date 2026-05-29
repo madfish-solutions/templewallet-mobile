@@ -20,7 +20,6 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
 import { useAccountForTezos } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -130,7 +129,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
         trackErrorEvent(
           'InternalOperationsConfirmationEstimationError',
           error,
-          opParams.map(op => ('source' in op ? op.source : tezosAccount.address ?? null)).filter(isDefined),
+          opParams.map(op => ('source' in op ? op.source : tezosAccount.address)).filter(isDefined),
           { opParams, testID }
         );
       }

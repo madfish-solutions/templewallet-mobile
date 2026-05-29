@@ -80,7 +80,7 @@ export const useAccountAddressForEvm = () =>
     return account ? getAccountAddressForEvm(account) : undefined;
   });
 
-export const useCurrentAccountForChainSelector = (chain: TempleChainKind) =>
+export const useCurrentAccountForChainSelector = <C extends TempleChainKind>(chain: C) =>
   useSelector(({ wallet }) => {
     const account = getSelectedAccountFromWallet(wallet);
 

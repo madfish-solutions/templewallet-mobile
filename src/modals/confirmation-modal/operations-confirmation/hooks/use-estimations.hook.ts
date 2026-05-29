@@ -6,22 +6,21 @@ import { from, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
-import { Account } from 'src/interfaces/account.interfaces';
 import { EstimationInterface } from 'src/interfaces/estimation.interface';
 import { LoadableEntityState } from 'src/store/types';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { MINIMAL_FEE_PER_GAS_MUTEZ } from 'src/utils/tezos.util';
 
-export const useEstimations = (sender: Account, opParams: ParamsWithKind[]) => {
+export const useEstimations = (sender: TezosReadOnlySignerPayload, opParams: ParamsWithKind[]) => {
   const [estimationState, setEstimationState] = useState<LoadableEntityState<EstimationInterface[], unknown>>({
     isLoading: true,
     data: []
   });
   const tezos = useReadOnlyTezosToolkit(sender);
-  const senderTezosAddress = getAccountAddressForTezos(sender);
+  const senderTezosAddress = sender.address;
 
   const estimate$ = useCallback(
     (

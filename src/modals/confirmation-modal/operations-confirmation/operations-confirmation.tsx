@@ -13,6 +13,7 @@ import { Divider } from 'src/components/divider/divider';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { emptyFn } from 'src/config/general';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -20,6 +21,7 @@ import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floatin
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { AccountForChain, getAccountForTezos } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
@@ -43,7 +45,7 @@ const delegationDisabledDisclaimerMessage =
   'This baker doesn’t offer rewards for delegation. If you want to earn delegation rewards, please choose a different baker.';
 
 interface Props extends TestIdProps {
-  sender: Account;
+  sender: Account | AccountForChain<TempleChainKind.Tezos>;
   opParams: ParamsWithKind[];
   isLoading: boolean;
   disclaimer?: ReactNode;
@@ -72,7 +74,8 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
 
   const { trackEvent } = useAnalytics();
 
-  const estimations = useEstimations(sender, opParams);
+  const tezosSender = useMemo(() => ('address' in sender ? sender : getAccountForTezos(sender)), [sender]);
+  const estimations = useEstimations(tezosSender!, opParams);
 
   const {
     opParamsWithEstimations,

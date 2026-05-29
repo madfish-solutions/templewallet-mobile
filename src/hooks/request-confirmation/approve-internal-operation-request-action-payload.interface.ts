@@ -1,9 +1,9 @@
 import { ParamsWithKind } from '@taquito/taquito';
 
-import { Account } from 'src/interfaces/account.interfaces';
+import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
 
 export interface ApproveInternalOperationRequestActionPayloadInterface {
   rpcUrl: string;
-  sender: Account;
+  sender: TezosReadOnlySignerPayload;
   opParams: ParamsWithKind[];
 }
