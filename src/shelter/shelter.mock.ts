@@ -37,6 +37,7 @@ export const mockShelter = {
   revealSeedPhrase$: jest.fn(() => of(mockRevealedSeedPhrase)),
   isPasswordCorrect$: jest.fn((password: string) => of(password === mockCorrectPassword)),
   createImportedAccount$: jest.fn(() => of(mockHdAccount)),
+  createImportedMultichainAccount$: jest.fn(() => of(mockHdAccount)),
   doMigrations$: jest.fn(() => of(undefined))
 };
 

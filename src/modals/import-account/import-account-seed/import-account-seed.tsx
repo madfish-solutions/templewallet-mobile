@@ -1,7 +1,6 @@
 import { FormikProvider, useFormik } from 'formik';
 import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { AndroidKeyboardDisclaimer } from 'src/components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -19,15 +18,10 @@ import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
-import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast } from 'src/toast/toast.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { mnemonicToPrivateKey } from 'src/utils/keys.utils';
-import { extractHdIndexFromDerivationPath, getSaplingDerivationPath } from 'src/utils/sapling/address-utils';
-import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys/in-memory-spending-key';
 
 import { ImportAccountChainForm } from '../import-account-chain.form';
 
@@ -46,9 +40,8 @@ interface Props {
 }
 
 export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
-  const dispatch = useDispatch();
   const styles = useImportAccountFromSeedStyles();
-  const { createImportedAccount } = useShelter();
+  const { createImportedMultichainAccount } = useShelter();
   const accountsIndex = useAllAccounts().length + 1;
 
   const isLoading = useIsShowLoaderSelector();
@@ -58,50 +51,16 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Seed Phrase" /> }, []);
 
   const onSubmit = useCallback(
-    ({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
-      dispatch(showLoaderAction());
-
-      setTimeout(async () => {
-        try {
-          const privateKeyResult = mnemonicToPrivateKey(
-            seedPhrase,
-            message => new Error(message),
-            password,
-            derivationPath
-          );
-
-          if (privateKeyResult.chain === TempleChainKind.EVM) {
-            createImportedAccount({
-              name: `Account ${accountsIndex}`,
-              privateKey: privateKeyResult.privateKey,
-              chain: TempleChainKind.EVM
-            });
-
-            return;
-          }
-
-          const hdIndex = extractHdIndexFromDerivationPath(derivationPath);
-          const saplingSpendingKey = await InMemorySpendingKey.deriveSaskFromMnemonic(
-            seedPhrase,
-            getSaplingDerivationPath(hdIndex)
-          );
-
-          createImportedAccount({
-            name: `Account ${accountsIndex}`,
-            privateKey: privateKeyResult.privateKey,
-            chain: TempleChainKind.Tezos,
-            saplingSpendingKey
-          });
-        } catch {
-          dispatch(hideLoaderAction());
-          showErrorToast({
-            title: 'Failed to import account.',
-            description: 'This may happen because provided Seed Phrase is invalid.'
-          });
-        }
-      }, 0);
+    ({ seedPhrase, password, chain, derivationPath }: ImportAccountSeedValues) => {
+      createImportedMultichainAccount({
+        name: `Account ${accountsIndex}`,
+        seedPhrase,
+        password,
+        chain,
+        derivationPath
+      });
     },
-    [accountsIndex, createImportedAccount, dispatch]
+    [accountsIndex, createImportedMultichainAccount]
   );
 
   const formik = useFormik({

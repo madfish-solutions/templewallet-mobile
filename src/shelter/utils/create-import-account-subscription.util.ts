@@ -3,7 +3,7 @@ import type { NavigationAction } from '@react-navigation/routers';
 import { Dispatch } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import Toast from 'react-native-toast-message';
-import { catchError, from, lastValueFrom, map, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, forkJoin, from, lastValueFrom, map, merge, of, Subject, switchMap, tap } from 'rxjs';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -16,6 +16,9 @@ import { showErrorToast, showSuccessToast, showWarningToast } from 'src/toast/to
 import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/account.utils';
 import {
   AccountCredentials,
+  getEvmDerivationPath,
+  getTezosDerivationPath,
+  mnemonicToPrivateKey,
   privateKeyToEvmAccountCredentials,
   privateKeyToTezosAccountCredentials
 } from 'src/utils/keys.utils';
@@ -33,6 +36,14 @@ export interface CreateImportedAccountParams {
   saplingSpendingKey?: string;
 }
 
+export interface CreateImportedMultichainAccountParams {
+  seedPhrase: string;
+  name: string;
+  password?: string;
+  chain?: TempleChainKind;
+  derivationPath?: string;
+}
+
 const normalizeAddressForCompare = (chain: TempleChainKind, address: string) =>
   chain === TempleChainKind.EVM ? address.toLowerCase() : address;
 
@@ -45,27 +56,77 @@ const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, addres
       : false;
   });
 
-const deriveImportedAccountCredentials = (privateKey: string, chain: TempleChainKind): Promise<AccountCredentials> =>
+const deriveImportedChainAccountCredentials = (
+  privateKey: string,
+  chain: TempleChainKind
+): Promise<AccountCredentials> =>
   chain === TempleChainKind.EVM
     ? Promise.resolve().then(() => privateKeyToEvmAccountCredentials(privateKey))
     : privateKeyToTezosAccountCredentials(privateKey);
 
+const deriveImportedMultichainAccountCredentials = ({
+  seedPhrase,
+  password,
+  chain = TempleChainKind.Tezos,
+  derivationPath
+}: CreateImportedMultichainAccountParams) => {
+  const tezosDerivationPath = chain === TempleChainKind.Tezos ? derivationPath : getTezosDerivationPath(0);
+  const evmDerivationPath =
+    chain === TempleChainKind.EVM ? derivationPath ?? getEvmDerivationPath(0) : getEvmDerivationPath(0);
+
+  return forkJoin([
+    from(
+      Promise.resolve().then(() => {
+        const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+          seedPhrase,
+          message => new Error(message),
+          password,
+          tezosDerivationPath
+        );
+
+        if (derivedChain !== TempleChainKind.Tezos) {
+          throw new Error('Invalid Tezos derivation path');
+        }
+
+        return privateKeyToTezosAccountCredentials(privateKey);
+      })
+    ),
+    from(
+      Promise.resolve().then(() => {
+        const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+          seedPhrase,
+          message => new Error(message),
+          password,
+          evmDerivationPath
+        );
+
+        if (derivedChain !== TempleChainKind.EVM) {
+          throw new Error('Invalid EVM derivation path');
+        }
+
+        return privateKeyToEvmAccountCredentials(privateKey);
+      })
+    )
+  ]);
+};
+
 export const createImportAccountSubscription = (
   createImportedAccount$: Subject<CreateImportedAccountParams>,
+  createImportedMultichainAccount$: Subject<CreateImportedMultichainAccountParams>,
   accounts: Account[],
   dispatch: Dispatch,
   navigationDispatch: (action: NavigationAction) => void,
   rpcUrl: string,
   trackErrorEvent: (error: unknown, accountPkh?: string) => void
 ) =>
-  createImportedAccount$
-    .pipe(
+  merge(
+    createImportedAccount$.pipe(
       tap(() => {
         Toast.hide();
         dispatch(showLoaderAction());
       }),
       switchMap(({ privateKey, name, chain = TempleChainKind.Tezos, saplingSpendingKey }) =>
-        from(deriveImportedAccountCredentials(privateKey, chain)).pipe(
+        from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
           switchMap(({ address }) => {
             if (hasSameChainAddress(accounts, chain, address)) {
               showWarningToast({ description: 'Account already exist' });
@@ -100,33 +161,71 @@ export const createImportAccountSubscription = (
         )
       ),
       tap(() => dispatch(hideLoaderAction()))
-    )
-    .subscribe(publicData => {
-      if (publicData !== undefined) {
-        dispatch(setSelectedAccountIdAction(publicData.id));
-        dispatch(addHdAccountAction(publicData));
+    ),
+    createImportedMultichainAccount$.pipe(
+      tap(() => {
+        Toast.hide();
+        dispatch(showLoaderAction());
+      }),
+      switchMap(params =>
+        deriveImportedMultichainAccountCredentials(params).pipe(
+          switchMap(([tezosCredentials, evmCredentials]) => {
+            const hasCollision =
+              hasSameChainAddress(accounts, TempleChainKind.Tezos, tezosCredentials.address) ||
+              hasSameChainAddress(accounts, TempleChainKind.EVM, evmCredentials.address);
 
-        navigationDispatch(StackActions.popToTop());
-        setTimeout(() => showSuccessToast({ description: 'Account Imported!' }), 100);
+            if (hasCollision) {
+              showWarningToast({ description: 'Account already exist' });
 
-        const tezosAddress = getAccountAddressForChain(publicData, TempleChainKind.Tezos);
-
-        if (tezosAddress) {
-          dispatch(loadWhitelistAction.submit());
-
-          lastValueFrom(loadTezosBalance$(rpcUrl, tezosAddress)).then(
-            balance =>
-              void (
-                !LIMIT_FIN_FEATURES &&
-                new BigNumber(balance).isEqualTo(0) &&
-                !isDcpNode(rpcUrl) &&
-                dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start))
-              ),
-            error => {
-              console.error(error);
-              trackErrorEvent(error, tezosAddress);
+              return of(undefined);
             }
-          );
-        }
+
+            return Shelter.createImportedMultichainAccount$({
+              seedPhrase: params.seedPhrase,
+              name: params.name,
+              bip39Passphrase: params.password,
+              chain: params.chain,
+              derivationPath: params.derivationPath
+            });
+          }),
+          catchError(() => {
+            showErrorToast({
+              title: 'Failed to import account.',
+              description: 'This may happen because provided Seed Phrase is invalid.'
+            });
+
+            return of(undefined);
+          })
+        )
+      ),
+      tap(() => dispatch(hideLoaderAction()))
+    )
+  ).subscribe(publicData => {
+    if (publicData !== undefined) {
+      dispatch(setSelectedAccountIdAction(publicData.id));
+      dispatch(addHdAccountAction(publicData));
+
+      navigationDispatch(StackActions.popToTop());
+      setTimeout(() => showSuccessToast({ description: 'Account Imported!' }), 100);
+
+      const tezosAddress = getAccountAddressForChain(publicData, TempleChainKind.Tezos);
+
+      if (tezosAddress) {
+        dispatch(loadWhitelistAction.submit());
+
+        lastValueFrom(loadTezosBalance$(rpcUrl, tezosAddress)).then(
+          balance =>
+            void (
+              !LIMIT_FIN_FEATURES &&
+              new BigNumber(balance).isEqualTo(0) &&
+              !isDcpNode(rpcUrl) &&
+              dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start))
+            ),
+          error => {
+            console.error(error);
+            trackErrorEvent(error, tezosAddress);
+          }
+        );
       }
-    });
+    }
+  });

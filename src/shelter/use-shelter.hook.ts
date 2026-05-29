@@ -13,7 +13,8 @@ import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
 import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
 import {
   createImportAccountSubscription,
-  CreateImportedAccountParams
+  CreateImportedAccountParams,
+  CreateImportedMultichainAccountParams
 } from './utils/create-import-account-subscription.util';
 import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
 import { importWalletSubscription } from './utils/import-wallet-subscription.util';
@@ -32,6 +33,7 @@ export const useShelter = () => {
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
   const createImportedAccount$ = useMemo(() => new Subject<CreateImportedAccountParams>(), []);
+  const createImportedMultichainAccount$ = useMemo(() => new Subject<CreateImportedMultichainAccountParams>(), []);
 
   useEffect(() => {
     const subscriptions = [
@@ -39,6 +41,7 @@ export const useShelter = () => {
       createHdAccountSubscription(createHdAccount$, accounts, dispatch),
       createImportAccountSubscription(
         createImportedAccount$,
+        createImportedMultichainAccount$,
         accounts,
         dispatch,
         navigationDispatch,
@@ -55,6 +58,7 @@ export const useShelter = () => {
     accounts,
     createHdAccount$,
     createImportedAccount$,
+    createImportedMultichainAccount$,
     dispatch,
     enableBiometryPassword$,
     importWallet$,
@@ -83,12 +87,18 @@ export const useShelter = () => {
     [createImportedAccount$]
   );
 
+  const createImportedMultichainAccount = useCallback(
+    (params: CreateImportedMultichainAccountParams) => createImportedMultichainAccount$.next(params),
+    [createImportedMultichainAccount$]
+  );
+
   return {
     importWallet,
     createHdAccount,
     revealSecretKey,
     revealSeedPhrase,
     enableBiometryPassword,
-    createImportedAccount
+    createImportedAccount,
+    createImportedMultichainAccount
   };
 };

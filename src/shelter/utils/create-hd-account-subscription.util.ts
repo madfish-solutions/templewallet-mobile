@@ -18,7 +18,7 @@ export const createHdAccountSubscription = (
   accounts: Account[],
   dispatch: Dispatch
 ) => {
-  const hdAccounts = accounts.filter((account): account is HDAccount => account.type === AccountTypeEnum.HD_ACCOUNT);
+  const hdAccounts = accounts.filter((account): account is HDAccount => account.type === AccountTypeEnum.HD);
   const nextHdIndex =
     hdAccounts.length === 0
       ? 0

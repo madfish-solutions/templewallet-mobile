@@ -16,7 +16,7 @@ import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { TempleChainKind } from '../enums/temple-chain-kind.enum';
-import { Account } from '../interfaces/account.interfaces';
+import { Account, ImportedMultichainAccount } from '../interfaces/account.interfaces';
 import { getAccountAddressForChain } from '../utils/account.utils';
 import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
@@ -31,16 +31,18 @@ import {
 } from '../utils/keychain.utils';
 import {
   AccountCredentials,
+  getEvmDerivationPath,
   getPublicKeyAndHash$,
   getTezosDerivationPath,
   mnemonicToEvmAccountCredentials,
+  mnemonicToPrivateKey,
   mnemonicToTezosAccountCredentials,
   privateKeyToEvmAccountCredentials,
   privateKeyToTezosAccountCredentials,
   seedToPrivateKey
 } from '../utils/keys.utils';
 import { throwError$ } from '../utils/rxjs.utils';
-import { getSaplingDerivationPath } from '../utils/sapling/address-utils';
+import { extractHdIndexFromDerivationPath, getSaplingDerivationPath } from '../utils/sapling/address-utils';
 import { InMemorySpendingKey } from '../utils/sapling/sapling-keys';
 
 import { deriveSaskFromPrivateKey } from './utils/derive-sask-from-private-key.util';
@@ -55,6 +57,14 @@ interface CreateHdAccountOptions {
   accountIndex?: number;
   existingAccounts?: Account[];
   explicitAccountIndex?: boolean;
+}
+
+export interface CreateImportedMultichainAccountOptions {
+  seedPhrase: string;
+  name: string;
+  bip39Passphrase?: string;
+  chain?: TempleChainKind;
+  derivationPath?: string;
 }
 
 const normalizeAddressForCompare = (chain: TempleChainKind, address: string) =>
@@ -409,6 +419,81 @@ export class Shelter {
         );
       })
     );
+
+  static createImportedMultichainAccount$ = ({
+    seedPhrase,
+    name,
+    bip39Passphrase,
+    chain = TempleChainKind.Tezos,
+    derivationPath
+  }: CreateImportedMultichainAccountOptions): Observable<ImportedMultichainAccount> => {
+    if (!validateMnemonic(seedPhrase)) {
+      return throwError$('Mnemonic not validated');
+    }
+
+    const tezosDerivationPath = chain === TempleChainKind.Tezos ? derivationPath : getTezosDerivationPath(0);
+    const evmDerivationPath =
+      chain === TempleChainKind.EVM ? derivationPath ?? getEvmDerivationPath(0) : getEvmDerivationPath(0);
+    const saplingDerivationPath = getSaplingDerivationPath(
+      chain === TempleChainKind.Tezos ? extractHdIndexFromDerivationPath(derivationPath) : undefined
+    );
+
+    return forkJoin([
+      from(
+        Promise.resolve().then(() => {
+          const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+            seedPhrase,
+            message => new Error(message),
+            bip39Passphrase,
+            tezosDerivationPath
+          );
+
+          if (derivedChain !== TempleChainKind.Tezos) {
+            throw new Error('Invalid Tezos derivation path');
+          }
+
+          return privateKeyToTezosAccountCredentials(privateKey);
+        })
+      ),
+      from(
+        Promise.resolve().then(() => {
+          const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+            seedPhrase,
+            message => new Error(message),
+            bip39Passphrase,
+            evmDerivationPath
+          );
+
+          if (derivedChain !== TempleChainKind.EVM) {
+            throw new Error('Invalid EVM derivation path');
+          }
+
+          return privateKeyToEvmAccountCredentials(privateKey);
+        })
+      )
+    ]).pipe(
+      switchMap(([tezosCredentials, evmCredentials]) =>
+        forkJoin([
+          InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, saplingDerivationPath),
+          Shelter.saveAccountCredentials$(tezosCredentials),
+          Shelter.saveAccountCredentials$(evmCredentials)
+        ]).pipe(
+          switchMap(([saplingSpendingKey]) =>
+            Shelter.saveSaplingSpendingKey$(tezosCredentials.address, saplingSpendingKey)
+          ),
+          mapTo<ImportedMultichainAccount>({
+            id: nanoid(),
+            name,
+            type: AccountTypeEnum.IMPORTED_MULTICHAIN,
+            tezosAddress: tezosCredentials.address,
+            tezosPublicKey: tezosCredentials.publicKey,
+            evmAddress: evmCredentials.address as HexString,
+            evmPublicKey: evmCredentials.publicKey
+          })
+        )
+      )
+    );
+  };
 
   static createHdAccount$ = (
     name: string,

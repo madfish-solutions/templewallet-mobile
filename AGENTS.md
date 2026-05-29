@@ -43,6 +43,3 @@ Optimize for clarity, polish, and performance in every change.
 
 ## A Note to the Agent
 We are building this together. When you learn something non-obvious, add it here so future changes go faster.
-
-- In key utility Jest tests, Taquito signer output may follow repo mocks rather than real derived public key/hash values; assert secret-key derivation explicitly when that is the behavior under test.
-- `FormRadioButtonsGroup` calls `onChange` with the next selected value; use that callback argument instead of same-render `formValues` when resetting dependent fields.
