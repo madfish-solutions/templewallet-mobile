@@ -82,7 +82,7 @@ export const AccountDropdownTriggerItem = memo<AccountDropdownTriggerItemProps>(
   <AccountDropdownItem {...props} />
 ));
 
-export const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account = emptyAddressBookItem }) => {
+const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account = emptyAddressBookItem }) => {
   const styles = useAccountDropdownItemStyles();
   const accountInterface = isAccount(account) ? account : undefined;
   const tezosAddress = getTezosAddress(account);

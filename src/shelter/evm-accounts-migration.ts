@@ -47,7 +47,7 @@ export const runEvmAccountsMigration = async ({ wallet, dispatch }: EvmAccountsM
   dispatch(completeEvmAccountsMigrationAction(migratedAccounts));
 };
 
-export const accountNeedsMigration = (account: Account) =>
+const accountNeedsMigration = (account: Account) =>
   account.type === AccountTypeEnum.HD && account.evmAddress === EVM_ADDRESS_PLACEHOLDER;
 
 export const walletNeedsMigration = (wallet: WalletState) =>

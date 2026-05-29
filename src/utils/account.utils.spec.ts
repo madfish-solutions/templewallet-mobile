@@ -16,22 +16,23 @@ describe('account facade helpers', () => {
       id: mockHdAccount.id,
       chain: TempleChainKind.EVM,
       address: mockHdAccount.evmAddress,
+      publicKey: mockHdAccount.evmPublicKey,
       type: mockHdAccount.type,
       name: mockHdAccount.name
     });
   });
 
-  it('returns only Tezos address for Tezos imported accounts', () => {
+  it('returns imported Tezos account address for chain facades', () => {
     expect(getAccountAddressForTezos(mockTezosImportedAccount)).toEqual(mockTezosImportedAccount.address);
-    expect(getAccountAddressForEvm(mockTezosImportedAccount)).toBeUndefined();
+    expect(getAccountAddressForEvm(mockTezosImportedAccount)).toEqual(mockTezosImportedAccount.address);
     expect(canUseAccountForChain(mockTezosImportedAccount, TempleChainKind.Tezos)).toEqual(true);
-    expect(canUseAccountForChain(mockTezosImportedAccount, TempleChainKind.EVM)).toEqual(false);
+    expect(canUseAccountForChain(mockTezosImportedAccount, TempleChainKind.EVM)).toEqual(true);
   });
 
-  it('returns only EVM address for EVM imported accounts', () => {
-    expect(getAccountAddressForTezos(mockEvmImportedAccount)).toBeUndefined();
+  it('returns imported EVM account address for chain facades', () => {
+    expect(getAccountAddressForTezos(mockEvmImportedAccount)).toEqual(mockEvmImportedAccount.address);
     expect(getAccountAddressForEvm(mockEvmImportedAccount)).toEqual(mockEvmImportedAccount.address);
-    expect(canUseAccountForChain(mockEvmImportedAccount, TempleChainKind.Tezos)).toEqual(false);
+    expect(canUseAccountForChain(mockEvmImportedAccount, TempleChainKind.Tezos)).toEqual(true);
     expect(canUseAccountForChain(mockEvmImportedAccount, TempleChainKind.EVM)).toEqual(true);
   });
 });

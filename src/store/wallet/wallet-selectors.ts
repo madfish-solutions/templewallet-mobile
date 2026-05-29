@@ -1,6 +1,5 @@
 import { isEqual } from 'lodash-es';
 import { useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -21,8 +20,6 @@ import { getAccountState } from 'src/utils/wallet-account-state.utils';
 
 import { useSelector } from '../selector';
 import { useTokensMetadataSelector } from '../tokens-metadata/tokens-metadata-selectors';
-
-import { setSelectedAccountIdAction } from './wallet-actions';
 
 export const useAllAccounts = () => useSelector(({ wallet }) => wallet.accounts);
 
@@ -57,6 +54,7 @@ export const useIsAuthorisedSelector = () => {
   return useMemo(() => accounts.length > 0, [accounts.length]);
 };
 
+/** @knipignore */
 export const useCurrentAccountId = () => useSelector(({ wallet }) => wallet.selectedAccountId);
 
 export const useIsAccountVisibleSelector = (publicKeyHash: string): boolean | undefined =>
@@ -73,6 +71,7 @@ export const useAccountAddressForTezos = () =>
     return account ? getAccountAddressForTezos(account) : undefined;
   });
 
+/** @knipignore */
 export const useAccountAddressForEvm = () =>
   useSelector(({ wallet }) => {
     const account = getSelectedAccountFromWallet(wallet);
@@ -80,7 +79,7 @@ export const useAccountAddressForEvm = () =>
     return account ? getAccountAddressForEvm(account) : undefined;
   });
 
-export const useCurrentAccountForChainSelector = <C extends TempleChainKind>(chain: C) =>
+const useCurrentAccountForChainSelector = <C extends TempleChainKind>(chain: C) =>
   useSelector(({ wallet }) => {
     const account = getSelectedAccountFromWallet(wallet);
 
@@ -89,13 +88,8 @@ export const useCurrentAccountForChainSelector = <C extends TempleChainKind>(cha
 
 export const useAccountForTezos = () => useCurrentAccountForChainSelector(TempleChainKind.Tezos);
 
+/** @knipignore */
 export const useAccountForEvm = () => useCurrentAccountForChainSelector(TempleChainKind.EVM);
-
-export const useSetAccountId = () => {
-  const dispatch = useDispatch();
-
-  return useCallback((accountId: string) => dispatch(setSelectedAccountIdAction(accountId)), [dispatch]);
-};
 
 export const useAllCurrentAccountAssetsSelector = () =>
   useSelector(

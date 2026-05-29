@@ -119,45 +119,25 @@ describe('Shelter', () => {
             expect(accounts?.[0].name).toEqual('Account 1');
             expect(accounts?.[0].type).toEqual(AccountTypeEnum.HD);
             expect(accounts?.[0]).toMatchObject({
-              id: mockAccountCredentials.publicKeyHash,
               hdIndex: 0,
               tezosAddress: mockAccountCredentials.publicKeyHash,
               evmAddress: mockEvmCredentials.address
             });
 
-            expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
-              mockAccountCredentials.seedPhrase,
-              mockCorrectPasswordHash
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockAccountCredentials.publicKeyHash,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              'seedPhrase',
+              mockEvmCredentials.address,
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions('seedPhrase', 0)
+              getKeychainOptions(mockEvmCredentials.address, 0)
             );
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              'wallet_mnemonic_default-hd-wallet',
+              `sapling_sk_${mockAccountCredentials.publicKeyHash}`,
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions('wallet_mnemonic_default-hd-wallet', 0)
-            );
-            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              `account_private_key_${mockAccountCredentials.publicKeyHash}`,
-              JSON.stringify(mockEncryptedData),
-              getKeychainOptions(`account_private_key_${mockAccountCredentials.publicKeyHash}`, 0)
-            );
-            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              `account_public_key_${mockAccountCredentials.publicKeyHash}`,
-              JSON.stringify(mockEncryptedData),
-              getKeychainOptions(`account_public_key_${mockAccountCredentials.publicKeyHash}`, 0)
-            );
-            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              `account_private_key_${mockEvmCredentials.address}`,
-              JSON.stringify(mockEncryptedData),
-              getKeychainOptions(`account_private_key_${mockEvmCredentials.address}`, 0)
-            );
-            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              `account_public_key_${mockEvmCredentials.address}`,
-              JSON.stringify(mockEncryptedData),
-              getKeychainOptions(`account_public_key_${mockEvmCredentials.address}`, 0)
+              getKeychainOptions(`sapling_sk_${mockAccountCredentials.publicKeyHash}`, 0)
             );
 
             expect(isLocked).toEqual(false);
@@ -205,9 +185,9 @@ describe('Shelter', () => {
               getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
             );
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              `account_private_key_${mockEvmCredentialsIndex77.address}`,
+              mockEvmCredentialsIndex77.address,
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions(`account_private_key_${mockEvmCredentialsIndex77.address}`, 0)
+              getKeychainOptions(mockEvmCredentialsIndex77.address, 0)
             );
           }, done)
         );
@@ -298,9 +278,9 @@ describe('Shelter', () => {
               getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
             );
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              `account_private_key_${mockHDAccountCredentials.publicKeyHash}`,
+              mockHDAccountCredentials.publicKeyHash,
               JSON.stringify(mockEncryptedData),
-              getKeychainOptions(`account_private_key_${mockHDAccountCredentials.publicKeyHash}`, 0)
+              getKeychainOptions(mockHDAccountCredentials.publicKeyHash, 0)
             );
           }, done)
         );
@@ -317,8 +297,7 @@ describe('Shelter', () => {
         )
         .subscribe(
           rxJsTestingHelper(account => {
-            expect(account).toEqual({
-              id: mockEvmCredentials.address,
+            expect(account).toMatchObject({
               name: mockName,
               type: AccountTypeEnum.IMPORTED_CHAIN,
               chain: TempleChainKind.EVM,
@@ -327,19 +306,53 @@ describe('Shelter', () => {
             });
 
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              `account_private_key_${mockEvmCredentials.address}`,
-              JSON.stringify(mockEncryptedData),
-              getKeychainOptions(`account_private_key_${mockEvmCredentials.address}`, 0)
-            );
-            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
-              `account_public_key_${mockEvmCredentials.address}`,
-              JSON.stringify(mockEncryptedData),
-              getKeychainOptions(`account_public_key_${mockEvmCredentials.address}`, 0)
-            );
-            expect(mockKeychain.setGenericPassword).not.toHaveBeenCalledWith(
               mockEvmCredentials.address,
               JSON.stringify(mockEncryptedData),
               getKeychainOptions(mockEvmCredentials.address, 0)
+            );
+          }, done)
+        );
+    });
+
+    it('should create imported multichain account', done => {
+      const mockName = 'mockMultichainName';
+
+      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
+        .pipe(
+          switchMap(() =>
+            Shelter.createImportedMultichainAccount$({
+              seedPhrase: mockAccountCredentials.seedPhrase,
+              name: mockName,
+              chain: TempleChainKind.Tezos,
+              derivationPath: mockAccountCredentials.derivationPath
+            })
+          )
+        )
+        .subscribe(
+          rxJsTestingHelper(account => {
+            expect(account).toMatchObject({
+              name: mockName,
+              type: AccountTypeEnum.IMPORTED_MULTICHAIN,
+              tezosAddress: mockAccountCredentials.publicKeyHash,
+              tezosPublicKey: mockAccountCredentials.publicKey,
+              evmAddress: mockEvmCredentials.address,
+              evmPublicKey: mockEvmCredentials.publicKey
+            });
+
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockAccountCredentials.publicKeyHash,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
+            );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              mockEvmCredentials.address,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(mockEvmCredentials.address, 0)
+            );
+            expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
+              `sapling_sk_${mockAccountCredentials.publicKeyHash}`,
+              JSON.stringify(mockEncryptedData),
+              getKeychainOptions(`sapling_sk_${mockAccountCredentials.publicKeyHash}`, 0)
             );
           }, done)
         );
@@ -373,22 +386,19 @@ describe('Shelter', () => {
               mockCorrectPasswordHash
             );
             expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
-              getKeychainOptions(`account_private_key_${mockAccountCredentials.publicKeyHash}`, 0)
+              getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
           }, done)
         );
     });
 
-    it('should fall back to legacy Tezos private key reveal', done => {
+    it('should return undefined when account private key is absent', done => {
       mockKeychain.getGenericPassword.mockResolvedValueOnce(false).mockResolvedValueOnce(mockCorrectUserCredentials);
 
       Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash, mockCorrectPasswordHash).subscribe(
         rxJsTestingHelper(decryptResult => {
-          expect(decryptResult).toEqual(mockAccountCredentials.privateKey);
+          expect(decryptResult).toBeUndefined();
 
-          expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
-            getKeychainOptions(`account_private_key_${mockAccountCredentials.publicKeyHash}`, 0)
-          );
           expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
             getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
           );
@@ -410,7 +420,7 @@ describe('Shelter', () => {
               mockCorrectPasswordHash
             );
             expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
-              getKeychainOptions(`account_private_key_${mockAccountCredentials.publicKeyHash}`, 0)
+              getKeychainOptions(mockAccountCredentials.publicKeyHash, 0)
             );
           }, done)
         );

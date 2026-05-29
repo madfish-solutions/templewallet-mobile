@@ -1,7 +1,8 @@
 import Keychain from 'react-native-keychain';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
+import { Account } from '../interfaces/account.interfaces';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
 import { getBiometryKeychainOptions } from '../utils/keychain.utils';
 
@@ -36,7 +37,7 @@ export const mockShelter = {
   revealSecretKey$: jest.fn(() => of(mockRevealedSecretKey)),
   revealSeedPhrase$: jest.fn(() => of(mockRevealedSeedPhrase)),
   isPasswordCorrect$: jest.fn((password: string) => of(password === mockCorrectPassword)),
-  createImportedAccount$: jest.fn(() => of(mockHdAccount)),
+  createImportedChainAccount$: jest.fn<Observable<Account>, []>(() => of(mockHdAccount)),
   createImportedMultichainAccount$: jest.fn(() => of(mockHdAccount)),
   doMigrations$: jest.fn(() => of(undefined))
 };

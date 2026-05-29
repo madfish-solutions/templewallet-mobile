@@ -12,14 +12,13 @@ export interface AccountForChain<C extends TempleChainKind = TempleChainKind> {
   name: string;
 }
 
-export type AddressBookItem = Account | Contact;
+type AddressBookItem = Account | Contact;
 
 export const isAccount = (item: AddressBookItem): item is Account => 'type' in item;
 
-export const isContact = (item: AddressBookItem): item is Contact => !isAccount(item);
-
 export const getAccountForTezos = (account: Account) => getAccountForChain(account, TempleChainKind.Tezos);
 
+/** @knipignore */
 export const getAccountForEvm = (account: Account) => getAccountForChain(account, TempleChainKind.EVM);
 
 export const getAccountAddressForTezos = (account: Account) =>
@@ -44,7 +43,7 @@ export const getAccountAddressForChain = (account: Account, chain: TempleChainKi
 export const getAccountPublicKeyForTezos = (account: Account) =>
   getAccountPublicKeyForChain(account, TempleChainKind.Tezos);
 
-export const getAccountPublicKeyForChain = (account: Account, chain: TempleChainKind): string | null => {
+const getAccountPublicKeyForChain = (account: Account, chain: TempleChainKind): string | null => {
   switch (account.type) {
     case AccountTypeEnum.HD:
     case AccountTypeEnum.IMPORTED_MULTICHAIN:
@@ -72,9 +71,9 @@ export const getAccountForChain = <C extends TempleChainKind>(
 export const canUseAccountForChain = (account: Account, chain: TempleChainKind) =>
   getAccountAddressForChain(account, chain) !== undefined;
 
-export const getContactAddress = (contact: Contact) => contact.address;
+const getContactAddress = (contact: Contact) => contact.address;
 
-export const getAddressBookItemAddress = (item: AddressBookItem) =>
+const getAddressBookItemAddress = (item: AddressBookItem) =>
   isAccount(item)
     ? getAccountAddressForTezos(item) || getAccountAddressForEvm(item) || item.id
     : getContactAddress(item);

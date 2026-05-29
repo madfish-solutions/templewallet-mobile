@@ -8,7 +8,7 @@ import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { ErrorBoundaryContent } from './content';
 import { BoundaryError } from './errors';
 
-export { BoundaryError, DeadEndBoundaryError } from './errors';
+export { DeadEndBoundaryError } from './errors';
 
 type Props = PropsWithChildren<{
   Fallback?: FC<object>;
