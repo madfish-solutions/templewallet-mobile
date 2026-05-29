@@ -30,7 +30,8 @@ export const ImportWatchOnlyDebug: FC = () => {
       name: values.name,
       type: AccountTypeEnum.WATCH_ONLY_DEBUG,
       chain: TempleChainKind.Tezos,
-      address: values.address
+      address: values.address,
+      publicKey: ''
     };
 
     dispatch(setSelectedAccountIdAction(publicData.id));

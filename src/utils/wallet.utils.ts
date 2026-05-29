@@ -15,12 +15,11 @@ import {
   useCurrentAccountTezosBalance,
   useTezosBalanceOfKnownAccountSelector
 } from 'src/store/wallet/wallet-selectors';
-import { WalletState } from 'src/store/wallet/wallet-state.ts';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
-import { getAccountId } from './account.utils';
 import { AnalyticsError } from './error-analytics-data.utils';
+import { getSelectedAccountFromWallet } from './get-selected-account-from-wallet.util.ts';
 import { getNetworkGasTokenMetadata } from './network.utils';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
@@ -47,7 +46,7 @@ export const withSelectedAccountHdIndex =
       withLatestFrom(state$, (value, { wallet }): [T, number | undefined] => {
         const selectedAccount = getSelectedAccountFromWallet(wallet);
 
-        if (selectedAccount.type !== AccountTypeEnum.HD_ACCOUNT) {
+        if (selectedAccount.type !== AccountTypeEnum.HD) {
           return [value, undefined];
         }
 
@@ -55,9 +54,9 @@ export const withSelectedAccountHdIndex =
           return [value, selectedAccount.hdIndex];
         }
 
-        const selectedAccountId = getAccountId(selectedAccount);
-        const hdAccounts = wallet.accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT);
-        const hdIndex = hdAccounts.findIndex(account => getAccountId(account) === selectedAccountId);
+        const selectedAccountId = selectedAccount.id;
+        const hdAccounts = wallet.accounts.filter(account => account.type === AccountTypeEnum.HD);
+        const hdIndex = hdAccounts.findIndex(account => account.id === selectedAccountId);
 
         return [value, hdIndex];
       })
@@ -136,6 +135,3 @@ export const useTezosTokenOfKnownAccount = (publicKeyHash: string) => {
 
   return useTezosToken(balance);
 };
-
-export const getSelectedAccountFromWallet = (wallet: WalletState) =>
-  wallet.accounts.find(account => account.id === wallet.selectedAccountId) ?? wallet.accounts[0];

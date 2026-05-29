@@ -8,7 +8,7 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { useHdAccountListSelector } from 'src/store/wallet/wallet-selectors';
+import { useHDAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 
@@ -18,7 +18,7 @@ import { RevealSeedPharaseSelectors } from '../reveal-seed-phrase.selectors';
 import { RevealSeedPhraseView } from './reveal-seed-phrase-view/reveal-seed-phrase-view';
 
 export const RevealSeedPhraseFormContent: SyncFC<FormikProps<RevealSeedPhraseModalFormValues>> = ({ values }) => {
-  const hdAccounts = useHdAccountListSelector();
+  const hdAccounts = useHDAccounts();
 
   return (
     <>

@@ -3,8 +3,9 @@ import { useMemo } from 'react';
 import { earnOpportunitiesTypesToDisplay } from 'src/config/earn-opportunities';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
-import { getAccountAddressForTezos, getSelectedAccountFromWallet } from 'src/utils/account.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { nullableEntityWasLoading } from 'src/utils/earn-opportunities/store.utils';
+import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
 import { isDefined } from 'src/utils/is-defined';
 
 import { useSelector } from '../selector';

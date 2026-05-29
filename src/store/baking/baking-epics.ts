@@ -6,7 +6,7 @@ import { ofType } from 'ts-action-operators';
 
 import { BakerInterface, bakingBadApi, fetchBaker, buildUnknownBaker } from 'src/apis/baking-bad';
 import type { AnyActionEpic } from 'src/store/types';
-import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { getAccountAddressForTezos, getAccountForTezos } from 'src/utils/account.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
@@ -28,7 +28,7 @@ const loadSelectedBakerAddressEpic: AnyActionEpic = (action$, state$) =>
         return of(loadSelectedBakerActions.success(null));
       }
 
-      const tezos = createReadOnlyTezosToolkit(rpcUrl, selectedAccount);
+      const tezos = createReadOnlyTezosToolkit(rpcUrl, getAccountForTezos(selectedAccount));
       let fetchedBakerAddress: string | nullish;
 
       return from(retry(() => tezos.rpc.getDelegate(selectedTezosAddress), RPC_RETRY_OPTIONS)).pipe(

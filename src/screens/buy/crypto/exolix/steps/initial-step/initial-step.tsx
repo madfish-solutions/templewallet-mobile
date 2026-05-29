@@ -24,6 +24,7 @@ import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getProperNetworkFullName } from 'src/utils/topup';
 
+import { DeadEndBoundaryError } from '../../../../../../components/error-boundary';
 import { ErrorComponent } from '../../components/error-component';
 import { EXOLIX_PRIVICY_LINK, EXOLIX_TERMS_LINK, initialFormValues } from '../../config';
 import { exolixTopupFormValidationSchema, ExolixTopupFormValues } from '../../exolix-topup.form';
@@ -46,7 +47,12 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue, currenciesLoading } =
     useFilteredCurrenciesList();
   const prevCurrenciesLoading = useRef(currenciesLoading);
-  const publicKeyHash = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const [outputLoading, setOutputLoading] = useState(false);
 
   const handleSubmit = () => {
@@ -60,7 +66,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
         coinTo: outputCurrency.code,
         networkTo: outputCurrency.network.code,
         amount: values.coinFrom.amount.toNumber(),
-        withdrawalAddress: publicKeyHash,
+        withdrawalAddress: tezosAddress,
         withdrawalExtraId: ''
       })
     );

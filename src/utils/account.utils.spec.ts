@@ -1,13 +1,11 @@
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { mockEvmImportedAccount, mockHdAccount, mockTezosImportedAccount } from 'src/interfaces/account.interface.mock';
-import { mockWalletState } from 'src/store/wallet/wallet-state.mock';
 
 import {
   canUseAccountForChain,
   getAccountAddressForEvm,
   getAccountAddressForTezos,
-  getAccountForChain,
-  getSelectedAccountIdFromWallet
+  getAccountForChain
 } from './account.utils';
 
 describe('account facade helpers', () => {
@@ -35,9 +33,5 @@ describe('account facade helpers', () => {
     expect(getAccountAddressForEvm(mockEvmImportedAccount)).toEqual(mockEvmImportedAccount.address);
     expect(canUseAccountForChain(mockEvmImportedAccount, TempleChainKind.Tezos)).toEqual(false);
     expect(canUseAccountForChain(mockEvmImportedAccount, TempleChainKind.EVM)).toEqual(true);
-  });
-
-  it('falls back from deprecated selected pkh to selected account id', () => {
-    expect(getSelectedAccountIdFromWallet({ ...mockWalletState, selectedAccountId: '' })).toEqual(mockHdAccount.id);
   });
 });

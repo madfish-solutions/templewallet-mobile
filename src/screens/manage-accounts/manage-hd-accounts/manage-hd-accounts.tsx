@@ -12,7 +12,7 @@ import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook
 import { Account } from 'src/interfaces/account.interfaces';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { useHdAccountListSelector, useAccount } from 'src/store/wallet/wallet-selectors';
+import { useHDAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
 import { InfoText } from '../info-text/info-text';
@@ -27,7 +27,7 @@ export const ManageHdAccounts = () => {
   const revealSelectBottomSheetController = useBottomSheetController();
 
   const selectedAccount = useAccount();
-  const hdAccounts = useHdAccountListSelector();
+  const hdAccounts = useHDAccounts();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(hdAccounts);
 
   const [managedAccount, setManagedAccount] = useState<Account | null>(null);

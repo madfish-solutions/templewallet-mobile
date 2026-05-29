@@ -27,6 +27,7 @@ import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
+import { DeadEndBoundaryError } from '../../../components/error-boundary';
 import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT, PERCENTAGE_OPTIONS } from '../constants';
 
 import { createWithdrawOperationParams } from './create-withdraw-operation-params';
@@ -51,7 +52,12 @@ const LAST_PERCENTAGE_OPTION_INDEX = PERCENTAGE_OPTIONS.length - 1;
 
 export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: UserStakeValueInterface) => {
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunity);
-  const publicKeyHash = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const tezos = useReadOnlyTezosToolkit();
   const dispatch = useDispatch();
   const { trackEvent, trackErrorEvent } = useAnalytics();
@@ -101,7 +107,7 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
             earnOpportunity,
             tokenIndex,
             tezos,
-            publicKeyHash,
+            tezosAddress,
             stake,
             PERCENTAGE_OPTIONS[amountOptionIndex],
             slippageTolerance
@@ -122,7 +128,7 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
           trackEvent('WITHDRAW_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
           const internalError = error instanceof AnalyticsError ? error.error : error;
           const additionalProperties = error instanceof AnalyticsError ? error.additionalProperties : {};
-          trackErrorEvent('EarnOpportunityDoWithdrawError', internalError, [publicKeyHash], {
+          trackErrorEvent('EarnOpportunityDoWithdrawError', internalError, [tezosAddress], {
             doWithdrawInput: {
               earnOpportunity,
               tokenIndex,
@@ -170,17 +176,7 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
         );
       }
     },
-    [
-      stakeTokens,
-      earnOpportunity,
-      tezos,
-      publicKeyHash,
-      stake,
-      dispatch,
-      trackEvent,
-      slippageTolerance,
-      trackErrorEvent
-    ]
+    [stakeTokens, earnOpportunity, tezos, tezosAddress, stake, dispatch, trackEvent, slippageTolerance, trackErrorEvent]
   );
 
   const formik = useFormik<WithdrawFormValues>({

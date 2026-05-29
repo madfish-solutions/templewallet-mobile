@@ -5,7 +5,7 @@ import { emptyFn } from 'src/config/general';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
-import { useHdAccountListSelector, useAccount } from 'src/store/wallet/wallet-selectors';
+import { useHDAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { RevealSeedPhraseFormContent } from './reveal-seed-phrase-form-content/reveal-seed-phrase-form-content';
@@ -16,15 +16,14 @@ import {
 
 export const RevealSeedPhraseModal = () => {
   const selectedAccount = useAccount();
-  const hdAccounts = useHdAccountListSelector();
+  const hdAccounts = useHDAccounts();
   const { account: accountFromRouteProps } = useModalParams<ModalsEnum.RevealSeedPhrase>();
 
   const account = useMemo(() => {
-    const selectedHdAccount =
-      selectedAccount.type === AccountTypeEnum.IMPORTED_ACCOUNT ? hdAccounts[0] : selectedAccount;
+    const selectedHdAccount = selectedAccount.type === AccountTypeEnum.HD ? selectedAccount : hdAccounts[0];
 
     return accountFromRouteProps ?? selectedHdAccount;
-  }, []);
+  }, [accountFromRouteProps, hdAccounts, selectedAccount]);
 
   usePageAnalytic(ModalsEnum.RevealSeedPhrase);
 

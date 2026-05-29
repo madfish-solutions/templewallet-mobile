@@ -37,6 +37,8 @@ import { ZERO } from 'src/utils/number.util';
 import { percentageToFraction } from 'src/utils/percentage.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 import { PERCENTAGE_OPTIONS } from './constants';
 import { ManageEarnOpportunityModalSelectors } from './selectors';
 import { StakeForm } from './stake-form';
@@ -69,7 +71,12 @@ export const ManageEarnOpportunityModal: FC = () => {
   const earnOpportunityLoading = isFarmingPool ? farmIsLoading : savingsItemIsLoading;
   const { isLoading: isSwapMetadataLoading, data: swapMetadataData } = useSwapTokensMetadataSelector();
   const swapTokensMetadataLoading = isSwapMetadataLoading && swapMetadataData.length === 0;
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const pageIsLoading = (earnOpportunityLoading && !isDefined(earnOpportunityItem)) || swapTokensMetadataLoading;
   const farmStake = useFarmStakeSelector(contractAddress);
   const savingsStake = useSavingsItemStakeSelector(contractAddress);
@@ -118,15 +125,15 @@ export const ManageEarnOpportunityModal: FC = () => {
 
     dispatch(
       isFarm(earnOpportunityItem)
-        ? loadSingleFarmStakeActions.submit({ farm: earnOpportunityItem, accountPkh })
-        : loadSingleSavingStakeActions.submit({ item: earnOpportunityItem, accountPkh })
+        ? loadSingleFarmStakeActions.submit({ farm: earnOpportunityItem, accountPkh: tezosAddress })
+        : loadSingleSavingStakeActions.submit({ item: earnOpportunityItem, accountPkh: tezosAddress })
     );
 
     if (!isFarm(earnOpportunityItem) && !startedLoadingTokensRef.current) {
       dispatch(loadSwapTokensAction.submit());
       startedLoadingTokensRef.current = true;
     }
-  }, [earnOpportunityItem, dispatch, accountPkh]);
+  }, [earnOpportunityItem, dispatch, tezosAddress]);
 
   const handleDepositClick = useCallback(() => {
     const nativeScrollRef = scrollViewRef.current?.getNativeScrollRef?.();

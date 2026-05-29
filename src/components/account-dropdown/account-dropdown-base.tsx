@@ -68,7 +68,7 @@ type Props = DropdownValueBaseProps<AddressBookItem> & TestIdProps;
 const isAccountItem = (account: AddressBookItem): account is Account => isAccount(account);
 
 const getAccountSectionTitle = (account: AddressBookItem) =>
-  isAccountItem(account) && account.type === AccountTypeEnum.IMPORTED_ACCOUNT ? 'Imported' : 'Created';
+  isAccountItem(account) && account.type === AccountTypeEnum.HD ? 'Created' : 'Imported';
 
 const getAccountSectionWeight = (account: AddressBookItem) => (getAccountSectionTitle(account) === 'Created' ? 0 : 1);
 

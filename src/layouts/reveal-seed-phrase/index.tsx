@@ -19,6 +19,8 @@ import { RevealSeedPhraseView } from 'src/modals/reveal-seed-phrase-modal/reveal
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 import {
   createNewWalletValidationSchemaFactory,
   CreateNewWalletFormValues,
@@ -43,7 +45,11 @@ export const RevealSeedPhrase: FC<Props> = ({
   headerTitleText = 'Manual backup'
 }) => {
   const styles = useCreateNewWalletStyles();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
 
   useNavigationSetOptions(
     {
@@ -70,7 +76,7 @@ export const RevealSeedPhrase: FC<Props> = ({
               description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
             />
             <RevealSeedPhraseView
-              publicKeyHash={accountPkh}
+              publicKeyHash={tezosAddress}
               testID={RevealSeedPhraseSelectors.tapToRevealProtectedMask}
             />
           </View>

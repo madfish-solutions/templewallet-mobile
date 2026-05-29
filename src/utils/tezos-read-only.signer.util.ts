@@ -4,11 +4,11 @@ import { Signer } from '@taquito/taquito';
 import { firstValueFrom } from 'rxjs';
 
 import { Shelter } from '../shelter/shelter';
-import { ReadOnlySignerPayload } from '../types/read-only-signer-payload';
+import { TezosReadOnlySignerPayload } from '../types/tezos-read-only-signer-payload';
 
 import { READ_ONLY_SIGNER_PUBLIC_KEY, READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from './env.utils';
 
-export class ReadOnlySigner implements Signer {
+export class TezosReadOnlySigner implements Signer {
   constructor(private pkh: string, private pk: string) {}
 
   async publicKeyHash() {
@@ -40,7 +40,7 @@ export class ReadOnlySigner implements Signer {
   }
 }
 
-export const readOnlySignerAccount: ReadOnlySignerPayload = {
+export const tezosReadOnlySignerAccount: TezosReadOnlySignerPayload = {
   publicKey: READ_ONLY_SIGNER_PUBLIC_KEY,
-  tezosAddress: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
+  address: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
 };

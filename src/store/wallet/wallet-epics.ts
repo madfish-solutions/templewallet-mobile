@@ -190,7 +190,7 @@ const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>
               sendErrorAnalyticsEvent(
                 'WaitForOperationCompletionEpicError',
                 err,
-                [sender.tezosAddress],
+                [sender.address],
                 { userId, ABTestingCategory },
                 { rpcUrl }
               );

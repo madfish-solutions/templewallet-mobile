@@ -19,7 +19,7 @@ import { setAccountVisibility } from 'src/store/wallet/wallet-actions';
 import { useIsAccountVisibleSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos, getAccountBaseDisplayAddress, getAccountId } from 'src/utils/account.utils';
+import { getAccountAddressForTezos, getAccountBaseDisplayAddress } from 'src/utils/account.utils';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { ManageAccountItemSelectors } from './manage-account-item.selectors';
@@ -40,7 +40,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const tezosToken = useTezosTokenOfKnownAccount(tezosAddress ?? '');
   const isVisible = useIsAccountVisibleSelector(tezosAddress ?? '') ?? true;
 
-  const isVisibilitySwitchDisabled = !tezosAddress || getAccountId(account) === getAccountId(selectedAccount);
+  const isVisibilitySwitchDisabled = !tezosAddress || account.id === selectedAccount.id;
   const visibilityWarning = tezosAddress
     ? {
         title: 'Could not hide your selected account',

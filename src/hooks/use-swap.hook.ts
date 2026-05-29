@@ -5,10 +5,17 @@ import { Route3SwapHops, Route3LiquidityBakingHops, Route3Token } from 'src/inte
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { getSwapTransferParams } from 'src/utils/swap.utils';
 
+import { DeadEndBoundaryError } from '../components/error-boundary';
+
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 
 export const useSwap = () => {
-  const publicKeyHash = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const tezos = useReadOnlyTezosToolkit();
 
   return useCallback(
@@ -28,8 +35,8 @@ export const useSwap = () => {
         slippageRatio,
         hops,
         tezos,
-        publicKeyHash
+        tezosAddress
       ),
-    [tezos, publicKeyHash]
+    [tezos, tezosAddress]
   );
 };

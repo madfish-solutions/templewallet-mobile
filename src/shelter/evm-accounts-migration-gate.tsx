@@ -14,11 +14,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 
 import { useAppLock } from './app-lock/app-lock';
-import {
-  getEvmAccountsMigrationErrorMessage,
-  runEvmAccountsMigration,
-  walletNeedsMigration
-} from './evm-accounts-migration';
+import { runEvmAccountsMigration, walletNeedsMigration } from './evm-accounts-migration';
 import { useEvmAccountsMigrationGateStyles } from './evm-accounts-migration-gate.styles';
 
 type MigrationStatus = 'idle' | 'checking' | 'migrating' | 'failed';
@@ -67,7 +63,7 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
       setStatus('idle');
     } catch (error) {
       console.error('[EVM account migration] Failed', error);
-      setErrorMessage(getEvmAccountsMigrationErrorMessage(error));
+      setErrorMessage(`Failed to populate accounts with EVM addresses: ${error}`);
       setStatus('failed');
     } finally {
       migrationInProgressRef.current = false;

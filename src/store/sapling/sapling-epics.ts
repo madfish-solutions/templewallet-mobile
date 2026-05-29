@@ -10,7 +10,8 @@ import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmat
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { Shelter } from 'src/shelter/shelter';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos, getSelectedAccountFromWallet } from 'src/utils/account.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
 import { withAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction, navigateBackAction } from '../root-state.actions';

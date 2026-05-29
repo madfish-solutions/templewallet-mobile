@@ -26,6 +26,8 @@ import { TEZ_TOKEN_SLUG, TEZ_TOKEN_METADATA, TEZ_SHIELDED_TOKEN_METADATA } from 
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 import { RebalanceDirection } from './rebalance-modal.form';
 import { RebalanceModalSelectors } from './rebalance-modal.selectors';
 import { useRebalanceModalStyles } from './rebalance-modal.styles';
@@ -50,7 +52,12 @@ export const RebalanceModal: FC = () => {
   const publicBalanceMutez = useCurrentAccountTezosBalance();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
   const saplingAddress = useSaplingAddressSelector();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const tezExchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
 
   usePageAnalytic(ModalsEnum.Rebalance);
@@ -127,12 +134,12 @@ export const RebalanceModal: FC = () => {
         prepareSaplingTransactionActions.submit({
           type: 'unshield',
           amount: amountMutez,
-          recipientAddress: accountPkh,
+          recipientAddress: tezosAddress,
           isRebalance: true
         })
       );
     }
-  }, [sourceAmount, isAmountValid, direction, dispatch, saplingAddress, accountPkh]);
+  }, [sourceAmount, isAmountValid, direction, dispatch, saplingAddress, tezosAddress]);
 
   return (
     <>

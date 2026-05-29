@@ -4,7 +4,8 @@ import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
 import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
-import { getAccountAddressForTezos, getSelectedAccountFromWallet } from 'src/utils/account.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
 import { isDefined } from 'src/utils/is-defined';
 
 import { WalletState } from './wallet-state';

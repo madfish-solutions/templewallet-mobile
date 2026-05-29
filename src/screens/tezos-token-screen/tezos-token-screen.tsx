@@ -42,6 +42,8 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 import { PrivateTezosTokenHistory } from './private-tezos-token-history/private-tezos-token-history';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
 import { useTezosTokenScreenStyles } from './tezos-token-screen.styles';
@@ -53,7 +55,12 @@ export const TezosTokenScreen = () => {
   const dispatch = useDispatch();
   const navigateToScreen = useNavigateToScreen();
   const navigateToModal = useNavigateToModal();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const tezosToken = useTezosTokenOfCurrentAccount();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
   const isSaplingCredentialsLoaded = useIsSaplingCredentialsLoadedSelector();
@@ -157,7 +164,7 @@ export const TezosTokenScreen = () => {
       <HeaderCard>
         <TokenEquityValue token={combinedToken} />
         <Divider size={formatSize(4)} />
-        <PublicKeyHashText publicKeyHash={accountPkh} marginTop={0} />
+        <PublicKeyHashText publicKeyHash={tezosAddress} marginTop={0} />
 
         <View style={styles.balanceSplitRow}>
           <View style={styles.balancePill}>

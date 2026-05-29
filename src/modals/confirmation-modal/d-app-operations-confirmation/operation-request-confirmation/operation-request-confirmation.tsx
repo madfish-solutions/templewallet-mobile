@@ -12,7 +12,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { getAccountAddressForTezos, getAccountForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { mapBeaconToTaquitoParams } from 'src/utils/beacon.utils';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
@@ -81,7 +81,9 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
       sender={sender}
       opParams={opParams}
       isLoading={isLoading}
-      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender, opParams: newOpParams, message })}
+      onSubmit={newOpParams =>
+        confirmRequest({ rpcUrl, sender: getAccountForTezos(sender)!, opParams: newOpParams, message })
+      }
       onEstimationError={handleEstimationError}
     >
       <AppMetadataView appMetadata={message.appMetadata} />

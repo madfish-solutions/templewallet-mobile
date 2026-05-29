@@ -64,7 +64,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
               conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
             ]}
           >
-            <TruncatedText style={styles.name}>{account.name}</TruncatedText>
+            <TruncatedText style={styles.name}>{account?.name}</TruncatedText>
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(22)} />}
           </View>
           <View style={styles.lowerContainer}>
@@ -95,7 +95,7 @@ export const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ acc
     tezosAddress ? sapling.accountsRecord[tezosAddress]?.saplingAddress : undefined
   );
   const displayAddress = getAccountBaseDisplayAddress(account);
-  const shouldRenderSaplingAddress = accountInterface?.type === AccountTypeEnum.HD_ACCOUNT && isDefined(saplingAddress);
+  const shouldRenderSaplingAddress = accountInterface?.type === AccountTypeEnum.HD && isDefined(saplingAddress);
 
   return (
     <>

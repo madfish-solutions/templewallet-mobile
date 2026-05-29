@@ -25,13 +25,20 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 export const TokenScreen = () => {
   const { token: initialToken } = useScreenParams<ScreensEnum.TokenScreen>();
 
   const navigateToScreen = useNavigateToScreen();
 
   const dispatch = useDispatch();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const tokensList = useCurrentAccountTokens();
   const tezosToken = useTezosTokenOfCurrentAccount();
 
@@ -49,7 +56,7 @@ export const TokenScreen = () => {
   useEffect(() => {
     dispatch(
       highPriorityLoadTokenBalanceAction({
-        publicKeyHash: accountPkh,
+        publicKeyHash: tezosAddress,
         slug: getTokenSlug(token)
       })
     );
@@ -77,7 +84,7 @@ export const TokenScreen = () => {
       <HeaderCard>
         <TokenEquityValue token={token} />
         <Divider size={formatSize(4)} />
-        <PublicKeyHashText publicKeyHash={accountPkh} marginBottom={formatSize(16)} />
+        <PublicKeyHashText publicKeyHash={tezosAddress} marginBottom={formatSize(16)} />
 
         <HeaderCardActionButtons token={token} />
       </HeaderCard>

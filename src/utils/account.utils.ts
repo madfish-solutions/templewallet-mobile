@@ -7,6 +7,7 @@ export interface AccountForChain<C extends TempleChainKind = TempleChainKind> {
   id: string;
   chain: C;
   address: string;
+  publicKey: string;
   type: AccountTypeEnum;
   name: string;
 }
@@ -25,9 +26,9 @@ export const getAccountAddressForTezos = (account: Account) =>
   getAccountAddressForChain(account, TempleChainKind.Tezos);
 
 export const getAccountAddressForEvm = (account: Account) =>
-  getAccountAddressForChain(account, TempleChainKind.EVM) as HexString | null;
+  getAccountAddressForChain(account, TempleChainKind.EVM) as HexString | undefined;
 
-export const getAccountAddressForChain = (account: Account, chain: TempleChainKind): string | null => {
+export const getAccountAddressForChain = (account: Account, chain: TempleChainKind): string | undefined => {
   switch (account.type) {
     case AccountTypeEnum.HD:
     case AccountTypeEnum.IMPORTED_MULTICHAIN:
@@ -35,6 +36,22 @@ export const getAccountAddressForChain = (account: Account, chain: TempleChainKi
     case AccountTypeEnum.IMPORTED_CHAIN:
     case AccountTypeEnum.WATCH_ONLY_DEBUG:
       return account.address;
+    default:
+      return undefined;
+  }
+};
+
+export const getAccountPublicKeyForTezos = (account: Account) =>
+  getAccountPublicKeyForChain(account, TempleChainKind.Tezos);
+
+export const getAccountPublicKeyForChain = (account: Account, chain: TempleChainKind): string | null => {
+  switch (account.type) {
+    case AccountTypeEnum.HD:
+    case AccountTypeEnum.IMPORTED_MULTICHAIN:
+      return account[`${chain}PublicKey`];
+    case AccountTypeEnum.IMPORTED_CHAIN:
+    case AccountTypeEnum.WATCH_ONLY_DEBUG:
+      return account.publicKey;
     default:
       return null;
   }
@@ -45,14 +62,15 @@ export const getAccountForChain = <C extends TempleChainKind>(
   chain: C
 ): AccountForChain<C> | null => {
   const address = getAccountAddressForChain(account, chain);
+  const publicKey = getAccountPublicKeyForChain(account, chain);
 
-  return address ? { id: account.id, chain, address, type: account.type, name: account.name } : null;
+  return address && publicKey
+    ? { id: account.id, chain, address, publicKey, type: account.type, name: account.name }
+    : null;
 };
 
 export const canUseAccountForChain = (account: Account, chain: TempleChainKind) =>
   getAccountAddressForChain(account, chain) !== undefined;
-
-export const getAccountId = (account: Account) => account.id;
 
 export const getContactAddress = (contact: Contact) => contact.address;
 

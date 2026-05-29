@@ -11,10 +11,8 @@ import {
 } from '@taquito/tzip16';
 import memoize from 'memoizee';
 
-import { Account } from 'src/interfaces/account.interfaces';
-import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
-import { getAccountAddressForTezos } from 'src/utils/account.utils';
-import { ReadOnlySigner } from 'src/utils/read-only.signer.util';
+import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
+import { TezosReadOnlySigner } from 'src/utils/tezos-read-only.signer.util';
 
 import { isDefined } from '../is-defined';
 
@@ -41,13 +39,13 @@ export const createTezosToolkit = (rpcUrl: string) => {
 };
 
 export const createReadOnlyTezosToolkit = memoize(
-  (rpcUrl: string, sender?: ReadOnlySignerPayload) => {
+  (rpcUrl: string, sender?: TezosReadOnlySignerPayload | null) => {
     const readOnlyTezosToolkit = createTezosToolkit(rpcUrl);
     if (isDefined(sender)) {
-      readOnlyTezosToolkit.setSignerProvider(new ReadOnlySigner(sender.publicKeyHash, sender.publicKey));
+      readOnlyTezosToolkit.setSignerProvider(new TezosReadOnlySigner(sender.address, sender.publicKey));
     }
 
     return readOnlyTezosToolkit;
   },
-  { normalizer: ([rpcUrl, sender]) => `${rpcUrl}_${sender?.publicKeyHash}`, max: 10 }
+  { normalizer: ([rpcUrl, sender]) => `${rpcUrl}_${sender?.address}`, max: 10 }
 );

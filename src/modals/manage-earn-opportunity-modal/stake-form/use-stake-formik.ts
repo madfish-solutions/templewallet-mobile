@@ -29,6 +29,7 @@ import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
+import { DeadEndBoundaryError } from '../../../components/error-boundary';
 import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 
 import { createStakeOperationParams } from './create-stake-operation-params';
@@ -48,7 +49,12 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const { data: threeRouteTokens } = useSwapTokensSelector();
   const tezos = useReadOnlyTezosToolkit();
   const slippageTolerancePercentage = useSlippageSelector();
@@ -117,7 +123,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
           amount,
           asset,
           tezos,
-          accountPkh,
+          tezosAddress,
           stake?.lastStakeId,
           threeRouteTokens,
           slippageTolerancePercentage
@@ -139,7 +145,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
         const internalError = error instanceof AnalyticsError ? error.error : error;
         const additionalProperties = error instanceof AnalyticsError ? error.additionalProperties : {};
-        trackErrorEvent('EarnOpportunityStakeError', internalError, [accountPkh], {
+        trackErrorEvent('EarnOpportunityStakeError', internalError, [tezosAddress], {
           stakeFormInput: {
             earnOpportunity,
             amount,
@@ -161,7 +167,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
       trackEvent,
       trackErrorEvent,
       tezos,
-      accountPkh,
+      tezosAddress,
       stake?.lastStakeId,
       threeRouteTokens,
       slippageTolerancePercentage

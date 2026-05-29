@@ -4,7 +4,7 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
 import { Account } from 'src/interfaces/account.interfaces';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
-import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
@@ -41,9 +41,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   builder.addCase(updateAccountAction, (state, { payload }) => {
     const updatedAccount = normalizeAccount(payload);
 
-    state.accounts = state.accounts.map(item =>
-      getAccountId(item) === getAccountId(updatedAccount) ? updatedAccount : item
-    );
+    state.accounts = state.accounts.map(item => (item.id === updatedAccount.id ? updatedAccount : item));
   });
 
   builder.addCase(completeEvmAccountsMigrationAction, (state, { payload: migratedAccounts }) => {

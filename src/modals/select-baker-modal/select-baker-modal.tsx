@@ -36,6 +36,8 @@ import { isString } from 'src/utils/is-string';
 import { EVERSTAKE_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS, TEMPLE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { isValidAddress } from 'src/utils/tezos.util';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { DISCLAIMER_MESSAGE, TEZ_LABEL, DCP_LABEL, TEZ_DESCRIPTION, DCP_DESCRIPTION } from './constants';
 import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
@@ -75,7 +77,11 @@ export const SelectBakerModal = memo(() => {
 
   const { trackEvent } = useAnalytics();
 
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
 
   const knownBakers = useBakersListSelector();
 
@@ -111,7 +117,7 @@ export const SelectBakerModal = memo(() => {
       } else {
         navigateToModal(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
-          opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: accountPkh }],
+          opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: tezosAddress }],
           ...(isTempleBakerSelected && { testID: 'TEMPLE_BAKER_DELEGATION' }),
           ...(isEverstakeBakerSelected && { testID: 'EVERSTAKE_BAKER_DELEGATION' }),
           ...(isHelpUkraineBakerSelected && { testID: 'HELP_UKRAINE_BAKER_DELEGATION' }),
@@ -168,14 +174,14 @@ export const SelectBakerModal = memo(() => {
 
   const ListEmptyComponent = useMemo(
     () =>
-      searchValue?.toLowerCase() !== accountPkh.toLowerCase() ? (
+      searchValue?.toLowerCase() !== tezosAddress.toLowerCase() ? (
         <BakerListItem
           item={unknownBaker}
           onPress={setSelectedBaker}
           selected={searchValue === selectedBaker?.address}
         />
       ) : undefined,
-    [unknownBakerName, searchValue, accountPkh, selectedBaker?.address]
+    [unknownBakerName, searchValue, tezosAddress, selectedBaker?.address]
   );
 
   const renderItem: ListRenderItem<BakerInterface> = useCallback(
@@ -208,7 +214,7 @@ export const SelectBakerModal = memo(() => {
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
           {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
-          {searchValue === accountPkh && <Text style={styles.errorText}>You can not delegate to yourself</Text>}
+          {searchValue === tezosAddress && <Text style={styles.errorText}>You can not delegate to yourself</Text>}
         </View>
         {isTezosNode && (
           <View style={styles.upperContainer}>
@@ -237,7 +243,7 @@ export const SelectBakerModal = memo(() => {
         />
       )}
 
-      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue?.toLowerCase() !== accountPkh.toLowerCase() && (
+      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue?.toLowerCase() !== tezosAddress.toLowerCase() && (
         <View style={styles.dcpBaker}>
           <Divider size={formatSize(16)} />
           <BakerListItem

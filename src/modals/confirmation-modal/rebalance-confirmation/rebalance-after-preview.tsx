@@ -17,6 +17,7 @@ import { getDollarValue } from 'src/utils/balance.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosToken } from 'src/utils/wallet.utils';
 
+import { DeadEndBoundaryError } from '../../../components/error-boundary';
 import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
 
 interface Props {
@@ -27,7 +28,12 @@ interface Props {
 export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
   const styles = useOperationsPreviewItemStyles();
   const colors = useColors();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const saplingAddress = useSaplingAddressSelector();
   const amountToken = useTezosToken(amount);
   const exchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
@@ -54,7 +60,7 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
       <View style={styles.container}>
         <View style={styles.contentWrapper}>
           <View style={styles.infoContainer}>
-            <RobotIcon seed={accountPkh} size={formatSize(40)} />
+            <RobotIcon seed={tezosAddress} size={formatSize(40)} />
             <Divider size={formatSize(10)} />
             <View>
               <TruncatedText style={styles.description}>{minusLabel}</TruncatedText>
@@ -84,7 +90,7 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
       <View style={styles.container}>
         <View style={styles.contentWrapper}>
           <View style={styles.infoContainer}>
-            <RobotIcon seed={accountPkh} size={formatSize(40)} />
+            <RobotIcon seed={tezosAddress} size={formatSize(40)} />
             <Divider size={formatSize(10)} />
             <View>
               <TruncatedText style={styles.description}>{plusLabel}</TruncatedText>

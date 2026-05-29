@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -7,6 +6,7 @@ import { APR_REFRESH_INTERVAL } from 'src/config/fixed-times';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
 import { useUserSavingsStats } from 'src/hooks/use-user-savings-stats';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
+import { dispatch } from 'src/store';
 import { loadAllFarmsAndStakesAction } from 'src/store/farms/actions';
 import { loadAllSavingsAndStakesAction } from 'src/store/savings/actions';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
@@ -14,11 +14,12 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useInterval } from 'src/utils/hooks/use-interval';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 import { OpportunityCategoryCard } from './opportunity-category-card';
 import { EarnPageSelectors } from './selectors';
 
 export const Earn: FC = () => {
-  const dispatch = useDispatch();
   const {
     netApr: farmsNetApr,
     totalStakedAmountInFiat: farmsTotalStakedAmountInFiat,
@@ -29,17 +30,21 @@ export const Earn: FC = () => {
     totalStakedAmountInFiat: savingsTotalStakedAmountInFiat,
     maxApr: savingsMaxApr
   } = useUserSavingsStats();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
 
   usePageAnalytic(ScreensEnum.Earn);
 
   useInterval(
     () => {
-      dispatch(loadAllFarmsAndStakesAction(accountPkh));
-      dispatch(loadAllSavingsAndStakesAction(accountPkh));
+      dispatch(loadAllFarmsAndStakesAction(tezosAddress));
+      dispatch(loadAllSavingsAndStakesAction(tezosAddress));
     },
     APR_REFRESH_INTERVAL,
-    [accountPkh, dispatch]
+    [tezosAddress]
   );
 
   return (

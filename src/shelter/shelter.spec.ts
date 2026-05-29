@@ -117,7 +117,7 @@ describe('Shelter', () => {
         .subscribe(
           rxJsTestingHelper(([accounts, isLocked]) => {
             expect(accounts?.[0].name).toEqual('Account 1');
-            expect(accounts?.[0].type).toEqual(AccountTypeEnum.HD_ACCOUNT);
+            expect(accounts?.[0].type).toEqual(AccountTypeEnum.HD);
             expect(accounts?.[0]).toMatchObject({
               id: mockAccountCredentials.publicKeyHash,
               hdIndex: 0,
@@ -190,7 +190,7 @@ describe('Shelter', () => {
           rxJsTestingHelper(account => {
             expect(account).toMatchObject({
               name: mockName,
-              type: AccountTypeEnum.HD_ACCOUNT,
+              type: AccountTypeEnum.HD,
               tezosAddress: mockHDAccountCredentials.publicKeyHash,
               evmAddress: mockEvmCredentialsIndex77.address
             });
@@ -224,9 +224,10 @@ describe('Shelter', () => {
                 {
                   id: mockEvmCredentialsIndex77.address,
                   name: 'Imported EVM',
-                  type: AccountTypeEnum.IMPORTED_ACCOUNT,
+                  type: AccountTypeEnum.IMPORTED_CHAIN,
                   chain: TempleChainKind.EVM,
-                  address: mockEvmCredentialsIndex77.address
+                  address: mockEvmCredentialsIndex77.address,
+                  publicKey: mockEvmCredentialsIndex77.publicKey
                 }
               ]
             })
@@ -255,9 +256,10 @@ describe('Shelter', () => {
                 {
                   id: mockEvmCredentialsIndex77.address,
                   name: 'Imported EVM',
-                  type: AccountTypeEnum.IMPORTED_ACCOUNT,
+                  type: AccountTypeEnum.IMPORTED_CHAIN,
                   chain: TempleChainKind.EVM,
-                  address: mockEvmCredentialsIndex77.address
+                  address: mockEvmCredentialsIndex77.address,
+                  publicKey: mockEvmCredentialsIndex77.publicKey
                 }
               ],
               explicitAccountIndex: true
@@ -281,8 +283,9 @@ describe('Shelter', () => {
           rxJsTestingHelper(account => {
             expect(account).toMatchObject({
               name: mockName,
-              type: AccountTypeEnum.IMPORTED_ACCOUNT,
-              address: mockHDAccountCredentials.publicKeyHash
+              type: AccountTypeEnum.IMPORTED_CHAIN,
+              address: mockHDAccountCredentials.publicKeyHash,
+              publicKey: mockHDAccountCredentials.publicKey
             });
 
             expect(mockCryptoUtil.encryptString$).toHaveBeenCalledWith(
@@ -317,9 +320,10 @@ describe('Shelter', () => {
             expect(account).toEqual({
               id: mockEvmCredentials.address,
               name: mockName,
-              type: AccountTypeEnum.IMPORTED_ACCOUNT,
+              type: AccountTypeEnum.IMPORTED_CHAIN,
               chain: TempleChainKind.EVM,
-              address: mockEvmCredentials.address
+              address: mockEvmCredentials.address,
+              publicKey: mockEvmCredentials.publicKey
             });
 
             expect(mockKeychain.setGenericPassword).toHaveBeenCalledWith(
@@ -357,20 +361,6 @@ describe('Shelter', () => {
         );
     });
 
-    it('should reveal HD wallet mnemonic', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.revealWalletMnemonic$('default-hd-wallet')))
-        .subscribe(
-          rxJsTestingHelper(decryptResult => {
-            expect(decryptResult).toEqual(mockCorrectDecryptResult);
-
-            expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
-              getKeychainOptions('wallet_mnemonic_default-hd-wallet', 0)
-            );
-          }, done)
-        );
-    });
-
     it('should reveal account private key', done => {
       Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(switchMap(() => Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash)))
@@ -404,20 +394,6 @@ describe('Shelter', () => {
           );
         }, done)
       );
-    });
-
-    it('should reveal account public key', done => {
-      Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.revealAccountPublicKey$(mockAccountCredentials.publicKeyHash)))
-        .subscribe(
-          rxJsTestingHelper(decryptResult => {
-            expect(decryptResult).toEqual(mockCorrectDecryptResult);
-
-            expect(mockKeychain.getGenericPassword).toHaveBeenCalledWith(
-              getKeychainOptions(`account_public_key_${mockAccountCredentials.publicKeyHash}`, 0)
-            );
-          }, done)
-        );
     });
 
     it('should return signer with private key', done => {

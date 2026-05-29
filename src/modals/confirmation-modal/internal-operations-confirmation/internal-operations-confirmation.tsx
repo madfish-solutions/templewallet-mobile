@@ -18,7 +18,7 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
-import { useRawCurrentAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountForTezos } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -27,9 +27,9 @@ import { isDefined } from 'src/utils/is-defined';
 import { isTooLowTezBalanceError } from 'src/utils/is-too-low-tez-balance-error';
 import { isTruthy } from 'src/utils/is-truthy';
 import { EVERSTAKE_BAKER_ADDRESS } from 'src/utils/known-bakers';
-import { getReadOnlySignerPayload$ } from 'src/utils/read-only-signer-payload.utils';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
+import { DeadEndBoundaryError } from '../../../components/error-boundary';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
 
@@ -43,22 +43,18 @@ const approveInternalOperationRequest = ({
   sender,
   opParams
 }: ApproveInternalOperationRequestActionPayloadInterface) =>
-  getReadOnlySignerPayload$(sender).pipe(
-    switchMap(senderPayload =>
-      sendTransaction$(rpcUrl, senderPayload.tezosAddress, opParams).pipe(
-        switchMap(({ hash }) =>
-          opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === EVERSTAKE_BAKER_ADDRESS
-            ? of(
-                everstakeApi.post('/delegations', {
-                  link_id: TEMPLE_WALLET_EVERSTAKE_LINK_ID,
-                  delegations: [hash]
-                })
-              ).pipe(map(() => ({ hash, senderPayload })))
-            : of({ hash, senderPayload })
-        )
-      )
+  sendTransaction$(rpcUrl, sender.address, opParams).pipe(
+    switchMap(({ hash }) =>
+      opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === EVERSTAKE_BAKER_ADDRESS
+        ? of(
+            everstakeApi.post('/delegations', {
+              link_id: TEMPLE_WALLET_EVERSTAKE_LINK_ID,
+              delegations: [hash]
+            })
+          ).pipe(map(() => hash))
+        : of(hash)
     ),
-    switchMap(({ hash, senderPayload }) => {
+    switchMap(hash => {
       showSuccessToast({
         operationHash: hash,
         description: 'Transaction request sent! Confirming...',
@@ -67,7 +63,7 @@ const approveInternalOperationRequest = ({
 
       return [
         navigateAction({ screen: StacksEnum.MainStack }),
-        waitForOperationCompletionAction({ opHash: hash, sender: senderPayload })
+        waitForOperationCompletionAction({ opHash: hash, sender })
       ];
     })
   );
@@ -82,7 +78,12 @@ export const InternalOperationsConfirmation: FC<Props> = ({
 }) => {
   const canUseOnRamp = useCanUseOnRamp();
   const dispatch = useDispatch();
-  const selectedAccount = useRawCurrentAccountSelector();
+  const tezosAccount = useAccountForTezos();
+
+  if (!tezosAccount) {
+    throw new DeadEndBoundaryError();
+  }
+
   const rpcUrl = useSelectedRpcUrlSelector();
   const lastSetOverlayStateRef = useRef<OnRampOverlayState | null>(null);
   const { trackErrorEvent } = useAnalytics();
@@ -129,23 +130,23 @@ export const InternalOperationsConfirmation: FC<Props> = ({
         trackErrorEvent(
           'InternalOperationsConfirmationEstimationError',
           error,
-          opParams.map(op => ('source' in op ? op.source : getAccountAddressForTezos(selectedAccount) ?? null)).filter(isDefined),
+          opParams.map(op => ('source' in op ? op.source : tezosAccount.address ?? null)).filter(isDefined),
           { opParams, testID }
         );
       }
     },
-    [canUseOnRamp, opParams, selectedAccount, testID, trackErrorEvent, updateOverlayState]
+    [canUseOnRamp, opParams, tezosAccount, testID, trackErrorEvent, updateOverlayState]
   );
 
   return (
     <>
-      {isDefined(selectedAccount) && (
+      {isDefined(tezosAccount) && (
         <OperationsConfirmation
-          sender={selectedAccount}
+          sender={tezosAccount}
           opParams={opParams}
           isLoading={isLoading}
           onEstimationError={handleEstimationError}
-          onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: selectedAccount, opParams: newOpParams })}
+          onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: tezosAccount, opParams: newOpParams })}
           testID={testID}
           disclaimer={disclaimer}
           renderPreview={renderPreview}

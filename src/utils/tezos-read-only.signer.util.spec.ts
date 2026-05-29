@@ -1,9 +1,12 @@
 import { mockAccountCredentials } from '../mocks/account-credentials.mock';
 
-import { ReadOnlySigner } from './read-only.signer.util';
+import { TezosReadOnlySigner } from './tezos-read-only.signer.util';
 
 describe('ReadOnlySigner', () => {
-  const readOnlySigner = new ReadOnlySigner(mockAccountCredentials.publicKeyHash, mockAccountCredentials.publicKey);
+  const readOnlySigner = new TezosReadOnlySigner(
+    mockAccountCredentials.publicKeyHash,
+    mockAccountCredentials.publicKey
+  );
 
   it('should return public key', async () => {
     await expect(readOnlySigner.publicKey()).resolves.toEqual(mockAccountCredentials.publicKey);

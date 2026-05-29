@@ -12,6 +12,8 @@ import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { isDefined } from 'src/utils/is-defined';
 
+import { DeadEndBoundaryError } from '../../components/error-boundary';
+
 import { CollectibleItem } from './components/collectible-item';
 import { useCollectionStyles, useCollectionClosingComponentStyles } from './styles';
 import { useCollectionItemsLoading } from './use-items-loading';
@@ -26,12 +28,17 @@ const keyExtractor = (item: CollectionItemInterface) => `${item.address}_${item.
 
 export const Collection = memo(() => {
   const styles = useCollectionStyles();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const { collectionContract, galleryPk } = useScreenParams<ScreensEnum.Collection>();
 
   const { collectibles, isLoading, collectionSize, loadMore } = useCollectionItemsLoading(
     collectionContract,
-    accountPkh,
+    tezosAddress,
     galleryPk
   );
 
@@ -47,8 +54,8 @@ export const Collection = memo(() => {
   const snapToInterval = useMemo(() => formatSize(ITEM_WIDTH) + formatSize(GAP_SIZE), []);
 
   const renderItem: ListRenderItem<CollectionItemInterface> = useCallback(
-    ({ item }) => <CollectibleItem item={item} collectionContract={collectionContract} accountPkh={accountPkh} />,
-    [accountPkh]
+    ({ item }) => <CollectibleItem item={item} collectionContract={collectionContract} accountPkh={tezosAddress} />,
+    [tezosAddress]
   );
 
   const onEndReached = useCallback(() => {

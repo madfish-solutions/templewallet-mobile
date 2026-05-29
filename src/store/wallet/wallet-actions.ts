@@ -3,7 +3,7 @@ import { createAction } from '@reduxjs/toolkit';
 import { Account } from 'src/interfaces/account.interfaces';
 import { SendAssetActionPayloadInterface } from 'src/interfaces/send-asset-action-payload.interface';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
-import { ReadOnlySignerPayload } from 'src/types/read-only-signer-payload';
+import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
 
 import { createActions } from '../create-actions';
 
@@ -39,5 +39,5 @@ export const sendAssetActions = createActions<SendAssetActionPayloadInterface, s
 
 export const waitForOperationCompletionAction = createAction<{
   opHash: string;
-  sender: ReadOnlySignerPayload;
+  sender: TezosReadOnlySignerPayload;
 }>('d-apps/WAIT_FOR_OPERATION_COMPLETION');

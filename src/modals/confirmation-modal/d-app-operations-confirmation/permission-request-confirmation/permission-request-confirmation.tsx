@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
@@ -23,8 +23,7 @@ import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos, getAccountId } from 'src/utils/account.utils';
-import { getReadOnlySignerPayload$ } from 'src/utils/read-only-signer-payload.utils';
+import { getAccountAddressForTezos, getAccountPublicKeyForTezos } from 'src/utils/account.utils';
 
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
@@ -37,20 +36,17 @@ interface Props {
   message: PermissionRequestOutput;
 }
 
-const approvePermissionRequest = ({ message, approver }: ApprovePermissionRequestActionPayloadInterface) =>
-  getReadOnlySignerPayload$(approver).pipe(
-    switchMap(({ publicKey }) =>
-      from(
-        BeaconHandler.respond({
-          type: BeaconMessageType.PermissionResponse,
-          network: message.network,
-          scopes: message.scopes,
-          id: message.id,
-          publicKey,
-          walletType: 'implicit'
-        })
-      )
-    ),
+const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionRequestActionPayloadInterface) =>
+  from(
+    BeaconHandler.respond({
+      type: BeaconMessageType.PermissionResponse,
+      network: message.network,
+      scopes: message.scopes,
+      id: message.id,
+      publicKey,
+      walletType: 'implicit'
+    })
+  ).pipe(
     map(() => {
       showSuccessToast({ description: 'Successfully approved!' });
 
@@ -73,12 +69,19 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   );
 
   const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) => {
-    if (getAccountId(approver) !== getAccountId(selectedAccount)) {
-      dispatch(setSelectedAccountIdAction(getAccountId(approver)));
+    if (approver.id !== selectedAccount.id) {
+      dispatch(setSelectedAccountIdAction(approver.id));
     }
+
+    const publicKey = getAccountPublicKeyForTezos(approver);
+
+    if (!publicKey) {
+      return;
+    }
+
     confirmRequest({
       message,
-      approver
+      publicKey
     });
   };
 

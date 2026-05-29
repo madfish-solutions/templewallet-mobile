@@ -13,11 +13,11 @@ import {
   getAccountAddressForTezos,
   getAccountForChain
 } from 'src/utils/account.utils';
+import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
 import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible } from 'src/utils/tezos.util';
 import { getAccountState } from 'src/utils/wallet-account-state.utils';
-import { getSelectedAccountFromWallet } from 'src/utils/wallet.utils.ts';
 
 import { useSelector } from '../selector';
 import { useTokensMetadataSelector } from '../tokens-metadata/tokens-metadata-selectors';
@@ -32,16 +32,23 @@ export const useAllVisibleAccounts = () =>
     jsonEqualityFn
   );
 
-export const useHdAccountListSelector = () => {
+export const useHDAccounts = () => {
   const accounts = useAllAccounts();
 
-  return useMemo(() => accounts.filter(account => account.type === AccountTypeEnum.HD_ACCOUNT), [accounts]);
+  return useMemo(() => accounts.filter(account => account.type === AccountTypeEnum.HD), [accounts]);
 };
 
-export const useImportedAccountListSelector = () => {
+export const useImportedAccounts = () => {
   const accounts = useAllAccounts();
 
-  return useMemo(() => accounts.filter(account => account.type === AccountTypeEnum.IMPORTED_ACCOUNT), [accounts]);
+  return useMemo(
+    () =>
+      accounts.filter(
+        account =>
+          account.type === AccountTypeEnum.IMPORTED_CHAIN || account.type === AccountTypeEnum.IMPORTED_MULTICHAIN
+      ),
+    [accounts]
+  );
 };
 
 export const useIsAuthorisedSelector = () => {

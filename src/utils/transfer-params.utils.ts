@@ -9,7 +9,7 @@ import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
 import { getTokenType } from '../token/utils/token.utils';
 
-import { getAccountAddressForTezos } from './account.utils';
+import { getAccountAddressForTezos, getAccountForTezos } from './account.utils';
 import { isString } from './is-string';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 import { throwError$ } from './rxjs.utils';
@@ -37,7 +37,9 @@ export function getTransferParams$(
 ): Observable<TransferParams> {
   const { id, address } = asset;
   const tezos =
-    typeof rpcUrlOrTezos === 'string' ? createReadOnlyTezosToolkit(rpcUrlOrTezos, sender as Account) : rpcUrlOrTezos;
+    typeof rpcUrlOrTezos === 'string'
+      ? createReadOnlyTezosToolkit(rpcUrlOrTezos, getAccountForTezos(sender as Account))
+      : rpcUrlOrTezos;
   const senderPkh = typeof sender === 'string' ? sender : getAccountAddressForTezos(sender);
 
   if (!senderPkh) {
