@@ -4,11 +4,7 @@ exec('yarn npm audit --recursive --severity high', (error, stdout) => {
   if (error) {
     console.log(stdout);
 
-    if (
-      (stdout.includes('Axios is vulnerable to DoS attack through lack of data size') ||
-        stdout.includes('minimatch')) &&
-      !stdout.includes('critical')
-    ) {
+    if (stdout.includes('minimatch') && !stdout.includes('critical')) {
       return;
     }
 
