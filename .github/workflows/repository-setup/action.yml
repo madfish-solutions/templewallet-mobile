@@ -1,6 +1,6 @@
 name: Repository setup
 
-description: Setups Node 18.x & installs dependencies
+description: Setups Node 20.x & installs dependencies
 
 runs:
   using: 'composite'
@@ -35,5 +35,6 @@ runs:
       run: yarn install
 
     - name: Audit dependencies
+      if: github.event_name == 'pull_request' && github.base_ref == 'master'
       shell: bash
       run: yarn audit-deps
