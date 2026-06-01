@@ -1,6 +1,6 @@
 import { exec } from 'child_process';
 
-exec('yarn audit --level high', (error, stdout) => {
+exec('yarn npm audit  --severity high', (error, stdout) => {
   if (error) {
     console.log(stdout);
 
