@@ -3199,7 +3199,7 @@ PODS:
     - Yoga
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.30.0):
+  - RNGestureHandler (2.31.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -3348,7 +3348,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNReanimated (4.3.1):
+  - RNReanimated (4.4.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3375,12 +3375,12 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/apple (= 4.3.1)
-    - RNReanimated/common (= 4.3.1)
+    - RNReanimated/apple (= 4.4.0)
+    - RNReanimated/common (= 4.4.0)
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNReanimated/apple (4.3.1):
+  - RNReanimated/apple (4.4.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3410,7 +3410,7 @@ PODS:
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNReanimated/common (4.3.1):
+  - RNReanimated/common (4.4.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3590,7 +3590,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets (0.8.3):
+  - RNWorklets (0.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3617,11 +3617,11 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/apple (= 0.8.3)
-    - RNWorklets/common (= 0.8.3)
+    - RNWorklets/apple (= 0.9.1)
+    - RNWorklets/common (= 0.9.1)
     - SocketRocket
     - Yoga
-  - RNWorklets/apple (0.8.3):
+  - RNWorklets/apple (0.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3650,7 +3650,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets/common (0.8.3):
+  - RNWorklets/common (0.9.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -4223,20 +4223,20 @@ SPEC CHECKSUMS:
   RNFBAppCheck: 5a1a36ca7f428d174930bd6ecfdfcd8579cc0296
   RNFBMessaging: 296600da7f02e92bb6631c11ef5e19bc1b89a54d
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
-  RNGestureHandler: 420e50a05cdec7de12a3c8ce2bde368130cfa9cc
+  RNGestureHandler: 35e1f5f04f5b224777890a3e93c6208072c2057b
   RNGoogleSignin: c1de96d92d6dd4335fa8e0f0ed4312a9d34e4ecb
   RNKeychain: 76d042fc1dfba47f3945920bc82e0bce9ad1ff55
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNPermissions: 0dbae39cf157f6c699f1454bbdcc25a0977eca83
   RNQuickAction: c2c8f379e614428be0babe4d53a575739667744d
   RNReactNativeHapticFeedback: 5f1542065f0b24c9252bd8cf3e83bc9c548182e4
-  RNReanimated: 920c33f677549b725b3e4a571fa8eeda790703d0
+  RNReanimated: 4405484a956444df1df51a49493ca2824a281226
   RNScreens: d6413aeb1878cdafd3c721e2c5218faf5d5d3b13
   RNScrypt: 3e8612600c93aaa3bfa7849b6d1a4ab61613e2af
   RNSentry: 0cb5c73bdb064318193d5b658774bd34f83107cf
   RNSha256: 4d35f112e967f58273d625a19376f4eafc72bd5c
   RNSVG: 0b9792eb17fbbc8e6d186581cb2cf712998dcc2a
-  RNWorklets: 8598e72b87947ae2f8428a541440851eb50579c3
+  RNWorklets: dd22aad568254990d6f3dc4655d54364c5a3eb3a
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
@@ -4246,6 +4246,6 @@ SPEC CHECKSUMS:
   VisionCamera: b51af005669c6642dd1b4fca434eda4c1778de87
   Yoga: 9d8e8094a2bed6a175d9e6001a0546d5dae663ee
 
-PODFILE CHECKSUM: 37909e0c8f2a781d24747230d0c5d3554596f0ed
+PODFILE CHECKSUM: a1b45771ff02f9813c28a409db7c90feec8bef1d
 
 COCOAPODS: 1.16.2
