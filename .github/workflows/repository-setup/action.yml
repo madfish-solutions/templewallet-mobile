@@ -1,6 +1,6 @@
 name: Repository setup
 
-description: Setups Node 18.x & installs dependencies
+description: Setups Node 20.x & installs dependencies
 
 runs:
   using: 'composite'
@@ -10,15 +10,19 @@ runs:
       with:
         node-version: '20.x'
 
+    - name: Enable Corepack
+      shell: bash
+      run: corepack enable
+
     - name: Get branch name
       uses: EthanSK/git-branch-name-action@v1
 
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       shell: bash
-      run: echo "::set-output name=dir::$(yarn cache dir)"
+      run: echo "dir=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -31,5 +35,6 @@ runs:
       run: yarn install
 
     - name: Audit dependencies
+      if: github.event_name == 'pull_request' && github.base_ref == 'master'
       shell: bash
       run: yarn audit-deps
