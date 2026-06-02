@@ -2,6 +2,7 @@
   "name": "temple-wallet",
   "version": "2.00",
   "private": true,
+  "packageManager": "yarn@4.15.0",
   "scripts": {
     "postinstall": "bash postinstall.sh",
     "android": "react-native run-android",
@@ -180,7 +181,7 @@
     "fast-xml-parser": "5.5.6",
     "underscore": "^1.13.8",
     "@noble/curves": "1.9.7",
-    "eslint-plugin-jsx-expressions/@typescript-eslint/utils/@typescript-eslint/typescript-estree/minimatch": "^9.0.7"
+    "@typescript-eslint/typescript-estree/minimatch": "^9.0.7"
   },
   "engines": {
     "node": ">= 22.11.0"
