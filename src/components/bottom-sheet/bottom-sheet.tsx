@@ -5,13 +5,14 @@ import GorhomBottomSheet, {
   TouchableOpacity
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
-import React, { PropsWithChildren, useCallback, useEffect, useRef, useState } from 'react';
-import { BackHandler, Keyboard, Text, View } from 'react-native';
+import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import { BackHandler, Keyboard, Text, useWindowDimensions, View } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
+import { useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
-import { emptyComponent, emptyFn } from 'src/config/general';
+import { emptyFn } from 'src/config/general';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
@@ -50,22 +51,29 @@ export const BottomSheet: FCWithChildren<Props> = ({
   const insets = useSafeAreaInsets();
   const [isOpened, setIsOpened] = useState(false);
 
-  const wasAnimatedRef = useRef(false);
-  const handleAnimate = useCallback(() => {
-    wasAnimatedRef.current = true;
-  }, []);
+  const { height } = useWindowDimensions();
+  const bottomInset = insets.bottom + formatSize(8);
+  const containerLayoutState = useSharedValue({
+    height: height - bottomInset,
+    offset: {
+      top: 0,
+      right: 0,
+      bottom: bottomInset,
+      left: 0
+    }
+  });
 
   const renderBackdropComponent = useCallback(
     (props: PropsWithChildren<BottomSheetBackdropProps>) => (
       <BottomSheetBackdrop
         {...props}
         style={[props.style, styles.backdrop]}
-        opacity={wasAnimatedRef.current || isInitiallyOpen ? 0.16 : 0}
+        opacity={0.16}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
       />
     ),
-    [styles.backdrop, isInitiallyOpen]
+    [styles.backdrop]
   );
 
   const handleChange = (index: number) => {
@@ -102,15 +110,16 @@ export const BottomSheet: FCWithChildren<Props> = ({
       {!isLocked && (
         <GorhomBottomSheet
           containerStyle={styles.bottomSheetContainer}
+          containerLayoutState={containerLayoutState}
           ref={controller.ref}
           index={isInitiallyOpen ? 0 : -1}
           snapPoints={[contentHeight]}
+          enableDynamicSizing={false}
           enablePanDownToClose={true}
-          bottomInset={insets.bottom + formatSize(8)}
-          handleComponent={emptyComponent}
-          backgroundComponent={emptyComponent}
+          bottomInset={bottomInset}
+          handleComponent={null}
+          backgroundComponent={null}
           backdropComponent={renderBackdropComponent}
-          onAnimate={handleAnimate}
           onChange={handleChange}
           onClose={handleClose}
         >

@@ -24,3 +24,12 @@ if [ -f "$rnexitapp_h" ]; then
   sed -i ${sed_mac_arg:+""} 's|#import <RNExitAppSpec/RNExitAppSpec.h>|#import "RNExitAppSpec/RNExitAppSpec.h"|' "$rnexitapp_h"
   sed -i ${sed_mac_arg:+""} 's|#import <React_Codegen/RNExitAppSpec/RNExitAppSpec.h>|#import "RNExitAppSpec/RNExitAppSpec.h"|' "$rnexitapp_h"
 fi
+
+# Fix react-native-orientation-locker iOS reload redbox on RN 0.85.
+# The native module manually mutates RCTEventEmitter listener accounting during
+# init/dealloc, which can remove listeners after React Native already reset them.
+orientation_locker_m="node_modules/react-native-orientation-locker/iOS/RCTOrientation/Orientation.m"
+if [ -f "$orientation_locker_m" ]; then
+  sed -i ${sed_mac_arg:+""} '/\[self addListener:@"orientationDidChange"\];/d' "$orientation_locker_m"
+  sed -i ${sed_mac_arg:+""} '/\[self removeListeners:1\];/d' "$orientation_locker_m"
+fi

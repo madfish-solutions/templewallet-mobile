@@ -1,6 +1,7 @@
 # Build React Native third-party dependencies from source,
 # so native pods can depend on RCT-Folly directly.
 ENV['RCT_USE_RN_DEP'] = '0'
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
 
 # Resolve react_native_pods.rb with node to allow for hoisting
 def node_require(script)
