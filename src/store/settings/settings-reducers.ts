@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { DCP_RPC } from 'src/utils/rpc/rpc-list';
+import { DCP_RPC, OLD_OTHER_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 
@@ -32,7 +32,8 @@ import {
   setIsInAppBrowserEnabledAction,
   resetPermanentInitialSettingsAction,
   setKoloCardAnimationShownAction,
-  setKoloForceLogoutOnNextOpenAction
+  setKoloForceLogoutOnNextOpenAction,
+  ensureOldRpcUrlsRemovedAction
 } from './settings-actions';
 import { SettingsState, settingsInitialState } from './settings-state';
 import { alterCustomRPC } from './utils';
@@ -165,4 +166,11 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     ...state,
     koloForceLogoutOnNextOpen: payload
   }));
+
+  builder.addCase(ensureOldRpcUrlsRemovedAction, state => {
+    state.rpcList = state.rpcList.filter(rpc => !OLD_OTHER_RPC_URLS.includes(rpc.url));
+    if (OLD_OTHER_RPC_URLS.includes(state.selectedRpcUrl)) {
+      state.selectedRpcUrl = TEMPLE_RPC.url;
+    }
+  });
 });
