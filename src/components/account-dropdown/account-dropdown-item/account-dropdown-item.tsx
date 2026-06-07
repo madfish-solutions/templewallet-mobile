@@ -8,6 +8,7 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { TruncatedText } from 'src/components/truncated-text';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { Account } from 'src/interfaces/account.interfaces.ts';
@@ -23,12 +24,10 @@ import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
-import { getSeedFromAccount } from '../../robot-icon/robot-icon.utils.ts';
-
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import {
-  useAccountDropdownItemStyles,
-  useAccountDropdownItemCollectiblesInfoStyles
+  useAccountDropdownItemCollectiblesInfoStyles,
+  useAccountDropdownItemStyles
 } from './account-dropdown-item.styles';
 
 const COLLECTIBLES_ROBOT_ICON_SIZE = 76;

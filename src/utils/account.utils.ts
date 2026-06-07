@@ -29,7 +29,7 @@ export const getAccountAddressForChain = (account: Account, chain: TempleChainKi
       return account[`${chain}Address`];
     case AccountTypeEnum.IMPORTED_CHAIN:
     case AccountTypeEnum.WATCH_ONLY_DEBUG:
-      return account.address;
+      return account.chain === chain ? account.address : undefined;
     default:
       return undefined;
   }
