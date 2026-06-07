@@ -1,12 +1,12 @@
 import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import React, { FC, useCallback, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import { of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { everstakeApi } from 'src/api.service';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -14,12 +14,14 @@ import { ApproveInternalOperationRequestActionPayloadInterface } from 'src/hooks
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
 import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { StacksEnum } from 'src/navigator/enums/stacks.enum';
+import { dispatch } from 'src/store';
 import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
-import { useAccountForTezos } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { getAccountForTezos } from 'src/utils/account.utils.ts';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -28,7 +30,6 @@ import { isTruthy } from 'src/utils/is-truthy';
 import { EVERSTAKE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
-import { DeadEndBoundaryError } from '../../../components/error-boundary';
 import { InternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { OperationsConfirmation } from '../operations-confirmation/operations-confirmation';
 
@@ -76,10 +77,10 @@ export const InternalOperationsConfirmation: FC<Props> = ({
   onEstimationComplete
 }) => {
   const canUseOnRamp = useCanUseOnRamp();
-  const dispatch = useDispatch();
-  const tezosAccount = useAccountForTezos();
+  const account = useAccount();
+  const tezosAccount = getAccountForTezos(account);
 
-  if (!tezosAccount) {
+  if (!account || !tezosAccount) {
     throw new DeadEndBoundaryError();
   }
 
@@ -109,15 +110,12 @@ export const InternalOperationsConfirmation: FC<Props> = ({
     <Disclaimer title="Disclaimer" texts={[disclaimerMessage]} />
   ) : undefined;
 
-  const updateOverlayState = useCallback(
-    (newState: OnRampOverlayState) => {
-      if (lastSetOverlayStateRef.current !== newState) {
-        lastSetOverlayStateRef.current = newState;
-        dispatch(setOnRampOverlayStateAction(newState));
-      }
-    },
-    [dispatch]
-  );
+  const updateOverlayState = useCallback((newState: OnRampOverlayState) => {
+    if (lastSetOverlayStateRef.current !== newState) {
+      lastSetOverlayStateRef.current = newState;
+      dispatch(setOnRampOverlayStateAction(newState));
+    }
+  }, []);
 
   const handleEstimationError = useCallback(
     (error: unknown) => {
@@ -138,20 +136,16 @@ export const InternalOperationsConfirmation: FC<Props> = ({
   );
 
   return (
-    <>
-      {isDefined(tezosAccount) && (
-        <OperationsConfirmation
-          sender={tezosAccount}
-          opParams={opParams}
-          isLoading={isLoading}
-          onEstimationError={handleEstimationError}
-          onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: tezosAccount, opParams: newOpParams })}
-          testID={testID}
-          disclaimer={disclaimer}
-          renderPreview={renderPreview}
-          onEstimationComplete={onEstimationComplete}
-        />
-      )}
-    </>
+    <OperationsConfirmation
+      sender={account}
+      opParams={opParams}
+      isLoading={isLoading}
+      onEstimationError={handleEstimationError}
+      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: tezosAccount, opParams: newOpParams })}
+      testID={testID}
+      disclaimer={disclaimer}
+      renderPreview={renderPreview}
+      onEstimationComplete={onEstimationComplete}
+    />
   );
 };

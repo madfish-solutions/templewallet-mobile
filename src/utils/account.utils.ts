@@ -1,7 +1,6 @@
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces';
-import { Contact } from 'src/interfaces/contact.interface';
 
 export interface AccountForChain<C extends TempleChainKind = TempleChainKind> {
   id: string;
@@ -11,10 +10,6 @@ export interface AccountForChain<C extends TempleChainKind = TempleChainKind> {
   type: AccountTypeEnum;
   name: string;
 }
-
-type AddressBookItem = Account | Contact;
-
-export const isAccount = (item: AddressBookItem): item is Account => 'type' in item;
 
 export const getAccountForTezos = (account: Account) => getAccountForChain(account, TempleChainKind.Tezos);
 
@@ -43,7 +38,7 @@ export const getAccountAddressForChain = (account: Account, chain: TempleChainKi
 export const getAccountPublicKeyForTezos = (account: Account) =>
   getAccountPublicKeyForChain(account, TempleChainKind.Tezos);
 
-const getAccountPublicKeyForChain = (account: Account, chain: TempleChainKind): string | null => {
+const getAccountPublicKeyForChain = (account: Account, chain: TempleChainKind): string | undefined => {
   switch (account.type) {
     case AccountTypeEnum.HD:
     case AccountTypeEnum.IMPORTED_MULTICHAIN:
@@ -52,7 +47,7 @@ const getAccountPublicKeyForChain = (account: Account, chain: TempleChainKind): 
     case AccountTypeEnum.WATCH_ONLY_DEBUG:
       return account.publicKey;
     default:
-      return null;
+      return undefined;
   }
 };
 
@@ -67,19 +62,3 @@ export const getAccountForChain = <C extends TempleChainKind>(
     ? { id: account.id, chain, address, publicKey, type: account.type, name: account.name }
     : null;
 };
-
-export const canUseAccountForChain = (account: Account, chain: TempleChainKind) =>
-  getAccountAddressForChain(account, chain) !== undefined;
-
-const getContactAddress = (contact: Contact) => contact.address;
-
-const getAddressBookItemAddress = (item: AddressBookItem) =>
-  isAccount(item)
-    ? getAccountAddressForTezos(item) || getAccountAddressForEvm(item) || item.id
-    : getContactAddress(item);
-
-export const getAddressBookItemDisplayAddress = (item: AddressBookItem) => getAddressBookItemAddress(item) || '';
-
-export const getAccountBaseId = (item: AddressBookItem) => (isAccount(item) ? item.id : undefined);
-
-export const getAccountBaseDisplayAddress = getAddressBookItemDisplayAddress;

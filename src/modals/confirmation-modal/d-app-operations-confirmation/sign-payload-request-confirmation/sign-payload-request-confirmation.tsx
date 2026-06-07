@@ -66,7 +66,7 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveSignPayloadRequest);
 
   const approver = useMemo(
-    () => accounts.find(account => getAccountAddressForTezos(account) === message.sourceAddress),
+    () => accounts.find(account => getAccountAddressForTezos(account) === message.sourceAddress)!,
     [accounts, message.sourceAddress]
   );
 

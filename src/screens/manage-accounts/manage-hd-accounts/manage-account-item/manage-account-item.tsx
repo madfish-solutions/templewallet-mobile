@@ -9,6 +9,7 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { Switch } from 'src/components/switch/switch';
 import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
@@ -19,7 +20,7 @@ import { setAccountVisibility } from 'src/store/wallet/wallet-actions';
 import { useIsAccountVisibleSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos, getAccountBaseDisplayAddress } from 'src/utils/account.utils';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { ManageAccountItemSelectors } from './manage-account-item.selectors';
@@ -35,8 +36,10 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const dispatch = useDispatch();
   const navigateToModal = useNavigateToModal();
   const styles = useManageAccountItemStyles();
+
   const tezosAddress = getAccountAddressForTezos(account);
-  const displayAddress = getAccountBaseDisplayAddress(account);
+  const evmAddress = getAccountAddressForEvm(account);
+
   const tezosToken = useTezosTokenOfKnownAccount(tezosAddress ?? '');
   const isVisible = useIsAccountVisibleSelector(tezosAddress ?? '') ?? true;
 
@@ -55,10 +58,10 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
     <View style={styles.container}>
       <View style={styles.upperContainer}>
         <View style={styles.accountContainer}>
-          <RobotIcon seed={displayAddress} />
+          <RobotIcon seed={getSeedFromAccount(account)} />
           <View style={styles.accountContainerData}>
             <TruncatedText style={styles.accountText}>{account.name}</TruncatedText>
-            <WalletAddress publicKeyHash={displayAddress} />
+            <WalletAddress publicKeyHash={tezosAddress ?? evmAddress ?? ''} />
           </View>
         </View>
 

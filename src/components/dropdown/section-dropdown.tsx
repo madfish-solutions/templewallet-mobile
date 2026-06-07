@@ -33,17 +33,17 @@ export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps
 }
 
 interface SectionDropdownValueProps<T> {
-  value?: T;
+  value: T;
   itemHeight?: number;
   list: Array<SectionDropdownDataInterface<T>>;
   disabled?: boolean;
-  onValueChange: SyncFn<T | undefined>;
+  onValueChange: SyncFn<T>;
 }
 
-type DropdownEqualityFn<T> = (item: T, value?: T) => boolean;
+type DropdownEqualityFn<T> = (item: T, value: T) => boolean;
 
 type DropdownValueComponent<T> = SyncFC<{
-  value?: T;
+  value: T;
   disabled?: boolean;
 }>;
 

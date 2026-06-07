@@ -4,9 +4,9 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AccountFormSectionDropdown } from 'src/components/account-dropdown/account-form-section-dropdown';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ContactFormSectionDropdown } from 'src/components/contact-dropdown/contact-form-section-dropdown';
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
@@ -271,7 +271,7 @@ export const SendModal: FC = () => {
           />
           {values.transferBetweenOwnAccounts ? (
             <>
-              <AccountFormSectionDropdown
+              <ContactFormSectionDropdown
                 name="recipient"
                 list={filteredReceiversList}
                 setSearchValue={handleSearchValueChange}

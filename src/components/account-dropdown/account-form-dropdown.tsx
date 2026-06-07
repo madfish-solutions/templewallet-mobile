@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
 import { FormDropdown } from 'src/form/form-dropdown';
-import { AddressBookItem } from 'src/interfaces/account.interfaces';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 
 import { DropdownValueComponent } from '../dropdown/dropdown';
@@ -13,12 +13,12 @@ import { accountEqualityFn } from './account-equality-fn';
 
 interface Props extends TestIdProps {
   name: string;
-  list: AddressBookItem[];
+  list: Account[];
 }
 
-const renderAccountValue: DropdownValueComponent<AddressBookItem> = ({ value }) => (
+const renderAccountValue: DropdownValueComponent<Account> = ({ value }) => (
   <DropdownItemContainer>
-    <AccountDropdownItem account={value} actionIconName={IconNameEnum.TriangleDown} />
+    {value && <AccountDropdownItem account={value} actionIconName={IconNameEnum.TriangleDown} />}
   </DropdownItemContainer>
 );
 

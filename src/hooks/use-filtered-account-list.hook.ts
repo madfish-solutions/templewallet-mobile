@@ -2,7 +2,7 @@ import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
 
 import { Account } from '../interfaces/account.interfaces';
-import { getAccountBaseDisplayAddress } from '../utils/account.utils';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from '../utils/account.utils.ts';
 import { isString } from '../utils/is-string';
 
 export const useFilteredAccountList = (accountList: Account[]) => {
@@ -18,10 +18,13 @@ export const useFilteredAccountList = (accountList: Account[]) => {
 
       for (const account of accountList) {
         const { name } = account;
-        const displayAddress = getAccountBaseDisplayAddress(account);
+        const tezosAddress = getAccountAddressForTezos(account);
+        const evmAddress = getAccountAddressForEvm(account);
+
         if (
           name.toLowerCase().includes(lowerCaseSearchValue) ||
-          displayAddress.toLowerCase().includes(lowerCaseSearchValue)
+          tezosAddress?.toLowerCase().includes(lowerCaseSearchValue) ||
+          evmAddress?.toLowerCase().includes(lowerCaseSearchValue)
         ) {
           result.push(account);
         }

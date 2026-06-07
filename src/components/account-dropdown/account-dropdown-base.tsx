@@ -2,20 +2,19 @@ import React, { memo, useMemo, useState } from 'react';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
-import { AddressBookItem, Account } from 'src/interfaces/account.interfaces';
+import { Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useShelter } from 'src/shelter/use-shelter.hook';
-import { useSaplingAddressSelector } from 'src/store/sapling';
+import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
-import { getAccountAddressForEvm, getAccountAddressForTezos, isAccount } from 'src/utils/account.utils';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
-import { isString } from 'src/utils/is-string';
 
 import { CopyAddressModal, CopyAddressOption } from '../../modals/copy-address-modal';
 import { isTruthy } from '../../utils/is-truthy.ts';
@@ -63,14 +62,39 @@ const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
   );
 };
 
-type Props = DropdownValueBaseProps<AddressBookItem> & TestIdProps;
+export type AccountDropdownValueComponent = SyncFC<
+  { value: Account; disabled?: boolean; isCollectibleScreen?: boolean } & TestIdProps
+>;
 
-const isAccountItem = (account: AddressBookItem): account is Account => isAccount(account);
+type Props = Omit<DropdownValueBaseProps<Account>, 'value' | 'renderValue' | 'onValueChange'> & {
+  value: Account;
+  renderValue: AccountDropdownValueComponent;
+  onValueChange: SyncFn<Account>;
+} & TestIdProps;
 
-const getAccountSectionTitle = (account: AddressBookItem) =>
-  isAccountItem(account) && account.type === AccountTypeEnum.HD ? 'Created' : 'Imported';
+const getAccountSectionTitle = (account: Account) => {
+  switch (account.type) {
+    case AccountTypeEnum.HD:
+      return 'Created';
+    case AccountTypeEnum.IMPORTED_CHAIN:
+    case AccountTypeEnum.IMPORTED_MULTICHAIN:
+      return 'Imported';
+    case AccountTypeEnum.WATCH_ONLY_DEBUG:
+      return 'Watch Only';
+  }
+};
 
-const getAccountSectionWeight = (account: AddressBookItem) => (getAccountSectionTitle(account) === 'Created' ? 0 : 1);
+const getAccountSectionWeight = (account: Account) => {
+  switch (account.type) {
+    case AccountTypeEnum.HD:
+      return 0;
+    case AccountTypeEnum.IMPORTED_CHAIN:
+    case AccountTypeEnum.IMPORTED_MULTICHAIN:
+      return 1;
+    case AccountTypeEnum.WATCH_ONLY_DEBUG:
+      return 2;
+  }
+};
 
 export const AccountDropdownBase = memo<Props>(
   ({
@@ -84,7 +108,7 @@ export const AccountDropdownBase = memo<Props>(
     isCollectibleScreen
   }) => {
     const [isCopyAddressDropdownVisible, setIsCopyAddressDropdownVisible] = useState(false);
-    const saplingAddress = useSaplingAddressSelector();
+    const saplingAddress = useSaplingAddressForAccount(value);
 
     const groupedList = useMemo(
       () =>
@@ -93,27 +117,21 @@ export const AccountDropdownBase = memo<Props>(
     );
 
     const copyAddressOptions = useMemo<CopyAddressOption[]>(() => {
-      if (!isDefined(value)) {
-        return [];
-      }
-
-      const tezosAddress = isAccountItem(value) ? getAccountAddressForTezos(value) : value.address;
-      const evmAddress = isAccountItem(value) ? getAccountAddressForEvm(value) : undefined;
+      const tezosAddress = getAccountAddressForTezos(value);
+      const evmAddress = getAccountAddressForEvm(value);
 
       return [
-        isString(tezosAddress) && {
+        isDefined(tezosAddress) && {
           label: 'Tezos',
           address: tezosAddress,
           iconName: IconNameEnum.TezToken
         },
-        isString(saplingAddress) &&
-          isAccountItem(value) &&
-          getAccountAddressForTezos(value) !== undefined && {
-            label: 'Shielded',
-            address: saplingAddress,
-            iconName: IconNameEnum.TezShieldedToken
-          },
-        isString(evmAddress) && {
+        isDefined(saplingAddress) && {
+          label: 'Shielded',
+          address: saplingAddress,
+          iconName: IconNameEnum.TezShieldedToken
+        },
+        isDefined(evmAddress) && {
           label: 'Etherlink',
           address: evmAddress,
           iconName: IconNameEnum.EtherlinkToken
@@ -139,11 +157,15 @@ export const AccountDropdownBase = memo<Props>(
           list={groupedList}
           itemHeight={formatSize(80)}
           equalityFn={accountEqualityFn}
-          renderValue={renderValue}
+          renderValue={props => renderValue({ ...props, value })}
           renderListItem={renderAccountListItem}
           getListItemSectionTitle={getAccountSectionTitle}
           renderActionButtons={ActionButtons}
-          onValueChange={onValueChange}
+          onValueChange={value => {
+            if (isDefined(value)) {
+              onValueChange(value);
+            }
+          }}
           onLongPress={onLongPressHandler}
           isCollectibleScreen={isCollectibleScreen}
         />

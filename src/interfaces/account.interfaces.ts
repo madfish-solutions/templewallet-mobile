@@ -1,8 +1,6 @@
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 
-import { Contact, emptyContact } from './contact.interface';
-
 interface BaseAccount {
   id: string;
   name: string;
@@ -54,6 +52,3 @@ export const isImportedPrivateKeyAccount = (account: Account): account is Import
 /** @knipignore */
 export const isWatchOnlyDebugAccount = (account: Account): account is WatchOnlyDebugAccount =>
   account.type === AccountTypeEnum.WATCH_ONLY_DEBUG;
-
-export type AddressBookItem = Account | Contact;
-export const emptyAddressBookItem = emptyContact;

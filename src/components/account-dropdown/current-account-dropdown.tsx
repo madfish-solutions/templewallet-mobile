@@ -1,21 +1,20 @@
 import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
-import { AddressBookItem } from 'src/interfaces/account.interfaces';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { dispatch } from 'src/store';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAccount, useAllVisibleAccounts } from 'src/store/wallet/wallet-selectors';
-import { getAccountBaseId } from 'src/utils/account.utils';
 
-import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown';
+import { DropdownValueProps } from '../dropdown/dropdown';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
-import { AccountDropdownBase } from './account-dropdown-base';
+import { AccountDropdownBase, AccountDropdownValueComponent } from './account-dropdown-base';
 import { AccountDropdownTriggerItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { CurrentAccountDropdownStyles } from './current-account-dropdown.styles';
 
-const renderAccountValue: DropdownValueComponent<AddressBookItem> = ({ value, isCollectibleScreen }) => (
+const renderAccountValue: AccountDropdownValueComponent = ({ value, isCollectibleScreen }) => (
   <AccountDropdownTriggerItem
     account={value}
     showFullData={false}
@@ -24,19 +23,13 @@ const renderAccountValue: DropdownValueComponent<AddressBookItem> = ({ value, is
   />
 );
 
-type Props = Omit<DropdownValueProps<AddressBookItem>, 'list' | 'value' | 'onValueChange'> & TestIdProps;
+type Props = Omit<DropdownValueProps<Account>, 'list' | 'value' | 'onValueChange'> & TestIdProps;
 
 export const CurrentAccountDropdown = memo<Props>(({ testID, testIDProperties, isCollectibleScreen }) => {
   const selectedAccount = useAccount();
   const visibleAccounts = useAllVisibleAccounts();
 
-  const dispatch = useDispatch();
-
-  const onValueChange = useCallback(
-    (value: AddressBookItem | undefined) =>
-      dispatch(setSelectedAccountIdAction(value ? getAccountBaseId(value) : undefined)),
-    [dispatch]
-  );
+  const onValueChange = useCallback((value: Account) => dispatch(setSelectedAccountIdAction(value.id)), []);
 
   return (
     <View style={CurrentAccountDropdownStyles.root}>

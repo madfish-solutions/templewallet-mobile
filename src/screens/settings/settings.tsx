@@ -11,6 +11,7 @@ import { NotificationCounter } from 'src/components/notification-counter/notific
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
 import { Quote } from 'src/components/quote/quote';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
@@ -33,7 +34,6 @@ import {
 import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { getAddressBookItemDisplayAddress } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
@@ -116,7 +116,7 @@ export const Settings = () => {
               testID={SettingsSelectors.accountsButton}
             >
               <View style={styles.actionsContainer}>
-                <RobotIcon seed={getAddressBookItemDisplayAddress(account)} size={formatSize(32)} />
+                <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(32)} />
                 <WhiteContainerText text="Accounts" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />

@@ -17,6 +17,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { mapBeaconToTaquitoParams } from 'src/utils/beacon.utils';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
+import { DeadEndBoundaryError } from '../../../../components/error-boundary';
 import { OperationsConfirmation } from '../../operations-confirmation/operations-confirmation';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 
@@ -63,6 +64,12 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
     [accounts, message.sourceAddress]
   );
 
+  const tezosAccount = getAccountForTezos(sender);
+
+  if (!tezosAccount) {
+    throw new DeadEndBoundaryError();
+  }
+
   const opParams = useMemo(() => message.operationDetails.map(mapBeaconToTaquitoParams), [message]);
 
   const handleEstimationError = useCallback(
@@ -81,9 +88,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
       sender={sender}
       opParams={opParams}
       isLoading={isLoading}
-      onSubmit={newOpParams =>
-        confirmRequest({ rpcUrl, sender: getAccountForTezos(sender)!, opParams: newOpParams, message })
-      }
+      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: tezosAccount, opParams: newOpParams, message })}
       onEstimationError={handleEstimationError}
     >
       <AppMetadataView appMetadata={message.appMetadata} />

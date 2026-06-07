@@ -9,20 +9,13 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
-import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { AddressBookItem, emptyAddressBookItem } from 'src/interfaces/account.interfaces';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useSelector } from 'src/store/selector';
+import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
-import {
-  AccountForChain,
-  getAccountAddressForEvm,
-  getAccountAddressForTezos,
-  getAccountBaseDisplayAddress,
-  isAccount
-} from 'src/utils/account.utils';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
@@ -30,11 +23,9 @@ import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
-import {
-  AccountDropdownItemProps,
-  AccountDropdownListItemProps,
-  AccountDropdownTriggerItemProps
-} from './account-dropdown-item.interface';
+import { getSeedFromAccount } from '../../robot-icon/robot-icon.utils.ts';
+
+import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import {
   useAccountDropdownItemStyles,
   useAccountDropdownItemCollectiblesInfoStyles
@@ -45,14 +36,16 @@ const COLLECTIBLES_ROBOT_ICON_SIZE = 76;
 export const AccountDropdownItem = memo<AccountDropdownItemProps>(
   ({ account, showFullData = true, actionIconName, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
-    const resolvedAccount = account ?? emptyAddressBookItem;
-    const tezosAddress = getTezosAddress(resolvedAccount);
+
+    const tezosAddress = getAccountAddressForTezos(account);
     const tezos = useTezosTokenOfKnownAccount(tezosAddress ?? '');
-    const displayAddress = getDisplayAddress(resolvedAccount);
 
     return (
       <View style={styles.root}>
-        <RobotIcon seed={displayAddress} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
+        <RobotIcon
+          seed={getSeedFromAccount(account)}
+          size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined}
+        />
         <View style={styles.infoContainer}>
           <View
             style={[
@@ -61,7 +54,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
               conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
             ]}
           >
-            <TruncatedText style={styles.name}>{resolvedAccount.name}</TruncatedText>
+            <TruncatedText style={styles.name}>{account.name}</TruncatedText>
             {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(22)} />}
           </View>
           <View style={styles.lowerContainer}>
@@ -78,26 +71,21 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
   }
 );
 
-export const AccountDropdownTriggerItem = memo<AccountDropdownTriggerItemProps>(props => (
-  <AccountDropdownItem {...props} />
-));
+export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
 
-const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account = emptyAddressBookItem }) => {
+const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
   const styles = useAccountDropdownItemStyles();
-  const accountInterface = isAccount(account) ? account : undefined;
-  const tezosAddress = getTezosAddress(account);
-  const evmAddress = accountInterface ? getAccountAddressForEvm(accountInterface) : undefined;
+  const saplingAddress = useSaplingAddressForAccount(account);
+
+  const tezosAddress = getAccountAddressForTezos(account);
+  const evmAddress = getAccountAddressForEvm(account);
+
   const tezos = useTezosTokenOfKnownAccount(tezosAddress ?? '');
-  const saplingAddress = useSelector(({ sapling }) =>
-    tezosAddress ? sapling.accountsRecord[tezosAddress]?.saplingAddress : undefined
-  );
-  const displayAddress = getAccountBaseDisplayAddress(account);
-  const shouldRenderSaplingAddress = accountInterface?.type === AccountTypeEnum.HD && isDefined(saplingAddress);
 
   return (
     <>
       <View style={styles.listItemHeader}>
-        <RobotIcon seed={displayAddress} size={formatSize(24)} scaleFactor={4} />
+        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} scaleFactor={4} />
         <View style={styles.listItemHeaderInfo}>
           <TruncatedText style={styles.listItemName}>{account.name}</TruncatedText>
           <HideBalance style={styles.listItemBalanceText}>
@@ -108,7 +96,7 @@ const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account = 
 
       <View style={styles.addressesContainer}>
         {isDefined(tezosAddress) && <AccountAddressChip address={tezosAddress} iconName={IconNameEnum.TezToken} />}
-        {shouldRenderSaplingAddress && (
+        {isDefined(saplingAddress) && (
           <AccountAddressChip address={saplingAddress} iconName={IconNameEnum.TezShieldedToken} />
         )}
         {isDefined(evmAddress) && <AccountAddressChip address={evmAddress} iconName={IconNameEnum.EtherlinkToken} />}
@@ -117,7 +105,7 @@ const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account = 
   );
 });
 
-export const renderAccountListItem: DropdownListItemComponent<AddressBookItem> = ({ item }) => (
+export const renderAccountListItem: DropdownListItemComponent<Account> = ({ item }) => (
   <AccountDropdownListItem account={item} />
 );
 
@@ -189,9 +177,3 @@ const CollectiblesInfo = memo(() => {
 
 const truncateAddress = (address: string) =>
   address.length > 10 ? `${address.slice(0, 3)}...${address.slice(-4)}` : address;
-
-const getTezosAddress = (account: AddressBookItem | AccountForChain) =>
-  'address' in account ? account.address : getAccountAddressForTezos(account);
-
-const getDisplayAddress = (account: AddressBookItem | AccountForChain) =>
-  'address' in account ? account.address : getAccountBaseDisplayAddress(account);

@@ -9,7 +9,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 export const useFilteredReceiversList = () => {
   const contacts = useContactsSelector();
-  const accountPkh = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
 
   const allVisibleAccounts = useAllVisibleAccounts();
 
@@ -22,8 +22,8 @@ export const useFilteredReceiversList = () => {
           return address ? { name: account.name, address } : undefined;
         })
         .filter(isDefined)
-        .filter(({ address }) => address !== accountPkh),
-    [allVisibleAccounts, accountPkh]
+        .filter(({ address }) => address !== tezosAddress),
+    [allVisibleAccounts, tezosAddress]
   );
 
   const [searchValue, setSearchValue] = useState<string>('');
