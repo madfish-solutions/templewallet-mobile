@@ -181,6 +181,23 @@ describe('useShelter', () => {
     expect(mockUseDispatch).not.toHaveBeenCalledWith(loadWhitelistAction.submit());
   });
 
+  it('should infer imported EVM account from private key without chain or 0x prefix', async () => {
+    mockShelter.createImportedChainAccount$.mockReturnValueOnce(of(mockEvmImportedAccount));
+    const { result } = renderHook(() => useShelter());
+
+    result.current.createImportedAccount({
+      privateKey: mockEvmPrivateKey.slice(2),
+      name: mockEvmImportedAccount.name
+    });
+    await jest.runAllTimersAsync();
+
+    expect(mockShelter.createImportedChainAccount$).toHaveBeenCalledWith(
+      mockEvmPrivateKey,
+      mockEvmImportedAccount.name,
+      TempleChainKind.EVM
+    );
+  });
+
   it('should create imported multichain account from seed without custom derivation path', async () => {
     const initialAccounts = mockRootState.wallet.accounts;
     mockRootState.wallet.accounts = [];

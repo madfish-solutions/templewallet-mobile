@@ -17,6 +17,7 @@ import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/
 import {
   AccountCredentials,
   getEvmDerivationPath,
+  getPrivateKeyWithChain,
   getTezosDerivationPath,
   mnemonicToPrivateKey,
   privateKeyToEvmAccountCredentials,
@@ -150,22 +151,30 @@ export const createImportAccountSubscription = (
         Toast.hide();
         dispatch(showLoaderAction());
       }),
-      switchMap(({ privateKey, name, chain = TempleChainKind.Tezos, saplingSpendingKey }) =>
-        from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
+      switchMap(({ privateKey, name, chain: explicitChain, saplingSpendingKey }) => {
+        const normalizedPrivateKey = getPrivateKeyWithChain(privateKey, explicitChain);
+
+        return from(
+          deriveImportedChainAccountCredentials(normalizedPrivateKey.privateKey, normalizedPrivateKey.chain)
+        ).pipe(
           switchMap(({ address }) => {
+            const { chain } = normalizedPrivateKey;
+
             if (hasSameChainAddress(accounts, chain, address)) {
               showWarningToast({ description: 'Account already exist' });
 
               return of(undefined);
             }
 
-            return Shelter.createImportedChainAccount$(privateKey, name, chain).pipe(
+            return Shelter.createImportedChainAccount$(normalizedPrivateKey.privateKey, name, chain).pipe(
               switchMap(publicData => {
                 if (chain === TempleChainKind.EVM) {
                   return of(publicData);
                 }
 
-                const sask$ = saplingSpendingKey ? of(saplingSpendingKey) : from(deriveSaskFromPrivateKey(privateKey));
+                const sask$ = saplingSpendingKey
+                  ? of(saplingSpendingKey)
+                  : from(deriveSaskFromPrivateKey(normalizedPrivateKey.privateKey));
 
                 return sask$.pipe(
                   switchMap(sask => Shelter.saveSaplingSpendingKey$(getAccountAddressForTezos(publicData) ?? '', sask)),
@@ -183,8 +192,8 @@ export const createImportAccountSubscription = (
 
             return of(undefined);
           })
-        )
-      ),
+        );
+      }),
       tap(() => dispatch(hideLoaderAction()))
     ),
     createImportedAccountFromSeed$.pipe(

@@ -20,8 +20,6 @@ import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { ImportAccountChainForm } from '../import-account-chain.form';
-
 import {
   importAccountPrivateKeyInitialValues,
   importAccountPrivateKeyValidationSchema,
@@ -44,10 +42,9 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Private Key" /> }, []);
 
   const onSubmit = useCallback(
-    ({ privateKey, chain }: ImportAccountPrivateKeyValues) => {
+    ({ privateKey }: ImportAccountPrivateKeyValues) => {
       createImportedAccount({
         privateKey,
-        chain,
         name: `Account ${accountIndex}`
       });
     },
@@ -64,9 +61,6 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
     <FormikProvider value={formik}>
       <ScreenContainer>
         <View>
-          <Divider size={formatSize(12)} />
-          <Label label="Chain" />
-          <ImportAccountChainForm />
           <Divider size={formatSize(12)} />
           <Label label="Private key" description="The Secret Key of the account you want to import." />
           <FormMnemonicInput

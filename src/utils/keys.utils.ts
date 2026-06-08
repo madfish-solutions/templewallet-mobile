@@ -139,6 +139,51 @@ export const privateKeyToEvmAccountCredentials = (privateKey: string): AccountCr
   }
 };
 
+const tezosSecretKeyPrefixes = [
+  PrefixV2.Ed25519Seed,
+  PrefixV2.Secp256k1SecretKey,
+  PrefixV2.P256SecretKey,
+  PrefixV2.Ed25519EncryptedSeed,
+  PrefixV2.Secp256k1EncryptedSecretKey,
+  PrefixV2.P256EncryptedSecretKey,
+  PrefixV2.BLS12_381SecretKey,
+  PrefixV2.BLS12_381EncryptedSecretKey
+] as const;
+
+type TezosSecretKey = `${(typeof tezosSecretKeyPrefixes)[number]}${string}`;
+
+export const isTezosPrivateKey = (value: string): value is TezosSecretKey =>
+  tezosSecretKeyPrefixes.some(prefix => value.startsWith(prefix));
+
+export const getPrivateKeyWithChain = (
+  privateKey: string,
+  explicitChain?: TempleChainKind
+): { privateKey: string; chain: TempleChainKind } => {
+  const trimmedPrivateKey = privateKey.replace(/\s/g, '');
+
+  if (explicitChain) {
+    return {
+      privateKey:
+        explicitChain === TempleChainKind.EVM && !trimmedPrivateKey.startsWith('0x')
+          ? `0x${trimmedPrivateKey}`
+          : trimmedPrivateKey,
+      chain: explicitChain
+    };
+  }
+
+  if (isTezosPrivateKey(trimmedPrivateKey)) {
+    return {
+      privateKey: trimmedPrivateKey,
+      chain: TempleChainKind.Tezos
+    };
+  }
+
+  return {
+    privateKey: trimmedPrivateKey.startsWith('0x') ? trimmedPrivateKey : `0x${trimmedPrivateKey}`,
+    chain: TempleChainKind.EVM
+  };
+};
+
 export const mnemonicToPrivateKey = (
   mnemonic: string,
   errorFactory: (message: string) => Error,

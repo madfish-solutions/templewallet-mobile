@@ -44,3 +44,4 @@ Optimize for clarity, polish, and performance in every change.
 ## A Note to the Agent
 We are building this together. When you learn something non-obvious, add it here so future changes go faster.
 - Seed phrase account import mirrors the extension: an empty derivation path imports a default multichain account; any custom path imports one chain account, with `m/44'/60'...` treated as EVM and every other syntactically valid path treated as Tezos.
+- Private key import also mirrors the extension: known Taquito/Tezos secret-key prefixes are treated as Tezos; any other private key is treated as EVM and normalized with a `0x` prefix before validation/import.

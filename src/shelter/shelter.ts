@@ -32,6 +32,7 @@ import {
 import {
   AccountCredentials,
   getEvmDerivationPath,
+  getPrivateKeyWithChain,
   getPublicKeyAndHash$,
   getTezosDerivationPath,
   mnemonicToEvmAccountCredentials,
@@ -387,20 +388,23 @@ export class Shelter {
   static createImportedChainAccount$ = (
     privateKey: string,
     name: string,
-    chain = TempleChainKind.Tezos
-  ): Observable<Account> =>
-    (chain === TempleChainKind.EVM
-      ? from(Promise.resolve().then(() => privateKeyToEvmAccountCredentials(privateKey)))
-      : from(privateKeyToTezosAccountCredentials(privateKey))
+    chain?: TempleChainKind
+  ): Observable<Account> => {
+    const normalizedPrivateKey = getPrivateKeyWithChain(privateKey, chain);
+
+    return (
+      normalizedPrivateKey.chain === TempleChainKind.EVM
+        ? from(Promise.resolve().then(() => privateKeyToEvmAccountCredentials(normalizedPrivateKey.privateKey)))
+        : from(privateKeyToTezosAccountCredentials(normalizedPrivateKey.privateKey))
     ).pipe(
       switchMap(credentials => {
-        if (chain === TempleChainKind.EVM) {
+        if (normalizedPrivateKey.chain === TempleChainKind.EVM) {
           return Shelter.saveAccountCredentials$(credentials).pipe(
             mapTo<Account>({
               id: nanoid(),
               name,
               type: AccountTypeEnum.IMPORTED_CHAIN,
-              chain,
+              chain: normalizedPrivateKey.chain,
               address: credentials.address,
               publicKey: credentials.publicKey
             })
@@ -412,13 +416,14 @@ export class Shelter {
             id: nanoid(),
             name,
             type: AccountTypeEnum.IMPORTED_CHAIN,
-            chain,
+            chain: normalizedPrivateKey.chain,
             address: credentials.address,
             publicKey: credentials.publicKey
           })
         );
       })
     );
+  };
 
   static createImportedMultichainAccount$ = ({
     seedPhrase,
