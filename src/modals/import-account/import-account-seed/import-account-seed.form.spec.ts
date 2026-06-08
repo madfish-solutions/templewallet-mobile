@@ -1,17 +1,8 @@
 import { mockAccountCredentials } from 'src/mocks/account-credentials.mock';
 
-import {
-  importAccountSeedDerivationPathPlaceholder,
-  importAccountSeedInitialValues,
-  importAccountSeedValidationSchema
-} from './import-account-seed.form';
+import { importAccountSeedValidationSchema } from './import-account-seed.form';
 
 describe('importAccountSeed form', () => {
-  it('should use empty derivation path by default and provide an EVM placeholder', () => {
-    expect(importAccountSeedInitialValues.derivationPath).toEqual('');
-    expect(importAccountSeedDerivationPathPlaceholder).toEqual("m/44'/60'/0'/0/0");
-  });
-
   it('should allow empty derivation path', async () => {
     await expect(
       importAccountSeedValidationSchema.isValid({

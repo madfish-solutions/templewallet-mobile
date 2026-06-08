@@ -1,7 +1,6 @@
 import { object, SchemaOf, string } from 'yup';
 
 import { seedPhraseValidation } from 'src/form/validation/seed-phrase';
-import { getEvmDerivationPath } from 'src/utils/keys.utils';
 
 export type ImportAccountSeedValues = {
   seedPhrase: string;
@@ -12,8 +11,6 @@ export const importAccountSeedInitialValues: ImportAccountSeedValues = {
   seedPhrase: '',
   derivationPath: ''
 };
-
-export const importAccountSeedDerivationPathPlaceholder = getEvmDerivationPath(0);
 
 const derivationPathValidation = string().test('validateDerivationPath', 'Invalid derivation path', path => {
   if (!path) {

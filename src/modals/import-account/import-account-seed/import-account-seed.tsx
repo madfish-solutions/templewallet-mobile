@@ -86,11 +86,7 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
           </View>
           <AndroidKeyboardDisclaimer />
           <Divider size={formatSize(12)} />
-          <Label
-            label="Custom derivation path"
-            isOptional
-            description="Leave empty to import default Tezos and EVM accounts."
-          />
+          <Label label="Custom Derivation Path" isOptional />
           <ImportAccountSeedDerivationPathForm />
           <Divider size={formatSize(12)} />
         </View>

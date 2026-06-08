@@ -86,6 +86,7 @@ const useCurrentAccountForChainSelector = <C extends TempleChainKind>(chain: C) 
     return account ? getAccountForChain(account, chain) : null;
   }, jsonEqualityFn);
 
+/** @knipignore */
 export const useAccountForTezos = () => useCurrentAccountForChainSelector(TempleChainKind.Tezos);
 
 /** @knipignore */

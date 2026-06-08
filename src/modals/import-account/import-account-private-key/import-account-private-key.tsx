@@ -65,7 +65,7 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
           <Label label="Private key" description="The Secret Key of the account you want to import." />
           <FormMnemonicInput
             name="privateKey"
-            placeholder="e.g. AFVEWNWEQwt34QRVGEWBFDSAd"
+            placeholder="Paste or input your private key"
             testID={ImportAccountPrivateKeySelectors.privateKeyInput}
           />
           <AndroidKeyboardDisclaimer />
