@@ -36,6 +36,12 @@ export interface CreateImportedAccountParams {
   saplingSpendingKey?: string;
 }
 
+export interface CreateImportedAccountFromSeedParams {
+  seedPhrase: string;
+  name: string;
+  derivationPath: string;
+}
+
 export interface CreateImportedMultichainAccountParams {
   seedPhrase: string;
   name: string;
@@ -64,13 +70,31 @@ const deriveImportedChainAccountCredentials = (
     ? Promise.resolve().then(() => privateKeyToEvmAccountCredentials(privateKey))
     : privateKeyToTezosAccountCredentials(privateKey);
 
+const deriveImportedChainAccountFromSeed = ({ seedPhrase, derivationPath }: CreateImportedAccountFromSeedParams) => {
+  const { chain, privateKey } = mnemonicToPrivateKey(
+    seedPhrase,
+    message => new Error(message),
+    undefined,
+    derivationPath
+  );
+
+  return from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
+    map(credentials => ({
+      chain,
+      credentials,
+      privateKey
+    }))
+  );
+};
+
 const deriveImportedMultichainAccountCredentials = ({
   seedPhrase,
   password,
   chain = TempleChainKind.Tezos,
   derivationPath
 }: CreateImportedMultichainAccountParams) => {
-  const tezosDerivationPath = chain === TempleChainKind.Tezos ? derivationPath : getTezosDerivationPath(0);
+  const tezosDerivationPath =
+    chain === TempleChainKind.Tezos ? derivationPath ?? getTezosDerivationPath(0) : getTezosDerivationPath(0);
   const evmDerivationPath =
     chain === TempleChainKind.EVM ? derivationPath ?? getEvmDerivationPath(0) : getEvmDerivationPath(0);
 
@@ -112,6 +136,7 @@ const deriveImportedMultichainAccountCredentials = ({
 
 export const createImportAccountSubscription = (
   createImportedAccount$: Subject<CreateImportedAccountParams>,
+  createImportedAccountFromSeed$: Subject<CreateImportedAccountFromSeedParams>,
   createImportedMultichainAccount$: Subject<CreateImportedMultichainAccountParams>,
   accounts: Account[],
   dispatch: Dispatch,
@@ -154,6 +179,46 @@ export const createImportAccountSubscription = (
             showErrorToast({
               title: 'Failed to import account.',
               description: 'This may happen because provided Key is invalid.'
+            });
+
+            return of(undefined);
+          })
+        )
+      ),
+      tap(() => dispatch(hideLoaderAction()))
+    ),
+    createImportedAccountFromSeed$.pipe(
+      tap(() => {
+        Toast.hide();
+        dispatch(showLoaderAction());
+      }),
+      switchMap(params =>
+        deriveImportedChainAccountFromSeed(params).pipe(
+          switchMap(({ chain, credentials, privateKey }) => {
+            if (hasSameChainAddress(accounts, chain, credentials.address)) {
+              showWarningToast({ description: 'Account already exist' });
+
+              return of(undefined);
+            }
+
+            return Shelter.createImportedChainAccount$(privateKey, params.name, chain).pipe(
+              switchMap(publicData => {
+                if (chain === TempleChainKind.EVM) {
+                  return of(publicData);
+                }
+
+                return from(deriveSaskFromPrivateKey(privateKey)).pipe(
+                  switchMap(sask => Shelter.saveSaplingSpendingKey$(getAccountAddressForTezos(publicData) ?? '', sask)),
+                  map(() => publicData),
+                  catchError(() => of(publicData))
+                );
+              })
+            );
+          }),
+          catchError(() => {
+            showErrorToast({
+              title: 'Failed to import account.',
+              description: 'This may happen because provided Seed Phrase or Derivation Path is invalid.'
             });
 
             return of(undefined);

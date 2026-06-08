@@ -37,6 +37,7 @@ describe('useShelter', () => {
     mockShelter.revealSecretKey$.mockClear();
     mockShelter.revealSeedPhrase$.mockClear();
     mockShelter.createImportedChainAccount$.mockClear();
+    mockShelter.createImportedMultichainAccount$.mockClear();
     mockShelter.saveSaplingSpendingKey$.mockClear();
     mockUseDispatch.mockClear();
     mockNavigationDispatch.mockClear();
@@ -174,13 +175,74 @@ describe('useShelter', () => {
       TempleChainKind.EVM
     );
     expect(mockShelter.saveSaplingSpendingKey$).not.toHaveBeenCalled();
-    expect(loadTezosBalanceSpy).toHaveBeenCalledWith(
-      mockRootState.settings.selectedRpcUrl,
-      mockEvmImportedAccount.address
-    );
+    expect(loadTezosBalanceSpy).not.toHaveBeenCalled();
     expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockEvmImportedAccount.id));
     expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockEvmImportedAccount));
-    expect(mockUseDispatch).toHaveBeenCalledWith(loadWhitelistAction.submit());
+    expect(mockUseDispatch).not.toHaveBeenCalledWith(loadWhitelistAction.submit());
+  });
+
+  it('should create imported multichain account from seed without custom derivation path', async () => {
+    const initialAccounts = mockRootState.wallet.accounts;
+    mockRootState.wallet.accounts = [];
+    try {
+      const { result } = renderHook(() => useShelter());
+
+      result.current.createImportedMultichainAccount({
+        seedPhrase: mockAccountCredentials.seedPhrase,
+        name: mockHdAccount.name
+      });
+      await jest.runAllTimersAsync();
+    } finally {
+      mockRootState.wallet.accounts = initialAccounts;
+    }
+
+    expect(mockShelter.createImportedMultichainAccount$).toHaveBeenCalledWith({
+      seedPhrase: mockAccountCredentials.seedPhrase,
+      name: mockHdAccount.name,
+      bip39Passphrase: undefined,
+      chain: undefined,
+      derivationPath: undefined
+    });
+    expect(mockShelter.createImportedChainAccount$).not.toHaveBeenCalled();
+  });
+
+  it('should create imported EVM chain account from seed with custom EVM derivation path', async () => {
+    mockShelter.createImportedChainAccount$.mockReturnValueOnce(of(mockEvmImportedAccount));
+    const { result } = renderHook(() => useShelter());
+
+    result.current.createImportedAccountFromSeed({
+      seedPhrase: mockAccountCredentials.seedPhrase,
+      name: mockEvmImportedAccount.name,
+      derivationPath: "m/44'/60'/0'/0/1"
+    });
+    await jest.runAllTimersAsync();
+
+    expect(mockShelter.createImportedChainAccount$).toHaveBeenCalledWith(
+      expect.any(String),
+      mockEvmImportedAccount.name,
+      TempleChainKind.EVM
+    );
+    expect(mockShelter.createImportedMultichainAccount$).not.toHaveBeenCalled();
+  });
+
+  it('should create imported Tezos chain account from seed with custom non-EVM derivation path', async () => {
+    mockInMemorySigner.publicKey.mockReturnValueOnce(Promise.resolve('another public key'));
+    mockInMemorySigner.publicKeyHash.mockReturnValueOnce(Promise.resolve('tz1AnotherPublicKeyHash'));
+    const { result } = renderHook(() => useShelter());
+
+    result.current.createImportedAccountFromSeed({
+      seedPhrase: mockAccountCredentials.seedPhrase,
+      name: mockHdAccount.name,
+      derivationPath: "m/44'/999'/0'/0'"
+    });
+    await jest.runAllTimersAsync();
+
+    expect(mockShelter.createImportedChainAccount$).toHaveBeenCalledWith(
+      expect.any(String),
+      mockHdAccount.name,
+      TempleChainKind.Tezos
+    );
+    expect(mockShelter.createImportedMultichainAccount$).not.toHaveBeenCalled();
   });
 
   it('should not create account with invalid private key', async () => {

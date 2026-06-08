@@ -322,9 +322,7 @@ describe('Shelter', () => {
           switchMap(() =>
             Shelter.createImportedMultichainAccount$({
               seedPhrase: mockAccountCredentials.seedPhrase,
-              name: mockName,
-              chain: TempleChainKind.Tezos,
-              derivationPath: mockAccountCredentials.derivationPath
+              name: mockName
             })
           )
         )

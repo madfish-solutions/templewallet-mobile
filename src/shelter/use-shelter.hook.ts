@@ -14,6 +14,7 @@ import { createHdAccountSubscription } from './utils/create-hd-account-subscript
 import {
   createImportAccountSubscription,
   CreateImportedAccountParams,
+  CreateImportedAccountFromSeedParams,
   CreateImportedMultichainAccountParams
 } from './utils/create-import-account-subscription.util';
 import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
@@ -33,6 +34,7 @@ export const useShelter = () => {
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
   const createImportedAccount$ = useMemo(() => new Subject<CreateImportedAccountParams>(), []);
+  const createImportedAccountFromSeed$ = useMemo(() => new Subject<CreateImportedAccountFromSeedParams>(), []);
   const createImportedMultichainAccount$ = useMemo(() => new Subject<CreateImportedMultichainAccountParams>(), []);
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export const useShelter = () => {
       createHdAccountSubscription(createHdAccount$, accounts, dispatch),
       createImportAccountSubscription(
         createImportedAccount$,
+        createImportedAccountFromSeed$,
         createImportedMultichainAccount$,
         accounts,
         dispatch,
@@ -58,6 +61,7 @@ export const useShelter = () => {
     accounts,
     createHdAccount$,
     createImportedAccount$,
+    createImportedAccountFromSeed$,
     createImportedMultichainAccount$,
     dispatch,
     enableBiometryPassword$,
@@ -87,6 +91,11 @@ export const useShelter = () => {
     [createImportedAccount$]
   );
 
+  const createImportedAccountFromSeed = useCallback(
+    (params: CreateImportedAccountFromSeedParams) => createImportedAccountFromSeed$.next(params),
+    [createImportedAccountFromSeed$]
+  );
+
   const createImportedMultichainAccount = useCallback(
     (params: CreateImportedMultichainAccountParams) => createImportedMultichainAccount$.next(params),
     [createImportedMultichainAccount$]
@@ -99,6 +108,7 @@ export const useShelter = () => {
     revealSeedPhrase,
     enableBiometryPassword,
     createImportedAccount,
+    createImportedAccountFromSeed,
     createImportedMultichainAccount
   };
 };

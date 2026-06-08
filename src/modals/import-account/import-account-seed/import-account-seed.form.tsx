@@ -1,41 +1,45 @@
-import { isValidPath } from 'ed25519-hd-key';
-import { mixed, object, SchemaOf, string } from 'yup';
+import { object, SchemaOf, string } from 'yup';
 
-import { ImportAccountDerivationEnum } from 'src/enums/account-type.enum';
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { seedPhraseValidation } from 'src/form/validation/seed-phrase';
-import { isDefined } from 'src/utils/is-defined';
-import { getEvmDerivationPath, getTezosDerivationPath, isValidEvmDerivationPath } from 'src/utils/keys.utils';
+import { getEvmDerivationPath } from 'src/utils/keys.utils';
 
 export type ImportAccountSeedValues = {
   seedPhrase: string;
-  password?: string;
-  chain: TempleChainKind;
-  derivationType: ImportAccountDerivationEnum;
   derivationPath?: string;
 };
 
 export const importAccountSeedInitialValues: ImportAccountSeedValues = {
   seedPhrase: '',
-  password: '',
-  chain: TempleChainKind.Tezos,
-  derivationType: ImportAccountDerivationEnum.DEFAULT,
-  derivationPath: getTezosDerivationPath(0)
+  derivationPath: ''
 };
+
+export const importAccountSeedDerivationPathPlaceholder = getEvmDerivationPath(0);
+
+const derivationPathValidation = string().test('validateDerivationPath', 'Invalid derivation path', path => {
+  if (!path) {
+    return true;
+  }
+
+  if (!path.startsWith('m')) {
+    return false;
+  }
+
+  if (path.length > 1 && path[1] !== '/') {
+    return false;
+  }
+
+  return path
+    .replace('m', '')
+    .split('/')
+    .filter(Boolean)
+    .every(pathPart => {
+      const pathPartNumber = Number(pathPart.endsWith("'") ? pathPart.slice(0, -1) : pathPart);
+
+      return Number.isSafeInteger(pathPartNumber) && pathPartNumber >= 0;
+    });
+});
 
 export const importAccountSeedValidationSchema: SchemaOf<ImportAccountSeedValues> = object().shape({
   seedPhrase: seedPhraseValidation,
-  password: string(),
-  chain: mixed<TempleChainKind>().oneOf(Object.values(TempleChainKind)).required(),
-  derivationType: mixed<ImportAccountDerivationEnum>().oneOf(Object.values(ImportAccountDerivationEnum)).required(),
-  derivationPath: string().test('validateDerivationPath', 'Invalid derivation path', function (path) {
-    if (!isDefined(path)) {
-      return true;
-    }
-
-    return this.parent.chain === TempleChainKind.EVM ? isValidEvmDerivationPath(path) : isValidPath(path);
-  })
+  derivationPath: derivationPathValidation
 });
-
-export const getDefaultImportAccountSeedDerivationPath = (chain: TempleChainKind) =>
-  chain === TempleChainKind.EVM ? getEvmDerivationPath(0) : getTezosDerivationPath(0);

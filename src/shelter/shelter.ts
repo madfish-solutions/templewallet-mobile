@@ -431,11 +431,12 @@ export class Shelter {
       return throwError$('Mnemonic not validated');
     }
 
-    const tezosDerivationPath = chain === TempleChainKind.Tezos ? derivationPath : getTezosDerivationPath(0);
+    const tezosDerivationPath =
+      chain === TempleChainKind.Tezos ? derivationPath ?? getTezosDerivationPath(0) : getTezosDerivationPath(0);
     const evmDerivationPath =
       chain === TempleChainKind.EVM ? derivationPath ?? getEvmDerivationPath(0) : getEvmDerivationPath(0);
     const saplingDerivationPath = getSaplingDerivationPath(
-      chain === TempleChainKind.Tezos ? extractHdIndexFromDerivationPath(derivationPath) : undefined
+      chain === TempleChainKind.Tezos ? extractHdIndexFromDerivationPath(tezosDerivationPath) : undefined
     );
 
     return forkJoin([

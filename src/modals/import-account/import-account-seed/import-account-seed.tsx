@@ -10,10 +10,7 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { ImportAccountDerivationEnum } from 'src/enums/account-type.enum';
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
-import { FormPasswordInput } from 'src/form/form-password-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -23,12 +20,9 @@ import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { ImportAccountChainForm } from '../import-account-chain.form';
-
 import { useImportAccountFromSeedStyles } from './import-account-from-seed.styles';
 import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
 import {
-  getDefaultImportAccountSeedDerivationPath,
   importAccountSeedInitialValues,
   importAccountSeedValidationSchema,
   ImportAccountSeedValues
@@ -41,7 +35,7 @@ interface Props {
 
 export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   const styles = useImportAccountFromSeedStyles();
-  const { createImportedMultichainAccount } = useShelter();
+  const { createImportedAccountFromSeed, createImportedMultichainAccount } = useShelter();
   const accountsIndex = useAllAccounts().length + 1;
 
   const isLoading = useIsShowLoaderSelector();
@@ -51,16 +45,25 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Seed Phrase" /> }, []);
 
   const onSubmit = useCallback(
-    ({ seedPhrase, password, chain, derivationPath }: ImportAccountSeedValues) => {
-      createImportedMultichainAccount({
+    ({ seedPhrase, derivationPath }: ImportAccountSeedValues) => {
+      const trimmedDerivationPath = derivationPath?.trim();
+      const params = {
         name: `Account ${accountsIndex}`,
-        seedPhrase,
-        password,
-        chain,
-        derivationPath
-      });
+        seedPhrase
+      };
+
+      if (trimmedDerivationPath) {
+        createImportedAccountFromSeed({
+          ...params,
+          derivationPath: trimmedDerivationPath
+        });
+
+        return;
+      }
+
+      createImportedMultichainAccount(params);
     },
-    [accountsIndex, createImportedMultichainAccount]
+    [accountsIndex, createImportedAccountFromSeed, createImportedMultichainAccount]
   );
 
   const formik = useFormik({
@@ -71,15 +74,6 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
     validateOnMount: false,
     onSubmit
   });
-
-  const onChainChange = useCallback(
-    (nextChain: TempleChainKind) => {
-      if (formik.values.derivationType === ImportAccountDerivationEnum.DEFAULT) {
-        formik.setFieldValue('derivationPath', getDefaultImportAccountSeedDerivationPath(nextChain));
-      }
-    },
-    [formik]
-  );
 
   return (
     <FormikProvider value={formik}>
@@ -92,22 +86,12 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
           </View>
           <AndroidKeyboardDisclaimer />
           <Divider size={formatSize(12)} />
-          <Label label="Chain" />
-          <ImportAccountChainForm onChange={onChainChange} />
-          <Divider size={formatSize(12)} />
           <Label
-            label="Derivation"
+            label="Custom derivation path"
             isOptional
-            description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
+            description="Leave empty to import default Tezos and EVM accounts."
           />
-          <ImportAccountSeedDerivationPathForm formValues={formik.values} />
-          <Divider size={formatSize(12)} />
-          <Label
-            label="Password"
-            isOptional
-            description={'That is NOT a wallet password.\nUsed for additional mnemonic derivation.'}
-          />
-          <FormPasswordInput name="password" testID={ImportAccountSeedSelectors.passwordInput} />
+          <ImportAccountSeedDerivationPathForm />
           <Divider size={formatSize(12)} />
         </View>
       </ScreenContainer>
