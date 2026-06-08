@@ -39,6 +39,8 @@ import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { getTempleUniversalLink } from 'src/utils/universal-links';
 
+import { Account } from '../../interfaces/account.interfaces.ts';
+
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';
 import { useSettingsStyles } from './settings.styles';
@@ -56,7 +58,9 @@ export const Settings = () => {
   const { trackEvent } = useAnalytics();
 
   const theme = useThemeSelector();
-  const account = useAccount();
+
+  // Can become undefined during reset
+  const account = useAccount() as Account | undefined;
 
   const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
 
@@ -84,7 +88,7 @@ export const Settings = () => {
     }
   }, [trackEvent]);
 
-  const showBackupButton = !isAnyBackupMade || account.type === AccountTypeEnum.WATCH_ONLY_DEBUG;
+  const showBackupButton = !isAnyBackupMade || account?.type === AccountTypeEnum.WATCH_ONLY_DEBUG;
 
   return (
     <>
@@ -116,7 +120,7 @@ export const Settings = () => {
               testID={SettingsSelectors.accountsButton}
             >
               <View style={styles.actionsContainer}>
-                <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(32)} />
+                {account && <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(32)} />}
                 <WhiteContainerText text="Accounts" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
