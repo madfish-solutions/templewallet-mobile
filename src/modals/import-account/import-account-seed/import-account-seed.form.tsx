@@ -13,19 +13,21 @@ export const importAccountSeedInitialValues: ImportAccountSeedValues = {
 };
 
 const derivationPathValidation = string().test('validateDerivationPath', 'Invalid derivation path', path => {
-  if (!path) {
+  const trimmedPath = path?.trim();
+
+  if (!trimmedPath) {
     return true;
   }
 
-  if (!path.startsWith('m')) {
+  if (!trimmedPath.startsWith('m')) {
     return false;
   }
 
-  if (path.length > 1 && path[1] !== '/') {
+  if (trimmedPath.length > 1 && trimmedPath[1] !== '/') {
     return false;
   }
 
-  return path
+  return trimmedPath
     .replace('m', '')
     .split('/')
     .filter(Boolean)

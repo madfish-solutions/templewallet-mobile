@@ -43,4 +43,4 @@ Optimize for clarity, polish, and performance in every change.
 
 ## A Note to the Agent
 We are building this together. When you learn something non-obvious, add it here so future changes go faster.
-- Kukai/Temple `.tez` keystore files decrypt to a mnemonic; for account import, pass that mnemonic to `createImportedAccountFromSeed` with `getTezosDerivationPath(0)` so the result is an `IMPORTED_CHAIN` Tezos account instead of a full wallet import.
+- Kukai/Temple `.tez` keystore files decrypt to a mnemonic; for account import, pass that mnemonic to `createImportedAccountFromSeed` with a Tezos derivation path so the result is an `IMPORTED_CHAIN` Tezos account instead of a full wallet import.

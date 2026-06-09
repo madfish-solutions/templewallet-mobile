@@ -13,6 +13,7 @@ import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormFileInput } from 'src/form/form-file-input';
 import { FormPasswordInput } from 'src/form/form-password-input';
+import { FormTextInput } from 'src/form/form-text-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -47,10 +48,11 @@ export const ImportAccountKeystoreFile = memo<Props>(({ onBackPress }) => {
   usePageAnalytic(ModalsEnum.ImportAccountFromKeystoreFile);
 
   const handleSubmit = useCallback(
-    async ({ password, keystoreFile }: ImportAccountKeystoreFileFormValues) => {
+    async ({ password, keystoreFile, derivationPath }: ImportAccountKeystoreFileFormValues) => {
       try {
         const content = await readFile(keystoreFile.uri, 'utf8');
         const seedPhrase = await decryptSeedPhrase(content, password);
+        const trimmedDerivationPath = derivationPath?.trim();
 
         if (!validateMnemonic(seedPhrase)) {
           throw new Error('Mnemonic not validated');
@@ -59,7 +61,7 @@ export const ImportAccountKeystoreFile = memo<Props>(({ onBackPress }) => {
         createImportedAccountFromSeed({
           seedPhrase,
           name: `Account ${accountIndex}`,
-          derivationPath: getTezosDerivationPath(0)
+          derivationPath: trimmedDerivationPath || getTezosDerivationPath(0)
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (e: any) {
@@ -99,6 +101,9 @@ export const ImportAccountKeystoreFile = memo<Props>(({ onBackPress }) => {
             <Divider size={formatSize(12)} />
             <Label label="File password" description="Please enter a password for keystore file" />
             <FormPasswordInput name="password" />
+            <Divider size={formatSize(12)} />
+            <Label label="Custom Tezos Derivation Path" isOptional />
+            <FormTextInput name="derivationPath" placeholder="e.g. m/44'/1729'/0'/0'" />
           </View>
         </View>
         <Divider />
