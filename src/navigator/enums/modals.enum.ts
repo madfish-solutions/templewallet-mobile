@@ -25,12 +25,12 @@ export enum ModalsEnum {
   ManageSavingsPool = 'ManageSavingsPool',
   ChooseWalletImportType = 'ChooseWalletImportType',
   ImportWalletFromSeedPhrase = 'ImportWalletFromSeedPhrase',
-  ImportWalletFromKeystoreFile = 'ImportWalletFromKeystoreFile',
   SyncInstructions = 'SyncInstructions',
   ConfirmSync = 'ConfirmSync',
   ChooseAccountImportType = 'ChooseAccountImportType',
   ImportAccountFromSeedPhrase = 'ImportAccountFromSeedPhrase',
   ImportAccountFromPrivateKey = 'ImportAccountFromPrivateKey',
+  ImportAccountFromKeystoreFile = 'ImportAccountFromKeystoreFile',
   KoloCard = 'KoloCard',
   ShieldedAnnouncement = 'ShieldedAnnouncement',
   Rebalance = 'Rebalance'
@@ -57,12 +57,12 @@ export type ModalsParamList = {
   [ModalsEnum.InAppBrowser]: { uri: string };
   [ModalsEnum.ChooseWalletImportType]: undefined;
   [ModalsEnum.ImportWalletFromSeedPhrase]: undefined;
-  [ModalsEnum.ImportWalletFromKeystoreFile]: undefined;
   [ModalsEnum.SyncInstructions]: undefined;
   [ModalsEnum.ConfirmSync]: { payload: string };
   [ModalsEnum.ChooseAccountImportType]: undefined;
   [ModalsEnum.ImportAccountFromSeedPhrase]: undefined;
   [ModalsEnum.ImportAccountFromPrivateKey]: undefined;
+  [ModalsEnum.ImportAccountFromKeystoreFile]: undefined;
   [ModalsEnum.KoloCard]: undefined;
   [ModalsEnum.ShieldedAnnouncement]: undefined;
   [ModalsEnum.Rebalance]: undefined;
@@ -93,12 +93,12 @@ export type ModalParams =
   | ModalParamsPart<ModalsEnum.InAppBrowser>
   | ModalParamsPart<ModalsEnum.ChooseWalletImportType>
   | ModalParamsPart<ModalsEnum.ImportWalletFromSeedPhrase>
-  | ModalParamsPart<ModalsEnum.ImportWalletFromKeystoreFile>
   | ModalParamsPart<ModalsEnum.SyncInstructions>
   | ModalParamsPart<ModalsEnum.ConfirmSync>
   | ModalParamsPart<ModalsEnum.ChooseAccountImportType>
   | ModalParamsPart<ModalsEnum.ImportAccountFromSeedPhrase>
   | ModalParamsPart<ModalsEnum.ImportAccountFromPrivateKey>
+  | ModalParamsPart<ModalsEnum.ImportAccountFromKeystoreFile>
   | ModalParamsPart<ModalsEnum.KoloCard>
   | ModalParamsPart<ModalsEnum.ShieldedAnnouncement>
   | ModalParamsPart<ModalsEnum.Rebalance>;
