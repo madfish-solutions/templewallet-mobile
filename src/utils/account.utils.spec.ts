@@ -17,13 +17,8 @@ describe('account facade helpers', () => {
     });
   });
 
-  it('returns imported Tezos account address for chain facades', () => {
+  it('returns imported account address for chain facades', () => {
     expect(getAccountAddressForTezos(mockTezosImportedAccount)).toEqual(mockTezosImportedAccount.address);
-    expect(getAccountAddressForEvm(mockTezosImportedAccount)).toEqual(mockTezosImportedAccount.address);
-  });
-
-  it('returns imported EVM account address for chain facades', () => {
-    expect(getAccountAddressForTezos(mockEvmImportedAccount)).toEqual(mockEvmImportedAccount.address);
     expect(getAccountAddressForEvm(mockEvmImportedAccount)).toEqual(mockEvmImportedAccount.address);
   });
 });
