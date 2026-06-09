@@ -31,6 +31,7 @@ import {
   importAccountKeystoreFileInitialValues,
   importAccountKeystoreFileValidationSchema
 } from './import-account-keystore-file.form';
+import { ImportAccountKeystoreFileSelectors } from './import-account-keystore-file.selectors.ts';
 import { useImportAccountKeystoreFileStyles } from './import-account-keystore-file.styles';
 
 interface Props {
@@ -100,21 +101,30 @@ export const ImportAccountKeystoreFile = memo<Props>(({ onBackPress }) => {
             <FormFileInput name="keystoreFile" />
             <Divider size={formatSize(12)} />
             <Label label="File password" description="Please enter a password for keystore file" />
-            <FormPasswordInput name="password" />
+            <FormPasswordInput name="password" testID={ImportAccountKeystoreFileSelectors.passwordInput} />
             <Divider size={formatSize(12)} />
             <Label label="Custom Tezos Derivation Path" isOptional />
-            <FormTextInput name="derivationPath" placeholder="e.g. m/44'/1729'/0'/0'" />
+            <FormTextInput
+              name="derivationPath"
+              placeholder="e.g. m/44'/1729'/0'/0'"
+              testID={ImportAccountKeystoreFileSelectors.derivationPathInput}
+            />
           </View>
         </View>
         <Divider />
       </ScreenContainer>
 
       <ModalButtonsFloatingContainer variant="bordered">
-        <ButtonLargeSecondary title="Back" onPress={onBackPress} />
+        <ButtonLargeSecondary
+          title="Back"
+          onPress={onBackPress}
+          testID={ImportAccountKeystoreFileSelectors.backButton}
+        />
         <ButtonLargePrimary
           title="Import"
           disabled={!isValid || isSubmitting || isLoading}
           onPress={useCallbackIfOnline(submitForm)}
+          testID={ImportAccountKeystoreFileSelectors.importButton}
         />
       </ModalButtonsFloatingContainer>
     </FormikProvider>

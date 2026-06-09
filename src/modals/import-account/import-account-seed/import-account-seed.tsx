@@ -11,6 +11,7 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
+import { FormTextInput } from 'src/form/form-text-input.tsx';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -21,7 +22,6 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { useImportAccountFromSeedStyles } from './import-account-from-seed.styles';
-import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
 import {
   importAccountSeedInitialValues,
   importAccountSeedValidationSchema,
@@ -87,7 +87,11 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
           <AndroidKeyboardDisclaimer />
           <Divider size={formatSize(12)} />
           <Label label="Custom Derivation Path" isOptional />
-          <ImportAccountSeedDerivationPathForm />
+          <FormTextInput
+            name="derivationPath"
+            placeholder="e.g. m/44'/60'/0'/0/0"
+            testID={ImportAccountSeedSelectors.derivationPathInput}
+          />
           <Divider size={formatSize(12)} />
         </View>
       </ScreenContainer>
