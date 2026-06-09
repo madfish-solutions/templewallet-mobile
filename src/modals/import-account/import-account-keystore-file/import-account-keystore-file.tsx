@@ -103,7 +103,7 @@ export const ImportAccountKeystoreFile = memo<Props>(({ onBackPress }) => {
             <Label label="File password" description="Please enter a password for keystore file" />
             <FormPasswordInput name="password" testID={ImportAccountKeystoreFileSelectors.passwordInput} />
             <Divider size={formatSize(12)} />
-            <Label label="Custom Tezos Derivation Path" isOptional />
+            <Label label="Custom derivation path" isOptional />
             <FormTextInput
               name="derivationPath"
               placeholder="e.g. m/44'/1729'/0'/0'"

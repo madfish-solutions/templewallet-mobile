@@ -1,27 +1,23 @@
 import { string } from 'yup';
 
-export const derivationPathValidation = string().test('validateDerivationPath', 'Invalid derivation path', path => {
-  const trimmedPath = path?.trim();
+import { isTruthy } from 'src/utils/is-truthy.ts';
 
-  if (!trimmedPath) {
-    return true;
+export const derivationPathValidation = string().test('validateDerivationPath', 'Invalid path', path => {
+  const p = path ?? '';
+
+  if (p.length === 0) return true;
+  if (!p.startsWith('m')) {
+    return false;
   }
-
-  if (!trimmedPath.startsWith('m')) {
+  if (p.length > 1 && p[1] !== '/') {
     return false;
   }
 
-  if (trimmedPath.length > 1 && trimmedPath[1] !== '/') {
-    return false;
-  }
+  const parts = p.replace('m', '').split('/').filter(isTruthy);
 
-  return trimmedPath
-    .replace('m', '')
-    .split('/')
-    .filter(Boolean)
-    .every(pathPart => {
-      const pathPartNumber = Number(pathPart.endsWith("'") ? pathPart.slice(0, -1) : pathPart);
+  return parts.every(itemPart => {
+    const pNum = +(itemPart.includes("'") ? itemPart.replace("'", '') : itemPart);
 
-      return Number.isSafeInteger(pathPartNumber) && pathPartNumber >= 0;
-    });
+    return Number.isSafeInteger(pNum) && pNum >= 0;
+  });
 });

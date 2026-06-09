@@ -86,7 +86,7 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
           </View>
           <AndroidKeyboardDisclaimer />
           <Divider size={formatSize(12)} />
-          <Label label="Custom Derivation Path" isOptional />
+          <Label label="Custom derivation path" isOptional />
           <FormTextInput
             name="derivationPath"
             placeholder="e.g. m/44'/60'/0'/0/0"
