@@ -269,9 +269,6 @@ export class Shelter {
       passwordHash
     );
 
-  static revealAccountPrivateKey$ = (address: string, passwordHash?: string) =>
-    Shelter.decryptSensitiveData$(address, passwordHash ?? Shelter._passwordHash$.getValue());
-
   private static deriveAndSaveHdAccount$ = ({
     seedPhrase,
     name,
