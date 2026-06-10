@@ -31,10 +31,10 @@ describe('useShelter', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
     loadTezosBalanceSpy = jest.spyOn(tokenBalanceUtils, 'loadTezosBalance$').mockReturnValue(of('0'));
-    mockShelter.importHdAccount$.mockClear();
+    mockShelter.importWallet$.mockClear();
     mockShelter.enableBiometryPassword$.mockClear();
     mockShelter.createHdAccount$.mockClear();
-    mockShelter.revealSecretKey$.mockClear();
+    mockShelter.revealAccountPrivateKey$.mockClear();
     mockShelter.revealSeedPhrase$.mockClear();
     mockShelter.createImportedChainAccount$.mockClear();
     mockShelter.createImportedMultichainAccount$.mockClear();
@@ -52,7 +52,7 @@ describe('useShelter', () => {
 
     result.current.importWallet({ seedPhrase: mockAccountCredentials.seedPhrase, password: mockCorrectPassword });
 
-    expect(mockShelter.importHdAccount$).toHaveBeenCalledWith(
+    expect(mockShelter.importWallet$).toHaveBeenCalledWith(
       mockAccountCredentials.seedPhrase,
       mockCorrectPassword,
       undefined
@@ -72,7 +72,7 @@ describe('useShelter', () => {
       useBiometry: true
     });
 
-    expect(mockShelter.importHdAccount$).toHaveBeenCalledWith(
+    expect(mockShelter.importWallet$).toHaveBeenCalledWith(
       mockAccountCredentials.seedPhrase,
       mockCorrectPassword,
       undefined
@@ -102,7 +102,7 @@ describe('useShelter', () => {
       successCallback: mockSuccessCallback
     });
 
-    expect(mockShelter.revealSecretKey$).toHaveBeenCalledWith(mockAccountCredentials.publicKeyHash);
+    expect(mockShelter.revealAccountPrivateKey$).toHaveBeenCalledWith(mockAccountCredentials.publicKeyHash);
     expect(mockSuccessCallback).toHaveBeenCalledWith(mockRevealedSecretKey);
   });
 

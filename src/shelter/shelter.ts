@@ -592,7 +592,7 @@ export class Shelter {
     );
 
   static getTezosSigner$ = (address: string) =>
-    Shelter.revealAccountPrivateKey$(address, TempleChainKind.Tezos).pipe(
+    Shelter.revealAccountPrivateKey$(address).pipe(
       switchMap(value => (value === undefined ? throwError$('Failed to reveal private key') : of(value))),
       map(privateKey => new InMemorySigner(privateKey))
     );
