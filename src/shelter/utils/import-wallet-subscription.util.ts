@@ -19,7 +19,7 @@ export const importWalletSubscription = (importWallet$: Subject<ImportWalletPara
       tap(() => dispatch(showLoaderAction())),
       switchMap(({ seedPhrase, password, hdAccountsLength, useBiometry }) =>
         forkJoin([
-          Shelter.importHdAccount$(seedPhrase, password, hdAccountsLength),
+          Shelter.importWallet$(seedPhrase, password, hdAccountsLength),
           useBiometry === true ? Shelter.enableBiometryPassword$(password) : of(false)
         ])
       ),

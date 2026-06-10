@@ -338,7 +338,7 @@ export class Shelter {
       )
     );
 
-  static importHdAccount$ = (
+  static importWallet$ = (
     seedPhrase: string,
     password: string,
     hdAccountsLength = 1
@@ -356,6 +356,7 @@ export class Shelter {
 
         return Shelter.saveSensitiveData$(
           {
+            seedPhrase,
             [PASSWORD_CHECK_KEY]: generateMnemonic(128)
           },
           passwordHash

@@ -112,7 +112,7 @@ describe('Shelter', () => {
 
   describe('accounts management', () => {
     it('should import HD account & unlock app', done => {
-      Shelter.importHdAccount$(mockAccountCredentials.seedPhrase, mockCorrectPassword)
+      Shelter.importWallet$(mockAccountCredentials.seedPhrase, mockCorrectPassword)
         .pipe(withLatestFrom(Shelter.isLocked$))
         .subscribe(
           rxJsTestingHelper(([accounts, isLocked]) => {
@@ -148,7 +148,7 @@ describe('Shelter', () => {
     it('should not import HD account with wrong mnemonic', done => {
       const incorrectSeedPhraseMock = 'Lorem ipsum dolor sit amet consectetur adipiscing elit donec iaculis libero et';
 
-      Shelter.importHdAccount$(incorrectSeedPhraseMock, mockCorrectPassword).subscribe({
+      Shelter.importWallet$(incorrectSeedPhraseMock, mockCorrectPassword).subscribe({
         error: err => {
           expect(err.message).toBe('Mnemonic not validated');
           done();
