@@ -4,15 +4,16 @@ import { InMemorySigner } from '@taquito/signer';
 import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from 'bip39';
 import { range } from 'lodash-es';
 import {
-  UserCredentials,
-  setGenericPassword,
   getAllGenericPasswordServices,
   getGenericPassword,
   getSupportedBiometryType,
-  resetGenericPassword
+  resetGenericPassword,
+  setGenericPassword,
+  UserCredentials
 } from 'react-native-keychain';
 import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { isAddress as isEvmAddress } from 'viem';
 
 import { AccountTypeEnum } from '../enums/account-type.enum';
 import { TempleChainKind } from '../enums/temple-chain-kind.enum';
@@ -534,12 +535,19 @@ export class Shelter {
       )
     );
 
-  static revealSecretKey$ = (address: string, passwordHash?: string) =>
-    Shelter.decryptSensitiveData$(address, passwordHash ?? Shelter._passwordHash$.getValue()).pipe(
+  static revealAccountPrivateKey$ = (address: string, passwordHash?: string) => {
+    const decrypt$ = Shelter.decryptSensitiveData$(address, passwordHash ?? Shelter._passwordHash$.getValue());
+
+    if (isEvmAddress(address)) {
+      return decrypt$;
+    }
+
+    return decrypt$.pipe(
       switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
       switchMap(signer => signer.secretKey()),
       catchError(() => of(undefined))
     );
+  };
 
   static revealSeedPhrase$ = (passwordHash?: string) =>
     Shelter.decryptSensitiveData$('seedPhrase', passwordHash ?? Shelter._passwordHash$.getValue());
@@ -572,7 +580,7 @@ export class Shelter {
     );
 
   static restoreImportedAccountSaplingSpendingKey$ = (address: string, passwordHash?: string) =>
-    Shelter.revealSecretKey$(address, passwordHash).pipe(
+    Shelter.revealAccountPrivateKey$(address, passwordHash).pipe(
       switchMap(privateKey => {
         if (privateKey) {
           return from(deriveSaskFromPrivateKey(privateKey));
@@ -584,7 +592,7 @@ export class Shelter {
     );
 
   static getTezosSigner$ = (address: string) =>
-    Shelter.revealSecretKey$(address).pipe(
+    Shelter.revealAccountPrivateKey$(address, TempleChainKind.Tezos).pipe(
       switchMap(value => (value === undefined ? throwError$('Failed to reveal private key') : of(value))),
       map(privateKey => new InMemorySigner(privateKey))
     );

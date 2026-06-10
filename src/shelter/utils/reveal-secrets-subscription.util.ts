@@ -16,7 +16,7 @@ export const revealSecretsSubscription = (
     revealSecretKey$.pipe(
       tap(() => dispatch(showLoaderAction())),
       switchMap(({ address, successCallback }) =>
-        Shelter.revealSecretKey$(address).pipe(
+        Shelter.revealAccountPrivateKey$(address).pipe(
           map((secretKey): [string | undefined, SyncFn<string>] => [secretKey, successCallback])
         )
       ),

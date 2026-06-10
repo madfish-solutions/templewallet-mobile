@@ -43,7 +43,7 @@ describe('Shelter', () => {
 
   describe('app lock', () => {
     it('should initially lock app & be unable to decrypt data', done => {
-      Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash)
+      Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash)
         .pipe(withLatestFrom(Shelter.isLocked$))
         .subscribe(
           rxJsTestingHelper(([decryptResult, isLocked]) => {
@@ -57,7 +57,9 @@ describe('Shelter', () => {
       Shelter.unlockApp$(mockIncorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(
           switchMap(() =>
-            Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
+            Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash).pipe(
+              withLatestFrom(Shelter.isLocked$)
+            )
           )
         )
         .subscribe(
@@ -72,7 +74,9 @@ describe('Shelter', () => {
       Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(
           switchMap(() =>
-            Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
+            Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash).pipe(
+              withLatestFrom(Shelter.isLocked$)
+            )
           )
         )
         .subscribe(
@@ -87,7 +91,9 @@ describe('Shelter', () => {
       Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
         .pipe(
           switchMap(() =>
-            Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(withLatestFrom(Shelter.isLocked$))
+            Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash).pipe(
+              withLatestFrom(Shelter.isLocked$)
+            )
           ),
           tap(([decryptResult, isLocked]) => {
             expect(decryptResult).toEqual(mockAccountCredentials.privateKey);
@@ -96,7 +102,7 @@ describe('Shelter', () => {
           switchMap(() => {
             Shelter.lockApp();
 
-            return Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash).pipe(
+            return Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash).pipe(
               withLatestFrom(Shelter.isLocked$)
             );
           })
@@ -374,7 +380,7 @@ describe('Shelter', () => {
 
     it('should reveal account private key', done => {
       Shelter.unlockApp$(mockCorrectPassword, mockAccountCredentials.publicKeyHash, undefined)
-        .pipe(switchMap(() => Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash)))
+        .pipe(switchMap(() => Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash)))
         .subscribe(
           rxJsTestingHelper(decryptResult => {
             expect(decryptResult).toEqual(mockAccountCredentials.privateKey);
@@ -393,7 +399,7 @@ describe('Shelter', () => {
     it('should return undefined when account private key is absent', done => {
       mockKeychain.getGenericPassword.mockResolvedValueOnce(false).mockResolvedValueOnce(mockCorrectUserCredentials);
 
-      Shelter.revealSecretKey$(mockAccountCredentials.publicKeyHash, mockCorrectPasswordHash).subscribe(
+      Shelter.revealAccountPrivateKey$(mockAccountCredentials.publicKeyHash, mockCorrectPasswordHash).subscribe(
         rxJsTestingHelper(decryptResult => {
           expect(decryptResult).toBeUndefined();
 

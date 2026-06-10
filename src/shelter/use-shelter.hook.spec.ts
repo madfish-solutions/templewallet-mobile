@@ -98,7 +98,7 @@ describe('useShelter', () => {
     const { result } = renderHook(() => useShelter());
 
     result.current.revealSecretKey({
-      publicKeyHash: mockAccountCredentials.publicKeyHash,
+      address: mockAccountCredentials.publicKeyHash,
       successCallback: mockSuccessCallback
     });
 
