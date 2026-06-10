@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useDispatch } from 'react-redux';
@@ -31,13 +31,24 @@ import { isString } from 'src/utils/is-string';
 import { ReceiveModalSelectors } from './receive-modal.selectors';
 import { useReceiveModalStyles } from './receive-modal.styles';
 
+interface ReceivePage {
+  address: string;
+  symbol: string;
+  name: string;
+  iconName?: IconNameEnum;
+  thumbnailUri?: string;
+  copyTestID: ReceiveModalSelectors;
+  showDomainToggle?: boolean;
+  warningText?: string;
+}
+
 export const ReceiveModal = () => {
   const colors = useColors();
   const styles = useReceiveModalStyles();
   const { width: screenWidth } = useWindowDimensions();
   const selectedAccount = useAccount();
   const tezosAddress = getAccountAddressForTezos(selectedAccount);
-  const publicAddress = tezosAddress ?? getAccountAddressForEvm(selectedAccount) ?? '';
+  const evmAddress = getAccountAddressForEvm(selectedAccount);
   const { token } = useModalParams<ModalsEnum.Receive>();
 
   const dispatch = useDispatch();
@@ -46,9 +57,47 @@ export const ReceiveModal = () => {
   const domainName = useDomainName(tezosAddress ?? '');
 
   const saplingAddress = useSaplingAddressSelector();
-  const showShieldedPage = Boolean(tezosAddress) && isString(saplingAddress);
 
   const [activePageIndex, setActivePageIndex] = useState(0);
+
+  const pages = useMemo(() => {
+    const receivePages: ReceivePage[] = [];
+
+    if (isString(tezosAddress)) {
+      receivePages.push({
+        address: tezosAddress,
+        symbol: token.symbol,
+        name: token.name,
+        iconName: token.iconName,
+        thumbnailUri: token.thumbnailUri,
+        copyTestID: ReceiveModalSelectors.publicAddressCopyButton,
+        showDomainToggle: true
+      });
+    }
+
+    if (isString(tezosAddress) && isString(saplingAddress)) {
+      receivePages.push({
+        address: saplingAddress,
+        symbol: 'TEZ',
+        name: 'Shielded',
+        iconName: IconNameEnum.TezShieldedToken,
+        copyTestID: ReceiveModalSelectors.copyButton,
+        warningText: 'Send only TEZ tokens to this address'
+      });
+    }
+
+    if (isString(evmAddress)) {
+      receivePages.push({
+        address: evmAddress,
+        symbol: 'TEZ',
+        name: 'Etherlink',
+        iconName: IconNameEnum.EtherlinkToken,
+        copyTestID: ReceiveModalSelectors.publicAddressCopyButton
+      });
+    }
+
+    return receivePages;
+  }, [evmAddress, saplingAddress, tezosAddress, token.iconName, token.name, token.symbol, token.thumbnailUri]);
 
   const handleScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -59,14 +108,21 @@ export const ReceiveModal = () => {
     [screenWidth]
   );
 
-  const currentAddress = activePageIndex === 0 ? publicAddress : saplingAddress ?? '';
+  useEffect(() => {
+    if (activePageIndex >= pages.length) {
+      setActivePageIndex(Math.max(pages.length - 1, 0));
+    }
+  }, [activePageIndex, pages.length]);
+
+  const activePage = pages[activePageIndex] ?? pages[0];
+  const currentAddress = activePage?.address ?? '';
 
   const testID = useMemo(
     () =>
-      isShownDomainName && isString(domainName) && activePageIndex === 0
+      activePage?.showDomainToggle && isShownDomainName && isString(domainName)
         ? ReceiveModalSelectors.domainCopyButton
-        : ReceiveModalSelectors.publicAddressCopyButton,
-    [activePageIndex, isShownDomainName, domainName]
+        : activePage?.copyTestID ?? ReceiveModalSelectors.publicAddressCopyButton,
+    [activePage, isShownDomainName, domainName]
   );
 
   const handleCopyButtonPress = () => {
@@ -78,18 +134,18 @@ export const ReceiveModal = () => {
 
   const pageContentWidth = screenWidth - formatSize(32);
 
-  const renderPublicPage = () => (
+  const renderPage = (page: ReceivePage) => (
     <View style={[styles.page, { width: screenWidth }]}>
       <View style={[styles.card, { maxWidth: pageContentWidth }]}>
         <View style={styles.tokenContainer}>
-          <TokenIcon size={formatSize(40)} iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
+          <TokenIcon size={formatSize(40)} iconName={page.iconName} thumbnailUri={page.thumbnailUri} />
           <View style={styles.tokenInfoContainer}>
-            <Text style={styles.tokenSymbol}>{token.symbol}</Text>
-            <Text style={styles.tokenName}>{token.name}</Text>
+            <Text style={styles.tokenSymbol}>{page.symbol}</Text>
+            <Text style={styles.tokenName}>{page.name}</Text>
           </View>
         </View>
         <QRCode
-          value={publicAddress}
+          value={page.address}
           ecl="Q"
           size={formatSize(180)}
           color={colors.black}
@@ -99,7 +155,7 @@ export const ReceiveModal = () => {
 
         <View style={styles.pkhWrapper}>
           <Text style={styles.addressTitle}>Address</Text>
-          {isString(domainName) ? (
+          {page.showDomainToggle && isString(domainName) ? (
             <TouchableIcon
               size={formatSize(16)}
               style={styles.iconContainer}
@@ -111,61 +167,33 @@ export const ReceiveModal = () => {
         <Divider size={formatSize(8)} />
 
         <SafeTouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyButtonPress} testID={testID}>
-          {isShownDomainName && isString(domainName) ? (
+          {page.showDomainToggle && isShownDomainName && isString(domainName) ? (
             <Text style={styles.publicKeyHash}>{domainName}</Text>
           ) : (
-            <Text style={styles.publicKeyHash}>{publicAddress}</Text>
+            <Text style={styles.publicKeyHash}>{page.address}</Text>
           )}
         </SafeTouchableOpacity>
+
+        {page.warningText ? (
+          <>
+            <Divider size={formatSize(16)} />
+
+            <View style={styles.warningContainer}>
+              <Text style={styles.warningIcon}>⚠</Text>
+              <Text style={styles.warningText}>{page.warningText}</Text>
+            </View>
+          </>
+        ) : null}
       </View>
     </View>
   );
 
-  const renderShieldedPage = () => (
-    <View style={[styles.page, { width: screenWidth }]}>
-      <View style={[styles.card, { maxWidth: pageContentWidth }]}>
-        <View style={styles.tokenContainer}>
-          <TokenIcon size={formatSize(40)} iconName={IconNameEnum.TezShieldedToken} />
-          <View style={styles.tokenInfoContainer}>
-            <Text style={styles.tokenSymbol}>TEZ</Text>
-            <Text style={styles.tokenName}>Shielded</Text>
-          </View>
-        </View>
-        <QRCode
-          value={saplingAddress ?? ''}
-          ecl="Q"
-          size={formatSize(180)}
-          color={colors.black}
-          backgroundColor={colors.cardBG}
-        />
-        <Divider />
-
-        <Text style={styles.addressTitle}>Address</Text>
-        <Divider size={formatSize(8)} />
-
-        <SafeTouchableOpacity
-          style={styles.publicKeyHashContainer}
-          onPress={handleCopyButtonPress}
-          testID={ReceiveModalSelectors.copyButton}
-        >
-          <Text style={styles.publicKeyHash}>{saplingAddress}</Text>
-        </SafeTouchableOpacity>
-        <Divider size={formatSize(16)} />
-
-        <View style={styles.warningContainer}>
-          <Text style={styles.warningIcon}>⚠</Text>
-          <Text style={styles.warningText}>Send only TEZ tokens to this address</Text>
-        </View>
-      </View>
-    </View>
-  );
-
-  if (!showShieldedPage) {
+  if (pages.length < 2) {
     return (
       <>
         <ScreenContainer contentContainerStyle={styles.rootContainer}>
           <ModalStatusBar />
-          {renderPublicPage()}
+          {activePage ? renderPage(activePage) : null}
         </ScreenContainer>
 
         <ButtonsFloatingContainer>
@@ -192,14 +220,18 @@ export const ReceiveModal = () => {
           onMomentumScrollEnd={handleScroll}
           style={styles.pagerContainer}
         >
-          {renderPublicPage()}
-          {renderShieldedPage()}
+          {pages.map(page => (
+            <React.Fragment key={page.address}>{renderPage(page)}</React.Fragment>
+          ))}
         </ScrollView>
 
         <View style={styles.dotsContainer}>
-          <View style={[styles.dot, activePageIndex === 0 ? styles.dotActive : styles.dotInactive]} />
-          <Divider size={formatSize(8)} />
-          <View style={[styles.dot, activePageIndex === 1 ? styles.dotActive : styles.dotInactive]} />
+          {pages.map((page, index) => (
+            <React.Fragment key={page.address}>
+              {index > 0 ? <Divider size={formatSize(8)} /> : null}
+              <View style={[styles.dot, activePageIndex === index ? styles.dotActive : styles.dotInactive]} />
+            </React.Fragment>
+          ))}
         </View>
       </ScreenContainer>
 
