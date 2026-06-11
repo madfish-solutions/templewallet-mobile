@@ -4,6 +4,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import Toast from 'react-native-toast-message';
 import { catchError, forkJoin, from, lastValueFrom, map, merge, of, Subject, switchMap, tap } from 'rxjs';
+import { isAddressEqual } from 'viem';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -50,90 +51,6 @@ export interface CreateImportedMultichainAccountParams {
   chain?: TempleChainKind;
   derivationPath?: string;
 }
-
-const normalizeAddressForCompare = (chain: TempleChainKind, address: string) =>
-  chain === TempleChainKind.EVM ? address.toLowerCase() : address;
-
-const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, address: string) =>
-  accounts.some(account => {
-    const accountAddress = getAccountAddressForChain(account, chain);
-
-    return accountAddress
-      ? normalizeAddressForCompare(chain, accountAddress) === normalizeAddressForCompare(chain, address)
-      : false;
-  });
-
-const deriveImportedChainAccountCredentials = (
-  privateKey: string,
-  chain: TempleChainKind
-): Promise<AccountCredentials> =>
-  chain === TempleChainKind.EVM
-    ? Promise.resolve().then(() => privateKeyToEvmAccountCredentials(privateKey))
-    : privateKeyToTezosAccountCredentials(privateKey);
-
-const deriveImportedChainAccountFromSeed = ({ seedPhrase, derivationPath }: CreateImportedAccountFromSeedParams) => {
-  const { chain, privateKey } = mnemonicToPrivateKey(
-    seedPhrase,
-    message => new Error(message),
-    undefined,
-    derivationPath
-  );
-
-  return from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
-    map(credentials => ({
-      chain,
-      credentials,
-      privateKey
-    }))
-  );
-};
-
-const deriveImportedMultichainAccountCredentials = ({
-  seedPhrase,
-  password,
-  chain = TempleChainKind.Tezos,
-  derivationPath
-}: CreateImportedMultichainAccountParams) => {
-  const tezosDerivationPath =
-    chain === TempleChainKind.Tezos ? derivationPath ?? getTezosDerivationPath(0) : getTezosDerivationPath(0);
-  const evmDerivationPath =
-    chain === TempleChainKind.EVM ? derivationPath ?? getEvmDerivationPath(0) : getEvmDerivationPath(0);
-
-  return forkJoin([
-    from(
-      Promise.resolve().then(() => {
-        const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
-          seedPhrase,
-          message => new Error(message),
-          password,
-          tezosDerivationPath
-        );
-
-        if (derivedChain !== TempleChainKind.Tezos) {
-          throw new Error('Invalid Tezos derivation path');
-        }
-
-        return privateKeyToTezosAccountCredentials(privateKey);
-      })
-    ),
-    from(
-      Promise.resolve().then(() => {
-        const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
-          seedPhrase,
-          message => new Error(message),
-          password,
-          evmDerivationPath
-        );
-
-        if (derivedChain !== TempleChainKind.EVM) {
-          throw new Error('Invalid EVM derivation path');
-        }
-
-        return privateKeyToEvmAccountCredentials(privateKey);
-      })
-    )
-  ]);
-};
 
 export const createImportAccountSubscription = (
   createImportedAccount$: Subject<CreateImportedAccountParams>,
@@ -303,3 +220,88 @@ export const createImportAccountSubscription = (
       }
     }
   });
+
+const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, address: string) =>
+  accounts.some(account => {
+    const accountAddress = getAccountAddressForChain(account, chain);
+
+    if (!accountAddress) {
+      return false;
+    }
+
+    return chain === TempleChainKind.EVM
+      ? isAddressEqual(accountAddress as HexString, address as HexString)
+      : accountAddress === address;
+  });
+
+const deriveImportedChainAccountCredentials = (
+  privateKey: string,
+  chain: TempleChainKind
+): Promise<AccountCredentials> =>
+  chain === TempleChainKind.EVM
+    ? Promise.resolve().then(() => privateKeyToEvmAccountCredentials(privateKey))
+    : privateKeyToTezosAccountCredentials(privateKey);
+
+const deriveImportedChainAccountFromSeed = ({ seedPhrase, derivationPath }: CreateImportedAccountFromSeedParams) => {
+  const { chain, privateKey } = mnemonicToPrivateKey(
+    seedPhrase,
+    message => new Error(message),
+    undefined,
+    derivationPath
+  );
+
+  return from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
+    map(credentials => ({
+      chain,
+      credentials,
+      privateKey
+    }))
+  );
+};
+
+const deriveImportedMultichainAccountCredentials = ({
+  seedPhrase,
+  password,
+  chain = TempleChainKind.Tezos,
+  derivationPath
+}: CreateImportedMultichainAccountParams) => {
+  const tezosDerivationPath =
+    chain === TempleChainKind.Tezos ? derivationPath ?? getTezosDerivationPath(0) : getTezosDerivationPath(0);
+  const evmDerivationPath =
+    chain === TempleChainKind.EVM ? derivationPath ?? getEvmDerivationPath(0) : getEvmDerivationPath(0);
+
+  return forkJoin([
+    from(
+      Promise.resolve().then(() => {
+        const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+          seedPhrase,
+          message => new Error(message),
+          password,
+          tezosDerivationPath
+        );
+
+        if (derivedChain !== TempleChainKind.Tezos) {
+          throw new Error('Invalid Tezos derivation path');
+        }
+
+        return privateKeyToTezosAccountCredentials(privateKey);
+      })
+    ),
+    from(
+      Promise.resolve().then(() => {
+        const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+          seedPhrase,
+          message => new Error(message),
+          password,
+          evmDerivationPath
+        );
+
+        if (derivedChain !== TempleChainKind.EVM) {
+          throw new Error('Invalid EVM derivation path');
+        }
+
+        return privateKeyToEvmAccountCredentials(privateKey);
+      })
+    )
+  ]);
+};
