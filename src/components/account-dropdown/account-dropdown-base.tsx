@@ -20,26 +20,25 @@ import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from
 
 import { accountEqualityFn } from './account-equality-fn';
 
-const ActionButtons: DropdownActionButtonsComponent = ({ onPress }) => {
+const ActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) => {
   const navigateToModal = useNavigateToModal();
   const navigateToScreen = useNavigateToScreen();
   const { trackEvent } = useAnalytics();
   const { createHdAccount } = useShelter();
 
   const handleCreateNewAccountButtonPress = () => {
-    createHdAccount();
-    onPress();
     trackEvent(WalletSelectors.createNewAccountButton, AnalyticsEventCategory.ButtonPress);
-  };
-
-  const handleManageAccountsButtonPress = () => {
-    navigateToScreen({ screen: ScreensEnum.ManageAccounts });
-    onPress();
+    closeDropdown();
+    createHdAccount();
   };
 
   const handleImportAccountButtonPress = () => {
     navigateToModal(ModalsEnum.ChooseAccountImportType);
-    onPress();
+  };
+
+  const handleManageAccountsButtonPress = () => {
+    closeDropdown(100);
+    navigateToScreen({ screen: ScreensEnum.ManageAccounts });
   };
 
   return (

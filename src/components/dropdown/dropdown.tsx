@@ -66,7 +66,7 @@ export type DropdownListItemComponent<T> = SyncFC<{
 }>;
 
 export type DropdownActionButtonsComponent = SyncFC<{
-  onPress: EmptyFn;
+  closeDropdown: (animationDuration?: number) => void;
 }>;
 
 const DropdownComponent = <T extends unknown>({
@@ -202,7 +202,8 @@ const DropdownComponent = <T extends unknown>({
         </View>
 
         {renderActionButtons({
-          onPress: () => dropdownBottomSheetController.close()
+          closeDropdown: animationDuration =>
+            dropdownBottomSheetController.close(animationDuration ? { duration: animationDuration } : undefined)
         })}
       </BottomSheet>
     </>

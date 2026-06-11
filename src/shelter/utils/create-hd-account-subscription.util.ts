@@ -2,7 +2,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { EMPTY, expand, first, of, Subject, switchMap, tap } from 'rxjs';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
-import { Account, HDAccount } from 'src/interfaces/account.interfaces';
+import { Account } from 'src/interfaces/account.interfaces';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
@@ -11,24 +11,16 @@ import { Shelter } from '../shelter';
 
 const MAX_HD_SKIP_ATTEMPTS = 10;
 
-const getHdAccountIndex = (account: HDAccount, fallbackIndex: number) => account.hdIndex ?? fallbackIndex;
-
 export const createHdAccountSubscription = (
   createHdAccount$: Subject<unknown>,
   accounts: Account[],
   dispatch: Dispatch
-) => {
-  const hdAccounts = accounts.filter((account): account is HDAccount => account.type === AccountTypeEnum.HD);
-  const nextHdIndex =
-    hdAccounts.length === 0
-      ? 0
-      : Math.max(...hdAccounts.map((account, index) => getHdAccountIndex(account, index))) + 1;
-
-  return createHdAccount$
+) =>
+  createHdAccount$
     .pipe(
       tap(() => dispatch(showLoaderAction())),
       switchMap(() => {
-        let nextIndex = nextHdIndex;
+        let nextIndex = getNextHdIndex(accounts);
         let attempts = 0;
 
         return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, {
@@ -65,4 +57,9 @@ export const createHdAccountSubscription = (
         dispatch(loadWhitelistAction.submit());
       }
     });
-};
+
+const getNextHdIndex = (accounts: Account[]) =>
+  accounts.reduce(
+    (maxHdIndex, account) => (account.type === AccountTypeEnum.HD ? Math.max(maxHdIndex, account.hdIndex) : maxHdIndex),
+    -1
+  ) + 1;
