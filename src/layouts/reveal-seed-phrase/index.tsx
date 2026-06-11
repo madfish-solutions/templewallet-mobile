@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderProgress } from 'src/components/header/header-progress/header-progress';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -18,8 +19,6 @@ import { FormCheckbox } from 'src/form/form-checkbox';
 import { RevealSeedPhraseView } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-form-content/reveal-seed-phrase-view/reveal-seed-phrase-view';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-
-import { DeadEndBoundaryError } from '../../components/error-boundary';
 
 import {
   createNewWalletValidationSchemaFactory,

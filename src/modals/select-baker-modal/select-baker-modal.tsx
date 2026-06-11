@@ -10,6 +10,7 @@ import { BakerInterface, buildUnknownBaker } from 'src/apis/baking-bad';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { SearchInput } from 'src/components/search-input/search-input';
@@ -35,8 +36,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 import { EVERSTAKE_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS, TEMPLE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { isValidAddress } from 'src/utils/tezos.util';
-
-import { DeadEndBoundaryError } from '../../components/error-boundary';
 
 import { BakerListItem } from './baker-list-item/baker-list-item';
 import { DISCLAIMER_MESSAGE, TEZ_LABEL, DCP_LABEL, TEZ_DESCRIPTION, DCP_DESCRIPTION } from './constants';

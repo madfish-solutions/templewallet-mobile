@@ -1,9 +1,9 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
 
-import { Account } from '../interfaces/account.interfaces';
-import { getAccountAddressForEvm, getAccountAddressForTezos } from '../utils/account.utils.ts';
-import { isString } from '../utils/is-string';
+import { Account } from 'src/interfaces/account.interfaces';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils.ts';
+import { isString } from 'src/utils/is-string';
 
 export const useFilteredAccountList = (accountList: Account[]) => {
   const [searchValue, setSearchValue] = useState<string>();

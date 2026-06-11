@@ -22,6 +22,7 @@ import { WhiteContainerDivider } from 'src/components/white-container/white-cont
 import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useResetDataHandler } from 'src/hooks/use-reset-data-handler.hook';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
@@ -38,8 +39,6 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { usePageAnalytic, useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { getTempleUniversalLink } from 'src/utils/universal-links';
-
-import { Account } from '../../interfaces/account.interfaces.ts';
 
 import { SettingsHeader } from './settings-header/settings-header';
 import { SettingsSelectors } from './settings.selectors';

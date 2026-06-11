@@ -3,6 +3,7 @@ import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from '
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -11,8 +12,6 @@ import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { isDefined } from 'src/utils/is-defined';
-
-import { DeadEndBoundaryError } from '../../components/error-boundary';
 
 import { CollectibleItem } from './components/collectible-item';
 import { useCollectionStyles, useCollectionClosingComponentStyles } from './styles';

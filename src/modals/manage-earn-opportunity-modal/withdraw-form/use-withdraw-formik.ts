@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { number as numberSchema, object as objectSchema, SchemaOf } from 'yup';
 
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
@@ -27,7 +28,6 @@ import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { doAfterConfirmation } from 'src/utils/farm.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { DeadEndBoundaryError } from '../../../components/error-boundary';
 import { MINIMAL_DIVISIBLE_ATOMIC_AMOUNT, PERCENTAGE_OPTIONS } from '../constants';
 
 import { createWithdrawOperationParams } from './create-withdraw-operation-params';

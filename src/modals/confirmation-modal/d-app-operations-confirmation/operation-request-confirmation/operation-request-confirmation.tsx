@@ -5,6 +5,7 @@ import { mapTo, switchMap } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { ApproveOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-operation-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
@@ -17,7 +18,6 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { mapBeaconToTaquitoParams } from 'src/utils/beacon.utils';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
 
-import { DeadEndBoundaryError } from '../../../../components/error-boundary';
 import { OperationsConfirmation } from '../../operations-confirmation/operations-confirmation';
 import { AppMetadataView } from '../app-metadata-view/app-metadata-view';
 

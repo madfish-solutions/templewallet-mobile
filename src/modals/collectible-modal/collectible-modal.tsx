@@ -7,6 +7,7 @@ import { SvgUri, SvgXml } from 'react-native-svg';
 import { objktCurrencies } from 'src/apis/objkt/constants';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { LinkWithIcon } from 'src/components/link-with-icon/link-with-icon';
@@ -45,8 +46,6 @@ import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams } from 'src/utils/objkt'
 import { objktCollectionUrl } from 'src/utils/objkt-collection-url.util';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
-
-import { DeadEndBoundaryError } from '../../components/error-boundary';
 
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';

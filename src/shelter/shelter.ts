@@ -306,34 +306,38 @@ export class Shelter {
       )
     );
 
-  static unlockApp$ = (password: string, currentAccountPkh: string, hdIndex: number | undefined) =>
+  static unlockApp$ = (password: string, tezosAddress: string | undefined, hdIndex: number | undefined) =>
     hashPassword$(password).pipe(
       switchMap(passwordHash =>
         Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, passwordHash).pipe(
-          switchMap(value =>
-            value === null
-              ? of(false)
-              : !currentAccountPkh
-              ? of(undefined).pipe(
-                  tap(() => Shelter._passwordHash$.next(passwordHash)),
-                  map(() => true)
-                )
-              : Shelter.revealSaplingSpendingKey$(currentAccountPkh, passwordHash).pipe(
-                  switchMap(sask => {
-                    if (sask) {
-                      return of(sask);
-                    }
+          switchMap(value => {
+            if (value === null) {
+              return of(false);
+            }
 
-                    return (
-                      hdIndex === undefined
-                        ? Shelter.restoreImportedAccountSaplingSpendingKey$(currentAccountPkh, passwordHash)
-                        : Shelter.restoreHdAccountSaplingSpendingKey$(hdIndex, passwordHash)
-                    ).pipe(catchError(() => of(undefined)));
-                  }),
-                  tap(() => Shelter._passwordHash$.next(passwordHash)),
-                  map(() => true)
-                )
-          ),
+            if (!isDefined(tezosAddress)) {
+              return of(undefined).pipe(
+                tap(() => Shelter._passwordHash$.next(passwordHash)),
+                map(() => true)
+              );
+            }
+
+            return Shelter.revealSaplingSpendingKey$(tezosAddress, passwordHash).pipe(
+              switchMap(sask => {
+                if (sask) {
+                  return of(sask);
+                }
+
+                return (
+                  isDefined(hdIndex)
+                    ? Shelter.restoreHdAccountSaplingSpendingKey$(hdIndex, passwordHash)
+                    : Shelter.restoreImportedAccountSaplingSpendingKey$(tezosAddress, passwordHash)
+                ).pipe(catchError(() => of(undefined)));
+              }),
+              tap(() => Shelter._passwordHash$.next(passwordHash)),
+              map(() => true)
+            );
+          }),
           catchError(() => of(false))
         )
       )

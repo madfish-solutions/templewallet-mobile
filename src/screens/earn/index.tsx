@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { APR_REFRESH_INTERVAL } from 'src/config/fixed-times';
 import { useUserFarmingStats } from 'src/hooks/use-user-farming-stats';
@@ -14,12 +15,16 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useInterval } from 'src/utils/hooks/use-interval';
 
-import { DeadEndBoundaryError } from '../../components/error-boundary';
-
 import { OpportunityCategoryCard } from './opportunity-category-card';
 import { EarnPageSelectors } from './selectors';
 
 export const Earn: FC = () => {
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const {
     netApr: farmsNetApr,
     totalStakedAmountInFiat: farmsTotalStakedAmountInFiat,
@@ -30,11 +35,6 @@ export const Earn: FC = () => {
     totalStakedAmountInFiat: savingsTotalStakedAmountInFiat,
     maxApr: savingsMaxApr
   } = useUserSavingsStats();
-  const tezosAddress = useAccountAddressForTezos();
-
-  if (!tezosAddress) {
-    throw new DeadEndBoundaryError();
-  }
 
   usePageAnalytic(ScreensEnum.Earn);
 

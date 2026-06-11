@@ -1,14 +1,14 @@
 import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ActivityGroup } from '../interfaces/activity.interface';
-import { UseActivityInterface } from '../interfaces/use-activity.interface';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useAccount } from '../store/wallet/wallet-selectors';
-import { getAccountAddressForTezos } from '../utils/account.utils';
-import { useAnalytics } from '../utils/analytics/use-analytics.hook';
-import { isDefined } from '../utils/is-defined';
-import { loadActivity } from '../utils/token-operations.util';
+import { ActivityGroup } from 'src/interfaces/activity.interface';
+import { UseActivityInterface } from 'src/interfaces/use-activity.interface';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
+import { loadActivity } from 'src/utils/token-operations.util';
 
 interface ContractActivityState {
   activities: Array<ActivityGroup>;

@@ -1,12 +1,12 @@
 import { BigNumber } from 'bignumber.js';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from 'src/components/divider/divider';
 import { DropdownItemContainer } from 'src/components/dropdown/dropdown-item-container/dropdown-item-container';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { HeaderCard } from 'src/components/header-card/header-card';
@@ -42,7 +42,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { DeadEndBoundaryError } from '../../components/error-boundary';
+import { dispatch } from '../../store';
 
 import { PrivateTezosTokenHistory } from './private-tezos-token-history/private-tezos-token-history';
 import { TezosTokenHistory } from './tezos-token-history/tezos-token-history';
@@ -52,14 +52,14 @@ const HISTORY_TAB_VALUES = ['Public', 'Private'];
 const PUBLIC_TAB_INDEX = 0;
 
 export const TezosTokenScreen = () => {
-  const dispatch = useDispatch();
-  const navigateToScreen = useNavigateToScreen();
-  const navigateToModal = useNavigateToModal();
   const tezosAddress = useAccountAddressForTezos();
 
   if (!tezosAddress) {
     throw new DeadEndBoundaryError();
   }
+
+  const navigateToScreen = useNavigateToScreen();
+  const navigateToModal = useNavigateToModal();
 
   const tezosToken = useTezosTokenOfCurrentAccount();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
@@ -120,17 +120,14 @@ export const TezosTokenScreen = () => {
 
   const handleRebalancePress = useCallback(() => {
     dispatch(navigateAction({ screen: ModalsEnum.Rebalance }));
-  }, [dispatch]);
+  }, []);
 
-  const handleHistoryTabChange = useCallback(
-    (index: number) => {
-      setHistoryTabIndex(index);
-      if (index !== PUBLIC_TAB_INDEX) {
-        dispatch(loadSaplingTransactionHistoryActions.submit());
-      }
-    },
-    [dispatch]
-  );
+  const handleHistoryTabChange = useCallback((index: number) => {
+    setHistoryTabIndex(index);
+    if (index !== PUBLIC_TAB_INDEX) {
+      dispatch(loadSaplingTransactionHistoryActions.submit());
+    }
+  }, []);
 
   const isPrivateTab = historyTabIndex !== PUBLIC_TAB_INDEX;
 

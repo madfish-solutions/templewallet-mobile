@@ -5,6 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
 import { CheckboxIcon } from 'src/components/checkbox-icon/checkbox-icon';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -26,8 +27,6 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
 import { useDidUpdate } from 'src/utils/hooks';
 import { formatObjktLogoUri } from 'src/utils/image.utils';
-
-import { DeadEndBoundaryError } from '../../components/error-boundary';
 
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';

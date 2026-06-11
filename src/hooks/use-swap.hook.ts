@@ -1,11 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
 
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { Route3SwapHops, Route3LiquidityBakingHops, Route3Token } from 'src/interfaces/route3.interface';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { getSwapTransferParams } from 'src/utils/swap.utils';
-
-import { DeadEndBoundaryError } from '../components/error-boundary';
 
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
 

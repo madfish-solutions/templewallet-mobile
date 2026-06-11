@@ -7,6 +7,7 @@ import { AssetAmountInput, AssetAmountInterface } from 'src/components/asset-amo
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -25,8 +26,6 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { TEZ_TOKEN_SLUG, TEZ_TOKEN_METADATA, TEZ_SHIELDED_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-
-import { DeadEndBoundaryError } from '../../components/error-boundary';
 
 import { RebalanceDirection } from './rebalance-modal.form';
 import { RebalanceModalSelectors } from './rebalance-modal.selectors';

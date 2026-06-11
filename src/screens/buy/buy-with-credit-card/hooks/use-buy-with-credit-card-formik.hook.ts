@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { getSignedMoonPayUrl } from 'src/apis/moonpay';
 import { createOrder as createUtorgOrder } from 'src/apis/utorg';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -47,7 +48,11 @@ const initialValues: BuyWithCreditCardFormValues = {
 
 export const useBuyWithCreditCardFormik = () => {
   const { trackEvent, trackErrorEvent } = useAnalytics();
-  const publicKeyHash = useAccountAddressForTezos();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
 
   const handleSubmit = useCallback(
     async (values: BuyWithCreditCardFormValues) => {
@@ -69,34 +74,28 @@ export const useBuyWithCreditCardFormik = () => {
           return;
         }
 
-        if (!publicKeyHash) {
-          showErrorToast({ description: 'Select a Tezos account to buy Tezos assets' });
-
-          return;
-        }
-
         let urlToOpen: string;
         switch (values.paymentProvider?.id) {
           case TopUpProviderEnum.MoonPay:
             urlToOpen = await getSignedMoonPayUrl(
               outputSymbol,
               '#ed8936',
-              publicKeyHash,
+              tezosAddress,
               inputAmount.toNumber(),
               inputSymbol
             );
             break;
           default:
-            urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, publicKeyHash, outputSymbol);
+            urlToOpen = await createUtorgOrder(outputAmount.toNumber(), inputSymbol, tezosAddress, outputSymbol);
             break;
         }
         openUrl(urlToOpen);
       } catch (error) {
-        trackErrorEvent('BuyWithCreditCardFormSubmitError', error, publicKeyHash ? [publicKeyHash] : [], { values });
+        trackErrorEvent('BuyWithCreditCardFormSubmitError', error, tezosAddress ? [tezosAddress] : [], { values });
         showErrorToast({ description: getAxiosQueryErrorMessage(error) });
       }
     },
-    [publicKeyHash, trackEvent, trackErrorEvent]
+    [tezosAddress, trackEvent, trackErrorEvent]
   );
 
   return useFormik<BuyWithCreditCardFormValues>({

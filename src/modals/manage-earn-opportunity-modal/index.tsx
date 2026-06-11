@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
@@ -36,8 +37,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { ZERO } from 'src/utils/number.util';
 import { percentageToFraction } from 'src/utils/percentage.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
-
-import { DeadEndBoundaryError } from '../../components/error-boundary';
 
 import { PERCENTAGE_OPTIONS } from './constants';
 import { ManageEarnOpportunityModalSelectors } from './selectors';

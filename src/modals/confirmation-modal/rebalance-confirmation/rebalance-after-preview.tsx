@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { TruncatedText } from 'src/components/truncated-text';
@@ -17,7 +18,6 @@ import { getDollarValue } from 'src/utils/balance.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosToken } from 'src/utils/wallet.utils';
 
-import { DeadEndBoundaryError } from '../../../components/error-boundary';
 import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
 
 interface Props {

@@ -1,10 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Subject } from 'rxjs';
 import { delay, switchMap, tap } from 'rxjs/operators';
 
 import { emptyFn } from 'src/config/general';
 import { usePasswordDelay } from 'src/hooks/use-password-delay.hook';
+import { dispatch } from 'src/store';
 import { enterPassword } from 'src/store/security/security-actions';
 import { usePasswordAttempt } from 'src/store/security/security-selectors';
 import { useAccountAddressForTezos, useHDAccounts } from 'src/store/wallet/wallet-selectors';
@@ -35,18 +35,17 @@ export const useAppLock = () => useContext(AppLockContext);
 export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const [isLocked, setIsLocked] = useState(Shelter.getIsLocked());
   const [unlockInProgress, setUnlockInProgress] = useState(false);
-  const dispatch = useDispatch();
   const attempt = usePasswordAttempt();
   const passwordDelay = usePasswordDelay();
   const unlock$ = useMemo(() => new Subject<string>(), []);
-  const currentAccountPkh = useAccountAddressForTezos() ?? '';
+  const tezosAddress = useAccountAddressForTezos();
   const hdAccounts = useHDAccounts();
 
   const hdIndex = useMemo(() => {
-    const rawIndex = hdAccounts.findIndex(account => getAccountAddressForTezos(account) === currentAccountPkh);
+    const rawIndex = hdAccounts.findIndex(account => getAccountAddressForTezos(account) === tezosAddress);
 
     return rawIndex >= 0 ? hdAccounts[rawIndex].hdIndex ?? rawIndex : undefined;
-  }, [hdAccounts, currentAccountPkh]);
+  }, [hdAccounts, tezosAddress]);
 
   const lock = useCallback(() => Shelter.lockApp(), []);
   const unlock = useCallback((password: string) => unlock$.next(password), [unlock$]);
@@ -76,7 +75,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
         .pipe(
           tap(() => setUnlockInProgress(true)),
           delay(passwordDelay),
-          switchMap(password => Shelter.unlockApp$(password, currentAccountPkh, hdIndex)),
+          switchMap(password => Shelter.unlockApp$(password, tezosAddress, hdIndex)),
           tap(() => setUnlockInProgress(false))
         )
         .subscribe(success => {
@@ -94,7 +93,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [unlock$, attempt, currentAccountPkh, hdIndex]);
+  }, [unlock$, attempt, tezosAddress, hdIndex]);
 
   return <AppLockContext value={value}>{children}</AppLockContext>;
 };

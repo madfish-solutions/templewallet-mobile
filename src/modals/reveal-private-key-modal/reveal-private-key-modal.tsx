@@ -14,8 +14,7 @@ import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-
-import { isDefined } from '../../utils/is-defined.ts';
+import { isDefined } from 'src/utils/is-defined.ts';
 
 import {
   RevealPrivateKeyModalFormValues,

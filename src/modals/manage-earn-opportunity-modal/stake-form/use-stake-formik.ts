@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { assetAmountValidation, createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
@@ -29,7 +30,6 @@ import { AnalyticsError } from 'src/utils/error-analytics-data.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 
-import { DeadEndBoundaryError } from '../../../components/error-boundary';
 import { EXPECTED_STABLESWAP_STAKING_GAS_EXPENSE } from '../constants';
 
 import { createStakeOperationParams } from './create-stake-operation-params';

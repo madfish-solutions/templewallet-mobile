@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-token-info';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
@@ -15,6 +15,7 @@ import { TokenScreenContentContainer } from 'src/components/token-screen-content
 import { useContractActivity } from 'src/hooks/use-contract-activity';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen, useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
+import { dispatch } from 'src/store';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
@@ -25,19 +26,16 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { DeadEndBoundaryError } from '../../components/error-boundary';
-
 export const TokenScreen = () => {
-  const { token: initialToken } = useScreenParams<ScreensEnum.TokenScreen>();
-
-  const navigateToScreen = useNavigateToScreen();
-
-  const dispatch = useDispatch();
   const tezosAddress = useAccountAddressForTezos();
 
   if (!tezosAddress) {
     throw new DeadEndBoundaryError();
   }
+
+  const { token: initialToken } = useScreenParams<ScreensEnum.TokenScreen>();
+
+  const navigateToScreen = useNavigateToScreen();
 
   const tokensList = useCurrentAccountTokens();
   const tezosToken = useTezosTokenOfCurrentAccount();
