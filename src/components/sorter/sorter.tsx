@@ -44,7 +44,7 @@ export const Sorter = <T extends string>({
         <Text style={styles.sortByLabel}>Sort by</Text>
         <TouchableOpacity
           style={styles.selectedBakerFieldWrapper}
-          onPress={revealSelectBottomSheetController.open}
+          onPress={() => revealSelectBottomSheetController.open()}
           testID={testID}
         >
           <Text style={styles.selectedBakerSortField}>{sortFieldsLabels[sortValue]}</Text>

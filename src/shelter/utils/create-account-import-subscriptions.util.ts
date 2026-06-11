@@ -47,21 +47,40 @@ export interface CreateImportedMultichainAccountFromSeedParams {
   name: string;
 }
 
-type ImportAccountRequest =
-  | { type: 'chainPrivateKey'; params: CreateImportedChainAccountFromPrivateKeyParams }
-  | { type: 'chainSeed'; params: CreateImportedChainAccountFromSeedParams }
-  | { type: 'multichainSeed'; params: CreateImportedMultichainAccountFromSeedParams };
+export enum AccountImportType {
+  ChainPrivateKey = 'chainPrivateKey',
+  ChainSeed = 'chainSeed',
+  MultichainSeed = 'multichainSeed'
+}
 
-const importErrorDescriptions: Record<ImportAccountRequest['type'], string> = {
-  chainPrivateKey: 'This may happen because provided Key is invalid.',
-  chainSeed: 'This may happen because provided Seed Phrase or Derivation Path is invalid.',
-  multichainSeed: 'This may happen because provided Seed Phrase is invalid.'
+export interface CreateImportedChainAccountFromPrivateKeyRequest
+  extends CreateImportedChainAccountFromPrivateKeyParams {
+  type: AccountImportType.ChainPrivateKey;
+}
+
+export interface CreateImportedChainAccountFromSeedRequest extends CreateImportedChainAccountFromSeedParams {
+  type: AccountImportType.ChainSeed;
+}
+
+export interface CreateImportedMultichainAccountFromSeedRequest extends CreateImportedMultichainAccountFromSeedParams {
+  type: AccountImportType.MultichainSeed;
+}
+
+type AccountImportRequest =
+  | CreateImportedChainAccountFromPrivateKeyRequest
+  | CreateImportedChainAccountFromSeedRequest
+  | CreateImportedMultichainAccountFromSeedRequest;
+
+const importErrorDescriptions: Record<AccountImportType, string> = {
+  [AccountImportType.ChainPrivateKey]: 'This may happen because provided Key is invalid.',
+  [AccountImportType.ChainSeed]: 'This may happen because provided Seed Phrase or Derivation Path is invalid.',
+  [AccountImportType.MultichainSeed]: 'This may happen because provided Seed Phrase is invalid.'
 };
 
 export const createAccountImportSubscriptions = (
-  createImportedChainAccountFromPrivateKey$: Subject<CreateImportedChainAccountFromPrivateKeyParams>,
-  createImportedChainAccountFromSeed$: Subject<CreateImportedChainAccountFromSeedParams>,
-  createImportedMultichainAccountFromSeed$: Subject<CreateImportedMultichainAccountFromSeedParams>,
+  createImportedChainAccountFromPrivateKey$: Subject<CreateImportedChainAccountFromPrivateKeyRequest>,
+  createImportedChainAccountFromSeed$: Subject<CreateImportedChainAccountFromSeedRequest>,
+  createImportedMultichainAccountFromSeed$: Subject<CreateImportedMultichainAccountFromSeedRequest>,
   accounts: Account[],
   dispatch: Dispatch,
   navigationDispatch: (action: NavigationAction) => void,
@@ -69,9 +88,9 @@ export const createAccountImportSubscriptions = (
   trackErrorEvent: (error: unknown, accountPkh?: string) => void
 ) =>
   merge(
-    createImportedChainAccountFromPrivateKey$.pipe(map(params => ({ type: 'chainPrivateKey' as const, params }))),
-    createImportedChainAccountFromSeed$.pipe(map(params => ({ type: 'chainSeed' as const, params }))),
-    createImportedMultichainAccountFromSeed$.pipe(map(params => ({ type: 'multichainSeed' as const, params })))
+    createImportedChainAccountFromPrivateKey$,
+    createImportedChainAccountFromSeed$,
+    createImportedMultichainAccountFromSeed$
   )
     .pipe(
       tap(() => {
@@ -122,14 +141,14 @@ export const createAccountImportSubscriptions = (
       }
     });
 
-const importAccount$ = (request: ImportAccountRequest, accounts: Account[]): Observable<Account | undefined> => {
+const importAccount$ = (request: AccountImportRequest, accounts: Account[]): Observable<Account | undefined> => {
   switch (request.type) {
-    case 'chainPrivateKey':
-      return importChainAccountFromPrivateKey$(request.params, accounts);
-    case 'chainSeed':
-      return importChainAccountFromSeed$(request.params, accounts);
-    case 'multichainSeed':
-      return importMultichainAccountFromSeed$(request.params, accounts);
+    case AccountImportType.ChainPrivateKey:
+      return importChainAccountFromPrivateKey$(request, accounts);
+    case AccountImportType.ChainSeed:
+      return importChainAccountFromSeed$(request, accounts);
+    case AccountImportType.MultichainSeed:
+      return importMultichainAccountFromSeed$(request, accounts);
   }
 };
 

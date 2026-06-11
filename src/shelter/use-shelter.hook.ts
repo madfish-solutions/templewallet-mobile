@@ -1,20 +1,24 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 import { EMPTY, Subject } from 'rxjs';
 
-import { useNavigation } from '../navigator/hooks/use-navigation.hook';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useAllAccounts } from '../store/wallet/wallet-selectors';
-import { useAnalytics } from '../utils/analytics/use-analytics.hook';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { dispatch } from 'src/store';
+import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
 import {
+  AccountImportType,
   createAccountImportSubscriptions,
   CreateImportedChainAccountFromPrivateKeyParams,
+  CreateImportedChainAccountFromPrivateKeyRequest,
   CreateImportedChainAccountFromSeedParams,
-  CreateImportedMultichainAccountFromSeedParams
+  CreateImportedChainAccountFromSeedRequest,
+  CreateImportedMultichainAccountFromSeedParams,
+  CreateImportedMultichainAccountFromSeedRequest
 } from './utils/create-account-import-subscriptions.util';
 import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
 import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
@@ -22,7 +26,6 @@ import { importWalletSubscription } from './utils/import-wallet-subscription.uti
 import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.util';
 
 export const useShelter = () => {
-  const dispatch = useDispatch();
   const accounts = useAllAccounts();
   const { dispatch: navigationDispatch } = useNavigation();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
@@ -34,15 +37,15 @@ export const useShelter = () => {
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
   const createImportedChainAccountFromPrivateKey$ = useMemo(
-    () => new Subject<CreateImportedChainAccountFromPrivateKeyParams>(),
+    () => new Subject<CreateImportedChainAccountFromPrivateKeyRequest>(),
     []
   );
   const createImportedChainAccountFromSeed$ = useMemo(
-    () => new Subject<CreateImportedChainAccountFromSeedParams>(),
+    () => new Subject<CreateImportedChainAccountFromSeedRequest>(),
     []
   );
   const createImportedMultichainAccountFromSeed$ = useMemo(
-    () => new Subject<CreateImportedMultichainAccountFromSeedParams>(),
+    () => new Subject<CreateImportedMultichainAccountFromSeedRequest>(),
     []
   );
 
@@ -96,17 +99,29 @@ export const useShelter = () => {
   const enableBiometryPassword = (password: string) => enableBiometryPassword$.next(password);
 
   const createImportedChainAccountFromPrivateKey = useCallback(
-    (params: CreateImportedChainAccountFromPrivateKeyParams) => createImportedChainAccountFromPrivateKey$.next(params),
+    (params: CreateImportedChainAccountFromPrivateKeyParams) =>
+      createImportedChainAccountFromPrivateKey$.next({
+        ...params,
+        type: AccountImportType.ChainPrivateKey
+      }),
     [createImportedChainAccountFromPrivateKey$]
   );
 
   const createImportedChainAccountFromSeed = useCallback(
-    (params: CreateImportedChainAccountFromSeedParams) => createImportedChainAccountFromSeed$.next(params),
+    (params: CreateImportedChainAccountFromSeedParams) =>
+      createImportedChainAccountFromSeed$.next({
+        ...params,
+        type: AccountImportType.ChainSeed
+      }),
     [createImportedChainAccountFromSeed$]
   );
 
   const createImportedMultichainAccountFromSeed = useCallback(
-    (params: CreateImportedMultichainAccountFromSeedParams) => createImportedMultichainAccountFromSeed$.next(params),
+    (params: CreateImportedMultichainAccountFromSeedParams) =>
+      createImportedMultichainAccountFromSeed$.next({
+        ...params,
+        type: AccountImportType.MultichainSeed
+      }),
     [createImportedMultichainAccountFromSeed$]
   );
 
