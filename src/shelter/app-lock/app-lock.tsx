@@ -7,9 +7,8 @@ import { usePasswordDelay } from 'src/hooks/use-password-delay.hook';
 import { dispatch } from 'src/store';
 import { enterPassword } from 'src/store/security/security-actions';
 import { usePasswordAttempt } from 'src/store/security/security-selectors';
-import { useAccountAddressForTezos, useHDAccounts } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { Shelter } from '../shelter';
@@ -38,14 +37,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
   const attempt = usePasswordAttempt();
   const passwordDelay = usePasswordDelay();
   const unlock$ = useMemo(() => new Subject<string>(), []);
-  const tezosAddress = useAccountAddressForTezos();
-  const hdAccounts = useHDAccounts();
-
-  const hdIndex = useMemo(() => {
-    const rawIndex = hdAccounts.findIndex(account => getAccountAddressForTezos(account) === tezosAddress);
-
-    return rawIndex >= 0 ? hdAccounts[rawIndex].hdIndex ?? rawIndex : undefined;
-  }, [hdAccounts, tezosAddress]);
+  const account = useAccount();
 
   const lock = useCallback(() => Shelter.lockApp(), []);
   const unlock = useCallback((password: string) => unlock$.next(password), [unlock$]);
@@ -75,7 +67,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
         .pipe(
           tap(() => setUnlockInProgress(true)),
           delay(passwordDelay),
-          switchMap(password => Shelter.unlockApp$(password, tezosAddress, hdIndex)),
+          switchMap(password => Shelter.unlockApp$(password, account)),
           tap(() => setUnlockInProgress(false))
         )
         .subscribe(success => {
@@ -93,7 +85,7 @@ export const AppLockContextProvider: FCWithChildren = ({ children }) => {
     ];
 
     return () => void subscriptions.forEach(subscription => subscription.unsubscribe());
-  }, [unlock$, attempt, tezosAddress, hdIndex]);
+  }, [unlock$, attempt, passwordDelay, account]);
 
   return <AppLockContext value={value}>{children}</AppLockContext>;
 };

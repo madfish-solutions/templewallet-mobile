@@ -15,10 +15,11 @@ import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 
 import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { isAddress as isEvmAddress } from 'viem';
 
-import { AccountTypeEnum } from '../enums/account-type.enum';
-import { TempleChainKind } from '../enums/temple-chain-kind.enum';
-import { Account, ImportedMultichainAccount } from '../interfaces/account.interfaces';
-import { getAccountAddressForChain } from '../utils/account.utils';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { Account, ImportedMultichainAccount } from 'src/interfaces/account.interfaces';
+import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/account.utils';
+
 import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '../utils/crypto.util';
 import { isDefined } from '../utils/is-defined';
 import {
@@ -306,7 +307,7 @@ export class Shelter {
       )
     );
 
-  static unlockApp$ = (password: string, tezosAddress: string | undefined, hdIndex: number | undefined) =>
+  static unlockApp$ = (password: string, account: Account | undefined) =>
     hashPassword$(password).pipe(
       switchMap(passwordHash =>
         Shelter.decryptSensitiveData$(PASSWORD_CHECK_KEY, passwordHash).pipe(
@@ -315,25 +316,25 @@ export class Shelter {
               return of(false);
             }
 
-            if (!isDefined(tezosAddress)) {
-              return of(undefined).pipe(
-                tap(() => Shelter._passwordHash$.next(passwordHash)),
-                map(() => true)
-              );
-            }
+            const tezosAddress = account ? getAccountAddressForTezos(account) : undefined;
+            const restoreSaplingSpendingKey$ =
+              account && tezosAddress
+                ? Shelter.revealSaplingSpendingKey$(tezosAddress, passwordHash).pipe(
+                    switchMap(sask => {
+                      if (sask) {
+                        return of(sask);
+                      }
 
-            return Shelter.revealSaplingSpendingKey$(tezosAddress, passwordHash).pipe(
-              switchMap(sask => {
-                if (sask) {
-                  return of(sask);
-                }
+                      return (
+                        account.type === AccountTypeEnum.HD
+                          ? Shelter.restoreHdAccountSaplingSpendingKey$(account.hdIndex, passwordHash)
+                          : Shelter.restoreImportedAccountSaplingSpendingKey$(tezosAddress, passwordHash)
+                      ).pipe(catchError(() => of(undefined)));
+                    })
+                  )
+                : of(undefined);
 
-                return (
-                  isDefined(hdIndex)
-                    ? Shelter.restoreHdAccountSaplingSpendingKey$(hdIndex, passwordHash)
-                    : Shelter.restoreImportedAccountSaplingSpendingKey$(tezosAddress, passwordHash)
-                ).pipe(catchError(() => of(undefined)));
-              }),
+            return restoreSaplingSpendingKey$.pipe(
               tap(() => Shelter._passwordHash$.next(passwordHash)),
               map(() => true)
             );

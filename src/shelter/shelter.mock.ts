@@ -24,7 +24,7 @@ export const mockShelter = {
   shouldDoSomeMigrations: jest.fn(() => Promise.resolve(true)),
   isLocked$: new BehaviorSubject<boolean>(true),
   getIsLocked: () => true,
-  unlockApp$: jest.fn((password: string, _activeAccountPkh: string, _hdIndex: number | undefined) => {
+  unlockApp$: jest.fn((password: string, _account?: Account) => {
     const isCorrectPassword = password === mockCorrectPassword;
     mockShelter.isLocked$.next(!isCorrectPassword);
 
