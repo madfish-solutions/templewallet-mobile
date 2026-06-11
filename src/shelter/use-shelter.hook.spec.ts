@@ -1,12 +1,14 @@
 import { renderHook } from '@testing-library/react-hooks';
+import { useSelector } from 'react-redux';
 import { of } from 'rxjs';
+
+import { dispatch as storeDispatch } from 'src/store';
 
 import { TempleChainKind } from '../enums/temple-chain-kind.enum';
 import { mockEvmImportedAccount, mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
 import { mockAccountCredentials, mockInvalidPrivateKey } from '../mocks/account-credentials.mock';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
 import { mockNavigationDispatch, mockNavigate } from '../mocks/react-navigation.mock';
-import { mockUseDispatch } from '../mocks/react-redux.mock';
 import { mockInMemorySigner } from '../mocks/taquito-signer.mock';
 import { StacksEnum } from '../navigator/enums/stacks.enum';
 import { navigateAction } from '../store/root-state.actions';
@@ -20,6 +22,12 @@ import * as tokenBalanceUtils from '../utils/token-balance.utils';
 import { mockRevealedSecretKey, mockRevealedSeedPhrase, mockShelter } from './shelter.mock';
 import { useShelter } from './use-shelter.hook';
 
+jest.mock('src/store', () => ({
+  dispatch: jest.fn()
+}));
+
+const mockStoreDispatch = storeDispatch as jest.Mock;
+
 describe('useShelter', () => {
   jest.useFakeTimers();
   afterAll(() => void jest.useRealTimers());
@@ -29,7 +37,9 @@ describe('useShelter', () => {
   let loadTezosBalanceSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    jest.restoreAllMocks();
+    jest.clearAllMocks();
+    (useSelector as jest.Mock).mockImplementation(selector => selector(mockRootState));
+
     loadTezosBalanceSpy = jest.spyOn(tokenBalanceUtils, 'loadTezosBalance$').mockReturnValue(of('0'));
     mockShelter.importWallet$.mockClear();
     mockShelter.enableBiometryPassword$.mockClear();
@@ -39,7 +49,7 @@ describe('useShelter', () => {
     mockShelter.createImportedChainAccount$.mockClear();
     mockShelter.createImportedMultichainAccount$.mockClear();
     mockShelter.saveSaplingSpendingKey$.mockClear();
-    mockUseDispatch.mockClear();
+    mockStoreDispatch.mockClear();
     mockNavigationDispatch.mockClear();
     mockNavigate.mockClear();
     mockShowErrorToast.mockClear();
@@ -59,8 +69,8 @@ describe('useShelter', () => {
     );
     expect(mockShelter.enableBiometryPassword$).not.toHaveBeenCalled();
 
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addAccountAction(mockHdAccount));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountAction(mockHdAccount));
   });
 
   it('should import wallet and enable biometry password', () => {
@@ -90,8 +100,8 @@ describe('useShelter', () => {
       existingAccounts: mockRootState.wallet.accounts
     });
 
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockNewHdAccount.id));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addAccountAction(mockNewHdAccount));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockNewHdAccount.id));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountAction(mockNewHdAccount));
   });
 
   it('should reveal secret key', () => {
@@ -125,8 +135,8 @@ describe('useShelter', () => {
     expect(mockShelter.enableBiometryPassword$).toHaveBeenCalledWith(mockCorrectPassword);
 
     expect(mockShowSuccessToast).toHaveBeenCalledWith({ description: 'Successfully enabled!' });
-    expect(mockUseDispatch).toHaveBeenCalledWith(setIsBiometricsEnabled(true));
-    expect(mockUseDispatch).toHaveBeenCalledWith(navigateAction({ screen: StacksEnum.MainStack }));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(setIsBiometricsEnabled(true));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(navigateAction({ screen: StacksEnum.MainStack }));
   });
 
   it('should not enable biometry password for incorrect password', () => {
@@ -155,8 +165,8 @@ describe('useShelter', () => {
       TempleChainKind.Tezos
     );
 
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addAccountAction(mockHdAccount));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountAction(mockHdAccount));
     expect(mockShowSuccessToast).toHaveBeenCalledWith({ description: 'Account Imported!' });
     expect(mockNavigationDispatch).toHaveBeenCalledWith({ type: 'POP_TO_TOP' });
   });
@@ -178,9 +188,9 @@ describe('useShelter', () => {
     );
     expect(mockShelter.saveSaplingSpendingKey$).not.toHaveBeenCalled();
     expect(loadTezosBalanceSpy).not.toHaveBeenCalled();
-    expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockEvmImportedAccount.id));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addAccountAction(mockEvmImportedAccount));
-    expect(mockUseDispatch).not.toHaveBeenCalledWith(loadWhitelistAction.submit());
+    expect(mockStoreDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockEvmImportedAccount.id));
+    expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountAction(mockEvmImportedAccount));
+    expect(mockStoreDispatch).not.toHaveBeenCalledWith(loadWhitelistAction.submit());
   });
 
   it('should infer imported EVM account from private key without chain or 0x prefix', async () => {
