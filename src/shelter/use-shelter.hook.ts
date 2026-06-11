@@ -10,13 +10,13 @@ import { useAnalytics } from '../utils/analytics/use-analytics.hook';
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
-import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
 import {
-  createImportAccountSubscription,
-  CreateImportedAccountParams,
-  CreateImportedAccountFromSeedParams,
-  CreateImportedMultichainAccountParams
-} from './utils/create-import-account-subscription.util';
+  createAccountImportSubscriptions,
+  CreateImportedChainAccountFromPrivateKeyParams,
+  CreateImportedChainAccountFromSeedParams,
+  CreateImportedMultichainAccountFromSeedParams
+} from './utils/create-account-import-subscriptions.util';
+import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
 import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
 import { importWalletSubscription } from './utils/import-wallet-subscription.util';
 import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.util';
@@ -33,18 +33,27 @@ export const useShelter = () => {
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
-  const createImportedAccount$ = useMemo(() => new Subject<CreateImportedAccountParams>(), []);
-  const createImportedAccountFromSeed$ = useMemo(() => new Subject<CreateImportedAccountFromSeedParams>(), []);
-  const createImportedMultichainAccount$ = useMemo(() => new Subject<CreateImportedMultichainAccountParams>(), []);
+  const createImportedChainAccountFromPrivateKey$ = useMemo(
+    () => new Subject<CreateImportedChainAccountFromPrivateKeyParams>(),
+    []
+  );
+  const createImportedChainAccountFromSeed$ = useMemo(
+    () => new Subject<CreateImportedChainAccountFromSeedParams>(),
+    []
+  );
+  const createImportedMultichainAccountFromSeed$ = useMemo(
+    () => new Subject<CreateImportedMultichainAccountFromSeedParams>(),
+    []
+  );
 
   useEffect(() => {
     const subscriptions = [
       importWalletSubscription(importWallet$, dispatch),
       createHdAccountSubscription(createHdAccount$, accounts, dispatch),
-      createImportAccountSubscription(
-        createImportedAccount$,
-        createImportedAccountFromSeed$,
-        createImportedMultichainAccount$,
+      createAccountImportSubscriptions(
+        createImportedChainAccountFromPrivateKey$,
+        createImportedChainAccountFromSeed$,
+        createImportedMultichainAccountFromSeed$,
         accounts,
         dispatch,
         navigationDispatch,
@@ -60,9 +69,9 @@ export const useShelter = () => {
   }, [
     accounts,
     createHdAccount$,
-    createImportedAccount$,
-    createImportedAccountFromSeed$,
-    createImportedMultichainAccount$,
+    createImportedChainAccountFromPrivateKey$,
+    createImportedChainAccountFromSeed$,
+    createImportedMultichainAccountFromSeed$,
     dispatch,
     enableBiometryPassword$,
     importWallet$,
@@ -86,19 +95,19 @@ export const useShelter = () => {
 
   const enableBiometryPassword = (password: string) => enableBiometryPassword$.next(password);
 
-  const createImportedAccount = useCallback(
-    (params: CreateImportedAccountParams) => createImportedAccount$.next(params),
-    [createImportedAccount$]
+  const createImportedChainAccountFromPrivateKey = useCallback(
+    (params: CreateImportedChainAccountFromPrivateKeyParams) => createImportedChainAccountFromPrivateKey$.next(params),
+    [createImportedChainAccountFromPrivateKey$]
   );
 
-  const createImportedAccountFromSeed = useCallback(
-    (params: CreateImportedAccountFromSeedParams) => createImportedAccountFromSeed$.next(params),
-    [createImportedAccountFromSeed$]
+  const createImportedChainAccountFromSeed = useCallback(
+    (params: CreateImportedChainAccountFromSeedParams) => createImportedChainAccountFromSeed$.next(params),
+    [createImportedChainAccountFromSeed$]
   );
 
-  const createImportedMultichainAccount = useCallback(
-    (params: CreateImportedMultichainAccountParams) => createImportedMultichainAccount$.next(params),
-    [createImportedMultichainAccount$]
+  const createImportedMultichainAccountFromSeed = useCallback(
+    (params: CreateImportedMultichainAccountFromSeedParams) => createImportedMultichainAccountFromSeed$.next(params),
+    [createImportedMultichainAccountFromSeed$]
   );
 
   return {
@@ -107,8 +116,8 @@ export const useShelter = () => {
     revealSecretKey,
     revealSeedPhrase,
     enableBiometryPassword,
-    createImportedAccount,
-    createImportedAccountFromSeed,
-    createImportedMultichainAccount
+    createImportedChainAccountFromPrivateKey,
+    createImportedChainAccountFromSeed,
+    createImportedMultichainAccountFromSeed
   };
 };

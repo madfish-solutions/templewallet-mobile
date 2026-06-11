@@ -32,7 +32,7 @@ interface Props {
 }
 
 export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
-  const { createImportedAccount } = useShelter();
+  const { createImportedChainAccountFromPrivateKey } = useShelter();
   const accountIndex = useAllAccounts().length + 1;
 
   const isLoading = useIsShowLoaderSelector();
@@ -43,12 +43,12 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
 
   const onSubmit = useCallback(
     ({ privateKey }: ImportAccountPrivateKeyValues) => {
-      createImportedAccount({
+      createImportedChainAccountFromPrivateKey({
         privateKey,
         name: `Account ${accountIndex}`
       });
     },
-    [accountIndex, createImportedAccount]
+    [accountIndex, createImportedChainAccountFromPrivateKey]
   );
 
   const formik = useFormik({

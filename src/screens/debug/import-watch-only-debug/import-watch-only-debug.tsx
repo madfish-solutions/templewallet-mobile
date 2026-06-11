@@ -11,7 +11,7 @@ import { FormTextInput } from 'src/form/form-text-input';
 import { WatchOnlyDebugAccount } from 'src/interfaces/account.interfaces';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
+import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { showSuccessToast } from 'src/toast/toast.utils';
 
 import {
@@ -35,7 +35,7 @@ export const ImportWatchOnlyDebug: FC = () => {
     };
 
     dispatch(setSelectedAccountIdAction(publicData.id));
-    dispatch(addHdAccountAction(publicData));
+    dispatch(addAccountAction(publicData));
     dispatch(loadWhitelistAction.submit());
     showSuccessToast({ description: 'Debug Account Imported!' });
     goBack();

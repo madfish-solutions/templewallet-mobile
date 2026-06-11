@@ -8,7 +8,7 @@ import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-pay
 import { createActions } from '../create-actions';
 
 export const setSelectedAccountIdAction = createAction<string | undefined>('wallet/SET_SELECTED_ACCOUNT_ID');
-export const addHdAccountAction = createAction<Account>('wallet/ADD_HD_ACCOUNT');
+export const addAccountAction = createAction<Account>('wallet/ADD_ACCOUNT');
 export const completeEvmAccountsMigrationAction = createAction<Account[]>('wallet/COMPLETE_EVM_ACCOUNTS_MIGRATION');
 
 export const updateAccountAction = createAction<Account>('wallet/UPDATE_ACCOUNT');

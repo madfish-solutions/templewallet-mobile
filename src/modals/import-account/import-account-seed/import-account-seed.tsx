@@ -35,7 +35,7 @@ interface Props {
 
 export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   const styles = useImportAccountFromSeedStyles();
-  const { createImportedAccountFromSeed, createImportedMultichainAccount } = useShelter();
+  const { createImportedChainAccountFromSeed, createImportedMultichainAccountFromSeed } = useShelter();
   const accountsIndex = useAllAccounts().length + 1;
 
   const isLoading = useIsShowLoaderSelector();
@@ -53,7 +53,7 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
       };
 
       if (trimmedDerivationPath) {
-        createImportedAccountFromSeed({
+        createImportedChainAccountFromSeed({
           ...params,
           derivationPath: trimmedDerivationPath
         });
@@ -61,9 +61,9 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
         return;
       }
 
-      createImportedMultichainAccount(params);
+      createImportedMultichainAccountFromSeed(params);
     },
-    [accountsIndex, createImportedAccountFromSeed, createImportedMultichainAccount]
+    [accountsIndex, createImportedChainAccountFromSeed, createImportedMultichainAccountFromSeed]
   );
 
   const formik = useFormik({

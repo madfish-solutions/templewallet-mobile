@@ -5,7 +5,7 @@ import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
+import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 
 import { Shelter } from '../shelter';
 
@@ -53,7 +53,7 @@ export const createHdAccountSubscription = (
     .subscribe(publicData => {
       if (publicData !== undefined) {
         dispatch(setSelectedAccountIdAction(publicData.id));
-        dispatch(addHdAccountAction(publicData));
+        dispatch(addAccountAction(publicData));
         dispatch(loadWhitelistAction.submit());
       }
     });

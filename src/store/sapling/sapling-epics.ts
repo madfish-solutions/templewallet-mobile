@@ -17,7 +17,7 @@ import { withAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } from 'src
 import { navigateAction, navigateBackAction } from '../root-state.actions';
 import { hideLoaderAction, showLoaderAction } from '../settings/settings-actions';
 import type { AnyActionEpic, RootState } from '../types';
-import { addHdAccountAction, loadTezosBalanceActions, setSelectedAccountIdAction } from '../wallet/wallet-actions';
+import { addAccountAction, loadTezosBalanceActions, setSelectedAccountIdAction } from '../wallet/wallet-actions';
 
 import {
   cancelSaplingPreparationAction,
@@ -362,7 +362,7 @@ const autoLoadCredentialsOnUnlockEpic: AnyActionEpic = (_action$, state$) =>
 /** Auto-load credentials when account is added or selected account changes */
 const autoLoadCredentialsOnAccountSwitchEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
-    ofType(addHdAccountAction, setSelectedAccountIdAction),
+    ofType(addAccountAction, setSelectedAccountIdAction),
     filter(() => shouldAutoLoadCredentials(state$)),
     map(() => loadSaplingCredentialsActions.submit())
   );

@@ -2,7 +2,6 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
-import { Account } from 'src/interfaces/account.interfaces';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDcpNode } from 'src/utils/network.utils';
@@ -10,7 +9,7 @@ import { isDcpNode } from 'src/utils/network.utils';
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
 
 import {
-  addHdAccountAction,
+  addAccountAction,
   addTokenAction,
   loadTezosBalanceActions,
   removeTokenAction,
@@ -24,11 +23,8 @@ import {
 import { walletInitialState, WalletState } from './wallet-state';
 import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
 
-const normalizeAccount = (account: Account): Account => account;
-
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
-  builder.addCase(addHdAccountAction, (state, { payload }) => {
-    const account = normalizeAccount(payload);
+  builder.addCase(addAccountAction, (state, { payload: account }) => {
     const tezosAddress = getAccountAddressForTezos(account);
 
     state.accounts.push(account);
@@ -38,9 +34,7 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }
   });
 
-  builder.addCase(updateAccountAction, (state, { payload }) => {
-    const updatedAccount = normalizeAccount(payload);
-
+  builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => {
     state.accounts = state.accounts.map(item => (item.id === updatedAccount.id ? updatedAccount : item));
   });
 

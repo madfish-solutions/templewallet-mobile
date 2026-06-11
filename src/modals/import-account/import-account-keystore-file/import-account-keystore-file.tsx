@@ -40,7 +40,7 @@ interface Props {
 
 export const ImportAccountKeystoreFile = memo<Props>(({ onBackPress }) => {
   const styles = useImportAccountKeystoreFileStyles();
-  const { createImportedAccountFromSeed } = useShelter();
+  const { createImportedChainAccountFromSeed } = useShelter();
   const accountIndex = useAllAccounts().length + 1;
   const isLoading = useIsShowLoaderSelector();
 
@@ -59,7 +59,7 @@ export const ImportAccountKeystoreFile = memo<Props>(({ onBackPress }) => {
           throw new Error('Mnemonic not validated');
         }
 
-        createImportedAccountFromSeed({
+        createImportedChainAccountFromSeed({
           seedPhrase,
           name: `Account ${accountIndex}`,
           derivationPath: trimmedDerivationPath || getTezosDerivationPath(0)
@@ -79,7 +79,7 @@ export const ImportAccountKeystoreFile = memo<Props>(({ onBackPress }) => {
         }
       }
     },
-    [accountIndex, createImportedAccountFromSeed]
+    [accountIndex, createImportedChainAccountFromSeed]
   );
 
   const formik = useFormik({

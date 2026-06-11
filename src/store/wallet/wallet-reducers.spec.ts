@@ -1,7 +1,7 @@
 import { mockAccountState } from 'src/interfaces/account-state.interface.mock';
 import { mockEvmImportedAccount, mockHdAccount, mockTezosImportedAccount } from 'src/interfaces/account.interface.mock';
 
-import { addHdAccountAction, setSelectedAccountIdAction } from './wallet-actions';
+import { addAccountAction, setSelectedAccountIdAction } from './wallet-actions';
 import { walletReducers } from './wallet-reducers';
 import { WalletState } from './wallet-state';
 
@@ -36,7 +36,7 @@ describe('walletReducers account selection', () => {
   });
 
   it('adds Tezos account state under the Tezos address', () => {
-    const state = walletReducers(undefined, addHdAccountAction(mockHdAccount));
+    const state = walletReducers(undefined, addAccountAction(mockHdAccount));
 
     expect(state.accounts[0].id).toEqual(mockHdAccount.id);
     expect(state.accountsStateRecord[mockHdAccount.tezosAddress]).toBeDefined();

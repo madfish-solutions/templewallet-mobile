@@ -43,3 +43,5 @@ Optimize for clarity, polish, and performance in every change.
 
 ## A Note to the Agent
 We are building this together. When you learn something non-obvious, add it here so future changes go faster.
+
+- Import-account flow: seed phrase import with a custom derivation path creates a single-chain imported account; seed phrase import without a custom path creates an imported multichain account. Private-key import infers Tezos vs EVM from the key format.

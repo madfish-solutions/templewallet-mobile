@@ -13,7 +13,7 @@ import { navigateAction } from '../store/root-state.actions';
 import { mockRootState } from '../store/root-state.mock';
 import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
 import { loadWhitelistAction } from '../store/tokens-metadata/tokens-metadata-actions';
-import { addHdAccountAction, setSelectedAccountIdAction } from '../store/wallet/wallet-actions';
+import { addAccountAction, setSelectedAccountIdAction } from '../store/wallet/wallet-actions';
 import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from '../toast/toast.utils.mock';
 import * as tokenBalanceUtils from '../utils/token-balance.utils';
 
@@ -60,7 +60,7 @@ describe('useShelter', () => {
     expect(mockShelter.enableBiometryPassword$).not.toHaveBeenCalled();
 
     expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addAccountAction(mockHdAccount));
   });
 
   it('should import wallet and enable biometry password', () => {
@@ -91,7 +91,7 @@ describe('useShelter', () => {
     });
 
     expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockNewHdAccount.id));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockNewHdAccount));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addAccountAction(mockNewHdAccount));
   });
 
   it('should reveal secret key', () => {
@@ -143,7 +143,10 @@ describe('useShelter', () => {
     mockInMemorySigner.publicKeyHash.mockReturnValueOnce(Promise.resolve('tz1AnotherPublicKeyHash'));
     const { result } = renderHook(() => useShelter());
 
-    result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
+    result.current.createImportedChainAccountFromPrivateKey({
+      privateKey: mockAccountCredentials.privateKey,
+      name: mockHdAccount.name
+    });
     await jest.runAllTimersAsync();
 
     expect(mockShelter.createImportedChainAccount$).toHaveBeenCalledWith(
@@ -153,7 +156,7 @@ describe('useShelter', () => {
     );
 
     expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockHdAccount.id));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockHdAccount));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addAccountAction(mockHdAccount));
     expect(mockShowSuccessToast).toHaveBeenCalledWith({ description: 'Account Imported!' });
     expect(mockNavigationDispatch).toHaveBeenCalledWith({ type: 'POP_TO_TOP' });
   });
@@ -162,10 +165,9 @@ describe('useShelter', () => {
     mockShelter.createImportedChainAccount$.mockReturnValueOnce(of(mockEvmImportedAccount));
     const { result } = renderHook(() => useShelter());
 
-    result.current.createImportedAccount({
+    result.current.createImportedChainAccountFromPrivateKey({
       privateKey: mockEvmPrivateKey,
-      name: mockEvmImportedAccount.name,
-      chain: TempleChainKind.EVM
+      name: mockEvmImportedAccount.name
     });
     await jest.runAllTimersAsync();
 
@@ -177,7 +179,7 @@ describe('useShelter', () => {
     expect(mockShelter.saveSaplingSpendingKey$).not.toHaveBeenCalled();
     expect(loadTezosBalanceSpy).not.toHaveBeenCalled();
     expect(mockUseDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockEvmImportedAccount.id));
-    expect(mockUseDispatch).toHaveBeenCalledWith(addHdAccountAction(mockEvmImportedAccount));
+    expect(mockUseDispatch).toHaveBeenCalledWith(addAccountAction(mockEvmImportedAccount));
     expect(mockUseDispatch).not.toHaveBeenCalledWith(loadWhitelistAction.submit());
   });
 
@@ -185,7 +187,7 @@ describe('useShelter', () => {
     mockShelter.createImportedChainAccount$.mockReturnValueOnce(of(mockEvmImportedAccount));
     const { result } = renderHook(() => useShelter());
 
-    result.current.createImportedAccount({
+    result.current.createImportedChainAccountFromPrivateKey({
       privateKey: mockEvmPrivateKey.slice(2),
       name: mockEvmImportedAccount.name
     });
@@ -204,7 +206,7 @@ describe('useShelter', () => {
     try {
       const { result } = renderHook(() => useShelter());
 
-      result.current.createImportedMultichainAccount({
+      result.current.createImportedMultichainAccountFromSeed({
         seedPhrase: mockAccountCredentials.seedPhrase,
         name: mockHdAccount.name
       });
@@ -215,10 +217,7 @@ describe('useShelter', () => {
 
     expect(mockShelter.createImportedMultichainAccount$).toHaveBeenCalledWith({
       seedPhrase: mockAccountCredentials.seedPhrase,
-      name: mockHdAccount.name,
-      bip39Passphrase: undefined,
-      chain: undefined,
-      derivationPath: undefined
+      name: mockHdAccount.name
     });
     expect(mockShelter.createImportedChainAccount$).not.toHaveBeenCalled();
   });
@@ -227,7 +226,7 @@ describe('useShelter', () => {
     mockShelter.createImportedChainAccount$.mockReturnValueOnce(of(mockEvmImportedAccount));
     const { result } = renderHook(() => useShelter());
 
-    result.current.createImportedAccountFromSeed({
+    result.current.createImportedChainAccountFromSeed({
       seedPhrase: mockAccountCredentials.seedPhrase,
       name: mockEvmImportedAccount.name,
       derivationPath: "m/44'/60'/0'/0/1"
@@ -247,7 +246,7 @@ describe('useShelter', () => {
     mockInMemorySigner.publicKeyHash.mockReturnValueOnce(Promise.resolve('tz1AnotherPublicKeyHash'));
     const { result } = renderHook(() => useShelter());
 
-    result.current.createImportedAccountFromSeed({
+    result.current.createImportedChainAccountFromSeed({
       seedPhrase: mockAccountCredentials.seedPhrase,
       name: mockHdAccount.name,
       derivationPath: "m/44'/999'/0'/0'"
@@ -265,7 +264,10 @@ describe('useShelter', () => {
   it('should not create account with invalid private key', async () => {
     const { result } = renderHook(() => useShelter());
 
-    result.current.createImportedAccount({ privateKey: mockInvalidPrivateKey, name: mockHdAccount.name });
+    result.current.createImportedChainAccountFromPrivateKey({
+      privateKey: mockInvalidPrivateKey,
+      name: mockHdAccount.name
+    });
     await jest.runAllTimersAsync();
 
     expect(mockShelter.createImportedChainAccount$).not.toHaveBeenCalled();
@@ -279,7 +281,10 @@ describe('useShelter', () => {
   it('should show error toast while creating the same account', async () => {
     const { result } = renderHook(() => useShelter());
 
-    result.current.createImportedAccount({ privateKey: mockAccountCredentials.privateKey, name: mockHdAccount.name });
+    result.current.createImportedChainAccountFromPrivateKey({
+      privateKey: mockAccountCredentials.privateKey,
+      name: mockHdAccount.name
+    });
     await jest.runAllTimersAsync();
 
     expect(mockShelter.createImportedChainAccount$).not.toHaveBeenCalled();
@@ -290,10 +295,9 @@ describe('useShelter', () => {
   it('should show error toast while creating the same EVM account', async () => {
     const { result } = renderHook(() => useShelter());
 
-    result.current.createImportedAccount({
+    result.current.createImportedChainAccountFromPrivateKey({
       privateKey: '0x3925ef64b24414526bd9d28826c642a34d4d8fbb292b467a33f5376126632d3d',
-      name: mockEvmImportedAccount.name,
-      chain: TempleChainKind.EVM
+      name: mockEvmImportedAccount.name
     });
     await jest.runAllTimersAsync();
 
