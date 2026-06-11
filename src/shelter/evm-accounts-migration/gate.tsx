@@ -1,6 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, BackHandler, Modal, Text, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -13,53 +12,39 @@ import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 
-import { useAppLock } from './app-lock/app-lock';
-import { runEvmAccountsMigration, walletNeedsMigration } from './evm-accounts-migration';
-import { useEvmAccountsMigrationGateStyles } from './evm-accounts-migration-gate.styles';
+import { useAppLock } from '../app-lock/app-lock';
 
-type MigrationStatus = 'idle' | 'checking' | 'migrating' | 'failed';
+import { useEvmAccountsMigrationGateStyles } from './styles';
+
+import { runEvmAccountsMigration, walletNeedsMigration } from './index';
+
+type MigrationStatus = 'idle' | 'migrating' | 'failed';
 
 export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
-  const dispatch = useDispatch();
-  const wallet = useSelector(({ wallet }) => wallet);
-  const isAuthorised = useIsAuthorisedSelector();
-  const { isLocked, lock } = useAppLock();
-  const colors = useColors();
-  const styles = useEvmAccountsMigrationGateStyles();
-  const migrationInProgressRef = useRef(false);
-  const completedCheckRef = useRef(false);
   const [status, setStatus] = useState<MigrationStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string>();
 
+  const migrationInProgressRef = useRef(false);
+
+  const colors = useColors();
+  const styles = useEvmAccountsMigrationGateStyles();
+
+  const { isLocked, lock } = useAppLock();
+  const isAuthorised = useIsAuthorisedSelector();
+  const wallet = useSelector(({ wallet }) => wallet);
+
   const startMigration = useCallback(async () => {
-    if (migrationInProgressRef.current || !isAuthorised || isLocked || wallet.accounts.length === 0) {
-      return;
-    }
-
-    const needsMigration = walletNeedsMigration(wallet);
-
-    if (completedCheckRef.current && !needsMigration) {
+    if (migrationInProgressRef.current || !isAuthorised || isLocked || !walletNeedsMigration(wallet)) {
       return;
     }
 
     migrationInProgressRef.current = true;
-    setStatus('checking');
+    setStatus('migrating');
     setErrorMessage(undefined);
 
     try {
-      if (!needsMigration) {
-        completedCheckRef.current = true;
-        setStatus('idle');
+      await runEvmAccountsMigration(wallet);
 
-        return;
-      }
-
-      setStatus('migrating');
-      await runEvmAccountsMigration({
-        wallet,
-        dispatch
-      });
-      completedCheckRef.current = true;
       setStatus('idle');
     } catch (error) {
       console.error('[EVM account migration] Failed', error);
@@ -68,14 +53,14 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
     } finally {
       migrationInProgressRef.current = false;
     }
-  }, [dispatch, isAuthorised, isLocked, wallet]);
+  }, [isAuthorised, isLocked, wallet]);
 
   useEffect(() => {
     void startMigration();
   }, [startMigration]);
 
   useEffect(() => {
-    if (status === 'idle' || status === 'checking') {
+    if (status === 'idle') {
       return;
     }
 

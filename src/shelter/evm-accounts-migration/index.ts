@@ -3,22 +3,17 @@ import { firstValueFrom } from 'rxjs';
 import { EVM_ADDRESS_PLACEHOLDER } from 'src/config/wallet.const';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { Account } from 'src/interfaces/account.interfaces';
-import { completeEvmAccountsMigrationAction } from 'src/store/wallet/wallet-actions';
+import { dispatch } from 'src/store';
+import { completeEvmAccountsMigrationAction } from 'src/store/wallet/wallet-actions.ts';
 import { WalletState } from 'src/store/wallet/wallet-state';
 import { mnemonicToEvmAccountCredentials } from 'src/utils/keys.utils';
 
-import { Shelter } from './shelter';
+import { Shelter } from '../shelter';
 
-interface EvmAccountsMigrationParams {
-  wallet: WalletState;
-  dispatch: (action: ReturnType<typeof completeEvmAccountsMigrationAction>) => void;
-}
+export const walletNeedsMigration = (wallet: WalletState) =>
+  wallet.accounts.some(account => accountNeedsMigration(account));
 
-export const runEvmAccountsMigration = async ({ wallet, dispatch }: EvmAccountsMigrationParams) => {
-  if (!walletNeedsMigration(wallet)) {
-    return;
-  }
-
+export const runEvmAccountsMigration = async (wallet: WalletState) => {
   const mnemonic = await firstValueFrom(Shelter.revealSeedPhrase$());
   let hdPosition = 0;
 
@@ -49,6 +44,3 @@ export const runEvmAccountsMigration = async ({ wallet, dispatch }: EvmAccountsM
 
 const accountNeedsMigration = (account: Account) =>
   account.type === AccountTypeEnum.HD && account.evmAddress === EVM_ADDRESS_PLACEHOLDER;
-
-export const walletNeedsMigration = (wallet: WalletState) =>
-  wallet.accounts.some(account => accountNeedsMigration(account));
