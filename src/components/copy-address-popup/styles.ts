@@ -1,7 +1,7 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const useCopyAddressModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
+export const useCopyAddressPopupStyles = createUseStylesMemoized(({ colors, typography }) => ({
   backdrop: {
     flex: 1
   },

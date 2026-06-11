@@ -1,5 +1,6 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useRef } from 'react';
 
+import { CopyAddressPopup, CopyAddressPopupController } from 'src/components/copy-address-popup';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { Account } from 'src/interfaces/account.interfaces';
@@ -9,18 +10,13 @@ import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useShelter } from 'src/shelter/use-shelter.hook';
-import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
-import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 
-import { CopyAddressModal, CopyAddressOption } from '../../modals/copy-address-modal';
-import { isTruthy } from '../../utils/is-truthy.ts';
 import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
-import { IconNameEnum } from '../icon/icon-name.enum';
 
 import { accountEqualityFn } from './account-equality-fn';
 
@@ -107,8 +103,7 @@ export const AccountDropdownBase = memo<Props>(
     testIDProperties,
     isCollectibleScreen
   }) => {
-    const [isCopyAddressDropdownVisible, setIsCopyAddressDropdownVisible] = useState(false);
-    const saplingAddress = useSaplingAddressForAccount(value);
+    const copyAddressPopupRef = useRef<CopyAddressPopupController>(null);
 
     const groupedList = useMemo(
       () =>
@@ -116,36 +111,9 @@ export const AccountDropdownBase = memo<Props>(
       [list]
     );
 
-    const copyAddressOptions = useMemo<CopyAddressOption[]>(() => {
-      const tezosAddress = getAccountAddressForTezos(value);
-      const evmAddress = getAccountAddressForEvm(value);
-
-      return [
-        isDefined(tezosAddress) && {
-          label: 'Tezos',
-          address: tezosAddress,
-          iconName: IconNameEnum.TezToken
-        },
-        isDefined(saplingAddress) && {
-          label: 'Shielded',
-          address: saplingAddress,
-          iconName: IconNameEnum.TezShieldedToken
-        },
-        isDefined(evmAddress) && {
-          label: 'Etherlink',
-          address: evmAddress,
-          iconName: IconNameEnum.EtherlinkToken
-        }
-      ].filter(isTruthy);
-    }, [saplingAddress, value]);
-
-    const closeCopyAddressDropdown = () => setIsCopyAddressDropdownVisible(false);
-
-    const onLongPressHandler = () => {
-      if (copyAddressOptions.length > 0) {
-        setIsCopyAddressDropdownVisible(true);
-      }
-    };
+    const onLongPressHandler = useCallback(() => {
+      copyAddressPopupRef.current?.open();
+    }, []);
 
     return (
       <>
@@ -170,11 +138,7 @@ export const AccountDropdownBase = memo<Props>(
           isCollectibleScreen={isCollectibleScreen}
         />
 
-        <CopyAddressModal
-          isVisible={isCopyAddressDropdownVisible}
-          options={copyAddressOptions}
-          onClose={closeCopyAddressDropdown}
-        />
+        <CopyAddressPopup controlRef={copyAddressPopupRef} account={value} />
       </>
     );
   }

@@ -80,7 +80,7 @@ const getCreateUnifiedSavingsCacheKey = (
   rpcUrl: string,
   { SAVINGS_V3_POOL_ADDRESS, token }: AssetDefinition,
   account: Account
-) => [rpcUrl, SAVINGS_V3_POOL_ADDRESS, token.id, getAccountAddressForTezos(account) ?? account.id].join('_');
+) => [rpcUrl, SAVINGS_V3_POOL_ADDRESS, token.id, account.id].join('_');
 
 export const createUnifiedSavings = memoize(
   (rpcUrl: string, assetDefinition: AssetDefinition, account: Account) =>
