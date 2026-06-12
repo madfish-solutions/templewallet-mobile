@@ -4,7 +4,6 @@ import { mockAccountCredentials } from '../mocks/account-credentials.mock';
 import {
   generateSeed,
   getEvmDerivationPath,
-  getPrivateKeyWithChain,
   getPublicKeyAndHash$,
   getTezosDerivationPath,
   isEvmDerivationPath,
@@ -137,17 +136,6 @@ it('privateKeyToEvmAccountCreds should return EVM account credentials from priva
 it('isTezosPrivateKey should detect Tezos secret key prefixes', () => {
   expect(isTezosPrivateKey(mockAccountCredentials.privateKey)).toEqual(true);
   expect(isTezosPrivateKey(mockEvmPrivateKeyIndexZero)).toEqual(false);
-});
-
-it('getPrivateKeyWithChain should infer Tezos keys and normalize EVM keys', () => {
-  expect(getPrivateKeyWithChain(mockAccountCredentials.privateKey)).toEqual({
-    privateKey: mockAccountCredentials.privateKey,
-    chain: TempleChainKind.Tezos
-  });
-  expect(getPrivateKeyWithChain(mockEvmPrivateKeyIndexZero.slice(2))).toEqual({
-    privateKey: mockEvmPrivateKeyIndexZero,
-    chain: TempleChainKind.EVM
-  });
 });
 
 it('privateKeyToEvmAccountCreds should throw a useful error for non-hex private key', () => {

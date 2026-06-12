@@ -8,7 +8,7 @@ import { TempleChainKind } from '../enums/temple-chain-kind.enum';
 import { mockEvmImportedAccount, mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
 import { mockAccountCredentials, mockInvalidPrivateKey } from '../mocks/account-credentials.mock';
 import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
-import { mockNavigationDispatch, mockNavigate } from '../mocks/react-navigation.mock';
+import { mockNavigate, mockNavigationDispatch } from '../mocks/react-navigation.mock';
 import { mockInMemorySigner } from '../mocks/taquito-signer.mock';
 import { StacksEnum } from '../navigator/enums/stacks.enum';
 import { navigateAction } from '../store/root-state.actions';
@@ -155,7 +155,8 @@ describe('useShelter', () => {
 
     result.current.createImportedChainAccountFromPrivateKey({
       privateKey: mockAccountCredentials.privateKey,
-      name: mockHdAccount.name
+      name: mockHdAccount.name,
+      chain: TempleChainKind.Tezos
     });
     await jest.runAllTimersAsync();
 
@@ -177,7 +178,8 @@ describe('useShelter', () => {
 
     result.current.createImportedChainAccountFromPrivateKey({
       privateKey: mockEvmPrivateKey,
-      name: mockEvmImportedAccount.name
+      name: mockEvmImportedAccount.name,
+      chain: mockEvmImportedAccount.chain
     });
     await jest.runAllTimersAsync();
 
@@ -191,23 +193,6 @@ describe('useShelter', () => {
     expect(mockStoreDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockEvmImportedAccount.id));
     expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountAction(mockEvmImportedAccount));
     expect(mockStoreDispatch).not.toHaveBeenCalledWith(loadWhitelistAction.submit());
-  });
-
-  it('should infer imported EVM account from private key without chain or 0x prefix', async () => {
-    mockShelter.createImportedChainAccount$.mockReturnValueOnce(of(mockEvmImportedAccount));
-    const { result } = renderHook(() => useShelter());
-
-    result.current.createImportedChainAccountFromPrivateKey({
-      privateKey: mockEvmPrivateKey.slice(2),
-      name: mockEvmImportedAccount.name
-    });
-    await jest.runAllTimersAsync();
-
-    expect(mockShelter.createImportedChainAccount$).toHaveBeenCalledWith(
-      mockEvmPrivateKey,
-      mockEvmImportedAccount.name,
-      TempleChainKind.EVM
-    );
   });
 
   it('should create imported multichain account from seed without custom derivation path', async () => {
@@ -276,7 +261,8 @@ describe('useShelter', () => {
 
     result.current.createImportedChainAccountFromPrivateKey({
       privateKey: mockInvalidPrivateKey,
-      name: mockHdAccount.name
+      name: mockHdAccount.name,
+      chain: TempleChainKind.Tezos
     });
     await jest.runAllTimersAsync();
 
@@ -293,7 +279,8 @@ describe('useShelter', () => {
 
     result.current.createImportedChainAccountFromPrivateKey({
       privateKey: mockAccountCredentials.privateKey,
-      name: mockHdAccount.name
+      name: mockHdAccount.name,
+      chain: TempleChainKind.Tezos
     });
     await jest.runAllTimersAsync();
 
@@ -307,7 +294,8 @@ describe('useShelter', () => {
 
     result.current.createImportedChainAccountFromPrivateKey({
       privateKey: '0x3925ef64b24414526bd9d28826c642a34d4d8fbb292b467a33f5376126632d3d',
-      name: mockEvmImportedAccount.name
+      name: mockEvmImportedAccount.name,
+      chain: TempleChainKind.EVM
     });
     await jest.runAllTimersAsync();
 

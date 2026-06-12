@@ -10,6 +10,7 @@ import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum.ts';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
@@ -19,6 +20,7 @@ import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { isTezosPrivateKey } from 'src/utils/keys.utils.ts';
 
 import {
   importAccountPrivateKeyInitialValues,
@@ -43,9 +45,12 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
 
   const onSubmit = useCallback(
     ({ privateKey }: ImportAccountPrivateKeyValues) => {
+      const [finalPrivateKey, chain] = toPrivateKeyWithChain(privateKey.replace(/\s/g, ''));
+
       createImportedChainAccountFromPrivateKey({
-        privateKey,
-        name: `Account ${accountIndex}`
+        privateKey: finalPrivateKey,
+        name: `Account ${accountIndex}`,
+        chain
       });
     },
     [accountIndex, createImportedChainAccountFromPrivateKey]
@@ -83,3 +88,11 @@ export const ImportAccountPrivateKey = memo<Props>(({ onBackPress }) => {
     </FormikProvider>
   );
 });
+
+const toPrivateKeyWithChain = (value: string): [string, TempleChainKind] => {
+  if (isTezosPrivateKey(value)) return [value, TempleChainKind.Tezos];
+
+  if (!value.startsWith('0x')) value = `0x${value}`;
+
+  return [value, TempleChainKind.EVM];
+};

@@ -256,7 +256,8 @@ describe('Shelter', () => {
                   address: mockEvmCredentialsIndex77.address,
                   publicKey: mockEvmCredentialsIndex77.publicKey
                 }
-              ]
+              ],
+              explicitAccountIndex: true
             })
           )
         )

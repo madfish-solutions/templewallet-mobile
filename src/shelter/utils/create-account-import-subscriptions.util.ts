@@ -17,7 +17,6 @@ import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/
 import {
   AccountCredentials,
   getEvmDerivationPath,
-  getPrivateKeyWithChain,
   getTezosDerivationPath,
   mnemonicToPrivateKey,
   privateKeyToEvmAccountCredentials,
@@ -34,6 +33,7 @@ import { deriveSaskFromPrivateKey } from './derive-sask-from-private-key.util';
 export interface CreateImportedChainAccountFromPrivateKeyParams {
   privateKey: string;
   name: string;
+  chain: TempleChainKind;
 }
 
 export interface CreateImportedChainAccountFromSeedParams {
@@ -153,16 +153,12 @@ const importAccount$ = (request: AccountImportRequest, accounts: Account[]): Obs
 };
 
 const importChainAccountFromPrivateKey$ = (
-  { privateKey, name }: CreateImportedChainAccountFromPrivateKeyParams,
+  { privateKey, name, chain }: CreateImportedChainAccountFromPrivateKeyParams,
   accounts: Account[]
 ): Observable<Account | undefined> => {
-  const { privateKey: normalizedPrivateKey, chain } = getPrivateKeyWithChain(privateKey);
-
-  return from(deriveImportedChainAccountCredentials(normalizedPrivateKey, chain)).pipe(
-    switchMap(({ address }) =>
-      createImportedChainAccountIfUnique$(accounts, chain, address, normalizedPrivateKey, name)
-    ),
-    switchMap(publicData => saveSaplingSpendingKeyForTezosAccount$(publicData, normalizedPrivateKey))
+  return from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
+    switchMap(({ address }) => createImportedChainAccountIfUnique$(accounts, chain, address, privateKey, name)),
+    switchMap(publicData => saveSaplingSpendingKeyForTezosAccount$(publicData, privateKey))
   );
 };
 
