@@ -95,10 +95,11 @@ describe('useShelter', () => {
 
     result.current.createHdAccount();
 
-    expect(mockShelter.createHdAccount$).toHaveBeenCalledWith(`Account ${mockRootState.wallet.accounts.length + 1}`, {
-      accountIndex: mockRootState.wallet.accounts.length,
-      existingAccounts: mockRootState.wallet.accounts
-    });
+    expect(mockShelter.createHdAccount$).toHaveBeenCalledWith(
+      `Account ${mockRootState.wallet.accounts.length + 1}`,
+      mockRootState.wallet.accounts.length,
+      mockRootState.wallet.accounts
+    );
 
     expect(mockStoreDispatch).toHaveBeenCalledWith(setSelectedAccountIdAction(mockNewHdAccount.id));
     expect(mockStoreDispatch).toHaveBeenCalledWith(addAccountAction(mockNewHdAccount));
@@ -210,10 +211,10 @@ describe('useShelter', () => {
       mockRootState.wallet.accounts = initialAccounts;
     }
 
-    expect(mockShelter.createImportedMultichainAccount$).toHaveBeenCalledWith({
-      seedPhrase: mockAccountCredentials.seedPhrase,
-      name: mockHdAccount.name
-    });
+    expect(mockShelter.createImportedMultichainAccount$).toHaveBeenCalledWith(
+      mockAccountCredentials.seedPhrase,
+      mockHdAccount.name
+    );
     expect(mockShelter.createImportedChainAccount$).not.toHaveBeenCalled();
   });
 
