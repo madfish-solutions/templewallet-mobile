@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { Observable } from 'rxjs';
 import { catchError, switchMap, withLatestFrom } from 'rxjs/operators';
 
-import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { Account } from 'src/interfaces/account.interfaces';
@@ -38,29 +37,6 @@ export const withAllAccounts =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
     observable$.pipe(withLatestFrom(state$, (value, { wallet }): [T, Account[]] => [value, wallet.accounts]));
-
-export const withSelectedAccountHdIndex =
-  <T>(state$: Observable<RootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(
-      withLatestFrom(state$, (value, { wallet }): [T, number | undefined] => {
-        const selectedAccount = getSelectedAccountFromWallet(wallet);
-
-        if (selectedAccount.type !== AccountTypeEnum.HD) {
-          return [value, undefined];
-        }
-
-        if (selectedAccount.hdIndex !== undefined) {
-          return [value, selectedAccount.hdIndex];
-        }
-
-        const selectedAccountId = selectedAccount.id;
-        const hdAccounts = wallet.accounts.filter(account => account.type === AccountTypeEnum.HD);
-        const hdIndex = hdAccounts.findIndex(account => account.id === selectedAccountId);
-
-        return [value, hdIndex];
-      })
-    );
 
 export const withOnRampOverlayState =
   <T>(state$: Observable<RootState>) =>

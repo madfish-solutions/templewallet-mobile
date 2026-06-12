@@ -12,7 +12,7 @@ import { Shelter } from 'src/shelter/shelter';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
-import { withAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { withAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction, navigateBackAction } from '../root-state.actions';
 import { hideLoaderAction, showLoaderAction } from '../settings/settings-actions';
@@ -64,8 +64,7 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSaplingCredentialsActions.submit),
     withAccount(state$),
-    withSelectedAccountHdIndex(state$),
-    switchMap(([[, selectedAccount], hdIndex]) => {
+    switchMap(([, selectedAccount]) => {
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
 
       if (!publicKeyHash) {
@@ -82,6 +81,8 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
           })
         );
       }
+
+      const hdIndex = type === AccountTypeEnum.HD ? selectedAccount.hdIndex : undefined;
 
       return withSaplingSpendingKey$(
         publicKeyHash,
@@ -150,8 +151,7 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
     toPayload(),
     withAccount(state$),
     withSelectedRpcUrl(state$),
-    withSelectedAccountHdIndex(state$),
-    switchMap(([[[payload, selectedAccount], rpcUrl], hdIndex]) => {
+    switchMap(([[payload, selectedAccount], rpcUrl]) => {
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
 
       if (!publicKeyHash) {
@@ -172,6 +172,8 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
               saplingAmount: payload.amount,
               saplingType: payload.type
             };
+
+      const hdIndex = selectedAccount.type === AccountTypeEnum.HD ? selectedAccount.hdIndex : undefined;
 
       return concat(
         of(navigateAction({ screen: ModalsEnum.Confirmation, params: confirmationParams })),

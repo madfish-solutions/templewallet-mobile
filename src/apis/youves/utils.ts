@@ -15,7 +15,7 @@ import memoize from 'memoizee';
 
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
 import { Account } from 'src/interfaces/account.interfaces';
-import { getAccountAddressForTezos, getAccountForTezos } from 'src/utils/account.utils';
+import { getAccountForTezos } from 'src/utils/account.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
 import { INDEXER_CONFIG, YOUVES_TOKENS_ICONS } from './constants';
@@ -55,7 +55,7 @@ class MemoryStorage implements Storage {
 }
 
 const getCreateEngineCacheKey = (rpcUrl: string, token: AssetDefinition, account?: Account) =>
-  [rpcUrl, token.id, account ? getAccountAddressForTezos(account) ?? account.id : ''].join('_');
+  [rpcUrl, token.id, account?.id].join('_');
 
 export const createEngineMemoized = memoize(
   (rpcUrl: string, token: AssetDefinition, account?: Account) => {
