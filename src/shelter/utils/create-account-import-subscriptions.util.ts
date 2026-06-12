@@ -2,7 +2,21 @@ import { StackActions } from '@react-navigation/native';
 import type { NavigationAction } from '@react-navigation/routers';
 import { BigNumber } from 'bignumber.js';
 import Toast from 'react-native-toast-message';
-import { catchError, forkJoin, from, lastValueFrom, map, merge, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import {
+  asyncScheduler,
+  catchError,
+  forkJoin,
+  from,
+  lastValueFrom,
+  map,
+  merge,
+  Observable,
+  observeOn,
+  of,
+  Subject,
+  switchMap,
+  tap
+} from 'rxjs';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -96,6 +110,7 @@ export const createAccountImportSubscriptions = (
         Toast.hide();
         dispatch(showLoaderAction());
       }),
+      observeOn(asyncScheduler),
       switchMap(request =>
         importAccount$(request, accounts).pipe(
           catchError(() => {

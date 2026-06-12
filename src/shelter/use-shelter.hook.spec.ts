@@ -2,22 +2,21 @@ import { renderHook } from '@testing-library/react-hooks';
 import { useSelector } from 'react-redux';
 import { of } from 'rxjs';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { mockEvmImportedAccount, mockHdAccount, mockNewHdAccount } from 'src/interfaces/account.interface.mock';
+import { mockAccountCredentials, mockInvalidPrivateKey } from 'src/mocks/account-credentials.mock';
+import { mockCorrectPassword } from 'src/mocks/react-native-keychain.mock';
+import { mockNavigate, mockNavigationDispatch } from 'src/mocks/react-navigation.mock';
+import { mockInMemorySigner } from 'src/mocks/taquito-signer.mock';
+import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { dispatch as storeDispatch } from 'src/store';
-
-import { TempleChainKind } from '../enums/temple-chain-kind.enum';
-import { mockEvmImportedAccount, mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
-import { mockAccountCredentials, mockInvalidPrivateKey } from '../mocks/account-credentials.mock';
-import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
-import { mockNavigate, mockNavigationDispatch } from '../mocks/react-navigation.mock';
-import { mockInMemorySigner } from '../mocks/taquito-signer.mock';
-import { StacksEnum } from '../navigator/enums/stacks.enum';
-import { navigateAction } from '../store/root-state.actions';
-import { mockRootState } from '../store/root-state.mock';
-import { setIsBiometricsEnabled } from '../store/settings/settings-actions';
-import { loadWhitelistAction } from '../store/tokens-metadata/tokens-metadata-actions';
-import { addAccountAction, setSelectedAccountIdAction } from '../store/wallet/wallet-actions';
-import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from '../toast/toast.utils.mock';
-import * as tokenBalanceUtils from '../utils/token-balance.utils';
+import { navigateAction } from 'src/store/root-state.actions';
+import { mockRootState } from 'src/store/root-state.mock';
+import { setIsBiometricsEnabled } from 'src/store/settings/settings-actions';
+import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
+import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
+import { mockShowErrorToast, mockShowSuccessToast, mockShowWarningToast } from 'src/toast/toast.utils.mock';
+import * as tokenBalanceUtils from 'src/utils/token-balance.utils';
 
 import { mockRevealedSecretKey, mockRevealedSeedPhrase, mockShelter } from './shelter.mock';
 import { useShelter } from './use-shelter.hook';
