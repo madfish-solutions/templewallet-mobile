@@ -34,11 +34,12 @@ const ActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) => {
 
   const handleImportAccountButtonPress = () => {
     navigateToModal(ModalsEnum.ChooseAccountImportType);
+    closeDropdown();
   };
 
   const handleManageAccountsButtonPress = () => {
-    closeDropdown(100);
-    navigateToScreen({ screen: ScreensEnum.ManageAccounts });
+    closeDropdown();
+    setTimeout(() => navigateToScreen({ screen: ScreensEnum.ManageAccounts }), 100);
   };
 
   return (
