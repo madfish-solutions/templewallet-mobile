@@ -40,7 +40,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const tezosAddress = getAccountAddressForTezos(account);
   const evmAddress = getAccountAddressForEvm(account);
 
-  const tezosToken = useTezosTokenOfKnownAccount(tezosAddress ?? '');
+  const tezosToken = useTezosTokenOfKnownAccount(account.id);
   const isVisible = useIsAccountVisibleSelector(account.id) ?? true;
 
   const isVisibilitySwitchDisabled = !tezosAddress || account.id === selectedAccount.id;

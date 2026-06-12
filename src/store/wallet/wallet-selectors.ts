@@ -49,7 +49,6 @@ export const useIsAuthorisedSelector = () => {
   return useMemo(() => accounts.length > 0, [accounts.length]);
 };
 
-/** @knipignore */
 export const useCurrentAccountId = () => useSelector(({ wallet }) => wallet.selectedAccountId);
 
 export const useIsAccountVisibleSelector = (accountId: string): boolean | undefined =>
@@ -167,18 +166,10 @@ export const useTokenBalanceGetter = () => {
 export const useCurrentAccountTezosBalance = () =>
   useSelector(({ wallet }) => {
     const account = getSelectedAccountFromWallet(wallet);
-    const tezosAddress = account ? getAccountAddressForTezos(account) : undefined;
+    const tezosAddress = getAccountAddressForTezos(account);
 
-    return account && tezosAddress ? wallet.accountsStateRecord[account.id]?.tezosBalance ?? '0' : '0';
+    return tezosAddress ? wallet.accountsStateRecord[account.id]?.tezosBalance ?? '0' : '0';
   });
 
-export const useTezosBalanceOfKnownAccountSelector = (publicKeyHash: string) =>
-  useSelector(state => {
-    const account = state.wallet.accounts.find(account => getAccountAddressForTezos(account) === publicKeyHash);
-
-    if (account) {
-      return state.wallet.accountsStateRecord[account.id]?.tezosBalance ?? '0';
-    }
-
-    return state.contactBook.contactsStateRecord[publicKeyHash]?.tezosBalance ?? '0';
-  });
+export const useTezosBalanceOfKnownAccountSelector = (accountId: string) =>
+  useSelector(state => state.wallet.accountsStateRecord[accountId]?.tezosBalance ?? '0');

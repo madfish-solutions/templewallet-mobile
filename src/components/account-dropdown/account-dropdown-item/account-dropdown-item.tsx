@@ -36,8 +36,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
   ({ account, showFullData = true, actionIconName, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
 
-    const tezosAddress = getAccountAddressForTezos(account);
-    const tezos = useTezosTokenOfKnownAccount(tezosAddress ?? '');
+    const tezos = useTezosTokenOfKnownAccount(account.id);
 
     return (
       <View style={styles.root}>
@@ -79,7 +78,7 @@ const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(
   const tezosAddress = getAccountAddressForTezos(account);
   const evmAddress = getAccountAddressForEvm(account);
 
-  const tezos = useTezosTokenOfKnownAccount(tezosAddress ?? '');
+  const tezos = useTezosTokenOfKnownAccount(account.id);
 
   return (
     <>

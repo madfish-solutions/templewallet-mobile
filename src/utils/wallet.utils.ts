@@ -130,8 +130,8 @@ export const useTezosTokenOfCurrentAccount = () => {
   return useTezosToken(balance);
 };
 
-export const useTezosTokenOfKnownAccount = (publicKeyHash: string) => {
-  const balance = useTezosBalanceOfKnownAccountSelector(publicKeyHash);
+export const useTezosTokenOfKnownAccount = (accountId: string) => {
+  const balance = useTezosBalanceOfKnownAccountSelector(accountId);
 
   return useTezosToken(balance);
 };

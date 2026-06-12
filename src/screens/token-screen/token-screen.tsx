@@ -28,11 +28,12 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 export const TokenScreen = () => {
   const tezosAddress = useAccountAddressForTezos();
-  const accountId = useCurrentAccountId();
 
-  if (!tezosAddress || !accountId) {
+  if (!tezosAddress) {
     throw new DeadEndBoundaryError();
   }
+
+  const accountId = useCurrentAccountId();
 
   const { token: initialToken } = useScreenParams<ScreensEnum.TokenScreen>();
 
