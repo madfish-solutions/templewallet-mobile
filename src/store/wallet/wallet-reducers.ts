@@ -3,7 +3,6 @@ import { createReducer } from '@reduxjs/toolkit';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
-import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDcpNode } from 'src/utils/network.utils';
 
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
@@ -25,13 +24,8 @@ import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
   builder.addCase(addAccountAction, (state, { payload: account }) => {
-    const tezosAddress = getAccountAddressForTezos(account);
-
     state.accounts.push(account);
-
-    if (tezosAddress) {
-      state.accountsStateRecord[tezosAddress] = initialAccountState;
-    }
+    state.accountsStateRecord[account.id] = initialAccountState;
   });
 
   builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => {
@@ -42,8 +36,8 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     state.accounts = migratedAccounts;
   });
 
-  builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) => {
-    const accountState = retrieveAccountState(state, publicKeyHash);
+  builder.addCase(setAccountVisibility, (state, { payload: { accountId, isVisible } }) => {
+    const accountState = retrieveAccountState(state, accountId);
 
     if (accountState) {
       accountState.isVisible = isVisible;
@@ -79,34 +73,31 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
   });
 
   builder.addCase(loadTezosBalanceActions.success, (state, { payload }) => {
-    for (const pkh in payload) {
-      const newBalance = payload[pkh];
+    for (const accountId in payload) {
+      const newBalance = payload[accountId];
 
       if (!newBalance) {
-        return;
+        continue;
       }
 
-      const accountState = retrieveAccountState(state, pkh);
+      const accountState = retrieveAccountState(state, accountId);
       if (accountState) {
         accountState.tezosBalance = newBalance;
       }
     }
   });
 
-  builder.addCase(
-    loadAssetsBalancesActions.success,
-    (state, { payload: { publicKeyHash, balances, selectedRpcUrl } }) => {
-      const accountState = retrieveAccountState(state, publicKeyHash);
-      if (!accountState) {
-        return;
-      }
-
-      pushOrUpdateTokensBalances(
-        isDcpNode(selectedRpcUrl) ? accountState.dcpTokensList : accountState.tokensList,
-        balances
-      );
+  builder.addCase(loadAssetsBalancesActions.success, (state, { payload: { accountId, balances, selectedRpcUrl } }) => {
+    const accountState = retrieveAccountState(state, accountId);
+    if (!accountState) {
+      return;
     }
-  );
+
+    pushOrUpdateTokensBalances(
+      isDcpNode(selectedRpcUrl) ? accountState.dcpTokensList : accountState.tokensList,
+      balances
+    );
+  });
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const accountState = retrieveAccountState(state);

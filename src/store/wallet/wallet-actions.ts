@@ -13,18 +13,20 @@ export const completeEvmAccountsMigrationAction = createAction<Account[]>('walle
 
 export const updateAccountAction = createAction<Account>('wallet/UPDATE_ACCOUNT');
 
-export const setAccountVisibility = createAction<{ publicKeyHash: string; isVisible: boolean }>(
+export const setAccountVisibility = createAction<{ accountId: string; isVisible: boolean }>(
   'wallet/SET_ACCOUNT_VISIBILITY'
 );
 
 export const loadTezosBalanceActions = createActions<void, StringRecord, string>('assets/LOAD_TEZOS');
 
-export const highPriorityLoadTokenBalanceAction = createAction<{ publicKeyHash: string; slug: string }>(
-  'assets/HIGH_PRIORITY_LOAD_TOKEN_BALANCE'
-);
+export const highPriorityLoadTokenBalanceAction = createAction<{
+  accountId: string;
+  publicKeyHash: string;
+  slug: string;
+}>('assets/HIGH_PRIORITY_LOAD_TOKEN_BALANCE');
 export const loadAssetsBalancesActions = createActions<
   void,
-  { publicKeyHash: string; balances: StringRecord; selectedRpcUrl: string },
+  { accountId: string; publicKeyHash: string; balances: StringRecord; selectedRpcUrl: string },
   string
 >('assets/LOAD_TOKENS_BALANCES');
 

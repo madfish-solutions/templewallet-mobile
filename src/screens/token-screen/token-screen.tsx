@@ -18,7 +18,7 @@ import { useNavigateToScreen, useScreenParams } from 'src/navigator/hooks/use-na
 import { dispatch } from 'src/store';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { highPriorityLoadTokenBalanceAction } from 'src/store/wallet/wallet-actions';
-import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountId } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -28,8 +28,9 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 export const TokenScreen = () => {
   const tezosAddress = useAccountAddressForTezos();
+  const accountId = useCurrentAccountId();
 
-  if (!tezosAddress) {
+  if (!tezosAddress || !accountId) {
     throw new DeadEndBoundaryError();
   }
 
@@ -54,11 +55,12 @@ export const TokenScreen = () => {
   useEffect(() => {
     dispatch(
       highPriorityLoadTokenBalanceAction({
+        accountId,
         publicKeyHash: tezosAddress,
         slug: getTokenSlug(token)
       })
     );
-  }, []);
+  }, [accountId, tezosAddress, token]);
 
   const { activities, handleUpdate, isAllLoaded, isLoading } = useContractActivity(getTokenSlug(initialToken));
 

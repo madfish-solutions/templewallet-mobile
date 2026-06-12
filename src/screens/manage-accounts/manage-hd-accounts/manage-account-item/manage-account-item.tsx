@@ -41,7 +41,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
   const evmAddress = getAccountAddressForEvm(account);
 
   const tezosToken = useTezosTokenOfKnownAccount(tezosAddress ?? '');
-  const isVisible = useIsAccountVisibleSelector(tezosAddress ?? '') ?? true;
+  const isVisible = useIsAccountVisibleSelector(account.id) ?? true;
 
   const isVisibilitySwitchDisabled = !tezosAddress || account.id === selectedAccount.id;
   const visibilityWarning = tezosAddress
@@ -82,7 +82,7 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
               onChange={newIsVisible =>
                 dispatch(
                   setAccountVisibility({
-                    publicKeyHash: tezosAddress ?? '',
+                    accountId: account.id,
                     isVisible: newIsVisible
                   })
                 )

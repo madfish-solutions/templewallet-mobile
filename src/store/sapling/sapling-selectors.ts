@@ -1,6 +1,6 @@
 import { Account } from 'src/interfaces/account.interfaces.ts';
+import { getAccountAddressForTezos } from 'src/utils/account.utils.ts';
 
-import { getAccountAddressForTezos } from '../../utils/account.utils.ts';
 import { useSelector } from '../selector';
 import { useAccountAddressForTezos } from '../wallet/wallet-selectors';
 

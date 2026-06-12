@@ -155,8 +155,6 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
 
       if (!publicKeyHash) {
-        showErrorToast({ description: 'Select a Tezos account to use Sapling' });
-
         return EMPTY;
       }
 

@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { Contact } from '../../interfaces/contact.interface';
+import { Contact } from 'src/interfaces/contact.interface';
+
 import { createActions } from '../create-actions';
 
 export const addContactAction = createAction<Contact>('contactBook/ADD_CONTACT');

@@ -47,8 +47,9 @@ const highPriorityLoadTokenBalanceEpic: AnyActionEpic = (action$, state$) =>
         map(balance =>
           isDefined(balance)
             ? loadAssetsBalancesActions.success({
+                accountId: payload.accountId,
                 publicKeyHash: payload.publicKeyHash,
-                balances: { slug: payload.slug, balance },
+                balances: { [payload.slug]: balance },
                 selectedRpcUrl
               })
             : loadAssetsBalancesActions.fail(`${payload.slug} balance load FAILED`)
@@ -73,6 +74,7 @@ const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
       return from(fetchAllAssetsBalancesFromTzkt(selectedRpcUrl, selectedTezosAddress)).pipe(
         map(data =>
           loadAssetsBalancesActions.success({
+            accountId: selectedAccount.id,
             publicKeyHash: selectedTezosAddress,
             balances: data,
             selectedRpcUrl
@@ -106,7 +108,17 @@ const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
       loadTezosBalances$(rpcUrl, allAccounts.map(getAccountAddressForTezos).filter(isDefined)).pipe(
         withOnRampOverlayState(state$),
         concatMap(([balances, overlayState]) => {
-          const successAction = loadTezosBalanceActions.success(balances);
+          const balancesByAccountId = allAccounts.reduce<StringRecord>((acc, account) => {
+            const tezosAddress = getAccountAddressForTezos(account);
+            const balance = tezosAddress ? balances[tezosAddress] : undefined;
+
+            if (isDefined(balance)) {
+              acc[account.id] = balance;
+            }
+
+            return acc;
+          }, {});
+          const successAction = loadTezosBalanceActions.success(balancesByAccountId);
           const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
           const balance = selectedTezosAddress ? balances[selectedTezosAddress] : undefined;
           const showOnRampAction =
