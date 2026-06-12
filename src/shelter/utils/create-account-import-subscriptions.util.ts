@@ -1,6 +1,5 @@
 import { StackActions } from '@react-navigation/native';
 import type { NavigationAction } from '@react-navigation/routers';
-import { Dispatch } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import Toast from 'react-native-toast-message';
 import { catchError, forkJoin, from, lastValueFrom, map, merge, Observable, of, Subject, switchMap, tap } from 'rxjs';
@@ -9,6 +8,7 @@ import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces';
+import { dispatch } from 'src/store';
 import { hideLoaderAction, setOnRampOverlayStateAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
@@ -82,7 +82,6 @@ export const createAccountImportSubscriptions = (
   createImportedChainAccountFromSeed$: Subject<CreateImportedChainAccountFromSeedRequest>,
   createImportedMultichainAccountFromSeed$: Subject<CreateImportedMultichainAccountFromSeedRequest>,
   accounts: Account[],
-  dispatch: Dispatch,
   navigationDispatch: (action: NavigationAction) => void,
   rpcUrl: string,
   trackErrorEvent: (error: unknown, accountPkh?: string) => void

@@ -1,6 +1,6 @@
-import { Dispatch } from '@reduxjs/toolkit';
 import { forkJoin, of, Subject, switchMap, tap } from 'rxjs';
 
+import { dispatch } from 'src/store';
 import {
   hideLoaderAction,
   setIsBiometricsEnabled,
@@ -13,7 +13,7 @@ import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/w
 import { ImportWalletParams } from '../interfaces/import-wallet-params.interface';
 import { Shelter } from '../shelter';
 
-export const importWalletSubscription = (importWallet$: Subject<ImportWalletParams>, dispatch: Dispatch) =>
+export const importWalletSubscription = (importWallet$: Subject<ImportWalletParams>) =>
   importWallet$
     .pipe(
       tap(() => dispatch(showLoaderAction())),

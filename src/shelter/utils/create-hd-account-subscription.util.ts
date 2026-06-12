@@ -1,8 +1,8 @@
-import { Dispatch } from '@reduxjs/toolkit';
 import { EMPTY, expand, first, of, Subject, switchMap, tap } from 'rxjs';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { Account } from 'src/interfaces/account.interfaces';
+import { dispatch } from 'src/store';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 import { loadWhitelistAction } from 'src/store/tokens-metadata/tokens-metadata-actions';
 import { addAccountAction, setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
@@ -11,11 +11,7 @@ import { Shelter } from '../shelter';
 
 const MAX_HD_SKIP_ATTEMPTS = 10;
 
-export const createHdAccountSubscription = (
-  createHdAccount$: Subject<unknown>,
-  accounts: Account[],
-  dispatch: Dispatch
-) =>
+export const createHdAccountSubscription = (createHdAccount$: Subject<unknown>, accounts: Account[]) =>
   createHdAccount$
     .pipe(
       tap(() => dispatch(showLoaderAction())),

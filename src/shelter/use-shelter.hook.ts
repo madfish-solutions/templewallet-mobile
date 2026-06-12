@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { EMPTY, Subject } from 'rxjs';
 
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { dispatch } from 'src/store';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -51,21 +50,20 @@ export const useShelter = () => {
 
   useEffect(() => {
     const subscriptions = [
-      importWalletSubscription(importWallet$, dispatch),
-      createHdAccountSubscription(createHdAccount$, accounts, dispatch),
+      importWalletSubscription(importWallet$),
+      createHdAccountSubscription(createHdAccount$, accounts),
       createAccountImportSubscriptions(
         createImportedChainAccountFromPrivateKey$,
         createImportedChainAccountFromSeed$,
         createImportedMultichainAccountFromSeed$,
         accounts,
-        dispatch,
         navigationDispatch,
         selectedRpcUrl,
         (error, accountPkh) =>
           trackErrorEvent('CreateImportAccountError', error, accountPkh ? [accountPkh] : [], { selectedRpcUrl })
       ),
-      revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
-      enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch)
+      revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$),
+      enableBiometryPasswordSubscription(enableBiometryPassword$)
     ];
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());
@@ -75,7 +73,6 @@ export const useShelter = () => {
     createImportedChainAccountFromPrivateKey$,
     createImportedChainAccountFromSeed$,
     createImportedMultichainAccountFromSeed$,
-    dispatch,
     enableBiometryPassword$,
     importWallet$,
     navigationDispatch,
