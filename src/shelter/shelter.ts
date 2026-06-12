@@ -54,18 +54,6 @@ export const FATAL_MIGRATION_ERROR_MESSAGE = 'Please, reset your wallet to compl
 const MIGRATION_WITH_BIOMETRY_ERROR_MESSAGE = 'Confirm the migration using your biometrics and try again.';
 const MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE = 'Please, try again.';
 
-interface CreateHdAccountOptions {
-  accountIndex?: number;
-  existingAccounts?: Account[];
-  explicitAccountIndex?: boolean;
-}
-
-export interface CreateImportedMultichainAccountOptions {
-  seedPhrase: string;
-  name: string;
-  bip39Passphrase?: string;
-}
-
 interface PasswordServiceMigrationResultBase {
   isSuccess: boolean;
   error?: unknown;
@@ -407,11 +395,10 @@ export class Shelter {
     );
   };
 
-  static createImportedMultichainAccount$ = ({
-    seedPhrase,
-    name,
-    bip39Passphrase
-  }: CreateImportedMultichainAccountOptions): Observable<ImportedMultichainAccount> => {
+  static createImportedMultichainAccount$ = (
+    seedPhrase: string,
+    name: string
+  ): Observable<ImportedMultichainAccount> => {
     if (!validateMnemonic(seedPhrase)) {
       return throwError$('Mnemonic not validated');
     }
@@ -424,7 +411,6 @@ export class Shelter {
           const { privateKey } = mnemonicToPrivateKey(
             seedPhrase,
             message => new Error(message),
-            bip39Passphrase,
             getTezosDerivationPath(defaultAccountIndex)
           );
 
@@ -436,7 +422,6 @@ export class Shelter {
           const { privateKey } = mnemonicToPrivateKey(
             seedPhrase,
             message => new Error(message),
-            bip39Passphrase,
             getEvmDerivationPath(defaultAccountIndex)
           );
 
@@ -469,7 +454,9 @@ export class Shelter {
 
   static createHdAccount$ = (
     name: string,
-    { accountIndex = 0, existingAccounts = [], explicitAccountIndex = false }: CreateHdAccountOptions = {}
+    accountIndex = 0,
+    existingAccounts: Account[] = [],
+    explicitAccountIndex = false
   ): Observable<Account | undefined> =>
     Shelter.revealSeedPhrase$().pipe(
       switchMap(seedPhrase =>

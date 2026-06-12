@@ -23,10 +23,7 @@ export const createHdAccountSubscription = (
         let nextIndex = getNextHdIndex(accounts);
         let attempts = 0;
 
-        return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, {
-          accountIndex: nextIndex,
-          existingAccounts: accounts
-        }).pipe(
+        return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex, accounts).pipe(
           expand(publicData => {
             if (publicData !== undefined) {
               return EMPTY;
@@ -40,10 +37,7 @@ export const createHdAccountSubscription = (
 
             nextIndex++;
 
-            return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, {
-              accountIndex: nextIndex,
-              existingAccounts: accounts
-            });
+            return Shelter.createHdAccount$(`Account ${accounts.length + 1}`, nextIndex, accounts);
           }),
           first(publicData => publicData !== undefined || attempts >= MAX_HD_SKIP_ATTEMPTS)
         );

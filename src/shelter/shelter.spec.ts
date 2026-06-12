@@ -1,23 +1,23 @@
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
 
-import { AccountTypeEnum } from '../enums/account-type.enum';
-import { TempleChainKind } from '../enums/temple-chain-kind.enum';
-import { Account } from '../interfaces/account.interfaces';
-import { mockAccountCredentials, mockHDAccountCredentials } from '../mocks/account-credentials.mock';
+import { AccountTypeEnum } from 'src/enums/account-type.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { Account } from 'src/interfaces/account.interfaces';
+import { mockAccountCredentials, mockHDAccountCredentials } from 'src/mocks/account-credentials.mock';
 import {
   mockCorrectPassword,
   mockCorrectUserCredentials,
   mockCorrectUserCredentialsValue,
   mockKeychain
-} from '../mocks/react-native-keychain.mock';
+} from 'src/mocks/react-native-keychain.mock';
 import {
   mockCorrectDecryptResult,
   mockCorrectPasswordHash,
   mockCryptoUtil,
   mockEncryptedData
-} from '../utils/crypto.util.mock';
-import { getBiometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from '../utils/keychain.utils';
-import { rxJsTestingHelper } from '../utils/testing.utils';
+} from 'src/utils/crypto.util.mock';
+import { getBiometryKeychainOptions, getKeychainOptions, PASSWORD_STORAGE_KEY } from 'src/utils/keychain.utils';
+import { rxJsTestingHelper } from 'src/utils/testing.utils';
 
 import { Shelter } from './shelter';
 
@@ -177,9 +177,7 @@ describe('Shelter', () => {
       Shelter.unlockApp$(mockCorrectPassword, mockAccount)
         .pipe(
           tap(() => mockCryptoUtil.decryptString$.mockResolvedValueOnce(mockAccountCredentials.seedPhrase)),
-          switchMap(() =>
-            Shelter.createHdAccount$(mockName, { accountIndex: mockHDAccountCredentials.mockAccountIndex })
-          )
+          switchMap(() => Shelter.createHdAccount$(mockName, mockHDAccountCredentials.mockAccountIndex))
         )
         .subscribe(
           rxJsTestingHelper(account => {
@@ -213,19 +211,16 @@ describe('Shelter', () => {
         .pipe(
           tap(() => mockCryptoUtil.decryptString$.mockResolvedValueOnce(mockAccountCredentials.seedPhrase)),
           switchMap(() =>
-            Shelter.createHdAccount$('mockName', {
-              accountIndex: mockHDAccountCredentials.mockAccountIndex,
-              existingAccounts: [
-                {
-                  id: mockEvmCredentialsIndex77.address,
-                  name: 'Imported EVM',
-                  type: AccountTypeEnum.IMPORTED_CHAIN,
-                  chain: TempleChainKind.EVM,
-                  address: mockEvmCredentialsIndex77.address,
-                  publicKey: mockEvmCredentialsIndex77.publicKey
-                }
-              ]
-            })
+            Shelter.createHdAccount$('mockName', mockHDAccountCredentials.mockAccountIndex, [
+              {
+                id: mockEvmCredentialsIndex77.address,
+                name: 'Imported EVM',
+                type: AccountTypeEnum.IMPORTED_CHAIN,
+                chain: TempleChainKind.EVM,
+                address: mockEvmCredentialsIndex77.address,
+                publicKey: mockEvmCredentialsIndex77.publicKey
+              }
+            ])
           )
         )
         .subscribe(
@@ -245,9 +240,10 @@ describe('Shelter', () => {
         .pipe(
           tap(() => mockCryptoUtil.decryptString$.mockResolvedValueOnce(mockAccountCredentials.seedPhrase)),
           switchMap(() =>
-            Shelter.createHdAccount$('mockName', {
-              accountIndex: mockHDAccountCredentials.mockAccountIndex,
-              existingAccounts: [
+            Shelter.createHdAccount$(
+              'mockName',
+              mockHDAccountCredentials.mockAccountIndex,
+              [
                 {
                   id: mockEvmCredentialsIndex77.address,
                   name: 'Imported EVM',
@@ -257,8 +253,8 @@ describe('Shelter', () => {
                   publicKey: mockEvmCredentialsIndex77.publicKey
                 }
               ],
-              explicitAccountIndex: true
-            })
+              true
+            )
           )
         )
         .subscribe({
@@ -337,14 +333,7 @@ describe('Shelter', () => {
       const mockName = 'mockMultichainName';
 
       Shelter.unlockApp$(mockCorrectPassword, mockAccount)
-        .pipe(
-          switchMap(() =>
-            Shelter.createImportedMultichainAccount$({
-              seedPhrase: mockAccountCredentials.seedPhrase,
-              name: mockName
-            })
-          )
-        )
+        .pipe(switchMap(() => Shelter.createImportedMultichainAccount$(mockAccountCredentials.seedPhrase, mockName)))
         .subscribe(
           rxJsTestingHelper(account => {
             expect(account).toMatchObject({

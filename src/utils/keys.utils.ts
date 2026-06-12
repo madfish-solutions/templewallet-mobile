@@ -158,15 +158,14 @@ export const isTezosPrivateKey = (value: string): value is TezosSecretKey =>
 export const mnemonicToPrivateKey = (
   mnemonic: string,
   errorFactory: (message: string) => Error,
-  bip39Passphrase?: string,
   derivationPath?: string
 ): MnemonicPrivateKey => {
   let seed: Buffer;
 
   try {
-    seed = mnemonicToSeedSync(mnemonic, bip39Passphrase);
+    seed = mnemonicToSeedSync(mnemonic);
   } catch {
-    throw errorFactory('Invalid Mnemonic or Password');
+    throw errorFactory('Invalid Mnemonic');
   }
 
   if (!derivationPath) {

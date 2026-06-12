@@ -190,10 +190,7 @@ const importMultichainAccountFromSeed$ = (
         return of(undefined);
       }
 
-      return Shelter.createImportedMultichainAccount$({
-        seedPhrase: params.seedPhrase,
-        name: params.name
-      });
+      return Shelter.createImportedMultichainAccount$(params.seedPhrase, params.name);
     })
   );
 
@@ -242,12 +239,7 @@ const deriveImportedChainAccountFromSeed = ({
   seedPhrase,
   derivationPath
 }: CreateImportedChainAccountFromSeedParams) => {
-  const { chain, privateKey } = mnemonicToPrivateKey(
-    seedPhrase,
-    message => new Error(message),
-    undefined,
-    derivationPath
-  );
+  const { chain, privateKey } = mnemonicToPrivateKey(seedPhrase, message => new Error(message), derivationPath);
 
   return from(deriveImportedChainAccountCredentials(privateKey, chain)).pipe(
     map(credentials => ({
@@ -265,7 +257,6 @@ const deriveImportedMultichainAccountCredentials = ({ seedPhrase }: CreateImport
         const { privateKey } = mnemonicToPrivateKey(
           seedPhrase,
           message => new Error(message),
-          undefined,
           getTezosDerivationPath(0)
         );
 
@@ -274,12 +265,7 @@ const deriveImportedMultichainAccountCredentials = ({ seedPhrase }: CreateImport
     ),
     from(
       Promise.resolve().then(() => {
-        const { privateKey } = mnemonicToPrivateKey(
-          seedPhrase,
-          message => new Error(message),
-          undefined,
-          getEvmDerivationPath(0)
-        );
+        const { privateKey } = mnemonicToPrivateKey(seedPhrase, message => new Error(message), getEvmDerivationPath(0));
 
         return privateKeyToEvmAccountCredentials(privateKey);
       })

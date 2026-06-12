@@ -1,5 +1,5 @@
-import { TempleChainKind } from '../enums/temple-chain-kind.enum';
-import { mockAccountCredentials } from '../mocks/account-credentials.mock';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { mockAccountCredentials } from 'src/mocks/account-credentials.mock';
 
 import {
   generateSeed,
@@ -87,23 +87,14 @@ it("mnemonicToEvmAccountCreds should use m/44'/60'/0'/0/{index} for EVM account 
     mockEvmPrivateKeyIndexOne
   );
   expect(
-    mnemonicToPrivateKey(
-      mockAccountCredentials.seedPhrase,
-      message => new Error(message),
-      undefined,
-      getEvmDerivationPath(1)
-    ).privateKey
+    mnemonicToPrivateKey(mockAccountCredentials.seedPhrase, message => new Error(message), getEvmDerivationPath(1))
+      .privateKey
   ).toEqual(mockEvmPrivateKeyIndexOne);
 });
 
 it('mnemonicToPrivateKey should return EVM private key for custom EVM derivation path', () => {
   expect(
-    mnemonicToPrivateKey(
-      mockAccountCredentials.seedPhrase,
-      message => new Error(message),
-      undefined,
-      getEvmDerivationPath(0)
-    )
+    mnemonicToPrivateKey(mockAccountCredentials.seedPhrase, message => new Error(message), getEvmDerivationPath(0))
   ).toEqual({
     chain: TempleChainKind.EVM,
     privateKey: mockEvmPrivateKeyIndexZero
@@ -112,12 +103,7 @@ it('mnemonicToPrivateKey should return EVM private key for custom EVM derivation
 
 it('mnemonicToPrivateKey should return Tezos private key for custom Tezos derivation path', () => {
   expect(
-    mnemonicToPrivateKey(
-      mockAccountCredentials.seedPhrase,
-      message => new Error(message),
-      undefined,
-      getTezosDerivationPath(0)
-    )
+    mnemonicToPrivateKey(mockAccountCredentials.seedPhrase, message => new Error(message), getTezosDerivationPath(0))
   ).toEqual({
     chain: TempleChainKind.Tezos,
     privateKey: 'edsk42B5mxHfZWnnmEFAEHcZvMwD7CH673F3s2NQkCQ5n6SXD8Vxqp'
