@@ -279,32 +279,24 @@ const deriveImportedMultichainAccountCredentials = ({ seedPhrase }: CreateImport
   return forkJoin([
     from(
       Promise.resolve().then(() => {
-        const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+        const { privateKey } = mnemonicToPrivateKey(
           seedPhrase,
           message => new Error(message),
           undefined,
           getTezosDerivationPath(0)
         );
 
-        if (derivedChain !== TempleChainKind.Tezos) {
-          throw new Error('Invalid Tezos derivation path');
-        }
-
         return privateKeyToTezosAccountCredentials(privateKey);
       })
     ),
     from(
       Promise.resolve().then(() => {
-        const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+        const { privateKey } = mnemonicToPrivateKey(
           seedPhrase,
           message => new Error(message),
           undefined,
           getEvmDerivationPath(0)
         );
-
-        if (derivedChain !== TempleChainKind.EVM) {
-          throw new Error('Invalid EVM derivation path');
-        }
 
         return privateKeyToEvmAccountCredentials(privateKey);
       })

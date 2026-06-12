@@ -42,7 +42,7 @@ import {
   mnemonicToTezosAccountCredentials,
   privateKeyToEvmAccountCredentials,
   privateKeyToTezosAccountCredentials,
-  seedToPrivateKey
+  seedToTezosPrivateKey
 } from '../utils/keys.utils';
 import { throwError$ } from '../utils/rxjs.utils';
 import { extractHdIndexFromDerivationPath, getSaplingDerivationPath } from '../utils/sapling/address-utils';
@@ -572,7 +572,7 @@ export class Shelter {
     Shelter.revealSeedPhrase$(passwordHash).pipe(
       switchMap(seedPhrase => {
         const seed = mnemonicToSeedSync(seedPhrase);
-        const privateKey = seedToPrivateKey(seed, getTezosDerivationPath(hdAccountIndex));
+        const privateKey = seedToTezosPrivateKey(seed, getTezosDerivationPath(hdAccountIndex));
 
         return forkJoin([
           InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(hdAccountIndex)),

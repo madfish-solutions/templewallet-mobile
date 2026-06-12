@@ -14,7 +14,7 @@ import {
   mnemonicToPrivateKey,
   mnemonicToTezosAccountCredentials,
   privateKeyToEvmAccountCredentials,
-  seedToPrivateKey
+  seedToTezosPrivateKey
 } from './keys.utils';
 import { rxJsTestingHelper } from './testing.utils';
 
@@ -47,12 +47,12 @@ it('isValidEvmDerivationPath should validate custom EVM derivation paths', () =>
 
 it('seedToPrivateKey should return private key, passing seed and derivation path', () => {
   expect(
-    seedToPrivateKey(Buffer.from(mockAccountCredentials.seedPhrase), mockAccountCredentials.derivationPath)
+    seedToTezosPrivateKey(Buffer.from(mockAccountCredentials.seedPhrase), mockAccountCredentials.derivationPath)
   ).toEqual(mockAccountCredentials.privateKey);
 });
 
 it('seedToHDPrivateKey should return private key, passing seed without derivation path', () => {
-  expect(seedToPrivateKey(Buffer.from(mockAccountCredentials.seedPhrase), '')).toEqual(
+  expect(seedToTezosPrivateKey(Buffer.from(mockAccountCredentials.seedPhrase), '')).toEqual(
     mockAccountCredentials.privateKeyWithoutDerivationPath
   );
 });

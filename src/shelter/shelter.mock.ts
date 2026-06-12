@@ -1,10 +1,10 @@
 import Keychain from 'react-native-keychain';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
-import { mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
-import { Account } from '../interfaces/account.interfaces';
-import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
-import { getBiometryKeychainOptions } from '../utils/keychain.utils';
+import { mockHdAccount, mockNewHdAccount } from 'src/interfaces/account.interface.mock';
+import { Account } from 'src/interfaces/account.interfaces';
+import { mockCorrectPassword } from 'src/mocks/react-native-keychain.mock';
+import { getBiometryKeychainOptions } from 'src/utils/keychain.utils';
 
 export const mockRevealedSecretKey = 'mockRevealedSecretKey';
 export const mockRevealedSeedPhrase = 'mockRevealedSeedPhrase';

@@ -36,7 +36,7 @@ interface MnemonicPrivateKey {
   privateKey: string;
 }
 
-export const seedToPrivateKey = (seed: Buffer, derivationPath?: string) => {
+export const seedToTezosPrivateKey = (seed: Buffer, derivationPath?: string) => {
   const derivedSeed = isString(derivationPath) ? deriveSeed(seed, derivationPath) : seed;
 
   return b58Encode(derivedSeed.subarray(0, 32), PrefixV2.Ed25519Seed);
@@ -106,7 +106,7 @@ export const mnemonicToTezosAccountCredentials = (
   bip39Passphrase?: string
 ): Promise<TezosAccountCredentials> => {
   const seed = mnemonicToSeedSync(mnemonic, bip39Passphrase);
-  const privateKey = seedToPrivateKey(seed, getTezosDerivationPath(hdIndex));
+  const privateKey = seedToTezosPrivateKey(seed, getTezosDerivationPath(hdIndex));
 
   return privateKeyToTezosAccountCredentials(privateKey);
 };
@@ -201,7 +201,7 @@ export const mnemonicToPrivateKey = (
   if (!derivationPath) {
     return {
       chain: TempleChainKind.Tezos,
-      privateKey: seedToPrivateKey(seed)
+      privateKey: seedToTezosPrivateKey(seed)
     };
   }
 
@@ -217,7 +217,7 @@ export const mnemonicToPrivateKey = (
 
     return {
       chain: TempleChainKind.Tezos,
-      privateKey: seedToPrivateKey(seed, derivationPath)
+      privateKey: seedToTezosPrivateKey(seed, derivationPath)
     };
   } catch {
     throw errorFactory('Invalid derivation path');
