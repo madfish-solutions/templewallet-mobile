@@ -4,7 +4,6 @@ import { Dispatch } from '@reduxjs/toolkit';
 import { BigNumber } from 'bignumber.js';
 import Toast from 'react-native-toast-message';
 import { catchError, forkJoin, from, lastValueFrom, map, merge, Observable, of, Subject, switchMap, tap } from 'rxjs';
-import { isAddressEqual } from 'viem';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -29,6 +28,7 @@ import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
 
 import { Shelter } from '../shelter';
 
+import { hasSameChainAddress } from './common.utils.ts';
 import { deriveSaskFromPrivateKey } from './derive-sask-from-private-key.util';
 
 export interface CreateImportedChainAccountFromPrivateKeyParams {
@@ -233,19 +233,6 @@ const saveSaplingSpendingKeyForTezosAccount$ = (
     catchError(() => of(publicData))
   );
 };
-
-const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, address: string) =>
-  accounts.some(account => {
-    const accountAddress = getAccountAddressForChain(account, chain);
-
-    if (!accountAddress) {
-      return false;
-    }
-
-    return chain === TempleChainKind.EVM
-      ? isAddressEqual(accountAddress as HexString, address as HexString)
-      : accountAddress === address;
-  });
 
 const deriveImportedChainAccountCredentials = (
   privateKey: string,

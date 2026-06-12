@@ -4,7 +4,7 @@ import { WithSpringConfig, WithTimingConfig } from 'react-native-reanimated';
 
 import { isDefined } from 'src/utils/is-defined';
 
-export type BottomSheetCallback = (config?: WithSpringConfig | WithTimingConfig) => void;
+type BottomSheetCallback = (config?: WithSpringConfig | WithTimingConfig) => void;
 
 interface BottomSheetController {
   ref: Ref<BottomSheet>;

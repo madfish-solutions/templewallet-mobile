@@ -155,21 +155,8 @@ type TezosSecretKey = `${(typeof tezosSecretKeyPrefixes)[number]}${string}`;
 export const isTezosPrivateKey = (value: string): value is TezosSecretKey =>
   tezosSecretKeyPrefixes.some(prefix => value.startsWith(prefix));
 
-export const getPrivateKeyWithChain = (
-  privateKey: string,
-  explicitChain?: TempleChainKind
-): { privateKey: string; chain: TempleChainKind } => {
+export const getPrivateKeyWithChain = (privateKey: string): { privateKey: string; chain: TempleChainKind } => {
   const trimmedPrivateKey = privateKey.replace(/\s/g, '');
-
-  if (explicitChain) {
-    return {
-      privateKey:
-        explicitChain === TempleChainKind.EVM && !trimmedPrivateKey.startsWith('0x')
-          ? `0x${trimmedPrivateKey}`
-          : trimmedPrivateKey,
-      chain: explicitChain
-    };
-  }
 
   if (isTezosPrivateKey(trimmedPrivateKey)) {
     return {

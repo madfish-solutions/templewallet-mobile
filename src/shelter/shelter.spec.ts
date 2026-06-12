@@ -256,8 +256,7 @@ describe('Shelter', () => {
                   address: mockEvmCredentialsIndex77.address,
                   publicKey: mockEvmCredentialsIndex77.publicKey
                 }
-              ],
-              explicitAccountIndex: true
+              ]
             })
           )
         )
@@ -273,7 +272,11 @@ describe('Shelter', () => {
       const mockName = 'mockName';
 
       Shelter.unlockApp$(mockCorrectPassword, mockAccount)
-        .pipe(switchMap(() => Shelter.createImportedChainAccount$(mockHDAccountCredentials.privateKey, mockName)))
+        .pipe(
+          switchMap(() =>
+            Shelter.createImportedChainAccount$(mockHDAccountCredentials.privateKey, mockName, TempleChainKind.Tezos)
+          )
+        )
         .subscribe(
           rxJsTestingHelper(account => {
             expect(account).toMatchObject({

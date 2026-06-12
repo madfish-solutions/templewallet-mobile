@@ -18,10 +18,9 @@ import { isAddress as isEvmAddress } from 'viem';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account, ImportedMultichainAccount } from 'src/interfaces/account.interfaces';
-import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/account.utils';
-
-import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from '../utils/crypto.util';
-import { isDefined } from '../utils/is-defined';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { decryptString$, EncryptedData, encryptString$, hashPassword$ } from 'src/utils/crypto.util';
+import { isDefined } from 'src/utils/is-defined';
 import {
   getBiometryKeychainOptions,
   getGenericPasswordOptions,
@@ -30,11 +29,10 @@ import {
   PASSWORD_STORAGE_KEY,
   SHELTER_VERSION_STORAGE_KEY,
   shouldMoveToSoftwareInV1
-} from '../utils/keychain.utils';
+} from 'src/utils/keychain.utils';
 import {
   AccountCredentials,
   getEvmDerivationPath,
-  getPrivateKeyWithChain,
   getPublicKeyAndHash$,
   getTezosDerivationPath,
   mnemonicToEvmAccountCredentials,
@@ -43,11 +41,12 @@ import {
   privateKeyToEvmAccountCredentials,
   privateKeyToTezosAccountCredentials,
   seedToTezosPrivateKey
-} from '../utils/keys.utils';
-import { throwError$ } from '../utils/rxjs.utils';
-import { extractHdIndexFromDerivationPath, getSaplingDerivationPath } from '../utils/sapling/address-utils';
-import { InMemorySpendingKey } from '../utils/sapling/sapling-keys';
+} from 'src/utils/keys.utils';
+import { throwError$ } from 'src/utils/rxjs.utils';
+import { getSaplingDerivationPath } from 'src/utils/sapling/address-utils';
+import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys';
 
+import { hasSameChainAddress } from './utils/common.utils.ts';
 import { deriveSaskFromPrivateKey } from './utils/derive-sask-from-private-key.util';
 
 const EMPTY_PASSWORD_HASH = '';
@@ -56,7 +55,6 @@ const MIGRATION_WITH_BIOMETRY_ERROR_MESSAGE = 'Confirm the migration using your 
 const MIGRATION_WITHOUT_BIOMETRY_ERROR_MESSAGE = 'Please, try again.';
 
 interface CreateHdAccountOptions {
-  walletId?: string;
   accountIndex?: number;
   existingAccounts?: Account[];
   explicitAccountIndex?: boolean;
@@ -66,25 +64,7 @@ export interface CreateImportedMultichainAccountOptions {
   seedPhrase: string;
   name: string;
   bip39Passphrase?: string;
-  chain?: TempleChainKind;
-  derivationPath?: string;
 }
-
-const normalizeAddressForCompare = (chain: TempleChainKind, address: string) =>
-  chain === TempleChainKind.EVM ? address.toLowerCase() : address;
-
-const hasSameChainAddress = (accounts: Account[], chain: TempleChainKind, address: string, includeHd = true) =>
-  accounts.some(account => {
-    if (!includeHd && account.type === AccountTypeEnum.HD) {
-      return false;
-    }
-
-    const accountAddress = getAccountAddressForChain(account, chain);
-
-    return accountAddress
-      ? normalizeAddressForCompare(chain, accountAddress) === normalizeAddressForCompare(chain, address)
-      : false;
-  });
 
 interface PasswordServiceMigrationResultBase {
   isSuccess: boolean;
@@ -392,23 +372,21 @@ export class Shelter {
   static createImportedChainAccount$ = (
     privateKey: string,
     name: string,
-    chain?: TempleChainKind
+    chain: TempleChainKind
   ): Observable<Account> => {
-    const normalizedPrivateKey = getPrivateKeyWithChain(privateKey, chain);
-
     return (
-      normalizedPrivateKey.chain === TempleChainKind.EVM
-        ? from(Promise.resolve().then(() => privateKeyToEvmAccountCredentials(normalizedPrivateKey.privateKey)))
-        : from(privateKeyToTezosAccountCredentials(normalizedPrivateKey.privateKey))
+      chain === TempleChainKind.EVM
+        ? from(Promise.resolve().then(() => privateKeyToEvmAccountCredentials(privateKey)))
+        : from(privateKeyToTezosAccountCredentials(privateKey))
     ).pipe(
       switchMap(credentials => {
-        if (normalizedPrivateKey.chain === TempleChainKind.EVM) {
+        if (chain === TempleChainKind.EVM) {
           return Shelter.saveAccountCredentials$(credentials).pipe(
             mapTo<Account>({
               id: nanoid(),
               name,
+              chain,
               type: AccountTypeEnum.IMPORTED_CHAIN,
-              chain: normalizedPrivateKey.chain,
               address: credentials.address,
               publicKey: credentials.publicKey
             })
@@ -419,8 +397,8 @@ export class Shelter {
           mapTo<Account>({
             id: nanoid(),
             name,
+            chain,
             type: AccountTypeEnum.IMPORTED_CHAIN,
-            chain: normalizedPrivateKey.chain,
             address: credentials.address,
             publicKey: credentials.publicKey
           })
@@ -432,51 +410,35 @@ export class Shelter {
   static createImportedMultichainAccount$ = ({
     seedPhrase,
     name,
-    bip39Passphrase,
-    chain = TempleChainKind.Tezos,
-    derivationPath
+    bip39Passphrase
   }: CreateImportedMultichainAccountOptions): Observable<ImportedMultichainAccount> => {
     if (!validateMnemonic(seedPhrase)) {
       return throwError$('Mnemonic not validated');
     }
 
-    const tezosDerivationPath =
-      chain === TempleChainKind.Tezos ? derivationPath ?? getTezosDerivationPath(0) : getTezosDerivationPath(0);
-    const evmDerivationPath =
-      chain === TempleChainKind.EVM ? derivationPath ?? getEvmDerivationPath(0) : getEvmDerivationPath(0);
-    const saplingDerivationPath = getSaplingDerivationPath(
-      chain === TempleChainKind.Tezos ? extractHdIndexFromDerivationPath(tezosDerivationPath) : undefined
-    );
+    const defaultAccountIndex = 0;
 
     return forkJoin([
       from(
         Promise.resolve().then(() => {
-          const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+          const { privateKey } = mnemonicToPrivateKey(
             seedPhrase,
             message => new Error(message),
             bip39Passphrase,
-            tezosDerivationPath
+            getTezosDerivationPath(defaultAccountIndex)
           );
-
-          if (derivedChain !== TempleChainKind.Tezos) {
-            throw new Error('Invalid Tezos derivation path');
-          }
 
           return privateKeyToTezosAccountCredentials(privateKey);
         })
       ),
       from(
         Promise.resolve().then(() => {
-          const { chain: derivedChain, privateKey } = mnemonicToPrivateKey(
+          const { privateKey } = mnemonicToPrivateKey(
             seedPhrase,
             message => new Error(message),
             bip39Passphrase,
-            evmDerivationPath
+            getEvmDerivationPath(defaultAccountIndex)
           );
-
-          if (derivedChain !== TempleChainKind.EVM) {
-            throw new Error('Invalid EVM derivation path');
-          }
 
           return privateKeyToEvmAccountCredentials(privateKey);
         })
@@ -484,7 +446,7 @@ export class Shelter {
     ]).pipe(
       switchMap(([tezosCredentials, evmCredentials]) =>
         forkJoin([
-          InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, saplingDerivationPath),
+          InMemorySpendingKey.deriveSaskFromMnemonic(seedPhrase, getSaplingDerivationPath(defaultAccountIndex)),
           Shelter.saveAccountCredentials$(tezosCredentials),
           Shelter.saveAccountCredentials$(evmCredentials)
         ]).pipe(
