@@ -178,7 +178,8 @@
     "node-libs-react-native/react-native-randombytes": "madfish-solutions/react-native-randombytes#cf4f237e0affbef3f23d444478bd271b28936ac0",
     "fast-xml-parser": "5.5.6",
     "underscore": "^1.13.8",
-    "@noble/curves": "1.9.7"
+    "@noble/curves": "1.9.7",
+    "bignumber.js": "9.3.1"
   },
   "engines": {
     "node": ">=20"
