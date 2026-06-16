@@ -46,6 +46,8 @@ export const TEZ_SHIELDED_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.TezShieldedToken
 };
 
+export const TEZ_SHIELDED_ANALYTICS_NAME = 'Shielded TEZ';
+
 export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
   ...emptyTokenMetadata,
   name: 'FILM',

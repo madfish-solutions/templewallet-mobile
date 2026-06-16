@@ -22,7 +22,12 @@ import { useCurrentAccountTezosBalance, useCurrentAccountPkhSelector } from 'src
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { TEZ_TOKEN_SLUG, TEZ_TOKEN_METADATA, TEZ_SHIELDED_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import {
+  TEZ_TOKEN_SLUG,
+  TEZ_TOKEN_METADATA,
+  TEZ_SHIELDED_TOKEN_METADATA,
+  TEZ_SHIELDED_ANALYTICS_NAME
+} from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
@@ -53,7 +58,7 @@ export const RebalanceModal: FC = () => {
   const accountPkh = useCurrentAccountPkhSelector();
   const tezExchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
 
-  usePageAnalytic(ModalsEnum.Rebalance);
+  usePageAnalytic(ModalsEnum.Rebalance, '', { token: TEZ_SHIELDED_ANALYTICS_NAME });
 
   const tezPublicToken = useMemo(
     () => createToken(TEZ_TOKEN_METADATA, publicBalanceMutez, tezExchangeRate),
