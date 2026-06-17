@@ -12,6 +12,7 @@ import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { MS_IN_SECOND } from 'src/utils/date.utils';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
@@ -21,12 +22,7 @@ import { isDcpNode } from 'src/utils/network.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { loadAssetBalance$, fetchAllAssetsBalancesFromTzkt, loadTezosBalances$ } from 'src/utils/token-balance.utils';
 import { getTransferParams$ } from 'src/utils/transfer-params.utils';
-import {
-  withAllAccounts,
-  withOnRampOverlayState,
-  withSelectedAccount,
-  withSelectedRpcUrl
-} from 'src/utils/wallet.utils';
+import { withAllAccounts, withOnRampOverlayState, withAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction } from '../root-state.actions';
 import { setOnRampOverlayStateAction } from '../settings/settings-actions';
@@ -51,8 +47,9 @@ const highPriorityLoadTokenBalanceEpic: AnyActionEpic = (action$, state$) =>
         map(balance =>
           isDefined(balance)
             ? loadAssetsBalancesActions.success({
+                accountId: payload.accountId,
                 publicKeyHash: payload.publicKeyHash,
-                balances: { slug: payload.slug, balance },
+                balances: { [payload.slug]: balance },
                 selectedRpcUrl
               })
             : loadAssetsBalancesActions.fail(`${payload.slug} balance load FAILED`)
@@ -64,14 +61,21 @@ const highPriorityLoadTokenBalanceEpic: AnyActionEpic = (action$, state$) =>
 const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadAssetsBalancesActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[[_, selectedAccount], selectedRpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      from(fetchAllAssetsBalancesFromTzkt(selectedRpcUrl, selectedAccount.publicKeyHash)).pipe(
+    switchMap(([[[_, selectedAccount], selectedRpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) => {
+      const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
+
+      if (!selectedTezosAddress) {
+        return EMPTY;
+      }
+
+      return from(fetchAllAssetsBalancesFromTzkt(selectedRpcUrl, selectedTezosAddress)).pipe(
         map(data =>
           loadAssetsBalancesActions.success({
-            publicKeyHash: selectedAccount.publicKeyHash,
+            accountId: selectedAccount.id,
+            publicKeyHash: selectedTezosAddress,
             balances: data,
             selectedRpcUrl
           })
@@ -81,36 +85,42 @@ const loadTokensBalancesEpic: AnyActionEpic = (action$, state$) =>
             sendErrorAnalyticsEvent(
               'LoadTokensBalancesError',
               err,
-              [selectedAccount.publicKeyHash],
+              [selectedTezosAddress],
               { userId, ABTestingCategory },
               { selectedRpcUrl }
             );
           }
 
-          return of(loadAssetsBalancesActions.fail(`${selectedAccount.publicKeyHash} balance load SKIPPED`)).pipe(
-            delay(5)
-          );
+          return of(loadAssetsBalancesActions.fail(`${selectedTezosAddress} balance load SKIPPED`)).pipe(delay(5));
         })
-      )
-    )
+      );
+    })
   );
 
 const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.submit),
     withAllAccounts(state$),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
     switchMap(([[[[, allAccounts], selectedAccount], rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadTezosBalances$(
-        rpcUrl,
-        allAccounts.map(account => account.publicKeyHash)
-      ).pipe(
+      loadTezosBalances$(rpcUrl, allAccounts.map(getAccountAddressForTezos).filter(isDefined)).pipe(
         withOnRampOverlayState(state$),
         concatMap(([balances, overlayState]) => {
-          const successAction = loadTezosBalanceActions.success(balances);
-          const balance = balances[selectedAccount.publicKeyHash];
+          const balancesByAccountId = allAccounts.reduce<StringRecord>((acc, account) => {
+            const tezosAddress = getAccountAddressForTezos(account);
+            const balance = tezosAddress ? balances[tezosAddress] : undefined;
+
+            if (isDefined(balance)) {
+              acc[account.id] = balance;
+            }
+
+            return acc;
+          }, {});
+          const successAction = loadTezosBalanceActions.success(balancesByAccountId);
+          const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
+          const balance = selectedTezosAddress ? balances[selectedTezosAddress] : undefined;
           const showOnRampAction =
             !LIMIT_FIN_FEATURES &&
             !isDcpNode(rpcUrl) &&
@@ -127,7 +137,7 @@ const loadTezosBalanceEpic: AnyActionEpic = (action$, state$) =>
             sendErrorAnalyticsEvent(
               'LoadTezosBalanceError',
               err,
-              [selectedAccount.publicKeyHash],
+              [getAccountAddressForTezos(selectedAccount) ?? selectedAccount.id],
               { userId, ABTestingCategory },
               { rpcUrl }
             );
@@ -143,10 +153,16 @@ const sendAssetEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(sendAssetActions.submit),
     toPayload(),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
-    switchMap(([[{ asset, receiverPublicKeyHash, amount }, selectedAccount], rpcUrl]) =>
-      getTransferParams$(asset, rpcUrl, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
+    switchMap(([[{ asset, receiverPublicKeyHash, amount }, selectedAccount], rpcUrl]) => {
+      if (!getAccountAddressForTezos(selectedAccount)) {
+        showErrorToast({ description: 'Select a Tezos account to send this asset' });
+
+        return EMPTY;
+      }
+
+      return getTransferParams$(asset, rpcUrl, selectedAccount, receiverPublicKeyHash, new BigNumber(amount)).pipe(
         map((transferParams): ParamsWithKind[] => [{ ...transferParams, kind: OpKind.TRANSACTION }]),
         map(opParams => {
           const modalTitle = receiverPublicKeyHash === BURN_ADDRESS ? 'Confirm Burn' : 'Confirm Send';
@@ -160,8 +176,8 @@ const sendAssetEpic: AnyActionEpic = (action$, state$) =>
             }
           });
         })
-      )
-    )
+      );
+    })
   );
 
 const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>
@@ -186,7 +202,7 @@ const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>
               sendErrorAnalyticsEvent(
                 'WaitForOperationCompletionEpicError',
                 err,
-                [sender.publicKeyHash],
+                [sender.address],
                 { userId, ABTestingCategory },
                 { rpcUrl }
               );

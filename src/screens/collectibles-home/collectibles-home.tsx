@@ -2,10 +2,10 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { useDispatch } from 'react-redux';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
 import { CheckboxIcon } from 'src/components/checkbox-icon/checkbox-icon';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -15,12 +15,13 @@ import { Search } from 'src/components/search/search';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { dispatch } from 'src/store';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
 import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
@@ -34,11 +35,14 @@ export const CollectiblesHome = memo(() => {
   const navigateToScreen = useNavigateToScreen();
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
-  const dispatch = useDispatch();
-
   const collections = useCreatedCollectionsSelector();
   const collectibles = useCurrentAccountCollectibles(true);
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const styles = useCollectiblesHomeStyles();
@@ -59,8 +63,8 @@ export const CollectiblesHome = memo(() => {
   }, [screenHeight, headerHeight, profileHeight]);
 
   useEffect(() => {
-    dispatch(loadCollectionsActions.submit(accountPkh));
-  }, [accountPkh, dispatch]);
+    dispatch(loadCollectionsActions.submit(tezosAddress));
+  }, [tezosAddress]);
 
   const { setSearchValue, filteredAssetsList } = useFilteredAssetsList(collectibles);
 
@@ -73,7 +77,7 @@ export const CollectiblesHome = memo(() => {
 
   const collectionsFlatListRef = useRef<FlatList<Collection>>(null);
   // On collections number decrease scroll might not reposition & items remain off-view
-  useDidUpdate(() => void collectionsFlatListRef.current?.scrollToOffset({ offset: 0 }), [accountPkh]);
+  useDidUpdate(() => void collectionsFlatListRef.current?.scrollToOffset({ offset: 0 }), [tezosAddress]);
 
   return (
     <View style={styles.screen} onLayout={event => void setScreenHeight(event.nativeEvent.layout.height)}>

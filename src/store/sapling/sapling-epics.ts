@@ -10,12 +10,14 @@ import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmat
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { Shelter } from 'src/shelter/shelter';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { withSelectedAccount, withSelectedAccountHdIndex, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
+import { withAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { navigateAction, navigateBackAction } from '../root-state.actions';
 import { hideLoaderAction, showLoaderAction } from '../settings/settings-actions';
 import type { AnyActionEpic, RootState } from '../types';
-import { addHdAccountAction, loadTezosBalanceActions, setSelectedAccountAction } from '../wallet/wallet-actions';
+import { addAccountAction, loadTezosBalanceActions, setSelectedAccountIdAction } from '../wallet/wallet-actions';
 
 import {
   cancelSaplingPreparationAction,
@@ -61,9 +63,16 @@ const withSaplingSpendingKey$ = (
 const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSaplingCredentialsActions.submit),
-    withSelectedAccount(state$),
-    withSelectedAccountHdIndex(state$),
-    switchMap(([[, { publicKeyHash, type }], hdIndex]) => {
+    withAccount(state$),
+    switchMap(([, selectedAccount]) => {
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+
+      if (!publicKeyHash) {
+        return EMPTY;
+      }
+
+      const { type } = selectedAccount;
+
       if (type === AccountTypeEnum.WATCH_ONLY_DEBUG) {
         return of(
           loadSaplingCredentialsActions.fail({
@@ -72,6 +81,8 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
           })
         );
       }
+
+      const hdIndex = type === AccountTypeEnum.HD ? selectedAccount.hdIndex : undefined;
 
       return withSaplingSpendingKey$(
         publicKeyHash,
@@ -101,10 +112,16 @@ const loadSaplingCredentialsEpic: AnyActionEpic = (action$, state$) =>
 const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadShieldedBalanceActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) => {
-      const saplingState = state$.value.sapling.accountsRecord[selectedAccount.publicKeyHash];
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+
+      if (!publicKeyHash) {
+        return EMPTY;
+      }
+
+      const saplingState = state$.value.sapling.accountsRecord[publicKeyHash];
 
       if (saplingState?.viewingKey == null) {
         return EMPTY;
@@ -114,7 +131,7 @@ const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
         concatMap(balance =>
           of(
             loadShieldedBalanceActions.success({
-              publicKeyHash: selectedAccount.publicKeyHash,
+              publicKeyHash,
               balance
             })
           )
@@ -132,10 +149,15 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(prepareSaplingTransactionActions.submit),
     toPayload(),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
-    withSelectedAccountHdIndex(state$),
-    switchMap(([[[payload, selectedAccount], rpcUrl], hdIndex]) => {
+    switchMap(([[payload, selectedAccount], rpcUrl]) => {
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+
+      if (!publicKeyHash) {
+        return EMPTY;
+      }
+
       const cancelPreparation$ = action$.pipe(ofType(cancelSaplingPreparationAction));
       const confirmationParams: ConfirmationModalParams =
         payload.isRebalance === true
@@ -151,13 +173,15 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
               saplingType: payload.type
             };
 
+      const hdIndex = selectedAccount.type === AccountTypeEnum.HD ? selectedAccount.hdIndex : undefined;
+
       return concat(
         of(navigateAction({ screen: ModalsEnum.Confirmation, params: confirmationParams })),
         withSaplingSpendingKey$(
-          selectedAccount.publicKeyHash,
+          publicKeyHash,
           hdIndex,
           sask =>
-            from(prepareSaplingTx(sask, payload, selectedAccount.publicKeyHash, rpcUrl, state$)).pipe(
+            from(prepareSaplingTx(sask, payload, publicKeyHash, rpcUrl, state$)).pipe(
               takeUntil(cancelPreparation$),
               map(opParams => prepareSaplingTransactionActions.success(opParams))
             ),
@@ -233,10 +257,16 @@ async function prepareSaplingTx(
 const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSaplingTransactionHistoryActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     switchMap(([[, selectedAccount], rpcUrl]) => {
-      const saplingState = state$.value.sapling.accountsRecord[selectedAccount.publicKeyHash];
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+
+      if (!publicKeyHash) {
+        return EMPTY;
+      }
+
+      const saplingState = state$.value.sapling.accountsRecord[publicKeyHash];
 
       if (saplingState?.viewingKey == null) {
         return EMPTY;
@@ -248,7 +278,7 @@ const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
 
           return of(
             loadSaplingTransactionHistoryActions.success({
-              publicKeyHash: selectedAccount.publicKeyHash,
+              publicKeyHash,
               transactions: allTransactions
             })
           );
@@ -266,7 +296,7 @@ const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
 
 const clearCacheOnAccountSwitchEpic: AnyActionEpic = action$ =>
   action$.pipe(
-    ofType(setSelectedAccountAction, clearSaplingCredentialsAction),
+    ofType(setSelectedAccountIdAction, clearSaplingCredentialsAction),
     map(() => {
       clearSaplingServiceCache();
 
@@ -287,10 +317,11 @@ const clearCacheOnLockEpic: AnyActionEpic = () =>
 const refreshBalanceAfterTxEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTezosBalanceActions.success),
-    withSelectedAccount(state$),
+    withAccount(state$),
     filter(([, selectedAccount]) => {
       const { sapling } = state$.value;
-      const saplingState = sapling.accountsRecord[selectedAccount.publicKeyHash];
+      const publicKeyHash = getAccountAddressForTezos(selectedAccount);
+      const saplingState = publicKeyHash ? sapling.accountsRecord[publicKeyHash] : undefined;
 
       return Boolean(saplingState?.isCredentialsLoaded);
     }),
@@ -299,12 +330,12 @@ const refreshBalanceAfterTxEpic: AnyActionEpic = (action$, state$) =>
 
 const shouldAutoLoadCredentials = (state$: StateObservable<RootState>) => {
   const { wallet, sapling } = state$.value;
-  const { selectedAccountPublicKeyHash, accounts } = wallet;
-  const saplingState = sapling.accountsRecord[selectedAccountPublicKeyHash];
-  const selectedAccount = accounts.find(account => account.publicKeyHash === selectedAccountPublicKeyHash);
+  const selectedAccount = getSelectedAccountFromWallet(wallet);
+  const selectedTezosAddress = selectedAccount ? getAccountAddressForTezos(selectedAccount) : undefined;
+  const saplingState = selectedTezosAddress ? sapling.accountsRecord[selectedTezosAddress] : undefined;
 
   return (
-    Boolean(selectedAccountPublicKeyHash) &&
+    Boolean(selectedTezosAddress) &&
     !saplingState?.isCredentialsLoaded &&
     !saplingState?.failedToLoadCredentials &&
     selectedAccount?.type !== AccountTypeEnum.WATCH_ONLY_DEBUG
@@ -331,7 +362,7 @@ const autoLoadCredentialsOnUnlockEpic: AnyActionEpic = (_action$, state$) =>
 /** Auto-load credentials when account is added or selected account changes */
 const autoLoadCredentialsOnAccountSwitchEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
-    ofType(addHdAccountAction, setSelectedAccountAction),
+    ofType(addAccountAction, setSelectedAccountIdAction),
     filter(() => shouldAutoLoadCredentials(state$)),
     map(() => loadSaplingCredentialsActions.submit())
   );

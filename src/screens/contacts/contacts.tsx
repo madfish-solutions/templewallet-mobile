@@ -7,7 +7,7 @@ import { HeaderButton } from 'src/components/header/header-button/header-button'
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { Contact } from 'src/interfaces/contact.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
@@ -15,7 +15,7 @@ import { useContactsSelector } from 'src/store/contact-book/contact-book-selecto
 import { ContactItem } from './contact-item/contact-item';
 import { ContactsSelectors } from './contacts.selectors';
 
-const keyExtractor = (item: AccountBaseInterface) => item.publicKeyHash;
+const keyExtractor = (item: Contact) => item.address;
 
 export const Contacts = memo(() => {
   const navigateToModal = useNavigateToModal();
@@ -33,7 +33,7 @@ export const Contacts = memo(() => {
     []
   );
 
-  const renderItem: ListRenderItem<AccountBaseInterface> = useCallback(
+  const renderItem: ListRenderItem<Contact> = useCallback(
     ({ item, index }) => <ContactItem contact={item} index={index} />,
     []
   );

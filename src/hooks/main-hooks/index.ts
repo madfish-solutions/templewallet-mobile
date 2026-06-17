@@ -21,7 +21,7 @@ import { loadTokensApyActions } from 'src/store/d-apps/d-apps-actions';
 import { loadNotificationsAction } from 'src/store/notifications/notifications-actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { loadTezosBalanceActions, loadAssetsBalancesActions } from 'src/store/wallet/wallet-actions';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { shouldMoveToSoftwareInV1 } from 'src/utils/keychain.utils';
 
 import { useMetadataLoading } from './use-metadata-loading';
@@ -30,7 +30,7 @@ import { useNotificationRedirection } from './use-notification-redirection';
 export const useMainHooks = (isLocked: boolean, isAuthorised: boolean) => {
   const dispatch = useDispatch();
 
-  const selectedAccountPkh = useCurrentAccountPkhSelector();
+  const selectedAccountPkh = useAccountAddressForTezos();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const exchangeRates = useUsdToTokenRates();
   const navigateToScreen = useNavigateToScreen();

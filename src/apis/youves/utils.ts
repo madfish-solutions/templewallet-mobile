@@ -14,7 +14,8 @@ import {
 import memoize from 'memoizee';
 
 import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-token-standard.enum';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
+import { getAccountForTezos } from 'src/utils/account.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
 import { INDEXER_CONFIG, YOUVES_TOKENS_ICONS } from './constants';
@@ -53,20 +54,23 @@ class MemoryStorage implements Storage {
   }
 }
 
-const getCreateEngineCacheKey = (rpcUrl: string, token: AssetDefinition, account?: AccountInterface) =>
-  [rpcUrl, token.id, account?.publicKey].join('_');
+const getCreateEngineCacheKey = (rpcUrl: string, token: AssetDefinition, account?: Account) =>
+  [rpcUrl, token.id, account?.id].join('_');
 
 export const createEngineMemoized = memoize(
-  (rpcUrl: string, token: AssetDefinition, account?: AccountInterface) =>
-    createEngine({
-      tezos: createReadOnlyTezosToolkit(rpcUrl, account),
+  (rpcUrl: string, token: AssetDefinition, account?: Account) => {
+    const tezosAccount = account ? getAccountForTezos(account) : null;
+
+    return createEngine({
+      tezos: createReadOnlyTezosToolkit(rpcUrl, tezosAccount),
       contracts: token,
       storage: new MemoryStorage(),
       indexerConfig: INDEXER_CONFIG,
       tokens: mainnetTokens,
       activeCollateral: contracts.mainnet[0].collateralOptions[0],
       networkConstants: mainnetNetworkConstants
-    }),
+    });
+  },
   {
     normalizer: ([rpcUrl, token, account]) => getCreateEngineCacheKey(rpcUrl, token, account)
   }
@@ -75,16 +79,16 @@ export const createEngineMemoized = memoize(
 const getCreateUnifiedSavingsCacheKey = (
   rpcUrl: string,
   { SAVINGS_V3_POOL_ADDRESS, token }: AssetDefinition,
-  account: AccountInterface
-) => [rpcUrl, SAVINGS_V3_POOL_ADDRESS, token.id, account.publicKey].join('_');
+  account: Account
+) => [rpcUrl, SAVINGS_V3_POOL_ADDRESS, token.id, account.id].join('_');
 
 export const createUnifiedSavings = memoize(
-  (rpcUrl: string, assetDefinition: AssetDefinition, account: AccountInterface) =>
+  (rpcUrl: string, assetDefinition: AssetDefinition, account: Account) =>
     new UnifiedSavings(
       assetDefinition.SAVINGS_V3_POOL_ADDRESS,
       assetDefinition.token,
       assetDefinition.token,
-      createReadOnlyTezosToolkit(rpcUrl, account),
+      createReadOnlyTezosToolkit(rpcUrl, getAccountForTezos(account)),
       INDEXER_CONFIG,
       mainnetNetworkConstants
     ),

@@ -6,25 +6,32 @@ import { ofType } from 'ts-action-operators';
 
 import { BakerInterface, bakingBadApi, fetchBaker, buildUnknownBaker } from 'src/apis/baking-bad';
 import type { AnyActionEpic } from 'src/store/types';
+import { getAccountAddressForTezos, getAccountForTezos } from 'src/utils/account.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { RPC_RETRY_OPTIONS } from 'src/utils/tezos.util';
-import { withSelectedAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { withAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 
 const loadSelectedBakerAddressEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSelectedBakerActions.submit),
-    withSelectedAccount(state$),
+    withAccount(state$),
     withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
     switchMap(([[[, selectedAccount], rpcUrl], { userId, ABTestingCategory, isAnalyticsEnabled }]) => {
-      const tezos = createReadOnlyTezosToolkit(rpcUrl, selectedAccount);
+      const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
+
+      if (!selectedTezosAddress) {
+        return of(loadSelectedBakerActions.success(null));
+      }
+
+      const tezos = createReadOnlyTezosToolkit(rpcUrl, getAccountForTezos(selectedAccount));
       let fetchedBakerAddress: string | nullish;
 
-      return from(retry(() => tezos.rpc.getDelegate(selectedAccount.publicKeyHash), RPC_RETRY_OPTIONS)).pipe(
+      return from(retry(() => tezos.rpc.getDelegate(selectedTezosAddress), RPC_RETRY_OPTIONS)).pipe(
         switchMap(bakerAddress => {
           fetchedBakerAddress = bakerAddress;
 
@@ -40,7 +47,7 @@ const loadSelectedBakerAddressEpic: AnyActionEpic = (action$, state$) =>
             sendErrorAnalyticsEvent(
               'LoadSelectedBakerAddressEpicError',
               error,
-              [selectedAccount.publicKeyHash],
+              [selectedTezosAddress],
               { userId, ABTestingCategory },
               { rpcUrl, fetchedBakerAddress }
             );

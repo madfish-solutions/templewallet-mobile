@@ -1,9 +1,8 @@
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
-
-import { IconNameEnum } from '../../icon/icon-name.enum';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 
 export interface AccountDropdownItemProps {
-  account?: AccountBaseInterface;
+  account: Account;
   showFullData?: boolean;
   actionIconName?: IconNameEnum;
   isPublicKeyHashTextDisabled?: boolean;

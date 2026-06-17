@@ -19,10 +19,11 @@ import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-d
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
-import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
-import { useAccountsListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
+import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos, getAccountPublicKeyForTezos } from 'src/utils/account.utils';
 
 import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
 import {
@@ -56,23 +57,31 @@ const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionReque
 export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   const dispatch = useDispatch();
   const { goBack } = useNavigation();
-  const accounts = useAccountsListSelector();
-  const selectedAccount = useSelectedAccountSelector();
+  const accounts = useAllAccounts();
+  const selectedAccount = useAccount();
+  const tezosAccounts = useMemo(() => accounts.filter(account => getAccountAddressForTezos(account)), [accounts]);
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approvePermissionRequest);
 
   const formInitialValues = useMemo<PermissionRequestConfirmationFormValues>(
-    () => ({ approver: selectedAccount }),
-    [selectedAccount]
+    () => ({ approver: getAccountAddressForTezos(selectedAccount) ? selectedAccount : tezosAccounts[0] }),
+    [selectedAccount, tezosAccounts]
   );
 
   const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) => {
-    if (approver.publicKeyHash !== selectedAccount.publicKeyHash) {
-      dispatch(setSelectedAccountAction(approver.publicKeyHash));
+    if (approver.id !== selectedAccount.id) {
+      dispatch(setSelectedAccountIdAction(approver.id));
     }
+
+    const publicKey = getAccountPublicKeyForTezos(approver);
+
+    if (!publicKey) {
+      return;
+    }
+
     confirmRequest({
       message,
-      publicKey: approver.publicKey
+      publicKey
     });
   };
 
@@ -90,7 +99,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
             <AppMetadataConnectionView appMetadata={message.appMetadata} />
             <Divider size={formatSize(24)} />
             <Label label="Account" description="To be connected with dApp." />
-            <AccountFormDropdown name="approver" list={accounts} />
+            <AccountFormDropdown name="approver" list={tezosAccounts} />
           </ScreenContainer>
           <ModalButtonsFloatingContainer variant="bordered">
             <ButtonLargeSecondary

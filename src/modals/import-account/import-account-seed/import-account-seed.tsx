@@ -1,8 +1,6 @@
-import { mnemonicToSeedSync } from 'bip39';
 import { FormikProvider, useFormik } from 'formik';
 import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { AndroidKeyboardDisclaimer } from 'src/components/android-keyboard-disclaimer/android-keyboard-disclaimer';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -13,23 +11,17 @@ import { useNavigationSetOptions } from 'src/components/header/use-navigation-se
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormMnemonicInput } from 'src/form/form-mnemonic-input';
-import { FormPasswordInput } from 'src/form/form-password-input';
+import { FormTextInput } from 'src/form/form-text-input.tsx';
 import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useShelter } from 'src/shelter/use-shelter.hook';
-import { showLoaderAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { isString } from 'src/utils/is-string';
-import { seedToPrivateKey } from 'src/utils/keys.util';
-import { extractHdIndexFromDerivationPath, getSaplingDerivationPath } from 'src/utils/sapling/address-utils';
-import { InMemorySpendingKey } from 'src/utils/sapling/sapling-keys/in-memory-spending-key';
 
 import { useImportAccountFromSeedStyles } from './import-account-from-seed.styles';
-import { ImportAccountSeedDerivationPathForm } from './import-account-seed-derivation-path.form';
 import {
   importAccountSeedInitialValues,
   importAccountSeedValidationSchema,
@@ -42,10 +34,9 @@ interface Props {
 }
 
 export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
-  const dispatch = useDispatch();
   const styles = useImportAccountFromSeedStyles();
-  const { createImportedAccount } = useShelter();
-  const accountsIndex = useAccountsListSelector().length + 1;
+  const { createImportedChainAccountFromSeed, createImportedMultichainAccountFromSeed } = useShelter();
+  const accountsIndex = useAllAccounts().length + 1;
 
   const isLoading = useIsShowLoaderSelector();
 
@@ -54,27 +45,25 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Import Seed Phrase" /> }, []);
 
   const onSubmit = useCallback(
-    ({ seedPhrase, password, derivationPath }: ImportAccountSeedValues) => {
-      dispatch(showLoaderAction());
+    ({ seedPhrase, derivationPath }: ImportAccountSeedValues) => {
+      const trimmedDerivationPath = derivationPath?.trim();
+      const params = {
+        name: `Account ${accountsIndex}`,
+        seedPhrase
+      };
 
-      setTimeout(async () => {
-        const seed = mnemonicToSeedSync(seedPhrase, password);
-        const privateKey = seedToPrivateKey(seed, isString(derivationPath) ? derivationPath : undefined);
-
-        const hdIndex = extractHdIndexFromDerivationPath(derivationPath);
-        const saplingSpendingKey = await InMemorySpendingKey.deriveSaskFromMnemonic(
-          seedPhrase,
-          getSaplingDerivationPath(hdIndex)
-        );
-
-        createImportedAccount({
-          name: `Account ${accountsIndex}`,
-          privateKey,
-          saplingSpendingKey
+      if (trimmedDerivationPath) {
+        createImportedChainAccountFromSeed({
+          ...params,
+          derivationPath: trimmedDerivationPath
         });
-      }, 0);
+
+        return;
+      }
+
+      createImportedMultichainAccountFromSeed(params);
     },
-    [accountsIndex, createImportedAccount, dispatch]
+    [accountsIndex, createImportedChainAccountFromSeed, createImportedMultichainAccountFromSeed]
   );
 
   const formik = useFormik({
@@ -97,19 +86,12 @@ export const ImportAccountSeed = memo<Props>(({ onBackPress }) => {
           </View>
           <AndroidKeyboardDisclaimer />
           <Divider size={formatSize(12)} />
-          <Label
-            label="Derivation"
-            isOptional
-            description="By default derivation isn't used. Click on 'Custom derivation path' to add it."
+          <Label label="Custom derivation path" isOptional />
+          <FormTextInput
+            name="derivationPath"
+            placeholder="e.g. m/44'/60'/0'/0/0"
+            testID={ImportAccountSeedSelectors.derivationPathInput}
           />
-          <ImportAccountSeedDerivationPathForm formValues={formik.values} />
-          <Divider size={formatSize(12)} />
-          <Label
-            label="Password"
-            isOptional
-            description={'That is NOT a wallet password.\nUsed for additional mnemonic derivation.'}
-          />
-          <FormPasswordInput name="password" testID={ImportAccountSeedSelectors.passwordInput} />
           <Divider size={formatSize(12)} />
         </View>
       </ScreenContainer>

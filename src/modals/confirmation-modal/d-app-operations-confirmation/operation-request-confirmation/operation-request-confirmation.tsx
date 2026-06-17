@@ -5,14 +5,15 @@ import { mapTo, switchMap } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { ApproveOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-operation-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
-import { emptyAccount } from 'src/interfaces/account.interface';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { getAccountAddressForTezos, getAccountForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { mapBeaconToTaquitoParams } from 'src/utils/beacon.utils';
 import { sendTransaction$ } from 'src/utils/wallet.utils';
@@ -30,7 +31,7 @@ const approveOperationRequest = ({
   opParams,
   message
 }: ApproveOperationRequestActionPayloadInterface) =>
-  sendTransaction$(rpcUrl, sender.publicKeyHash, opParams).pipe(
+  sendTransaction$(rpcUrl, sender.address, opParams).pipe(
     switchMap(({ hash }) =>
       from(
         BeaconHandler.respond({
@@ -52,28 +53,34 @@ const approveOperationRequest = ({
   );
 
 export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
   const rpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveOperationRequest);
 
   const sender = useMemo(
-    () => accounts.find(({ publicKeyHash }) => publicKeyHash === message.sourceAddress) ?? emptyAccount,
+    () => accounts.find(account => getAccountAddressForTezos(account) === message.sourceAddress)!,
     [accounts, message.sourceAddress]
   );
+
+  const tezosAccount = getAccountForTezos(sender);
+
+  if (!tezosAccount) {
+    throw new DeadEndBoundaryError();
+  }
 
   const opParams = useMemo(() => message.operationDetails.map(mapBeaconToTaquitoParams), [message]);
 
   const handleEstimationError = useCallback(
     (error: unknown) => {
-      trackErrorEvent('DAppOperationsConfirmationEstimateError', error, [sender.publicKeyHash], {
+      trackErrorEvent('DAppOperationsConfirmationEstimateError', error, [message.sourceAddress], {
         opParams,
         rpcUrl,
         appMetadata: message.appMetadata
       });
     },
-    [trackErrorEvent, sender.publicKeyHash, opParams, rpcUrl, message.appMetadata]
+    [trackErrorEvent, message.sourceAddress, message.appMetadata, opParams, rpcUrl]
   );
 
   return (
@@ -81,7 +88,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
       sender={sender}
       opParams={opParams}
       isLoading={isLoading}
-      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender, opParams: newOpParams, message })}
+      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: tezosAccount, opParams: newOpParams, message })}
       onEstimationError={handleEstimationError}
     >
       <AppMetadataView appMetadata={message.appMetadata} />

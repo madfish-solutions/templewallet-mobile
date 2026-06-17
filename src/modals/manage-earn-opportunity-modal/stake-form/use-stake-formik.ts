@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { assetAmountValidation, createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
@@ -17,7 +18,7 @@ import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useSelectedRpcUrlSelector, useSlippageSelector } from 'src/store/settings/settings-selectors';
 import { useSwapTokensSelector } from 'src/store/swap/swap-selectors';
-import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken } from 'src/token/interfaces/token.interface';
@@ -48,7 +49,12 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
   const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
   const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const { data: threeRouteTokens } = useSwapTokensSelector();
   const tezos = useReadOnlyTezosToolkit();
   const slippageTolerancePercentage = useSlippageSelector();
@@ -117,7 +123,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
           amount,
           asset,
           tezos,
-          accountPkh,
+          tezosAddress,
           stake?.lastStakeId,
           threeRouteTokens,
           slippageTolerancePercentage
@@ -139,7 +145,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         trackEvent('STAKE_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
         const internalError = error instanceof AnalyticsError ? error.error : error;
         const additionalProperties = error instanceof AnalyticsError ? error.additionalProperties : {};
-        trackErrorEvent('EarnOpportunityStakeError', internalError, [accountPkh], {
+        trackErrorEvent('EarnOpportunityStakeError', internalError, [tezosAddress], {
           stakeFormInput: {
             earnOpportunity,
             amount,
@@ -161,7 +167,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
       trackEvent,
       trackErrorEvent,
       tezos,
-      accountPkh,
+      tezosAddress,
       stake?.lastStakeId,
       threeRouteTokens,
       slippageTolerancePercentage

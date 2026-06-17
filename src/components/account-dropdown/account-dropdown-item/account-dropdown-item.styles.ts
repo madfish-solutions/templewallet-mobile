@@ -3,10 +3,19 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
-  rootModal: {
-    margin: formatSize(8)
+  listItemHeader: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  listItemHeaderInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: formatSize(10)
   },
   infoContainer: {
     flexGrow: 1,
@@ -14,21 +23,24 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     justifyContent: 'space-between',
     marginLeft: formatSize(10)
   },
-  smallInfoContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-    justifyContent: 'center',
-    marginLeft: formatSize(4)
-  },
   upperContainer: {
     flexDirection: 'row',
     alignItems: 'center'
   },
   upperContainerFullData: {
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    minHeight: formatSize(40)
   },
   name: {
-    ...typography.tagline13Tag,
+    ...typography.body17Semibold,
+    flexShrink: 1,
+    marginRight: formatSize(10),
+    color: colors.black
+  },
+  listItemName: {
+    ...typography.body15Semibold,
+    flexShrink: 1,
+    marginRight: formatSize(10),
     color: colors.black
   },
   lowerContainer: {
@@ -37,8 +49,32 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     alignItems: 'center'
   },
   balanceText: {
-    ...typography.numbersRegular13,
+    ...typography.numbersRegular15,
     color: colors.black
+  },
+  listItemBalanceText: {
+    ...typography.numbersRegular15,
+    flexShrink: 0,
+    color: colors.black
+  },
+  addressesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    gap: formatSize(12),
+    marginTop: formatSize(16),
+    marginLeft: formatSize(2)
+  },
+  addressChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    maxWidth: formatSize(100)
+  },
+  addressText: {
+    ...typography.caption13Regular,
+    flexShrink: 1,
+    marginLeft: formatSize(4),
+    color: colors.blue
   },
   accountNameMargin: {
     marginLeft: formatSize(10)

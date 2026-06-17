@@ -10,7 +10,7 @@ import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormAddressInput } from 'src/form/form-address-input';
 import { FormTextInput } from 'src/form/form-text-input';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { Contact } from 'src/interfaces/contact.interface';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -33,17 +33,17 @@ export const AddContactModal: FC = () => {
   const selectedRpcUrl = useSelectedRpcUrlSelector();
   const resolver = useMemo(() => tezosDomainsResolver(selectedRpcUrl), [selectedRpcUrl]);
 
-  const formik = useRef<FormikProps<AccountBaseInterface>>(null);
+  const formik = useRef<FormikProps<Contact>>(null);
 
-  const addContact = (contact: AccountBaseInterface) => {
+  const addContact = (contact: Contact) => {
     dispatch(addContactAction(contact));
-    dispatch(loadContactTezosBalance.submit(contact.publicKeyHash));
+    dispatch(loadContactTezosBalance.submit(contact.address));
     goBack();
   };
 
   const initialValues = {
     name: params?.name ?? '',
-    publicKeyHash: params?.publicKeyHash ?? ''
+    address: params?.address ?? ''
   };
 
   usePageAnalytic(ModalsEnum.AddContact);
@@ -64,7 +64,7 @@ export const AddContactModal: FC = () => {
               <Label label="Name" />
               <FormTextInput name="name" testID={AddContactModalSelectors.nameInput} />
               <Label label="Address" />
-              <FormAddressInput name="publicKeyHash" testID={AddContactModalSelectors.addressInput} />
+              <FormAddressInput name="address" testID={AddContactModalSelectors.addressInput} />
             </View>
           </ScreenContainer>
           <ModalButtonsFloatingContainer>

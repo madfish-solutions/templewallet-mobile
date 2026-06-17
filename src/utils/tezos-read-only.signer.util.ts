@@ -3,13 +3,13 @@ import { InMemorySigner } from '@taquito/signer';
 import { Signer } from '@taquito/taquito';
 import { firstValueFrom } from 'rxjs';
 
-import { AccountTypeEnum } from '../enums/account-type.enum';
-import { AccountInterface } from '../interfaces/account.interface';
+import { TempleChainKind } from '../enums/temple-chain-kind.enum.ts';
 import { Shelter } from '../shelter/shelter';
+import { TezosReadOnlySignerPayload } from '../types/tezos-read-only-signer-payload';
 
 import { READ_ONLY_SIGNER_PUBLIC_KEY, READ_ONLY_SIGNER_PUBLIC_KEY_HASH } from './env.utils';
 
-export class ReadOnlySigner implements Signer {
+export class TezosReadOnlySigner implements Signer {
   constructor(private pkh: string, private pk: string) {}
 
   async publicKeyHash() {
@@ -35,15 +35,14 @@ export class ReadOnlySigner implements Signer {
       throw new Error('Only BLS keys can prove possession');
     }
 
-    const realSigner: InMemorySigner = await firstValueFrom(Shelter.getSigner$(this.pkh));
+    const realSigner: InMemorySigner = await firstValueFrom(Shelter.getTezosSigner$(this.pkh));
 
     return realSigner.provePossession();
   }
 }
 
-export const readOnlySignerAccount: AccountInterface = {
-  name: 'Read-only account',
-  type: AccountTypeEnum.IMPORTED_ACCOUNT,
+export const tezosReadOnlySignerAccount: TezosReadOnlySignerPayload = {
+  chain: TempleChainKind.Tezos,
   publicKey: READ_ONLY_SIGNER_PUBLIC_KEY,
-  publicKeyHash: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
+  address: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
 };

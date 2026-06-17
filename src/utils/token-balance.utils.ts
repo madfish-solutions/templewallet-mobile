@@ -10,8 +10,8 @@ import { getTokenType, toTokenSlug } from 'src/token/utils/token.utils';
 import { sendErrorAnalyticsEvent } from './analytics/analytics.util';
 import { UserAnalyticsCredentials } from './error-analytics-data.utils';
 import { isDefined } from './is-defined';
-import { readOnlySignerAccount } from './read-only.signer.util';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
+import { tezosReadOnlySignerAccount } from './tezos-read-only.signer.util';
 
 const TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS = 'KT1GBZmSxmnKJXGMdMLbugPfLyUPmuLSMwKS';
 
@@ -51,12 +51,12 @@ const fetchAssetsBalancesFromTzktOnce = (selectedRpcUrl: string, account: string
   });
 
 export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
-  from(createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
+  from(createReadOnlyTezosToolkit(rpcUrl, tezosReadOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
     map(balance => balance.toFixed())
   );
 
 export const loadTezosBalances$ = (rpcUrl: string, publicKeyHashes: string[]) => {
-  const tezos = createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount);
+  const tezos = createReadOnlyTezosToolkit(rpcUrl, tezosReadOnlySignerAccount);
 
   return from(Promise.allSettled(publicKeyHashes.map(publicKeyHash => tezos.tz.getBalance(publicKeyHash)))).pipe(
     map(results =>
@@ -99,7 +99,7 @@ export const loadAssetBalance$ = (
   assetSlug: string,
   { isAnalyticsEnabled, userId, ABTestingCategory }: UserAnalyticsCredentials
 ) => {
-  const tezos = createReadOnlyTezosToolkit(rpcUrl, readOnlySignerAccount);
+  const tezos = createReadOnlyTezosToolkit(rpcUrl, tezosReadOnlySignerAccount);
   const [assetAddress, assetId = '0'] = assetSlug.split('_');
 
   const cachedRecord = cachedResults[`${publicKeyHash}_${assetSlug}`];

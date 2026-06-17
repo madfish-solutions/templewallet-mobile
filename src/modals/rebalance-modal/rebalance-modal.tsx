@@ -7,6 +7,7 @@ import { AssetAmountInput, AssetAmountInterface } from 'src/components/asset-amo
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
@@ -18,7 +19,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useShieldedBalanceSelector, useSaplingAddressSelector } from 'src/store/sapling';
 import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-actions';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountTezosBalance, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useCurrentAccountTezosBalance, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { showErrorToast } from 'src/toast/toast.utils';
@@ -50,7 +51,12 @@ export const RebalanceModal: FC = () => {
   const publicBalanceMutez = useCurrentAccountTezosBalance();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
   const saplingAddress = useSaplingAddressSelector();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const tezExchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
 
   usePageAnalytic(ModalsEnum.Rebalance);
@@ -127,12 +133,12 @@ export const RebalanceModal: FC = () => {
         prepareSaplingTransactionActions.submit({
           type: 'unshield',
           amount: amountMutez,
-          recipientAddress: accountPkh,
+          recipientAddress: tezosAddress,
           isRebalance: true
         })
       );
     }
-  }, [sourceAmount, isAmountValid, direction, dispatch, saplingAddress, accountPkh]);
+  }, [sourceAmount, isAmountValid, direction, dispatch, saplingAddress, tezosAddress]);
 
   return (
     <>

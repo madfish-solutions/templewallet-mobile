@@ -38,7 +38,7 @@ const loadSingleSavingLastStake: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
     withSelectedRpcUrl(state$),
-    withAccount(state$, ([{ payload }]) => payload.accountPkh),
+    withAccount(state$),
     withUserAnalyticsCredentials(state$),
     mergeMap(([[[{ payload }, rpcUrl], account], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
       loadSingleSavingStake$(payload.item, account, rpcUrl).pipe(

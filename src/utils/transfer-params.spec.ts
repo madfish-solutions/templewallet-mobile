@@ -63,7 +63,7 @@ describe('getTransferParams$', () => {
     ).subscribe(
       rxJsTestingHelper(() => {
         expect(mockFA1_2Contract.methodsObject.transfer).toBeCalledWith({
-          from: mockHdAccount.publicKeyHash,
+          from: mockHdAccount.tezosAddress,
           to: 'receiverPublicKeyHash',
           value: mockInputAmount
         });
@@ -94,7 +94,7 @@ describe('getTransferParams$', () => {
               {
                 prim: 'Pair',
                 args: [
-                  { string: mockHdAccount.publicKeyHash },
+                  { string: mockHdAccount.tezosAddress },
                   [
                     {
                       prim: 'Pair',

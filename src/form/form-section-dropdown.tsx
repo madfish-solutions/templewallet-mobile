@@ -23,7 +23,7 @@ export const FormSectionDropdown = <T extends unknown>({
   testID,
   testIDProperties
 }: Props<T>) => {
-  const [field, meta, helpers] = useField<T | undefined>(name);
+  const [field, meta, helpers] = useField<T>(name);
 
   return (
     <>

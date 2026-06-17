@@ -1,42 +1,35 @@
 import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
-import { isAndroid } from 'src/config/system';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { setSelectedAccountAction } from 'src/store/wallet/wallet-actions';
-import { useSelectedAccountSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { dispatch } from 'src/store';
+import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
+import { useAccount, useAllVisibleAccounts } from 'src/store/wallet/wallet-selectors';
 
-import { DropdownValueComponent, DropdownValueProps } from '../dropdown/dropdown';
+import { DropdownValueProps } from '../dropdown/dropdown';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
-import { AccountDropdownBase } from './account-dropdown-base';
-import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
+import { AccountDropdownBase, AccountDropdownValueComponent } from './account-dropdown-base';
+import { AccountDropdownTriggerItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { CurrentAccountDropdownStyles } from './current-account-dropdown.styles';
 
-const renderAccountValue: DropdownValueComponent<AccountBaseInterface> = ({ value, isCollectibleScreen }) => (
-  <AccountDropdownItem
+const renderAccountValue: AccountDropdownValueComponent = ({ value, isCollectibleScreen }) => (
+  <AccountDropdownTriggerItem
     account={value}
     showFullData={false}
-    actionIconName={IconNameEnum.TriangleDown}
-    isPublicKeyHashTextDisabled={isAndroid}
+    actionIconName={IconNameEnum.Copy}
     isCollectibleScreen={isCollectibleScreen}
   />
 );
 
-type Props = Omit<DropdownValueProps<AccountBaseInterface>, 'list' | 'value' | 'onValueChange'> & TestIdProps;
+type Props = Omit<DropdownValueProps<Account>, 'list' | 'value' | 'onValueChange'> & TestIdProps;
 
 export const CurrentAccountDropdown = memo<Props>(({ testID, testIDProperties, isCollectibleScreen }) => {
-  const selectedAccount = useSelectedAccountSelector();
-  const visibleAccounts = useVisibleAccountsListSelector();
+  const selectedAccount = useAccount();
+  const visibleAccounts = useAllVisibleAccounts();
 
-  const dispatch = useDispatch();
-
-  const onValueChange = useCallback(
-    (value: AccountBaseInterface | undefined) => dispatch(setSelectedAccountAction(value?.publicKeyHash)),
-    []
-  );
+  const onValueChange = useCallback((value: Account) => dispatch(setSelectedAccountIdAction(value.id)), []);
 
   return (
     <View style={CurrentAccountDropdownStyles.root}>

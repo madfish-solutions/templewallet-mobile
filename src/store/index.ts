@@ -44,3 +44,5 @@ export const { store, persistor } = createStore(
   savingsEpics,
   saplingEpics
 );
+
+export const dispatch = store.dispatch.bind(store);

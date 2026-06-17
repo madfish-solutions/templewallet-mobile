@@ -1,15 +1,16 @@
 import React, { FC, memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { useDropdownBottomSheetStyles } from 'src/components/bottom-sheet/bottom-sheet.styles';
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
+import { dispatch } from 'src/store';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { openUrl } from 'src/utils/linking';
@@ -30,35 +31,39 @@ interface OnRampOverlayProps extends OverlayBodyProps {
 }
 
 const OverlayBody = memo<OverlayBodyProps>(({ isStart }) => {
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const [isLinkLoading, setIsLinkLoading] = useState(false);
   const { trackErrorEvent } = useAnalytics();
 
   const styles = useOnRampOverlayStyles();
   const dropdownBottomSheetStyles = useDropdownBottomSheetStyles();
-  const dispatch = useDispatch();
-  const publicKeyHash = useCurrentAccountPkhSelector();
 
   const handleClose = useCallback(() => {
     setIsLinkLoading(false);
     dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Closed));
-  }, [dispatch]);
+  }, []);
 
   const handleOnRampButtonPress = useCallback(
     async (amount = 0) => {
       try {
         setIsLinkLoading(true);
 
-        const url = await getWertLink(publicKeyHash, amount);
+        const url = await getWertLink(tezosAddress, amount);
 
         handleClose();
 
         openUrl(url);
       } catch (e) {
-        trackErrorEvent('GetWertLinkError', e, [publicKeyHash], { amount });
+        trackErrorEvent('GetWertLinkError', e, tezosAddress ? [tezosAddress] : [], { amount });
         handleClose();
       }
     },
-    [handleClose, publicKeyHash, trackErrorEvent]
+    [handleClose, tezosAddress, trackErrorEvent]
   );
 
   return (

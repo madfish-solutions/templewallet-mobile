@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
@@ -56,7 +56,7 @@ const getCycleValue = <T, U>(
 export const BakerRewardsList = memo(() => {
   const selectedBaker = useSelectedBakerSelector();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const { trackErrorEvent } = useAnalytics();
 
   const styles = useBakerRewardsListStyles();

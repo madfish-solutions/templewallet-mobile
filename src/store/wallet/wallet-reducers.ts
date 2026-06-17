@@ -8,35 +8,36 @@ import { isDcpNode } from 'src/utils/network.utils';
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
 
 import {
-  addHdAccountAction,
+  addAccountAction,
   addTokenAction,
   loadTezosBalanceActions,
   removeTokenAction,
-  setSelectedAccountAction,
+  setSelectedAccountIdAction,
   toggleTokenVisibilityAction,
   updateAccountAction,
   setAccountVisibility,
-  loadAssetsBalancesActions
+  loadAssetsBalancesActions,
+  completeEvmAccountsMigrationAction
 } from './wallet-actions';
 import { walletInitialState, WalletState } from './wallet-state';
 import { retrieveAccountState, pushOrUpdateTokensBalances } from './wallet-state.utils';
 
 export const walletReducers = createReducer<WalletState>(walletInitialState, builder => {
-  builder.addCase(addHdAccountAction, (state, { payload: account }) => ({
-    ...state,
-    accounts: [...state.accounts, account],
-    accountsStateRecord: { ...state.accountsStateRecord, [account.publicKeyHash]: initialAccountState }
-  }));
+  builder.addCase(addAccountAction, (state, { payload: account }) => {
+    state.accounts.push(account);
+    state.accountsStateRecord[account.id] = initialAccountState;
+  });
 
-  builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => ({
-    ...state,
-    accounts: state.accounts.map(item =>
-      item.publicKeyHash === updatedAccount.publicKeyHash ? { ...item, ...updatedAccount } : item
-    )
-  }));
+  builder.addCase(updateAccountAction, (state, { payload: updatedAccount }) => {
+    state.accounts = state.accounts.map(item => (item.id === updatedAccount.id ? updatedAccount : item));
+  });
 
-  builder.addCase(setAccountVisibility, (state, { payload: { publicKeyHash, isVisible } }) => {
-    const accountState = retrieveAccountState(state, publicKeyHash);
+  builder.addCase(completeEvmAccountsMigrationAction, (state, { payload: migratedAccounts }) => {
+    state.accounts = migratedAccounts;
+  });
+
+  builder.addCase(setAccountVisibility, (state, { payload: { accountId, isVisible } }) => {
+    const accountState = retrieveAccountState(state, accountId);
 
     if (accountState) {
       accountState.isVisible = isVisible;
@@ -65,40 +66,38 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }
   });
 
-  builder.addCase(setSelectedAccountAction, (state, { payload: selectedAccountPublicKeyHash }) => ({
-    ...state,
-    selectedAccountPublicKeyHash: selectedAccountPublicKeyHash ?? ''
-  }));
+  builder.addCase(setSelectedAccountIdAction, (state, { payload: accountId }) => {
+    if (!accountId) return;
+
+    state.selectedAccountId = accountId;
+  });
 
   builder.addCase(loadTezosBalanceActions.success, (state, { payload }) => {
-    for (const pkh in payload) {
-      const newBalance = payload[pkh];
+    for (const accountId in payload) {
+      const newBalance = payload[accountId];
 
       if (!newBalance) {
-        return;
+        continue;
       }
 
-      const accountState = retrieveAccountState(state, pkh);
+      const accountState = retrieveAccountState(state, accountId);
       if (accountState) {
         accountState.tezosBalance = newBalance;
       }
     }
   });
 
-  builder.addCase(
-    loadAssetsBalancesActions.success,
-    (state, { payload: { publicKeyHash, balances, selectedRpcUrl } }) => {
-      const accountState = retrieveAccountState(state, publicKeyHash);
-      if (!accountState) {
-        return;
-      }
-
-      pushOrUpdateTokensBalances(
-        isDcpNode(selectedRpcUrl) ? accountState.dcpTokensList : accountState.tokensList,
-        balances
-      );
+  builder.addCase(loadAssetsBalancesActions.success, (state, { payload: { accountId, balances, selectedRpcUrl } }) => {
+    const accountState = retrieveAccountState(state, accountId);
+    if (!accountState) {
+      return;
     }
-  );
+
+    pushOrUpdateTokensBalances(
+      isDcpNode(selectedRpcUrl) ? accountState.dcpTokensList : accountState.tokensList,
+      balances
+    );
+  });
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
     const accountState = retrieveAccountState(state);

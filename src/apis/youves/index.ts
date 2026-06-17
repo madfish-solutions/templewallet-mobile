@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { catchError, firstValueFrom, forkJoin, from, map, Observable, of } from 'rxjs';
 
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { SavingsItem } from 'src/interfaces/earn-opportunity/savings-item.interface';
 import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interface';
 import { ExchangeRateRecord } from 'src/store/currency/currency-state';
@@ -90,7 +90,7 @@ export const getYouvesSavingsItems$ = (tokenUsdExchangeRates: ExchangeRateRecord
   ).pipe(map(items => items.filter(isDefined)));
 
 export const getUserStake = async (
-  account: AccountInterface,
+  account: Account,
   stakingOrSavingId: string,
   type: EarnOpportunityTypeEnum,
   rpcUrl: string

@@ -7,7 +7,7 @@ import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { useImportedAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useImportedAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
 import { InfoText } from '../info-text/info-text';
@@ -18,8 +18,8 @@ import { ManageImportedAccountsSelectors } from './manage-imported-accounts.sele
 export const ManageImportedAccounts = () => {
   const navigateToModal = useNavigateToModal();
 
-  const selectedAccount = useSelectedAccountSelector();
-  const importedAccounts = useImportedAccountListSelector();
+  const selectedAccount = useAccount();
+  const importedAccounts = useImportedAccounts();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(importedAccounts);
 
   const accountsLength = importedAccounts.length;
@@ -35,7 +35,7 @@ export const ManageImportedAccounts = () => {
       <InfoText />
       <ScreenContainer>
         {filteredAccountList.map(account => (
-          <Fragment key={account.publicKeyHash}>
+          <Fragment key={account.id}>
             <ManageAccountItem
               account={account}
               selectedAccount={selectedAccount}

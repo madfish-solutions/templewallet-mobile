@@ -10,6 +10,7 @@ import { BakerInterface, buildUnknownBaker } from 'src/apis/baking-bad';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { SearchInput } from 'src/components/search-input/search-input';
@@ -26,7 +27,7 @@ import { useNavigateToModal, useNavigation } from 'src/navigator/hooks/use-navig
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { useBakersListSelector, useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -75,7 +76,11 @@ export const SelectBakerModal = memo(() => {
 
   const { trackEvent } = useAnalytics();
 
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
 
   const knownBakers = useBakersListSelector();
 
@@ -111,7 +116,7 @@ export const SelectBakerModal = memo(() => {
       } else {
         navigateToModal(ModalsEnum.Confirmation, {
           type: ConfirmationTypeEnum.InternalOperations,
-          opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: accountPkh }],
+          opParams: [{ kind: OpKind.DELEGATION, delegate: selectedBaker.address, source: tezosAddress }],
           ...(isTempleBakerSelected && { testID: 'TEMPLE_BAKER_DELEGATION' }),
           ...(isEverstakeBakerSelected && { testID: 'EVERSTAKE_BAKER_DELEGATION' }),
           ...(isHelpUkraineBakerSelected && { testID: 'HELP_UKRAINE_BAKER_DELEGATION' }),
@@ -168,14 +173,14 @@ export const SelectBakerModal = memo(() => {
 
   const ListEmptyComponent = useMemo(
     () =>
-      searchValue?.toLowerCase() !== accountPkh.toLowerCase() ? (
+      searchValue?.toLowerCase() !== tezosAddress.toLowerCase() ? (
         <BakerListItem
           item={unknownBaker}
           onPress={setSelectedBaker}
           selected={searchValue === selectedBaker?.address}
         />
       ) : undefined,
-    [unknownBakerName, searchValue, accountPkh, selectedBaker?.address]
+    [unknownBakerName, searchValue, tezosAddress, selectedBaker?.address]
   );
 
   const renderItem: ListRenderItem<BakerInterface> = useCallback(
@@ -208,7 +213,7 @@ export const SelectBakerModal = memo(() => {
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
           {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
-          {searchValue === accountPkh && <Text style={styles.errorText}>You can not delegate to yourself</Text>}
+          {searchValue === tezosAddress && <Text style={styles.errorText}>You can not delegate to yourself</Text>}
         </View>
         {isTezosNode && (
           <View style={styles.upperContainer}>
@@ -237,7 +242,7 @@ export const SelectBakerModal = memo(() => {
         />
       )}
 
-      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue?.toLowerCase() !== accountPkh.toLowerCase() && (
+      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue?.toLowerCase() !== tezosAddress.toLowerCase() && (
         <View style={styles.dcpBaker}>
           <Divider size={formatSize(16)} />
           <BakerListItem

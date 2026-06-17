@@ -58,6 +58,7 @@ export enum IconNameEnum {
   Close = 'Close',
   TezToken = 'TezToken',
   TezShieldedToken = 'TezShieldedToken',
+  EtherlinkToken = 'EtherlinkToken',
   FilmToken = 'FilmToken',
   TzBtcToken = 'TzBtcToken',
   NoNameToken = 'NoNameToken',

@@ -12,9 +12,10 @@ import { useRobotIconStyles } from './robot-icon.styles';
 interface Props {
   seed: string;
   size?: number;
+  padding?: number;
 }
 
-export const RobotIcon: FC<Props> = ({ seed, size = formatSize(44) }) => {
+export const RobotIcon: FC<Props> = ({ seed, size = formatSize(40), padding = formatSize(8) }) => {
   const styles = useRobotIconStyles();
 
   const xml = useMemo(
@@ -22,12 +23,12 @@ export const RobotIcon: FC<Props> = ({ seed, size = formatSize(44) }) => {
       createAvatar(bottts, {
         seed,
         size,
-        scale: fractionToPercentage((size - formatSize(8)) / size).toNumber(),
+        scale: fractionToPercentage((size - padding) / size).toNumber(),
         clip: false
       })
         .toString()
         .replace('undefined', ''),
-    [seed, size]
+    [seed, size, padding]
   );
 
   return (

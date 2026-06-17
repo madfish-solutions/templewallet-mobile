@@ -9,44 +9,59 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { Switch } from 'src/components/switch/switch';
 import { TruncatedText } from 'src/components/truncated-text';
 import { WalletAddress } from 'src/components/wallet-address/wallet-address';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { setAccountVisibility } from 'src/store/wallet/wallet-actions';
 import { useIsAccountVisibleSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast } from 'src/toast/toast.utils';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { ManageAccountItemSelectors } from './manage-account-item.selectors';
 import { useManageAccountItemStyles } from './manage-account-item.styles';
 
 interface Props {
-  account: AccountInterface;
-  selectedAccount: AccountInterface;
-  onRevealButtonPress: SyncFn<AccountInterface>;
+  account: Account;
+  selectedAccount: Account;
+  onRevealButtonPress: SyncFn<Account>;
 }
 
 export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevealButtonPress }) => {
   const dispatch = useDispatch();
   const navigateToModal = useNavigateToModal();
   const styles = useManageAccountItemStyles();
-  const tezosToken = useTezosTokenOfKnownAccount(account.publicKeyHash);
-  const isVisible = useIsAccountVisibleSelector(account.publicKeyHash) ?? true;
 
-  const isVisibilitySwitchDisabled = account.publicKeyHash === selectedAccount.publicKeyHash;
+  const tezosAddress = getAccountAddressForTezos(account);
+  const evmAddress = getAccountAddressForEvm(account);
+
+  const tezosToken = useTezosTokenOfKnownAccount(account.id);
+  const isVisible = useIsAccountVisibleSelector(account.id) ?? true;
+
+  const isVisibilitySwitchDisabled = !tezosAddress || account.id === selectedAccount.id;
+  const visibilityWarning = tezosAddress
+    ? {
+        title: 'Could not hide your selected account',
+        description: 'Switch to another account and try again'
+      }
+    : {
+        title: 'Could not hide this account',
+        description: 'EVM-only accounts stay visible until EVM account management is supported'
+      };
 
   return (
     <View style={styles.container}>
       <View style={styles.upperContainer}>
         <View style={styles.accountContainer}>
-          <RobotIcon seed={account.publicKeyHash} />
+          <RobotIcon seed={getSeedFromAccount(account)} />
           <View style={styles.accountContainerData}>
             <TruncatedText style={styles.accountText}>{account.name}</TruncatedText>
-            <WalletAddress publicKeyHash={account.publicKeyHash} />
+            <WalletAddress publicKeyHash={tezosAddress ?? evmAddress ?? ''} />
           </View>
         </View>
 
@@ -60,24 +75,14 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
           />
           <Divider size={formatSize(16)} />
 
-          <View
-            onTouchStart={() =>
-              void (
-                isVisibilitySwitchDisabled &&
-                showWarningToast({
-                  title: 'Could not hide your selected account',
-                  description: 'Switch to another account and try again'
-                })
-              )
-            }
-          >
+          <View onTouchStart={() => void (isVisibilitySwitchDisabled && showWarningToast(visibilityWarning))}>
             <Switch
               value={isVisible}
               disabled={isVisibilitySwitchDisabled}
               onChange={newIsVisible =>
                 dispatch(
                   setAccountVisibility({
-                    publicKeyHash: account.publicKeyHash,
+                    accountId: account.id,
                     isVisible: newIsVisible
                   })
                 )

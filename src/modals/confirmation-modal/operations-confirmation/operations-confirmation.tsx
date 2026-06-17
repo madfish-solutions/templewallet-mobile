@@ -10,16 +10,18 @@ import { ButtonLargeSecondary } from 'src/components/button/button-large/button-
 import { DelegateDisclaimer } from 'src/components/delegate-disclaimer/delegate-disclaimer';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { emptyFn } from 'src/config/general';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { AccountInterface } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountForTezos } from 'src/utils/account.utils.ts';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
@@ -43,7 +45,7 @@ const delegationDisabledDisclaimerMessage =
   'This baker doesn’t offer rewards for delegation. If you want to earn delegation rewards, please choose a different baker.';
 
 interface Props extends TestIdProps {
-  sender: AccountInterface;
+  sender: Account;
   opParams: ParamsWithKind[];
   isLoading: boolean;
   disclaimer?: ReactNode;
@@ -72,7 +74,13 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
 
   const { trackEvent } = useAnalytics();
 
-  const estimations = useEstimations(sender, opParams);
+  const tezosAccount = getAccountForTezos(sender);
+
+  if (!tezosAccount) {
+    throw new DeadEndBoundaryError();
+  }
+
+  const estimations = useEstimations(tezosAccount, opParams);
 
   const {
     opParamsWithEstimations,

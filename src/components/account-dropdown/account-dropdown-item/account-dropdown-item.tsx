@@ -8,13 +8,15 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { TruncatedText } from 'src/components/truncated-text';
-import { WalletAddress } from 'src/components/wallet-address/wallet-address';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { AccountBaseInterface, emptyAccountBase } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
@@ -24,26 +26,24 @@ import { useTezosTokenOfKnownAccount } from 'src/utils/wallet.utils';
 
 import { AccountDropdownItemProps } from './account-dropdown-item.interface';
 import {
-  useAccountDropdownItemStyles,
-  useAccountDropdownItemCollectiblesInfoStyles
+  useAccountDropdownItemCollectiblesInfoStyles,
+  useAccountDropdownItemStyles
 } from './account-dropdown-item.styles';
 
 const COLLECTIBLES_ROBOT_ICON_SIZE = 76;
 
 export const AccountDropdownItem = memo<AccountDropdownItemProps>(
-  ({
-    account = emptyAccountBase,
-    showFullData = true,
-    actionIconName,
-    isPublicKeyHashTextDisabled,
-    isCollectibleScreen = false
-  }) => {
+  ({ account, showFullData = true, actionIconName, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
-    const tezos = useTezosTokenOfKnownAccount(account.publicKeyHash);
+
+    const tezos = useTezosTokenOfKnownAccount(account.id);
 
     return (
       <View style={styles.root}>
-        <RobotIcon seed={account.publicKeyHash} size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined} />
+        <RobotIcon
+          seed={getSeedFromAccount(account)}
+          size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined}
+        />
         <View style={styles.infoContainer}>
           <View
             style={[
@@ -53,18 +53,10 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
             ]}
           >
             <TruncatedText style={styles.name}>{account.name}</TruncatedText>
-            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
+            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(22)} />}
           </View>
           <View style={styles.lowerContainer}>
-            {isCollectibleScreen ? (
-              <CollectiblesInfo />
-            ) : (
-              <WalletAddress
-                isLocalDomainNameShowing
-                publicKeyHash={account.publicKeyHash}
-                isPublicKeyHashTextDisabled={isPublicKeyHashTextDisabled}
-              />
-            )}
+            {isCollectibleScreen && <CollectiblesInfo />}
             {showFullData && !isCollectibleScreen && (
               <HideBalance style={styles.balanceText}>
                 <AssetValueText asset={tezos} amount={tezos.balance} />
@@ -77,9 +69,59 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
   }
 );
 
-export const renderAccountListItem: DropdownListItemComponent<AccountBaseInterface> = ({ item, isSelected }) => (
-  <AccountDropdownItem account={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
+export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
+
+const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
+  const styles = useAccountDropdownItemStyles();
+  const saplingAddress = useSaplingAddressForAccount(account);
+
+  const tezosAddress = getAccountAddressForTezos(account);
+  const evmAddress = getAccountAddressForEvm(account);
+
+  const tezos = useTezosTokenOfKnownAccount(account.id);
+
+  return (
+    <>
+      <View style={styles.listItemHeader}>
+        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} padding={formatSize(4)} />
+        <View style={styles.listItemHeaderInfo}>
+          <TruncatedText style={styles.listItemName}>{account.name}</TruncatedText>
+          <HideBalance style={styles.listItemBalanceText}>
+            <AssetValueText asset={tezos} amount={tezos.balance} convertToDollar />
+          </HideBalance>
+        </View>
+      </View>
+
+      <View style={styles.addressesContainer}>
+        {isDefined(tezosAddress) && <AccountAddressChip address={tezosAddress} iconName={IconNameEnum.TezToken} />}
+        {isDefined(saplingAddress) && (
+          <AccountAddressChip address={saplingAddress} iconName={IconNameEnum.TezShieldedToken} />
+        )}
+        {isDefined(evmAddress) && <AccountAddressChip address={evmAddress} iconName={IconNameEnum.EtherlinkToken} />}
+      </View>
+    </>
+  );
+});
+
+export const renderAccountListItem: DropdownListItemComponent<Account> = ({ item }) => (
+  <AccountDropdownListItem account={item} />
 );
+
+interface AccountAddressChipProps {
+  address: string;
+  iconName: IconNameEnum;
+}
+
+const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName }) => {
+  const styles = useAccountDropdownItemStyles();
+
+  return (
+    <View style={styles.addressChip}>
+      <Icon name={iconName} size={formatSize(16)} />
+      <Text style={styles.addressText}>{truncateAddress(address)}</Text>
+    </View>
+  );
+});
 
 const CollectiblesInfo = memo(() => {
   const styles = useAccountDropdownItemCollectiblesInfoStyles();
@@ -130,3 +172,6 @@ const CollectiblesInfo = memo(() => {
     </>
   );
 });
+
+const truncateAddress = (address: string) =>
+  address.length > 10 ? `${address.slice(0, 3)}...${address.slice(-4)}` : address;

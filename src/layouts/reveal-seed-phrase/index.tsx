@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CheckboxLabel } from 'src/components/checkbox-description/checkbox-label';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderProgress } from 'src/components/header/header-progress/header-progress';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -16,7 +17,7 @@ import { NewSeedPhraseAttention } from 'src/components/new-seed-phrase-attention
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { RevealSeedPhraseView } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-form-content/reveal-seed-phrase-view/reveal-seed-phrase-view';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
 import {
@@ -43,7 +44,11 @@ export const RevealSeedPhrase: FC<Props> = ({
   headerTitleText = 'Manual backup'
 }) => {
   const styles = useCreateNewWalletStyles();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
 
   useNavigationSetOptions(
     {
@@ -70,7 +75,7 @@ export const RevealSeedPhrase: FC<Props> = ({
               description="If you ever switch between browsers or devices, you will need this seed phrase to access your accounts."
             />
             <RevealSeedPhraseView
-              publicKeyHash={accountPkh}
+              publicKeyHash={tezosAddress}
               testID={RevealSeedPhraseSelectors.tapToRevealProtectedMask}
             />
           </View>

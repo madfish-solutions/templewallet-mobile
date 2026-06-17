@@ -1,27 +1,17 @@
 import { useMemo } from 'react';
 
-import { AccountInterface } from 'src/interfaces/account.interface';
 import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
-import { useRawCurrentAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
+import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
+import { getAccountForTezos } from 'src/utils/account.utils.ts';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
-export const useReadOnlyTezosToolkit = (sender?: AccountInterface) => {
-  const defaultSender = useRawCurrentAccountSelector();
+export const useReadOnlyTezosToolkit = (sender?: TezosReadOnlySignerPayload) => {
+  const account = useAccount();
   const selectedRpcUrl = useSelectedRpcUrlSelector();
 
-  let publicKeyHash = '';
-  let publicKey = '';
-
-  if (sender) {
-    publicKeyHash = sender.publicKeyHash;
-    publicKey = sender.publicKey;
-  } else if (defaultSender) {
-    publicKeyHash = defaultSender.publicKeyHash;
-    publicKey = defaultSender.publicKey;
-  }
-
   return useMemo(
-    () => createReadOnlyTezosToolkit(selectedRpcUrl, { publicKey, publicKeyHash }),
-    [selectedRpcUrl, publicKey, publicKeyHash]
+    () => createReadOnlyTezosToolkit(selectedRpcUrl, sender ?? getAccountForTezos(account)),
+    [account, selectedRpcUrl, sender]
   );
 };
