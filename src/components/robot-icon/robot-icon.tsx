@@ -15,7 +15,7 @@ interface Props {
   padding?: number;
 }
 
-export const RobotIcon: FC<Props> = ({ seed, size = formatSize(40), padding = 8 }) => {
+export const RobotIcon: FC<Props> = ({ seed, size = formatSize(40), padding = formatSize(8) }) => {
   const styles = useRobotIconStyles();
 
   const xml = useMemo(
@@ -23,7 +23,7 @@ export const RobotIcon: FC<Props> = ({ seed, size = formatSize(40), padding = 8 
       createAvatar(bottts, {
         seed,
         size,
-        scale: fractionToPercentage((size - formatSize(padding)) / size).toNumber(),
+        scale: fractionToPercentage((size - padding) / size).toNumber(),
         clip: false
       })
         .toString()

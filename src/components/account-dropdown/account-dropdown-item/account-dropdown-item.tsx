@@ -83,7 +83,7 @@ const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(
   return (
     <>
       <View style={styles.listItemHeader}>
-        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} padding={4} />
+        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} padding={formatSize(4)} />
         <View style={styles.listItemHeaderInfo}>
           <TruncatedText style={styles.listItemName}>{account.name}</TruncatedText>
           <HideBalance style={styles.listItemBalanceText}>
