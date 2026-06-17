@@ -381,7 +381,7 @@ export class Shelter {
           );
         }
 
-        return forkJoin([Shelter.saveAccountCredentials$(credentials)]).pipe(
+        return Shelter.saveAccountCredentials$(credentials).pipe(
           mapTo<Account>({
             id: nanoid(),
             name,
@@ -492,15 +492,14 @@ export class Shelter {
   static revealAccountPrivateKey$ = (address: string, passwordHash?: string) => {
     const decrypt$ = Shelter.decryptSensitiveData$(address, passwordHash ?? Shelter._passwordHash$.getValue());
 
-    if (isEvmAddress(address)) {
-      return decrypt$;
-    }
-
-    return decrypt$.pipe(
-      switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
-      switchMap(signer => signer.secretKey()),
-      catchError(() => of(undefined))
-    );
+    return (
+      isEvmAddress(address)
+        ? decrypt$
+        : decrypt$.pipe(
+            switchMap(privateKeySeed => InMemorySigner.fromSecretKey(privateKeySeed)),
+            switchMap(signer => signer.secretKey())
+          )
+    ).pipe(catchError(() => of(undefined)));
   };
 
   static revealSeedPhrase$ = (passwordHash?: string) =>

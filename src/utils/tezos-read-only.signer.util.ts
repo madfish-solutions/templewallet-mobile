@@ -3,6 +3,7 @@ import { InMemorySigner } from '@taquito/signer';
 import { Signer } from '@taquito/taquito';
 import { firstValueFrom } from 'rxjs';
 
+import { TempleChainKind } from '../enums/temple-chain-kind.enum.ts';
 import { Shelter } from '../shelter/shelter';
 import { TezosReadOnlySignerPayload } from '../types/tezos-read-only-signer-payload';
 
@@ -41,6 +42,7 @@ export class TezosReadOnlySigner implements Signer {
 }
 
 export const tezosReadOnlySignerAccount: TezosReadOnlySignerPayload = {
+  chain: TempleChainKind.Tezos,
   publicKey: READ_ONLY_SIGNER_PUBLIC_KEY,
   address: READ_ONLY_SIGNER_PUBLIC_KEY_HASH
 };

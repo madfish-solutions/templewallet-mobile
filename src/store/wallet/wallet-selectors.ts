@@ -54,8 +54,6 @@ export const useCurrentAccountId = () => useSelector(({ wallet }) => wallet.sele
 export const useIsAccountVisibleSelector = (accountId: string): boolean | undefined =>
   useSelector(state => state.wallet.accountsStateRecord[accountId]?.isVisible);
 
-export const useRawCurrentAccountSelector = () => useSelector(({ wallet }) => getSelectedAccountFromWallet(wallet));
-
 export const useAccount = () => useSelector(({ wallet }) => getSelectedAccountFromWallet(wallet), jsonEqualityFn);
 
 export const useAccountAddressForTezos = () =>
