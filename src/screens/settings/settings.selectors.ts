@@ -4,7 +4,7 @@ export enum SettingsSelectors {
   defaultCurrencyButton = 'Settings/Default Currency Button',
   appearanceToggle = 'Settings/Appearance Toggle',
   secureButton = 'Settings/Secure Button',
-  notificationsButton = 'Settings/Notifications Button',
+  advancedFeaturesButton = 'Settings/Advanced Features Button',
   authorizedDAppsButton = 'Settings/Authorized DApps Button',
   defaultNodeRPCButton = 'Settings/Default node (RPC) Button',
   aboutButton = 'Settings/About Button',
