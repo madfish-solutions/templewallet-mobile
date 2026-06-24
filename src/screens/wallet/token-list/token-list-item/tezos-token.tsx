@@ -13,7 +13,7 @@ import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
@@ -41,11 +41,11 @@ export const TezosToken = memo(() => {
       return null;
     }
 
-    return mutezToTz(new BigNumber(tezosToken.balance), TEZ_TOKEN_METADATA.decimals).toFormat();
+    return mutezToTz(new BigNumber(tezosToken.balance), TEZ_TOKEN_DECIMALS).toFormat();
   }, [tezosToken.balance]);
 
   const formattedShieldedBalance = useMemo(
-    () => mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_METADATA.decimals).toFormat(),
+    () => mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_DECIMALS).toFormat(),
     [shieldedBalanceMutez]
   );
 

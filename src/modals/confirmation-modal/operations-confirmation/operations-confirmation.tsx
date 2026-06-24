@@ -20,7 +20,7 @@ import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floatin
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
 import { getAccountForTezos } from 'src/utils/account.utils.ts';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -111,7 +111,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
 
       if (isDefined(gasFeeSum)) {
         const isLastOpParam = index === opParams.length - 1;
-        patchedOpParam.fee = isLastOpParam ? tzToMutez(gasFeeSum, TEZ_TOKEN_METADATA.decimals).toNumber() : 0;
+        patchedOpParam.fee = isLastOpParam ? tzToMutez(gasFeeSum, TEZ_TOKEN_DECIMALS).toNumber() : 0;
       }
 
       if (isDefined(storageLimitSum) && onlyOneOperation) {

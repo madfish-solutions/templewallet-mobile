@@ -5,7 +5,7 @@ import React, { FC } from 'react';
 import { StyledNumericInput } from 'src/components/styled-numberic-input/styled-numeric-input';
 import { StyledNumericInputProps } from 'src/components/styled-numberic-input/styled-numeric-input.props';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
 import { hasError } from 'src/utils/has-error';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -32,7 +32,7 @@ export const FormNumericInput: FC<Props> = ({
   const [field, meta, helpers] = useField<BigNumber | undefined>(name);
   const isError = hasError(meta);
 
-  const decimalsWithFallback = decimals ?? TEZ_TOKEN_METADATA.decimals;
+  const decimalsWithFallback = decimals ?? TEZ_TOKEN_DECIMALS;
 
   return (
     <>

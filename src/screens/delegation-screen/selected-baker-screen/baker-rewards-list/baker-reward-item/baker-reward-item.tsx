@@ -11,7 +11,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { isString } from 'src/utils/is-string';
 import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking';
@@ -22,8 +22,6 @@ import { CycleStatus, getCycleStatusIcon } from '../utils/get-cycle-status-icon'
 
 import { BakerRewardItemDetails } from './baker-reward-item-details/baker-reward-item-details';
 import { useBakerRewardItemStyles } from './baker-reward-item.styles';
-
-const tezSymbol = TEZ_TOKEN_METADATA.symbol;
 
 export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
   const {
@@ -100,14 +98,14 @@ export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
               <Text style={styles.cellTitle}>Delegated:</Text>
               <Text style={styles.textBlack}>
                 {delegated.lt(1) ? '<1' : delegated.decimalPlaces(0, BigNumber.ROUND_FLOOR).toString()}
-                {` ${tezSymbol} `}
+                {` ${TEZ_TOKEN_SYMBOL} `}
               </Text>
             </View>
             {status === CycleStatus.UNLOCKED && (
               <View style={styles.cellContainer}>
                 <Text style={styles.cellTitle}>Rewards & Luck:</Text>
                 <Text style={styles.textBlack}>
-                  {`${totalRewards.toString()} ${tezSymbol} `}
+                  {`${totalRewards.toString()} ${TEZ_TOKEN_SYMBOL} `}
                   <Text style={luckTextStyle}>
                     ({luckPercentage.gt(0) ? '+' : ''}
                     {luckPercentage.decimalPlaces(0).toString()}%)
@@ -121,13 +119,13 @@ export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
                 {isTruthy(feeStr) ? feeStr : '--'}%
                 <Text style={styles.textGray}>
                   {' '}
-                  ({bakerFee.toString()} {tezSymbol})
+                  ({bakerFee.toString()} {TEZ_TOKEN_SYMBOL})
                 </Text>
               </Text>
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Expected payout:</Text>
-              <Text style={styles.textBlack}>{`${expectedPayout} ${tezSymbol}`}</Text>
+              <Text style={styles.textBlack}>{`${expectedPayout} ${TEZ_TOKEN_SYMBOL}`}</Text>
             </View>
             {status === CycleStatus.UNLOCKED && (
               <View style={styles.cellContainer}>

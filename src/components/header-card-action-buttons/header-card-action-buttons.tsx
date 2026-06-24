@@ -19,7 +19,7 @@ import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
 import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -56,9 +56,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
 
   const isTezBalanceTooLow =
     isDefined(token.address) && token.address === tezosToken.address && tezosToken.balance === emptyToken.balance;
-  const errorMessage = isTezBalanceTooLow
-    ? `You need to have ${TEZ_TOKEN_METADATA.symbol} to pay gas fee`
-    : 'Balance is zero';
+  const errorMessage = isTezBalanceTooLow ? `You need to have ${TEZ_TOKEN_SYMBOL} to pay gas fee` : 'Balance is zero';
 
   const emptyBalance = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
   const disabledSendButton = !canUseTezos || (emptyBalance && LIMIT_FIN_FEATURES);

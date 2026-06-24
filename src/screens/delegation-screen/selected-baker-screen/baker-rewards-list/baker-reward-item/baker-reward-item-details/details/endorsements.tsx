@@ -6,7 +6,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 
 import { BakingHistoryEntry } from '../../../interfaces/baking-history-entry';
 import { useBakerRewardItemStyles } from '../../baker-reward-item.styles';
@@ -36,7 +36,7 @@ export const Endorsements: FC<Pick<BakingHistoryEntry, 'attestations' | 'attesta
               <Divider size={formatSize(2)} />
               <Text style={styles.textGreen}>
                 +{attestationRewards.decimalPlaces(2, BigNumber.ROUND_FLOOR).toString() + ' '}
-                {TEZ_TOKEN_METADATA.symbol}
+                {TEZ_TOKEN_SYMBOL}
                 <Text style={styles.textGray}>
                   {' '}
                   for <Text style={styles.textBlack}>{attestations.toString()} slots</Text>

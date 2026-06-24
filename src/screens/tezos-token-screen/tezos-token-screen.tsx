@@ -36,7 +36,7 @@ import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_METADATA, TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
 import type { TokenInterface } from 'src/token/interfaces/token.interface';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -83,11 +83,11 @@ export const TezosTokenScreen = () => {
       return '';
     }
 
-    return mutezToTz(new BigNumber(tezosToken.balance), TEZ_TOKEN_METADATA.decimals).toFormat();
+    return mutezToTz(new BigNumber(tezosToken.balance), TEZ_TOKEN_DECIMALS).toFormat();
   }, [tezosToken.balance]);
 
   const formattedShieldedBalance = useMemo(
-    () => mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_METADATA.decimals).toFormat(),
+    () => mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_DECIMALS).toFormat(),
     [shieldedBalanceMutez]
   );
 

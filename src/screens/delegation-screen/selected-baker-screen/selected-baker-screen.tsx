@@ -12,7 +12,7 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { openUrl, tzktUrl, useOpenUrlInAppBrowser } from 'src/utils/linking';
@@ -89,7 +89,7 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
           <View>
             <Text style={styles.cellTitle}>Space:</Text>
             <Text style={styles.cellValueText}>
-              {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {TEZ_TOKEN_METADATA.symbol}
+              {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {TEZ_TOKEN_SYMBOL}
             </Text>
           </View>
           <Divider size={formatSize(16)} />

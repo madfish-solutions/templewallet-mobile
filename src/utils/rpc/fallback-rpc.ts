@@ -22,7 +22,7 @@ import { FALLBACK_TEZOS_RPC_LIST, TEMPLE_RPC } from './rpc-list';
  * A lightweight fallback client that sequentially tries multiple FastRpcClient instances
  * until one succeeds. Inspired by Viem's fallback transport policy.
  */
-export class FallbackRpcClient extends RpcClient {
+class FallbackRpcClient extends RpcClient {
   private readonly clients: FastRpcClient[];
   private preferredIndex = 0;
 

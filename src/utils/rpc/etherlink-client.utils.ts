@@ -4,7 +4,7 @@ import { etherlink } from 'viem/chains';
 
 import { FALLBACK_ETHERLINK_RPC_LIST } from './rpc-list';
 
-export type ChainPublicClient = PublicClient<Transport, Pick<Chain, 'id' | 'name' | 'nativeCurrency' | 'rpcUrls'>>;
+type ChainPublicClient = PublicClient<Transport, Pick<Chain, 'id' | 'name' | 'nativeCurrency' | 'rpcUrls'>>;
 
 export const getViemPublicClient = memoizee((): ChainPublicClient => {
   return createPublicClient({

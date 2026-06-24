@@ -13,7 +13,7 @@ import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosToken } from 'src/utils/wallet.utils';
@@ -42,17 +42,14 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
   const minusLabel = isUnshield ? 'Shielded TEZ sent' : 'TEZ sent';
   const plusLabel = isUnshield ? 'TEZ received' : 'Shielded TEZ received';
 
-  const formattedAmount = useMemo(
-    () => mutezToTz(new BigNumber(amount), TEZ_TOKEN_METADATA.decimals).toFormat(),
-    [amount]
-  );
+  const formattedAmount = useMemo(() => mutezToTz(new BigNumber(amount), TEZ_TOKEN_DECIMALS).toFormat(), [amount]);
 
   const dollarValue = useMemo(() => {
     if (exchangeRate == null) {
       return null;
     }
 
-    return getDollarValue(amount, TEZ_TOKEN_METADATA.decimals, exchangeRate).toFixed(2);
+    return getDollarValue(amount, TEZ_TOKEN_DECIMALS, exchangeRate).toFixed(2);
   }, [amount, exchangeRate]);
 
   return (

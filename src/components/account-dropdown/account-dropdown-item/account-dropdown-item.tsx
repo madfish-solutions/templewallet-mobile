@@ -15,7 +15,7 @@ import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collec
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -146,12 +146,10 @@ const CollectiblesInfo = memo(() => {
       return '-';
     }
 
-    const { decimals: gasTokenDecimals, symbol: gasTokenSymbol } = TEZ_TOKEN_METADATA;
-
-    const floorPrice = mutezToTz(new BigNumber(totalFloorPrice), gasTokenDecimals).toNumber();
+    const floorPrice = mutezToTz(new BigNumber(totalFloorPrice), TEZ_TOKEN_DECIMALS).toNumber();
     const floorPriceDisplayed = formatNumber(floorPrice);
 
-    return `${floorPriceDisplayed} ${gasTokenSymbol}`;
+    return `${floorPriceDisplayed} ${TEZ_TOKEN_SYMBOL}`;
   }, [collectibles, allDetails]);
 
   return (

@@ -9,7 +9,7 @@ import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-ke
 import { TruncatedText } from 'src/components/truncated-text';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
@@ -72,7 +72,7 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
         <View>
           <Text style={styles.cellTitle}>Space:</Text>
           <Text style={styles.cellValueText}>
-            {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {TEZ_TOKEN_METADATA.symbol}
+            {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {TEZ_TOKEN_SYMBOL}
           </Text>
         </View>
         <Divider size={formatSize(16)} />

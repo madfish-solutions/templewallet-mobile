@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 
 import { emptyFn } from 'src/config/general';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
 
 import { StyledTextInput } from '../styled-text-input/styled-text-input';
 
@@ -24,7 +24,7 @@ export const StyledNumericInput: FC<StyledNumericInputProps> = ({
 }) => {
   const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
     value,
-    decimals ?? TEZ_TOKEN_METADATA.decimals,
+    decimals ?? TEZ_TOKEN_DECIMALS,
     minValue,
     maxValue,
     onChange,
