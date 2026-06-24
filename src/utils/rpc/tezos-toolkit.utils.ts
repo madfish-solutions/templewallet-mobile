@@ -20,7 +20,7 @@ import { getFallbackRpcClient } from './fallback-rpc';
 
 const michelEncoder = new MichelCodecPacker();
 
-export const createTezosToolkit = () => {
+export const createTezosToolkit = (preferredRpcUrl?: string) => {
   const metadataProvider = new MetadataProvider(
     new Map<string, Handler>([
       ['http', new HttpHandler()],
@@ -29,7 +29,7 @@ export const createTezosToolkit = () => {
       ['ipfs', new IpfsHttpHandler('ipfs.filebase.io')]
     ])
   );
-  const tezosToolkit = new TezosToolkit(getFallbackRpcClient());
+  const tezosToolkit = new TezosToolkit(getFallbackRpcClient(preferredRpcUrl));
   tezosToolkit.setPackerProvider(michelEncoder);
   tezosToolkit.setForgerProvider(new CompositeForger([tezosToolkit.getFactory(RpcForger)(), localForger]));
   tezosToolkit.addExtension(new Tzip16Module(metadataProvider));
@@ -39,8 +39,8 @@ export const createTezosToolkit = () => {
 };
 
 export const createReadOnlyTezosToolkit = memoize(
-  (sender?: TezosReadOnlySignerPayload | null) => {
-    const readOnlyTezosToolkit = createTezosToolkit();
+  (sender?: TezosReadOnlySignerPayload | null, preferredRpcUrl?: string) => {
+    const readOnlyTezosToolkit = createTezosToolkit(preferredRpcUrl);
     if (isDefined(sender)) {
       readOnlyTezosToolkit.setSignerProvider(new TezosReadOnlySigner(sender.address, sender.publicKey));
     }

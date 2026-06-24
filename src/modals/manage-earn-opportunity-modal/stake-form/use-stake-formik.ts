@@ -5,10 +5,10 @@ import { object as objectSchema, boolean as booleanSchema, SchemaOf } from 'yup'
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { assetAmountValidation, createAssetAmountWithMaxValidation } from 'src/form/validation/asset-amount';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -44,7 +44,6 @@ const forbidSubmitEventEarnOpportunityTypes: Array<EarnOpportunityTypeEnum | und
 
 export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserStakeValueInterface) => {
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunity);
-  const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
   const tezosAddress = useAccountAddressForTezos();
 
@@ -101,7 +100,7 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
         return;
       }
 
-      if (canUseOnRamp && toTokenSlug(asset.address, asset.id) === TEZ_TOKEN_SLUG && amount.gt(tezosBalance)) {
+      if (!LIMIT_FIN_FEATURES && toTokenSlug(asset.address, asset.id) === TEZ_TOKEN_SLUG && amount.gt(tezosBalance)) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
 
         return;
@@ -157,7 +156,6 @@ export const useStakeFormik = (earnOpportunity?: EarnOpportunity, stake?: UserSt
     },
     [
       earnOpportunity,
-      canUseOnRamp,
       tezosBalance,
       dispatch,
       trackEvent,

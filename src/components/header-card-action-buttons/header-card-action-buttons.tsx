@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
@@ -44,7 +43,6 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   const navigateToScreen = useNavigateToScreen();
   const { isLocked } = useAppLock();
   const atBootsplash = useAtBootsplash();
-  const canUseOnRamp = useCanUseOnRamp();
   const selectedAccount = useAccount();
   const { isTezosMainnet } = useNetworkInfo();
   const tezosToken = useTezosTokenOfCurrentAccount();
@@ -123,7 +121,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
 
     showErrorToast({ description: errorMessage });
 
-    if (isTezBalanceTooLow && canUseOnRamp) {
+    if (isTezBalanceTooLow && !LIMIT_FIN_FEATURES) {
       dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
     }
   };

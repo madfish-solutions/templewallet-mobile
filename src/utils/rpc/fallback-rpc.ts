@@ -11,6 +11,7 @@ import {
   RPCSimulateOperationParam
 } from '@taquito/rpc';
 import { TezosOperationError } from '@taquito/taquito';
+import { uniq } from 'lodash-es';
 import memoize from 'memoizee';
 
 import { isDefined } from '../is-defined';
@@ -259,5 +260,5 @@ function isNonRetryableTezosError(error: unknown): boolean {
 }
 
 export const getFallbackRpcClient = memoize(
-  () => new FallbackRpcClient([TEMPLE_RPC.url].concat(FALLBACK_TEZOS_RPC_LIST))
+  (preferredRpcUrl = TEMPLE_RPC.url) => new FallbackRpcClient(uniq([preferredRpcUrl].concat(FALLBACK_TEZOS_RPC_LIST)))
 );

@@ -31,6 +31,7 @@ export const RpcList: RpcInterface[] = [
 ];
 
 export const FALLBACK_TEZOS_RPC_LIST = [
+  TEMPLE_RPC.url,
   'https://mainnet.smartpy.io',
   'https://mainnet.api.tez.ie',
   'https://rpc.tzkt.io/mainnet',

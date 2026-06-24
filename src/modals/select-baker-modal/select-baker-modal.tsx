@@ -15,9 +15,9 @@ import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { Sorter } from 'src/components/sorter/sorter';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { BakersSortFieldEnum } from 'src/enums/bakers-sort-field.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
@@ -63,7 +63,6 @@ export const SelectBakerModal = memo(() => {
   const navigateToModal = useNavigateToModal();
   const styles = useSelectBakerModalStyles();
   const currentBaker = useSelectedBakerSelector();
-  const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
   const dispatch = useDispatch();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
@@ -105,7 +104,7 @@ export const SelectBakerModal = memo(() => {
           title: 'Re-delegation is not possible',
           description: `Already delegated funds to this baker.`
         });
-      } else if (new BigNumber(tezosBalance).isZero() && canUseOnRamp) {
+      } else if (new BigNumber(tezosBalance).isZero() && !LIMIT_FIN_FEATURES) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       } else {
         navigateToModal(ModalsEnum.Confirmation, {

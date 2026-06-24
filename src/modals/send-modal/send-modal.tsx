@@ -12,6 +12,7 @@ import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormAddressInput } from 'src/form/form-address-input';
@@ -19,7 +20,6 @@ import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asse
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormTextInput } from 'src/form/form-text-input';
 import { useAddressFieldAnalytics } from 'src/hooks/use-address-field-analytics.hook';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
@@ -64,7 +64,6 @@ export const SendModal: FC = () => {
   const tokens = useCurrentAccountTokens(true);
   const collectibles = useCurrentAccountCollectibles(true);
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
   const tezosAddress = useAccountAddressForTezos();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
@@ -201,7 +200,11 @@ export const SendModal: FC = () => {
       // Regular flow
       !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash));
 
-      if (getTokenSlug(asset) === TEZ_TOKEN_SLUG && (amount?.isGreaterThan(tezosBalance) ?? false) && canUseOnRamp) {
+      if (
+        getTokenSlug(asset) === TEZ_TOKEN_SLUG &&
+        (amount?.isGreaterThan(tezosBalance) ?? false) &&
+        !LIMIT_FIN_FEATURES
+      ) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       } else if (isDefined(amount)) {
         dispatch(
@@ -213,7 +216,7 @@ export const SendModal: FC = () => {
         );
       }
     },
-    [dispatch, tezosBalance, canUseOnRamp, resolver, tezosAddress]
+    [dispatch, tezosBalance, resolver, tezosAddress]
   );
 
   const formik = useFormik({

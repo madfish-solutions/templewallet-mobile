@@ -9,10 +9,10 @@ import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ApproveInternalOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-internal-operation-request-action-payload.interface';
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { dispatch } from 'src/store';
 import { navigateAction } from 'src/store/root-state.actions';
@@ -71,7 +71,6 @@ export const InternalOperationsConfirmation: FC<Props> = ({
   renderPreview,
   onEstimationComplete
 }) => {
-  const canUseOnRamp = useCanUseOnRamp();
   const account = useAccount();
   const tezosAccount = getAccountForTezos(account);
 
@@ -113,7 +112,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
 
   const handleEstimationError = useCallback(
     (error: unknown) => {
-      if (canUseOnRamp && isTooLowTezBalanceError(error)) {
+      if (!LIMIT_FIN_FEATURES && isTooLowTezBalanceError(error)) {
         updateOverlayState(OnRampOverlayState.Continue);
       } else {
         console.error(error);
@@ -126,7 +125,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
         );
       }
     },
-    [canUseOnRamp, opParams, tezosAccount, testID, trackErrorEvent, updateOverlayState]
+    [opParams, tezosAccount, testID, trackErrorEvent, updateOverlayState]
   );
 
   return (
