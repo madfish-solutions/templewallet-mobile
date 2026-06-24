@@ -6,11 +6,13 @@ import { FALLBACK_ETHERLINK_RPC_LIST } from './rpc-list';
 
 type ChainPublicClient = PublicClient<Transport, Pick<Chain, 'id' | 'name' | 'nativeCurrency' | 'rpcUrls'>>;
 
-export const getViemPublicClient = memoizee((): ChainPublicClient => {
+export const getViemPublicClient = memoizee((preferredRpcUrl?: string): ChainPublicClient => {
+  const rpcList = (preferredRpcUrl ? [preferredRpcUrl] : []).concat(FALLBACK_ETHERLINK_RPC_LIST);
+
   return createPublicClient({
     chain: etherlink,
     transport: fallback(
-      FALLBACK_ETHERLINK_RPC_LIST.map(url => http(url, { retryCount: 0 })),
+      rpcList.map(url => http(url, { retryCount: 0 })),
       { retryCount: 0 }
     ),
     batch: { multicall: { batchSize: 64, wait: 20 } }

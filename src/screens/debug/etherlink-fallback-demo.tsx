@@ -13,8 +13,6 @@ interface SubscriptionArtifacts {
 export const EtherlinkFallbackDemo = () => {
   const client = useEtherlinkPublicClient();
 
-  const initialRpcUrl = useCallback(() => 'Unavailable', []);
-
   const createSubscription = useCallback<FallbackDemoProps<SubscriptionArtifacts>['createSubscription']>(
     (setMessages, _setUsedRpcUrl) => {
       let unwatch: WatchBlocksReturnType | undefined;
@@ -54,7 +52,7 @@ export const EtherlinkFallbackDemo = () => {
       networkName="Etherlink"
       createSubscription={createSubscription}
       destroySubscription={destroySubscription}
-      initialRpcUrl={initialRpcUrl}
+      initialRpcUrl="Unavailable"
     />
   );
 };

@@ -99,6 +99,7 @@ export const SendModal: FC = () => {
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, true, true, leadingAssets);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
+  // TODO: Add preferredRpcUrl when choosing RPC node becomes available
   const resolver = useMemo(() => tezosDomainsResolver(), []);
 
   const isTransferDisabled = filteredReceiversList.length === 0;

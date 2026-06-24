@@ -5,7 +5,9 @@ import memoizee from 'memoizee';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const tezosDomainsResolver = memoizee(
-  () => new TaquitoTezosDomainsClient({ network: 'mainnet', tezos: createReadOnlyTezosToolkit() }).resolver
+  (preferredRpcUrl?: string) =>
+    new TaquitoTezosDomainsClient({ network: 'mainnet', tezos: createReadOnlyTezosToolkit(undefined, preferredRpcUrl) })
+      .resolver
 );
 
 export const isTezosDomainNameValid = (domain: string) =>

@@ -29,6 +29,7 @@ export const EditContactModal: FC = () => {
   const { goBack } = useNavigation();
   const { contact, index } = useModalParams<ModalsEnum.EditContact>();
   const editContactFormValidationSchema = useEditContactFormValidationSchema(index);
+  // TODO: Add preferredRpcUrl when choosing RPC node becomes available
   const resolver = useMemo(() => tezosDomainsResolver(), []);
 
   const formik = useRef<FormikProps<Contact>>(null);

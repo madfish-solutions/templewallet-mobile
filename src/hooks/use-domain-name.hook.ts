@@ -22,6 +22,7 @@ const isMemoized = (pkh: string) =>
 export const useDomainName = (publicKeyHash: string) => {
   const [domainName, setDomainName] = useState(isMemoized(publicKeyHash) || '');
   const dispatch = useDispatch();
+  // TODO: Add preferredRpcUrl when choosing RPC node becomes available
   const resolver = useMemo(() => tezosDomainsResolver(), []);
   const { trackErrorEvent } = useAnalytics();
 

@@ -28,10 +28,6 @@ export const Debug: FC = () => {
 
   return (
     <ScreenContainer>
-      <TezosFallbackDemo />
-      <Divider />
-      <EtherlinkFallbackDemo />
-      <Divider />
       <ImportWatchOnlyDebug />
       <Divider size={formatSize(50)} />
       <ButtonMedium title="Throw Test Error" iconName={IconNameEnum.Alert} onPress={handleThrowErrorButtonsPress} />
@@ -42,6 +38,10 @@ export const Debug: FC = () => {
         onPress={handleThrowRenderErrorButtonsPress}
       />
       {shouldThrowRenderError && <RenderError />}
+      <Divider />
+      <TezosFallbackDemo />
+      <Divider />
+      <EtherlinkFallbackDemo />
       <Divider />
       <AsyncStorageDetails />
     </ScreenContainer>
