@@ -11,7 +11,6 @@ import { isIOS } from 'src/config/system';
 import { useRootHooks } from 'src/hooks/root-hooks';
 import { useAppSplash } from 'src/hooks/use-app-splash.hook';
 import { useDevicePasscode } from 'src/hooks/use-device-passcode.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
 import { ChooseAccountImportType } from 'src/modals/choose-account-import-type';
 import { ChooseWalletImportType } from 'src/modals/choose-wallet-import-type';
@@ -76,7 +75,6 @@ export const RootStackScreen = () => {
   const { isLocked } = useAppLock();
   const isShowLoader = useIsShowLoaderSelector();
   const isAuthorised = useIsAuthorisedSelector();
-  const { isDcpNode } = useNetworkInfo();
 
   useRootHooks();
 
@@ -125,7 +123,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.SelectBaker}
               component={SelectBakerModal}
-              options={useModalOptions(`Select ${isDcpNode ? 'Producer' : 'Baker'}`, true)}
+              options={useModalOptions('Select Baker', true)}
             />
             <RootStack.Screen
               name={ModalsEnum.RevealSeedPhrase}

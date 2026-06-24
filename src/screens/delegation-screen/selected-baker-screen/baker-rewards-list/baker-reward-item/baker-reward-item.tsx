@@ -10,9 +10,8 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { isString } from 'src/utils/is-string';
 import { isTruthy } from 'src/utils/is-truthy';
 import { tzktUrl } from 'src/utils/linking';
@@ -23,6 +22,8 @@ import { CycleStatus, getCycleStatusIcon } from '../utils/get-cycle-status-icon'
 
 import { BakerRewardItemDetails } from './baker-reward-item-details/baker-reward-item-details';
 import { useBakerRewardItemStyles } from './baker-reward-item.styles';
+
+const tezSymbol = TEZ_TOKEN_METADATA.symbol;
 
 export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
   const {
@@ -45,11 +46,7 @@ export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
 
   const styles = useBakerRewardItemStyles();
 
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-
-  const { metadata, isDcpNode } = useNetworkInfo();
 
   const luckPercentage = luck.times(100);
   const efficiencyPercentage = efficiency.multipliedBy(100);
@@ -97,20 +94,20 @@ export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
             <View style={styles.row}>
               <PublicKeyHashText style={styles.accountPkh} publicKeyHash={bakerAddress} />
               <Divider size={formatSize(4)} />
-              <ExternalLinkButton url={tzktUrl(selectedRpcUrl, bakerAddress)} />
+              <ExternalLinkButton url={tzktUrl(bakerAddress)} />
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Delegated:</Text>
               <Text style={styles.textBlack}>
                 {delegated.lt(1) ? '<1' : delegated.decimalPlaces(0, BigNumber.ROUND_FLOOR).toString()}
-                {` ${metadata.symbol} `}
+                {` ${tezSymbol} `}
               </Text>
             </View>
             {status === CycleStatus.UNLOCKED && (
               <View style={styles.cellContainer}>
                 <Text style={styles.cellTitle}>Rewards & Luck:</Text>
                 <Text style={styles.textBlack}>
-                  {`${totalRewards.toString()} ${metadata.symbol} `}
+                  {`${totalRewards.toString()} ${tezSymbol} `}
                   <Text style={luckTextStyle}>
                     ({luckPercentage.gt(0) ? '+' : ''}
                     {luckPercentage.decimalPlaces(0).toString()}%)
@@ -119,18 +116,18 @@ export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
               </View>
             )}
             <View style={styles.cellContainer}>
-              <Text style={styles.cellTitle}>{isDcpNode ? 'Producer' : 'Baker'} fee:</Text>
+              <Text style={styles.cellTitle}>Baker fee:</Text>
               <Text style={styles.textBlack}>
                 {isTruthy(feeStr) ? feeStr : '--'}%
                 <Text style={styles.textGray}>
                   {' '}
-                  ({bakerFee.toString()} {metadata.symbol})
+                  ({bakerFee.toString()} {tezSymbol})
                 </Text>
               </Text>
             </View>
             <View style={styles.cellContainer}>
               <Text style={styles.cellTitle}>Expected payout:</Text>
-              <Text style={styles.textBlack}>{`${expectedPayout} ${metadata.symbol}`}</Text>
+              <Text style={styles.textBlack}>{`${expectedPayout} ${tezSymbol}`}</Text>
             </View>
             {status === CycleStatus.UNLOCKED && (
               <View style={styles.cellContainer}>

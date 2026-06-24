@@ -52,8 +52,7 @@ export const createStakeTransfersParams = async (
     toSymbol: toRoute3Token.symbol,
     toTokenDecimals: toRoute3Token.decimals,
     amount: mutezToTz(swapInputMinusFeeAtomic, asset.decimals).toString(),
-    dexesLimit: isSirsSwap(fromRoute3Token, toRoute3Token) ? MAIN_SIRS_SWAP_MAX_DEXES : MAIN_NON_SIRS_SWAP_MAX_DEXES,
-    rpcUrl: tezos.rpc.getRpcUrl()
+    dexesLimit: isSirsSwap(fromRoute3Token, toRoute3Token) ? MAIN_SIRS_SWAP_MAX_DEXES : MAIN_NON_SIRS_SWAP_MAX_DEXES
   });
 
   if (!isDefined(threeRouteSwapParams.output) || threeRouteSwapParams.output === '0') {

@@ -20,7 +20,6 @@ import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-p
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useInternalAdsAnalyticsWithImpressionCallback } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useListElementIntersection } from 'src/hooks/use-list-element-intersection.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -85,7 +84,6 @@ export const TokensList = memo(() => {
   const isInAppUpdateAvailable = useIsInAppUpdateAvailableSelector();
   const publicKeyHash = useAccountAddressForTezos();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID, PromotionProviderEnum.HypeLab);
-  const { isTezosNode } = useNetworkInfo();
 
   const adPageName = 'Home page';
   const { onAdLoad, onIsVisible, onAdImpression } = useInternalAdsAnalyticsWithImpressionCallback(
@@ -121,13 +119,7 @@ export const TokensList = memo(() => {
     }
   }, [dispatch, partnersPromoShown]);
 
-  const leadingAssets = useMemo(() => {
-    if (isTezosNode) {
-      return [tezosToken, tkeyToken];
-    }
-
-    return [tezosToken];
-  }, [isTezosNode, tezosToken, tkeyToken]);
+  const leadingAssets = useMemo(() => [tezosToken, tkeyToken], [tezosToken, tkeyToken]);
 
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(
     visibleTokensList,

@@ -31,7 +31,7 @@ import { addContactCandidateAddressAction } from 'src/store/contact-book/contact
 import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useAssetExchangeRate, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
 import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -100,8 +100,7 @@ export const SendModal: FC = () => {
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, true, true, leadingAssets);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const resolver = useMemo(() => tezosDomainsResolver(selectedRpcUrl), [selectedRpcUrl]);
+  const resolver = useMemo(() => tezosDomainsResolver(), []);
 
   const isTransferDisabled = filteredReceiversList.length === 0;
   const recipient = filteredReceiversList[0]?.data[0];

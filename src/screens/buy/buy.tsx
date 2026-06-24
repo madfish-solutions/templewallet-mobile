@@ -4,9 +4,9 @@ import { View } from 'react-native';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { BuySelectors } from './buy.selectors';
@@ -14,7 +14,6 @@ import { useBuyStyles } from './buy.styles';
 import { TopUpOption } from './components/top-up-option/top-up-option';
 
 export const Buy = () => {
-  const { metadata } = useNetworkInfo();
   const styles = useBuyStyles();
   const navigateToScreen = useNavigateToScreen();
 
@@ -48,7 +47,7 @@ export const Buy = () => {
       <Disclaimer
         title="Disclaimer"
         texts={[
-          `Temple integrated third-party solutions to buy ${metadata.symbol} or other tokens with cryptocurrencies or Debit/Credit cards.`
+          `Temple integrated third-party solutions to buy ${TEZ_TOKEN_METADATA.symbol} or other tokens with cryptocurrencies or Debit/Credit cards.`
         ]}
       />
     </ScreenContainer>

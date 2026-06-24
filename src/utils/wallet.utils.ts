@@ -8,18 +8,17 @@ import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 import { Shelter } from 'src/shelter/shelter';
 import { ExchangeRateRecord } from 'src/store/currency/currency-state';
-import { useAssetExchangeRate, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import type { RootState } from 'src/store/types';
 import {
   useCurrentAccountTezosBalance,
   useTezosBalanceOfKnownAccountSelector
 } from 'src/store/wallet/wallet-selectors';
-import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { AnalyticsError } from './error-analytics-data.utils';
 import { getSelectedAccountFromWallet } from './get-selected-account-from-wallet.util.ts';
-import { getNetworkGasTokenMetadata } from './network.utils';
 import { createTezosToolkit } from './rpc/tezos-toolkit.utils';
 
 export const withAccount =
@@ -45,11 +44,6 @@ export const withOnRampOverlayState =
       withLatestFrom(state$, (value, { settings }): [T, OnRampOverlayState] => [value, settings.onRampOverlayState])
     );
 
-export const withSelectedRpcUrl =
-  <T>(state$: Observable<RootState>) =>
-  (observable$: Observable<T>) =>
-    observable$.pipe(withLatestFrom(state$, (value, { settings }): [T, string] => [value, settings.selectedRpcUrl]));
-
 export const withUsdToTokenRates =
   <T>(state$: Observable<RootState>) =>
   (observable$: Observable<T>) =>
@@ -57,17 +51,16 @@ export const withUsdToTokenRates =
       withLatestFrom(state$, (value, { currency }): [T, ExchangeRateRecord] => [value, currency.usdToTokenRates.data])
     );
 
-export const sendTransaction$ = (rpcUrl: string, senderPkh: string, opParams: ParamsWithKind[]) =>
+export const sendTransaction$ = (senderPkh: string, opParams: ParamsWithKind[]) =>
   Shelter.getTezosSigner$(senderPkh).pipe(
     switchMap(signer => {
-      const tezos = createTezosToolkit(rpcUrl);
+      const tezos = createTezosToolkit();
       tezos.setSignerProvider(signer);
 
       return tezos.contract.batch(opParams).send();
     }),
     catchError(err => {
-      const makeAnalyticsError = (message?: string) =>
-        new AnalyticsError(err, [senderPkh], { rpcUrl, opParams }, message);
+      const makeAnalyticsError = (message?: string) => new AnalyticsError(err, [senderPkh], { opParams }, message);
 
       try {
         const errorBody = JSON.parse(err.body);
@@ -85,18 +78,16 @@ export const sendTransaction$ = (rpcUrl: string, senderPkh: string, opParams: Pa
   );
 
 export const useTezosToken = (balance: string) => {
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const metadata = getNetworkGasTokenMetadata(selectedRpcUrl);
   const exchangeRate = useAssetExchangeRate(TEZ_TOKEN_SLUG);
 
   return useMemo<TokenInterface>(
     () => ({
       visibility: VisibilityEnum.Visible,
-      ...metadata,
+      ...TEZ_TOKEN_METADATA,
       balance,
       exchangeRate
     }),
-    [metadata, balance, exchangeRate]
+    [balance, exchangeRate]
   );
 };
 

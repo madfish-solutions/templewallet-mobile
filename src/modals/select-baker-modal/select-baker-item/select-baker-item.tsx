@@ -7,10 +7,9 @@ import { Divider } from 'src/components/divider/divider';
 import { ExternalLinkButton } from 'src/components/icon/external-link-button/external-link-button';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TruncatedText } from 'src/components/truncated-text';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
@@ -31,9 +30,6 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
   const styles = useSelectBakerItemStyles();
   const isRecommendedBaker = baker.address === TEMPLE_BAKER_ADDRESS || baker.address === EVERSTAKE_BAKER_ADDRESS;
   const isHelpUkraineBaker = baker.address === HELP_UKRAINE_BAKER_ADDRESS;
-  const { metadata, isDcpNode } = useNetworkInfo();
-
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   const { fee, capacity, freeSpace, minBalance } = baker.delegation;
   const feeStr = formatToPercentStr(fee);
@@ -61,37 +57,35 @@ export const SelectBakerItem: FC<Props> = ({ baker, selected, onPress, testID })
         <View style={styles.actionsContainer}>
           <PublicKeyHashText style={styles.accountPkh} publicKeyHash={baker.address} />
           <Divider size={formatSize(4)} />
-          <ExternalLinkButton url={tzktUrl(selectedRpcUrl, baker.address)} />
+          <ExternalLinkButton url={tzktUrl(baker.address)} />
         </View>
       </View>
 
       <Divider size={formatSize(8)} />
 
-      {!isDcpNode && (
-        <View style={styles.lowerContainer}>
-          <View>
-            <Text style={styles.cellTitle}>Delegated:</Text>
-            <Text style={styles.cellValueText}>{isTruthy(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
-          </View>
-          <Divider size={formatSize(16)} />
-          <View>
-            <Text style={styles.cellTitle}>Space:</Text>
-            <Text style={styles.cellValueText}>
-              {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {metadata.symbol}
-            </Text>
-          </View>
-          <Divider size={formatSize(16)} />
-          <View>
-            <Text style={styles.cellTitle}>Baker fee:</Text>
-            <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
-          </View>
-          <Divider size={formatSize(16)} />
-          <View>
-            <Text style={styles.cellTitle}>Min Balance:</Text>
-            <Text style={styles.cellValueText}>{isDefined(minBalance) ? `${minBalance} TEZ` : '--'}</Text>
-          </View>
+      <View style={styles.lowerContainer}>
+        <View>
+          <Text style={styles.cellTitle}>Delegated:</Text>
+          <Text style={styles.cellValueText}>{isTruthy(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
         </View>
-      )}
+        <Divider size={formatSize(16)} />
+        <View>
+          <Text style={styles.cellTitle}>Space:</Text>
+          <Text style={styles.cellValueText}>
+            {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {TEZ_TOKEN_METADATA.symbol}
+          </Text>
+        </View>
+        <Divider size={formatSize(16)} />
+        <View>
+          <Text style={styles.cellTitle}>Baker fee:</Text>
+          <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+        </View>
+        <Divider size={formatSize(16)} />
+        <View>
+          <Text style={styles.cellTitle}>Min Balance:</Text>
+          <Text style={styles.cellValueText}>{isDefined(minBalance) ? `${minBalance} TEZ` : '--'}</Text>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 };

@@ -17,7 +17,6 @@ import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { dispatch } from 'src/store';
 import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
 import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
@@ -38,12 +37,8 @@ type Props = Omit<InternalOperationsConfirmationModalParams, 'type'> & {
   onEstimationComplete?: EmptyFn;
 };
 
-const approveInternalOperationRequest = ({
-  rpcUrl,
-  sender,
-  opParams
-}: ApproveInternalOperationRequestActionPayloadInterface) =>
-  sendTransaction$(rpcUrl, sender.address, opParams).pipe(
+const approveInternalOperationRequest = ({ sender, opParams }: ApproveInternalOperationRequestActionPayloadInterface) =>
+  sendTransaction$(sender.address, opParams).pipe(
     switchMap(({ hash }) =>
       opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === EVERSTAKE_BAKER_ADDRESS
         ? of(
@@ -84,7 +79,6 @@ export const InternalOperationsConfirmation: FC<Props> = ({
     throw new DeadEndBoundaryError();
   }
 
-  const rpcUrl = useSelectedRpcUrlSelector();
   const lastSetOverlayStateRef = useRef<OnRampOverlayState | null>(null);
   const { trackErrorEvent } = useAnalytics();
 
@@ -141,7 +135,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
       opParams={opParams}
       isLoading={isLoading}
       onEstimationError={handleEstimationError}
-      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: tezosAccount, opParams: newOpParams })}
+      onSubmit={newOpParams => confirmRequest({ sender: tezosAccount, opParams: newOpParams })}
       testID={testID}
       disclaimer={disclaimer}
       renderPreview={renderPreview}

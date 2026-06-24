@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { ONE_MINUTE } from 'src/config/fixed-times';
 import { EMPTY_PUBLIC_KEY_HASH } from 'src/config/system';
 import { setIsDomainAddressShown } from 'src/store/settings/settings-actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -23,8 +22,7 @@ const isMemoized = (pkh: string) =>
 export const useDomainName = (publicKeyHash: string) => {
   const [domainName, setDomainName] = useState(isMemoized(publicKeyHash) || '');
   const dispatch = useDispatch();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const resolver = useMemo(() => tezosDomainsResolver(selectedRpcUrl), [selectedRpcUrl]);
+  const resolver = useMemo(() => tezosDomainsResolver(), []);
   const { trackErrorEvent } = useAnalytics();
 
   const updateDomainReverseName = async (pkh: string) => {

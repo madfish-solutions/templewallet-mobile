@@ -127,7 +127,7 @@ export const DetailsCard = memo<DetailsCardProps>(
         } catch (e) {
           showErrorToastByError(e);
           trackErrorEvent('EarnOpportunityClaimRewardsError', e, [], {
-            claimRewardsInput: { rpcUrl: tezos.rpc.getRpcUrl(), contractAddress, lastStakeId }
+            claimRewardsInput: { contractAddress, lastStakeId }
           });
         } finally {
           setClaimPending(false);

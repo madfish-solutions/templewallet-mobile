@@ -14,13 +14,13 @@ import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { emptyFn } from 'src/config/general';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { getAccountForTezos } from 'src/utils/account.utils.ts';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -70,8 +70,6 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
 
-  const { metadata } = useNetworkInfo();
-
   const { trackEvent } = useAnalytics();
 
   const tezosAccount = getAccountForTezos(sender);
@@ -113,7 +111,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
 
       if (isDefined(gasFeeSum)) {
         const isLastOpParam = index === opParams.length - 1;
-        patchedOpParam.fee = isLastOpParam ? tzToMutez(gasFeeSum, metadata.decimals).toNumber() : 0;
+        patchedOpParam.fee = isLastOpParam ? tzToMutez(gasFeeSum, TEZ_TOKEN_METADATA.decimals).toNumber() : 0;
       }
 
       if (isDefined(storageLimitSum) && onlyOneOperation) {

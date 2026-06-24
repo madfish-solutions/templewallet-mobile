@@ -16,13 +16,13 @@ import memoize from 'memoizee';
 import { isDefined } from '../is-defined';
 
 import { FastRpcClient, getFastRpcClient } from './fast-rpc';
-import { FALLBACK_RPC_LIST, TEMPLE_RPC } from './rpc-list';
+import { FALLBACK_TEZOS_RPC_LIST, TEMPLE_RPC } from './rpc-list';
 
 /**
  * A lightweight fallback client that sequentially tries multiple FastRpcClient instances
  * until one succeeds. Inspired by Viem's fallback transport policy.
  */
-class FallbackRpcClient extends RpcClient {
+export class FallbackRpcClient extends RpcClient {
   private readonly clients: FastRpcClient[];
   private preferredIndex = 0;
 
@@ -258,10 +258,6 @@ function isNonRetryableTezosError(error: unknown): boolean {
   return false;
 }
 
-export const getFallbackRpcClient = memoize((rpc: string) => {
-  if (rpc === TEMPLE_RPC.url) {
-    return new FallbackRpcClient([rpc, ...FALLBACK_RPC_LIST]);
-  }
-
-  return getFastRpcClient(rpc);
-});
+export const getFallbackRpcClient = memoize(
+  () => new FallbackRpcClient([TEMPLE_RPC.url].concat(FALLBACK_TEZOS_RPC_LIST))
+);

@@ -49,7 +49,7 @@ const parser = (origJSON: string): ReturnType<(typeof JSON)['parse']> => {
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest): string;
 function getRoute3ParametrizedUrlPart(params: Route3LbSwapParamsRequest): string;
 function getRoute3ParametrizedUrlPart(params: Route3SwapParamsRequest | Route3LbSwapParamsRequest) {
-  const { fromSymbol, toSymbol, amount, toTokenDecimals, rpcUrl, ...queryParams } = params;
+  const { fromSymbol, toSymbol, amount, toTokenDecimals, ...queryParams } = params;
   const searchParams = new URLSearchParams(
     transform<typeof queryParams, StringRecord>(
       queryParams,
@@ -141,10 +141,10 @@ const correctOutput = <T extends Route3TreeNode>(tree: T, newOutput: BigNumber, 
 export const fetchRoute3LiquidityBakingParams = async (
   params: Route3LbSwapParamsRequest
 ): Promise<Route3LiquidityBakingParamsResponse> => {
-  const { rpcUrl, toSymbol, toTokenDecimals } = params;
+  const { toSymbol, toTokenDecimals } = params;
 
   if (params.fromSymbol === THREE_ROUTE_SIRS_TOKEN.symbol) {
-    const { tokenPool, xtzPool, lqtTotal } = await getLbStorage(params.rpcUrl);
+    const { tokenPool, xtzPool, lqtTotal } = await getLbStorage();
     const sirsAtomicAmount = tzToMutez(new BigNumber(params.amount), THREE_ROUTE_SIRS_TOKEN.decimals);
     const tzbtcAtomicAmount = sirsAtomicAmount
       .times(tokenPool)
@@ -174,7 +174,6 @@ export const fetchRoute3LiquidityBakingParams = async (
             toSymbol: toSymbol,
             amount: xtzInAmount,
             toTokenDecimals,
-            rpcUrl,
             dexesLimit: params.xtzDexesLimit,
             showTree: true
           }),
@@ -195,7 +194,6 @@ export const fetchRoute3LiquidityBakingParams = async (
             toSymbol: toSymbol,
             amount: tzbtcInAmount,
             toTokenDecimals,
-            rpcUrl,
             dexesLimit: params.tzbtcDexesLimit,
             showTree: true
           })

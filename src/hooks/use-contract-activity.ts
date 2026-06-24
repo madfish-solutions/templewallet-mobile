@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ActivityGroup } from 'src/interfaces/activity.interface';
 import { UseActivityInterface } from 'src/interfaces/use-activity.interface';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -18,7 +17,6 @@ interface ContractActivityState {
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
   const selectedAccount = useAccount();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
   const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
 
@@ -35,12 +33,11 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
       let fetchedActivities: Array<ActivityGroup> = [];
       let isError = false;
       try {
-        fetchedActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
+        fetchedActivities = await loadActivity(selectedAccount, tokenSlug);
       } catch (error) {
         console.error(error);
         trackErrorEvent('InitialLoadContractActivityError', error, selectedTezosAddress ? [selectedTezosAddress] : [], {
           tokenSlug,
-          selectedRpcUrl,
           refresh
         });
         isError = true;
@@ -65,7 +62,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         });
       }
     },
-    [selectedRpcUrl, selectedAccount, selectedTezosAddress, tokenSlug, trackErrorEvent]
+    [selectedAccount, selectedTezosAddress, tokenSlug, trackErrorEvent]
   );
 
   useEffect(() => {
@@ -90,14 +87,13 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         if (!isLoading) {
           setState(prev => ({ ...prev, isLoading: true }));
 
-          newActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
+          newActivities = await loadActivity(selectedAccount, tokenSlug, lastItem);
         }
       }
     } catch (error) {
       console.error(error);
       trackErrorEvent('HandleUpdateContractActivityError', error, selectedTezosAddress ? [selectedTezosAddress] : [], {
         tokenSlug,
-        selectedRpcUrl,
         lastItem
       });
     } finally {

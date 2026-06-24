@@ -7,7 +7,7 @@ export enum SettingsSelectors {
   secureButton = 'Settings/Secure Button',
   notificationsButton = 'Settings/Notifications Button',
   authorizedDAppsButton = 'Settings/Authorized DApps Button',
-  defaultNodeRPCButton = 'Settings/Default node (RPC) Button',
+  networksButton = 'Settings/Networks Button',
   aboutButton = 'Settings/About Button',
   shareTempleWalletButton = 'Settings/Share Temple Wallet Button',
   shareSuccess = 'Settings/Success sharing Temple Wallet',

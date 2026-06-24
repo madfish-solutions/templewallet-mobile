@@ -19,7 +19,6 @@ import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -44,7 +43,6 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
 
   const styles = useCollectibleItemStyles();
   const navigateToModal = useNavigateToModal();
-  const selectedRpc = useSelectedRpcUrlSelector();
 
   const lastPrice = useMemo(() => {
     const lastDeal = item.lastDeal;
@@ -116,7 +114,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
       title: `Sell for ${priceToDisplay} ${currency.symbol}`,
       onPress: () =>
         void buildSellCollectibleParams(
-          createTezosToolkit(selectedRpc),
+          createTezosToolkit(),
           accountPkh,
           collectionContract,
           item.id,
@@ -129,15 +127,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
           })
         )
     };
-  }, [
-    accountPkh,
-    selectedRpc,
-    isAccountHolder,
-    collectionContract,
-    item.id,
-    extraDetails?.offers_active,
-    navigateToModal
-  ]);
+  }, [accountPkh, isAccountHolder, collectionContract, item.id, extraDetails?.offers_active, navigateToModal]);
 
   const secondButton = useMemo(() => {
     if (LIMIT_NFT_FEATURES) {
@@ -194,24 +184,14 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
     return {
       title: `Buy for ${priceToDisplay} ${purchaseCurrency.symbol}`,
       onPress: () =>
-        void buildBuyCollectibleParams(createTezosToolkit(selectedRpc), accountPkh, listing, purchaseCurrency).then(
-          opParams =>
-            navigateToModal(ModalsEnum.Confirmation, {
-              type: ConfirmationTypeEnum.InternalOperations,
-              opParams
-            })
+        void buildBuyCollectibleParams(createTezosToolkit(), accountPkh, listing, purchaseCurrency).then(opParams =>
+          navigateToModal(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams
+          })
         )
     };
-  }, [
-    accountPkh,
-    selectedRpc,
-    isAccountHolder,
-    collectionContract,
-    item.id,
-    item.holders,
-    item.listingsActive,
-    navigateToModal
-  ]);
+  }, [accountPkh, isAccountHolder, collectionContract, item.id, item.holders, item.listingsActive, navigateToModal]);
 
   const handleShare = useShareNFT(slug, item.thumbnailUri, item.name, item.description);
 

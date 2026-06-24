@@ -46,14 +46,6 @@ export const TEZ_SHIELDED_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.TezShieldedToken
 };
 
-export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
-  ...emptyTokenMetadata,
-  name: 'FILM',
-  symbol: 'FILM',
-  decimals: 6,
-  iconName: IconNameEnum.FilmToken
-};
-
 export const TZBTC_TOKEN_METADATA: TokenMetadataInterface = {
   id: 0,
   address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',

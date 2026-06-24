@@ -1,4 +1,5 @@
 import { Action } from '@reduxjs/toolkit';
+import { RpcClient } from '@taquito/rpc';
 import { combineEpics, StateObservable } from 'redux-observable';
 import { concat, EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, endWith, filter, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
@@ -12,7 +13,8 @@ import { Shelter } from 'src/shelter/shelter';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
-import { withAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { getFallbackRpcClient } from 'src/utils/rpc/fallback-rpc';
+import { withAccount } from 'src/utils/wallet.utils';
 
 import { navigateAction, navigateBackAction } from '../root-state.actions';
 import { hideLoaderAction, showLoaderAction } from '../settings/settings-actions';
@@ -113,8 +115,7 @@ const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadShieldedBalanceActions.submit),
     withAccount(state$),
-    withSelectedRpcUrl(state$),
-    switchMap(([[, selectedAccount], rpcUrl]) => {
+    switchMap(([, selectedAccount]) => {
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
 
       if (!publicKeyHash) {
@@ -127,7 +128,7 @@ const loadShieldedBalanceEpic: AnyActionEpic = (action$, state$) =>
         return EMPTY;
       }
 
-      return from(saplingService.getShieldedBalance(saplingState.viewingKey, rpcUrl)).pipe(
+      return from(saplingService.getShieldedBalance(saplingState.viewingKey, getFallbackRpcClient())).pipe(
         concatMap(balance =>
           of(
             loadShieldedBalanceActions.success({
@@ -150,8 +151,7 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
     ofType(prepareSaplingTransactionActions.submit),
     toPayload(),
     withAccount(state$),
-    withSelectedRpcUrl(state$),
-    switchMap(([[payload, selectedAccount], rpcUrl]) => {
+    switchMap(([payload, selectedAccount]) => {
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
 
       if (!publicKeyHash) {
@@ -181,7 +181,7 @@ const prepareSaplingTransactionEpic: AnyActionEpic = (action$, state$) =>
           publicKeyHash,
           hdIndex,
           sask =>
-            from(prepareSaplingTx(sask, payload, publicKeyHash, rpcUrl, state$)).pipe(
+            from(prepareSaplingTx(sask, payload, publicKeyHash, getFallbackRpcClient(), state$)).pipe(
               takeUntil(cancelPreparation$),
               map(opParams => prepareSaplingTransactionActions.success(opParams))
             ),
@@ -203,7 +203,7 @@ async function prepareSaplingTx(
   sask: string,
   payload: PrepareSaplingTxPayload,
   publicKeyHash: string,
-  rpcUrl: string,
+  rpcClient: RpcClient,
   state$: StateObservable<RootState>
 ) {
   const { BigNumber } = await import('bignumber.js');
@@ -222,7 +222,7 @@ async function prepareSaplingTx(
         spendingKey: sask,
         saplingAddress,
         amount,
-        rpcUrl,
+        rpcClient,
         memo: payload.memo
       });
 
@@ -233,7 +233,7 @@ async function prepareSaplingTx(
         spendingKey: sask,
         recipientPublicKeyHash: payload.recipientAddress,
         amount,
-        rpcUrl
+        rpcClient
       });
 
       return result.opParams;
@@ -244,7 +244,7 @@ async function prepareSaplingTx(
         recipientSaplingAddress: payload.recipientAddress,
         amount,
         memo: payload.memo,
-        rpcUrl
+        rpcClient
       });
 
       return result.opParams;
@@ -258,8 +258,7 @@ const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSaplingTransactionHistoryActions.submit),
     withAccount(state$),
-    withSelectedRpcUrl(state$),
-    switchMap(([[, selectedAccount], rpcUrl]) => {
+    switchMap(([, selectedAccount]) => {
       const publicKeyHash = getAccountAddressForTezos(selectedAccount);
 
       if (!publicKeyHash) {
@@ -272,7 +271,7 @@ const loadSaplingTransactionHistoryEpic: AnyActionEpic = (action$, state$) =>
         return EMPTY;
       }
 
-      return from(saplingService.getTransactionHistory(saplingState.viewingKey, rpcUrl)).pipe(
+      return from(saplingService.getTransactionHistory(saplingState.viewingKey, getFallbackRpcClient())).pipe(
         concatMap(history => {
           const allTransactions = [...history.incoming, ...history.outgoing].sort((a, b) => b.position - a.position);
 

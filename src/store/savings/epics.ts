@@ -9,7 +9,7 @@ import { showFailedStakeLoadWarning } from 'src/toast/toast.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { UserAnalyticsCredentials, withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
-import { withAccount, withSelectedRpcUrl, withUsdToTokenRates } from 'src/utils/wallet.utils';
+import { withAccount, withUsdToTokenRates } from 'src/utils/wallet.utils';
 
 import { AnyActionEpic } from '../types';
 
@@ -37,11 +37,10 @@ const makeSavingsListErrorHandlerBase =
 const loadSingleSavingLastStake: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSingleSavingStakeActions.submit),
-    withSelectedRpcUrl(state$),
     withAccount(state$),
     withUserAnalyticsCredentials(state$),
-    mergeMap(([[[{ payload }, rpcUrl], account], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadSingleSavingStake$(payload.item, account, rpcUrl).pipe(
+    mergeMap(([[{ payload }, account], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
+      loadSingleSavingStake$(payload.item, account).pipe(
         map(stake =>
           loadSingleSavingStakeActions.success({
             stake,
@@ -58,7 +57,7 @@ const loadSingleSavingLastStake: AnyActionEpic = (action$, state$) =>
               err,
               [],
               { userId, ABTestingCategory },
-              { item: payload.item, rpcUrl }
+              { item: payload.item }
             );
           }
 
@@ -78,11 +77,10 @@ const loadAllSavingsItemsErrorHandlerBase = makeSavingsListErrorHandlerBase('Loa
 const loadAllSavingsItems: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadAllSavingsAction),
-    withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[[, rpcUrl], rates], userAnalyticsCredentials]) =>
-      getYouvesSavingsItems$(rates, rpcUrl).pipe(
+    switchMap(([[, rates], userAnalyticsCredentials]) =>
+      getYouvesSavingsItems$(rates).pipe(
         switchMap(youvesSavings =>
           of(loadSavingsByProviderActions.success({ data: youvesSavings, provider: SavingsProviderEnum.Youves }))
         ),
@@ -103,11 +101,10 @@ const loadSavingsItemsByProviderErrorHandlerBase = makeSavingsListErrorHandlerBa
 const loadSavingsItemsByProvider: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSavingsByProviderActions.submit),
-    withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[[{ payload: savingsProvider }, rpcUrl], rates], userAnalyticsCredentials]) =>
-      getYouvesSavingsItems$(rates, rpcUrl).pipe(
+    switchMap(([[{ payload: savingsProvider }, rates], userAnalyticsCredentials]) =>
+      getYouvesSavingsItems$(rates).pipe(
         map(data => loadSavingsByProviderActions.success({ data, provider: savingsProvider })),
         catchError(err => {
           loadSavingsItemsByProviderErrorHandlerBase(err, userAnalyticsCredentials, savingsProvider);
@@ -124,10 +121,9 @@ const loadAllSavingsItemsAndStakesErrorHandlerBase = makeSavingsListErrorHandler
 const loadAllSavingsItemsAndStakes: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadAllSavingsAndStakesAction),
-    withSelectedRpcUrl(state$),
     withUsdToTokenRates(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[[{ payload: accountPkh }, rpcUrl], rates], userAnalyticsCredentials]) => {
+    switchMap(([[{ payload: accountPkh }, rates], userAnalyticsCredentials]) => {
       const makeSavingsListErrorHandler = (savingsProvider: SavingsProviderEnum) => (err: unknown) => {
         loadAllSavingsItemsAndStakesErrorHandlerBase(err, userAnalyticsCredentials, savingsProvider);
 
@@ -138,7 +134,7 @@ const loadAllSavingsItemsAndStakes: AnyActionEpic = (action$, state$) =>
       };
 
       return merge(
-        getYouvesSavingsItems$(rates, rpcUrl).pipe(
+        getYouvesSavingsItems$(rates).pipe(
           switchMap(youvesSavings =>
             of(
               loadSavingsByProviderActions.success({ data: youvesSavings, provider: SavingsProviderEnum.Youves }),

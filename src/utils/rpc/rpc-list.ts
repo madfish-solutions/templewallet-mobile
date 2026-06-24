@@ -1,5 +1,6 @@
 import { RpcInterface } from 'src/interfaces/rpc.interface';
 
+/** @deprecated: Not going to support Talentnet */
 export const DCP_RPC: RpcInterface = {
   name: 'T4L3NT Mainnet',
   url: 'https://rpc.decentralized.pictures'
@@ -26,14 +27,18 @@ export const RpcList: RpcInterface[] = [
   {
     name: 'ECAD Labs Mainnet',
     url: 'https://mainnet.api.tez.ie'
-  },
-  DCP_RPC
+  }
 ];
 
-export const FALLBACK_RPC_LIST = [
+export const FALLBACK_TEZOS_RPC_LIST = [
   'https://mainnet.smartpy.io',
   'https://mainnet.api.tez.ie',
   'https://rpc.tzkt.io/mainnet',
   'https://rpc.tzbeta.net',
   'https://mainnet.tezos.ecadinfra.com'
+];
+
+export const FALLBACK_ETHERLINK_RPC_LIST = [
+  'https://rpc.ankr.com/etherlink_mainnet',
+  'https://node.mainnet.etherlink.com'
 ];

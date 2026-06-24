@@ -16,30 +16,14 @@ import { throwError$ } from './rxjs.utils';
 
 export function getTransferParams$(
   asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  tezos: TezosToolkit,
-  senderPkh: string,
-  receiverPublicKeyHash: string,
-  amount: BigNumber
-): Observable<TransferParams>;
-export function getTransferParams$(
-  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  rpcUrl: string,
-  sender: Account,
-  receiverPublicKeyHash: string,
-  amount: BigNumber
-): Observable<TransferParams>;
-export function getTransferParams$(
-  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  rpcUrlOrTezos: string | TezosToolkit,
+  tezosFromArgs: TezosToolkit | undefined,
   sender: Account | string,
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams> {
   const { id, address } = asset;
   const tezos =
-    typeof rpcUrlOrTezos === 'string'
-      ? createReadOnlyTezosToolkit(rpcUrlOrTezos, getAccountForTezos(sender as Account))
-      : rpcUrlOrTezos;
+    tezosFromArgs ?? createReadOnlyTezosToolkit(typeof sender === 'string' ? undefined : getAccountForTezos(sender));
   const senderPkh = typeof sender === 'string' ? sender : getAccountAddressForTezos(sender);
 
   if (!senderPkh) {

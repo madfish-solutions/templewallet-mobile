@@ -9,7 +9,9 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { AsyncStorageDetails } from './async-storage-details';
+import { EtherlinkFallbackDemo } from './etherlink-fallback-demo';
 import { ImportWatchOnlyDebug } from './import-watch-only-debug/import-watch-only-debug';
+import { TezosFallbackDemo } from './tezos-fallback-demo';
 
 export const Debug: FC = () => {
   const [shouldThrowRenderError, setShouldThrowRenderError] = useState(false);
@@ -26,6 +28,10 @@ export const Debug: FC = () => {
 
   return (
     <ScreenContainer>
+      <TezosFallbackDemo />
+      <Divider />
+      <EtherlinkFallbackDemo />
+      <Divider />
       <ImportWatchOnlyDebug />
       <Divider size={formatSize(50)} />
       <ButtonMedium title="Throw Test Error" iconName={IconNameEnum.Alert} onPress={handleThrowErrorButtonsPress} />

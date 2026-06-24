@@ -6,9 +6,8 @@ import { forkJoin, from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { scamlistApi, tezosMetadataApi, whitelistApi } from 'src/api.service';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import type { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -16,7 +15,6 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { getDollarValue } from './balance.utils';
 import { isDefined } from './is-defined';
 import { isTruthy } from './is-truthy';
-import { getNetworkGasTokenMetadata, isDcpNode } from './network.utils';
 
 export interface TokenMetadataResponse {
   decimals: number;
@@ -93,21 +91,18 @@ export const transformWhitelistToTokenMetadata = (token: WhitelistTokensItem): T
 
 export const useTokenMetadataGetter = () => {
   const tokensMetadata = useTokensMetadataSelector();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
   return useCallback(
     (slug: string): TokenMetadataInterface | undefined =>
-      slug === TEZ_TOKEN_SLUG ? getNetworkGasTokenMetadata(selectedRpcUrl) : tokensMetadata[slug],
-    [tokensMetadata, selectedRpcUrl]
+      slug === TEZ_TOKEN_SLUG ? TEZ_TOKEN_METADATA : tokensMetadata[slug],
+    [tokensMetadata]
   );
 };
 
-export const loadWhitelist$ = (selectedRpc: string) =>
-  isDcpNode(selectedRpc)
-    ? from([])
-    : from(whitelistApi.get<WhitelistResponse>('tokens/quipuswap.whitelist.json')).pipe(
-        map(({ data }) => data.tokens?.filter(x => x.contractAddress !== 'tez') ?? [])
-      );
+export const loadWhitelist$ = () =>
+  from(whitelistApi.get<WhitelistResponse>('tokens/quipuswap.whitelist.json')).pipe(
+    map(({ data }) => data.tokens?.filter(x => x.contractAddress !== 'tez') ?? [])
+  );
 
 export const loadScamlist$ = () =>
   from(scamlistApi.get<ScamlistResponse>('tokens/scamlist.json')).pipe(map(({ data }) => data.slugs));

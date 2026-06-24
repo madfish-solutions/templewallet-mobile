@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { from, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
-import { getTzktApi } from 'src/api.service';
+import { tzktApi } from 'src/api.service';
 import { ContractType } from 'src/interfaces/contract.type';
 import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
 import { getTokenType, toTokenSlug } from 'src/token/utils/token.utils';
@@ -18,11 +18,11 @@ const TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS = 'KT1GBZmSxmnKJXGMdMLbugPfLyUPmuLSMwK
 /** TZKT API max items limit */
 const LIMIT = 10000;
 
-export const fetchAllAssetsBalancesFromTzkt = async (selectedRpcUrl: string, account: string) => {
+export const fetchAllAssetsBalancesFromTzkt = async (account: string) => {
   const balances: StringRecord = {};
 
   await (async function recourse(offset: number) {
-    const { data } = await fetchAssetsBalancesFromTzktOnce(selectedRpcUrl, account, offset);
+    const { data } = await fetchAssetsBalancesFromTzktOnce(account, offset);
 
     for (const [address, tokenId, balance] of data) {
       const slug = toTokenSlug(address, tokenId);
@@ -39,8 +39,8 @@ export const fetchAllAssetsBalancesFromTzkt = async (selectedRpcUrl: string, acc
 
 type AssetBalance = [address: string, tokenId: string, balance: string];
 
-const fetchAssetsBalancesFromTzktOnce = (selectedRpcUrl: string, account: string, offset = 0) =>
-  getTzktApi(selectedRpcUrl).get<AssetBalance[]>('/tokens/balances', {
+const fetchAssetsBalancesFromTzktOnce = (account: string, offset = 0) =>
+  tzktApi.get<AssetBalance[]>('/tokens/balances', {
     params: {
       account,
       'token.contract.ne': TEZOS_DOMAINS_NAME_REGISTRY_ADDRESS,
@@ -50,13 +50,13 @@ const fetchAssetsBalancesFromTzktOnce = (selectedRpcUrl: string, account: string
     }
   });
 
-export const loadTezosBalance$ = (rpcUrl: string, publicKeyHash: string) =>
-  from(createReadOnlyTezosToolkit(rpcUrl, tezosReadOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
+export const loadTezosBalance$ = (publicKeyHash: string) =>
+  from(createReadOnlyTezosToolkit(tezosReadOnlySignerAccount).tz.getBalance(publicKeyHash)).pipe(
     map(balance => balance.toFixed())
   );
 
-export const loadTezosBalances$ = (rpcUrl: string, publicKeyHashes: string[]) => {
-  const tezos = createReadOnlyTezosToolkit(rpcUrl, tezosReadOnlySignerAccount);
+export const loadTezosBalances$ = (publicKeyHashes: string[]) => {
+  const tezos = createReadOnlyTezosToolkit(tezosReadOnlySignerAccount);
 
   return from(Promise.allSettled(publicKeyHashes.map(publicKeyHash => tezos.tz.getBalance(publicKeyHash)))).pipe(
     map(results =>
@@ -94,12 +94,11 @@ export const getBalance = async (
 };
 
 export const loadAssetBalance$ = (
-  rpcUrl: string,
   publicKeyHash: string,
   assetSlug: string,
   { isAnalyticsEnabled, userId, ABTestingCategory }: UserAnalyticsCredentials
 ) => {
-  const tezos = createReadOnlyTezosToolkit(rpcUrl, tezosReadOnlySignerAccount);
+  const tezos = createReadOnlyTezosToolkit(tezosReadOnlySignerAccount);
   const [assetAddress, assetId = '0'] = assetSlug.split('_');
 
   const cachedRecord = cachedResults[`${publicKeyHash}_${assetSlug}`];
@@ -126,7 +125,7 @@ export const loadAssetBalance$ = (
           error,
           [publicKeyHash],
           { userId, ABTestingCategory },
-          { rpcUrl, assetSlug }
+          { assetSlug }
         );
       }
 

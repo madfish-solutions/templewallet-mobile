@@ -3,10 +3,9 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 import { Text, TextInput, View } from 'react-native';
 
 import { DEFAULT_EXPECTED_GAS_EXPENSE, emptyFn } from 'src/config/general';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
-import { useFiatCurrencySelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useFiatCurrencySelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountTezosBalance, useTokenBalanceGetter } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
@@ -17,7 +16,6 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
-import { getNetworkGasTokenMetadata } from 'src/utils/network.utils';
 import { isCollectible, mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import { AssetValueText } from '../asset-value-text/asset-value-text';
@@ -125,10 +123,6 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
 
       return slug === TEZ_TOKEN_SLUG ? tezosBalance : getTokenBalance(slug) ?? value.asset.balance ?? '0';
     }, [getTokenBalance, slug, tezosBalance, value.asset, balanceFromProps]);
-
-    const { isTezosNode } = useNetworkInfo();
-    const selectedRpcUrl = useSelectedRpcUrlSelector();
-    const gasToken = getNetworkGasTokenMetadata(selectedRpcUrl);
 
     const amountInputRef = useRef<TextInput>(null);
 
@@ -243,7 +237,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     const handleMaxButtonPress = useCallback(() => {
       if (isDefined(token)) {
         const { address, id, balance } = token;
-        const isGasToken = toTokenSlug(address, id) === toTokenSlug(gasToken.address, gasToken.id);
+        const isGasToken = toTokenSlug(address, id) === TEZ_TOKEN_SLUG;
         const isGasTokenMaxAmountGuard = isGasToken ? tzToMutez(new BigNumber(expectedGasExpense), token.decimals) : 0;
         const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
@@ -255,7 +249,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
           asset: token
         });
       }
-    }, [token, gasToken, onValueChange, amountInputRef, trackEvent, expectedGasExpense]);
+    }, [token, onValueChange, amountInputRef, trackEvent, expectedGasExpense, maxButtonTestID]);
 
     useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
@@ -263,7 +257,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
       <>
         <View style={styles.headerContainer}>
           <Label label={label} />
-          {isTezosNode && toUsdToggle && hasExchangeRate && (
+          {toUsdToggle && hasExchangeRate && (
             <TextSegmentControl
               width={formatSize(158)}
               selectedIndex={inputTypeIndex}

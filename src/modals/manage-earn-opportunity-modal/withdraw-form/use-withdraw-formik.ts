@@ -132,7 +132,6 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
             doWithdrawInput: {
               earnOpportunity,
               tokenIndex,
-              rpcUrl: tezos.rpc.getRpcUrl(),
               stake,
               percentage: PERCENTAGE_OPTIONS[amountOptionIndex],
               slippageTolerance

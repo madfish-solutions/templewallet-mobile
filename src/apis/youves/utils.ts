@@ -54,15 +54,14 @@ class MemoryStorage implements Storage {
   }
 }
 
-const getCreateEngineCacheKey = (rpcUrl: string, token: AssetDefinition, account?: Account) =>
-  [rpcUrl, token.id, account?.id].join('_');
+const getCreateEngineCacheKey = (token: AssetDefinition, account?: Account) => [token.id, account?.id].join('_');
 
 export const createEngineMemoized = memoize(
-  (rpcUrl: string, token: AssetDefinition, account?: Account) => {
+  (token: AssetDefinition, account?: Account) => {
     const tezosAccount = account ? getAccountForTezos(account) : null;
 
     return createEngine({
-      tezos: createReadOnlyTezosToolkit(rpcUrl, tezosAccount),
+      tezos: createReadOnlyTezosToolkit(tezosAccount),
       contracts: token,
       storage: new MemoryStorage(),
       indexerConfig: INDEXER_CONFIG,
@@ -72,29 +71,25 @@ export const createEngineMemoized = memoize(
     });
   },
   {
-    normalizer: ([rpcUrl, token, account]) => getCreateEngineCacheKey(rpcUrl, token, account)
+    normalizer: ([token, account]) => getCreateEngineCacheKey(token, account)
   }
 );
 
-const getCreateUnifiedSavingsCacheKey = (
-  rpcUrl: string,
-  { SAVINGS_V3_POOL_ADDRESS, token }: AssetDefinition,
-  account: Account
-) => [rpcUrl, SAVINGS_V3_POOL_ADDRESS, token.id, account.id].join('_');
+const getCreateUnifiedSavingsCacheKey = ({ SAVINGS_V3_POOL_ADDRESS, token }: AssetDefinition, account: Account) =>
+  [SAVINGS_V3_POOL_ADDRESS, token.id, account.id].join('_');
 
 export const createUnifiedSavings = memoize(
-  (rpcUrl: string, assetDefinition: AssetDefinition, account: Account) =>
+  (assetDefinition: AssetDefinition, account: Account) =>
     new UnifiedSavings(
       assetDefinition.SAVINGS_V3_POOL_ADDRESS,
       assetDefinition.token,
       assetDefinition.token,
-      createReadOnlyTezosToolkit(rpcUrl, getAccountForTezos(account)),
+      createReadOnlyTezosToolkit(getAccountForTezos(account)),
       INDEXER_CONFIG,
       mainnetNetworkConstants
     ),
   {
-    normalizer: ([rpcUrl, assetDefinition, account]) =>
-      getCreateUnifiedSavingsCacheKey(rpcUrl, assetDefinition, account)
+    normalizer: ([assetDefinition, account]) => getCreateUnifiedSavingsCacheKey(assetDefinition, account)
   }
 );
 

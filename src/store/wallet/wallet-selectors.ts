@@ -8,7 +8,6 @@ import { WR_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { getAccountAddressForEvm, getAccountAddressForTezos, getAccountForChain } from 'src/utils/account.utils';
 import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
-import { isDcpNode } from 'src/utils/network.utils';
 import { jsonEqualityFn } from 'src/utils/store.utils';
 import { isCollectible } from 'src/utils/tezos.util';
 import { getAccountState } from 'src/utils/wallet-account-state.utils';
@@ -96,12 +95,10 @@ export const useAllCurrentAccountAssetsSelector = () =>
         return null;
       }
 
-      const isDcp = isDcpNode(state.settings.selectedRpcUrl);
-
       // (!) Somehow, after wallet reset, witnessed `account.removedTokensList` & `account.dcpTokensList` be `undefined`
       return {
         removed: account.removedTokensList ?? [],
-        stored: (isDcp ? account.dcpTokensList : account.tokensList) ?? []
+        stored: account.tokensList ?? []
       };
     },
     (state1, state2) => state1?.stored === state2?.stored && state1?.removed === state2?.removed

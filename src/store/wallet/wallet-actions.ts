@@ -26,16 +26,14 @@ export const highPriorityLoadTokenBalanceAction = createAction<{
 }>('assets/HIGH_PRIORITY_LOAD_TOKEN_BALANCE');
 export const loadAssetsBalancesActions = createActions<
   void,
-  { accountId: string; publicKeyHash: string; balances: StringRecord; selectedRpcUrl: string },
+  { accountId: string; publicKeyHash: string; balances: StringRecord },
   string
 >('assets/LOAD_TOKENS_BALANCES');
 
 /** TODO: add `ofDcpNetwork` flag to payload */
 export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
-export const toggleTokenVisibilityAction = createAction<{ slug: string; selectedRpcUrl: string }>(
-  'assets/TOGGLE_TOKEN_VISIBILITY'
-);
+export const toggleTokenVisibilityAction = createAction<{ slug: string }>('assets/TOGGLE_TOKEN_VISIBILITY');
 
 export const sendAssetActions = createActions<SendAssetActionPayloadInterface, string, string>('wallet/SEND_ASSET');
 

@@ -219,8 +219,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: TEMPLE_TOKEN.symbol,
           toTokenDecimals: TEMPLE_TOKEN.decimals,
           amount: mutezToTz(routingFeeFromInputAtomic, fromRoute3Token.decimals).toFixed(),
-          dexesLimit: CASHBACK_SWAP_MAX_DEXES,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: CASHBACK_SWAP_MAX_DEXES
         });
         fetchedData.swapToTempleParams = swapToTempleParams;
 
@@ -270,8 +269,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: TEMPLE_TOKEN.symbol,
           toTokenDecimals: TEMPLE_TOKEN.decimals,
           amount: mutezToTz(routingFeeFromOutputAtomic, toRoute3Token.decimals).toFixed(),
-          dexesLimit: CASHBACK_SWAP_MAX_DEXES,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: CASHBACK_SWAP_MAX_DEXES
         });
         fetchedData.swapToTempleParams = swapToTempleParams;
 
@@ -435,12 +433,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: getRoute3TokenSymbol(output.asset),
           toTokenDecimals: output.asset.decimals,
           amount: mutezToTz(amount, input.asset.decimals).toFixed(),
-          dexesLimit: mainSwapMaxDexes,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: mainSwapMaxDexes
         })
       );
     },
-    [getSwapWithFeeParams, tezos.rpc]
+    [getSwapWithFeeParams]
   );
 
   useEffect(() => {

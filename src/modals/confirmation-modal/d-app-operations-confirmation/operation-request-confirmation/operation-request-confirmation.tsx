@@ -9,7 +9,6 @@ import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { ApproveOperationRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-operation-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
@@ -25,13 +24,8 @@ interface Props {
   message: OperationRequestOutput;
 }
 
-const approveOperationRequest = ({
-  rpcUrl,
-  sender,
-  opParams,
-  message
-}: ApproveOperationRequestActionPayloadInterface) =>
-  sendTransaction$(rpcUrl, sender.address, opParams).pipe(
+const approveOperationRequest = ({ sender, opParams, message }: ApproveOperationRequestActionPayloadInterface) =>
+  sendTransaction$(sender.address, opParams).pipe(
     switchMap(({ hash }) =>
       from(
         BeaconHandler.respond({
@@ -54,7 +48,6 @@ const approveOperationRequest = ({
 
 export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
   const accounts = useAllAccounts();
-  const rpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approveOperationRequest);
@@ -76,11 +69,10 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
     (error: unknown) => {
       trackErrorEvent('DAppOperationsConfirmationEstimateError', error, [message.sourceAddress], {
         opParams,
-        rpcUrl,
         appMetadata: message.appMetadata
       });
     },
-    [trackErrorEvent, message.sourceAddress, message.appMetadata, opParams, rpcUrl]
+    [trackErrorEvent, message.sourceAddress, message.appMetadata, opParams]
   );
 
   return (
@@ -88,7 +80,7 @@ export const OperationRequestConfirmation: FC<Props> = ({ message }) => {
       sender={sender}
       opParams={opParams}
       isLoading={isLoading}
-      onSubmit={newOpParams => confirmRequest({ rpcUrl, sender: tezosAccount, opParams: newOpParams, message })}
+      onSubmit={newOpParams => confirmRequest({ sender: tezosAccount, opParams: newOpParams, message })}
       onEstimationError={handleEstimationError}
     >
       <AppMetadataView appMetadata={message.appMetadata} />

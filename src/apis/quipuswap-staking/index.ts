@@ -106,7 +106,7 @@ const getStableswapPool = async (tezos: TezosToolkit, stableswapContractAddress:
     };
   } catch (error) {
     throw new AnalyticsError(error, [], {
-      getStableswapPoolInput: { rpcUrl: tezos.rpc.getRpcUrl(), stableswapContractAddress, poolId },
+      getStableswapPoolInput: { stableswapContractAddress, poolId },
       fetchedData
     });
   }
@@ -142,7 +142,6 @@ export const estimateDivestOneCoinOutputs = async (
   } catch (error) {
     throw new AnalyticsError(error, [], {
       estimateDivestOneCoinOutputsInput: {
-        rpcUrl: tezos?.rpc?.getRpcUrl(),
         stableswapContractAddress,
         tokenIndexes,
         shares,
@@ -173,7 +172,6 @@ export const estimateStableswapLpTokenOutput = async (
   } catch (error) {
     throw new AnalyticsError(error, [], {
       estimateStableswapLpTokenOutputInput: {
-        rpcUrl: tezos?.rpc?.getRpcUrl(),
         stableswapContractAddress,
         investedTokenIndex,
         amount,
