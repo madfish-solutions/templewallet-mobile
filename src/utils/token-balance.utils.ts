@@ -4,8 +4,8 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { tzktApi } from 'src/api.service';
 import { ContractType } from 'src/interfaces/contract.type';
-import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
-import { getTokenType, toTokenSlug } from 'src/token/utils/token.utils';
+import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { getTokenStandard, toTokenSlug } from 'src/token/utils/token.utils';
 
 import { sendErrorAnalyticsEvent } from './analytics/analytics.util';
 import { UserAnalyticsCredentials } from './error-analytics-data.utils';
@@ -86,7 +86,7 @@ export const getBalance = async (
   owner: string,
   tokenId?: number | string | undefined
 ): Promise<BigNumber> => {
-  if (getTokenType(contract) === TokenTypeEnum.FA_2) {
+  if (getTokenStandard(contract) === TokenStandardsEnum.Fa2) {
     return (await contract.views.balance_of([{ owner, token_id: tokenId }]).read())[0].balance;
   } else {
     return await contract.views.getBalance(owner).read();

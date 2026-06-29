@@ -12,10 +12,10 @@ import {
   OperationInterface,
   OperationLiquidityBakingInterface
 } from '../interfaces/operation.interface';
-import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
-import { getTokenType } from '../token/utils/token.utils';
+import { TokenStandardsEnum } from '../token/interfaces/token-metadata.interface';
+import { getTokenStandard } from '../token/utils/token.utils';
 
 import { getAccountAddressForTezos, getAccountForTezos } from './account.utils';
 import { isDefined } from './is-defined';
@@ -172,13 +172,13 @@ const loadOperations = async (selectedAccount: Account, tokenSlug?: string, last
 
     const tezos = createReadOnlyTezosToolkit(getAccountForTezos(selectedAccount));
     const contract = await tezos.contract.at(contractAddress);
-    const tokenType = getTokenType(contract);
+    const tokenType = getTokenStandard(contract);
 
-    if (tokenType === TokenTypeEnum.FA_1_2) {
+    if (tokenType === TokenStandardsEnum.Fa12) {
       return getTokenFa12Operations(selectedTezosAddress, contractAddress, lastItem?.level);
     }
 
-    if (tokenType === TokenTypeEnum.FA_2) {
+    if (tokenType === TokenStandardsEnum.Fa2) {
       return getTokenFa2Operations(selectedTezosAddress, contractAddress, tokenId, lastItem?.level);
     }
   }

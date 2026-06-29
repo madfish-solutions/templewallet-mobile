@@ -5,9 +5,8 @@ import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Account } from '../interfaces/account.interfaces';
-import { TokenTypeEnum } from '../interfaces/token-type.enum';
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { getTokenType } from '../token/utils/token.utils';
+import { TokenMetadataInterface, TokenStandardsEnum } from '../token/interfaces/token-metadata.interface';
+import { getTokenStandard } from '../token/utils/token.utils';
 
 import { getAccountAddressForTezos, getAccountForTezos } from './account.utils';
 import { isString } from './is-string';
@@ -33,7 +32,7 @@ export function getTransferParams$(
   return isString(address)
     ? from(tezos.contract.at(address)).pipe(
         map(contract =>
-          getTokenType(contract) === TokenTypeEnum.FA_2
+          getTokenStandard(contract) === TokenStandardsEnum.Fa2
             ? {
                 to: contract.address,
                 amount: 0,

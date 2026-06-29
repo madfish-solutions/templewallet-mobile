@@ -25,3 +25,39 @@ export const emptyTokenMetadata: TokenMetadataInterface = {
   decimals: 0,
   standard: TokenStandardsEnum.Fa12
 };
+
+enum EvmAssetStandardEnum {
+  NATIVE = 'native',
+  ERC20 = 'erc20',
+  ERC721 = 'erc721',
+  ERC1155 = 'erc1155'
+}
+
+export const EVM_TOKEN_SLUG = 'eth';
+
+interface EvmAssetMetadataBase {
+  address: typeof EVM_TOKEN_SLUG | HexString;
+  standard?: EvmAssetStandardEnum;
+  /** contract name (for nft contract refers to collection name) */
+  name?: string;
+  /** contract symbol (for nft contract refers to collection symbol) */
+  symbol?: string;
+  /** contract decimals (could be available only for ERC20 tokens and native currency) */
+  decimals?: number;
+  /** A fallback for icon URL */
+  iconURL?: string;
+}
+
+export interface EvmNativeTokenMetadata
+  extends RequiredBy<EvmAssetMetadataBase, Exclude<keyof EvmAssetMetadataBase, 'iconURL'>> {
+  standard: EvmAssetStandardEnum.NATIVE;
+  address: typeof EVM_TOKEN_SLUG;
+}
+
+export const DEFAULT_EVM_CURRENCY: EvmNativeTokenMetadata = {
+  address: EVM_TOKEN_SLUG,
+  standard: EvmAssetStandardEnum.NATIVE,
+  name: 'Ethereum',
+  symbol: 'ETH',
+  decimals: 18
+};

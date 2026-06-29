@@ -1,5 +1,6 @@
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { DEFAULT_EVM_CHAINS_SPECS } from 'src/types/networks';
 import { FiatCurrenciesEnum } from 'src/utils/exchange-rate.util';
 import { RpcList } from 'src/utils/rpc/rpc-list';
 
@@ -29,5 +30,8 @@ export const mockSettingsState: SettingsState = {
   isInAppUpdateAvailable: false,
   isInAppBrowserEnabled: true,
   isKoloCardAnimationShown: false,
-  koloForceLogoutOnNextOpen: false
+  koloForceLogoutOnNextOpen: false,
+  customEvmRpcs: {},
+  customEvmBlockExplorers: {},
+  evmChainsSpecs: DEFAULT_EVM_CHAINS_SPECS
 };

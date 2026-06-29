@@ -1,5 +1,7 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
+
+import { BlockExplorer, RpcBase } from 'src/types/networks';
 
 import { useNetworkSettingsLayoutStyles } from './styles';
 
@@ -11,19 +13,34 @@ interface OptionProps {
 
 interface NetworkSettingsLayoutProps {
   activeRpcEndpointId: string;
-  rpcEndpoints: OptionProps[];
+  rpcEndpoints: RpcBase[];
   activeBlockExplorerId: string;
-  blockExplorers: OptionProps[];
+  blockExplorers: BlockExplorer[];
 }
 
 export const NetworkSettingsLayout = memo<NetworkSettingsLayoutProps>(
   ({ activeRpcEndpointId, rpcEndpoints, activeBlockExplorerId, blockExplorers }) => {
     const styles = useNetworkSettingsLayoutStyles();
 
+    const rpcEndpointItems = useMemo(
+      () =>
+        rpcEndpoints.map(({ id, name, description, rpcBaseURL }) => ({
+          id,
+          title: name,
+          description: description || rpcBaseURL
+        })),
+      [rpcEndpoints]
+    );
+
+    const blockExplorerItems = useMemo(
+      () => blockExplorers.map(({ id, name, url }) => ({ id, title: name, description: url })),
+      [blockExplorers]
+    );
+
     return (
       <View style={styles.container}>
-        <LayoutSection title="RPC Endpoints" items={rpcEndpoints} activeItemId={activeRpcEndpointId} />
-        <LayoutSection title="Block Explorers" items={blockExplorers} activeItemId={activeBlockExplorerId} />
+        <LayoutSection title="RPC Endpoints" items={rpcEndpointItems} activeItemId={activeRpcEndpointId} />
+        <LayoutSection title="Block Explorers" items={blockExplorerItems} activeItemId={activeBlockExplorerId} />
       </View>
     );
   }

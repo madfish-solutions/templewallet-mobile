@@ -1,5 +1,7 @@
 import { RpcInterface } from 'src/interfaces/rpc.interface';
 
+export const ETHERLINK_MAINNET_CHAIN_ID = 42793;
+
 /** @deprecated: Not going to support Talentnet */
 export const DCP_RPC: RpcInterface = {
   name: 'T4L3NT Mainnet',
@@ -39,7 +41,6 @@ export const FALLBACK_TEZOS_RPC_LIST = [
   'https://mainnet.tezos.ecadinfra.com'
 ];
 
-export const FALLBACK_ETHERLINK_RPC_LIST = [
-  'https://rpc.ankr.com/etherlink_mainnet',
-  'https://node.mainnet.etherlink.com'
-];
+export const FALLBACK_EVM_RPCS_LIST: Record<number, string[]> = {
+  [ETHERLINK_MAINNET_CHAIN_ID]: ['https://node.mainnet.etherlink.com', 'https://rpc.ankr.com/etherlink_mainnet']
+};

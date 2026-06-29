@@ -5,7 +5,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
-import { AllNetworksOptionId } from 'src/types/networks';
+import { ChainId } from 'src/types/networks';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { AllNetworksOptions } from './all-networks-options';
@@ -16,7 +16,7 @@ export const Networks = () => {
   usePageAnalytic(ScreensEnum.Networks);
 
   const handleNetworkSelect = useCallback(
-    (network: AllNetworksOptionId) => navigateToScreen({ screen: ScreensEnum.NetworkSettings, params: { network } }),
+    (chainId: ChainId) => navigateToScreen({ screen: ScreensEnum.NetworkSettings, params: { chainId } }),
     [navigateToScreen]
   );
 

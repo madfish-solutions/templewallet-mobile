@@ -1,7 +1,6 @@
 import { PortalProvider } from '@gorhom/portal';
 import type { RouteProp } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { capitalize } from 'lodash-es';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
@@ -14,6 +13,8 @@ import { emptyFn } from 'src/config/general';
 import { transparent } from 'src/config/styles';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { useMainHooks } from 'src/hooks/main-hooks';
+import { useEvmChains } from 'src/hooks/use-evm-chains.hook';
+import { useTezosChains } from 'src/hooks/use-tezos-chains.hook';
 import { SecurityUpdate } from 'src/modals/security-update';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
@@ -73,6 +74,8 @@ export const MainStackScreen = memo(() => {
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
   const colors = useColors();
+  const tezosChains = useTezosChains();
+  const evmChains = useEvmChains();
 
   const tokenScreenHeaderStyle = useMemo(
     () => ({
@@ -90,9 +93,16 @@ export const MainStackScreen = memo(() => {
   const shouldShowBlankScreen = isAuthorised && isLocked;
 
   const getNetworkSettingsScreenOptions = useCallback(
-    ({ route: { params } }: { route: RouteProp<ScreensParamList, ScreensEnum.NetworkSettings> }) =>
-      generateScreenOptions(<HeaderTitle title={capitalize(params.network)} />),
-    []
+    ({ route }: { route: RouteProp<ScreensParamList, ScreensEnum.NetworkSettings> }) => {
+      const { chainId } = route.params;
+      const chain =
+        typeof chainId === 'string'
+          ? tezosChains.find(chain => chain.chainId === chainId)
+          : evmChains.find(chain => chain.chainId === chainId);
+
+      return generateScreenOptions(<HeaderTitle title={chain?.name ?? 'Unknown network'} />);
+    },
+    [tezosChains, evmChains]
   );
 
   return (

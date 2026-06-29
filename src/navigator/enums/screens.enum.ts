@@ -1,6 +1,6 @@
 import { ObjktCollectionType } from 'src/apis/objkt/types';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { AllNetworksOptionId } from 'src/types/networks';
+import { ChainId } from 'src/types/networks';
 import { EncryptedBackupObject } from 'src/utils/cloud-backup';
 
 import { ModalsEnum } from './modals.enum';
@@ -114,7 +114,7 @@ export type ScreensParamList = {
   [ScreensEnum.FiatSettings]: undefined;
   [ScreensEnum.SecureSettings]: undefined;
   [ScreensEnum.Networks]: undefined;
-  [ScreensEnum.NetworkSettings]: { network: AllNetworksOptionId };
+  [ScreensEnum.NetworkSettings]: { chainId: ChainId };
   [ScreensEnum.Backup]: undefined;
   [ScreensEnum.ManualBackup]: undefined;
   [ScreensEnum.CloudBackup]: undefined;
