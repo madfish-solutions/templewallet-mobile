@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { startTransition, useEffect, useState } from 'react';
 
 import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenStandard } from 'src/token/utils/token.utils';
@@ -12,7 +12,7 @@ export const useTokenStandard = (address: string) => {
   const [tokenStandard, setTokenStandard] = useState<TokenStandardsEnum>(TokenStandardsEnum.Fa12);
 
   useEffect(() => {
-    async function getCurrentTokenStandard() {
+    startTransition(async () => {
       try {
         setLoading(true);
         const contract = await tezos.contract.at(address);
@@ -21,9 +21,7 @@ export const useTokenStandard = (address: string) => {
         setTokenStandard(type);
       } catch {}
       setLoading(false);
-    }
-
-    getCurrentTokenStandard();
+    });
   }, []);
 
   return { tokenStandard, loading };
