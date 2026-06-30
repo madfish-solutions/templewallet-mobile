@@ -46,7 +46,7 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.Backup>
   | MainStackParamsPart<ScreensEnum.ManualBackup>
   | MainStackParamsPart<ScreensEnum.CloudBackup>
-  | MainStackParamsPart<ScreensEnum.NotificationsSettings>
+  | MainStackParamsPart<ScreensEnum.AdvancedFeaturesSettings>
   | MainStackParamsPart<ScreensEnum.Debug>
   | MainStackParamsPart<ScreensEnum.Blank>;
 

@@ -166,11 +166,11 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction
-              onPress={() => navigateToScreen({ screen: ScreensEnum.NotificationsSettings })}
-              testID={SettingsSelectors.notificationsButton}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.AdvancedFeaturesSettings })}
+              testID={SettingsSelectors.advancedFeaturesButton}
             >
               <View style={styles.actionsContainer}>
-                <WhiteContainerText text="Notifications and Ads" />
+                <WhiteContainerText text="Advanced features" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
