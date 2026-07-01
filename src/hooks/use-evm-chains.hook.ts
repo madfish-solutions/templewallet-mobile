@@ -28,8 +28,8 @@ export const useEvmChains = (): EvmChain[] => {
           chainId,
           activeRpc: allRpcs.find(x => x.id === activeRpcId) ?? allRpcs[0],
           activeBlockExplorer: allBlockExplorers.find(x => x.id === activeBlockExplorerId) ?? allBlockExplorers[0],
-          allRpcs: allRpcs.concat(customEvmRpcs[chainId] ?? []),
-          allBlockExplorers: allBlockExplorers.concat(customEvmBlockExplorers[chainId] ?? [])
+          allRpcs,
+          allBlockExplorers
         };
       }),
     [customEvmRpcs, customEvmBlockExplorers, evmChainsSpecs]

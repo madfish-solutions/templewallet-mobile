@@ -56,12 +56,15 @@ const getCustomViemChain = (network: EvmNetworkEssentials) => ({
   nativeCurrency: DEFAULT_EVM_CURRENCY
 });
 
-export const getViemPublicClient = memoizee((network: EvmNetworkEssentials): ChainPublicClient => {
-  const viemChain = getViemChainByChainId(network.chainId);
+export const getViemPublicClient = memoizee(
+  (network: EvmNetworkEssentials): ChainPublicClient => {
+    const viemChain = getViemChainByChainId(network.chainId);
 
-  return createPublicClient({
-    chain: viemChain ?? getCustomViemChain(network),
-    transport: getViemTransportForNetwork(network),
-    batch: { multicall: { batchSize: 64, wait: 20 } }
-  });
-});
+    return createPublicClient({
+      chain: viemChain ?? getCustomViemChain(network),
+      transport: getViemTransportForNetwork(network),
+      batch: { multicall: { batchSize: 64, wait: 20 } }
+    });
+  },
+  { normalizer: ([network]) => `${network.chainId}_${network.rpcBaseURL}`, max: 10 }
+);

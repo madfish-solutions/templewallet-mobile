@@ -47,5 +47,5 @@ export const createReadOnlyTezosToolkit = memoize(
 
     return readOnlyTezosToolkit;
   },
-  { normalizer: ([sender]) => sender?.address ?? '', max: 10 }
+  { normalizer: ([sender, preferredRpcUrl]) => `${sender?.address ?? ''}_${preferredRpcUrl ?? ''}`, max: 10 }
 );
