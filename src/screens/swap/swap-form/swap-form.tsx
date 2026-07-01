@@ -24,10 +24,10 @@ import {
   SWAP_THRESHOLD_TO_GET_CASHBACK,
   TEMPLE_TOKEN
 } from 'src/config/swap';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -104,7 +104,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { isLoading: isMetadataLoading, data: tokensMetadataData } = useSwapTokensMetadataSelector();
   const isLoading = isMetadataLoading && tokensMetadataData.length === 0;
   const usdExchangeRates = useUsdToTokenRates();
-  const canUseOnRamp = useCanUseOnRamp();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const swapParams = useSwapParamsSelector();
@@ -160,7 +159,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       return;
     }
 
-    if (inputAssetSlug === TEZ_TOKEN_SLUG && inputAssets.amount.isGreaterThan(tezosBalance) && canUseOnRamp) {
+    if (inputAssetSlug === TEZ_TOKEN_SLUG && inputAssets.amount.isGreaterThan(tezosBalance) && !LIMIT_FIN_FEATURES) {
       dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
 
       return;
@@ -219,8 +218,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: TEMPLE_TOKEN.symbol,
           toTokenDecimals: TEMPLE_TOKEN.decimals,
           amount: mutezToTz(routingFeeFromInputAtomic, fromRoute3Token.decimals).toFixed(),
-          dexesLimit: CASHBACK_SWAP_MAX_DEXES,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: CASHBACK_SWAP_MAX_DEXES
         });
         fetchedData.swapToTempleParams = swapToTempleParams;
 
@@ -270,8 +268,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: TEMPLE_TOKEN.symbol,
           toTokenDecimals: TEMPLE_TOKEN.decimals,
           amount: mutezToTz(routingFeeFromOutputAtomic, toRoute3Token.decimals).toFixed(),
-          dexesLimit: CASHBACK_SWAP_MAX_DEXES,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: CASHBACK_SWAP_MAX_DEXES
         });
         fetchedData.swapToTempleParams = swapToTempleParams;
 
@@ -435,12 +432,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: getRoute3TokenSymbol(output.asset),
           toTokenDecimals: output.asset.decimals,
           amount: mutezToTz(amount, input.asset.decimals).toFixed(),
-          dexesLimit: mainSwapMaxDexes,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: mainSwapMaxDexes
         })
       );
     },
-    [getSwapWithFeeParams, tezos.rpc]
+    [getSwapWithFeeParams]
   );
 
   useEffect(() => {

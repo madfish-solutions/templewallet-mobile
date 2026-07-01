@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { StyleProp, TextStyle, Text } from 'react-native';
 
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -33,9 +32,7 @@ export const AssetValueText: FC<Props> = ({
   receiver,
   convertToDollar = false
 }) => {
-  const { isDcpNode } = useNetworkInfo();
-
-  const hideText = convertToDollar && (!isDefined(asset.decimals) || isDcpNode);
+  const hideText = convertToDollar && !isDefined(asset.decimals);
 
   const visibleAmount = getDollarValue(amount, asset.decimals, convertToDollar ? asset.exchangeRate : 1);
   const isBurnReceiverAddress = receiver === BURN_ADDRESS;

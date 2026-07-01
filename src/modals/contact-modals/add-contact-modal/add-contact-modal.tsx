@@ -15,7 +15,6 @@ import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floatin
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addContactAction, loadContactTezosBalance } from 'src/store/contact-book/contact-book-actions';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { tezosDomainsResolver } from 'src/utils/dns.utils';
 
@@ -30,8 +29,8 @@ export const AddContactModal: FC = () => {
   const { goBack } = useNavigation();
   const params = useModalParams<ModalsEnum.AddContact>();
   const validationSchema = useAddContactFormValidationSchema();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const resolver = useMemo(() => tezosDomainsResolver(selectedRpcUrl), [selectedRpcUrl]);
+  // TODO: Add preferredRpcUrl when choosing RPC node becomes available
+  const resolver = useMemo(() => tezosDomainsResolver(), []);
 
   const formik = useRef<FormikProps<Contact>>(null);
 

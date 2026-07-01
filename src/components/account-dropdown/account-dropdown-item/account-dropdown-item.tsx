@@ -10,12 +10,12 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { TruncatedText } from 'src/components/truncated-text';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
 import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
+import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -131,7 +131,6 @@ const CollectiblesInfo = memo(() => {
   const collectibles = useCurrentAccountCollectiblesWithPositiveBalance();
 
   const allDetails = useAllCollectiblesDetailsSelector();
-  const { metadata: gasMetadata } = useNetworkInfo();
 
   const totalFloorPriceStr = useMemo(() => {
     let totalFloorPrice = 0;
@@ -147,11 +146,11 @@ const CollectiblesInfo = memo(() => {
       return '-';
     }
 
-    const floorPrice = mutezToTz(new BigNumber(totalFloorPrice), gasMetadata.decimals).toNumber();
+    const floorPrice = mutezToTz(new BigNumber(totalFloorPrice), TEZ_TOKEN_DECIMALS).toNumber();
     const floorPriceDisplayed = formatNumber(floorPrice);
 
-    return `${floorPriceDisplayed} ${gasMetadata.symbol}`;
-  }, [collectibles, allDetails, gasMetadata]);
+    return `${floorPriceDisplayed} ${TEZ_TOKEN_SYMBOL}`;
+  }, [collectibles, allDetails]);
 
   return (
     <>

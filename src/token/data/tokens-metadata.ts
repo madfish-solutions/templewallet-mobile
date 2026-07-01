@@ -32,6 +32,9 @@ export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.TezToken
 };
 
+export const TEZ_TOKEN_SYMBOL = TEZ_TOKEN_METADATA.symbol;
+export const TEZ_TOKEN_DECIMALS = TEZ_TOKEN_METADATA.decimals;
+
 export const TEZ_SHIELDED_TOKEN_SLUG = 'shielded_tez_0';
 
 /** Shielded TEZ shares the same exchange rate as public TEZ */
@@ -44,14 +47,6 @@ export const TEZ_SHIELDED_TOKEN_METADATA: TokenMetadataInterface = {
   symbol: 'TEZ',
   decimals: 6,
   iconName: IconNameEnum.TezShieldedToken
-};
-
-export const FILM_TOKEN_METADATA: TokenMetadataInterface = {
-  ...emptyTokenMetadata,
-  name: 'FILM',
-  symbol: 'FILM',
-  decimals: 6,
-  iconName: IconNameEnum.FilmToken
 };
 
 export const TZBTC_TOKEN_METADATA: TokenMetadataInterface = {

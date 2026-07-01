@@ -30,7 +30,6 @@ import {
   useCollectibleDetailsLoadingSelector,
   useCollectibleDetailsSelector
 } from 'src/store/collectibles/collectibles-selectors';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { useAssetBalanceSelector, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -72,8 +71,6 @@ export const CollectibleModal = memo(() => {
   if (!tezosAddress) {
     throw new DeadEndBoundaryError();
   }
-
-  const selectedRpc = useSelectedRpcUrlSelector();
 
   const { width } = Dimensions.get('window');
   const imageSize = width - formatSize(32);
@@ -134,23 +131,14 @@ export const CollectibleModal = memo(() => {
     return {
       title: `Buy for ${formatNumber(priceToDisplay)} ${purchaseCurrency.symbol}`,
       onPress: () =>
-        void buildBuyCollectibleParams(createTezosToolkit(selectedRpc), tezosAddress, listing, purchaseCurrency).then(
-          opParams =>
-            navigateToModal(ModalsEnum.Confirmation, {
-              type: ConfirmationTypeEnum.InternalOperations,
-              opParams
-            })
+        void buildBuyCollectibleParams(createTezosToolkit(), tezosAddress, listing, purchaseCurrency).then(opParams =>
+          navigateToModal(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams
+          })
         )
     };
-  }, [
-    isAccountHolder,
-    areDetailsLoading,
-    metadata,
-    details?.listingsActive,
-    tezosAddress,
-    selectedRpc,
-    navigateToModal
-  ]);
+  }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, tezosAddress, navigateToModal]);
 
   const name = metadata?.name ?? details?.name;
   let artifactUri: string | undefined;

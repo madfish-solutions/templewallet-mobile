@@ -9,7 +9,9 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { AsyncStorageDetails } from './async-storage-details';
+import { EtherlinkFallbackDemo } from './etherlink-fallback-demo';
 import { ImportWatchOnlyDebug } from './import-watch-only-debug/import-watch-only-debug';
+import { TezosFallbackDemo } from './tezos-fallback-demo';
 
 export const Debug: FC = () => {
   const [shouldThrowRenderError, setShouldThrowRenderError] = useState(false);
@@ -36,6 +38,10 @@ export const Debug: FC = () => {
         onPress={handleThrowRenderErrorButtonsPress}
       />
       {shouldThrowRenderError && <RenderError />}
+      <Divider />
+      <TezosFallbackDemo />
+      <Divider />
+      <EtherlinkFallbackDemo />
       <Divider />
       <AsyncStorageDetails />
     </ScreenContainer>

@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 
-import { TEZ_TOKEN_METADATA } from '../token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { getDollarValue } from '../utils/balance.utils';
 import { tzToMutez } from '../utils/tezos.util';
@@ -28,7 +28,7 @@ export const useTotalBalance = () => {
     const tezosDollarValue = getDollarValue(tezosToken.balance, tezosToken.decimals, exchangeRates.tez);
     dollarValue = dollarValue.plus(tezosDollarValue);
 
-    return tzToMutez(dollarValue.dividedBy(exchangeRates.tez), TEZ_TOKEN_METADATA.decimals);
+    return tzToMutez(dollarValue.dividedBy(exchangeRates.tez), TEZ_TOKEN_DECIMALS);
   }, [tezosToken, visibleTokens, exchangeRates]);
 
   return useTezosToken(totalBalance.toFixed());

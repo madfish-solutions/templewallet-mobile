@@ -122,3 +122,18 @@ declare module 'react-native-video-controls' {
     // TODO: add custom methods here
   }
 }
+
+type NonEmptyArray<T> = [T, ...T[]];
+
+/**
+ * @description Creates a type that is T with the required keys K.
+ *
+ * @example
+ * RequiredBy<{ a?: string, b: number }, 'a'>
+ * => { a: string, b: number }
+ */
+type RequiredBy<T, K extends keyof T> = Omit<T, K> & ExactRequired<Pick<T, K>>;
+
+type ExactRequired<type> = {
+  [P in keyof type]-?: Exclude<type[P], undefined>;
+};

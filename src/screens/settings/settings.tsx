@@ -216,10 +216,10 @@ export const Settings = () => {
             <WhiteContainerDivider />
 
             <WhiteContainerAction
-              onPress={() => navigateToScreen({ screen: ScreensEnum.NodeSettings })}
-              testID={SettingsSelectors.defaultNodeRPCButton}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.Networks })}
+              testID={SettingsSelectors.networksButton}
             >
-              <WhiteContainerText text="Default node (RPC)" />
+              <WhiteContainerText text="Networks" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>

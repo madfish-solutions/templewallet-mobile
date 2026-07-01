@@ -34,14 +34,11 @@ import { tzToMutez } from './tezos.util';
 import { getTransferParams$ } from './transfer-params.utils';
 import { getTransferPermissions } from './transfer-permissions.util';
 
-export const getLbStorage = async (tezosOrRpc: string | TezosToolkit) => {
-  const tezos = typeof tezosOrRpc === 'string' ? createReadOnlyTezosToolkit(tezosOrRpc) : tezosOrRpc;
-
-  return getContractStorage<{ tokenPool: BigNumber; xtzPool: BigNumber; lqtTotal: BigNumber }>(
-    tezos,
+export const getLbStorage = () =>
+  getContractStorage<{ tokenPool: BigNumber; xtzPool: BigNumber; lqtTotal: BigNumber }>(
+    createReadOnlyTezosToolkit(),
     LIQUIDITY_BAKING_DEX_ADDRESS
   );
-};
 
 const mapToRoute3ExecuteHops = (hops: Route3Hop[]): Record<string, Hop> => {
   const result: Record<string, Hop> = {};
@@ -262,7 +259,7 @@ export const getSwapTransferParams = async (
       tzbtcAddLiqInput
     );
     // Prevent extra TEZ spending
-    const { xtzPool, lqtTotal } = await getLbStorage(tezos);
+    const { xtzPool, lqtTotal } = await getLbStorage();
     const xtzAddLiqInput = BigNumber.min(
       xtzSwapMinOut,
       xtzPool

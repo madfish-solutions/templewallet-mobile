@@ -11,7 +11,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking';
 import { ZERO } from 'src/utils/number.util';
 import { fetchRoute3LiquidityBakingParams } from 'src/utils/route3.util';
-import { TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 import {
   calculateSidePaymentsFromInput,
   calculateOutputFeeAtomic,
@@ -47,8 +46,8 @@ export const getLiquidityBakingFarm = async (): Promise<LiquidityBakingFarmRespo
     item: {
       type: EarnOpportunityTypeEnum.LIQUIDITY_BAKING,
       id: liquidityBakingStakingId,
-      depositTokenUrl: `${tzktUrl(TEMPLE_RPC.url, SIRS_TOKEN.address)}`,
-      stakeUrl: `${tzktUrl(TEMPLE_RPC.url, LIQUIDITY_BAKING_DEX_ADDRESS)}`,
+      depositTokenUrl: `${tzktUrl(SIRS_TOKEN.address)}`,
+      stakeUrl: `${tzktUrl(LIQUIDITY_BAKING_DEX_ADDRESS)}`,
       stakedToken: {
         contractAddress: SIRS_TOKEN.address,
         type: EarnOpportunityTokenStandardEnum.Fa12,
@@ -67,8 +66,7 @@ export const getLiquidityBakingFarm = async (): Promise<LiquidityBakingFarmRespo
 export const calculateUnstakeParams = async (
   outputTokenIndexes: number[],
   lpAmount: BigNumber,
-  slippageTolerancePercentage: number,
-  rpcUrl: string
+  slippageTolerancePercentage: number
 ) => {
   const { swapInputMinusFeeAtomic, inputFeeAtomic: routingFeeFromInputAtomic } =
     calculateSidePaymentsFromInput(lpAmount);
@@ -88,7 +86,6 @@ export const calculateUnstakeParams = async (
         // Such swap has either XTZ or tzBTC hops
         xtzDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
         tzbtcDexesLimit: MAIN_SIRS_SWAP_MAX_DEXES,
-        rpcUrl,
         showTree: true
       });
 

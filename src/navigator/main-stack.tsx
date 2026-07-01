@@ -1,6 +1,7 @@
 import { PortalProvider } from '@gorhom/portal';
+import type { RouteProp } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { exolixScreenOptions } from 'src/components/header/exolix-screen-options';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
@@ -12,7 +13,8 @@ import { emptyFn } from 'src/config/general';
 import { transparent } from 'src/config/styles';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { useMainHooks } from 'src/hooks/main-hooks';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
+import { useEvmChains } from 'src/hooks/use-evm-chains.hook';
+import { useTezosChains } from 'src/hooks/use-tezos-chains.hook';
 import { SecurityUpdate } from 'src/modals/security-update';
 import { About } from 'src/screens/about/about';
 import { Activity } from 'src/screens/activity/activity';
@@ -37,7 +39,8 @@ import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
 import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
 import { Market } from 'src/screens/market/market';
-import { NodeSettings } from 'src/screens/node-settings/node-settings';
+import { NetworkSettings } from 'src/screens/network-settings';
+import { Networks } from 'src/screens/networks';
 import { Notifications } from 'src/screens/notifications/notifications';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
 import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
@@ -55,6 +58,7 @@ import { Welcome } from 'src/screens/welcome/welcome';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { useColors } from 'src/styles/use-colors';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { emptyTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { cloudTitle } from 'src/utils/cloud-backup';
 
@@ -70,6 +74,8 @@ export const MainStackScreen = memo(() => {
 
   const styleScreenOptions = useStackNavigatorStyleOptions();
   const colors = useColors();
+  const tezosChains = useTezosChains();
+  const evmChains = useEvmChains();
 
   const tokenScreenHeaderStyle = useMemo(
     () => ({
@@ -80,13 +86,24 @@ export const MainStackScreen = memo(() => {
     [colors]
   );
 
-  const { metadata } = useNetworkInfo();
-
   useMainHooks(isLocked, isAuthorised);
 
   const shouldShowUnauthorizedScreens = !isAuthorised;
   const shouldShowAuthorizedScreens = isAuthorised && !isLocked;
   const shouldShowBlankScreen = isAuthorised && isLocked;
+
+  const getNetworkSettingsScreenOptions = useCallback(
+    ({ route }: { route: RouteProp<ScreensParamList, ScreensEnum.NetworkSettings> }) => {
+      const { chainId } = route.params;
+      const chain =
+        typeof chainId === 'string'
+          ? tezosChains.find(chain => chain.chainId === chainId)
+          : evmChains.find(chain => chain.chainId === chainId);
+
+      return generateScreenOptions(<HeaderTitle title={chain?.name ?? 'Unknown network'} />);
+    },
+    [tezosChains, evmChains]
+  );
 
   return (
     <PortalProvider>
@@ -126,7 +143,7 @@ export const MainStackScreen = memo(() => {
                 name={ScreensEnum.TezosTokenScreen}
                 component={TezosTokenScreen}
                 options={generateScreenOptions(
-                  <HeaderTokenInfo token={metadata} />,
+                  <HeaderTokenInfo token={TEZ_TOKEN_METADATA} />,
                   null,
                   true,
                   tokenScreenHeaderStyle
@@ -270,9 +287,14 @@ export const MainStackScreen = memo(() => {
                 options={generateScreenOptions(<HeaderTitle title="Authorized DApps" />)}
               />
               <MainStack.Screen
-                name={ScreensEnum.NodeSettings}
-                component={NodeSettings}
-                options={generateScreenOptions(<HeaderTitle title="Default node (RPC)" />)}
+                name={ScreensEnum.Networks}
+                component={Networks}
+                options={generateScreenOptions(<HeaderTitle title="Networks" />)}
+              />
+              <MainStack.Screen
+                name={ScreensEnum.NetworkSettings}
+                component={NetworkSettings}
+                options={getNetworkSettingsScreenOptions}
               />
               <MainStack.Screen
                 name={ScreensEnum.FiatSettings}

@@ -1,7 +1,7 @@
 import { uniq } from 'lodash-es';
 import { stringify } from 'qs';
 
-import { getTzktApi } from '../api.service';
+import { tzktApi } from '../api.service';
 import { OPERATION_LIMIT } from '../config/general';
 import { ActivityTypeEnum } from '../enums/activity-type.enum';
 import { Account } from '../interfaces/account.interfaces';
@@ -12,10 +12,10 @@ import {
   OperationInterface,
   OperationLiquidityBakingInterface
 } from '../interfaces/operation.interface';
-import { TokenTypeEnum } from '../interfaces/token-type.enum';
 import { LIQUIDITY_BAKING_DEX_ADDRESS } from '../token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from '../token/data/tokens-metadata';
-import { getTokenType } from '../token/utils/token.utils';
+import { TokenStandardsEnum } from '../token/interfaces/token-metadata.interface';
+import { getTokenStandard } from '../token/utils/token.utils';
 
 import { getAccountAddressForTezos, getAccountForTezos } from './account.utils';
 import { isDefined } from './is-defined';
@@ -23,17 +23,11 @@ import { mapOperationsToActivities } from './operation.utils';
 import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 import { sleep } from './timeouts.util';
 
-const getOperationGroupByHash = <T>(selectedRpcUrl: string, hash: string) =>
-  getTzktApi(selectedRpcUrl).get<Array<T>>(`operations/${hash}`);
+const getOperationGroupByHash = <T>(hash: string) => tzktApi.get<Array<T>>(`operations/${hash}`);
 
 // LIQUIDITY BAKING ACTIVITY
-const getContractOperations = <T>(
-  selectedRpcUrl: string,
-  account: string,
-  contractAddress: string,
-  lastLevel?: number
-) =>
-  getTzktApi(selectedRpcUrl)
+const getContractOperations = <T>(account: string, contractAddress: string, lastLevel?: number) =>
+  tzktApi
     .get<Array<T>>('/operations/transactions', {
       params: {
         target: contractAddress,
@@ -48,14 +42,8 @@ const getContractOperations = <T>(
 
 const paramsSerializer = (params: Record<string, unknown>) => stringify(params);
 
-const getTokenFa2Operations = (
-  selectedRpcUrl: string,
-  account: string,
-  contractAddress: string,
-  tokenId = '0',
-  lastLevel?: number
-) =>
-  getTzktApi(selectedRpcUrl)
+const getTokenFa2Operations = (account: string, contractAddress: string, tokenId = '0', lastLevel?: number) =>
+  tzktApi
     .get<Array<OperationFa2Interface>>('operations/transactions', {
       paramsSerializer,
       params: {
@@ -69,8 +57,8 @@ const getTokenFa2Operations = (
     })
     .then(x => x.data);
 
-const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contractAddress: string, lastLevel?: number) =>
-  getTzktApi(selectedRpcUrl)
+const getTokenFa12Operations = (account: string, contractAddress: string, lastLevel?: number) =>
+  tzktApi
     .get<Array<OperationFa12Interface>>('operations/transactions', {
       paramsSerializer,
       params: {
@@ -84,8 +72,8 @@ const getTokenFa12Operations = (selectedRpcUrl: string, account: string, contrac
     })
     .then(x => x.data);
 
-const getTezosOperations = (selectedRpcUrl: string, account: string, lastLevel?: number) =>
-  getTzktApi(selectedRpcUrl)
+const getTezosOperations = (account: string, lastLevel?: number) =>
+  tzktApi
     .get<Array<OperationInterface>>('operations/transactions', {
       params: {
         'anyof.sender.target.initiator': account,
@@ -97,8 +85,8 @@ const getTezosOperations = (selectedRpcUrl: string, account: string, lastLevel?:
     })
     .then(x => x.data);
 
-const getAccountOperations = (selectedRpcUrl: string, account: string, lastId?: number) =>
-  getTzktApi(selectedRpcUrl)
+const getAccountOperations = (account: string, lastId?: number) =>
+  tzktApi
     .get<Array<OperationInterface>>('accounts/activity', {
       params: {
         addresses: account,
@@ -110,8 +98,8 @@ const getAccountOperations = (selectedRpcUrl: string, account: string, lastId?: 
     })
     .then(x => x.data);
 
-const getFa12IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
-  getTzktApi(selectedRpcUrl)
+const getFa12IncomingOperations = (account: string, lowerId: number, upperId?: number) =>
+  tzktApi
     .get<Array<OperationFa12Interface>>('operations/transactions', {
       params: {
         'sender.ne': account,
@@ -125,8 +113,8 @@ const getFa12IncomingOperations = (selectedRpcUrl: string, account: string, lowe
     })
     .then(x => x.data);
 
-const getFa2IncomingOperations = (selectedRpcUrl: string, account: string, lowerId: number, upperId?: number) =>
-  getTzktApi(selectedRpcUrl)
+const getFa2IncomingOperations = (account: string, lowerId: number, upperId?: number) =>
+  tzktApi
     .get<Array<OperationFa2Interface>>('operations/transactions', {
       params: {
         'sender.ne': account,
@@ -140,12 +128,8 @@ const getFa2IncomingOperations = (selectedRpcUrl: string, account: string, lower
     })
     .then(x => x.data);
 
-const getAllOperations = async (
-  selectedRpcUrl: string,
-  publicKeyHash: string,
-  upperId?: number
-): Promise<OperationInterface[]> => {
-  const operations = await getAccountOperations(selectedRpcUrl, publicKeyHash, upperId);
+const getAllOperations = async (publicKeyHash: string, upperId?: number): Promise<OperationInterface[]> => {
+  const operations = await getAccountOperations(publicKeyHash, upperId);
   if (operations.length === 0) {
     return [];
   }
@@ -155,8 +139,8 @@ const getAllOperations = async (
   }
   const lowerId = localLastItem.id;
   const [operationsFa12, operationsFa2] = await Promise.all([
-    getFa12IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId),
-    getFa2IncomingOperations(selectedRpcUrl, publicKeyHash, lowerId, upperId)
+    getFa12IncomingOperations(publicKeyHash, lowerId, upperId),
+    getFa2IncomingOperations(publicKeyHash, lowerId, upperId)
   ]);
 
   return operations
@@ -165,12 +149,7 @@ const getAllOperations = async (
     .sort((b, a) => a.id - b.id);
 };
 
-const loadOperations = async (
-  selectedRpcUrl: string,
-  selectedAccount: Account,
-  tokenSlug?: string,
-  lastItem?: ActivityInterface
-) => {
+const loadOperations = async (selectedAccount: Account, tokenSlug?: string, lastItem?: ActivityInterface) => {
   const [contractAddress, tokenId] = (tokenSlug ?? '').split('_');
   const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
 
@@ -180,36 +159,34 @@ const loadOperations = async (
 
   if (isDefined(tokenSlug)) {
     if (tokenSlug === TEZ_TOKEN_SLUG) {
-      return getTezosOperations(selectedRpcUrl, selectedTezosAddress, lastItem?.level);
+      return getTezosOperations(selectedTezosAddress, lastItem?.level);
     }
 
     if (contractAddress === LIQUIDITY_BAKING_DEX_ADDRESS) {
       return getContractOperations<OperationLiquidityBakingInterface>(
-        selectedRpcUrl,
         selectedTezosAddress,
         contractAddress,
         lastItem?.level
       );
     }
 
-    const tezos = createReadOnlyTezosToolkit(selectedRpcUrl, getAccountForTezos(selectedAccount));
+    const tezos = createReadOnlyTezosToolkit(getAccountForTezos(selectedAccount));
     const contract = await tezos.contract.at(contractAddress);
-    const tokenType = getTokenType(contract);
+    const tokenType = getTokenStandard(contract);
 
-    if (tokenType === TokenTypeEnum.FA_1_2) {
-      return getTokenFa12Operations(selectedRpcUrl, selectedTezosAddress, contractAddress, lastItem?.level);
+    if (tokenType === TokenStandardsEnum.Fa12) {
+      return getTokenFa12Operations(selectedTezosAddress, contractAddress, lastItem?.level);
     }
 
-    if (tokenType === TokenTypeEnum.FA_2) {
-      return getTokenFa2Operations(selectedRpcUrl, selectedTezosAddress, contractAddress, tokenId, lastItem?.level);
+    if (tokenType === TokenStandardsEnum.Fa2) {
+      return getTokenFa2Operations(selectedTezosAddress, contractAddress, tokenId, lastItem?.level);
     }
   }
 
-  return getAllOperations(selectedRpcUrl, selectedTezosAddress, lastItem?.id);
+  return getAllOperations(selectedTezosAddress, lastItem?.id);
 };
 
 export const loadActivity = async (
-  selectedRpcUrl: string,
   /** @deprecated // Wanna pass PKH only */
   selectedAccount: Account,
   tokenSlug?: string,
@@ -221,14 +198,14 @@ export const loadActivity = async (
     return [];
   }
 
-  const operationsHashes = await loadOperations(selectedRpcUrl, selectedAccount, tokenSlug, lastItem)
+  const operationsHashes = await loadOperations(selectedAccount, tokenSlug, lastItem)
     .then(operations => operations.map(operation => operation.hash))
     .then(newHashes => uniq(newHashes.filter(x => x !== lastItem?.hash)));
 
   const operationGroups = [];
 
   for (const opHash of operationsHashes) {
-    const { data } = await getOperationGroupByHash<OperationInterface>(selectedRpcUrl, opHash);
+    const { data } = await getOperationGroupByHash<OperationInterface>(opHash);
     operationGroups.push(data);
     await sleep(100);
   }

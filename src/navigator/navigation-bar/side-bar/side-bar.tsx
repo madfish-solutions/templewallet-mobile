@@ -7,7 +7,6 @@ import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitut
 import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
 import { LIMIT_DAPPS_FEATURES, LIMIT_FIN_FEATURES, LIMIT_NFT_FEATURES } from 'src/config/system';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensOrModalsEnum } from 'src/interfaces/stacks.interface';
 import {
   dAppsStackScreens,
@@ -32,8 +31,6 @@ interface Props {
 
 export const SideBar = memo<Props>(({ currentRouteName }) => {
   const styles = useSideBarStyles();
-
-  const { isDcpNode } = useNetworkInfo();
 
   const swapScreenParams = useSwapScreenParams(currentRouteName);
 
@@ -70,7 +67,6 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
               routeName={ScreensEnum.SwapScreen}
               swapScreenParams={swapScreenParams}
               focused={isStackFocusedMemo(swapStackScreens)}
-              disabled={isDcpNode}
               disabledOnPress={handleDisabledPress}
             />
           )}
@@ -79,7 +75,6 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
             iconName={IconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocusedMemo(dAppsStackScreens)}
-            disabled={isDcpNode}
             disabledOnPress={handleDisabledPress}
           />
           <SideBarButton

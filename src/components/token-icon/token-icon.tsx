@@ -1,9 +1,9 @@
 import React, { FC, useMemo } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
 import { isImageRectangular, isImgUriDataUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -44,10 +44,10 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
 
   const colors = useColors();
 
-  const { metadata } = useNetworkInfo();
-
   if (isDefined(iconName)) {
-    return <Icon name={iconName} color={metadata.iconName === iconName ? colors.black : undefined} size={size} />;
+    return (
+      <Icon name={iconName} color={TEZ_TOKEN_METADATA.iconName === iconName ? colors.black : undefined} size={size} />
+    );
   }
 
   if (!isString(thumbnailUri)) {

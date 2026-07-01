@@ -16,8 +16,14 @@ export const useAnalyticsEnabledSelector = () => useSelector(({ settings }) => s
 
 export const useBalanceHiddenSelector = () => useSelector(({ settings }) => settings.isBalanceHiddenSetting);
 
+/** @deprecated */
 export const useRpcListSelector = () => useSelector(({ settings }) => settings.rpcList);
+/** @deprecated */
 export const useSelectedRpcUrlSelector = () => useSelector(({ settings }) => settings.selectedRpcUrl);
+
+export const useCustomEvmRpcsSelector = () => useSelector(({ settings }) => settings.customEvmRpcs);
+export const useCustomEvmBlockExplorersSelector = () => useSelector(({ settings }) => settings.customEvmBlockExplorers);
+export const useEvmChainsSpecsSelector = () => useSelector(({ settings }) => settings.evmChainsSpecs);
 
 export const useFiatCurrencySelector = () => useSelector(({ settings }) => settings.fiatCurrency);
 

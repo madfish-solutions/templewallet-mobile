@@ -1,5 +1,6 @@
 import { ObjktCollectionType } from 'src/apis/objkt/types';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { ChainId } from 'src/types/networks';
 import { EncryptedBackupObject } from 'src/utils/cloud-backup';
 
 import { ModalsEnum } from './modals.enum';
@@ -52,7 +53,8 @@ export enum ScreensEnum {
   DAppsSettings = 'DAppsSettings',
   FiatSettings = 'FiatSettings',
   SecureSettings = 'SecureSettings',
-  NodeSettings = 'NodeSettings',
+  Networks = 'Networks',
+  NetworkSettings = 'NetworkSettings',
   Backup = 'Backup',
   ManualBackup = 'ManualBackup',
   CloudBackup = 'CloudBackup',
@@ -111,7 +113,8 @@ export type ScreensParamList = {
   [ScreensEnum.DAppsSettings]: undefined;
   [ScreensEnum.FiatSettings]: undefined;
   [ScreensEnum.SecureSettings]: undefined;
-  [ScreensEnum.NodeSettings]: undefined;
+  [ScreensEnum.Networks]: undefined;
+  [ScreensEnum.NetworkSettings]: { chainId: ChainId };
   [ScreensEnum.Backup]: undefined;
   [ScreensEnum.ManualBackup]: undefined;
   [ScreensEnum.CloudBackup]: undefined;

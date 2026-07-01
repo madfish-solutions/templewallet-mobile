@@ -15,10 +15,9 @@ import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { Sorter } from 'src/components/sorter/sorter';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { BakersSortFieldEnum } from 'src/enums/bakers-sort-field.enum';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
@@ -38,7 +37,7 @@ import { EVERSTAKE_BAKER_ADDRESS, HELP_UKRAINE_BAKER_ADDRESS, TEMPLE_BAKER_ADDRE
 import { isValidAddress } from 'src/utils/tezos.util';
 
 import { BakerListItem } from './baker-list-item/baker-list-item';
-import { DISCLAIMER_MESSAGE, TEZ_LABEL, DCP_LABEL, TEZ_DESCRIPTION, DCP_DESCRIPTION } from './constants';
+import { DISCLAIMER_MESSAGE, TEZ_LABEL, TEZ_DESCRIPTION } from './constants';
 import { SelectBakerModalSelectors } from './select-baker-modal.selectors';
 import { useSelectBakerModalStyles } from './select-baker-modal.styles';
 
@@ -64,15 +63,9 @@ export const SelectBakerModal = memo(() => {
   const navigateToModal = useNavigateToModal();
   const styles = useSelectBakerModalStyles();
   const currentBaker = useSelectedBakerSelector();
-  const { isTezosNode, isDcpNode } = useNetworkInfo();
-  const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
   const dispatch = useDispatch();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
-  const bakerNameByNode = isDcpNode ? 'Producer' : 'Baker';
-
-  const searchPlaceholder = `Search ${bakerNameByNode}`;
-  const unknownBakerName = `Unknown ${bakerNameByNode}`;
 
   const { trackEvent } = useAnalytics();
 
@@ -109,9 +102,9 @@ export const SelectBakerModal = memo(() => {
       if (currentBaker?.address === selectedBaker.address) {
         showErrorToast({
           title: 'Re-delegation is not possible',
-          description: `Already delegated funds to this ${isDcpNode ? 'producer' : 'baker'}.`
+          description: `Already delegated funds to this baker.`
         });
-      } else if (new BigNumber(tezosBalance).isZero() && canUseOnRamp) {
+      } else if (new BigNumber(tezosBalance).isZero() && !LIMIT_FIN_FEATURES) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       } else {
         navigateToModal(ModalsEnum.Confirmation, {
@@ -120,7 +113,7 @@ export const SelectBakerModal = memo(() => {
           ...(isTempleBakerSelected && { testID: 'TEMPLE_BAKER_DELEGATION' }),
           ...(isEverstakeBakerSelected && { testID: 'EVERSTAKE_BAKER_DELEGATION' }),
           ...(isHelpUkraineBakerSelected && { testID: 'HELP_UKRAINE_BAKER_DELEGATION' }),
-          ...(Boolean(selectedBaker.isUnknownBaker) && !isDcpNode && { disclaimerMessage: DISCLAIMER_MESSAGE })
+          ...(Boolean(selectedBaker.isUnknownBaker) && { disclaimerMessage: DISCLAIMER_MESSAGE })
         });
       }
     }
@@ -166,10 +159,7 @@ export const SelectBakerModal = memo(() => {
 
   const isValidBakerAddress = isDefined(selectedBaker) && !isValidAddress(selectedBaker.address);
 
-  const unknownBaker = useMemo(
-    () => buildUnknownBaker(searchValue ?? '', unknownBakerName),
-    [unknownBakerName, searchValue]
-  );
+  const unknownBaker = useMemo(() => buildUnknownBaker(searchValue ?? '', 'Unknown Baker'), [searchValue]);
 
   const ListEmptyComponent = useMemo(
     () =>
@@ -180,7 +170,7 @@ export const SelectBakerModal = memo(() => {
           selected={searchValue === selectedBaker?.address}
         />
       ) : undefined,
-    [unknownBakerName, searchValue, tezosAddress, selectedBaker?.address]
+    [searchValue, tezosAddress, selectedBaker?.address]
   );
 
   const renderItem: ListRenderItem<BakerInterface> = useCallback(
@@ -201,59 +191,41 @@ export const SelectBakerModal = memo(() => {
       <View style={styles.background}>
         <Divider size={formatSize(16)} />
         <View style={styles.upperContainer}>
-          <Label
-            label={isDcpNode ? DCP_LABEL : TEZ_LABEL}
-            description={isDcpNode ? DCP_DESCRIPTION : TEZ_DESCRIPTION}
-          />
+          <Label label={TEZ_LABEL} description={TEZ_DESCRIPTION} />
         </View>
         <View style={styles.searchContainer}>
           <SearchInput
-            placeholder={searchPlaceholder}
+            placeholder="Search Baker"
             onChangeText={debouncedSetSearchValue}
             testID={SelectBakerModalSelectors.searchBakerInput}
           />
           {isValidBakerAddress && <Text style={styles.errorText}>Not a valid address</Text>}
           {searchValue === tezosAddress && <Text style={styles.errorText}>You can not delegate to yourself</Text>}
         </View>
-        {isTezosNode && (
-          <View style={styles.upperContainer}>
-            <Text style={styles.infoText}>The higher the better</Text>
+        <View style={styles.upperContainer}>
+          <Text style={styles.infoText}>The higher the better</Text>
 
-            <Sorter
-              sortValue={sortValue}
-              description="Sort bakers by:"
-              sortFieldsOptions={bakersSortFieldsOptions}
-              sortFieldsLabels={bakersSortFieldsLabels}
-              onSetSortValue={handleSortValueChange}
-              testID={SelectBakerModalSelectors.sortByDropDownButton}
-            />
-          </View>
-        )}
-      </View>
-
-      {isTezosNode && (
-        <FlatList
-          data={sortedKnownBakers}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          style={styles.flatList}
-          windowSize={10}
-          ListEmptyComponent={ListEmptyComponent}
-        />
-      )}
-
-      {isDcpNode && isValidAddress(searchValue ?? '') && searchValue?.toLowerCase() !== tezosAddress.toLowerCase() && (
-        <View style={styles.dcpBaker}>
-          <Divider size={formatSize(16)} />
-          <BakerListItem
-            item={unknownBaker}
-            onPress={setSelectedBaker}
-            selected={searchValue === selectedBaker?.address}
+          <Sorter
+            sortValue={sortValue}
+            description="Sort bakers by:"
+            sortFieldsOptions={bakersSortFieldsOptions}
+            sortFieldsLabels={bakersSortFieldsLabels}
+            onSetSortValue={handleSortValueChange}
+            testID={SelectBakerModalSelectors.sortByDropDownButton}
           />
         </View>
-      )}
+      </View>
 
-      <ModalButtonsFloatingContainer variant="bordered" style={isDcpNode && styles.buttons}>
+      <FlatList
+        data={sortedKnownBakers}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        style={styles.flatList}
+        windowSize={10}
+        ListEmptyComponent={ListEmptyComponent}
+      />
+
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary title="Close" onPress={goBack} testID={SelectBakerModalSelectors.closeButton} />
         <ButtonLargePrimary
           title="Next"

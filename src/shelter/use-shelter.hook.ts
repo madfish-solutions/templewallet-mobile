@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { EMPTY, Subject } from 'rxjs';
 
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
@@ -27,7 +26,6 @@ import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.u
 export const useShelter = () => {
   const accounts = useAllAccounts();
   const { dispatch: navigationDispatch } = useNavigation();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
@@ -58,9 +56,7 @@ export const useShelter = () => {
         createImportedMultichainAccountFromSeed$,
         accounts,
         navigationDispatch,
-        selectedRpcUrl,
-        (error, accountPkh) =>
-          trackErrorEvent('CreateImportAccountError', error, accountPkh ? [accountPkh] : [], { selectedRpcUrl })
+        (error, accountPkh) => trackErrorEvent('CreateImportAccountError', error, accountPkh ? [accountPkh] : [])
       ),
       revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$),
       enableBiometryPasswordSubscription(enableBiometryPassword$)
@@ -78,7 +74,6 @@ export const useShelter = () => {
     navigationDispatch,
     revealSecretKey$,
     revealSeedPhrase$,
-    selectedRpcUrl,
     trackErrorEvent
   ]);
 

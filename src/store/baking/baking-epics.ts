@@ -11,7 +11,7 @@ import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { RPC_RETRY_OPTIONS } from 'src/utils/tezos.util';
-import { withAccount, withSelectedRpcUrl } from 'src/utils/wallet.utils';
+import { withAccount } from 'src/utils/wallet.utils';
 
 import { loadBakersListActions, loadSelectedBakerActions } from './baking-actions';
 
@@ -19,16 +19,15 @@ const loadSelectedBakerAddressEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadSelectedBakerActions.submit),
     withAccount(state$),
-    withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[[, selectedAccount], rpcUrl], { userId, ABTestingCategory, isAnalyticsEnabled }]) => {
+    switchMap(([[, selectedAccount], { userId, ABTestingCategory, isAnalyticsEnabled }]) => {
       const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
 
       if (!selectedTezosAddress) {
         return of(loadSelectedBakerActions.success(null));
       }
 
-      const tezos = createReadOnlyTezosToolkit(rpcUrl, getAccountForTezos(selectedAccount));
+      const tezos = createReadOnlyTezosToolkit(getAccountForTezos(selectedAccount));
       let fetchedBakerAddress: string | nullish;
 
       return from(retry(() => tezos.rpc.getDelegate(selectedTezosAddress), RPC_RETRY_OPTIONS)).pipe(
@@ -49,7 +48,7 @@ const loadSelectedBakerAddressEpic: AnyActionEpic = (action$, state$) =>
               error,
               [selectedTezosAddress],
               { userId, ABTestingCategory },
-              { rpcUrl, fetchedBakerAddress }
+              { fetchedBakerAddress }
             );
           }
 

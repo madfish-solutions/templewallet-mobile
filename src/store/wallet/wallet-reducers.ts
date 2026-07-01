@@ -3,7 +3,6 @@ import { createReducer } from '@reduxjs/toolkit';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { initialAccountState } from 'src/interfaces/account-state.interface';
 import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
-import { isDcpNode } from 'src/utils/network.utils';
 
 import { loadWhitelistAction } from '../tokens-metadata/tokens-metadata-actions';
 
@@ -87,16 +86,13 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }
   });
 
-  builder.addCase(loadAssetsBalancesActions.success, (state, { payload: { accountId, balances, selectedRpcUrl } }) => {
+  builder.addCase(loadAssetsBalancesActions.success, (state, { payload: { accountId, balances } }) => {
     const accountState = retrieveAccountState(state, accountId);
     if (!accountState) {
       return;
     }
 
-    pushOrUpdateTokensBalances(
-      isDcpNode(selectedRpcUrl) ? accountState.dcpTokensList : accountState.tokensList,
-      balances
-    );
+    pushOrUpdateTokensBalances(accountState.tokensList, balances);
   });
 
   builder.addCase(addTokenAction, (state, { payload: tokenMetadata }) => {
@@ -129,12 +125,10 @@ export const walletReducers = createReducer<WalletState>(walletInitialState, bui
     }
   });
 
-  builder.addCase(toggleTokenVisibilityAction, (state, { payload: { slug, selectedRpcUrl } }) => {
+  builder.addCase(toggleTokenVisibilityAction, (state, { payload: { slug } }) => {
     const accountState = retrieveAccountState(state);
 
-    const token = accountState?.[isDcpNode(selectedRpcUrl) ? 'dcpTokensList' : 'tokensList']?.find(
-      t => t.slug === slug
-    );
+    const token = accountState?.tokensList?.find(t => t.slug === slug);
 
     if (token) {
       token.visibility = token.visibility === VisibilityEnum.Visible ? VisibilityEnum.Hidden : VisibilityEnum.Visible;

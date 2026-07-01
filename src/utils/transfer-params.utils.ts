@@ -5,9 +5,8 @@ import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Account } from '../interfaces/account.interfaces';
-import { TokenTypeEnum } from '../interfaces/token-type.enum';
-import { TokenMetadataInterface } from '../token/interfaces/token-metadata.interface';
-import { getTokenType } from '../token/utils/token.utils';
+import { TokenMetadataInterface, TokenStandardsEnum } from '../token/interfaces/token-metadata.interface';
+import { getTokenStandard } from '../token/utils/token.utils';
 
 import { getAccountAddressForTezos, getAccountForTezos } from './account.utils';
 import { isString } from './is-string';
@@ -16,30 +15,14 @@ import { throwError$ } from './rxjs.utils';
 
 export function getTransferParams$(
   asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  tezos: TezosToolkit,
-  senderPkh: string,
-  receiverPublicKeyHash: string,
-  amount: BigNumber
-): Observable<TransferParams>;
-export function getTransferParams$(
-  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  rpcUrl: string,
-  sender: Account,
-  receiverPublicKeyHash: string,
-  amount: BigNumber
-): Observable<TransferParams>;
-export function getTransferParams$(
-  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
-  rpcUrlOrTezos: string | TezosToolkit,
+  tezosFromArgs: TezosToolkit | undefined,
   sender: Account | string,
   receiverPublicKeyHash: string,
   amount: BigNumber
 ): Observable<TransferParams> {
   const { id, address } = asset;
   const tezos =
-    typeof rpcUrlOrTezos === 'string'
-      ? createReadOnlyTezosToolkit(rpcUrlOrTezos, getAccountForTezos(sender as Account))
-      : rpcUrlOrTezos;
+    tezosFromArgs ?? createReadOnlyTezosToolkit(typeof sender === 'string' ? undefined : getAccountForTezos(sender));
   const senderPkh = typeof sender === 'string' ? sender : getAccountAddressForTezos(sender);
 
   if (!senderPkh) {
@@ -49,7 +32,7 @@ export function getTransferParams$(
   return isString(address)
     ? from(tezos.contract.at(address)).pipe(
         map(contract =>
-          getTokenType(contract) === TokenTypeEnum.FA_2
+          getTokenStandard(contract) === TokenStandardsEnum.Fa2
             ? {
                 to: contract.address,
                 amount: 0,

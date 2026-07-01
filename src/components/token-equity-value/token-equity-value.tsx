@@ -3,7 +3,6 @@ import React, { memo, useLayoutEffect, useRef } from 'react';
 import { StyleProp, Text, TextStyle, View } from 'react-native';
 
 import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
@@ -13,7 +12,6 @@ import { isDefined } from 'src/utils/is-defined';
 import { formatAssetAmount } from 'src/utils/number.util';
 
 import { AssetValueText } from '../asset-value-text/asset-value-text';
-import { Divider } from '../divider/divider';
 import { ErrorBoundary } from '../error-boundary';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
@@ -57,14 +55,12 @@ export const TokenEquityValue = memo<Props>(props => {
 const TokenEquityValueContent = memo<Props>(({ token, forTotalBalance = false }) => {
   const styles = useTokenEquityValueStyles();
 
-  const { isTezosNode } = useNetworkInfo();
-
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
   const totalBalance = useTotalBalance();
 
   const exchangeRate = token.exchangeRate;
 
-  return isTezosNode ? (
+  return (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableIcon
@@ -101,8 +97,6 @@ const TokenEquityValueContent = memo<Props>(({ token, forTotalBalance = false })
         </HideBalance>
       )}
     </View>
-  ) : (
-    <Divider />
   );
 });
 

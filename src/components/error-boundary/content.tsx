@@ -54,6 +54,7 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
       const defaultTheme = Appearance.getColorScheme() === 'dark' ? ThemesEnum.dark : ThemesEnum.light;
 
       dispatch(changeTheme(defaultTheme));
+      // TODO: Implement resetting network settings
       dispatch(setSelectedRpcUrl(RpcList[0].url));
       dispatch(setFiatCurrency(FiatCurrenciesEnum.USD));
       dispatch(setSlippage(0.25));

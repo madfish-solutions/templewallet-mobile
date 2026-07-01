@@ -6,7 +6,6 @@ import useSWR from 'swr';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -55,32 +54,25 @@ const getCycleValue = <T, U>(
 
 export const BakerRewardsList = memo(() => {
   const selectedBaker = useSelectedBakerSelector();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
   const accountPkh = useAccountAddressForTezos();
   const { trackErrorEvent } = useAnalytics();
 
   const styles = useBakerRewardsListStyles();
 
   const getBakingHistory = useCallback(
-    async ([, accountPkh, , selectedRpcUrl]: [string, string, string | nullish, string]) => {
+    async ([, accountPkh]: [string, string, string | nullish]) => {
       const fetchedValues: Record<string, unknown> = {};
       try {
-        const rewards = await getDelegatorRewards(selectedRpcUrl, { address: accountPkh, limit: 30 }).then(
-          res => res || []
-        );
+        const rewards = await getDelegatorRewards({ address: accountPkh, limit: 30 }).then(res => res || []);
         fetchedValues.rewards = rewards;
-        const [newestCycle] = await getCycles(selectedRpcUrl, undefined, 1);
+        const [newestCycle] = await getCycles(undefined, 1);
         fetchedValues.newestCycle = newestCycle;
         const [cycles, protocol] =
           rewards.length === 0
-            ? await Promise.all([getCycles(selectedRpcUrl), getProtocol(selectedRpcUrl)])
+            ? await Promise.all([getCycles(), getProtocol()])
             : await Promise.all([
-                getCycles(
-                  selectedRpcUrl,
-                  newestCycle.index - rewards[0].cycle,
-                  rewards[0].cycle - rewards.at(-1)!.cycle + 1
-                ),
-                getProtocolByCycle(selectedRpcUrl, rewards[0].cycle)
+                getCycles(newestCycle.index - rewards[0].cycle, rewards[0].cycle - rewards.at(-1)!.cycle + 1),
+                getProtocolByCycle(rewards[0].cycle)
               ]);
         fetchedValues.cycles = cycles;
         fetchedValues.protocol = protocol;
@@ -88,7 +80,7 @@ export const BakerRewardsList = memo(() => {
         fetchedValues.bakersAddresses = bakersAddresses;
         const setParamsOperationsValues = await Promise.all(
           bakersAddresses.map(address =>
-            fetchSetDelegateParametersOperations(selectedRpcUrl, { sender: address, 'sort.desc': 'level' })
+            fetchSetDelegateParametersOperations({ sender: address, 'sort.desc': 'level' })
           )
         );
         fetchedValues.setParamsOperations = setParamsOperationsValues;
@@ -105,10 +97,7 @@ export const BakerRewardsList = memo(() => {
           stories: Object.fromEntries(bakersAddresses.map((address, i) => [address, storiesValues[i]]))
         };
       } catch (error) {
-        trackErrorEvent('BakerRewardsListGetBakingHistoryError', error, [accountPkh], {
-          fetchedValues,
-          selectedRpcUrl
-        });
+        trackErrorEvent('BakerRewardsListGetBakingHistoryError', error, [accountPkh], { fetchedValues });
         showErrorToast({ description: 'Failed to load rewards history' });
 
         return undefined;
@@ -118,7 +107,7 @@ export const BakerRewardsList = memo(() => {
   );
 
   const { data: bakingHistoryInput, isLoading } = useSWR(
-    ['baking-history', accountPkh, selectedBaker?.address, selectedRpcUrl],
+    ['baking-history', accountPkh, selectedBaker?.address],
     getBakingHistory,
     { suspense: true, errorRetryCount: 2 }
   );

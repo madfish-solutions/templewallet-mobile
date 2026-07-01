@@ -5,7 +5,6 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum.ts';
 import { AccountForChain } from 'src/utils/account.utils.ts';
 
 export interface ApproveOperationRequestActionPayloadInterface {
-  rpcUrl: string;
   sender: AccountForChain<TempleChainKind.Tezos>;
   opParams: ParamsWithKind[];
   message: OperationRequestOutput;

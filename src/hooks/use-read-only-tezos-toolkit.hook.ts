@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
 import { getAccountForTezos } from 'src/utils/account.utils.ts';
@@ -8,10 +7,6 @@ import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
 export const useReadOnlyTezosToolkit = (sender?: TezosReadOnlySignerPayload) => {
   const account = useAccount();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
 
-  return useMemo(
-    () => createReadOnlyTezosToolkit(selectedRpcUrl, sender ?? getAccountForTezos(account)),
-    [account, selectedRpcUrl, sender]
-  );
+  return useMemo(() => createReadOnlyTezosToolkit(sender ?? getAccountForTezos(account)), [account, sender]);
 };

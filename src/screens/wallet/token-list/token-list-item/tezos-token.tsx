@@ -8,13 +8,12 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TokenContainer } from 'src/components/token-container/token-container';
 import { delegationApy } from 'src/config/general';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { formatSize } from 'src/styles/format-size';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
@@ -29,7 +28,6 @@ export const TezosToken = memo(() => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const currentBaker = useSelectedBakerSelector();
   const navigateToScreen = useNavigateToScreen();
-  const { isTezosNode } = useNetworkInfo();
   const shieldedBalanceMutez = useShieldedBalanceSelector();
 
   const combinedToken = useMemo(() => {
@@ -43,11 +41,11 @@ export const TezosToken = memo(() => {
       return null;
     }
 
-    return mutezToTz(new BigNumber(tezosToken.balance), TEZ_TOKEN_METADATA.decimals).toFormat();
+    return mutezToTz(new BigNumber(tezosToken.balance), TEZ_TOKEN_DECIMALS).toFormat();
   }, [tezosToken.balance]);
 
   const formattedShieldedBalance = useMemo(
-    () => mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_METADATA.decimals).toFormat(),
+    () => mutezToTz(new BigNumber(shieldedBalanceMutez), TEZ_TOKEN_DECIMALS).toFormat(),
     [shieldedBalanceMutez]
   );
 
@@ -60,7 +58,7 @@ export const TezosToken = memo(() => {
   const styles = useTezosTokenBalanceSplitStyles();
   const tokenListItemStyles = useTokenListItemStyles();
 
-  const apy = isTezosNode && currentBaker ? delegationApy : undefined;
+  const apy = currentBaker ? delegationApy : undefined;
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.outerContainer}>

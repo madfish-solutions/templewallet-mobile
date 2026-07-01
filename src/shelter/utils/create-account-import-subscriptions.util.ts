@@ -36,7 +36,6 @@ import {
   privateKeyToEvmAccountCredentials,
   privateKeyToTezosAccountCredentials
 } from 'src/utils/keys.utils';
-import { isDcpNode } from 'src/utils/network.utils';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
 
 import { Shelter } from '../shelter';
@@ -97,7 +96,6 @@ export const createAccountImportSubscriptions = (
   createImportedMultichainAccountFromSeed$: Subject<CreateImportedMultichainAccountFromSeedRequest>,
   accounts: Account[],
   navigationDispatch: (action: NavigationAction) => void,
-  rpcUrl: string,
   trackErrorEvent: (error: unknown, accountPkh?: string) => void
 ) =>
   merge(
@@ -138,12 +136,11 @@ export const createAccountImportSubscriptions = (
         if (tezosAddress) {
           dispatch(loadWhitelistAction.submit());
 
-          lastValueFrom(loadTezosBalance$(rpcUrl, tezosAddress)).then(
+          lastValueFrom(loadTezosBalance$(tezosAddress)).then(
             balance =>
               void (
                 !LIMIT_FIN_FEATURES &&
                 new BigNumber(balance).isEqualTo(0) &&
-                !isDcpNode(rpcUrl) &&
                 dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Start))
               ),
             error => {
