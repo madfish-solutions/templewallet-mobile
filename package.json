@@ -1,6 +1,6 @@
 {
   "name": "temple-wallet",
-  "version": "1.55",
+  "version": "1.56",
   "private": true,
   "packageManager": "yarn@4.15.0",
   "scripts": {
