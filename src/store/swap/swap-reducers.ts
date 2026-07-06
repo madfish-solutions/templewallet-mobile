@@ -17,8 +17,8 @@ import { DEFAULT_SWAP_PARAMS } from './swap-state.mock';
 
 const swapReducer = createReducer(route3InitialState, builder => {
   builder.addCase(loadSwapTokensAction.submit, state => {
-    state.tokens = createEntity([], true);
-    state.tokensMetadata = createEntity([], true);
+    state.tokens = createEntity(state.tokens.data, true);
+    state.tokensMetadata = createEntity(state.tokensMetadata.data, true);
   });
   builder.addCase(loadSwapTokensAction.success, (state, { payload }) => {
     state.tokens = createEntity(payload, false);

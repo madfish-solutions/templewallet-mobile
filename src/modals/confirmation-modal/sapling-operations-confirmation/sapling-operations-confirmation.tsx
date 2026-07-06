@@ -8,6 +8,7 @@ import { PromotionItem } from 'src/components/promotion-item';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
 import { useIsSaplingPreparingSelector } from 'src/store/sapling';
+import { TEZ_SHIELDED_ANALYTICS_NAME } from 'src/token/data/tokens-metadata';
 
 import { InternalOperationsConfirmation } from '../internal-operations-confirmation/internal-operations-confirmation';
 import { RebalanceAfterPreview } from '../rebalance-confirmation/rebalance-after-preview';
@@ -60,6 +61,11 @@ export const SaplingOperationsConfirmation = (props: Props) => {
     return <SaplingSendPreview amount={props.amount} saplingType={props.saplingType} />;
   }, [props]);
 
+  const confirmEventProperties =
+    props.variant === 'rebalance'
+      ? { token: TEZ_SHIELDED_ANALYTICS_NAME, direction: props.direction }
+      : { token: TEZ_SHIELDED_ANALYTICS_NAME, saplingType: props.saplingType };
+
   return (
     <View style={fixedStyles.fill}>
       {showLoader && (
@@ -91,6 +97,7 @@ export const SaplingOperationsConfirmation = (props: Props) => {
             disclaimerMessage={props.variant === 'send' ? props.disclaimerMessage : undefined}
             renderPreview={renderPreview}
             onEstimationComplete={handleEstimationComplete}
+            confirmEventProperties={confirmEventProperties}
           />
         </View>
       )}

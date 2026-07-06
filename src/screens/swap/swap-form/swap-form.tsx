@@ -96,7 +96,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const tezosBalance = useCurrentAccountTezosBalance();
   const blockLevel = useBlockLevel();
   const prevBlockLevelRef = useRef(blockLevel);
-  const { isLoading } = useSwapTokensMetadataSelector();
+  const { isLoading: isMetadataLoading, data: tokensMetadataData } = useSwapTokensMetadataSelector();
+  const isLoading = isMetadataLoading && tokensMetadataData.length === 0;
   const usdExchangeRates = useUsdToTokenRates();
   const canUseOnRamp = useCanUseOnRamp();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();

@@ -9,6 +9,7 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 
 import { useElementIsSeen } from './use-element-is-seen.hook';
+import { useUpdatableRef } from './use-updatable-ref.hook';
 
 /**
  * This hook sends `Internal Ads Activity` after the ad is seen
@@ -75,13 +76,6 @@ export const useInternalAdsAnalytics = (
   );
 
   return { onAdLoad, resetAdState, onIsVisible };
-};
-
-const useUpdatableRef = <T>(value: T) => {
-  const ref = useRef<T>(value);
-  ref.current = value;
-
-  return ref;
 };
 
 export const useInternalAdsAnalyticsWithImpressionCallback = (

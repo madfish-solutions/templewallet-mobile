@@ -67,7 +67,8 @@ export const ManageEarnOpportunityModal: FC = () => {
   const farmIsLoading = useFarmsLoadingSelector();
   const savingsItemIsLoading = useSavingsItemsLoadingSelector();
   const earnOpportunityLoading = isFarmingPool ? farmIsLoading : savingsItemIsLoading;
-  const { isLoading: swapTokensMetadataLoading } = useSwapTokensMetadataSelector();
+  const { isLoading: isSwapMetadataLoading, data: swapMetadataData } = useSwapTokensMetadataSelector();
+  const swapTokensMetadataLoading = isSwapMetadataLoading && swapMetadataData.length === 0;
   const accountPkh = useCurrentAccountPkhSelector();
   const pageIsLoading = (earnOpportunityLoading && !isDefined(earnOpportunityItem)) || swapTokensMetadataLoading;
   const farmStake = useFarmStakeSelector(contractAddress);

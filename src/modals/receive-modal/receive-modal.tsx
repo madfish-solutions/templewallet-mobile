@@ -58,13 +58,15 @@ export const ReceiveModal = () => {
 
   const currentAddress = activePageIndex === 0 ? publicKeyHash : saplingAddress ?? '';
 
-  const testID = useMemo(
-    () =>
-      isShownDomainName && isString(domainName) && activePageIndex === 0
-        ? ReceiveModalSelectors.domainCopyButton
-        : ReceiveModalSelectors.publicAddressCopyButton,
-    [activePageIndex, isShownDomainName, domainName]
-  );
+  const testID = useMemo(() => {
+    if (activePageIndex === 1) {
+      return ReceiveModalSelectors.shieldedAddressCopyButton;
+    }
+
+    return isShownDomainName && isString(domainName)
+      ? ReceiveModalSelectors.domainCopyButton
+      : ReceiveModalSelectors.publicAddressCopyButton;
+  }, [activePageIndex, isShownDomainName, domainName]);
 
   const handleCopyButtonPress = () => {
     copyStringToClipboard(currentAddress);

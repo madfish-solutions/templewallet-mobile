@@ -20,6 +20,7 @@ import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors
 import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-actions';
 import { useRawCurrentAccountSelector } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
+import { AnalyticsEventProperties } from 'src/utils/analytics/analytics.util';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -34,6 +35,7 @@ import { OperationsConfirmation } from '../operations-confirmation/operations-co
 type Props = Omit<InternalOperationsConfirmationModalParams, 'type'> & {
   renderPreview?: (opParams: ParamsWithKind[]) => React.ReactNode;
   onEstimationComplete?: EmptyFn;
+  confirmEventProperties?: AnalyticsEventProperties;
 };
 
 const approveInternalOperationRequest = ({
@@ -72,7 +74,8 @@ export const InternalOperationsConfirmation: FC<Props> = ({
   disclaimerMessage,
   testID,
   renderPreview,
-  onEstimationComplete
+  onEstimationComplete,
+  confirmEventProperties
 }) => {
   const canUseOnRamp = useCanUseOnRamp();
   const dispatch = useDispatch();
@@ -144,6 +147,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
           disclaimer={disclaimer}
           renderPreview={renderPreview}
           onEstimationComplete={onEstimationComplete}
+          confirmEventProperties={confirmEventProperties}
         />
       )}
     </>
