@@ -37,5 +37,4 @@ export interface AssetAmountInputProps extends TestIdProps {
   tokenTestID?: string;
   switcherTestID?: string;
   maxButtonTestID?: string;
-  assetOptionTestIdPropertiesFn?: (asset: TokenInterface) => object | undefined;
 }
