@@ -21,9 +21,7 @@ setJSExceptionHandler((error, isFatal) => {
   isFatal &&
     Alert.alert(
       'Ooops, something went wrong',
-      `We have reported this to our team! \nRestart the app and try again. \nIf this continues - please Reset the wallet. ${JSON.stringify(
-        getErrorDerivedEventProps(error)
-      )}`,
+      'We have reported this to our team! \nRestart the app and try again. \nIf this continues - please Reset the wallet.',
       [
         {
           text: 'Restart',
