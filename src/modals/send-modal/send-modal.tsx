@@ -43,7 +43,7 @@ import {
   TEZ_SHIELDED_ANALYTICS_NAME
 } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { getTokenSlug, isShieldedTez } from 'src/token/utils/token.utils';
 import { AnalyticsPageName } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
@@ -56,8 +56,6 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { SendModalSelectors } from './send-modal.selectors';
 import { useSendModalStyles } from './send-modal.styles';
-
-const isShieldedTezSelected = (asset: TokenInterface): boolean => getTokenSlug(asset) === TEZ_SHIELDED_TOKEN_SLUG;
 
 export const SendModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -154,7 +152,7 @@ export const SendModal: FC = () => {
 
       const resolvedAddress = transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash;
       const isRecipientSapling = isSaplingAddress(resolvedAddress);
-      const isSourceShielded = isShieldedTezSelected(asset);
+      const isSourceShielded = isShieldedTez(asset);
 
       // Sapling flow
       if (isSourceShielded || (getTokenSlug(asset) === TEZ_TOKEN_SLUG && isRecipientSapling)) {

@@ -12,7 +12,7 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug, toTokenSlug } from 'src/token/utils/token.utils';
+import { getTokenSlug, isShieldedTez, toTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -46,7 +46,9 @@ const DEFAULT_BALANCE = '0';
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
 const defaultAssetAmountInputStylesConfig: AssetAmountInputStylesConfig = {};
-const defaultAssetOptionTestIdPropertiesFn = (asset: TokenInterface) => ({ token: asset.symbol });
+const assetOptionTestIdPropertiesFn = (asset: TokenInterface) => ({
+  token: isShieldedTez(asset) ? 'Shielded TEZ' : asset.symbol
+});
 
 const getDefinedAmount = (
   amount: BigNumber | undefined,
@@ -90,8 +92,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     testID,
     tokenTestID,
     switcherTestID,
-    maxButtonTestID,
-    assetOptionTestIdPropertiesFn = defaultAssetOptionTestIdPropertiesFn
+    maxButtonTestID
   }) => {
     const styles = useAssetAmountInputStyles();
     const {
@@ -230,7 +231,9 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
         const asset = newAsset ?? emptyTezosLikeToken;
         const newExchangeRate = getTokenExchangeRate(getTokenSlug(asset));
 
-        trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, { token: asset.symbol });
+        trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, {
+          token: isShieldedTez(asset) ? 'Shielded TEZ' : asset.symbol
+        });
 
         onValueChange({
           amount: getDefinedAmount(inputValueRef.current, decimals, newExchangeRate ?? 1, isTokenInputType),

@@ -9,7 +9,7 @@ export interface TopUpInterfaceBase {
   code: string;
   codeToDisplay?: string;
   network?: TopUpItemNetwork;
-  icon: string;
+  icon: string | null;
   minAmount?: number;
   maxAmount?: number;
   precision?: number;
