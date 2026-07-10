@@ -15,6 +15,9 @@ type ObjktMediaTail = 'display' | 'artifact' | 'thumb288';
 
 const DEFAULT_MEDIA_SIZE: TcInfraMediaSize = 'small';
 
+/** Some contracts emit the `ipfs://ipfs/<CID>` double-prefix form, which breaks gateway conversion */
+export const normalizeIpfsUri = (uri?: string | null) => uri?.replace(/^ipfs:\/\/ipfs\//, IPFS_PROTOCOL) ?? undefined;
+
 const buildIpfsMediaUrisByInfo = (info: MediaUriInfo, isFullView: boolean) => {
   const sizes: TcInfraMediaSize[] = isFullView ? ['raw', 'large', 'medium', 'small'] : ['medium', 'small'];
 

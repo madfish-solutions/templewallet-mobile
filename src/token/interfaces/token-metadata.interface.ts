@@ -26,7 +26,7 @@ export const emptyTokenMetadata: TokenMetadataInterface = {
   standard: TokenStandardsEnum.Fa12
 };
 
-enum EvmAssetStandardEnum {
+export enum EvmAssetStandardEnum {
   NATIVE = 'native',
   ERC20 = 'erc20',
   ERC721 = 'erc721',

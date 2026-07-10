@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { WatchBlocksReturnType } from 'viem';
 
-import { useEtherlinkPublicClient } from 'src/hooks/use-etherlink-public-client.hook';
+import { useEtherlinkPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
 
 import { FallbackDemo, FallbackDemoProps } from './fallback-demo';
 

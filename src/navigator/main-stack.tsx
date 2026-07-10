@@ -12,8 +12,8 @@ import { ScreenStatusBar } from 'src/components/screen-status-bar/screen-status-
 import { emptyFn } from 'src/config/general';
 import { transparent } from 'src/config/styles';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
+import { useEvmChains } from 'src/hooks/evm/use-evm-chains.hook';
 import { useMainHooks } from 'src/hooks/main-hooks';
-import { useEvmChains } from 'src/hooks/use-evm-chains.hook';
 import { useTezosChains } from 'src/hooks/use-tezos-chains.hook';
 import { SecurityUpdate } from 'src/modals/security-update';
 import { About } from 'src/screens/about/about';
