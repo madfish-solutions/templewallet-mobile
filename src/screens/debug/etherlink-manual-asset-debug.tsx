@@ -72,7 +72,6 @@ export const EtherlinkManualAssetDebug = () => {
       return;
     }
 
-    // New entries must be validated as real tokens (extension parity): API token info or on-chain metadata
     if (!network || !isAddress(contract)) {
       setAddError('Not a valid contract address');
 

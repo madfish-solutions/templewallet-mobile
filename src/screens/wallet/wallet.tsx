@@ -11,6 +11,7 @@ import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
+import { useEtherlinkDataLoading } from 'src/hooks/evm/use-etherlink-data-loading.hook';
 import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
 import { KoloCryptoCardPreview } from 'src/modals/kolo-card';
@@ -62,6 +63,7 @@ export const Wallet = memo(() => {
 
   useApkBuildIdEvent();
   usePushNotificationsEvent();
+  useEtherlinkDataLoading();
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
 
