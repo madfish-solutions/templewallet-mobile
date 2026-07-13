@@ -128,8 +128,6 @@ export const getEtherlinkAccountData = async (
       tokenId: id,
       name: metadata?.name ?? undefined,
       symbol: token.symbol ?? undefined,
-      // The normalized ipfs:// form rides the tcinfra media proxy (proven at Tezos-collectibles scale);
-      // image_url is a dweb.link gateway link that rate-limits under grid-burst load
       iconUri: normalizeIpfsUri(metadata?.image) ?? image_url ?? undefined,
       collectionName: token.name ?? undefined,
       standard

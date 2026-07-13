@@ -10,6 +10,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { AsyncStorageDetails } from './async-storage-details';
 import { EtherlinkFallbackDemo } from './etherlink-fallback-demo';
+import { EtherlinkManualAssetDebug } from './etherlink-manual-asset-debug';
 import { ImportWatchOnlyDebug } from './import-watch-only-debug/import-watch-only-debug';
 import { TezosFallbackDemo } from './tezos-fallback-demo';
 
@@ -42,6 +43,8 @@ export const Debug: FC = () => {
       <TezosFallbackDemo />
       <Divider />
       <EtherlinkFallbackDemo />
+      <Divider />
+      <EtherlinkManualAssetDebug />
       <Divider />
       <AsyncStorageDetails />
     </ScreenContainer>

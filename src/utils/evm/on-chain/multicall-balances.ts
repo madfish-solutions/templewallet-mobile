@@ -17,7 +17,6 @@ export interface EvmAssetToReadBalanceFor {
 }
 
 interface EvmAssetsBalancesResult {
-  /** Every viem `bigint`/owner-address result is converted to a decimal string before it leaves this module */
   balances: Record<string, string>;
   failed: string[];
 }
