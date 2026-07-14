@@ -50,14 +50,16 @@ const sizeWrapperStyles = StyleSheet.create({
   32: makeSizeWrapperStyles(32)
 });
 
-export const IconV2: FC<IconV2Props> = ({ name, size = 16, color, style, testID }) => {
+const DEFAULT_SIZE = 16 as const;
+
+export const IconV2: FC<IconV2Props> = ({ name, size = DEFAULT_SIZE, color, style, testID }) => {
   const { peach } = useColors();
   const Svg = IconNameV2Map[name];
 
   const scaleTransform = useMemo(() => {
     const padding = irregularPaddingByIconName[name]?.[size] ?? 1;
-    const defaultSizePadding = irregularPaddingByIconName[name]?.[16] ?? 1;
-    const scale = (size - 2 * padding) / (16 - 2 * defaultSizePadding);
+    const defaultSizePadding = irregularPaddingByIconName[name]?.[DEFAULT_SIZE] ?? 1;
+    const scale = (size - 2 * padding) / (DEFAULT_SIZE - 2 * defaultSizePadding);
 
     return scale === 1 ? undefined : [{ scale }];
   }, [size, name]);

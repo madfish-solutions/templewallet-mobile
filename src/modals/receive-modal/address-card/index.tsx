@@ -46,17 +46,17 @@ export const AddressCard = ({ title, address, cryptoLogoName, showWarningOnCard,
           <Text style={styles.address}>{address}</Text>
 
           <SafeTouchableOpacity onPress={handleCopyClick} style={styles.actionButton}>
-            <IconV2 name={IconNameV2Enum.Copy} size={16} color={colors.blue} />
+            <IconV2 name={IconNameV2Enum.Copy} color={colors.blue} />
           </SafeTouchableOpacity>
 
           <SafeTouchableOpacity onPress={handleQrButtonClick} style={styles.actionButton}>
-            <IconV2 name={IconNameV2Enum.Qr} size={16} color={colors.blue} />
+            <IconV2 name={IconNameV2Enum.Qr} color={colors.blue} />
           </SafeTouchableOpacity>
         </View>
 
         {showWarningOnCard && (
           <View style={styles.warningContainer}>
-            <IconV2 name={IconNameV2Enum.AlarmTriangle} size={16} />
+            <IconV2 name={IconNameV2Enum.AlarmTriangle} />
             <Text style={styles.warningText}>{warningText}</Text>
           </View>
         )}
