@@ -7,7 +7,6 @@ import AlertMonochromeIcon from './assets/alert-monochrome.svg';
 import AlertTriangleIcon from './assets/alert-triangle.svg';
 import AlertIcon from './assets/alert.svg';
 import ArrowDownIcon from './assets/arrow-down.svg';
-import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import AudioIcon from './assets/audio.svg';
@@ -164,7 +163,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
-  [IconNameEnum.ArrowLeft]: ArrowLeftIcon,
   [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.Burn]: BurnIcon,
   [IconNameEnum.BrokenImage]: BrokenImage,

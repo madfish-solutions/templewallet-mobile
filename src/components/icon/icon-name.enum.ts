@@ -4,7 +4,6 @@ export enum IconNameEnum {
   ArrowUp = 'ArrowUp',
   ArrowDown = 'ArrowDown',
   ArrowRight = 'ArrowRight',
-  ArrowLeft = 'ArrowLeft',
   Action = 'Action',
   Bell = 'Bell',
   Burn = 'Burn',

@@ -7,7 +7,7 @@ import { formatSize } from 'src/styles/format-size';
 import { CryptoLogoNameEnum } from './logo-name.enum';
 import { CryptoLogoNameMap } from './logo-name.map';
 
-export interface CryptoLogoProps extends TestIdProps, Omit<SvgProps, 'width' | 'height'> {
+interface CryptoLogoProps extends TestIdProps, Omit<SvgProps, 'width' | 'height'> {
   name: CryptoLogoNameEnum;
   size?: number;
   internalSize?: number;
