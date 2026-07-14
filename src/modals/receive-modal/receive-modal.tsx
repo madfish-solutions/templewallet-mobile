@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { View } from 'react-native';
 
-import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -40,20 +39,11 @@ const makeTezosSaplingComponentsProps = (saplingAddress: string) => ({
 const cardKeyExtractor = ({ address, title }: AddressCardProps) => `${title}-${address}`;
 
 export const ReceiveModal = () => {
-  const qrCodeBottomSheetController = useBottomSheetController();
   const selectedAccount = useAccount();
   const tezosAddress = getAccountAddressForTezos(selectedAccount);
   const evmAddress = getAccountAddressForEvm(selectedAccount);
   const styles = useReceiveModalStyles();
   const saplingAddress = useSaplingAddressSelector();
-
-  const [shouldOpenQrCode, setShouldOpenQrCode] = useState(false);
-  useEffect(() => {
-    if (shouldOpenQrCode) {
-      qrCodeBottomSheetController.open();
-      setShouldOpenQrCode(false);
-    }
-  }, [shouldOpenQrCode, qrCodeBottomSheetController]);
 
   const cardsContentProps = useMemo(() => {
     const componentsProps: AddressCardProps[] = [];

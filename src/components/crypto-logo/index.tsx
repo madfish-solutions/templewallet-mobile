@@ -29,7 +29,7 @@ export const CryptoLogo: FC<CryptoLogoProps> = ({
   const Svg = CryptoLogoNameMap[name];
 
   const style = useMemo(
-    () => [{ margin: formatSize(size - internalSize) / 2 }, styleFromProps],
+    () => [{ margin: (size - internalSize) / 2 }, styleFromProps],
     [styleFromProps, internalSize, size]
   );
 

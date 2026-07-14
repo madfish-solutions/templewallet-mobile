@@ -101,7 +101,6 @@ export const BottomSheet: FCWithChildren<Props> = ({
   };
   const handleClosePress = () => {
     controller.close();
-    handleClose();
   };
 
   useEffect(() => {
