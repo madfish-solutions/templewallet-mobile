@@ -11,7 +11,7 @@ import { HeaderButton } from 'src/components/header/header-button/header-button'
 import { HeaderProgress } from 'src/components/header/header-progress/header-progress';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
@@ -44,7 +44,7 @@ export const VerifySeedPhrase: FC<Props> = ({ onGoBackPress }) => {
 
   useNavigationSetOptions(
     {
-      headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
+      headerLeft: () => <HeaderButton iconName={IconNameV2Enum.ArrowLeft} onPress={onGoBackPress} />,
       headerRight: () => <HeaderProgress current={2} total={2} />,
       headerTitle: () => <HeaderTitle title="Verify your seed" />
     },

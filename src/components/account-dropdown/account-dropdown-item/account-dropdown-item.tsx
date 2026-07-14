@@ -3,10 +3,11 @@ import React, { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { CryptoLogo } from 'src/components/crypto-logo';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { TruncatedText } from 'src/components/truncated-text';
@@ -93,11 +94,11 @@ const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(
       </View>
 
       <View style={styles.addressesContainer}>
-        {isDefined(tezosAddress) && <AccountAddressChip address={tezosAddress} iconName={IconNameEnum.TezToken} />}
+        {isDefined(tezosAddress) && <AccountAddressChip address={tezosAddress} iconName={CryptoLogoNameEnum.Tezos} />}
         {isDefined(saplingAddress) && (
-          <AccountAddressChip address={saplingAddress} iconName={IconNameEnum.TezShieldedToken} />
+          <AccountAddressChip address={saplingAddress} iconName={CryptoLogoNameEnum.ShieldedTezos} />
         )}
-        {isDefined(evmAddress) && <AccountAddressChip address={evmAddress} iconName={IconNameEnum.EtherlinkToken} />}
+        {isDefined(evmAddress) && <AccountAddressChip address={evmAddress} iconName={CryptoLogoNameEnum.Etherlink} />}
       </View>
     </>
   );
@@ -109,7 +110,7 @@ export const renderAccountListItem: DropdownListItemComponent<Account> = ({ item
 
 interface AccountAddressChipProps {
   address: string;
-  iconName: IconNameEnum;
+  iconName: CryptoLogoNameEnum;
 }
 
 const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName }) => {
@@ -117,7 +118,7 @@ const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName })
 
   return (
     <View style={styles.addressChip}>
-      <Icon name={iconName} size={formatSize(16)} />
+      <CryptoLogo name={iconName} size={formatSize(12)} />
       <Text style={styles.addressText}>{truncateAddress(address)}</Text>
     </View>
   );

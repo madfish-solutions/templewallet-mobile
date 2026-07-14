@@ -6,7 +6,7 @@ import GorhomBottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
 import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react';
-import { BackHandler, Keyboard, Text, useWindowDimensions, View } from 'react-native';
+import { BackHandler, Keyboard, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,6 +17,9 @@ import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { formatSize } from 'src/styles/format-size';
 import { isDefined } from 'src/utils/is-defined';
 
+import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
+import { TouchableIconV2 } from '../touchable-icon-v2';
+
 import { useDropdownBottomSheetStyles } from './bottom-sheet.styles';
 import { BottomSheetControllerProps } from './use-bottom-sheet-controller';
 
@@ -26,9 +29,12 @@ interface Props extends BottomSheetControllerProps {
   cancelButtonText?: string;
   onCancelButtonPress?: EmptyFn;
   cancelButtonTestID?: string;
+  showCancelButton?: boolean;
+  showCloseButton?: boolean;
   onClose?: EmptyFn;
   contentHeight: number;
   isInitiallyOpen?: boolean;
+  rootStyle?: StyleProp<ViewStyle>;
 }
 
 export const BottomSheet: FCWithChildren<Props> = ({
@@ -41,7 +47,10 @@ export const BottomSheet: FCWithChildren<Props> = ({
   onClose = emptyFn,
   contentHeight,
   controller,
-  children
+  children,
+  showCancelButton = true,
+  showCloseButton = false,
+  rootStyle
 }) => {
   // hack that prevents rendering of GorhomBottomSheet component for locked app state,
   // as it loads heavy Reanimated 2 modules and application do not respond on gestures
@@ -68,7 +77,7 @@ export const BottomSheet: FCWithChildren<Props> = ({
       <BottomSheetBackdrop
         {...props}
         style={[props.style, styles.backdrop]}
-        opacity={0.16}
+        opacity={0.3}
         appearsOnIndex={0}
         disappearsOnIndex={-1}
       />
@@ -89,6 +98,10 @@ export const BottomSheet: FCWithChildren<Props> = ({
       setIsOpened(false);
       onClose();
     }
+  };
+  const handleClosePress = () => {
+    controller.close();
+    handleClose();
   };
 
   useEffect(() => {
@@ -123,24 +136,39 @@ export const BottomSheet: FCWithChildren<Props> = ({
           onChange={handleChange}
           onClose={handleClose}
         >
-          <BottomSheetView style={styles.root}>
+          <BottomSheetView style={rootStyle ?? styles.root}>
             {(isDefined(title) || isDefined(description)) && (
               <View style={styles.headerContainer}>
-                {isDefined(title) && <Text style={styles.title}>{title}</Text>}
-                {isDefined(description) && <Text style={styles.description}>{description}</Text>}
+                {showCloseButton && <View style={styles.headerLeftSide} />}
+                <View style={styles.headerTextsContainer}>
+                  {isDefined(title) && <Text style={styles.title}>{title}</Text>}
+                  {isDefined(description) && <Text style={styles.description}>{description}</Text>}
+                </View>
+                {showCloseButton && (
+                  <View style={styles.headerRightSide}>
+                    <TouchableIconV2
+                      name={IconNameV2Enum.XBig}
+                      onPress={handleClosePress}
+                      size={formatSize(20)}
+                      style={styles.closeButton}
+                    />
+                  </View>
+                )}
               </View>
             )}
 
             {children}
 
-            <TouchableWithAnalytics
-              Component={TouchableOpacity}
-              testID={cancelButtonTestID}
-              style={styles.cancelButton}
-              onPress={handleCancelPress}
-            >
-              <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
-            </TouchableWithAnalytics>
+            {showCancelButton && (
+              <TouchableWithAnalytics
+                Component={TouchableOpacity}
+                testID={cancelButtonTestID}
+                style={styles.cancelButton}
+                onPress={handleCancelPress}
+              >
+                <Text style={styles.cancelButtonText}>{cancelButtonText}</Text>
+              </TouchableWithAnalytics>
+            )}
           </BottomSheetView>
         </GorhomBottomSheet>
       )}
