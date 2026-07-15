@@ -24,7 +24,7 @@ export const useTokenImagesStack = (url: string, preferDirectSource = false) => 
   return useImagesStack(sourcesStack);
 };
 
-const useImagesStack = (sourcesStack: string[]) => {
+export const useImagesStack = (sourcesStack: string[]) => {
   const emptyStack = sourcesStack.length < 1;
 
   const [isLoading, setIsLoading] = useState(emptyStack === false);

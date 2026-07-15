@@ -13,18 +13,20 @@ import { SIDEBAR_WIDTH } from 'src/config/styles';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useAreMetadatasLoadingSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { isEvmCollectibleSlug } from 'src/utils/assets/hooks';
 import { UsableAccountAsset } from 'src/utils/assets/types';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 
 import { useCollectiblesGridStyles } from '../styles';
 
 import { CollectibleItem } from './collectible-item';
+import { EvmCollectibleItem } from './collectible-item/evm-collectible-item';
 import { useCollectibleItemStyles } from './collectible-item/styles';
 import { CollectiblesListStyles, GRID_GAP } from './styles';
 
 interface Props {
   collectibles: UsableAccountAsset[];
-  isShowInfo: boolean;
+  showInfo: boolean;
 }
 
 const ITEMS_PER_ROW = 3;
@@ -32,7 +34,7 @@ const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
 const keyExtractor = (item: UsableAccountAsset) => item.slug;
 
-export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
+export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
   const screenStyles = useScreenContainerStyles();
   const itemStyles = useCollectibleItemStyles();
 
@@ -52,7 +54,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
   const getItemLayout = useMemo(
     () =>
       createGetItemLayout<UsableAccountAsset>(
-        isShowInfo
+        showInfo
           ? itemSize +
               itemStyles.description.paddingTop +
               itemStyles.description.paddingBottom +
@@ -61,21 +63,33 @@ export const CollectiblesList = memo<Props>(({ collectibles, isShowInfo }) => {
           : itemSize,
         GRID_GAP
       ),
-    [isShowInfo, itemSize, itemStyles]
+    [showInfo, itemSize, itemStyles]
   );
 
   const renderItem: ListRenderItem<UsableAccountAsset> = useCallback(
-    ({ item: collectible, index }) => (
-      <CollectibleItem
-        key={collectible.slug}
-        slug={collectible.slug}
-        collectible={collectible}
-        isShowInfo={isShowInfo}
-        size={itemSize}
-        style={(index + 1) % ITEMS_PER_ROW !== 0 ? CollectiblesListStyles.marginRight : undefined}
-      />
-    ),
-    [itemSize, isShowInfo]
+    ({ item: collectible, index }) => {
+      const style = (index + 1) % ITEMS_PER_ROW !== 0 ? CollectiblesListStyles.marginRight : undefined;
+
+      return isEvmCollectibleSlug(collectible.slug) ? (
+        <EvmCollectibleItem
+          key={collectible.slug}
+          collectible={collectible}
+          showInfo={showInfo}
+          size={itemSize}
+          style={style}
+        />
+      ) : (
+        <CollectibleItem
+          key={collectible.slug}
+          slug={collectible.slug}
+          collectible={collectible}
+          showInfo={showInfo}
+          size={itemSize}
+          style={style}
+        />
+      );
+    },
+    [itemSize, showInfo]
   );
 
   return (

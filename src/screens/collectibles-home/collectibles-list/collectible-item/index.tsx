@@ -24,11 +24,11 @@ interface Props {
   slug: string;
   collectible: TokenInterface;
   size: number;
-  isShowInfo?: boolean;
+  showInfo?: boolean;
   style?: StyleProp<ViewStyle>;
 }
 
-export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInfo = false, style }) => {
+export const CollectibleItem = memo<Props>(({ slug, collectible, size, showInfo = false, style }) => {
   const navigateToModal = useNavigateToModal();
 
   const styles = useCollectibleItemStyles();
@@ -79,10 +79,10 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, isShowInf
           areDetailsLoading={areDetailsLoading && details === undefined}
         />
 
-        {isShowInfo && isDefined(balance) ? <Balance balance={balance} /> : null}
+        {showInfo && isDefined(balance) ? <Balance balance={balance} /> : null}
       </View>
 
-      {isShowInfo ? (
+      {showInfo ? (
         <View style={styles.description}>
           <Text numberOfLines={1} lineBreakMode="tail" style={styles.name}>
             {collectible.name}
