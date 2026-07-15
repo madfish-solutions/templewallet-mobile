@@ -62,21 +62,16 @@ export const IconV2: FC<IconV2Props> = ({ name, size = DEFAULT_SIZE, color, styl
   const { peach } = useColors();
   const Svg = IconNameV2Map[name];
 
-  const transform = useMemo(() => {
+  const internalSize = useMemo(() => {
     const padding = getPadding(size, name);
     const defaultSizePadding = getPadding(DEFAULT_SIZE, name);
 
-    return [
-      {
-        scale:
-          ((size - 2 * padding) * formatSize(DEFAULT_SIZE)) / ((DEFAULT_SIZE - 2 * defaultSizePadding) * DEFAULT_SIZE)
-      }
-    ];
+    return ((size - 2 * padding) * formatSize(DEFAULT_SIZE)) / (DEFAULT_SIZE - 2 * defaultSizePadding);
   }, [size, name]);
 
   return (
     <View style={[style, sizeWrapperStyles.wrapper, sizeWrapperStyles[size]]}>
-      <Svg transform={transform} color={color ?? peach} testID={testID} />
+      <Svg width={internalSize} height={internalSize} color={color ?? peach} testID={testID} />
     </View>
   );
 };
