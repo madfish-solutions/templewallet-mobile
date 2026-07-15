@@ -30,7 +30,8 @@ const irregularPaddingByIconName: Partial<Record<IconNameV2Enum, Partial<Record<
   },
   // TODO: Apply the same for other single chevron icons
   [IconNameV2Enum.ChevronRight]: {
-    16: 2
+    16: 2,
+    24: 5.219
   },
   [IconNameV2Enum.Copy]: {
     24: 3.458
