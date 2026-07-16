@@ -133,16 +133,16 @@ export const DEFAULT_EVM_RPCS: Record<number, EvmRpc[]> = {
   ]
 };
 
-export const DEFAULT_EVM_CHAINS_SPECS: EvmChainSpecs[] = [
-  {
-    name: 'Etherlink',
-    chainId: ETHERLINK_MAINNET_CHAIN_ID,
-    currency: { ...DEFAULT_EVM_CURRENCY, name: 'Tezos', symbol: 'XTZ' },
-    activeRpcId: 'etherlink',
-    activeBlockExplorerId: 'etherlink-mainnet',
-    default: true
-  }
-];
+export const ETHERLINK_MAINNET_CHAIN_SPECS = {
+  name: 'Etherlink',
+  chainId: ETHERLINK_MAINNET_CHAIN_ID,
+  currency: { ...DEFAULT_EVM_CURRENCY, name: 'Tezos', symbol: 'XTZ' },
+  activeRpcId: 'etherlink',
+  activeBlockExplorerId: 'etherlink-mainnet',
+  default: true
+} satisfies EvmChainSpecs;
+
+export const DEFAULT_EVM_CHAINS_SPECS: EvmChainSpecs[] = [ETHERLINK_MAINNET_CHAIN_SPECS];
 
 export type ChainOfKind<T extends TempleChainKind> = T extends TempleChainKind.Tezos ? TezosChain : EvmChain;
 

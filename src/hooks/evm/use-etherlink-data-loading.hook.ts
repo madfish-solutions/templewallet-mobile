@@ -1,11 +1,11 @@
 import { useIsFocused } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { isAddress } from 'viem';
 
 import { EVM_BALANCES_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useAppStateStatus } from 'src/hooks/use-app-state-status.hook';
+import { dispatch } from 'src/store';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { processLoadedEvmCollectiblesMetadataAction } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-actions';
@@ -23,9 +23,9 @@ import {
   readContractAssetsBalancesOnChain
 } from 'src/utils/evm/etherlink-balances.utils';
 import { getEvmCollectibleMetadata, getEvmTokenMetadata } from 'src/utils/evm/on-chain/metadata';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
+import { useInterval } from 'src/utils/hooks/use-interval';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
-
-const EMPTY_HEX_ADDRESS: HexString = '0x';
 
 const inFlightMap: Record<string, boolean> = {};
 const lastLoadTimestampMap: Record<string, number> = {};
@@ -38,12 +38,11 @@ const toNetworkEssentials = (chain: EvmChain): EvmNetworkEssentials => ({
 });
 
 export const useEtherlinkDataLoading = () => {
-  const dispatch = useDispatch();
   const evmAddress = useAccountAddressForEvm();
   const etherlinkChain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
-  const nativeUsdRate = useUsdToTokenRates()[TEZ_TOKEN_SLUG];
+  const tezUsdRate = useUsdToTokenRates()[TEZ_TOKEN_SLUG];
 
-  const chainAssets = useEvmAccountChainAssetsSelector(evmAddress ?? EMPTY_HEX_ADDRESS, ETHERLINK_MAINNET_CHAIN_ID);
+  const chainAssets = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const tokensMetadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
   const collectiblesMetadata = useEvmChainCollectiblesMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
 
@@ -57,99 +56,79 @@ export const useEtherlinkDataLoading = () => {
 
   const etherlinkChainRef = useRef(etherlinkChain);
   etherlinkChainRef.current = etherlinkChain;
-  const nativeUsdRateRef = useRef(nativeUsdRate);
-  nativeUsdRateRef.current = nativeUsdRate;
+  const tezUsdRateRef = useRef(tezUsdRate);
+  tezUsdRateRef.current = tezUsdRate;
   const chainAssetsRef = useRef(chainAssets);
   chainAssetsRef.current = chainAssets;
 
-  const refresh = useCallback(
-    async (account: HexString) => {
-      const chain = etherlinkChainRef.current;
-      if (!chain) {
-        return;
-      }
-      const currentNetwork = toNetworkEssentials(chain);
+  const refresh = useCallback(async (account: HexString) => {
+    const chain = etherlinkChainRef.current;
+    if (!chain) {
+      return;
+    }
+    const currentNetwork = toNetworkEssentials(chain);
 
-      const key = `${account}_${ETHERLINK_MAINNET_CHAIN_ID}`;
-      if (inFlightMap[key]) {
-        return;
-      }
-      inFlightMap[key] = true;
+    const key = `${account}_${ETHERLINK_MAINNET_CHAIN_ID}`;
+    if (inFlightMap[key] || Date.now() - (lastLoadTimestampMap[key] ?? 0) < EVM_BALANCES_SYNC_INTERVAL) {
+      return;
+    }
+    inFlightMap[key] = true;
+    lastLoadTimestampMap[key] = Date.now();
 
+    try {
       try {
-        try {
-          const data = await getEtherlinkAccountData(ETHERLINK_MAINNET_CHAIN_ID, account);
+        const data = await getEtherlinkAccountData(account);
 
-          // Manual assets may be missing from the API response, but their balances must survive the refresh
-          const chainAssets = chainAssetsRef.current;
-          const manualAssetsMissingFromApi: typeof chainAssets = {};
-          for (const slug in chainAssets) {
-            if (chainAssets[slug].manual && data.balances[slug] == null) {
-              manualAssetsMissingFromApi[slug] = chainAssets[slug];
-            }
+        // Manual assets may be missing from the API response, but their balances must survive the refresh
+        const chainAssets = chainAssetsRef.current;
+        const manualAssetsMissingFromApi: typeof chainAssets = {};
+        for (const slug in chainAssets) {
+          if (chainAssets[slug].manual && data.balances[slug] == null) {
+            manualAssetsMissingFromApi[slug] = chainAssets[slug];
           }
-
-          let preservedSlugs: string[] | undefined;
-          if (Object.keys(manualAssetsMissingFromApi).length > 0) {
-            const manualResult = await readContractAssetsBalancesOnChain(
-              currentNetwork,
-              account,
-              manualAssetsMissingFromApi
-            );
-            Object.assign(data.balances, manualResult.balances);
-            preservedSlugs = manualResult.failed;
-          }
-
-          dispatchEtherlinkAccountData({
-            dispatch,
-            account,
-            chainId: ETHERLINK_MAINNET_CHAIN_ID,
-            data,
-            nativeUsdRate: nativeUsdRateRef.current,
-            preservedSlugs
-          });
-        } catch (apiError) {
-          console.error(apiError);
-          await loadEtherlinkBalancesOnChain({
-            dispatch,
-            network: currentNetwork,
-            account,
-            chainId: ETHERLINK_MAINNET_CHAIN_ID,
-            knownAssets: chainAssetsRef.current
-          });
         }
 
-        lastLoadTimestampMap[key] = Date.now();
-      } finally {
-        inFlightMap[key] = false;
+        let preservedSlugs: string[] | undefined;
+        if (Object.keys(manualAssetsMissingFromApi).length > 0) {
+          const manualResult = await readContractAssetsBalancesOnChain(
+            currentNetwork,
+            account,
+            manualAssetsMissingFromApi
+          );
+          Object.assign(data.balances, manualResult.balances);
+          preservedSlugs = manualResult.failed;
+        }
+
+        dispatchEtherlinkAccountData({
+          account,
+          data,
+          fallbackNativeUsdRate: tezUsdRateRef.current,
+          preservedSlugs
+        });
+      } catch (apiError) {
+        console.error(apiError);
+        await loadEtherlinkBalancesOnChain({
+          network: currentNetwork,
+          account,
+          knownAssets: chainAssetsRef.current
+        });
       }
-    },
-    [dispatch]
-  );
+    } finally {
+      inFlightMap[key] = false;
+    }
+  }, []);
 
   const hasNetwork = etherlinkChain != null;
 
-  useEffect(() => {
-    if (!isFocused || !isAppActive || !evmAddress || !hasNetwork) {
-      return;
-    }
-
-    const key = `${evmAddress}_${ETHERLINK_MAINNET_CHAIN_ID}`;
-    const delay = Math.max(0, EVM_BALANCES_SYNC_INTERVAL - (Date.now() - (lastLoadTimestampMap[key] ?? 0)));
-
-    let intervalId: ReturnType<typeof setInterval> | undefined;
-    const timeoutId = setTimeout(() => {
-      refresh(evmAddress);
-      intervalId = setInterval(() => refresh(evmAddress), EVM_BALANCES_SYNC_INTERVAL);
-    }, delay);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (intervalId) {
-        clearInterval(intervalId);
+  useInterval(
+    () => {
+      if (isFocused && isAppActive && evmAddress && hasNetwork) {
+        refresh(evmAddress);
       }
-    };
-  }, [isFocused, isAppActive, evmAddress, hasNetwork, refresh]);
+    },
+    EVM_BALANCES_SYNC_INTERVAL,
+    [isFocused, isAppActive, evmAddress, hasNetwork]
+  );
 
   useEffect(() => {
     const chain = etherlinkChainRef.current;
@@ -212,7 +191,7 @@ export const useEtherlinkDataLoading = () => {
           continue;
         }
 
-        const [contract, tokenId] = slug.split('_');
+        const [contract, tokenId] = fromTokenSlug(slug);
         if (!isAddress(contract)) {
           checkedMetadataSlugs.add(checkedKey);
           continue;
@@ -220,7 +199,7 @@ export const useEtherlinkDataLoading = () => {
 
         inFlightMetadataFetches.add(checkedKey);
         (async () => {
-          const metadata = await getEvmCollectibleMetadata(currentNetwork, contract, tokenId ?? '0', standard);
+          const metadata = await getEvmCollectibleMetadata(currentNetwork, contract, tokenId, standard);
           if (metadata == null) {
             checkedMetadataSlugs.add(checkedKey);
 
@@ -250,5 +229,5 @@ export const useEtherlinkDataLoading = () => {
           });
       }
     }
-  }, [chainAssets, tokensMetadata, collectiblesMetadata, evmAddress, hasNetwork, dispatch]);
+  }, [chainAssets, tokensMetadata, collectiblesMetadata, evmAddress, hasNetwork]);
 };

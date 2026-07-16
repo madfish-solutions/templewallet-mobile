@@ -1,9 +1,8 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 
 import { ConcurrencyLimiter } from 'src/utils/concurrency-limiter.utils';
-import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
-import { ETHERLINK_API_BASE_URLS, EtherlinkChainId } from './constants';
+import { ETHERLINK_API_BASE_URL } from './constants';
 import {
   EtherlinkAccountInfo,
   EtherlinkAccountNftsPageParams,
@@ -13,30 +12,24 @@ import {
   EtherlinkTokenInfo
 } from './types';
 
-export type { EtherlinkChainId } from './constants';
 export { isErc20TokenBalance } from './types';
 export type { EtherlinkTokenType } from './types';
 
-const apiInstances: Record<EtherlinkChainId, AxiosInstance> = {
-  [ETHERLINK_MAINNET_CHAIN_ID]: axios.create({ baseURL: ETHERLINK_API_BASE_URLS[ETHERLINK_MAINNET_CHAIN_ID] })
-};
+const api = axios.create({ baseURL: ETHERLINK_API_BASE_URL });
 
-const apiConcurrencyLimiters: Record<EtherlinkChainId, ConcurrencyLimiter> = {
-  [ETHERLINK_MAINNET_CHAIN_ID]: new ConcurrencyLimiter(10)
-};
+const apiConcurrencyLimiter = new ConcurrencyLimiter(10);
 
 interface FetchGetParams<P extends object> {
-  chainId: EtherlinkChainId;
   endpoint: string;
   pageParams?: P;
   signal?: AbortSignal;
 }
 
-async function fetchGet<R, P extends object = never>({ chainId, endpoint, pageParams, signal }: FetchGetParams<P>) {
-  const release = await apiConcurrencyLimiters[chainId].acquire();
+async function fetchGet<R, P extends object = never>({ endpoint, pageParams, signal }: FetchGetParams<P>) {
+  const release = await apiConcurrencyLimiter.acquire();
   setTimeout(release, 1000);
 
-  const { data } = await apiInstances[chainId].get<R>(endpoint, {
+  const { data } = await api.get<R>(endpoint, {
     params: pageParams,
     signal
   });
@@ -44,39 +37,28 @@ async function fetchGet<R, P extends object = never>({ chainId, endpoint, pagePa
   return data;
 }
 
-export const fetchGetAccountInfo = (chainId: EtherlinkChainId, address: string, signal?: AbortSignal) =>
-  fetchGet<EtherlinkAccountInfo, never>({ chainId, endpoint: `/addresses/${address}`, signal });
+export const fetchGetAccountInfo = (address: string, signal?: AbortSignal) =>
+  fetchGet<EtherlinkAccountInfo, never>({ endpoint: `/addresses/${address}`, signal });
 
-export const fetchGetTokensBalances = (chainId: EtherlinkChainId, address: string, signal?: AbortSignal) =>
-  fetchGet<EtherlinkTokenBalance[], never>({ chainId, endpoint: `/addresses/${address}/token-balances`, signal });
+export const fetchGetTokensBalances = (address: string, signal?: AbortSignal) =>
+  fetchGet<EtherlinkTokenBalance[], never>({ endpoint: `/addresses/${address}/token-balances`, signal });
 
-export const fetchGetTokenInfo = (chainId: EtherlinkChainId, contract: string, signal?: AbortSignal) =>
-  fetchGet<EtherlinkTokenInfo, never>({ chainId, endpoint: `/tokens/${contract}`, signal });
+export const fetchGetTokenInfo = (contract: string, signal?: AbortSignal) =>
+  fetchGet<EtherlinkTokenInfo, never>({ endpoint: `/tokens/${contract}`, signal });
 
-const fetchGetAccountNfts = (
-  chainId: EtherlinkChainId,
-  address: string,
-  pageParams?: EtherlinkAccountNftsPageParams,
-  signal?: AbortSignal
-) =>
+const fetchGetAccountNfts = (address: string, pageParams?: EtherlinkAccountNftsPageParams, signal?: AbortSignal) =>
   fetchGet<EtherlinkAccountNftsResponse, EtherlinkAccountNftsPageParams>({
-    chainId,
     endpoint: `/addresses/${address}/nft`,
     pageParams,
     signal
   });
 
-export const fetchAllAccountNfts = async (chainId: EtherlinkChainId, address: string, signal?: AbortSignal) => {
+export const fetchAllAccountNfts = async (address: string, signal?: AbortSignal) => {
   let nextPageParams: EtherlinkAccountNftsPageParams | undefined;
   let allItems: EtherlinkAddressNftInstance[] = [];
 
   do {
-    const { items, next_page_params: newNextPageParams } = await fetchGetAccountNfts(
-      chainId,
-      address,
-      nextPageParams,
-      signal
-    );
+    const { items, next_page_params: newNextPageParams } = await fetchGetAccountNfts(address, nextPageParams, signal);
     allItems = allItems.concat(items);
     nextPageParams = newNextPageParams ?? undefined;
   } while (nextPageParams != null);

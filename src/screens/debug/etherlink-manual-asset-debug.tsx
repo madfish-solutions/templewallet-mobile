@@ -26,6 +26,7 @@ import {
   getEtherlinkAccountData
 } from 'src/utils/evm/etherlink-balances.utils';
 import { getEvmAssetMetadata } from 'src/utils/evm/on-chain/metadata';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 export const EtherlinkManualAssetDebug = () => {
@@ -39,8 +40,8 @@ export const EtherlinkManualAssetDebug = () => {
   const [addError, setAddError] = useState<string>();
   const [refreshError, setRefreshError] = useState<string>();
 
-  const knownAssets = useEvmAccountChainAssetsSelector(account ?? '0x0', ETHERLINK_MAINNET_CHAIN_ID);
-  const balancesTimestamp = useEvmAccountChainBalancesTimestampSelector(account ?? '0x0', ETHERLINK_MAINNET_CHAIN_ID);
+  const knownAssets = useEvmAccountChainAssetsSelector(account, ETHERLINK_MAINNET_CHAIN_ID);
+  const balancesTimestamp = useEvmAccountChainBalancesTimestampSelector(account, ETHERLINK_MAINNET_CHAIN_ID);
   const etherlinkChain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
 
   const network = useMemo<EvmNetworkEssentials | undefined>(
@@ -62,7 +63,7 @@ export const EtherlinkManualAssetDebug = () => {
     }
 
     const chainId = ETHERLINK_MAINNET_CHAIN_ID;
-    const [contract, tokenId] = trimmedSlug.split('_');
+    const [contract, tokenId] = fromTokenSlug(trimmedSlug);
 
     setAddError(undefined);
 
@@ -82,7 +83,7 @@ export const EtherlinkManualAssetDebug = () => {
     try {
       if (tokenId == null) {
         try {
-          const tokenInfo = await fetchGetTokenInfo(chainId, contract);
+          const tokenInfo = await fetchGetTokenInfo(contract);
           const standard = etherlinkTokenTypeToStandard(tokenInfo.type);
 
           if (standard === EvmAssetStandardEnum.ERC20 && tokenInfo.decimals != null) {
@@ -175,8 +176,8 @@ export const EtherlinkManualAssetDebug = () => {
     setRefreshError(undefined);
 
     try {
-      const data = await getEtherlinkAccountData(ETHERLINK_MAINNET_CHAIN_ID, account);
-      dispatchEtherlinkAccountData({ dispatch, account, chainId: ETHERLINK_MAINNET_CHAIN_ID, data });
+      const data = await getEtherlinkAccountData(account);
+      dispatchEtherlinkAccountData({ account, data });
     } catch (error) {
       setRefreshError(error instanceof Error ? error.message : String(error));
     } finally {

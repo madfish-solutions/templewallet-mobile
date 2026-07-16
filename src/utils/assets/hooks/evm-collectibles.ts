@@ -6,6 +6,8 @@ import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-b
 import { useEvmChainCollectiblesMetadataSelector } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-selectors';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
+import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { UsableAccountAsset } from '../types';
@@ -19,8 +21,8 @@ export const isEvmCollectibleSlug = (slug: string) => slug.startsWith(`${EVM_COL
 
 export const useCurrentAccountEvmCollectibles = (): UsableAccountAsset[] => {
   const evmAddress = useAccountAddressForEvm();
-  const assets = useEvmAccountChainAssetsSelector(evmAddress ?? '0x', ETHERLINK_MAINNET_CHAIN_ID);
-  const balances = useEvmAccountChainBalancesSelector(evmAddress ?? '0x', ETHERLINK_MAINNET_CHAIN_ID);
+  const assets = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
+  const balances = useEvmAccountChainBalancesSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const metadatas = useEvmChainCollectiblesMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
 
   return useMemo(() => {
@@ -36,12 +38,12 @@ export const useCurrentAccountEvmCollectibles = (): UsableAccountAsset[] => {
       }
 
       const balance = balances[assetSlug];
-      if (balance == null || Number(balance) <= 0) {
+      if (!isPositiveNumber(balance)) {
         continue;
       }
 
       const metadata = metadatas[assetSlug];
-      const [contract, tokenId] = assetSlug.split('_');
+      const [contract, tokenId] = fromTokenSlug(assetSlug);
 
       collectibles.push({
         slug: buildEvmCollectibleSlug(ETHERLINK_MAINNET_CHAIN_ID, assetSlug),

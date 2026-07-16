@@ -5,9 +5,9 @@ import { isDefined } from './is-defined';
 import { isString } from './is-string';
 import { isTruthy } from './is-truthy';
 
-const IPFS_PROTOCOL = 'ipfs://';
+export const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
-const IPFS_GATE = 'https://ipfs.filebase.io/ipfs';
+export const IPFS_GATE = 'https://ipfs.filebase.io/ipfs';
 const MEDIA_HOST = 'https://static.tcinfra.net/media';
 
 type TcInfraMediaSize = 'small' | 'medium' | 'large' | 'raw';
@@ -183,6 +183,18 @@ export const buildTokenImagesStack = (url?: string, preferDirectSource = false):
   }
 
   return [];
+};
+
+const DWEB_IPFS_GATE = 'https://dweb.link/ipfs';
+
+/** Blockscout serves ipfs images through dweb.link, so it is appended as the last option gateway */
+export const buildEvmCollectibleImagesStack = (uri?: string): string[] => {
+  const normalizedUri = normalizeIpfsUri(uri);
+  const stack = buildTokenImagesStack(normalizedUri);
+
+  return normalizedUri?.startsWith(IPFS_PROTOCOL)
+    ? stack.concat(`${DWEB_IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`)
+    : stack;
 };
 
 export const isImgUriSvg = (url: string) => /\.svg(?:$|[?#])/i.test(url);

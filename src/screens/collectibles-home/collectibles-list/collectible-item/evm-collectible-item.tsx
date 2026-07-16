@@ -10,7 +10,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { useImagesStack } from 'src/hooks/use-images-stack';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { buildTokenImagesStack, normalizeIpfsUri } from 'src/utils/image.utils';
+import { buildEvmCollectibleImagesStack } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { Balance } from './balance';
@@ -59,21 +59,10 @@ interface EvmCollectibleImageProps {
   size: number;
 }
 
-const IPFS_PROTOCOL = 'ipfs://';
-const DWEB_IPFS_GATE = 'https://dweb.link/ipfs';
-
 const EvmCollectibleImage = memo<EvmCollectibleImageProps>(({ uri, size }) => {
   const styles = useCollectibleImageStyles();
 
-  const sourcesStack = useMemo(() => {
-    const normalizedUri = normalizeIpfsUri(uri);
-    const stack = buildTokenImagesStack(normalizedUri);
-
-    // dweb.link is what Blockscout itself resolves ipfs images through
-    return normalizedUri?.startsWith(IPFS_PROTOCOL)
-      ? stack.concat(`${DWEB_IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`)
-      : stack;
-  }, [uri]);
+  const sourcesStack = useMemo(() => buildEvmCollectibleImagesStack(uri), [uri]);
 
   const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sourcesStack);
 

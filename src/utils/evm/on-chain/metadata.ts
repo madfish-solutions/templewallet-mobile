@@ -3,7 +3,7 @@ import { pickBy } from 'lodash-es';
 import { BaseError, erc20Abi, erc721Abi, HttpRequestError, parseAbi, RpcRequestError, TimeoutError } from 'viem';
 
 import { EvmNetworkEssentials } from 'src/types/networks';
-import { normalizeIpfsUri } from 'src/utils/image.utils';
+import { IPFS_GATE, IPFS_PROTOCOL, normalizeIpfsUri } from 'src/utils/image.utils';
 
 import { erc1155Abi } from './abi/erc1155.abi';
 import { detectTokenStandard } from './common.utils';
@@ -22,21 +22,19 @@ const isRetryableRpcError = (error: unknown): boolean =>
   error instanceof BaseError &&
   error.walk(e => e instanceof HttpRequestError || e instanceof TimeoutError || e instanceof RpcRequestError) != null;
 
-const IPFS_PROTOCOL = 'ipfs://';
-const IPFS_GATE = 'https://ipfs.filebase.io/ipfs';
 const COVALENT_IPFS_GATE = 'https://ipfs.covalenthq.com';
 
 const buildHttpLinkFromUri = (uri?: string): string | undefined => {
-  if (!uri) {
+  const normalizedUri = normalizeIpfsUri(uri);
+  if (!normalizedUri) {
     return undefined;
   }
 
-  if (uri.startsWith(IPFS_PROTOCOL)) {
-    // Some contracts emit the `ipfs://ipfs/<CID>` double-prefix form
-    return `${IPFS_GATE}/${uri.slice(IPFS_PROTOCOL.length).replace(/^ipfs\//, '')}`;
+  if (normalizedUri.startsWith(IPFS_PROTOCOL)) {
+    return `${IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`;
   }
 
-  return uri.replace(COVALENT_IPFS_GATE, IPFS_GATE);
+  return normalizedUri.replace(COVALENT_IPFS_GATE, IPFS_GATE);
 };
 
 export const getEvmTokenMetadata = async (
@@ -69,7 +67,7 @@ export const getEvmTokenMetadata = async (
 export const getEvmCollectibleMetadata = async (
   network: EvmNetworkEssentials,
   contract: HexString,
-  tokenId: string,
+  tokenId = '0',
   standard: EvmCollectibleAssetStandard
 ): Promise<EvmCollectibleOnChainMetadata | undefined> => {
   try {
@@ -222,7 +220,7 @@ export const getEvmAssetMetadata = async (
   const standard = await detectTokenStandard(network, contract);
 
   if (standard === EvmAssetStandard.ERC721 || standard === EvmAssetStandard.ERC1155) {
-    const metadata = await getEvmCollectibleMetadata(network, contract, tokenId ?? '0', standard);
+    const metadata = await getEvmCollectibleMetadata(network, contract, tokenId, standard);
 
     return metadata && { standard, metadata };
   }

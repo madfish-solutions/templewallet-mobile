@@ -1,14 +1,13 @@
-import { Dispatch } from 'redux';
 import { isAddress } from 'viem';
 
 import {
-  EtherlinkChainId,
   EtherlinkTokenType,
   fetchAllAccountNfts,
   fetchGetAccountInfo,
   fetchGetTokensBalances,
   isErc20TokenBalance
 } from 'src/apis/etherlink';
+import { dispatch } from 'src/store';
 import { processLoadedEvmAssetsAction } from 'src/store/evm/assets/evm-assets-actions';
 import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
 import { processLoadedEvmBalancesAction } from 'src/store/evm/balances/evm-balances-actions';
@@ -18,12 +17,15 @@ import { processLoadedEvmExchangeRatesAction } from 'src/store/evm/exchange-rate
 import { processLoadedEvmTokensMetadataAction } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-actions';
 import { EvmTokenMetadata } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-state';
 import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
-import { DEFAULT_EVM_CHAINS_SPECS, EvmNetworkEssentials } from 'src/types/networks';
+import { ETHERLINK_MAINNET_CHAIN_SPECS, EvmNetworkEssentials } from 'src/types/networks';
 import { getEvmAssetBalance, getEvmNativeBalance } from 'src/utils/evm/on-chain/balance';
 import { getEvmAssetsBalances, EvmAssetToReadBalanceFor } from 'src/utils/evm/on-chain/multicall-balances';
 import { EvmContractAssetStandard } from 'src/utils/evm/on-chain/types';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { normalizeIpfsUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isPositiveNumber } from 'src/utils/number.util';
+import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 interface NormalizedEtherlinkAccountData {
   assets: Record<string, { standard: EvmAssetStandardEnum }>;
@@ -32,8 +34,6 @@ interface NormalizedEtherlinkAccountData {
   collectiblesMetadata: Record<string, EvmCollectibleMetadata>;
   exchangeRates: Record<string, number>;
 }
-
-const isPositiveBalance = (value?: string | null): value is string => value != null && value !== '' && value !== '0';
 
 export const etherlinkTokenTypeToStandard = (type: EtherlinkTokenType): EvmAssetStandardEnum => {
   switch (type) {
@@ -46,17 +46,13 @@ export const etherlinkTokenTypeToStandard = (type: EtherlinkTokenType): EvmAsset
   }
 };
 
-const getEtherlinkNativeCurrency = (chainId: EtherlinkChainId) =>
-  DEFAULT_EVM_CHAINS_SPECS.find(specs => specs.chainId === chainId)?.currency;
+const etherlinkNativeCurrency = ETHERLINK_MAINNET_CHAIN_SPECS.currency;
 
-export const getEtherlinkAccountData = async (
-  chainId: EtherlinkChainId,
-  address: HexString
-): Promise<NormalizedEtherlinkAccountData> => {
+export const getEtherlinkAccountData = async (address: HexString): Promise<NormalizedEtherlinkAccountData> => {
   const [accountInfo, tokensBalances, nfts] = await Promise.all([
-    fetchGetAccountInfo(chainId, address),
-    fetchGetTokensBalances(chainId, address),
-    fetchAllAccountNfts(chainId, address)
+    fetchGetAccountInfo(address),
+    fetchGetTokensBalances(address),
+    fetchAllAccountNfts(address)
   ]);
 
   const assets: NormalizedEtherlinkAccountData['assets'] = {};
@@ -65,15 +61,15 @@ export const getEtherlinkAccountData = async (
   const collectiblesMetadata: NormalizedEtherlinkAccountData['collectiblesMetadata'] = {};
   const exchangeRates: NormalizedEtherlinkAccountData['exchangeRates'] = {};
 
-  const nativeCurrency = getEtherlinkNativeCurrency(chainId);
-  if (nativeCurrency && isPositiveBalance(accountInfo.coin_balance)) {
+  const coinBalance = accountInfo.coin_balance ?? undefined;
+  if (isPositiveNumber(coinBalance)) {
     assets[EVM_TOKEN_SLUG] = { standard: EvmAssetStandardEnum.NATIVE };
-    balances[EVM_TOKEN_SLUG] = accountInfo.coin_balance;
+    balances[EVM_TOKEN_SLUG] = coinBalance;
     tokensMetadata[EVM_TOKEN_SLUG] = {
-      name: nativeCurrency.name,
-      symbol: nativeCurrency.symbol,
-      decimals: nativeCurrency.decimals,
-      iconUri: nativeCurrency.iconURL,
+      name: etherlinkNativeCurrency.name,
+      symbol: etherlinkNativeCurrency.symbol,
+      decimals: etherlinkNativeCurrency.decimals,
+      iconUri: etherlinkNativeCurrency.iconURL,
       standard: EvmAssetStandardEnum.NATIVE
     };
   }
@@ -104,7 +100,7 @@ export const getEtherlinkAccountData = async (
       exchangeRates[slug] = Number(token.exchange_rate);
     }
 
-    if (!isPositiveBalance(value)) {
+    if (!isPositiveNumber(value)) {
       continue;
     }
 
@@ -113,7 +109,7 @@ export const getEtherlinkAccountData = async (
   }
 
   for (const nft of nfts) {
-    if (!isPositiveBalance(nft.value)) {
+    if (!isPositiveNumber(nft.value)) {
       continue;
     }
 
@@ -138,27 +134,25 @@ export const getEtherlinkAccountData = async (
 };
 
 interface DispatchEtherlinkAccountDataParams {
-  dispatch: Dispatch;
   account: HexString;
-  chainId: EtherlinkChainId;
   data: NormalizedEtherlinkAccountData;
-  nativeUsdRate?: number;
+  fallbackNativeUsdRate?: number;
   timestamp?: number;
   preservedSlugs?: string[];
 }
 
 export const dispatchEtherlinkAccountData = ({
-  dispatch,
   account,
-  chainId,
   data,
-  nativeUsdRate,
+  fallbackNativeUsdRate,
   timestamp = Date.now(),
   preservedSlugs
 }: DispatchEtherlinkAccountDataParams) => {
+  const chainId = ETHERLINK_MAINNET_CHAIN_ID;
+  // Etherlink's native coin is bridged XTZ, so the wallet's TEZ/USD rate covers gaps in the explorer's rate
   const rates =
-    nativeUsdRate != null && data.exchangeRates[EVM_TOKEN_SLUG] == null
-      ? { ...data.exchangeRates, [EVM_TOKEN_SLUG]: nativeUsdRate }
+    fallbackNativeUsdRate != null && data.exchangeRates[EVM_TOKEN_SLUG] == null
+      ? { ...data.exchangeRates, [EVM_TOKEN_SLUG]: fallbackNativeUsdRate }
       : data.exchangeRates;
 
   dispatch(processLoadedEvmAssetsAction({ account, chainId, assets: data.assets }));
@@ -182,7 +176,7 @@ const knownAssetsToReadList = (knownAssets: EvmChainAssetsRecord): EvmAssetToRea
       continue;
     }
 
-    const [contract, tokenId] = slug.split('_');
+    const [contract, tokenId] = fromTokenSlug(slug);
     if (!isAddress(contract)) {
       continue;
     }
@@ -194,10 +188,8 @@ const knownAssetsToReadList = (knownAssets: EvmChainAssetsRecord): EvmAssetToRea
 };
 
 interface LoadEtherlinkBalancesOnChainParams {
-  dispatch: Dispatch;
   network: EvmNetworkEssentials;
   account: HexString;
-  chainId: EtherlinkChainId;
   knownAssets: EvmChainAssetsRecord;
 }
 
@@ -214,7 +206,7 @@ export const readContractAssetsBalancesOnChain = async (
   const stillFailed: string[] = [];
 
   for (const slug in contractBalances) {
-    if (isPositiveBalance(contractBalances[slug])) {
+    if (isPositiveNumber(contractBalances[slug])) {
       balances[slug] = contractBalances[slug];
     }
   }
@@ -227,7 +219,7 @@ export const readContractAssetsBalancesOnChain = async (
         const balance = await getEvmAssetBalance(network, account, contract, tokenId, standard);
 
         if (isDefined(balance)) {
-          if (isPositiveBalance(balance)) {
+          if (isPositiveNumber(balance)) {
             balances[slug] = balance;
           }
         } else {
@@ -240,10 +232,8 @@ export const readContractAssetsBalancesOnChain = async (
 };
 
 export const loadEtherlinkBalancesOnChain = async ({
-  dispatch,
   network,
   account,
-  chainId,
   knownAssets
 }: LoadEtherlinkBalancesOnChainParams) => {
   const [{ balances }, nativeBalance] = await Promise.all([
@@ -251,9 +241,11 @@ export const loadEtherlinkBalancesOnChain = async ({
     getEvmNativeBalance(network, account)
   ]);
 
-  if (isPositiveBalance(nativeBalance)) {
+  if (isPositiveNumber(nativeBalance)) {
     balances[EVM_TOKEN_SLUG] = nativeBalance;
   }
 
-  dispatch(processLoadedEvmBalancesAction({ account, chainId, balances, timestamp: Date.now() }));
+  dispatch(
+    processLoadedEvmBalancesAction({ account, chainId: ETHERLINK_MAINNET_CHAIN_ID, balances, timestamp: Date.now() })
+  );
 };

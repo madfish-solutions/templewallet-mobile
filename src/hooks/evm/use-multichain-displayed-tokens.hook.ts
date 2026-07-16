@@ -15,17 +15,16 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { DEFAULT_EVM_CHAINS_SPECS } from 'src/types/networks';
+import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
 import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { mutezToTz } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-const etherlinkNativeCurrency = DEFAULT_EVM_CHAINS_SPECS.find(
-  specs => specs.chainId === ETHERLINK_MAINNET_CHAIN_ID
-)?.currency;
+const etherlinkNativeCurrency = ETHERLINK_MAINNET_CHAIN_SPECS.currency;
 
 export interface MultichainDisplayedToken {
   slug: string;
@@ -41,8 +40,6 @@ export interface MultichainDisplayedToken {
   shieldedAtomicBalance?: string;
   original?: TokenInterface;
 }
-
-const EMPTY_EVM_ADDRESS: HexString = '0x';
 
 const buildTezosDisplayedToken = (
   token: TokenInterface,
@@ -74,13 +71,6 @@ const compareDisplayedTokens = (a: SortableDisplayedToken, b: SortableDisplayedT
   const aFiat = a.token.fiatValue ?? 0;
   const bFiat = b.token.fiatValue ?? 0;
 
-  const aRated = aFiat > 0;
-  const bRated = bFiat > 0;
-
-  if (aRated !== bRated) {
-    return aRated ? -1 : 1;
-  }
-
   if (aFiat !== bFiat) {
     return bFiat - aFiat;
   }
@@ -100,9 +90,8 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
 
   const tezosAddress = useAccountAddressForTezos();
   const evmAddress = useAccountAddressForEvm();
-  const evmAccount = evmAddress ?? EMPTY_EVM_ADDRESS;
-  const evmBalances = useEvmAccountChainBalancesSelector(evmAccount, ETHERLINK_MAINNET_CHAIN_ID);
-  const evmAssets = useEvmAccountChainAssetsSelector(evmAccount, ETHERLINK_MAINNET_CHAIN_ID);
+  const evmBalances = useEvmAccountChainBalancesSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
+  const evmAssets = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const evmMetadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
   const evmExchangeRates = useEvmChainExchangeRatesSelector(ETHERLINK_MAINNET_CHAIN_ID);
   const fiatToUsdRate = useFiatToUsdRateSelector();
@@ -139,7 +128,7 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
 
     for (const slug of evmSlugs) {
       const atomicBalance = evmBalances[slug] ?? '0';
-      if (Number(atomicBalance) <= 0 && evmAssets[slug]?.manual !== true) {
+      if (!isPositiveNumber(atomicBalance) && evmAssets[slug]?.manual !== true) {
         continue;
       }
 
@@ -154,7 +143,10 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
 
       const nativeCurrency = isNative ? etherlinkNativeCurrency : undefined;
       const metadata = evmMetadata[slug];
-      const decimals = nativeCurrency?.decimals ?? metadata?.decimals ?? 18;
+      const decimals = nativeCurrency?.decimals ?? metadata?.decimals;
+      if (decimals == null) {
+        continue;
+      }
       const symbol = nativeCurrency?.symbol ?? metadata?.symbol ?? '';
       const usdRate = evmExchangeRates[slug];
       const fiatRate = isDefined(usdRate) && isDefined(fiatToUsdRate) ? usdRate * fiatToUsdRate : undefined;

@@ -39,6 +39,7 @@ import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isString } from 'src/utils/is-string';
+import { isPositiveNumber } from 'src/utils/number.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
 import { WalletSelectors } from '../wallet.selectors';
@@ -126,7 +127,9 @@ export const TokensList = memo(() => {
   }, [dispatch, partnersPromoShown]);
 
   const filteredTokens = useMemo(() => {
-    let result = isHideZeroBalance ? displayedTokens.filter(token => Number(token.atomicBalance) > 0) : displayedTokens;
+    let result = isHideZeroBalance
+      ? displayedTokens.filter(token => isPositiveNumber(token.atomicBalance))
+      : displayedTokens;
 
     const lowerCaseSearchValue = searchValue?.toLowerCase();
     if (isString(lowerCaseSearchValue)) {

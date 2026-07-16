@@ -17,7 +17,7 @@ import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
-import { DEFAULT_EVM_CHAINS_SPECS, DEFAULT_MAINNET_TEZOS_CHAIN_SPECS } from 'src/types/networks';
+import { DEFAULT_MAINNET_TEZOS_CHAIN_SPECS, ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
@@ -51,9 +51,7 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
   const mainIconName = isTezos ? original?.iconName : token.slug === EVM_TOKEN_SLUG ? IconNameEnum.TezToken : undefined;
   const mainThumbnailUri = token.slug === EVM_TOKEN_SLUG ? undefined : token.iconUri;
 
-  const networkName = isTezos
-    ? DEFAULT_MAINNET_TEZOS_CHAIN_SPECS.name
-    : DEFAULT_EVM_CHAINS_SPECS.find(specs => specs.chainId === token.chainId)?.name ?? token.name;
+  const networkName = isTezos ? DEFAULT_MAINNET_TEZOS_CHAIN_SPECS.name : ETHERLINK_MAINNET_CHAIN_SPECS.name;
 
   const tokenAmount = useMemo(
     () => mutezToTz(new BigNumber(token.atomicBalance), token.decimals),

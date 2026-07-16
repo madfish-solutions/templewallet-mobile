@@ -26,7 +26,7 @@ export const getEvmAssetBalance = async (
   network: EvmNetworkEssentials,
   account: HexString,
   contract: HexString,
-  tokenId?: string,
+  tokenId = '0',
   knownStandard?: EvmContractAssetStandard
 ): Promise<string | undefined> => {
   const standard = knownStandard ?? (await detectTokenStandard(network, contract));
@@ -37,7 +37,7 @@ export const getEvmAssetBalance = async (
         address: contract,
         abi: erc1155Abi,
         functionName: 'balanceOf',
-        args: [account, BigInt(tokenId ?? '0')]
+        args: [account, BigInt(tokenId)]
       });
 
       return balance.toString();
@@ -48,7 +48,7 @@ export const getEvmAssetBalance = async (
         address: contract,
         abi: erc721Abi,
         functionName: 'ownerOf',
-        args: [BigInt(tokenId ?? '0')]
+        args: [BigInt(tokenId)]
       });
 
       return equalsIgnoreCase(owner, account) ? '1' : '0';

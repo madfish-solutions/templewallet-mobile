@@ -26,7 +26,7 @@ import { tzToMutez } from '../utils/tezos.util';
 import { useTezosToken, useTezosTokenOfCurrentAccount } from '../utils/wallet.utils';
 
 const useEvmDollarBalance = (evmAddress: HexString | undefined) => {
-  const balances = useEvmAccountChainBalancesSelector(evmAddress ?? '0x', ETHERLINK_MAINNET_CHAIN_ID);
+  const balances = useEvmAccountChainBalancesSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const metadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
   const exchangeRates = useEvmChainExchangeRatesSelector(ETHERLINK_MAINNET_CHAIN_ID);
 
