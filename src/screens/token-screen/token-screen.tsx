@@ -8,7 +8,7 @@ import { HeaderTokenInfo } from 'src/components/header/header-token-info/header-
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
 import { TokenScreenContentContainer } from 'src/components/token-screen-content-container/token-screen-content-container';
@@ -73,7 +73,7 @@ export const TokenScreen = () => {
   useNavigationSetOptions(
     {
       headerTitle: () => <HeaderTokenInfo token={token} />,
-      headerRight: () => <HeaderButton iconName={IconNameEnum.InfoAlt} onPress={handleInfoIconClick} />
+      headerRight: () => <HeaderButton iconName={IconNameV2Enum.Info} onPress={handleInfoIconClick} />
     },
     [token]
   );

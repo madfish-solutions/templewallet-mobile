@@ -6,7 +6,7 @@ import { isDefined } from 'src/utils/is-defined';
 
 type BottomSheetCallback = (config?: WithSpringConfig | WithTimingConfig) => void;
 
-interface BottomSheetController {
+export interface BottomSheetController {
   ref: Ref<BottomSheet>;
   open: BottomSheetCallback;
   close: BottomSheetCallback;

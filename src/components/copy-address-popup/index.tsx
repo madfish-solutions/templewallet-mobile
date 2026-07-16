@@ -1,10 +1,6 @@
 import React, { memo, Ref, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 import { Modal, Text, TouchableWithoutFeedback, View } from 'react-native';
 
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
-import { TruncatedText } from 'src/components/truncated-text';
 import { Account } from 'src/interfaces/account.interfaces';
 import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
 import { formatSize } from 'src/styles/format-size';
@@ -12,6 +8,11 @@ import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/ac
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy.ts';
+
+import { CryptoLogo } from '../crypto-logo';
+import { CryptoLogoNameEnum } from '../crypto-logo/logo-name.enum';
+import { SafeTouchableOpacity } from '../safe-touchable-opacity';
+import { TruncatedText } from '../truncated-text';
 
 import { useCopyAddressPopupStyles } from './styles';
 
@@ -23,7 +24,7 @@ export interface CopyAddressPopupController {
 interface CopyAddressOption {
   label: string;
   address: string;
-  iconName: IconNameEnum;
+  iconName: CryptoLogoNameEnum;
 }
 
 interface Props {
@@ -45,17 +46,17 @@ export const CopyAddressPopup = memo<Props>(({ controlRef, account }) => {
       isDefined(tezosAddress) && {
         label: 'Tezos',
         address: tezosAddress,
-        iconName: IconNameEnum.TezToken
+        iconName: CryptoLogoNameEnum.Tezos
       },
       isDefined(saplingAddress) && {
         label: 'Shielded',
         address: saplingAddress,
-        iconName: IconNameEnum.TezShieldedToken
+        iconName: CryptoLogoNameEnum.ShieldedTezos
       },
       isDefined(evmAddress) && {
         label: 'Etherlink',
         address: evmAddress,
-        iconName: IconNameEnum.EtherlinkToken
+        iconName: CryptoLogoNameEnum.Etherlink
       }
     ].filter(isTruthy);
   }, [account, saplingAddress]);
@@ -95,7 +96,7 @@ export const CopyAddressPopup = memo<Props>(({ controlRef, account }) => {
                     </View>
 
                     <View style={styles.iconContainer}>
-                      <Icon name={iconName} size={formatSize(16)} />
+                      <CryptoLogo name={iconName} size={formatSize(20)} />
                     </View>
                   </SafeTouchableOpacity>
                 </React.Fragment>
