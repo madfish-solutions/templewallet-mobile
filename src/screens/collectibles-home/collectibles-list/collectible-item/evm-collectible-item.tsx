@@ -5,8 +5,8 @@ import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { BrokenImage } from 'src/components/broken-image';
 import { useCollectibleImageStyles } from 'src/components/collectible-image/styles';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { CryptoLogo } from 'src/components/crypto-logo';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { useImagesStack } from 'src/hooks/use-images-stack';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
@@ -37,7 +37,7 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
         {showInfo && isDefined(balance) ? <Balance balance={balance} /> : null}
 
         <View style={badgeStyles.badge}>
-          <Icon name={IconNameEnum.EtherlinkToken} size={formatSize(12)} />
+          <CryptoLogo name={CryptoLogoNameEnum.Etherlink} size={formatSize(12)} internalSize={formatSize(12)} />
         </View>
       </View>
 

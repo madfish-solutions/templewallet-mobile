@@ -241,7 +241,7 @@ export const EtherlinkManualAssetDebug = () => {
 
           <ButtonMedium
             title="Force Etherlink Refresh"
-            iconName={IconNameEnum.RefreshIcon}
+            iconName={IconNameEnum.Sync}
             onPress={handleForceRefresh}
             isLoading={isRefreshing}
           />
