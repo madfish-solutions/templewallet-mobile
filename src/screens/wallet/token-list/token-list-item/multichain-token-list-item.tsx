@@ -14,7 +14,6 @@ import { TruncatedText } from 'src/components/truncated-text';
 import { MultichainDisplayedToken } from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
-import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
@@ -42,7 +41,7 @@ interface Props {
 export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
   const styles = useMultichainTokenListItemStyles();
   const navigateToScreen = useNavigateToScreen();
-  const shieldedBalanceMutez = useShieldedBalanceSelector();
+  const shieldedBalanceMutez = token.shieldedAtomicBalance ?? '0';
 
   const isTezos = token.chainKind === 'tezos';
   const isTezosGasToken = isTezos && token.slug === TEZ_TOKEN_SLUG;

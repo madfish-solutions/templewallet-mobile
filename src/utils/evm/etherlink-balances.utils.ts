@@ -219,21 +219,22 @@ export const readContractAssetsBalancesOnChain = async (
     }
   }
 
-  for (const { slug, standard, contract, tokenId } of assetsToRead) {
-    if (!failed.includes(slug)) {
-      continue;
-    }
+  const failedSet = new Set(failed);
+  await Promise.all(
+    assetsToRead
+      .filter(({ slug }) => failedSet.has(slug))
+      .map(async ({ slug, standard, contract, tokenId }) => {
+        const balance = await getEvmAssetBalance(network, account, contract, tokenId, standard);
 
-    const balance = await getEvmAssetBalance(network, account, contract, tokenId, standard);
-
-    if (isDefined(balance)) {
-      if (isPositiveBalance(balance)) {
-        balances[slug] = balance;
-      }
-    } else {
-      stillFailed.push(slug);
-    }
-  }
+        if (isDefined(balance)) {
+          if (isPositiveBalance(balance)) {
+            balances[slug] = balance;
+          }
+        } else {
+          stillFailed.push(slug);
+        }
+      })
+  );
 
   return { balances, failed: stillFailed };
 };

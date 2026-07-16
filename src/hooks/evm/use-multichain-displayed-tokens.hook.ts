@@ -37,12 +37,18 @@ export interface MultichainDisplayedToken {
   atomicBalance: string;
   decimals: number;
   fiatValue: number | undefined;
+  /** Set only on the TEZ gas-token row, whose atomicBalance is the combined public + shielded amount */
+  shieldedAtomicBalance?: string;
   original?: TokenInterface;
 }
 
 const EMPTY_EVM_ADDRESS: HexString = '0x';
 
-const buildTezosDisplayedToken = (token: TokenInterface, fiatValue: number | undefined): MultichainDisplayedToken => ({
+const buildTezosDisplayedToken = (
+  token: TokenInterface,
+  fiatValue: number | undefined,
+  shieldedAtomicBalance?: string
+): MultichainDisplayedToken => ({
   slug: getTokenSlug(token),
   chainKind: 'tezos',
   chainId: ChainIds.MAINNET,
@@ -52,15 +58,21 @@ const buildTezosDisplayedToken = (token: TokenInterface, fiatValue: number | und
   atomicBalance: token.balance,
   decimals: token.decimals,
   fiatValue,
+  shieldedAtomicBalance,
   original: token
 });
 
 const getAtomicBalanceAsNumber = ({ atomicBalance, decimals }: MultichainDisplayedToken) =>
   mutezToTz(new BigNumber(atomicBalance), decimals).toNumber();
 
-const compareDisplayedTokens = (a: MultichainDisplayedToken, b: MultichainDisplayedToken) => {
-  const aFiat = a.fiatValue ?? 0;
-  const bFiat = b.fiatValue ?? 0;
+interface SortableDisplayedToken {
+  token: MultichainDisplayedToken;
+  balanceForSort: number;
+}
+
+const compareDisplayedTokens = (a: SortableDisplayedToken, b: SortableDisplayedToken) => {
+  const aFiat = a.token.fiatValue ?? 0;
+  const bFiat = b.token.fiatValue ?? 0;
 
   const aRated = aFiat > 0;
   const bRated = bFiat > 0;
@@ -73,14 +85,11 @@ const compareDisplayedTokens = (a: MultichainDisplayedToken, b: MultichainDispla
     return bFiat - aFiat;
   }
 
-  const aBalance = getAtomicBalanceAsNumber(a);
-  const bBalance = getAtomicBalanceAsNumber(b);
-
-  if (aBalance !== bBalance) {
-    return bBalance - aBalance;
+  if (a.balanceForSort !== b.balanceForSort) {
+    return b.balanceForSort - a.balanceForSort;
   }
 
-  return a.symbol.localeCompare(b.symbol);
+  return a.token.symbol.localeCompare(b.token.symbol);
 };
 
 export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
@@ -100,18 +109,22 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
   const shieldedBalanceMutez = useShieldedBalanceSelector();
 
   return useMemo(() => {
-    const accountTezosTokens = tezosAddress == null ? [] : [tezosToken, tkeyToken, ...visibleTokensList];
+    const accountTezosTokens = tezosAddress == null ? [] : [tezosToken, tkeyToken].concat(visibleTokensList);
     const tezosTokens = uniqBy(accountTezosTokens, getTokenSlug).map(token => {
       const slug = getTokenSlug(token);
+      const isGasToken = slug === TEZ_TOKEN_SLUG;
       // The gas-token row displays and sorts by the combined public + shielded balance
-      const balance =
-        slug === TEZ_TOKEN_SLUG ? new BigNumber(token.balance).plus(shieldedBalanceMutez).toFixed() : token.balance;
+      const balance = isGasToken ? new BigNumber(token.balance).plus(shieldedBalanceMutez).toFixed() : token.balance;
       const exchangeRate = token.exchangeRate ?? getExchangeRate(slug);
       const fiatValue = isDefined(exchangeRate)
         ? getDollarValue(balance, token.decimals, exchangeRate).toNumber()
         : undefined;
 
-      return buildTezosDisplayedToken({ ...token, balance, exchangeRate }, fiatValue);
+      return buildTezosDisplayedToken(
+        { ...token, balance, exchangeRate },
+        fiatValue,
+        isGasToken ? shieldedBalanceMutez : undefined
+      );
     });
 
     const evmTokens: MultichainDisplayedToken[] = [];
@@ -160,7 +173,11 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
       });
     }
 
-    return tezosTokens.concat(evmTokens).sort(compareDisplayedTokens);
+    return tezosTokens
+      .concat(evmTokens)
+      .map(token => ({ token, balanceForSort: getAtomicBalanceAsNumber(token) }))
+      .sort(compareDisplayedTokens)
+      .map(({ token }) => token);
   }, [
     tezosAddress,
     tezosToken,

@@ -28,21 +28,24 @@ export const useCurrentAccountEvmCollectibles = (): UsableAccountAsset[] => {
       return [];
     }
 
-    return Object.entries(assets).reduce<UsableAccountAsset[]>((acc, [assetSlug, { standard }]) => {
+    const collectibles: UsableAccountAsset[] = [];
+
+    for (const [assetSlug, { standard }] of Object.entries(assets)) {
       if (standard !== EvmAssetStandardEnum.ERC721 && standard !== EvmAssetStandardEnum.ERC1155) {
-        return acc;
+        continue;
       }
 
       const balance = balances[assetSlug];
       if (balance == null || Number(balance) <= 0) {
-        return acc;
+        continue;
       }
 
       const metadata = metadatas[assetSlug];
       const [contract, tokenId] = assetSlug.split('_');
 
-      return acc.concat({
+      collectibles.push({
         slug: buildEvmCollectibleSlug(ETHERLINK_MAINNET_CHAIN_ID, assetSlug),
+        // Imprecise for uint256 ids above 2^53, `slug` carries the exact tokenId and is the identity field
         id: Number(tokenId),
         address: contract,
         name: metadata?.name ?? tokenId,
@@ -54,6 +57,8 @@ export const useCurrentAccountEvmCollectibles = (): UsableAccountAsset[] => {
         displayUri: metadata?.iconUri,
         thumbnailUri: metadata?.iconUri
       });
-    }, []);
+    }
+
+    return collectibles;
   }, [evmAddress, assets, balances, metadatas]);
 };

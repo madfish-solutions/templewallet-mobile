@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { isAddress } from 'viem';
 
@@ -15,7 +15,7 @@ import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
-import { EvmNetworkEssentials } from 'src/types/networks';
+import { EvmChain, EvmNetworkEssentials } from 'src/types/networks';
 import {
   dispatchEtherlinkAccountData,
   getEtherlinkAccountData,
@@ -30,7 +30,12 @@ const EMPTY_HEX_ADDRESS: HexString = '0x';
 const inFlightMap: Record<string, boolean> = {};
 const lastLoadTimestampMap: Record<string, number> = {};
 const checkedMetadataSlugs = new Set<string>();
-const inFlightMetadataFetches = new Map<string, Promise<void>>();
+const inFlightMetadataFetches = new Set<string>();
+
+const toNetworkEssentials = (chain: EvmChain): EvmNetworkEssentials => ({
+  rpcBaseURL: chain.activeRpc.rpcBaseURL,
+  chainId: chain.chainId
+});
 
 export const useEtherlinkDataLoading = () => {
   const dispatch = useDispatch();
@@ -50,14 +55,8 @@ export const useEtherlinkDataLoading = () => {
     onAppBackgroundState: () => setIsAppActive(false)
   });
 
-  const network = useMemo<EvmNetworkEssentials | undefined>(
-    () =>
-      etherlinkChain ? { rpcBaseURL: etherlinkChain.activeRpc.rpcBaseURL, chainId: etherlinkChain.chainId } : undefined,
-    [etherlinkChain]
-  );
-
-  const networkRef = useRef(network);
-  networkRef.current = network;
+  const etherlinkChainRef = useRef(etherlinkChain);
+  etherlinkChainRef.current = etherlinkChain;
   const nativeUsdRateRef = useRef(nativeUsdRate);
   nativeUsdRateRef.current = nativeUsdRate;
   const chainAssetsRef = useRef(chainAssets);
@@ -65,10 +64,11 @@ export const useEtherlinkDataLoading = () => {
 
   const refresh = useCallback(
     async (account: HexString) => {
-      const currentNetwork = networkRef.current;
-      if (!currentNetwork) {
+      const chain = etherlinkChainRef.current;
+      if (!chain) {
         return;
       }
+      const currentNetwork = toNetworkEssentials(chain);
 
       const key = `${account}_${ETHERLINK_MAINNET_CHAIN_ID}`;
       if (inFlightMap[key]) {
@@ -127,7 +127,7 @@ export const useEtherlinkDataLoading = () => {
     [dispatch]
   );
 
-  const hasNetwork = network != null;
+  const hasNetwork = etherlinkChain != null;
 
   useEffect(() => {
     if (!isFocused || !isAppActive || !evmAddress || !hasNetwork) {
@@ -152,10 +152,11 @@ export const useEtherlinkDataLoading = () => {
   }, [isFocused, isAppActive, evmAddress, hasNetwork, refresh]);
 
   useEffect(() => {
-    const currentNetwork = networkRef.current;
-    if (!currentNetwork || !evmAddress) {
+    const chain = etherlinkChainRef.current;
+    if (!chain || !evmAddress) {
       return;
     }
+    const currentNetwork = toNetworkEssentials(chain);
 
     for (const slug in chainAssets) {
       const { standard } = chainAssets[slug];
@@ -178,7 +179,8 @@ export const useEtherlinkDataLoading = () => {
           continue;
         }
 
-        const fetchPromise = (async () => {
+        inFlightMetadataFetches.add(checkedKey);
+        (async () => {
           const metadata = await getEvmTokenMetadata(currentNetwork, slug);
           if (metadata == null || metadata.decimals == null) {
             checkedMetadataSlugs.add(checkedKey);
@@ -205,8 +207,6 @@ export const useEtherlinkDataLoading = () => {
           .finally(() => {
             inFlightMetadataFetches.delete(checkedKey);
           });
-
-        inFlightMetadataFetches.set(checkedKey, fetchPromise);
       } else {
         if (collectiblesMetadata[slug]) {
           continue;
@@ -218,7 +218,8 @@ export const useEtherlinkDataLoading = () => {
           continue;
         }
 
-        const fetchPromise = (async () => {
+        inFlightMetadataFetches.add(checkedKey);
+        (async () => {
           const metadata = await getEvmCollectibleMetadata(currentNetwork, contract, tokenId ?? '0', standard);
           if (metadata == null) {
             checkedMetadataSlugs.add(checkedKey);
@@ -236,7 +237,7 @@ export const useEtherlinkDataLoading = () => {
                   symbol: metadata.symbol,
                   iconUri: metadata.image,
                   collectionName: metadata.name,
-                  standard: standard
+                  standard
                 }
               }
             })
@@ -247,8 +248,6 @@ export const useEtherlinkDataLoading = () => {
           .finally(() => {
             inFlightMetadataFetches.delete(checkedKey);
           });
-
-        inFlightMetadataFetches.set(checkedKey, fetchPromise);
       }
     }
   }, [chainAssets, tokensMetadata, collectiblesMetadata, evmAddress, hasNetwork, dispatch]);

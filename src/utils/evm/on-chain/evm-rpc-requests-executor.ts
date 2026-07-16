@@ -28,14 +28,9 @@ interface EvmGetBalanceRequest {
 
 type EvmOnChainReadPayload = EvmReadContractRequest | EvmGetBalanceRequest;
 
-interface PendingRequest {
-  payload: EvmOnChainReadPayload;
-  reqPromise: Promise<unknown>;
-}
-
 interface RequestsPool {
   rpsLimiter: ConcurrencyLimiter;
-  pendingRequests: PendingRequest[];
+  pendingRequests: Map<string, Promise<unknown>>;
 }
 
 const requestsPools = new Map<number, RequestsPool>();
@@ -43,7 +38,7 @@ const requestsPools = new Map<number, RequestsPool>();
 const getOrCreatePool = (chainId: number): RequestsPool => {
   let pool = requestsPools.get(chainId);
   if (!pool) {
-    pool = { rpsLimiter: new ConcurrencyLimiter(RPS_LIMIT), pendingRequests: [] };
+    pool = { rpsLimiter: new ConcurrencyLimiter(RPS_LIMIT), pendingRequests: new Map() };
     requestsPools.set(chainId, pool);
   }
 
@@ -52,25 +47,10 @@ const getOrCreatePool = (chainId: number): RequestsPool => {
 
 const serializeArgs = (args?: readonly unknown[]): string => (args == null ? '' : args.map(String).join('|'));
 
-const requestsAreSame = (a: EvmOnChainReadPayload, b: EvmOnChainReadPayload) => {
-  if (a.network.chainId !== b.network.chainId || a.kind !== b.kind) {
-    return false;
-  }
-
-  if (a.kind === 'getBalance' && b.kind === 'getBalance') {
-    return a.params.address === b.params.address;
-  }
-
-  if (a.kind === 'readContract' && b.kind === 'readContract') {
-    return (
-      a.params.address === b.params.address &&
-      a.params.functionName === b.params.functionName &&
-      serializeArgs(a.params.args) === serializeArgs(b.params.args)
-    );
-  }
-
-  return false;
-};
+const serializeRequest = (payload: EvmOnChainReadPayload): string =>
+  payload.kind === 'getBalance'
+    ? `${payload.kind}_${payload.params.address}`
+    : `${payload.kind}_${payload.params.address}_${payload.params.functionName}_${serializeArgs(payload.params.args)}`;
 
 const getResult = (payload: EvmOnChainReadPayload): Promise<unknown> => {
   const publicClient = getViemPublicClient(payload.network);
@@ -82,12 +62,11 @@ const getResult = (payload: EvmOnChainReadPayload): Promise<unknown> => {
 
 const executeRequest = (payload: EvmOnChainReadPayload): Promise<unknown> => {
   const pool = getOrCreatePool(payload.network.chainId);
+  const requestKey = serializeRequest(payload);
 
-  const pendingRequest = pool.pendingRequests.find(({ payload: pendingPayload }) =>
-    requestsAreSame(pendingPayload, payload)
-  );
+  const pendingRequest = pool.pendingRequests.get(requestKey);
   if (pendingRequest) {
-    return pendingRequest.reqPromise;
+    return pendingRequest;
   }
 
   const reqPromise = pool.rpsLimiter
@@ -98,12 +77,10 @@ const executeRequest = (payload: EvmOnChainReadPayload): Promise<unknown> => {
       return getResult(payload);
     })
     .finally(() => {
-      pool.pendingRequests = pool.pendingRequests.filter(
-        ({ payload: pendingPayload }) => !requestsAreSame(pendingPayload, payload)
-      );
+      pool.pendingRequests.delete(requestKey);
     });
 
-  pool.pendingRequests.push({ payload, reqPromise });
+  pool.pendingRequests.set(requestKey, reqPromise);
 
   return reqPromise;
 };
