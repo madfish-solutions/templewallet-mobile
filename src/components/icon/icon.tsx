@@ -19,6 +19,7 @@ export interface IconProps extends TestIdProps, SvgProps {
   style?: StyleProp<ViewStyle>;
 }
 
+/** @deprecated Extend and use IconV2 or CryptoLogo */
 export const Icon: FC<IconProps> = ({
   name,
   size = formatSize(16),

@@ -1,8 +1,10 @@
 import { memo, useCallback } from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { CryptoLogo } from 'src/components/crypto-logo';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmChains } from 'src/hooks/evm/use-evm-chains.hook';
@@ -57,9 +59,9 @@ const AllNetworksOptionHOC = <T extends TempleChainKind>(
         testID={NetworksSelectors.networkOption}
         testIDProperties={{ network: chainId }}
       >
-        <NetworkIcon chainId={chainId} size={formatSize(30)} style={styles.optionIcon} />
+        <NetworkIcon chainId={chainId} size={formatSize(36)} style={styles.optionIcon} />
         <Text style={styles.optionName}>{name}</Text>
-        <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+        <IconV2 name={IconNameV2Enum.ChevronRight} size={24} />
       </TouchableWithAnalytics>
     );
   });
@@ -68,10 +70,10 @@ const AllNetworksOptionHOC = <T extends TempleChainKind>(
 };
 
 const TezosNetworkOption = AllNetworksOptionHOC<TempleChainKind.Tezos>(({ size, style }) => (
-  <Icon name={IconNameEnum.TezToken} size={size} style={style} />
+  <CryptoLogo name={CryptoLogoNameEnum.Tezos} size={size} style={style} />
 ));
 
 // TODO: Add icons for other EVM chains
 const EvmNetworkOption = AllNetworksOptionHOC<TempleChainKind.EVM>(({ size, style }) => (
-  <Icon name={IconNameEnum.EtherlinkToken} size={size} style={style} />
+  <CryptoLogo name={CryptoLogoNameEnum.Etherlink} size={size} style={style} />
 ));

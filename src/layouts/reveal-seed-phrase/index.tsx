@@ -10,7 +10,7 @@ import { HeaderButton } from 'src/components/header/header-button/header-button'
 import { HeaderProgress } from 'src/components/header/header-progress/header-progress';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { Label } from 'src/components/label/label';
 import { NewSeedPhraseAttention } from 'src/components/new-seed-phrase-attention/new-seed-phrase-attention';
@@ -52,7 +52,7 @@ export const RevealSeedPhrase: FC<Props> = ({
 
   useNavigationSetOptions(
     {
-      headerLeft: () => <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={onGoBackPress} />,
+      headerLeft: () => <HeaderButton iconName={IconNameV2Enum.ArrowLeft} onPress={onGoBackPress} />,
       headerRight: () => <HeaderProgress current={1} total={2} />,
       headerTitle: () => <HeaderTitle title={headerTitleText} />
     },

@@ -14,6 +14,7 @@ import { HeaderCardActionButtons } from 'src/components/header-card-action-butto
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from 'src/components/token-dropdown/token-dropdown-item/token-dropdown-item';
@@ -151,7 +152,7 @@ export const TezosTokenScreen = () => {
 
   useNavigationSetOptions(
     {
-      headerRight: () => <HeaderButton iconName={IconNameEnum.InfoAlt} onPress={handleInfoIconClick} />
+      headerRight: () => <HeaderButton iconName={IconNameV2Enum.Info} onPress={handleInfoIconClick} />
     },
     [tezosToken]
   );
