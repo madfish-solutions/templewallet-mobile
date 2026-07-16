@@ -1,4 +1,4 @@
-import { black } from 'src/config/styles';
+import { black, white } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { generateShadow } from 'src/styles/generate-shadow';
@@ -29,8 +29,8 @@ export const useQrBottomSheetStyles = createUseStylesMemoized(({ colors, typogra
   },
   qrCodeContainer: {
     ...generateShadow(1, black),
-    backgroundColor: colors.white,
+    backgroundColor: white,
     borderRadius: formatSize(8),
-    padding: formatSize(16)
+    padding: formatSize(20)
   }
 }));

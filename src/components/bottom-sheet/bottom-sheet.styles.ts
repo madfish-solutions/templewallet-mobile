@@ -21,7 +21,8 @@ export const useDropdownBottomSheetStyles = createUseStyles(({ colors, typograph
   },
   headerTextsContainer: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'column'
   },
   headerLeftSide: {
     flex: 1
