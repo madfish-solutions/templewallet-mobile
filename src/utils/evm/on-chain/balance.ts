@@ -3,7 +3,7 @@ import { erc20Abi, erc721Abi } from 'viem';
 import { EvmNetworkEssentials } from 'src/types/networks';
 
 import { erc1155Abi } from './abi/erc1155.abi';
-import { detectTokenStandard, equalsIgnoreCase } from './common.utils';
+import { equalsIgnoreCase } from './common.utils';
 import { executeEvmGetBalance, executeEvmReadContract } from './evm-rpc-requests-executor';
 import { EvmAssetStandard, EvmContractAssetStandard } from './types';
 
@@ -27,10 +27,8 @@ export const getEvmAssetBalance = async (
   account: HexString,
   contract: HexString,
   tokenId = '0',
-  knownStandard?: EvmContractAssetStandard
+  standard: EvmContractAssetStandard
 ): Promise<string | undefined> => {
-  const standard = knownStandard ?? (await detectTokenStandard(network, contract));
-
   try {
     if (standard === EvmAssetStandard.ERC1155) {
       const balance = await executeEvmReadContract<bigint>(network, {

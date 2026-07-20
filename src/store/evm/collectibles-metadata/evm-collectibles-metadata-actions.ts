@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { EvmCollectibleMetadata } from './evm-collectibles-metadata-state';
+import { EvmCollectibleMetadata } from 'src/token/interfaces/token-metadata.interface';
 
 interface ProcessLoadedEvmCollectiblesMetadataActionPayload {
   chainId: number;

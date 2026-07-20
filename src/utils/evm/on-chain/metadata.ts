@@ -22,7 +22,7 @@ const isRetryableRpcError = (error: unknown): boolean =>
   error instanceof BaseError &&
   error.walk(e => e instanceof HttpRequestError || e instanceof TimeoutError || e instanceof RpcRequestError) != null;
 
-const COVALENT_IPFS_GATE = 'https://ipfs.covalenthq.com';
+const COVALENT_IPFS_GATE = 'https://ipfs.covalenthq.com/ipfs';
 
 const buildHttpLinkFromUri = (uri?: string): string | undefined => {
   const normalizedUri = normalizeIpfsUri(uri);
@@ -119,7 +119,7 @@ const getErc721Metadata = async (
 
   return {
     ...remoteMetadata,
-    name: remoteMetadata.name ?? getSettledValue(name),
+    name: getSettledValue(name),
     symbol: getSettledValue(symbol),
     metadataUri
   };
@@ -152,20 +152,36 @@ const getErc1155Metadata = async (
 
   const tokenIdStr = tokenId.toString();
 
-  let metadataUri = rawUri.replace('{id}', tokenIdStr.padStart(64, '0'));
-  let remoteMetadata: Awaited<ReturnType<typeof fetchCollectibleJsonMetadata>>;
-  try {
-    remoteMetadata = await fetchCollectibleJsonMetadata(metadataUri);
-  } catch {
-    // Some ERC-1155 contracts expect the decimal tokenId rather than the zero-padded hex form
-    metadataUri = rawUri.replace('{id}', tokenIdStr);
-    remoteMetadata = await fetchCollectibleJsonMetadata(metadataUri);
+  // EIP-1155 requires `{id}` to be the lowercase 64-char hex form; some non-compliant contracts expect decimal
+  const candidateUris = [
+    ...new Set([
+      rawUri.replace('{id}', tokenId.toString(16).padStart(64, '0')),
+      rawUri.replace('{id}', tokenIdStr.padStart(64, '0')),
+      rawUri.replace('{id}', tokenIdStr)
+    ])
+  ];
+
+  let metadataUri = candidateUris[0];
+  let remoteMetadata: Awaited<ReturnType<typeof fetchCollectibleJsonMetadata>> | undefined;
+  let lastFetchError: unknown;
+  for (const candidateUri of candidateUris) {
+    try {
+      remoteMetadata = await fetchCollectibleJsonMetadata(candidateUri);
+      metadataUri = candidateUri;
+      break;
+    } catch (error) {
+      lastFetchError = error;
+    }
+  }
+
+  if (!remoteMetadata) {
+    throw lastFetchError;
   }
 
   return {
     ...remoteMetadata,
-    name: remoteMetadata.name ?? getSettledValue(name),
-    symbol: getSettledValue(symbol) ?? remoteMetadata.name,
+    name: getSettledValue(name),
+    symbol: getSettledValue(symbol) ?? remoteMetadata.collectibleName,
     metadataUri
   };
 };
@@ -182,7 +198,10 @@ interface CollectibleJsonMetadata {
 const fetchCollectibleJsonMetadata = async (
   metadataUri: string
 ): Promise<
-  Pick<EvmCollectibleOnChainMetadata, 'name' | 'image' | 'description' | 'attributes' | 'externalUrl' | 'animationUrl'>
+  Pick<
+    EvmCollectibleOnChainMetadata,
+    'collectibleName' | 'image' | 'description' | 'attributes' | 'externalUrl' | 'animationUrl'
+  >
 > => {
   const httpUri = buildHttpLinkFromUri(metadataUri);
   if (!httpUri) {
@@ -198,7 +217,7 @@ const fetchCollectibleJsonMetadata = async (
   const { name, description, image, attributes, external_url: externalUrl, animation_url: animationUrl } = data;
 
   return {
-    name,
+    collectibleName: name,
     image: normalizeIpfsUri(image),
     description,
     ...pickBy({ attributes, externalUrl, animationUrl: normalizeIpfsUri(animationUrl) }, value => value !== undefined)

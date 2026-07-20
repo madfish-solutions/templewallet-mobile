@@ -13,7 +13,6 @@ export interface EtherlinkTokenInfo<T extends EtherlinkTokenType = EtherlinkToke
 
 export interface EtherlinkAccountInfo {
   coin_balance: string | null;
-  exchange_rate: string | null;
   hash: HexString;
 }
 
@@ -61,10 +60,11 @@ interface EtherlinkERC20TokenBalance extends EtherlinkTokenBalance {
 export const isErc20TokenBalance = (balance: EtherlinkTokenBalance): balance is EtherlinkERC20TokenBalance =>
   balance.token.type === 'ERC-20';
 
-interface ItemsWithPagination<T, P> {
-  items: T[];
-  next_page_params: P | null;
-}
+export const isEtherlinkCollectibleTokenType = (type: string): type is Exclude<EtherlinkTokenType, 'ERC-20'> =>
+  type === 'ERC-721' || type === 'ERC-1155';
+
+export const isEtherlinkTokenType = (type: string): type is EtherlinkTokenType =>
+  type === 'ERC-20' || isEtherlinkCollectibleTokenType(type);
 
 export interface EtherlinkAccountNftsPageParams {
   items_count: number;
@@ -73,7 +73,7 @@ export interface EtherlinkAccountNftsPageParams {
   token_type: Exclude<EtherlinkTokenType, 'ERC-20'>;
 }
 
-export type EtherlinkAccountNftsResponse = ItemsWithPagination<
-  EtherlinkAddressNftInstance,
-  EtherlinkAccountNftsPageParams
->;
+export interface EtherlinkAccountNftsResponse {
+  items: EtherlinkAddressNftInstance[];
+  next_page_params: EtherlinkAccountNftsPageParams | null;
+}

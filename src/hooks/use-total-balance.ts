@@ -16,11 +16,13 @@ import {
 } from 'src/store/wallet/wallet-selectors';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import { isEvmCollectibleSlug } from 'src/utils/from-token-slug';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { TEZ_TOKEN_DECIMALS } from '../token/data/tokens-metadata';
 import { getTokenSlug } from '../token/utils/token.utils';
 import { getDollarValue } from '../utils/balance.utils';
+import { isDefined } from '../utils/is-defined';
 import { ZERO } from '../utils/number.util';
 import { tzToMutez } from '../utils/tezos.util';
 import { useTezosToken, useTezosTokenOfCurrentAccount } from '../utils/wallet.utils';
@@ -34,7 +36,7 @@ const useEvmDollarBalance = (evmAddress: HexString | undefined) => {
     let dollarValue = new BigNumber(0);
 
     for (const slug in balances) {
-      if (slug.includes('_')) {
+      if (isEvmCollectibleSlug(slug)) {
         continue;
       }
 
@@ -72,7 +74,11 @@ export const useTotalBalance = () => {
     const tezosDollarValue = getDollarValue(tezosToken.balance, tezosToken.decimals, exchangeRates.tez);
     dollarValue = dollarValue.plus(tezosDollarValue).plus(evmDollarBalance);
 
-    return tzToMutez(dollarValue.dividedBy(exchangeRates.tez), TEZ_TOKEN_DECIMALS);
+    const tezUsdRate: number | undefined = exchangeRates.tez;
+
+    return isDefined(tezUsdRate) && tezUsdRate > 0
+      ? tzToMutez(dollarValue.dividedBy(tezUsdRate), TEZ_TOKEN_DECIMALS)
+      : ZERO;
   }, [tezosToken, visibleTokens, exchangeRates, evmDollarBalance]);
 
   return useTezosToken(totalBalance.toFixed());

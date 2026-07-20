@@ -6,16 +6,16 @@ import { EVM_BALANCES_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useAppStateStatus } from 'src/hooks/use-app-state-status.hook';
 import { dispatch } from 'src/store';
-import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { processLoadedEvmCollectiblesMetadataAction } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-actions';
 import { useEvmChainCollectiblesMetadataSelector } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-selectors';
+import { buildEvmCollectibleMetadataFromOnChain } from 'src/store/evm/collectibles-metadata/utils';
 import { processLoadedEvmTokensMetadataAction } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-actions';
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
+import { buildEvmTokenMetadataFromOnChain } from 'src/store/evm/tokens-metadata/utils';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
-import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
-import { EvmChain, EvmNetworkEssentials } from 'src/types/networks';
+import { toEvmNetworkEssentials } from 'src/types/networks';
 import {
   dispatchEtherlinkAccountData,
   getEtherlinkAccountData,
@@ -29,18 +29,14 @@ import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 const inFlightMap: Record<string, boolean> = {};
 const lastLoadTimestampMap: Record<string, number> = {};
+/** Slightly below the sync interval, so a tick arriving a few ms early is not skipped for a whole period */
+const REFRESH_THROTTLE = EVM_BALANCES_SYNC_INTERVAL - 5000;
 const checkedMetadataSlugs = new Set<string>();
 const inFlightMetadataFetches = new Set<string>();
-
-const toNetworkEssentials = (chain: EvmChain): EvmNetworkEssentials => ({
-  rpcBaseURL: chain.activeRpc.rpcBaseURL,
-  chainId: chain.chainId
-});
 
 export const useEtherlinkDataLoading = () => {
   const evmAddress = useAccountAddressForEvm();
   const etherlinkChain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
-  const tezUsdRate = useUsdToTokenRates()[TEZ_TOKEN_SLUG];
 
   const chainAssets = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const tokensMetadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
@@ -56,8 +52,6 @@ export const useEtherlinkDataLoading = () => {
 
   const etherlinkChainRef = useRef(etherlinkChain);
   etherlinkChainRef.current = etherlinkChain;
-  const tezUsdRateRef = useRef(tezUsdRate);
-  tezUsdRateRef.current = tezUsdRate;
   const chainAssetsRef = useRef(chainAssets);
   chainAssetsRef.current = chainAssets;
 
@@ -66,10 +60,10 @@ export const useEtherlinkDataLoading = () => {
     if (!chain) {
       return;
     }
-    const currentNetwork = toNetworkEssentials(chain);
+    const currentNetwork = toEvmNetworkEssentials(chain);
 
     const key = `${account}_${ETHERLINK_MAINNET_CHAIN_ID}`;
-    if (inFlightMap[key] || Date.now() - (lastLoadTimestampMap[key] ?? 0) < EVM_BALANCES_SYNC_INTERVAL) {
+    if (inFlightMap[key] || Date.now() - (lastLoadTimestampMap[key] ?? 0) < REFRESH_THROTTLE) {
       return;
     }
     inFlightMap[key] = true;
@@ -99,12 +93,7 @@ export const useEtherlinkDataLoading = () => {
           preservedSlugs = manualResult.failed;
         }
 
-        dispatchEtherlinkAccountData({
-          account,
-          data,
-          fallbackNativeUsdRate: tezUsdRateRef.current,
-          preservedSlugs
-        });
+        dispatchEtherlinkAccountData({ account, data, preservedSlugs });
       } catch (apiError) {
         console.error(apiError);
         await loadEtherlinkBalancesOnChain({
@@ -135,7 +124,7 @@ export const useEtherlinkDataLoading = () => {
     if (!chain || !evmAddress) {
       return;
     }
-    const currentNetwork = toNetworkEssentials(chain);
+    const currentNetwork = toEvmNetworkEssentials(chain);
 
     for (const slug in chainAssets) {
       const { standard } = chainAssets[slug];
@@ -170,14 +159,7 @@ export const useEtherlinkDataLoading = () => {
           dispatch(
             processLoadedEvmTokensMetadataAction({
               chainId: ETHERLINK_MAINNET_CHAIN_ID,
-              metadata: {
-                [slug]: {
-                  name: metadata.name,
-                  symbol: metadata.symbol,
-                  decimals: metadata.decimals,
-                  standard: EvmAssetStandardEnum.ERC20
-                }
-              }
+              metadata: { [slug]: buildEvmTokenMetadataFromOnChain(slug, metadata, metadata.decimals) }
             })
           );
           checkedMetadataSlugs.add(checkedKey);
@@ -209,16 +191,7 @@ export const useEtherlinkDataLoading = () => {
           dispatch(
             processLoadedEvmCollectiblesMetadataAction({
               chainId: ETHERLINK_MAINNET_CHAIN_ID,
-              metadata: {
-                [slug]: {
-                  tokenId: tokenId ?? '0',
-                  name: metadata.name,
-                  symbol: metadata.symbol,
-                  iconUri: metadata.image,
-                  collectionName: metadata.name,
-                  standard
-                }
-              }
+              metadata: { [slug]: buildEvmCollectibleMetadataFromOnChain(contract, tokenId ?? '0', standard, metadata) }
             })
           );
           checkedMetadataSlugs.add(checkedKey);

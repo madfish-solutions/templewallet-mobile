@@ -13,6 +13,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { ImageWithIndicator } from 'src/components/image';
 import { Search } from 'src/components/search/search';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEtherlinkDataLoading } from 'src/hooks/evm/use-etherlink-data-loading.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -27,8 +28,11 @@ import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wa
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles, useCurrentAccountEvmCollectibles } from 'src/utils/assets/hooks';
+import { DisplayedCollectible } from 'src/utils/assets/types';
 import { useDidUpdate } from 'src/utils/hooks';
 import { formatObjktLogoUri } from 'src/utils/image.utils';
+import { isString } from 'src/utils/is-string';
+import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
@@ -40,7 +44,6 @@ export const CollectiblesHome = memo(() => {
   const collections = useCreatedCollectionsSelector();
   const tezosCollectibles = useCurrentAccountCollectibles(true);
   const evmCollectibles = useCurrentAccountEvmCollectibles();
-  const collectibles = useMemo(() => tezosCollectibles.concat(evmCollectibles), [tezosCollectibles, evmCollectibles]);
   const tezosAddress = useAccountAddressForTezos();
   const evmAddress = useAccountAddressForEvm();
 
@@ -101,7 +104,35 @@ export const CollectiblesHome = memo(() => {
     }
   }, [tezosAddress]);
 
-  const { setSearchValue, filteredAssetsList } = useFilteredAssetsList(collectibles);
+  const {
+    setSearchValue,
+    searchValue,
+    filteredAssetsList: filteredTezosCollectibles
+  } = useFilteredAssetsList(tezosCollectibles);
+
+  const collectibles = useMemo<DisplayedCollectible[]>(() => {
+    const searchValueLowercased = searchValue?.toLowerCase();
+    const filteredEvmCollectibles = isString(searchValueLowercased)
+      ? evmCollectibles.filter(({ metadata, tokenId }) =>
+          isAssetSearched(
+            {
+              name: metadata?.collectibleName ?? metadata?.name ?? tokenId,
+              symbol: metadata?.symbol ?? '',
+              address: metadata?.address
+            },
+            searchValueLowercased
+          )
+        )
+      : evmCollectibles;
+
+    const tezosDisplayed: DisplayedCollectible[] = filteredTezosCollectibles.map(asset => ({
+      chainKind: TempleChainKind.Tezos,
+      slug: asset.slug,
+      asset
+    }));
+
+    return tezosDisplayed.concat(filteredEvmCollectibles);
+  }, [filteredTezosCollectibles, evmCollectibles, searchValue]);
 
   const handleSwitchShowInfo = () => void dispatch(switchIsShowCollectibleInfoAction());
 
@@ -177,7 +208,7 @@ export const CollectiblesHome = memo(() => {
             </View>
           </View>
 
-          <CollectiblesList collectibles={filteredAssetsList} showInfo={isShowCollectibleInfo} />
+          <CollectiblesList collectibles={collectibles} showInfo={isShowCollectibleInfo} />
         </BottomSheet>
       ) : null}
     </View>

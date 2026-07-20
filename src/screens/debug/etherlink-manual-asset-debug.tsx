@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { isAddress } from 'viem';
 
-import { fetchGetTokenInfo } from 'src/apis/etherlink';
+import { fetchGetTokenInfo, isEtherlinkTokenType } from 'src/apis/etherlink';
 import { ButtonMedium } from 'src/components/button/button-medium/button-medium';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { StyledTextInput } from 'src/components/styled-text-input/styled-text-input';
@@ -11,15 +11,20 @@ import { Switch } from 'src/components/switch/switch';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { setEvmAssetManualAction } from 'src/store/evm/assets/evm-assets-actions';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
-import { useEvmAccountChainBalancesTimestampSelector } from 'src/store/evm/balances/evm-balances-selectors';
+import {
+  useEvmAccountChainBalancesSelector,
+  useEvmAccountChainBalancesTimestampSelector
+} from 'src/store/evm/balances/evm-balances-selectors';
 import { processLoadedEvmCollectiblesMetadataAction } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-actions';
+import { buildEvmCollectibleMetadataFromOnChain } from 'src/store/evm/collectibles-metadata/utils';
 import { processLoadedEvmExchangeRatesAction } from 'src/store/evm/exchange-rates/evm-exchange-rates-actions';
 import { processLoadedEvmTokensMetadataAction } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-actions';
+import { buildEvmTokenMetadataFromApi, buildEvmTokenMetadataFromOnChain } from 'src/store/evm/tokens-metadata/utils';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
-import { EvmNetworkEssentials } from 'src/types/networks';
+import { toEvmNetworkEssentials } from 'src/types/networks';
 import {
   dispatchEtherlinkAccountData,
   etherlinkTokenTypeToStandard,
@@ -41,12 +46,12 @@ export const EtherlinkManualAssetDebug = () => {
   const [refreshError, setRefreshError] = useState<string>();
 
   const knownAssets = useEvmAccountChainAssetsSelector(account, ETHERLINK_MAINNET_CHAIN_ID);
+  const balances = useEvmAccountChainBalancesSelector(account, ETHERLINK_MAINNET_CHAIN_ID);
   const balancesTimestamp = useEvmAccountChainBalancesTimestampSelector(account, ETHERLINK_MAINNET_CHAIN_ID);
   const etherlinkChain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
 
-  const network = useMemo<EvmNetworkEssentials | undefined>(
-    () =>
-      etherlinkChain ? { rpcBaseURL: etherlinkChain.activeRpc.rpcBaseURL, chainId: etherlinkChain.chainId } : undefined,
+  const network = useMemo(
+    () => (etherlinkChain ? toEvmNetworkEssentials(etherlinkChain) : undefined),
     [etherlinkChain]
   );
 
@@ -54,8 +59,6 @@ export const EtherlinkManualAssetDebug = () => {
 
   const trimmedSlug = slug.trim().toLowerCase();
   const selectedAsset = knownAssets[trimmedSlug];
-
-  const handleSlugPick = (pickedSlug: string) => setSlug(pickedSlug);
 
   const handleManualToggle = async (manual: boolean) => {
     if (!account || trimmedSlug === '') {
@@ -84,22 +87,16 @@ export const EtherlinkManualAssetDebug = () => {
       if (tokenId == null) {
         try {
           const tokenInfo = await fetchGetTokenInfo(contract);
-          const standard = etherlinkTokenTypeToStandard(tokenInfo.type);
+          const standard = isEtherlinkTokenType(tokenInfo.type)
+            ? etherlinkTokenTypeToStandard(tokenInfo.type)
+            : undefined;
 
           if (standard === EvmAssetStandardEnum.ERC20 && tokenInfo.decimals != null) {
             dispatch(setEvmAssetManualAction({ account, chainId, slug: trimmedSlug, manual, standard }));
             dispatch(
               processLoadedEvmTokensMetadataAction({
                 chainId,
-                metadata: {
-                  [trimmedSlug]: {
-                    name: tokenInfo.name ?? undefined,
-                    symbol: tokenInfo.symbol ?? undefined,
-                    decimals: Number(tokenInfo.decimals),
-                    iconUri: tokenInfo.icon_url ?? undefined,
-                    standard
-                  }
-                }
+                metadata: { [trimmedSlug]: buildEvmTokenMetadataFromApi(tokenInfo, Number(tokenInfo.decimals)) }
               })
             );
             if (tokenInfo.exchange_rate != null) {
@@ -133,28 +130,21 @@ export const EtherlinkManualAssetDebug = () => {
           processLoadedEvmTokensMetadataAction({
             chainId,
             metadata: {
-              [trimmedSlug]: {
-                name: detected.metadata.name,
-                symbol: detected.metadata.symbol,
-                decimals: detected.metadata.decimals,
-                standard: detected.standard
-              }
+              [trimmedSlug]: buildEvmTokenMetadataFromOnChain(contract, detected.metadata, detected.metadata.decimals)
             }
           })
         );
-      } else if (detected && detected.standard !== EvmAssetStandardEnum.ERC20) {
+      } else if (detected.standard !== EvmAssetStandardEnum.ERC20) {
         dispatch(
           processLoadedEvmCollectiblesMetadataAction({
             chainId,
             metadata: {
-              [trimmedSlug]: {
-                tokenId: tokenId ?? '0',
-                name: detected.metadata.name,
-                symbol: detected.metadata.symbol,
-                iconUri: detected.metadata.image,
-                collectionName: detected.metadata.name,
-                standard: detected.standard
-              }
+              [trimmedSlug]: buildEvmCollectibleMetadataFromOnChain(
+                contract,
+                tokenId ?? '0',
+                detected.standard,
+                detected.metadata
+              )
             }
           })
         );
@@ -209,7 +199,7 @@ export const EtherlinkManualAssetDebug = () => {
             <View style={styles.slugsList}>
               <Text style={styles.infoText}>Stored assets (tap to select):</Text>
               {knownSlugs.map(knownSlug => (
-                <TouchableOpacity key={knownSlug} onPress={() => handleSlugPick(knownSlug)}>
+                <TouchableOpacity key={knownSlug} onPress={() => setSlug(knownSlug)}>
                   <Text style={styles.slugItem}>
                     {knownSlug} — {knownAssets[knownSlug].standard}
                     {knownAssets[knownSlug].manual ? ' (manual)' : ''}
@@ -239,6 +229,9 @@ export const EtherlinkManualAssetDebug = () => {
           </View>
           {addError != null && <Text style={styles.errorText}>Add error: {addError}</Text>}
 
+          <Text style={styles.infoText}>
+            Stored balance for {trimmedSlug || '—'}: {trimmedSlug ? balances[trimmedSlug] ?? 'none' : '—'}
+          </Text>
           <ButtonMedium
             title="Force Etherlink Refresh"
             iconName={IconNameEnum.Sync}

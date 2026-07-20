@@ -1,9 +1,11 @@
 import { uniq } from 'lodash-es';
+import { getAddress } from 'viem';
 
 import { AssetMediaURIs } from './assets/types';
 import { isDefined } from './is-defined';
 import { isString } from './is-string';
 import { isTruthy } from './is-truthy';
+import { ETHERLINK_MAINNET_CHAIN_ID } from './rpc/rpc-list';
 
 export const IPFS_PROTOCOL = 'ipfs://';
 const OBJKT_MEDIA_HOST = 'https://assets.objkt.media/file/assets-003';
@@ -184,6 +186,36 @@ export const buildTokenImagesStack = (url?: string, preferDirectSource = false):
 
   return [];
 };
+
+const IMG_PROXY_HOST = 'https://img.templewallet.com';
+const RAINBOW_ASSETS_BASE_URL = 'https://raw.githubusercontent.com/rainbow-me/assets/master/blockchains/';
+const COMPRESSED_TOKEN_ICON_SIZE = 80;
+
+/** Extend along with new EVM chains */
+const CHAIN_ID_TO_IMAGE_CHAIN_NAME: Record<number, string> = {
+  [ETHERLINK_MAINNET_CHAIN_ID]: 'etherlink'
+};
+
+const getCompressedImageUrl = (imageUrl: string, size: number) =>
+  `${IMG_PROXY_HOST}/insecure/fill/${size}/${size}/ce/0/plain/${encodeURIComponent(imageUrl)}@png`;
+
+const getEvmTokenRainbowLogoUrl = (chainId: number, address: string) => {
+  const chainName = CHAIN_ID_TO_IMAGE_CHAIN_NAME[chainId];
+  if (!chainName) {
+    return undefined;
+  }
+
+  try {
+    return `${RAINBOW_ASSETS_BASE_URL}${chainName}/assets/${getAddress(address)}/logo.png`;
+  } catch {
+    return undefined;
+  }
+};
+
+export const buildEvmTokenIconSources = (chainId: number, address: string, iconURL?: string): string[] =>
+  [iconURL, getEvmTokenRainbowLogoUrl(chainId, address)]
+    .filter(isTruthy)
+    .map(url => getCompressedImageUrl(url, COMPRESSED_TOKEN_ICON_SIZE));
 
 const DWEB_IPFS_GATE = 'https://dweb.link/ipfs';
 

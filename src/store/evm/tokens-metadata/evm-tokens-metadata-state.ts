@@ -1,14 +1,8 @@
-import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { EvmNativeTokenMetadata, EvmTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 
-export interface EvmTokenMetadata {
-  name?: string;
-  symbol?: string;
-  decimals: number;
-  iconUri?: string;
-  standard: EvmAssetStandardEnum;
-}
+export type EvmStoredTokenMetadata = EvmTokenMetadata | EvmNativeTokenMetadata;
 
-export type EvmTokensMetadataRecord = Record<number, Record<string, EvmTokenMetadata>>;
+export type EvmTokensMetadataRecord = Record<number, Record<string, EvmStoredTokenMetadata>>;
 
 export interface EvmTokensMetadataState {
   record: EvmTokensMetadataRecord;

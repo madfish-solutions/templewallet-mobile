@@ -2,7 +2,7 @@ import { createAction } from '@reduxjs/toolkit';
 
 import { Account } from 'src/interfaces/account.interfaces';
 import { SendAssetActionPayloadInterface } from 'src/interfaces/send-asset-action-payload.interface';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { TezosReadOnlySignerPayload } from 'src/types/tezos-read-only-signer-payload';
 
 import { createActions } from '../create-actions';
@@ -31,7 +31,7 @@ export const loadAssetsBalancesActions = createActions<
 >('assets/LOAD_TOKENS_BALANCES');
 
 /** TODO: add `ofDcpNetwork` flag to payload */
-export const addTokenAction = createAction<TokenMetadataInterface>('assets/ADD_TOKEN');
+export const addTokenAction = createAction<TezosTokenMetadata>('assets/ADD_TOKEN');
 export const removeTokenAction = createAction<string>('assets/REMOVE_TOKEN');
 export const toggleTokenVisibilityAction = createAction<{ slug: string }>('assets/TOGGLE_TOKEN_VISIBILITY');
 

@@ -4,10 +4,10 @@ import { useDispatch } from 'react-redux';
 
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
 
-export const useBurnCollectible = (collectible: TokenMetadataInterface | nullish) => {
+export const useBurnCollectible = (collectible: TezosTokenMetadata | nullish) => {
   const dispatch = useDispatch();
 
   return useMemo(() => {

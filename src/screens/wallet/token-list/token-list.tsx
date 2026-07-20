@@ -17,6 +17,7 @@ import { delegationApy } from 'src/config/general';
 import { isAndroid } from 'src/config/system';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import {
   MultichainDisplayedToken,
   useMultichainDisplayedTokens
@@ -38,6 +39,7 @@ import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { isString } from 'src/utils/is-string';
 import { isPositiveNumber } from 'src/utils/number.util';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
@@ -61,7 +63,8 @@ const FILLER_SLUG_PREFIX = 'filler';
 
 const emptyListItems: ListItem[] = [];
 
-const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : item.slug);
+const keyExtractor = (item: ListItem) =>
+  item === AD_PLACEHOLDER ? item : toChainAssetSlug(item.chainKind, item.chainId, item.slug);
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
 export const TokensList = memo(() => {
@@ -188,12 +191,20 @@ export const TokensList = memo(() => {
         return <View style={{ height: ITEM_HEIGHT }} />;
       }
 
-      const apy =
-        item.chainKind === 'tezos' && item.slug === TEZ_TOKEN_SLUG && currentBaker
+      const isTezosItem = item.chainKind === TempleChainKind.Tezos;
+      const apy = isTezosItem
+        ? item.slug === TEZ_TOKEN_SLUG && currentBaker
           ? delegationApy
-          : apyRates[item.slug];
+          : apyRates[item.slug]
+        : undefined;
 
-      return <MultichainTokenListItem token={item} scam={scamTokenSlugsRecord[item.slug]} apy={apy} />;
+      return (
+        <MultichainTokenListItem
+          token={item}
+          scam={isTezosItem ? scamTokenSlugsRecord[item.slug] : undefined}
+          apy={apy}
+        />
+      );
     },
     [
       apyRates,
@@ -269,7 +280,7 @@ export const TokensList = memo(() => {
 
 const buildFillerToken = (index: number): MultichainDisplayedToken => ({
   slug: `${FILLER_SLUG_PREFIX}${index}`,
-  chainKind: 'tezos',
+  chainKind: TempleChainKind.Tezos,
   chainId: '',
   symbol: '',
   name: '',

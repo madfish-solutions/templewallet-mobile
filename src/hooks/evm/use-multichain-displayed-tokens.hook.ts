@@ -3,6 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
@@ -18,6 +19,7 @@ import { getTokenSlug } from 'src/token/utils/token.utils';
 import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
 import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { getDollarValue } from 'src/utils/balance.utils';
+import { isEvmCollectibleSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
@@ -28,7 +30,7 @@ const etherlinkNativeCurrency = ETHERLINK_MAINNET_CHAIN_SPECS.currency;
 
 export interface MultichainDisplayedToken {
   slug: string;
-  chainKind: 'tezos' | 'evm';
+  chainKind: TempleChainKind;
   chainId: string | number;
   symbol: string;
   name: string;
@@ -47,7 +49,7 @@ const buildTezosDisplayedToken = (
   shieldedAtomicBalance?: string
 ): MultichainDisplayedToken => ({
   slug: getTokenSlug(token),
-  chainKind: 'tezos',
+  chainKind: TempleChainKind.Tezos,
   chainId: ChainIds.MAINNET,
   symbol: token.symbol,
   name: token.name,
@@ -137,7 +139,7 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
         ? EvmAssetStandardEnum.NATIVE
         : evmAssets[slug]?.standard ?? evmMetadata[slug]?.standard;
       const isFungible = standard === EvmAssetStandardEnum.NATIVE || standard === EvmAssetStandardEnum.ERC20;
-      if (!isFungible || slug.includes('_')) {
+      if (!isFungible || isEvmCollectibleSlug(slug)) {
         continue;
       }
 
@@ -154,11 +156,11 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
 
       evmTokens.push({
         slug,
-        chainKind: 'evm',
+        chainKind: TempleChainKind.EVM,
         chainId: ETHERLINK_MAINNET_CHAIN_ID,
         symbol,
         name: nativeCurrency?.name ?? metadata?.name ?? symbol,
-        iconUri: nativeCurrency?.iconURL ?? metadata?.iconUri,
+        iconUri: nativeCurrency?.iconURL ?? metadata?.iconURL,
         atomicBalance,
         decimals,
         fiatValue

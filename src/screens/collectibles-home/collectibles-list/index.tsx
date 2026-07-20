@@ -11,10 +11,11 @@ import {
 } from 'src/components/screen-container/screen-container.styles';
 import { SIDEBAR_WIDTH } from 'src/config/styles';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useAreMetadatasLoadingSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { isEvmCollectibleSlug } from 'src/utils/assets/hooks';
-import { UsableAccountAsset } from 'src/utils/assets/types';
+import { DisplayedCollectible } from 'src/utils/assets/types';
+import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { createGetItemLayout } from 'src/utils/flat-list.utils';
 
 import { useCollectiblesGridStyles } from '../styles';
@@ -25,21 +26,21 @@ import { useCollectibleItemStyles } from './collectible-item/styles';
 import { CollectiblesListStyles, GRID_GAP } from './styles';
 
 interface Props {
-  collectibles: UsableAccountAsset[];
+  collectibles: DisplayedCollectible[];
   showInfo: boolean;
 }
 
 const ITEMS_PER_ROW = 3;
 const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
-const keyExtractor = (item: UsableAccountAsset) => item.slug;
+const keyExtractor = (item: DisplayedCollectible) =>
+  item.chainKind === TempleChainKind.EVM ? toChainAssetSlug(item.chainKind, item.chainId, item.slug) : item.slug;
 
 export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
   const screenStyles = useScreenContainerStyles();
   const itemStyles = useCollectibleItemStyles();
 
-  const areMetadatasLoading = useAreMetadatasLoadingSelector();
-  const isSyncing = areMetadatasLoading;
+  const isSyncing = useAreMetadatasLoadingSelector();
 
   const { width: windowWidth } = useWindowDimensions();
 
@@ -53,7 +54,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
 
   const getItemLayout = useMemo(
     () =>
-      createGetItemLayout<UsableAccountAsset>(
+      createGetItemLayout<DisplayedCollectible>(
         showInfo
           ? itemSize +
               itemStyles.description.paddingTop +
@@ -66,11 +67,11 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
     [showInfo, itemSize, itemStyles]
   );
 
-  const renderItem: ListRenderItem<UsableAccountAsset> = useCallback(
+  const renderItem: ListRenderItem<DisplayedCollectible> = useCallback(
     ({ item: collectible, index }) => {
       const style = (index + 1) % ITEMS_PER_ROW !== 0 ? CollectiblesListStyles.marginRight : undefined;
 
-      return isEvmCollectibleSlug(collectible.slug) ? (
+      return collectible.chainKind === TempleChainKind.EVM ? (
         <EvmCollectibleItem
           key={collectible.slug}
           collectible={collectible}
@@ -82,7 +83,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
         <CollectibleItem
           key={collectible.slug}
           slug={collectible.slug}
-          collectible={collectible}
+          collectible={collectible.asset}
           showInfo={showInfo}
           size={itemSize}
           style={style}

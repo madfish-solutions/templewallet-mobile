@@ -1,10 +1,10 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { EvmTokenMetadata } from './evm-tokens-metadata-state';
+import { EvmStoredTokenMetadata } from './evm-tokens-metadata-state';
 
 interface ProcessLoadedEvmTokensMetadataActionPayload {
   chainId: number;
-  metadata: Record<string, EvmTokenMetadata>;
+  metadata: Record<string, EvmStoredTokenMetadata>;
 }
 
 export const processLoadedEvmTokensMetadataAction = createAction<ProcessLoadedEvmTokensMetadataActionPayload>(

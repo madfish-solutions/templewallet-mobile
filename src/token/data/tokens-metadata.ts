@@ -1,30 +1,34 @@
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 
-import { emptyTokenMetadata, TokenMetadataInterface, TokenStandardsEnum } from '../interfaces/token-metadata.interface';
+import {
+  emptyTokenMetadata,
+  TezosTokenMetadata,
+  TezosTokenStandardsEnum
+} from '../interfaces/token-metadata.interface';
 
 export const TEZ_TOKEN_SLUG = 'tez';
 
-export const TEMPLE_TOKEN_METADATA: TokenMetadataInterface = {
+export const TEMPLE_TOKEN_METADATA: TezosTokenMetadata = {
   id: 0,
   address: 'KT1VaEsVNiBoA56eToEK6n6BcPgh1tdx9eXi',
   name: 'Temple Key',
   symbol: 'TKEY',
   decimals: 18,
-  standard: TokenStandardsEnum.Fa2,
+  standard: TezosTokenStandardsEnum.Fa2,
   thumbnailUri: 'ipfs://Qmb9QUXYn1PW8e7E2CwpBMgEur7gFAPPpq2Zh7H2D7eQcT'
 };
 
-export const WR_TOKEN_METADATA: TokenMetadataInterface = {
+export const WR_TOKEN_METADATA: TezosTokenMetadata = {
   id: 0,
   address: 'KT193FiCoUkthuDXcZ6Chr1J19TRoJqjWSYu',
   name: 'Wristory Token',
   symbol: 'WR',
   decimals: 6,
   thumbnailUri: 'ipfs://bafybeibiohfmkqcslplibgrn4giwrhuw4r4jqkhhdm7ozj4ufk7ch46fxe',
-  standard: TokenStandardsEnum.Fa2
+  standard: TezosTokenStandardsEnum.Fa2
 };
 
-export const TEZ_TOKEN_METADATA: TokenMetadataInterface = {
+export const TEZ_TOKEN_METADATA: TezosTokenMetadata = {
   ...emptyTokenMetadata,
   name: 'Tezos',
   symbol: 'TEZ',
@@ -40,7 +44,7 @@ export const TEZ_SHIELDED_TOKEN_SLUG = 'shielded_tez_0';
 /** Shielded TEZ shares the same exchange rate as public TEZ */
 export const getExchangeRateSlug = (slug: string) => (slug === TEZ_SHIELDED_TOKEN_SLUG ? TEZ_TOKEN_SLUG : slug);
 
-export const TEZ_SHIELDED_TOKEN_METADATA: TokenMetadataInterface = {
+export const TEZ_SHIELDED_TOKEN_METADATA: TezosTokenMetadata = {
   ...emptyTokenMetadata,
   address: 'shielded_tez',
   name: 'Shielded',
@@ -49,46 +53,46 @@ export const TEZ_SHIELDED_TOKEN_METADATA: TokenMetadataInterface = {
   iconName: IconNameEnum.TezShieldedToken
 };
 
-export const TZBTC_TOKEN_METADATA: TokenMetadataInterface = {
+export const TZBTC_TOKEN_METADATA: TezosTokenMetadata = {
   id: 0,
   address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
   name: 'Tezos BTC',
   symbol: 'tzBTC',
   decimals: 8,
   iconName: IconNameEnum.TzBtcToken,
-  standard: TokenStandardsEnum.Fa12
+  standard: TezosTokenStandardsEnum.Fa12
 };
 
-export const WTEZ_TOKEN_METADATA: TokenMetadataInterface = {
+export const WTEZ_TOKEN_METADATA: TezosTokenMetadata = {
   id: 0,
   address: 'KT1UpeXdK6AJbX58GJ92pLZVCucn2DR8Nu4b',
   name: 'Wrapped Tezos FA2 token',
   symbol: 'wTEZ',
   decimals: 6,
   thumbnailUri: 'ipfs://QmUWhCYXtC8r8aXgjrwsLrZmopiGMHdLWoQzEueAktJbHB',
-  standard: TokenStandardsEnum.Fa2
+  standard: TezosTokenStandardsEnum.Fa2
 };
 
-export const SIRS_TOKEN_METADATA: TokenMetadataInterface = {
+export const SIRS_TOKEN_METADATA: TezosTokenMetadata = {
   id: 0,
   address: 'KT1AafHA1C1vk959wvHWBispY9Y2f3fxBUUo',
   name: 'Sirius',
   symbol: 'SIRS',
   decimals: 0,
   thumbnailUri: 'ipfs://QmNXQPkRACxaR17cht5ZWaaKiQy46qfCwNVT5FGZy6qnyp',
-  standard: TokenStandardsEnum.Fa12
+  standard: TezosTokenStandardsEnum.Fa12
 };
 
-const DEPRECATED_TKEY_METADATA: TokenMetadataInterface = {
+const DEPRECATED_TKEY_METADATA: TezosTokenMetadata = {
   address: 'KT1WihWRnmzhfebi6zqQ4tvNGiPeVxiGwTi2',
   id: 0,
   name: 'Deprecated Temple Key',
   symbol: 'TKEY_OLD',
   decimals: 18,
-  standard: TokenStandardsEnum.Fa2
+  standard: TezosTokenStandardsEnum.Fa2
 };
 
-export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+export const PREDEFINED_MAINNET_TOKENS_METADATA: TezosTokenMetadata[] = [
   TEMPLE_TOKEN_METADATA,
   {
     id: 0,
@@ -97,7 +101,7 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'USDt',
     decimals: 6,
     thumbnailUri: 'ipfs://QmRymVGWEudMfLrbjaEiXxngCRTDgWCsscjQMwizy4ZJjX',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -106,7 +110,7 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'uUSD',
     decimals: 12,
     thumbnailUri: 'ipfs://QmbvhanNCxydZEbGu1RdqkG3LcpNGv7XYsCHgzWBXnmxRd',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -115,7 +119,7 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'kUSD',
     decimals: 18,
     thumbnailUri: 'https://kolibri-data.s3.amazonaws.com/logo.png',
-    standard: TokenStandardsEnum.Fa12
+    standard: TezosTokenStandardsEnum.Fa12
   },
   TZBTC_TOKEN_METADATA,
   {
@@ -125,7 +129,7 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'uBTC',
     decimals: 12,
     thumbnailUri: 'ipfs://Qmbev41h4axBqVzxsXP2NSaAF996bJjJBPb8FFZVqTvJTY',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -134,7 +138,7 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'QUIPU',
     decimals: 6,
     thumbnailUri: 'ipfs://Qmb2GiHN9EjcrN29J6y9PsXu3ZDosXTv6uLUWGZfRRSzS2/quipu.png',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -143,19 +147,19 @@ export const PREDEFINED_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'YOU',
     decimals: 12,
     thumbnailUri: 'ipfs://QmYAJaJvEJuwvMEgRbBoAUKrTxRTT22nCC9RuY7Jy4L4Gc',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   WTEZ_TOKEN_METADATA
 ];
 
-const YUPANA_TOKENS_METADATA_TEMPLATE: Array<Omit<TokenMetadataInterface, 'address'>> = [
+const YUPANA_TOKENS_METADATA_TEMPLATE: Array<Omit<TezosTokenMetadata, 'address'>> = [
   {
     id: 0,
     name: 'Yupana XTZ',
     symbol: 'y-XTZ',
     decimals: 6,
     thumbnailUri: 'ipfs://QmRukmxJkSmu9v2mUutSU7FNMegPramzVgsZ6YfRSWjdnV',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 1,
@@ -163,7 +167,7 @@ const YUPANA_TOKENS_METADATA_TEMPLATE: Array<Omit<TokenMetadataInterface, 'addre
     symbol: 'y-cTez',
     decimals: 6,
     thumbnailUri: 'ipfs://Qmb75waMQiExVM8AvVm6VAhJXpA9rP3etUARzzzLTozy1i',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 2,
@@ -171,7 +175,7 @@ const YUPANA_TOKENS_METADATA_TEMPLATE: Array<Omit<TokenMetadataInterface, 'addre
     symbol: 'y-kUSD',
     decimals: 18,
     thumbnailUri: 'ipfs://QmbUocmW1Numv648rcVXx46FxEg91pwPpUHYMW7yc7KVF2',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 3,
@@ -179,7 +183,7 @@ const YUPANA_TOKENS_METADATA_TEMPLATE: Array<Omit<TokenMetadataInterface, 'addre
     symbol: 'y-uUSD',
     decimals: 12,
     thumbnailUri: 'ipfs://QmbQDxZF5kXm8uFhWv4hb4qQcXEkEqgmGfX2J8EVW64BDf',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 4,
@@ -227,7 +231,7 @@ const YUPANA_V2_TOKENS_METADATA = YUPANA_TOKENS_METADATA_TEMPLATE.map(metadata =
   address: 'KT1CojtgtVHVarS135fnV3y4z8TiKXrsRHJr'
 }));
 
-export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+export const OVERRIDEN_MAINNET_TOKENS_METADATA: TezosTokenMetadata[] = [
   DEPRECATED_TKEY_METADATA,
   ...YUPANA_V1_TOKENS_METADATA,
   ...YUPANA_V2_TOKENS_METADATA,
@@ -238,7 +242,7 @@ export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'WEED',
     decimals: 8,
     thumbnailUri: 'https://i.ibb.co/CnPdk2Y/Weed-Token.jpg',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -247,7 +251,7 @@ export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'SHTz',
     decimals: 2,
     thumbnailUri: 'https://i.ibb.co/9ZV2T54/shitz-small.png',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -256,7 +260,7 @@ export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'ECN',
     decimals: 8,
     thumbnailUri: 'https://cdn.tzstats.com/KT1M81KrJr6TxYLkZkVqcpSTNKGoya8XytWT.png',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -265,7 +269,7 @@ export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'TROLL',
     decimals: 0,
     thumbnailUri: 'ipfs://QmNjXSkR1AgarJdgYQzruQxbh5QZim4Dq1i2vg1LQe8JZk',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   {
     id: 0,
@@ -274,12 +278,12 @@ export const OVERRIDEN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'RCKT',
     decimals: 6,
     thumbnailUri: 'ipfs://QmNwMXAL5tVaPxauq7W4mXMhFGNVsstBfQ87AwUUo94thL',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   },
   WR_TOKEN_METADATA
 ];
 
-export const PREDEFINED_DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
+export const PREDEFINED_DCP_TOKENS_METADATA: TezosTokenMetadata[] = [
   {
     id: 0,
     address: 'KT1N7Rh6SgSdExMPxfnYw1tHqrkSm7cm6JDN',
@@ -287,11 +291,11 @@ export const PREDEFINED_DCP_TOKENS_METADATA: TokenMetadataInterface[] = [
     symbol: 'APX',
     name: 'APXCOIN',
     thumbnailUri: 'https://loonfilms.com/apx/apx-coin-220px.png',
-    standard: TokenStandardsEnum.Fa2
+    standard: TezosTokenStandardsEnum.Fa2
   }
 ];
 
-export const KNOWN_MAINNET_TOKENS_METADATA: TokenMetadataInterface[] = [
+export const KNOWN_MAINNET_TOKENS_METADATA: TezosTokenMetadata[] = [
   ...PREDEFINED_MAINNET_TOKENS_METADATA,
   ...OVERRIDEN_MAINNET_TOKENS_METADATA
 ];

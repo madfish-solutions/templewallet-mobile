@@ -1,31 +1,69 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { processLoadedEvmBalancesAction } from './evm-balances-actions';
-import { evmBalancesInitialState, EvmBalancesState } from './evm-balances-state';
+import { processLoadedEvmBalancesAction, processLoadedOnChainEvmBalancesAction } from './evm-balances-actions';
+import { evmBalancesInitialState, EvmBalancesState, EvmChainBalancesRecord } from './evm-balances-state';
+
+const getChainBalancesRecord = (
+  state: EvmBalancesState,
+  account: HexString,
+  chainId: number
+): EvmChainBalancesRecord => {
+  if (!state.record[account]) {
+    state.record[account] = {};
+  }
+  if (!state.record[account][chainId]) {
+    state.record[account][chainId] = {};
+  }
+
+  return state.record[account][chainId];
+};
+
+const setChainTimestamp = (state: EvmBalancesState, account: HexString, chainId: number, timestamp: number) => {
+  if (!state.timestamps[account]) {
+    state.timestamps[account] = {};
+  }
+  state.timestamps[account][chainId] = timestamp;
+};
 
 export const evmBalancesReducers = createReducer<EvmBalancesState>(evmBalancesInitialState, builder => {
   builder.addCase(processLoadedEvmBalancesAction, (state, { payload }) => {
     const { account, chainId, balances, timestamp, preservedSlugs } = payload;
 
-    if (!state.record[account]) {
-      state.record[account] = {};
-    }
-    const accountRecord = state.record[account];
-
-    const stored = accountRecord[chainId];
-    if (stored && timestamp < stored.timestamp) {
+    const storedTimestamp = state.timestamps[account]?.[chainId];
+    if (storedTimestamp != null && timestamp < storedTimestamp) {
       return;
     }
+
+    const stored = state.record[account]?.[chainId];
 
     const newBalances = { ...balances };
     if (stored && preservedSlugs) {
       for (const slug of preservedSlugs) {
-        if (newBalances[slug] == null && stored.balances[slug] != null) {
-          newBalances[slug] = stored.balances[slug];
+        if (newBalances[slug] == null && stored[slug] != null) {
+          newBalances[slug] = stored[slug];
         }
       }
     }
 
-    accountRecord[chainId] = { balances: newBalances, timestamp };
+    if (!state.record[account]) {
+      state.record[account] = {};
+    }
+    state.record[account][chainId] = newBalances;
+    setChainTimestamp(state, account, chainId, timestamp);
+  });
+
+  builder.addCase(processLoadedOnChainEvmBalancesAction, (state, { payload }) => {
+    const { account, chainId, balances, timestamp } = payload;
+
+    const storedTimestamp = state.timestamps[account]?.[chainId];
+    if (storedTimestamp != null && timestamp < storedTimestamp) {
+      return;
+    }
+
+    const chainRecord = getChainBalancesRecord(state, account, chainId);
+    for (const slug in balances) {
+      chainRecord[slug] = balances[slug];
+    }
+    setChainTimestamp(state, account, chainId, timestamp);
   });
 });

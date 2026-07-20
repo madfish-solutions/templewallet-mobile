@@ -10,9 +10,11 @@ import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { EvmTokenIcon } from 'src/components/token-icon/evm-token-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TokenTag } from 'src/components/token-tag/token-tag';
 import { TruncatedText } from 'src/components/truncated-text';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { MultichainDisplayedToken } from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
@@ -45,8 +47,9 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
   const navigateToScreen = useNavigateToScreen();
   const shieldedBalanceMutez = token.shieldedAtomicBalance ?? '0';
 
-  const isTezos = token.chainKind === 'tezos';
+  const isTezos = token.chainKind === TempleChainKind.Tezos;
   const isTezosGasToken = isTezos && token.slug === TEZ_TOKEN_SLUG;
+  const isEvmContractToken = !isTezos && token.slug !== EVM_TOKEN_SLUG;
   const original = token.original;
 
   const badgeLogoName = isTezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink;
@@ -85,7 +88,16 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
     <>
       <View style={styles.leftContainer}>
         <View style={styles.iconContainer}>
-          <TokenIcon size={ICON_SIZE} iconName={mainIconName} thumbnailUri={mainThumbnailUri} />
+          {isEvmContractToken ? (
+            <EvmTokenIcon
+              size={ICON_SIZE}
+              chainId={Number(token.chainId)}
+              address={token.slug}
+              iconURL={token.iconUri}
+            />
+          ) : (
+            <TokenIcon size={ICON_SIZE} iconName={mainIconName} thumbnailUri={mainThumbnailUri} />
+          )}
           <View style={styles.badge}>
             <CryptoLogo name={badgeLogoName} size={BADGE_ICON_SIZE} internalSize={BADGE_ICON_SIZE} />
           </View>

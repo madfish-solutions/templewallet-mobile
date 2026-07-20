@@ -1,6 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
 
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
 import { processLoadedEvmAssetsAction, setEvmAssetManualAction } from './evm-assets-actions';
 import { EvmChainAssetsRecord, evmAssetsInitialState, EvmAssetsState } from './evm-assets-state';
@@ -21,17 +23,20 @@ export const evmAssetsReducers = createReducer<EvmAssetsState>(evmAssetsInitialS
     const { account, chainId, assets } = payload;
     const chainAssetsRecord = getChainAssetsRecord(state, account, chainId);
 
-    const manualEntries = Object.entries(chainAssetsRecord).filter(([, asset]) => asset.manual);
+    for (const slug in chainAssetsRecord) {
+      if (!(slug in assets) && !chainAssetsRecord[slug].manual) {
+        delete chainAssetsRecord[slug];
+      }
+    }
 
-    const newChainAssetsRecord: EvmChainAssetsRecord = {};
     for (const slug in assets) {
-      newChainAssetsRecord[slug] = { standard: assets[slug].standard, manual: false };
+      const stored = chainAssetsRecord[slug];
+      if (!stored) {
+        chainAssetsRecord[slug] = { standard: assets[slug].standard, manual: false };
+      } else if (stored.standard !== assets[slug].standard) {
+        stored.standard = assets[slug].standard;
+      }
     }
-    for (const [slug, asset] of manualEntries) {
-      newChainAssetsRecord[slug] = asset;
-    }
-
-    state.record[account][chainId] = newChainAssetsRecord;
   });
 
   builder.addCase(setEvmAssetManualAction, (state, { payload }) => {
@@ -46,3 +51,11 @@ export const evmAssetsReducers = createReducer<EvmAssetsState>(evmAssetsInitialS
     }
   });
 });
+
+export const evmAssetsPersistedReducer = persistReducer(
+  {
+    key: 'root.evmAssets',
+    storage: SlicedAsyncStorage
+  },
+  evmAssetsReducers
+);

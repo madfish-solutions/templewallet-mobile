@@ -1,4 +1,4 @@
-import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { EvmAssetStandardEnum, EvmCollectibleAttribute } from 'src/token/interfaces/token-metadata.interface';
 
 export { EvmAssetStandardEnum as EvmAssetStandard };
 
@@ -15,14 +15,10 @@ export interface EvmTokenOnChainMetadata {
   decimals?: number;
 }
 
-export interface EvmCollectibleAttribute {
-  trait_type?: string;
-  value?: string | number;
-}
-
 export interface EvmCollectibleOnChainMetadata {
   name?: string;
   symbol?: string;
+  collectibleName?: string;
   metadataUri: string;
   image?: string;
   description?: string;

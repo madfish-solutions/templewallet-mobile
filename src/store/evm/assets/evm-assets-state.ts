@@ -2,7 +2,8 @@ import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interf
 
 interface EvmAssetRecordEntry {
   standard: EvmAssetStandardEnum;
-  /** `true` if manually added/flagged by the user, preserved across API refreshes */
+  /** `true` if manually added/flagged by the user, preserved across API refreshes.
+   * Only the debug screen sets it until the manage-assets ticket ships the real UI. */
   manual: boolean;
 }
 

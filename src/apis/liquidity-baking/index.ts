@@ -5,7 +5,7 @@ import { EarnOpportunityTokenStandardEnum } from 'src/enums/earn-opportunity-tok
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { LIQUIDITY_BAKING_DEX_ADDRESS, SIRS_TOKEN } from 'src/token/data/token-slugs';
 import { SIRS_TOKEN_METADATA, TEZ_TOKEN_METADATA, TZBTC_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
-import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata, TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { getFirstAccountActivityTime } from 'src/utils/earn.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { tzktUrl } from 'src/utils/linking';
@@ -24,10 +24,10 @@ import { getLiquidityBakingStats } from '../temple-wallet';
 import { liquidityBakingStakingId, THREE_ROUTE_LB_TOKENS } from './consts';
 import { LiquidityBakingFarmResponse } from './types';
 
-const toFarmToken = (token: TokenMetadataInterface) => ({
+const toFarmToken = (token: TezosTokenMetadata) => ({
   contractAddress: token.address,
   type:
-    token.standard === TokenStandardsEnum.Fa2
+    token.standard === TezosTokenStandardsEnum.Fa2
       ? EarnOpportunityTokenStandardEnum.Fa2
       : EarnOpportunityTokenStandardEnum.Fa12,
   isWhitelisted: true,

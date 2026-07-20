@@ -1,6 +1,6 @@
-import { useSelector } from '../../selector';
+import { EvmCollectibleMetadata } from 'src/token/interfaces/token-metadata.interface';
 
-import { EvmCollectibleMetadata } from './evm-collectibles-metadata-state';
+import { useSelector } from '../../selector';
 
 const EMPTY_EVM_CHAIN_COLLECTIBLES_METADATA_RECORD: Record<string, EvmCollectibleMetadata> = {};
 

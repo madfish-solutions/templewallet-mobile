@@ -1,4 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+
+import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 
 import { processLoadedEvmExchangeRatesAction } from './evm-exchange-rates-actions';
 import { evmExchangeRatesInitialState, EvmExchangeRatesState } from './evm-exchange-rates-state';
@@ -17,3 +20,11 @@ export const evmExchangeRatesReducers = createReducer<EvmExchangeRatesState>(evm
     }
   });
 });
+
+export const evmExchangeRatesPersistedReducer = persistReducer(
+  {
+    key: 'root.evmExchangeRates',
+    storage: SlicedAsyncStorage
+  },
+  evmExchangeRatesReducers
+);

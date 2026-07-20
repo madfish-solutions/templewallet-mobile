@@ -1,6 +1,6 @@
 import { startTransition, useEffect, useState } from 'react';
 
-import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenStandard } from 'src/token/utils/token.utils';
 
 import { useReadOnlyTezosToolkit } from './use-read-only-tezos-toolkit.hook';
@@ -9,7 +9,7 @@ export const useTokenStandard = (address: string) => {
   const tezos = useReadOnlyTezosToolkit();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [tokenStandard, setTokenStandard] = useState<TokenStandardsEnum>(TokenStandardsEnum.Fa12);
+  const [tokenStandard, setTokenStandard] = useState<TezosTokenStandardsEnum>(TezosTokenStandardsEnum.Fa12);
 
   useEffect(() => {
     startTransition(async () => {

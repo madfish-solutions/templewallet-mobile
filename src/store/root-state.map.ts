@@ -7,11 +7,11 @@ import { collectionsReducer } from './collectons/collections-reducers';
 import { contactBookReducers } from './contact-book/contact-book-reducers';
 import { currencyReducers } from './currency/currency-reducers';
 import { dAppsReducers } from './d-apps/d-apps-reducers';
-import { evmAssetsReducers } from './evm/assets/evm-assets-reducers';
+import { evmAssetsPersistedReducer } from './evm/assets/evm-assets-reducers';
 import { evmBalancesReducers } from './evm/balances/evm-balances-reducers';
-import { evmCollectiblesMetadataReducers } from './evm/collectibles-metadata/evm-collectibles-metadata-reducers';
-import { evmExchangeRatesReducers } from './evm/exchange-rates/evm-exchange-rates-reducers';
-import { evmTokensMetadataReducers } from './evm/tokens-metadata/evm-tokens-metadata-reducers';
+import { evmCollectiblesMetadataPersistedReducer } from './evm/collectibles-metadata/evm-collectibles-metadata-reducers';
+import { evmExchangeRatesPersistedReducer } from './evm/exchange-rates/evm-exchange-rates-reducers';
+import { evmTokensMetadataPersistedReducer } from './evm/tokens-metadata/evm-tokens-metadata-reducers';
 import { exolixReducers } from './exolix/exolix-reducers';
 import { farmsReducer } from './farms/reducers';
 import { marketReducers } from './market/market-reducers';
@@ -49,9 +49,9 @@ export const rootStateReducersMap = {
   collections: collectionsReducer,
   collectibles: collectiblesPersistedReducer,
   sapling: saplingReducers,
-  evmAssets: evmAssetsReducers,
+  evmAssets: evmAssetsPersistedReducer,
   evmBalances: evmBalancesReducers,
-  evmTokensMetadata: evmTokensMetadataReducers,
-  evmCollectiblesMetadata: evmCollectiblesMetadataReducers,
-  evmExchangeRates: evmExchangeRatesReducers
+  evmTokensMetadata: evmTokensMetadataPersistedReducer,
+  evmCollectiblesMetadata: evmCollectiblesMetadataPersistedReducer,
+  evmExchangeRates: evmExchangeRatesPersistedReducer
 };

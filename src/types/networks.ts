@@ -87,6 +87,11 @@ export interface EvmChain extends BasicEvmChain, ChainBase {
   activeRpc: EvmRpc;
 }
 
+export const toEvmNetworkEssentials = (chain: EvmChain): EvmNetworkEssentials => ({
+  rpcBaseURL: chain.activeRpc.rpcBaseURL,
+  chainId: chain.chainId
+});
+
 export const DEFAULT_TEZOS_RPCS: TezosRpc[] = [
   {
     id: 'tezos-default',

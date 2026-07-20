@@ -9,15 +9,14 @@ import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { useImagesStack } from 'src/hooks/use-images-stack';
 import { formatSize } from 'src/styles/format-size';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { EvmDisplayedCollectible } from 'src/utils/assets/types';
 import { buildEvmCollectibleImagesStack } from 'src/utils/image.utils';
-import { isDefined } from 'src/utils/is-defined';
 
 import { Balance } from './balance';
 import { useCollectibleItemStyles, useEvmCollectibleChainBadgeStyles } from './styles';
 
 interface Props {
-  collectible: TokenInterface;
+  collectible: EvmDisplayedCollectible;
   size: number;
   showInfo?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -27,14 +26,16 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
   const styles = useCollectibleItemStyles();
   const badgeStyles = useEvmCollectibleChainBadgeStyles();
 
-  const balance = collectible.balance;
+  const { metadata, tokenId, balance } = collectible;
+  const displayName = metadata?.collectibleName ?? metadata?.name ?? tokenId;
+  const imageUri = metadata?.image ?? metadata?.iconURL;
 
   return (
     <View style={[styles.root, style, { width: size }]}>
       <View style={[styles.image, { width: size, height: size }]}>
-        <EvmCollectibleImage uri={collectible.artifactUri} size={size} />
+        <EvmCollectibleImage uri={imageUri} size={size} />
 
-        {showInfo && isDefined(balance) ? <Balance balance={balance} /> : null}
+        {showInfo ? <Balance balance={balance} /> : null}
 
         <View style={badgeStyles.badge}>
           <CryptoLogo name={CryptoLogoNameEnum.Etherlink} size={formatSize(12)} internalSize={formatSize(12)} />
@@ -44,7 +45,7 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
       {showInfo ? (
         <View style={styles.description}>
           <Text numberOfLines={1} lineBreakMode="tail" style={styles.name}>
-            {collectible.name}
+            {displayName}
           </Text>
 
           <Text style={styles.price} />
