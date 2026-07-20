@@ -147,7 +147,7 @@ export const ETHERLINK_MAINNET_CHAIN_SPECS = {
   default: true
 } satisfies EvmChainSpecs;
 
-export const DEFAULT_EVM_CHAINS_SPECS: EvmChainSpecs[] = [ETHERLINK_MAINNET_CHAIN_SPECS];
+export const DEFAULT_EVM_CHAINS_SPECS = [ETHERLINK_MAINNET_CHAIN_SPECS];
 
 export type ChainOfKind<T extends TempleChainKind> = T extends TempleChainKind.Tezos ? TezosChain : EvmChain;
 
