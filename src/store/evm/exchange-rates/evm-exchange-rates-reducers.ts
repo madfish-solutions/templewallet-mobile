@@ -6,7 +6,7 @@ import { SlicedAsyncStorage } from 'src/utils/sliced-async-storage';
 import { processLoadedEvmExchangeRatesAction } from './evm-exchange-rates-actions';
 import { evmExchangeRatesInitialState, EvmExchangeRatesState } from './evm-exchange-rates-state';
 
-export const evmExchangeRatesReducers = createReducer<EvmExchangeRatesState>(evmExchangeRatesInitialState, builder => {
+const evmExchangeRatesReducers = createReducer<EvmExchangeRatesState>(evmExchangeRatesInitialState, builder => {
   builder.addCase(processLoadedEvmExchangeRatesAction, (state, { payload }) => {
     const { chainId, rates } = payload;
 

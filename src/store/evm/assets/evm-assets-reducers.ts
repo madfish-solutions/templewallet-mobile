@@ -18,7 +18,7 @@ const getChainAssetsRecord = (state: EvmAssetsState, account: HexString, chainId
   return state.record[account][chainId];
 };
 
-export const evmAssetsReducers = createReducer<EvmAssetsState>(evmAssetsInitialState, builder => {
+const evmAssetsReducers = createReducer<EvmAssetsState>(evmAssetsInitialState, builder => {
   builder.addCase(processLoadedEvmAssetsAction, (state, { payload }) => {
     const { account, chainId, assets } = payload;
     const chainAssetsRecord = getChainAssetsRecord(state, account, chainId);
