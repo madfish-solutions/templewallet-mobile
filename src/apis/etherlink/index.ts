@@ -14,7 +14,7 @@ import {
   EtherlinkTokenInfo
 } from './types';
 
-export { isErc20TokenBalance, isEtherlinkCollectibleTokenType, isEtherlinkTokenType } from './types';
+export { isErc20TokenBalance, isEtherlinkCollectibleTokenType } from './types';
 export type { EtherlinkTokenType, EtherlinkTokenInfo, EtherlinkAddressNftInstance } from './types';
 
 const api = axios.create({ baseURL: ETHERLINK_API_BASE_URL });

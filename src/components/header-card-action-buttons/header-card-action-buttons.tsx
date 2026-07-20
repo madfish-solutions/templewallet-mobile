@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -46,7 +45,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   const selectedAccount = useAccount();
   const { isTezosMainnet } = useNetworkInfo();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const { balance } = useTotalBalance();
+  const totalBalance = useTotalBalance();
   const styles = useHeaderCardActionButtonsStyles();
   const defaultStyleConfig = useButtonMediumStyleConfig();
   const isLoaderBeingShown = useIsShowLoaderSelector();
@@ -163,7 +162,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
         style={styles.buttonContainer}
         testID={WalletSelectors.earnButton}
         testIDProperties={{
-          isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)
+          isZeroBalance: totalBalance.isLessThanOrEqualTo(0)
         }}
       />
 

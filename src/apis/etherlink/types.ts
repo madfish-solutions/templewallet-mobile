@@ -63,9 +63,6 @@ export const isErc20TokenBalance = (balance: EtherlinkTokenBalance): balance is 
 export const isEtherlinkCollectibleTokenType = (type: string): type is Exclude<EtherlinkTokenType, 'ERC-20'> =>
   type === 'ERC-721' || type === 'ERC-1155';
 
-export const isEtherlinkTokenType = (type: string): type is EtherlinkTokenType =>
-  type === 'ERC-20' || isEtherlinkCollectibleTokenType(type);
-
 export interface EtherlinkAccountNftsPageParams {
   items_count: number;
   token_contract_address_hash: HexString;

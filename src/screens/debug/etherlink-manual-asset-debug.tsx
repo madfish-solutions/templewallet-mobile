@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { isAddress } from 'viem';
 
-import { fetchGetTokenInfo, isEtherlinkTokenType } from 'src/apis/etherlink';
+import { fetchGetTokenInfo } from 'src/apis/etherlink';
 import { ButtonMedium } from 'src/components/button/button-medium/button-medium';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { StyledTextInput } from 'src/components/styled-text-input/styled-text-input';
@@ -25,11 +25,7 @@ import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { toEvmNetworkEssentials } from 'src/types/networks';
-import {
-  dispatchEtherlinkAccountData,
-  etherlinkTokenTypeToStandard,
-  getEtherlinkAccountData
-} from 'src/utils/evm/etherlink-balances.utils';
+import { dispatchEtherlinkAccountData, getEtherlinkAccountData } from 'src/utils/evm/etherlink-balances.utils';
 import { getEvmAssetMetadata } from 'src/utils/evm/on-chain/metadata';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
@@ -87,12 +83,17 @@ export const EtherlinkManualAssetDebug = () => {
       if (tokenId == null) {
         try {
           const tokenInfo = await fetchGetTokenInfo(contract);
-          const standard = isEtherlinkTokenType(tokenInfo.type)
-            ? etherlinkTokenTypeToStandard(tokenInfo.type)
-            : undefined;
 
-          if (standard === EvmAssetStandardEnum.ERC20 && tokenInfo.decimals != null) {
-            dispatch(setEvmAssetManualAction({ account, chainId, slug: trimmedSlug, manual, standard }));
+          if (tokenInfo.type === 'ERC-20' && tokenInfo.decimals != null) {
+            dispatch(
+              setEvmAssetManualAction({
+                account,
+                chainId,
+                slug: trimmedSlug,
+                manual,
+                standard: EvmAssetStandardEnum.ERC20
+              })
+            );
             dispatch(
               processLoadedEvmTokensMetadataAction({
                 chainId,

@@ -50,7 +50,7 @@ const ETHERLINK_TYPE_TO_STANDARD = {
   'ERC-1155': EvmAssetStandardEnum.ERC1155
 } as const;
 
-export const etherlinkTokenTypeToStandard = <T extends EtherlinkTokenType>(type: T) => ETHERLINK_TYPE_TO_STANDARD[type];
+const etherlinkTokenTypeToStandard = <T extends EtherlinkTokenType>(type: T) => ETHERLINK_TYPE_TO_STANDARD[type];
 
 const etherlinkNativeCurrency = ETHERLINK_MAINNET_CHAIN_SPECS.currency;
 
