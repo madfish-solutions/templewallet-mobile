@@ -4,7 +4,7 @@ import { isEqual } from 'lodash-es';
 import { ContractType } from 'src/interfaces/contract.type';
 import { assert } from 'src/utils/assert.utils';
 
-import { TokenStandardsEnum } from '../interfaces/token-metadata.interface';
+import { TezosTokenStandardsEnum } from '../interfaces/token-metadata.interface';
 import { TokenMethodsAssertionInterface } from '../interfaces/token-methods-assertion.interface';
 
 const extractArgsTypes = (schema: TokenSchema): string[] => {
@@ -62,7 +62,7 @@ const FA_2_TOKEN_METHODS_ASSERTIONS: TokenMethodsAssertionInterface[] = [
   }
 ];
 
-export const TokenMethodsAssertionsMap: Record<TokenStandardsEnum, TokenMethodsAssertionInterface[]> = {
-  [TokenStandardsEnum.Fa12]: FA_1_2_TOKEN_METHODS_ASSERTIONS,
-  [TokenStandardsEnum.Fa2]: FA_2_TOKEN_METHODS_ASSERTIONS
+export const TokenMethodsAssertionsMap: Record<TezosTokenStandardsEnum, TokenMethodsAssertionInterface[]> = {
+  [TezosTokenStandardsEnum.Fa12]: FA_1_2_TOKEN_METHODS_ASSERTIONS,
+  [TezosTokenStandardsEnum.Fa2]: FA_2_TOKEN_METHODS_ASSERTIONS
 };

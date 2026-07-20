@@ -7,7 +7,7 @@ import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { EarnOpportunityToken } from 'src/interfaces/earn-opportunity/earn-opportunity-token.interface';
 import { StakesValueInterface } from 'src/interfaces/earn.interface';
-import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 import { Farm } from 'src/types/farm';
@@ -79,7 +79,7 @@ export const convertEarnOpportunityToken = (rawToken: EarnOpportunityToken): Tok
     symbol,
     decimals,
     thumbnailUri,
-    standard: type === EarnOpportunityTokenStandardEnum.Fa2 ? TokenStandardsEnum.Fa2 : TokenStandardsEnum.Fa12
+    standard: type === EarnOpportunityTokenStandardEnum.Fa2 ? TezosTokenStandardsEnum.Fa2 : TezosTokenStandardsEnum.Fa12
   };
 };
 

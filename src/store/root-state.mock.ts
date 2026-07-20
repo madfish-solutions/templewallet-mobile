@@ -7,6 +7,11 @@ import { collectionsMockState } from './collectons/collections-state.mock';
 import { mockContactBookState } from './contact-book/contact-book-state.mock';
 import { mockCurrencyState } from './currency/currency-state.mock';
 import { mockDAppsState } from './d-apps/d-apps-state.mock';
+import { mockEvmAssetsState } from './evm/assets/evm-assets-state.mock';
+import { mockEvmBalancesState } from './evm/balances/evm-balances-state.mock';
+import { mockEvmCollectiblesMetadataState } from './evm/collectibles-metadata/evm-collectibles-metadata-state.mock';
+import { mockEvmExchangeRatesState } from './evm/exchange-rates/evm-exchange-rates-state.mock';
+import { mockEvmTokensMetadataState } from './evm/tokens-metadata/evm-tokens-metadata-state.mock';
 import { mockExolixState } from './exolix/exolix-state.mock';
 import { mockFarmsState } from './farms/state.mock';
 import { mockMarketState } from './market/market-state.mock';
@@ -44,5 +49,10 @@ export const mockRootState: RootState = {
   farms: mockFarmsState,
   savings: mockSavingsState,
   newsletter: mockNewsletterState,
-  sapling: saplingInitialState
+  sapling: saplingInitialState,
+  evmAssets: mockEvmAssetsState,
+  evmBalances: mockEvmBalancesState,
+  evmTokensMetadata: mockEvmTokensMetadataState,
+  evmCollectiblesMetadata: mockEvmCollectiblesMetadataState,
+  evmExchangeRates: mockEvmExchangeRatesState
 };

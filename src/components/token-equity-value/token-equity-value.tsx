@@ -1,18 +1,22 @@
 import BigNumber from 'bignumber.js';
-import React, { memo, useLayoutEffect, useRef } from 'react';
+import React, { memo, useLayoutEffect, useMemo, useRef } from 'react';
 import { StyleProp, Text, TextStyle, View } from 'react-native';
 
 import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
-import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
+import {
+  useCurrentFiatCurrencyMetadataSelector,
+  useFiatToUsdRateSelector
+} from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { isDefined } from 'src/utils/is-defined';
-import { formatAssetAmount } from 'src/utils/number.util';
+import { formatAssetAmount, ZERO } from 'src/utils/number.util';
 
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { ErrorBoundary } from '../error-boundary';
+import { FormattedAmount } from '../formatted-amount';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
@@ -56,7 +60,13 @@ const TokenEquityValueContent = memo<Props>(({ token, forTotalBalance = false })
   const styles = useTokenEquityValueStyles();
 
   const { toggleHideBalance, isBalanceHidden } = useHideBalance();
-  const totalBalance = useTotalBalance();
+  const totalDollarBalance = useTotalBalance();
+  const fiatToUsdRate = useFiatToUsdRateSelector();
+
+  const totalFiatBalance = useMemo(
+    () => (isDefined(fiatToUsdRate) ? totalDollarBalance.times(fiatToUsdRate) : ZERO),
+    [totalDollarBalance, fiatToUsdRate]
+  );
 
   const exchangeRate = token.exchangeRate;
 
@@ -93,7 +103,7 @@ const TokenEquityValueContent = memo<Props>(({ token, forTotalBalance = false })
         </>
       ) : (
         <HideBalance style={styles.mainValueText}>
-          <AssetValueText convertToDollar asset={totalBalance} amount={totalBalance.balance} />
+          <FormattedAmount isDollarValue amount={totalFiatBalance} />
         </HideBalance>
       )}
     </View>

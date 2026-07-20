@@ -4,7 +4,7 @@ import { StyleProp, View, ViewStyle } from 'react-native';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { isImageRectangular, isImgUriDataUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
@@ -16,7 +16,7 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { LoadableTokenIconImage } from './loadable-image';
 import { TokenIconStyles } from './token-icon.styles';
 
-interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'> {
+interface Props extends Pick<TezosTokenMetadata, 'iconName' | 'thumbnailUri'> {
   size?: number;
   style?: StyleProp<ViewStyle>;
 }

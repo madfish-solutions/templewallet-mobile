@@ -1,7 +1,7 @@
 import { Account } from 'src/interfaces/account.interfaces';
 import { Contact } from 'src/interfaces/contact.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
 
 export enum ModalsEnum {
@@ -37,8 +37,8 @@ export enum ModalsEnum {
 }
 
 export type ModalsParamList = {
-  [ModalsEnum.Receive]: { token: TokenMetadataInterface };
-  [ModalsEnum.Send]: { token: TokenMetadataInterface; receiverPublicKeyHash?: string };
+  [ModalsEnum.Receive]: { token: TezosTokenMetadata };
+  [ModalsEnum.Send]: { token: TezosTokenMetadata; receiverPublicKeyHash?: string };
   [ModalsEnum.AddAsset]: undefined;
   [ModalsEnum.RenameAccount]: { account: Account };
   [ModalsEnum.SelectBaker]: undefined;

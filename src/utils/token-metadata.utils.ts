@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { scamlistApi, tezosMetadataApi, whitelistApi } from 'src/api.service';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
 import { OVERRIDEN_MAINNET_TOKENS_METADATA, TEZ_TOKEN_METADATA, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import { TokenMetadataInterface, TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata, TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import type { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 
@@ -68,7 +68,7 @@ const transformDataToTokenMetadata = (
   token: TokenMetadataResponse,
   address: string,
   id: number
-): TokenMetadataInterface => ({
+): TezosTokenMetadata => ({
   id,
   address,
   decimals: token.decimals ?? 0,
@@ -79,21 +79,21 @@ const transformDataToTokenMetadata = (
   displayUri: token.displayUri
 });
 
-export const transformWhitelistToTokenMetadata = (token: WhitelistTokensItem): TokenMetadataInterface => ({
+export const transformWhitelistToTokenMetadata = (token: WhitelistTokensItem): TezosTokenMetadata => ({
   id: token.fa2TokenId ?? 0,
   address: token.contractAddress,
   decimals: token.metadata.decimals,
   symbol: token.metadata.symbol ?? token.metadata.name?.substring(0, 8) ?? '???',
   name: token.metadata.name ?? token.metadata.symbol ?? 'Unknown Token',
   thumbnailUri: token.metadata.thumbnailUri,
-  standard: token.type === 'FA12' ? TokenStandardsEnum.Fa12 : TokenStandardsEnum.Fa2
+  standard: token.type === 'FA12' ? TezosTokenStandardsEnum.Fa12 : TezosTokenStandardsEnum.Fa2
 });
 
 export const useTokenMetadataGetter = () => {
   const tokensMetadata = useTokensMetadataSelector();
 
   return useCallback(
-    (slug: string): TokenMetadataInterface | undefined =>
+    (slug: string): TezosTokenMetadata | undefined =>
       slug === TEZ_TOKEN_SLUG ? TEZ_TOKEN_METADATA : tokensMetadata[slug],
     [tokensMetadata]
   );
@@ -108,7 +108,7 @@ export const loadScamlist$ = () =>
   from(scamlistApi.get<ScamlistResponse>('tokens/scamlist.json')).pipe(map(({ data }) => data.slugs));
 
 export const loadTokenMetadata$ = memoizee(
-  (address: string, id = 0): Observable<TokenMetadataInterface> => {
+  (address: string, id = 0): Observable<TezosTokenMetadata> => {
     const overridenTokenMetadata = OVERRIDEN_MAINNET_TOKENS_METADATA.find(
       token => token.address === address && token.id === id
     );
@@ -136,7 +136,7 @@ export const loadTokenMetadata$ = memoizee(
 
 const METADATA_CHUNK_SIZE = 100;
 
-export const loadTokensMetadata$ = (slugs: string[]): Observable<TokenMetadataInterface[]> =>
+export const loadTokensMetadata$ = (slugs: string[]): Observable<TezosTokenMetadata[]> =>
   forkJoin(
     // Parallelizing
     chunk(slugs, METADATA_CHUNK_SIZE).map(slugsChunk =>

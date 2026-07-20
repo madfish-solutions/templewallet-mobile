@@ -7,7 +7,7 @@ import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { useEvmChains } from 'src/hooks/use-evm-chains.hook';
+import { useEvmChains } from 'src/hooks/evm/use-evm-chains.hook';
 import { useTezosChains } from 'src/hooks/use-tezos-chains.hook';
 import { formatSize } from 'src/styles/format-size';
 import { ChainId, ChainOfKind } from 'src/types/networks';

@@ -3,7 +3,7 @@ import { isString } from 'src/utils/is-string';
 
 import { TokenMethodsAssertionsMap } from '../data/token-methods-assertions';
 import { TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
-import { TokenStandardsEnum } from '../interfaces/token-metadata.interface';
+import { TezosTokenStandardsEnum } from '../interfaces/token-metadata.interface';
 
 export const getTokenSlug = <T extends { address?: string; id?: number | string }>({ address, id }: T) =>
   toTokenSlug(address, id);
@@ -11,7 +11,7 @@ export const getTokenSlug = <T extends { address?: string; id?: number | string 
 export const toTokenSlug = (address?: string | null, id?: number | string | null) =>
   isString(address) ? `${address}_${id ?? 0}` : TEZ_TOKEN_SLUG;
 
-const assertTokenContractType = (contract: ContractType, tokenType: TokenStandardsEnum) => {
+const assertTokenContractType = (contract: ContractType, tokenType: TezosTokenStandardsEnum) => {
   try {
     for (const assertion of TokenMethodsAssertionsMap[tokenType]) {
       const { name, assertionFn } = assertion;
@@ -30,8 +30,10 @@ const assertTokenContractType = (contract: ContractType, tokenType: TokenStandar
 };
 
 export const isValidTokenContract = (contract: ContractType) =>
-  assertTokenContractType(contract, TokenStandardsEnum.Fa12) ||
-  assertTokenContractType(contract, TokenStandardsEnum.Fa2);
+  assertTokenContractType(contract, TezosTokenStandardsEnum.Fa12) ||
+  assertTokenContractType(contract, TezosTokenStandardsEnum.Fa2);
 
 export const getTokenStandard = (tokenContract: ContractType) =>
-  assertTokenContractType(tokenContract, TokenStandardsEnum.Fa2) ? TokenStandardsEnum.Fa2 : TokenStandardsEnum.Fa12;
+  assertTokenContractType(tokenContract, TezosTokenStandardsEnum.Fa2)
+    ? TezosTokenStandardsEnum.Fa2
+    : TezosTokenStandardsEnum.Fa12;

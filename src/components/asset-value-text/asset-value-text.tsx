@@ -12,7 +12,7 @@ interface Props {
   amount: string;
   /**
    * @deprecated
-   * Rework to accept TokenMetadataInterface
+   * Rework to accept TezosTokenMetadata
    * with `exchangeRate` as a separate property
    */
   asset: TokenInterface;
