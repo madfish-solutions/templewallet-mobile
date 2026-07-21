@@ -54,6 +54,7 @@ import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DocsIcon from './assets/docs.svg';
+import DollarFilledIcon from './assets/dollar-filled.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
@@ -141,6 +142,7 @@ import TwitterIcon from './assets/socials/twitter.svg';
 import WebsiteIcon from './assets/socials/website.svg';
 import YouTubeIcon from './assets/socials/you-tube.svg';
 import SoonBadgeIcon from './assets/soon-badge.svg';
+import SoundOffIcon from './assets/sound-off.svg';
 import SpicyIcon from './assets/spicy.svg';
 import StakeIcon from './assets/stake.svg';
 import SuccessIcon from './assets/success.svg';
@@ -254,6 +256,8 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.Website]: WebsiteIcon,
   [IconNameEnum.NFTCollection]: NFTCollectionIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
+  [IconNameEnum.DollarFiled]: DollarFilledIcon,
+  [IconNameEnum.SoundOff]: SoundOffIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,
