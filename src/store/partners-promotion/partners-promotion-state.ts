@@ -1,9 +1,13 @@
 export interface PartnersPromotionState {
   isEnabled: boolean;
   promotionHidingTimestamps: Record<string, number>;
+  hasSeenRewardsAnnouncement: boolean;
+  isAdsEnabledEventSent: boolean;
 }
 
 export const partnersPromotionInitialState: PartnersPromotionState = {
-  isEnabled: false,
-  promotionHidingTimestamps: {}
+  isEnabled: true,
+  promotionHidingTimestamps: {},
+  hasSeenRewardsAnnouncement: false,
+  isAdsEnabledEventSent: false
 };

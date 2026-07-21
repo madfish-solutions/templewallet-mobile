@@ -2,7 +2,12 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { AD_HIDING_TIMEOUT } from 'src/hooks/use-ad-temporary-hiding.hook';
 
-import { hidePromotionAction, togglePartnersPromotionAction } from './partners-promotion-actions';
+import {
+  hidePromotionAction,
+  setAdsEnabledEventSentAction,
+  setHasSeenRewardsAnnouncementAction,
+  togglePartnersPromotionAction
+} from './partners-promotion-actions';
 import { partnersPromotionInitialState } from './partners-promotion-state';
 
 export const partnersPromotionReducers = createReducer(partnersPromotionInitialState, builder => {
@@ -21,5 +26,11 @@ export const partnersPromotionReducers = createReducer(partnersPromotionInitialS
     }
 
     promotionHidingTimestamps[pathname] = timestamp;
+  });
+  builder.addCase(setHasSeenRewardsAnnouncementAction, state => {
+    state.hasSeenRewardsAnnouncement = true;
+  });
+  builder.addCase(setAdsEnabledEventSentAction, state => {
+    state.isAdsEnabledEventSent = true;
   });
 });

@@ -26,6 +26,7 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
+import { useHasSeenRewardsAnnouncementSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
 import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
@@ -57,6 +58,7 @@ export const Wallet = memo(() => {
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
   const hasSeenAnnouncement = useHasSeenAnnouncementSelector();
+  const hasSeenRewardsAnnouncement = useHasSeenRewardsAnnouncementSelector();
   const isKoloCardAnimationShown = useIsKoloCardAnimationShownSelector();
 
   const handleKoloCardAnimationComplete = useCallback(() => {
@@ -96,6 +98,12 @@ export const Wallet = memo(() => {
       navigateToModal(ModalsEnum.ShieldedAnnouncement);
     }
   }, [hasSeenAnnouncement]);
+
+  useEffect(() => {
+    if (hasSeenAnnouncement && !hasSeenRewardsAnnouncement) {
+      navigateToModal(ModalsEnum.RewardsAnnouncement);
+    }
+  }, [hasSeenAnnouncement, hasSeenRewardsAnnouncement, navigateToModal]);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');
