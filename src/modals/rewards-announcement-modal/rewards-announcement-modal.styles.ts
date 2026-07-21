@@ -3,7 +3,12 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useRewardsAnnouncementModalStyles = createUseStyles(({ colors, typography }) => ({
   content: { flex: 1, justifyContent: 'center', padding: formatSize(24) },
-  icon: { alignSelf: 'center', marginBottom: formatSize(32) },
+  animation: {
+    alignSelf: 'center',
+    width: formatSize(352),
+    height: formatSize(172),
+    marginBottom: formatSize(32)
+  },
   title: { ...typography.headline4Bold22, color: colors.black, textAlign: 'center', marginBottom: formatSize(16) },
   description: { ...typography.caption13Regular, color: colors.gray1, lineHeight: formatSize(18), textAlign: 'center' },
   benefits: { flexDirection: 'row', marginTop: formatSize(24) },

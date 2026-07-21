@@ -228,7 +228,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.RewardsAnnouncement}
               component={RewardsAnnouncementModal}
-              options={useModalOptions('Rewards for all')}
+              options={useModalOptions('Reward')}
             />
             <RootStack.Screen
               name={ModalsEnum.ShieldedAnnouncement}

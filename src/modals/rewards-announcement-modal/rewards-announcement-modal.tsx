@@ -9,6 +9,7 @@ import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
+import { LottieAnimation } from 'src/components/lottie-animation';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
@@ -22,6 +23,7 @@ import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { useRewardsAnnouncementModalStyles } from './rewards-announcement-modal.styles';
+import tkeyCoinAnimation from './tkey-coin-animation.json';
 
 export const RewardsAnnouncementModal: FC = () => {
   const dispatch = useDispatch();
@@ -44,7 +46,7 @@ export const RewardsAnnouncementModal: FC = () => {
     <>
       <ScreenContainer scrollEnabled={false} contentContainerStyle={styles.content}>
         <ModalStatusBar />
-        <Icon name={IconNameEnum.Deal} size={formatSize(64)} style={styles.icon} />
+        <LottieAnimation source={tkeyCoinAnimation} resizeMode="cover" style={styles.animation} />
         <Text style={styles.title}>TKEY rewards for all</Text>
         <Text style={styles.description}>
           We turned wallet usage into earning with Promo rewards and it’s now active in your wallet. 20% of revenue goes
