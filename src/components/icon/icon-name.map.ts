@@ -125,6 +125,7 @@ import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RampIcon from './assets/ramp.svg';
 import RefreshIcon from './assets/refresh-icon.svg';
 import RetryIcon from './assets/retry.svg';
+import RewardIcon from './assets/reward.svg';
 import ScamInfoIcon from './assets/scam-info.svg';
 import SearchNewIcon from './assets/search-new.svg';
 import SearchIcon from './assets/search.svg';
@@ -258,6 +259,7 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
   [IconNameEnum.DollarFiled]: DollarFilledIcon,
   [IconNameEnum.SoundOff]: SoundOffIcon,
+  [IconNameEnum.Reward]: RewardIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,

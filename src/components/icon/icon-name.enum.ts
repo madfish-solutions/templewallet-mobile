@@ -179,5 +179,6 @@ export enum IconNameEnum {
   Stake = 'Stake',
   MessageCircle = 'MessageCircle',
   DollarFiled = 'DollarFiled',
-  SoundOff = 'SoundOff'
+  SoundOff = 'SoundOff',
+  Reward = 'Reward'
 }

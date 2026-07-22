@@ -1,5 +1,6 @@
-import React, { memo, useCallback } from 'react';
+import React, { FC, memo, PropsWithChildren, useCallback } from 'react';
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Defs, LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -18,62 +19,100 @@ export const PromoRewardsCard = memo(() => {
   const navigateToModal = useNavigateToModal();
   const { isLoading, stats } = useTkeyRewardsStats();
 
-  const showPayoutInfo = useCallback(
-    () => Alert.alert('Promo balance', 'Promo rewards are paid in TKEY at the end of every month.'),
-    []
-  );
   const openEnableModal = useCallback(() => navigateToModal(ModalsEnum.PromoRewardsEnable), [navigateToModal]);
 
   if (!isPromoEnabled) {
     return (
-      <TouchableOpacity style={styles.root} onPress={openEnableModal} testID="Earn page/Promo rewards card">
-        <View style={styles.content}>
-          <View style={styles.titleRow}>
-            <Icon name={IconNameEnum.Deal} size={formatSize(16)} />
-            <Text style={styles.title}>Promo rewards</Text>
-            <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+      <PromoRewardsCardFrame>
+        <TouchableOpacity style={styles.card} onPress={openEnableModal} testID="Earn page/Promo rewards card">
+          <View style={styles.content}>
+            <View style={styles.titleRow}>
+              <Icon name={IconNameEnum.Reward} />
+              <Text style={styles.title}>Promo rewards</Text>
+              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+            </View>
+            <Text style={styles.description}>
+              Earn TKEY token through built-in promo feature and claim your slice of 20% monthly rewards.
+            </Text>
           </View>
-          <Text style={styles.description}>
-            Earn TKEY through built-in Promo content and claim your slice of 20% monthly rewards.
-          </Text>
-        </View>
-        <View style={styles.introFooter}>
-          <Text style={styles.introFooterText}>Up to 511 TKEY / month</Text>
-        </View>
-      </TouchableOpacity>
+          <View style={styles.introFooter}>
+            <Text style={styles.introFooterText}>Up to 511 TKEY / month</Text>
+          </View>
+        </TouchableOpacity>
+      </PromoRewardsCardFrame>
     );
   }
 
   return (
-    <View style={styles.root} testID="Earn page/Promo rewards card">
-      <View style={styles.content}>
-        <View style={styles.titleRow}>
-          <Icon name={IconNameEnum.Deal} size={formatSize(16)} />
-          <Text style={styles.title}>Promo rewards</Text>
-          <TouchableOpacity onPress={showPayoutInfo} accessibilityLabel="Promo rewards payout information">
-            <Icon name={IconNameEnum.Info} size={formatSize(16)} />
-          </TouchableOpacity>
-        </View>
-        {isLoading ? (
-          <ActivityIndicator style={styles.loader} />
-        ) : stats && !stats.total.isZero() ? (
-          <>
-            <View style={styles.divider} />
+    <PromoRewardsCardFrame reversed>
+      <View style={styles.card}>
+        <View style={styles.content}>
+          <View style={styles.titleRow}>
+            <Icon name={IconNameEnum.Reward} />
+            <Text style={styles.title}>Promo rewards</Text>
+            {(!stats || stats.total.isZero()) && (
+              <TouchableOpacity onPress={showPayoutInfo}>
+                <Icon name={IconNameEnum.InfoFilledAlt} />
+              </TouchableOpacity>
+            )}
+          </View>
+          {isLoading ? (
+            <View style={styles.loader}>
+              <ActivityIndicator size="small" />
+            </View>
+          ) : (
             <View style={styles.stats}>
               <View style={styles.stat}>
-                <Text style={styles.label}>All time</Text>
-                <Text style={styles.value}>{formatAssetAmount(stats.total, 2)} TKEY</Text>
+                <Text style={styles.label}>All time:</Text>
+                <Text style={styles.value}>{formatAssetAmount(stats?.total ?? ZERO, 2)} TKEY</Text>
               </View>
               <View style={[styles.stat, styles.statEnd]}>
-                <Text style={styles.label}>Last payment</Text>
-                <Text style={styles.positiveValue}>+{formatAssetAmount(stats.lastAmount ?? ZERO, 2)} TKEY</Text>
+                <Text style={styles.label}>Last payment:</Text>
+                <Text style={styles.positiveValue}>+{formatAssetAmount(stats?.lastAmount ?? ZERO, 2)} TKEY</Text>
               </View>
             </View>
-          </>
-        ) : (
-          <Text style={styles.empty}>Your Promo balance will appear after your first end-of-month payout.</Text>
-        )}
+          )}
+        </View>
       </View>
-    </View>
+    </PromoRewardsCardFrame>
   );
 });
+
+interface PromoRewardsCardFrameProps extends PropsWithChildren {
+  reversed?: boolean;
+}
+
+const PromoRewardsCardFrame: FC<PromoRewardsCardFrameProps> = ({ children, reversed = false }) => {
+  const styles = usePromoRewardsCardStyles();
+
+  return (
+    <View style={styles.root}>
+      <Svg pointerEvents="none" style={styles.borderGradient} width="100%" height="100%" preserveAspectRatio="none">
+        <Defs>
+          <LinearGradient id="promoRewardsBorder" x1="0%" y1="0%" x2="100%" y2="0%">
+            <Stop offset="0%" stopColor={reversed ? '#FF5B00' : '#FFD600'} />
+            <Stop offset="100%" stopColor={reversed ? '#FFD600' : '#FF5B00'} />
+          </LinearGradient>
+        </Defs>
+        <Rect
+          x="0.5%"
+          y="0.5%"
+          width="99%"
+          height="99%"
+          rx={formatSize(8)}
+          ry={formatSize(8)}
+          fill="none"
+          stroke="url(#promoRewardsBorder)"
+          strokeWidth={formatSize(1)}
+        />
+      </Svg>
+      {children}
+    </View>
+  );
+};
+
+const showPayoutInfo = () =>
+  Alert.alert(
+    'Promo rewards',
+    'This section display display your rewards for Promo. You can manage this feature in the Settings.'
+  );
