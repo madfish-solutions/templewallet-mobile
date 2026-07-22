@@ -1,36 +1,22 @@
 import React, { memo, useCallback } from 'react';
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
-import useSWR from 'swr';
 
-import { templeAdsApi } from 'src/api.service';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { useTkeyRewardsStats } from 'src/hooks/use-tkey-rewards-stats.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { formatAssetAmount, ZERO } from 'src/utils/number.util';
 
-import { usePromoRewardsCardStyles } from './promo-rewards-card.styles';
-
-interface PromoRewardsResponse {
-  allTimeTkey: string;
-  lastPaymentTkey?: string;
-}
-
-const fetchPromoRewards = (accountPkh: string) =>
-  templeAdsApi.get<PromoRewardsResponse>(`/promo-rewards/${accountPkh}`).then(({ data }) => data);
+import { usePromoRewardsCardStyles } from './styles';
 
 export const PromoRewardsCard = memo(() => {
   const styles = usePromoRewardsCardStyles();
   const isPromoEnabled = useIsPartnersPromoEnabledSelector();
-  const accountPkh = useCurrentAccountPkhSelector();
   const navigateToModal = useNavigateToModal();
-  const { data, isLoading } = useSWR(
-    isPromoEnabled && accountPkh ? ['promo-rewards', accountPkh] : null,
-    ([, pkh]) => fetchPromoRewards(pkh),
-    { revalidateOnFocus: true }
-  );
+  const { isLoading, stats } = useTkeyRewardsStats();
 
   const showPayoutInfo = useCallback(
     () => Alert.alert('Promo balance', 'Promo rewards are paid in TKEY at the end of every month.'),
@@ -70,17 +56,17 @@ export const PromoRewardsCard = memo(() => {
         </View>
         {isLoading ? (
           <ActivityIndicator style={styles.loader} />
-        ) : data ? (
+        ) : stats && !stats.total.isZero() ? (
           <>
             <View style={styles.divider} />
             <View style={styles.stats}>
               <View style={styles.stat}>
                 <Text style={styles.label}>All time</Text>
-                <Text style={styles.value}>{data.allTimeTkey} TKEY</Text>
+                <Text style={styles.value}>{formatAssetAmount(stats.total, 2)} TKEY</Text>
               </View>
               <View style={[styles.stat, styles.statEnd]}>
                 <Text style={styles.label}>Last payment</Text>
-                <Text style={styles.positiveValue}>+{data.lastPaymentTkey ?? '0'} TKEY</Text>
+                <Text style={styles.positiveValue}>+{formatAssetAmount(stats.lastAmount ?? ZERO, 2)} TKEY</Text>
               </View>
             </View>
           </>
