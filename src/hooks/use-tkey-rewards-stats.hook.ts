@@ -7,11 +7,6 @@ import { useIsTkeyRewardsStatsLoadingSelector, useTkeyRewardsStatsSelector } fro
 
 import { useRewardsAddress } from './use-rewards-address.hook';
 
-export interface TkeyRewardsStats {
-  lastAmount?: BigNumber;
-  total: BigNumber;
-}
-
 export const useTkeyRewardsStats = () => {
   const dispatch = useDispatch();
   const rewardsAddress = useRewardsAddress();
