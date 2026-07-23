@@ -95,15 +95,13 @@ const PromoRewardsCardFrame: FC<PromoRewardsCardFrameProps> = ({ children, rever
           </LinearGradient>
         </Defs>
         <Rect
-          x="0.5%"
-          y="0.5%"
-          width="99%"
-          height="99%"
+          width="100%"
+          height="100%"
           rx={formatSize(8)}
           ry={formatSize(8)}
           fill="none"
           stroke="url(#promoRewardsBorder)"
-          strokeWidth={formatSize(1)}
+          strokeWidth={formatSize(2)}
         />
       </Svg>
       {children}

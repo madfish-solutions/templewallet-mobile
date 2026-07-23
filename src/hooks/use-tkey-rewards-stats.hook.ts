@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { loadTkeyRewardsStatsActions } from 'src/store/rewards/rewards-actions';
 import { useIsTkeyRewardsStatsLoadingSelector, useTkeyRewardsStatsSelector } from 'src/store/rewards/rewards-selectors';
+import { isDefined } from 'src/utils/is-defined.ts';
 
 import { useRewardsAddress } from './use-rewards-address.hook';
 
@@ -24,7 +25,7 @@ export const useTkeyRewardsStats = () => {
       storedStats
         ? {
             total: new BigNumber(storedStats.total),
-            lastAmount: storedStats.lastAmount === undefined ? undefined : new BigNumber(storedStats.lastAmount)
+            lastAmount: isDefined(storedStats.lastAmount) ? new BigNumber(storedStats.lastAmount) : undefined
           }
         : undefined,
     [storedStats]

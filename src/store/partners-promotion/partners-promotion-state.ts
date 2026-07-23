@@ -4,6 +4,6 @@ export interface PartnersPromotionState {
 }
 
 export const partnersPromotionInitialState: PartnersPromotionState = {
-  isEnabled: true,
+  isEnabled: false,
   promotionHidingTimestamps: {}
 };
