@@ -15,6 +15,6 @@ export const useIsSaplingCredentialsLoadedSelector = () => useSaplingAccountStat
 export const useIsSaplingBalanceLoadingSelector = () => useSaplingAccountState().isBalanceLoading;
 export const useSaplingTransactionHistorySelector = () => useSaplingAccountState().transactionHistory;
 export const useIsSaplingHistoryLoadingSelector = () => useSaplingAccountState().isHistoryLoading;
-export const useHasSeenAnnouncementSelector = () => useSelector(({ sapling }) => sapling.hasSeenAnnouncement);
+export const useHasSeenSaplingAnnouncementSelector = () => useSelector(({ sapling }) => sapling.hasSeenAnnouncement);
 export const useIsSaplingPreparingSelector = () => useSelector(({ sapling }) => sapling.isPreparing);
 export const usePreparedOpParamsSelector = () => useSelector(({ sapling }) => sapling.preparedOpParams);

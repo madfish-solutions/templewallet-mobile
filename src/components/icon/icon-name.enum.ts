@@ -177,5 +177,12 @@ export enum IconNameEnum {
   NoConnection = 'NoConnection',
   ScamInfo = 'ScamInfo',
   Stake = 'Stake',
-  MessageCircle = 'MessageCircle'
+  MessageCircle = 'MessageCircle',
+  DollarFiled = 'DollarFiled',
+  SoundOff = 'SoundOff',
+  Reward = 'Reward',
+  Uptrend = 'Uptrend',
+  Gears = 'Gears',
+  Megaphone = 'Megaphone',
+  Calendar = 'Calendar'
 }

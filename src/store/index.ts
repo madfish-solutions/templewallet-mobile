@@ -12,6 +12,7 @@ import { exolixEpics } from './exolix/exolix-epics';
 import { farmsEpics } from './farms/epics';
 import { marketEpics } from './market/market-epics';
 import { notificationsEpics } from './notifications/notifications-epics';
+import { rewardsEpics } from './rewards/rewards-epics';
 import { rootStateEpics } from './root-state.epics';
 import { saplingEpics } from './sapling';
 import { savingsEpics } from './savings/epics';
@@ -23,6 +24,7 @@ import { walletEpics } from './wallet/wallet-epics';
 
 export const { store, persistor } = createStore(
   rootStateEpics,
+  rewardsEpics,
   walletEpics,
   tokensMetadataEpics,
   bakingEpics,
