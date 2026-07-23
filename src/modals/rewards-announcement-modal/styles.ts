@@ -62,5 +62,8 @@ export const useRewardsAnnouncementModalStyles = createUseStyles(({ colors, typo
     ...typography.caption13Semibold,
     color: colors.orange,
     marginLeft: formatSize(4)
+  },
+  buttonsContainer: {
+    paddingHorizontal: formatSize(16)
   }
 }));

@@ -180,5 +180,9 @@ export enum IconNameEnum {
   MessageCircle = 'MessageCircle',
   DollarFiled = 'DollarFiled',
   SoundOff = 'SoundOff',
-  Reward = 'Reward'
+  Reward = 'Reward',
+  Uptrend = 'Uptrend',
+  Gears = 'Gears',
+  Megaphone = 'Megaphone',
+  Calendar = 'Calendar'
 }

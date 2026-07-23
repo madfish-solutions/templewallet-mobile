@@ -22,6 +22,7 @@ import BrokenImage from './assets/broken-image.svg';
 import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
+import CalendarIcon from './assets/calendar.svg';
 import ChartIcon from './assets/chart-icon.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
@@ -74,6 +75,7 @@ import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
+import GearsIcon from './assets/gears.svg';
 import GlobeIcon from './assets/globe.svg';
 import GoogleDriveNativeIcon from './assets/google-drive-native.svg';
 import GoogleDriveIcon from './assets/google-drive.svg';
@@ -98,6 +100,7 @@ import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import ManualBackupIcon from './assets/manual-backup.svg';
 import MarketIcon from './assets/market.svg';
+import MegaphoneIcon from './assets/megaphone.svg';
 import MessageCircleIcon from './assets/message-circle.svg';
 import MinusIcon from './assets/minus-icon.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
@@ -172,6 +175,7 @@ import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import UkraineIcon from './assets/ukraine.svg';
 import UpdateIcon from './assets/update.svg';
+import UptrendIcon from './assets/uptrend.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import WTezIcon from './assets/wtez.svg';
@@ -260,6 +264,10 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DollarFiled]: DollarFilledIcon,
   [IconNameEnum.SoundOff]: SoundOffIcon,
   [IconNameEnum.Reward]: RewardIcon,
+  [IconNameEnum.Gears]: GearsIcon,
+  [IconNameEnum.Calendar]: CalendarIcon,
+  [IconNameEnum.Uptrend]: UptrendIcon,
+  [IconNameEnum.Megaphone]: MegaphoneIcon,
   /** topup icons **/
   [IconNameEnum.Exolix]: ExolixIcon,
   [IconNameEnum.MoonPay]: MoonPayIcon,

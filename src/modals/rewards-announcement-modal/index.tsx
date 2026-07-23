@@ -3,6 +3,7 @@ import React, { FC, useCallback, useEffect } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import tkeyCoinAnimation from 'src/assets/animations/tkey-coin-animation.json';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
@@ -24,8 +25,7 @@ import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
-import { useRewardsAnnouncementModalStyles } from './rewards-announcement-modal.styles';
-import tkeyCoinAnimation from './tkey-coin-animation.json';
+import { useRewardsAnnouncementModalStyles } from './styles';
 
 export const RewardsAnnouncementModal: FC = () => {
   const dispatch = useDispatch();
@@ -84,7 +84,7 @@ export const RewardsAnnouncementModal: FC = () => {
           <Text style={styles.managePromoText}>Manage Promo</Text>
         </TouchableOpacity>
       </ScreenContainer>
-      <ButtonsFloatingContainer>
+      <ButtonsFloatingContainer style={styles.buttonsContainer}>
         <ButtonLargePrimary title="Got it" onPress={goBack} />
         <InsetSubstitute type="bottom" />
       </ButtonsFloatingContainer>

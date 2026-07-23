@@ -26,13 +26,13 @@ import { InAppBrowser } from 'src/modals/in-app-browser';
 import { KoloCardWidgetModal } from 'src/modals/kolo-card';
 import { ManageEarnOpportunityModal } from 'src/modals/manage-earn-opportunity-modal';
 import { Newsletter } from 'src/modals/newsletter/newsletter-modal';
-import { PromoRewardsEnableModal } from 'src/modals/promo-rewards-enable-modal/promo-rewards-enable-modal';
+import { PromoRewardsEnableModal } from 'src/modals/promo-rewards-enable-modal';
 import { RebalanceModal } from 'src/modals/rebalance-modal/rebalance-modal';
 import { ReceiveModal } from 'src/modals/receive-modal/receive-modal';
 import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-account-modal';
 import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
-import { RewardsAnnouncementModal } from 'src/modals/rewards-announcement-modal/rewards-announcement-modal';
+import { RewardsAnnouncementModal } from 'src/modals/rewards-announcement-modal';
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
 import { SendModal } from 'src/modals/send-modal/send-modal';
 import { ShieldedAnnouncementModal } from 'src/modals/shielded-announcement-modal/shielded-announcement-modal';
@@ -223,7 +223,7 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.PromoRewardsEnable}
               component={PromoRewardsEnableModal}
-              options={useModalOptions('Promo rewards')}
+              options={useModalOptions('Promo')}
             />
             <RootStack.Screen
               name={ModalsEnum.RewardsAnnouncement}
