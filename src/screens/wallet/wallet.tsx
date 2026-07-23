@@ -26,7 +26,7 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
-import { useHasSeenRewardsAnnouncementSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { useHasSeenRewardsAnnouncementSelector } from 'src/store/rewards/rewards-selectors';
 import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';

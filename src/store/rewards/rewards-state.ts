@@ -8,9 +8,11 @@ export interface TkeyRewardsStats {
 }
 
 export interface RewardsState {
+  hasSeenRewardsAnnouncement: boolean;
   tkeyStats: LoadableEntityState<TkeyRewardsStats | null>;
 }
 
 export const rewardsInitialState: RewardsState = {
+  hasSeenRewardsAnnouncement: false,
   tkeyStats: createEntity(null)
 };

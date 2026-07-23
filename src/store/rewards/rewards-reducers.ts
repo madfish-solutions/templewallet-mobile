@@ -2,7 +2,7 @@ import { createReducer } from '@reduxjs/toolkit';
 
 import { createEntity } from '../create-entity';
 
-import { loadTkeyRewardsStatsActions } from './rewards-actions';
+import { loadTkeyRewardsStatsActions, setHasSeenRewardsAnnouncementAction } from './rewards-actions';
 import { rewardsInitialState, RewardsState } from './rewards-state';
 
 export const rewardsReducer = createReducer<RewardsState>(rewardsInitialState, builder => {
@@ -14,5 +14,8 @@ export const rewardsReducer = createReducer<RewardsState>(rewardsInitialState, b
   });
   builder.addCase(loadTkeyRewardsStatsActions.fail, (state, { payload: error }) => {
     state.tkeyStats = createEntity(state.tkeyStats.data, false, error);
+  });
+  builder.addCase(setHasSeenRewardsAnnouncementAction, state => {
+    state.hasSeenRewardsAnnouncement = true;
   });
 });

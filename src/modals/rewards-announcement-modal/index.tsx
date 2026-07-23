@@ -16,11 +16,7 @@ import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigation, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
-import {
-  setAdsEnabledEventSentAction,
-  setHasSeenRewardsAnnouncementAction
-} from 'src/store/partners-promotion/partners-promotion-actions';
-import { useIsAdsEnabledEventSentSelector } from 'src/store/partners-promotion/partners-promotion-selectors';
+import { setHasSeenRewardsAnnouncementAction } from 'src/store/rewards/rewards-actions';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -33,17 +29,13 @@ export const RewardsAnnouncementModal: FC = () => {
   const navigateToScreen = useNavigateToScreen();
   const { trackEvent } = useAnalytics();
   const isFocused = useIsFocused();
-  const eventWasSent = useIsAdsEnabledEventSentSelector();
   const styles = useRewardsAnnouncementModalStyles();
 
   useEffect(() => {
     if (!isFocused) return;
     dispatch(setHasSeenRewardsAnnouncementAction());
-    if (!eventWasSent) {
-      void trackEvent('AdsEnabled', AnalyticsEventCategory.General, {}, true);
-      dispatch(setAdsEnabledEventSentAction());
-    }
-  }, [dispatch, eventWasSent, isFocused, trackEvent]);
+    void trackEvent('AdsEnabled', AnalyticsEventCategory.General);
+  }, [dispatch, isFocused, trackEvent]);
 
   const managePromo = useCallback(
     () => navigateToScreen({ screen: ScreensEnum.AdvancedFeaturesSettings }),

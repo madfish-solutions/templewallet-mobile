@@ -198,9 +198,7 @@ export const MIGRATIONS: MigrationManifest = {
     const state = untypedState as TypedPersistedRootState;
     state.partnersPromotion = {
       ...state.partnersPromotion,
-      isEnabled: true,
-      hasSeenRewardsAnnouncement: false,
-      isAdsEnabledEventSent: false
+      isEnabled: true
     };
 
     return state;
