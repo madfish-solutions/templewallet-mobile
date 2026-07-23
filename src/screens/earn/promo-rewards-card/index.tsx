@@ -23,7 +23,7 @@ export const PromoRewardsCard = memo(() => {
 
   if (!isPromoEnabled) {
     return (
-      <PromoRewardsCardFrame>
+      <PromoRewardsCardFrame key="promo-rewards-card-clickable">
         <TouchableOpacity style={styles.card} onPress={openEnableModal} testID="Earn page/Promo rewards card">
           <View style={styles.content}>
             <View style={styles.titleRow}>
@@ -44,7 +44,7 @@ export const PromoRewardsCard = memo(() => {
   }
 
   return (
-    <PromoRewardsCardFrame reversed>
+    <PromoRewardsCardFrame key="promo-rewards-card" reversed>
       <View style={styles.card}>
         <View style={styles.content}>
           <View style={styles.titleRow}>
