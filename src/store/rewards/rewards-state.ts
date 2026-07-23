@@ -13,6 +13,6 @@ export interface RewardsState {
 }
 
 export const rewardsInitialState: RewardsState = {
-  hasSeenRewardsAnnouncement: false,
+  hasSeenRewardsAnnouncement: true,
   tkeyStats: createEntity(null)
 };
