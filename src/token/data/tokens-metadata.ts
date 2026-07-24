@@ -53,6 +53,8 @@ export const TEZ_SHIELDED_TOKEN_METADATA: TezosTokenMetadata = {
   iconName: IconNameEnum.TezShieldedToken
 };
 
+export const TEZ_SHIELDED_ANALYTICS_NAME = 'Shielded TEZ';
+
 export const TZBTC_TOKEN_METADATA: TezosTokenMetadata = {
   id: 0,
   address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
