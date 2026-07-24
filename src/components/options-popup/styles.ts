@@ -1,12 +1,14 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
+export const popoverWidth = formatSize(207);
+
 export const useOptionsPopupStyles = createUseStylesMemoized(({ colors, typography }) => ({
   popoverBackground: {
     backgroundColor: 'transparent'
   },
   popover: {
-    width: formatSize(207),
+    width: popoverWidth,
     borderRadius: formatSize(12),
     backgroundColor: colors.navigation,
     borderWidth: formatSize(1),

@@ -88,8 +88,7 @@ export const BottomSheet: FCWithChildren<Props> = ({
   );
 
   const handleChange = (index: number) => {
-    const opened = index !== -1;
-    setIsOpened(opened);
+    setIsOpened(index !== -1);
     Keyboard.dismiss();
   };
   const handleCancelPress = () => {

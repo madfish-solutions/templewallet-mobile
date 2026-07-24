@@ -115,7 +115,6 @@ const SearchActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) 
         iconSize={24}
         color={commonTheme.blue}
         onPress={useCallbackIfOnline(goToManageAccounts)}
-        // TODO: add testID
       />
       <View ref={createAccountButtonRef}>
         <TouchableIconV2
@@ -125,7 +124,6 @@ const SearchActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) 
           color={commonTheme.blue}
           onPress={openCreateAccountPopup}
           key="create"
-          // TODO: add testID
         />
       </View>
       <CreateAccountPopupBase

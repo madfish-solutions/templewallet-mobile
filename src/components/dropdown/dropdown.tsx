@@ -39,7 +39,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
   showCloseButton?: boolean;
-  triggerRef?: Ref<View>;
+  triggerWrapperRef?: Ref<View>;
   onLongPress?: EmptyFn;
 }
 
@@ -101,7 +101,7 @@ const DropdownComponent = <T extends unknown>({
   testID,
   testIDProperties,
   itemTestIDPropertiesFn,
-  triggerRef
+  triggerWrapperRef
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
@@ -229,22 +229,23 @@ const DropdownComponent = <T extends unknown>({
 
   return (
     <>
-      <SafeTouchableOpacity
-        style={styles.valueContainer}
-        disabled={disabled}
-        onPress={() => {
-          scroll();
+      <View style={styles.valueContainer} ref={triggerWrapperRef}>
+        <SafeTouchableOpacity
+          style={styles.valueContainer}
+          disabled={disabled}
+          onPress={() => {
+            scroll();
 
-          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+            trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
-          return dropdownBottomSheetController.open();
-        }}
-        onLongPress={onLongPress}
-        testID={testID}
-        ref={triggerRef}
-      >
-        {renderValue({ value, disabled, isCollectibleScreen })}
-      </SafeTouchableOpacity>
+            return dropdownBottomSheetController.open();
+          }}
+          onLongPress={onLongPress}
+          testID={testID}
+        >
+          {renderValue({ value, disabled, isCollectibleScreen })}
+        </SafeTouchableOpacity>
+      </View>
 
       <BottomSheet
         description={description}

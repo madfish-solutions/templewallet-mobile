@@ -1,13 +1,11 @@
 import { memo, RefObject, useCallback, useImperativeHandle, useMemo, useState } from 'react';
-import { NativeMethods, Text } from 'react-native';
+import { NativeMethods, Text, TouchableOpacity } from 'react-native';
 import Popover, { Rect, PopoverPlacement } from 'react-native-popover-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { formatSize } from 'src/styles/format-size';
+import { isAndroid } from 'src/config/system';
 
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
-
-import { useOptionsPopupStyles } from './styles';
+import { popoverWidth, useOptionsPopupStyles } from './styles';
 
 export interface OptionsPopupController {
   open: EmptyFn;
@@ -23,6 +21,7 @@ export interface OptionsPopupProps<T> {
   title: string;
   options: T[];
   keyFn: SyncFn<T, string>;
+  /** The preferred placement of the popup. If it cannot be placed there, it may be placed at the opposite side of the trigger element. */
   placement: Exclude<`${YPlacement}-${XPlacement}`, 'center-center'>;
   onOptionPress: SyncFn<T, void>;
   /** Away from left/right edge if the placement is centered by Y axis; by X axis direction otherwise */
@@ -41,11 +40,9 @@ export const OptionsPopupHOC = <T extends unknown>(OptionContent: OptionContent<
     ({ controlRef, title, options, keyFn, placement, onOptionPress, xOffset = 0, yOffset = 0, triggerRef }) => {
       const [yPlacement, xPlacement] = useMemo(() => placement.split('-') as [YPlacement, XPlacement], [placement]);
       const insets = useSafeAreaInsets();
-      const [popoverFromRect, setPopoverFromRect] = useState(
-        () => new Rect(insets.left, insets.top, formatSize(207), 0)
-      );
+      const yInsetOffset = isAndroid ? insets.top : 0;
+      const [popoverFromRect, setPopoverFromRect] = useState(() => new Rect(insets.left, insets.top, popoverWidth, 0));
       const [isVisible, setIsVisible] = useState(false);
-      const popupWidth = formatSize(207);
 
       const styles = useOptionsPopupStyles();
 
@@ -55,26 +52,31 @@ export const OptionsPopupHOC = <T extends unknown>(OptionContent: OptionContent<
           switch (placement) {
             case 'top-left':
             case 'bottom-left':
-              setPopoverFromRect(new Rect(x + xOffset, y - yOffset, popupWidth, height + 2 * yOffset));
+              setPopoverFromRect(new Rect(x + xOffset, y - yOffset + yInsetOffset, popoverWidth, height + 2 * yOffset));
               break;
             case 'top-center':
             case 'bottom-center':
-              setPopoverFromRect(new Rect(x + xOffset, y - yOffset, width, height + 2 * yOffset));
+              setPopoverFromRect(new Rect(x + xOffset, y - yOffset + yInsetOffset, width, height + 2 * yOffset));
               break;
             case 'top-right':
             case 'bottom-right':
               setPopoverFromRect(
-                new Rect(x + width - popupWidth + xOffset, y - yOffset, popupWidth, height + 2 * yOffset)
+                new Rect(
+                  x + width - popoverWidth + xOffset,
+                  y - yOffset + yInsetOffset,
+                  popoverWidth,
+                  height + 2 * yOffset
+                )
               );
               break;
             case 'center-left':
             case 'center-right':
-              setPopoverFromRect(new Rect(x - xOffset, y + yOffset, width + 2 * xOffset, height));
+              setPopoverFromRect(new Rect(x - xOffset, y + yOffset + yInsetOffset, width + 2 * xOffset, height));
               break;
           }
           setIsVisible(true);
         });
-      }, [triggerRef, placement, popupWidth, xOffset, yOffset]);
+      }, [triggerRef, placement, xOffset, yOffset, yInsetOffset]);
 
       const popoverPlacement = useMemo(() => {
         switch (yPlacement) {
@@ -127,9 +129,9 @@ const OptionHOC = <T extends unknown>(Content: OptionContent<T>) => {
     const handleOptionPress = useCallback(() => onPress(option), [option, onPress]);
 
     return (
-      <SafeTouchableOpacity style={styles.option} onPress={handleOptionPress}>
+      <TouchableOpacity style={styles.option} onPress={handleOptionPress}>
         <Content option={option} />
-      </SafeTouchableOpacity>
+      </TouchableOpacity>
     );
   });
 

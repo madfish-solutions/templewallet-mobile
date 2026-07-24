@@ -110,7 +110,7 @@ export const AccountDropdownBase = memo<Props>(
           onLongPress={onLongPressHandler}
           isCollectibleScreen={isCollectibleScreen}
           renderSearchActionButtons={renderSearchActionButtons}
-          triggerRef={triggerRef}
+          triggerWrapperRef={triggerRef}
         />
 
         <CopyAddressPopup controlRef={copyAddressPopupRef} account={value} triggerRef={triggerRef} />
