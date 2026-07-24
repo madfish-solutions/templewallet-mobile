@@ -11,8 +11,8 @@ import { Label } from 'src/components/label/label';
 import { Slider } from 'src/components/slider/slider';
 import { StyledNumericInput } from 'src/components/styled-numberic-input/styled-numeric-input';
 import { FormNumericInput } from 'src/form/form-numeric-input/form-numeric-input';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { formatSize } from 'src/styles/format-size';
+import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 import { useTezosToken } from 'src/utils/wallet.utils';
@@ -39,8 +39,6 @@ export const FeeFormInput: FC<Props> = ({
 }) => {
   const styles = useFeeFormInputStyles();
 
-  const { metadata } = useNetworkInfo();
-
   const [isShowDetailedInput, setIsShowDetailedInput] = useState(!estimationWasSuccessful);
 
   const sliderMinValue = basicFees.gasFeeSum.toNumber();
@@ -49,16 +47,16 @@ export const FeeFormInput: FC<Props> = ({
   const storageLimitDefaultValue = basicFees.storageLimitSum;
 
   const storageFee = isDefined(values.storageLimitSum)
-    ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), metadata.decimals)
+    ? mutezToTz(new BigNumber(values.storageLimitSum).times(minimalFeePerStorageByteMutez), TEZ_TOKEN_DECIMALS)
     : undefined;
 
   const rawGasFeeSumToken = useTezosToken(
-    isDefined(values.gasFeeSum) ? tzToMutez(values.gasFeeSum, metadata.decimals).toFixed() : '0'
+    isDefined(values.gasFeeSum) ? tzToMutez(values.gasFeeSum, TEZ_TOKEN_DECIMALS).toFixed() : '0'
   );
   const gasFeeSumToken = isDefined(values.gasFeeSum) ? rawGasFeeSumToken : undefined;
 
   const rawStorageFeeToken = useTezosToken(
-    isDefined(storageFee) ? tzToMutez(storageFee, metadata.decimals).toFixed() : '0'
+    isDefined(storageFee) ? tzToMutez(storageFee, TEZ_TOKEN_DECIMALS).toFixed() : '0'
   );
   const storageFeeToken = isDefined(storageFee) ? rawStorageFeeToken : undefined;
 
@@ -70,7 +68,7 @@ export const FeeFormInput: FC<Props> = ({
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Gas fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} ${metadata.symbol}` : 'Not defined'}
+            {isDefined(values.gasFeeSum) ? `${values.gasFeeSum.toFixed()} ${TEZ_TOKEN_SYMBOL}` : 'Not defined'}
           </Text>
           {isDefined(gasFeeSumToken) && (
             <AssetValueText
@@ -87,7 +85,7 @@ export const FeeFormInput: FC<Props> = ({
         <View style={styles.infoContainerItem}>
           <Text style={styles.infoTitle}>Storage fee:</Text>
           <Text style={styles.infoFeeAmount}>
-            {isDefined(storageFee) ? `${storageFee} ${metadata.symbol}` : 'Not defined'}
+            {isDefined(storageFee) ? `${storageFee} ${TEZ_TOKEN_SYMBOL}` : 'Not defined'}
           </Text>
           {storageFeeToken && (
             <AssetValueText
@@ -127,7 +125,7 @@ export const FeeFormInput: FC<Props> = ({
               maximumValue={sliderMaxValue}
               step={1e-6}
               onValueChange={(newValue: number) => {
-                setFieldValue('gasFeeSum', new BigNumber(newValue).decimalPlaces(metadata.decimals));
+                setFieldValue('gasFeeSum', new BigNumber(newValue).decimalPlaces(TEZ_TOKEN_DECIMALS));
                 !isDefined(values.storageLimitSum) && setFieldValue('storageLimitSum', storageLimitDefaultValue, false);
               }}
             />

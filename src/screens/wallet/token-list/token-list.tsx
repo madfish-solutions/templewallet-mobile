@@ -13,49 +13,58 @@ import { InAppUpdateBanner } from 'src/components/in-app-update-banner/in-app-up
 import { PromotionItem } from 'src/components/promotion-item';
 import { RefreshControl } from 'src/components/refresh-control/refresh-control';
 import { Search } from 'src/components/search/search';
+import { delegationApy } from 'src/config/general';
 import { isAndroid } from 'src/config/system';
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import {
+  MultichainDisplayedToken,
+  useMultichainDisplayedTokens
+} from 'src/hooks/evm/use-multichain-displayed-tokens.hook';
 import { useFakeRefreshControlProps } from 'src/hooks/use-fake-refresh-control-props.hook';
-import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useInternalAdsAnalyticsWithImpressionCallback } from 'src/hooks/use-internal-ads-analytics.hook';
 import { useListElementIntersection } from 'src/hooks/use-list-element-intersection.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useIsPartnersPromoShown } from 'src/hooks/use-partners-promo';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { loadAdvertisingPromotionActions } from 'src/store/advertising/advertising-actions';
+import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { useTokensApyRatesSelector } from 'src/store/d-apps/d-apps-selectors';
 import { setZeroBalancesShown } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector, useIsInAppUpdateAvailableSelector } from 'src/store/settings/settings-selectors';
 import { useScamTokenSlugsSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
-import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
+import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
+import { isString } from 'src/utils/is-string';
+import { isPositiveNumber } from 'src/utils/number.util';
+import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
 import { WalletSelectors } from '../wallet.selectors';
 
-import { TezosToken } from './token-list-item/tezos-token';
-import { TokenListItem } from './token-list-item/token-list-item';
+import { MultichainTokenListItem } from './token-list-item/multichain-token-list-item';
 import { useTokenListStyles } from './token-list.styles';
 
 const AD_PLACEHOLDER = 'ad';
 
 const PROMOTION_ID = 'wallet-promotion';
 
-type ListItem = TokenInterface | typeof AD_PLACEHOLDER;
+type ListItem = MultichainDisplayedToken | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
 /** padding size + icon size */
-const ITEM_HEIGHT = formatSize(24 + 32);
+const ITEM_HEIGHT = formatSize(20 + 40);
 
-const keyExtractor = (item: ListItem) => (item === AD_PLACEHOLDER ? item : getTokenSlug(item));
+const FILLER_SLUG_PREFIX = 'filler';
+
+const emptyListItems: ListItem[] = [];
+
+const keyExtractor = (item: ListItem) =>
+  item === AD_PLACEHOLDER ? item : toChainAssetSlug(item.chainKind, item.chainId, item.slug);
 const getItemType = (item: ListItem) => (typeof item === 'string' ? 'promotion' : 'row');
 
 export const TokensList = memo(() => {
@@ -66,10 +75,12 @@ export const TokensList = memo(() => {
   const styles = useTokenListStyles();
 
   const apyRates = useTokensApyRatesSelector();
+  const currentBaker = useSelectedBakerSelector();
   const scamTokenSlugsRecord = useScamTokenSlugsSelector();
 
   const [listHeight, setListHeight] = useState(0);
   const [promotionErrorOccurred, setPromotionErrorOccurred] = useState(false);
+  const [searchValue, setSearchValue] = useState<string>();
 
   const flashListRef = useRef<FlashListRef<ListItem>>(null);
   const adListItemRef = useRef<View>(null);
@@ -78,14 +89,11 @@ export const TokensList = memo(() => {
 
   const fakeRefreshControlProps = useFakeRefreshControlProps();
 
-  const tezosToken = useTezosTokenOfCurrentAccount();
-  const tkeyToken = useAccountTkeyToken();
   const isHideZeroBalance = useHideZeroBalancesSelector();
-  const visibleTokensList = useCurrentAccountTokens(true);
+  const displayedTokens = useMultichainDisplayedTokens();
   const isInAppUpdateAvailable = useIsInAppUpdateAvailableSelector();
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const publicKeyHash = useAccountAddressForTezos();
   const partnersPromoShown = useIsPartnersPromoShown(PROMOTION_ID, PromotionProviderEnum.HypeLab);
-  const { isTezosNode } = useNetworkInfo();
 
   const adPageName = 'Home page';
   const { onAdLoad, onIsVisible, onAdImpression } = useInternalAdsAnalyticsWithImpressionCallback(
@@ -121,27 +129,27 @@ export const TokensList = memo(() => {
     }
   }, [dispatch, partnersPromoShown]);
 
-  const leadingAssets = useMemo(() => {
-    if (isTezosNode) {
-      return [tezosToken, tkeyToken];
+  const filteredTokens = useMemo(() => {
+    let result = isHideZeroBalance
+      ? displayedTokens.filter(token => isPositiveNumber(token.atomicBalance))
+      : displayedTokens;
+
+    const lowerCaseSearchValue = searchValue?.toLowerCase();
+    if (isString(lowerCaseSearchValue)) {
+      result = result.filter(({ name, symbol, slug }) =>
+        isAssetSearched({ name, symbol, address: slug }, lowerCaseSearchValue)
+      );
     }
 
-    return [tezosToken];
-  }, [isTezosNode, tezosToken, tkeyToken]);
-
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(
-    visibleTokensList,
-    isHideZeroBalance,
-    true,
-    leadingAssets
-  );
+    return result;
+  }, [displayedTokens, isHideZeroBalance, searchValue]);
 
   const screenFillingItemsCount = useMemo(() => listHeight / ITEM_HEIGHT, [listHeight]);
 
   const renderData = useMemo(() => {
-    const isNonEmptyList = filteredAssetsList.length > 0;
+    const isNonEmptyList = filteredTokens.length > 0;
 
-    const assetsListWithPromotion: ListItem[] = [...filteredAssetsList];
+    const assetsListWithPromotion = emptyListItems.concat(filteredTokens);
     if (partnersPromoShown && !promotionErrorOccurred) {
       assetsListWithPromotion.splice(isNonEmptyList ? ITEMS_BEFORE_AD : 0, 0, AD_PLACEHOLDER);
     }
@@ -149,9 +157,9 @@ export const TokensList = memo(() => {
     return isNonEmptyList
       ? addPlaceholdersForAndroid(assetsListWithPromotion, screenFillingItemsCount)
       : assetsListWithPromotion;
-  }, [filteredAssetsList, screenFillingItemsCount, partnersPromoShown, promotionErrorOccurred]);
+  }, [filteredTokens, screenFillingItemsCount, partnersPromoShown, promotionErrorOccurred]);
 
-  const shouldShowEmptyListComponent = filteredAssetsList.length === 0;
+  const shouldShowEmptyListComponent = filteredTokens.length === 0;
   const isNonEmptyRenderList = renderData.length > 1;
 
   const handleLayout = useCallback((event: LayoutChangeEvent) => setListHeight(event.nativeEvent.layout.height), []);
@@ -179,19 +187,35 @@ export const TokensList = memo(() => {
         );
       }
 
-      const slug = getTokenSlug(item);
-
-      if (slug === TEZ_TOKEN_SLUG) {
-        return <TezosToken />;
-      }
-
-      if (item.address.startsWith('filler')) {
+      if (item.slug.startsWith(FILLER_SLUG_PREFIX)) {
         return <View style={{ height: ITEM_HEIGHT }} />;
       }
 
-      return <TokenListItem token={item} scam={scamTokenSlugsRecord[slug]} apy={apyRates[slug]} />;
+      const isTezosItem = item.chainKind === TempleChainKind.Tezos;
+      const apy = isTezosItem
+        ? item.slug === TEZ_TOKEN_SLUG && currentBaker
+          ? delegationApy
+          : apyRates[item.slug]
+        : undefined;
+
+      return (
+        <MultichainTokenListItem
+          token={item}
+          scam={isTezosItem ? scamTokenSlugsRecord[item.slug] : undefined}
+          apy={apy}
+        />
+      );
     },
-    [apyRates, scamTokenSlugsRecord, handlePromotionError, onAdLoad, onElementLayoutChange, styles, onAdImpression]
+    [
+      apyRates,
+      currentBaker,
+      scamTokenSlugsRecord,
+      handlePromotionError,
+      onAdLoad,
+      onElementLayoutChange,
+      styles,
+      onAdImpression
+    ]
   );
 
   useEffect(() => void flashListRef.current?.scrollToOffset({ animated: true, offset: 0 }), [publicKeyHash]);
@@ -254,11 +278,22 @@ export const TokensList = memo(() => {
   );
 });
 
+const buildFillerToken = (index: number): MultichainDisplayedToken => ({
+  slug: `${FILLER_SLUG_PREFIX}${index}`,
+  chainKind: TempleChainKind.Tezos,
+  chainId: '',
+  symbol: '',
+  name: '',
+  atomicBalance: '0',
+  decimals: 0,
+  fiatValue: undefined
+});
+
 const addPlaceholdersForAndroid = (listData: ListItem[], screenFillingItemsCount: number) =>
   isAndroid && screenFillingItemsCount > listData.length
     ? listData.concat(
         Array(Math.ceil(screenFillingItemsCount - listData.length))
-          .fill(emptyToken)
-          .map((token, index) => ({ ...token, address: `filler${index}` }))
+          .fill(null)
+          .map((_, index) => buildFillerToken(index))
       )
     : listData;

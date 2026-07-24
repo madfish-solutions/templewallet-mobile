@@ -1,3 +1,4 @@
+import { isAddress } from 'viem';
 import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
@@ -15,5 +16,17 @@ export const importWatchOnlyDebugInitialValues: ImportWatchOnlyDebugValues = {
 
 export const importWatchOnlyDebugValidationSchema: SchemaOf<ImportWatchOnlyDebugValues> = object().shape({
   name: string().required(makeRequiredErrorMessage('Name')),
-  address: walletAddressValidation
+  address: string()
+    .required(makeRequiredErrorMessage('Address'))
+    .test('is-valid-address', 'Invalid address', value => {
+      if (value == null) {
+        return false;
+      }
+
+      if (isAddress(value)) {
+        return true;
+      }
+
+      return walletAddressValidation.isValidSync(value);
+    })
 });

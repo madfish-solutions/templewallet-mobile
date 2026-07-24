@@ -1,9 +1,10 @@
 import { object, SchemaOf, string } from 'yup';
 
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { Contact } from 'src/interfaces/contact.interface';
 import { useContactsAddresses, useContactsNames } from 'src/store/contact-book/contact-book-selectors';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isTezosDomainNameValid } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isValidAddress } from 'src/utils/tezos.util';
@@ -25,7 +26,7 @@ const baseValidationSchema = ({
       .test('whitespaces', 'The contact name cannot include leading and trailing spaces', value =>
         isDefined(value) ? value === value.trim() : false
       ),
-    publicKeyHash: string()
+    address: string()
       .required(makeRequiredErrorMessage('Address'))
       .notOneOf(contactsAddresses, 'Contact with the same address already exists')
       .test('is-valid-address', 'Invalid address', value =>
@@ -38,16 +39,16 @@ const baseValidationSchema = ({
       )
   });
 
-export const useAddContactFormValidationSchema = (): SchemaOf<AccountBaseInterface> => {
-  const ownAccounts = useAccountsListSelector().map(({ publicKeyHash }) => publicKeyHash);
+export const useAddContactFormValidationSchema = (): SchemaOf<Contact> => {
+  const ownAccounts = useAllAccounts().map(getAccountAddressForTezos).filter(isDefined);
   const contactsNames = useContactsNames();
   const contactsAddresses = useContactsAddresses();
 
   return baseValidationSchema({ contactsNames, contactsAddresses, ownAccounts });
 };
 
-export const useEditContactFormValidationSchema = (editContactIndex: number): SchemaOf<AccountBaseInterface> => {
-  const ownAccounts = useAccountsListSelector().map(({ publicKeyHash }) => publicKeyHash);
+export const useEditContactFormValidationSchema = (editContactIndex: number): SchemaOf<Contact> => {
+  const ownAccounts = useAllAccounts().map(getAccountAddressForTezos).filter(isDefined);
   const contactsNames = useContactsNames().filter((_, index) => editContactIndex !== index);
   const contactsAddresses = useContactsAddresses().filter((_, index) => editContactIndex !== index);
 

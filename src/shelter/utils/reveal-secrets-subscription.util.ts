@@ -1,6 +1,6 @@
-import { Dispatch } from '@reduxjs/toolkit';
 import { catchError, map, merge, of, Subject, switchMap, tap } from 'rxjs';
 
+import { dispatch } from 'src/store';
 import { hideLoaderAction, showLoaderAction } from 'src/store/settings/settings-actions';
 
 import { RevealSecretKeyParams } from '../interfaces/reveal-secret-key-params.interface';
@@ -9,14 +9,13 @@ import { Shelter } from '../shelter';
 
 export const revealSecretsSubscription = (
   revealSecretKey$: Subject<RevealSecretKeyParams>,
-  revealSeedPhrase$: Subject<RevealSeedPhraseParams>,
-  dispatch: Dispatch
+  revealSeedPhrase$: Subject<RevealSeedPhraseParams>
 ) =>
   merge(
     revealSecretKey$.pipe(
       tap(() => dispatch(showLoaderAction())),
-      switchMap(({ publicKeyHash, successCallback }) =>
-        Shelter.revealSecretKey$(publicKeyHash).pipe(
+      switchMap(({ address, successCallback }) =>
+        Shelter.revealAccountPrivateKey$(address).pipe(
           map((secretKey): [string | undefined, SyncFn<string>] => [secretKey, successCallback])
         )
       ),

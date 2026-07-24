@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { PromotionProviderEnum } from 'src/enums/promotion-provider.enum';
 import { PromotionVariantEnum } from 'src/enums/promotion-variant.enum';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
@@ -23,7 +23,7 @@ export const useInternalAdsAnalytics = (
   initialAdAreaIsVisible = false,
   seenTimeout: number
 ) => {
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const isFocused = useIsFocused();
   const { trackEvent } = useAnalytics();
   const [adAreaIsVisible, setAdAreaIsVisible] = useState(initialAdAreaIsVisible);
@@ -83,7 +83,7 @@ export const useInternalAdsAnalyticsWithImpressionCallback = (
   variant = PromotionVariantEnum.Image,
   initialAdAreaIsVisible = false
 ) => {
-  const accountPkh = useCurrentAccountPkhSelector();
+  const accountPkh = useAccountAddressForTezos();
   const isFocused = useIsFocused();
   const { trackEvent } = useAnalytics();
   const [loadedPromotionProvider, setLoadedPromotionProvider] = useState<PromotionProviderEnum | undefined>();

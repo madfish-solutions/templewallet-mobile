@@ -4,14 +4,15 @@ import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
-import { AccountFormSectionDropdown } from 'src/components/account-dropdown/account-form-section-dropdown';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { ContactFormSectionDropdown } from 'src/components/contact-dropdown/contact-form-section-dropdown';
 import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { FormAddressInput } from 'src/form/form-address-input';
@@ -19,7 +20,6 @@ import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asse
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormTextInput } from 'src/form/form-text-input';
 import { useAddressFieldAnalytics } from 'src/hooks/use-address-field-analytics.hook';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
@@ -31,9 +31,9 @@ import { addContactCandidateAddressAction } from 'src/store/contact-book/contact
 import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { useAssetExchangeRate, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
-import { useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
 import {
@@ -68,8 +68,8 @@ export const SendModal: FC = () => {
   const tokens = useCurrentAccountTokens(true);
   const collectibles = useCurrentAccountCollectibles(true);
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const canUseOnRamp = useCanUseOnRamp();
   const tezosBalance = useCurrentAccountTezosBalance();
+  const tezosAddress = useAccountAddressForTezos();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const shieldedBalanceMutez = useShieldedBalanceSelector();
@@ -103,8 +103,8 @@ export const SendModal: FC = () => {
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, true, true, leadingAssets);
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList();
 
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const resolver = useMemo(() => tezosDomainsResolver(selectedRpcUrl), [selectedRpcUrl]);
+  // TODO: Add preferredRpcUrl when choosing RPC node becomes available
+  const resolver = useMemo(() => tezosDomainsResolver(), []);
 
   const isTransferDisabled = filteredReceiversList.length === 0;
   const recipient = filteredReceiversList[0]?.data[0];
@@ -136,6 +136,12 @@ export const SendModal: FC = () => {
       transferBetweenOwnAccounts,
       memo
     }: SendModalFormValues) => {
+      if (!tezosAddress) {
+        showErrorToast({ description: 'Select a Tezos account to send assets' });
+
+        return;
+      }
+
       if (isTezosDomainNameValid(receiverPublicKeyHash) && !transferBetweenOwnAccounts) {
         setIsLoading(true);
 
@@ -150,7 +156,7 @@ export const SendModal: FC = () => {
         }
       }
 
-      const resolvedAddress = transferBetweenOwnAccounts ? recipient.publicKeyHash : receiverPublicKeyHash;
+      const resolvedAddress = transferBetweenOwnAccounts ? recipient.address : receiverPublicKeyHash;
       const isRecipientSapling = isSaplingAddress(resolvedAddress);
       const isSourceShielded = isShieldedTez(asset);
 
@@ -199,7 +205,11 @@ export const SendModal: FC = () => {
       // Regular flow
       !transferBetweenOwnAccounts && dispatch(addContactCandidateAddressAction(receiverPublicKeyHash));
 
-      if (getTokenSlug(asset) === TEZ_TOKEN_SLUG && (amount?.isGreaterThan(tezosBalance) ?? false) && canUseOnRamp) {
+      if (
+        getTokenSlug(asset) === TEZ_TOKEN_SLUG &&
+        (amount?.isGreaterThan(tezosBalance) ?? false) &&
+        !LIMIT_FIN_FEATURES
+      ) {
         dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
       } else if (isDefined(amount)) {
         dispatch(
@@ -211,7 +221,7 @@ export const SendModal: FC = () => {
         );
       }
     },
-    [dispatch, tezosBalance, canUseOnRamp, resolver]
+    [dispatch, tezosBalance, resolver, tezosAddress]
   );
 
   const formik = useFormik({
@@ -272,7 +282,7 @@ export const SendModal: FC = () => {
           />
           {values.transferBetweenOwnAccounts ? (
             <>
-              <AccountFormSectionDropdown
+              <ContactFormSectionDropdown
                 name="recipient"
                 list={filteredReceiversList}
                 setSearchValue={handleSearchValueChange}
@@ -326,7 +336,7 @@ export const SendModal: FC = () => {
         <ButtonLargePrimary
           title="Send"
           onPress={submitForm}
-          disabled={isLoading || Object.keys(errors).length > 0}
+          disabled={!tezosAddress || isLoading || Object.keys(errors).length > 0}
           testID={SendModalSelectors.sendButton}
         />
       </ModalButtonsFloatingContainer>

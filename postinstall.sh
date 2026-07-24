@@ -1,8 +1,16 @@
-if [ "$(expr substr $(uname -s) 1 5)" != "Linux" ]; then
+if [ "$(uname -s)" != "Linux" ]; then
   sed_mac_arg=true
 fi
 
 find node_modules -type f -name 'build.gradle' -exec sed -i ${sed_mac_arg:+""} 's/jcenter()/mavenCentral()/g' {} +
+
+# https://github.com/facebook/react-native/issues/56287
+# Gradle 9 removed JvmVendorSpec.IBM_SEMERU. React Native 0.85.3 ships Foojay
+# resolver 0.5.0, which still references it and crashes during Android builds.
+rn_gradle_plugin_settings="node_modules/@react-native/gradle-plugin/settings.gradle.kts"
+if [ -f "$rn_gradle_plugin_settings" ]; then
+  sed -i ${sed_mac_arg:+""} 's/org.gradle.toolchains.foojay-resolver-convention").version("0.5.0")/org.gradle.toolchains.foojay-resolver-convention").version("1.0.0")/' "$rn_gradle_plugin_settings"
+fi
 
 search_string="compile 'com.facebook.react:react-native:+'"
 replace_string="implementation 'com.facebook.react:react-native:+'"
@@ -15,4 +23,13 @@ if [ -f "$rnexitapp_h" ]; then
   sed -i ${sed_mac_arg:+""} 's|#import <React-Codegen/RNExitAppSpec/RNExitAppSpec.h>|#import "RNExitAppSpec/RNExitAppSpec.h"|' "$rnexitapp_h"
   sed -i ${sed_mac_arg:+""} 's|#import <RNExitAppSpec/RNExitAppSpec.h>|#import "RNExitAppSpec/RNExitAppSpec.h"|' "$rnexitapp_h"
   sed -i ${sed_mac_arg:+""} 's|#import <React_Codegen/RNExitAppSpec/RNExitAppSpec.h>|#import "RNExitAppSpec/RNExitAppSpec.h"|' "$rnexitapp_h"
+fi
+
+# Fix react-native-orientation-locker iOS reload redbox on RN 0.85.
+# The native module manually mutates RCTEventEmitter listener accounting during
+# init/dealloc, which can remove listeners after React Native already reset them.
+orientation_locker_m="node_modules/react-native-orientation-locker/iOS/RCTOrientation/Orientation.m"
+if [ -f "$orientation_locker_m" ]; then
+  sed -i ${sed_mac_arg:+""} '/\[self addListener:@"orientationDidChange"\];/d' "$orientation_locker_m"
+  sed -i ${sed_mac_arg:+""} '/\[self removeListeners:1\];/d' "$orientation_locker_m"
 fi

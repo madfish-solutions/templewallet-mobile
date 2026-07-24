@@ -14,6 +14,7 @@ import { HideBalanceProvider } from 'src/hooks/hide-balance/hide-balance.provide
 import { HideBootsplashProvider } from 'src/hooks/use-hide-bootsplash';
 import { RootStackScreen } from 'src/navigator/root-stack';
 import { AppLockContextProvider } from 'src/shelter/app-lock/app-lock';
+import { EvmAccountsMigrationGate } from 'src/shelter/evm-accounts-migration/gate';
 import { persistor, store } from 'src/store';
 import { TypographyProvider } from 'src/styles/typography.context';
 import { ToastProvider } from 'src/toast/toast-provider';
@@ -36,7 +37,9 @@ const NoSentryApp = () => (
                 <TypographyProvider>
                   <HideBootsplashProvider>
                     <ErrorBoundary whileMessage="loading the app">
-                      <RootStackScreen />
+                      <EvmAccountsMigrationGate>
+                        <RootStackScreen />
+                      </EvmAccountsMigrationGate>
                     </ErrorBoundary>
                   </HideBootsplashProvider>
                   <ToastProvider />

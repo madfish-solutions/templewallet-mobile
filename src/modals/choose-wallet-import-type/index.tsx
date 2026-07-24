@@ -21,7 +21,6 @@ import { useChooseWalletImportTypeStyles } from './styles';
 
 enum ImportType {
   SeedPhrase = 'SeedPhrase',
-  KeystoreFile = 'KeystoreFile',
   Sync = 'Sync'
 }
 
@@ -41,12 +40,6 @@ export const ChooseWalletImportType = memo(() => {
         description: 'Synchronize your mobile and extension\n' + 'Temple Wallet',
         iconName: IconNameEnum.Sync,
         onPress: () => setSelectedImportType(ImportType.Sync)
-      },
-      {
-        title: 'Keystore File',
-        description: 'Import your wallet from an encrypted\n' + 'keystore file (.tez)',
-        iconName: IconNameEnum.FileUpload,
-        onPress: () => setSelectedImportType(ImportType.KeystoreFile)
       }
     ],
     []
@@ -57,9 +50,6 @@ export const ChooseWalletImportType = memo(() => {
   switch (selectedImportType) {
     case ImportType.SeedPhrase:
       return <ImportWallet onBackPress={onBackPress} />;
-
-    case ImportType.KeystoreFile:
-      return <ImportWallet fromSeed={false} onBackPress={onBackPress} />;
 
     case ImportType.Sync:
       return <SyncInstructions onBackPress={onBackPress} />;

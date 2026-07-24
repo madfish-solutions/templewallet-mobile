@@ -8,6 +8,7 @@ import { ButtonLargePrimary } from 'src/components/button/button-large/button-la
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -15,7 +16,7 @@ import { BlackTextLink } from 'src/components/text-link/black-text-link';
 import { TopUpAssetAmountInterface, TopUpFormAssetAmountInput } from 'src/components/top-up-field';
 import { emptyFn } from 'src/config/general';
 import { loadExolixExchangeDataActions } from 'src/store/exolix/exolix-actions';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { ExchangePayload } from 'src/types/exolix.types';
@@ -46,7 +47,12 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
   const { inputCurrencies, outputCurrencies, filteredInputCurrenciesList, setSearchValue, currenciesLoading } =
     useFilteredCurrenciesList();
   const prevCurrenciesLoading = useRef(currenciesLoading);
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const [outputLoading, setOutputLoading] = useState(false);
 
   const handleSubmit = () => {
@@ -60,7 +66,7 @@ export const InitialStep: FC<InitialStepProps> = ({ isError, setIsError }) => {
         coinTo: outputCurrency.code,
         networkTo: outputCurrency.network.code,
         amount: values.coinFrom.amount.toNumber(),
-        withdrawalAddress: publicKeyHash,
+        withdrawalAddress: tezosAddress,
         withdrawalExtraId: ''
       })
     );

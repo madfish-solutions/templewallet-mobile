@@ -3,11 +3,12 @@ import { ListRenderItem, ViewToken, ScrollView, View, ActivityIndicator } from '
 import { FlatList } from 'react-native-gesture-handler';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useInnerScreenProgress } from 'src/hooks/use-inner-screen-progress';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { isDefined } from 'src/utils/is-defined';
@@ -26,12 +27,17 @@ const keyExtractor = (item: CollectionItemInterface) => `${item.address}_${item.
 
 export const Collection = memo(() => {
   const styles = useCollectionStyles();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const { collectionContract, galleryPk } = useScreenParams<ScreensEnum.Collection>();
 
   const { collectibles, isLoading, collectionSize, loadMore } = useCollectionItemsLoading(
     collectionContract,
-    accountPkh,
+    tezosAddress,
     galleryPk
   );
 
@@ -47,8 +53,8 @@ export const Collection = memo(() => {
   const snapToInterval = useMemo(() => formatSize(ITEM_WIDTH) + formatSize(GAP_SIZE), []);
 
   const renderItem: ListRenderItem<CollectionItemInterface> = useCallback(
-    ({ item }) => <CollectibleItem item={item} collectionContract={collectionContract} accountPkh={accountPkh} />,
-    [accountPkh]
+    ({ item }) => <CollectibleItem item={item} collectionContract={collectionContract} accountPkh={tezosAddress} />,
+    [tezosAddress]
   );
 
   const onEndReached = useCallback(() => {

@@ -9,10 +9,10 @@ import { ExternalLinkButton } from 'src/components/icon/external-link-button/ext
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
-import { useIsInAppBrowserEnabledSelector, useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
+import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
+import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
 import { openUrl, tzktUrl, useOpenUrlInAppBrowser } from 'src/utils/linking';
@@ -33,10 +33,6 @@ interface Props {
 export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => {
   const styles = useSelectedBakerScreenStyles();
   const colors = useColors();
-
-  const { metadata, isDcpNode } = useNetworkInfo();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
-  const bakerName = isDcpNode ? 'Current Producer' : baker.name;
 
   const openUrlInAppBrowser = useOpenUrlInAppBrowser();
   const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
@@ -59,14 +55,14 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
             <Divider size={formatSize(10)} />
             <View style={styles.bakerContainerData}>
               <Text style={styles.nameText} numberOfLines={1}>
-                {bakerName}
+                {baker.name}
               </Text>
               <Divider size={formatSize(2)} />
               <View style={styles.actionsContainer}>
                 <PublicKeyHashText style={styles.accountPkh} publicKeyHash={baker.address} />
                 <Divider size={formatSize(4)} />
                 <ExternalLinkButton
-                  url={tzktUrl(selectedRpcUrl, baker.address)}
+                  url={tzktUrl(baker.address)}
                   testID={SelectedBakerScreenSelectors.selectedBakerTZKTlink}
                 />
               </View>
@@ -84,56 +80,52 @@ export const SelectedBakerScreen: FC<Props> = ({ baker, onRedelegatePress }) => 
 
         <Divider size={formatSize(8)} />
 
-        {!isDcpNode && (
-          <View style={styles.lowerContainer}>
-            <View>
-              <Text style={styles.cellTitle}>Delegated:</Text>
-              <Text style={styles.cellValueText}>{isDefined(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
-            </View>
-            <Divider size={formatSize(16)} />
-            <View>
-              <Text style={styles.cellTitle}>Space:</Text>
-              <Text style={styles.cellValueText}>
-                {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {metadata.symbol}
-              </Text>
-            </View>
-            <Divider size={formatSize(16)} />
-            <View>
-              <Text style={styles.cellTitle}>Baker fee:</Text>
-              <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
-            </View>
-            <Divider size={formatSize(16)} />
-            <View>
-              <Text style={styles.cellTitle}>Min Balance:</Text>
-              <Text style={styles.cellValueText}>{isDefined(minBalance) ? `${minBalance} TEZ` : '--'}</Text>
-            </View>
+        <View style={styles.lowerContainer}>
+          <View>
+            <Text style={styles.cellTitle}>Delegated:</Text>
+            <Text style={styles.cellValueText}>{isDefined(stakingBalance) ? kFormatter(stakingBalance) : '--'}</Text>
           </View>
-        )}
+          <Divider size={formatSize(16)} />
+          <View>
+            <Text style={styles.cellTitle}>Space:</Text>
+            <Text style={styles.cellValueText}>
+              {isDefined(freeSpace) ? kFormatter(freeSpace) : '--'} {TEZ_TOKEN_SYMBOL}
+            </Text>
+          </View>
+          <Divider size={formatSize(16)} />
+          <View>
+            <Text style={styles.cellTitle}>Baker fee:</Text>
+            <Text style={styles.cellValueText}>{isTruthy(feeStr) ? feeStr : '--'}%</Text>
+          </View>
+          <Divider size={formatSize(16)} />
+          <View>
+            <Text style={styles.cellTitle}>Min Balance:</Text>
+            <Text style={styles.cellValueText}>{isDefined(minBalance) ? `${minBalance} TEZ` : '--'}</Text>
+          </View>
+        </View>
       </View>
 
-      {!isDcpNode && (
-        <TouchableOpacity style={styles.card} onPress={handleStakingPress}>
-          <View style={styles.upperContainer}>
-            <View style={styles.mainContentContainer}>
-              <View style={styles.stakeIcon}>
-                <Icon name={IconNameEnum.Stake} size={formatSize(24)} />
-              </View>
-              <Divider size={formatSize(10)} />
-              <View style={styles.bakerContainerData}>
-                <Text style={styles.nameText} numberOfLines={1}>
-                  Stake TEZ
-                </Text>
-                <Text style={styles.cellTitle} numberOfLines={1}>
-                  Earn interest up to 17.5% APY
-                </Text>
-              </View>
+      <TouchableOpacity style={styles.card} onPress={handleStakingPress}>
+        <View style={styles.upperContainer}>
+          <View style={styles.mainContentContainer}>
+            <View style={styles.stakeIcon}>
+              <Icon name={IconNameEnum.Stake} size={formatSize(24)} />
             </View>
-            <View style={styles.linkIcon}>
-              <Icon name={IconNameEnum.ExternalLink} color={colors.blue} />
+            <Divider size={formatSize(10)} />
+            <View style={styles.bakerContainerData}>
+              <Text style={styles.nameText} numberOfLines={1}>
+                Stake TEZ
+              </Text>
+              <Text style={styles.cellTitle} numberOfLines={1}>
+                Earn interest up to 17.5% APY
+              </Text>
             </View>
           </View>
-        </TouchableOpacity>
-      )}
+          <View style={styles.linkIcon}>
+            <Icon name={IconNameEnum.ExternalLink} color={colors.blue} />
+          </View>
+        </View>
+      </TouchableOpacity>
 
       <Divider size={formatSize(16)} />
 

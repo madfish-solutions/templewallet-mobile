@@ -5,7 +5,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { SAPLING_CONTRACT_ADDRESS } from 'src/config/sapling';
 import { ActivityTypeEnum } from 'src/enums/activity-type.enum';
 import { ActivityGroup, emptyActivity } from 'src/interfaces/activity.interface';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { useColors } from 'src/styles/use-colors';
 import { isString } from 'src/utils/is-string';
 import { ZERO } from 'src/utils/number.util';
@@ -21,7 +21,7 @@ const isSaplingOperation = (group: ActivityGroup): boolean =>
 
 export const useActivityGroupInfo = (group: ActivityGroup) => {
   const colors = useColors();
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const publicKeyHash = useAccountAddressForTezos();
 
   return useMemo<[IconNameEnum, string, string]>(() => {
     if (isSaplingOperation(group)) {

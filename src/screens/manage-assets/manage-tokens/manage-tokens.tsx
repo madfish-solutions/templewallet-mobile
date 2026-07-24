@@ -5,7 +5,6 @@ import { Text } from 'react-native';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -22,8 +21,6 @@ const ListEmptyComponent = <DataPlaceholder text="No tokens matching search crit
 export const ManageTokens = memo(() => {
   const styles = useManageAssetsStyles();
 
-  const { isTezosNode } = useNetworkInfo();
-
   const tokensList = useCurrentAccountTokens();
   const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensWithoutTkey, false, true);
@@ -32,7 +29,7 @@ export const ManageTokens = memo(() => {
     <>
       <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />
 
-      <Text style={styles.descriptionText}>Show{isTezosNode && ', remove'} and hide tokens at your home screen.</Text>
+      <Text style={styles.descriptionText}>Show, remove, and hide tokens at your home screen.</Text>
 
       <FlashList
         data={filteredAssetsList}

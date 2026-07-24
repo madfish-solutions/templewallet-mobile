@@ -10,7 +10,7 @@ export const mockAccountCredentials = {
 
 export const mockHDAccountCredentials = {
   mockAccountIndex: 77,
-  privateKey: 'edsk4PnmkH1gzBCAWKAagyBG83JeTKRKRZrRejbjunyhdcAqgPiHsL',
+  privateKey: 'edsk4GNNuhSc34VFizCN1qTRJipwBe7ok7pCLpZDrJubFaVhZiDz5A',
   seedPhrase: mockAccountCredentials.seedPhrase,
   publicKey: mockAccountCredentials.publicKey,
   publicKeyHash: mockAccountCredentials.publicKeyHash

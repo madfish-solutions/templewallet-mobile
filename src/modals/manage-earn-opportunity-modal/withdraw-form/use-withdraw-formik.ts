@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { number as numberSchema, object as objectSchema, SchemaOf } from 'yup';
 
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { EarnOpportunityTypeEnum } from 'src/enums/earn-opportunity-type.enum';
 import { makeRequiredErrorMessage } from 'src/form/validation/messages';
 import { useEarnOpportunityTokens } from 'src/hooks/use-earn-opportunity-tokens';
@@ -14,7 +15,7 @@ import { UserStakeValueInterface } from 'src/interfaces/user-stake-value.interfa
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { navigateAction } from 'src/store/root-state.actions';
 import { useSlippageSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -51,7 +52,12 @@ const LAST_PERCENTAGE_OPTION_INDEX = PERCENTAGE_OPTIONS.length - 1;
 
 export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: UserStakeValueInterface) => {
   const { stakeTokens } = useEarnOpportunityTokens(earnOpportunity);
-  const publicKeyHash = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const tezos = useReadOnlyTezosToolkit();
   const dispatch = useDispatch();
   const { trackEvent, trackErrorEvent } = useAnalytics();
@@ -101,7 +107,7 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
             earnOpportunity,
             tokenIndex,
             tezos,
-            publicKeyHash,
+            tezosAddress,
             stake,
             PERCENTAGE_OPTIONS[amountOptionIndex],
             slippageTolerance
@@ -122,11 +128,10 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
           trackEvent('WITHDRAW_FORM_SUBMIT_FAIL', AnalyticsEventCategory.FormSubmitFail);
           const internalError = error instanceof AnalyticsError ? error.error : error;
           const additionalProperties = error instanceof AnalyticsError ? error.additionalProperties : {};
-          trackErrorEvent('EarnOpportunityDoWithdrawError', internalError, [publicKeyHash], {
+          trackErrorEvent('EarnOpportunityDoWithdrawError', internalError, [tezosAddress], {
             doWithdrawInput: {
               earnOpportunity,
               tokenIndex,
-              rpcUrl: tezos.rpc.getRpcUrl(),
               stake,
               percentage: PERCENTAGE_OPTIONS[amountOptionIndex],
               slippageTolerance
@@ -170,17 +175,7 @@ export const useWithdrawFormik = (earnOpportunity?: EarnOpportunity, stake?: Use
         );
       }
     },
-    [
-      stakeTokens,
-      earnOpportunity,
-      tezos,
-      publicKeyHash,
-      stake,
-      dispatch,
-      trackEvent,
-      slippageTolerance,
-      trackErrorEvent
-    ]
+    [stakeTokens, earnOpportunity, tezos, tezosAddress, stake, dispatch, trackEvent, slippageTolerance, trackErrorEvent]
   );
 
   const formik = useFormik<WithdrawFormValues>({

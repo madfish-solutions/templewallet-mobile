@@ -4,12 +4,12 @@ import { BigNumber } from 'bignumber.js';
 import { FormikProvider, isEmptyArray, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
 import {
@@ -24,10 +24,10 @@ import {
   SWAP_THRESHOLD_TO_GET_CASHBACK,
   TEMPLE_TOKEN
 } from 'src/config/swap';
+import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { useBlockLevel } from 'src/hooks/use-block-level.hook';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { TokensInputsEnum, useFilteredSwapTokensList } from 'src/hooks/use-filtered-swap-tokens.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { useReadOnlyTezosToolkit } from 'src/hooks/use-read-only-tezos-toolkit.hook';
@@ -37,6 +37,7 @@ import { isLiquidityBakingParamsResponse } from 'src/interfaces/route3.interface
 import { SwapFormValues } from 'src/interfaces/swap-asset.interface';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
+import { dispatch } from 'src/store';
 import { useUsdToTokenRates } from 'src/store/currency/currency-selectors';
 import { navigateAction } from 'src/store/root-state.actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
@@ -47,7 +48,7 @@ import {
   useSwapTokenBySlugSelector,
   useSwapTokensMetadataSelector
 } from 'src/store/swap/swap-selectors';
-import { useCurrentAccountPkhSelector, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
@@ -85,13 +86,17 @@ interface SwapFormProps {
 }
 
 export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
-  const dispatch = useDispatch();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const getSwapParams = useSwap();
 
   const { trackEvent, trackErrorEvent } = useAnalytics();
   const slippageTolerance = useSlippageSelector();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const publicKeyHash = useCurrentAccountPkhSelector();
   const tezos = useReadOnlyTezosToolkit();
   const tezosBalance = useCurrentAccountTezosBalance();
   const blockLevel = useBlockLevel();
@@ -99,7 +104,6 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
   const { isLoading: isMetadataLoading, data: tokensMetadataData } = useSwapTokensMetadataSelector();
   const isLoading = isMetadataLoading && tokensMetadataData.length === 0;
   const usdExchangeRates = useUsdToTokenRates();
-  const canUseOnRamp = useCanUseOnRamp();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
   const swapParams = useSwapParamsSelector();
@@ -155,7 +159,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       return;
     }
 
-    if (inputAssetSlug === TEZ_TOKEN_SLUG && inputAssets.amount.isGreaterThan(tezosBalance) && canUseOnRamp) {
+    if (inputAssetSlug === TEZ_TOKEN_SLUG && inputAssets.amount.isGreaterThan(tezosBalance) && !LIMIT_FIN_FEATURES) {
       dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
 
       return;
@@ -167,7 +171,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
       let routingOutputFeeTransferParams: TransferParams[] = await getRoutingFeeTransferParams(
         toRoute3Token,
         outputFeeAtomicAmount,
-        publicKeyHash,
+        tezosAddress,
         ROUTING_FEE_ADDRESS,
         tezos
       );
@@ -192,7 +196,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         const routingInputFeeOpParams = await getRoutingFeeTransferParams(
           fromRoute3Token,
           routingFeeFromInputAtomic.minus(cashbackSwapInputFromInAtomic),
-          publicKeyHash,
+          tezosAddress,
           BURN_ADDRESS,
           tezos
         );
@@ -202,7 +206,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         const routingInputFeeOpParams = await getRoutingFeeTransferParams(
           TEMPLE_TOKEN,
           routingFeeFromInputAtomic,
-          publicKeyHash,
+          tezosAddress,
           ROUTING_FEE_ADDRESS,
           tezos
         );
@@ -214,8 +218,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: TEMPLE_TOKEN.symbol,
           toTokenDecimals: TEMPLE_TOKEN.decimals,
           amount: mutezToTz(routingFeeFromInputAtomic, fromRoute3Token.decimals).toFixed(),
-          dexesLimit: CASHBACK_SWAP_MAX_DEXES,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: CASHBACK_SWAP_MAX_DEXES
         });
         fetchedData.swapToTempleParams = swapToTempleParams;
 
@@ -244,7 +247,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         const routingFeeOpParams = await getRoutingFeeTransferParams(
           TEMPLE_TOKEN,
           templeMinOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
-          publicKeyHash,
+          tezosAddress,
           BURN_ADDRESS,
           tezos
         );
@@ -254,7 +257,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         routingOutputFeeTransferParams = await getRoutingFeeTransferParams(
           TEMPLE_TOKEN,
           routingFeeFromOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
-          publicKeyHash,
+          tezosAddress,
           BURN_ADDRESS,
           tezos
         );
@@ -265,8 +268,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: TEMPLE_TOKEN.symbol,
           toTokenDecimals: TEMPLE_TOKEN.decimals,
           amount: mutezToTz(routingFeeFromOutputAtomic, toRoute3Token.decimals).toFixed(),
-          dexesLimit: CASHBACK_SWAP_MAX_DEXES,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: CASHBACK_SWAP_MAX_DEXES
         });
         fetchedData.swapToTempleParams = swapToTempleParams;
 
@@ -293,7 +295,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         const routingFeeOpParams = await getRoutingFeeTransferParams(
           TEMPLE_TOKEN,
           templeMinOutputAtomic.times(ROUTING_FEE_RATIO - CASHBACK_RATIO).dividedToIntegerBy(ROUTING_FEE_RATIO),
-          publicKeyHash,
+          tezosAddress,
           BURN_ADDRESS,
           tezos
         );
@@ -304,7 +306,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
         const routingInputFeeOpParams = await getRoutingFeeTransferParams(
           fromRoute3Token,
           routingFeeFromInputAtomic,
-          publicKeyHash,
+          tezosAddress,
           ROUTING_FEE_ADDRESS,
           tezos
         );
@@ -314,7 +316,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
       allSwapParams.push(...route3SwapOpParams, ...routingOutputFeeTransferParams);
     } catch (error) {
-      trackErrorEvent('SwapFormSubmitError', error, [publicKeyHash], {
+      trackErrorEvent('SwapFormSubmitError', error, [tezosAddress], {
         fetchedData,
         input: {
           inputAssets,
@@ -339,7 +341,7 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
 
     if (opParams.length === 0) {
       showErrorToast({ description: 'Transaction params not loaded' });
-      trackErrorEvent('SwapFormSubmitFail', new Error('Transaction params not loaded'), [publicKeyHash], {
+      trackErrorEvent('SwapFormSubmitFail', new Error('Transaction params not loaded'), [tezosAddress], {
         input: {
           inputAssets,
           outputAssets,
@@ -430,12 +432,11 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
           toSymbol: getRoute3TokenSymbol(output.asset),
           toTokenDecimals: output.asset.decimals,
           amount: mutezToTz(amount, input.asset.decimals).toFixed(),
-          dexesLimit: mainSwapMaxDexes,
-          rpcUrl: tezos.rpc.getRpcUrl()
+          dexesLimit: mainSwapMaxDexes
         })
       );
     },
-    [dispatch, getSwapWithFeeParams, tezos.rpc]
+    [getSwapWithFeeParams]
   );
 
   useEffect(() => {
@@ -554,7 +555,8 @@ export const SwapForm: FC<SwapFormProps> = ({ inputToken, outputToken }) => {
             (submitCount !== 0 && !isValid) ||
             (submitCount !== 0 && chainsAreAbsent) ||
             swapParams.isLoading ||
-            isSubmitting
+            isSubmitting ||
+            !tezosAddress
           }
           title={Boolean(swapParams.isLoading) ? 'Searching the best route' : 'Swap'}
           onPress={submitForm}

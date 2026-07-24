@@ -4,7 +4,7 @@ import React, { FC, useMemo } from 'react';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useExolixStep } from 'src/store/exolix/exolix-selectors';
 
-import { IconNameEnum } from '../icon/icon-name.enum';
+import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 
 import { HeaderButton } from './header-button/header-button';
 import { HeaderProgress } from './header-progress/header-progress';
@@ -17,7 +17,7 @@ const BackButton: FC = () => {
     goBack();
   };
 
-  return <HeaderButton iconName={IconNameEnum.ArrowLeft} onPress={handleOnPress} />;
+  return <HeaderButton iconName={IconNameV2Enum.ArrowLeft} onPress={handleOnPress} />;
 };
 
 export const exolixScreenOptions = (): StackNavigationOptions => ({

@@ -1,11 +1,9 @@
-import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Animated } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { useCanUseOnRamp } from 'src/hooks/use-can-use-on-ramp.hook';
 import { useAtBootsplash } from 'src/hooks/use-hide-bootsplash';
 import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
@@ -16,11 +14,13 @@ import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
 import { useAppLock } from 'src/shelter/app-lock/app-lock';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { useIsShowLoaderSelector } from 'src/store/settings/settings-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
+import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl } from 'src/utils/linking';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { ButtonMedium } from '../button/button-medium/button-medium';
@@ -36,28 +36,27 @@ interface Props {
   onSendPress?: EmptyFn;
 }
 
-const CHAINBITS_URL = 'https://buy.chainbits.com';
-
 export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   const dispatch = useDispatch();
   const navigateToModal = useNavigateToModal();
   const navigateToScreen = useNavigateToScreen();
   const { isLocked } = useAppLock();
   const atBootsplash = useAtBootsplash();
-  const canUseOnRamp = useCanUseOnRamp();
-  const { metadata, isTezosNode, isTezosMainnet } = useNetworkInfo();
+  const selectedAccount = useAccount();
+  const { isTezosMainnet } = useNetworkInfo();
   const tezosToken = useTezosTokenOfCurrentAccount();
-  const { balance } = useTotalBalance();
+  const totalBalance = useTotalBalance();
   const styles = useHeaderCardActionButtonsStyles();
   const defaultStyleConfig = useButtonMediumStyleConfig();
   const isLoaderBeingShown = useIsShowLoaderSelector();
+  const canUseTezos = Boolean(getAccountAddressForTezos(selectedAccount));
 
   const isTezBalanceTooLow =
     isDefined(token.address) && token.address === tezosToken.address && tezosToken.balance === emptyToken.balance;
-  const errorMessage = isTezBalanceTooLow ? `You need to have ${metadata.symbol} to pay gas fee` : 'Balance is zero';
+  const errorMessage = isTezBalanceTooLow ? `You need to have ${TEZ_TOKEN_SYMBOL} to pay gas fee` : 'Balance is zero';
 
   const emptyBalance = token.balance === emptyToken.balance || tezosToken.balance === emptyToken.balance;
-  const disabledSendButton = emptyBalance && LIMIT_FIN_FEATURES;
+  const disabledSendButton = !canUseTezos || (emptyBalance && LIMIT_FIN_FEATURES);
 
   const actionButtonStylesOverrides = useMemo(
     () => ({
@@ -121,7 +120,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
 
     showErrorToast({ description: errorMessage });
 
-    if (isTezBalanceTooLow && canUseOnRamp) {
+    if (isTezBalanceTooLow && !LIMIT_FIN_FEATURES) {
       dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
     }
   };
@@ -141,9 +140,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
         <>
           <Divider size={formatSize(8)} />
           <ButtonMedium
+            disabled={!canUseTezos}
             title="Buy"
             iconName={IconNameEnum.ShoppingCard}
-            onPress={() => (isTezosNode ? navigateToScreen({ screen: ScreensEnum.Buy }) : openUrl(CHAINBITS_URL))}
+            onPress={() => navigateToScreen({ screen: ScreensEnum.Buy })}
             styleConfigOverrides={actionButtonStylesOverrides}
             style={styles.buttonContainer}
             testID={WalletSelectors.buyButton}
@@ -154,7 +154,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
       <Divider size={formatSize(8)} />
 
       <ButtonMedium
-        disabled={!isTezosNode || !isTezosMainnet}
+        disabled={!canUseTezos || !isTezosMainnet}
         title="Earn"
         iconName={IconNameEnum.Earn}
         onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
@@ -162,13 +162,14 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
         style={styles.buttonContainer}
         testID={WalletSelectors.earnButton}
         testIDProperties={{
-          isZeroBalance: new BigNumber(balance).isLessThanOrEqualTo(0)
+          isZeroBalance: totalBalance.isLessThanOrEqualTo(0)
         }}
       />
 
       <Divider size={formatSize(8)} />
 
       <ButtonMedium
+        disabled={disabledSendButton}
         title="Send"
         iconName={IconNameEnum.ArrowUp}
         onPress={handleSendButton}

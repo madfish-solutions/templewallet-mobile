@@ -1,10 +1,10 @@
 import React, { FC, useMemo } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { TokenMetadataInterface } from 'src/token/interfaces/token-metadata.interface';
+import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { isImageRectangular, isImgUriDataUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
@@ -16,7 +16,7 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { LoadableTokenIconImage } from './loadable-image';
 import { TokenIconStyles } from './token-icon.styles';
 
-interface Props extends Pick<TokenMetadataInterface, 'iconName' | 'thumbnailUri'> {
+interface Props extends Pick<TezosTokenMetadata, 'iconName' | 'thumbnailUri'> {
   size?: number;
   style?: StyleProp<ViewStyle>;
 }
@@ -44,10 +44,10 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
 
   const colors = useColors();
 
-  const { metadata } = useNetworkInfo();
-
   if (isDefined(iconName)) {
-    return <Icon name={iconName} color={metadata.iconName === iconName ? colors.black : undefined} size={size} />;
+    return (
+      <Icon name={iconName} color={TEZ_TOKEN_METADATA.iconName === iconName ? colors.black : undefined} size={size} />
+    );
   }
 
   if (!isString(thumbnailUri)) {

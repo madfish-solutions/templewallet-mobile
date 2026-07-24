@@ -1,211 +1,77 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, useWindowDimensions, View } from 'react-native';
-import QRCode from 'react-native-qrcode-svg';
-import { useDispatch } from 'react-redux';
+import React, { useMemo } from 'react';
+import { View } from 'react-native';
 
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
-import { Divider } from 'src/components/divider/divider';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
-import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
-import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { TokenIcon } from 'src/components/token-icon/token-icon';
-import { useDomainName } from 'src/hooks/use-domain-name.hook';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { useSaplingAddressSelector } from 'src/store/sapling';
-import { toggleDomainAddressShown } from 'src/store/settings/settings-actions';
-import { useIsShownDomainNameSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
-import { useColors } from 'src/styles/use-colors';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isString } from 'src/utils/is-string';
 
-import { ReceiveModalSelectors } from './receive-modal.selectors';
+import { AddressCard } from './address-card';
 import { useReceiveModalStyles } from './receive-modal.styles';
+import { AddressCardProps } from './types';
+
+const makeTezosComponentsProps = (tezosAddress: string) => ({
+  title: 'Tezos',
+  address: tezosAddress,
+  cryptoLogoName: CryptoLogoNameEnum.Tezos,
+  warningText: 'Send only Tezos tokens to this address'
+});
+
+const makeEtherlinkComponentsProps = (evmAddress: string) => ({
+  title: 'Etherlink',
+  address: evmAddress,
+  cryptoLogoName: CryptoLogoNameEnum.Etherlink,
+  warningText: 'Send only Etherlink tokens to this address'
+});
+
+const makeTezosSaplingComponentsProps = (saplingAddress: string) => ({
+  title: 'Shielded Tezos',
+  address: saplingAddress,
+  cryptoLogoName: CryptoLogoNameEnum.ShieldedTezos,
+  warningText: 'Send only TEZ tokens to this address',
+  showWarningOnCard: true
+});
+
+const cardKeyExtractor = ({ address, title }: AddressCardProps) => `${title}-${address}`;
 
 export const ReceiveModal = () => {
-  const colors = useColors();
+  const selectedAccount = useAccount();
+  const tezosAddress = getAccountAddressForTezos(selectedAccount);
+  const evmAddress = getAccountAddressForEvm(selectedAccount);
   const styles = useReceiveModalStyles();
-  const { width: screenWidth } = useWindowDimensions();
-  const publicKeyHash = useCurrentAccountPkhSelector();
-  const { token } = useModalParams<ModalsEnum.Receive>();
-
-  const dispatch = useDispatch();
-  const { trackEvent } = useAnalytics();
-  const isShownDomainName = useIsShownDomainNameSelector();
-  const domainName = useDomainName(publicKeyHash);
-
   const saplingAddress = useSaplingAddressSelector();
-  const showShieldedPage = isString(saplingAddress);
 
-  const [activePageIndex, setActivePageIndex] = useState(0);
+  const cardsContentProps = useMemo(() => {
+    const componentsProps: AddressCardProps[] = [];
 
-  const handleScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const offsetX = event.nativeEvent.contentOffset.x;
-      const page = Math.round(offsetX / screenWidth);
-      setActivePageIndex(page);
-    },
-    [screenWidth]
-  );
-
-  const currentAddress = activePageIndex === 0 ? publicKeyHash : saplingAddress ?? '';
-
-  const testID = useMemo(() => {
-    if (activePageIndex === 1) {
-      return ReceiveModalSelectors.shieldedAddressCopyButton;
+    if (isString(tezosAddress)) {
+      componentsProps.push(makeTezosComponentsProps(tezosAddress));
     }
 
-    return isShownDomainName && isString(domainName)
-      ? ReceiveModalSelectors.domainCopyButton
-      : ReceiveModalSelectors.publicAddressCopyButton;
-  }, [activePageIndex, isShownDomainName, domainName]);
+    if (isString(tezosAddress) && isString(saplingAddress)) {
+      componentsProps.push(makeTezosSaplingComponentsProps(saplingAddress));
+    }
 
-  const handleCopyButtonPress = () => {
-    copyStringToClipboard(currentAddress);
-    trackEvent(testID, AnalyticsEventCategory.ButtonPress);
-  };
+    if (isString(evmAddress)) {
+      componentsProps.push(makeEtherlinkComponentsProps(evmAddress));
+    }
+
+    return componentsProps;
+  }, [evmAddress, saplingAddress, tezosAddress]);
 
   usePageAnalytic(ModalsEnum.Receive);
 
-  const pageContentWidth = screenWidth - formatSize(32);
-
-  const renderPublicPage = () => (
-    <View style={[styles.page, { width: screenWidth }]}>
-      <View style={[styles.card, { maxWidth: pageContentWidth }]}>
-        <View style={styles.tokenContainer}>
-          <TokenIcon size={formatSize(40)} iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
-          <View style={styles.tokenInfoContainer}>
-            <Text style={styles.tokenSymbol}>{token.symbol}</Text>
-            <Text style={styles.tokenName}>{token.name}</Text>
-          </View>
-        </View>
-        <QRCode
-          value={publicKeyHash}
-          ecl="Q"
-          size={formatSize(180)}
-          color={colors.black}
-          backgroundColor={colors.cardBG}
-        />
-        <Divider />
-
-        <View style={styles.pkhWrapper}>
-          <Text style={styles.addressTitle}>Address</Text>
-          {isString(domainName) ? (
-            <TouchableIcon
-              size={formatSize(16)}
-              style={styles.iconContainer}
-              name={isShownDomainName ? IconNameEnum.Diez : IconNameEnum.Globe}
-              onPress={() => dispatch(toggleDomainAddressShown())}
-            />
-          ) : null}
-        </View>
-        <Divider size={formatSize(8)} />
-
-        <SafeTouchableOpacity style={styles.publicKeyHashContainer} onPress={handleCopyButtonPress} testID={testID}>
-          {isShownDomainName && isString(domainName) ? (
-            <Text style={styles.publicKeyHash}>{domainName}</Text>
-          ) : (
-            <Text style={styles.publicKeyHash}>{publicKeyHash}</Text>
-          )}
-        </SafeTouchableOpacity>
-      </View>
-    </View>
-  );
-
-  const renderShieldedPage = () => (
-    <View style={[styles.page, { width: screenWidth }]}>
-      <View style={[styles.card, { maxWidth: pageContentWidth }]}>
-        <View style={styles.tokenContainer}>
-          <TokenIcon size={formatSize(40)} iconName={IconNameEnum.TezShieldedToken} />
-          <View style={styles.tokenInfoContainer}>
-            <Text style={styles.tokenSymbol}>TEZ</Text>
-            <Text style={styles.tokenName}>Shielded</Text>
-          </View>
-        </View>
-        <QRCode
-          value={saplingAddress ?? ''}
-          ecl="Q"
-          size={formatSize(180)}
-          color={colors.black}
-          backgroundColor={colors.cardBG}
-        />
-        <Divider />
-
-        <Text style={styles.addressTitle}>Address</Text>
-        <Divider size={formatSize(8)} />
-
-        <SafeTouchableOpacity
-          style={styles.publicKeyHashContainer}
-          onPress={handleCopyButtonPress}
-          testID={ReceiveModalSelectors.copyButton}
-        >
-          <Text style={styles.publicKeyHash}>{saplingAddress}</Text>
-        </SafeTouchableOpacity>
-        <Divider size={formatSize(16)} />
-
-        <View style={styles.warningContainer}>
-          <Text style={styles.warningIcon}>⚠</Text>
-          <Text style={styles.warningText}>Send only TEZ tokens to this address</Text>
-        </View>
-      </View>
-    </View>
-  );
-
-  if (!showShieldedPage) {
-    return (
-      <>
-        <ScreenContainer contentContainerStyle={styles.rootContainer}>
-          <ModalStatusBar />
-          {renderPublicPage()}
-        </ScreenContainer>
-
-        <ButtonsFloatingContainer>
-          <ButtonLargePrimary title="Copy" onPress={handleCopyButtonPress} />
-          <InsetSubstitute type="bottom" />
-        </ButtonsFloatingContainer>
-      </>
-    );
-  }
-
   return (
-    <>
-      <ScreenContainer
-        contentContainerStyle={styles.shieldedContentContainer}
-        style={styles.rootContainer}
-        isFullScreenMode={true}
-      >
-        <ModalStatusBar />
-
-        <ScrollView
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={handleScroll}
-          style={styles.pagerContainer}
-        >
-          {renderPublicPage()}
-          {renderShieldedPage()}
-        </ScrollView>
-
-        <View style={styles.dotsContainer}>
-          <View style={[styles.dot, activePageIndex === 0 ? styles.dotActive : styles.dotInactive]} />
-          <Divider size={formatSize(8)} />
-          <View style={[styles.dot, activePageIndex === 1 ? styles.dotActive : styles.dotInactive]} />
-        </View>
-      </ScreenContainer>
-
-      <ButtonsFloatingContainer>
-        <ButtonLargePrimary title="Copy" onPress={handleCopyButtonPress} />
-        <InsetSubstitute type="bottom" />
-      </ButtonsFloatingContainer>
-    </>
+    <ScreenContainer isFullScreenMode contentContainerStyle={styles.cardsListContainer}>
+      <View style={styles.cardsList}>
+        {cardsContentProps.map(props => (
+          <AddressCard {...props} key={cardKeyExtractor(props)} />
+        ))}
+      </View>
+    </ScreenContainer>
   );
 };

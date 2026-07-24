@@ -1,34 +1,41 @@
 import { useMemo, useState } from 'react';
 
-import { AccountBaseInterface } from 'src/interfaces/account.interface';
+import { Contact } from 'src/interfaces/contact.interface';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useCurrentAccountPkhSelector, useVisibleAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForTezos, useAllVisibleAccounts } from 'src/store/wallet/wallet-selectors';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { isDefined } from 'src/utils/is-defined';
 
 export const useFilteredReceiversList = () => {
   const contacts = useContactsSelector();
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosAddress = useAccountAddressForTezos();
 
-  const allVisibleAccounts = useVisibleAccountsListSelector();
+  const allVisibleAccounts = useAllVisibleAccounts();
 
   const myVisibleAccounts = useMemo(
     () =>
       allVisibleAccounts
-        .filter(({ publicKeyHash }) => publicKeyHash !== accountPkh)
-        .map(({ name, publicKeyHash }) => ({ name, publicKeyHash })),
-    [allVisibleAccounts, accountPkh]
+        .map(account => {
+          const address = getAccountAddressForTezos(account);
+
+          return address ? { name: account.name, address } : undefined;
+        })
+        .filter(isDefined)
+        .filter(({ address }) => address !== tezosAddress),
+    [allVisibleAccounts, tezosAddress]
   );
 
   const [searchValue, setSearchValue] = useState<string>('');
 
   const filteredReceiversList = useMemo(() => {
-    const result: Array<SectionDropdownDataInterface<AccountBaseInterface>> = [];
+    const result: Array<SectionDropdownDataInterface<Contact>> = [];
 
     const searchValueLowerCase = searchValue.toLowerCase();
 
     const filteredAccounts = myVisibleAccounts.filter(
-      ({ name, publicKeyHash }) =>
-        name.toLowerCase().includes(searchValueLowerCase) || publicKeyHash.toLowerCase().includes(searchValueLowerCase)
+      ({ name, address }) =>
+        name.toLowerCase().includes(searchValueLowerCase) || address.toLowerCase().includes(searchValueLowerCase)
     );
 
     if (filteredAccounts.length > 0) {
@@ -36,8 +43,8 @@ export const useFilteredReceiversList = () => {
     }
 
     const filteredContacts = contacts.filter(
-      ({ name, publicKeyHash }) =>
-        name.toLowerCase().includes(searchValueLowerCase) || publicKeyHash.toLowerCase().includes(searchValueLowerCase)
+      ({ name, address }) =>
+        name.toLowerCase().includes(searchValueLowerCase) || address.toLowerCase().includes(searchValueLowerCase)
     );
 
     if (filteredContacts.length > 0) {

@@ -9,11 +9,9 @@ import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { white } from 'src/config/styles';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { useSelectedBakerSelector } from 'src/store/baking/baking-selectors';
 import { removeTokenAction } from 'src/store/wallet/wallet-actions';
 import { formatSize } from 'src/styles/format-size';
@@ -40,19 +38,13 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
   const dispatch = useDispatch();
   const styles = useTokenScreenContentContainerStyles();
   const apyStyles = useApyStyles();
-  const navigateToModal = useNavigateToModal();
   const navigateToScreen = useNavigateToScreen();
   const currentBaker = useSelectedBakerSelector();
   const { trackEvent } = useAnalytics();
   const isTezos = token.address === '';
   const tokenSlug = getTokenSlug(token);
-  const { isDcpNode } = useNetworkInfo();
 
-  const navigationFlow = () => {
-    isDcpNode && !currentBaker
-      ? navigateToModal(ModalsEnum.SelectBaker)
-      : navigateToScreen({ screen: ScreensEnum.Delegation });
-  };
+  const navigationFlow = () => navigateToScreen({ screen: ScreensEnum.Delegation });
 
   const { rate: apyRate = INITIAL_APR_VALUE, link: apyLink } = useTokenApyInfo(tokenSlug);
 

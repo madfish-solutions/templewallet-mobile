@@ -1,17 +1,10 @@
 # AGENTS.md – Working Effectively In This Repo
 
-This repository is the Temple Wallet mobile app codebase. Temple Wallet is an open-source wallet for Tezos blockchain, focusing on security and seamless UX.
+This repository is the Temple Wallet mobile app codebase. Temple Wallet is an open-source wallet for Tezos blockchain (in transition to support EVM-compatible blockchains), focusing on security and seamless UX.
 
-Tech stack: React Native CLI 0.83.1, React v19, TypeScript, Redux Toolkit, RxJS with Redux Observable
+Tech stack: React Native CLI 0.85, React v19.2, TypeScript, Redux Toolkit, RxJS with Redux Observable
 
 Optimize for clarity, polish, and performance in every change.
-
-## Core Tenets (Do Not Violate)
-1. Polish is a feature. Visual and interaction quality matter as much as correctness.
-2. Performance is a feature. Avoid UI hitches, excessive main-thread work, and unnecessary re-rendering.
-3. Stay aligned with the existing architecture. Prefer small, targeted improvements over new abstractions.
-4. Do not quietly change security-sensitive behavior. Call it out.
-5. When instructions are unclear or conflicting, ask for clarification.
 
 ## Commands
 - `yarn start`: Start Metro server

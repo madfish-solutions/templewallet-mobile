@@ -1,13 +1,13 @@
 import { uniq } from 'lodash-es';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { ActivityGroup } from '../interfaces/activity.interface';
-import { UseActivityInterface } from '../interfaces/use-activity.interface';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useSelectedAccountSelector } from '../store/wallet/wallet-selectors';
-import { useAnalytics } from '../utils/analytics/use-analytics.hook';
-import { isDefined } from '../utils/is-defined';
-import { loadActivity } from '../utils/token-operations.util';
+import { ActivityGroup } from 'src/interfaces/activity.interface';
+import { UseActivityInterface } from 'src/interfaces/use-activity.interface';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isDefined } from 'src/utils/is-defined';
+import { loadActivity } from 'src/utils/token-operations.util';
 
 interface ContractActivityState {
   activities: Array<ActivityGroup>;
@@ -16,9 +16,9 @@ interface ContractActivityState {
 }
 
 export const useContractActivity = (tokenSlug?: string): UseActivityInterface => {
-  const selectedAccount = useSelectedAccountSelector();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
+  const selectedAccount = useAccount();
   const { trackErrorEvent } = useAnalytics();
+  const selectedTezosAddress = getAccountAddressForTezos(selectedAccount);
 
   const lastActivityRef = useRef<string>('');
 
@@ -33,12 +33,11 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
       let fetchedActivities: Array<ActivityGroup> = [];
       let isError = false;
       try {
-        fetchedActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug);
+        fetchedActivities = await loadActivity(selectedAccount, tokenSlug);
       } catch (error) {
         console.error(error);
-        trackErrorEvent('InitialLoadContractActivityError', error, [selectedAccount.publicKeyHash], {
+        trackErrorEvent('InitialLoadContractActivityError', error, selectedTezosAddress ? [selectedTezosAddress] : [], {
           tokenSlug,
-          selectedRpcUrl,
           refresh
         });
         isError = true;
@@ -63,7 +62,7 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         });
       }
     },
-    [selectedRpcUrl, selectedAccount, tokenSlug, trackErrorEvent]
+    [selectedAccount, selectedTezosAddress, tokenSlug, trackErrorEvent]
   );
 
   useEffect(() => {
@@ -88,14 +87,13 @@ export const useContractActivity = (tokenSlug?: string): UseActivityInterface =>
         if (!isLoading) {
           setState(prev => ({ ...prev, isLoading: true }));
 
-          newActivities = await loadActivity(selectedRpcUrl, selectedAccount, tokenSlug, lastItem);
+          newActivities = await loadActivity(selectedAccount, tokenSlug, lastItem);
         }
       }
     } catch (error) {
       console.error(error);
-      trackErrorEvent('HandleUpdateContractActivityError', error, [selectedAccount.publicKeyHash], {
+      trackErrorEvent('HandleUpdateContractActivityError', error, selectedTezosAddress ? [selectedTezosAddress] : [], {
         tokenSlug,
-        selectedRpcUrl,
         lastItem
       });
     } finally {

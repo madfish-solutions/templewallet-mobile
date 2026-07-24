@@ -1,8 +1,8 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
-import { DCP_RPC, OLD_OTHER_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
+import { OLD_OTHER_RPC_URLS, TEMPLE_RPC } from '../../utils/rpc/rpc-list.ts';
 import { resetKeychainOnInstallAction } from '../root-state.actions';
 
 import {
@@ -135,11 +135,7 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
   }));
 
   builder.addCase(setOnRampOverlayStateAction, (state, { payload: onRampOverlayState }) => {
-    if (state.selectedRpcUrl !== DCP_RPC.url) {
-      return { ...state, onRampOverlayState };
-    }
-
-    return state;
+    state.onRampOverlayState = onRampOverlayState;
   });
 
   builder.addCase(walletOpenedAction, state => ({

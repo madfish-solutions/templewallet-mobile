@@ -3,11 +3,11 @@ import BigNumber from 'bignumber.js';
 import React, { memo, useMemo, useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View, Image } from 'react-native';
 import { SvgUri, SvgXml } from 'react-native-svg';
-import { useDispatch } from 'react-redux';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { LinkWithIcon } from 'src/components/link-with-icon/link-with-icon';
@@ -24,14 +24,14 @@ import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmatio
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
+import { dispatch } from 'src/store';
 import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
 import {
   useCollectibleDetailsLoadingSelector,
   useCollectibleDetailsSelector
 } from 'src/store/collectibles/collectibles-selectors';
-import { useSelectedRpcUrlSelector } from 'src/store/settings/settings-selectors';
 import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useAssetBalanceSelector, useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAssetBalanceSelector, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -66,15 +66,16 @@ export const CollectibleModal = memo(() => {
   const navigateToModal = useNavigateToModal();
 
   const [address, id] = fromTokenSlug(slug);
-  const accountPkh = useCurrentAccountPkhSelector();
-  const selectedRpc = useSelectedRpcUrlSelector();
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
 
   const { width } = Dimensions.get('window');
   const imageSize = width - formatSize(32);
 
   usePageAnalytic(ModalsEnum.CollectibleModal);
-
-  const dispatch = useDispatch();
 
   const styles = useCollectibleModalStyles();
 
@@ -130,15 +131,14 @@ export const CollectibleModal = memo(() => {
     return {
       title: `Buy for ${formatNumber(priceToDisplay)} ${purchaseCurrency.symbol}`,
       onPress: () =>
-        void buildBuyCollectibleParams(createTezosToolkit(selectedRpc), accountPkh, listing, purchaseCurrency).then(
-          opParams =>
-            navigateToModal(ModalsEnum.Confirmation, {
-              type: ConfirmationTypeEnum.InternalOperations,
-              opParams
-            })
+        void buildBuyCollectibleParams(createTezosToolkit(), tezosAddress, listing, purchaseCurrency).then(opParams =>
+          navigateToModal(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams
+          })
         )
     };
-  }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, accountPkh, selectedRpc, navigateToModal]);
+  }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, tezosAddress, navigateToModal]);
 
   const name = metadata?.name ?? details?.name;
   let artifactUri: string | undefined;

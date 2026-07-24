@@ -1,26 +1,31 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 import { EMPTY, Subject } from 'rxjs';
 
-import { useNavigation } from '../navigator/hooks/use-navigation.hook';
-import { useSelectedRpcUrlSelector } from '../store/settings/settings-selectors';
-import { useAccountsListSelector } from '../store/wallet/wallet-selectors';
-import { useAnalytics } from '../utils/analytics/use-analytics.hook';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 
 import { ImportWalletParams } from './interfaces/import-wallet-params.interface';
 import { RevealSecretKeyParams } from './interfaces/reveal-secret-key-params.interface';
 import { RevealSeedPhraseParams } from './interfaces/reveal-seed-phrase.params';
+import {
+  AccountImportType,
+  createAccountImportSubscriptions,
+  CreateImportedChainAccountFromPrivateKeyParams,
+  CreateImportedChainAccountFromPrivateKeyRequest,
+  CreateImportedChainAccountFromSeedParams,
+  CreateImportedChainAccountFromSeedRequest,
+  CreateImportedMultichainAccountFromSeedParams,
+  CreateImportedMultichainAccountFromSeedRequest
+} from './utils/create-account-import-subscriptions.util';
 import { createHdAccountSubscription } from './utils/create-hd-account-subscription.util';
-import { createImportAccountSubscription } from './utils/create-import-account-subscription.util';
 import { enableBiometryPasswordSubscription } from './utils/enable-biometry-password-subscription.util';
 import { importWalletSubscription } from './utils/import-wallet-subscription.util';
 import { revealSecretsSubscription } from './utils/reveal-secrets-subscription.util';
 
 export const useShelter = () => {
-  const dispatch = useDispatch();
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
   const { dispatch: navigationDispatch } = useNavigation();
-  const selectedRpcUrl = useSelectedRpcUrlSelector();
   const { trackErrorEvent } = useAnalytics();
 
   const importWallet$ = useMemo(() => new Subject<ImportWalletParams>(), []);
@@ -28,35 +33,46 @@ export const useShelter = () => {
   const revealSecretKey$ = useMemo(() => new Subject<RevealSecretKeyParams>(), []);
   const revealSeedPhrase$ = useMemo(() => new Subject<RevealSeedPhraseParams>(), []);
   const enableBiometryPassword$ = useMemo(() => new Subject<string>(), []);
-  const createImportedAccount$ = useMemo(
-    () => new Subject<{ privateKey: string; name: string; saplingSpendingKey?: string }>(),
+  const createImportedChainAccountFromPrivateKey$ = useMemo(
+    () => new Subject<CreateImportedChainAccountFromPrivateKeyRequest>(),
+    []
+  );
+  const createImportedChainAccountFromSeed$ = useMemo(
+    () => new Subject<CreateImportedChainAccountFromSeedRequest>(),
+    []
+  );
+  const createImportedMultichainAccountFromSeed$ = useMemo(
+    () => new Subject<CreateImportedMultichainAccountFromSeedRequest>(),
     []
   );
 
   useEffect(() => {
     const subscriptions = [
-      importWalletSubscription(importWallet$, dispatch),
-      createHdAccountSubscription(createHdAccount$, accounts, dispatch),
-      createImportAccountSubscription(
-        createImportedAccount$,
+      importWalletSubscription(importWallet$),
+      createHdAccountSubscription(createHdAccount$, accounts),
+      createAccountImportSubscriptions(
+        createImportedChainAccountFromPrivateKey$,
+        createImportedChainAccountFromSeed$,
+        createImportedMultichainAccountFromSeed$,
         accounts,
-        dispatch,
         navigationDispatch,
-        selectedRpcUrl,
-        (error, accountPkh) =>
-          trackErrorEvent('CreateImportAccountError', error, accountPkh ? [accountPkh] : [], { selectedRpcUrl })
+        (error, accountPkh) => trackErrorEvent('CreateImportAccountError', error, accountPkh ? [accountPkh] : [])
       ),
-      revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$, dispatch),
-      enableBiometryPasswordSubscription(enableBiometryPassword$, dispatch)
+      revealSecretsSubscription(revealSecretKey$, revealSeedPhrase$),
+      enableBiometryPasswordSubscription(enableBiometryPassword$)
     ];
 
     return () => subscriptions.forEach(subscription => subscription.unsubscribe());
   }, [
-    dispatch,
-    importWallet$,
-    revealSecretKey$,
+    accounts,
     createHdAccount$,
-    accounts.length,
+    createImportedChainAccountFromPrivateKey$,
+    createImportedChainAccountFromSeed$,
+    createImportedMultichainAccountFromSeed$,
+    enableBiometryPassword$,
+    importWallet$,
+    navigationDispatch,
+    revealSecretKey$,
     revealSeedPhrase$,
     trackErrorEvent
   ]);
@@ -74,8 +90,32 @@ export const useShelter = () => {
 
   const enableBiometryPassword = (password: string) => enableBiometryPassword$.next(password);
 
-  const createImportedAccount = (params: { privateKey: string; name: string; saplingSpendingKey?: string }) =>
-    createImportedAccount$.next(params);
+  const createImportedChainAccountFromPrivateKey = useCallback(
+    (params: CreateImportedChainAccountFromPrivateKeyParams) =>
+      createImportedChainAccountFromPrivateKey$.next({
+        ...params,
+        type: AccountImportType.ChainPrivateKey
+      }),
+    [createImportedChainAccountFromPrivateKey$]
+  );
+
+  const createImportedChainAccountFromSeed = useCallback(
+    (params: CreateImportedChainAccountFromSeedParams) =>
+      createImportedChainAccountFromSeed$.next({
+        ...params,
+        type: AccountImportType.ChainSeed
+      }),
+    [createImportedChainAccountFromSeed$]
+  );
+
+  const createImportedMultichainAccountFromSeed = useCallback(
+    (params: CreateImportedMultichainAccountFromSeedParams) =>
+      createImportedMultichainAccountFromSeed$.next({
+        ...params,
+        type: AccountImportType.MultichainSeed
+      }),
+    [createImportedMultichainAccountFromSeed$]
+  );
 
   return {
     importWallet,
@@ -83,6 +123,8 @@ export const useShelter = () => {
     revealSecretKey,
     revealSeedPhrase,
     enableBiometryPassword,
-    createImportedAccount
+    createImportedChainAccountFromPrivateKey,
+    createImportedChainAccountFromSeed,
+    createImportedMultichainAccountFromSeed
   };
 };

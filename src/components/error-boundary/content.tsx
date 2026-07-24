@@ -29,6 +29,7 @@ import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
 import { useErrorBoundaryContentStyles } from './content.styles';
+import { BoundaryError } from './errors';
 
 interface ErrorBoundaryContentProps {
   error: Error;
@@ -43,6 +44,7 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
     const errorMessage = isString(whileMessage)
       ? `Oops! Something unexpected happened while ${whileMessage}.`
       : 'Oops! Something unexpected happened.';
+    const isBoundaryError = error instanceof BoundaryError;
     const styles = useErrorBoundaryContentStyles();
     const colors = useColors();
 
@@ -52,6 +54,7 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
       const defaultTheme = Appearance.getColorScheme() === 'dark' ? ThemesEnum.dark : ThemesEnum.light;
 
       dispatch(changeTheme(defaultTheme));
+      // TODO: Implement resetting network settings
       dispatch(setSelectedRpcUrl(RpcList[0].url));
       dispatch(setFiatCurrency(FiatCurrenciesEnum.USD));
       dispatch(setSlippage(0.25));
@@ -71,8 +74,10 @@ export const ErrorBoundaryContent = memo<ErrorBoundaryContentProps>(
               color={colors.destructive}
               style={styles.icon}
             />
-            <Text style={styles.errorText}>{errorMessage} Even our app wasn't ready for that move.</Text>
-            <Text style={styles.errorSubText}>{error.message ?? 'No error message'}</Text>
+            <Text style={styles.errorText}>
+              {isBoundaryError ? error.message : `${errorMessage} Even our app wasn't ready for that move.`}
+            </Text>
+            {!isBoundaryError && <Text style={styles.errorSubText}>{error.message ?? 'No error message'}</Text>}
 
             <ButtonsContainer style={styles.buttonsRow}>
               {isDefined(error.stack) && (

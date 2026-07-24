@@ -42,7 +42,8 @@ export type MainStackParams =
   | MainStackParamsPart<ScreensEnum.DAppsSettings>
   | MainStackParamsPart<ScreensEnum.FiatSettings>
   | MainStackParamsPart<ScreensEnum.SecureSettings>
-  | MainStackParamsPart<ScreensEnum.NodeSettings>
+  | MainStackParamsPart<ScreensEnum.Networks>
+  | MainStackParamsPart<ScreensEnum.NetworkSettings>
   | MainStackParamsPart<ScreensEnum.Backup>
   | MainStackParamsPart<ScreensEnum.ManualBackup>
   | MainStackParamsPart<ScreensEnum.CloudBackup>

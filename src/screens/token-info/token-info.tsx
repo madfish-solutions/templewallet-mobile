@@ -5,10 +5,10 @@ import { Divider } from 'src/components/divider/divider';
 import { Label } from 'src/components/label/label';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { StyledTextInput } from 'src/components/styled-text-input/styled-text-input';
-import { useTokenType } from 'src/hooks/use-token-type';
-import { TokenTypeEnum } from 'src/interfaces/token-type.enum';
+import { useTokenStandard } from 'src/hooks/use-token-standard';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
+import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -18,7 +18,7 @@ export const TokenInfo = () => {
   const { token } = useScreenParams<ScreensEnum.TokenInfo>();
 
   const styles = useTokenInfoStyles();
-  const { tokenType, loading } = useTokenType(token.address);
+  const { tokenStandard, loading } = useTokenStandard(token.address);
 
   const symbol = token.symbol;
   const isTezos = token.address === '';
@@ -37,7 +37,7 @@ export const TokenInfo = () => {
           </TouchableOpacity>
           <Divider />
 
-          {isDefined(token.id) && !loading && tokenType === TokenTypeEnum.FA_2 && (
+          {isDefined(token.id) && !loading && tokenStandard === TezosTokenStandardsEnum.Fa2 && (
             <>
               <Label label="Token ID" description={`Token Id of a ${symbol} token contract.`} />
               <StyledTextInput placeholder={token.id.toString()} editable={false} />

@@ -10,15 +10,14 @@ import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom
 import { Divider } from 'src/components/divider/divider';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { HeaderCardActionButtons } from 'src/components/header-card-action-buttons/header-card-action-buttons';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { TokenEquityValue } from 'src/components/token-equity-value/token-equity-value';
+import { useEtherlinkDataLoading } from 'src/hooks/evm/use-etherlink-data-loading.hook';
 import { useApkBuildIdEvent } from 'src/hooks/use-apk-build-id-event';
 import { usePushNotificationsEvent } from 'src/hooks/use-push-notifications-event';
 import { KoloCryptoCardPreview } from 'src/modals/kolo-card';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToModal, useNavigateToScreen, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal, useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { addBlacklistedContactAction } from 'src/store/contact-book/contact-book-actions';
 import {
   useContactCandidateAddressSelector,
@@ -29,8 +28,9 @@ import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsl
 import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
-import { useAccountsListSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
@@ -46,10 +46,8 @@ export const Wallet = memo(() => {
   const { pageEvent } = useAnalytics();
   const navigateToModal = useNavigateToModal();
   const { dispatch: navigationDispatch, getState } = useNavigation();
-  const navigateToScreen = useNavigateToScreen();
-
   const isAnyBackupMade = useIsAnyBackupMadeSelector();
-  const accounts = useAccountsListSelector();
+  const accounts = useAllAccounts();
   const tezosToken = useTezosTokenOfCurrentAccount();
   const contactCandidateAddress = useContactCandidateAddressSelector();
   const ignoredAddresses = useIgnoredAddressesSelector();
@@ -65,6 +63,7 @@ export const Wallet = memo(() => {
 
   useApkBuildIdEvent();
   usePushNotificationsEvent();
+  useEtherlinkDataLoading();
 
   const handleCloseButtonPress = () => dispatch(addBlacklistedContactAction(contactCandidateAddress));
 
@@ -73,7 +72,7 @@ export const Wallet = memo(() => {
       contactCandidateAddress &&
       !ignoredAddresses.includes(contactCandidateAddress) &&
       !contactsAddresses.includes(contactCandidateAddress) &&
-      !accounts.find(({ publicKeyHash }) => publicKeyHash === contactCandidateAddress)
+      !accounts.find(account => getAccountAddressForTezos(account) === contactCandidateAddress)
     ) {
       bottomSheetController.open();
     }
@@ -113,14 +112,6 @@ export const Wallet = memo(() => {
 
           <Divider />
 
-          <TouchableIcon
-            name={IconNameEnum.QrScanner}
-            onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
-            testID={WalletSelectors.scanQRButton}
-          />
-
-          <Divider size={formatSize(24)} />
-
           <NotificationsBell />
 
           <Divider size={formatSize(24)} />
@@ -159,7 +150,7 @@ export const Wallet = memo(() => {
           onPress={() => {
             navigateToModal(ModalsEnum.AddContact, {
               name: '',
-              publicKeyHash: contactCandidateAddress
+              address: contactCandidateAddress
             });
             bottomSheetController.close();
           }}

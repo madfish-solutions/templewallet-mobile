@@ -11,6 +11,7 @@ import { NotificationCounter } from 'src/components/notification-counter/notific
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
 import { Quote } from 'src/components/quote/quote';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
+import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
@@ -21,6 +22,7 @@ import { WhiteContainerDivider } from 'src/components/white-container/white-cont
 import { WhiteContainerText } from 'src/components/white-container/white-container-text/white-container-text';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { useResetDataHandler } from 'src/hooks/use-reset-data-handler.hook';
+import { Account } from 'src/interfaces/account.interfaces.ts';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
@@ -30,7 +32,7 @@ import {
   useIsAnyBackupMadeSelector,
   useThemeSelector
 } from 'src/store/settings/settings-selectors';
-import { useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -55,7 +57,9 @@ export const Settings = () => {
   const { trackEvent } = useAnalytics();
 
   const theme = useThemeSelector();
-  const account = useSelectedAccountSelector();
+
+  // Can become undefined during reset
+  const account = useAccount() as Account | undefined;
 
   const selectedThemeIndex = theme === ThemesEnum.light ? 0 : 1;
 
@@ -83,7 +87,7 @@ export const Settings = () => {
     }
   }, [trackEvent]);
 
-  const showBackupButton = !isAnyBackupMade || account.type === AccountTypeEnum.WATCH_ONLY_DEBUG;
+  const showBackupButton = !isAnyBackupMade || account?.type === AccountTypeEnum.WATCH_ONLY_DEBUG;
 
   return (
     <>
@@ -99,11 +103,23 @@ export const Settings = () => {
 
           <WhiteContainer>
             <WhiteContainerAction
+              onPress={() => navigateToScreen({ screen: ScreensEnum.ScanQrCode })}
+              testID={SettingsSelectors.scanQRButton}
+            >
+              <WhiteContainerText text="Scan QR code" />
+              <Icon name={IconNameEnum.QrScanner} size={formatSize(24)} />
+            </WhiteContainerAction>
+          </WhiteContainer>
+
+          <Divider size={formatSize(16)} />
+
+          <WhiteContainer>
+            <WhiteContainerAction
               onPress={() => navigateToScreen({ screen: ScreensEnum.ManageAccounts })}
               testID={SettingsSelectors.accountsButton}
             >
               <View style={styles.actionsContainer}>
-                <RobotIcon seed={account.publicKeyHash} size={formatSize(32)} />
+                {account && <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(32)} />}
                 <WhiteContainerText text="Accounts" />
               </View>
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
@@ -200,10 +216,10 @@ export const Settings = () => {
             <WhiteContainerDivider />
 
             <WhiteContainerAction
-              onPress={() => navigateToScreen({ screen: ScreensEnum.NodeSettings })}
-              testID={SettingsSelectors.defaultNodeRPCButton}
+              onPress={() => navigateToScreen({ screen: ScreensEnum.Networks })}
+              testID={SettingsSelectors.networksButton}
             >
-              <WhiteContainerText text="Default node (RPC)" />
+              <WhiteContainerText text="Networks" />
               <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
             </WhiteContainerAction>
           </WhiteContainer>

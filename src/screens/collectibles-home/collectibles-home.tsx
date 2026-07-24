@@ -2,30 +2,37 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { useDispatch } from 'react-redux';
+import { useSharedValue } from 'react-native-reanimated';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
 import { CheckboxIcon } from 'src/components/checkbox-icon/checkbox-icon';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { ImageWithIndicator } from 'src/components/image';
 import { Search } from 'src/components/search/search';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { useEtherlinkDataLoading } from 'src/hooks/evm/use-etherlink-data-loading.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
+import { dispatch } from 'src/store';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
 import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
-import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
+import { useCurrentAccountCollectibles, useCurrentAccountEvmCollectibles } from 'src/utils/assets/hooks';
+import { DisplayedCollectible } from 'src/utils/assets/types';
 import { useDidUpdate } from 'src/utils/hooks';
 import { formatObjktLogoUri } from 'src/utils/image.utils';
+import { isString } from 'src/utils/is-string';
+import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
@@ -34,11 +41,18 @@ export const CollectiblesHome = memo(() => {
   const navigateToScreen = useNavigateToScreen();
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
-  const dispatch = useDispatch();
-
   const collections = useCreatedCollectionsSelector();
-  const collectibles = useCurrentAccountCollectibles(true);
-  const accountPkh = useCurrentAccountPkhSelector();
+  const tezosCollectibles = useCurrentAccountCollectibles(true);
+  const evmCollectibles = useCurrentAccountEvmCollectibles();
+  const tezosAddress = useAccountAddressForTezos();
+  const evmAddress = useAccountAddressForEvm();
+
+  useEtherlinkDataLoading();
+
+  if (!tezosAddress && !evmAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const styles = useCollectiblesHomeStyles();
@@ -46,6 +60,8 @@ export const CollectiblesHome = memo(() => {
   const [screenHeight, setScreenHeight] = useState(0);
   const [headerHeight, setHeaderHeight] = useState(0);
   const [profileHeight, setProfileHeight] = useState(0);
+
+  const hasCollections = collections.length > 0;
 
   const snapPoints = useMemo(() => {
     const firstSnapPoint = screenHeight - headerHeight;
@@ -55,14 +71,68 @@ export const CollectiblesHome = memo(() => {
 
     const secondSnapPoint = firstSnapPoint + profileHeight;
 
-    return firstSnapPoint === secondSnapPoint ? [firstSnapPoint] : [firstSnapPoint, secondSnapPoint];
-  }, [screenHeight, headerHeight, profileHeight]);
+    return !hasCollections || firstSnapPoint === secondSnapPoint ? [firstSnapPoint] : [firstSnapPoint, secondSnapPoint];
+  }, [screenHeight, headerHeight, profileHeight, hasCollections]);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const animatedIndex = useSharedValue(-1);
+  const firstSnapPoint = snapPoints?.[0];
+  // gorhom v5 + reanimated v4: the mount animation sometimes never starts, leaving the
+  // sheet stuck closed off-screen (animatedIndex stays -1), detect it and snap into place manually
+  useEffect(() => {
+    if (firstSnapPoint == null) {
+      return;
+    }
+
+    let ticks = 0;
+    const id = setInterval(() => {
+      if (animatedIndex.value > -0.9 || ++ticks > 10) {
+        clearInterval(id);
+
+        return;
+      }
+
+      bottomSheetRef.current?.snapToPosition(firstSnapPoint);
+    }, 300);
+
+    return () => clearInterval(id);
+  }, [firstSnapPoint, animatedIndex]);
 
   useEffect(() => {
-    dispatch(loadCollectionsActions.submit(accountPkh));
-  }, [accountPkh, dispatch]);
+    if (tezosAddress != null) {
+      dispatch(loadCollectionsActions.submit(tezosAddress));
+    }
+  }, [tezosAddress]);
 
-  const { setSearchValue, filteredAssetsList } = useFilteredAssetsList(collectibles);
+  const {
+    setSearchValue,
+    searchValue,
+    filteredAssetsList: filteredTezosCollectibles
+  } = useFilteredAssetsList(tezosCollectibles);
+
+  const collectibles = useMemo<DisplayedCollectible[]>(() => {
+    const searchValueLowercased = searchValue?.toLowerCase();
+    const filteredEvmCollectibles = isString(searchValueLowercased)
+      ? evmCollectibles.filter(({ metadata, tokenId }) =>
+          isAssetSearched(
+            {
+              name: metadata?.collectibleName ?? metadata?.name ?? tokenId,
+              symbol: metadata?.symbol ?? '',
+              address: metadata?.address
+            },
+            searchValueLowercased
+          )
+        )
+      : evmCollectibles;
+
+    const tezosDisplayed: DisplayedCollectible[] = filteredTezosCollectibles.map(asset => ({
+      chainKind: TempleChainKind.Tezos,
+      slug: asset.slug,
+      asset
+    }));
+
+    return tezosDisplayed.concat(filteredEvmCollectibles);
+  }, [filteredTezosCollectibles, evmCollectibles, searchValue]);
 
   const handleSwitchShowInfo = () => void dispatch(switchIsShowCollectibleInfoAction());
 
@@ -73,7 +143,7 @@ export const CollectiblesHome = memo(() => {
 
   const collectionsFlatListRef = useRef<FlatList<Collection>>(null);
   // On collections number decrease scroll might not reposition & items remain off-view
-  useDidUpdate(() => void collectionsFlatListRef.current?.scrollToOffset({ offset: 0 }), [accountPkh]);
+  useDidUpdate(() => void collectionsFlatListRef.current?.scrollToOffset({ offset: 0 }), [tezosAddress]);
 
   return (
     <View style={styles.screen} onLayout={event => void setScreenHeight(event.nativeEvent.layout.height)}>
@@ -112,6 +182,8 @@ export const CollectiblesHome = memo(() => {
 
       {snapPoints ? (
         <BottomSheet
+          ref={bottomSheetRef}
+          animatedIndex={animatedIndex}
           enableDynamicSizing={false}
           snapPoints={snapPoints}
           handleStyle={styles.handleStyle}
@@ -136,7 +208,7 @@ export const CollectiblesHome = memo(() => {
             </View>
           </View>
 
-          <CollectiblesList collectibles={filteredAssetsList} isShowInfo={isShowCollectibleInfo} />
+          <CollectiblesList collectibles={collectibles} showInfo={isShowCollectibleInfo} />
         </BottomSheet>
       ) : null}
     </View>

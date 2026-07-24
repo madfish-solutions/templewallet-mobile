@@ -1,12 +1,15 @@
 import BottomSheet from '@gorhom/bottom-sheet';
 import { Ref, useMemo, useRef } from 'react';
+import { WithSpringConfig, WithTimingConfig } from 'react-native-reanimated';
 
 import { isDefined } from 'src/utils/is-defined';
 
-interface BottomSheetController {
+type BottomSheetCallback = (config?: WithSpringConfig | WithTimingConfig) => void;
+
+export interface BottomSheetController {
   ref: Ref<BottomSheet>;
-  open: EmptyFn;
-  close: EmptyFn;
+  open: BottomSheetCallback;
+  close: BottomSheetCallback;
 }
 
 export interface BottomSheetControllerProps {
@@ -16,8 +19,8 @@ export interface BottomSheetControllerProps {
 export const useBottomSheetController = (): BottomSheetController => {
   const ref = useRef<BottomSheet>(null);
 
-  const open = () => void (isDefined(ref.current) && ref.current.expand());
-  const close = () => void (isDefined(ref.current) && ref.current.close());
+  const open: BottomSheetCallback = config => void (isDefined(ref.current) && ref.current.expand(config));
+  const close: BottomSheetCallback = config => void (isDefined(ref.current) && ref.current.close(config));
 
-  return useMemo(() => ({ ref, open, close }), []);
+  return useMemo<BottomSheetController>(() => ({ ref, open, close }), []);
 };

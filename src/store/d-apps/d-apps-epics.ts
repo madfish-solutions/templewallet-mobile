@@ -11,7 +11,6 @@ import { CustomDAppsInfo } from 'src/interfaces/custom-dapps-info.interface';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
-import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import { emptyAction } from '../root-state.actions';
 import type { AnyActionEpic } from '../types';
@@ -118,10 +117,9 @@ const loadDAppsListEpic: AnyActionEpic = (action$, state$) =>
 const loadTokensApyEpic: AnyActionEpic = (action$, state$) =>
   action$.pipe(
     ofType(loadTokensApyActions.submit),
-    withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      forkJoin([fetchUBTCApr$(rpcUrl), fetchUUSDCApr$(rpcUrl)]).pipe(
+    switchMap(([, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
+      forkJoin([fetchUBTCApr$(), fetchUUSDCApr$()]).pipe(
         map(responses => loadTokensApyActions.success(Object.assign({}, ...responses))),
         catchError(err => {
           if (isAnalyticsEnabled) {

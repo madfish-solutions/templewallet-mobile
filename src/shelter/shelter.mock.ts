@@ -1,9 +1,10 @@
 import Keychain from 'react-native-keychain';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
-import { mockHdAccount, mockNewHdAccount } from '../interfaces/account.interface.mock';
-import { mockCorrectPassword } from '../mocks/react-native-keychain.mock';
-import { getBiometryKeychainOptions } from '../utils/keychain.utils';
+import { mockHdAccount, mockNewHdAccount } from 'src/interfaces/account.interface.mock';
+import { Account } from 'src/interfaces/account.interfaces';
+import { mockCorrectPassword } from 'src/mocks/react-native-keychain.mock';
+import { getBiometryKeychainOptions } from 'src/utils/keychain.utils';
 
 export const mockRevealedSecretKey = 'mockRevealedSecretKey';
 export const mockRevealedSeedPhrase = 'mockRevealedSeedPhrase';
@@ -23,20 +24,21 @@ export const mockShelter = {
   shouldDoSomeMigrations: jest.fn(() => Promise.resolve(true)),
   isLocked$: new BehaviorSubject<boolean>(true),
   getIsLocked: () => true,
-  unlockApp$: jest.fn((password: string, _activeAccountPkh: string, _hdIndex: number | undefined) => {
+  unlockApp$: jest.fn((password: string, _account?: Account) => {
     const isCorrectPassword = password === mockCorrectPassword;
     mockShelter.isLocked$.next(!isCorrectPassword);
 
     return of(isCorrectPassword);
   }),
-  importHdAccount$: jest.fn(() => of([mockHdAccount])),
+  importWallet$: jest.fn(() => of([mockHdAccount])),
   enableBiometryPassword$: jest.fn((password: string) => of(password === mockCorrectPassword)),
   createHdAccount$: jest.fn(() => of(mockNewHdAccount)),
   saveSaplingSpendingKey$: jest.fn(() => of(undefined)),
-  revealSecretKey$: jest.fn(() => of(mockRevealedSecretKey)),
+  revealAccountPrivateKey$: jest.fn(() => of(mockRevealedSecretKey)),
   revealSeedPhrase$: jest.fn(() => of(mockRevealedSeedPhrase)),
   isPasswordCorrect$: jest.fn((password: string) => of(password === mockCorrectPassword)),
-  createImportedAccount$: jest.fn(() => of(mockHdAccount)),
+  createImportedChainAccount$: jest.fn<Observable<Account>, []>(() => of(mockHdAccount)),
+  createImportedMultichainAccount$: jest.fn(() => of(mockHdAccount)),
   doMigrations$: jest.fn(() => of(undefined))
 };
 

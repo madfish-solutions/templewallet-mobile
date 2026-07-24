@@ -5,7 +5,6 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { LIMIT_DAPPS_FEATURES, LIMIT_FIN_FEATURES, LIMIT_NFT_FEATURES } from 'src/config/system';
-import { useNetworkInfo } from 'src/hooks/use-network-info.hook';
 import { ScreensOrModalsEnum } from 'src/interfaces/stacks.interface';
 import {
   dAppsStackScreens,
@@ -30,8 +29,6 @@ interface Props {
 
 export const TabBar = memo<Props>(({ currentRouteName }) => {
   const styles = useTabBarStyles();
-
-  const { isDcpNode } = useNetworkInfo();
 
   const swapScreenParams = useSwapScreenParams(currentRouteName);
 
@@ -70,7 +67,6 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
               routeName={ScreensEnum.SwapScreen}
               swapScreenParams={swapScreenParams}
               focused={isStackFocusedMemo(swapStackScreens)}
-              disabled={isDcpNode}
               disabledOnPress={handleDisabledPress}
             />
           )}
@@ -80,7 +76,6 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
             iconWidth={formatSize(32)}
             routeName={ScreensEnum.DApps}
             focused={isStackFocusedMemo(dAppsStackScreens)}
-            disabled={isDcpNode}
             disabledOnPress={handleDisabledPress}
           />
           <TabBarButton

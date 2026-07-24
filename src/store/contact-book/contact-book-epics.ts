@@ -7,7 +7,6 @@ import { ofType, toPayload } from 'ts-action-operators';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { loadTezosBalance$ } from 'src/utils/token-balance.utils';
-import { withSelectedRpcUrl } from 'src/utils/wallet.utils';
 
 import type { RootState } from '../types';
 
@@ -17,20 +16,13 @@ const loadContactTezosBalanceEpic = (action$: Observable<Action>, state$: Observ
   action$.pipe(
     ofType(loadContactTezosBalance.submit),
     toPayload(),
-    withSelectedRpcUrl(state$),
     withUserAnalyticsCredentials(state$),
-    switchMap(([[publicKeyHash, rpcUrl], { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
-      loadTezosBalance$(rpcUrl, publicKeyHash).pipe(
-        map(tezosBalance => loadContactTezosBalance.success({ publicKeyHash, tezosBalance })),
+    switchMap(([address, { isAnalyticsEnabled, userId, ABTestingCategory }]) =>
+      loadTezosBalance$(address).pipe(
+        map(tezosBalance => loadContactTezosBalance.success({ address, tezosBalance })),
         catchError(err => {
           if (isAnalyticsEnabled) {
-            sendErrorAnalyticsEvent(
-              'LoadContactTezosBalanceError',
-              err,
-              [publicKeyHash],
-              { userId, ABTestingCategory },
-              { rpcUrl }
-            );
+            sendErrorAnalyticsEvent('LoadContactTezosBalanceError', err, [address], { userId, ABTestingCategory });
           }
 
           return of(loadContactTezosBalance.fail(err.message));

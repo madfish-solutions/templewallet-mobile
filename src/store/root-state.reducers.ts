@@ -40,12 +40,16 @@ const persistConfigBlacklist: (keyof RootState)[] = [
   'farms',
   'savings',
   'collectibles',
-  'tokensMetadata'
+  'tokensMetadata',
+  'evmAssets',
+  'evmTokensMetadata',
+  'evmCollectiblesMetadata',
+  'evmExchangeRates'
 ];
 
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
-  version: 8,
+  version: 9,
   storage: SlicedAsyncStorage,
   stateReconciler: autoMergeLevel2,
   writeFailHandler: persistFailHandler,

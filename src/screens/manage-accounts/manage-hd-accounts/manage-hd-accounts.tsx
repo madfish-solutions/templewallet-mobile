@@ -9,10 +9,10 @@ import { Divider } from 'src/components/divider/divider';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAccountList } from 'src/hooks/use-filtered-account-list.hook';
-import { AccountInterface, emptyAccount } from 'src/interfaces/account.interface';
+import { Account } from 'src/interfaces/account.interfaces';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { useHdAccountListSelector, useSelectedAccountSelector } from 'src/store/wallet/wallet-selectors';
+import { useHDAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 
 import { InfoText } from '../info-text/info-text';
@@ -26,23 +26,27 @@ export const ManageHdAccounts = () => {
   const styles = useManageHdAccountsStyles();
   const revealSelectBottomSheetController = useBottomSheetController();
 
-  const selectedAccount = useSelectedAccountSelector();
-  const hdAccounts = useHdAccountListSelector();
+  const selectedAccount = useAccount();
+  const hdAccounts = useHDAccounts();
   const { debouncedSetSearch, filteredAccountList } = useFilteredAccountList(hdAccounts);
 
-  const [managedAccount, setManagedAccount] = useState(emptyAccount);
+  const [managedAccount, setManagedAccount] = useState<Account | null>(null);
 
-  const handleRevealButtonPress = (account: AccountInterface) => {
+  const handleRevealButtonPress = (account: Account) => {
     setManagedAccount(account);
     revealSelectBottomSheetController.open();
   };
 
   const handleRevealPrivateKeyButtonPress = () => {
+    if (!managedAccount) return;
+
     navigateToModal(ModalsEnum.RevealPrivateKey, { account: managedAccount });
     revealSelectBottomSheetController.close();
   };
 
   const handleRevealSeedPhraseButtonPress = () => {
+    if (!managedAccount) return;
+
     navigateToModal(ModalsEnum.RevealSeedPhrase, { account: managedAccount });
     revealSelectBottomSheetController.close();
   };
@@ -72,7 +76,7 @@ export const ManageHdAccounts = () => {
       <InfoText />
       <ScreenContainer>
         {filteredAccountList.map(account => (
-          <Fragment key={account.publicKeyHash}>
+          <Fragment key={account.id}>
             <ManageAccountItem
               account={account}
               selectedAccount={selectedAccount}
