@@ -1,5 +1,6 @@
 export enum ConfirmationTypeEnum {
   InternalOperations = 'InternalOperations',
   DAppOperations = 'DAppOperations',
-  RebalanceOperation = 'RebalanceOperation'
+  RebalanceOperation = 'RebalanceOperation',
+  EvmTransfer = 'EvmTransfer'
 }

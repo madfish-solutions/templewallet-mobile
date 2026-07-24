@@ -1,7 +1,10 @@
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
+import { CryptoLogo } from 'src/components/crypto-logo';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { TruncatedText } from 'src/components/truncated-text';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { formatSize } from 'src/styles/format-size';
 import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -35,6 +38,14 @@ export const TokenDropdownItem: FC<Props> = ({
   iconSize = formatSize(40)
 }) => {
   const styles = useTokenDropdownItemStyles();
+  const chainKind = (token as TokenInterface & { chainKind?: TempleChainKind }).chainKind;
+  const networkName = (token as TokenInterface & { networkName?: string }).networkName;
+  const chainLogoName =
+    chainKind === TempleChainKind.Tezos
+      ? CryptoLogoNameEnum.Tezos
+      : chainKind === TempleChainKind.EVM
+      ? CryptoLogoNameEnum.Etherlink
+      : undefined;
 
   const tokenNameTextStyle = useMemo(
     () => [styles.name, conditionalStyle(!isDefined(actionIconName), styles.fullWidthName)],
@@ -65,7 +76,14 @@ export const TokenDropdownItem: FC<Props> = ({
 
   return (
     <View style={styles.container}>
-      <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconSize} />
+      <View style={[styles.iconContainer, { width: iconSize, height: iconSize }]}>
+        <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconSize} />
+        {isDefined(chainLogoName) && (
+          <View style={styles.chainBadge}>
+            <CryptoLogo name={chainLogoName} size={formatSize(12)} internalSize={formatSize(12)} />
+          </View>
+        )}
+      </View>
       <Divider size={formatSize(8)} />
 
       <View style={styles.infoContainer}>
@@ -87,7 +105,7 @@ export const TokenDropdownItem: FC<Props> = ({
         </View>
 
         <View style={styles.infoRow}>
-          {isShowName && <TruncatedText style={tokenNameTextStyle}>{token.name}</TruncatedText>}
+          {isShowName && <TruncatedText style={tokenNameTextStyle}>{networkName ?? token.name}</TruncatedText>}
 
           <View style={styles.rightContainer}>
             {isShowName && <Divider size={formatSize(4)} />}

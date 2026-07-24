@@ -3,11 +3,13 @@ import { ParamsWithKind } from '@taquito/taquito';
 
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { SendAsset } from 'src/modals/send-modal/send-asset.types';
 
 export type ConfirmationModalParams =
   | InternalOperationsConfirmationModalParams
   | DAppOperationsConfirmationModalParams
-  | RebalanceConfirmationModalParams;
+  | RebalanceConfirmationModalParams
+  | EvmTransferConfirmationModalParams;
 
 export interface InternalOperationsConfirmationModalParams extends TestIdProps {
   type: ConfirmationTypeEnum.InternalOperations;
@@ -29,4 +31,12 @@ interface RebalanceConfirmationModalParams {
   opParams?: ParamsWithKind[];
   direction: 'shield' | 'unshield';
   amount: string;
+}
+
+export interface EvmTransferConfirmationModalParams {
+  type: ConfirmationTypeEnum.EvmTransfer;
+  accountId: string;
+  asset: SendAsset;
+  receiverAddress: HexString;
+  atomicAmount: string;
 }

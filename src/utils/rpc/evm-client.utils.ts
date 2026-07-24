@@ -3,13 +3,16 @@ import memoizee from 'memoizee';
 import {
   Chain,
   createPublicClient,
+  createWalletClient,
   extractChain,
   fallback,
   http,
   HttpTransportConfig,
   PublicClient,
-  Transport
+  Transport,
+  WalletClient
 } from 'viem';
+import { LocalAccount } from 'viem/accounts';
 import * as ViemChains from 'viem/chains';
 
 import { DEFAULT_EVM_CURRENCY } from 'src/token/interfaces/token-metadata.interface';
@@ -20,6 +23,11 @@ import { isDefined } from '../is-defined';
 import { FALLBACK_EVM_RPCS_LIST } from './rpc-list';
 
 type ChainPublicClient = PublicClient<Transport, Pick<Chain, 'id' | 'name' | 'nativeCurrency' | 'rpcUrls'>>;
+type ChainWalletClient = WalletClient<
+  Transport,
+  Pick<Chain, 'id' | 'name' | 'nativeCurrency' | 'rpcUrls'>,
+  LocalAccount
+>;
 
 const DEFAULT_TRANSPORT_CONFIG: HttpTransportConfig = {
   /** Defaults to 3 */
@@ -68,3 +76,13 @@ export const getViemPublicClient = memoizee(
   },
   { normalizer: ([network]) => `${network.chainId}_${network.rpcBaseURL}`, max: 10 }
 );
+
+export const getViemWalletClient = (network: EvmNetworkEssentials, account: LocalAccount): ChainWalletClient => {
+  const viemChain = getViemChainByChainId(network.chainId);
+
+  return createWalletClient({
+    account,
+    chain: viemChain ?? getCustomViemChain(network),
+    transport: getViemTransportForNetwork(network)
+  });
+};

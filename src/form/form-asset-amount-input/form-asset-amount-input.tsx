@@ -32,6 +32,9 @@ export const FormAssetAmountInput = memo<Props>(
     toUsdToggle = true,
     isLoading = false,
     isSearchable = false,
+    searchPlaceholder,
+    dropdownListHeader,
+    dropdownDescription,
     isSingleAsset,
     selectionOptions = undefined,
     maxButton = false,
@@ -63,14 +66,26 @@ export const FormAssetAmountInput = memo<Props>(
 
     useDidUpdate(
       () =>
-        void helpers.setValue({ ...field.value, asset: { ...field.value.asset, balance: balanceStored ?? '0' } }, true),
+        void helpers.setValue(
+          {
+            ...field.value,
+            asset: { ...field.value.asset, balance: balanceStored ?? field.value.asset.balance ?? '0' }
+          },
+          true
+        ),
       [balanceStored]
     );
 
     useDidUpdate(
       () =>
         void helpers.setValue(
-          { ...field.value, asset: { ...field.value.asset, exchangeRate: exchangeRateStored } },
+          {
+            ...field.value,
+            asset: {
+              ...field.value.asset,
+              exchangeRate: exchangeRateStored ?? field.value.asset.exchangeRate
+            }
+          },
           true
         ),
       [exchangeRateStored]
@@ -87,6 +102,9 @@ export const FormAssetAmountInput = memo<Props>(
           isError={isError}
           isLoading={isLoading}
           isSearchable={isSearchable}
+          searchPlaceholder={searchPlaceholder}
+          dropdownListHeader={dropdownListHeader}
+          dropdownDescription={dropdownDescription}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}

@@ -77,6 +77,9 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     editable = true,
     isLoading = false,
     isSearchable = false,
+    searchPlaceholder,
+    dropdownListHeader,
+    dropdownDescription = 'Assets',
     selectionOptions = undefined,
     maxButton = false,
     expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
@@ -111,7 +114,10 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     );
 
     const slug = useMemo(() => getTokenSlug(value.asset), [value.asset]);
-    const token = useMemo(() => assetsList.find(asset => getTokenSlug(asset) === slug), [assetsList, slug]);
+    const token = useMemo(
+      () => assetsList.find(asset => getTokenSlug(asset) === slug) ?? value.asset,
+      [assetsList, slug, value.asset]
+    );
 
     const balance = useMemo(() => {
       if (isDefined(balanceFromProps)) {
@@ -223,7 +229,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
       (newAsset?: TokenInterface) => {
         const decimals = newAsset?.decimals ?? 0;
         const asset = newAsset ?? emptyTezosLikeToken;
-        const newExchangeRate = getTokenExchangeRate(getTokenSlug(asset));
+        const newExchangeRate = newAsset?.exchangeRate ?? getTokenExchangeRate(getTokenSlug(asset));
 
         trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, {
           token: isShieldedTez(asset) ? 'Shielded TEZ' : asset.symbol
@@ -308,11 +314,13 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
             ]}
           >
             <Dropdown
-              description="Assets"
+              description={dropdownDescription}
               disabled={isSingleAsset}
               value={value.asset}
               list={assetsList}
               isSearchable={isSearchable}
+              searchPlaceholder={searchPlaceholder}
+              listHeader={dropdownListHeader}
               isLoading={isLoading}
               setSearchValue={setSearchValue}
               equalityFn={tokenEqualityFn}
