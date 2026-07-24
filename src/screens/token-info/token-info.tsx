@@ -8,7 +8,7 @@ import { StyledTextInput } from 'src/components/styled-text-input/styled-text-in
 import { useTokenStandard } from 'src/hooks/use-token-standard';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
-import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -37,7 +37,7 @@ export const TokenInfo = () => {
           </TouchableOpacity>
           <Divider />
 
-          {isDefined(token.id) && !loading && tokenStandard === TokenStandardsEnum.Fa2 && (
+          {isDefined(token.id) && !loading && tokenStandard === TezosTokenStandardsEnum.Fa2 && (
             <>
               <Label label="Token ID" description={`Token Id of a ${symbol} token contract.`} />
               <StyledTextInput placeholder={token.id.toString()} editable={false} />

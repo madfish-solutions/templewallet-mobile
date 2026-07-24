@@ -4,7 +4,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { tzktApi } from 'src/api.service';
 import { ContractType } from 'src/interfaces/contract.type';
-import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenStandard, toTokenSlug } from 'src/token/utils/token.utils';
 
 import { sendErrorAnalyticsEvent } from './analytics/analytics.util';
@@ -86,7 +86,7 @@ export const getBalance = async (
   owner: string,
   tokenId?: number | string | undefined
 ): Promise<BigNumber> => {
-  if (getTokenStandard(contract) === TokenStandardsEnum.Fa2) {
+  if (getTokenStandard(contract) === TezosTokenStandardsEnum.Fa2) {
     return (await contract.views.balance_of([{ owner, token_id: tokenId }]).read())[0].balance;
   } else {
     return await contract.views.getBalance(owner).read();

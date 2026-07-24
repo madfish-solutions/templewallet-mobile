@@ -6,7 +6,7 @@ import { StableswapFarm, StableswapPoolVersion } from 'src/apis/quipuswap-stakin
 import { Route3TokenStandardEnum } from 'src/enums/route3.enum';
 import { getTransactionTimeoutDate } from 'src/op-params/op-params.utils';
 import { TEZ_TOKEN_SLUG, WTEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
-import { TokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { getReadOnlyContract } from 'src/utils/rpc/contract.utils';
@@ -79,7 +79,9 @@ export const createStableswapStakeTransfersParams = async (
     accountPkh,
     {
       standard:
-        tokenToInvest.standard === TokenStandardsEnum.Fa2 ? Route3TokenStandardEnum.fa2 : Route3TokenStandardEnum.fa12,
+        tokenToInvest.standard === TezosTokenStandardsEnum.Fa2
+          ? Route3TokenStandardEnum.fa2
+          : Route3TokenStandardEnum.fa12,
       contract: tokenToInvest.address,
       tokenId: tokenToInvest.id.toString()
     },

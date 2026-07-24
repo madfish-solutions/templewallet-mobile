@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		23836A1DDDC14C5F9274E738 /* sapling-spend.params in Resources */ = {isa = PBXBuildFile; fileRef = 59303EBE52B24906887ED67D /* sapling-spend.params */; };
 		3858021FB1B395AB59FD9D78 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		4F2473F08F3A4223A5A3E80C /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 23104EC3D1DF434789982A00 /* Inter-Medium.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		7B0549E02F166976000A1B6D /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7B0549DF2F166976000A1B6D /* BootSplash.storyboard */; };
 		7B0549E12F166D52000A1B6D /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -22,7 +23,6 @@
 		7B0549E92F166DA5000A1B6D /* Rubik-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B736EB92F0E66F600E1BA97 /* Rubik-SemiBold.ttf */; };
 		D334BC1CF6E64801A9C54B30 /* sapling-output.params in Resources */ = {isa = PBXBuildFile; fileRef = 7121AA32532846A4ADC03ABA /* sapling-output.params */; };
 		E728B459BA0A044259287FD0 /* Pods_TempleWallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04C712DE3D2201161BE195D8 /* Pods_TempleWallet.framework */; };
-		4F2473F08F3A4223A5A3E80C /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 23104EC3D1DF434789982A00 /* Inter-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +31,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TempleWallet/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TempleWallet/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = TempleWallet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		23104EC3D1DF434789982A00 /* Inter-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.ttf"; path = "../src/assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-TempleWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.debug.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-TempleWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TempleWallet.release.xcconfig"; path = "Target Support Files/Pods-TempleWallet/Pods-TempleWallet.release.xcconfig"; sourceTree = "<group>"; };
 		59303EBE52B24906887ED67D /* sapling-spend.params */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "sapling-spend.params"; path = "../src/assets/sapling-spend.params"; sourceTree = "<group>"; };
@@ -47,7 +48,6 @@
 		7B736EBA2F0E66F600E1BA97 /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Inter-SemiBold.ttf"; path = "../src/assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
 		7B736EBB2F0E66F600E1BA97 /* Inter-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Inter-Bold.ttf"; path = "../src/assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		23104EC3D1DF434789982A00 /* Inter-Medium.ttf */ = {isa = PBXFileReference; name = "Inter-Medium.ttf"; path = "../src/assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

@@ -5,7 +5,7 @@ import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Account } from '../interfaces/account.interfaces';
-import { TokenMetadataInterface, TokenStandardsEnum } from '../token/interfaces/token-metadata.interface';
+import { TezosTokenMetadata, TezosTokenStandardsEnum } from '../token/interfaces/token-metadata.interface';
 import { getTokenStandard } from '../token/utils/token.utils';
 
 import { getAccountAddressForTezos, getAccountForTezos } from './account.utils';
@@ -14,7 +14,7 @@ import { createReadOnlyTezosToolkit } from './rpc/tezos-toolkit.utils';
 import { throwError$ } from './rxjs.utils';
 
 export function getTransferParams$(
-  asset: Pick<TokenMetadataInterface, 'id' | 'address'>,
+  asset: Pick<TezosTokenMetadata, 'id' | 'address'>,
   tezosFromArgs: TezosToolkit | undefined,
   sender: Account | string,
   receiverPublicKeyHash: string,
@@ -32,7 +32,7 @@ export function getTransferParams$(
   return isString(address)
     ? from(tezos.contract.at(address)).pipe(
         map(contract =>
-          getTokenStandard(contract) === TokenStandardsEnum.Fa2
+          getTokenStandard(contract) === TezosTokenStandardsEnum.Fa2
             ? {
                 to: contract.address,
                 amount: 0,

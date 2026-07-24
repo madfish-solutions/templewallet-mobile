@@ -6,11 +6,13 @@ import { AssetValueText } from 'src/components/asset-value-text/asset-value-text
 import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
+import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { TruncatedText } from 'src/components/truncated-text';
+import { useTotalFiatBalanceOfAccount } from 'src/hooks/use-total-balance';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
@@ -80,7 +82,7 @@ const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(
   const tezosAddress = getAccountAddressForTezos(account);
   const evmAddress = getAccountAddressForEvm(account);
 
-  const tezos = useTezosTokenOfKnownAccount(account.id);
+  const totalFiatBalance = useTotalFiatBalanceOfAccount(account);
 
   return (
     <>
@@ -89,7 +91,7 @@ const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(
         <View style={styles.listItemHeaderInfo}>
           <TruncatedText style={styles.listItemName}>{account.name}</TruncatedText>
           <HideBalance wrapperStyle={styles.listItemBalanceTextWrapper} textStyle={styles.listItemBalanceText}>
-            <AssetValueText asset={tezos} amount={tezos.balance} convertToDollar />
+            <FormattedAmount amount={totalFiatBalance} isDollarValue />
           </HideBalance>
         </View>
       </View>

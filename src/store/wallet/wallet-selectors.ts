@@ -5,6 +5,7 @@ import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
 import { WR_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
 import { toTokenSlug } from 'src/token/utils/token.utils';
 import { getAccountAddressForEvm, getAccountAddressForTezos, getAccountForChain } from 'src/utils/account.utils';
 import { getSelectedAccountFromWallet } from 'src/utils/get-selected-account-from-wallet.util.ts';
@@ -62,7 +63,6 @@ export const useAccountAddressForTezos = () =>
     return account ? getAccountAddressForTezos(account) : undefined;
   });
 
-/** @knipignore */
 export const useAccountAddressForEvm = () =>
   useSelector(({ wallet }) => {
     const account = getSelectedAccountFromWallet(wallet);
@@ -168,3 +168,8 @@ export const useCurrentAccountTezosBalance = () =>
 
 export const useTezosBalanceOfKnownAccountSelector = (accountId: string) =>
   useSelector(state => state.wallet.accountsStateRecord[accountId]?.tezosBalance ?? '0');
+
+const EMPTY_STORED_TOKENS: AccountTokenInterface[] = [];
+
+export const useStoredTokensOfKnownAccountSelector = (accountId: string) =>
+  useSelector(state => state.wallet.accountsStateRecord[accountId]?.tokensList ?? EMPTY_STORED_TOKENS);

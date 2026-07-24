@@ -2,6 +2,7 @@ import { Formik } from 'formik';
 import React, { FC } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { isAddress } from 'viem';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
@@ -29,7 +30,7 @@ export const ImportWatchOnlyDebug: FC = () => {
       id: values.address,
       name: values.name,
       type: AccountTypeEnum.WATCH_ONLY_DEBUG,
-      chain: TempleChainKind.Tezos,
+      chain: isAddress(values.address) ? TempleChainKind.EVM : TempleChainKind.Tezos,
       address: values.address,
       publicKey: ''
     };

@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { useEvmChain } from 'src/hooks/use-evm-chains.hook';
+import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useTezosChain } from 'src/hooks/use-tezos-chains.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
