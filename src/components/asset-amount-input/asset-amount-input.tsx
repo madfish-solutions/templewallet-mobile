@@ -352,7 +352,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
                 {balanceLabel ?? (isLiquidityProviderToken ? 'Total Balance:' : 'Balance:')}
               </Text>
               <Divider size={formatSize(4)} />
-              <HideBalance style={styles.balanceValueText}>
+              <HideBalance textStyle={styles.balanceValueText}>
                 <AssetValueText
                   amount={balance}
                   asset={value.asset}

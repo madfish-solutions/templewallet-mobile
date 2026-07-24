@@ -1,6 +1,6 @@
 import { debounce } from 'lodash-es';
-import React, { FC, useMemo } from 'react';
-import { TextInputProps, View } from 'react-native';
+import React, { FC, useCallback, useMemo, useState } from 'react';
+import { StyleProp, TextInputProps, View, ViewStyle } from 'react-native';
 
 import { emptyFn } from 'src/config/general';
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -8,23 +8,38 @@ import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { isString } from 'src/utils/is-string';
 import { setTestID } from 'src/utils/test-id.utils';
 
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
+import { IconV2 } from '../icon-v2';
+import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 import { PatchedTextInput } from '../patched-text-input';
+import { TouchableIconV2 } from '../touchable-icon-v2';
 
 import { useSearchInputStyles } from './search-input.styles';
 
-type Props = Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText' | 'onBlur' | 'testID'> & TestIdProps;
+interface Props
+  extends Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText' | 'onBlur' | 'testID'>,
+    TestIdProps {
+  containerStyle?: StyleProp<ViewStyle>;
+}
 
-export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = emptyFn, onBlur = emptyFn, testID }) => {
+export const SearchInput: FC<Props> = ({
+  value,
+  placeholder,
+  onChangeText = emptyFn,
+  onBlur = emptyFn,
+  testID,
+  containerStyle
+}) => {
   const colors = useColors();
   const styles = useSearchInputStyles();
+  const [localValue, setLocalValue] = useState(value);
 
   const { trackEvent } = useAnalytics();
 
-  const handleSearchQueryChange = useMemo(
+  const debouncedOnChange = useMemo(
     () =>
       debounce((newValue: string) => {
         trackEvent(testID, AnalyticsEventCategory.FormChange, { value: newValue });
@@ -32,21 +47,41 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = empt
       }),
     [testID, trackEvent, onChangeText]
   );
+  const handleSearchQueryChange = useCallback(
+    (newValue: string) => {
+      setLocalValue(newValue);
+      debouncedOnChange(newValue);
+    },
+    [debouncedOnChange]
+  );
+
+  const clearSearchValue = useCallback(() => handleSearchQueryChange(''), [handleSearchQueryChange]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.iconContainer}>
-        <Icon name={IconNameEnum.IosSearch} size={formatSize(14)} color={colors.gray2} />
-      </View>
+    <View style={[styles.container, containerStyle]}>
       <PatchedTextInput
-        value={value}
-        style={styles.input}
+        value={localValue}
+        style={[styles.input, conditionalStyle(isString(localValue), styles.clearableInput)]}
         placeholder={placeholder}
         placeholderTextColor={colors.gray2}
         onChangeText={handleSearchQueryChange}
         onBlur={onBlur}
         {...setTestID(testID)}
       />
+      <View style={styles.searchIconContainer}>
+        <IconV2 name={IconNameV2Enum.Search} size={16} color={colors.gray2} />
+      </View>
+      {isString(localValue) && (
+        <View style={styles.clearIconContainer}>
+          <TouchableIconV2
+            name={IconNameV2Enum.XRound}
+            size={formatSize(16)}
+            iconSize={16}
+            color={colors.gray2}
+            onPress={clearSearchValue}
+          />
+        </View>
+      )}
     </View>
   );
 };

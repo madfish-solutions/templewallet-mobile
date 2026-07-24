@@ -30,6 +30,7 @@ type TypographyKey =
   | 'caption13Semibold'
   | 'tagline13Tag'
   | 'caption10Regular'
+  | 'caption10Medium'
   | 'caption11Regular'
   | 'caption11Semibold'
   | 'tagline11Tag'

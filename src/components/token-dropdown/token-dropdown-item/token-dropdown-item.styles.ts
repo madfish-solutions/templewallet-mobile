@@ -30,15 +30,19 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
   fullWidthName: {
     flexGrow: 1
   },
+  balanceWrapper: {
+    alignSelf: 'center'
+  },
   balance: {
     ...typography.numbersRegular15,
-    color: colors.black,
-    alignSelf: 'center'
+    color: colors.black
+  },
+  dollarEquivalentWrapper: {
+    alignSelf: 'flex-end'
   },
   dollarEquivalent: {
     ...typography.numbersRegular11,
-    color: colors.gray1,
-    alignSelf: 'flex-end'
+    color: colors.gray1
   },
   actionIconSubstitute: {
     marginRight: formatSize(24)

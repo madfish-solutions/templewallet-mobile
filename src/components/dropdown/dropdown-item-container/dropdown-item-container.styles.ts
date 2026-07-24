@@ -5,12 +5,11 @@ import { generateShadow } from 'src/styles/generate-shadow';
 
 export const useDropdownItemContainerStyles = createUseStyles(({ colors }) => ({
   root: {
-    padding: formatSize(8),
-    backgroundColor: colors.white,
-    borderColor: colors.white,
-    borderWidth: formatSize(2),
+    padding: formatSize(12),
+    backgroundColor: colors.cardBG,
+    borderColor: colors.cardBG,
+    borderWidth: formatSize(1),
     borderRadius: formatSize(8),
-    margin: formatSize(2),
     ...generateShadow(1, black)
   },
   rootMargin: {
@@ -18,6 +17,6 @@ export const useDropdownItemContainerStyles = createUseStyles(({ colors }) => ({
   },
   rootSelected: {
     borderColor: colors.orange,
-    borderWidth: formatSize(2)
+    borderWidth: formatSize(1)
   }
 }));

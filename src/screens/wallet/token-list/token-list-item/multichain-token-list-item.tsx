@@ -115,20 +115,20 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
       <View style={styles.rightContainer}>
         {isTezos && isDefined(original) ? (
           <>
-            <HideBalance style={styles.balanceText}>
+            <HideBalance textStyle={styles.balanceText}>
               <AssetValueText asset={original} amount={original.balance} showSymbol={false} />
             </HideBalance>
-            <HideBalance style={styles.valueText}>
+            <HideBalance textStyle={styles.valueText}>
               <AssetValueText asset={original} convertToDollar amount={original.balance} />
             </HideBalance>
           </>
         ) : (
           <>
-            <HideBalance style={styles.balanceText}>
+            <HideBalance textStyle={styles.balanceText}>
               <FormattedAmount amount={tokenAmount} />
             </HideBalance>
             {isDefined(token.fiatValue) && (
-              <HideBalance style={styles.valueText}>
+              <HideBalance textStyle={styles.valueText}>
                 <FormattedAmount amount={fiatAmount} isDollarValue />
               </HideBalance>
             )}
@@ -146,11 +146,11 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
         <View style={styles.balanceSplitContainer}>
           <View style={styles.balancePill}>
             <Text style={styles.balancePillText}>Public:</Text>
-            <HideBalance style={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
+            <HideBalance textStyle={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
           </View>
           <View style={styles.balancePill}>
             <Text style={styles.balancePillText}>Shielded:</Text>
-            <HideBalance style={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
+            <HideBalance textStyle={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
           </View>
           <TouchableOpacity
             onPress={showShieldedBalanceInfo}

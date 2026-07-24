@@ -1,21 +1,20 @@
 import React, { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
-import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
+
+import { NavigationBarIcon } from '../../navigation-bar-icon';
+import { NavigationBarIconNameEnum } from '../../navigation-bar-icon/icon-name.enum';
 
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 
 interface Props {
   label: string;
-  iconName: IconNameEnum;
-  iconWidth: number;
+  iconName: NavigationBarIconNameEnum;
   routeName:
     | ScreensEnum.Wallet
     | ScreensEnum.DApps
@@ -24,23 +23,12 @@ interface Props {
     | ScreensEnum.CollectiblesHome;
   focused: boolean;
   disabled?: boolean;
-  showNotificationDot?: boolean;
   swapScreenParams?: ScreensParamList[ScreensEnum.SwapScreen];
   disabledOnPress?: EmptyFn;
 }
 
 export const TabBarButton = memo<Props>(
-  ({
-    label,
-    iconName,
-    iconWidth,
-    routeName,
-    focused,
-    disabled = false,
-    showNotificationDot = false,
-    swapScreenParams,
-    disabledOnPress
-  }) => {
+  ({ label, iconName, routeName, focused, disabled = false, swapScreenParams, disabledOnPress }) => {
     const colors = useColors();
     const styles = useTabBarButtonStyles();
     const navigateToScreen = useNavigateToScreen();
@@ -71,16 +59,7 @@ export const TabBarButton = memo<Props>(
         onPress={handlePress}
       >
         <View style={styles.iconContainer}>
-          {showNotificationDot && (
-            <Icon
-              name={IconNameEnum.NotificationDot}
-              width={formatSize(9)}
-              height={formatSize(9)}
-              color={colors.navigation}
-              style={styles.notificationDotIcon}
-            />
-          )}
-          <Icon name={iconName} width={iconWidth} height={formatSize(28)} color={color} />
+          <NavigationBarIcon name={iconName} color={color} />
         </View>
         <Text style={[styles.label, { color }]}>{label}</Text>
       </SafeTouchableOpacity>

@@ -167,7 +167,7 @@ export const TezosTokenScreen = () => {
         <View style={styles.balanceSplitRow}>
           <View style={styles.balancePill}>
             <Text style={styles.balancePillText}>Public:</Text>
-            <HideBalance style={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
+            <HideBalance textStyle={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
           </View>
 
           <TouchableOpacity onPress={handleRebalancePress} style={styles.rebalanceButton}>
@@ -176,7 +176,7 @@ export const TezosTokenScreen = () => {
 
           <View style={styles.balancePill}>
             <Text style={styles.balancePillText}>Shielded:</Text>
-            <HideBalance style={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
+            <HideBalance textStyle={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
           </View>
         </View>
 
