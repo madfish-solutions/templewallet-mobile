@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo, useRef } from 'react';
+import React, { memo, ReactNode, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -27,6 +27,8 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   list: T[];
   emptyListText?: string;
   isSearchable?: boolean;
+  searchPlaceholder?: string;
+  listHeader?: ReactNode;
   itemHeight?: number;
   itemContainerStyle?: StyleProp<ViewStyle>;
   isLoading?: boolean;
@@ -79,6 +81,8 @@ const DropdownComponent = <T extends unknown>({
   disabled = false,
   isLoading = false,
   isSearchable = false,
+  searchPlaceholder = 'Search assets',
+  listHeader,
   isCollectibleScreen = false,
   setSearchValue,
   equalityFn,
@@ -181,7 +185,8 @@ const DropdownComponent = <T extends unknown>({
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />}
+          {isSearchable && <SearchInput placeholder={searchPlaceholder} onChangeText={setSearchValue} />}
+          {listHeader}
           {isLoading ? (
             <View style={styles.activityIndicatorContainer}>
               <ActivityIndicator size="large" />

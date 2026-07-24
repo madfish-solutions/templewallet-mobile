@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { ReactNode } from 'react';
 import { TextInputProps, TextStyle, ViewStyle } from 'react-native';
 
 import { TestIdProps } from 'src/interfaces/test-id.props';
@@ -27,6 +28,9 @@ export interface AssetAmountInputProps extends TestIdProps {
   toUsdToggle?: boolean;
   isLoading?: boolean;
   isSearchable?: boolean;
+  searchPlaceholder?: string;
+  dropdownListHeader?: ReactNode;
+  dropdownDescription?: string;
   isShowNameForValue?: boolean;
   isSingleAsset?: boolean;
   selectionOptions?: TextInputProps['selection'];

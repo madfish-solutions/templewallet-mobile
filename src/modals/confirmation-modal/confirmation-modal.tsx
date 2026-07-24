@@ -12,6 +12,7 @@ import { cancelSaplingPreparationAction, clearPreparedOpParamsAction } from 'src
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { DAppOperationsConfirmation } from './d-app-operations-confirmation/d-app-operations-confirmation';
+import { EvmTransferConfirmation } from './evm-transfer-confirmation/evm-transfer-confirmation';
 import { InternalOperationsConfirmation } from './internal-operations-confirmation/internal-operations-confirmation';
 import { SaplingOperationsConfirmation } from './sapling-operations-confirmation/sapling-operations-confirmation';
 
@@ -74,6 +75,15 @@ const ConfirmationModalContent: FC = () => {
           opParams={preparedOpParams ?? params.opParams ?? []}
           amount={params.amount}
           direction={params.direction}
+        />
+      );
+    case ConfirmationTypeEnum.EvmTransfer:
+      return (
+        <EvmTransferConfirmation
+          accountId={params.accountId}
+          asset={params.asset}
+          receiverAddress={params.receiverAddress}
+          atomicAmount={params.atomicAmount}
         />
       );
     default:
