@@ -1,25 +1,15 @@
-import BigNumber from 'bignumber.js';
 import React, { memo, useLayoutEffect, useRef } from 'react';
-import { StyleProp, Text, TextStyle, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
 import { useTotalBalance } from 'src/hooks/use-total-balance';
 import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
-import { useCurrentFiatCurrencyMetadataSelector } from 'src/store/settings/settings-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { isDefined } from 'src/utils/is-defined';
-import { formatAssetAmount } from 'src/utils/number.util';
 
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { ErrorBoundary } from '../error-boundary';
 import { HideBalance } from '../hide-balance/hide-balance';
-import { IconNameEnum } from '../icon/icon-name.enum';
-import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 
-import { useAssetEquityTextStyles, useTokenEquityValueStyles } from './token-equity-value.styles';
-
-const currentDate = new Date().toLocaleString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+import { useTokenEquityValueStyles } from './token-equity-value.styles';
 
 interface Props {
   token: TokenInterface;
@@ -55,69 +45,27 @@ export const TokenEquityValue = memo<Props>(props => {
 const TokenEquityValueContent = memo<Props>(({ token, forTotalBalance = false }) => {
   const styles = useTokenEquityValueStyles();
 
-  const { toggleHideBalance, isBalanceHidden } = useHideBalance();
   const totalBalance = useTotalBalance();
-
-  const exchangeRate = token.exchangeRate;
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableIcon
-          name={isBalanceHidden ? IconNameEnum.EyeClosedBold : IconNameEnum.EyeOpenBold}
-          size={formatSize(24)}
-          onPress={toggleHideBalance}
-          testID={WalletSelectors.tokenEquityButton}
-        />
-
-        {!forTotalBalance ? (
-          <View style={styles.equityContainer}>
-            <Text style={styles.dateText}>Equity Value {currentDate}</Text>
-            {isDefined(exchangeRate) ? (
-              <AssetEquityText style={styles.dateText} assetSymbol={token.symbol} exchangeRate={exchangeRate} />
-            ) : null}
-          </View>
-        ) : (
-          <Text style={styles.dateText}>Equity Value {currentDate}</Text>
-        )}
-      </View>
-
-      {!forTotalBalance ? (
+      {forTotalBalance ? (
         <>
-          <HideBalance style={styles.mainValueText}>
-            <AssetValueText asset={token} amount={token.balance} />
-          </HideBalance>
-          <HideBalance style={styles.additionalValueText}>
-            <AssetValueText convertToDollar asset={token} amount={token.balance} />
+          <Text style={styles.totalEquityText}>Total Equity Value</Text>
+          <HideBalance textStyle={styles.mainValueText} interactive testID={WalletSelectors.tokenEquity}>
+            <AssetValueText convertToDollar asset={totalBalance} amount={totalBalance.balance} hideApproximateSign />
           </HideBalance>
         </>
       ) : (
-        <HideBalance style={styles.mainValueText}>
-          <AssetValueText convertToDollar asset={totalBalance} amount={totalBalance.balance} />
-        </HideBalance>
+        <>
+          <HideBalance textStyle={styles.mainValueText} interactive testID={WalletSelectors.tokenEquity}>
+            <AssetValueText asset={token} amount={token.balance} />
+          </HideBalance>
+          <HideBalance textStyle={styles.additionalValueText}>
+            <AssetValueText convertToDollar asset={token} amount={token.balance} hideApproximateSign />
+          </HideBalance>
+        </>
       )}
     </View>
-  );
-});
-
-interface AssetEquityTextProps {
-  assetSymbol: string;
-  exchangeRate: number;
-  style?: StyleProp<TextStyle>;
-}
-
-const AssetEquityText = memo<AssetEquityTextProps>(({ assetSymbol, exchangeRate, style }) => {
-  const styles = useAssetEquityTextStyles();
-  const { symbol } = useCurrentFiatCurrencyMetadataSelector();
-
-  const formattedExchangeRate = formatAssetAmount(new BigNumber(exchangeRate ?? 0), 2);
-
-  return (
-    <Text style={style}>
-      <Text style={[style, styles.numberText]}>1</Text> <Text style={style}>{assetSymbol}</Text>
-      <Text style={style}> ≈ </Text>
-      <Text style={[style, styles.numberText]}>{formattedExchangeRate}</Text>
-      <Text style={style}>{symbol}</Text>
-    </Text>
   );
 });

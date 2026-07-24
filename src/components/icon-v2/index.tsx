@@ -28,6 +28,12 @@ const irregularPaddingByIconName: Partial<Record<IconNameV2Enum, Partial<Record<
   [IconNameV2Enum.ArrowLeft]: {
     24: 4.742
   },
+  [IconNameV2Enum.ArrowDown]: {
+    24: 4.742
+  },
+  [IconNameV2Enum.ArrowUp]: {
+    24: 4.742
+  },
   // TODO: Apply the same for other single chevron icons
   [IconNameV2Enum.ChevronRight]: {
     16: 2,
@@ -35,6 +41,26 @@ const irregularPaddingByIconName: Partial<Record<IconNameV2Enum, Partial<Record<
   },
   [IconNameV2Enum.Copy]: {
     24: 3.458
+  },
+  [IconNameV2Enum.DropdownDown]: {
+    16: 2,
+    24: 4.775
+  },
+  [IconNameV2Enum.Notification]: {
+    24: 3
+  },
+  [IconNameV2Enum.Settings]: {
+    24: 3
+  },
+  [IconNameV2Enum.Dollar]: {
+    24: 2.645
+  },
+  [IconNameV2Enum.Import]: {
+    24: 3.239
+  },
+  [IconNameV2Enum.UserAdd]: {
+    16: 0,
+    24: 2.024
   }
 };
 

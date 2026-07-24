@@ -2,19 +2,20 @@ import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
+import { NavigationBarIcon } from '../../navigation-bar-icon';
+import { NavigationBarIconNameEnum } from '../../navigation-bar-icon/icon-name.enum';
+
 import { useSideBarButtonStyles } from './side-bar-button.styles';
 
 interface Props {
   label: string;
-  iconName: IconNameEnum;
+  iconName: NavigationBarIconNameEnum;
   routeName:
     | ScreensEnum.Wallet
     | ScreensEnum.DApps
@@ -34,7 +35,6 @@ export const SideBarButton: FC<Props> = ({
   routeName,
   focused,
   disabled = false,
-  showNotificationDot = false,
   swapScreenParams,
   disabledOnPress
 }) => {
@@ -72,16 +72,7 @@ export const SideBarButton: FC<Props> = ({
       onPress={handlePress}
     >
       <View style={styles.iconContainer}>
-        {showNotificationDot && (
-          <Icon
-            name={IconNameEnum.NotificationDot}
-            width={formatSize(9)}
-            height={formatSize(9)}
-            color={colors.navigation}
-            style={styles.notificationDotIcon}
-          />
-        )}
-        <Icon name={iconName} size={formatSize(28)} color={color} />
+        <NavigationBarIcon name={iconName} color={color} />
       </View>
       <Divider size={formatSize(8)} />
       <Text style={[styles.label, { color }]}>{label}</Text>

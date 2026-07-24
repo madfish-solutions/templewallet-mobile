@@ -8,5 +8,9 @@ export const WalletStyles = StyleSheet.create({
   },
   cryptoCardContainer: {
     zIndex: -1
+  },
+  topActionsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
   }
 });

@@ -1,7 +1,6 @@
 import React, { memo, useCallback } from 'react';
 import { View } from 'react-native';
 
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { LIMIT_DAPPS_FEATURES, LIMIT_FIN_FEATURES, LIMIT_NFT_FEATURES } from 'src/config/system';
@@ -14,10 +13,10 @@ import {
   swapStackScreens,
   walletStackScreens
 } from 'src/navigator/enums/screens.enum';
-import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
 
+import { NavigationBarIconNameEnum } from '../navigation-bar-icon/icon-name.enum';
 import { NOT_AVAILABLE_MESSAGE, useSwapScreenParams } from '../utils';
 
 import { TabBarButton } from './tab-bar-button/tab-bar-button';
@@ -46,15 +45,13 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
         <View style={styles.buttonsContainer}>
           <TabBarButton
             label="Wallet"
-            iconName={IconNameEnum.TezWallet}
-            iconWidth={formatSize(28)}
+            iconName={NavigationBarIconNameEnum.Wallet}
             routeName={ScreensEnum.Wallet}
             focused={isStackFocusedMemo(walletStackScreens)}
           />
           <TabBarButton
             label={LIMIT_NFT_FEATURES ? 'Collectibles' : 'NFT'}
-            iconName={IconNameEnum.NFT}
-            iconWidth={formatSize(32)}
+            iconName={NavigationBarIconNameEnum.Nft}
             routeName={ScreensEnum.CollectiblesHome}
             focused={isStackFocusedMemo(nftStackScreens)}
             disabledOnPress={handleDisabledPress}
@@ -62,8 +59,7 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
           {!LIMIT_FIN_FEATURES && (
             <TabBarButton
               label="Swap"
-              iconName={IconNameEnum.Swap}
-              iconWidth={formatSize(32)}
+              iconName={NavigationBarIconNameEnum.Swap}
               routeName={ScreensEnum.SwapScreen}
               swapScreenParams={swapScreenParams}
               focused={isStackFocusedMemo(swapStackScreens)}
@@ -72,16 +68,14 @@ export const TabBar = memo<Props>(({ currentRouteName }) => {
           )}
           <TabBarButton
             label={LIMIT_DAPPS_FEATURES ? 'Explore' : 'DApps'}
-            iconName={IconNameEnum.DApps}
-            iconWidth={formatSize(32)}
+            iconName={NavigationBarIconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocusedMemo(dAppsStackScreens)}
             disabledOnPress={handleDisabledPress}
           />
           <TabBarButton
             label="Market"
-            iconName={IconNameEnum.Market}
-            iconWidth={formatSize(32)}
+            iconName={NavigationBarIconNameEnum.Market}
             routeName={ScreensEnum.Market}
             focused={isStackFocusedMemo(marketStackScreens)}
           />

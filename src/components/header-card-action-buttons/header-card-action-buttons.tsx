@@ -24,11 +24,10 @@ import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { ButtonMedium } from '../button/button-medium/button-medium';
-import { useButtonMediumStyleConfig } from '../button/button-medium/button-medium.styles';
+import { ButtonMediumV2 } from '../button/button-medium/button-medium';
+import { useButtonMediumStyleConfigV2 } from '../button/button-medium/button-medium.styles';
 import { ButtonsContainer } from '../button/buttons-container/buttons-container';
-import { Divider } from '../divider/divider';
-import { IconNameEnum } from '../icon/icon-name.enum';
+import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 
 import { useHeaderCardActionButtonsStyles } from './header-card-action-buttons.styles';
 
@@ -48,7 +47,7 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const { balance } = useTotalBalance();
   const styles = useHeaderCardActionButtonsStyles();
-  const defaultStyleConfig = useButtonMediumStyleConfig();
+  const defaultStyleConfig = useButtonMediumStyleConfigV2();
   const isLoaderBeingShown = useIsShowLoaderSelector();
   const canUseTezos = Boolean(getAccountAddressForTezos(selectedAccount));
 
@@ -127,10 +126,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
   };
 
   return (
-    <ButtonsContainer>
-      <ButtonMedium
+    <ButtonsContainer style={styles.buttonsContainer}>
+      <ButtonMediumV2
         title="Receive"
-        iconName={IconNameEnum.ArrowDown}
+        iconName={IconNameV2Enum.ArrowDown}
         onPress={() => navigateToModal(ModalsEnum.Receive, { token })}
         styleConfigOverrides={actionButtonStylesOverrides}
         style={styles.buttonContainer}
@@ -138,26 +137,21 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
       />
 
       {!LIMIT_FIN_FEATURES && (
-        <>
-          <Divider size={formatSize(8)} />
-          <ButtonMedium
-            disabled={!canUseTezos}
-            title="Buy"
-            iconName={IconNameEnum.ShoppingCard}
-            onPress={() => navigateToScreen({ screen: ScreensEnum.Buy })}
-            styleConfigOverrides={actionButtonStylesOverrides}
-            style={styles.buttonContainer}
-            testID={WalletSelectors.buyButton}
-          />
-        </>
+        <ButtonMediumV2
+          disabled={!canUseTezos}
+          title="Buy"
+          iconName={IconNameV2Enum.Cart}
+          onPress={() => navigateToScreen({ screen: ScreensEnum.Buy })}
+          styleConfigOverrides={actionButtonStylesOverrides}
+          style={styles.buttonContainer}
+          testID={WalletSelectors.buyButton}
+        />
       )}
 
-      <Divider size={formatSize(8)} />
-
-      <ButtonMedium
+      <ButtonMediumV2
         disabled={!canUseTezos || !isTezosMainnet}
         title="Earn"
-        iconName={IconNameEnum.Earn}
+        iconName={IconNameV2Enum.Dollar}
         onPress={() => navigateToScreen({ screen: ScreensEnum.Earn })}
         styleConfigOverrides={earnButtonStylesOverrides}
         style={styles.buttonContainer}
@@ -167,12 +161,10 @@ export const HeaderCardActionButtons: FC<Props> = ({ token, onSendPress }) => {
         }}
       />
 
-      <Divider size={formatSize(8)} />
-
-      <ButtonMedium
+      <ButtonMediumV2
         disabled={disabledSendButton}
         title="Send"
-        iconName={IconNameEnum.ArrowUp}
+        iconName={IconNameV2Enum.ArrowUp}
         onPress={handleSendButton}
         styleConfigOverrides={sendButtonStylesOverrides}
         style={styles.buttonContainer}

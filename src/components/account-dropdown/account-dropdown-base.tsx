@@ -1,62 +1,19 @@
-import React, { memo, useCallback, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { View } from 'react-native';
 
-import { CopyAddressPopup, CopyAddressPopupController } from 'src/components/copy-address-popup';
+import { CopyAddressPopup } from 'src/components/copy-address-popup';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
-import { useCallbackIfOnline } from 'src/hooks/use-callback-if-online';
 import { Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToModal, useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
-import { WalletSelectors } from 'src/screens/wallet/wallet.selectors';
-import { useShelter } from 'src/shelter/use-shelter.hook';
 import { formatSize } from 'src/styles/format-size';
-import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
-import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { includesIgnoreCase } from 'src/utils/string.utils';
 
-import { BottomSheetActionButton } from '../bottom-sheet/bottom-sheet-action-button/bottom-sheet-action-button';
 import { Dropdown, DropdownActionButtonsComponent, DropdownValueBaseProps } from '../dropdown/dropdown';
+import { OptionsPopupController } from '../options-popup';
 
 import { accountEqualityFn } from './account-equality-fn';
-
-const ActionButtons: DropdownActionButtonsComponent = ({ closeDropdown }) => {
-  const navigateToModal = useNavigateToModal();
-  const navigateToScreen = useNavigateToScreen();
-  const { trackEvent } = useAnalytics();
-  const { createHdAccount } = useShelter();
-
-  const handleCreateNewAccountButtonPress = () => {
-    trackEvent(WalletSelectors.createNewAccountButton, AnalyticsEventCategory.ButtonPress);
-    closeDropdown();
-    createHdAccount();
-  };
-
-  const handleImportAccountButtonPress = () => {
-    navigateToModal(ModalsEnum.ChooseAccountImportType);
-    closeDropdown();
-  };
-
-  const handleManageAccountsButtonPress = () => {
-    closeDropdown();
-    setTimeout(() => navigateToScreen({ screen: ScreensEnum.ManageAccounts }), 100);
-  };
-
-  return (
-    <>
-      <BottomSheetActionButton
-        showTopBorder
-        title="Create new account"
-        onPress={useCallbackIfOnline(handleCreateNewAccountButtonPress)}
-      />
-      <BottomSheetActionButton
-        title="Import an account"
-        onPress={useCallbackIfOnline(handleImportAccountButtonPress)}
-      />
-      <BottomSheetActionButton title="Manage accounts" onPress={handleManageAccountsButtonPress} />
-    </>
-  );
-};
 
 export type AccountDropdownValueComponent = SyncFC<
   { value: Account; disabled?: boolean; isCollectibleScreen?: boolean } & TestIdProps
@@ -66,6 +23,7 @@ type Props = Omit<DropdownValueBaseProps<Account>, 'value' | 'renderValue' | 'on
   value: Account;
   renderValue: AccountDropdownValueComponent;
   onValueChange: SyncFn<Account>;
+  renderSearchActionButtons?: DropdownActionButtonsComponent;
 } & TestIdProps;
 
 const getAccountSectionTitle = (account: Account) => {
@@ -101,14 +59,28 @@ export const AccountDropdownBase = memo<Props>(
     renderAccountListItem,
     testID,
     testIDProperties,
-    isCollectibleScreen
+    isCollectibleScreen,
+    renderSearchActionButtons
   }) => {
-    const copyAddressPopupRef = useRef<CopyAddressPopupController>(null);
+    const triggerRef = useRef<View>(null);
+    const copyAddressPopupRef = useRef<OptionsPopupController>(null);
+    const [searchValue, setSearchValue] = useState('');
 
     const groupedList = useMemo(
       () =>
-        [...list].sort((accountA, accountB) => getAccountSectionWeight(accountA) - getAccountSectionWeight(accountB)),
-      [list]
+        Array.from(list)
+          .filter(account => {
+            const tezosAddress = getAccountAddressForTezos(account);
+            const evmAddress = getAccountAddressForEvm(account);
+
+            return (
+              includesIgnoreCase(account.name, searchValue) ||
+              (tezosAddress && includesIgnoreCase(tezosAddress, searchValue)) ||
+              (evmAddress && includesIgnoreCase(evmAddress, searchValue))
+            );
+          })
+          .sort((accountA, accountB) => getAccountSectionWeight(accountA) - getAccountSectionWeight(accountB)),
+      [list, searchValue]
     );
 
     const onLongPressHandler = useCallback(() => {
@@ -120,15 +92,16 @@ export const AccountDropdownBase = memo<Props>(
         <Dropdown
           testID={testID}
           testIDProperties={testIDProperties}
-          description="Accounts"
+          description="My Accounts"
+          isSearchable
           value={value}
           list={groupedList}
-          itemHeight={formatSize(80)}
+          itemHeight={formatSize(90)}
           equalityFn={accountEqualityFn}
           renderValue={props => renderValue({ ...props, value })}
           renderListItem={renderAccountListItem}
           getListItemSectionTitle={getAccountSectionTitle}
-          renderActionButtons={ActionButtons}
+          setSearchValue={setSearchValue}
           onValueChange={value => {
             if (isDefined(value)) {
               onValueChange(value);
@@ -136,9 +109,11 @@ export const AccountDropdownBase = memo<Props>(
           }}
           onLongPress={onLongPressHandler}
           isCollectibleScreen={isCollectibleScreen}
+          renderSearchActionButtons={renderSearchActionButtons}
+          triggerRef={triggerRef}
         />
 
-        <CopyAddressPopup controlRef={copyAddressPopupRef} account={value} />
+        <CopyAddressPopup controlRef={copyAddressPopupRef} account={value} triggerRef={triggerRef} />
       </>
     );
   }

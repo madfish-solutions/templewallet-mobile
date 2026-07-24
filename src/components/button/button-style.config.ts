@@ -3,8 +3,9 @@ import { Animated, TextStyle, ViewStyle } from 'react-native';
 type ButtonContainerStyle = Required<Pick<ViewStyle, 'height' | 'borderRadius'>> & Pick<ViewStyle, 'borderWidth'>;
 type ButtonTitleStyle = Required<Pick<TextStyle, 'fontSize' | 'fontFamily'>>;
 
-type ButtonIconStyle = {
-  size: number;
+// TODO: Remove generic parameter after complete migration to new icon system
+type ButtonIconStyle<Size extends number> = {
+  size: Size;
   marginRight: number;
   translateY?: Animated.Value;
 };
@@ -16,10 +17,11 @@ type ButtonColorConfig = {
   borderColor?: string;
 };
 
-export interface ButtonStyleConfig {
+// TODO: Remove generic parameter after complete migration to new icon system
+export interface ButtonStyleConfig<Size extends number = number> {
   containerStyle: ButtonContainerStyle;
   titleStyle?: ButtonTitleStyle;
-  iconStyle?: ButtonIconStyle;
+  iconStyle?: ButtonIconStyle<Size>;
   activeColorConfig: ButtonColorConfig;
   disabledColorConfig?: ButtonColorConfig;
 }

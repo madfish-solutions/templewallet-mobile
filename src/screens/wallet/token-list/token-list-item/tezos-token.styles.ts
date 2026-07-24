@@ -3,10 +3,7 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useTezosTokenBalanceSplitStyles = createUseStyles(({ colors, typography }) => ({
-  outerContainer: {
-    borderBottomWidth: DEFAULT_BORDER_WIDTH,
-    borderColor: colors.lines
-  },
+  outerContainer: {},
   tokenRowNoBorder: {
     borderBottomWidth: 0
   },
@@ -14,10 +11,12 @@ export const useTezosTokenBalanceSplitStyles = createUseStyles(({ colors, typogr
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingHorizontal: formatSize(16),
+    marginHorizontal: formatSize(16),
     paddingTop: formatSize(4),
     paddingBottom: formatSize(8),
-    gap: formatSize(8)
+    gap: formatSize(8),
+    borderBottomWidth: DEFAULT_BORDER_WIDTH,
+    borderColor: colors.lines
   },
   balancePill: {
     flexDirection: 'row',

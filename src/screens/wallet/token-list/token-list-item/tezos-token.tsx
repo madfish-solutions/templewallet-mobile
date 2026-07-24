@@ -65,10 +65,10 @@ export const TezosToken = memo(() => {
       <View style={tokenListItemStyles.container}>
         <TokenContainer token={combinedToken} apy={apy} style={styles.tokenRowNoBorder}>
           <View style={tokenListItemStyles.rightContainer}>
-            <HideBalance style={tokenListItemStyles.balanceText}>
+            <HideBalance textStyle={tokenListItemStyles.balanceText}>
               <AssetValueText asset={combinedToken} amount={combinedToken.balance} showSymbol={false} />
             </HideBalance>
-            <HideBalance style={tokenListItemStyles.valueText}>
+            <HideBalance textStyle={tokenListItemStyles.valueText}>
               <AssetValueText asset={combinedToken} convertToDollar amount={combinedToken.balance} />
             </HideBalance>
           </View>
@@ -79,13 +79,13 @@ export const TezosToken = memo(() => {
         <View style={styles.balancePill}>
           <View style={styles.balancePillTextContainer}>
             <Text style={styles.balancePillText}>Public:</Text>
-            <HideBalance style={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
+            <HideBalance textStyle={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
           </View>
         </View>
         <View style={styles.balancePill}>
           <View style={styles.balancePillTextContainer}>
             <Text style={styles.balancePillText}>Shielded:</Text>
-            <HideBalance style={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
+            <HideBalance textStyle={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
           </View>
         </View>
         <TouchableOpacity

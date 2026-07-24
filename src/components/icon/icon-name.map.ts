@@ -10,7 +10,6 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import AudioIcon from './assets/audio.svg';
-import BellIcon from './assets/bell.svg';
 import BlurDark from './assets/blur-dark.svg';
 import BlurEyeBlack from './assets/blur-eye-black.svg';
 import BlurEyeWhite from './assets/blur-eye-white.svg';
@@ -26,7 +25,6 @@ import CheckboxOnIcon from './assets/checkbox-on.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
-import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CloudFillOnDarkIcon from './assets/cloud-fill-on-dark.svg';
 import CloudFillIcon from './assets/cloud-fill.svg';
@@ -53,7 +51,6 @@ import DocsIcon from './assets/docs.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
-import EarnIcon from './assets/earn.svg';
 import EditNewIcon from './assets/edit-new.svg';
 import EditIcon from './assets/edit.svg';
 import EndorsementsIcon from './assets/endorsements.svg';
@@ -112,9 +109,7 @@ import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RetryIcon from './assets/retry.svg';
 import ScamInfoIcon from './assets/scam-info.svg';
 import SearchNewIcon from './assets/search-new.svg';
-import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
-import ShoppingCardIcon from './assets/shopping-card.svg';
 import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
 import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
 import SmileIcon from './assets/smile.svg';
@@ -163,7 +158,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
-  [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.Burn]: BurnIcon,
   [IconNameEnum.BrokenImage]: BrokenImage,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
@@ -189,7 +183,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.InvertedCheckboxOn]: InvertedCheckboxOnIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.HelpCircle]: HelpCircleIcon,
-  [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
@@ -202,7 +195,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
-  [IconNameEnum.Settings]: SettingsIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
   [IconNameEnum.Spicy]: SpicyIcon,
   [IconNameEnum.WTez]: WTezIcon,
@@ -243,7 +235,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.AlertCircle]: AlertCircleIcon,
   [IconNameEnum.AlertTriangle]: AlertTriangleIcon,
-  [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.InfoAlt]: InfoAltIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
   [IconNameEnum.ChevronUp]: ChevronUpIcon,
@@ -281,7 +272,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.RetryIcon]: RetryIcon,
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.Market]: MarketIcon,
-  [IconNameEnum.Earn]: EarnIcon,
   [IconNameEnum.EarnDapp]: EarnDappIcon,
   [IconNameEnum.Buy]: BuyIcon,
   [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,

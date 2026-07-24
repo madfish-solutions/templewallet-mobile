@@ -98,10 +98,10 @@ export const ManageAccountItem: FC<Props> = ({ account, selectedAccount, onRevea
 
       <View style={styles.lowerContainer}>
         <View style={styles.lowerContainerData}>
-          <HideBalance style={styles.balanceText}>
+          <HideBalance textStyle={styles.balanceText}>
             <AssetValueText asset={tezosToken} amount={tezosToken.balance} />
           </HideBalance>
-          <HideBalance style={styles.equityText}>
+          <HideBalance textStyle={styles.equityText}>
             <AssetValueText convertToDollar asset={tezosToken} amount={tezosToken.balance} />
           </HideBalance>
         </View>

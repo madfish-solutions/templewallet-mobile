@@ -31,10 +31,10 @@ export const TokenListItem = memo<Props>(({ token, scam, apy, onPress }) => {
     <TouchableOpacity onPress={handleOnPress} style={styles.container}>
       <TokenContainer token={token} scam={scam} apy={apy}>
         <View style={styles.rightContainer}>
-          <HideBalance style={styles.balanceText}>
+          <HideBalance textStyle={styles.balanceText}>
             <AssetValueText asset={token} amount={token.balance} showSymbol={false} />
           </HideBalance>
-          <HideBalance style={styles.valueText}>
+          <HideBalance textStyle={styles.valueText}>
             <AssetValueText asset={token} convertToDollar amount={token.balance} />
           </HideBalance>
         </View>

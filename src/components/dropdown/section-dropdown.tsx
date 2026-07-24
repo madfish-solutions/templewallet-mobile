@@ -3,7 +3,7 @@ import React, { memo, useCallback } from 'react';
 import { FlatListProps, ListRenderItemInfo, Text, View } from 'react-native';
 
 import { emptyComponent, emptyFn } from 'src/config/general';
-import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
+import { useMaxDropdownHeight } from 'src/hooks/use-max-dropdown-height.hook';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
@@ -76,7 +76,7 @@ const SectionDropdownComponent = <T extends unknown>({
 }: SectionDropdownProps<T> & SectionDropdownValueProps<T>) => {
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
-  const contentHeight = useDropdownHeight();
+  const contentHeight = useMaxDropdownHeight();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {

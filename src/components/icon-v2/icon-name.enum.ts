@@ -2,9 +2,22 @@ export enum IconNameV2Enum {
   Copy = 'Copy',
   Qr = 'Qr',
   XBig = 'XBig',
+  XRound = 'XRound',
   AlarmTriangle = 'AlarmTriangle',
   Info = 'Info',
   ArrowLeft = 'ArrowLeft',
+  ArrowDown = 'ArrowDown',
+  ArrowUp = 'ArrowUp',
   PlusBig = 'PlusBig',
-  ChevronRight = 'ChevronRight'
+  ChevronRight = 'ChevronRight',
+  DropdownDown = 'DropdownDown',
+  Notification = 'Notification',
+  Settings = 'Settings',
+  Cart = 'Cart',
+  Dollar = 'Dollar',
+  Search = 'Search',
+  Clock = 'Clock',
+  Slider = 'Slider',
+  Import = 'Import',
+  UserAdd = 'UserAdd'
 }
