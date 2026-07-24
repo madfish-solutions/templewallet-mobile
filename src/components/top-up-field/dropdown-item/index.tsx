@@ -55,7 +55,7 @@ export const TopUpTokenDropdownItem: FC<Props> = memo(
         );
       }
 
-      return <StaticTokenIcon uri={token?.icon} size={iconSize} />;
+      return <StaticTokenIcon uri={token?.icon ?? undefined} size={iconSize} />;
     }, [token]);
 
     const codeFromToken = token?.codeToDisplay ?? token?.code;

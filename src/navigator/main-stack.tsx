@@ -43,7 +43,7 @@ import { NetworkSettings } from 'src/screens/network-settings';
 import { Networks } from 'src/screens/networks';
 import { Notifications } from 'src/screens/notifications/notifications';
 import { NotificationsItem } from 'src/screens/notifications-item/notifications-item';
-import { NotificationsSettings } from 'src/screens/notifications-settings/notifications-settings';
+import { AdvancedFeaturesSettings } from 'src/screens/notifications-settings/advanced-features-settings';
 import { Savings } from 'src/screens/savings';
 import { ScanQrCode } from 'src/screens/scan-qr-code/scan-qr-code';
 import { SecureSettings } from 'src/screens/secure-settings/secure-settings';
@@ -322,9 +322,9 @@ export const MainStackScreen = memo(() => {
                 options={generateScreenOptions(<HeaderTitle title={`Backup to ${cloudTitle}`} />)}
               />
               <MainStack.Screen
-                name={ScreensEnum.NotificationsSettings}
-                component={NotificationsSettings}
-                options={generateScreenOptions(<HeaderTitle title="Notifications and Ads" />)}
+                name={ScreensEnum.AdvancedFeaturesSettings}
+                component={AdvancedFeaturesSettings}
+                options={generateScreenOptions(<HeaderTitle title="Advanced features" />)}
               />
               <MainStack.Screen
                 name={ScreensEnum.Debug}
