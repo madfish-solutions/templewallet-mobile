@@ -23,6 +23,7 @@ import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS } from 'src/token/data/tokens-metadata';
 import { getAccountForTezos } from 'src/utils/account.utils.ts';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
+import { AnalyticsEventProperties } from 'src/utils/analytics/analytics.util';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { isDefined } from 'src/utils/is-defined';
 import { isTruthy } from 'src/utils/is-truthy';
@@ -53,6 +54,7 @@ interface Props extends TestIdProps {
   onEstimationError?: SyncFn<unknown>;
   onEstimationComplete?: EmptyFn;
   onSubmit: SyncFn<ParamsWithKind[]>;
+  confirmEventProperties?: AnalyticsEventProperties;
 }
 
 export const OperationsConfirmation: FCWithChildren<Props> = ({
@@ -65,7 +67,8 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
   children,
   disclaimer,
   renderPreview,
-  testID
+  testID,
+  confirmEventProperties
 }) => {
   const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
@@ -95,7 +98,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
 
   const handleSubmit = ({ gasFeeSum, storageLimitSum }: FeeFormInputValues) => {
     if (isTruthy(testID)) {
-      trackEvent(testID, AnalyticsEventCategory.FormSubmit);
+      trackEvent(testID, AnalyticsEventCategory.FormSubmit, confirmEventProperties);
     }
 
     // Remove revealGasGee from sum
@@ -224,6 +227,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
           disabled={estimations.isLoading || isLoading || !isValid}
           onPress={submitForm}
           testID={ConfirmationModalSelectors.confirmButton}
+          testIDProperties={confirmEventProperties}
         />
       </ModalButtonsFloatingContainer>
     </FormikProvider>

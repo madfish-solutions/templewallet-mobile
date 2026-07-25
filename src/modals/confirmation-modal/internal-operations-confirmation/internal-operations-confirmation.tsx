@@ -21,6 +21,7 @@ import { waitForOperationCompletionAction } from 'src/store/wallet/wallet-action
 import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { getAccountForTezos } from 'src/utils/account.utils.ts';
+import { AnalyticsEventProperties } from 'src/utils/analytics/analytics.util';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { TEMPLE_WALLET_EVERSTAKE_LINK_ID } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -35,6 +36,7 @@ import { OperationsConfirmation } from '../operations-confirmation/operations-co
 type Props = Omit<InternalOperationsConfirmationModalParams, 'type'> & {
   renderPreview?: (opParams: ParamsWithKind[]) => React.ReactNode;
   onEstimationComplete?: EmptyFn;
+  confirmEventProperties?: AnalyticsEventProperties;
 };
 
 const approveInternalOperationRequest = ({ sender, opParams }: ApproveInternalOperationRequestActionPayloadInterface) =>
@@ -69,7 +71,8 @@ export const InternalOperationsConfirmation: FC<Props> = ({
   disclaimerMessage,
   testID,
   renderPreview,
-  onEstimationComplete
+  onEstimationComplete,
+  confirmEventProperties
 }) => {
   const account = useAccount();
   const tezosAccount = getAccountForTezos(account);
@@ -139,6 +142,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
       disclaimer={disclaimer}
       renderPreview={renderPreview}
       onEstimationComplete={onEstimationComplete}
+      confirmEventProperties={confirmEventProperties}
     />
   );
 };

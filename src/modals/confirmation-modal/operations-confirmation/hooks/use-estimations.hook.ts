@@ -43,6 +43,9 @@ export const useEstimations = (sender: TezosReadOnlySignerPayload, opParams: Par
             error.errors.some(internalError => internalError.id.includes('gas_exhausted'))
           ) {
             const { operationsWithResults } = error;
+            // Taquito auto-prepends reveal op for unrevealed accounts, so "operationsWithResults" can
+            // be one longer than "currentOpParams", offset the index back into "currentOpParams" space.
+            const revealOffset = operationsWithResults.length - currentOpParams.length;
             const firstSkippedOperationIndex = operationsWithResults.findIndex(
               op =>
                 'metadata' in op &&
@@ -50,10 +53,16 @@ export const useEstimations = (sender: TezosReadOnlySignerPayload, opParams: Par
                 op.metadata.operation_result.status === 'skipped'
             );
             // An internal operation of this operation may be marked as failed but this one as backtracked
-            const failedOperationIndex =
+            const failedResultIndex =
               firstSkippedOperationIndex === -1 ? operationsWithResults.length - 1 : firstSkippedOperationIndex - 1;
-            const failedOperationWithResult = operationsWithResults[failedOperationIndex];
-            if ('gas_limit' in failedOperationWithResult) {
+            const failedOperationIndex = failedResultIndex - revealOffset;
+            const failedOperationWithResult = operationsWithResults[failedResultIndex];
+            if (
+              (revealOffset === 0 || revealOffset === 1) &&
+              failedOperationIndex >= 0 &&
+              failedOperationWithResult &&
+              'gas_limit' in failedOperationWithResult
+            ) {
               const newOpParams = Array.from(currentOpParams);
               const failedOperation = newOpParams[failedOperationIndex] as GasConsumingOperation;
               failedOperation.gasLimit =

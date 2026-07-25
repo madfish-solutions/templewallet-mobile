@@ -118,16 +118,6 @@ export const loadMinMaxFields = async (
   }
 };
 
-class LoadRateError extends Error {
-  constructor(
-    public readonly error: Error,
-    public readonly requestData: GetRateRequestData,
-    public readonly errorName: string
-  ) {
-    super(error.message);
-  }
-}
-
 export const makeUpdateOutputInputValuePipeline$ = (
   payload$: BehaviorSubject<(GetRateRequestData & { errorName: string }) | null>,
   setFieldValue: setFieldType,
@@ -143,9 +133,13 @@ export const makeUpdateOutputInputValuePipeline$ = (
       const { errorName, ...requestData } = payload;
       setLoading(true);
 
-      return from(
-        loadExolixRate(requestData).catch(error => {
-          throw new LoadRateError(error, requestData, errorName);
+      return from(loadExolixRate(requestData)).pipe(
+        catchError(error => {
+          setLoading(false);
+
+          trackErrorEvent(error.errorName, error.error, [], error.requestData);
+
+          return EMPTY;
         })
       );
     }),
@@ -168,17 +162,6 @@ export const makeUpdateOutputInputValuePipeline$ = (
       }
 
       setLoading(false);
-
-      return of(undefined);
-    }),
-    catchError(error => {
-      setLoading(false);
-
-      if (error instanceof LoadRateError) {
-        trackErrorEvent(error.errorName, error.error, [], error.requestData);
-      } else {
-        trackErrorEvent('ExolixUpdateOutputInputValueError', error, []);
-      }
 
       return of(undefined);
     })

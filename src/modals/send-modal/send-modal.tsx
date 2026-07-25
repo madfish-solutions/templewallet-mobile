@@ -36,9 +36,15 @@ import { sendAssetActions } from 'src/store/wallet/wallet-actions';
 import { useAccountAddressForTezos, useCurrentAccountTezosBalance } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { showWarningToast, showErrorToast } from 'src/toast/toast.utils';
-import { TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
+import {
+  TEZ_TOKEN_SLUG,
+  TEZ_SHIELDED_TOKEN_SLUG,
+  TEZ_SHIELDED_TOKEN_METADATA,
+  TEZ_SHIELDED_ANALYTICS_NAME
+} from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { getTokenSlug, isShieldedTez } from 'src/token/utils/token.utils';
+import { AnalyticsPageName } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
@@ -50,8 +56,6 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { SendModalSelectors } from './send-modal.selectors';
 import { useSendModalStyles } from './send-modal.styles';
-
-const isShieldedTezSelected = (asset: TokenInterface): boolean => getTokenSlug(asset) === TEZ_SHIELDED_TOKEN_SLUG;
 
 export const SendModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -154,7 +158,7 @@ export const SendModal: FC = () => {
 
       const resolvedAddress = transferBetweenOwnAccounts ? recipient.address : receiverPublicKeyHash;
       const isRecipientSapling = isSaplingAddress(resolvedAddress);
-      const isSourceShielded = isShieldedTezSelected(asset);
+      const isSourceShielded = isShieldedTez(asset);
 
       // Sapling flow
       if (isSourceShielded || (getTokenSlug(asset) === TEZ_TOKEN_SLUG && isRecipientSapling)) {
@@ -233,10 +237,14 @@ export const SendModal: FC = () => {
 
   const selectedAssetSlug = getTokenSlug(values.assetAmount.asset);
   const isTezOrShieldedTez = selectedAssetSlug === TEZ_TOKEN_SLUG || selectedAssetSlug === TEZ_SHIELDED_TOKEN_SLUG;
+  const isShieldedSend = selectedAssetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const isRecipientSapling = isSaplingAddress(values.receiverPublicKeyHash);
   const showMemoField = isTezOrShieldedTez && isRecipientSapling;
 
-  usePageAnalytic(ModalsEnum.Send);
+  const sendPageName = isShieldedSend ? AnalyticsPageName.SendShieldedTez : ModalsEnum.Send;
+  const sendPageToken = isShieldedSend ? TEZ_SHIELDED_ANALYTICS_NAME : values.assetAmount.asset.symbol;
+
+  usePageAnalytic(sendPageName, '', { token: sendPageToken });
   const { onBlur: handleAddressInputBlur } = useAddressFieldAnalytics(
     'RECIPIENT_NETWORK',
     'receiverPublicKeyHash' as const,

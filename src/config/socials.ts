@@ -1,11 +1,10 @@
 export const telegramUrl = 'https://t.me/madfishdev';
-export const discordUrl = 'https://discord.gg/qFRZ8kVzkv';
-export const twitterUrl = 'https://twitter.com/madfishofficial';
+export const discordUrl = 'https://discord.com/invite/qFRZ8kVzkv';
+export const twitterUrl = 'https://x.com/templewallet';
 export const youTubeUrl = 'https://www.youtube.com/channel/UCUp80EXfJEigks3xU5hiwyA';
 export const redditUrl = 'https://www.reddit.com/r/MadFishCommunity';
 
-export const knowledgeBase = 'https://madfish.crunch.help/temple-wallet';
-export const featureRequest = 'https://madfish.canny.io/feature-requests';
+export const knowledgeBase = 'https://docs.templewallet.com';
 
 export const website = 'https://templewallet.com';
 export const repository = 'https://github.com/madfish-solutions/templewallet-mobile';

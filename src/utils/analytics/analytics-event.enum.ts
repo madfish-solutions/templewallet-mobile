@@ -8,3 +8,7 @@ export enum AnalyticsEventCategory {
   PageOpened = 'PageOpened',
   Error = 'Error'
 }
+
+export enum AnalyticsPageName {
+  SendShieldedTez = 'Send Shielded TEZ'
+}

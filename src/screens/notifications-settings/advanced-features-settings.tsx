@@ -16,9 +16,9 @@ import { useIsPartnersPromoEnabledSelector } from 'src/store/partners-promotion/
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
-import { NotificationsSettingsSelectors } from './notifications-settings.selectors';
+import { AdvancedFeaturesSettingsSelectors } from './advanced-features-settings.selectors';
 
-export const NotificationsSettings = () => {
+export const AdvancedFeaturesSettings = () => {
   const dispatch = useDispatch();
 
   const isNewsEnabled = useIsNewsEnabledSelector();
@@ -34,37 +34,37 @@ export const NotificationsSettings = () => {
     }
   };
 
-  usePageAnalytic(ScreensEnum.NotificationsSettings);
+  usePageAnalytic(ScreensEnum.AdvancedFeaturesSettings);
 
   return (
     <ScreenContainer>
       <Divider size={formatSize(8)} />
-      <Label description="Configure the notifications and ads. (Platform updates and emergency notifications can’t be disabled)" />
+      <Label description="Configure the notifications and promo. (Platform updates and emergency notifications can’t be disabled)" />
       <Divider size={formatSize(8)} />
       <WhiteContainer>
         <WhiteContainerAction
           onPress={() => dispatch(setIsNewsEnabledAction(!isNewsEnabled))}
-          testID={NotificationsSettingsSelectors.newsAction}
+          testID={AdvancedFeaturesSettingsSelectors.newsAction}
           testIDProperties={{ newValue: !isNewsEnabled }}
         >
           <WhiteContainerText text="News" />
           <Switch
             value={isNewsEnabled}
             onChange={value => dispatch(setIsNewsEnabledAction(value))}
-            testID={NotificationsSettingsSelectors.newsToggle}
+            testID={AdvancedFeaturesSettingsSelectors.newsToggle}
             testIDProperties={{ newValue: !isNewsEnabled }}
           />
         </WhiteContainerAction>
         <WhiteContainerAction
           onPress={() => handleAdsToggle(!isAdsEnabled)}
-          testID={NotificationsSettingsSelectors.adsAction}
+          testID={AdvancedFeaturesSettingsSelectors.promoAction}
           testIDProperties={{ newValue: !isAdsEnabled }}
         >
-          <WhiteContainerText text="Ads" />
+          <WhiteContainerText text="Promo" />
           <Switch
             value={isAdsEnabled}
             onChange={() => handleAdsToggle(!isAdsEnabled)}
-            testID={NotificationsSettingsSelectors.adsToggle}
+            testID={AdvancedFeaturesSettingsSelectors.promoToggle}
             testIDProperties={{ newValue: !isAdsEnabled }}
           />
         </WhiteContainerAction>

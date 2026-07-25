@@ -1,4 +1,5 @@
 import { useCollectiblesDetailsLoading } from './use-collectibles-details-loading';
+import { useEnsureOldRpcUrlsRemoved } from './use-ensure-old-rpc-urls-removed';
 import { useFirebaseApp } from './use-firebase-app';
 import { usePushNotifications } from './use-push-notifications';
 import { useQuickActions } from './use-quick-actions';
@@ -19,6 +20,7 @@ export const useRootHooks = () => {
   useQuickActions();
   useResetPermanentInitialSettings();
   useResetKeychainOnInstall();
+  useEnsureOldRpcUrlsRemoved();
 
   useFirebaseApp();
   usePushNotifications();

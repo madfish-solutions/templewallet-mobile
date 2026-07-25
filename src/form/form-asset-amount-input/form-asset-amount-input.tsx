@@ -41,8 +41,7 @@ export const FormAssetAmountInput = memo<Props>(
     testID,
     tokenTestID,
     switcherTestID,
-    maxButtonTestID,
-    assetOptionTestIdPropertiesFn
+    maxButtonTestID
   }) => {
     const formikContext = useFormikContext();
     const [field, meta, helpers] = useField<AssetAmountInterface>(name);
@@ -101,7 +100,6 @@ export const FormAssetAmountInput = memo<Props>(
           tokenTestID={tokenTestID}
           switcherTestID={switcherTestID}
           maxButtonTestID={maxButtonTestID}
-          assetOptionTestIdPropertiesFn={assetOptionTestIdPropertiesFn}
         />
         <ErrorMessage meta={meta} />
       </>

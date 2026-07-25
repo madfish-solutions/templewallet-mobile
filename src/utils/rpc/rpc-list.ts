@@ -19,6 +19,7 @@ export const MARIGOLD_RPC: RpcInterface = {
 };
 
 export const OLD_TEMPLE_RPC_URLS = ['https://mainnet-node.madfish.solutions', 'https://uoi3x99n7c.tezosrpc.midl.dev'];
+export const OLD_OTHER_RPC_URLS = ['https://mainnet.api.tez.ie', 'https://mainnet.tezos.ecadinfra.com'];
 
 export const RpcList: RpcInterface[] = [
   TEMPLE_RPC,
@@ -35,10 +36,8 @@ export const RpcList: RpcInterface[] = [
 export const FALLBACK_TEZOS_RPC_LIST = [
   TEMPLE_RPC.url,
   'https://mainnet.smartpy.io',
-  'https://mainnet.api.tez.ie',
   'https://rpc.tzkt.io/mainnet',
-  'https://rpc.tzbeta.net',
-  'https://mainnet.tezos.ecadinfra.com'
+  'https://rpc.tzbeta.net'
 ];
 
 export const FALLBACK_EVM_RPCS_LIST: Record<number, string[]> = {

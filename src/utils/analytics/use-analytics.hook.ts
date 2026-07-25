@@ -7,7 +7,7 @@ import { useUserTestingGroupNameSelector } from 'src/store/ab-testing/ab-testing
 import { useAnalyticsEnabledSelector, useUserIdSelector } from 'src/store/settings/settings-selectors';
 import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 
-import { AnalyticsEventCategory } from './analytics-event.enum';
+import { AnalyticsEventCategory, AnalyticsPageName } from './analytics-event.enum';
 import { AnalyticsEventProperties, jitsu, sendAnalyticsEvent, sendErrorAnalyticsEvent } from './analytics.util';
 
 export const useAnalytics = () => {
@@ -77,7 +77,7 @@ export const useAnalytics = () => {
 };
 
 export const usePageAnalytic = (
-  screen: ModalsEnum | ScreensEnum | OverlayEnum,
+  screen: ModalsEnum | ScreensEnum | OverlayEnum | AnalyticsPageName,
   search = '',
   additionalProperties?: AnalyticsEventProperties
 ) => {

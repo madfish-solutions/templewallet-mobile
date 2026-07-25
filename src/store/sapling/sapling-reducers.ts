@@ -42,6 +42,12 @@ export const saplingReducers = createReducer<SaplingState>(saplingInitialState, 
 
   builder.addCase(loadShieldedBalanceActions.success, (state, { payload }) => {
     const { publicKeyHash, balance } = payload;
+
+    if (!state.accountsRecord[publicKeyHash]) {
+      // Shielded balance arrived after resetting the app
+      return;
+    }
+
     state.accountsRecord[publicKeyHash].shieldedBalance = balance;
     state.accountsRecord[publicKeyHash].isBalanceLoading = false;
   });
@@ -87,6 +93,12 @@ export const saplingReducers = createReducer<SaplingState>(saplingInitialState, 
 
   builder.addCase(loadSaplingTransactionHistoryActions.success, (state, { payload }) => {
     const { publicKeyHash, transactions } = payload;
+
+    if (!state.accountsRecord[publicKeyHash]) {
+      // Transaction history arrived after resetting the app
+      return;
+    }
+
     state.accountsRecord[publicKeyHash].transactionHistory = transactions;
     state.accountsRecord[publicKeyHash].isHistoryLoading = false;
   });
