@@ -1,4 +1,4 @@
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 
 import {
   emptyTokenMetadata,
@@ -33,7 +33,7 @@ export const TEZ_TOKEN_METADATA: TezosTokenMetadata = {
   name: 'Tezos',
   symbol: 'TEZ',
   decimals: 6,
-  iconName: IconNameEnum.TezToken
+  iconName: CryptoLogoNameEnum.Tezos
 };
 
 export const TEZ_TOKEN_SYMBOL = TEZ_TOKEN_METADATA.symbol;
@@ -50,7 +50,7 @@ export const TEZ_SHIELDED_TOKEN_METADATA: TezosTokenMetadata = {
   name: 'Shielded',
   symbol: 'TEZ',
   decimals: 6,
-  iconName: IconNameEnum.TezShieldedToken
+  iconName: CryptoLogoNameEnum.ShieldedTezos
 };
 
 export const TZBTC_TOKEN_METADATA: TezosTokenMetadata = {
@@ -59,7 +59,7 @@ export const TZBTC_TOKEN_METADATA: TezosTokenMetadata = {
   name: 'Tezos BTC',
   symbol: 'tzBTC',
   decimals: 8,
-  iconName: IconNameEnum.TzBtcToken,
+  iconName: CryptoLogoNameEnum.TzBtc,
   standard: TezosTokenStandardsEnum.Fa12
 };
 

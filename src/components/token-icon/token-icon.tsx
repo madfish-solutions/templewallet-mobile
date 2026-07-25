@@ -2,16 +2,14 @@ import React, { FC, useMemo } from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 
 import { formatSize } from 'src/styles/format-size';
-import { useColors } from 'src/styles/use-colors';
-import { TEZ_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { isImageRectangular, isImgUriDataUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
+import { CryptoLogo } from '../crypto-logo';
+import { CryptoLogoNameEnum } from '../crypto-logo/logo-name.enum';
 import { DataUriImage } from '../data-uri-image';
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
 
 import { LoadableTokenIconImage } from './loadable-image';
 import { TokenIconStyles } from './token-icon.styles';
@@ -42,21 +40,19 @@ type TokenIconImageProps = Props & {
 const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size }) => {
   const isDataUri = useMemo(() => isImgUriDataUri(thumbnailUri ?? ''), [thumbnailUri]);
 
-  const colors = useColors();
-
   if (isDefined(iconName)) {
-    return (
-      <Icon name={iconName} color={TEZ_TOKEN_METADATA.iconName === iconName ? colors.black : undefined} size={size} />
-    );
+    return <CryptoLogo name={iconName} size={size} />;
   }
 
   if (!isString(thumbnailUri)) {
-    return <Icon name={IconNameEnum.NoNameToken} size={size} />;
+    return <CryptoLogo name={CryptoLogoNameEnum.Placeholder} size={size} />;
   }
 
+  const imgSize = (size * 5) / 6;
+
   return isDataUri ? (
-    <DataUriImage width={size} height={size} dataUri={thumbnailUri} />
+    <DataUriImage width={imgSize} height={imgSize} dataUri={thumbnailUri} />
   ) : (
-    <LoadableTokenIconImage uri={thumbnailUri} size={size} />
+    <LoadableTokenIconImage uri={thumbnailUri} size={imgSize} />
   );
 };

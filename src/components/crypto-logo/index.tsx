@@ -13,16 +13,10 @@ interface CryptoLogoProps extends TestIdProps, Omit<SvgProps, 'width' | 'height'
   internalSize?: number;
 }
 
-const defaultInternalSizeByRatioIcons = new Set([
-  CryptoLogoNameEnum.Etherlink,
-  CryptoLogoNameEnum.ShieldedTezos,
-  CryptoLogoNameEnum.Tezos
-]);
-
 export const CryptoLogo: FC<CryptoLogoProps> = ({
   name,
   size = formatSize(24),
-  internalSize = defaultInternalSizeByRatioIcons.has(name) ? (size * 10) / 12 : size - formatSize(4),
+  internalSize = (size * 5) / 6,
   style: styleFromProps,
   ...restProps
 }) => {

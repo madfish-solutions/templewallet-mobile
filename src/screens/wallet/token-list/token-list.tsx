@@ -52,7 +52,7 @@ type ListItem = MultichainDisplayedToken | typeof AD_PLACEHOLDER;
 
 const ITEMS_BEFORE_AD = 4;
 /** padding size + icon size */
-const ITEM_HEIGHT = formatSize(20 + 40);
+const ITEM_HEIGHT = formatSize(16 + 44);
 
 const FILLER_SLUG_PREFIX = 'filler';
 

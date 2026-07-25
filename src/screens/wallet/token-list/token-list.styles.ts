@@ -23,10 +23,12 @@ export const useTokenListStyles = createUseStylesMemoized(({ colors }) => ({
   },
   promotionItemWrapper: {
     paddingVertical: formatSize(12),
-    paddingHorizontal: formatSize(8)
+    paddingHorizontal: formatSize(16)
   },
   promotionItemBorder: {
-    marginLeft: formatSize(16)
+    marginHorizontal: formatSize(16),
+    width: 'auto',
+    alignSelf: 'stretch'
   },
   promotionItem: {
     width: '100%'

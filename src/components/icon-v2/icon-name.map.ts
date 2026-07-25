@@ -12,6 +12,7 @@ import CopyIcon from './assets/copy.svg';
 import DollarIcon from './assets/dollar.svg';
 import DropdownDownIcon from './assets/dropdown-down.svg';
 import ImportIcon from './assets/import.svg';
+import InfoFillIcon from './assets/info-fill.svg';
 import InfoIcon from './assets/info.svg';
 import NotificationIcon from './assets/notification.svg';
 import PlusBigIcon from './assets/plus-big.svg';
@@ -31,6 +32,7 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.XRound]: XRoundIcon,
   [IconNameV2Enum.AlarmTriangle]: AlarmTriangleIcon,
   [IconNameV2Enum.Info]: InfoIcon,
+  [IconNameV2Enum.InfoFill]: InfoFillIcon,
   [IconNameV2Enum.ArrowLeft]: ArrowLeftIcon,
   [IconNameV2Enum.ArrowDown]: ArrowDownIcon,
   [IconNameV2Enum.ArrowUp]: ArrowUpIcon,
