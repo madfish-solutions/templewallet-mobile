@@ -36,10 +36,14 @@ import {
 const COLLECTIBLES_ROBOT_ICON_SIZE = 76;
 
 export const AccountDropdownItem = memo<AccountDropdownItemProps>(
-  ({ account, showFullData = true, actionIconName, isCollectibleScreen = false }) => {
+  ({ account, showFullData = true, actionIconName, isCollectibleScreen = false, variant = 'default' }) => {
     const styles = useAccountDropdownItemStyles();
 
     const tezos = useTezosTokenOfKnownAccount(account.id);
+
+    if (variant === 'card') {
+      return <AccountDropdownListItem account={account} />;
+    }
 
     return (
       <View style={styles.root}>
@@ -74,7 +78,11 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
 
 export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
 
-const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
+interface AccountDropdownListItemProps {
+  account: Account;
+}
+
+const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account }) => {
   const styles = useAccountDropdownItemStyles();
   const saplingAddress = useSaplingAddressForAccount(account);
 
@@ -100,7 +108,9 @@ const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(
         {isDefined(saplingAddress) && (
           <AccountAddressChip address={saplingAddress} iconName={CryptoLogoNameEnum.ShieldedTezos} />
         )}
-        {isDefined(evmAddress) && <AccountAddressChip address={evmAddress} iconName={CryptoLogoNameEnum.Etherlink} />}
+        {isDefined(evmAddress) && (
+          <AccountAddressChip address={evmAddress} iconName={CryptoLogoNameEnum.Etherlink} />
+        )}
       </View>
     </>
   );

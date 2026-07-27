@@ -176,8 +176,10 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
             <Text style={styles.sectionTitle}>Account</Text>
             <Divider />
 
-            <AccountDropdownItem account={sender} />
-            <Divider />
+            <View style={styles.accountCard}>
+              <AccountDropdownItem account={sender} variant="card" />
+            </View>
+            <Divider size={formatSize(24)} />
 
             <Text style={styles.sectionTitle}>Preview</Text>
             <Divider size={formatSize(12)} />

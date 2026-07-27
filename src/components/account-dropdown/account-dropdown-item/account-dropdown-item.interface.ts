@@ -7,4 +7,5 @@ export interface AccountDropdownItemProps {
   actionIconName?: IconNameEnum;
   isPublicKeyHashTextDisabled?: boolean;
   isCollectibleScreen?: boolean;
+  variant?: 'default' | 'card';
 }
