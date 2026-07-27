@@ -32,6 +32,7 @@ interface Props {
   iconSize?: number;
   iconVisualSize?: number;
   iconGap?: number;
+  layout?: 'default' | 'token-selector';
 }
 
 export const TokenDropdownItem: FC<Props> = ({
@@ -43,7 +44,8 @@ export const TokenDropdownItem: FC<Props> = ({
   isShowName = true,
   iconSize = formatSize(40),
   iconVisualSize = iconSize,
-  iconGap = formatSize(8)
+  iconGap = formatSize(8),
+  layout = 'default'
 }) => {
   const styles = useTokenDropdownItemStyles();
   const chainKind = (token as TokenInterface & { chainKind?: TempleChainKind }).chainKind;
@@ -55,10 +57,15 @@ export const TokenDropdownItem: FC<Props> = ({
       ? CryptoLogoNameEnum.Etherlink
       : undefined;
   const hasActionIcon = isDefined(actionIconName) || isDefined(actionIconV2Name);
+  const isTokenSelector = layout === 'token-selector';
 
   const tokenNameTextStyle = useMemo(
-    () => [styles.name, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
-    [hasActionIcon, styles]
+    () => [
+      styles.name,
+      isTokenSelector && styles.tokenSelectorName,
+      conditionalStyle(!hasActionIcon, styles.fullWidthName)
+    ],
+    [hasActionIcon, isTokenSelector, styles]
   );
 
   if (tokenEqualityFn(token, emptyToken)) {
@@ -100,7 +107,9 @@ export const TokenDropdownItem: FC<Props> = ({
 
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
-          <TruncatedText style={styles.symbol}>{token.symbol}</TruncatedText>
+          <TruncatedText style={[styles.symbol, isTokenSelector && styles.tokenSelectorSymbol]}>
+            {token.symbol}
+          </TruncatedText>
           <View style={styles.rightContainer}>
             <Divider size={formatSize(4)} />
             {isShowBalance && (
@@ -124,7 +133,11 @@ export const TokenDropdownItem: FC<Props> = ({
             {isShowName && <Divider size={formatSize(4)} />}
             {isShowBalance && (
               <HideBalance
-                style={[styles.dollarEquivalent, conditionalStyle(hasActionIcon, styles.actionIconSubstitute)]}
+                style={[
+                  styles.dollarEquivalent,
+                  isTokenSelector && styles.tokenSelectorDollarEquivalent,
+                  conditionalStyle(hasActionIcon, styles.actionIconSubstitute)
+                ]}
               >
                 {isShowBalanceLoading ? (
                   '---'

@@ -39,6 +39,8 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
   onLongPress?: EmptyFn;
+  appearance?: 'default' | 'token-selector';
+  scrollToSelectedValue?: boolean;
 }
 
 export interface DropdownValueProps<T> extends TestIdProps {
@@ -93,6 +95,8 @@ const DropdownComponent = <T extends unknown>({
   keyExtractor,
   onValueChange,
   onLongPress,
+  appearance = 'default',
+  scrollToSelectedValue = true,
   testID,
   testIDProperties,
   itemTestIDPropertiesFn
@@ -101,7 +105,8 @@ const DropdownComponent = <T extends unknown>({
   const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
-  const getItemLayout = useMemo(() => createGetItemLayout<T>(itemHeight), [itemHeight]);
+  const listItemHeight = appearance === 'token-selector' ? formatSize(52) : itemHeight;
+  const getItemLayout = useMemo(() => createGetItemLayout<T>(listItemHeight), [listItemHeight]);
   const contentHeight = useDropdownHeight();
 
   const renderItem = useCallback(
@@ -127,8 +132,13 @@ const DropdownComponent = <T extends unknown>({
             testID={DropdownSelectors.option}
             testIDProperties={itemTestIDPropertiesFn?.(item)}
           >
-            <DropdownItemContainer hasMargin={true} isSelected={isSelected} style={itemContainerStyle}>
-              {renderListItem({ item, isSelected })}
+            <DropdownItemContainer
+              hasMargin={appearance === 'default'}
+              isSelected={isSelected}
+              isCompact={appearance === 'token-selector'}
+              style={itemContainerStyle}
+            >
+              {renderListItem({ item, isSelected: appearance === 'token-selector' ? false : isSelected })}
             </DropdownItemContainer>
           </TouchableWithAnalytics>
         </>
@@ -171,7 +181,9 @@ const DropdownComponent = <T extends unknown>({
         style={styles.valueContainer}
         disabled={disabled}
         onPress={() => {
-          scroll();
+          if (scrollToSelectedValue) {
+            scroll();
+          }
 
           trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
@@ -183,9 +195,23 @@ const DropdownComponent = <T extends unknown>({
         {renderValue({ value, disabled, isCollectibleScreen })}
       </SafeTouchableOpacity>
 
-      <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
-        <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder={searchPlaceholder} onChangeText={setSearchValue} />}
+      <BottomSheet
+        description={description}
+        contentHeight={contentHeight}
+        controller={dropdownBottomSheetController}
+        showCloseButton={appearance === 'token-selector'}
+        showCancelButton={appearance === 'default'}
+      >
+        <View
+          style={[styles.contentContainer, appearance === 'token-selector' && styles.tokenSelectorContentContainer]}
+        >
+          {isSearchable && (
+            <SearchInput
+              placeholder={searchPlaceholder}
+              onChangeText={setSearchValue}
+              variant={appearance === 'token-selector' ? 'compact' : 'default'}
+            />
+          )}
           {listHeader}
           {isLoading ? (
             <View style={styles.activityIndicatorContainer}>
@@ -198,7 +224,10 @@ const DropdownComponent = <T extends unknown>({
               renderItem={renderItem}
               keyExtractor={keyExtractor}
               getItemLayout={getItemLayout}
-              contentContainerStyle={styles.flatListContentContainer}
+              contentContainerStyle={[
+                styles.flatListContentContainer,
+                appearance === 'token-selector' && styles.tokenSelectorListContentContainer
+              ]}
               ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
               windowSize={10}
               updateCellsBatchingPeriod={150}

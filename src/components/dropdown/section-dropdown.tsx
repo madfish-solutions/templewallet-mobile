@@ -30,6 +30,8 @@ export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps
   renderListItem: DropdownListItemComponent<T>;
   renderActionButtons?: DropdownActionButtonsComponent;
   onLongPress?: EmptyFn;
+  showCancelButton?: boolean;
+  showCloseButton?: boolean;
 }
 
 interface SectionDropdownValueProps<T> {
@@ -71,6 +73,8 @@ const SectionDropdownComponent = <T extends unknown>({
   keyExtractor,
   onValueChange,
   onLongPress,
+  showCancelButton,
+  showCloseButton,
   testID,
   testIDProperties
 }: SectionDropdownProps<T> & SectionDropdownValueProps<T>) => {
@@ -142,9 +146,15 @@ const SectionDropdownComponent = <T extends unknown>({
         {renderValue({ value, disabled })}
       </TouchableWithAnalytics>
 
-      <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
+      <BottomSheet
+        description={description}
+        contentHeight={contentHeight}
+        controller={dropdownBottomSheetController}
+        showCancelButton={showCancelButton}
+        showCloseButton={showCloseButton}
+      >
         <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder="Search" onChangeText={setSearchValue} />}
+          {isSearchable && <SearchInput placeholder="Search" onChangeText={setSearchValue} variant="compact" />}
           <BottomSheetSectionList
             sections={list}
             getItemLayout={createGetItemLayout(itemHeight)}

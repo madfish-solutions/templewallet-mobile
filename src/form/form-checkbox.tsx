@@ -12,6 +12,7 @@ import { ErrorMessage } from './error-message/error-message';
 
 interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID' | 'inverted'>, TestIdProps {
   name: string;
+  onValueChange?: SyncFn<boolean>;
   descriptionNode?: ReactNode;
   error?: string;
   shouldShowError?: boolean;
@@ -19,6 +20,7 @@ interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID' | 'in
 
 export const FormCheckbox: FCWithChildren<Props> = ({
   name,
+  onValueChange,
   children,
   descriptionNode,
   disabled,
@@ -36,6 +38,7 @@ export const FormCheckbox: FCWithChildren<Props> = ({
     trackEvent(testID, AnalyticsEventCategory.FormChange, testIDProperties);
 
     helpers.setTouched(true);
+    onValueChange?.(newValue);
     helpers.setValue(newValue);
   };
 

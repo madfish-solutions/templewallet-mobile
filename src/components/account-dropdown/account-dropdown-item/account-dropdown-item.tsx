@@ -86,7 +86,7 @@ const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(
   return (
     <>
       <View style={styles.listItemHeader}>
-        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} padding={formatSize(4)} />
+        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} padding={formatSize(2)} />
         <View style={styles.listItemHeaderInfo}>
           <TruncatedText style={styles.listItemName}>{account.name}</TruncatedText>
           <HideBalance style={styles.listItemBalanceText}>
@@ -120,7 +120,7 @@ const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName })
 
   return (
     <View style={styles.addressChip}>
-      <CryptoLogo name={iconName} size={formatSize(12)} />
+      <CryptoLogo name={iconName} size={formatSize(16)} internalSize={formatSize(12)} />
       <Text style={styles.addressText}>{truncateAddress(address)}</Text>
     </View>
   );

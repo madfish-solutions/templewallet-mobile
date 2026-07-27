@@ -45,5 +45,39 @@ export const useContactFormSectionDropdownStyles = createUseStyles(({ colors, ty
     ...typography.numbersRegular11,
     color: colors.gray1,
     marginLeft: formatSize(4)
+  },
+  accountContainer: {
+    flex: 1,
+    gap: formatSize(12)
+  },
+  accountHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: formatSize(8)
+  },
+  accountName: {
+    ...typography.body15Semibold,
+    flexShrink: 1,
+    color: colors.black
+  },
+  accountBalance: {
+    ...typography.numbersRegular15,
+    flexGrow: 1,
+    textAlign: 'right',
+    color: colors.black
+  },
+  accountAddressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: formatSize(8)
+  },
+  accountAddress: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: formatSize(2)
+  },
+  accountAddressText: {
+    ...typography.caption13Regular,
+    color: colors.blue
   }
 }));

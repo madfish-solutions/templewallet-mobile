@@ -7,7 +7,11 @@ import { useDispatch } from 'react-redux';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { ContactFormSectionDropdown } from 'src/components/contact-dropdown/contact-form-section-dropdown';
+import { CryptoLogo } from 'src/components/crypto-logo';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { Divider } from 'src/components/divider/divider';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -38,7 +42,8 @@ import {
   useCurrentAccountTezosBalance
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToast, showWarningToast } from 'src/toast/toast.utils';
+import { useColors } from 'src/styles/use-colors';
+import { showErrorToast } from 'src/toast/toast.utils';
 import { TEZ_SHIELDED_ANALYTICS_NAME, TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { AnalyticsPageName } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
@@ -69,6 +74,7 @@ export const SendModal: FC = () => {
   const { token: initialToken, receiverPublicKeyHash: initialReceiverPublicKeyHash = '' } =
     useModalParams<ModalsEnum.Send>();
   const styles = useSendModalStyles();
+  const colors = useColors();
   const { goBack } = useNavigation();
 
   const assets = useSendAssets();
@@ -252,6 +258,7 @@ export const SendModal: FC = () => {
   );
 
   const isTransferDisabled = filteredReceiversList.length === 0;
+  const firstReceiver = useMemo(() => filteredReceiversList.flatMap(({ data }) => data)[0], [filteredReceiversList]);
   const isTezOrShieldedTez =
     selectedAsset.assetSlug === TEZ_TOKEN_SLUG || selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
@@ -264,6 +271,15 @@ export const SendModal: FC = () => {
     setIsValidationTriggered(true);
     void submitForm();
   }, [submitForm]);
+
+  const handleTransferBetweenOwnAccountsChange = useCallback(
+    (isEnabled: boolean) => {
+      if (isEnabled && !values.recipient && firstReceiver) {
+        void setFieldValue('recipient', firstReceiver);
+      }
+    },
+    [firstReceiver, setFieldValue, values.recipient]
+  );
 
   useEffect(() => {
     if (
@@ -293,6 +309,17 @@ export const SendModal: FC = () => {
           style={[styles.filterChip, networkFilter === filter.value && styles.filterChipSelected]}
           onPress={() => setNetworkFilter(filter.value)}
         >
+          <View style={styles.filterIconContainer}>
+            {filter.value === 'all' ? (
+              <Icon name={IconNameEnum.Globe} size={formatSize(16)} color={colors.blue} />
+            ) : (
+              <CryptoLogo
+                name={filter.value === TempleChainKind.Tezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink}
+                size={formatSize(20)}
+              />
+            )}
+          </View>
+          <Divider size={formatSize(4)} />
           <Text style={[styles.filterChipText, networkFilter === filter.value && styles.filterChipTextSelected]}>
             {filter.label}
           </Text>
@@ -320,11 +347,14 @@ export const SendModal: FC = () => {
             inputTypeSwitcherVariant="figma"
             inputTypeSwitcherWidth={formatSize(118)}
             inputHeight={formatSize(56)}
+            stylesConfig={{ amountInput: styles.assetAmountInput }}
             dropdownVerticalPadding={formatSize(8)}
             label="Asset"
             assetsList={filteredAssets}
             isSearchable
             dropdownDescription="Select Token"
+            dropdownAppearance="token-selector"
+            scrollToSelectedValue={false}
             searchPlaceholder="Search by name or address"
             dropdownListHeader={tokenFilterHeader}
             setSearchValue={setAssetSearch}
@@ -359,20 +389,17 @@ export const SendModal: FC = () => {
             />
           )}
 
-          <View
-            onTouchStart={() =>
-              void (isTransferDisabled && showWarningToast({ description: 'Create another account or contact' }))
-            }
-          >
+          {!isTransferDisabled && (
             <FormCheckbox
-              disabled={isTransferDisabled || isRecipientSapling}
+              disabled={isRecipientSapling}
               name="transferBetweenOwnAccounts"
+              onValueChange={handleTransferBetweenOwnAccountsChange}
               size={formatSize(16)}
               testID={SendModalSelectors.transferBetweenMyAccountsCheckBox}
             >
-              <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
+              <Text style={styles.checkboxText}>Transfer between my accounts</Text>
             </FormCheckbox>
-          </View>
+          )}
 
           {showMemoField && (
             <>

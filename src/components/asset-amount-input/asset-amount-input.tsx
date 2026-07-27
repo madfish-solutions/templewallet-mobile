@@ -61,9 +61,19 @@ const getDefinedAmount = (
       : dollarToTokenAmount(amount, decimals, exchangeRate)
     : undefined;
 
-const renderTokenListItem: DropdownListItemComponent<TokenInterface> = ({ item, isSelected }) => (
-  <TokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
-);
+const getRenderTokenListItem =
+  (isTokenSelector: boolean): DropdownListItemComponent<TokenInterface> =>
+  ({ item, isSelected }) =>
+    (
+      <TokenDropdownItem
+        token={item}
+        iconSize={isTokenSelector ? formatSize(40) : undefined}
+        iconVisualSize={isTokenSelector ? formatSize(32) : undefined}
+        iconGap={isTokenSelector ? formatSize(4) : undefined}
+        layout={isTokenSelector ? 'token-selector' : 'default'}
+        {...(isSelected && { actionIconName: IconNameEnum.Check })}
+      />
+    );
 
 export const AssetAmountInput = memo<AssetAmountInputProps>(
   ({
@@ -78,15 +88,14 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     toUsdToggle = true,
     editable = true,
     isLoading = false,
-    inputTypeSwitcherGap,
-    inputTypeSwitcherVariant,
-    inputTypeSwitcherWidth = formatSize(158),
     inputHeight,
     dropdownVerticalPadding,
     isSearchable = false,
     searchPlaceholder,
     dropdownListHeader,
     dropdownDescription = 'Assets',
+    dropdownAppearance,
+    scrollToSelectedValue,
     selectionOptions = undefined,
     selectedTokenIconSize = formatSize(32),
     selectedTokenIconVisualSize,
@@ -107,6 +116,10 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     maxButtonTestID
   }) => {
     const styles = useAssetAmountInputStyles();
+    const renderTokenListItem = useMemo(
+      () => getRenderTokenListItem(dropdownAppearance === 'token-selector'),
+      [dropdownAppearance]
+    );
     const {
       balanceText: configBalanceTextStyles,
       amountInput: configAmountInputStyles,
@@ -330,6 +343,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
           >
             <Dropdown
               description={dropdownDescription}
+              appearance={dropdownAppearance}
+              scrollToSelectedValue={scrollToSelectedValue}
               disabled={isSingleAsset}
               value={value.asset}
               list={assetsList}

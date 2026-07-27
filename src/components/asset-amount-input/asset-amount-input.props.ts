@@ -37,6 +37,8 @@ export interface AssetAmountInputProps extends TestIdProps {
   searchPlaceholder?: string;
   dropdownListHeader?: ReactNode;
   dropdownDescription?: string;
+  dropdownAppearance?: 'default' | 'token-selector';
+  scrollToSelectedValue?: boolean;
   isShowNameForValue?: boolean;
   selectedTokenIconSize?: number;
   selectedTokenIconVisualSize?: number;

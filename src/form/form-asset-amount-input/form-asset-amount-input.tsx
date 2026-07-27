@@ -25,6 +25,8 @@ interface Props
       | 'inputTypeSwitcherWidth'
       | 'inputHeight'
       | 'dropdownVerticalPadding'
+      | 'dropdownAppearance'
+      | 'scrollToSelectedValue'
       | 'selectedTokenIconSize'
       | 'selectedTokenIconVisualSize'
       | 'selectedTokenIconGap'
@@ -55,6 +57,8 @@ export const FormAssetAmountInput = memo<Props>(
     searchPlaceholder,
     dropdownListHeader,
     dropdownDescription,
+    dropdownAppearance,
+    scrollToSelectedValue,
     isSingleAsset,
     selectionOptions = undefined,
     selectedTokenIconSize,
@@ -138,6 +142,8 @@ export const FormAssetAmountInput = memo<Props>(
           searchPlaceholder={searchPlaceholder}
           dropdownListHeader={dropdownListHeader}
           dropdownDescription={dropdownDescription}
+          dropdownAppearance={dropdownAppearance}
+          scrollToSelectedValue={scrollToSelectedValue}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}

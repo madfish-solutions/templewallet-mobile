@@ -50,11 +50,11 @@ export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddre
     const importedAccounts = filteredAccounts.filter(({ isImported }) => isImported);
 
     if (createdAccounts.length > 0) {
-      result.push({ title: 'CREATED', data: createdAccounts });
+      result.push({ title: 'Created', data: createdAccounts });
     }
 
     if (importedAccounts.length > 0) {
-      result.push({ title: 'IMPORTED', data: importedAccounts });
+      result.push({ title: 'Imported', data: importedAccounts });
     }
 
     const filteredContacts = contacts
@@ -67,7 +67,7 @@ export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddre
       );
 
     if (filteredContacts.length > 0) {
-      result.push({ title: 'CONTACTS', data: filteredContacts });
+      result.push({ title: 'Contacts', data: filteredContacts });
     }
 
     return result;

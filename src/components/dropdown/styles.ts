@@ -11,13 +11,21 @@ export const useDropdownStyles = createUseStyles(({ typography, colors }) => ({
     flexShrink: 1,
     backgroundColor: colors.pageBG
   },
+  tokenSelectorContentContainer: {
+    paddingTop: formatSize(4)
+  },
   flatListContentContainer: {
     justifyContent: 'space-between',
-    padding: formatSize(8)
+    paddingHorizontal: formatSize(16),
+    paddingVertical: formatSize(8)
+  },
+  tokenSelectorListContentContainer: {
+    paddingHorizontal: formatSize(16),
+    paddingVertical: formatSize(4)
   },
   sectionHeaderText: {
-    ...typography.numbersMedium13,
-    color: colors.gray2,
+    ...typography.caption13Regular,
+    color: colors.gray1,
     backgroundColor: colors.pageBG,
     paddingVertical: formatSize(4),
     letterSpacing: formatSize(-0.1)

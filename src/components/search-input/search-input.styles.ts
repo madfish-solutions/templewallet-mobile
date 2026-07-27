@@ -8,6 +8,9 @@ export const useSearchInputStyles = createUseStyles(({ colors, typography }) => 
     marginVertical: formatSize(8),
     marginHorizontal: formatSize(16)
   },
+  compactContainer: {
+    marginVertical: formatSize(8)
+  },
   iconContainer: {
     position: 'absolute',
     top: 0,
@@ -22,5 +25,10 @@ export const useSearchInputStyles = createUseStyles(({ colors, typography }) => 
     paddingLeft: formatSize(32),
     borderRadius: formatSize(10),
     backgroundColor: hexa('#8E8E93', 0.12)
+  },
+  compactInput: {
+    ...typography.caption13Regular,
+    lineHeight: formatSize(18),
+    borderRadius: formatSize(8)
   }
 }));

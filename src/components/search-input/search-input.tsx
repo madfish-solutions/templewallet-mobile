@@ -16,9 +16,19 @@ import { PatchedTextInput } from '../patched-text-input';
 
 import { useSearchInputStyles } from './search-input.styles';
 
-type Props = Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText' | 'onBlur' | 'testID'> & TestIdProps;
+type Props = Pick<TextInputProps, 'value' | 'placeholder' | 'onChangeText' | 'onBlur' | 'testID'> &
+  TestIdProps & {
+    variant?: 'default' | 'compact';
+  };
 
-export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = emptyFn, onBlur = emptyFn, testID }) => {
+export const SearchInput: FC<Props> = ({
+  value,
+  placeholder,
+  onChangeText = emptyFn,
+  onBlur = emptyFn,
+  testID,
+  variant = 'default'
+}) => {
   const colors = useColors();
   const styles = useSearchInputStyles();
 
@@ -34,13 +44,13 @@ export const SearchInput: FC<Props> = ({ value, placeholder, onChangeText = empt
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, variant === 'compact' && styles.compactContainer]}>
       <View style={styles.iconContainer}>
         <Icon name={IconNameEnum.IosSearch} size={formatSize(14)} color={colors.gray2} />
       </View>
       <PatchedTextInput
         value={value}
-        style={styles.input}
+        style={[styles.input, variant === 'compact' && styles.compactInput]}
         placeholder={placeholder}
         placeholderTextColor={colors.gray2}
         onChangeText={handleSearchQueryChange}
