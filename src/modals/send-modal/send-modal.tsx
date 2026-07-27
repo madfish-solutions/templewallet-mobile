@@ -61,6 +61,7 @@ const NETWORK_FILTERS: Array<{ label: string; value: NetworkFilter }> = [
 
 export const SendModal: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isValidationTriggered, setIsValidationTriggered] = useState(false);
   const [assetSearch, setAssetSearch] = useState('');
   const [networkFilter, setNetworkFilter] = useState<NetworkFilter>('all');
   const dispatch = useDispatch();
@@ -259,6 +260,11 @@ export const SendModal: FC = () => {
   const hasSourceAccount =
     selectedAsset.chainKind === TempleChainKind.Tezos ? Boolean(tezosAddress) : Boolean(evmAddress);
 
+  const handleSubmit = useCallback(() => {
+    setIsValidationTriggered(true);
+    void submitForm();
+  }, [submitForm]);
+
   useEffect(() => {
     if (
       selectedAsset.chainKind === TempleChainKind.Tezos &&
@@ -304,7 +310,17 @@ export const SendModal: FC = () => {
           <Divider size={formatSize(8)} />
           <FormAssetAmountInput
             maxButton
+            showErrorInFooter
             name="assetAmount"
+            selectedTokenIconSize={formatSize(40)}
+            selectedTokenIconVisualSize={formatSize(32)}
+            selectedTokenIconGap={formatSize(4)}
+            selectedTokenDropdownWidth={formatSize(122)}
+            inputTypeSwitcherGap={formatSize(2)}
+            inputTypeSwitcherVariant="figma"
+            inputTypeSwitcherWidth={formatSize(118)}
+            inputHeight={formatSize(56)}
+            dropdownVerticalPadding={formatSize(8)}
             label="Asset"
             assetsList={filteredAssets}
             isSearchable
@@ -336,9 +352,10 @@ export const SendModal: FC = () => {
             <FormAddressInput
               name="receiverPublicKeyHash"
               onBlur={handleAddressInputBlur}
-              placeholder={selectedAsset.chainKind === TempleChainKind.Tezos ? 'e.g. tz1 or domain.tez' : 'e.g. 0x...'}
+              placeholder={selectedAsset.chainKind === TempleChainKind.Tezos ? 'Address or domain' : 'Address'}
               testID={SendModalSelectors.toInput}
               pasteButtonTestID={SendModalSelectors.pasteAddressButton}
+              inputStyle={styles.recipientInput}
             />
           )}
 
@@ -353,7 +370,7 @@ export const SendModal: FC = () => {
               size={formatSize(16)}
               testID={SendModalSelectors.transferBetweenMyAccountsCheckBox}
             >
-              <Text style={styles.checkboxText}>Transfer between my accounts</Text>
+              <Text style={styles.checkboxText}>Transfer between my accounts or contacts</Text>
             </FormCheckbox>
           </View>
 
@@ -368,17 +385,17 @@ export const SendModal: FC = () => {
           <Divider />
         </View>
       </ScreenContainer>
-      <ModalButtonsFloatingContainer>
+      <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary
-          title="Close"
+          title="Cancel"
           onPress={goBack}
           disabled={isLoading}
           testID={SendModalSelectors.closeButton}
         />
         <ButtonLargePrimary
-          title="Send"
-          onPress={submitForm}
-          disabled={!hasSourceAccount || isLoading || Object.keys(errors).length > 0}
+          title="Confirm"
+          onPress={handleSubmit}
+          disabled={!hasSourceAccount || isLoading || (isValidationTriggered && Object.keys(errors).length > 0)}
           testID={SendModalSelectors.sendButton}
         />
       </ModalButtonsFloatingContainer>

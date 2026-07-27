@@ -7,6 +7,10 @@ export const useSendModalStyles = createUseStyles(({ colors, typography }) => ({
     color: colors.gray1,
     marginLeft: formatSize(4)
   },
+  recipientInput: {
+    height: formatSize(80),
+    minHeight: formatSize(80)
+  },
   filterRow: {
     flexDirection: 'row',
     paddingVertical: formatSize(12)

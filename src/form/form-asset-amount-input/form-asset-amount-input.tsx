@@ -15,10 +15,25 @@ import { ErrorMessage } from '../error-message/error-message';
 interface Props
   extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
     Partial<Pick<AssetAmountInputProps, 'onValueChange'>>,
-    Pick<AssetAmountInputProps, 'selectionOptions' & 'isSearchable' & 'toUsdToggle'>,
+    Pick<
+      AssetAmountInputProps,
+      | 'selectionOptions'
+      | 'isSearchable'
+      | 'toUsdToggle'
+      | 'inputTypeSwitcherGap'
+      | 'inputTypeSwitcherVariant'
+      | 'inputTypeSwitcherWidth'
+      | 'inputHeight'
+      | 'dropdownVerticalPadding'
+      | 'selectedTokenIconSize'
+      | 'selectedTokenIconVisualSize'
+      | 'selectedTokenIconGap'
+      | 'selectedTokenDropdownWidth'
+    >,
     TestIdProps {
   name: string;
   setSearchValue?: SyncFn<string>;
+  showErrorInFooter?: boolean;
 }
 
 export const FormAssetAmountInput = memo<Props>(
@@ -32,12 +47,22 @@ export const FormAssetAmountInput = memo<Props>(
     toUsdToggle = true,
     isLoading = false,
     isSearchable = false,
+    inputTypeSwitcherGap,
+    inputTypeSwitcherVariant,
+    inputTypeSwitcherWidth,
+    inputHeight,
+    dropdownVerticalPadding,
     searchPlaceholder,
     dropdownListHeader,
     dropdownDescription,
     isSingleAsset,
     selectionOptions = undefined,
+    selectedTokenIconSize,
+    selectedTokenIconVisualSize,
+    selectedTokenIconGap,
+    selectedTokenDropdownWidth,
     maxButton = false,
+    showErrorInFooter = false,
     expectedGasExpense,
     setSearchValue,
     onValueChange,
@@ -49,6 +74,8 @@ export const FormAssetAmountInput = memo<Props>(
     const formikContext = useFormikContext();
     const [field, meta, helpers] = useField<AssetAmountInterface>(name);
     const isError = hasError(meta);
+    const error = meta.touched ? meta.error : undefined;
+    const errorMessage = typeof error === 'string' ? error : error?.[Object.keys(error)[0]];
 
     const handleValueChange: SyncFn<AssetAmountInterface, void> = useCallback(
       newValue => {
@@ -100,7 +127,13 @@ export const FormAssetAmountInput = memo<Props>(
           frozenBalance={frozenBalance}
           stylesConfig={stylesConfig}
           isError={isError}
+          footerErrorMessage={showErrorInFooter && isError ? errorMessage : undefined}
           isLoading={isLoading}
+          inputTypeSwitcherGap={inputTypeSwitcherGap}
+          inputTypeSwitcherVariant={inputTypeSwitcherVariant}
+          inputTypeSwitcherWidth={inputTypeSwitcherWidth}
+          inputHeight={inputHeight}
+          dropdownVerticalPadding={dropdownVerticalPadding}
           isSearchable={isSearchable}
           searchPlaceholder={searchPlaceholder}
           dropdownListHeader={dropdownListHeader}
@@ -109,6 +142,10 @@ export const FormAssetAmountInput = memo<Props>(
           editable={editable}
           toUsdToggle={toUsdToggle}
           selectionOptions={selectionOptions}
+          selectedTokenIconSize={selectedTokenIconSize}
+          selectedTokenIconVisualSize={selectedTokenIconVisualSize}
+          selectedTokenIconGap={selectedTokenIconGap}
+          selectedTokenDropdownWidth={selectedTokenDropdownWidth}
           maxButton={maxButton}
           setSearchValue={setSearchValue}
           expectedGasExpense={expectedGasExpense}
@@ -119,7 +156,7 @@ export const FormAssetAmountInput = memo<Props>(
           switcherTestID={switcherTestID}
           maxButtonTestID={maxButtonTestID}
         />
-        <ErrorMessage meta={meta} />
+        {!showErrorInFooter && <ErrorMessage meta={meta} />}
       </>
     );
   }

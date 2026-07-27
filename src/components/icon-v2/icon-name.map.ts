@@ -5,6 +5,7 @@ import AlarmTriangleIcon from './assets/alarm-triangle.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import CopyIcon from './assets/copy.svg';
+import DropdownDownIcon from './assets/dropdown-down.svg';
 import InfoIcon from './assets/info.svg';
 import PlusBigIcon from './assets/plus-big.svg';
 import QrIcon from './assets/qr.svg';
@@ -19,5 +20,6 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.Info]: InfoIcon,
   [IconNameV2Enum.ArrowLeft]: ArrowLeftIcon,
   [IconNameV2Enum.PlusBig]: PlusBigIcon,
-  [IconNameV2Enum.ChevronRight]: ChevronRightIcon
+  [IconNameV2Enum.ChevronRight]: ChevronRightIcon,
+  [IconNameV2Enum.DropdownDown]: DropdownDownIcon
 };

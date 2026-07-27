@@ -10,6 +10,11 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
   iconContainer: {
     position: 'relative'
   },
+  iconVisualContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center'
+  },
   chainBadge: {
     position: 'absolute',
     right: 0,

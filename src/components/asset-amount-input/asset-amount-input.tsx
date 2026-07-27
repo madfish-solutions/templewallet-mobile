@@ -23,6 +23,7 @@ import { Divider } from '../divider/divider';
 import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
 import { HideBalance } from '../hide-balance/hide-balance';
 import { IconNameEnum } from '../icon/icon-name.enum';
+import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 import { Label } from '../label/label';
 import { PatchedTextInput } from '../patched-text-input';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
@@ -73,14 +74,24 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     balanceLabel,
     frozenBalance,
     isError = false,
+    footerErrorMessage,
     toUsdToggle = true,
     editable = true,
     isLoading = false,
+    inputTypeSwitcherGap,
+    inputTypeSwitcherVariant,
+    inputTypeSwitcherWidth = formatSize(158),
+    inputHeight,
+    dropdownVerticalPadding,
     isSearchable = false,
     searchPlaceholder,
     dropdownListHeader,
     dropdownDescription = 'Assets',
     selectionOptions = undefined,
+    selectedTokenIconSize = formatSize(32),
+    selectedTokenIconVisualSize,
+    selectedTokenIconGap,
+    selectedTokenDropdownWidth,
     maxButton = false,
     expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
     stylesConfig = defaultAssetAmountInputStylesConfig,
@@ -176,13 +187,15 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
       ({ value: tokenValue }) => (
         <TokenDropdownItem
           token={tokenValue}
-          actionIconName={isSingleAsset ? undefined : IconNameEnum.TriangleDown}
+          actionIconV2Name={isSingleAsset ? undefined : IconNameV2Enum.DropdownDown}
           isShowBalance={false}
           isShowName={isShowNameForValue}
-          iconSize={formatSize(32)}
+          iconSize={selectedTokenIconSize}
+          iconVisualSize={selectedTokenIconVisualSize}
+          iconGap={selectedTokenIconGap}
         />
       ),
-      [isSingleAsset, isShowNameForValue]
+      [isShowNameForValue, isSingleAsset, selectedTokenIconGap, selectedTokenIconSize, selectedTokenIconVisualSize]
     );
 
     const onChange = useCallback(
@@ -268,7 +281,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
           <Label label={label} />
           {toUsdToggle && hasExchangeRate && (
             <TextSegmentControl
-              width={formatSize(158)}
+              width={formatSize(128)}
               selectedIndex={inputTypeIndex}
               values={['TOKEN', fiatCurrency]}
               testID={AssetAmountInputSelectors.inputTypeSwitcher}
@@ -283,6 +296,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
             styles.inputContainer,
             conditionalStyle(!editable, styles.disabledInputContainer),
             conditionalStyle(isError, styles.inputContainerError),
+            { height: inputHeight },
             configInputContainerStyles
           ]}
         >
@@ -310,7 +324,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
             style={[
               styles.dropdownContainer,
               conditionalStyle(isLiquidityProviderToken, styles.lpDropdownContainer),
-              conditionalStyle(!editable, styles.disabledDropdownContainer)
+              conditionalStyle(!editable, styles.disabledDropdownContainer),
+              { paddingVertical: dropdownVerticalPadding, width: selectedTokenDropdownWidth }
             ]}
           >
             <Dropdown
@@ -336,12 +351,16 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
         <Divider size={formatSize(8)} />
 
         <View style={styles.footerContainer}>
-          <AssetValueText
-            amount={amount.toFixed()}
-            asset={value.asset}
-            style={styles.equivalentValueText}
-            convertToDollar={isTokenInputType}
-          />
+          {footerErrorMessage ? (
+            <Text style={styles.footerErrorText}>{footerErrorMessage}</Text>
+          ) : (
+            <AssetValueText
+              amount={amount.toFixed()}
+              asset={value.asset}
+              style={styles.equivalentValueText}
+              convertToDollar={isTokenInputType}
+            />
+          )}
           <View style={styles.balanceContainer}>
             {isLiquidityProviderToken && (
               <>
