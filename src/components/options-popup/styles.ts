@@ -1,5 +1,6 @@
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
+import { iosCardShadow } from 'src/styles/shadows';
 
 export const popoverWidth = formatSize(207);
 
@@ -13,7 +14,8 @@ export const useOptionsPopupStyles = createUseStylesMemoized(({ colors, typograp
     backgroundColor: colors.navigation,
     borderWidth: formatSize(1),
     borderColor: colors.lines,
-    borderBottomColor: colors.lines
+    borderBottomColor: colors.lines,
+    boxShadow: iosCardShadow
   },
   title: {
     ...typography.caption13Regular,

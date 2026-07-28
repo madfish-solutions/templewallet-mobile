@@ -70,7 +70,7 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     flexWrap: 'nowrap',
     alignItems: 'center',
     gap: formatSize(12),
-    marginTop: formatSize(16)
+    marginTop: formatSize(12)
   },
   addressChip: {
     flexDirection: 'row',

@@ -6,9 +6,7 @@ export const WalletStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  cryptoCardContainer: {
-    zIndex: -1
-  },
+  cryptoCardContainer: {},
   topActionsContainer: {
     flexDirection: 'row',
     alignItems: 'center'

@@ -1,7 +1,8 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { memo, useMemo } from 'react';
-import { Text } from 'react-native';
+import React, { memo, useCallback, useMemo, useState } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent, Text, View } from 'react-native';
 
+import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
@@ -23,13 +24,27 @@ export const ManageTokens = memo(() => {
 
   const tokensList = useCurrentAccountTokens();
   const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensWithoutTkey, false, true);
+  const [shouldHideZeroBalanceTokens, setShouldHideZeroBalanceTokens] = useState(false);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(
+    tokensWithoutTkey,
+    shouldHideZeroBalanceTokens,
+    true
+  );
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    setIsScrolled(event.nativeEvent.contentOffset.y > 0);
+  }, []);
 
   return (
     <>
-      <SearchInput placeholder="Search assets" onChangeText={setSearchValue} />
-
-      <Text style={styles.descriptionText}>Show, remove, and hide tokens at your home screen.</Text>
+      <View style={styles.searchRow}>
+        {isScrolled && <View pointerEvents="none" style={styles.searchRowShadow} />}
+        <SearchInput placeholder="Search" onChangeText={setSearchValue} containerStyle={styles.searchInputContainer} />
+        <Checkbox value={shouldHideZeroBalanceTokens} size={16} onChange={setShouldHideZeroBalanceTokens}>
+          <Text style={styles.checkboxText}>Hide 0 balance</Text>
+        </Checkbox>
+      </View>
 
       <FlashList
         data={filteredAssetsList}
@@ -37,6 +52,7 @@ export const ManageTokens = memo(() => {
         renderItem={renderItem}
         contentContainerStyle={styles.contentContainerStyle}
         ListEmptyComponent={ListEmptyComponent}
+        onScroll={handleScroll}
       />
     </>
   );

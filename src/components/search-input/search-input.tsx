@@ -63,7 +63,7 @@ export const SearchInput: FC<Props> = ({
         value={localValue}
         style={[styles.input, conditionalStyle(isString(localValue), styles.clearableInput)]}
         placeholder={placeholder}
-        placeholderTextColor={colors.gray2}
+        placeholderTextColor={colors.gray1}
         onChangeText={handleSearchQueryChange}
         onBlur={onBlur}
         {...setTestID(testID)}

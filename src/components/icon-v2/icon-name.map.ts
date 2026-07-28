@@ -6,6 +6,8 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import CartIcon from './assets/cart.svg';
+import CheckboxCheckedFillIcon from './assets/checkbox-checked-fill.svg';
+import CheckboxEmptyIcon from './assets/checkbox-empty.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClockIcon from './assets/clock.svg';
 import CopyIcon from './assets/copy.svg';
@@ -14,12 +16,15 @@ import DropdownDownIcon from './assets/dropdown-down.svg';
 import ImportIcon from './assets/import.svg';
 import InfoFillIcon from './assets/info-fill.svg';
 import InfoIcon from './assets/info.svg';
+import LogoutIcon from './assets/logout.svg';
 import NotificationIcon from './assets/notification.svg';
 import PlusBigIcon from './assets/plus-big.svg';
 import QrIcon from './assets/qr.svg';
 import SearchIcon from './assets/search.svg';
 import SettingsIcon from './assets/settings.svg';
+import ShareIcon from './assets/share.svg';
 import SliderIcon from './assets/slider.svg';
+import TrashIcon from './assets/trash.svg';
 import UserAddIcon from './assets/user-add.svg';
 import XBigIcon from './assets/x-big.svg';
 import XRoundIcon from './assets/x-round.svg';
@@ -47,5 +52,10 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.Clock]: ClockIcon,
   [IconNameV2Enum.Slider]: SliderIcon,
   [IconNameV2Enum.Import]: ImportIcon,
-  [IconNameV2Enum.UserAdd]: UserAddIcon
+  [IconNameV2Enum.UserAdd]: UserAddIcon,
+  [IconNameV2Enum.Trash]: TrashIcon,
+  [IconNameV2Enum.CheckboxEmpty]: CheckboxEmptyIcon,
+  [IconNameV2Enum.CheckboxCheckedFill]: CheckboxCheckedFillIcon,
+  [IconNameV2Enum.Share]: ShareIcon,
+  [IconNameV2Enum.Logout]: LogoutIcon
 };

@@ -106,7 +106,7 @@ export const Wallet = memo(() => {
 
   return (
     <>
-      <HeaderCard hasInsetTop={true}>
+      <HeaderCard hasInsetTop>
         <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown testID={WalletSelectors.accountDropdownButton} />
           <View style={WalletStyles.topActionsContainer}>

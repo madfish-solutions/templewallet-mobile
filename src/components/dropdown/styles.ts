@@ -10,7 +10,8 @@ export const useDropdownStyles = createUseStyles(({ typography, colors }) => ({
   },
   searchInputContainer: {
     flexGrow: 1,
-    flexShrink: 1
+    flexShrink: 1,
+    marginHorizontal: 0
   },
   valueContainer: {
     flexGrow: 1,

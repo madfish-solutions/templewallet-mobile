@@ -20,5 +20,10 @@ export enum IconNameV2Enum {
   Clock = 'Clock',
   Slider = 'Slider',
   Import = 'Import',
-  UserAdd = 'UserAdd'
+  UserAdd = 'UserAdd',
+  Trash = 'Trash',
+  CheckboxEmpty = 'CheckboxEmpty',
+  CheckboxCheckedFill = 'CheckboxCheckedFill',
+  Share = 'Share',
+  Logout = 'Logout'
 }

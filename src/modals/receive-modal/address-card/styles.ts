@@ -1,11 +1,10 @@
-import { black } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
-import { generateShadow } from 'src/styles/generate-shadow';
+import { iosCardShadow } from 'src/styles/shadows';
 
 export const useAddressCardStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
-    ...generateShadow(1, black),
+    boxShadow: iosCardShadow,
     backgroundColor: colors.cardBG,
     padding: formatSize(16),
     borderRadius: formatSize(10),

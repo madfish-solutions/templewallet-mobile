@@ -1,14 +1,14 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
-import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { NavigationBarIcon } from '../../navigation-bar-icon';
 import { NavigationBarIconNameEnum } from '../../navigation-bar-icon/icon-name.enum';
+import { useNavigationBarColors } from '../../use-navigation-bar-colors';
 
 import { useTabBarButtonStyles } from './tab-bar-button.styles';
 
@@ -29,17 +29,10 @@ interface Props {
 
 export const TabBarButton = memo<Props>(
   ({ label, iconName, routeName, focused, disabled = false, swapScreenParams, disabledOnPress }) => {
-    const colors = useColors();
     const styles = useTabBarButtonStyles();
     const navigateToScreen = useNavigateToScreen();
 
-    const color = useMemo(() => {
-      let value = colors.gray1;
-      focused && (value = colors.orange);
-      disabled && (value = colors.disabled);
-
-      return value;
-    }, [colors, focused, disabled]);
+    const { iconColor, labelColor } = useNavigationBarColors(focused, disabled);
 
     const handlePress = () => {
       if (disabled) {
@@ -55,13 +48,13 @@ export const TabBarButton = memo<Props>(
 
     return (
       <SafeTouchableOpacity
-        style={[styles.container, conditionalStyle(disabled, { borderLeftColor: color })]}
+        style={[styles.container, conditionalStyle(disabled, { borderLeftColor: iconColor })]}
         onPress={handlePress}
       >
         <View style={styles.iconContainer}>
-          <NavigationBarIcon name={iconName} color={color} />
+          <NavigationBarIcon name={iconName} color={iconColor} />
         </View>
-        <Text style={[styles.label, { color }]}>{label}</Text>
+        <Text style={[styles.label, { color: labelColor }]}>{label}</Text>
       </SafeTouchableOpacity>
     );
   }

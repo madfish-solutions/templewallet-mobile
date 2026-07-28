@@ -22,7 +22,7 @@ export const useTokenListStyles = createUseStylesMemoized(({ colors }) => ({
     zIndex: 1
   },
   promotionItemWrapper: {
-    paddingVertical: formatSize(12),
+    paddingVertical: formatSize(8),
     paddingHorizontal: formatSize(16)
   },
   promotionItemBorder: {
@@ -39,6 +39,6 @@ export const useTokenListStyles = createUseStylesMemoized(({ colors }) => ({
   },
   searchInputContainer: {
     flex: 1,
-    marginRight: formatSize(16)
+    marginLeft: 0
   }
 }));

@@ -1,15 +1,15 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
-import { useColors } from 'src/styles/use-colors';
 import { conditionalStyle } from 'src/utils/conditional-style';
 
 import { NavigationBarIcon } from '../../navigation-bar-icon';
 import { NavigationBarIconNameEnum } from '../../navigation-bar-icon/icon-name.enum';
+import { useNavigationBarColors } from '../../use-navigation-bar-colors';
 
 import { useSideBarButtonStyles } from './side-bar-button.styles';
 
@@ -38,17 +38,10 @@ export const SideBarButton: FC<Props> = ({
   swapScreenParams,
   disabledOnPress
 }) => {
-  const colors = useColors();
   const styles = useSideBarButtonStyles();
   const navigateToScreen = useNavigateToScreen();
 
-  const color = useMemo(() => {
-    let value = colors.gray1;
-    focused && (value = colors.orange);
-    disabled && (value = colors.disabled);
-
-    return value;
-  }, [colors, focused, disabled]);
+  const { iconColor, labelColor } = useNavigationBarColors(focused, disabled);
 
   const handlePress = () => {
     if (disabled) {
@@ -66,16 +59,16 @@ export const SideBarButton: FC<Props> = ({
     <TouchableOpacity
       style={[
         styles.container,
-        conditionalStyle(focused, { borderLeftColor: color }),
-        conditionalStyle(disabled, { borderLeftColor: color })
+        conditionalStyle(focused, { borderLeftColor: iconColor }),
+        conditionalStyle(disabled, { borderLeftColor: iconColor })
       ]}
       onPress={handlePress}
     >
       <View style={styles.iconContainer}>
-        <NavigationBarIcon name={iconName} color={color} />
+        <NavigationBarIcon name={iconName} color={iconColor} />
       </View>
       <Divider size={formatSize(8)} />
-      <Text style={[styles.label, { color }]}>{label}</Text>
+      <Text style={[styles.label, { color: labelColor }]}>{label}</Text>
     </TouchableOpacity>
   );
 };

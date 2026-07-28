@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 
-import { Divider } from 'src/components/divider/divider';
 import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
 import { HeaderButton } from 'src/components/header/header-button/header-button';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -11,7 +10,6 @@ import { TextSegmentControl } from 'src/components/segmented-control/text-segmen
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToModal, useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
-import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { useManageAssetsStyles } from './manage-assets.styles';
@@ -39,7 +37,6 @@ export const ManageAssets = () => {
 
   return (
     <>
-      <Divider size={formatSize(8)} />
       <View style={styles.segmentControlContainer}>
         <TextSegmentControl
           selectedIndex={segmentedControlIndex}
@@ -47,8 +44,6 @@ export const ManageAssets = () => {
           onChange={setSegmentedControlIndex}
         />
       </View>
-
-      <Divider size={formatSize(8)} />
 
       {showManageTokens ? <ManageTokens /> : <ManageCollectibles />}
     </>

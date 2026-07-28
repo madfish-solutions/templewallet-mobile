@@ -50,13 +50,7 @@ export const EarnOpportunitySearchPanel: FC<Props> = ({
   return (
     <View style={[styles.row, styles.container]}>
       <View style={styles.row}>
-        <Checkbox
-          value={depositedOnly}
-          size={formatSize(16)}
-          strokeWidth={formatSize(2)}
-          onChange={handleToggleDepositOnly}
-          testID={checkboxTestID}
-        >
+        <Checkbox value={depositedOnly} size={16} onChange={handleToggleDepositOnly} testID={checkboxTestID}>
           <Divider size={formatSize(4)} />
           <Text style={styles.depositText}>Deposited only</Text>
         </Checkbox>

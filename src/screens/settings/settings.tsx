@@ -4,9 +4,10 @@ import { Share, Text, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
+import { ActionChevron } from 'src/components/action-chevron';
 import { Divider } from 'src/components/divider/divider';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { NotificationCounter } from 'src/components/notification-counter/notification-counter';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
 import { Quote } from 'src/components/quote/quote';
@@ -107,7 +108,7 @@ export const Settings = () => {
               testID={SettingsSelectors.scanQRButton}
             >
               <WhiteContainerText text="Scan QR code" />
-              <Icon name={IconNameEnum.QrScanner} size={formatSize(24)} />
+              <IconV2 name={IconNameV2Enum.Qr} size={24} />
             </WhiteContainerAction>
           </WhiteContainer>
 
@@ -119,18 +120,20 @@ export const Settings = () => {
               testID={SettingsSelectors.accountsButton}
             >
               <View style={styles.actionsContainer}>
+                <Divider size={formatSize(8)} />
                 {account && <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(32)} />}
                 <WhiteContainerText text="Accounts" />
               </View>
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              <ActionChevron />
             </WhiteContainerAction>
 
+            <WhiteContainerDivider />
             <WhiteContainerAction
               onPress={() => navigateToScreen({ screen: ScreensEnum.Contacts })}
               testID={SettingsSelectors.contactsButton}
             >
               <WhiteContainerText text="Contacts" />
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              <ActionChevron />
             </WhiteContainerAction>
 
             {showBackupButton && (
@@ -142,7 +145,7 @@ export const Settings = () => {
                   </View>
                   <View style={styles.actionsContainer}>
                     {!isAnyBackupMade && <NotificationCounter count={1} />}
-                    <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+                    <ActionChevron />
                   </View>
                 </WhiteContainerAction>
               </>
@@ -159,7 +162,7 @@ export const Settings = () => {
               <WhiteContainerText text="Default Currency" />
               <View style={styles.shevronContainer}>
                 <Text style={styles.shevronText}>{fiatCurrency}</Text>
-                <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+                <ActionChevron />
               </View>
             </WhiteContainerAction>
 
@@ -188,7 +191,7 @@ export const Settings = () => {
               <View style={styles.actionsContainer}>
                 <WhiteContainerText text="Advanced features" />
               </View>
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              <ActionChevron />
             </WhiteContainerAction>
 
             <WhiteContainerDivider />
@@ -200,7 +203,7 @@ export const Settings = () => {
               <View style={styles.actionsContainer}>
                 <WhiteContainerText text="Secure" />
               </View>
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              <ActionChevron />
             </WhiteContainerAction>
 
             <WhiteContainerDivider />
@@ -210,7 +213,7 @@ export const Settings = () => {
               testID={SettingsSelectors.authorizedDAppsButton}
             >
               <WhiteContainerText text="Authorized DApps" />
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              <ActionChevron />
             </WhiteContainerAction>
 
             <WhiteContainerDivider />
@@ -220,7 +223,7 @@ export const Settings = () => {
               testID={SettingsSelectors.networksButton}
             >
               <WhiteContainerText text="Networks" />
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              <ActionChevron />
             </WhiteContainerAction>
           </WhiteContainer>
 
@@ -232,14 +235,14 @@ export const Settings = () => {
               testID={SettingsSelectors.aboutButton}
             >
               <WhiteContainerText text="About" />
-              <Icon name={IconNameEnum.ChevronRight} size={formatSize(24)} />
+              <ActionChevron />
             </WhiteContainerAction>
 
             <WhiteContainerDivider />
 
             <WhiteContainerAction onPress={handleShare} testID={SettingsSelectors.shareTempleWalletButton}>
               <WhiteContainerText text="Share Temple Wallet" />
-              <Icon name={IconNameEnum.Share} size={formatSize(24)} />
+              <IconV2 name={IconNameV2Enum.Share} size={24} />
             </WhiteContainerAction>
           </WhiteContainer>
 
@@ -252,7 +255,7 @@ export const Settings = () => {
             testID={SettingsSelectors.resetWalletButton}
           >
             <Text style={styles.logoutButtonText}>Reset wallet</Text>
-            <Icon name={IconNameEnum.LogOut} />
+            <IconV2 name={IconNameV2Enum.Logout} />
           </TouchableWithAnalytics>
 
           <Divider />

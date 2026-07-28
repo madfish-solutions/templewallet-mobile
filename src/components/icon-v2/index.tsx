@@ -61,6 +61,13 @@ const irregularPaddingByIconName: Partial<Record<IconNameV2Enum, Partial<Record<
   [IconNameV2Enum.UserAdd]: {
     16: 0,
     24: 2.024
+  },
+  [IconNameV2Enum.Share]: {
+    24: 4
+  },
+  [IconNameV2Enum.Logout]: {
+    16: 0.372,
+    24: 2.226
   }
 };
 

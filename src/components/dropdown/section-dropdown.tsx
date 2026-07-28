@@ -144,7 +144,15 @@ const SectionDropdownComponent = <T extends unknown>({
 
       <BottomSheet description={description} contentHeight={contentHeight} controller={dropdownBottomSheetController}>
         <View style={styles.contentContainer}>
-          {isSearchable && <SearchInput placeholder="Search" onChangeText={setSearchValue} />}
+          {isSearchable && (
+            <View style={styles.searchContainer}>
+              <SearchInput
+                containerStyle={styles.searchInputContainer}
+                placeholder="Search"
+                onChangeText={setSearchValue}
+              />
+            </View>
+          )}
           <BottomSheetSectionList
             sections={list}
             getItemLayout={createGetItemLayout(itemHeight)}

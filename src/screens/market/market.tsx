@@ -20,7 +20,7 @@ export const Market = () => {
 
   return (
     <>
-      <HeaderCard hasInsetTop={true}>
+      <HeaderCard hasInsetTop hasShadow>
         <TezosInfo />
       </HeaderCard>
       <TopTokensTable />

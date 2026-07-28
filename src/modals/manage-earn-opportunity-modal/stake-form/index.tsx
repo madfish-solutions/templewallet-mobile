@@ -143,11 +143,7 @@ export const StakeForm: FC<StakeFormProps> = ({ earnOpportunityItem, formik, sta
         </QuestionAccordion>
         <Divider size={formatSize(16)} />
         <View ref={acceptRisksRef}>
-          <FormCheckbox
-            testID={ManageEarnOpportunityModalSelectors.acceptRisksCheckbox}
-            size={formatSize(20)}
-            name="acceptRisks"
-          >
+          <FormCheckbox testID={ManageEarnOpportunityModalSelectors.acceptRisksCheckbox} name="acceptRisks">
             <Text style={styles.acceptRisksText}>Accept risks</Text>
           </FormCheckbox>
         </View>

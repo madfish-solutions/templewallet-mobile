@@ -3,7 +3,8 @@ import { formatSize } from 'src/styles/format-size';
 
 export const useSearchInputStyles = createUseStyles(({ colors, typography }) => ({
   container: {
-    position: 'relative'
+    position: 'relative',
+    marginHorizontal: formatSize(16)
   },
   searchIconContainer: {
     position: 'absolute',

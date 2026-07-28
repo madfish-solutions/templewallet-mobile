@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
-import React, { memo, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import React, { memo, useCallback, useMemo } from 'react';
+import { GestureResponderEvent, Text, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { CryptoLogo } from 'src/components/crypto-logo';
@@ -11,6 +11,7 @@ import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TruncatedText } from 'src/components/truncated-text';
 import { useTotalFiatBalanceOfAccount } from 'src/hooks/use-total-balance';
 import { Account } from 'src/interfaces/account.interfaces.ts';
@@ -21,6 +22,7 @@ import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { isDefined } from 'src/utils/is-defined';
@@ -119,13 +121,21 @@ interface AccountAddressChipProps {
 const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName }) => {
   const styles = useAccountDropdownItemStyles();
 
+  const copyAddress = useCallback(
+    (e?: GestureResponderEvent) => {
+      e?.stopPropagation();
+      copyStringToClipboard(address);
+    },
+    [address]
+  );
+
   return (
-    <View style={styles.addressChip}>
+    <SafeTouchableOpacity style={styles.addressChip} onPress={copyAddress}>
       <View style={styles.cryptoLogoContainer}>
         <CryptoLogo name={iconName} size={formatSize(12)} />
       </View>
       <Text style={styles.addressText}>{truncateAddress(address)}</Text>
-    </View>
+    </SafeTouchableOpacity>
   );
 });
 
