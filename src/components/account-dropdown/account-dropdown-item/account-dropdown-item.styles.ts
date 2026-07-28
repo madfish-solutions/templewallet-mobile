@@ -68,7 +68,9 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
   addressChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    maxWidth: formatSize(100)
+    maxWidth: formatSize(100),
+    paddingRight: formatSize(4),
+    paddingVertical: formatSize(2)
   },
   addressText: {
     ...typography.caption13Regular,

@@ -7,6 +7,7 @@ import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
+import { NetworkLogo } from 'src/components/network-logo/network-logo';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -45,11 +46,12 @@ export const ContactFormSectionDropdown: FC<Props> = ({
   testID,
   testIDProperties
 }) => {
+  const styles = useContactFormSectionDropdownStyles();
   const logoName = chainKind === TempleChainKind.Tezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink;
 
   const renderContactValue: DropdownValueComponent<SendReceiver> = ({ value }) =>
     value ? (
-      <DropdownItemContainer>
+      <DropdownItemContainer style={styles.selectedAccountContainer}>
         <ReceiverRow receiver={value} logoName={logoName} showDropdownDown />
       </DropdownItemContainer>
     ) : null;
@@ -115,14 +117,14 @@ const AccountReceiverRow: FC<{
           {account.name}
         </Text>
         <HideBalance style={styles.accountBalance}>
-          <FormattedAmount amount={totalFiatBalance} isDollarValue />
+          <FormattedAmount amount={totalFiatBalance} isDollarValue spaceBeforeFiatSymbol />
         </HideBalance>
         {showDropdownDown && <IconV2 name={IconNameV2Enum.DropdownDown} size={12} />}
       </View>
       <View style={styles.accountAddressRow}>
         {addresses.map(({ address, logoName: addressLogoName }) => (
           <View key={address} style={styles.accountAddress}>
-            <CryptoLogo name={addressLogoName} size={formatSize(16)} internalSize={formatSize(12)} />
+            <NetworkLogo name={addressLogoName} />
             <Text style={styles.accountAddressText}>{truncateAccountAddress(address)}</Text>
           </View>
         ))}
@@ -132,7 +134,7 @@ const AccountReceiverRow: FC<{
 };
 
 const truncateAccountAddress = (address: string) =>
-  address.length > 10 ? `${address.slice(0, 3)}...${address.slice(-4)}` : address;
+  address.length > 10 ? `${address.slice(0, 2)}...${address.slice(-4)}` : address;
 
 const ReceiverRowLayout: FC<ReceiverRowProps & { balance?: React.ReactNode }> = ({ receiver, logoName, balance }) => {
   const styles = useContactFormSectionDropdownStyles();

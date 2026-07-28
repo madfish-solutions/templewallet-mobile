@@ -27,6 +27,7 @@ interface Props
       | 'dropdownVerticalPadding'
       | 'dropdownAppearance'
       | 'scrollToSelectedValue'
+      | 'spaceBeforeFiatSymbol'
       | 'selectedTokenIconSize'
       | 'selectedTokenIconVisualSize'
       | 'selectedTokenIconGap'
@@ -59,6 +60,7 @@ export const FormAssetAmountInput = memo<Props>(
     dropdownDescription,
     dropdownAppearance,
     scrollToSelectedValue,
+    spaceBeforeFiatSymbol,
     isSingleAsset,
     selectionOptions = undefined,
     selectedTokenIconSize,
@@ -144,6 +146,7 @@ export const FormAssetAmountInput = memo<Props>(
           dropdownDescription={dropdownDescription}
           dropdownAppearance={dropdownAppearance}
           scrollToSelectedValue={scrollToSelectedValue}
+          spaceBeforeFiatSymbol={spaceBeforeFiatSymbol}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}

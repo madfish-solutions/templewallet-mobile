@@ -2,6 +2,10 @@ import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
 export const useContactFormSectionDropdownStyles = createUseStyles(({ colors, typography }) => ({
+  selectedAccountContainer: {
+    marginVertical: 0,
+    paddingVertical: formatSize(11)
+  },
   contactContainer: {
     flexDirection: 'row',
     alignItems: 'center'
@@ -74,7 +78,9 @@ export const useContactFormSectionDropdownStyles = createUseStyles(({ colors, ty
   accountAddress: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: formatSize(2)
+    gap: formatSize(2),
+    paddingRight: formatSize(4),
+    paddingVertical: formatSize(2)
   },
   accountAddressText: {
     ...typography.caption13Regular,

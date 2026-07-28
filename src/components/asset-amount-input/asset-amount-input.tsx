@@ -105,6 +105,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
     stylesConfig = defaultAssetAmountInputStylesConfig,
     isShowNameForValue = true,
+    spaceBeforeFiatSymbol = false,
     isSingleAsset = false,
     setSearchValue = emptyFn,
     onBlur,
@@ -374,6 +375,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
               asset={value.asset}
               style={styles.equivalentValueText}
               convertToDollar={isTokenInputType}
+              spaceBeforeFiatSymbol={spaceBeforeFiatSymbol}
             />
           )}
           <View style={styles.balanceContainer}>

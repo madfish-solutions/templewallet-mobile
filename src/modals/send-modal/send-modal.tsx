@@ -355,6 +355,7 @@ export const SendModal: FC = () => {
             dropdownDescription="Select Token"
             dropdownAppearance="token-selector"
             scrollToSelectedValue={false}
+            spaceBeforeFiatSymbol
             searchPlaceholder="Search by name or address"
             dropdownListHeader={tokenFilterHeader}
             setSearchValue={setAssetSearch}
@@ -368,16 +369,13 @@ export const SendModal: FC = () => {
 
           <Label label="Recipient" description="Address or domain to send funds to" />
           {values.transferBetweenOwnAccounts ? (
-            <>
-              <ContactFormSectionDropdown
-                name="recipient"
-                list={filteredReceiversList}
-                chainKind={selectedAsset.chainKind}
-                setSearchValue={handleSearchValueChange}
-                testID={SendModalSelectors.sectionDropdown}
-              />
-              <Divider size={formatSize(10)} />
-            </>
+            <ContactFormSectionDropdown
+              name="recipient"
+              list={filteredReceiversList}
+              chainKind={selectedAsset.chainKind}
+              setSearchValue={handleSearchValueChange}
+              testID={SendModalSelectors.sectionDropdown}
+            />
           ) : (
             <FormAddressInput
               name="receiverPublicKeyHash"

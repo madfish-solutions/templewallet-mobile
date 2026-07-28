@@ -3,12 +3,12 @@ import React, { memo, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
-import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { Icon } from 'src/components/icon/icon';
+import { NetworkLogo } from 'src/components/network-logo/network-logo';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { TruncatedText } from 'src/components/truncated-text';
@@ -98,7 +98,7 @@ const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account })
         <View style={styles.listItemHeaderInfo}>
           <TruncatedText style={styles.listItemName}>{account.name}</TruncatedText>
           <HideBalance style={styles.listItemBalanceText}>
-            <FormattedAmount amount={totalFiatBalance} isDollarValue />
+            <FormattedAmount amount={totalFiatBalance} isDollarValue spaceBeforeFiatSymbol />
           </HideBalance>
         </View>
       </View>
@@ -108,9 +108,7 @@ const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account })
         {isDefined(saplingAddress) && (
           <AccountAddressChip address={saplingAddress} iconName={CryptoLogoNameEnum.ShieldedTezos} />
         )}
-        {isDefined(evmAddress) && (
-          <AccountAddressChip address={evmAddress} iconName={CryptoLogoNameEnum.Etherlink} />
-        )}
+        {isDefined(evmAddress) && <AccountAddressChip address={evmAddress} iconName={CryptoLogoNameEnum.Etherlink} />}
       </View>
     </>
   );
@@ -130,7 +128,7 @@ const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName })
 
   return (
     <View style={styles.addressChip}>
-      <CryptoLogo name={iconName} size={formatSize(16)} internalSize={formatSize(12)} />
+      <NetworkLogo name={iconName} />
       <Text style={styles.addressText}>{truncateAddress(address)}</Text>
     </View>
   );
@@ -186,4 +184,4 @@ const CollectiblesInfo = memo(() => {
 });
 
 const truncateAddress = (address: string) =>
-  address.length > 10 ? `${address.slice(0, 3)}...${address.slice(-4)}` : address;
+  address.length > 10 ? `${address.slice(0, 2)}...${address.slice(-4)}` : address;

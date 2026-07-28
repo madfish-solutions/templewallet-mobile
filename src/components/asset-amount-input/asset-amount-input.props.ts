@@ -40,6 +40,7 @@ export interface AssetAmountInputProps extends TestIdProps {
   dropdownAppearance?: 'default' | 'token-selector';
   scrollToSelectedValue?: boolean;
   isShowNameForValue?: boolean;
+  spaceBeforeFiatSymbol?: boolean;
   selectedTokenIconSize?: number;
   selectedTokenIconVisualSize?: number;
   selectedTokenIconGap?: number;
