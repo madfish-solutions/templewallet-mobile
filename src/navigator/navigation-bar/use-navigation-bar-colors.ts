@@ -6,10 +6,14 @@ export const useNavigationBarColors = (focused: boolean, disabled: boolean) => {
   const colors = useColors();
 
   return useMemo(() => {
-    let value = { iconColor: colors.gray2, labelColor: colors.gray1 };
-    focused && (value = { iconColor: colors.orange, labelColor: colors.orange });
-    disabled && (value = { iconColor: colors.disabled, labelColor: colors.disabled });
+    if (focused) {
+      return { iconColor: colors.orange, labelColor: colors.orange };
+    }
 
-    return value;
+    if (disabled) {
+      return { iconColor: colors.disabled, labelColor: colors.disabled };
+    }
+
+    return { iconColor: colors.gray2, labelColor: colors.gray1 };
   }, [colors, focused, disabled]);
 };

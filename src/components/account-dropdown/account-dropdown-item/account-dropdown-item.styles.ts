@@ -24,7 +24,7 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     marginLeft: formatSize(8)
   },
   infoContainerCollectibles: {
-    marginLeft: formatSize(8)
+    marginLeft: formatSize(2)
   },
   upperContainer: {
     flexDirection: 'row',

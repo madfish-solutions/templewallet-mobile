@@ -113,11 +113,6 @@ import ShareIcon from './assets/share.svg';
 import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
 import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
 import SmileIcon from './assets/smile.svg';
-import DiscordIcon from './assets/socials/discord.svg';
-import RedditIcon from './assets/socials/reddit.svg';
-import TelegramIcon from './assets/socials/telegram.svg';
-import TwitterIcon from './assets/socials/twitter.svg';
-import YouTubeIcon from './assets/socials/you-tube.svg';
 import SpicyIcon from './assets/spicy.svg';
 import StakeIcon from './assets/stake.svg';
 import SuccessIcon from './assets/success.svg';
@@ -134,7 +129,6 @@ import TezWalletIcon from './assets/tez-wallet.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
 import SwapTokenPlaceholderIcon from './assets/tokens/swap-token-placeholder.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
-import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
@@ -205,7 +199,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DApps]: DAppsIcon,
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
-  [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   [IconNameEnum.InfoFilledAlt]: InfoFilledAltIcon,
   [IconNameEnum.NFTCollection]: NFTCollectionIcon,
@@ -242,11 +235,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TempleLogoUp]: TempleLogoUpIcon,
   [IconNameEnum.TempleLogoBottom]: TempleLogoBottomIcon,
   [IconNameEnum.TempleLogoWithText]: TempleLogoWithTextIcon,
-  [IconNameEnum.Telegram]: TelegramIcon,
-  [IconNameEnum.Discord]: DiscordIcon,
-  [IconNameEnum.Twitter]: TwitterIcon,
-  [IconNameEnum.YouTube]: YouTubeIcon,
-  [IconNameEnum.Reddit]: RedditIcon,
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
   [IconNameEnum.ExternalLinkTag]: ExternalLinkTagIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,

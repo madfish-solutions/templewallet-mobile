@@ -48,7 +48,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
           size={isCollectibleScreen ? formatSize(76) : undefined}
           color="blue"
         />
-        <View style={[styles.infoContainer, conditionalStyle(isCollectibleScreen, styles.infoContainerCollectibles)]}>
+        <View style={[styles.infoContainer, isCollectibleScreen && styles.infoContainerCollectibles]}>
           <View
             style={[
               styles.upperContainer,
