@@ -24,6 +24,7 @@ interface Props {
   hide: EmptyFn;
   toastType: ToastTypeEnum;
   operationHash?: string;
+  operationUrl?: string;
   isCopyButtonVisible?: boolean;
   onPress: EmptyFn;
 }
@@ -41,6 +42,7 @@ export const CustomToast: FC<Props> = ({
   hide,
   toastType,
   operationHash,
+  operationUrl,
   isCopyButtonVisible,
   onPress
 }) => {
@@ -98,7 +100,7 @@ export const CustomToast: FC<Props> = ({
                 <Divider size={formatSize(8)} />
                 <PublicKeyHashText publicKeyHash={operationHash} />
                 <Divider size={formatSize(4)} />
-                <ExternalLinkButton url={tzktUrl(operationHash)} />
+                <ExternalLinkButton url={operationUrl ?? tzktUrl(operationHash)} />
               </View>
             )}
           </View>

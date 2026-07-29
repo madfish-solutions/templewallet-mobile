@@ -15,6 +15,7 @@ import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
 import { ChooseAccountImportType } from 'src/modals/choose-account-import-type';
 import { ChooseWalletImportType } from 'src/modals/choose-wallet-import-type';
 import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
+import { EvmCollectibleModal } from 'src/modals/collectible-modal/evm-collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
 import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal/add-contact-modal';
 import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal/edit-contact-modal';
@@ -148,6 +149,11 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.CollectibleModal}
               component={CollectibleModal}
+              options={{ ...useModalOptions(), gestureEnabled: isIOS }}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.EvmCollectibleModal}
+              component={EvmCollectibleModal}
               options={{ ...useModalOptions(), gestureEnabled: isIOS }}
             />
             <RootStack.Screen

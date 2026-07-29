@@ -205,6 +205,7 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
 
       showSuccessToast({
         operationHash: hash,
+        operationUrl: `https://explorer.etherlink.com/tx/${hash}`,
         title: 'Success!',
         description: 'Etherlink transaction submitted'
       });

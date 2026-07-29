@@ -71,8 +71,11 @@ export const SendModal: FC = () => {
   const [networkFilter, setNetworkFilter] = useState<NetworkFilter>('all');
   const dispatch = useDispatch();
   const navigateToModal = useNavigateToModal();
-  const { token: initialToken, receiverPublicKeyHash: initialReceiverPublicKeyHash = '' } =
-    useModalParams<ModalsEnum.Send>();
+  const {
+    token: initialToken,
+    receiverPublicKeyHash: initialReceiverPublicKeyHash = '',
+    assetKey: initialAssetKey
+  } = useModalParams<ModalsEnum.Send>();
   const styles = useSendModalStyles();
   const colors = useColors();
   const { goBack } = useNavigation();
@@ -86,10 +89,11 @@ export const SendModal: FC = () => {
 
   const inputInitialValue = useMemo(
     () =>
+      assets.find(item => item.assetKey === initialAssetKey) ??
       assets.find(item => item.chainKind === TempleChainKind.Tezos && tokenEqualityFn(item, initialToken)) ??
       assets.find(item => item.assetSlug === TEZ_TOKEN_SLUG) ??
       assets[0],
-    [assets, initialToken]
+    [assets, initialAssetKey, initialToken]
   );
 
   const sendModalInitialValues: SendModalFormValues = {
