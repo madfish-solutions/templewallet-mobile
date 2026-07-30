@@ -1,9 +1,8 @@
 import { StyleSheet } from 'react-native';
 
-import { black } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize, formatTextSize } from 'src/styles/format-size';
-import { generateShadow } from 'src/styles/generate-shadow';
+import { iosCardShadow } from 'src/styles/shadows';
 import { hexa } from 'src/utils/style.util';
 
 export const useNetworkSettingsLayoutStyles = createUseStylesMemoized(({ colors, typography }) => ({
@@ -18,7 +17,7 @@ export const useNetworkSettingsLayoutStyles = createUseStylesMemoized(({ colors,
     color: colors.black
   },
   optionContainer: {
-    ...generateShadow(1, black),
+    boxShadow: iosCardShadow,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

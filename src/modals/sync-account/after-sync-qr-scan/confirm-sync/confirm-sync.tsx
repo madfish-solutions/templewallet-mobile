@@ -73,7 +73,7 @@ export const ConfirmSync = memo<Props>(({ onSubmit }) => {
         />
 
         <View style={styles.checkboxContainer}>
-          <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.useAsAppPasswordCheckbox} inverted>
+          <FormCheckbox name="usePrevPassword" testID={ConfirmSyncSelectors.useAsAppPasswordCheckbox}>
             <Divider size={formatSize(8)} />
             <Text style={styles.checkboxText}>Use as App Password</Text>
           </FormCheckbox>

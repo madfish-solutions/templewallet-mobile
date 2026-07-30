@@ -20,7 +20,7 @@ import {
   setIsShowLoaderAction,
   setSelectedRpcUrl,
   setSlippage,
-  setZeroBalancesShown,
+  setHideZeroBalances,
   toggleDomainAddressShown,
   madeManualBackupAction,
   madeCloudBackupAction,
@@ -53,7 +53,7 @@ export const settingsReducers = createReducer<SettingsState>(settingsInitialStat
     isBiometricsEnabled
   }));
 
-  builder.addCase(setZeroBalancesShown, (state, { payload: hideZeroBalances }) => ({
+  builder.addCase(setHideZeroBalances, (state, { payload: hideZeroBalances }) => ({
     ...state,
     hideZeroBalances
   }));

@@ -13,7 +13,6 @@ export interface FormattedAmountProps {
   showAllDecimalPlaces?: boolean;
   showMinusSign?: boolean;
   showPlusSign?: boolean;
-  spaceBeforeFiatSymbol?: boolean;
   symbol?: string;
   style?: StyleProp<TextStyle>;
 }
@@ -27,7 +26,6 @@ export const FormattedAmount: FC<FormattedAmountProps> = ({
   isDollarValue = false,
   showMinusSign = false,
   showPlusSign = false,
-  spaceBeforeFiatSymbol = false,
   showAllDecimalPlaces = false,
   symbol,
   style
@@ -67,7 +65,7 @@ export const FormattedAmount: FC<FormattedAmountProps> = ({
       {isDollarValue && !isLessThan && !hideApproximateSign && '≈ '}
       {amountSignStr && `${amountSignStr} `}
       {formattedAmount}
-      {isDollarValue ? `${spaceBeforeFiatSymbol ? ' ' : ''}${fiatSymbol}` : formattedSymbol}
+      {isDollarValue ? ` ${fiatSymbol}` : formattedSymbol}
     </Text>
   );
 };

@@ -10,7 +10,7 @@ import { isDefined } from '../utils/is-defined';
 
 import { ErrorMessage } from './error-message/error-message';
 
-interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID' | 'inverted'>, TestIdProps {
+interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID'>, TestIdProps {
   name: string;
   onValueChange?: SyncFn<boolean>;
   descriptionNode?: ReactNode;
@@ -25,7 +25,6 @@ export const FormCheckbox: FCWithChildren<Props> = ({
   descriptionNode,
   disabled,
   size,
-  inverted,
   testID,
   testIDProperties,
   error,
@@ -44,14 +43,7 @@ export const FormCheckbox: FCWithChildren<Props> = ({
 
   return (
     <>
-      <Checkbox
-        disabled={disabled}
-        value={field.value}
-        size={size}
-        inverted={inverted}
-        onChange={handleChange}
-        testID={testID}
-      >
+      <Checkbox disabled={disabled} value={field.value} size={size} onChange={handleChange} testID={testID}>
         {children}
       </Checkbox>
       {descriptionNode}

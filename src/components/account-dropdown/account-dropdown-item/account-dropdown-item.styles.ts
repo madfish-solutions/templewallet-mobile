@@ -21,7 +21,10 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     flexGrow: 1,
     flexShrink: 1,
     justifyContent: 'space-between',
-    marginLeft: formatSize(10)
+    marginLeft: formatSize(8)
+  },
+  infoContainerCollectibles: {
+    marginLeft: formatSize(2)
   },
   upperContainer: {
     flexDirection: 'row',
@@ -34,13 +37,16 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
   name: {
     ...typography.body17Semibold,
     flexShrink: 1,
-    marginRight: formatSize(10),
+    marginRight: formatSize(4),
     color: colors.black
+  },
+  nameCollectibles: {
+    marginRight: formatSize(10)
   },
   listItemName: {
     ...typography.body15Semibold,
     flexShrink: 1,
-    marginRight: formatSize(10),
+    marginRight: formatSize(8),
     color: colors.black
   },
   lowerContainer: {
@@ -52,28 +58,38 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     ...typography.numbersRegular15,
     color: colors.black
   },
+  listItemBalanceTextWrapper: {
+    flexShrink: 0
+  },
   listItemBalanceText: {
     ...typography.numbersRegular15,
-    flexShrink: 0,
     color: colors.black
   },
   addressesContainer: {
     flexDirection: 'row',
     flexWrap: 'nowrap',
     alignItems: 'center',
-    gap: formatSize(8),
-    marginTop: formatSize(12),
-    marginLeft: formatSize(2)
+    gap: formatSize(12),
+    marginTop: formatSize(12)
   },
   addressChip: {
     flexDirection: 'row',
     alignItems: 'center',
     maxWidth: formatSize(100),
-    paddingRight: formatSize(4),
     paddingVertical: formatSize(2)
+  },
+  cryptoLogoContainer: {
+    width: formatSize(16),
+    height: formatSize(16),
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: formatSize(8),
+    borderWidth: formatSize(1),
+    borderColor: colors.lines
   },
   addressText: {
     ...typography.caption13Regular,
+    lineHeight: formatSize(18),
     flexShrink: 1,
     marginLeft: formatSize(2),
     color: colors.blue

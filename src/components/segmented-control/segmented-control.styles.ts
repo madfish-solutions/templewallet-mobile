@@ -1,9 +1,8 @@
 import { StyleSheet } from 'react-native';
 
-import { black, transparent } from '../../config/styles';
-import { createUseStyles } from '../../styles/create-use-styles';
-import { formatSize } from '../../styles/format-size';
-import { generateShadow } from '../../styles/generate-shadow';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize } from 'src/styles/format-size';
+import { combineBoxShadows, generateBoxShadow } from 'src/styles/shadows';
 
 export const tileMargin = formatSize(2);
 
@@ -17,7 +16,10 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
   },
   tile: {
     ...StyleSheet.absoluteFill,
-    ...generateShadow(1, black),
+    boxShadow: combineBoxShadows(
+      generateBoxShadow(0, 3, 1, 0, '#0000000A'),
+      generateBoxShadow(0, 3, 8, 0, '#0000001F')
+    ),
     zIndex: 1,
     margin: tileMargin,
     borderRadius: formatSize(8),
@@ -25,13 +27,11 @@ export const useSegmentedControlStyles = createUseStyles(({ colors }) => ({
   },
   contentContainer: {
     ...StyleSheet.absoluteFill,
-    ...generateShadow(2, transparent),
     zIndex: 2,
     flexDirection: 'row',
     padding: formatSize(2)
   },
   itemContainer: {
-    elevation: 5,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

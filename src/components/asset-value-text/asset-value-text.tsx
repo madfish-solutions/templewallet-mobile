@@ -21,7 +21,7 @@ interface Props {
   showSymbol?: boolean;
   receiver?: string;
   convertToDollar?: boolean;
-  spaceBeforeFiatSymbol?: boolean;
+  hideApproximateSign?: boolean;
 }
 
 export const AssetValueText: FC<Props> = ({
@@ -32,7 +32,7 @@ export const AssetValueText: FC<Props> = ({
   showSymbol = true,
   receiver,
   convertToDollar = false,
-  spaceBeforeFiatSymbol = false
+  hideApproximateSign = false
 }) => {
   const hideText = convertToDollar && !isDefined(asset.decimals);
 
@@ -48,11 +48,11 @@ export const AssetValueText: FC<Props> = ({
         <FormattedAmount
           amount={visibleAmount}
           isDollarValue={convertToDollar}
-          spaceBeforeFiatSymbol={spaceBeforeFiatSymbol}
           showMinusSign={showMinusSign}
           showPlusSign={false}
           symbol={visibleSymbol}
           style={style}
+          hideApproximateSign={hideApproximateSign}
         />
       )}
     </>

@@ -1,19 +1,19 @@
-import React, { memo, ReactNode, useCallback, useMemo, useRef } from 'react';
+import React, { memo, Ref, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent } from 'src/config/general';
-import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
+import { useMaxDropdownHeight } from 'src/hooks/use-max-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
-import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { isDefined } from 'src/utils/is-defined';
 
 import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
+import { Divider } from '../divider/divider';
 import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { SearchInput } from '../search-input/search-input';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
@@ -28,7 +28,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   emptyListText?: string;
   isSearchable?: boolean;
   searchPlaceholder?: string;
-  listHeader?: ReactNode;
+  renderSearchActionButtons?: DropdownActionButtonsComponent;
   itemHeight?: number;
   itemContainerStyle?: StyleProp<ViewStyle>;
   isLoading?: boolean;
@@ -38,9 +38,9 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   renderListItem: DropdownListItemComponent<T>;
   getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
+  showCloseButton?: boolean;
+  triggerWrapperRef?: Ref<View>;
   onLongPress?: EmptyFn;
-  appearance?: 'default' | 'token-selector';
-  scrollToSelectedValue?: boolean;
 }
 
 export interface DropdownValueProps<T> extends TestIdProps {
@@ -70,8 +70,10 @@ export type DropdownListItemComponent<T> = SyncFC<{
 }>;
 
 export type DropdownActionButtonsComponent = SyncFC<{
-  closeDropdown: EmptyFn;
+  closeDropdown: (onClosed?: EmptyFn) => void;
 }>;
+
+const ItemSeparatorComponent = memo(() => <Divider size={formatSize(8)} />);
 
 const DropdownComponent = <T extends unknown>({
   value,
@@ -83,39 +85,80 @@ const DropdownComponent = <T extends unknown>({
   disabled = false,
   isLoading = false,
   isSearchable = false,
-  searchPlaceholder = 'Search assets',
-  listHeader,
+  searchPlaceholder = 'Search',
+  renderSearchActionButtons,
   isCollectibleScreen = false,
   setSearchValue,
   equalityFn,
   renderValue,
   renderListItem,
+  showCloseButton = true,
   getListItemSectionTitle,
   renderActionButtons = emptyComponent,
   keyExtractor,
   onValueChange,
   onLongPress,
-  appearance = 'default',
-  scrollToSelectedValue = true,
   testID,
   testIDProperties,
-  itemTestIDPropertiesFn
+  itemTestIDPropertiesFn,
+  triggerWrapperRef
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const { trackEvent } = useAnalytics();
   const ref = useRef<FlatList<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
-  const listItemHeight = appearance === 'token-selector' ? formatSize(52) : itemHeight;
-  const getItemLayout = useMemo(() => createGetItemLayout<T>(listItemHeight), [listItemHeight]);
-  const contentHeight = useDropdownHeight();
+  const afterCloseRef = useRef<EmptyFn>(undefined);
+
+  const itemsTitles = useMemo(() => {
+    const result: Record<number, string | undefined> = {};
+    let previousSectionTitle: string | undefined;
+    list.forEach((item, index) => {
+      const sectionTitle = getListItemSectionTitle?.(item);
+      if (sectionTitle !== previousSectionTitle) {
+        result[index] = sectionTitle;
+        previousSectionTitle = sectionTitle;
+      }
+    });
+
+    return result;
+  }, [getListItemSectionTitle, list]);
+
+  const getItemLayout = useCallback(
+    (_: unknown, index: number) => {
+      const sectionTitle = itemsTitles[index];
+      const sectionsTitlesBeforeCount = Object.keys(itemsTitles).filter(key => Number(key) < index).length;
+      const rowDividerSize = formatSize(8);
+      const sectionTitleSize = formatSize(22);
+      const itemSeparatorSize = formatSize(8);
+
+      return {
+        length: itemHeight + rowDividerSize + (sectionTitle ? sectionTitleSize : 0),
+        index,
+        offset: index * (itemHeight + rowDividerSize + itemSeparatorSize) + sectionsTitlesBeforeCount * sectionTitleSize
+      };
+    },
+    [itemHeight, itemsTitles]
+  );
+  const maxContentHeight = useMaxDropdownHeight();
+  const contentHeight = useMemo(() => {
+    if (isLoading) {
+      return maxContentHeight;
+    }
+
+    const searchHeight = isSearchable ? formatSize(64) : 0;
+    let itemsHeight = formatSize(212);
+    if (list.length > 0) {
+      const { length, offset } = getItemLayout(undefined, list.length - 1);
+      itemsHeight = length + offset;
+    }
+
+    return Math.min(searchHeight + itemsHeight + formatSize(64), maxContentHeight);
+  }, [getItemLayout, isLoading, isSearchable, list.length, maxContentHeight]);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
       const isSelected = equalityFn(item, value);
-      const sectionTitle = getListItemSectionTitle?.(item);
-      const previousItem = index > 0 ? list[index - 1] : undefined;
-      const previousSectionTitle = previousItem ? getListItemSectionTitle?.(previousItem) : undefined;
-      const shouldRenderSectionTitle = isDefined(sectionTitle) && sectionTitle !== previousSectionTitle;
+      const sectionTitle = itemsTitles[index];
 
       const handlePress = () => {
         onValueChange(item);
@@ -124,7 +167,8 @@ const DropdownComponent = <T extends unknown>({
 
       return (
         <>
-          {shouldRenderSectionTitle && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
+          {isDefined(sectionTitle) && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
+          <Divider size={formatSize(8)} />
           <TouchableWithAnalytics
             Component={SafeTouchableOpacity}
             key={index}
@@ -132,13 +176,8 @@ const DropdownComponent = <T extends unknown>({
             testID={DropdownSelectors.option}
             testIDProperties={itemTestIDPropertiesFn?.(item)}
           >
-            <DropdownItemContainer
-              hasMargin={appearance === 'default'}
-              isSelected={isSelected}
-              isCompact={appearance === 'token-selector'}
-              style={itemContainerStyle}
-            >
-              {renderListItem({ item, isSelected: appearance === 'token-selector' ? false : isSelected })}
+            <DropdownItemContainer isSelected={isSelected} style={itemContainerStyle}>
+              {renderListItem({ item, isSelected })}
             </DropdownItemContainer>
           </TouchableWithAnalytics>
         </>
@@ -147,8 +186,7 @@ const DropdownComponent = <T extends unknown>({
     [
       equalityFn,
       value,
-      getListItemSectionTitle,
-      list,
+      itemsTitles,
       onValueChange,
       dropdownBottomSheetController.close,
       itemTestIDPropertiesFn,
@@ -175,44 +213,64 @@ const DropdownComponent = <T extends unknown>({
     }
   }, [value, list]);
 
+  const closeDropdown = useCallback(
+    (onClosed?: EmptyFn) => {
+      afterCloseRef.current = onClosed;
+      dropdownBottomSheetController.close({ duration: 100 });
+    },
+    [dropdownBottomSheetController.close]
+  );
+
+  const handleDropdownClose = useCallback(() => {
+    const callback = afterCloseRef.current;
+    afterCloseRef.current = undefined;
+    callback?.();
+  }, []);
+
   return (
     <>
-      <SafeTouchableOpacity
-        style={styles.valueContainer}
-        disabled={disabled}
-        onPress={() => {
-          if (scrollToSelectedValue) {
+      <View style={styles.valueContainer} ref={triggerWrapperRef}>
+        <SafeTouchableOpacity
+          style={styles.valueContainer}
+          disabled={disabled}
+          onPress={() => {
             scroll();
-          }
 
-          trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
+            trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
-          return dropdownBottomSheetController.open();
-        }}
-        onLongPress={onLongPress}
-        testID={testID}
-      >
-        {renderValue({ value, disabled, isCollectibleScreen })}
-      </SafeTouchableOpacity>
+            return dropdownBottomSheetController.open();
+          }}
+          onLongPress={onLongPress}
+          testID={testID}
+        >
+          {renderValue({ value, disabled, isCollectibleScreen })}
+        </SafeTouchableOpacity>
+      </View>
 
       <BottomSheet
         description={description}
         contentHeight={contentHeight}
         controller={dropdownBottomSheetController}
-        showCloseButton={appearance === 'token-selector'}
-        showCancelButton={appearance === 'default'}
+        showCloseButton={showCloseButton}
+        showCancelButton={!showCloseButton}
+        onClose={handleDropdownClose}
       >
-        <View
-          style={[styles.contentContainer, appearance === 'token-selector' && styles.tokenSelectorContentContainer]}
-        >
+        <View style={styles.contentContainer}>
           {isSearchable && (
-            <SearchInput
-              placeholder={searchPlaceholder}
-              onChangeText={setSearchValue}
-              variant={appearance === 'token-selector' ? 'compact' : 'default'}
-            />
+            <View style={styles.searchContainer}>
+              <SearchInput
+                containerStyle={styles.searchInputContainer}
+                placeholder={searchPlaceholder}
+                onChangeText={setSearchValue}
+              />
+              {renderSearchActionButtons && (
+                <>
+                  <Divider size={formatSize(24)} />
+                  {renderSearchActionButtons({ closeDropdown })}
+                </>
+              )}
+            </View>
           )}
-          {listHeader}
           {isLoading ? (
             <View style={styles.activityIndicatorContainer}>
               <ActivityIndicator size="large" />
@@ -224,10 +282,8 @@ const DropdownComponent = <T extends unknown>({
               renderItem={renderItem}
               keyExtractor={keyExtractor}
               getItemLayout={getItemLayout}
-              contentContainerStyle={[
-                styles.flatListContentContainer,
-                appearance === 'token-selector' && styles.tokenSelectorListContentContainer
-              ]}
+              contentContainerStyle={styles.flatListContentContainer}
+              ItemSeparatorComponent={ItemSeparatorComponent}
               ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
               windowSize={10}
               updateCellsBatchingPeriod={150}
@@ -235,9 +291,7 @@ const DropdownComponent = <T extends unknown>({
           )}
         </View>
 
-        {renderActionButtons({
-          closeDropdown: () => dropdownBottomSheetController.close({ duration: 100 })
-        })}
+        {renderActionButtons({ closeDropdown })}
       </BottomSheet>
     </>
   );

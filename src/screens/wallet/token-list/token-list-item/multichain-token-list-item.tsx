@@ -8,8 +8,8 @@ import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { EvmTokenIcon } from 'src/components/token-icon/evm-token-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TokenTag } from 'src/components/token-tag/token-tag';
@@ -19,16 +19,15 @@ import { MultichainDisplayedToken } from 'src/hooks/evm/use-multichain-displayed
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
+import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
-import { DEFAULT_MAINNET_TEZOS_CHAIN_SPECS, ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
 import { isDefined } from 'src/utils/is-defined';
 import { mutezToTz } from 'src/utils/tezos.util';
 
 import { useMultichainTokenListItemStyles } from './multichain-token-list-item.styles';
 
 const ICON_SIZE = formatSize(40);
-const BADGE_ICON_SIZE = formatSize(12);
 
 const SHIELDED_BALANCE_INFO_TITLE = 'Public and Shielded balance';
 const SHIELDED_BALANCE_INFO_MESSAGE =
@@ -44,6 +43,7 @@ interface Props {
 
 export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
   const styles = useMultichainTokenListItemStyles();
+  const colors = useColors();
   const navigateToScreen = useNavigateToScreen();
   const shieldedBalanceMutez = token.shieldedAtomicBalance ?? '0';
 
@@ -53,10 +53,12 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
   const original = token.original;
 
   const badgeLogoName = isTezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink;
-  const mainIconName = isTezos ? original?.iconName : token.slug === EVM_TOKEN_SLUG ? IconNameEnum.TezToken : undefined;
-  const mainThumbnailUri = token.slug === EVM_TOKEN_SLUG ? undefined : token.iconUri;
-
-  const networkName = isTezos ? DEFAULT_MAINNET_TEZOS_CHAIN_SPECS.name : ETHERLINK_MAINNET_CHAIN_SPECS.name;
+  const mainIconName = isTezos
+    ? original?.iconName
+    : token.slug === EVM_TOKEN_SLUG
+    ? CryptoLogoNameEnum.Tezos
+    : undefined;
+  const mainThumbnailUri = mainIconName ? undefined : token.iconUri;
 
   const tokenAmount = useMemo(
     () => mutezToTz(new BigNumber(token.atomicBalance), token.decimals),
@@ -99,36 +101,36 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
             <TokenIcon size={ICON_SIZE} iconName={mainIconName} thumbnailUri={mainThumbnailUri} />
           )}
           <View style={styles.badge}>
-            <CryptoLogo name={badgeLogoName} size={BADGE_ICON_SIZE} internalSize={BADGE_ICON_SIZE} />
+            <CryptoLogo name={badgeLogoName} size={formatSize(12)} />
           </View>
         </View>
-        <Divider size={formatSize(8)} />
+        <Divider size={formatSize(4)} />
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
             <TruncatedText style={styles.symbolText}>{token.symbol}</TruncatedText>
             {isTezos && isDefined(original) && <TokenTag token={original} scam={scam} apy={apy} />}
           </View>
-          <TruncatedText style={styles.networkText}>{networkName}</TruncatedText>
+          <TruncatedText style={styles.tokenNameText}>{token.name}</TruncatedText>
         </View>
       </View>
 
       <View style={styles.rightContainer}>
         {isTezos && isDefined(original) ? (
           <>
-            <HideBalance style={styles.balanceText}>
+            <HideBalance textStyle={styles.balanceText}>
               <AssetValueText asset={original} amount={original.balance} showSymbol={false} />
             </HideBalance>
-            <HideBalance style={styles.valueText}>
+            <HideBalance textStyle={styles.valueText}>
               <AssetValueText asset={original} convertToDollar amount={original.balance} />
             </HideBalance>
           </>
         ) : (
           <>
-            <HideBalance style={styles.balanceText}>
+            <HideBalance textStyle={styles.balanceText}>
               <FormattedAmount amount={tokenAmount} />
             </HideBalance>
             {isDefined(token.fiatValue) && (
-              <HideBalance style={styles.valueText}>
+              <HideBalance textStyle={styles.valueText}>
                 <FormattedAmount amount={fiatAmount} isDollarValue />
               </HideBalance>
             )}
@@ -141,23 +143,23 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
   if (isTezosGasToken) {
     return (
       <TouchableOpacity onPress={handlePress} style={styles.gasTokenContainer}>
-        <View style={[styles.container, styles.containerNoBorder]}>{content}</View>
+        <View style={[styles.container, styles.gasTokenSubcontainer]}>{content}</View>
 
         <View style={styles.balanceSplitContainer}>
           <View style={styles.balancePill}>
             <Text style={styles.balancePillText}>Public:</Text>
-            <HideBalance style={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
+            <HideBalance textStyle={styles.balancePillTextNumber}>{formattedPublicBalance}</HideBalance>
           </View>
           <View style={styles.balancePill}>
             <Text style={styles.balancePillText}>Shielded:</Text>
-            <HideBalance style={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
+            <HideBalance textStyle={styles.balancePillTextNumber}>{formattedShieldedBalance}</HideBalance>
           </View>
           <TouchableOpacity
             onPress={showShieldedBalanceInfo}
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             style={styles.infoButton}
           >
-            <Icon name={IconNameEnum.InfoFilled} size={formatSize(20)} />
+            <IconV2 name={IconNameV2Enum.InfoFill} color={colors.gray2} />
           </TouchableOpacity>
         </View>
       </TouchableOpacity>

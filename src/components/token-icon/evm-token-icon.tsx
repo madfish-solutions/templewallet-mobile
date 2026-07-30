@@ -31,13 +31,13 @@ export const EvmTokenIcon = memo<Props>(({ chainId, address, iconURL, size = for
     [size, style]
   );
   const imageStyle = useMemo(
-    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: size, height: size }],
+    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: (size * 5) / 6, height: (size * 5) / 6 }],
     [isShowPlaceholder, size]
   );
 
   return (
     <View style={containerStyle}>
-      {isShowPlaceholder && <CryptoLogo name={CryptoLogoNameEnum.Placeholder} size={size} internalSize={size} />}
+      {isShowPlaceholder && <CryptoLogo name={CryptoLogoNameEnum.Placeholder} size={size} />}
       {src != null && <FastImage style={imageStyle} source={{ uri: src }} onLoad={onSuccess} onError={onFail} />}
     </View>
   );

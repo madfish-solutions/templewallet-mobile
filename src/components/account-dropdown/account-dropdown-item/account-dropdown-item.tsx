@@ -1,16 +1,17 @@
 import BigNumber from 'bignumber.js';
-import React, { memo, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import React, { memo, useCallback, useMemo } from 'react';
+import { GestureResponderEvent, Text, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
-import { Icon } from 'src/components/icon/icon';
-import { NetworkLogo } from 'src/components/network-logo/network-logo';
+import { IconV2 } from 'src/components/icon-v2';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TruncatedText } from 'src/components/truncated-text';
 import { useTotalFiatBalanceOfAccount } from 'src/hooks/use-total-balance';
 import { Account } from 'src/interfaces/account.interfaces.ts';
@@ -21,6 +22,7 @@ import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_DECIMALS, TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useCurrentAccountCollectiblesWithPositiveBalance } from 'src/utils/assets/hooks';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { isDefined } from 'src/utils/is-defined';
@@ -33,25 +35,20 @@ import {
   useAccountDropdownItemStyles
 } from './account-dropdown-item.styles';
 
-const COLLECTIBLES_ROBOT_ICON_SIZE = 76;
-
 export const AccountDropdownItem = memo<AccountDropdownItemProps>(
-  ({ account, showFullData = true, actionIconName, isCollectibleScreen = false, variant = 'default' }) => {
+  ({ account, showFullData = true, actionIconName, actionIconColor, isCollectibleScreen = false }) => {
     const styles = useAccountDropdownItemStyles();
 
     const tezos = useTezosTokenOfKnownAccount(account.id);
-
-    if (variant === 'card') {
-      return <AccountDropdownListItem account={account} />;
-    }
 
     return (
       <View style={styles.root}>
         <RobotIcon
           seed={getSeedFromAccount(account)}
-          size={isCollectibleScreen ? COLLECTIBLES_ROBOT_ICON_SIZE : undefined}
+          size={isCollectibleScreen ? formatSize(76) : undefined}
+          color="blue"
         />
-        <View style={styles.infoContainer}>
+        <View style={[styles.infoContainer, isCollectibleScreen && styles.infoContainerCollectibles]}>
           <View
             style={[
               styles.upperContainer,
@@ -59,13 +56,15 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
               conditionalStyle(isCollectibleScreen, styles.accountNameMargin)
             ]}
           >
-            <TruncatedText style={styles.name}>{account.name}</TruncatedText>
-            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(22)} />}
+            <TruncatedText style={[styles.name, conditionalStyle(isCollectibleScreen, styles.nameCollectibles)]}>
+              {account.name}
+            </TruncatedText>
+            {isDefined(actionIconName) && <IconV2 name={actionIconName} size={24} color={actionIconColor} />}
           </View>
           <View style={styles.lowerContainer}>
             {isCollectibleScreen && <CollectiblesInfo />}
             {showFullData && !isCollectibleScreen && (
-              <HideBalance style={styles.balanceText}>
+              <HideBalance textStyle={styles.balanceText}>
                 <AssetValueText asset={tezos} amount={tezos.balance} />
               </HideBalance>
             )}
@@ -78,11 +77,7 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
 
 export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
 
-interface AccountDropdownListItemProps {
-  account: Account;
-}
-
-const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account }) => {
+const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
   const styles = useAccountDropdownItemStyles();
   const saplingAddress = useSaplingAddressForAccount(account);
 
@@ -94,11 +89,11 @@ const AccountDropdownListItem = memo<AccountDropdownListItemProps>(({ account })
   return (
     <>
       <View style={styles.listItemHeader}>
-        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} padding={formatSize(2)} />
+        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} />
         <View style={styles.listItemHeaderInfo}>
           <TruncatedText style={styles.listItemName}>{account.name}</TruncatedText>
-          <HideBalance style={styles.listItemBalanceText}>
-            <FormattedAmount amount={totalFiatBalance} isDollarValue spaceBeforeFiatSymbol />
+          <HideBalance wrapperStyle={styles.listItemBalanceTextWrapper} textStyle={styles.listItemBalanceText}>
+            <FormattedAmount amount={totalFiatBalance} isDollarValue />
           </HideBalance>
         </View>
       </View>
@@ -126,11 +121,21 @@ interface AccountAddressChipProps {
 const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName }) => {
   const styles = useAccountDropdownItemStyles();
 
+  const copyAddress = useCallback(
+    (e?: GestureResponderEvent) => {
+      e?.stopPropagation();
+      copyStringToClipboard(address);
+    },
+    [address]
+  );
+
   return (
-    <View style={styles.addressChip}>
-      <NetworkLogo name={iconName} />
+    <SafeTouchableOpacity style={styles.addressChip} onPress={copyAddress}>
+      <View style={styles.cryptoLogoContainer}>
+        <CryptoLogo name={iconName} size={formatSize(12)} />
+      </View>
       <Text style={styles.addressText}>{truncateAddress(address)}</Text>
-    </View>
+    </SafeTouchableOpacity>
   );
 });
 
@@ -184,4 +189,4 @@ const CollectiblesInfo = memo(() => {
 });
 
 const truncateAddress = (address: string) =>
-  address.length > 10 ? `${address.slice(0, 2)}...${address.slice(-4)}` : address;
+  address.length > 10 ? `${address.slice(0, 3)}...${address.slice(-4)}` : address;

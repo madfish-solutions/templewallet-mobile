@@ -2,7 +2,6 @@ import React, { memo, useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 
 import { Divider } from 'src/components/divider/divider';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { InternetConnectionStatus } from 'src/components/internet-connection-status';
 import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-love';
@@ -20,6 +19,7 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { isStackFocused } from 'src/utils/is-stack-focused.util';
 
+import { NavigationBarIconNameEnum } from '../navigation-bar-icon/icon-name.enum';
 import { NOT_AVAILABLE_MESSAGE, useSwapScreenParams } from '../utils';
 
 import { SideBarButton } from './side-bar-button/side-bar-button';
@@ -49,13 +49,13 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
           <Divider size={formatSize(8)} />
           <SideBarButton
             label="Wallet"
-            iconName={IconNameEnum.TezWallet}
+            iconName={NavigationBarIconNameEnum.Wallet}
             routeName={ScreensEnum.Wallet}
             focused={isStackFocusedMemo(walletStackScreens)}
           />
           <SideBarButton
             label={LIMIT_NFT_FEATURES ? 'Collectibles' : 'NFT'}
-            iconName={IconNameEnum.NFT}
+            iconName={NavigationBarIconNameEnum.Nft}
             routeName={ScreensEnum.CollectiblesHome}
             focused={isStackFocusedMemo(nftStackScreens)}
             disabledOnPress={handleDisabledPress}
@@ -63,7 +63,7 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
           {!LIMIT_FIN_FEATURES && (
             <SideBarButton
               label="Swap"
-              iconName={IconNameEnum.Swap}
+              iconName={NavigationBarIconNameEnum.Swap}
               routeName={ScreensEnum.SwapScreen}
               swapScreenParams={swapScreenParams}
               focused={isStackFocusedMemo(swapStackScreens)}
@@ -72,14 +72,14 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
           )}
           <SideBarButton
             label={LIMIT_DAPPS_FEATURES ? 'Explore' : 'DApps'}
-            iconName={IconNameEnum.DApps}
+            iconName={NavigationBarIconNameEnum.DApps}
             routeName={ScreensEnum.DApps}
             focused={isStackFocusedMemo(dAppsStackScreens)}
             disabledOnPress={handleDisabledPress}
           />
           <SideBarButton
             label="Market"
-            iconName={IconNameEnum.Market}
+            iconName={NavigationBarIconNameEnum.Market}
             routeName={ScreensEnum.Market}
             focused={isStackFocusedMemo(marketStackScreens)}
           />

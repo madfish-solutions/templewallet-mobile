@@ -6,7 +6,7 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 
 import { DropdownValueComponent } from '../dropdown/dropdown';
 import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
-import { IconNameEnum } from '../icon/icon-name.enum';
+import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 
 import { AccountDropdownItem, renderAccountListItem } from './account-dropdown-item/account-dropdown-item';
 import { accountEqualityFn } from './account-equality-fn';
@@ -18,7 +18,7 @@ interface Props extends TestIdProps {
 
 const renderAccountValue: DropdownValueComponent<Account> = ({ value }) => (
   <DropdownItemContainer>
-    {value && <AccountDropdownItem account={value} actionIconName={IconNameEnum.TriangleDown} />}
+    {value && <AccountDropdownItem account={value} actionIconName={IconNameV2Enum.DropdownDown} />}
   </DropdownItemContainer>
 );
 

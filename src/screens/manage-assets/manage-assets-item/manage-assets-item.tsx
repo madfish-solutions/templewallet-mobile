@@ -3,10 +3,10 @@ import { Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { Divider } from 'src/components/divider/divider';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { Switch } from 'src/components/switch/switch';
 import { TokenContainer } from 'src/components/token-container/token-container';
+import { TouchableIconV2 } from 'src/components/touchable-icon-v2';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { removeTokenAction, toggleTokenVisibilityAction } from 'src/store/wallet/wallet-actions';
 import { formatSize } from 'src/styles/format-size';
@@ -36,7 +36,7 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
 
   return (
     <TokenContainer token={asset}>
-      <TouchableIcon name={IconNameEnum.Trash} size={formatSize(16)} onPress={handleTrashIconPress} />
+      <TouchableIconV2 name={IconNameV2Enum.Trash} size={formatSize(16)} iconSize={16} onPress={handleTrashIconPress} />
       <Divider size={formatSize(16)} />
       <Switch
         value={asset.visibility === VisibilityEnum.Visible}

@@ -1,7 +1,7 @@
-import { black, white } from 'src/config/styles';
+import { white } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
-import { generateShadow } from 'src/styles/generate-shadow';
+import { iosCardShadow } from 'src/styles/shadows';
 
 export const useQrBottomSheetStyles = createUseStylesMemoized(({ colors, typography }) => ({
   root: {
@@ -28,7 +28,7 @@ export const useQrBottomSheetStyles = createUseStylesMemoized(({ colors, typogra
     justifyContent: 'center'
   },
   qrCodeContainer: {
-    ...generateShadow(1, black),
+    boxShadow: iosCardShadow,
     backgroundColor: white,
     borderRadius: formatSize(8),
     padding: formatSize(20)
