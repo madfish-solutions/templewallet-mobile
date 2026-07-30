@@ -20,8 +20,6 @@ export const FormSectionDropdown = <T extends unknown>({
   renderActionButtons,
   isSearchable,
   setSearchValue,
-  showCancelButton,
-  showCloseButton,
   testID,
   testIDProperties
 }: Props<T>) => {
@@ -40,8 +38,6 @@ export const FormSectionDropdown = <T extends unknown>({
         renderListItem={renderListItem}
         renderActionButtons={renderActionButtons}
         setSearchValue={setSearchValue}
-        showCancelButton={showCancelButton}
-        showCloseButton={showCloseButton}
         onValueChange={helpers.setValue}
         testID={testID}
         testIDProperties={testIDProperties}

@@ -3,7 +3,7 @@ import { BigNumber } from 'bignumber.js';
 import { uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum.ts';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
@@ -153,7 +153,7 @@ export const useSendAssets = (): SendAsset[] => {
         name,
         symbol,
         decimals,
-        iconName: isNative ? IconNameEnum.TezToken : undefined,
+        iconName: isNative ? CryptoLogoNameEnum.Tezos : undefined,
         thumbnailUri: isNative
           ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.iconURL
           : collectibleMetadata?.image ?? metadata?.iconURL,

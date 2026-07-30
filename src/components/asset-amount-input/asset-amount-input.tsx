@@ -61,19 +61,9 @@ const getDefinedAmount = (
       : dollarToTokenAmount(amount, decimals, exchangeRate)
     : undefined;
 
-const getRenderTokenListItem =
-  (isTokenSelector: boolean): DropdownListItemComponent<TokenInterface> =>
-  ({ item, isSelected }) =>
-    (
-      <TokenDropdownItem
-        token={item}
-        iconSize={isTokenSelector ? formatSize(40) : undefined}
-        iconVisualSize={isTokenSelector ? formatSize(32) : undefined}
-        iconGap={isTokenSelector ? formatSize(4) : undefined}
-        layout={isTokenSelector ? 'token-selector' : 'default'}
-        {...(isSelected && { actionIconName: IconNameEnum.Check })}
-      />
-    );
+const renderTokenListItem: DropdownListItemComponent<TokenInterface> = ({ item, isSelected }) => (
+  <TokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
+);
 
 export const AssetAmountInput = memo<AssetAmountInputProps>(
   ({
@@ -92,10 +82,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     dropdownVerticalPadding,
     isSearchable = false,
     searchPlaceholder,
-    dropdownListHeader,
     dropdownDescription = 'Assets',
-    dropdownAppearance,
-    scrollToSelectedValue,
     selectionOptions = undefined,
     selectedTokenIconSize = formatSize(32),
     selectedTokenIconVisualSize,
@@ -105,7 +92,6 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
     stylesConfig = defaultAssetAmountInputStylesConfig,
     isShowNameForValue = true,
-    spaceBeforeFiatSymbol = false,
     isSingleAsset = false,
     setSearchValue = emptyFn,
     onBlur,
@@ -117,10 +103,6 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     maxButtonTestID
   }) => {
     const styles = useAssetAmountInputStyles();
-    const renderTokenListItem = useMemo(
-      () => getRenderTokenListItem(dropdownAppearance === 'token-selector'),
-      [dropdownAppearance]
-    );
     const {
       balanceText: configBalanceTextStyles,
       amountInput: configAmountInputStyles,
@@ -344,14 +326,11 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
           >
             <Dropdown
               description={dropdownDescription}
-              appearance={dropdownAppearance}
-              scrollToSelectedValue={scrollToSelectedValue}
               disabled={isSingleAsset}
               value={value.asset}
               list={assetsList}
               isSearchable={isSearchable}
               searchPlaceholder={searchPlaceholder}
-              listHeader={dropdownListHeader}
               isLoading={isLoading}
               setSearchValue={setSearchValue}
               equalityFn={tokenEqualityFn}
@@ -375,7 +354,6 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
               asset={value.asset}
               style={styles.equivalentValueText}
               convertToDollar={isTokenInputType}
-              spaceBeforeFiatSymbol={spaceBeforeFiatSymbol}
             />
           )}
           <View style={styles.balanceContainer}>

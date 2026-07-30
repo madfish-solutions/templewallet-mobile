@@ -14,5 +14,3 @@ export interface SendAsset extends TokenInterface {
   contractAddress?: HexString;
   tokenId?: string;
 }
-
-export const isEvmSendAsset = (asset: SendAsset): boolean => asset.chainKind === TempleChainKind.EVM;

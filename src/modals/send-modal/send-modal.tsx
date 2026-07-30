@@ -396,7 +396,7 @@ export const SendModal: FC = () => {
               disabled={isRecipientSapling}
               name="transferBetweenOwnAccounts"
               onValueChange={handleTransferBetweenOwnAccountsChange}
-              size={formatSize(16)}
+              size={16}
               testID={SendModalSelectors.transferBetweenMyAccountsCheckBox}
             >
               <Text style={styles.checkboxText}>Transfer between my accounts</Text>

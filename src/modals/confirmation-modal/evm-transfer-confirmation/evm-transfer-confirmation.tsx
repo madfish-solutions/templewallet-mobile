@@ -45,8 +45,8 @@ import { getViemWalletClient } from 'src/utils/rpc/evm-client.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { EvmTransferConfirmationModalParams } from '../confirmation-modal.params';
-import { useOperationsConfirmationStyles } from '../operations-confirmation/operations-confirmation.styles';
 import { useFeeFormInputStyles } from '../operations-confirmation/fee-form-input/fee-form-input.styles';
+import { useOperationsConfirmationStyles } from '../operations-confirmation/operations-confirmation.styles';
 import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
 
 import { useEvmTransferConfirmationStyles } from './evm-transfer-confirmation.styles';
@@ -275,10 +275,10 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
           <View style={[feeFormStyles.infoContainerItem, styles.feeInfoItem]}>
             <Text style={feeFormStyles.infoTitle}>Network fee:</Text>
             <Text style={feeFormStyles.infoFeeAmount}>{fee ? `${formatEther(fee)} XTZ` : 'Estimating...'}</Text>
-            {fee && feeAsset.exchangeRate !== undefined && (
+            {!!fee && feeAsset.exchangeRate !== undefined && (
               <Text style={feeFormStyles.infoFeeValue}>
                 (
-                <FormattedAmount amount={feeFiatValue} hideApproximateSign isDollarValue spaceBeforeFiatSymbol />)
+                <FormattedAmount amount={feeFiatValue} hideApproximateSign isDollarValue />)
               </Text>
             )}
           </View>

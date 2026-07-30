@@ -69,8 +69,6 @@ export const ContactFormSectionDropdown: FC<Props> = ({
       equalityFn={contactEqualityFn}
       renderValue={renderContactValue}
       renderListItem={renderContactListItem}
-      showCancelButton={false}
-      showCloseButton
       testID={testID}
       testIDProperties={testIDProperties}
     />
@@ -112,12 +110,12 @@ const AccountReceiverRow: FC<{
   return (
     <View style={styles.accountContainer}>
       <View style={styles.accountHeader}>
-        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} padding={formatSize(2)} />
+        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} />
         <Text numberOfLines={1} style={styles.accountName}>
           {account.name}
         </Text>
-        <HideBalance style={styles.accountBalance}>
-          <FormattedAmount amount={totalFiatBalance} isDollarValue spaceBeforeFiatSymbol />
+        <HideBalance textStyle={styles.accountBalance}>
+          <FormattedAmount amount={totalFiatBalance} isDollarValue />
         </HideBalance>
         {showDropdownDown && <IconV2 name={IconNameV2Enum.DropdownDown} size={12} />}
       </View>
@@ -149,7 +147,7 @@ const ReceiverRowLayout: FC<ReceiverRowProps & { balance?: React.ReactNode }> = 
           <Text numberOfLines={1} style={styles.name}>
             {receiver.name}
           </Text>
-          {!!balance && <HideBalance style={styles.balance}>{balance}</HideBalance>}
+          {!!balance && <HideBalance textStyle={styles.balance}>{balance}</HideBalance>}
         </View>
         {!!receiver.address && (
           <View style={styles.addressRow}>

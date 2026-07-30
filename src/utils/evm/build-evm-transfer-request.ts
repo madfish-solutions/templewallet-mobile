@@ -4,7 +4,7 @@ import { SendAsset } from 'src/modals/send-modal/send-asset.types';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { erc1155Abi } from 'src/utils/evm/on-chain/abi/erc1155.abi';
 
-export interface BasicEvmTransferRequest {
+interface BasicEvmTransferRequest {
   to: HexString;
   value: bigint;
   data?: HexString;
