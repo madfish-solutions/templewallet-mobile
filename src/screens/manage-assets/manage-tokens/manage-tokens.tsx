@@ -6,6 +6,9 @@ import { Checkbox } from 'src/components/checkbox/checkbox';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
 import { SearchInput } from 'src/components/search-input/search-input';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
+import { dispatch } from 'src/store';
+import { setHideZeroBalances } from 'src/store/settings/settings-actions';
+import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -24,13 +27,13 @@ export const ManageTokens = memo(() => {
 
   const tokensList = useCurrentAccountTokens();
   const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
-  const [shouldHideZeroBalanceTokens, setShouldHideZeroBalanceTokens] = useState(false);
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(
-    tokensWithoutTkey,
-    shouldHideZeroBalanceTokens,
-    true
-  );
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensWithoutTkey, false, true);
+  const hideZeroBalances = useHideZeroBalancesSelector();
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleHideZeroBalancesChange = useCallback(() => {
+    dispatch(setHideZeroBalances(!hideZeroBalances));
+  }, [hideZeroBalances]);
 
   const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
     setIsScrolled(event.nativeEvent.contentOffset.y > 0);
@@ -41,7 +44,7 @@ export const ManageTokens = memo(() => {
       <View style={styles.searchRow}>
         {isScrolled && <View pointerEvents="none" style={styles.searchRowShadow} />}
         <SearchInput placeholder="Search" onChangeText={setSearchValue} containerStyle={styles.searchInputContainer} />
-        <Checkbox value={shouldHideZeroBalanceTokens} size={16} onChange={setShouldHideZeroBalanceTokens}>
+        <Checkbox value={hideZeroBalances} size={16} onChange={handleHideZeroBalancesChange}>
           <Text style={styles.checkboxText}>Hide 0 balance</Text>
         </Checkbox>
       </View>
