@@ -40,7 +40,7 @@ export const useRewardsAnnouncementModalStyles = createUseStyles(({ colors, typo
   benefit: {
     flex: 1,
     padding: formatSize(12),
-    borderWidth: formatSize(0.5),
+    borderWidth: formatSize(1),
     borderColor: colors.lines,
     borderRadius: formatSize(8),
     backgroundColor: colors.cardBG

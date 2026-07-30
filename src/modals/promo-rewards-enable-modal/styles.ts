@@ -27,7 +27,7 @@ export const usePromoRewardsEnableModalStyles = createUseStyles(({ colors, typog
     backgroundColor: colors.cardBG,
     borderColor: colors.lines,
     borderRadius: formatSize(8),
-    borderWidth: formatSize(0.5),
+    borderWidth: formatSize(1),
     marginBottom: formatSize(8),
     padding: formatSize(12),
     width: '48.7%'

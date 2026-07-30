@@ -43,6 +43,8 @@ export const PromoRewardsCard = memo(() => {
     );
   }
 
+  const isLastAmountPositive = Boolean(stats?.lastAmount?.gt(ZERO));
+
   return (
     <PromoRewardsCardFrame key="promo-rewards-card" reversed>
       <View style={styles.card}>
@@ -64,11 +66,13 @@ export const PromoRewardsCard = memo(() => {
             <View style={styles.stats}>
               <View style={styles.stat}>
                 <Text style={styles.label}>All time:</Text>
-                <Text style={styles.value}>{formatAssetAmount(stats?.total ?? ZERO, 2)} TKEY</Text>
+                <Text style={styles.value}>{formatAssetAmount(stats?.total ?? ZERO, 2, true)} TKEY</Text>
               </View>
               <View style={[styles.stat, styles.statEnd]}>
                 <Text style={styles.label}>Last payment:</Text>
-                <Text style={styles.positiveValue}>+{formatAssetAmount(stats?.lastAmount ?? ZERO, 2)} TKEY</Text>
+                <Text style={isLastAmountPositive ? styles.positiveValue : styles.value}>
+                  {(isLastAmountPositive ? '+' : '') + formatAssetAmount(stats?.lastAmount ?? ZERO, 2, true)} TKEY
+                </Text>
               </View>
             </View>
           )}
@@ -112,5 +116,5 @@ const PromoRewardsCardFrame: FC<PromoRewardsCardFrameProps> = ({ children, rever
 const showPayoutInfo = () =>
   Alert.alert(
     'Promo rewards',
-    'This section display display your rewards for Promo. You can manage this feature in the Settings.'
+    'This section display your rewards for Promo. You can manage this feature in the Settings.'
   );
