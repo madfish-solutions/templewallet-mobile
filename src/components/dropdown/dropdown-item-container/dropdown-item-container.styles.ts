@@ -20,13 +20,14 @@ export const useDropdownItemContainerStyles = createUseStyles(({ colors }) => ({
     borderWidth: formatSize(1)
   },
   compactRoot: {
-    paddingVertical: formatSize(6),
+    paddingVertical: 0,
     paddingHorizontal: 0,
     margin: 0,
     backgroundColor: 'transparent',
     borderColor: 'transparent',
     borderWidth: 0,
     borderRadius: 0,
+    boxShadow: [],
     shadowOpacity: 0,
     elevation: 0
   }

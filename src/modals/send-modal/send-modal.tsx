@@ -344,7 +344,7 @@ export const SendModal: FC = () => {
             showErrorInFooter
             name="assetAmount"
             selectedTokenIconSize={formatSize(40)}
-            selectedTokenIconVisualSize={formatSize(32)}
+            selectedTokenIconVisualSize={formatSize(40)}
             selectedTokenIconGap={formatSize(4)}
             selectedTokenDropdownWidth={formatSize(122)}
             inputTypeSwitcherGap={formatSize(2)}

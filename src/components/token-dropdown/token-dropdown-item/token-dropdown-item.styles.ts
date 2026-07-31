@@ -7,6 +7,9 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     alignItems: 'center',
     height: formatSize(40)
   },
+  tokenSelectorContainer: {
+    height: formatSize(44)
+  },
   iconContainer: {
     position: 'relative'
   },
@@ -14,19 +17,6 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     alignItems: 'center',
     flex: 1,
     justifyContent: 'center'
-  },
-  chainBadge: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: formatSize(16),
-    height: formatSize(16),
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: formatSize(8),
-    borderWidth: formatSize(1),
-    borderColor: colors.lines,
-    backgroundColor: colors.pageBG
   },
   infoContainer: {
     flexGrow: 1,

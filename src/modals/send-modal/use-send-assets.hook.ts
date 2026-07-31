@@ -7,7 +7,6 @@ import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum.ts
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
-import { useEvmChainCollectiblesMetadataSelector } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-selectors';
 import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
@@ -18,7 +17,7 @@ import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
-import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
@@ -70,7 +69,6 @@ const compareSendAssets = (first: SendAsset, second: SendAsset) => {
 export const useSendAssets = (): SendAsset[] => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const tezosTokens = useCurrentAccountTokens(true);
-  const tezosCollectibles = useCurrentAccountCollectibles(true);
   const shieldedBalance = useShieldedBalanceSelector();
   const shieldedExchangeRate = useAssetExchangeRate(TEZ_SHIELDED_TOKEN_SLUG);
 
@@ -78,7 +76,6 @@ export const useSendAssets = (): SendAsset[] => {
   const evmAssets = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const evmBalances = useEvmAccountChainBalancesSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const evmTokensMetadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
-  const evmCollectiblesMetadata = useEvmChainCollectiblesMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
   const evmExchangeRates = useEvmChainExchangeRatesSelector(ETHERLINK_MAINNET_CHAIN_ID);
   const fiatToUsdRate = useFiatToUsdRateSelector();
 
@@ -94,9 +91,11 @@ export const useSendAssets = (): SendAsset[] => {
           };
 
     const tezosAssets = uniqBy(
-      [tezosToken, ...(shieldedToken ? [shieldedToken] : []), ...tezosTokens, ...tezosCollectibles],
+      [tezosToken, ...(shieldedToken ? [shieldedToken] : []), ...tezosTokens],
       getTokenSlug
-    ).map(toTezosSendAsset);
+    )
+      .filter(token => new BigNumber(token.balance).isGreaterThan(0))
+      .map(toTezosSendAsset);
 
     if (!evmAddress) {
       return tezosAssets.sort(compareSendAssets);
@@ -109,25 +108,24 @@ export const useSendAssets = (): SendAsset[] => {
       const isNative = assetSlug === EVM_TOKEN_SLUG;
       const standard = isNative
         ? EvmAssetStandardEnum.NATIVE
-        : evmAssets[assetSlug]?.standard ??
-          evmTokensMetadata[assetSlug]?.standard ??
-          evmCollectiblesMetadata[assetSlug]?.standard;
+        : evmAssets[assetSlug]?.standard ?? evmTokensMetadata[assetSlug]?.standard;
 
       if (!standard) {
         continue;
       }
 
-      const collectibleMetadata = evmCollectiblesMetadata[assetSlug];
+      const balance = evmBalances[assetSlug] ?? '0';
+      if (!new BigNumber(balance).isGreaterThan(0)) {
+        continue;
+      }
+
+      if (standard === EvmAssetStandardEnum.ERC721 || standard === EvmAssetStandardEnum.ERC1155) {
+        continue;
+      }
+
       const tokenMetadata = evmTokensMetadata[assetSlug];
-      const metadata = collectibleMetadata ?? tokenMetadata;
       const [, tokenIdFromSlug] = fromTokenSlug(assetSlug);
-      const tokenId = collectibleMetadata?.tokenId ?? tokenIdFromSlug;
-      const decimals =
-        standard === EvmAssetStandardEnum.ERC721 || standard === EvmAssetStandardEnum.ERC1155
-          ? 0
-          : isNative
-          ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.decimals
-          : tokenMetadata?.decimals;
+      const decimals = isNative ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.decimals : tokenMetadata?.decimals;
 
       if (!isDefined(decimals)) {
         continue;
@@ -137,15 +135,9 @@ export const useSendAssets = (): SendAsset[] => {
       const exchangeRate = isDefined(usdRate) && isDefined(fiatToUsdRate) ? usdRate * fiatToUsdRate : undefined;
       const contractAddress = isNative
         ? undefined
-        : ((collectibleMetadata?.address ?? tokenMetadata?.address) as HexString | undefined);
-      const symbol =
-        (isNative ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.symbol : metadata?.symbol) ??
-        collectibleMetadata?.collectibleName ??
-        'NFT';
-      const name =
-        (isNative
-          ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.name
-          : collectibleMetadata?.collectibleName ?? metadata?.name) ?? symbol;
+        : (tokenMetadata?.address as HexString | undefined);
+      const symbol = (isNative ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.symbol : tokenMetadata?.symbol) ?? 'Token';
+      const name = (isNative ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.name : tokenMetadata?.name) ?? symbol;
 
       etherlinkAssets.push({
         address: `evm:${ETHERLINK_MAINNET_CHAIN_ID}:${assetSlug}`,
@@ -156,10 +148,10 @@ export const useSendAssets = (): SendAsset[] => {
         iconName: isNative ? CryptoLogoNameEnum.Tezos : undefined,
         thumbnailUri: isNative
           ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.iconURL
-          : collectibleMetadata?.image ?? metadata?.iconURL,
+          : tokenMetadata?.iconURL,
         standard: null,
         visibility: tezosToken.visibility,
-        balance: evmBalances[assetSlug] ?? '0',
+        balance,
         exchangeRate,
         assetKey: toChainAssetSlug(TempleChainKind.EVM, ETHERLINK_MAINNET_CHAIN_ID, assetSlug),
         assetSlug,
@@ -168,7 +160,7 @@ export const useSendAssets = (): SendAsset[] => {
         networkName: ETHERLINK_MAINNET_CHAIN_SPECS.name,
         sendStandard: standard,
         contractAddress,
-        tokenId
+        tokenId: tokenIdFromSlug
       });
     }
 
@@ -176,14 +168,12 @@ export const useSendAssets = (): SendAsset[] => {
   }, [
     tezosToken,
     tezosTokens,
-    tezosCollectibles,
     shieldedBalance,
     shieldedExchangeRate,
     evmAddress,
     evmAssets,
     evmBalances,
     evmTokensMetadata,
-    evmCollectiblesMetadata,
     evmExchangeRates,
     fiatToUsdRate
   ]);

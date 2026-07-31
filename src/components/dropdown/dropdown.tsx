@@ -1,4 +1,4 @@
-import React, { memo, Ref, useCallback, useMemo, useRef } from 'react';
+import React, { memo, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -38,6 +38,8 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   renderListItem: DropdownListItemComponent<T>;
   getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
+  listHeader?: ReactNode;
+  appearance?: 'default' | 'token-selector';
   showCloseButton?: boolean;
   triggerWrapperRef?: Ref<View>;
   onLongPress?: EmptyFn;
@@ -95,6 +97,8 @@ const DropdownComponent = <T extends unknown>({
   showCloseButton = true,
   getListItemSectionTitle,
   renderActionButtons = emptyComponent,
+  listHeader,
+  appearance = 'default',
   keyExtractor,
   onValueChange,
   onLongPress,
@@ -123,37 +127,43 @@ const DropdownComponent = <T extends unknown>({
     return result;
   }, [getListItemSectionTitle, list]);
 
+  const isTokenSelector = appearance === 'token-selector';
+  const listItemHeight = isTokenSelector ? formatSize(44) : itemHeight;
+  const listItemSeparatorSize = isTokenSelector ? formatSize(8) : formatSize(16);
+
   const getItemLayout = useCallback(
     (_: unknown, index: number) => {
       const sectionTitle = itemsTitles[index];
       const sectionsTitlesBeforeCount = Object.keys(itemsTitles).filter(key => Number(key) < index).length;
-      const rowDividerSize = formatSize(8);
+      const rowDividerSize = isTokenSelector ? 0 : formatSize(8);
       const sectionTitleSize = formatSize(22);
-      const itemSeparatorSize = formatSize(8);
+      const itemSeparatorSize = listItemSeparatorSize;
 
       return {
-        length: itemHeight + rowDividerSize + (sectionTitle ? sectionTitleSize : 0),
+        length: listItemHeight + rowDividerSize + (sectionTitle ? sectionTitleSize : 0),
         index,
-        offset: index * (itemHeight + rowDividerSize + itemSeparatorSize) + sectionsTitlesBeforeCount * sectionTitleSize
+        offset:
+          index * (listItemHeight + rowDividerSize + itemSeparatorSize) + sectionsTitlesBeforeCount * sectionTitleSize
       };
     },
-    [itemHeight, itemsTitles]
+    [isTokenSelector, itemsTitles, listItemHeight, listItemSeparatorSize]
   );
   const maxContentHeight = useMaxDropdownHeight();
   const contentHeight = useMemo(() => {
-    if (isLoading) {
+    if (isLoading || isTokenSelector) {
       return maxContentHeight;
     }
 
     const searchHeight = isSearchable ? formatSize(64) : 0;
+    const listHeaderHeight = listHeader ? formatSize(44) : 0;
     let itemsHeight = formatSize(212);
     if (list.length > 0) {
       const { length, offset } = getItemLayout(undefined, list.length - 1);
       itemsHeight = length + offset;
     }
 
-    return Math.min(searchHeight + itemsHeight + formatSize(64), maxContentHeight);
-  }, [getItemLayout, isLoading, isSearchable, list.length, maxContentHeight]);
+    return Math.min(searchHeight + listHeaderHeight + itemsHeight + formatSize(64), maxContentHeight);
+  }, [getItemLayout, isLoading, isSearchable, isTokenSelector, list.length, listHeader, maxContentHeight]);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -168,7 +178,7 @@ const DropdownComponent = <T extends unknown>({
       return (
         <>
           {isDefined(sectionTitle) && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
-          <Divider size={formatSize(8)} />
+          {!isTokenSelector && <Divider size={formatSize(8)} />}
           <TouchableWithAnalytics
             Component={SafeTouchableOpacity}
             key={index}
@@ -176,7 +186,7 @@ const DropdownComponent = <T extends unknown>({
             testID={DropdownSelectors.option}
             testIDProperties={itemTestIDPropertiesFn?.(item)}
           >
-            <DropdownItemContainer isSelected={isSelected} style={itemContainerStyle}>
+            <DropdownItemContainer isSelected={isSelected} isCompact={isTokenSelector} style={itemContainerStyle}>
               {renderListItem({ item, isSelected })}
             </DropdownItemContainer>
           </TouchableWithAnalytics>
@@ -190,6 +200,7 @@ const DropdownComponent = <T extends unknown>({
       onValueChange,
       dropdownBottomSheetController.close,
       itemTestIDPropertiesFn,
+      isTokenSelector,
       styles.sectionHeaderText,
       itemContainerStyle,
       renderListItem
@@ -271,6 +282,7 @@ const DropdownComponent = <T extends unknown>({
               )}
             </View>
           )}
+          {listHeader}
           {isLoading ? (
             <View style={styles.activityIndicatorContainer}>
               <ActivityIndicator size="large" />
@@ -282,7 +294,10 @@ const DropdownComponent = <T extends unknown>({
               renderItem={renderItem}
               keyExtractor={keyExtractor}
               getItemLayout={getItemLayout}
-              contentContainerStyle={styles.flatListContentContainer}
+              contentContainerStyle={[
+                styles.flatListContentContainer,
+                isTokenSelector && styles.tokenSelectorFlatListContentContainer
+              ]}
               ItemSeparatorComponent={ItemSeparatorComponent}
               ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
               windowSize={10}

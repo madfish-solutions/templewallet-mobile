@@ -1,8 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { CryptoLogo } from 'src/components/crypto-logo';
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { TokenIconWithNetwork } from 'src/components/token-icon-with-network/token-icon-with-network';
 import { TruncatedText } from 'src/components/truncated-text';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { formatSize } from 'src/styles/format-size';
@@ -33,6 +32,7 @@ interface Props {
   iconVisualSize?: number;
   iconGap?: number;
   layout?: 'default' | 'token-selector';
+  showNetworkBadge?: boolean;
 }
 
 export const TokenDropdownItem: FC<Props> = ({
@@ -45,19 +45,15 @@ export const TokenDropdownItem: FC<Props> = ({
   iconSize = formatSize(40),
   iconVisualSize = iconSize,
   iconGap = formatSize(8),
-  layout = 'default'
+  layout = 'default',
+  showNetworkBadge = false
 }) => {
   const styles = useTokenDropdownItemStyles();
   const chainKind = (token as TokenInterface & { chainKind?: TempleChainKind }).chainKind;
   const networkName = (token as TokenInterface & { networkName?: string }).networkName;
-  const chainLogoName =
-    chainKind === TempleChainKind.Tezos
-      ? CryptoLogoNameEnum.Tezos
-      : chainKind === TempleChainKind.EVM
-      ? CryptoLogoNameEnum.Etherlink
-      : undefined;
   const hasActionIcon = isDefined(actionIconName) || isDefined(actionIconV2Name);
   const isTokenSelector = layout === 'token-selector';
+  const shouldShowNetworkBadge = isTokenSelector || showNetworkBadge;
 
   const tokenNameTextStyle = useMemo(
     () => [
@@ -66,6 +62,10 @@ export const TokenDropdownItem: FC<Props> = ({
       conditionalStyle(!hasActionIcon, styles.fullWidthName)
     ],
     [hasActionIcon, isTokenSelector, styles]
+  );
+  const iconContainerStyle = useMemo(
+    () => [styles.iconContainer, { width: iconSize, height: iconSize }],
+    [iconSize, styles]
   );
 
   if (tokenEqualityFn(token, emptyToken)) {
@@ -92,17 +92,18 @@ export const TokenDropdownItem: FC<Props> = ({
   }
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.iconContainer, { width: iconSize, height: iconSize }]}>
-        <View style={styles.iconVisualContainer}>
+    <View style={[styles.container, isTokenSelector && styles.tokenSelectorContainer]}>
+      {shouldShowNetworkBadge ? (
+        <TokenIconWithNetwork chainKind={chainKind}>
           <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconVisualSize} />
-        </View>
-        {isDefined(chainLogoName) && (
-          <View style={styles.chainBadge}>
-            <CryptoLogo name={chainLogoName} size={formatSize(12)} internalSize={formatSize(12)} />
+        </TokenIconWithNetwork>
+      ) : (
+        <View style={iconContainerStyle}>
+          <View style={styles.iconVisualContainer}>
+            <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconVisualSize} />
           </View>
-        )}
-      </View>
+        </View>
+      )}
       <Divider size={iconGap} />
 
       <View style={styles.infoContainer}>

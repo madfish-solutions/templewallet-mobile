@@ -22,7 +22,6 @@ import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
 import { Dropdown, DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
 import { HideBalance } from '../hide-balance/hide-balance';
-import { IconNameEnum } from '../icon/icon-name.enum';
 import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 import { Label } from '../label/label';
 import { PatchedTextInput } from '../patched-text-input';
@@ -61,10 +60,6 @@ const getDefinedAmount = (
       : dollarToTokenAmount(amount, decimals, exchangeRate)
     : undefined;
 
-const renderTokenListItem: DropdownListItemComponent<TokenInterface> = ({ item, isSelected }) => (
-  <TokenDropdownItem token={item} {...(isSelected && { actionIconName: IconNameEnum.Check })} />
-);
-
 export const AssetAmountInput = memo<AssetAmountInputProps>(
   ({
     value,
@@ -80,6 +75,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     isLoading = false,
     inputHeight,
     dropdownVerticalPadding,
+    dropdownListHeader,
+    dropdownAppearance = 'default',
     isSearchable = false,
     searchPlaceholder,
     dropdownDescription = 'Assets',
@@ -139,6 +136,18 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     }, [getTokenBalance, slug, tezosBalance, value.asset, balanceFromProps]);
 
     const amountInputRef = useRef<TextInput>(null);
+    const renderTokenListItem = useCallback<DropdownListItemComponent<TokenInterface>>(
+      ({ item }) => (
+        <TokenDropdownItem
+          token={item}
+          layout={dropdownAppearance}
+          iconSize={dropdownAppearance === 'token-selector' ? formatSize(44) : undefined}
+          iconVisualSize={dropdownAppearance === 'token-selector' ? formatSize(40) : undefined}
+          iconGap={dropdownAppearance === 'token-selector' ? formatSize(4) : undefined}
+        />
+      ),
+      [dropdownAppearance]
+    );
 
     const [inputTypeIndex, setInputTypeIndex] = useState(0);
     const isTokenInputType = inputTypeIndex === TOKEN_INPUT_TYPE_INDEX;
@@ -186,12 +195,20 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
           actionIconV2Name={isSingleAsset ? undefined : IconNameV2Enum.DropdownDown}
           isShowBalance={false}
           isShowName={isShowNameForValue}
+          showNetworkBadge={dropdownAppearance === 'token-selector'}
           iconSize={selectedTokenIconSize}
           iconVisualSize={selectedTokenIconVisualSize}
           iconGap={selectedTokenIconGap}
         />
       ),
-      [isShowNameForValue, isSingleAsset, selectedTokenIconGap, selectedTokenIconSize, selectedTokenIconVisualSize]
+      [
+        dropdownAppearance,
+        isShowNameForValue,
+        isSingleAsset,
+        selectedTokenIconGap,
+        selectedTokenIconSize,
+        selectedTokenIconVisualSize
+      ]
     );
 
     const onChange = useCallback(
@@ -336,6 +353,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
               equalityFn={tokenEqualityFn}
               renderValue={renderTokenValue}
               renderListItem={renderTokenListItem}
+              listHeader={dropdownListHeader}
+              appearance={dropdownAppearance}
               keyExtractor={getTokenSlug}
               onValueChange={handleTokenChange}
               testID={testID}
