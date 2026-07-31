@@ -41,8 +41,8 @@ export const FeeFormInput: FC<Props> = ({
 
   const [isShowDetailedInput, setIsShowDetailedInput] = useState(!estimationWasSuccessful);
 
-  const sliderMinValue = basicFees.gasFeeSum.toNumber();
-  const sliderMaxValue = basicFees.gasFeeSum.plus(2e-4).toNumber();
+  const sliderMinValue = Math.max(basicFees.gasFeeSum.minus(1e-4).toNumber(), 0);
+  const sliderMaxValue = basicFees.gasFeeSum.plus(1e-4).toNumber();
   const gasFeeBigNumber = values.gasFeeSum ?? new BigNumber(0);
   const storageLimitDefaultValue = basicFees.storageLimitSum;
 

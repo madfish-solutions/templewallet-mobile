@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/core';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { firstValueFrom } from 'rxjs';
-import { formatEther, formatGwei, parseGwei } from 'viem';
+import { formatEther, formatGwei, parseEther, parseGwei } from 'viem';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -54,17 +54,16 @@ import { useEvmTransferConfirmationStyles } from './evm-transfer-confirmation.st
 
 type Props = Omit<EvmTransferConfirmationModalParams, 'type'>;
 
-const getGasPriceStep = (gasPrice: bigint) => {
-  const zeroCount = Math.max(gasPrice.toString().length - 2, 0);
+const NETWORK_FEE_STEP = 1e-6;
+const NETWORK_FEE_RANGE = 2e-4;
 
-  return BigInt(`1${'0'.repeat(zeroCount)}`);
+const getGasPriceForNetworkFee = (networkFee: number, gasLimit: bigint) => {
+  const feeInWei = parseEther(networkFee.toFixed(6));
+
+  return (feeInWei + gasLimit - 1n) / gasLimit;
 };
 
-const getPresetGasPrice = (gasPrice: bigint, presetIndex: number) => {
-  const price = gasPrice + getGasPriceStep(gasPrice) * BigInt(presetIndex - 1);
-
-  return price > 0n ? price : gasPrice;
-};
+const formatNetworkFee = (fee: bigint) => Number(formatEther(fee)).toFixed(6);
 
 export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverAddress, atomicAmount }) => {
   const styles = useEvmTransferConfirmationStyles();
@@ -85,9 +84,8 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
 
   const [gasLimit, setGasLimit] = useState<bigint>();
   const [estimatedGasPrice, setEstimatedGasPrice] = useState<bigint>();
-  const [presetIndex, setPresetIndex] = useState(1);
-  const [isCustom, setIsCustom] = useState(false);
-  const [customGasPrice, setCustomGasPrice] = useState('');
+  const [isShowDetailedInput, setIsShowDetailedInput] = useState(false);
+  const [gasPriceInput, setGasPriceInput] = useState('');
   const [isEstimating, setIsEstimating] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [estimationError, setEstimationError] = useState<string>();
@@ -124,7 +122,7 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
         if (isActive) {
           setGasLimit(nextGasLimit);
           setEstimatedGasPrice(nextGasPrice);
-          setCustomGasPrice(formatGwei(nextGasPrice));
+          setGasPriceInput(formatGwei(nextGasPrice));
         }
       } catch (error) {
         if (isActive) {
@@ -145,24 +143,40 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
   }, [publicClient, request, sourceAddress]);
 
   const selectedGasPrice = useMemo(() => {
-    if (!estimatedGasPrice) {
-      return undefined;
-    }
-
-    if (!isCustom) {
-      return getPresetGasPrice(estimatedGasPrice, presetIndex);
-    }
-
     try {
-      const parsed = parseGwei(customGasPrice);
+      const parsed = parseGwei(gasPriceInput);
 
       return parsed > 0n ? parsed : undefined;
     } catch {
       return undefined;
     }
-  }, [customGasPrice, estimatedGasPrice, isCustom, presetIndex]);
+  }, [gasPriceInput]);
 
   const fee = gasLimit && selectedGasPrice ? gasLimit * selectedGasPrice : undefined;
+  const estimatedFee = gasLimit && estimatedGasPrice ? gasLimit * estimatedGasPrice : undefined;
+  const sliderMinValue = useMemo(() => {
+    if (!estimatedFee) {
+      return 0;
+    }
+
+    const estimatedFeeValue = Number(formatNetworkFee(estimatedFee));
+
+    return Math.min(
+      Math.max(estimatedFeeValue - NETWORK_FEE_RANGE / 2, 0),
+      fee ? Number(formatNetworkFee(fee)) : Infinity
+    );
+  }, [estimatedFee, fee]);
+  const sliderMaxValue = useMemo(() => {
+    if (!estimatedFee) {
+      return NETWORK_FEE_RANGE;
+    }
+
+    return Math.max(
+      Number(formatNetworkFee(estimatedFee)) + NETWORK_FEE_RANGE / 2,
+      fee ? Number(formatNetworkFee(fee)) : -Infinity
+    );
+  }, [estimatedFee, fee]);
+  const sliderValue = fee ? Number(formatNetworkFee(fee)) : sliderMinValue;
   const feeAsset = useMemo(
     () => ({
       ...asset,
@@ -273,7 +287,7 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
         <View style={feeFormStyles.infoContainer}>
           <View style={[feeFormStyles.infoContainerItem, styles.feeInfoItem]}>
             <Text style={feeFormStyles.infoTitle}>Network fee:</Text>
-            <Text style={feeFormStyles.infoFeeAmount}>{fee ? `${formatEther(fee)} XTZ` : 'Estimating...'}</Text>
+            <Text style={feeFormStyles.infoFeeAmount}>{fee ? `${formatNetworkFee(fee)} XTZ` : 'Estimating...'}</Text>
             {!!fee && feeAsset.exchangeRate !== undefined && (
               <Text style={feeFormStyles.infoFeeValue}>
                 (
@@ -286,24 +300,37 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
         <Divider size={formatSize(32)} />
         <View style={feeFormStyles.inputContainer}>
           <View style={feeFormStyles.sliderContainer}>
-            {!isCustom && (
-              <Slider value={presetIndex} minimumValue={0} maximumValue={2} step={1} onValueChange={setPresetIndex} />
+            {!isShowDetailedInput && estimatedFee !== undefined && fee !== undefined && (
+              <Slider
+                value={sliderValue}
+                minimumValue={sliderMinValue}
+                maximumValue={sliderMaxValue}
+                step={NETWORK_FEE_STEP}
+                onValueChange={value => {
+                  if (gasLimit) {
+                    setGasPriceInput(formatGwei(getGasPriceForNetworkFee(value, gasLimit)));
+                  }
+                }}
+              />
             )}
-            {isCustom && (
+            {isShowDetailedInput && (
               <>
-                <Label description="Gas price:" />
+                <Label description="Gas price (GWEI):" />
                 <StyledTextInput
-                  value={customGasPrice}
+                  value={gasPriceInput}
                   keyboardType="decimal-pad"
                   placeholder="0"
-                  onChangeText={setCustomGasPrice}
+                  onChangeText={setGasPriceInput}
                 />
               </>
             )}
           </View>
           <Divider size={formatSize(8)} />
-          <TouchableOpacity style={feeFormStyles.toggleViewButton} onPress={() => setIsCustom(value => !value)}>
-            <Icon name={isCustom ? IconNameEnum.X : IconNameEnum.Gear} size={formatSize(16)} />
+          <TouchableOpacity
+            style={feeFormStyles.toggleViewButton}
+            onPress={() => setIsShowDetailedInput(value => !value)}
+          >
+            <Icon name={isShowDetailedInput ? IconNameEnum.X : IconNameEnum.Gear} size={formatSize(16)} />
           </TouchableOpacity>
         </View>
 
