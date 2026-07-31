@@ -90,10 +90,7 @@ export const useSendAssets = (): SendAsset[] => {
             visibility: tezosToken.visibility
           };
 
-    const tezosAssets = uniqBy(
-      [tezosToken, ...(shieldedToken ? [shieldedToken] : []), ...tezosTokens],
-      getTokenSlug
-    )
+    const tezosAssets = uniqBy([tezosToken, ...(shieldedToken ? [shieldedToken] : []), ...tezosTokens], getTokenSlug)
       .filter(token => new BigNumber(token.balance).isGreaterThan(0))
       .map(toTezosSendAsset);
 
@@ -133,9 +130,7 @@ export const useSendAssets = (): SendAsset[] => {
 
       const usdRate = evmExchangeRates[assetSlug];
       const exchangeRate = isDefined(usdRate) && isDefined(fiatToUsdRate) ? usdRate * fiatToUsdRate : undefined;
-      const contractAddress = isNative
-        ? undefined
-        : (tokenMetadata?.address as HexString | undefined);
+      const contractAddress = isNative ? undefined : (tokenMetadata?.address as HexString | undefined);
       const symbol = (isNative ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.symbol : tokenMetadata?.symbol) ?? 'Token';
       const name = (isNative ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.name : tokenMetadata?.name) ?? symbol;
 
@@ -146,9 +141,7 @@ export const useSendAssets = (): SendAsset[] => {
         symbol,
         decimals,
         iconName: isNative ? CryptoLogoNameEnum.Tezos : undefined,
-        thumbnailUri: isNative
-          ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.iconURL
-          : tokenMetadata?.iconURL,
+        thumbnailUri: isNative ? ETHERLINK_MAINNET_CHAIN_SPECS.currency.iconURL : tokenMetadata?.iconURL,
         standard: null,
         visibility: tezosToken.visibility,
         balance,
