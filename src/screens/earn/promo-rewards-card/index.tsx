@@ -52,11 +52,9 @@ export const PromoRewardsCard = memo(() => {
           <View style={styles.titleRow}>
             <Icon name={IconNameEnum.Reward} />
             <Text style={styles.title}>Promo rewards</Text>
-            {(!stats || stats.total.isZero()) && (
-              <TouchableOpacity onPress={showPayoutInfo}>
-                <Icon name={IconNameEnum.InfoFilledAlt} />
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity onPress={showPayoutInfo}>
+              <Icon name={IconNameEnum.InfoFilledAlt} />
+            </TouchableOpacity>
           </View>
           {isLoading ? (
             <View style={styles.loader}>
