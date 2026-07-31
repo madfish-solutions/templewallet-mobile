@@ -96,6 +96,7 @@ export const SaplingOperationsConfirmation = (props: Props) => {
             testID={props.variant === 'send' ? props.testID : undefined}
             disclaimerMessage={props.variant === 'send' ? props.disclaimerMessage : undefined}
             renderPreview={renderPreview}
+            isShieldedTez
             onEstimationComplete={handleEstimationComplete}
             confirmEventProperties={confirmEventProperties}
           />

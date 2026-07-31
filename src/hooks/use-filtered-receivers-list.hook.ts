@@ -6,8 +6,9 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { SendReceiver } from 'src/interfaces/send-receiver.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
+import { useSelector } from 'src/store/selector';
 import { useAllVisibleAccounts } from 'src/store/wallet/wallet-selectors';
-import { getAccountAddressForChain } from 'src/utils/account.utils';
+import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 import { isValidAddress } from 'src/utils/tezos.util';
@@ -15,15 +16,21 @@ import { isValidAddress } from 'src/utils/tezos.util';
 const isImportedAccount = (type: AccountTypeEnum) =>
   type === AccountTypeEnum.IMPORTED_CHAIN || type === AccountTypeEnum.IMPORTED_MULTICHAIN;
 
-export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddress?: string) => {
+export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddress?: string, isShieldedTez = false) => {
   const contacts = useContactsSelector();
   const allVisibleAccounts = useAllVisibleAccounts();
+  const saplingAccountsRecord = useSelector(({ sapling }) => sapling.accountsRecord);
 
   const myVisibleAccounts = useMemo(
     () =>
       allVisibleAccounts
         .map(account => {
-          const address = getAccountAddressForChain(account, chainKind);
+          const tezosAddress = getAccountAddressForTezos(account);
+          const address = isShieldedTez
+            ? tezosAddress
+              ? saplingAccountsRecord[tezosAddress]?.saplingAddress
+              : undefined
+            : getAccountAddressForChain(account, chainKind);
 
           return address
             ? { name: account.name, address, accountId: account.id, isImported: isImportedAccount(account.type) }
@@ -31,7 +38,7 @@ export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddre
         })
         .filter(isDefined)
         .filter(({ address }) => address !== sourceAddress),
-    [allVisibleAccounts, chainKind, sourceAddress]
+    [allVisibleAccounts, chainKind, isShieldedTez, saplingAccountsRecord, sourceAddress]
   );
 
   const [searchValue, setSearchValue] = useState<string>('');

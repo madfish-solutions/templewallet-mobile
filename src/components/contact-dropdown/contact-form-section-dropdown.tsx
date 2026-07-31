@@ -17,6 +17,7 @@ import { Account } from 'src/interfaces/account.interfaces';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { SendReceiver } from 'src/interfaces/send-receiver.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
@@ -32,6 +33,7 @@ interface Props extends TestIdProps {
   list: Array<SectionDropdownDataInterface<SendReceiver>>;
   setSearchValue: SyncFn<string>;
   chainKind: TempleChainKind;
+  isShieldedTez?: boolean;
 }
 
 const truncateAddress = (address?: string) =>
@@ -42,16 +44,30 @@ export const ContactFormSectionDropdown: FC<Props> = ({
   list,
   setSearchValue,
   chainKind,
+  isShieldedTez = false,
   testID,
   testIDProperties
 }) => {
   const styles = useContactFormSectionDropdownStyles();
-  const logoName = chainKind === TempleChainKind.Tezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink;
+  const logoName = isShieldedTez
+    ? CryptoLogoNameEnum.ShieldedTezos
+    : chainKind === TempleChainKind.Tezos
+    ? CryptoLogoNameEnum.Tezos
+    : CryptoLogoNameEnum.Etherlink;
 
   const renderContactValue: DropdownValueComponent<SendReceiver> = ({ value }) =>
-    value ? <ReceiverRow receiver={value} logoName={logoName} chainKind={chainKind} showDropdownDown withCard /> : null;
+    value ? (
+      <ReceiverRow
+        receiver={value}
+        logoName={logoName}
+        chainKind={chainKind}
+        isShieldedTez={isShieldedTez}
+        showDropdownDown
+        withCard
+      />
+    ) : null;
   const renderContactListItem: DropdownListItemComponent<SendReceiver> = ({ item }) => (
-    <ReceiverRow receiver={item} logoName={logoName} chainKind={chainKind} />
+    <ReceiverRow receiver={item} logoName={logoName} chainKind={chainKind} isShieldedTez={isShieldedTez} />
   );
 
   return (
@@ -76,6 +92,7 @@ interface ReceiverRowProps {
   receiver: SendReceiver;
   logoName: CryptoLogoNameEnum;
   chainKind: TempleChainKind;
+  isShieldedTez: boolean;
   showDropdownDown?: boolean;
   withCard?: boolean;
 }
@@ -84,6 +101,7 @@ const ReceiverRow: FC<ReceiverRowProps> = ({
   receiver,
   logoName,
   chainKind,
+  isShieldedTez,
   showDropdownDown = false,
   withCard = false
 }) => {
@@ -92,37 +110,71 @@ const ReceiverRow: FC<ReceiverRowProps> = ({
 
   return account ? (
     withCard ? (
-      <AccountCard account={account} chainKind={chainKind} showDropdownDown={showDropdownDown} />
+      <AccountCard
+        account={account}
+        chainKind={chainKind}
+        isShieldedTez={isShieldedTez}
+        showDropdownDown={showDropdownDown}
+      />
     ) : (
-      <AccountReceiverRow account={account} chainKind={chainKind} showDropdownDown={showDropdownDown} />
+      <AccountReceiverRow
+        account={account}
+        chainKind={chainKind}
+        isShieldedTez={isShieldedTez}
+        showDropdownDown={showDropdownDown}
+      />
     )
   ) : (
-    <ReceiverRowLayout receiver={receiver} logoName={logoName} chainKind={chainKind} />
+    <ReceiverRowLayout receiver={receiver} logoName={logoName} chainKind={chainKind} isShieldedTez={isShieldedTez} />
   );
 };
 
 interface AccountCardProps {
   account: Account;
   chainKind: TempleChainKind;
+  isShieldedTez?: boolean;
   showDropdownDown?: boolean;
 }
 
-export const AccountCard: FC<AccountCardProps> = ({ account, chainKind, showDropdownDown = false }) => {
+export const AccountCard: FC<AccountCardProps> = ({
+  account,
+  chainKind,
+  isShieldedTez = false,
+  showDropdownDown = false
+}) => {
   const styles = useContactFormSectionDropdownStyles();
 
   return (
     <DropdownItemContainer style={styles.selectedAccountContainer}>
-      <AccountReceiverRow account={account} chainKind={chainKind} showDropdownDown={showDropdownDown} />
+      <AccountReceiverRow
+        account={account}
+        chainKind={chainKind}
+        isShieldedTez={isShieldedTez}
+        showDropdownDown={showDropdownDown}
+      />
     </DropdownItemContainer>
   );
 };
 
-const AccountReceiverRow: FC<AccountCardProps> = ({ account, chainKind, showDropdownDown = false }) => {
+const AccountReceiverRow: FC<AccountCardProps> = ({
+  account,
+  chainKind,
+  isShieldedTez = false,
+  showDropdownDown = false
+}) => {
   const totalFiatBalance = useTotalFiatBalanceOfAccount(account);
+  const saplingAddress = useSaplingAddressForAccount(account);
   const styles = useContactFormSectionDropdownStyles();
-  const address =
-    chainKind === TempleChainKind.Tezos ? getAccountAddressForTezos(account) : getAccountAddressForEvm(account);
-  const logoName = chainKind === TempleChainKind.Tezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink;
+  const address = isShieldedTez
+    ? saplingAddress
+    : chainKind === TempleChainKind.Tezos
+    ? getAccountAddressForTezos(account)
+    : getAccountAddressForEvm(account);
+  const logoName = isShieldedTez
+    ? CryptoLogoNameEnum.ShieldedTezos
+    : chainKind === TempleChainKind.Tezos
+    ? CryptoLogoNameEnum.Tezos
+    : CryptoLogoNameEnum.Etherlink;
 
   return (
     <View style={styles.accountContainer}>

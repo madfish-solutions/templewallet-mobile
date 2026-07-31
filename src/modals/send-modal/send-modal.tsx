@@ -32,6 +32,7 @@ import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
 import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
+import { useSaplingAddressSelector } from 'src/store/sapling';
 import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import { sendAssetActions } from 'src/store/wallet/wallet-actions';
@@ -84,6 +85,7 @@ export const SendModal: FC = () => {
   const tezosBalance = useCurrentAccountTezosBalance();
   const tezosAddress = useAccountAddressForTezos();
   const evmAddress = useAccountAddressForEvm();
+  const saplingAddress = useSaplingAddressSelector();
   const accountId = useCurrentAccountId();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
 
@@ -231,10 +233,16 @@ export const SendModal: FC = () => {
 
   const { errors, values, setFieldValue, submitForm } = formik;
   const selectedAsset = values.assetAmount.asset;
-  const sourceAddress = selectedAsset.chainKind === TempleChainKind.Tezos ? tezosAddress : evmAddress;
+  const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
+  const sourceAddress = isShieldedSend
+    ? saplingAddress ?? undefined
+    : selectedAsset.chainKind === TempleChainKind.Tezos
+    ? tezosAddress
+    : evmAddress;
   const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList(
     selectedAsset.chainKind,
-    sourceAddress
+    sourceAddress,
+    isShieldedSend
   );
 
   const filteredAssets = useMemo(() => {
@@ -265,7 +273,6 @@ export const SendModal: FC = () => {
   const firstReceiver = useMemo(() => filteredReceiversList.flatMap(({ data }) => data)[0], [filteredReceiversList]);
   const isTezOrShieldedTez =
     selectedAsset.assetSlug === TEZ_TOKEN_SLUG || selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
-  const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const isRecipientSapling = isSaplingAddress(values.receiverPublicKeyHash);
   const showMemoField = selectedAsset.chainKind === TempleChainKind.Tezos && isTezOrShieldedTez && isRecipientSapling;
   const hasSourceAccount =
@@ -377,6 +384,7 @@ export const SendModal: FC = () => {
               name="recipient"
               list={filteredReceiversList}
               chainKind={selectedAsset.chainKind}
+              isShieldedTez={isShieldedSend}
               setSearchValue={handleSearchValueChange}
               testID={SendModalSelectors.sectionDropdown}
             />

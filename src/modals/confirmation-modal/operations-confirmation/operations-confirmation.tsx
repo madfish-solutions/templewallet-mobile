@@ -52,6 +52,7 @@ interface Props extends TestIdProps {
   isLoading: boolean;
   disclaimer?: ReactNode;
   renderPreview?: (opParams: ParamsWithKind[]) => ReactNode;
+  isShieldedTez?: boolean;
   onEstimationError?: SyncFn<unknown>;
   onEstimationComplete?: EmptyFn;
   onSubmit: SyncFn<ParamsWithKind[]>;
@@ -68,6 +69,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
   children,
   disclaimer,
   renderPreview,
+  isShieldedTez = false,
   testID,
   confirmEventProperties
 }) => {
@@ -177,7 +179,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
             <Text style={styles.sectionTitle}>Account</Text>
             <Divider />
 
-            <AccountCard account={sender} chainKind={TempleChainKind.Tezos} />
+            <AccountCard account={sender} chainKind={TempleChainKind.Tezos} isShieldedTez={isShieldedTez} />
             <Divider size={formatSize(24)} />
 
             <Text style={styles.sectionTitle}>Preview</Text>
