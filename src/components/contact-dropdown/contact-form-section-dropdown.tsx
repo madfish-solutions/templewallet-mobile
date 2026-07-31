@@ -13,14 +13,13 @@ import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { FormSectionDropdown } from 'src/form/form-section-dropdown';
 import { useTotalFiatBalanceOfAccount } from 'src/hooks/use-total-balance';
+import { Account } from 'src/interfaces/account.interfaces';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { SendReceiver } from 'src/interfaces/send-receiver.interface';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
-import { isDefined } from 'src/utils/is-defined';
 
 import { DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
 import { DropdownItemContainer } from '../dropdown/dropdown-item-container/dropdown-item-container';
@@ -50,13 +49,9 @@ export const ContactFormSectionDropdown: FC<Props> = ({
   const logoName = chainKind === TempleChainKind.Tezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink;
 
   const renderContactValue: DropdownValueComponent<SendReceiver> = ({ value }) =>
-    value ? (
-      <DropdownItemContainer style={styles.selectedAccountContainer}>
-        <ReceiverRow receiver={value} logoName={logoName} showDropdownDown />
-      </DropdownItemContainer>
-    ) : null;
+    value ? <ReceiverRow receiver={value} logoName={logoName} chainKind={chainKind} showDropdownDown withCard /> : null;
   const renderContactListItem: DropdownListItemComponent<SendReceiver> = ({ item }) => (
-    <ReceiverRow receiver={item} logoName={logoName} />
+    <ReceiverRow receiver={item} logoName={logoName} chainKind={chainKind} />
   );
 
   return (
@@ -69,6 +64,8 @@ export const ContactFormSectionDropdown: FC<Props> = ({
       equalityFn={contactEqualityFn}
       renderValue={renderContactValue}
       renderListItem={renderContactListItem}
+      itemContainerStyle={styles.listAccountContainer}
+      showCloseButton
       testID={testID}
       testIDProperties={testIDProperties}
     />
@@ -78,34 +75,54 @@ export const ContactFormSectionDropdown: FC<Props> = ({
 interface ReceiverRowProps {
   receiver: SendReceiver;
   logoName: CryptoLogoNameEnum;
+  chainKind: TempleChainKind;
   showDropdownDown?: boolean;
+  withCard?: boolean;
 }
 
-const ReceiverRow: FC<ReceiverRowProps> = ({ receiver, logoName, showDropdownDown = false }) => {
+const ReceiverRow: FC<ReceiverRowProps> = ({
+  receiver,
+  logoName,
+  chainKind,
+  showDropdownDown = false,
+  withCard = false
+}) => {
   const accounts = useAllAccounts();
   const account = accounts.find(item => item.id === receiver.accountId);
 
   return account ? (
-    <AccountReceiverRow account={account} showDropdownDown={showDropdownDown} />
+    withCard ? (
+      <AccountCard account={account} chainKind={chainKind} showDropdownDown={showDropdownDown} />
+    ) : (
+      <AccountReceiverRow account={account} chainKind={chainKind} showDropdownDown={showDropdownDown} />
+    )
   ) : (
-    <ReceiverRowLayout receiver={receiver} logoName={logoName} />
+    <ReceiverRowLayout receiver={receiver} logoName={logoName} chainKind={chainKind} />
   );
 };
 
-const AccountReceiverRow: FC<{
-  account: ReturnType<typeof useAllAccounts>[number];
+interface AccountCardProps {
+  account: Account;
+  chainKind: TempleChainKind;
   showDropdownDown?: boolean;
-}> = ({ account, showDropdownDown = false }) => {
-  const totalFiatBalance = useTotalFiatBalanceOfAccount(account);
-  const saplingAddress = useSaplingAddressForAccount(account);
+}
+
+export const AccountCard: FC<AccountCardProps> = ({ account, chainKind, showDropdownDown = false }) => {
   const styles = useContactFormSectionDropdownStyles();
-  const tezosAddress = getAccountAddressForTezos(account);
-  const evmAddress = getAccountAddressForEvm(account);
-  const addresses = [
-    tezosAddress ? { address: tezosAddress, logoName: CryptoLogoNameEnum.Tezos } : undefined,
-    saplingAddress ? { address: saplingAddress, logoName: CryptoLogoNameEnum.ShieldedTezos } : undefined,
-    evmAddress ? { address: evmAddress, logoName: CryptoLogoNameEnum.Etherlink } : undefined
-  ].filter(isDefined);
+
+  return (
+    <DropdownItemContainer style={styles.selectedAccountContainer}>
+      <AccountReceiverRow account={account} chainKind={chainKind} showDropdownDown={showDropdownDown} />
+    </DropdownItemContainer>
+  );
+};
+
+const AccountReceiverRow: FC<AccountCardProps> = ({ account, chainKind, showDropdownDown = false }) => {
+  const totalFiatBalance = useTotalFiatBalanceOfAccount(account);
+  const styles = useContactFormSectionDropdownStyles();
+  const address =
+    chainKind === TempleChainKind.Tezos ? getAccountAddressForTezos(account) : getAccountAddressForEvm(account);
+  const logoName = chainKind === TempleChainKind.Tezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink;
 
   return (
     <View style={styles.accountContainer}>
@@ -114,19 +131,21 @@ const AccountReceiverRow: FC<{
         <Text numberOfLines={1} style={styles.accountName}>
           {account.name}
         </Text>
-        <HideBalance textStyle={styles.accountBalance}>
-          <FormattedAmount amount={totalFiatBalance} isDollarValue />
-        </HideBalance>
-        {showDropdownDown && <IconV2 name={IconNameV2Enum.DropdownDown} size={12} />}
+        <View style={styles.accountHeaderTrailingContent}>
+          <HideBalance textStyle={styles.accountBalance}>
+            <FormattedAmount amount={totalFiatBalance} isDollarValue />
+          </HideBalance>
+          {showDropdownDown && <IconV2 name={IconNameV2Enum.DropdownDown} size={12} />}
+        </View>
       </View>
-      <View style={styles.accountAddressRow}>
-        {addresses.map(({ address, logoName: addressLogoName }) => (
-          <View key={address} style={styles.accountAddress}>
-            <NetworkLogo name={addressLogoName} />
+      {!!address && (
+        <View style={styles.accountAddressRow}>
+          <View style={styles.accountAddress}>
+            <NetworkLogo name={logoName} />
             <Text style={styles.accountAddressText}>{truncateAccountAddress(address)}</Text>
           </View>
-        ))}
-      </View>
+        </View>
+      )}
     </View>
   );
 };

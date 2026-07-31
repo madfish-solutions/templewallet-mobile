@@ -16,7 +16,7 @@ export const NetworkLogo: FC<Props> = ({ name }) => {
 
   return (
     <View style={styles.root}>
-      <CryptoLogo name={name} size={formatSize(12)} internalSize={formatSize(12)} />
+      <CryptoLogo name={name} size={formatSize(12)} />
     </View>
   );
 };

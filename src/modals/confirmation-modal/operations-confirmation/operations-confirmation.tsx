@@ -4,9 +4,9 @@ import { FormikProvider, useFormik } from 'formik';
 import React, { ReactNode, useEffect, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { AccountCard } from 'src/components/contact-dropdown/contact-form-section-dropdown';
 import { DelegateDisclaimer } from 'src/components/delegate-disclaimer/delegate-disclaimer';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
@@ -14,6 +14,7 @@ import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { emptyFn } from 'src/config/general';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
@@ -176,9 +177,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
             <Text style={styles.sectionTitle}>Account</Text>
             <Divider />
 
-            <View style={styles.accountCard}>
-              <AccountDropdownItem account={sender} variant="card" />
-            </View>
+            <AccountCard account={sender} chainKind={TempleChainKind.Tezos} />
             <Divider size={formatSize(24)} />
 
             <Text style={styles.sectionTitle}>Preview</Text>

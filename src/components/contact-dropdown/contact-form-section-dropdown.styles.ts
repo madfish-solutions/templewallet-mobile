@@ -4,7 +4,11 @@ import { formatSize } from 'src/styles/format-size';
 export const useContactFormSectionDropdownStyles = createUseStyles(({ colors, typography }) => ({
   selectedAccountContainer: {
     marginVertical: 0,
-    paddingVertical: formatSize(11)
+    paddingVertical: formatSize(12),
+    borderRadius: formatSize(10)
+  },
+  listAccountContainer: {
+    borderRadius: formatSize(10)
   },
   contactContainer: {
     flexDirection: 'row',
@@ -61,12 +65,18 @@ export const useContactFormSectionDropdownStyles = createUseStyles(({ colors, ty
   },
   accountName: {
     ...typography.body15Semibold,
-    flexShrink: 1,
+    flex: 1,
     color: colors.black
+  },
+  accountHeaderTrailingContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: formatSize(8),
+    width: formatSize(150.5)
   },
   accountBalance: {
     ...typography.numbersRegular15,
-    flexGrow: 1,
     textAlign: 'right',
     color: colors.black
   },

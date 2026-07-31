@@ -4,10 +4,10 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { firstValueFrom } from 'rxjs';
 import { formatEther, formatGwei, parseGwei } from 'viem';
 
-import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
+import { AccountCard } from 'src/components/contact-dropdown/contact-form-section-dropdown';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
@@ -20,6 +20,7 @@ import { ScreenContainer } from 'src/components/screen-container/screen-containe
 import { Slider } from 'src/components/slider/slider';
 import { StyledTextInput } from 'src/components/styled-text-input/styled-text-input';
 import { TruncatedText } from 'src/components/truncated-text';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEtherlinkPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
@@ -232,9 +233,7 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
       <ScreenContainer>
         <Text style={operationStyles.sectionTitle}>Account</Text>
         <Divider />
-        <View style={operationStyles.accountCard}>
-          {sourceAccount ? <AccountDropdownItem account={sourceAccount} variant="card" /> : null}
-        </View>
+        {sourceAccount ? <AccountCard account={sourceAccount} chainKind={TempleChainKind.EVM} /> : null}
         <Divider size={formatSize(24)} />
 
         <Text style={operationStyles.sectionTitle}>Preview</Text>
