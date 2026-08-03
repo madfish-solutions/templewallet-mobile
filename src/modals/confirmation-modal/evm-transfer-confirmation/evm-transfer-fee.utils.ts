@@ -10,7 +10,7 @@ import {
   LegacyFees
 } from 'src/utils/evm/estimate-evm-transaction';
 
-export const NETWORK_FEE_STEP = 1e-6;
+const NETWORK_FEE_STEP = 1e-6;
 
 const FEE_PERCENTAGE_BASE = 100n;
 const SLOW_FEE_PERCENTAGE = 90n;

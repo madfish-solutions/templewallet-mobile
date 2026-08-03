@@ -9,8 +9,6 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import type { AssetAmountInterface } from './asset-amount-input';
 import type { AssetAmountInputVariant } from './asset-amount-input.variants';
 
-export type { AssetAmountInputVariant } from './asset-amount-input.variants';
-
 export interface AssetAmountInputStylesConfig {
   balanceText?: TextStyle;
   amountInput?: TextStyle;

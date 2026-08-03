@@ -23,7 +23,7 @@ export type SendIntent =
 
 export type SendIntentFailureReason = 'missing-evm-account' | 'missing-tezos-account';
 
-export type CreateSendIntentResult =
+type CreateSendIntentResult =
   | { success: true; intent: SendIntent }
   | { success: false; reason: SendIntentFailureReason };
 

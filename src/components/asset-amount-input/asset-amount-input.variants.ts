@@ -2,7 +2,7 @@ import { formatSize } from 'src/styles/format-size';
 
 export type AssetAmountInputVariant = 'v1' | 'v2';
 
-export interface AssetAmountInputVariantConfig {
+interface AssetAmountInputVariantConfig {
   inputHeight?: number;
   dropdownVerticalPadding?: number;
   selectedTokenDropdownWidth?: number;

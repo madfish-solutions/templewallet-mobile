@@ -2,7 +2,7 @@ import { ContractType } from 'src/interfaces/contract.type';
 import { isString } from 'src/utils/is-string';
 
 import { TokenMethodsAssertionsMap } from '../data/token-methods-assertions';
-import { TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
+import { TEZ_TOKEN_SLUG } from '../data/tokens-metadata';
 import { TezosTokenStandardsEnum } from '../interfaces/token-metadata.interface';
 
 interface TokenSlugInput {
@@ -11,9 +11,6 @@ interface TokenSlugInput {
 }
 
 export const getTokenSlug = <T extends TokenSlugInput>({ address, id }: T) => toTokenSlug(address, id);
-
-export const isShieldedTez = <T extends TokenSlugInput>({ address, id }: T) =>
-  getTokenSlug({ address, id }) === TEZ_SHIELDED_TOKEN_SLUG;
 
 export const toTokenSlug = (address?: string | null, id?: number | string | null) =>
   isString(address) ? `${address}_${id ?? 0}` : TEZ_TOKEN_SLUG;

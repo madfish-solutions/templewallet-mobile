@@ -8,7 +8,7 @@ interface TokenDropdownItemIconConfig {
   visualSize: number;
 }
 
-export interface TokenDropdownItemVariantConfig {
+interface TokenDropdownItemVariantConfig {
   isCompact: boolean;
   listIconConfig: TokenDropdownItemIconConfig;
   selectedIconConfig: TokenDropdownItemIconConfig;

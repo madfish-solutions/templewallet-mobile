@@ -6,7 +6,7 @@ import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isCollectible } from 'src/utils/tezos.util';
 
-export const isLegacyToken = (asset: AssetInterface): asset is TokenInterface =>
+const isLegacyToken = (asset: AssetInterface): asset is TokenInterface =>
   'address' in asset && typeof asset.address === 'string' && 'id' in asset && typeof asset.id === 'number';
 
 export const getAssetSlug = (asset: AssetInterface): string =>

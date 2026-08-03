@@ -28,12 +28,12 @@ export interface EvmNativeSendAsset extends EvmSendAssetBase {
   sendStandard: EvmAssetStandardEnum.NATIVE;
 }
 
-export interface EvmTokenSendAsset extends EvmSendAssetBase {
+interface EvmTokenSendAsset extends EvmSendAssetBase {
   sendStandard: EvmAssetStandardEnum.ERC20;
   contractAddress: HexString;
 }
 
-export interface EvmCollectibleSendAsset extends EvmSendAssetBase {
+interface EvmCollectibleSendAsset extends EvmSendAssetBase {
   sendStandard: EvmAssetStandardEnum.ERC721 | EvmAssetStandardEnum.ERC1155;
   contractAddress: HexString;
   tokenId: string;
