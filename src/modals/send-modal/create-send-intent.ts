@@ -1,0 +1,108 @@
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { isSaplingAddress } from 'src/utils/sapling/address-utils';
+
+import { SendAsset } from './send-asset.types';
+
+export type SendIntent =
+  | {
+      type: 'evm-transfer';
+      accountId: string;
+      asset: SendAsset;
+      receiverAddress: HexString;
+      atomicAmount: string;
+    }
+  | {
+      type: 'sapling-transaction';
+      transactionType: 'shield' | 'unshield' | 'transfer';
+      amount: string;
+      recipientAddress: string;
+      memo?: string;
+    }
+  | { type: 'tezos-transfer'; asset: SendAsset; receiverAddress: string; amount: string }
+  | { type: 'on-ramp' };
+
+export type SendIntentFailureReason = 'missing-evm-account' | 'missing-tezos-account';
+
+export type CreateSendIntentResult =
+  | { success: true; intent: SendIntent }
+  | { success: false; reason: SendIntentFailureReason };
+
+interface CreateSendIntentParams {
+  accountId?: string;
+  amount: BigNumber;
+  asset: SendAsset;
+  evmAddress?: string;
+  isOnRampEnabled: boolean;
+  memo: string;
+  receiverAddress: string;
+  tezosAddress?: string;
+  tezosBalance: string;
+}
+
+const toHexString = (address: string): HexString => `0x${address.slice(2)}`;
+
+export const createSendIntent = ({
+  accountId,
+  amount,
+  asset,
+  evmAddress,
+  isOnRampEnabled,
+  memo,
+  receiverAddress,
+  tezosAddress,
+  tezosBalance
+}: CreateSendIntentParams): CreateSendIntentResult => {
+  if (asset.chainKind === TempleChainKind.EVM) {
+    if (!evmAddress || !accountId) {
+      return { success: false, reason: 'missing-evm-account' };
+    }
+
+    return {
+      success: true,
+      intent: {
+        type: 'evm-transfer',
+        accountId,
+        asset,
+        receiverAddress: toHexString(receiverAddress),
+        atomicAmount: amount.toFixed(0)
+      }
+    };
+  }
+
+  if (!tezosAddress) {
+    return { success: false, reason: 'missing-tezos-account' };
+  }
+
+  const isRecipientSapling = isSaplingAddress(receiverAddress);
+  const isSourceShielded = asset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
+
+  if (isSourceShielded || (asset.assetSlug === TEZ_TOKEN_SLUG && isRecipientSapling)) {
+    const type = isSourceShielded ? (isRecipientSapling ? 'transfer' : 'unshield') : 'shield';
+
+    return {
+      success: true,
+      intent: {
+        type: 'sapling-transaction',
+        transactionType: type,
+        amount: amount.toFixed(0),
+        recipientAddress: receiverAddress,
+        ...((type === 'transfer' || type === 'shield') && { memo: memo || undefined })
+      }
+    };
+  }
+
+  if (asset.assetSlug === TEZ_TOKEN_SLUG && amount.isGreaterThan(tezosBalance) && isOnRampEnabled) {
+    return { success: true, intent: { type: 'on-ramp' } };
+  }
+
+  return {
+    success: true,
+    intent: {
+      type: 'tezos-transfer',
+      asset,
+      receiverAddress,
+      amount: amount.toString()
+    }
+  };
+};

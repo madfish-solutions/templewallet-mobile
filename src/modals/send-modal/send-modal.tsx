@@ -26,16 +26,12 @@ import { FormTextInput } from 'src/form/form-text-input';
 import { useAddressFieldAnalytics } from 'src/hooks/use-address-field-analytics.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
-import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useModalParams, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
+import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
-import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
 import { useSaplingAddressSelector } from 'src/store/sapling';
-import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
-import { sendAssetActions } from 'src/store/wallet/wallet-actions';
 import {
   useAccountAddressForEvm,
   useAccountAddressForTezos,
@@ -44,18 +40,16 @@ import {
 } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
-import { showErrorToast } from 'src/toast/toast.utils';
 import { TEZ_SHIELDED_ANALYTICS_NAME, TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { AnalyticsPageName } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
-import { isDefined } from 'src/utils/is-defined';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 
 import { SendAssetAmount, SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { SendModalSelectors } from './send-modal.selectors';
 import { useSendModalStyles } from './send-modal.styles';
 import { useSendAssets } from './use-send-assets.hook';
+import { useSendSubmission } from './use-send-submission.hook';
 
 type NetworkFilter = 'all' | TempleChainKind;
 
@@ -66,12 +60,10 @@ const NETWORK_FILTERS: Array<{ label: string; value: NetworkFilter }> = [
 ];
 
 export const SendModal: FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [isValidationTriggered, setIsValidationTriggered] = useState(false);
   const [assetSearch, setAssetSearch] = useState('');
   const [networkFilter, setNetworkFilter] = useState<NetworkFilter>('all');
   const dispatch = useDispatch();
-  const navigateToModal = useNavigateToModal();
   const {
     token: initialToken,
     receiverPublicKeyHash: initialReceiverPublicKeyHash = '',
@@ -88,6 +80,12 @@ export const SendModal: FC = () => {
   const saplingAddress = useSaplingAddressSelector();
   const accountId = useCurrentAccountId();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
+  const { isLoading, submit: submitSend } = useSendSubmission({
+    accountId,
+    evmAddress,
+    tezosAddress,
+    tezosBalance
+  });
 
   const inputInitialValue = useMemo(
     () =>
@@ -109,126 +107,13 @@ export const SendModal: FC = () => {
     memo: ''
   };
 
-  const resolver = useMemo(() => tezosDomainsResolver(), []);
-
-  const onSubmit = useCallback(
-    async ({
-      assetAmount: { asset, amount },
-      receiverPublicKeyHash,
-      recipient,
-      transferBetweenOwnAccounts,
-      memo
-    }: SendModalFormValues) => {
-      if (!isDefined(amount)) {
-        return;
-      }
-
-      let resolvedAddress = transferBetweenOwnAccounts ? recipient?.address ?? '' : receiverPublicKeyHash;
-
-      if (
-        asset.chainKind === TempleChainKind.Tezos &&
-        !transferBetweenOwnAccounts &&
-        isTezosDomainNameValid(receiverPublicKeyHash)
-      ) {
-        setIsLoading(true);
-        const address = await resolver.resolveNameToAddress(receiverPublicKeyHash).catch(() => null);
-        setIsLoading(false);
-
-        if (!address) {
-          showErrorToast({ title: 'Error!', description: 'Unable to resolve this Tezos domain' });
-
-          return;
-        }
-        resolvedAddress = address;
-      }
-
-      if (!transferBetweenOwnAccounts) {
-        dispatch(addContactCandidateAddressAction(resolvedAddress));
-      }
-
-      if (asset.chainKind === TempleChainKind.EVM) {
-        if (!evmAddress || !accountId) {
-          showErrorToast({ description: 'Select an Etherlink account to send assets' });
-
-          return;
-        }
-
-        navigateToModal(ModalsEnum.Confirmation, {
-          type: ConfirmationTypeEnum.EvmTransfer,
-          accountId,
-          asset,
-          receiverAddress: resolvedAddress as HexString,
-          atomicAmount: amount.toFixed(0)
-        });
-
-        return;
-      }
-
-      if (!tezosAddress) {
-        showErrorToast({ description: 'Select a Tezos account to send assets' });
-
-        return;
-      }
-
-      const isRecipientSapling = isSaplingAddress(resolvedAddress);
-      const isSourceShielded = asset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
-
-      if (isSourceShielded || (asset.assetSlug === TEZ_TOKEN_SLUG && isRecipientSapling)) {
-        const amountMutez = amount.toFixed(0);
-
-        if (isSourceShielded && isRecipientSapling) {
-          dispatch(
-            prepareSaplingTransactionActions.submit({
-              type: 'transfer',
-              amount: amountMutez,
-              recipientAddress: resolvedAddress,
-              memo: memo || undefined
-            })
-          );
-        } else if (isSourceShielded) {
-          dispatch(
-            prepareSaplingTransactionActions.submit({
-              type: 'unshield',
-              amount: amountMutez,
-              recipientAddress: resolvedAddress
-            })
-          );
-        } else {
-          dispatch(
-            prepareSaplingTransactionActions.submit({
-              type: 'shield',
-              amount: amountMutez,
-              recipientAddress: resolvedAddress,
-              memo: memo || undefined
-            })
-          );
-        }
-
-        return;
-      }
-
-      if (asset.assetSlug === TEZ_TOKEN_SLUG && amount.isGreaterThan(tezosBalance) && !LIMIT_FIN_FEATURES) {
-        dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
-      } else {
-        dispatch(
-          sendAssetActions.submit({
-            asset,
-            receiverPublicKeyHash: resolvedAddress,
-            amount: amount.toString()
-          })
-        );
-      }
-    },
-    [accountId, dispatch, evmAddress, navigateToModal, resolver, tezosAddress, tezosBalance]
-  );
-
   const formik = useFormik({
     initialValues: sendModalInitialValues,
     validationSchema: sendModalValidationSchema,
     validateOnChange: true,
     validateOnBlur: false,
     validateOnMount: false,
-    onSubmit
+    onSubmit: submitSend
   });
 
   const { errors, values, setFieldValue, submitForm } = formik;
