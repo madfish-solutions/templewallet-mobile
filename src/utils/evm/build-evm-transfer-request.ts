@@ -4,7 +4,7 @@ import { SendAsset } from 'src/modals/send-modal/send-asset.types';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { erc1155Abi } from 'src/utils/evm/on-chain/abi/erc1155.abi';
 
-interface BasicEvmTransferRequest {
+export interface EvmTransferRequest {
   to: HexString;
   value: bigint;
   data?: HexString;
@@ -15,7 +15,7 @@ export const buildEvmTransferRequest = (
   recipient: HexString,
   asset: SendAsset,
   atomicAmount: string
-): BasicEvmTransferRequest => {
+): EvmTransferRequest => {
   const amount = BigInt(atomicAmount);
 
   switch (asset.sendStandard) {

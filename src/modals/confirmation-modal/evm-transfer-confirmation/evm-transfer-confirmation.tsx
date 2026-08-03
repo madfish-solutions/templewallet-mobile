@@ -1,360 +1,172 @@
-import { useNavigation } from '@react-navigation/core';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { firstValueFrom } from 'rxjs';
-import { formatEther, formatGwei, parseEther, parseGwei } from 'viem';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { AccountCard } from 'src/components/contact-dropdown/contact-form-section-dropdown';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
+import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { Label } from 'src/components/label/label';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { Slider } from 'src/components/slider/slider';
 import { StyledTextInput } from 'src/components/styled-text-input/styled-text-input';
 import { TruncatedText } from 'src/components/truncated-text';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { useEtherlinkPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
-import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
-import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
-import { StacksEnum } from 'src/navigator/enums/stacks.enum';
-import { Shelter } from 'src/shelter/shelter';
-import { dispatch as storeDispatch } from 'src/store';
-import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
-import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
-import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
-import { navigateAction } from 'src/store/root-state.actions';
-import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
+import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
-import { showErrorToastByError } from 'src/toast/error-toast.utils';
-import { showSuccessToast } from 'src/toast/toast.utils';
-import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
-import { ETHERLINK_MAINNET_CHAIN_SPECS, toEvmNetworkEssentials } from 'src/types/networks';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
-import { getDollarValue } from 'src/utils/balance.utils';
 import { buildEvmTransferRequest } from 'src/utils/evm/build-evm-transfer-request';
-import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.utils';
-import { getViemWalletClient } from 'src/utils/rpc/evm-client.utils';
-import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
+import { ConfirmationLayout } from '../confirmation-layout/confirmation-layout';
 import { EvmTransferConfirmationModalParams } from '../confirmation-modal.params';
 import { useFeeFormInputStyles } from '../operations-confirmation/fee-form-input/fee-form-input.styles';
-import { useOperationsConfirmationStyles } from '../operations-confirmation/operations-confirmation.styles';
 import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
 
 import { useEvmTransferConfirmationStyles } from './evm-transfer-confirmation.styles';
+import { NETWORK_FEE_STEP } from './evm-transfer-fee.utils';
+import { useEvmTransferFee } from './use-evm-transfer-fee.hook';
+import { useEvmTransferSubmission } from './use-evm-transfer-submission.hook';
 
 type Props = Omit<EvmTransferConfirmationModalParams, 'type'>;
 
-const NETWORK_FEE_STEP = 1e-6;
-const NETWORK_FEE_RANGE = 2e-4;
-
-const getGasPriceForNetworkFee = (networkFee: number, gasLimit: bigint) => {
-  const feeInWei = parseEther(networkFee.toFixed(6));
-
-  return (feeInWei + gasLimit - 1n) / gasLimit;
-};
-
-const formatNetworkFee = (fee: bigint) => Number(formatEther(fee)).toFixed(6);
-
 export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverAddress, atomicAmount }) => {
-  const styles = useEvmTransferConfirmationStyles();
-  const operationStyles = useOperationsConfirmationStyles();
-  const feeFormStyles = useFeeFormInputStyles();
-  const previewStyles = useOperationsPreviewItemStyles();
-  const navigation = useNavigation();
-  const { goBack } = navigation;
+  const { goBack } = useNavigation();
   const accounts = useAllAccounts();
   const sourceAccount = accounts.find(account => account.id === accountId);
   const sourceAddress = sourceAccount ? getAccountAddressForEvm(sourceAccount) : undefined;
-  const chain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
-  const publicClient = useEtherlinkPublicClient();
-  const knownAssets = useEvmAccountChainAssetsSelector(sourceAddress, ETHERLINK_MAINNET_CHAIN_ID);
-  const balances = useEvmAccountChainBalancesSelector(sourceAddress, ETHERLINK_MAINNET_CHAIN_ID);
-  const evmExchangeRates = useEvmChainExchangeRatesSelector(ETHERLINK_MAINNET_CHAIN_ID);
-  const fiatToUsdRate = useFiatToUsdRateSelector();
-
-  const [gasLimit, setGasLimit] = useState<bigint>();
-  const [estimatedGasPrice, setEstimatedGasPrice] = useState<bigint>();
-  const [isShowDetailedInput, setIsShowDetailedInput] = useState(false);
-  const [gasPriceInput, setGasPriceInput] = useState('');
-  const [isEstimating, setIsEstimating] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [estimationError, setEstimationError] = useState<string>();
-
   const request = useMemo(
     () => (sourceAddress ? buildEvmTransferRequest(sourceAddress, receiverAddress, asset, atomicAmount) : undefined),
     [asset, atomicAmount, receiverAddress, sourceAddress]
   );
+  const feeState = useEvmTransferFee({ sourceAddress, request, asset, atomicAmount });
+  const { isSubmitting, submit } = useEvmTransferSubmission({
+    sourceAddress,
+    request,
+    gasLimit: feeState.gasLimit,
+    gasPrice: feeState.selectedGasPrice
+  });
 
-  useEffect(() => {
-    navigation.setOptions({ headerTitle: () => <HeaderTitle title="Confirm Send" /> });
-  }, [navigation]);
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Send" /> }, []);
 
-  useEffect(() => {
-    let isActive = true;
+  const isConfirmDisabled =
+    feeState.isEstimating ||
+    isSubmitting ||
+    Boolean(feeState.estimationError) ||
+    !feeState.selectedGasPrice ||
+    feeState.hasInsufficientNativeBalance;
 
-    const estimate = async () => {
-      if (!sourceAddress || !request) {
-        setEstimationError('Etherlink source account is unavailable');
-        setIsEstimating(false);
-
-        return;
-      }
-
-      setIsEstimating(true);
-      setEstimationError(undefined);
-
-      try {
-        const [nextGasLimit, nextGasPrice] = await Promise.all([
-          publicClient.estimateGas({ account: sourceAddress, ...request }),
-          publicClient.getGasPrice()
-        ]);
-
-        if (isActive) {
-          setGasLimit(nextGasLimit);
-          setEstimatedGasPrice(nextGasPrice);
-          setGasPriceInput(formatGwei(nextGasPrice));
-        }
-      } catch (error) {
-        if (isActive) {
-          setEstimationError(error instanceof Error ? error.message : 'Unable to estimate Etherlink fee');
-        }
-      } finally {
-        if (isActive) {
-          setIsEstimating(false);
-        }
-      }
-    };
-
-    void estimate();
-
-    return () => {
-      isActive = false;
-    };
-  }, [publicClient, request, sourceAddress]);
-
-  const selectedGasPrice = useMemo(() => {
-    try {
-      const parsed = parseGwei(gasPriceInput);
-
-      return parsed > 0n ? parsed : undefined;
-    } catch {
-      return undefined;
-    }
-  }, [gasPriceInput]);
-
-  const fee = gasLimit && selectedGasPrice ? gasLimit * selectedGasPrice : undefined;
-  const estimatedFee = gasLimit && estimatedGasPrice ? gasLimit * estimatedGasPrice : undefined;
-  const sliderMinValue = useMemo(() => {
-    if (!estimatedFee) {
-      return 0;
-    }
-
-    const estimatedFeeValue = Number(formatNetworkFee(estimatedFee));
-
-    return Math.min(
-      Math.max(estimatedFeeValue - NETWORK_FEE_RANGE / 2, 0),
-      fee ? Number(formatNetworkFee(fee)) : Infinity
-    );
-  }, [estimatedFee, fee]);
-  const sliderMaxValue = useMemo(() => {
-    if (!estimatedFee) {
-      return NETWORK_FEE_RANGE;
-    }
-
-    return Math.max(
-      Number(formatNetworkFee(estimatedFee)) + NETWORK_FEE_RANGE / 2,
-      fee ? Number(formatNetworkFee(fee)) : -Infinity
-    );
-  }, [estimatedFee, fee]);
-  const sliderValue = fee ? Number(formatNetworkFee(fee)) : sliderMinValue;
-  const feeAsset = useMemo(
-    () => ({
-      ...asset,
-      name: ETHERLINK_MAINNET_CHAIN_SPECS.currency.name,
-      symbol: ETHERLINK_MAINNET_CHAIN_SPECS.currency.symbol,
-      decimals: ETHERLINK_MAINNET_CHAIN_SPECS.currency.decimals,
-      balance: fee?.toString() ?? '0',
-      exchangeRate:
-        evmExchangeRates[EVM_TOKEN_SLUG] !== undefined && fiatToUsdRate !== undefined
-          ? evmExchangeRates[EVM_TOKEN_SLUG] * fiatToUsdRate
-          : undefined
-    }),
-    [asset, evmExchangeRates, fee, fiatToUsdRate]
+  return (
+    <ConfirmationLayout
+      account={sourceAccount}
+      accountChainKind={TempleChainKind.EVM}
+      preview={<EvmTransferPreview asset={asset} receiverAddress={receiverAddress} atomicAmount={atomicAmount} />}
+      details={<EvmTransferFeeDetails feeState={feeState} />}
+      backAction={{ disabled: isSubmitting, onPress: goBack }}
+      confirmAction={{ disabled: isConfirmDisabled, onPress: submit }}
+    />
   );
-  const feeFiatValue = useMemo(
-    () => getDollarValue(feeAsset.balance, feeAsset.decimals, feeAsset.exchangeRate),
-    [feeAsset.balance, feeAsset.decimals, feeAsset.exchangeRate]
+};
+
+interface EvmTransferPreviewProps {
+  asset: Props['asset'];
+  receiverAddress: HexString;
+  atomicAmount: string;
+}
+
+const EvmTransferPreview: FC<EvmTransferPreviewProps> = ({ asset, receiverAddress, atomicAmount }) => {
+  const styles = useOperationsPreviewItemStyles();
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.contentWrapper}>
+        <View style={styles.infoContainer}>
+          <RobotIcon seed={receiverAddress} size={formatSize(32)} />
+          <Divider size={formatSize(10)} />
+          <TruncatedText style={styles.description}>Transfer to</TruncatedText>
+        </View>
+        <View style={styles.hashContainer}>
+          <PublicKeyHashText publicKeyHash={receiverAddress} />
+        </View>
+      </View>
+      <Divider size={formatSize(8)} />
+      <AssetValueText
+        asset={asset}
+        amount={atomicAmount}
+        receiver={receiverAddress}
+        showMinusSign
+        style={styles.amountToken}
+      />
+      <Divider size={formatSize(8)} />
+      <AssetValueText convertToDollar asset={asset} amount={atomicAmount} showMinusSign style={styles.amountDollar} />
+    </View>
   );
-  const requiredNativeBalance = fee
-    ? fee + (asset.sendStandard === EvmAssetStandardEnum.NATIVE ? BigInt(atomicAmount) : 0n)
-    : undefined;
-  const hasInsufficientNativeBalance =
-    requiredNativeBalance !== undefined && requiredNativeBalance > BigInt(balances[EVM_TOKEN_SLUG] ?? '0');
+};
 
-  const handleConfirm = useCallback(async () => {
-    if (!sourceAddress || !chain || !request || !gasLimit || !selectedGasPrice) {
-      return;
-    }
+interface EvmTransferFeeDetailsProps {
+  feeState: ReturnType<typeof useEvmTransferFee>;
+}
 
-    setIsSubmitting(true);
-
-    try {
-      const signer = await firstValueFrom(Shelter.getEvmAccount$(sourceAddress));
-      const walletClient = getViemWalletClient(toEvmNetworkEssentials(chain), signer);
-      const hash = await walletClient.sendTransaction({
-        ...request,
-        account: signer,
-        gas: gasLimit,
-        gasPrice: selectedGasPrice
-      });
-
-      showSuccessToast({
-        operationHash: hash,
-        operationUrl: `https://explorer.etherlink.com/tx/${hash}`,
-        title: 'Success!',
-        description: 'Etherlink transaction submitted'
-      });
-      storeDispatch(navigateAction({ screen: StacksEnum.MainStack }));
-
-      void publicClient
-        .waitForTransactionReceipt({ hash })
-        .then(() =>
-          loadEtherlinkBalancesOnChain({
-            network: toEvmNetworkEssentials(chain),
-            account: sourceAddress,
-            knownAssets
-          })
-        )
-        .catch(console.error);
-    } catch (error) {
-      showErrorToastByError(error);
-      setIsSubmitting(false);
-    }
-  }, [chain, gasLimit, knownAssets, publicClient, request, selectedGasPrice, sourceAddress]);
+const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => {
+  const styles = useEvmTransferConfirmationStyles();
+  const feeFormStyles = useFeeFormInputStyles();
 
   return (
     <>
-      <ScreenContainer>
-        <Text style={operationStyles.sectionTitle}>Account</Text>
-        <Divider />
-        {sourceAccount ? <AccountCard account={sourceAccount} chainKind={TempleChainKind.EVM} /> : null}
-        <Divider size={formatSize(24)} />
-
-        <Text style={operationStyles.sectionTitle}>Preview</Text>
-        <Divider size={formatSize(12)} />
-        <View style={operationStyles.divider} />
-        <Divider size={formatSize(8)} />
-        <View style={previewStyles.container}>
-          <View style={previewStyles.contentWrapper}>
-            <View style={previewStyles.infoContainer}>
-              <RobotIcon seed={receiverAddress} size={formatSize(32)} />
-              <Divider size={formatSize(10)} />
-              <TruncatedText style={previewStyles.description}>Transfer to</TruncatedText>
-            </View>
-            <View style={previewStyles.hashContainer}>
-              <PublicKeyHashText publicKeyHash={receiverAddress} />
-            </View>
-          </View>
-          <Divider size={formatSize(8)} />
-          <AssetValueText
-            asset={asset}
-            amount={atomicAmount}
-            receiver={receiverAddress}
-            showMinusSign
-            style={previewStyles.amountToken}
-          />
-          <Divider size={formatSize(8)} />
-          <AssetValueText
-            convertToDollar
-            asset={asset}
-            amount={atomicAmount}
-            showMinusSign
-            style={previewStyles.amountDollar}
-          />
+      <Divider size={formatSize(24)} />
+      <View style={feeFormStyles.infoContainer}>
+        <View style={[feeFormStyles.infoContainerItem, styles.feeInfoItem]}>
+          <Text style={feeFormStyles.infoTitle}>Network fee:</Text>
+          <Text style={feeFormStyles.infoFeeAmount}>
+            {feeState.formattedFee ? `${feeState.formattedFee} XTZ` : 'Estimating...'}
+          </Text>
+          {!!feeState.fee && feeState.feeAsset.exchangeRate !== undefined && (
+            <Text style={feeFormStyles.infoFeeValue}>
+              (
+              <FormattedAmount amount={feeState.feeFiatValue} hideApproximateSign isDollarValue />)
+            </Text>
+          )}
         </View>
+      </View>
 
-        <Divider size={formatSize(24)} />
-        <View style={feeFormStyles.infoContainer}>
-          <View style={[feeFormStyles.infoContainerItem, styles.feeInfoItem]}>
-            <Text style={feeFormStyles.infoTitle}>Network fee:</Text>
-            <Text style={feeFormStyles.infoFeeAmount}>{fee ? `${formatNetworkFee(fee)} XTZ` : 'Estimating...'}</Text>
-            {!!fee && feeAsset.exchangeRate !== undefined && (
-              <Text style={feeFormStyles.infoFeeValue}>
-                (
-                <FormattedAmount amount={feeFiatValue} hideApproximateSign isDollarValue />)
-              </Text>
-            )}
-          </View>
-        </View>
-
-        <Divider size={formatSize(32)} />
-        <View style={feeFormStyles.inputContainer}>
-          <View style={feeFormStyles.sliderContainer}>
-            {!isShowDetailedInput && estimatedFee !== undefined && fee !== undefined && (
-              <Slider
-                value={sliderValue}
-                minimumValue={sliderMinValue}
-                maximumValue={sliderMaxValue}
-                step={NETWORK_FEE_STEP}
-                onValueChange={value => {
-                  if (gasLimit) {
-                    setGasPriceInput(formatGwei(getGasPriceForNetworkFee(value, gasLimit)));
-                  }
-                }}
+      <Divider size={formatSize(32)} />
+      <View style={feeFormStyles.inputContainer}>
+        <View style={feeFormStyles.sliderContainer}>
+          {!feeState.isDetailedInputVisible && feeState.isSliderAvailable && (
+            <Slider
+              value={feeState.slider.value}
+              minimumValue={feeState.slider.minimumValue}
+              maximumValue={feeState.slider.maximumValue}
+              step={NETWORK_FEE_STEP}
+              onValueChange={feeState.handleSliderValueChange}
+            />
+          )}
+          {feeState.isDetailedInputVisible && (
+            <>
+              <Label description="Gas price (GWEI):" />
+              <StyledTextInput
+                value={feeState.gasPriceInput}
+                keyboardType="decimal-pad"
+                placeholder="0"
+                onChangeText={feeState.handleGasPriceInputChange}
               />
-            )}
-            {isShowDetailedInput && (
-              <>
-                <Label description="Gas price (GWEI):" />
-                <StyledTextInput
-                  value={gasPriceInput}
-                  keyboardType="decimal-pad"
-                  placeholder="0"
-                  onChangeText={setGasPriceInput}
-                />
-              </>
-            )}
-          </View>
-          <Divider size={formatSize(8)} />
-          <TouchableOpacity
-            style={feeFormStyles.toggleViewButton}
-            onPress={() => setIsShowDetailedInput(value => !value)}
-          >
-            <Icon name={isShowDetailedInput ? IconNameEnum.X : IconNameEnum.Gear} size={formatSize(16)} />
-          </TouchableOpacity>
+            </>
+          )}
         </View>
+        <Divider size={formatSize(8)} />
+        <TouchableOpacity style={feeFormStyles.toggleViewButton} onPress={feeState.toggleDetailedInput}>
+          <Icon name={feeState.isDetailedInputVisible ? IconNameEnum.X : IconNameEnum.Gear} size={formatSize(16)} />
+        </TouchableOpacity>
+      </View>
 
-        {!!estimationError && <Text style={styles.errorText}>{estimationError}</Text>}
-        {hasInsufficientNativeBalance && (
-          <Text style={styles.errorText}>Insufficient XTZ balance for the amount and network fee</Text>
-        )}
-        <Divider size={formatSize(24)} />
-      </ScreenContainer>
-
-      <ModalButtonsFloatingContainer variant="bordered">
-        <ButtonLargeSecondary title="Back" disabled={isSubmitting} onPress={goBack} />
-        <ButtonLargePrimary
-          title="Confirm"
-          disabled={
-            isEstimating ||
-            isSubmitting ||
-            Boolean(estimationError) ||
-            !selectedGasPrice ||
-            hasInsufficientNativeBalance
-          }
-          onPress={handleConfirm}
-        />
-      </ModalButtonsFloatingContainer>
+      {!!feeState.estimationError && <Text style={styles.errorText}>{feeState.estimationError}</Text>}
+      {feeState.hasInsufficientNativeBalance && (
+        <Text style={styles.errorText}>Insufficient XTZ balance for the amount and network fee</Text>
+      )}
+      <Divider size={formatSize(24)} />
     </>
   );
 };

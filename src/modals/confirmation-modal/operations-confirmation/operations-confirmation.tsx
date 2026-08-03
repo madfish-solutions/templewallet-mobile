@@ -2,22 +2,15 @@ import { OpKind } from '@taquito/rpc';
 import { ParamsWithKind } from '@taquito/taquito';
 import { FormikProvider, useFormik } from 'formik';
 import React, { ReactNode, useEffect, useMemo } from 'react';
-import { Text, View } from 'react-native';
 
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { AccountCard } from 'src/components/contact-dropdown/contact-form-section-dropdown';
 import { DelegateDisclaimer } from 'src/components/delegate-disclaimer/delegate-disclaimer';
 import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
-import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { emptyFn } from 'src/config/general';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useBakersListSelector } from 'src/store/baking/baking-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -31,13 +24,13 @@ import { isTruthy } from 'src/utils/is-truthy';
 import { HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { tzToMutez } from 'src/utils/tezos.util';
 
+import { ConfirmationLayout } from '../confirmation-layout/confirmation-layout';
 import { ConfirmationModalSelectors } from '../confirmation-modal.selectors';
 
 import { FeeFormInput } from './fee-form-input/fee-form-input';
 import { FeeFormInputValues } from './fee-form-input/fee-form-input.form';
 import { useEstimations } from './hooks/use-estimations.hook';
 import { useFeeForm } from './hooks/use-fee-form.hook';
-import { useOperationsConfirmationStyles } from './operations-confirmation.styles';
 import { OperationsPreview } from './operations-preview/operations-preview';
 
 const supportUkraineDisclaimerMessage =
@@ -73,7 +66,6 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
   testID,
   confirmEventProperties
 }) => {
-  const styles = useOperationsConfirmationStyles();
   const { goBack } = useNavigation();
 
   const { trackEvent } = useAnalytics();
@@ -160,79 +152,69 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
     return isDefined(targetBaker) && !targetBaker.delegation.enabled;
   }, [knownBakers, opParams]);
 
+  const beforeAccount =
+    opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === HELP_UKRAINE_BAKER_ADDRESS ? (
+      <>
+        <Divider size={formatSize(12)} />
+        <DelegateDisclaimer title="This Baker helps Ukraine 🇺🇦" text={supportUkraineDisclaimerMessage} />
+        <Divider size={formatSize(28)} />
+      </>
+    ) : undefined;
+
+  const afterPreview = shouldShowDelegationDisabledDisclaimer ? (
+    <>
+      <Divider size={formatSize(8)} />
+      <Disclaimer title="Delegation is not available" texts={[delegationDisabledDisclaimerMessage]} />
+    </>
+  ) : (
+    disclaimer
+  );
+
+  const preview = estimations.isLoading ? null : renderPreview ? (
+    renderPreview(opParamsWithEstimations)
+  ) : (
+    <OperationsPreview opParams={opParamsWithEstimations} />
+  );
+
+  const details = (
+    <>
+      <Divider />
+      <FeeFormInput
+        values={values}
+        basicFees={basicFees}
+        estimationWasSuccessful={estimationsApplied}
+        onlyOneOperation={onlyOneOperation}
+        minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
+        setFieldValue={setFieldValue}
+      />
+    </>
+  );
+
   return (
     <FormikProvider value={formik}>
-      <ScreenContainer>
-        {children}
-        {estimations.isLoading ? (
-          <LoadingPlaceholder text="Operation is loading..." />
-        ) : (
-          <>
-            {opParams[0]?.kind === OpKind.DELEGATION && opParams[0]?.delegate === HELP_UKRAINE_BAKER_ADDRESS && (
-              <>
-                <Divider size={formatSize(12)} />
-                <DelegateDisclaimer title="This Baker helps Ukraine 🇺🇦" text={supportUkraineDisclaimerMessage} />
-                <Divider size={formatSize(28)} />
-              </>
-            )}
-
-            <Text style={styles.sectionTitle}>Account</Text>
-            <Divider />
-
-            <AccountCard account={sender} chainKind={TempleChainKind.Tezos} isShieldedTez={isShieldedTez} />
-            <Divider size={formatSize(24)} />
-
-            <Text style={styles.sectionTitle}>Preview</Text>
-            <Divider size={formatSize(12)} />
-
-            <View style={styles.divider} />
-            <Divider size={formatSize(8)} />
-
-            {renderPreview ? (
-              renderPreview(opParamsWithEstimations)
-            ) : (
-              <OperationsPreview opParams={opParamsWithEstimations} />
-            )}
-
-            {shouldShowDelegationDisabledDisclaimer ? (
-              <>
-                <Divider size={formatSize(8)} />
-                <Disclaimer title="Delegation is not available" texts={[delegationDisabledDisclaimerMessage]} />
-              </>
-            ) : (
-              disclaimer
-            )}
-
-            <Divider />
-
-            <FeeFormInput
-              values={values}
-              basicFees={basicFees}
-              estimationWasSuccessful={estimationsApplied}
-              onlyOneOperation={onlyOneOperation}
-              minimalFeePerStorageByteMutez={minimalFeePerStorageByteMutez}
-              setFieldValue={setFieldValue}
-            />
-          </>
-        )}
-        <Divider />
-      </ScreenContainer>
-
-      <ModalButtonsFloatingContainer variant="bordered">
-        <ButtonLargeSecondary
-          title="Back"
-          disabled={isLoading}
-          onPress={goBack}
-          testID={ConfirmationModalSelectors.backButton}
-        />
-        <ButtonLargePrimary
-          title="Confirm"
-          disabled={estimations.isLoading || isLoading || !isValid}
-          onPress={submitForm}
-          testID={ConfirmationModalSelectors.confirmButton}
-          testIDProperties={confirmEventProperties}
-        />
-      </ModalButtonsFloatingContainer>
+      <ConfirmationLayout
+        account={sender}
+        accountChainKind={TempleChainKind.Tezos}
+        isShieldedTez={isShieldedTez}
+        preview={preview}
+        details={details}
+        headerContent={children}
+        beforeAccount={beforeAccount}
+        afterPreview={afterPreview}
+        bottomContent={<Divider />}
+        isContentLoading={estimations.isLoading}
+        backAction={{
+          disabled: isLoading,
+          onPress: goBack,
+          testID: ConfirmationModalSelectors.backButton
+        }}
+        confirmAction={{
+          disabled: estimations.isLoading || isLoading || !isValid,
+          onPress: submitForm,
+          testID: ConfirmationModalSelectors.confirmButton,
+          testIDProperties: confirmEventProperties
+        }}
+      />
     </FormikProvider>
   );
 };
