@@ -27,9 +27,6 @@ export interface AssetAmountInputProps extends TestIdProps {
   footerErrorMessage?: string;
   editable?: boolean;
   toUsdToggle?: boolean;
-  inputTypeSwitcherGap?: number;
-  inputTypeSwitcherVariant?: 'default' | 'figma';
-  inputTypeSwitcherWidth?: number;
   inputHeight?: number;
   dropdownVerticalPadding?: number;
   isLoading?: boolean;
@@ -38,9 +35,7 @@ export interface AssetAmountInputProps extends TestIdProps {
   dropdownListHeader?: ReactNode;
   dropdownDescription?: string;
   dropdownAppearance?: 'default' | 'token-selector';
-  scrollToSelectedValue?: boolean;
   isShowNameForValue?: boolean;
-  spaceBeforeFiatSymbol?: boolean;
   selectedTokenIconSize?: number;
   selectedTokenIconVisualSize?: number;
   selectedTokenIconGap?: number;

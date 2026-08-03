@@ -8,5 +8,4 @@ export interface AccountDropdownItemProps {
   actionIconColor?: string;
   isPublicKeyHashTextDisabled?: boolean;
   isCollectibleScreen?: boolean;
-  variant?: 'default' | 'card';
 }

@@ -354,9 +354,6 @@ export const SendModal: FC = () => {
             selectedTokenIconVisualSize={formatSize(40)}
             selectedTokenIconGap={formatSize(4)}
             selectedTokenDropdownWidth={formatSize(122)}
-            inputTypeSwitcherGap={formatSize(2)}
-            inputTypeSwitcherVariant="figma"
-            inputTypeSwitcherWidth={formatSize(118)}
             inputHeight={formatSize(56)}
             stylesConfig={{ amountInput: styles.assetAmountInput }}
             dropdownVerticalPadding={formatSize(8)}
@@ -365,8 +362,6 @@ export const SendModal: FC = () => {
             isSearchable
             dropdownDescription="Select Token"
             dropdownAppearance="token-selector"
-            scrollToSelectedValue={false}
-            spaceBeforeFiatSymbol
             searchPlaceholder="Search by name or address"
             dropdownListHeader={tokenFilterHeader}
             setSearchValue={setAssetSearch}

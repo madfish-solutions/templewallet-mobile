@@ -20,14 +20,9 @@ interface Props
       | 'selectionOptions'
       | 'isSearchable'
       | 'toUsdToggle'
-      | 'inputTypeSwitcherGap'
-      | 'inputTypeSwitcherVariant'
-      | 'inputTypeSwitcherWidth'
       | 'inputHeight'
       | 'dropdownVerticalPadding'
       | 'dropdownAppearance'
-      | 'scrollToSelectedValue'
-      | 'spaceBeforeFiatSymbol'
       | 'selectedTokenIconSize'
       | 'selectedTokenIconVisualSize'
       | 'selectedTokenIconGap'
@@ -50,17 +45,12 @@ export const FormAssetAmountInput = memo<Props>(
     toUsdToggle = true,
     isLoading = false,
     isSearchable = false,
-    inputTypeSwitcherGap,
-    inputTypeSwitcherVariant,
-    inputTypeSwitcherWidth,
     inputHeight,
     dropdownVerticalPadding,
     searchPlaceholder,
     dropdownListHeader,
     dropdownDescription,
     dropdownAppearance,
-    scrollToSelectedValue,
-    spaceBeforeFiatSymbol,
     isSingleAsset,
     selectionOptions = undefined,
     selectedTokenIconSize,
@@ -135,9 +125,6 @@ export const FormAssetAmountInput = memo<Props>(
           isError={isError}
           footerErrorMessage={showErrorInFooter && isError ? errorMessage : undefined}
           isLoading={isLoading}
-          inputTypeSwitcherGap={inputTypeSwitcherGap}
-          inputTypeSwitcherVariant={inputTypeSwitcherVariant}
-          inputTypeSwitcherWidth={inputTypeSwitcherWidth}
           inputHeight={inputHeight}
           dropdownVerticalPadding={dropdownVerticalPadding}
           isSearchable={isSearchable}
@@ -145,8 +132,6 @@ export const FormAssetAmountInput = memo<Props>(
           dropdownListHeader={dropdownListHeader}
           dropdownDescription={dropdownDescription}
           dropdownAppearance={dropdownAppearance}
-          scrollToSelectedValue={scrollToSelectedValue}
-          spaceBeforeFiatSymbol={spaceBeforeFiatSymbol}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}
