@@ -32,6 +32,7 @@ module.exports = {
   moduleNameMapper: {
     '^src/(.*)': '<rootDir>/src/$1',
     '\\.svg': '<rootDir>/src/mocks/svg.mock.js',
+    '^lottie-react-native$': '<rootDir>/src/mocks/lottie-react-native.mock.tsx',
     '^react-native-themis': '<rootDir>/node_modules/react-native-themis/src/index.js',
     '^@stablelib/wipe$': '<rootDir>/src/mocks/stablelib/wipe.mock.ts',
     '^@stablelib/nacl$': '<rootDir>/src/mocks/stablelib/nacl.mock.ts',
