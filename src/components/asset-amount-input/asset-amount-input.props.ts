@@ -6,6 +6,9 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import type { AssetAmountInterface } from './asset-amount-input';
+import type { AssetAmountInputVariant } from './asset-amount-input.variants';
+
+export type { AssetAmountInputVariant } from './asset-amount-input.variants';
 
 export interface AssetAmountInputStylesConfig {
   balanceText?: TextStyle;
@@ -14,6 +17,7 @@ export interface AssetAmountInputStylesConfig {
 }
 
 export interface AssetAmountInputProps extends TestIdProps {
+  variant?: AssetAmountInputVariant;
   expectedGasExpense?: BigNumber.Value;
   stylesConfig?: AssetAmountInputStylesConfig;
   maxButton?: boolean;
@@ -27,19 +31,12 @@ export interface AssetAmountInputProps extends TestIdProps {
   footerErrorMessage?: string;
   editable?: boolean;
   toUsdToggle?: boolean;
-  inputHeight?: number;
-  dropdownVerticalPadding?: number;
   isLoading?: boolean;
   isSearchable?: boolean;
   searchPlaceholder?: string;
   dropdownListHeader?: ReactNode;
   dropdownDescription?: string;
-  dropdownAppearance?: 'default' | 'token-selector';
   isShowNameForValue?: boolean;
-  selectedTokenIconSize?: number;
-  selectedTokenIconVisualSize?: number;
-  selectedTokenIconGap?: number;
-  selectedTokenDropdownWidth?: number;
   isSingleAsset?: boolean;
   selectionOptions?: TextInputProps['selection'];
   setSearchValue?: SyncFn<string>;

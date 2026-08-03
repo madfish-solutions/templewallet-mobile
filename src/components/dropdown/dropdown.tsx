@@ -22,6 +22,8 @@ import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-c
 import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
 
+export type DropdownAppearance = 'v1' | 'v2';
+
 export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>, TestIdProps {
   description: string;
   list: T[];
@@ -39,7 +41,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
   listHeader?: ReactNode;
-  appearance?: 'default' | 'token-selector';
+  appearance?: DropdownAppearance;
   showCloseButton?: boolean;
   triggerWrapperRef?: Ref<View>;
   onLongPress?: EmptyFn;
@@ -98,7 +100,7 @@ const DropdownComponent = <T extends unknown>({
   getListItemSectionTitle,
   renderActionButtons = emptyComponent,
   listHeader,
-  appearance = 'default',
+  appearance = 'v1',
   keyExtractor,
   onValueChange,
   onLongPress,
@@ -127,7 +129,7 @@ const DropdownComponent = <T extends unknown>({
     return result;
   }, [getListItemSectionTitle, list]);
 
-  const isTokenSelector = appearance === 'token-selector';
+  const isTokenSelector = appearance === 'v2';
   const listItemHeight = isTokenSelector ? formatSize(44) : itemHeight;
   const listItemSeparatorSize = isTokenSelector ? formatSize(8) : formatSize(16);
 

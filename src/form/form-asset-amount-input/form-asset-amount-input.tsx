@@ -3,7 +3,6 @@ import React, { memo, useCallback, useMemo } from 'react';
 
 import { AssetAmountInput, AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { AssetAmountInputProps } from 'src/components/asset-amount-input/asset-amount-input.props';
-import { TestIdProps } from 'src/interfaces/test-id.props';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
 import { getTokenSlug } from 'src/token/utils/token.utils';
@@ -14,29 +13,15 @@ import { ErrorMessage } from '../error-message/error-message';
 
 interface Props
   extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
-    Partial<Pick<AssetAmountInputProps, 'onValueChange'>>,
-    Pick<
-      AssetAmountInputProps,
-      | 'selectionOptions'
-      | 'isSearchable'
-      | 'toUsdToggle'
-      | 'inputHeight'
-      | 'dropdownVerticalPadding'
-      | 'dropdownAppearance'
-      | 'selectedTokenIconSize'
-      | 'selectedTokenIconVisualSize'
-      | 'selectedTokenIconGap'
-      | 'selectedTokenDropdownWidth'
-    >,
-    TestIdProps {
+    Partial<Pick<AssetAmountInputProps, 'onValueChange'>> {
   name: string;
-  setSearchValue?: SyncFn<string>;
   showErrorInFooter?: boolean;
 }
 
 export const FormAssetAmountInput = memo<Props>(
   ({
     name,
+    variant,
     label,
     assetsList,
     frozenBalance,
@@ -45,18 +30,11 @@ export const FormAssetAmountInput = memo<Props>(
     toUsdToggle = true,
     isLoading = false,
     isSearchable = false,
-    inputHeight,
-    dropdownVerticalPadding,
     searchPlaceholder,
     dropdownListHeader,
     dropdownDescription,
-    dropdownAppearance,
     isSingleAsset,
     selectionOptions = undefined,
-    selectedTokenIconSize,
-    selectedTokenIconVisualSize,
-    selectedTokenIconGap,
-    selectedTokenDropdownWidth,
     maxButton = false,
     showErrorInFooter = false,
     expectedGasExpense,
@@ -117,6 +95,7 @@ export const FormAssetAmountInput = memo<Props>(
     return (
       <>
         <AssetAmountInput
+          variant={variant}
           value={field.value}
           label={label}
           assetsList={assetsList}
@@ -125,21 +104,14 @@ export const FormAssetAmountInput = memo<Props>(
           isError={isError}
           footerErrorMessage={showErrorInFooter && isError ? errorMessage : undefined}
           isLoading={isLoading}
-          inputHeight={inputHeight}
-          dropdownVerticalPadding={dropdownVerticalPadding}
           isSearchable={isSearchable}
           searchPlaceholder={searchPlaceholder}
           dropdownListHeader={dropdownListHeader}
           dropdownDescription={dropdownDescription}
-          dropdownAppearance={dropdownAppearance}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}
           selectionOptions={selectionOptions}
-          selectedTokenIconSize={selectedTokenIconSize}
-          selectedTokenIconVisualSize={selectedTokenIconVisualSize}
-          selectedTokenIconGap={selectedTokenIconGap}
-          selectedTokenDropdownWidth={selectedTokenDropdownWidth}
           maxButton={maxButton}
           setSearchValue={setSearchValue}
           expectedGasExpense={expectedGasExpense}

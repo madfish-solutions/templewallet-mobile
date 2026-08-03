@@ -20,6 +20,8 @@ import { TokenIcon } from '../../token-icon/token-icon';
 import { tokenEqualityFn } from '../token-equality-fn';
 
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
+import { tokenDropdownItemVariantConfigs } from './token-dropdown-item.variants';
+import type { TokenDropdownItemVariant } from './token-dropdown-item.variants';
 
 interface Props {
   token?: TokenInterface;
@@ -28,11 +30,7 @@ interface Props {
   isShowBalance?: boolean;
   isShowBalanceLoading?: boolean;
   isShowName?: boolean;
-  iconSize?: number;
-  iconVisualSize?: number;
-  iconGap?: number;
-  layout?: 'default' | 'token-selector';
-  showNetworkBadge?: boolean;
+  variant?: TokenDropdownItemVariant;
 }
 
 export const TokenDropdownItem: FC<Props> = ({
@@ -42,26 +40,21 @@ export const TokenDropdownItem: FC<Props> = ({
   isShowBalance = true,
   isShowBalanceLoading = false,
   isShowName = true,
-  iconSize = formatSize(40),
-  iconVisualSize = iconSize,
-  iconGap = formatSize(8),
-  layout = 'default',
-  showNetworkBadge = false
+  variant = 'v1'
 }) => {
   const styles = useTokenDropdownItemStyles();
+  const { isCompact, listIconConfig, selectedIconConfig, showNetworkBadge } = tokenDropdownItemVariantConfigs[variant];
+  const {
+    gap: iconGap,
+    size: iconSize,
+    visualSize: iconVisualSize
+  } = isShowBalance ? listIconConfig : selectedIconConfig;
   const chainKind = (token as TokenInterface & { chainKind?: TempleChainKind }).chainKind;
   const networkName = (token as TokenInterface & { networkName?: string }).networkName;
   const hasActionIcon = isDefined(actionIconName) || isDefined(actionIconV2Name);
-  const isTokenSelector = layout === 'token-selector';
-  const shouldShowNetworkBadge = isTokenSelector || showNetworkBadge;
-
   const tokenNameTextStyle = useMemo(
-    () => [
-      styles.name,
-      isTokenSelector && styles.tokenSelectorName,
-      conditionalStyle(!hasActionIcon, styles.fullWidthName)
-    ],
-    [hasActionIcon, isTokenSelector, styles]
+    () => [styles.name, isCompact && styles.tokenSelectorName, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
+    [hasActionIcon, isCompact, styles]
   );
   const iconContainerStyle = useMemo(
     () => [styles.iconContainer, { width: iconSize, height: iconSize }],
@@ -92,8 +85,8 @@ export const TokenDropdownItem: FC<Props> = ({
   }
 
   return (
-    <View style={[styles.container, isTokenSelector && styles.tokenSelectorContainer]}>
-      {shouldShowNetworkBadge ? (
+    <View style={[styles.container, isCompact && styles.tokenSelectorContainer]}>
+      {showNetworkBadge ? (
         <TokenIconWithNetwork chainKind={chainKind}>
           <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconVisualSize} />
         </TokenIconWithNetwork>
@@ -108,9 +101,7 @@ export const TokenDropdownItem: FC<Props> = ({
 
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
-          <TruncatedText style={[styles.symbol, isTokenSelector && styles.tokenSelectorSymbol]}>
-            {token.symbol}
-          </TruncatedText>
+          <TruncatedText style={[styles.symbol, isCompact && styles.tokenSelectorSymbol]}>{token.symbol}</TruncatedText>
           <View style={styles.rightContainer}>
             <Divider size={formatSize(4)} />
             {isShowBalance && (

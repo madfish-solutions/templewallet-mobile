@@ -347,21 +347,14 @@ export const SendModal: FC = () => {
         <View>
           <Divider size={formatSize(8)} />
           <FormAssetAmountInput
+            variant="v2"
             maxButton
             showErrorInFooter
             name="assetAmount"
-            selectedTokenIconSize={formatSize(40)}
-            selectedTokenIconVisualSize={formatSize(40)}
-            selectedTokenIconGap={formatSize(4)}
-            selectedTokenDropdownWidth={formatSize(122)}
-            inputHeight={formatSize(56)}
-            stylesConfig={{ amountInput: styles.assetAmountInput }}
-            dropdownVerticalPadding={formatSize(8)}
             label="Asset"
             assetsList={filteredAssets}
             isSearchable
             dropdownDescription="Select Token"
-            dropdownAppearance="token-selector"
             searchPlaceholder="Search by name or address"
             dropdownListHeader={tokenFilterHeader}
             setSearchValue={setAssetSearch}

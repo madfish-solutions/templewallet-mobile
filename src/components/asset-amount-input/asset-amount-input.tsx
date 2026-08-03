@@ -33,6 +33,7 @@ import { TouchableWithAnalytics } from '../touchable-with-analytics';
 import { AssetAmountInputProps, AssetAmountInputStylesConfig } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
 import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
+import { assetAmountInputVariantConfigs } from './asset-amount-input.variants';
 import { AssetAmountInputSelectors } from './selectors';
 
 export interface AssetAmountInterface {
@@ -44,6 +45,7 @@ const DEFAULT_BALANCE = '0';
 
 const TOKEN_INPUT_TYPE_INDEX = 0;
 const defaultAssetAmountInputStylesConfig: AssetAmountInputStylesConfig = {};
+
 const assetOptionTestIdPropertiesFn = (asset: TokenInterface) => ({
   token: isShieldedTez(asset) ? 'Shielded TEZ' : asset.symbol
 });
@@ -62,6 +64,7 @@ const getDefinedAmount = (
 
 export const AssetAmountInput = memo<AssetAmountInputProps>(
   ({
+    variant = 'v1',
     value,
     label,
     assetsList,
@@ -73,18 +76,11 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     toUsdToggle = true,
     editable = true,
     isLoading = false,
-    inputHeight,
-    dropdownVerticalPadding,
     dropdownListHeader,
-    dropdownAppearance = 'default',
     isSearchable = false,
     searchPlaceholder,
     dropdownDescription = 'Assets',
     selectionOptions = undefined,
-    selectedTokenIconSize = formatSize(32),
-    selectedTokenIconVisualSize,
-    selectedTokenIconGap,
-    selectedTokenDropdownWidth,
     maxButton = false,
     expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
     stylesConfig = defaultAssetAmountInputStylesConfig,
@@ -100,6 +96,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     maxButtonTestID
   }) => {
     const styles = useAssetAmountInputStyles();
+    const variantConfig = assetAmountInputVariantConfigs[variant];
+    const { inputHeight, dropdownVerticalPadding, selectedTokenDropdownWidth } = variantConfig;
     const {
       balanceText: configBalanceTextStyles,
       amountInput: configAmountInputStyles,
@@ -137,16 +135,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
 
     const amountInputRef = useRef<TextInput>(null);
     const renderTokenListItem = useCallback<DropdownListItemComponent<TokenInterface>>(
-      ({ item }) => (
-        <TokenDropdownItem
-          token={item}
-          layout={dropdownAppearance}
-          iconSize={dropdownAppearance === 'token-selector' ? formatSize(44) : undefined}
-          iconVisualSize={dropdownAppearance === 'token-selector' ? formatSize(40) : undefined}
-          iconGap={dropdownAppearance === 'token-selector' ? formatSize(4) : undefined}
-        />
-      ),
-      [dropdownAppearance]
+      ({ item }) => <TokenDropdownItem token={item} variant={variant} />,
+      [variant]
     );
 
     const [inputTypeIndex, setInputTypeIndex] = useState(0);
@@ -195,20 +185,10 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
           actionIconV2Name={isSingleAsset ? undefined : IconNameV2Enum.DropdownDown}
           isShowBalance={false}
           isShowName={isShowNameForValue}
-          showNetworkBadge={dropdownAppearance === 'token-selector'}
-          iconSize={selectedTokenIconSize}
-          iconVisualSize={selectedTokenIconVisualSize}
-          iconGap={selectedTokenIconGap}
+          variant={variant}
         />
       ),
-      [
-        dropdownAppearance,
-        isShowNameForValue,
-        isSingleAsset,
-        selectedTokenIconGap,
-        selectedTokenIconSize,
-        selectedTokenIconVisualSize
-      ]
+      [isShowNameForValue, isSingleAsset, variant]
     );
 
     const onChange = useCallback(
@@ -354,7 +334,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
               renderValue={renderTokenValue}
               renderListItem={renderTokenListItem}
               listHeader={dropdownListHeader}
-              appearance={dropdownAppearance}
+              appearance={variant}
               keyExtractor={getTokenSlug}
               onValueChange={handleTokenChange}
               testID={testID}

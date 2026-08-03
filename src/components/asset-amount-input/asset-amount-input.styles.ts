@@ -36,8 +36,7 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
     color: colors.black,
     flexGrow: 1,
     flexShrink: 1,
-    paddingTop: formatSize(12),
-    paddingBottom: formatSize(12),
+    paddingVertical: formatSize(12),
     borderColor: colors.lines,
     borderRightWidth: DEFAULT_BORDER_WIDTH
   },

@@ -11,11 +11,6 @@ export const useSendModalStyles = createUseStyles(({ colors, typography }) => ({
     height: formatSize(80),
     minHeight: formatSize(80)
   },
-  assetAmountInput: {
-    paddingTop: 0,
-    paddingBottom: 0,
-    lineHeight: formatSize(28)
-  },
   filterRow: {
     flexDirection: 'row',
     paddingHorizontal: formatSize(16),
