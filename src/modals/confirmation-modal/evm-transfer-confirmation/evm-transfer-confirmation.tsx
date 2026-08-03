@@ -48,12 +48,11 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
   const { isSubmitting, resetSubmissionError, submissionError, submit } = useEvmTransferSubmission({
     chainId: asset.chainId,
     sourceAddress,
-    request,
-    gasLimit: feeState.gasLimit,
-    fees: feeState.selectedFees
+    request
   });
   const transactionError = submissionError ?? feeState.estimationError;
   const retryEstimation = feeState.retry;
+  const getSubmissionFees = feeState.getSubmissionFees;
 
   useEffect(() => {
     if (transactionError) {
@@ -63,8 +62,15 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
 
   const retry = useCallback(() => {
     resetSubmissionError();
-    retryEstimation();
+    void retryEstimation();
   }, [resetSubmissionError, retryEstimation]);
+  const confirm = useCallback(async () => {
+    const submissionFees = await getSubmissionFees();
+
+    if (submissionFees) {
+      await submit(submissionFees);
+    }
+  }, [getSubmissionFees, submit]);
 
   useNavigationSetOptions({ headerTitle: renderHeaderTitle }, []);
 
@@ -85,7 +91,7 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
       backAction={{ disabled: isSubmitting, onPress: goBack }}
       confirmAction={{
         disabled: isConfirmDisabled,
-        onPress: transactionError ? retry : submit,
+        onPress: transactionError ? retry : confirm,
         title: transactionError ? 'Retry' : 'Confirm'
       }}
     />
