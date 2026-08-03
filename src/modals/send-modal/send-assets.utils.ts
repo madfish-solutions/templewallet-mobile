@@ -1,9 +1,8 @@
 import { BigNumber } from 'bignumber.js';
 
+import { SendAsset } from 'src/types/send-asset';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isDefined } from 'src/utils/is-defined';
-
-import { SendAsset } from './send-asset.types';
 
 const compareSendAssets = (first: SendAsset, second: SendAsset) => {
   const firstFiat = isDefined(first.exchangeRate)

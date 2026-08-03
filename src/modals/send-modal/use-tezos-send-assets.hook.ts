@@ -1,20 +1,16 @@
-import { ChainIds } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
 import { uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { TEZ_SHIELDED_TOKEN_METADATA, TEZ_SHIELDED_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
+import { TezosSendAsset } from 'src/types/send-asset';
 import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
-import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 
-import { SendAsset } from './send-asset.types';
-
-const TEZOS_NETWORK_NAME = 'Tezos';
+import { toTezosSendAsset } from './tezos-send-asset.mapper';
 
 interface CreateTezosSendAssetsParams {
   shieldedBalance: string;
@@ -23,26 +19,12 @@ interface CreateTezosSendAssetsParams {
   tezosTokens: TokenInterface[];
 }
 
-const toTezosSendAsset = (token: TokenInterface): SendAsset => {
-  const assetSlug = getTokenSlug(token);
-
-  return {
-    ...token,
-    assetKey: toChainAssetSlug(TempleChainKind.Tezos, ChainIds.MAINNET, assetSlug),
-    assetSlug,
-    chainKind: TempleChainKind.Tezos,
-    chainId: ChainIds.MAINNET,
-    networkName: TEZOS_NETWORK_NAME,
-    sendStandard: assetSlug === TEZ_SHIELDED_TOKEN_SLUG ? 'shielded-tez' : 'tezos'
-  };
-};
-
 export const createTezosSendAssets = ({
   shieldedBalance,
   shieldedExchangeRate,
   tezosToken,
   tezosTokens
-}: CreateTezosSendAssetsParams): SendAsset[] => {
+}: CreateTezosSendAssetsParams): TezosSendAsset[] => {
   const shieldedToken: TokenInterface | undefined =
     shieldedBalance === '0'
       ? undefined
@@ -58,7 +40,7 @@ export const createTezosSendAssets = ({
     .map(toTezosSendAsset);
 };
 
-export const useTezosSendAssets = (tezosToken: TokenInterface): SendAsset[] => {
+export const useTezosSendAssets = (tezosToken: TokenInterface): TezosSendAsset[] => {
   const tezosTokens = useCurrentAccountTokens(true);
   const shieldedBalance = useShieldedBalanceSelector();
   const shieldedExchangeRate = useAssetExchangeRate(TEZ_SHIELDED_TOKEN_SLUG);

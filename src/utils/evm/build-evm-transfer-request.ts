@@ -1,7 +1,7 @@
 import { encodeFunctionData, erc20Abi, erc721Abi } from 'viem';
 
-import { SendAsset } from 'src/modals/send-modal/send-asset.types';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { EvmSendAsset } from 'src/types/send-asset';
 import { erc1155Abi } from 'src/utils/evm/on-chain/abi/erc1155.abi';
 
 export interface EvmTransferRequest {
@@ -13,7 +13,7 @@ export interface EvmTransferRequest {
 export const buildEvmTransferRequest = (
   sender: HexString,
   recipient: HexString,
-  asset: SendAsset,
+  asset: EvmSendAsset,
   atomicAmount: string
 ): EvmTransferRequest => {
   const amount = BigInt(atomicAmount);
@@ -23,7 +23,7 @@ export const buildEvmTransferRequest = (
       return { to: recipient, value: amount };
     case EvmAssetStandardEnum.ERC20:
       return {
-        to: getContractAddress(asset),
+        to: asset.contractAddress,
         value: 0n,
         data: encodeFunctionData({
           abi: erc20Abi,
@@ -33,41 +33,25 @@ export const buildEvmTransferRequest = (
       };
     case EvmAssetStandardEnum.ERC721:
       return {
-        to: getContractAddress(asset),
+        to: asset.contractAddress,
         value: 0n,
         data: encodeFunctionData({
           abi: erc721Abi,
           functionName: 'safeTransferFrom',
-          args: [sender, recipient, BigInt(getTokenId(asset))]
+          args: [sender, recipient, BigInt(asset.tokenId)]
         })
       };
     case EvmAssetStandardEnum.ERC1155:
       return {
-        to: getContractAddress(asset),
+        to: asset.contractAddress,
         value: 0n,
         data: encodeFunctionData({
           abi: erc1155Abi,
           functionName: 'safeTransferFrom',
-          args: [sender, recipient, BigInt(getTokenId(asset)), amount, '0x']
+          args: [sender, recipient, BigInt(asset.tokenId), amount, '0x']
         })
       };
     default:
       throw new Error('Unsupported Etherlink asset standard');
   }
-};
-
-const getContractAddress = (asset: SendAsset): HexString => {
-  if (!asset.contractAddress) {
-    throw new Error('Etherlink token contract address is missing');
-  }
-
-  return asset.contractAddress;
-};
-
-const getTokenId = (asset: SendAsset): string => {
-  if (!asset.tokenId) {
-    throw new Error('Etherlink collectible token ID is missing');
-  }
-
-  return asset.tokenId;
 };

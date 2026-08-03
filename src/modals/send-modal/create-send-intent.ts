@@ -1,14 +1,13 @@
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { EvmSendAsset, SendAsset, TezosSendAsset } from 'src/types/send-asset';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
-
-import { SendAsset } from './send-asset.types';
 
 export type SendIntent =
   | {
       type: 'evm-transfer';
       accountId: string;
-      asset: SendAsset;
+      asset: EvmSendAsset;
       receiverAddress: HexString;
       atomicAmount: string;
     }
@@ -19,7 +18,7 @@ export type SendIntent =
       recipientAddress: string;
       memo?: string;
     }
-  | { type: 'tezos-transfer'; asset: SendAsset; receiverAddress: string; amount: string }
+  | { type: 'tezos-transfer'; asset: TezosSendAsset; receiverAddress: string; amount: string }
   | { type: 'on-ramp' };
 
 export type SendIntentFailureReason = 'missing-evm-account' | 'missing-tezos-account';

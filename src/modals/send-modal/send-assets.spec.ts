@@ -2,15 +2,16 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { EvmAssetStandardEnum, TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
+import { SendAsset } from 'src/types/send-asset';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
-import { SendAsset } from './send-asset.types';
 import { sortSendAssets } from './send-assets.utils';
 import { createEvmSendAssets } from './use-evm-send-assets.hook';
 import { createTezosSendAssets } from './use-tezos-send-assets.hook';
 
 const EVM_CONTRACT = '0x1111111111111111111111111111111111111111';
-const EVM_TOKEN_SLUG = `${EVM_CONTRACT}_0`;
+const EVM_TOKEN_SLUG = EVM_CONTRACT;
 
 const makeTezosToken = (overrides: Partial<TokenInterface> = {}): TokenInterface => ({
   address: '',
@@ -64,6 +65,7 @@ describe('send asset adapters', () => {
       exchangeRates: { eth: 2, [EVM_TOKEN_SLUG]: 4 },
       fiatToUsdRate: 0.5,
       hasAccount: true,
+      network: ETHERLINK_MAINNET_CHAIN_SPECS,
       tokensMetadata: {
         [EVM_TOKEN_SLUG]: {
           address: EVM_CONTRACT,
@@ -73,8 +75,7 @@ describe('send asset adapters', () => {
           decimals: 2,
           iconURL: 'token-icon'
         }
-      },
-      visibility: VisibilityEnum.Visible
+      }
     });
 
     expect(assets).toHaveLength(2);
@@ -94,6 +95,30 @@ describe('send asset adapters', () => {
       symbol: 'USDT',
       sendStandard: EvmAssetStandardEnum.ERC20
     });
+    expect(assets[1]).not.toHaveProperty('address');
+    expect(assets[1]).not.toHaveProperty('id');
+    expect(assets[1]).not.toHaveProperty('standard');
+  });
+
+  it('derives EVM identity from the selected network configuration', () => {
+    const network = { ...ETHERLINK_MAINNET_CHAIN_SPECS, chainId: 1, name: 'Configured network' };
+
+    expect(
+      createEvmSendAssets({
+        assets: {},
+        balances: { eth: '1' },
+        exchangeRates: {},
+        hasAccount: true,
+        network,
+        tokensMetadata: {}
+      })
+    ).toEqual([
+      expect.objectContaining({
+        assetKey: 'evm:1:eth',
+        chainId: 1,
+        networkName: 'Configured network'
+      })
+    ]);
   });
 
   it('does not expose EVM assets without an EVM account', () => {
@@ -103,8 +128,7 @@ describe('send asset adapters', () => {
         balances: { eth: '1' },
         exchangeRates: {},
         hasAccount: false,
-        tokensMetadata: {},
-        visibility: VisibilityEnum.Visible
+        tokensMetadata: {}
       })
     ).toEqual([]);
   });

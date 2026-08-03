@@ -2,12 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { formatGwei, parseGwei } from 'viem';
 
 import { useEtherlinkPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
-import { SendAsset } from 'src/modals/send-modal/send-asset.types';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
+import { EvmSendAsset } from 'src/types/send-asset';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { EvmTransferRequest } from 'src/utils/evm/build-evm-transfer-request';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
@@ -17,7 +17,7 @@ import { formatNetworkFee, getGasPriceForNetworkFee, getNetworkFeeSliderValues }
 interface Props {
   sourceAddress?: HexString;
   request?: EvmTransferRequest;
-  asset: SendAsset;
+  asset: EvmSendAsset;
   atomicAmount: string;
 }
 

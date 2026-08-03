@@ -5,25 +5,39 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { SendAsset } from 'src/types/send-asset';
 
-import { SendAsset } from './send-asset.types';
 import { SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 
-const makeAsset = (chainKind: TempleChainKind): SendAsset => ({
-  address: chainKind === TempleChainKind.Tezos ? 'tez' : 'evm:42793:eth',
-  id: 0,
-  name: chainKind === TempleChainKind.Tezos ? 'Tezos' : 'Etherlink XTZ',
-  symbol: 'XTZ',
-  decimals: chainKind === TempleChainKind.Tezos ? 6 : 18,
-  balance: '100',
-  visibility: VisibilityEnum.Visible,
-  assetKey: `${chainKind}:mainnet:native`,
-  assetSlug: chainKind === TempleChainKind.Tezos ? TEZ_TOKEN_SLUG : 'eth',
-  chainKind,
-  chainId: chainKind === TempleChainKind.Tezos ? 'NetXdQprcVkpaWU' : 42793,
-  networkName: chainKind === TempleChainKind.Tezos ? 'Tezos' : 'Etherlink',
-  sendStandard: chainKind === TempleChainKind.Tezos ? 'tezos' : EvmAssetStandardEnum.NATIVE
-});
+const makeAsset = (chainKind: TempleChainKind): SendAsset =>
+  chainKind === TempleChainKind.Tezos
+    ? {
+        address: 'tez',
+        id: 0,
+        name: 'Tezos',
+        symbol: 'XTZ',
+        decimals: 6,
+        balance: '100',
+        visibility: VisibilityEnum.Visible,
+        assetKey: `${chainKind}:mainnet:native`,
+        assetSlug: TEZ_TOKEN_SLUG,
+        chainKind,
+        chainId: 'NetXdQprcVkpaWU',
+        networkName: 'Tezos',
+        sendStandard: 'tezos'
+      }
+    : {
+        name: 'Etherlink XTZ',
+        symbol: 'XTZ',
+        decimals: 18,
+        balance: '100',
+        assetKey: `${chainKind}:mainnet:native`,
+        assetSlug: 'eth',
+        chainKind,
+        chainId: 42793,
+        networkName: 'Etherlink',
+        sendStandard: EvmAssetStandardEnum.NATIVE
+      };
 
 const makeValues = (chainKind: TempleChainKind, recipient: string): SendModalFormValues => ({
   assetAmount: {

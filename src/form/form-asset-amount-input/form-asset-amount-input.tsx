@@ -3,22 +3,28 @@ import React, { memo, useCallback, useMemo } from 'react';
 
 import { AssetAmountInput, AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { AssetAmountInputProps } from 'src/components/asset-amount-input/asset-amount-input.props';
+import { AssetInterface } from 'src/interfaces/asset.interface';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
-import { getTokenSlug } from 'src/token/utils/token.utils';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getAssetStoreKey } from 'src/utils/asset.utils';
 import { hasError } from 'src/utils/has-error';
 import { useDidUpdate } from 'src/utils/hooks';
 
 import { ErrorMessage } from '../error-message/error-message';
 
-interface Props
-  extends Omit<AssetAmountInputProps, 'value' | 'onValueChange'>,
-    Partial<Pick<AssetAmountInputProps, 'onValueChange'>> {
+interface Props<TAsset extends AssetInterface = TokenInterface>
+  extends Omit<AssetAmountInputProps<TAsset>, 'value' | 'onValueChange'>,
+    Partial<Pick<AssetAmountInputProps<TAsset>, 'onValueChange'>> {
   name: string;
   showErrorInFooter?: boolean;
 }
 
-export const FormAssetAmountInput = memo<Props>(
+type FormAssetAmountInputComponent = <TAsset extends AssetInterface = TokenInterface>(
+  props: Props<TAsset>
+) => React.JSX.Element;
+
+export const FormAssetAmountInput = memo<Props<AssetInterface>>(
   ({
     name,
     variant,
@@ -46,12 +52,12 @@ export const FormAssetAmountInput = memo<Props>(
     maxButtonTestID
   }) => {
     const formikContext = useFormikContext();
-    const [field, meta, helpers] = useField<AssetAmountInterface>(name);
+    const [field, meta, helpers] = useField<AssetAmountInterface<AssetInterface>>(name);
     const isError = hasError(meta);
     const error = meta.touched ? meta.error : undefined;
     const errorMessage = typeof error === 'string' ? error : error?.[Object.keys(error)[0]];
 
-    const handleValueChange: SyncFn<AssetAmountInterface, void> = useCallback(
+    const handleValueChange: SyncFn<AssetAmountInterface<AssetInterface>, void> = useCallback(
       newValue => {
         onValueChange?.(newValue);
         formikContext.setFieldValue(name, newValue);
@@ -61,7 +67,7 @@ export const FormAssetAmountInput = memo<Props>(
 
     const handleBlur = useCallback(() => formikContext.setFieldTouched(name, true), [formikContext.setFieldTouched]);
 
-    const slug = useMemo(() => getTokenSlug(field.value.asset), [field.value.asset]);
+    const slug = useMemo(() => getAssetStoreKey(field.value.asset), [field.value.asset]);
     const balanceStored = useAssetBalanceSelector(slug);
     const exchangeRateStored = useAssetExchangeRate(slug);
 
@@ -126,4 +132,4 @@ export const FormAssetAmountInput = memo<Props>(
       </>
     );
   }
-);
+) as FormAssetAmountInputComponent;

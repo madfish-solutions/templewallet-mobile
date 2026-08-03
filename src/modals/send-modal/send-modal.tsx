@@ -41,6 +41,8 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_SHIELDED_ANALYTICS_NAME, TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
+import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { isTezosSendAsset } from 'src/types/send-asset';
 import { AnalyticsPageName } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
@@ -90,7 +92,7 @@ export const SendModal: FC = () => {
   const inputInitialValue = useMemo(
     () =>
       assets.find(item => item.assetKey === initialAssetKey) ??
-      assets.find(item => item.chainKind === TempleChainKind.Tezos && tokenEqualityFn(item, initialToken)) ??
+      assets.find(item => isTezosSendAsset(item) && tokenEqualityFn(item, initialToken)) ??
       assets.find(item => item.assetSlug === TEZ_TOKEN_SLUG) ??
       assets[0],
     [assets, initialAssetKey, initialToken]
@@ -139,7 +141,9 @@ export const SendModal: FC = () => {
         (!normalizedSearch ||
           asset.name.toLowerCase().includes(normalizedSearch) ||
           asset.symbol.toLowerCase().includes(normalizedSearch) ||
-          asset.contractAddress?.toLowerCase().includes(normalizedSearch))
+          (asset.chainKind === TempleChainKind.EVM &&
+            asset.sendStandard !== EvmAssetStandardEnum.NATIVE &&
+            asset.contractAddress.toLowerCase().includes(normalizedSearch)))
     );
   }, [assetSearch, assets, networkFilter]);
 
@@ -243,7 +247,7 @@ export const SendModal: FC = () => {
             searchPlaceholder="Search by name or address"
             dropdownListHeader={tokenFilterHeader}
             setSearchValue={setAssetSearch}
-            onValueChange={value => handleAssetAmountChange(value as SendAssetAmount)}
+            onValueChange={handleAssetAmountChange}
             testID={SendModalSelectors.assetInput}
             tokenTestID={SendModalSelectors.tokenChange}
             maxButtonTestID={SendModalSelectors.maxButton}

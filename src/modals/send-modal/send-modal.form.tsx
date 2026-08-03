@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import { isAddress as isEvmAddress } from 'viem';
-import { AnyObjectSchema, boolean, object, SchemaOf, string, StringSchema, ValidationError } from 'yup';
+import { AnyObjectSchema, boolean, mixed, object, SchemaOf, string, StringSchema, ValidationError } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { SAPLING_MEMO_SIZE } from 'src/config/sapling';
@@ -9,13 +9,12 @@ import { bigNumberSchema } from 'src/form/validation/big-number';
 import { Contact } from 'src/interfaces/contact.interface';
 import { TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { SendAsset } from 'src/types/send-asset';
 import { isTezosDomainNameValid } from 'src/utils/dns.utils';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 import { isValidAddress } from 'src/utils/tezos.util';
 
-import { SendAsset } from './send-asset.types';
-
-export interface SendAssetAmount extends AssetAmountInterface {
+export interface SendAssetAmount extends AssetAmountInterface<SendAsset> {
   asset: SendAsset;
 }
 
@@ -29,13 +28,13 @@ export interface SendModalFormValues {
 
 const assetAmountValidation = object()
   .shape({
-    asset: object().required(),
+    asset: mixed<SendAsset>().required(),
     amount: bigNumberSchema()
       .required('Required')
       .test('is-positive', 'Should be greater than 0', value => value instanceof BigNumber && value.isGreaterThan(0))
   })
   .test('max-amount', (value, context) => {
-    const asset = value?.asset as unknown as SendAsset | undefined;
+    const asset = value?.asset;
     const amount = value?.amount;
 
     if (!asset || !(amount instanceof BigNumber)) {
@@ -89,7 +88,7 @@ const recipientAddressValidation = string()
   });
 
 export const sendModalValidationSchema = object().shape({
-  assetAmount: assetAmountValidation as SchemaOf<SendAssetAmount>,
+  assetAmount: assetAmountValidation,
   receiverPublicKeyHash: string()
     .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
       value ? schema.ensure() : recipientAddressValidation

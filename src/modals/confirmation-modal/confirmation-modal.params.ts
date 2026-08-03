@@ -3,7 +3,7 @@ import { ParamsWithKind } from '@taquito/taquito';
 
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { SendAsset } from 'src/modals/send-modal/send-asset.types';
+import { EvmSendAsset } from 'src/types/send-asset';
 
 export type ConfirmationModalParams =
   | InternalOperationsConfirmationModalParams
@@ -36,7 +36,7 @@ interface RebalanceConfirmationModalParams {
 export interface EvmTransferConfirmationModalParams {
   type: ConfirmationTypeEnum.EvmTransfer;
   accountId: string;
-  asset: SendAsset;
+  asset: EvmSendAsset;
   receiverAddress: HexString;
   atomicAmount: string;
 }

@@ -5,18 +5,26 @@ import { Text, TextInput, View } from 'react-native';
 import { DEFAULT_EXPECTED_GAS_EXPENSE, emptyFn } from 'src/config/general';
 import { useNumericInput } from 'src/hooks/use-numeric-input.hook';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
+import { AssetInterface } from 'src/interfaces/asset.interface';
 import { useFiatCurrencySelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountTezosBalance, useTokenBalanceGetter } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { emptyTezosLikeToken, TokenInterface } from 'src/token/interfaces/token.interface';
-import { getTokenSlug, isShieldedTez, toTokenSlug } from 'src/token/utils/token.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import {
+  assetsEqualityFn,
+  getAssetKey,
+  getAssetSlug,
+  getAssetStoreKey,
+  isCollectibleAsset,
+  isShieldedAsset
+} from 'src/utils/asset.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
-import { isCollectible, mutezToTz, tzToMutez } from 'src/utils/tezos.util';
+import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 import { AssetValueText } from '../asset-value-text/asset-value-text';
 import { Divider } from '../divider/divider';
@@ -27,7 +35,6 @@ import { Label } from '../label/label';
 import { PatchedTextInput } from '../patched-text-input';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
 import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
-import { tokenEqualityFn } from '../token-dropdown/token-equality-fn';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { AssetAmountInputProps, AssetAmountInputStylesConfig } from './asset-amount-input.props';
@@ -36,8 +43,8 @@ import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.u
 import { assetAmountInputVariantConfigs } from './asset-amount-input.variants';
 import { AssetAmountInputSelectors } from './selectors';
 
-export interface AssetAmountInterface {
-  asset: TokenInterface;
+export interface AssetAmountInterface<TAsset extends AssetInterface = TokenInterface> {
+  asset: TAsset;
   amount?: BigNumber;
 }
 
@@ -46,8 +53,8 @@ const DEFAULT_BALANCE = '0';
 const TOKEN_INPUT_TYPE_INDEX = 0;
 const defaultAssetAmountInputStylesConfig: AssetAmountInputStylesConfig = {};
 
-const assetOptionTestIdPropertiesFn = (asset: TokenInterface) => ({
-  token: isShieldedTez(asset) ? 'Shielded TEZ' : asset.symbol
+const assetOptionTestIdPropertiesFn = (asset: AssetInterface) => ({
+  token: isShieldedAsset(asset) ? 'Shielded TEZ' : asset.symbol
 });
 
 const getDefinedAmount = (
@@ -62,7 +69,11 @@ const getDefinedAmount = (
       : dollarToTokenAmount(amount, decimals, exchangeRate)
     : undefined;
 
-export const AssetAmountInput = memo<AssetAmountInputProps>(
+type AssetAmountInputComponent = <TAsset extends AssetInterface = TokenInterface>(
+  props: AssetAmountInputProps<TAsset>
+) => React.JSX.Element;
+
+export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
   ({
     variant = 'v1',
     value,
@@ -115,10 +126,10 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
       [configAmountInputStyles]
     );
 
-    const slug = useMemo(() => getTokenSlug(value.asset), [value.asset]);
+    const slug = useMemo(() => getAssetStoreKey(value.asset), [value.asset]);
     const token = useMemo(
-      () => assetsList.find(asset => getTokenSlug(asset) === slug) ?? value.asset,
-      [assetsList, slug, value.asset]
+      () => assetsList.find(asset => getAssetKey(asset) === getAssetKey(value.asset)) ?? value.asset,
+      [assetsList, value.asset]
     );
 
     const balance = useMemo(() => {
@@ -126,7 +137,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
         return balanceFromProps;
       }
 
-      if (tokenEqualityFn(value.asset, emptyTezosLikeToken)) {
+      if (assetsEqualityFn(value.asset, emptyTezosLikeToken)) {
         return DEFAULT_BALANCE;
       }
 
@@ -134,7 +145,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     }, [getTokenBalance, slug, tezosBalance, value.asset, balanceFromProps]);
 
     const amountInputRef = useRef<TextInput>(null);
-    const renderTokenListItem = useCallback<DropdownListItemComponent<TokenInterface>>(
+    const renderTokenListItem = useCallback<DropdownListItemComponent<AssetInterface>>(
       ({ item }) => <TokenDropdownItem token={item} variant={variant} />,
       [variant]
     );
@@ -161,7 +172,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
             if (isDefined(inputValueRef.current)) {
               const currentTokenValue = dollarToTokenAmount(inputValueRef.current, value.asset.decimals, exchangeRate);
 
-              if (currentTokenValue.isEqualTo(value.amount) || isCollectible(value.asset)) {
+              if (currentTokenValue.isEqualTo(value.amount) || isCollectibleAsset(value.asset)) {
                 return inputValueRef.current;
               }
             }
@@ -178,7 +189,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
       return newNumericInputValue;
     }, [value.amount, isTokenInputType, value.asset, exchangeRate]);
 
-    const renderTokenValue = useCallback<DropdownValueComponent<TokenInterface>>(
+    const renderTokenValue = useCallback<DropdownValueComponent<AssetInterface>>(
       ({ value: tokenValue }) => (
         <TokenDropdownItem
           token={tokenValue}
@@ -232,13 +243,13 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
     };
 
     const handleTokenChange = useCallback(
-      (newAsset?: TokenInterface) => {
+      (newAsset?: AssetInterface) => {
         const decimals = newAsset?.decimals ?? 0;
         const asset = newAsset ?? emptyTezosLikeToken;
-        const newExchangeRate = newAsset?.exchangeRate ?? getTokenExchangeRate(getTokenSlug(asset));
+        const newExchangeRate = newAsset?.exchangeRate ?? getTokenExchangeRate(getAssetStoreKey(asset));
 
         trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, {
-          token: isShieldedTez(asset) ? 'Shielded TEZ' : asset.symbol
+          token: isShieldedAsset(asset) ? 'Shielded TEZ' : asset.symbol
         });
 
         onValueChange({
@@ -251,8 +262,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
 
     const handleMaxButtonPress = useCallback(() => {
       if (isDefined(token)) {
-        const { address, id, balance } = token;
-        const isGasToken = toTokenSlug(address, id) === TEZ_TOKEN_SLUG;
+        const { balance } = token;
+        const isGasToken = getAssetSlug(token) === TEZ_TOKEN_SLUG;
         const isGasTokenMaxAmountGuard = isGasToken ? tzToMutez(new BigNumber(expectedGasExpense), token.decimals) : 0;
         const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
@@ -330,12 +341,12 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
               searchPlaceholder={searchPlaceholder}
               isLoading={isLoading}
               setSearchValue={setSearchValue}
-              equalityFn={tokenEqualityFn}
+              equalityFn={assetsEqualityFn}
               renderValue={renderTokenValue}
               renderListItem={renderTokenListItem}
               listHeader={dropdownListHeader}
               appearance={variant}
-              keyExtractor={getTokenSlug}
+              keyExtractor={getAssetKey}
               onValueChange={handleTokenChange}
               testID={testID}
               itemTestIDPropertiesFn={assetOptionTestIdPropertiesFn}
@@ -403,4 +414,4 @@ export const AssetAmountInput = memo<AssetAmountInputProps>(
       </>
     );
   }
-);
+) as AssetAmountInputComponent;

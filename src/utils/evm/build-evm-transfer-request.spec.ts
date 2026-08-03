@@ -1,7 +1,6 @@
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { VisibilityEnum } from 'src/enums/visibility.enum';
-import { SendAsset } from 'src/modals/send-modal/send-asset.types';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { EvmNativeSendAsset, EvmSendAsset } from 'src/types/send-asset';
 
 import { buildEvmTransferRequest } from './build-evm-transfer-request';
 
@@ -9,23 +8,28 @@ const sender = '0x1111111111111111111111111111111111111111';
 const recipient = '0x2222222222222222222222222222222222222222';
 const contractAddress = '0x3333333333333333333333333333333333333333';
 
-const makeAsset = (sendStandard: EvmAssetStandardEnum): SendAsset => ({
-  address: `evm:42793:${sendStandard}`,
-  id: 0,
-  name: sendStandard,
-  symbol: sendStandard,
-  decimals: 18,
-  balance: '1000',
-  visibility: VisibilityEnum.Visible,
-  assetKey: `evm:42793:${sendStandard}`,
-  assetSlug: sendStandard,
-  chainKind: TempleChainKind.EVM,
-  chainId: 42793,
-  networkName: 'Etherlink',
-  sendStandard,
-  contractAddress,
-  tokenId: '7'
-});
+const makeAsset = (sendStandard: EvmAssetStandardEnum): EvmSendAsset => {
+  const base: Omit<EvmNativeSendAsset, 'assetSlug' | 'sendStandard'> = {
+    name: sendStandard,
+    symbol: sendStandard,
+    decimals: 18,
+    balance: '1000',
+    assetKey: `evm:42793:${sendStandard}`,
+    chainKind: TempleChainKind.EVM,
+    chainId: 42793,
+    networkName: 'Etherlink'
+  };
+
+  switch (sendStandard) {
+    case EvmAssetStandardEnum.NATIVE:
+      return { ...base, assetSlug: 'eth', sendStandard };
+    case EvmAssetStandardEnum.ERC20:
+      return { ...base, assetSlug: sendStandard, sendStandard, contractAddress };
+    case EvmAssetStandardEnum.ERC721:
+    case EvmAssetStandardEnum.ERC1155:
+      return { ...base, assetSlug: sendStandard, sendStandard, contractAddress, tokenId: '7' };
+  }
+};
 
 describe('buildEvmTransferRequest', () => {
   it('builds a native transfer', () => {

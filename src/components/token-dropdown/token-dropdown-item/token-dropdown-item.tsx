@@ -3,9 +3,10 @@ import { Text, View } from 'react-native';
 
 import { TokenIconWithNetwork } from 'src/components/token-icon-with-network/token-icon-with-network';
 import { TruncatedText } from 'src/components/truncated-text';
-import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { AssetInterface } from 'src/interfaces/asset.interface';
 import { formatSize } from 'src/styles/format-size';
-import { emptyToken, TokenInterface } from 'src/token/interfaces/token.interface';
+import { emptyToken } from 'src/token/interfaces/token.interface';
+import { assetsEqualityFn } from 'src/utils/asset.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -17,14 +18,13 @@ import { IconNameEnum } from '../../icon/icon-name.enum';
 import { IconV2 } from '../../icon-v2';
 import { IconNameV2Enum } from '../../icon-v2/icon-name.enum';
 import { TokenIcon } from '../../token-icon/token-icon';
-import { tokenEqualityFn } from '../token-equality-fn';
 
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 import { tokenDropdownItemVariantConfigs } from './token-dropdown-item.variants';
 import type { TokenDropdownItemVariant } from './token-dropdown-item.variants';
 
 interface Props {
-  token?: TokenInterface;
+  token?: AssetInterface;
   actionIconName?: IconNameEnum;
   actionIconV2Name?: IconNameV2Enum;
   isShowBalance?: boolean;
@@ -49,8 +49,8 @@ export const TokenDropdownItem: FC<Props> = ({
     size: iconSize,
     visualSize: iconVisualSize
   } = isShowBalance ? listIconConfig : selectedIconConfig;
-  const chainKind = (token as TokenInterface & { chainKind?: TempleChainKind }).chainKind;
-  const networkName = (token as TokenInterface & { networkName?: string }).networkName;
+  const chainKind = token.chainKind;
+  const networkName = token.networkName;
   const hasActionIcon = isDefined(actionIconName) || isDefined(actionIconV2Name);
   const tokenNameTextStyle = useMemo(
     () => [styles.name, isCompact && styles.tokenSelectorName, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
@@ -61,7 +61,7 @@ export const TokenDropdownItem: FC<Props> = ({
     [iconSize, styles]
   );
 
-  if (tokenEqualityFn(token, emptyToken)) {
+  if (assetsEqualityFn(token, emptyToken)) {
     return (
       <View style={styles.container}>
         <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconVisualSize} />

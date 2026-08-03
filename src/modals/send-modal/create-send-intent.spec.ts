@@ -4,15 +4,15 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { EvmNativeSendAsset, TezosSendAsset } from 'src/types/send-asset';
 
 import { createSendIntent } from './create-send-intent';
-import { SendAsset } from './send-asset.types';
 
 const EVM_ADDRESS = '0x2222222222222222222222222222222222222222';
 const TEZOS_ADDRESS = 'tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb';
 const SAPLING_ADDRESS = 'zet12Q2EgWK7Xc322r9r6JVG5bLgLF9GJWS6gJpDW6Lh4nrgMPTFS6JEKVbAuqjicPEuE';
 
-const makeAsset = (overrides: Partial<SendAsset> = {}): SendAsset => ({
+const makeTezosAsset = (overrides: Partial<TezosSendAsset> = {}): TezosSendAsset => ({
   address: 'tez',
   id: 0,
   name: 'Tezos',
@@ -29,10 +29,23 @@ const makeAsset = (overrides: Partial<SendAsset> = {}): SendAsset => ({
   ...overrides
 });
 
+const makeEvmAsset = (): EvmNativeSendAsset => ({
+  name: 'Etherlink XTZ',
+  symbol: 'XTZ',
+  decimals: 18,
+  balance: '1000000',
+  assetKey: 'evm:42793:eth',
+  assetSlug: 'eth',
+  chainKind: TempleChainKind.EVM,
+  chainId: 42793,
+  networkName: 'Etherlink',
+  sendStandard: EvmAssetStandardEnum.NATIVE
+});
+
 const makeParams = (overrides: Partial<Parameters<typeof createSendIntent>[0]> = {}) => ({
   accountId: 'account-id',
   amount: new BigNumber(100),
-  asset: makeAsset(),
+  asset: makeTezosAsset(),
   evmAddress: EVM_ADDRESS,
   isOnRampEnabled: true,
   memo: '',
@@ -44,15 +57,7 @@ const makeParams = (overrides: Partial<Parameters<typeof createSendIntent>[0]> =
 
 describe('createSendIntent', () => {
   it('creates an EVM transfer intent', () => {
-    const asset = makeAsset({
-      address: 'evm:42793:eth',
-      assetKey: 'evm:42793:eth',
-      assetSlug: 'eth',
-      chainKind: TempleChainKind.EVM,
-      chainId: 42793,
-      networkName: 'Etherlink',
-      sendStandard: EvmAssetStandardEnum.NATIVE
-    });
+    const asset = makeEvmAsset();
 
     expect(createSendIntent(makeParams({ asset, receiverAddress: EVM_ADDRESS }))).toEqual({
       success: true,
@@ -67,7 +72,7 @@ describe('createSendIntent', () => {
   });
 
   it('rejects an EVM transfer without an EVM account', () => {
-    const asset = makeAsset({ chainKind: TempleChainKind.EVM });
+    const asset = makeEvmAsset();
 
     expect(createSendIntent(makeParams({ asset, evmAddress: undefined }))).toEqual({
       success: false,
@@ -89,7 +94,7 @@ describe('createSendIntent', () => {
     expect(
       createSendIntent(
         makeParams({
-          asset: makeAsset({ assetSlug: TEZ_SHIELDED_TOKEN_SLUG, sendStandard: 'shielded-tez' }),
+          asset: makeTezosAsset({ assetSlug: TEZ_SHIELDED_TOKEN_SLUG, sendStandard: 'shielded-tez' }),
           memo: 'memo',
           receiverAddress
         })
@@ -127,7 +132,7 @@ describe('createSendIntent', () => {
   });
 
   it('creates a regular transfer when on-ramp is disabled', () => {
-    const asset = makeAsset();
+    const asset = makeTezosAsset();
 
     expect(createSendIntent(makeParams({ amount: new BigNumber(1001), asset, isOnRampEnabled: false }))).toEqual({
       success: true,
