@@ -18,6 +18,7 @@ import { useConfirmationLayoutStyles } from './confirmation-layout.styles';
 interface ConfirmationAction extends TestIdProps {
   disabled?: boolean;
   onPress: EmptyFn;
+  title?: string;
 }
 
 interface Props {
@@ -85,7 +86,7 @@ export const ConfirmationLayout: FC<Props> = ({
 
       <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary title="Back" {...backAction} />
-        <ButtonLargePrimary title="Confirm" {...confirmAction} />
+        <ButtonLargePrimary {...confirmAction} title={confirmAction.title ?? 'Confirm'} />
       </ModalButtonsFloatingContainer>
     </>
   );

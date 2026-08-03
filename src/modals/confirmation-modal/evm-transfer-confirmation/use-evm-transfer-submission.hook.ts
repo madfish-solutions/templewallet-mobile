@@ -1,40 +1,43 @@
 import { useCallback, useState } from 'react';
 import { firstValueFrom } from 'rxjs';
 
-import { useEtherlinkPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
+import { useEvmPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { Shelter } from 'src/shelter/shelter';
 import { dispatch as storeDispatch } from 'src/store';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { navigateAction } from 'src/store/root-state.actions';
-import { showErrorToastByError } from 'src/toast/error-toast.utils';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { EvmTransferRequest } from 'src/utils/evm/build-evm-transfer-request';
+import { EvmFees } from 'src/utils/evm/estimate-evm-transaction';
 import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.utils';
+import { EvmTransactionError, normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import { getViemWalletClient } from 'src/utils/rpc/evm-client.utils';
-import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 interface Props {
+  chainId: number;
   sourceAddress?: HexString;
   request?: EvmTransferRequest;
   gasLimit?: bigint;
-  gasPrice?: bigint;
+  fees?: EvmFees;
 }
 
-export const useEvmTransferSubmission = ({ sourceAddress, request, gasLimit, gasPrice }: Props) => {
+export const useEvmTransferSubmission = ({ chainId, sourceAddress, request, gasLimit, fees }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const chain = useEvmChain(ETHERLINK_MAINNET_CHAIN_ID);
-  const publicClient = useEtherlinkPublicClient();
-  const knownAssets = useEvmAccountChainAssetsSelector(sourceAddress, ETHERLINK_MAINNET_CHAIN_ID);
+  const [submissionError, setSubmissionError] = useState<EvmTransactionError>();
+  const chain = useEvmChain(chainId);
+  const publicClient = useEvmPublicClient(chainId);
+  const knownAssets = useEvmAccountChainAssetsSelector(sourceAddress, chainId);
 
   const submit = useCallback(async () => {
-    if (!sourceAddress || !chain || !request || !gasLimit || !gasPrice) {
+    if (!sourceAddress || !chain || !publicClient || !request || !gasLimit || !fees) {
       return;
     }
 
     setIsSubmitting(true);
+    setSubmissionError(undefined);
 
     try {
       const signer = await firstValueFrom(Shelter.getEvmAccount$(sourceAddress));
@@ -43,14 +46,14 @@ export const useEvmTransferSubmission = ({ sourceAddress, request, gasLimit, gas
         ...request,
         account: signer,
         gas: gasLimit,
-        gasPrice
+        ...fees
       });
 
       showSuccessToast({
         operationHash: hash,
-        operationUrl: `https://explorer.etherlink.com/tx/${hash}`,
+        operationUrl: `${chain.activeBlockExplorer.url}/tx/${hash}`,
         title: 'Success!',
-        description: 'Etherlink transaction submitted'
+        description: `${chain.name} transaction submitted`
       });
       storeDispatch(navigateAction({ screen: StacksEnum.MainStack }));
 
@@ -65,10 +68,12 @@ export const useEvmTransferSubmission = ({ sourceAddress, request, gasLimit, gas
         )
         .catch(console.error);
     } catch (error) {
-      showErrorToastByError(error);
+      setSubmissionError(normalizeEvmTransactionError(error));
       setIsSubmitting(false);
     }
-  }, [chain, gasLimit, gasPrice, knownAssets, publicClient, request, sourceAddress]);
+  }, [chain, fees, gasLimit, knownAssets, publicClient, request, sourceAddress]);
 
-  return { isSubmitting, submit };
+  const resetSubmissionError = useCallback(() => setSubmissionError(undefined), []);
+
+  return { isSubmitting, resetSubmissionError, submissionError, submit };
 };

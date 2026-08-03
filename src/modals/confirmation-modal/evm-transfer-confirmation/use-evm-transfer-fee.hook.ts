@@ -1,18 +1,25 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { formatGwei, parseGwei } from 'viem';
 
-import { useEtherlinkPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
+import { useEvmPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
+import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
-import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
 import { EvmSendAsset } from 'src/types/send-asset';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { EvmTransferRequest } from 'src/utils/evm/build-evm-transfer-request';
-import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
+import { EvmEstimation, estimateEvmTransaction } from 'src/utils/evm/estimate-evm-transaction';
+import { EvmTransactionError, normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 
-import { formatNetworkFee, getGasPriceForNetworkFee, getNetworkFeeSliderValues } from './evm-transfer-fee.utils';
+import {
+  formatNetworkFee,
+  getEvmFeeOptions,
+  getEvmFeesForGasPrice,
+  getGasPriceForNetworkFee,
+  getNetworkFeeSliderValues
+} from './evm-transfer-fee.utils';
 
 interface Props {
   sourceAddress?: HexString;
@@ -21,51 +28,53 @@ interface Props {
   atomicAmount: string;
 }
 
+type EstimationState =
+  | { status: 'loading' }
+  | { status: 'success'; data: EvmEstimation }
+  | { status: 'error'; error: EvmTransactionError };
+
 export const useEvmTransferFee = ({ sourceAddress, request, asset, atomicAmount }: Props) => {
-  const publicClient = useEtherlinkPublicClient();
-  const balances = useEvmAccountChainBalancesSelector(sourceAddress, ETHERLINK_MAINNET_CHAIN_ID);
-  const evmExchangeRates = useEvmChainExchangeRatesSelector(ETHERLINK_MAINNET_CHAIN_ID);
+  const chain = useEvmChain(asset.chainId);
+  const publicClient = useEvmPublicClient(asset.chainId);
+  const balances = useEvmAccountChainBalancesSelector(sourceAddress, asset.chainId);
+  const evmExchangeRates = useEvmChainExchangeRatesSelector(asset.chainId);
   const fiatToUsdRate = useFiatToUsdRateSelector();
 
-  const [gasLimit, setGasLimit] = useState<bigint>();
-  const [estimatedGasPrice, setEstimatedGasPrice] = useState<bigint>();
+  const [estimationState, setEstimationState] = useState<EstimationState>({ status: 'loading' });
   const [isDetailedInputVisible, setIsDetailedInputVisible] = useState(false);
   const [gasPriceInput, setGasPriceInput] = useState('');
-  const [isEstimating, setIsEstimating] = useState(true);
-  const [estimationError, setEstimationError] = useState<string>();
+  const [retryIndex, setRetryIndex] = useState(0);
+  const estimation = estimationState.status === 'success' ? estimationState.data : undefined;
+  const estimationError = estimationState.status === 'error' ? estimationState.error : undefined;
 
   useEffect(() => {
     let isActive = true;
 
     const estimate = async () => {
-      if (!sourceAddress || !request) {
-        setEstimationError('Etherlink source account is unavailable');
-        setIsEstimating(false);
+      if (!sourceAddress || !request || !publicClient) {
+        setEstimationState({
+          status: 'error',
+          error: normalizeEvmTransactionError(new Error('EVM account or network is unavailable'))
+        });
 
         return;
       }
 
-      setIsEstimating(true);
-      setEstimationError(undefined);
+      setEstimationState({ status: 'loading' });
+      setGasPriceInput('');
 
       try {
-        const [nextGasLimit, nextGasPrice] = await Promise.all([
-          publicClient.estimateGas({ account: sourceAddress, ...request }),
-          publicClient.getGasPrice()
-        ]);
+        const nextEstimation = await estimateEvmTransaction(publicClient, sourceAddress, request);
 
         if (isActive) {
-          setGasLimit(nextGasLimit);
-          setEstimatedGasPrice(nextGasPrice);
-          setGasPriceInput(formatGwei(nextGasPrice));
+          setEstimationState({ status: 'success', data: nextEstimation });
+          setGasPriceInput(
+            formatGwei(nextEstimation.type === 'legacy' ? nextEstimation.gasPrice : nextEstimation.maxFeePerGas)
+          );
         }
       } catch (error) {
         if (isActive) {
-          setEstimationError(error instanceof Error ? error.message : 'Unable to estimate Etherlink fee');
-        }
-      } finally {
-        if (isActive) {
-          setIsEstimating(false);
+          setEstimationState({ status: 'error', error: normalizeEvmTransactionError(error) });
         }
       }
     };
@@ -75,7 +84,7 @@ export const useEvmTransferFee = ({ sourceAddress, request, asset, atomicAmount 
     return () => {
       isActive = false;
     };
-  }, [publicClient, request, sourceAddress]);
+  }, [publicClient, request, retryIndex, sourceAddress]);
 
   const selectedGasPrice = useMemo(() => {
     try {
@@ -87,22 +96,44 @@ export const useEvmTransferFee = ({ sourceAddress, request, asset, atomicAmount 
     }
   }, [gasPriceInput]);
 
-  const fee = gasLimit && selectedGasPrice ? gasLimit * selectedGasPrice : undefined;
-  const estimatedFee = gasLimit && estimatedGasPrice ? gasLimit * estimatedGasPrice : undefined;
-  const slider = useMemo(() => getNetworkFeeSliderValues(estimatedFee, fee), [estimatedFee, fee]);
+  const feeOptions = useMemo(() => (estimation ? getEvmFeeOptions(estimation) : undefined), [estimation]);
+  const selectedFees = useMemo(() => {
+    if (!estimation || !feeOptions || !selectedGasPrice) {
+      return undefined;
+    }
+
+    const minimumGasPrice = feeOptions.slow.type === 'legacy' ? feeOptions.slow.gasPrice : feeOptions.slow.maxFeePerGas;
+    if (selectedGasPrice < minimumGasPrice) return undefined;
+
+    return getEvmFeesForGasPrice(selectedGasPrice, estimation);
+  }, [estimation, feeOptions, selectedGasPrice]);
+  const fee = estimation && selectedGasPrice ? estimation.gas * selectedGasPrice : undefined;
+  const gasPriceError = useMemo(() => {
+    if (!gasPriceInput || !estimation || !feeOptions) return undefined;
+    if (!selectedGasPrice) return 'Enter a valid gas price';
+
+    const minimumGasPrice = feeOptions.slow.type === 'legacy' ? feeOptions.slow.gasPrice : feeOptions.slow.maxFeePerGas;
+    if (selectedGasPrice < minimumGasPrice) return 'Gas price is too low';
+
+    return undefined;
+  }, [estimation, feeOptions, gasPriceInput, selectedGasPrice]);
+  const slider = useMemo(
+    () => getNetworkFeeSliderValues(feeOptions?.slow.fee, feeOptions?.fast.fee, fee),
+    [fee, feeOptions]
+  );
   const feeAsset = useMemo(
     () => ({
       ...asset,
-      name: ETHERLINK_MAINNET_CHAIN_SPECS.currency.name,
-      symbol: ETHERLINK_MAINNET_CHAIN_SPECS.currency.symbol,
-      decimals: ETHERLINK_MAINNET_CHAIN_SPECS.currency.decimals,
+      name: chain?.currency.name ?? asset.networkName,
+      symbol: chain?.currency.symbol ?? asset.symbol,
+      decimals: chain?.currency.decimals ?? asset.decimals,
       balance: fee?.toString() ?? '0',
       exchangeRate:
         evmExchangeRates[EVM_TOKEN_SLUG] !== undefined && fiatToUsdRate !== undefined
           ? evmExchangeRates[EVM_TOKEN_SLUG] * fiatToUsdRate
           : undefined
     }),
-    [asset, evmExchangeRates, fee, fiatToUsdRate]
+    [asset, chain, evmExchangeRates, fee, fiatToUsdRate]
   );
   const feeFiatValue = useMemo(
     () => getDollarValue(feeAsset.balance, feeAsset.decimals, feeAsset.exchangeRate),
@@ -116,13 +147,17 @@ export const useEvmTransferFee = ({ sourceAddress, request, asset, atomicAmount 
 
   const handleSliderValueChange = useCallback(
     (value: number) => {
-      if (gasLimit) {
-        setGasPriceInput(formatGwei(getGasPriceForNetworkFee(value, gasLimit)));
+      if (estimation) {
+        setGasPriceInput(formatGwei(getGasPriceForNetworkFee(value, estimation.gas)));
       }
     },
-    [gasLimit]
+    [estimation]
   );
   const toggleDetailedInput = useCallback(() => setIsDetailedInputVisible(value => !value), []);
+  const retry = useCallback(() => {
+    setEstimationState({ status: 'loading' });
+    setRetryIndex(value => value + 1);
+  }, []);
 
   return {
     estimationError,
@@ -130,15 +165,17 @@ export const useEvmTransferFee = ({ sourceAddress, request, asset, atomicAmount 
     feeAsset,
     feeFiatValue,
     formattedFee: fee ? formatNetworkFee(fee) : undefined,
-    gasLimit,
+    gasLimit: estimation?.gas,
+    gasPriceError,
     gasPriceInput,
     handleGasPriceInputChange: setGasPriceInput,
     handleSliderValueChange,
     hasInsufficientNativeBalance,
     isDetailedInputVisible,
-    isEstimating,
-    isSliderAvailable: estimatedFee !== undefined && fee !== undefined,
-    selectedGasPrice,
+    isEstimating: estimationState.status === 'loading',
+    isSliderAvailable: feeOptions !== undefined && fee !== undefined,
+    retry,
+    selectedFees,
     slider,
     toggleDetailedInput
   };

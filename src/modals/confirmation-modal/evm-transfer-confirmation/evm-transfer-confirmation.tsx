@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
@@ -18,6 +18,7 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { showErrorToast } from 'src/toast/error-toast.utils';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
 import { buildEvmTransferRequest } from 'src/utils/evm/build-evm-transfer-request';
 
@@ -27,11 +28,12 @@ import { useFeeFormInputStyles } from '../operations-confirmation/fee-form-input
 import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
 
 import { useEvmTransferConfirmationStyles } from './evm-transfer-confirmation.styles';
-import { NETWORK_FEE_STEP } from './evm-transfer-fee.utils';
 import { useEvmTransferFee } from './use-evm-transfer-fee.hook';
 import { useEvmTransferSubmission } from './use-evm-transfer-submission.hook';
 
 type Props = Omit<EvmTransferConfirmationModalParams, 'type'>;
+
+const renderHeaderTitle = () => <HeaderTitle title="Confirm Send" />;
 
 export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverAddress, atomicAmount }) => {
   const { goBack } = useNavigation();
@@ -43,21 +45,36 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
     [asset, atomicAmount, receiverAddress, sourceAddress]
   );
   const feeState = useEvmTransferFee({ sourceAddress, request, asset, atomicAmount });
-  const { isSubmitting, submit } = useEvmTransferSubmission({
+  const { isSubmitting, resetSubmissionError, submissionError, submit } = useEvmTransferSubmission({
+    chainId: asset.chainId,
     sourceAddress,
     request,
     gasLimit: feeState.gasLimit,
-    gasPrice: feeState.selectedGasPrice
+    fees: feeState.selectedFees
   });
+  const transactionError = submissionError ?? feeState.estimationError;
+  const retryEstimation = feeState.retry;
 
-  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Send" /> }, []);
+  useEffect(() => {
+    if (transactionError) {
+      showErrorToast({ title: 'EVM transaction error', description: transactionError.message });
+    }
+  }, [transactionError]);
 
-  const isConfirmDisabled =
-    feeState.isEstimating ||
-    isSubmitting ||
-    Boolean(feeState.estimationError) ||
-    !feeState.selectedGasPrice ||
-    feeState.hasInsufficientNativeBalance;
+  const retry = useCallback(() => {
+    resetSubmissionError();
+    retryEstimation();
+  }, [resetSubmissionError, retryEstimation]);
+
+  useNavigationSetOptions({ headerTitle: renderHeaderTitle }, []);
+
+  const isConfirmDisabled = transactionError
+    ? feeState.isEstimating || isSubmitting
+    : feeState.isEstimating ||
+      isSubmitting ||
+      !feeState.gasLimit ||
+      !feeState.selectedFees ||
+      feeState.hasInsufficientNativeBalance;
 
   return (
     <ConfirmationLayout
@@ -66,7 +83,11 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
       preview={<EvmTransferPreview asset={asset} receiverAddress={receiverAddress} atomicAmount={atomicAmount} />}
       details={<EvmTransferFeeDetails feeState={feeState} />}
       backAction={{ disabled: isSubmitting, onPress: goBack }}
-      confirmAction={{ disabled: isConfirmDisabled, onPress: submit }}
+      confirmAction={{
+        disabled: isConfirmDisabled,
+        onPress: transactionError ? retry : submit,
+        title: transactionError ? 'Retry' : 'Confirm'
+      }}
     />
   );
 };
@@ -121,7 +142,11 @@ const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => 
         <View style={[feeFormStyles.infoContainerItem, styles.feeInfoItem]}>
           <Text style={feeFormStyles.infoTitle}>Network fee:</Text>
           <Text style={feeFormStyles.infoFeeAmount}>
-            {feeState.formattedFee ? `${feeState.formattedFee} XTZ` : 'Estimating...'}
+            {feeState.estimationError
+              ? 'Unavailable'
+              : feeState.formattedFee
+              ? `${feeState.formattedFee} XTZ`
+              : 'Estimating...'}
           </Text>
           {!!feeState.fee && feeState.feeAsset.exchangeRate !== undefined && (
             <Text style={feeFormStyles.infoFeeValue}>
@@ -140,7 +165,7 @@ const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => 
               value={feeState.slider.value}
               minimumValue={feeState.slider.minimumValue}
               maximumValue={feeState.slider.maximumValue}
-              step={NETWORK_FEE_STEP}
+              step={feeState.slider.step}
               onValueChange={feeState.handleSliderValueChange}
             />
           )}
@@ -149,6 +174,7 @@ const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => 
               <Label description="Gas price (GWEI):" />
               <StyledTextInput
                 value={feeState.gasPriceInput}
+                isError={Boolean(feeState.gasPriceError)}
                 keyboardType="decimal-pad"
                 placeholder="0"
                 onChangeText={feeState.handleGasPriceInputChange}
@@ -162,7 +188,7 @@ const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => 
         </TouchableOpacity>
       </View>
 
-      {!!feeState.estimationError && <Text style={styles.errorText}>{feeState.estimationError}</Text>}
+      {!!feeState.gasPriceError && <Text style={styles.errorText}>{feeState.gasPriceError}</Text>}
       {feeState.hasInsufficientNativeBalance && (
         <Text style={styles.errorText}>Insufficient XTZ balance for the amount and network fee</Text>
       )}
