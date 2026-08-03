@@ -1,9 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import { Text, View } from 'react-native';
 
+import { AccountCard } from 'src/components/account-card/account-card';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { AccountCard } from 'src/components/contact-dropdown/contact-form-section-dropdown';
 import { Divider } from 'src/components/divider/divider';
 import { LoadingPlaceholder } from 'src/components/loading-placeholder/loading-placeholder';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
