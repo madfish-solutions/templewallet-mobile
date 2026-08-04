@@ -49,6 +49,7 @@ import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 import { SendAssetAmount, SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
 import { SendModalSelectors } from './send-modal.selectors';
 import { useSendModalStyles } from './send-modal.styles';
+import { useEvmMaxAmount } from './use-evm-max-amount.hook';
 import { useSendAssets } from './use-send-assets.hook';
 import { useSendSubmission } from './use-send-submission.hook';
 
@@ -116,6 +117,11 @@ export const SendModal: FC = () => {
 
   const { isValid, submitCount, isSubmitting, values, setFieldError, setFieldValue, setValues, submitForm } = formik;
   const selectedAsset = values.assetAmount.asset;
+  const { maxAmount, isEstimating: isEvmMaxAmountEstimating } = useEvmMaxAmount({
+    asset: selectedAsset,
+    recipient: values.recipient,
+    sourceAddress: evmAddress
+  });
   const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const sourceAddress = isShieldedSend
     ? saplingAddress ?? undefined
@@ -227,6 +233,8 @@ export const SendModal: FC = () => {
           <FormAssetAmountInput
             variant="v2"
             maxButton
+            maxAmount={maxAmount}
+            maxButtonDisabled={isEvmMaxAmountEstimating}
             showErrorInFooter
             name="assetAmount"
             label="Asset"

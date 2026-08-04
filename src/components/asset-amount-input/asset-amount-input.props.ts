@@ -18,6 +18,9 @@ export interface AssetAmountInputStylesConfig {
 export interface AssetAmountInputProps<TAsset extends AssetInterface = TokenInterface> extends TestIdProps {
   variant?: AssetAmountInputVariant;
   expectedGasExpense?: BigNumber.Value;
+  /** Atomic amount to use when the MAX button is pressed. */
+  maxAmount?: BigNumber.Value;
+  maxButtonDisabled?: boolean;
   stylesConfig?: AssetAmountInputStylesConfig;
   maxButton?: boolean;
   value: AssetAmountInterface<TAsset>;

@@ -44,6 +44,8 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     maxButton = false,
     showErrorInFooter = false,
     expectedGasExpense,
+    maxAmount,
+    maxButtonDisabled,
     setSearchValue,
     onValueChange,
     testID,
@@ -121,6 +123,8 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
           maxButton={maxButton}
           setSearchValue={setSearchValue}
           expectedGasExpense={expectedGasExpense}
+          maxAmount={maxAmount}
+          maxButtonDisabled={maxButtonDisabled}
           onBlur={handleBlur}
           onValueChange={handleValueChange}
           testID={testID}

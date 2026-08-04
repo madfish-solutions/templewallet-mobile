@@ -94,6 +94,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
     selectionOptions = undefined,
     maxButton = false,
     expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
+    maxAmount,
+    maxButtonDisabled = false,
     stylesConfig = defaultAssetAmountInputStylesConfig,
     isShowNameForValue = true,
     isSingleAsset = false,
@@ -265,7 +267,9 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
         const { balance } = token;
         const isGasToken = getAssetSlug(token) === TEZ_TOKEN_SLUG;
         const isGasTokenMaxAmountGuard = isGasToken ? tzToMutez(new BigNumber(expectedGasExpense), token.decimals) : 0;
-        const amount = BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
+        const amount = isDefined(maxAmount)
+          ? BigNumber.maximum(new BigNumber(maxAmount), 0)
+          : BigNumber.maximum(new BigNumber(balance).minus(isGasTokenMaxAmountGuard), 0);
 
         amountInputRef.current?.blur();
         trackEvent(maxButtonTestID, AnalyticsEventCategory.ButtonPress);
@@ -275,7 +279,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
           asset: token
         });
       }
-    }, [token, onValueChange, amountInputRef, trackEvent, expectedGasExpense, maxButtonTestID]);
+    }, [token, onValueChange, amountInputRef, trackEvent, expectedGasExpense, maxAmount, maxButtonTestID]);
 
     useEffect(() => void (!hasExchangeRate && setInputTypeIndex(TOKEN_INPUT_TYPE_INDEX)), [hasExchangeRate]);
 
@@ -401,6 +405,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
                   <TouchableWithAnalytics
                     hitSlop={{ top: formatSize(8), left: formatSize(8), right: formatSize(8), bottom: formatSize(8) }}
                     onPress={handleMaxButtonPress}
+                    disabled={maxButtonDisabled}
                     testID={AssetAmountInputSelectors.maxButton}
                     testIDProperties={{ token: token?.symbol }}
                   >
