@@ -89,26 +89,20 @@ export const useSendSubmission = ({
   );
 
   const submit = useCallback(
-    async ({
-      assetAmount: { asset, amount },
-      receiverPublicKeyHash,
-      recipient,
-      transferBetweenOwnAccounts,
-      memo
-    }: SendModalFormValues) => {
+    async ({ assetAmount: { asset, amount }, recipient, transferBetweenOwnAccounts, memo }: SendModalFormValues) => {
       if (!isDefined(amount)) {
         return;
       }
 
-      let receiverAddress = transferBetweenOwnAccounts ? recipient?.address ?? '' : receiverPublicKeyHash;
+      let receiverAddress = recipient;
 
       if (
         asset.chainKind === TempleChainKind.Tezos &&
         !transferBetweenOwnAccounts &&
-        isTezosDomainNameValid(receiverPublicKeyHash)
+        isTezosDomainNameValid(recipient)
       ) {
         setIsLoading(true);
-        const resolvedAddress = await resolver.resolveNameToAddress(receiverPublicKeyHash).catch(() => null);
+        const resolvedAddress = await resolver.resolveNameToAddress(recipient).catch(() => null);
         setIsLoading(false);
 
         if (!resolvedAddress) {

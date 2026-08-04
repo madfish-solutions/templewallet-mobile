@@ -28,6 +28,7 @@ import TrashIcon from './assets/trash.svg';
 import UserAddIcon from './assets/user-add.svg';
 import XBigIcon from './assets/x-big.svg';
 import XRoundIcon from './assets/x-round.svg';
+import EarthIcon from './assets/earth.svg';
 import { IconNameV2Enum } from './icon-name.enum';
 
 export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
@@ -57,5 +58,6 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.CheckboxEmpty]: CheckboxEmptyIcon,
   [IconNameV2Enum.CheckboxCheckedFill]: CheckboxCheckedFillIcon,
   [IconNameV2Enum.Share]: ShareIcon,
-  [IconNameV2Enum.Logout]: LogoutIcon
+  [IconNameV2Enum.Logout]: LogoutIcon,
+  [IconNameV2Enum.Earth]: EarthIcon
 };

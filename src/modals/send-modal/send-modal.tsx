@@ -9,8 +9,8 @@ import { ContactFormSectionDropdown } from 'src/components/contact-dropdown/cont
 import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { Divider } from 'src/components/divider/divider';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum.ts';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -22,7 +22,6 @@ import { FormAddressInput } from 'src/form/form-address-input';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormTextInput } from 'src/form/form-text-input';
-import { useAddressFieldAnalytics } from 'src/hooks/use-address-field-analytics.hook';
 import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
@@ -66,7 +65,7 @@ export const SendModal: FC = () => {
   const [networkFilter, setNetworkFilter] = useState<NetworkFilter>('all');
   const {
     token: initialToken,
-    receiverPublicKeyHash: initialReceiverPublicKeyHash = '',
+    receiverPublicKeyHash: initialReceiverAddress = '',
     assetKey: initialAssetKey
   } = useModalParams<ModalsEnum.Send>();
   const styles = useSendModalStyles();
@@ -101,8 +100,7 @@ export const SendModal: FC = () => {
       asset: inputInitialValue,
       amount: undefined
     },
-    receiverPublicKeyHash: initialReceiverPublicKeyHash,
-    recipient: undefined,
+    recipient: initialReceiverAddress,
     transferBetweenOwnAccounts: false,
     memo: ''
   };
@@ -116,7 +114,8 @@ export const SendModal: FC = () => {
     onSubmit
   });
 
-  const { errors, values, setFieldValue, submitForm } = formik;
+  const { isValid, errors, values, setFieldValue, setValues, submitForm } = formik;
+  console.log(errors, 'errors');
   const selectedAsset = values.assetAmount.asset;
   const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const sourceAddress = isShieldedSend
@@ -148,28 +147,32 @@ export const SendModal: FC = () => {
   const handleAssetAmountChange = useCallback(
     (nextValue: SendAssetAmount) => {
       if (nextValue.asset.assetKey !== selectedAsset.assetKey) {
-        void setFieldValue('receiverPublicKeyHash', '');
-        void setFieldValue('recipient', undefined);
-        void setFieldValue('transferBetweenOwnAccounts', false);
+        void setValues(currentValues => ({
+          ...currentValues,
+          recipient: '',
+          transferBetweenOwnAccounts: false
+        }));
       }
     },
-    [selectedAsset.assetKey, setFieldValue]
+    [selectedAsset.assetKey, setValues]
   );
 
   const isTransferDisabled = filteredReceiversList.length === 0;
   const firstReceiver = useMemo(() => filteredReceiversList.flatMap(({ data }) => data)[0], [filteredReceiversList]);
   const isTezOrShieldedTez =
     selectedAsset.assetSlug === TEZ_TOKEN_SLUG || selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
-  const isRecipientSapling = isSaplingAddress(values.receiverPublicKeyHash);
+  const isRecipientSapling = isSaplingAddress(values.recipient);
   const showMemoField = selectedAsset.chainKind === TempleChainKind.Tezos && isTezOrShieldedTez && isRecipientSapling;
 
   const handleTransferBetweenOwnAccountsChange = useCallback(
     (isEnabled: boolean) => {
-      if (isEnabled && !values.recipient && firstReceiver) {
-        setFieldValue('recipient', firstReceiver);
+      if (isEnabled && firstReceiver) {
+        void setFieldValue('recipient', firstReceiver.address, false);
+      } else if (!isEnabled) {
+        void setFieldValue('recipient', '', false);
       }
     },
-    [firstReceiver, setFieldValue, values.recipient]
+    [firstReceiver, setFieldValue]
   );
 
   useEffect(() => {
@@ -186,11 +189,6 @@ export const SendModal: FC = () => {
   const sendPageName = isShieldedSend ? AnalyticsPageName.SendShieldedTez : ModalsEnum.Send;
   const sendPageToken = isShieldedSend ? TEZ_SHIELDED_ANALYTICS_NAME : selectedAsset.symbol;
   usePageAnalytic(sendPageName, '', { token: sendPageToken });
-  const { onBlur: handleAddressInputBlur } = useAddressFieldAnalytics(
-    'RECIPIENT_NETWORK',
-    'receiverPublicKeyHash' as const,
-    formik
-  );
 
   const tokenFilterHeader = (
     <View style={styles.filterRow}>
@@ -202,7 +200,7 @@ export const SendModal: FC = () => {
         >
           <View style={styles.filterIconContainer}>
             {filter.value === 'all' ? (
-              <Icon name={IconNameEnum.Globe} size={formatSize(16)} color={colors.blue} />
+              <IconV2 name={IconNameV2Enum.Earth} color={colors.blue} />
             ) : (
               <CryptoLogo
                 name={filter.value === TempleChainKind.Tezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink}
@@ -258,8 +256,7 @@ export const SendModal: FC = () => {
             />
           ) : (
             <FormAddressInput
-              name="receiverPublicKeyHash"
-              onBlur={handleAddressInputBlur}
+              name="recipient"
               placeholder={selectedAsset.chainKind === TempleChainKind.Tezos ? 'Address or domain' : 'Address'}
               testID={SendModalSelectors.toInput}
               pasteButtonTestID={SendModalSelectors.pasteAddressButton}
@@ -301,7 +298,7 @@ export const SendModal: FC = () => {
           title="Confirm"
           onPress={submitForm}
           isLoading={isLoading}
-          disabled={Object.keys(errors).length > 0}
+          disabled={!isValid}
           testID={SendModalSelectors.sendButton}
         />
       </ModalButtonsFloatingContainer>

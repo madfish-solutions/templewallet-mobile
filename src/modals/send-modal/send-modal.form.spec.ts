@@ -44,7 +44,7 @@ const makeValues = (chainKind: TempleChainKind, recipient: string): SendModalFor
     asset: makeAsset(chainKind),
     amount: new BigNumber(1)
   },
-  receiverPublicKeyHash: recipient,
+  recipient,
   transferBetweenOwnAccounts: false,
   memo: ''
 });
@@ -93,10 +93,7 @@ describe('sendModalValidationSchema', () => {
     await expect(
       sendModalValidationSchema.validate({
         ...makeValues(TempleChainKind.EVM, ''),
-        recipient: {
-          name: 'Tezos account',
-          address: 'tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb'
-        },
+        recipient: 'tz1VSUr8wwNhLAzempoch5d6hLRiTh8Cjcjb',
         transferBetweenOwnAccounts: true
       })
     ).rejects.toThrow('Invalid address');

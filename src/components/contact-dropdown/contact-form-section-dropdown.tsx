@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { FormSectionDropdown } from 'src/form/form-section-dropdown';
@@ -8,7 +8,6 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 
 import { DropdownListItemComponent, DropdownValueComponent } from '../dropdown/dropdown';
 
-import { contactEqualityFn } from './contact-equality-fn.ts';
 import { useContactFormSectionDropdownStyles } from './contact-form-section-dropdown.styles';
 import { ReceiverRow } from './receiver-row';
 
@@ -30,23 +29,45 @@ export const ContactFormSectionDropdown: FC<Props> = ({
   testIDProperties
 }) => {
   const styles = useContactFormSectionDropdownStyles();
+  const receiversByAddress = useMemo(() => {
+    const result = new Map<string, SendReceiver>();
 
-  const renderValue: DropdownValueComponent<SendReceiver> = ({ value }) =>
-    value ? (
-      <ReceiverRow receiver={value} chainKind={chainKind} isShieldedTez={isShieldedTez} showDropdownDown withCard />
-    ) : null;
-  const renderListItem: DropdownListItemComponent<SendReceiver> = ({ item }) => (
-    <ReceiverRow receiver={item} chainKind={chainKind} isShieldedTez={isShieldedTez} />
+    list
+      .flatMap(section => section.data)
+      .forEach(receiver => {
+        if (!result.has(receiver.address) || receiver.kind === 'account') {
+          result.set(receiver.address, receiver);
+        }
+      });
+
+    return result;
+  }, [list]);
+  const addressList = useMemo(
+    () => list.map(section => ({ ...section, data: section.data.map(receiver => receiver.address) })),
+    [list]
   );
 
+  const renderValue: DropdownValueComponent<string> = ({ value }) => {
+    const receiver = value ? receiversByAddress.get(value) : undefined;
+
+    return receiver ? (
+      <ReceiverRow receiver={receiver} chainKind={chainKind} isShieldedTez={isShieldedTez} showDropdownDown withCard />
+    ) : null;
+  };
+  const renderListItem: DropdownListItemComponent<string> = ({ item }) => {
+    const receiver = receiversByAddress.get(item);
+
+    return receiver ? <ReceiverRow receiver={receiver} chainKind={chainKind} isShieldedTez={isShieldedTez} /> : null;
+  };
+
   return (
-    <FormSectionDropdown
+    <FormSectionDropdown<string>
       isSearchable
       name={name}
-      list={list}
+      list={addressList}
       description="My Accounts"
       setSearchValue={setSearchValue}
-      equalityFn={contactEqualityFn}
+      equalityFn={(address, value) => address === value}
       renderValue={renderValue}
       renderListItem={renderListItem}
       itemContainerStyle={styles.listAccountContainer}

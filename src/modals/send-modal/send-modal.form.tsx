@@ -1,12 +1,11 @@
 import { BigNumber } from 'bignumber.js';
 import { isAddress as isEvmAddress } from 'viem';
-import { AnyObjectSchema, boolean, mixed, object, SchemaOf, string, StringSchema, ValidationError } from 'yup';
+import { boolean, mixed, object, SchemaOf, string, ValidationError } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { SAPLING_MEMO_SIZE } from 'src/config/sapling';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { bigNumberSchema } from 'src/form/validation/big-number';
-import { Contact } from 'src/interfaces/contact.interface';
 import { TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { SendAsset } from 'src/types/send-asset';
@@ -20,8 +19,7 @@ export interface SendAssetAmount extends AssetAmountInterface<SendAsset> {
 
 export interface SendModalFormValues {
   assetAmount: SendAssetAmount;
-  receiverPublicKeyHash: string;
-  recipient?: Contact;
+  recipient: string;
   transferBetweenOwnAccounts: boolean;
   memo: string;
 }
@@ -89,36 +87,7 @@ const recipientAddressValidation = string()
 
 export const sendModalValidationSchema = object().shape({
   assetAmount: assetAmountValidation,
-  receiverPublicKeyHash: string()
-    .when('transferBetweenOwnAccounts', (value: boolean, schema: StringSchema) =>
-      value ? schema.ensure() : recipientAddressValidation
-    )
-    .ensure(),
-  recipient: object()
-    .shape({
-      name: string().required(),
-      address: string().required()
-    })
-    .default(undefined)
-    .when('transferBetweenOwnAccounts', (value: boolean, schema: AnyObjectSchema) =>
-      value
-        ? schema
-            .required('Required')
-            .test(
-              'network-address',
-              'Invalid address',
-              function (this: { parent: SendModalFormValues }, recipient?: Contact) {
-                if (!recipient) {
-                  return false;
-                }
-
-                const { asset } = (this.parent as SendModalFormValues).assetAmount;
-
-                return isRecipientAddressValid(recipient.address, asset, false);
-              }
-            )
-        : schema.optional()
-    ) as SchemaOf<Contact | undefined>,
+  recipient: recipientAddressValidation.ensure(),
   transferBetweenOwnAccounts: boolean().required(),
   memo: string()
     .max(SAPLING_MEMO_SIZE, `Memo must be at most ${SAPLING_MEMO_SIZE} symbols`)
