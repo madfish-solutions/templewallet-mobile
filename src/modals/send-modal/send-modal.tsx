@@ -2,7 +2,6 @@ import { useNavigation } from '@react-navigation/core';
 import { FormikProvider, useFormik } from 'formik';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
@@ -30,6 +29,7 @@ import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floatin
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams } from 'src/navigator/hooks/use-navigation.hook';
 import { OnRampOverlay } from 'src/screens/wallet/on-ramp-overlay/on-ramp-overlay';
+import { dispatch } from 'src/store';
 import { useSaplingAddressSelector } from 'src/store/sapling';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
 import {
@@ -62,10 +62,8 @@ const NETWORK_FILTERS: Array<{ label: string; value: NetworkFilter }> = [
 ];
 
 export const SendModal: FC = () => {
-  const [isValidationTriggered, setIsValidationTriggered] = useState(false);
   const [assetSearch, setAssetSearch] = useState('');
   const [networkFilter, setNetworkFilter] = useState<NetworkFilter>('all');
-  const dispatch = useDispatch();
   const {
     token: initialToken,
     receiverPublicKeyHash: initialReceiverPublicKeyHash = '',
@@ -82,7 +80,7 @@ export const SendModal: FC = () => {
   const saplingAddress = useSaplingAddressSelector();
   const accountId = useCurrentAccountId();
   const { isOpened: onRampOverlayIsOpened, onClose: onOnRampOverlayClose } = useOnRampContinueOverlay();
-  const { isLoading, submit: submitSend } = useSendSubmission({
+  const { isLoading, submit: onSubmit } = useSendSubmission({
     accountId,
     evmAddress,
     tezosAddress,
@@ -115,7 +113,7 @@ export const SendModal: FC = () => {
     validateOnChange: true,
     validateOnBlur: false,
     validateOnMount: false,
-    onSubmit: submitSend
+    onSubmit
   });
 
   const { errors, values, setFieldValue, submitForm } = formik;
@@ -164,18 +162,11 @@ export const SendModal: FC = () => {
     selectedAsset.assetSlug === TEZ_TOKEN_SLUG || selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const isRecipientSapling = isSaplingAddress(values.receiverPublicKeyHash);
   const showMemoField = selectedAsset.chainKind === TempleChainKind.Tezos && isTezOrShieldedTez && isRecipientSapling;
-  const hasSourceAccount =
-    selectedAsset.chainKind === TempleChainKind.Tezos ? Boolean(tezosAddress) : Boolean(evmAddress);
-
-  const handleSubmit = useCallback(() => {
-    setIsValidationTriggered(true);
-    void submitForm();
-  }, [submitForm]);
 
   const handleTransferBetweenOwnAccountsChange = useCallback(
     (isEnabled: boolean) => {
       if (isEnabled && !values.recipient && firstReceiver) {
-        void setFieldValue('recipient', firstReceiver);
+        setFieldValue('recipient', firstReceiver);
       }
     },
     [firstReceiver, setFieldValue, values.recipient]
@@ -190,7 +181,7 @@ export const SendModal: FC = () => {
     ) {
       dispatch(setOnRampOverlayStateAction(OnRampOverlayState.Continue));
     }
-  }, [dispatch, selectedAsset.assetKey, selectedAsset.assetSlug, selectedAsset.balance, selectedAsset.chainKind]);
+  }, [selectedAsset.assetKey, selectedAsset.assetSlug, selectedAsset.balance, selectedAsset.chainKind]);
 
   const sendPageName = isShieldedSend ? AnalyticsPageName.SendShieldedTez : ModalsEnum.Send;
   const sendPageToken = isShieldedSend ? TEZ_SHIELDED_ANALYTICS_NAME : selectedAsset.symbol;
@@ -308,8 +299,9 @@ export const SendModal: FC = () => {
         />
         <ButtonLargePrimary
           title="Confirm"
-          onPress={handleSubmit}
-          disabled={!hasSourceAccount || isLoading || (isValidationTriggered && Object.keys(errors).length > 0)}
+          onPress={submitForm}
+          isLoading={isLoading}
+          disabled={Object.keys(errors).length > 0}
           testID={SendModalSelectors.sendButton}
         />
       </ModalButtonsFloatingContainer>
