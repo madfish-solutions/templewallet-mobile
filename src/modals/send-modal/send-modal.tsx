@@ -114,7 +114,7 @@ export const SendModal: FC = () => {
     onSubmit
   });
 
-  const { isValid, errors, values, setFieldValue, setValues, submitForm } = formik;
+  const { isValid, submitCount, isSubmitting, errors, values, setFieldValue, setValues, submitForm } = formik;
   console.log(errors, 'errors');
   const selectedAsset = values.assetAmount.asset;
   const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
@@ -167,9 +167,9 @@ export const SendModal: FC = () => {
   const handleTransferBetweenOwnAccountsChange = useCallback(
     (isEnabled: boolean) => {
       if (isEnabled && firstReceiver) {
-        void setFieldValue('recipient', firstReceiver.address, false);
+        void setFieldValue('recipient', firstReceiver.address);
       } else if (!isEnabled) {
-        void setFieldValue('recipient', '', false);
+        void setFieldValue('recipient', '');
       }
     },
     [firstReceiver, setFieldValue]
@@ -298,7 +298,7 @@ export const SendModal: FC = () => {
           title="Confirm"
           onPress={submitForm}
           isLoading={isLoading}
-          disabled={!isValid}
+          disabled={(submitCount !== 0 && !isValid) || isSubmitting}
           testID={SendModalSelectors.sendButton}
         />
       </ModalButtonsFloatingContainer>
