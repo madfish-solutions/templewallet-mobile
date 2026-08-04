@@ -114,8 +114,7 @@ export const SendModal: FC = () => {
     onSubmit
   });
 
-  const { isValid, submitCount, isSubmitting, errors, values, setFieldValue, setValues, submitForm } = formik;
-  console.log(errors, 'errors');
+  const { isValid, submitCount, isSubmitting, values, setFieldError, setFieldValue, setValues, submitForm } = formik;
   const selectedAsset = values.assetAmount.asset;
   const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const sourceAddress = isShieldedSend
@@ -168,11 +167,12 @@ export const SendModal: FC = () => {
     (isEnabled: boolean) => {
       if (isEnabled && firstReceiver) {
         void setFieldValue('recipient', firstReceiver.address);
+        setFieldError('recipient', undefined);
       } else if (!isEnabled) {
         void setFieldValue('recipient', '');
       }
     },
-    [firstReceiver, setFieldValue]
+    [firstReceiver, setFieldError, setFieldValue]
   );
 
   useEffect(() => {
@@ -269,6 +269,7 @@ export const SendModal: FC = () => {
               disabled={isRecipientSapling}
               name="transferBetweenOwnAccounts"
               onValueChange={handleTransferBetweenOwnAccountsChange}
+              shouldValidate={false}
               size={16}
               testID={SendModalSelectors.transferBetweenMyAccountsCheckBox}
             >

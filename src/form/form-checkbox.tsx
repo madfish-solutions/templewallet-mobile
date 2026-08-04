@@ -13,6 +13,7 @@ import { ErrorMessage } from './error-message/error-message';
 interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID'>, TestIdProps {
   name: string;
   onValueChange?: SyncFn<boolean>;
+  shouldValidate?: boolean;
   descriptionNode?: ReactNode;
   error?: string;
   shouldShowError?: boolean;
@@ -21,6 +22,7 @@ interface Props extends Pick<CheckboxProps, 'disabled' | 'size' | 'testID'>, Tes
 export const FormCheckbox: FCWithChildren<Props> = ({
   name,
   onValueChange,
+  shouldValidate = true,
   children,
   descriptionNode,
   disabled,
@@ -38,7 +40,7 @@ export const FormCheckbox: FCWithChildren<Props> = ({
 
     helpers.setTouched(true);
     onValueChange?.(newValue);
-    helpers.setValue(newValue);
+    helpers.setValue(newValue, shouldValidate);
   };
 
   return (
