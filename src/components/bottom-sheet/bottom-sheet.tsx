@@ -5,7 +5,7 @@ import GorhomBottomSheet, {
   TouchableOpacity
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
-import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { BackHandler, Keyboard, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSharedValue } from 'react-native-reanimated';
@@ -61,6 +61,7 @@ export const BottomSheet: FCWithChildren<Props> = ({
   const [isOpened, setIsOpened] = useState(false);
   const [activeContentHeight, setActiveContentHeight] = useState(contentHeight);
   const [sheetKey, setSheetKey] = useState(0);
+  const sheetId = useId();
 
   const { height } = useWindowDimensions();
   const bottomInset = insets.bottom + formatSize(8);
@@ -134,7 +135,7 @@ export const BottomSheet: FCWithChildren<Props> = ({
     <Portal>
       {!isLocked && (
         <GorhomBottomSheet
-          key={sheetKey}
+          key={`${sheetId}-${sheetKey}`}
           containerStyle={styles.bottomSheetContainer}
           containerLayoutState={containerLayoutState}
           ref={controller.ref}
