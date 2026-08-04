@@ -128,7 +128,7 @@ export const SendModal: FC = () => {
     : selectedAsset.chainKind === TempleChainKind.Tezos
     ? tezosAddress
     : evmAddress;
-  const { filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList(
+  const { receiversList, filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList(
     selectedAsset.chainKind,
     sourceAddress,
     isShieldedSend
@@ -162,8 +162,8 @@ export const SendModal: FC = () => {
     [selectedAsset.assetKey, setValues]
   );
 
-  const isTransferDisabled = filteredReceiversList.length === 0;
-  const firstReceiver = useMemo(() => filteredReceiversList.flatMap(({ data }) => data)[0], [filteredReceiversList]);
+  const isTransferDisabled = receiversList.length === 0;
+  const firstReceiver = useMemo(() => receiversList.flatMap(({ data }) => data)[0], [receiversList]);
   const isTezOrShieldedTez =
     selectedAsset.assetSlug === TEZ_TOKEN_SLUG || selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const isRecipientSapling = isSaplingAddress(values.recipient);
@@ -257,6 +257,7 @@ export const SendModal: FC = () => {
             <KnownRecipientInput
               name="recipient"
               list={filteredReceiversList}
+              receiversList={receiversList}
               chainKind={selectedAsset.chainKind}
               isShieldedTez={isShieldedSend}
               setSearchValue={handleSearchValueChange}

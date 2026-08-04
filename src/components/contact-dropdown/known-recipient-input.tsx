@@ -14,6 +14,7 @@ import { ReceiverRow } from './receiver-row';
 interface Props extends TestIdProps {
   name: string;
   list: Array<SectionDropdownDataInterface<SendReceiver>>;
+  receiversList: Array<SectionDropdownDataInterface<SendReceiver>>;
   setSearchValue: SyncFn<string>;
   chainKind: TempleChainKind;
   isShieldedTez?: boolean;
@@ -22,6 +23,7 @@ interface Props extends TestIdProps {
 export const KnownRecipientInput: FC<Props> = ({
   name,
   list,
+  receiversList,
   setSearchValue,
   chainKind,
   isShieldedTez = false,
@@ -32,7 +34,7 @@ export const KnownRecipientInput: FC<Props> = ({
   const receiversByAddress = useMemo(() => {
     const result = new Map<string, SendReceiver>();
 
-    list
+    receiversList
       .flatMap(section => section.data)
       .forEach(receiver => {
         if (!result.has(receiver.address) || receiver.kind === 'account') {
@@ -41,7 +43,7 @@ export const KnownRecipientInput: FC<Props> = ({
       });
 
     return result;
-  }, [list]);
+  }, [receiversList]);
   const addressList = useMemo(
     () => list.map(section => ({ ...section, data: section.data.map(receiver => receiver.address) })),
     [list]

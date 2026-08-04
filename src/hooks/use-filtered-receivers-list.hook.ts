@@ -46,18 +46,11 @@ export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddre
 
   const [searchValue, setSearchValue] = useState<string>('');
 
-  const filteredReceiversList = useMemo(() => {
+  const receiversList = useMemo(() => {
     const result: Array<SectionDropdownDataInterface<SendReceiver>> = [];
 
-    const searchValueLowerCase = searchValue.toLowerCase();
-
-    const filteredAccounts = myVisibleAccounts.filter(
-      ({ name, address }) =>
-        name.toLowerCase().includes(searchValueLowerCase) || address.toLowerCase().includes(searchValueLowerCase)
-    );
-
-    const createdAccounts = filteredAccounts.filter(({ account }) => !isImportedAccount(account.type));
-    const importedAccounts = filteredAccounts.filter(({ account }) => isImportedAccount(account.type));
+    const createdAccounts = myVisibleAccounts.filter(({ account }) => !isImportedAccount(account.type));
+    const importedAccounts = myVisibleAccounts.filter(({ account }) => isImportedAccount(account.type));
 
     if (createdAccounts.length > 0) {
       result.push({ title: 'Created', data: createdAccounts });
@@ -67,26 +60,37 @@ export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddre
       result.push({ title: 'Imported', data: importedAccounts });
     }
 
-    const filteredContacts = contacts
+    const validContacts = contacts
       .filter(({ address }) =>
         chainKind === TempleChainKind.EVM ? isEvmAddress(address) : isValidAddress(address) || isSaplingAddress(address)
       )
-      .filter(
-        ({ name, address }) =>
-          name.toLowerCase().includes(searchValueLowerCase) || address.toLowerCase().includes(searchValueLowerCase)
-      )
       .map(toContactReceiver);
 
-    if (filteredContacts.length > 0) {
-      result.push({ title: 'Contacts', data: filteredContacts });
+    if (validContacts.length > 0) {
+      result.push({ title: 'Contacts', data: validContacts });
     }
 
     return result;
-  }, [chainKind, contacts, myVisibleAccounts, searchValue]);
+  }, [chainKind, contacts, myVisibleAccounts]);
+
+  const filteredReceiversList = useMemo(() => {
+    const normalizedSearchValue = searchValue.toLowerCase();
+
+    return receiversList
+      .map(section => ({
+        ...section,
+        data: section.data.filter(
+          ({ name, address }) =>
+            name.toLowerCase().includes(normalizedSearchValue) || address.toLowerCase().includes(normalizedSearchValue)
+        )
+      }))
+      .filter(section => section.data.length > 0);
+  }, [receiversList, searchValue]);
 
   const handleSearchValueChange = (value: string) => setSearchValue(value);
 
   return {
+    receiversList,
     filteredReceiversList,
     handleSearchValueChange
   };
