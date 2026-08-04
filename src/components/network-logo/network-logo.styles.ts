@@ -7,7 +7,7 @@ export const useNetworkLogoStyles = createUseStylesMemoized(({ colors }) => ({
     backgroundColor: colors.white,
     borderColor: colors.lines,
     borderRadius: formatSize(8),
-    borderWidth: formatSize(0.8),
+    borderWidth: formatSize(1),
     height: formatSize(16),
     justifyContent: 'center',
     width: formatSize(16)

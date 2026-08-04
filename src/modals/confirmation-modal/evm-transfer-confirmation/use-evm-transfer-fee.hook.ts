@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { useEvmPublicClient } from 'src/hooks/evm/use-etherlink-public-client.hook';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
+import { useViemPublicClient } from 'src/hooks/evm/use-viem-public-client.hook';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
@@ -30,7 +30,7 @@ interface Props {
 
 export const useEvmTransferFee = ({ sourceAddress, request, asset, atomicAmount }: Props) => {
   const chain = useEvmChain(asset.chainId);
-  const publicClient = useEvmPublicClient(asset.chainId);
+  const publicClient = useViemPublicClient(asset.chainId);
   const balances = useEvmAccountChainBalancesSelector(sourceAddress, asset.chainId);
   const evmExchangeRates = useEvmChainExchangeRatesSelector(asset.chainId);
   const fiatToUsdRate = useFiatToUsdRateSelector();

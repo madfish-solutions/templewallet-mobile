@@ -53,7 +53,7 @@ export const TokenDropdownItem: FC<Props> = ({
   const networkName = token.networkName;
   const hasActionIcon = isDefined(actionIconName) || isDefined(actionIconV2Name);
   const tokenNameTextStyle = useMemo(
-    () => [styles.name, isCompact && styles.tokenSelectorName, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
+    () => [styles.name, isCompact && styles.compactName, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
     [hasActionIcon, isCompact, styles]
   );
   const iconContainerStyle = useMemo(
@@ -85,7 +85,7 @@ export const TokenDropdownItem: FC<Props> = ({
   }
 
   return (
-    <View style={[styles.container, isCompact && styles.tokenSelectorContainer]}>
+    <View style={[styles.container, isCompact && styles.compactContainer]}>
       {showNetworkBadge ? (
         <TokenIconWithNetwork chainKind={chainKind}>
           <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconVisualSize} />
@@ -101,7 +101,7 @@ export const TokenDropdownItem: FC<Props> = ({
 
       <View style={styles.infoContainer}>
         <View style={styles.infoRow}>
-          <TruncatedText style={[styles.symbol, isCompact && styles.tokenSelectorSymbol]}>{token.symbol}</TruncatedText>
+          <TruncatedText style={[styles.symbol, isCompact && styles.compactSymbol]}>{token.symbol}</TruncatedText>
           <View style={styles.rightContainer}>
             <Divider size={formatSize(4)} />
             {isShowBalance && (

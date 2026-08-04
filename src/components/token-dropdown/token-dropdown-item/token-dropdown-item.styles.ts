@@ -1,5 +1,5 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize, formatTextSize } from '../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
@@ -7,7 +7,7 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     alignItems: 'center',
     height: formatSize(40)
   },
-  tokenSelectorContainer: {
+  compactContainer: {
     height: formatSize(44)
   },
   iconContainer: {
@@ -34,19 +34,17 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     ...typography.numbersRegular15,
     color: colors.black
   },
-  tokenSelectorSymbol: {
+  compactSymbol: {
     ...typography.numbersRegular17,
-    lineHeight: formatTextSize(22),
-    letterSpacing: formatSize(-0.41)
+    lineHeight: formatTextSize(22)
   },
   name: {
     ...typography.numbersRegular11,
     color: colors.gray1
   },
-  tokenSelectorName: {
+  compactName: {
     ...typography.numbersRegular13,
-    lineHeight: formatTextSize(18),
-    letterSpacing: formatSize(-0.08)
+    lineHeight: formatTextSize(18)
   },
   fullWidthName: {
     flexGrow: 1
@@ -64,11 +62,6 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
   dollarEquivalent: {
     ...typography.numbersRegular11,
     color: colors.gray1
-  },
-  tokenSelectorDollarEquivalent: {
-    ...typography.numbersRegular13,
-    lineHeight: formatTextSize(18),
-    letterSpacing: formatSize(-0.08)
   },
   actionIconSubstitute: {
     marginRight: formatSize(24)

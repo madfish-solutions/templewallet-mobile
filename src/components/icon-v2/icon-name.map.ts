@@ -13,6 +13,7 @@ import ClockIcon from './assets/clock.svg';
 import CopyIcon from './assets/copy.svg';
 import DollarIcon from './assets/dollar.svg';
 import DropdownDownIcon from './assets/dropdown-down.svg';
+import EarthIcon from './assets/earth.svg';
 import ImportIcon from './assets/import.svg';
 import InfoFillIcon from './assets/info-fill.svg';
 import InfoIcon from './assets/info.svg';
@@ -28,7 +29,6 @@ import TrashIcon from './assets/trash.svg';
 import UserAddIcon from './assets/user-add.svg';
 import XBigIcon from './assets/x-big.svg';
 import XRoundIcon from './assets/x-round.svg';
-import EarthIcon from './assets/earth.svg';
 import { IconNameV2Enum } from './icon-name.enum';
 
 export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {

@@ -17,7 +17,7 @@ export const useTokenIconWithNetworkStyles = createUseStyles(({ colors }) => ({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: BADGE_SIZE / 2,
-    borderWidth: formatSize(0.8),
+    borderWidth: formatSize(1),
     borderColor: colors.lines,
     backgroundColor: colors.pageBG
   }

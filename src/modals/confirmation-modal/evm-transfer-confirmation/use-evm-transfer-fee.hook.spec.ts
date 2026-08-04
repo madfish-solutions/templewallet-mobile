@@ -12,7 +12,7 @@ import { EVM_ESTIMATION_REFRESH_INTERVAL, EvmSubmissionFees, useEvmTransferFee }
 const mockEstimateEvmTransaction = jest.fn();
 const mockUseAppStateStatus = useAppStateStatus as jest.Mock;
 
-jest.mock('src/hooks/evm/use-etherlink-public-client.hook', () => {
+jest.mock('src/hooks/evm/use-viem-public-client.hook', () => {
   const publicClient = {};
 
   return { useEvmPublicClient: jest.fn(() => publicClient) };
