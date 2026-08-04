@@ -13,6 +13,7 @@ export const FormSectionDropdown = <T extends unknown>({
   name,
   description,
   list,
+  emptyListText,
   itemHeight,
   equalityFn,
   renderValue,
@@ -31,6 +32,7 @@ export const FormSectionDropdown = <T extends unknown>({
     <>
       <SectionDropdown<T>
         list={list}
+        emptyListText={emptyListText}
         value={field.value}
         isSearchable={isSearchable}
         description={description}

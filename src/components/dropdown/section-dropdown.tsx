@@ -22,6 +22,7 @@ import { useDropdownStyles } from './styles';
 export interface SectionDropdownProps<T> extends TestIdProps, Pick<FlatListProps<T>, 'keyExtractor'> {
   description: string;
   list: Array<SectionDropdownDataInterface<T>>;
+  emptyListText?: string;
   isSearchable?: boolean;
   itemHeight?: number;
   setSearchValue?: SyncFn<string>;
@@ -62,6 +63,7 @@ const SectionDropdownComponent = <T extends unknown>({
   value,
   list,
   description,
+  emptyListText = 'No assets found.',
   itemHeight = formatSize(64),
   disabled = false,
   isSearchable = false,
@@ -170,7 +172,7 @@ const SectionDropdownComponent = <T extends unknown>({
             keyExtractor={keyExtractor}
             renderItem={renderItem}
             renderSectionHeader={renderSectionHeader}
-            ListEmptyComponent={<DataPlaceholder text="No assets found." />}
+            ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
           />
         </View>
 

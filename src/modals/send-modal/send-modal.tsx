@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { ContactFormSectionDropdown } from 'src/components/contact-dropdown/contact-form-section-dropdown';
+import { KnownRecipientInput } from 'src/components/contact-dropdown/known-recipient-input';
 import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { Divider } from 'src/components/divider/divider';
@@ -254,7 +254,7 @@ export const SendModal: FC = () => {
 
           <Label label="Recipient" description="Address or domain to send funds to" />
           {values.transferBetweenOwnAccounts ? (
-            <ContactFormSectionDropdown
+            <KnownRecipientInput
               name="recipient"
               list={filteredReceiversList}
               chainKind={selectedAsset.chainKind}

@@ -19,7 +19,7 @@ interface Props extends TestIdProps {
   isShieldedTez?: boolean;
 }
 
-export const ContactFormSectionDropdown: FC<Props> = ({
+export const KnownRecipientInput: FC<Props> = ({
   name,
   list,
   setSearchValue,
@@ -66,6 +66,7 @@ export const ContactFormSectionDropdown: FC<Props> = ({
       name={name}
       list={addressList}
       description="My Accounts"
+      emptyListText="No records found"
       setSearchValue={setSearchValue}
       equalityFn={(address, value) => address === value}
       renderValue={renderValue}

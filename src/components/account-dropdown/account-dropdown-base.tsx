@@ -93,6 +93,7 @@ export const AccountDropdownBase = memo<Props>(
           testID={testID}
           testIDProperties={testIDProperties}
           description="My Accounts"
+          emptyListText="No records found"
           isSearchable
           value={value}
           list={groupedList}
