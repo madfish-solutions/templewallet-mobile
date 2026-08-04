@@ -37,6 +37,7 @@ import { Farming } from 'src/screens/farming';
 import { FiatSettings } from 'src/screens/fiat-settings/fiat-settings';
 import { ManageAccounts } from 'src/screens/manage-accounts/manage-accounts';
 import { ManageAssets } from 'src/screens/manage-assets/manage-assets';
+import { ManageAssetsHeaderRight } from 'src/screens/manage-assets/manage-assets-header-right';
 import { ManualBackup } from 'src/screens/manual-backup/manual-backup';
 import { Market } from 'src/screens/market/market';
 import { NetworkSettings } from 'src/screens/network-settings';
@@ -67,6 +68,11 @@ import { useStackNavigatorStyleOptions } from './hooks/use-stack-navigator-style
 import { NavigationBar } from './navigation-bar/navigation-bar';
 
 const MainStack = createStackNavigator<ScreensParamList>();
+
+const manageAssetsScreenOptions = {
+  ...generateScreenOptions(<HeaderTitle title="Manage Assets" />, <ManageAssetsHeaderRight />),
+  animation: 'none' as const
+};
 
 export const MainStackScreen = memo(() => {
   const isAuthorised = useIsAuthorisedSelector();
@@ -172,7 +178,7 @@ export const MainStackScreen = memo(() => {
               <MainStack.Screen
                 name={ScreensEnum.ManageAssets}
                 component={ManageAssets}
-                options={generateScreenOptions(<HeaderTitle title="Manage Assets" />)}
+                options={manageAssetsScreenOptions}
               />
               <MainStack.Screen
                 name={ScreensEnum.Activity}
