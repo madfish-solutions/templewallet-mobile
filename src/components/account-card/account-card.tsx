@@ -19,12 +19,26 @@ import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/ac
 
 import { useAccountCardStyles } from './account-card.styles';
 
-interface Props {
-  account: Account;
+interface CommonProps {
   chainKind: TempleChainKind;
   isShieldedTez?: boolean;
   showDropdownDown?: boolean;
+  showBalance?: boolean;
 }
+
+interface AccountProps extends CommonProps {
+  variant?: 'account';
+  account: Account;
+}
+
+interface ContactProps extends CommonProps {
+  variant: 'contact';
+  name: string;
+  address: string;
+  avatarSeed: string;
+}
+
+type Props = AccountProps | ContactProps;
 
 export const AccountCard: FC<Props> = props => {
   const styles = useAccountCardStyles();
@@ -36,15 +50,18 @@ export const AccountCard: FC<Props> = props => {
   );
 };
 
-export const AccountSummary: FC<Props> = ({ account, chainKind, isShieldedTez = false, showDropdownDown = false }) => {
-  const totalFiatBalance = useTotalFiatBalanceOfAccount(account);
-  const saplingAddress = useSaplingAddressForAccount(account);
+export const AccountSummary: FC<Props> = props => {
+  const { chainKind, isShieldedTez = false, showDropdownDown = false, showBalance = true } = props;
   const styles = useAccountCardStyles();
-  const address = isShieldedTez
+  const isContact = props.variant === 'contact';
+  const saplingAddress = useSaplingAddressForAccount(isContact ? undefined : props.account);
+  const address = isContact
+    ? props.address
+    : isShieldedTez
     ? saplingAddress
     : chainKind === TempleChainKind.Tezos
-    ? getAccountAddressForTezos(account)
-    : getAccountAddressForEvm(account);
+    ? getAccountAddressForTezos(props.account)
+    : getAccountAddressForEvm(props.account);
   const logoName = isShieldedTez
     ? CryptoLogoNameEnum.ShieldedTezos
     : chainKind === TempleChainKind.Tezos
@@ -54,16 +71,16 @@ export const AccountSummary: FC<Props> = ({ account, chainKind, isShieldedTez = 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} />
+        <RobotIcon seed={isContact ? props.avatarSeed : getSeedFromAccount(props.account)} size={formatSize(24)} />
         <Text numberOfLines={1} style={styles.name}>
-          {account.name}
+          {isContact ? props.name : props.account.name}
         </Text>
-        <View style={styles.headerTrailingContent}>
-          <HideBalance textStyle={styles.balance}>
-            <FormattedAmount amount={totalFiatBalance} isDollarValue />
-          </HideBalance>
-          {showDropdownDown && <IconV2 name={IconNameV2Enum.DropdownDown} size={12} />}
-        </View>
+        {showBalance && !isContact && (
+          <View style={styles.headerTrailingContent}>
+            <AccountBalance account={props.account} />
+          </View>
+        )}
+        {showDropdownDown && <IconV2 name={IconNameV2Enum.DropdownDown} size={12} />}
       </View>
       {!!address && (
         <View style={styles.addressRow}>
@@ -74,6 +91,21 @@ export const AccountSummary: FC<Props> = ({ account, chainKind, isShieldedTez = 
         </View>
       )}
     </View>
+  );
+};
+
+interface AccountBalanceProps {
+  account: Account;
+}
+
+const AccountBalance: FC<AccountBalanceProps> = ({ account }) => {
+  const totalFiatBalance = useTotalFiatBalanceOfAccount(account);
+  const styles = useAccountCardStyles();
+
+  return (
+    <HideBalance textStyle={styles.balance}>
+      <FormattedAmount amount={totalFiatBalance} isDollarValue />
+    </HideBalance>
   );
 };
 
