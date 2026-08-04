@@ -15,7 +15,7 @@ const mockUseAppStateStatus = useAppStateStatus as jest.Mock;
 jest.mock('src/hooks/evm/use-viem-public-client.hook', () => {
   const publicClient = {};
 
-  return { useEvmPublicClient: jest.fn(() => publicClient) };
+  return { useViemPublicClient: jest.fn(() => publicClient) };
 });
 jest.mock('src/hooks/evm/use-evm-chains.hook', () => {
   const chain = { currency: { name: 'Tezos', symbol: 'XTZ', decimals: 18 } };
