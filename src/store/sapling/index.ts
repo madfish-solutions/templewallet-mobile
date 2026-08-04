@@ -4,7 +4,7 @@ export {
   useShieldedBalanceSelector,
   useIsSaplingCredentialsLoadedSelector,
   useIsSaplingBalanceLoadingSelector,
-  useHasSeenAnnouncementSelector,
+  useHasSeenSaplingAnnouncementSelector,
   useSaplingTransactionHistorySelector,
   useIsSaplingHistoryLoadingSelector,
   useIsSaplingPreparingSelector,

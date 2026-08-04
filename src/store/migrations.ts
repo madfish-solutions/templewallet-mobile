@@ -12,6 +12,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/utils/rpc/rpc-list';
 
 import { createEntity } from './create-entity';
+import { rewardsInitialState } from './rewards/rewards-state';
 import type { RootState } from './types';
 
 type TypedPersistedRootState = Exclude<PersistedState, undefined> & RootState;
@@ -187,6 +188,23 @@ export const MIGRATIONS: MigrationManifest = {
     if (isIOS) {
       state.settings.isInAppBrowserEnabled = true;
     }
+
+    return state;
+  },
+  '9': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
+    if (!untypedState) {
+      return untypedState;
+    }
+
+    const state = untypedState as TypedPersistedRootState;
+    state.partnersPromotion = {
+      ...state.partnersPromotion,
+      isEnabled: true
+    };
+    state.rewards = {
+      ...rewardsInitialState,
+      hasSeenRewardsAnnouncement: false
+    };
 
     return state;
   }

@@ -109,5 +109,22 @@ target 'TempleWallet' do
       end
       break
     end
+
+    # Xcode 26's compiler advertises consteval support that fmt 11 cannot use.
+    fmt_base = File.join(installer.sandbox.root, 'fmt', 'include', 'fmt', 'base.h')
+
+    if File.exist?(fmt_base)
+      content = File.read(fmt_base)
+      unless content.include?('Xcode 26 workaround')
+        patched = content.gsub(
+          /^#elif defined\(__cpp_consteval\)\n#  define FMT_USE_CONSTEVAL 1$/,
+          "// Xcode 26 workaround: disable consteval\n#elif defined(__cpp_consteval)\n#  define FMT_USE_CONSTEVAL 0"
+        )
+        if patched != content
+          File.chmod(0644, fmt_base)
+          File.write(fmt_base, patched)
+        end
+      end
+    end
   end
 end

@@ -45,7 +45,7 @@ const persistConfigBlacklist: (keyof RootState)[] = [
 
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
-  version: 8,
+  version: 9,
   storage: SlicedAsyncStorage,
   stateReconciler: autoMergeLevel2,
   writeFailHandler: persistFailHandler,
