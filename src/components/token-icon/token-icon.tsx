@@ -12,6 +12,7 @@ import { CryptoLogoNameEnum } from '../crypto-logo/logo-name.enum';
 import { DataUriImage } from '../data-uri-image';
 
 import { LoadableTokenIconImage } from './loadable-image';
+import { NftFallbackIcon } from './nft-fallback-icon';
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props extends Pick<TezosTokenMetadata, 'iconName' | 'thumbnailUri'> {
@@ -35,7 +36,13 @@ export const TokenIcon: FC<Props> = ({
 
   return (
     <View style={[TokenIconStyles.container, roundedStyle, containerSizeStyle, style]}>
-      <TokenIconImage size={size} thumbnailUri={thumbnailUri} borderRadius={roundedStyle.borderRadius} {...rest} />
+      <TokenIconImage
+        size={size}
+        thumbnailUri={thumbnailUri}
+        borderRadius={roundedStyle.borderRadius}
+        isCollectible={isCollectible}
+        {...rest}
+      />
     </View>
   );
 };
@@ -45,22 +52,30 @@ type TokenIconImageProps = Props & {
   size: number;
 };
 
-const TokenIconImage: FC<TokenIconImageProps> = ({ borderRadius, iconName, thumbnailUri, size }) => {
+const TokenIconImage: FC<TokenIconImageProps> = ({ borderRadius, iconName, isCollectible, thumbnailUri, size }) => {
   const isDataUri = useMemo(() => isImgUriDataUri(thumbnailUri ?? ''), [thumbnailUri]);
+  const imgSize = (size * 5) / 6;
 
   if (isDefined(iconName)) {
     return <CryptoLogo name={iconName} size={size} />;
   }
 
   if (!isString(thumbnailUri)) {
+    if (isCollectible) {
+      return <NftFallbackIcon borderRadius={borderRadius} size={imgSize} />;
+    }
+
     return <CryptoLogo name={CryptoLogoNameEnum.Placeholder} size={size} />;
   }
-
-  const imgSize = (size * 5) / 6;
 
   return isDataUri ? (
     <DataUriImage width={imgSize} height={imgSize} dataUri={thumbnailUri} style={{ borderRadius }} />
   ) : (
-    <LoadableTokenIconImage uri={thumbnailUri} size={imgSize} borderRadius={borderRadius} />
+    <LoadableTokenIconImage
+      uri={thumbnailUri}
+      size={imgSize}
+      borderRadius={borderRadius}
+      isCollectible={isCollectible}
+    />
   );
 };

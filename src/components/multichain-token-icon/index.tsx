@@ -110,7 +110,7 @@ const EvmTokenIcon: FC<EvmTokenIconProps> = ({ address, chainId, iconURL, isColl
 
   return (
     <View style={[TokenIconStyles.container, { borderRadius, height: size, width: size }]}>
-      {isShowPlaceholder && <TokenIcon size={size} style={{ borderRadius }} />}
+      {isShowPlaceholder && <TokenIcon size={size} isCollectible={isCollectible} style={{ borderRadius }} />}
       {src != null && <FastImage style={imageStyle} source={{ uri: src }} onLoad={onSuccess} onError={onFail} />}
     </View>
   );

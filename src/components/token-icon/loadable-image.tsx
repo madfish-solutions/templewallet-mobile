@@ -7,36 +7,45 @@ import { useDidUpdate } from 'src/utils/hooks';
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
 
+import { NftFallbackIcon } from './nft-fallback-icon';
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props {
   borderRadius?: number;
+  isCollectible?: boolean;
   useOriginal?: boolean;
   uri: string;
   size: number;
   onError?: EmptyFn;
 }
 
-export const LoadableTokenIconImage = memo<Props>(({ borderRadius, uri, size, onError, useOriginal = false }) => {
-  const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImagesStack(uri, useOriginal);
+export const LoadableTokenIconImage = memo<Props>(
+  ({ borderRadius, isCollectible = false, uri, size, onError, useOriginal = false }) => {
+    const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImagesStack(uri, useOriginal);
 
-  useDidUpdate(() => {
-    if (isStackFailed) {
-      onError?.();
-    }
-  }, [isStackFailed, onError]);
+    useDidUpdate(() => {
+      if (isStackFailed) {
+        onError?.();
+      }
+    }, [isStackFailed, onError]);
 
-  const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
+    const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
 
-  const style = useMemo(
-    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { borderRadius, width: size, height: size }],
-    [borderRadius, isShowPlaceholder, size]
-  );
+    const style = useMemo(
+      () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { borderRadius, width: size, height: size }],
+      [borderRadius, isShowPlaceholder, size]
+    );
 
-  return (
-    <>
-      {isShowPlaceholder && <Icon name={IconNameEnum.NoNameToken} size={size} />}
-      <FastImage style={style} source={{ uri: src }} onError={onFail} onLoad={onSuccess} />
-    </>
-  );
-});
+    return (
+      <>
+        {isShowPlaceholder &&
+          (isCollectible ? (
+            <NftFallbackIcon borderRadius={borderRadius ?? 0} size={size} />
+          ) : (
+            <Icon name={IconNameEnum.NoNameToken} size={size} />
+          ))}
+        <FastImage style={style} source={{ uri: src }} onError={onFail} onLoad={onSuccess} />
+      </>
+    );
+  }
+);
