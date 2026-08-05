@@ -154,7 +154,7 @@ const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => 
             {feeState.estimationError
               ? 'Unavailable'
               : feeState.formattedFee
-              ? `${feeState.formattedFee} XTZ`
+              ? `${feeState.formattedFee} ${feeState.feeAsset.symbol}`
               : 'Estimating...'}
           </Text>
           {isDefined(feeState.fee) && isDefined(feeState.feeAsset.exchangeRate) && (

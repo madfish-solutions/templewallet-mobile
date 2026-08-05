@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/core';
 import { BigNumber } from 'bignumber.js';
 import { FormikErrors, FormikProvider, useFormik } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -15,7 +15,6 @@ import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum.ts';
 import { Label } from 'src/components/label/label';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
-import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -23,7 +22,6 @@ import { FormAddressInput } from 'src/form/form-address-input';
 import { FormAssetAmountInput } from 'src/form/form-asset-amount-input/form-asset-amount-input';
 import { FormCheckbox } from 'src/form/form-checkbox';
 import { FormTextInput } from 'src/form/form-text-input';
-import { useFilteredReceiversList } from 'src/hooks/use-filtered-receivers-list.hook';
 import { useOnRampContinueOverlay } from 'src/hooks/use-on-ramp-continue-overlay.hook';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -41,20 +39,18 @@ import {
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 import { TEZ_SHIELDED_ANALYTICS_NAME, TEZ_SHIELDED_TOKEN_SLUG, TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
-import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
-import { isTezosSendAsset } from 'src/types/send-asset';
 import { AnalyticsPageName } from 'src/utils/analytics/analytics-event.enum';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 
-import { SendAssetAmount, SendModalFormValues, sendModalValidationSchema } from './send-modal.form';
-import { SendModalSelectors } from './send-modal.selectors';
-import { useSendModalStyles } from './send-modal.styles';
-import { useEvmMaxAmount } from './use-evm-max-amount.hook';
-import { useSendAssets } from './use-send-assets.hook';
-import { useSendSubmission } from './use-send-submission.hook';
-
-type NetworkFilter = 'all' | TempleChainKind;
+import { SendAssetAmount, SendModalFormValues, sendModalValidationSchema } from './form';
+import { useEvmMaxAmount } from './hooks/use-evm-max-amount';
+import { getInitialSendAsset, NetworkFilter, useSendAssetSelection } from './hooks/use-send-asset-selection';
+import { useSendAssets } from './hooks/use-send-assets';
+import { useSendRecipientSelection } from './hooks/use-send-recipient-selection';
+import { useSendSubmission } from './hooks/use-send-submission';
+import { SendModalSelectors } from './selectors';
+import { useSendModalStyles } from './styles';
 
 const NETWORK_FILTERS: Array<{ label: string; value: NetworkFilter }> = [
   { label: 'All', value: 'all' },
@@ -63,8 +59,6 @@ const NETWORK_FILTERS: Array<{ label: string; value: NetworkFilter }> = [
 ];
 
 export const SendModal: FC = () => {
-  const [assetSearch, setAssetSearch] = useState('');
-  const [networkFilter, setNetworkFilter] = useState<NetworkFilter>('all');
   const {
     token: initialToken,
     receiverPublicKeyHash: initialReceiverAddress = '',
@@ -88,14 +82,8 @@ export const SendModal: FC = () => {
     tezosBalance
   });
 
-  const inputInitialValue = useMemo(
-    () =>
-      assets.find(item => item.assetKey === initialAssetKey) ??
-      assets.find(item => isTezosSendAsset(item) && tokenEqualityFn(item, initialToken)) ??
-      assets.find(item => item.assetSlug === TEZ_TOKEN_SLUG) ??
-      assets[0],
-    [assets, initialAssetKey, initialToken]
-  );
+  const inputInitialValue = getInitialSendAsset(assets, initialAssetKey, initialToken);
+  const { networkFilter, pickerAssets, setAssetSearch, setNetworkFilter } = useSendAssetSelection(assets);
 
   const maxAmountRef = useRef<{ assetKey: string; amount?: BigNumber.Value }>({
     assetKey: inputInitialValue.assetKey
@@ -145,32 +133,19 @@ export const SendModal: FC = () => {
     sourceAddress: evmAddress
   });
   maxAmountRef.current = { assetKey: selectedAsset.assetKey, amount: maxAmount };
-  const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
-  const sourceAddress = isShieldedSend
-    ? saplingAddress ?? undefined
-    : selectedAsset.chainKind === TempleChainKind.Tezos
-    ? tezosAddress
-    : evmAddress;
-  const { receiversList, filteredReceiversList, handleSearchValueChange } = useFilteredReceiversList(
-    selectedAsset.chainKind,
-    sourceAddress,
-    isShieldedSend
-  );
-
-  const filteredAssets = useMemo(() => {
-    const normalizedSearch = assetSearch.trim().toLowerCase();
-
-    return assets.filter(
-      asset =>
-        (networkFilter === 'all' || asset.chainKind === networkFilter) &&
-        (!normalizedSearch ||
-          asset.name.toLowerCase().includes(normalizedSearch) ||
-          asset.symbol.toLowerCase().includes(normalizedSearch) ||
-          (asset.chainKind === TempleChainKind.EVM &&
-            asset.sendStandard !== EvmAssetStandardEnum.NATIVE &&
-            asset.contractAddress.toLowerCase().includes(normalizedSearch)))
-    );
-  }, [assetSearch, assets, networkFilter]);
+  const {
+    filteredReceiversList,
+    firstReceiver,
+    handleSearchValueChange,
+    isShieldedSend,
+    isTransferDisabled,
+    receiversList
+  } = useSendRecipientSelection({
+    asset: selectedAsset,
+    evmAddress,
+    saplingAddress: saplingAddress ?? undefined,
+    tezosAddress
+  });
 
   const handleAssetAmountChange = useCallback(
     (nextValue: SendAssetAmount) => {
@@ -185,8 +160,6 @@ export const SendModal: FC = () => {
     [selectedAsset.assetKey, setValues]
   );
 
-  const isTransferDisabled = receiversList.length === 0;
-  const firstReceiver = useMemo(() => receiversList.flatMap(({ data }) => data)[0], [receiversList]);
   const isTezOrShieldedTez =
     selectedAsset.assetSlug === TEZ_TOKEN_SLUG || selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const isRecipientSapling = isSaplingAddress(values.recipient);
@@ -261,7 +234,7 @@ export const SendModal: FC = () => {
             showErrorInFooter
             name="assetAmount"
             label="Asset"
-            assetsList={filteredAssets}
+            assetsList={pickerAssets}
             isSearchable
             dropdownDescription="Select Token"
             searchPlaceholder="Search by name or address"

@@ -8,9 +8,9 @@ import { TEZ_SHIELDED_TOKEN_METADATA, TEZ_SHIELDED_TOKEN_SLUG } from 'src/token/
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { TezosSendAsset } from 'src/types/send-asset';
-import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import { useCurrentAccountCollectibles, useCurrentAccountTokens } from 'src/utils/assets/hooks';
 
-import { toTezosSendAsset } from './tezos-send-asset.mapper';
+import { toTezosSendAsset } from '../tezos-send-asset.mapper';
 
 interface CreateTezosSendAssetsParams {
   shieldedBalance: string;
@@ -42,11 +42,18 @@ export const createTezosSendAssets = ({
 
 export const useTezosSendAssets = (tezosToken: TokenInterface): TezosSendAsset[] => {
   const tezosTokens = useCurrentAccountTokens(true);
+  const tezosCollectibles = useCurrentAccountCollectibles(true);
   const shieldedBalance = useShieldedBalanceSelector();
   const shieldedExchangeRate = useAssetExchangeRate(TEZ_SHIELDED_TOKEN_SLUG);
 
   return useMemo(
-    () => createTezosSendAssets({ shieldedBalance, shieldedExchangeRate, tezosToken, tezosTokens }),
-    [shieldedBalance, shieldedExchangeRate, tezosToken, tezosTokens]
+    () =>
+      createTezosSendAssets({
+        shieldedBalance,
+        shieldedExchangeRate,
+        tezosToken,
+        tezosTokens: [...tezosTokens, ...tezosCollectibles]
+      }),
+    [shieldedBalance, shieldedExchangeRate, tezosCollectibles, tezosToken, tezosTokens]
   );
 };

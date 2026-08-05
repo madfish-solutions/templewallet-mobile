@@ -6,20 +6,26 @@ import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
+import { useEvmChainCollectiblesMetadataSelector } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-selectors';
 import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { EvmStoredTokenMetadata } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-state';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
-import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
+import {
+  EvmAssetStandardEnum,
+  EvmCollectibleMetadata,
+  EVM_TOKEN_SLUG
+} from 'src/token/interfaces/token-metadata.interface';
 import { EvmSendAsset } from 'src/types/send-asset';
 import { isDefined } from 'src/utils/is-defined';
 
-import { EvmSendNetwork, toEvmSendAsset } from './evm-send-asset.mapper';
+import { EvmSendNetwork, toEvmSendAsset } from '../evm-send-asset.mapper';
 
 interface CreateEvmSendAssetsParams {
   assets: EvmChainAssetsRecord;
   balances: Record<string, string>;
+  collectiblesMetadata: Record<string, EvmCollectibleMetadata>;
   exchangeRates: Record<string, number>;
   fiatToUsdRate?: number;
   hasAccount: boolean;
@@ -30,6 +36,7 @@ interface CreateEvmSendAssetsParams {
 export const createEvmSendAssets = ({
   assets,
   balances,
+  collectiblesMetadata,
   exchangeRates,
   fiatToUsdRate,
   hasAccount,
@@ -61,7 +68,15 @@ export const createEvmSendAssets = ({
     const tokenMetadata = tokensMetadata[assetSlug];
     const usdRate = exchangeRates[assetSlug];
     const exchangeRate = isDefined(usdRate) && isDefined(fiatToUsdRate) ? usdRate * fiatToUsdRate : undefined;
-    const asset = toEvmSendAsset({ assetSlug, balance, exchangeRate, network, standard, tokenMetadata });
+    const asset = toEvmSendAsset({
+      assetSlug,
+      balance,
+      exchangeRate,
+      network,
+      standard,
+      tokenMetadata,
+      collectibleMetadata: collectiblesMetadata[assetSlug]
+    });
 
     if (asset) {
       sendAssets.push(asset);
@@ -76,6 +91,7 @@ export const useEvmSendAssets = (chainId: number, nativeIconName?: CryptoLogoNam
   const network = useEvmChain(chainId);
   const assets = useEvmAccountChainAssetsSelector(evmAddress, chainId);
   const balances = useEvmAccountChainBalancesSelector(evmAddress, chainId);
+  const collectiblesMetadata = useEvmChainCollectiblesMetadataSelector(chainId);
   const tokensMetadata = useEvmChainTokensMetadataSelector(chainId);
   const exchangeRates = useEvmChainExchangeRatesSelector(chainId);
   const fiatToUsdRate = useFiatToUsdRateSelector();
@@ -85,12 +101,23 @@ export const useEvmSendAssets = (chainId: number, nativeIconName?: CryptoLogoNam
       createEvmSendAssets({
         assets,
         balances,
+        collectiblesMetadata,
         exchangeRates,
         fiatToUsdRate,
         hasAccount: Boolean(evmAddress),
         network: network ? { ...network, nativeIconName } : undefined,
         tokensMetadata
       }),
-    [assets, balances, evmAddress, exchangeRates, fiatToUsdRate, nativeIconName, network, tokensMetadata]
+    [
+      assets,
+      balances,
+      collectiblesMetadata,
+      evmAddress,
+      exchangeRates,
+      fiatToUsdRate,
+      nativeIconName,
+      network,
+      tokensMetadata
+    ]
   );
 };

@@ -15,8 +15,8 @@ import { showErrorToast } from 'src/toast/toast.utils';
 import { isTezosDomainNameValid, tezosDomainsResolver } from 'src/utils/dns.utils';
 import { isDefined } from 'src/utils/is-defined';
 
-import { createSendIntent, SendIntent, SendIntentFailureReason } from './create-send-intent';
-import { SendModalFormValues } from './send-modal.form';
+import { createSendIntent, SendIntent, SendIntentFailureReason } from '../create-send-intent';
+import { SendModalFormValues } from '../form';
 
 interface UseSendSubmissionParams {
   accountId?: string;

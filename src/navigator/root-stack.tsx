@@ -32,7 +32,7 @@ import { RenameAccountModal } from 'src/modals/rename-account-modal/rename-accou
 import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/reveal-private-key-modal';
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
-import { SendModal } from 'src/modals/send-modal/send-modal';
+import { SendModal } from 'src/modals/send-modal';
 import { ShieldedAnnouncementModal } from 'src/modals/shielded-announcement-modal/shielded-announcement-modal';
 import { SplashModal } from 'src/modals/splash-modal/splash-modal';
 import { AfterSyncQRScan } from 'src/modals/sync-account/after-sync-qr-scan/after-sync-qr-scan';

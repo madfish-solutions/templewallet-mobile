@@ -2,12 +2,14 @@ import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import {
   EvmAssetStandardEnum,
+  EvmCollectibleMetadata,
   EvmNativeTokenMetadata,
   EvmTokenMetadata,
   EVM_TOKEN_SLUG
 } from 'src/token/interfaces/token-metadata.interface';
 import { EvmNativeSendAsset, EvmSendAsset } from 'src/types/send-asset';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 
 export interface EvmSendNetwork {
@@ -24,6 +26,7 @@ interface ToEvmSendAssetParams {
   network: EvmSendNetwork;
   standard: EvmAssetStandardEnum;
   tokenMetadata?: EvmTokenMetadata | EvmNativeTokenMetadata;
+  collectibleMetadata?: EvmCollectibleMetadata;
 }
 
 export const toEvmSendAsset = ({
@@ -32,23 +35,37 @@ export const toEvmSendAsset = ({
   exchangeRate,
   network,
   standard,
-  tokenMetadata
+  tokenMetadata,
+  collectibleMetadata
 }: ToEvmSendAssetParams): EvmSendAsset | undefined => {
   const isNative = standard === EvmAssetStandardEnum.NATIVE;
-  const decimals = isNative ? network.currency.decimals : tokenMetadata?.decimals;
+  const isCollectible = standard === EvmAssetStandardEnum.ERC721 || standard === EvmAssetStandardEnum.ERC1155;
+  const decimals = isNative ? network.currency.decimals : isCollectible ? 0 : tokenMetadata?.decimals;
 
   if (!isDefined(decimals)) {
     return undefined;
   }
 
-  const symbol = (isNative ? network.currency.symbol : tokenMetadata?.symbol) ?? 'Token';
-  const name = (isNative ? network.currency.name : tokenMetadata?.name) ?? symbol;
+  const [, tokenId] = isCollectible ? fromTokenSlug(assetSlug) : [];
+  const symbol =
+    (isNative ? network.currency.symbol : isCollectible ? collectibleMetadata?.symbol : tokenMetadata?.symbol) ??
+    (isCollectible ? 'NFT' : 'Token');
+  const name =
+    (isNative
+      ? network.currency.name
+      : isCollectible
+      ? collectibleMetadata?.collectibleName ?? collectibleMetadata?.name
+      : tokenMetadata?.name) ?? symbol;
   const commonAsset: Omit<EvmNativeSendAsset, 'assetSlug' | 'sendStandard'> = {
     name,
     symbol,
     decimals,
     iconName: isNative ? network.nativeIconName : undefined,
-    thumbnailUri: isNative ? network.currency.iconURL : tokenMetadata?.iconURL,
+    thumbnailUri: isNative
+      ? network.currency.iconURL
+      : isCollectible
+      ? collectibleMetadata?.image
+      : tokenMetadata?.iconURL,
     balance,
     exchangeRate,
     assetKey: toChainAssetSlug(TempleChainKind.EVM, network.chainId, assetSlug),
@@ -61,10 +78,22 @@ export const toEvmSendAsset = ({
     return { ...commonAsset, assetSlug: EVM_TOKEN_SLUG, sendStandard: EvmAssetStandardEnum.NATIVE };
   }
 
-  const contractAddress = tokenMetadata?.address;
-  if (standard !== EvmAssetStandardEnum.ERC20 || !contractAddress || contractAddress === EVM_TOKEN_SLUG) {
-    return undefined;
+  if (standard === EvmAssetStandardEnum.ERC20) {
+    const contractAddress = tokenMetadata?.address;
+
+    return contractAddress && contractAddress !== EVM_TOKEN_SLUG
+      ? { ...commonAsset, assetSlug, sendStandard: EvmAssetStandardEnum.ERC20, contractAddress }
+      : undefined;
   }
 
-  return { ...commonAsset, assetSlug, sendStandard: EvmAssetStandardEnum.ERC20, contractAddress };
+  const contractAddress = collectibleMetadata?.address ?? (fromTokenSlug(assetSlug)[0] as HexString | undefined);
+  if (!contractAddress || !tokenId) return undefined;
+
+  return {
+    ...commonAsset,
+    assetSlug,
+    sendStandard: standard,
+    contractAddress,
+    tokenId
+  };
 };
