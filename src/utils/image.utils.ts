@@ -212,10 +212,17 @@ const getEvmTokenRainbowLogoUrl = (chainId: number, address: string) => {
   }
 };
 
-export const buildEvmTokenIconSources = (chainId: number, address: string, iconURL?: string): string[] =>
-  [iconURL, getEvmTokenRainbowLogoUrl(chainId, address)]
-    .filter(isTruthy)
-    .map(url => getCompressedImageUrl(url, COMPRESSED_TOKEN_ICON_SIZE));
+export const buildEvmTokenIconSources = (chainId: number, address: string, iconURL?: string): string[] => {
+  const rainbowLogoUrl = getEvmTokenRainbowLogoUrl(chainId, address);
+
+  return [
+    // Blockscout serves some Etherlink token icons directly from IPFS gateways.
+    // Prefer the original gateway URL to avoid an unnecessary proxy hop.
+    iconURL?.startsWith('http') ? iconURL : undefined,
+    iconURL && getCompressedImageUrl(iconURL, COMPRESSED_TOKEN_ICON_SIZE),
+    rainbowLogoUrl && getCompressedImageUrl(rainbowLogoUrl, COMPRESSED_TOKEN_ICON_SIZE)
+  ].filter(isTruthy);
+};
 
 const DWEB_IPFS_GATE = 'https://dweb.link/ipfs';
 
