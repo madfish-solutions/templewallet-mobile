@@ -1,8 +1,10 @@
 import React, { FC, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { TokenIconWithNetwork } from 'src/components/token-icon-with-network/token-icon-with-network';
+import { MultichainTokenIcon, MultichainTokenIconProps } from 'src/components/multichain-token-icon';
+import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TruncatedText } from 'src/components/truncated-text';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { formatSize } from 'src/styles/format-size';
 import { emptyToken } from 'src/token/interfaces/token.interface';
@@ -17,7 +19,6 @@ import { Icon } from '../../icon/icon';
 import { IconNameEnum } from '../../icon/icon-name.enum';
 import { IconV2 } from '../../icon-v2';
 import { IconNameV2Enum } from '../../icon-v2/icon-name.enum';
-import { TokenIcon } from '../../token-icon/token-icon';
 
 import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 import { tokenDropdownItemVariantConfigs } from './token-dropdown-item.variants';
@@ -32,6 +33,35 @@ interface Props {
   isShowName?: boolean;
   variant?: TokenDropdownItemVariant;
 }
+
+interface EvmTokenAsset extends AssetInterface {
+  assetSlug: string;
+  chainId: number;
+  chainKind: TempleChainKind.EVM;
+}
+
+type EvmTokenCandidate = AssetInterface & { chainId?: unknown };
+
+const isEvmToken = (token: EvmTokenCandidate): token is EvmTokenAsset =>
+  token.chainKind === TempleChainKind.EVM && typeof token.assetSlug === 'string' && typeof token.chainId === 'number';
+
+const getTokenIconProps = (token: AssetInterface): MultichainTokenIconProps => {
+  if (isEvmToken(token)) {
+    return {
+      chainKind: TempleChainKind.EVM,
+      chainId: token.chainId,
+      address: token.assetSlug,
+      iconName: token.iconName,
+      iconURL: token.thumbnailUri
+    };
+  }
+
+  if (token.chainKind === TempleChainKind.Tezos) {
+    return { chainKind: TempleChainKind.Tezos, iconName: token.iconName, thumbnailUri: token.thumbnailUri };
+  }
+
+  return { iconName: token.iconName, thumbnailUri: token.thumbnailUri };
+};
 
 export const TokenDropdownItem: FC<Props> = ({
   token = emptyToken,
@@ -49,7 +79,6 @@ export const TokenDropdownItem: FC<Props> = ({
     size: iconSize,
     visualSize: iconVisualSize
   } = isShowBalance ? listIconConfig : selectedIconConfig;
-  const chainKind = token.chainKind;
   const hasActionIcon = isDefined(actionIconName) || isDefined(actionIconV2Name);
   const tokenNameTextStyle = useMemo(
     () => [styles.name, isCompact && styles.compactName, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
@@ -59,11 +88,12 @@ export const TokenDropdownItem: FC<Props> = ({
     () => [styles.iconContainer, { width: iconSize, height: iconSize }],
     [iconSize, styles]
   );
+  const tokenIconProps = getTokenIconProps(token);
 
   if (assetsEqualityFn(token, emptyToken)) {
     return (
       <View style={styles.container}>
-        <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconVisualSize} />
+        <TokenIcon iconName={token.iconName} size={iconVisualSize} thumbnailUri={token.thumbnailUri} />
         <Divider size={iconGap} />
 
         <View style={styles.infoContainer}>
@@ -86,13 +116,11 @@ export const TokenDropdownItem: FC<Props> = ({
   return (
     <View style={[styles.container, isCompact && styles.compactContainer]}>
       {showNetworkBadge ? (
-        <TokenIconWithNetwork chainKind={chainKind}>
-          <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconVisualSize} />
-        </TokenIconWithNetwork>
+        <MultichainTokenIcon {...tokenIconProps} size={iconVisualSize} showNetworkBadge />
       ) : (
         <View style={iconContainerStyle}>
           <View style={styles.iconVisualContainer}>
-            <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} size={iconVisualSize} />
+            <MultichainTokenIcon {...tokenIconProps} size={iconVisualSize} />
           </View>
         </View>
       )}

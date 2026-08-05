@@ -9,9 +9,7 @@ import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
-import { EvmTokenIcon } from 'src/components/token-icon/evm-token-icon';
-import { TokenIcon } from 'src/components/token-icon/token-icon';
-import { TokenIconWithNetwork } from 'src/components/token-icon-with-network/token-icon-with-network';
+import { MultichainTokenIcon, MultichainTokenIconProps } from 'src/components/multichain-token-icon';
 import { TokenTag } from 'src/components/token-tag/token-tag';
 import { TruncatedText } from 'src/components/truncated-text';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -49,7 +47,6 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
 
   const isTezos = token.chainKind === TempleChainKind.Tezos;
   const isTezosGasToken = isTezos && token.slug === TEZ_TOKEN_SLUG;
-  const isEvmContractToken = !isTezos && token.slug !== EVM_TOKEN_SLUG;
   const original = token.original;
 
   const mainIconName = isTezos
@@ -88,18 +85,7 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
   const content = (
     <>
       <View style={styles.leftContainer}>
-        <TokenIconWithNetwork chainKind={token.chainKind}>
-          {isEvmContractToken ? (
-            <EvmTokenIcon
-              size={ICON_SIZE}
-              chainId={Number(token.chainId)}
-              address={token.slug}
-              iconURL={token.iconUri}
-            />
-          ) : (
-            <TokenIcon size={ICON_SIZE} iconName={mainIconName} thumbnailUri={mainThumbnailUri} />
-          )}
-        </TokenIconWithNetwork>
+        <MultichainTokenIcon {...getTokenIconProps(token, mainIconName, mainThumbnailUri)} />
         <Divider size={formatSize(4)} />
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
@@ -172,3 +158,20 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
 
   return <View style={styles.container}>{content}</View>;
 });
+
+const getTokenIconProps = (
+  token: MultichainDisplayedToken,
+  iconName: CryptoLogoNameEnum | undefined,
+  thumbnailUri: string | undefined
+): MultichainTokenIconProps =>
+  token.chainKind === TempleChainKind.Tezos
+    ? { chainKind: TempleChainKind.Tezos, iconName, thumbnailUri, size: ICON_SIZE, showNetworkBadge: true }
+    : {
+        chainKind: TempleChainKind.EVM,
+        chainId: Number(token.chainId),
+        address: token.slug,
+        iconName,
+        iconURL: token.iconUri,
+        size: ICON_SIZE,
+        showNetworkBadge: true
+      };
