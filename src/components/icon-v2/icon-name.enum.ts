@@ -23,6 +23,7 @@ export enum IconNameV2Enum {
   UserAdd = 'UserAdd',
   Trash = 'Trash',
   CheckboxEmpty = 'CheckboxEmpty',
+  CheckboxChecked = 'CheckboxChecked',
   CheckboxCheckedFill = 'CheckboxCheckedFill',
   Share = 'Share',
   Logout = 'Logout',

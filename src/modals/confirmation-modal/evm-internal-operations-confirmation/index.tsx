@@ -2,12 +2,13 @@ import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
+import { AttentionMessage } from 'src/components/attention-message/attention-message';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { Icon } from 'src/components/icon/icon';
-import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum.ts';
 import { Label } from 'src/components/label/label';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
@@ -21,21 +22,22 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/error-toast.utils';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
 import { buildEvmTransferRequest } from 'src/utils/evm/build-evm-transfer-request';
+import { isDefined } from 'src/utils/is-defined.ts';
 
 import { ConfirmationLayout } from '../confirmation-layout/confirmation-layout';
-import { EvmTransferConfirmationModalParams } from '../confirmation-modal.params';
+import { EvmInternalOperationsConfirmationModalParams } from '../confirmation-modal.params';
 import { useFeeFormInputStyles } from '../operations-confirmation/fee-form-input/fee-form-input.styles';
 import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
 
-import { useEvmTransferConfirmationStyles } from './evm-transfer-confirmation.styles';
-import { useEvmTransferFee } from './use-evm-transfer-fee.hook';
-import { useEvmTransferSubmission } from './use-evm-transfer-submission.hook';
+import { useEvmTransferFee } from './hooks/use-evm-transfer-fee';
+import { useEvmTransferSubmission } from './hooks/use-evm-transfer-submission';
+import { useEvmInternalOperationsConfirmationStyles } from './styles';
 
-type Props = Omit<EvmTransferConfirmationModalParams, 'type'>;
+type Props = Omit<EvmInternalOperationsConfirmationModalParams, 'type'>;
 
 const renderHeaderTitle = () => <HeaderTitle title="Confirm Send" />;
 
-export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverAddress, atomicAmount }) => {
+export const EvmInternalOperationsConfirmation: FC<Props> = ({ accountId, asset, receiverAddress, atomicAmount }) => {
   const { goBack } = useNavigation();
   const accounts = useAllAccounts();
   const sourceAccount = accounts.find(account => account.id === accountId);
@@ -139,7 +141,7 @@ interface EvmTransferFeeDetailsProps {
 }
 
 const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => {
-  const styles = useEvmTransferConfirmationStyles();
+  const styles = useEvmInternalOperationsConfirmationStyles();
   const feeFormStyles = useFeeFormInputStyles();
 
   return (
@@ -155,7 +157,7 @@ const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => 
               ? `${feeState.formattedFee} XTZ`
               : 'Estimating...'}
           </Text>
-          {!!feeState.fee && feeState.feeAsset.exchangeRate !== undefined && (
+          {isDefined(feeState.fee) && isDefined(feeState.feeAsset.exchangeRate) && (
             <Text style={feeFormStyles.infoFeeValue}>
               (
               <FormattedAmount amount={feeState.feeFiatValue} hideApproximateSign isDollarValue />)
@@ -191,13 +193,25 @@ const EvmTransferFeeDetails: FC<EvmTransferFeeDetailsProps> = ({ feeState }) => 
         </View>
         <Divider size={formatSize(8)} />
         <TouchableOpacity style={feeFormStyles.toggleViewButton} onPress={feeState.toggleDetailedInput}>
-          <Icon name={feeState.isDetailedInputVisible ? IconNameEnum.X : IconNameEnum.Gear} size={formatSize(16)} />
+          <IconV2 name={feeState.isDetailedInputVisible ? IconNameV2Enum.XBig : IconNameV2Enum.Settings} />
         </TouchableOpacity>
       </View>
 
-      {!!feeState.gasPriceError && <Text style={styles.errorText}>{feeState.gasPriceError}</Text>}
+      {isDefined(feeState.gasPriceError) && (
+        <>
+          <Divider size={formatSize(16)} />
+          <AttentionMessage>
+            <Text>{feeState.gasPriceError}</Text>
+          </AttentionMessage>
+        </>
+      )}
       {feeState.hasInsufficientNativeBalance && (
-        <Text style={styles.errorText}>Insufficient XTZ balance for the amount and network fee</Text>
+        <>
+          <Divider size={formatSize(16)} />
+          <AttentionMessage>
+            <Text>Insufficient XTZ balance for the amount and network fee</Text>
+          </AttentionMessage>
+        </>
       )}
       <Divider size={formatSize(24)} />
     </>

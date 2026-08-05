@@ -12,7 +12,7 @@ import { cancelSaplingPreparationAction, clearPreparedOpParamsAction } from 'src
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { DAppOperationsConfirmation } from './d-app-operations-confirmation/d-app-operations-confirmation';
-import { EvmTransferConfirmation } from './evm-transfer-confirmation/evm-transfer-confirmation';
+import { EvmInternalOperationsConfirmation } from './evm-internal-operations-confirmation';
 import { InternalOperationsConfirmation } from './internal-operations-confirmation/internal-operations-confirmation';
 import { SaplingOperationsConfirmation } from './sapling-operations-confirmation/sapling-operations-confirmation';
 
@@ -77,9 +77,9 @@ const ConfirmationModalContent: FC = () => {
           direction={params.direction}
         />
       );
-    case ConfirmationTypeEnum.EvmTransfer:
+    case ConfirmationTypeEnum.EvmInternalOperations:
       return (
-        <EvmTransferConfirmation
+        <EvmInternalOperationsConfirmation
           accountId={params.accountId}
           asset={params.asset}
           receiverAddress={params.receiverAddress}

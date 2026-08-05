@@ -15,11 +15,12 @@ import {
   getEvmFeeOptions,
   getEvmFeesForGasPrice,
   getNetworkFeeSliderValues
-} from './evm-transfer-fee.utils';
-import { useEvmTransferEstimation } from './use-evm-transfer-estimation.hook';
+} from '../evm-transfer-fee.utils';
 
-export { EVM_ESTIMATION_REFRESH_INTERVAL } from './use-evm-transfer-estimation.hook';
-export type { EvmSubmissionFees } from './use-evm-transfer-estimation.hook';
+import { useEvmTransferEstimation } from './use-evm-transfer-estimation';
+
+export { EVM_ESTIMATION_REFRESH_INTERVAL } from './use-evm-transfer-estimation';
+export type { EvmSubmissionFees } from './use-evm-transfer-estimation';
 
 interface Props {
   sourceAddress?: HexString;

@@ -51,7 +51,7 @@ export const useSendSubmission = ({
       switch (intent.type) {
         case 'evm-transfer':
           navigateToModal(ModalsEnum.Confirmation, {
-            type: ConfirmationTypeEnum.EvmTransfer,
+            type: ConfirmationTypeEnum.EvmInternalOperations,
             accountId: intent.accountId,
             asset: intent.asset,
             receiverAddress: intent.receiverAddress,

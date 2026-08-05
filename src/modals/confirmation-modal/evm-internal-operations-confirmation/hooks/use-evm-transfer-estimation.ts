@@ -11,7 +11,7 @@ import {
 } from 'src/utils/evm/estimate-evm-transaction';
 import { EvmTransactionError, normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 
-import { getEvmFeeOptions, getEvmFeesForGasPrice, getGasPriceForNetworkFee } from './evm-transfer-fee.utils';
+import { getEvmFeeOptions, getEvmFeesForGasPrice, getGasPriceForNetworkFee } from '../evm-transfer-fee.utils';
 
 export const EVM_ESTIMATION_REFRESH_INTERVAL = 15_000;
 

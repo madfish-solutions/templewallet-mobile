@@ -1,6 +1,8 @@
 import React, { memo, useCallback } from 'react';
 
 import { emptyFn } from 'src/config/general';
+import { ThemesEnum } from 'src/interfaces/theme.enum';
+import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { generateHitSlop } from 'src/styles/generate-hit-slop';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -17,6 +19,7 @@ import { CheckboxStyles } from './checkbox.styles';
 export const Checkbox = memo<CheckboxProps>(
   ({ disabled = false, value, size = 24, children, onChange = emptyFn, testID }) => {
     const { trackEvent } = useAnalytics();
+    const theme = useThemeSelector();
 
     const handlePress = useCallback(() => {
       trackEvent(testID, AnalyticsEventCategory.ButtonPress, { value: !value });
@@ -32,7 +35,16 @@ export const Checkbox = memo<CheckboxProps>(
         onPress={handlePress}
         {...setTestID(testID)}
       >
-        <IconV2 name={value ? IconNameV2Enum.CheckboxCheckedFill : IconNameV2Enum.CheckboxEmpty} size={size} />
+        <IconV2
+          name={
+            value
+              ? theme === ThemesEnum.dark
+                ? IconNameV2Enum.CheckboxChecked
+                : IconNameV2Enum.CheckboxCheckedFill
+              : IconNameV2Enum.CheckboxEmpty
+          }
+          size={size}
+        />
         {children}
       </SafeTouchableOpacity>
     );

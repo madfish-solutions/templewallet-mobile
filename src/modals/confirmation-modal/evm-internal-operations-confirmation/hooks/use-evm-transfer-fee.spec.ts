@@ -7,7 +7,7 @@ import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interf
 import { EvmNativeSendAsset } from 'src/types/send-asset';
 import { Eip1559Estimation } from 'src/utils/evm/estimate-evm-transaction';
 
-import { EVM_ESTIMATION_REFRESH_INTERVAL, EvmSubmissionFees, useEvmTransferFee } from './use-evm-transfer-fee.hook';
+import { EVM_ESTIMATION_REFRESH_INTERVAL, EvmSubmissionFees, useEvmTransferFee } from './use-evm-transfer-fee';
 
 const mockEstimateEvmTransaction = jest.fn();
 const mockUseAppStateStatus = useAppStateStatus as jest.Mock;

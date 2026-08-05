@@ -7,6 +7,7 @@ import ArrowLeftIcon from './assets/arrow-left.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import CartIcon from './assets/cart.svg';
 import CheckboxCheckedFillIcon from './assets/checkbox-checked-fill.svg';
+import CheckboxCheckedIcon from './assets/checkbox-checked.svg';
 import CheckboxEmptyIcon from './assets/checkbox-empty.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ClockIcon from './assets/clock.svg';
@@ -56,6 +57,7 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.UserAdd]: UserAddIcon,
   [IconNameV2Enum.Trash]: TrashIcon,
   [IconNameV2Enum.CheckboxEmpty]: CheckboxEmptyIcon,
+  [IconNameV2Enum.CheckboxChecked]: CheckboxCheckedIcon,
   [IconNameV2Enum.CheckboxCheckedFill]: CheckboxCheckedFillIcon,
   [IconNameV2Enum.Share]: ShareIcon,
   [IconNameV2Enum.Logout]: LogoutIcon,

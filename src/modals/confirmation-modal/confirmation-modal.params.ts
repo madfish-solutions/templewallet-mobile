@@ -9,7 +9,7 @@ export type ConfirmationModalParams =
   | InternalOperationsConfirmationModalParams
   | DAppOperationsConfirmationModalParams
   | RebalanceConfirmationModalParams
-  | EvmTransferConfirmationModalParams;
+  | EvmInternalOperationsConfirmationModalParams;
 
 export interface InternalOperationsConfirmationModalParams extends TestIdProps {
   type: ConfirmationTypeEnum.InternalOperations;
@@ -33,8 +33,8 @@ interface RebalanceConfirmationModalParams {
   amount: string;
 }
 
-export interface EvmTransferConfirmationModalParams {
-  type: ConfirmationTypeEnum.EvmTransfer;
+export interface EvmInternalOperationsConfirmationModalParams {
+  type: ConfirmationTypeEnum.EvmInternalOperations;
   accountId: string;
   asset: EvmSendAsset;
   receiverAddress: HexString;
