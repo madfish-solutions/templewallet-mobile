@@ -3,13 +3,19 @@ import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { DataUriImage } from 'src/components/data-uri-image';
 import { NetworkIcon } from 'src/components/network-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TokenIconStyles } from 'src/components/token-icon/token-icon.styles';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useImagesStack } from 'src/hooks/use-images-stack';
 import { formatSize } from 'src/styles/format-size';
-import { buildEvmCollectibleImagesStack, buildEvmTokenIconSources } from 'src/utils/image.utils';
+import {
+  buildEvmCollectibleImagesStack,
+  buildEvmTokenIconSources,
+  isImgUriDataUri,
+  isSvgDataUriInBase64Encoding
+} from 'src/utils/image.utils';
 
 import { useMultichainTokenIconStyles } from './styles';
 
@@ -98,7 +104,8 @@ const EvmTokenIcon: FC<EvmTokenIconProps> = ({ address, chainId, iconURL, isColl
     [address, chainId, iconURL, isCollectible]
   );
   const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sourcesStack);
-  const isShowPlaceholder = isLoading || isStackFailed;
+  const isDataUri = src != null && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src));
+  const isShowPlaceholder = !isDataUri && (isLoading || isStackFailed);
   const borderRadius = isCollectible ? formatSize(8) : size / 2;
   const imageStyle = useMemo(
     () => [
@@ -111,7 +118,18 @@ const EvmTokenIcon: FC<EvmTokenIconProps> = ({ address, chainId, iconURL, isColl
   return (
     <View style={[TokenIconStyles.container, { borderRadius, height: size, width: size }]}>
       {isShowPlaceholder && <TokenIcon size={size} isCollectible={isCollectible} style={{ borderRadius }} />}
-      {src != null && <FastImage style={imageStyle} source={{ uri: src }} onLoad={onSuccess} onError={onFail} />}
+      {isDataUri ? (
+        <DataUriImage
+          dataUri={src}
+          width={(size * 5) / 6}
+          height={(size * 5) / 6}
+          style={imageStyle}
+          onLoad={onSuccess}
+          onError={onFail}
+        />
+      ) : (
+        src != null && <FastImage style={imageStyle} source={{ uri: src }} onLoad={onSuccess} onError={onFail} />
+      )}
     </View>
   );
 };

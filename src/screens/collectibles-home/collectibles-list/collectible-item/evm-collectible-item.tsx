@@ -1,8 +1,6 @@
 import FastImage from '@d11/react-native-fast-image';
 import React, { memo, useMemo } from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
-import { SvgXml } from 'react-native-svg';
-import { WebView } from 'react-native-webview';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { BrokenImage } from 'src/components/broken-image';
@@ -82,44 +80,9 @@ const EvmCollectibleImage = memo<EvmCollectibleImageProps>(({ uri, size }) => {
     return <BrokenImage isBigIcon={false} style={styles.brokenImage} />;
   }
 
-  if (src && isImgUriDataUri(src)) {
+  if (src && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src))) {
     return (
       <DataUriImage dataUri={src} width={size} height={size} style={styles.image} onLoad={onSuccess} onError={onFail} />
-    );
-  }
-
-  if (src && isSvgDataUriInBase64Encoding(src)) {
-    const base64Data = src.replace(/^data:image\/svg\+xml;base64,/i, '');
-    const svgXml = Buffer.from(base64Data, 'base64').toString('utf8');
-
-    if (svgXml.includes('<foreignObject')) {
-      const html = `
-        <html>
-          <body style="margin:0;padding:0;background:transparent;">
-            <img src="data:image/svg+xml;base64,${base64Data}" style="width:100%;height:100%;" />
-          </body>
-        </html>
-      `;
-
-      return (
-        <View style={{ width: size, height: size }}>
-          <WebView
-            source={{ html }}
-            style={{ width: size, height: size }}
-            onError={onFail}
-            onLoad={onSuccess}
-            scrollEnabled={false}
-            pointerEvents="none"
-          />
-          {isLoading ? <ActivityIndicator size="small" /> : null}
-        </View>
-      );
-    }
-
-    return (
-      <View style={{ width: size, height: size }}>
-        <SvgXml xml={svgXml} width={size} height={size} onError={onFail} onLoad={onSuccess} />
-      </View>
     );
   }
 

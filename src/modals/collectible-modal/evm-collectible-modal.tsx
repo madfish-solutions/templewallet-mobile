@@ -7,6 +7,7 @@ import { BrokenImage } from 'src/components/broken-image';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { DataUriImage } from 'src/components/data-uri-image';
 import { Divider } from 'src/components/divider/divider';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
@@ -23,7 +24,7 @@ import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
-import { buildEvmCollectibleImagesStack } from 'src/utils/image.utils';
+import { buildEvmCollectibleImagesStack, isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 
@@ -138,6 +139,10 @@ const EvmCollectibleMedia = memo(({ uri, size }: { uri?: string; size: number })
 
   if (isStackFailed) {
     return <BrokenImage isBigIcon style={{ width: size, height: size }} />;
+  }
+
+  if (src && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src))) {
+    return <DataUriImage dataUri={src} width={size} height={size} onLoad={onSuccess} onError={onFail} />;
   }
 
   return (
