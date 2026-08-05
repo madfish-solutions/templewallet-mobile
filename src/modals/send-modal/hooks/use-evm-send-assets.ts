@@ -33,7 +33,7 @@ interface CreateEvmSendAssetsParams {
   tokensMetadata: Record<string, EvmStoredTokenMetadata>;
 }
 
-export const createEvmSendAssets = ({
+const createEvmSendAssets = ({
   assets,
   balances,
   collectiblesMetadata,

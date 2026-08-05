@@ -33,7 +33,7 @@ export const getEvmFeesForGasPrice = (gasPrice: bigint, estimation: EvmEstimatio
   return getEip1559FeesForMaxFee(gasPrice, estimation);
 };
 
-export const getEip1559FeesForMaxFee = (maxFeePerGas: bigint, estimation: Eip1559Estimation): Eip1559Fees => {
+const getEip1559FeesForMaxFee = (maxFeePerGas: bigint, estimation: Eip1559Estimation): Eip1559Fees => {
   const scaledPriorityFee =
     estimation.maxFeePerGas === 0n
       ? 0n
@@ -57,7 +57,7 @@ const makeLegacyFeeOption = (gasPrice: bigint, estimation: LegacyEstimation): Le
   fee: estimation.gas * gasPrice
 });
 
-export const getEip1559FeeOptions = (estimation: Eip1559Estimation) => {
+const getEip1559FeeOptions = (estimation: Eip1559Estimation) => {
   const slowMaxFeePerGas = multiplyByPercentage(estimation.maxFeePerGas, SLOW_FEE_PERCENTAGE);
   const fastMaxFeePerGas = multiplyByPercentage(estimation.maxFeePerGas, FAST_FEE_PERCENTAGE);
 

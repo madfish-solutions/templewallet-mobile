@@ -19,7 +19,7 @@ interface CreateTezosSendAssetsParams {
   tezosTokens: TokenInterface[];
 }
 
-export const createTezosSendAssets = ({
+const createTezosSendAssets = ({
   shieldedBalance,
   shieldedExchangeRate,
   tezosToken,

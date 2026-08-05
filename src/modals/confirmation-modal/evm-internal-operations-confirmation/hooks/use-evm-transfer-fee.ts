@@ -19,9 +19,6 @@ import {
 
 import { useEvmTransferEstimation } from './use-evm-transfer-estimation';
 
-export { EVM_ESTIMATION_REFRESH_INTERVAL } from './use-evm-transfer-estimation';
-export type { EvmSubmissionFees } from './use-evm-transfer-estimation';
-
 interface Props {
   sourceAddress?: HexString;
   request?: EvmTransferRequest;

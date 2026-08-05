@@ -13,11 +13,11 @@ import { EvmNetworkEssentials } from 'src/types/networks';
 import { EvmTransactionSubmissionError } from 'src/utils/evm/evm-transaction-submission-error';
 import { getViemPublicClient, getViemWalletClient } from 'src/utils/rpc/evm-client.utils';
 
-export type EvmTransactionData = SendTransactionRequest;
+type EvmTransactionData = SendTransactionRequest;
 
 type ReceiptOptions = Omit<WaitForTransactionReceiptParameters, 'hash'>;
 
-export interface SubmitEvmTransactionParams {
+interface SubmitEvmTransactionParams {
   network: EvmNetworkEssentials;
   sourceAddress: HexString;
   transaction: EvmTransactionData;
@@ -29,7 +29,7 @@ export interface SubmitEvmTransactionParams {
   receiptOptions?: ReceiptOptions;
 }
 
-export interface EvmTransactionSubmissionDependencies {
+interface EvmTransactionSubmissionDependencies {
   getAccount: (address: HexString) => Promise<LocalAccount>;
   sendTransaction: (
     network: EvmNetworkEssentials,
@@ -51,7 +51,7 @@ const defaultDependencies: EvmTransactionSubmissionDependencies = {
  * Owns the complete chain-agnostic EVM submission lifecycle: account access,
  * local signing, broadcasting, replacement-aware receipt polling and receipt validation.
  */
-export class EvmTransactionSubmissionService {
+class EvmTransactionSubmissionService {
   private readonly dependencies: EvmTransactionSubmissionDependencies;
 
   constructor(dependencies: Partial<EvmTransactionSubmissionDependencies> = {}) {

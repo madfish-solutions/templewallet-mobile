@@ -13,9 +13,9 @@ import { EvmTransactionError, normalizeEvmTransactionError } from 'src/utils/evm
 
 import { getEvmFeeOptions, getEvmFeesForGasPrice, getGasPriceForNetworkFee } from '../evm-transfer-fee.utils';
 
-export const EVM_ESTIMATION_REFRESH_INTERVAL = 15_000;
+const EVM_ESTIMATION_REFRESH_INTERVAL = 15_000;
 
-export interface EvmSubmissionFees {
+interface EvmSubmissionFees {
   gasLimit: bigint;
   fees: EvmFees;
 }

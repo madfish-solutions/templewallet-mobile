@@ -41,7 +41,7 @@ export interface EvmTransactionError {
   pendingTransactionHash?: Hash;
 }
 
-export const EVM_TRANSACTION_ERROR_MESSAGES = {
+const EVM_TRANSACTION_ERROR_MESSAGES = {
   balance: 'Looks like your wallet is running low. Top up balance and try again.',
   lowGasBalance: 'Gas balance is not enough to complete transaction. Top up and retry.',
   feeTooLow: 'Fee is too low, blockchain says: "No tip, no trip". Add more fee and try again.',

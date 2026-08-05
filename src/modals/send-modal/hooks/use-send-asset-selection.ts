@@ -26,7 +26,7 @@ export const getInitialSendAsset = (
   return asset;
 };
 
-export const filterSendPickerAssets = (
+const filterSendPickerAssets = (
   assets: SendAsset[],
   networkFilter: NetworkFilter,
   assetSearch: string

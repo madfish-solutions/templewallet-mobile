@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { mutezToTz, tzToMutez } from 'src/utils/tezos.util';
 
 export const FIAT_AMOUNT_DECIMALS = 2;
-export const MIN_FIAT_INPUT_AMOUNT = new BigNumber(10).pow(-FIAT_AMOUNT_DECIMALS);
+const MIN_FIAT_INPUT_AMOUNT = new BigNumber(10).pow(-FIAT_AMOUNT_DECIMALS);
 
 export const tokenToDollarAmount = (
   tokenMutezAmount: BigNumber,

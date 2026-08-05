@@ -10,7 +10,7 @@ import { sortSendAssets } from '../send-assets.utils';
 import { useEvmSendAssets } from './use-evm-send-assets';
 import { useTezosSendAssets } from './use-tezos-send-assets';
 
-export const createSendAssets = (tezosAssets: SendAsset[], evmAssets: SendAsset[]): SendAsset[] =>
+const createSendAssets = (tezosAssets: SendAsset[], evmAssets: SendAsset[]): SendAsset[] =>
   sortSendAssets([...tezosAssets, ...evmAssets]);
 
 export const useSendAssets = (): SendAsset[] => {
