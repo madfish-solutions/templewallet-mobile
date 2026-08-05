@@ -1,10 +1,9 @@
 import React, { FC, ReactNode } from 'react';
 import { View } from 'react-native';
 
-import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { NetworkIcon } from 'src/components/network-icon';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { formatSize } from 'src/styles/format-size';
 
 import { useTokenIconWithNetworkStyles } from './token-icon-with-network.styles';
 
@@ -27,7 +26,7 @@ export const TokenIconWithNetwork: FC<Props> = ({ chainKind, children }) => {
       {children}
       {networkLogoName && (
         <View style={styles.networkBadge}>
-          <CryptoLogo name={networkLogoName} size={formatSize(12)} />
+          <NetworkIcon name={networkLogoName} variant="tokenBadge" />
         </View>
       )}
     </View>

@@ -78,15 +78,6 @@ export const useAccountDropdownItemStyles = createUseStylesMemoized(({ colors, t
     maxWidth: formatSize(100),
     paddingVertical: formatSize(2)
   },
-  cryptoLogoContainer: {
-    width: formatSize(16),
-    height: formatSize(16),
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: formatSize(8),
-    borderWidth: formatSize(1),
-    borderColor: colors.lines
-  },
   addressText: {
     ...typography.caption13Regular,
     lineHeight: formatSize(18),

@@ -7,7 +7,7 @@ import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
-import { NetworkLogo } from 'src/components/network-logo/network-logo';
+import { NetworkIcon } from 'src/components/network-icon';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -85,7 +85,7 @@ export const AccountSummary: FC<Props> = props => {
       {!!address && (
         <View style={styles.addressRow}>
           <View style={styles.address}>
-            <NetworkLogo name={logoName} />
+            <NetworkIcon name={logoName} />
             <Text style={styles.addressText}>{truncateAddress(address)}</Text>
           </View>
         </View>

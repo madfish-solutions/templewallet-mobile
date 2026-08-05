@@ -3,12 +3,12 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { GestureResponderEvent, Text, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
-import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
+import { NetworkIcon } from 'src/components/network-icon';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
@@ -131,9 +131,7 @@ const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName })
 
   return (
     <SafeTouchableOpacity style={styles.addressChip} onPress={copyAddress}>
-      <View style={styles.cryptoLogoContainer}>
-        <CryptoLogo name={iconName} size={formatSize(12)} />
-      </View>
+      <NetworkIcon name={iconName} variant="compactTransparent" />
       <Text style={styles.addressText}>{truncateAddress(address)}</Text>
     </SafeTouchableOpacity>
   );

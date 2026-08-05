@@ -5,18 +5,21 @@ import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { formatSize } from 'src/styles/format-size';
 
-import { useNetworkLogoStyles } from './network-logo.styles';
+import { useNetworkLogoStyles } from './styles';
 
 interface Props {
   name: CryptoLogoNameEnum;
+  variant?: NetworkIconVariant;
 }
 
-export const NetworkLogo: FC<Props> = ({ name }) => {
+export type NetworkIconVariant = 'compact' | 'compactTransparent' | 'tokenBadge' | 'large';
+
+export const NetworkIcon: FC<Props> = ({ name, variant = 'compact' }) => {
   const styles = useNetworkLogoStyles();
 
   return (
-    <View style={styles.root}>
-      <CryptoLogo name={name} size={formatSize(12)} />
+    <View style={styles[variant]}>
+      <CryptoLogo name={name} size={variant === 'large' ? formatSize(28) : formatSize(12)} />
     </View>
   );
 };
