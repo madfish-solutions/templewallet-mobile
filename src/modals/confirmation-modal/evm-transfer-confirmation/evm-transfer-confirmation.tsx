@@ -91,6 +91,7 @@ export const EvmTransferConfirmation: FC<Props> = ({ accountId, asset, receiverA
       backAction={{ disabled: isSubmitting, onPress: goBack }}
       confirmAction={{
         disabled: isConfirmDisabled,
+        isLoading: feeState.isEstimating,
         onPress: transactionError ? retry : confirm,
         title: transactionError ? 'Retry' : 'Confirm'
       }}

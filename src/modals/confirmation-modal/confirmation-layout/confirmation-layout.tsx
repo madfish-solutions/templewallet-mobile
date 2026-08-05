@@ -17,6 +17,7 @@ import { useConfirmationLayoutStyles } from './confirmation-layout.styles';
 
 interface ConfirmationAction extends TestIdProps {
   disabled?: boolean;
+  isLoading?: boolean;
   onPress: EmptyFn;
   title?: string;
 }
