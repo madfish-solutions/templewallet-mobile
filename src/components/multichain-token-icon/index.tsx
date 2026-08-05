@@ -1,12 +1,15 @@
-import React, { FC } from 'react';
+import FastImage from '@d11/react-native-fast-image';
+import React, { FC, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { NetworkIcon } from 'src/components/network-icon';
-import { EvmTokenIcon } from 'src/components/token-icon/evm-token-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
+import { TokenIconStyles } from 'src/components/token-icon/token-icon.styles';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { useImagesStack } from 'src/hooks/use-images-stack';
 import { formatSize } from 'src/styles/format-size';
+import { buildEvmTokenIconSources } from 'src/utils/image.utils';
 
 import { useMultichainTokenIconStyles } from './styles';
 
@@ -15,13 +18,13 @@ interface CommonProps {
   size?: number;
 }
 
-interface TezosTokenIconProps extends CommonProps {
+interface TezosIconProps extends CommonProps {
   chainKind: TempleChainKind.Tezos;
   iconName?: CryptoLogoNameEnum;
   thumbnailUri?: string;
 }
 
-interface EvmTokenIconProps extends CommonProps {
+interface EvmIconProps extends CommonProps {
   address: string;
   chainId: number;
   chainKind: TempleChainKind.EVM;
@@ -29,13 +32,13 @@ interface EvmTokenIconProps extends CommonProps {
   iconURL?: string;
 }
 
-interface UnspecifiedTokenIconProps extends CommonProps {
+interface UnspecifiedIconProps extends CommonProps {
   chainKind?: undefined;
   iconName?: CryptoLogoNameEnum;
   thumbnailUri?: string;
 }
 
-export type MultichainTokenIconProps = TezosTokenIconProps | EvmTokenIconProps | UnspecifiedTokenIconProps;
+export type MultichainTokenIconProps = TezosIconProps | EvmIconProps | UnspecifiedIconProps;
 
 export const MultichainTokenIcon: FC<MultichainTokenIconProps> = props => {
   const styles = useMultichainTokenIconStyles();
@@ -67,6 +70,30 @@ export const MultichainTokenIcon: FC<MultichainTokenIconProps> = props => {
       <View style={styles.networkBadge}>
         <NetworkIcon name={networkIconName} variant="tokenBadge" />
       </View>
+    </View>
+  );
+};
+
+interface EvmTokenIconProps {
+  address: string;
+  chainId: number;
+  iconURL?: string;
+  size: number;
+}
+
+const EvmTokenIcon: FC<EvmTokenIconProps> = ({ address, chainId, iconURL, size }) => {
+  const sourcesStack = useMemo(() => buildEvmTokenIconSources(chainId, address, iconURL), [chainId, address, iconURL]);
+  const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sourcesStack);
+  const isShowPlaceholder = isLoading || isStackFailed;
+  const imageStyle = useMemo(
+    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: (size * 5) / 6, height: (size * 5) / 6 }],
+    [isShowPlaceholder, size]
+  );
+
+  return (
+    <View style={[TokenIconStyles.container, { borderRadius: size / 2, height: size, width: size }]}>
+      {isShowPlaceholder && <TokenIcon size={size} />}
+      {src != null && <FastImage style={imageStyle} source={{ uri: src }} onLoad={onSuccess} onError={onFail} />}
     </View>
   );
 };

@@ -40,7 +40,7 @@ export const useImagesStack = (sourcesStack: string[]) => {
 
   const [index, setIndex] = useState(emptyStack ? -1 : 0);
 
-  const src = sourcesStack[index];
+  const src: string | undefined = sourcesStack[index];
 
   const onSuccess = useCallback(() => void setIsLoading(false), []);
 
