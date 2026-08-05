@@ -12,6 +12,7 @@ import {
   marketStackScreens,
   nftStackScreens,
   ScreensEnum,
+  settingsStackScreens,
   swapStackScreens,
   walletStackScreens
 } from 'src/navigator/enums/screens.enum';
@@ -51,7 +52,7 @@ export const SideBar = memo<Props>(({ currentRouteName }) => {
             label="Wallet"
             iconName={NavigationBarIconNameEnum.Wallet}
             routeName={ScreensEnum.Wallet}
-            focused={isStackFocusedMemo(walletStackScreens)}
+            focused={isStackFocusedMemo(walletStackScreens) || isStackFocusedMemo(settingsStackScreens)}
           />
           <SideBarButton
             label={LIMIT_NFT_FEATURES ? 'Collectibles' : 'NFT'}

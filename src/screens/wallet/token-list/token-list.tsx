@@ -50,7 +50,7 @@ const PROMOTION_ID = 'wallet-promotion';
 
 type ListItem = MultichainDisplayedToken | typeof AD_PLACEHOLDER;
 
-const ITEMS_BEFORE_AD = 4;
+const ITEMS_BEFORE_AD = 1;
 /** padding size + icon size */
 const ITEM_HEIGHT = formatSize(16 + 44);
 

@@ -3,7 +3,7 @@ import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle, Ac
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent } from 'src/config/general';
-import { useMaxDropdownHeight } from 'src/hooks/use-max-dropdown-height.hook';
+import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -150,22 +150,7 @@ const DropdownComponent = <T extends unknown>({
     },
     [isTokenSelector, itemsTitles, listItemHeight, listItemSeparatorSize]
   );
-  const maxContentHeight = useMaxDropdownHeight();
-  const contentHeight = useMemo(() => {
-    if (isLoading || isTokenSelector) {
-      return maxContentHeight;
-    }
-
-    const searchHeight = isSearchable ? formatSize(64) : 0;
-    const listHeaderHeight = listHeader ? formatSize(44) : 0;
-    let itemsHeight = formatSize(212);
-    if (list.length > 0) {
-      const { length, offset } = getItemLayout(undefined, list.length - 1);
-      itemsHeight = length + offset;
-    }
-
-    return Math.min(searchHeight + listHeaderHeight + itemsHeight + formatSize(64), maxContentHeight);
-  }, [getItemLayout, isLoading, isSearchable, isTokenSelector, list.length, listHeader, maxContentHeight]);
+  const contentHeight = useDropdownHeight();
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
