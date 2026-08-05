@@ -39,7 +39,13 @@ import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { AssetAmountInputProps, AssetAmountInputStylesConfig } from './asset-amount-input.props';
 import { useAssetAmountInputStyles } from './asset-amount-input.styles';
-import { dollarToTokenAmount, tokenToDollarAmount } from './asset-amount-input.utils';
+import {
+  convertAssetAmountInput,
+  dollarToTokenAmount,
+  FIAT_AMOUNT_DECIMALS,
+  getFiatInputAmount,
+  tokenToDollarAmount
+} from './asset-amount-input.utils';
 import { assetAmountInputVariantConfigs } from './asset-amount-input.variants';
 import { AssetAmountInputSelectors } from './selectors';
 
@@ -164,6 +170,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
     const exchangeRate = value.asset.exchangeRate ?? 1;
 
     const inputValueRef = useRef<BigNumber>(undefined);
+    const isFiatMinimumDisplayRef = useRef(false);
 
     const numericInputValue = useMemo(() => {
       const newNumericInputValue = (() => {
@@ -179,7 +186,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
               }
             }
 
-            return tokenToDollarAmount(value.amount, value.asset.decimals, exchangeRate);
+            return getFiatInputAmount(value.amount, value.asset.decimals, exchangeRate);
           }
         }
 
@@ -207,6 +214,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
     const onChange = useCallback(
       (newInputValue: BigNumber | undefined) => {
         inputValueRef.current = newInputValue;
+        isFiatMinimumDisplayRef.current = false;
 
         onValueChange({
           ...value,
@@ -218,29 +226,47 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
 
     const { stringValue, handleBlur, handleFocus, handleChange } = useNumericInput(
       numericInputValue,
-      value.asset.decimals,
+      isTokenInputType ? value.asset.decimals : FIAT_AMOUNT_DECIMALS,
       undefined,
       undefined,
       onChange,
       onBlur,
-      onFocus
+      onFocus,
+      inputTypeIndex
     );
 
     const handleTokenInputTypeChange = (tokenTypeIndex: number) => {
       if (isDefined(amountInputRef.current)) {
         amountInputRef.current.focus();
       }
+      const nextIsTokenInputType = tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX;
+      const currentTokenAmount = inputValueRef.current;
+      const fiatAmount = currentTokenAmount
+        ? tokenToDollarAmount(
+            tzToMutez(currentTokenAmount, value.asset.decimals),
+            value.asset.decimals,
+            exchangeRate,
+            FIAT_AMOUNT_DECIMALS
+          )
+        : undefined;
+      const shouldPreserveAmount =
+        (nextIsTokenInputType && isFiatMinimumDisplayRef.current) ||
+        (!nextIsTokenInputType && currentTokenAmount?.isGreaterThan(0) && fiatAmount?.isZero());
+      const nextInputValue =
+        shouldPreserveAmount && nextIsTokenInputType
+          ? mutezToTz(value.amount ?? new BigNumber(0), value.asset.decimals)
+          : convertAssetAmountInput(currentTokenAmount, value.asset.decimals, exchangeRate, nextIsTokenInputType);
+
+      inputValueRef.current = nextInputValue;
+      isFiatMinimumDisplayRef.current = !nextIsTokenInputType && Boolean(shouldPreserveAmount);
       setInputTypeIndex(tokenTypeIndex);
       trackEvent(switcherTestID, AnalyticsEventCategory.General, { tokenTypeIndex });
 
       onValueChange({
         ...value,
-        amount: getDefinedAmount(
-          inputValueRef.current,
-          value.asset.decimals,
-          exchangeRate,
-          tokenTypeIndex === TOKEN_INPUT_TYPE_INDEX
-        )
+        amount: shouldPreserveAmount
+          ? value.amount
+          : getDefinedAmount(nextInputValue, value.asset.decimals, exchangeRate, nextIsTokenInputType)
       });
     };
 

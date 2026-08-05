@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/core';
-import { FormikProvider, useFormik } from 'formik';
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { BigNumber } from 'bignumber.js';
+import { FormikErrors, FormikProvider, useFormik } from 'formik';
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -96,6 +97,26 @@ export const SendModal: FC = () => {
     [assets, initialAssetKey, initialToken]
   );
 
+  const maxAmountRef = useRef<{ assetKey: string; amount?: BigNumber.Value }>({
+    assetKey: inputInitialValue.assetKey
+  });
+
+  const validateMaxAmount = useCallback((formValues: SendModalFormValues): FormikErrors<SendModalFormValues> => {
+    const { asset, amount } = formValues.assetAmount;
+    const maxAmount = maxAmountRef.current;
+
+    if (
+      asset.assetKey === maxAmount.assetKey &&
+      maxAmount.amount !== undefined &&
+      amount instanceof BigNumber &&
+      amount.isGreaterThan(maxAmount.amount)
+    ) {
+      return { assetAmount: { amount: 'Insufficient balance' } };
+    }
+
+    return {};
+  }, []);
+
   const sendModalInitialValues: SendModalFormValues = {
     assetAmount: {
       asset: inputInitialValue,
@@ -109,6 +130,7 @@ export const SendModal: FC = () => {
   const formik = useFormik({
     initialValues: sendModalInitialValues,
     validationSchema: sendModalValidationSchema,
+    validate: validateMaxAmount,
     validateOnChange: true,
     validateOnBlur: false,
     validateOnMount: false,
@@ -122,6 +144,7 @@ export const SendModal: FC = () => {
     recipient: values.recipient,
     sourceAddress: evmAddress
   });
+  maxAmountRef.current = { assetKey: selectedAsset.assetKey, amount: maxAmount };
   const isShieldedSend = selectedAsset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
   const sourceAddress = isShieldedSend
     ? saplingAddress ?? undefined
@@ -308,7 +331,7 @@ export const SendModal: FC = () => {
           title="Confirm"
           onPress={submitForm}
           isLoading={isLoading}
-          disabled={(submitCount !== 0 && !isValid) || isSubmitting}
+          disabled={(submitCount !== 0 && !isValid) || isSubmitting || isEvmMaxAmountEstimating}
           testID={SendModalSelectors.sendButton}
         />
       </ModalButtonsFloatingContainer>

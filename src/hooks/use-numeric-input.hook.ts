@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FocusEvent, TextInputProps } from 'react-native';
 
 import { emptyFn } from '../config/general';
@@ -15,10 +15,12 @@ export const useNumericInput = (
   maxValue: BigNumber.Value = DEFAULT_MAX_VALUE,
   onChange: SyncFn<BigNumber | undefined>,
   onBlur: EmptyFn = emptyFn,
-  onFocus: TextInputProps['onFocus'] = emptyFn
+  onFocus: TextInputProps['onFocus'] = emptyFn,
+  refreshValueKey?: unknown
 ) => {
   const [stringValue, setStringValue] = useState('');
   const [focused, setFocused] = useState(false);
+  const previousRefreshValueKeyRef = useRef(refreshValueKey);
 
   useEffect(() => {
     if (focused) {
@@ -29,6 +31,15 @@ export const useNumericInput = (
       setStringValue(isDefined(value) ? value.toFixed() : '');
     }
   }, [setStringValue, focused, value]);
+
+  useEffect(() => {
+    const refreshValueKeyChanged = !Object.is(previousRefreshValueKeyRef.current, refreshValueKey);
+    previousRefreshValueKeyRef.current = refreshValueKey;
+
+    if (focused && refreshValueKeyChanged) {
+      setStringValue(isDefined(value) ? value.toFixed() : '');
+    }
+  }, [focused, refreshValueKey, value]);
 
   const handleChange = useCallback(
     (newStringValue: string) => {
