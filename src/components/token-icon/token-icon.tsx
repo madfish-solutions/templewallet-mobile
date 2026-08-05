@@ -15,29 +15,37 @@ import { LoadableTokenIconImage } from './loadable-image';
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props extends Pick<TezosTokenMetadata, 'iconName' | 'thumbnailUri'> {
+  isCollectible?: boolean;
   size?: number;
   style?: StyleProp<ViewStyle>;
 }
 
-export const TokenIcon: FC<Props> = ({ size = formatSize(32), thumbnailUri, style, ...rest }) => {
+export const TokenIcon: FC<Props> = ({
+  isCollectible = false,
+  size = formatSize(32),
+  thumbnailUri,
+  style,
+  ...rest
+}) => {
   const roundedStyle = useMemo(
-    () => (isImageRectangular(thumbnailUri) ? undefined : { borderRadius: size / 2 }),
-    [size, thumbnailUri]
+    () => ({ borderRadius: isCollectible ? formatSize(8) : isImageRectangular(thumbnailUri) ? 0 : size / 2 }),
+    [isCollectible, size, thumbnailUri]
   );
   const containerSizeStyle = useMemo(() => ({ width: size, height: size }), [size]);
 
   return (
     <View style={[TokenIconStyles.container, roundedStyle, containerSizeStyle, style]}>
-      <TokenIconImage size={size} thumbnailUri={thumbnailUri} {...rest} />
+      <TokenIconImage size={size} thumbnailUri={thumbnailUri} borderRadius={roundedStyle.borderRadius} {...rest} />
     </View>
   );
 };
 
 type TokenIconImageProps = Props & {
+  borderRadius: number;
   size: number;
 };
 
-const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size }) => {
+const TokenIconImage: FC<TokenIconImageProps> = ({ borderRadius, iconName, thumbnailUri, size }) => {
   const isDataUri = useMemo(() => isImgUriDataUri(thumbnailUri ?? ''), [thumbnailUri]);
 
   if (isDefined(iconName)) {
@@ -51,8 +59,8 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ iconName, thumbnailUri, size 
   const imgSize = (size * 5) / 6;
 
   return isDataUri ? (
-    <DataUriImage width={imgSize} height={imgSize} dataUri={thumbnailUri} />
+    <DataUriImage width={imgSize} height={imgSize} dataUri={thumbnailUri} style={{ borderRadius }} />
   ) : (
-    <LoadableTokenIconImage uri={thumbnailUri} size={imgSize} />
+    <LoadableTokenIconImage uri={thumbnailUri} size={imgSize} borderRadius={borderRadius} />
   );
 };

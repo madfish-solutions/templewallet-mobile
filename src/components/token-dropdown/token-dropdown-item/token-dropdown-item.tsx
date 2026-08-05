@@ -8,7 +8,7 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { formatSize } from 'src/styles/format-size';
 import { emptyToken } from 'src/token/interfaces/token.interface';
-import { assetsEqualityFn } from 'src/utils/asset.utils';
+import { assetsEqualityFn, isCollectibleAsset } from 'src/utils/asset.utils';
 import { conditionalStyle } from 'src/utils/conditional-style';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -52,12 +52,18 @@ const getTokenIconProps = (token: AssetInterface): MultichainTokenIconProps => {
       chainId: token.chainId,
       address: token.assetSlug,
       iconName: token.iconName,
-      iconURL: token.thumbnailUri
+      iconURL: token.thumbnailUri,
+      isCollectible: isCollectibleAsset(token)
     };
   }
 
   if (token.chainKind === TempleChainKind.Tezos) {
-    return { chainKind: TempleChainKind.Tezos, iconName: token.iconName, thumbnailUri: token.thumbnailUri };
+    return {
+      chainKind: TempleChainKind.Tezos,
+      iconName: token.iconName,
+      thumbnailUri: token.thumbnailUri,
+      isCollectible: isCollectibleAsset(token)
+    };
   }
 
   return { iconName: token.iconName, thumbnailUri: token.thumbnailUri };

@@ -40,7 +40,7 @@ export const assetsEqualityFn = (asset: AssetInterface, other?: AssetInterface):
 export const isShieldedAsset = (asset: AssetInterface): boolean => getAssetSlug(asset) === TEZ_SHIELDED_TOKEN_SLUG;
 
 export const isCollectibleAsset = (asset: AssetInterface): boolean => {
-  if ('sendStandard' in asset) {
+  if (asset.chainKind === TempleChainKind.EVM && 'sendStandard' in asset) {
     return asset.sendStandard === EvmAssetStandardEnum.ERC721 || asset.sendStandard === EvmAssetStandardEnum.ERC1155;
   }
 

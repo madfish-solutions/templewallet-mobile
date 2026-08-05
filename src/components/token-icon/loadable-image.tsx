@@ -10,13 +10,14 @@ import { IconNameEnum } from '../icon/icon-name.enum';
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props {
+  borderRadius?: number;
   useOriginal?: boolean;
   uri: string;
   size: number;
   onError?: EmptyFn;
 }
 
-export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOriginal = false }) => {
+export const LoadableTokenIconImage = memo<Props>(({ borderRadius, uri, size, onError, useOriginal = false }) => {
   const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImagesStack(uri, useOriginal);
 
   useDidUpdate(() => {
@@ -28,8 +29,8 @@ export const LoadableTokenIconImage = memo<Props>(({ uri, size, onError, useOrig
   const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
 
   const style = useMemo(
-    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { width: size, height: size }],
-    [isShowPlaceholder, size]
+    () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { borderRadius, width: size, height: size }],
+    [borderRadius, isShowPlaceholder, size]
   );
 
   return (

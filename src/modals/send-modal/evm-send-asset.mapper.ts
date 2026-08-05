@@ -64,7 +64,7 @@ export const toEvmSendAsset = ({
     thumbnailUri: isNative
       ? network.currency.iconURL
       : isCollectible
-      ? collectibleMetadata?.image
+      ? collectibleMetadata?.image ?? collectibleMetadata?.iconURL
       : tokenMetadata?.iconURL,
     balance,
     exchangeRate,

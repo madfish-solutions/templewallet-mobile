@@ -1,4 +1,4 @@
-import { buildTokenImagesStack, formatImgUri, isImgUriSvg } from './image.utils';
+import { buildEvmCollectibleImagesStack, buildTokenImagesStack, formatImgUri, isImgUriSvg } from './image.utils';
 
 describe('image utils', () => {
   describe('formatImgUri', () => {
@@ -38,6 +38,17 @@ describe('image utils', () => {
         'https://static.tcinfra.net/media/small/web/ipfs.filebase.io/ipfs/QmfEbirSA7indrEzjFAtJ589oChBFrqLio9kwpJwR4ttHx',
         'https://static.tcinfra.net/media/medium/web/ipfs.filebase.io/ipfs/QmfEbirSA7indrEzjFAtJ589oChBFrqLio9kwpJwR4ttHx',
         mockCloudflareUri
+      ]);
+    });
+  });
+
+  describe('buildEvmCollectibleImagesStack', () => {
+    it('converts IPFS collectible images into loadable gateway URLs', () => {
+      expect(buildEvmCollectibleImagesStack('ipfs://QmImage')).toEqual([
+        'https://static.tcinfra.net/media/small/ipfs/QmImage',
+        'https://static.tcinfra.net/media/medium/ipfs/QmImage',
+        'https://ipfs.filebase.io/ipfs/QmImage',
+        'https://dweb.link/ipfs/QmImage'
       ]);
     });
   });
