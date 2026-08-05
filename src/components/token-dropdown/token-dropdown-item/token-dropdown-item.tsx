@@ -50,7 +50,6 @@ export const TokenDropdownItem: FC<Props> = ({
     visualSize: iconVisualSize
   } = isShowBalance ? listIconConfig : selectedIconConfig;
   const chainKind = token.chainKind;
-  const networkName = token.networkName;
   const hasActionIcon = isDefined(actionIconName) || isDefined(actionIconV2Name);
   const tokenNameTextStyle = useMemo(
     () => [styles.name, isCompact && styles.compactName, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
@@ -119,7 +118,7 @@ export const TokenDropdownItem: FC<Props> = ({
         </View>
 
         <View style={styles.infoRow}>
-          {isShowName && <TruncatedText style={tokenNameTextStyle}>{networkName ?? token.name}</TruncatedText>}
+          {isShowName && <TruncatedText style={tokenNameTextStyle}>{token.name}</TruncatedText>}
 
           <View style={styles.rightContainer}>
             {isShowName && <Divider size={formatSize(4)} />}
