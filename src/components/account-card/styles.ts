@@ -25,13 +25,17 @@ export const useAccountCardStyles = createUseStyles(({ colors, typography }) => 
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    gap: formatSize(8),
+    gap: formatSize(8)
+  },
+  headerTrailingContentFixed: {
     width: formatSize(150.5)
   },
   balance: {
     ...typography.numbersRegular15,
-    textAlign: 'right',
     color: colors.black
+  },
+  balanceRight: {
+    textAlign: 'right'
   },
   addressRow: {
     flexDirection: 'row',
@@ -45,8 +49,15 @@ export const useAccountCardStyles = createUseStyles(({ colors, typography }) => 
     paddingRight: formatSize(4),
     paddingVertical: formatSize(2)
   },
+  compactAddress: {
+    maxWidth: formatSize(100)
+  },
   addressText: {
     ...typography.caption13Regular,
     color: colors.blue
+  },
+  compactAddressText: {
+    lineHeight: formatSize(18),
+    flexShrink: 1
   }
 }));

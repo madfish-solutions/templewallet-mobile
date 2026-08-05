@@ -2,18 +2,15 @@ import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
 import { GestureResponderEvent, Text, View } from 'react-native';
 
+import { AccountAddressDetails, AccountDetails } from 'src/components/account-card/account-details';
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DropdownListItemComponent } from 'src/components/dropdown/dropdown';
-import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
 import { IconV2 } from 'src/components/icon-v2';
-import { NetworkIcon } from 'src/components/network-icon';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TruncatedText } from 'src/components/truncated-text';
-import { useTotalFiatBalanceOfAccount } from 'src/hooks/use-total-balance';
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { useAllCollectiblesDetailsSelector } from 'src/store/collectibles/collectibles-selectors';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
@@ -78,64 +75,55 @@ export const AccountDropdownItem = memo<AccountDropdownItemProps>(
 export const AccountDropdownTriggerItem = memo<AccountDropdownItemProps>(props => <AccountDropdownItem {...props} />);
 
 const AccountDropdownListItem = memo<Pick<AccountDropdownItemProps, 'account'>>(({ account }) => {
-  const styles = useAccountDropdownItemStyles();
   const saplingAddress = useSaplingAddressForAccount(account);
 
   const tezosAddress = getAccountAddressForTezos(account);
   const evmAddress = getAccountAddressForEvm(account);
 
-  const totalFiatBalance = useTotalFiatBalanceOfAccount(account);
+  const copyAddress = useCallback((address: string, event?: GestureResponderEvent) => {
+    event?.stopPropagation();
+    copyStringToClipboard(address);
+  }, []);
+  const addresses: AccountAddressDetails[] = [
+    tezosAddress
+      ? {
+          address: tezosAddress,
+          network: CryptoLogoNameEnum.Tezos,
+          onPress: (event?: GestureResponderEvent) => copyAddress(tezosAddress, event)
+        }
+      : undefined,
+    saplingAddress
+      ? {
+          address: saplingAddress,
+          network: CryptoLogoNameEnum.ShieldedTezos,
+          onPress: (event?: GestureResponderEvent) => copyAddress(saplingAddress, event)
+        }
+      : undefined,
+    evmAddress
+      ? {
+          address: evmAddress,
+          network: CryptoLogoNameEnum.Etherlink,
+          onPress: (event?: GestureResponderEvent) => copyAddress(evmAddress, event)
+        }
+      : undefined
+  ].filter(isDefined);
 
   return (
-    <>
-      <View style={styles.listItemHeader}>
-        <RobotIcon seed={getSeedFromAccount(account)} size={formatSize(24)} />
-        <View style={styles.listItemHeaderInfo}>
-          <TruncatedText style={styles.listItemName}>{account.name}</TruncatedText>
-          <HideBalance wrapperStyle={styles.listItemBalanceTextWrapper} textStyle={styles.listItemBalanceText}>
-            <FormattedAmount amount={totalFiatBalance} isDollarValue />
-          </HideBalance>
-        </View>
-      </View>
-
-      <View style={styles.addressesContainer}>
-        {isDefined(tezosAddress) && <AccountAddressChip address={tezosAddress} iconName={CryptoLogoNameEnum.Tezos} />}
-        {isDefined(saplingAddress) && (
-          <AccountAddressChip address={saplingAddress} iconName={CryptoLogoNameEnum.ShieldedTezos} />
-        )}
-        {isDefined(evmAddress) && <AccountAddressChip address={evmAddress} iconName={CryptoLogoNameEnum.Etherlink} />}
-      </View>
-    </>
+    <AccountDetails
+      account={account}
+      avatarSeed={getSeedFromAccount(account)}
+      name={account.name}
+      addresses={addresses}
+      addressIconVariant="compactTransparent"
+      compactAddresses
+      fixedBalanceWidth={false}
+    />
   );
 });
 
 export const renderAccountListItem: DropdownListItemComponent<Account> = ({ item }) => (
   <AccountDropdownListItem account={item} />
 );
-
-interface AccountAddressChipProps {
-  address: string;
-  iconName: CryptoLogoNameEnum;
-}
-
-const AccountAddressChip = memo<AccountAddressChipProps>(({ address, iconName }) => {
-  const styles = useAccountDropdownItemStyles();
-
-  const copyAddress = useCallback(
-    (e?: GestureResponderEvent) => {
-      e?.stopPropagation();
-      copyStringToClipboard(address);
-    },
-    [address]
-  );
-
-  return (
-    <SafeTouchableOpacity style={styles.addressChip} onPress={copyAddress}>
-      <NetworkIcon name={iconName} variant="compactTransparent" />
-      <Text style={styles.addressText}>{truncateAddress(address)}</Text>
-    </SafeTouchableOpacity>
-  );
-});
 
 const CollectiblesInfo = memo(() => {
   const styles = useAccountDropdownItemCollectiblesInfoStyles();
@@ -185,6 +173,3 @@ const CollectiblesInfo = memo(() => {
     </>
   );
 });
-
-const truncateAddress = (address: string) =>
-  address.length > 10 ? `${address.slice(0, 3)}...${address.slice(-4)}` : address;

@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from 'react';
 import { Text, View } from 'react-native';
 
-import { AccountCard } from 'src/components/account-card/account-card';
+import { AccountCard } from 'src/components/account-card';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
 import { Divider } from 'src/components/divider/divider';

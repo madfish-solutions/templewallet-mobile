@@ -22,6 +22,9 @@ export const getAccountAddressForTezos = (account: Account) =>
 export const getAccountAddressForEvm = (account: Account) =>
   getAccountAddressForChain(account, TempleChainKind.EVM) as HexString | undefined;
 
+export const truncateAccountAddress = (address: string) =>
+  address.length > 10 ? `${address.slice(0, 2)}...${address.slice(-4)}` : address;
+
 export const getAccountAddressForChain = (account: Account, chain: TempleChainKind): string | undefined => {
   switch (account.type) {
     case AccountTypeEnum.HD:

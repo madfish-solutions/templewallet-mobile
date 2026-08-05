@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { AccountCard, AccountSummary } from 'src/components/account-card/account-card';
+import { AccountCard, AccountSummary } from 'src/components/account-card';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { SendReceiver } from 'src/interfaces/send-receiver.interface';
 
