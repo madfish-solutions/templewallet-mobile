@@ -69,6 +69,7 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ borderRadius, iconName, isCol
     <LoadableTokenIconImage
       uri={thumbnailUri}
       size={imgSize}
+      placeholderSize={size}
       borderRadius={borderRadius}
       isCollectible={isCollectible}
     />

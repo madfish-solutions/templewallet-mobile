@@ -4,6 +4,7 @@ import { uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
@@ -129,6 +130,10 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
     }
 
     for (const slug of evmSlugs) {
+      if (slug !== EVM_TOKEN_SLUG && evmAssets[slug]?.visibility === VisibilityEnum.Hidden) {
+        continue;
+      }
+
       const atomicBalance = evmBalances[slug] ?? '0';
       if (!isPositiveNumber(atomicBalance) && evmAssets[slug]?.manual !== true) {
         continue;

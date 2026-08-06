@@ -15,6 +15,7 @@ import { useTokenContainerStyles } from './token-container.styles';
 export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
   token,
   leadingIcon,
+  showTokenTag = true,
   apy = INITIAL_APR_VALUE,
   scam,
   style,
@@ -30,7 +31,7 @@ export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
             <TruncatedText style={styles.symbolText}>{token.symbol}</TruncatedText>
-            <TokenTag token={token} scam={scam} apy={apy} />
+            {showTokenTag && <TokenTag token={token} scam={scam} apy={apy} />}
           </View>
           <TruncatedText style={styles.nameText}>{token.name}</TruncatedText>
         </View>

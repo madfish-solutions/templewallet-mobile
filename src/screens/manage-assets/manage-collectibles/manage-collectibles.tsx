@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
 import { Checkbox } from 'src/components/checkbox/checkbox';
@@ -11,13 +11,21 @@ import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-a
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { useCurrentAccountCollectibles } from 'src/utils/assets/hooks';
+import {
+  EvmManageAsset,
+  isEvmCollectibleManageAsset,
+  useCurrentAccountCollectibles,
+  useCurrentAccountEvmManageAssets
+} from 'src/utils/assets/hooks';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
 
-const keyExtractor = (item: TokenInterface) => getTokenSlug(item);
-const renderItem: ListRenderItem<TokenInterface> = ({ item }) => <ManageAssetsItem asset={item} />;
+type ManageCollectible = TokenInterface | EvmManageAsset;
+
+const isEvmManageAsset = (asset: ManageCollectible): asset is EvmManageAsset => 'isVisible' in asset;
+const keyExtractor = (item: ManageCollectible) => (isEvmManageAsset(item) ? item.assetKey : getTokenSlug(item));
+const renderItem: ListRenderItem<ManageCollectible> = ({ item }) => <ManageAssetsItem asset={item} />;
 
 const ListEmptyComponent = <DataPlaceholder text="No collectibles matching search criteria were found" />;
 
@@ -25,7 +33,12 @@ export const ManageCollectibles = memo(() => {
   const styles = useManageAssetsStyles();
 
   const collectiblesList = useCurrentAccountCollectibles();
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectiblesList);
+  const evmAssets = useCurrentAccountEvmManageAssets();
+  const collectibles = useMemo<ManageCollectible[]>(
+    () => [...collectiblesList, ...evmAssets.filter(isEvmCollectibleManageAsset)],
+    [collectiblesList, evmAssets]
+  );
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectibles);
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const handleShowDetailsChange = useCallback(() => void dispatch(switchIsShowCollectibleInfoAction()), []);

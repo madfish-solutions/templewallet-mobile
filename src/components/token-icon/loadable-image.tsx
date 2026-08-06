@@ -14,11 +14,12 @@ interface Props {
   useOriginal?: boolean;
   uri: string;
   size: number;
+  placeholderSize: number;
   onError?: EmptyFn;
 }
 
 export const LoadableTokenIconImage = memo<Props>(
-  ({ borderRadius, isCollectible = false, uri, size, onError, useOriginal = false }) => {
+  ({ borderRadius, isCollectible = false, uri, size, placeholderSize, onError, useOriginal = false }) => {
     const { src, isLoading, isStackFailed, onSuccess, onFail } = useTokenImagesStack(uri, useOriginal);
 
     useDidUpdate(() => {
@@ -36,7 +37,7 @@ export const LoadableTokenIconImage = memo<Props>(
 
     return (
       <>
-        {isShowPlaceholder && <AssetIconPlaceholder isCollectible={isCollectible} size={size} />}
+        {isShowPlaceholder && <AssetIconPlaceholder isCollectible={isCollectible} size={placeholderSize} />}
         <FastImage style={style} source={{ uri: src }} onError={onFail} onLoad={onSuccess} />
       </>
     );

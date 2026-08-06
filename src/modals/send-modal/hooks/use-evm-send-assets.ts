@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
@@ -52,6 +53,10 @@ const createEvmSendAssets = ({
 
   for (const assetSlug of allEvmSlugs) {
     const isNative = assetSlug === EVM_TOKEN_SLUG;
+    if (!isNative && assets[assetSlug]?.visibility === VisibilityEnum.Hidden) {
+      continue;
+    }
+
     const standard = isNative
       ? EvmAssetStandardEnum.NATIVE
       : assets[assetSlug]?.standard ?? tokensMetadata[assetSlug]?.standard;
