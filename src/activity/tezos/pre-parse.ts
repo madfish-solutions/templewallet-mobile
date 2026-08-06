@@ -277,7 +277,7 @@ function reduceParameterFa2TransferValues(values: ParameterFa2Transfer['value'],
 
 const KNOWN_TZKT_STATUSES: TezosPreActivityStatus[] = ['applied', 'backtracked', 'skipped', 'failed'];
 
-const isKnownTzktStatus = (status: string): status is TezosPreActivityStatus =>
+export const isKnownTzktStatus = (status: string): status is TezosPreActivityStatus =>
   KNOWN_TZKT_STATUSES.some(knownStatus => knownStatus === status);
 
 const stringToActivityStatus = (status: string): TezosPreActivityStatus =>

@@ -9,6 +9,7 @@ import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.int
 import { getTokenStandard } from 'src/token/utils/token.utils';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
+import { isKnownTzktStatus } from './pre-parse';
 import type { TempleTzktOperationsGroup, TezosActivityOlderThan } from './types';
 
 export interface TezosOperationsPage {
@@ -223,6 +224,11 @@ function fetchIncomingOperTransactions_Fa_2(
   );
 }
 
+const MAX_CACHED_OPERATION_GROUPS = 500;
+
+// A group whose operations all reached a final status never changes, so re-opens skip its by-hash refetch
+const operationGroupsCache = new Map<string, TzktOperation[]>();
+
 export async function fetchOperGroupsForOperations(
   hashes: string[],
   olderThan?: TezosActivityOlderThan,
@@ -235,9 +241,30 @@ export async function fetchOperGroupsForOperations(
   const groups: TempleTzktOperationsGroup[] = [];
 
   for (const hash of uniqueHashes) {
+    const cachedOperations = operationGroupsCache.get(hash);
+
+    if (cachedOperations) {
+      groups.push({ hash, operations: cachedOperations });
+      continue;
+    }
+
     const operations = await refetchOnce429(() => TZKT.fetchGetOperationsByHash(hash, signal), 1000);
 
     groups.push({ hash, operations });
+
+    if (operations.length > 0 && operations.every(({ status }) => isKnownTzktStatus(status))) {
+      operationGroupsCache.set(hash, operations);
+
+      while (operationGroupsCache.size > MAX_CACHED_OPERATION_GROUPS) {
+        const oldestKey = operationGroupsCache.keys().next().value;
+
+        if (oldestKey === undefined) {
+          break;
+        }
+
+        operationGroupsCache.delete(oldestKey);
+      }
+    }
   }
 
   return groups;
