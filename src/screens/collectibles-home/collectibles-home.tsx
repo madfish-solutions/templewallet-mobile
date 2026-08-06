@@ -5,14 +5,13 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
-import { CheckboxIcon } from 'src/components/checkbox-icon/checkbox-icon';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { ImageWithIndicator } from 'src/components/image';
-import { Search } from 'src/components/search/search';
+import { SearchInput } from 'src/components/search-input/search-input';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEtherlinkDataLoading } from 'src/hooks/evm/use-etherlink-data-loading.hook';
 import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
@@ -22,7 +21,6 @@ import { dispatch } from 'src/store';
 import { loadCollectionsActions } from 'src/store/collectons/collections-actions';
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
-import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
@@ -33,6 +31,9 @@ import { useDidUpdate } from 'src/utils/hooks';
 import { formatObjktLogoUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
+
+import { Divider } from '../../components/divider/divider.tsx';
+import { ActionButton } from '../wallet/action-button';
 
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
@@ -134,7 +135,11 @@ export const CollectiblesHome = memo(() => {
     return tezosDisplayed.concat(filteredEvmCollectibles);
   }, [filteredTezosCollectibles, evmCollectibles, searchValue]);
 
-  const handleSwitchShowInfo = () => void dispatch(switchIsShowCollectibleInfoAction());
+  const navigateToActivity = useCallback(() => navigateToScreen({ screen: ScreensEnum.Activity }), [navigateToScreen]);
+  const navigateToManageCollectibles = useCallback(
+    () => navigateToScreen({ screen: ScreensEnum.ManageAssets, params: { collectibles: true } }),
+    [navigateToScreen]
+  );
 
   const renderItemCollections: ListRenderItem<Collection> = useCallback(
     ({ item }) => <CollectionButton item={item} />,
@@ -190,22 +195,16 @@ export const CollectiblesHome = memo(() => {
           style={styles.bottomSheet}
           backgroundStyle={styles.bottomSheet}
         >
-          <View style={styles.infoContainer}>
-            <CheckboxIcon
-              text="Show info"
-              initialState={isShowCollectibleInfo}
-              onActive={handleSwitchShowInfo}
-              onDisactive={handleSwitchShowInfo}
+          <View style={styles.toolbarContainer}>
+            <SearchInput
+              value={searchValue}
+              onChangeText={setSearchValue}
+              containerStyle={styles.searchInputContainer}
+              placeholder="Search"
             />
-
-            <View style={styles.icons}>
-              <Search onChange={setSearchValue} dividerSize={16}>
-                <TouchableIcon
-                  name={IconNameEnum.EditNew}
-                  onPress={() => navigateToScreen({ screen: ScreensEnum.ManageAssets, params: { collectibles: true } })}
-                />
-              </Search>
-            </View>
+            <Divider size={formatSize(16)} />
+            <ActionButton iconName={IconNameV2Enum.Clock} onPress={navigateToActivity} />
+            <ActionButton iconName={IconNameV2Enum.Slider} onPress={navigateToManageCollectibles} />
           </View>
 
           <CollectiblesList collectibles={collectibles} showInfo={isShowCollectibleInfo} />

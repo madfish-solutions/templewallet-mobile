@@ -1,4 +1,3 @@
-import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
@@ -9,7 +8,8 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
   },
   headerCard: {
     paddingHorizontal: 0,
-    paddingBottom: formatSize(4)
+    paddingBottom: formatSize(4),
+    backgroundColor: colors.pageBG
   },
   headerContainer: {
     flexDirection: 'row',
@@ -46,24 +46,15 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     ...typography.caption13Semibold,
     color: colors.disabled
   },
-  infoContainer: {
+  toolbarContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: formatSize(8),
-    paddingHorizontal: formatSize(16),
-    borderColor: colors.lines,
-    borderBottomWidth: DEFAULT_BORDER_WIDTH,
-    borderTopWidth: DEFAULT_BORDER_WIDTH,
-    backgroundColor: colors.pageBG,
-    height: formatSize(40)
+    paddingHorizontal: formatSize(16)
   },
-  icons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around'
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+  searchInputContainer: {
+    flex: 1,
+    marginHorizontal: 0
   },
   handleStyle: {
     display: 'none'
