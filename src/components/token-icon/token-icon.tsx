@@ -7,12 +7,11 @@ import { isImageRectangular, isImgUriDataUri } from 'src/utils/image.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isString } from 'src/utils/is-string';
 
+import { AssetIconPlaceholder } from '../asset-icon-placeholder';
 import { CryptoLogo } from '../crypto-logo';
-import { CryptoLogoNameEnum } from '../crypto-logo/logo-name.enum';
 import { DataUriImage } from '../data-uri-image';
 
 import { LoadableTokenIconImage } from './loadable-image';
-import { NftFallbackIcon } from './nft-fallback-icon';
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props extends Pick<TezosTokenMetadata, 'iconName' | 'thumbnailUri'> {
@@ -61,11 +60,7 @@ const TokenIconImage: FC<TokenIconImageProps> = ({ borderRadius, iconName, isCol
   }
 
   if (!isString(thumbnailUri)) {
-    if (isCollectible) {
-      return <NftFallbackIcon borderRadius={borderRadius} size={imgSize} />;
-    }
-
-    return <CryptoLogo name={CryptoLogoNameEnum.Placeholder} size={size} />;
+    return <AssetIconPlaceholder isCollectible={isCollectible} size={size} />;
   }
 
   return isDataUri ? (

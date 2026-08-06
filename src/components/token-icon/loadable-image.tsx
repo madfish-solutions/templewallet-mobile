@@ -4,10 +4,8 @@ import React, { memo, useMemo } from 'react';
 import { useTokenImagesStack } from 'src/hooks/use-images-stack';
 import { useDidUpdate } from 'src/utils/hooks';
 
-import { Icon } from '../icon/icon';
-import { IconNameEnum } from '../icon/icon-name.enum';
+import { AssetIconPlaceholder } from '../asset-icon-placeholder';
 
-import { NftFallbackIcon } from './nft-fallback-icon';
 import { TokenIconStyles } from './token-icon.styles';
 
 interface Props {
@@ -38,12 +36,7 @@ export const LoadableTokenIconImage = memo<Props>(
 
     return (
       <>
-        {isShowPlaceholder &&
-          (isCollectible ? (
-            <NftFallbackIcon borderRadius={borderRadius ?? 0} size={size} />
-          ) : (
-            <Icon name={IconNameEnum.NoNameToken} size={size} />
-          ))}
+        {isShowPlaceholder && <AssetIconPlaceholder isCollectible={isCollectible} size={size} />}
         <FastImage style={style} source={{ uri: src }} onError={onFail} onLoad={onSuccess} />
       </>
     );
