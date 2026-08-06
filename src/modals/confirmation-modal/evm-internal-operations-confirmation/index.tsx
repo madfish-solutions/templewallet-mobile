@@ -29,8 +29,8 @@ import { EvmInternalOperationsConfirmationModalParams } from '../confirmation-mo
 import { useFeeFormInputStyles } from '../operations-confirmation/fee-form-input/fee-form-input.styles';
 import { useOperationsPreviewItemStyles } from '../operations-confirmation/operations-preview/operations-preview-item/operations-preview-item.styles';
 
+import { useEvmTransactionSubmission } from './hooks/use-evm-transaction-submission';
 import { useEvmTransferFee } from './hooks/use-evm-transfer-fee';
-import { useEvmTransferSubmission } from './hooks/use-evm-transfer-submission';
 import { useEvmInternalOperationsConfirmationStyles } from './styles';
 
 type Props = Omit<EvmInternalOperationsConfirmationModalParams, 'type'>;
@@ -47,7 +47,7 @@ export const EvmInternalOperationsConfirmation: FC<Props> = ({ accountId, asset,
     [asset, atomicAmount, receiverAddress, sourceAddress]
   );
   const feeState = useEvmTransferFee({ sourceAddress, request, asset, atomicAmount });
-  const { isSubmitting, resetSubmissionError, submissionError, submit } = useEvmTransferSubmission({
+  const { isSubmitting, resetSubmissionError, submissionError, submit } = useEvmTransactionSubmission({
     chainId: asset.chainId,
     sourceAddress,
     request

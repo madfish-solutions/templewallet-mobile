@@ -25,7 +25,7 @@ interface SubmitParams {
   fees: EvmFees;
 }
 
-export const useEvmTransferSubmission = ({ chainId, sourceAddress, request }: Props) => {
+export const useEvmTransactionSubmission = ({ chainId, sourceAddress, request }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState<EvmTransactionError>();
   const [submittedHash, setSubmittedHash] = useState<Hash>();
