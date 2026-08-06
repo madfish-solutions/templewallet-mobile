@@ -5,19 +5,18 @@ import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { BrokenImage } from 'src/components/broken-image';
 import { useCollectibleImageStyles } from 'src/components/collectible-image/styles';
-import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { DataUriImage } from 'src/components/data-uri-image';
+import { NetworkIcon } from 'src/components/network-icon';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { useImagesStack } from 'src/hooks/use-images-stack';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
-import { formatSize } from 'src/styles/format-size';
 import { EvmDisplayedCollectible } from 'src/utils/assets/types';
 import { buildEvmCollectibleImagesStack, isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import { Balance } from './balance';
-import { useCollectibleItemStyles, useEvmCollectibleChainBadgeStyles } from './styles';
+import { useCollectibleItemStyles } from './styles';
 
 interface Props {
   collectible: EvmDisplayedCollectible;
@@ -29,7 +28,6 @@ interface Props {
 export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = false, style }) => {
   const navigateToModal = useNavigateToModal();
   const styles = useCollectibleItemStyles();
-  const badgeStyles = useEvmCollectibleChainBadgeStyles();
 
   const { metadata, tokenId, balance } = collectible;
   const displayName = metadata?.collectibleName ?? metadata?.name ?? tokenId;
@@ -46,8 +44,8 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
 
         {showInfo ? <Balance balance={balance} /> : null}
 
-        <View style={badgeStyles.badge}>
-          <CryptoLogo name={CryptoLogoNameEnum.Etherlink} size={formatSize(12)} internalSize={formatSize(12)} />
+        <View style={styles.networkBadge}>
+          <NetworkIcon name={CryptoLogoNameEnum.Etherlink} variant="nftBadge" />
         </View>
       </View>
 

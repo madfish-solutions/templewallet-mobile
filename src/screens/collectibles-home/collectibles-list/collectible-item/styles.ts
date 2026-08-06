@@ -28,6 +28,11 @@ export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typog
   price: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  networkBadge: {
+    bottom: formatSize(4),
+    position: 'absolute',
+    right: formatSize(4)
   }
 }));
 
@@ -47,21 +52,5 @@ export const useBalanceStyles = createUseStylesMemoized(({ typography }) => ({
   text: {
     ...typography.numbersRegular11,
     color: basicLightColors.white
-  }
-}));
-
-export const useEvmCollectibleChainBadgeStyles = createUseStylesMemoized(({ colors }) => ({
-  badge: {
-    position: 'absolute',
-    right: formatSize(4),
-    bottom: formatSize(4),
-    width: formatSize(16),
-    height: formatSize(16),
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: formatSize(8),
-    borderWidth: formatSize(0.8),
-    borderColor: colors.lines,
-    backgroundColor: colors.pageBG
   }
 }));

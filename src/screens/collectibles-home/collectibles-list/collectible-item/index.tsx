@@ -3,6 +3,8 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { StyleProp, Text, View, ViewStyle } from 'react-native';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { NetworkIcon } from 'src/components/network-icon';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
@@ -80,6 +82,10 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, showInfo 
         />
 
         {showInfo && isDefined(balance) ? <Balance balance={balance} /> : null}
+
+        <View style={styles.networkBadge}>
+          <NetworkIcon name={CryptoLogoNameEnum.Tezos} variant="nftBadge" />
+        </View>
       </View>
 
       {showInfo ? (
