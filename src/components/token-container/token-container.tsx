@@ -14,6 +14,7 @@ import { useTokenContainerStyles } from './token-container.styles';
 
 export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
   token,
+  leadingIcon,
   apy = INITIAL_APR_VALUE,
   scam,
   style,
@@ -24,7 +25,7 @@ export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.leftContainer}>
-        <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />
+        {leadingIcon ?? <TokenIcon iconName={token.iconName} thumbnailUri={token.thumbnailUri} />}
         <Divider size={formatSize(8)} />
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>

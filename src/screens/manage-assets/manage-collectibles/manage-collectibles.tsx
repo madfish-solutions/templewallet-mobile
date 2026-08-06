@@ -39,8 +39,6 @@ export const ManageCollectibles = memo(() => {
         </Checkbox>
       </View>
 
-      <Text style={styles.descriptionText}>Show, remove, and hide collectibles.</Text>
-
       <FlashList
         data={filteredAssetsList}
         keyExtractor={keyExtractor}
