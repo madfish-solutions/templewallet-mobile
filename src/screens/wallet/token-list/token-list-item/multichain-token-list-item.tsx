@@ -4,7 +4,7 @@ import { Alert, Text, TouchableOpacity, View } from 'react-native';
 
 import { AssetValueText } from 'src/components/asset-value-text/asset-value-text';
 import { CryptoLogo } from 'src/components/crypto-logo';
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { getChainLogoName } from 'src/components/crypto-logo/utils';
 import { Divider } from 'src/components/divider/divider';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { HideBalance } from 'src/components/hide-balance/hide-balance';
@@ -52,7 +52,7 @@ export const MultichainTokenListItem = memo<Props>(({ token, scam, apy }) => {
   const isEvmContractToken = !isTezos && token.slug !== EVM_TOKEN_SLUG;
   const original = token.original;
 
-  const badgeLogoName = isTezos ? CryptoLogoNameEnum.Tezos : CryptoLogoNameEnum.Etherlink;
+  const badgeLogoName = getChainLogoName(token.chainKind);
   const mainIconName = isTezos ? original?.iconName : token.slug === EVM_TOKEN_SLUG ? IconNameEnum.TezToken : undefined;
   const mainThumbnailUri = token.slug === EVM_TOKEN_SLUG ? undefined : token.iconUri;
 

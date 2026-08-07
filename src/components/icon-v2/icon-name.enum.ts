@@ -6,5 +6,10 @@ export enum IconNameV2Enum {
   Info = 'Info',
   ArrowLeft = 'ArrowLeft',
   PlusBig = 'PlusBig',
-  ChevronRight = 'ChevronRight'
+  ChevronRight = 'ChevronRight',
+  Send = 'Send',
+  Income = 'Income',
+  Documents = 'Documents',
+  Ok = 'Ok',
+  OutLink = 'OutLink'
 }
