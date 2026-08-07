@@ -1,7 +1,9 @@
 import React, { FC, isValidElement, memo, ReactElement, useMemo } from 'react';
 import { Text, View } from 'react-native';
 
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { LinkWithIcon } from 'src/components/link-with-icon/link-with-icon';
+import { NetworkIcon } from 'src/components/network-icon';
 import { CollectibleDetailsInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -24,23 +26,33 @@ export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, 
   const properties = useMemo(() => {
     const date = isDefined(minted) && minted !== '' ? new Date(minted) : undefined;
 
-    const formattedDate = new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }).format(date);
+    const formattedDate = date
+      ? new Intl.DateTimeFormat('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }).format(date)
+      : null;
 
     const hash = isDefined(metadata) && metadata.trim() !== '' ? metadata.split('/')[2] : null;
     const formattedMetadataLink = `https://ipfs.io/ipfs/${hash}`;
 
     return [
       {
-        name: 'Editions',
-        value: editions ?? null
+        name: 'Chain',
+        value: <ChainValue />
       },
       {
-        name: 'Owned',
-        value: owned ?? null
+        name: 'Token standard',
+        value: 'FA2'
+      },
+      {
+        name: 'Token ID',
+        value: tokenId
+      },
+      {
+        name: 'Token contract',
+        value: <LinkWithIcon text={contract} link={getTzktContractLink(contract)} valueToClipboard={contract} />
       },
       {
         name: 'Minted',
@@ -51,16 +63,16 @@ export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, 
         value: royalties ? reduceRoyalties(royalties) : null
       },
       {
-        name: 'Contract',
-        value: <LinkWithIcon text={contract} link={getTzktContractLink(contract)} valueToClipboard={contract} />
-      },
-      {
         name: 'Metadata',
         value: <LinkWithIcon text="IPFS" link={formattedMetadataLink} />
       },
       {
-        name: 'Token ID',
-        value: tokenId
+        name: 'Owned',
+        value: owned ?? null
+      },
+      {
+        name: 'Editions',
+        value: editions ?? null
       }
     ].filter(isDefined);
   }, [editions, owned, minted, royalties, contract, metadata, tokenId]);
@@ -70,6 +82,17 @@ export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, 
       {properties.map(({ name, value }) => (
         <CollectibleProperty key={name} name={name} value={value} />
       ))}
+    </View>
+  );
+});
+
+const ChainValue = memo(() => {
+  const styles = useCollectiblePropertyStyles();
+
+  return (
+    <View style={styles.chainValue}>
+      <Text style={styles.chainName}>Tezos</Text>
+      <NetworkIcon name={CryptoLogoNameEnum.Tezos} variant="nftBadge" />
     </View>
   );
 });

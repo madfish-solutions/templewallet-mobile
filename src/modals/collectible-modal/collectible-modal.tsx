@@ -57,8 +57,8 @@ import { useAttributesWithRarity } from './utils/use-attributes-with-rarity.hook
 import { useBurnCollectible } from './utils/use-burn-collectible.hook';
 
 enum SegmentControlNamesEnum {
-  attributes = 'Attributes',
-  properties = 'Properties'
+  details = 'Details',
+  attributes = 'Attributes'
 }
 
 export const CollectibleModal = memo(() => {
@@ -161,10 +161,10 @@ export const CollectibleModal = memo(() => {
     () =>
       attributes.length
         ? {
-            values: [SegmentControlNamesEnum.attributes, SegmentControlNamesEnum.properties],
-            current: segmentControlIndex === 1 ? 'properties' : 'attributes'
+            values: [SegmentControlNamesEnum.details, SegmentControlNamesEnum.attributes],
+            current: segmentControlIndex === 1 ? 'attributes' : 'details'
           }
-        : { values: [SegmentControlNamesEnum.properties], current: 'properties' },
+        : { values: [], current: 'details' },
     [attributes.length, segmentControlIndex]
   );
   const collection = useMemo(() => {
@@ -284,7 +284,7 @@ export const CollectibleModal = memo(() => {
             />
           ) : null}
 
-          {segments.current === 'properties' ? (
+          {segments.current === 'details' ? (
             <CollectibleProperties contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
           ) : null}
 

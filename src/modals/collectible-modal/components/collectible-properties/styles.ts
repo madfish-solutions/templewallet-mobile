@@ -31,5 +31,14 @@ export const useCollectiblePropertyStyles = createUseStylesMemoized(({ colors, t
   value: {
     ...typography.numbersMedium17,
     color: colors.black
+  },
+  chainValue: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: formatSize(4)
+  },
+  chainName: {
+    ...typography.body17Semibold,
+    color: colors.black
   }
 }));
