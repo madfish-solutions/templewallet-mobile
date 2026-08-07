@@ -55,7 +55,7 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
             {displayName}
           </Text>
 
-          <Text style={styles.price} />
+          <Text style={styles.price}>No value</Text>
         </View>
       ) : null}
     </SafeTouchableOpacity>
