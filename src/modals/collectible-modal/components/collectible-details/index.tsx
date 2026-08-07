@@ -18,7 +18,17 @@ interface Props {
   owned: string;
 }
 
-export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, owned }) => {
+interface EvmProps {
+  chainName: string;
+  tokenStandard: string;
+  contract: string;
+  contractLink?: string;
+  tokenId: string;
+  metadataLink?: string;
+  amount: string;
+}
+
+export const CollectibleDetails = memo<Props>(({ contract, tokenId, details, owned }) => {
   const styles = useCollectiblePropertiesStyles();
 
   const { metadata, editions, royalties, timestamp: minted } = details || {};
@@ -40,7 +50,7 @@ export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, 
     return [
       {
         name: 'Chain',
-        value: <ChainValue />
+        value: <ChainValue name="Tezos" network={CryptoLogoNameEnum.Tezos} />
       },
       {
         name: 'Token standard',
@@ -86,13 +96,67 @@ export const CollectibleProperties = memo<Props>(({ contract, tokenId, details, 
   );
 });
 
-const ChainValue = memo(() => {
+export const EvmCollectibleDetails = memo<EvmProps>(
+  ({ chainName, tokenStandard, contract, contractLink, tokenId, metadataLink, amount }) => {
+    const styles = useCollectiblePropertiesStyles();
+
+    const properties = [
+      {
+        name: 'Chain',
+        value: <ChainValue name={chainName} network={CryptoLogoNameEnum.Etherlink} />
+      },
+      {
+        name: 'Token standard',
+        value: tokenStandard
+      },
+      {
+        name: 'Token ID',
+        value: tokenId
+      },
+      {
+        name: 'Token contract',
+        value: contractLink ? (
+          <LinkWithIcon text={contract} link={contractLink} valueToClipboard={contract} />
+        ) : (
+          contract
+        )
+      },
+      ...(metadataLink
+        ? [
+            {
+              name: 'Metadata',
+              value: <LinkWithIcon text="IPFS" link={metadataLink} />
+            }
+          ]
+        : []),
+      {
+        name: 'Amount',
+        value: amount
+      }
+    ];
+
+    return (
+      <View style={styles.root}>
+        {properties.map(({ name, value }) => (
+          <CollectibleProperty key={name} name={name} value={value} />
+        ))}
+      </View>
+    );
+  }
+);
+
+interface ChainValueProps {
+  name: string;
+  network: CryptoLogoNameEnum;
+}
+
+const ChainValue = memo<ChainValueProps>(({ name, network }) => {
   const styles = useCollectiblePropertyStyles();
 
   return (
     <View style={styles.chainValue}>
-      <Text style={styles.chainName}>Tezos</Text>
-      <NetworkIcon name={CryptoLogoNameEnum.Tezos} variant="nftBadge" />
+      <Text style={styles.chainName}>{name}</Text>
+      <NetworkIcon name={network} variant="nftBadge" />
     </View>
   );
 });

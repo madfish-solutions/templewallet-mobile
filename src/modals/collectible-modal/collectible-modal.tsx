@@ -49,8 +49,8 @@ import { mutezToTz } from 'src/utils/tezos.util';
 import { CollectibleModalSelectors } from './collectible-modal.selectors';
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes';
+import { CollectibleDetails } from './components/collectible-details';
 import { CollectibleMedia } from './components/collectible-media';
-import { CollectibleProperties } from './components/collectible-properties';
 import { COLLECTION_ICON_SIZE } from './constants';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 import { useAttributesWithRarity } from './utils/use-attributes-with-rarity.hook';
@@ -285,7 +285,7 @@ export const CollectibleModal = memo(() => {
           ) : null}
 
           {segments.current === 'details' ? (
-            <CollectibleProperties contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
+            <CollectibleDetails contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
           ) : null}
 
           {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}

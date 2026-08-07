@@ -17,6 +17,15 @@ export const useCollectibleModalStyles = createUseStylesMemoized(({ colors, typo
     flexDirection: 'row',
     alignItems: 'center'
   },
+  evmCollection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: formatSize(12)
+  },
+  evmCollectionLogo: {
+    margin: 0,
+    marginRight: formatSize(8)
+  },
   collectionLogo: {
     height: formatSize(36),
     width: formatSize(36),
