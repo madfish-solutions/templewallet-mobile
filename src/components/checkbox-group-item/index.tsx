@@ -2,6 +2,7 @@ import React, { ReactNode, memo, useCallback, useState } from 'react';
 import { AlertButton, AlertOptions, View } from 'react-native';
 import Dialog from 'react-native-dialog';
 
+import { formatSize } from '../../styles/format-size.ts';
 import { IconNameEnum } from '../icon/icon-name.enum';
 import { TouchableIcon } from '../icon/touchable-icon/touchable-icon';
 
@@ -30,7 +31,7 @@ export const CheckboxGroupItem = memo<CheckboxGroupItemProps>(({ infoAlertArgs, 
 
       {infoAlertArgs && (
         <>
-          <TouchableIcon name={IconNameEnum.InfoFilledAlt} onPress={handleInfoIconClick} />
+          <TouchableIcon name={IconNameEnum.InfoFilledAlt} size={formatSize(16)} onPress={handleInfoIconClick} />
           <Dialog.Container
             visible={alertVisible}
             verticalButtons

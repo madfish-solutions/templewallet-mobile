@@ -18,6 +18,7 @@ import { mockMarketState } from './market/market-state.mock';
 import { mockNewsletterState } from './newsletter/newsletter-state.mock';
 import { mockNotificationsState } from './notifications/notifications-state.mock';
 import { mockPartnersPromotionState } from './partners-promotion/partners-promotion-state.mock';
+import { rewardsInitialState } from './rewards/rewards-state';
 import { saplingInitialState } from './sapling/sapling-state';
 import { mockSavingsState } from './savings/state.mock';
 import { mockSecurityState } from './security/security-state.mock';
@@ -44,6 +45,7 @@ export const mockRootState: RootState = {
   collections: collectionsMockState,
   buyWithCreditCard: mockBuyWithCreditCardState,
   partnersPromotion: mockPartnersPromotionState,
+  rewards: rewardsInitialState,
   abTesting: mockABTestingState,
   collectibles: mockCollectiblesState,
   farms: mockFarmsState,

@@ -25,7 +25,8 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
-import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
+import { useHasSeenRewardsAnnouncementSelector } from 'src/store/rewards/rewards-selectors';
+import { useHasSeenSaplingAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
@@ -54,7 +55,8 @@ export const Wallet = memo(() => {
   const contactsAddresses = useContactsAddresses();
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
-  const hasSeenAnnouncement = useHasSeenAnnouncementSelector();
+  const hasSeenSaplingAnnouncement = useHasSeenSaplingAnnouncementSelector();
+  const hasSeenRewardsAnnouncement = useHasSeenRewardsAnnouncementSelector();
   const isKoloCardAnimationShown = useIsKoloCardAnimationShownSelector();
 
   const handleKoloCardAnimationComplete = useCallback(() => {
@@ -91,10 +93,16 @@ export const Wallet = memo(() => {
   }, [shouldShowNewsletterModal, isAnyBackupMade]);
 
   useEffect(() => {
-    if (!hasSeenAnnouncement) {
+    if (!hasSeenSaplingAnnouncement) {
       navigateToModal(ModalsEnum.ShieldedAnnouncement);
     }
-  }, [hasSeenAnnouncement]);
+  }, [hasSeenSaplingAnnouncement]);
+
+  useEffect(() => {
+    if (hasSeenSaplingAnnouncement && !hasSeenRewardsAnnouncement) {
+      navigateToModal(ModalsEnum.RewardsAnnouncement);
+    }
+  }, [hasSeenSaplingAnnouncement, hasSeenRewardsAnnouncement, navigateToModal]);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');
