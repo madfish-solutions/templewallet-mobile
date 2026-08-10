@@ -1,81 +1,31 @@
-import FastImage from '@d11/react-native-fast-image';
-import React, { FC, useMemo } from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
-import { DataUriImage } from 'src/components/data-uri-image';
 import { NetworkIcon } from 'src/components/network-icon';
-import { TokenIcon } from 'src/components/token-icon/token-icon';
-import { TokenIconStyles } from 'src/components/token-icon/token-icon.styles';
+import { TokenIcon, TokenIconProps } from 'src/components/token-icon/token-icon';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
-import { useImagesStack } from 'src/hooks/use-images-stack';
-import { formatSize } from 'src/styles/format-size';
-import {
-  buildEvmCollectibleImagesStack,
-  buildEvmTokenIconSources,
-  isImgUriDataUri,
-  isSvgDataUriInBase64Encoding
-} from 'src/utils/image.utils';
 
 import { useMultichainTokenIconStyles } from './styles';
 
-interface CommonProps {
+interface MultichainProps {
   showNetworkBadge?: boolean;
-  size?: number;
 }
 
-interface TezosIconProps extends CommonProps {
-  chainKind: TempleChainKind.Tezos;
-  iconName?: CryptoLogoNameEnum;
-  isCollectible?: boolean;
-  thumbnailUri?: string;
-}
-
-interface EvmIconProps extends CommonProps {
-  address: string;
-  chainId: number;
-  chainKind: TempleChainKind.EVM;
-  iconName?: CryptoLogoNameEnum;
-  iconURL?: string;
-  isCollectible?: boolean;
-}
-
-interface UnspecifiedIconProps extends CommonProps {
-  chainKind?: undefined;
-  iconName?: CryptoLogoNameEnum;
-  thumbnailUri?: string;
-}
-
-export type MultichainTokenIconProps = TezosIconProps | EvmIconProps | UnspecifiedIconProps;
+export type MultichainTokenIconProps = TokenIconProps & MultichainProps;
 
 export const MultichainTokenIcon: FC<MultichainTokenIconProps> = props => {
   const styles = useMultichainTokenIconStyles();
-  const size = props.size ?? formatSize(32);
+  const { showNetworkBadge, ...tokenIconProps } = props;
   const networkIconName =
     props.chainKind === TempleChainKind.Tezos
       ? CryptoLogoNameEnum.Tezos
       : props.chainKind === TempleChainKind.EVM
       ? CryptoLogoNameEnum.Etherlink
       : undefined;
-  const icon =
-    props.chainKind === TempleChainKind.EVM && !props.iconName ? (
-      <EvmTokenIcon
-        size={size}
-        chainId={props.chainId}
-        address={props.address}
-        iconURL={props.iconURL}
-        isCollectible={props.isCollectible}
-      />
-    ) : (
-      <TokenIcon
-        size={size}
-        iconName={props.iconName}
-        thumbnailUri={'thumbnailUri' in props ? props.thumbnailUri : undefined}
-        isCollectible={props.chainKind === TempleChainKind.Tezos && props.isCollectible}
-      />
-    );
+  const icon = <TokenIcon {...tokenIconProps} />;
 
-  if (!props.showNetworkBadge || !networkIconName) {
+  if (!showNetworkBadge || !networkIconName) {
     return icon;
   }
 
@@ -85,51 +35,6 @@ export const MultichainTokenIcon: FC<MultichainTokenIconProps> = props => {
       <View style={styles.networkBadge}>
         <NetworkIcon name={networkIconName} variant="tokenBadge" />
       </View>
-    </View>
-  );
-};
-
-interface EvmTokenIconProps {
-  address: string;
-  chainId: number;
-  iconURL?: string;
-  isCollectible?: boolean;
-  size: number;
-}
-
-const EvmTokenIcon: FC<EvmTokenIconProps> = ({ address, chainId, iconURL, isCollectible = false, size }) => {
-  const sourcesStack = useMemo(
-    () =>
-      isCollectible ? buildEvmCollectibleImagesStack(iconURL) : buildEvmTokenIconSources(chainId, address, iconURL),
-    [address, chainId, iconURL, isCollectible]
-  );
-  const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sourcesStack);
-  const isDataUri = src != null && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src));
-  const isShowPlaceholder = !isDataUri && (isLoading || isStackFailed);
-  const borderRadius = isCollectible ? formatSize(8) : size / 2;
-  const imageStyle = useMemo(
-    () => [
-      isShowPlaceholder && TokenIconStyles.hiddenImage,
-      { borderRadius, width: (size * 5) / 6, height: (size * 5) / 6 }
-    ],
-    [borderRadius, isShowPlaceholder, size]
-  );
-
-  return (
-    <View style={[TokenIconStyles.container, { borderRadius, height: size, width: size }]}>
-      {isShowPlaceholder && <TokenIcon size={size} isCollectible={isCollectible} style={{ borderRadius }} />}
-      {isDataUri ? (
-        <DataUriImage
-          dataUri={src}
-          width={(size * 5) / 6}
-          height={(size * 5) / 6}
-          style={imageStyle}
-          onLoad={onSuccess}
-          onError={onFail}
-        />
-      ) : (
-        src != null && <FastImage style={imageStyle} source={{ uri: src }} onLoad={onSuccess} onError={onFail} />
-      )}
     </View>
   );
 };
