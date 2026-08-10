@@ -97,7 +97,7 @@ export const WalletInitFinalStepInputs = <T extends WalletInitFormValuesBase>({
 
       <CheckboxGroup onLayout={onAcceptTermsLayout} isError={Boolean(touched.acceptTerms && errors.acceptTerms)}>
         <CheckboxGroupItem infoAlertArgs={termsAlertParams}>
-          <FormCheckbox name="acceptTerms" inverted testID={acceptTermsCheckboxTestID} shouldShowError={false}>
+          <FormCheckbox name="acceptTerms" testID={acceptTermsCheckboxTestID} shouldShowError={false}>
             <Divider size={formatSize(4)} />
             <Text style={styles.checkboxText}>Accept Terms</Text>
           </FormCheckbox>

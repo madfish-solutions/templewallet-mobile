@@ -146,3 +146,18 @@ export const nftStackScreens = [ScreensEnum.CollectiblesHome, ScreensEnum.Collec
 export const dAppsStackScreens = [ScreensEnum.DApps];
 export const swapStackScreens = [ScreensEnum.SwapScreen, ScreensEnum.SwapSettingsScreen];
 export const marketStackScreens = [ScreensEnum.Market];
+export const settingsStackScreens = [
+  ScreensEnum.Settings,
+  ScreensEnum.ManageAccounts,
+  ScreensEnum.Contacts,
+  ScreensEnum.About,
+  ScreensEnum.DAppsSettings,
+  ScreensEnum.FiatSettings,
+  ScreensEnum.SecureSettings,
+  ScreensEnum.Networks,
+  ScreensEnum.NetworkSettings,
+  ScreensEnum.Backup,
+  ScreensEnum.ManualBackup,
+  ScreensEnum.CloudBackup,
+  ScreensEnum.AdvancedFeaturesSettings
+];

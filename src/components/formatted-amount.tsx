@@ -65,7 +65,7 @@ export const FormattedAmount: FC<FormattedAmountProps> = ({
       {isDollarValue && !isLessThan && !hideApproximateSign && '≈ '}
       {amountSignStr && `${amountSignStr} `}
       {formattedAmount}
-      {isDollarValue ? fiatSymbol : formattedSymbol}
+      {isDollarValue ? ` ${fiatSymbol}` : formattedSymbol}
     </Text>
   );
 };

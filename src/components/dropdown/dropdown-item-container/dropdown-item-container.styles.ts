@@ -1,23 +1,22 @@
-import { black } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
-import { generateShadow } from 'src/styles/generate-shadow';
+import { iosCardShadow } from 'src/styles/shadows';
 
 export const useDropdownItemContainerStyles = createUseStyles(({ colors }) => ({
   root: {
-    padding: formatSize(8),
-    backgroundColor: colors.white,
-    borderColor: colors.white,
-    borderWidth: formatSize(2),
+    paddingHorizontal: formatSize(16),
+    paddingVertical: formatSize(12),
+    backgroundColor: colors.cardBG,
+    borderColor: colors.cardBG,
+    borderWidth: formatSize(1),
     borderRadius: formatSize(8),
-    margin: formatSize(2),
-    ...generateShadow(1, black)
+    boxShadow: iosCardShadow
   },
   rootMargin: {
     marginVertical: formatSize(4)
   },
   rootSelected: {
     borderColor: colors.orange,
-    borderWidth: formatSize(2)
+    borderWidth: formatSize(1)
   }
 }));

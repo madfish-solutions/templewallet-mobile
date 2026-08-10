@@ -34,8 +34,8 @@ import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { NotificationsBell } from './notifications-bell/notifications-bell';
-import { Settings } from './settings/settings';
+import { NotificationsBell } from './notifications-bell';
+import { Settings } from './settings';
 import { TokensList } from './token-list/token-list';
 import { WalletOverlay } from './wallet-overlay';
 import { WalletSelectors } from './wallet.selectors';
@@ -106,21 +106,17 @@ export const Wallet = memo(() => {
 
   return (
     <>
-      <HeaderCard hasInsetTop={true}>
+      <HeaderCard hasInsetTop>
         <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown testID={WalletSelectors.accountDropdownButton} />
-
-          <Divider />
-
-          <NotificationsBell />
-
-          <Divider size={formatSize(24)} />
-
-          <Settings />
+          <View style={WalletStyles.topActionsContainer}>
+            <NotificationsBell />
+            <Settings />
+          </View>
         </View>
 
         <TokenEquityValue token={tezosToken} forTotalBalance={true} />
-        <Divider size={formatSize(16)} />
+        <Divider size={formatSize(24)} />
 
         <HeaderCardActionButtons token={tezosToken} />
 

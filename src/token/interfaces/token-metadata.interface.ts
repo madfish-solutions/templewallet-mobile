@@ -1,4 +1,4 @@
-import type { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import type { AssetMediaURIs } from 'src/utils/assets/types';
 
 export enum TezosTokenStandardsEnum {
@@ -12,7 +12,7 @@ export interface TezosTokenMetadata extends AssetMediaURIs {
   name: string;
   symbol: string;
   decimals: number;
-  iconName?: IconNameEnum;
+  iconName?: CryptoLogoNameEnum;
   standard?: TezosTokenStandardsEnum | null;
 }
 

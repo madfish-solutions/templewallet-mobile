@@ -74,7 +74,7 @@ export const TokenDropdownItem: FC<Props> = ({
           <View style={styles.rightContainer}>
             <Divider size={formatSize(4)} />
             {isShowBalance && (
-              <HideBalance style={styles.balance}>
+              <HideBalance wrapperStyle={styles.balanceWrapper} textStyle={styles.balance}>
                 {isShowBalanceLoading ? (
                   '---'
                 ) : (
@@ -93,10 +93,11 @@ export const TokenDropdownItem: FC<Props> = ({
             {isShowName && <Divider size={formatSize(4)} />}
             {isShowBalance && (
               <HideBalance
-                style={[
-                  styles.dollarEquivalent,
+                wrapperStyle={[
+                  styles.dollarEquivalentWrapper,
                   conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
                 ]}
+                textStyle={styles.dollarEquivalent}
               >
                 {isShowBalanceLoading ? (
                   '---'

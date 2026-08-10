@@ -2,25 +2,21 @@ import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-const ICON_SIZE = formatSize(40);
 const BADGE_SIZE = formatSize(16);
 
 export const useMultichainTokenListItemStyles = createUseStyles(({ colors, typography }) => ({
   gasTokenContainer: {
     borderBottomWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
-    backgroundColor: colors.pageBG
-  },
-  containerNoBorder: {
-    borderBottomWidth: 0
+    backgroundColor: colors.pageBG,
+    marginHorizontal: formatSize(16)
   },
   balanceSplitContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingHorizontal: formatSize(16),
-    paddingTop: formatSize(4),
-    paddingBottom: formatSize(8),
+    height: formatSize(40),
+    marginBottom: formatSize(8),
     gap: formatSize(8)
   },
   balancePill: {
@@ -49,11 +45,15 @@ export const useMultichainTokenListItemStyles = createUseStyles(({ colors, typog
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: formatSize(16),
-    paddingVertical: formatSize(10),
+    marginHorizontal: formatSize(16),
+    paddingVertical: formatSize(8),
     borderBottomWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
     backgroundColor: colors.pageBG
+  },
+  gasTokenSubcontainer: {
+    marginHorizontal: 0,
+    borderBottomWidth: 0
   },
   leftContainer: {
     flexDirection: 'row',
@@ -61,13 +61,13 @@ export const useMultichainTokenListItemStyles = createUseStyles(({ colors, typog
     flexShrink: 1
   },
   iconContainer: {
-    width: ICON_SIZE,
-    height: ICON_SIZE
+    position: 'relative',
+    margin: formatSize(2)
   },
   badge: {
     position: 'absolute',
-    right: 0,
-    bottom: 0,
+    right: formatSize(2),
+    bottom: formatSize(2),
     width: BADGE_SIZE,
     height: BADGE_SIZE,
     alignItems: 'center',
@@ -83,14 +83,17 @@ export const useMultichainTokenListItemStyles = createUseStyles(({ colors, typog
   },
   symbolContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    gap: formatSize(2)
   },
   symbolText: {
     ...typography.numbersRegular17,
+    lineHeight: formatSize(22),
     color: colors.black
   },
-  networkText: {
+  tokenNameText: {
     ...typography.numbersRegular13,
+    lineHeight: formatSize(18),
     color: colors.gray1
   },
   rightContainer: {
@@ -100,10 +103,12 @@ export const useMultichainTokenListItemStyles = createUseStyles(({ colors, typog
   },
   balanceText: {
     ...typography.numbersRegular17,
+    lineHeight: formatSize(22),
     color: colors.black
   },
   valueText: {
     ...typography.numbersRegular13,
+    lineHeight: formatSize(18),
     color: colors.gray1
   }
 }));
