@@ -39,8 +39,6 @@ interface CreateSendIntentParams {
   tezosBalance: string;
 }
 
-const toHexString = (address: string): HexString => `0x${address.slice(2)}`;
-
 export const createSendIntent = ({
   accountId,
   amount,
@@ -63,7 +61,7 @@ export const createSendIntent = ({
         type: 'evm-transfer',
         accountId,
         asset,
-        receiverAddress: toHexString(receiverAddress),
+        receiverAddress: receiverAddress as HexString,
         atomicAmount: amount.toFixed(0)
       }
     };

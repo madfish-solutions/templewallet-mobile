@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback, useMemo } from 'react';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { FormSectionDropdown } from 'src/form/form-section-dropdown';
@@ -49,18 +49,30 @@ export const KnownRecipientInput: FC<Props> = ({
     [list]
   );
 
-  const renderValue: DropdownValueComponent<string> = ({ value }) => {
-    const receiver = value ? receiversByAddress.get(value) : undefined;
+  const renderValue = useCallback<DropdownValueComponent<string>>(
+    ({ value }) => {
+      const receiver = value ? receiversByAddress.get(value) : undefined;
 
-    return receiver ? (
-      <ReceiverRow receiver={receiver} chainKind={chainKind} isShieldedTez={isShieldedTez} showDropdownDown withCard />
-    ) : null;
-  };
-  const renderListItem: DropdownListItemComponent<string> = ({ item }) => {
-    const receiver = receiversByAddress.get(item);
+      return receiver ? (
+        <ReceiverRow
+          receiver={receiver}
+          chainKind={chainKind}
+          isShieldedTez={isShieldedTez}
+          showDropdownDown
+          withCard
+        />
+      ) : null;
+    },
+    [chainKind, isShieldedTez, receiversByAddress]
+  );
+  const renderListItem = useCallback<DropdownListItemComponent<string>>(
+    ({ item }) => {
+      const receiver = receiversByAddress.get(item);
 
-    return receiver ? <ReceiverRow receiver={receiver} chainKind={chainKind} isShieldedTez={isShieldedTez} /> : null;
-  };
+      return receiver ? <ReceiverRow receiver={receiver} chainKind={chainKind} isShieldedTez={isShieldedTez} /> : null;
+    },
+    [chainKind, isShieldedTez, receiversByAddress]
+  );
 
   return (
     <FormSectionDropdown<string>
@@ -70,7 +82,7 @@ export const KnownRecipientInput: FC<Props> = ({
       description="My Accounts"
       emptyListText="No records found"
       setSearchValue={setSearchValue}
-      equalityFn={(address, value) => address === value}
+      equalityFn={areAddressesEqual}
       renderValue={renderValue}
       renderListItem={renderListItem}
       itemContainerStyle={styles.listAccountContainer}
@@ -80,3 +92,5 @@ export const KnownRecipientInput: FC<Props> = ({
     />
   );
 };
+
+const areAddressesEqual = (address: string, value: string) => address === value;

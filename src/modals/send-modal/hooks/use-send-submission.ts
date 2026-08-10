@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
@@ -7,6 +6,7 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
+import { dispatch } from 'src/store';
 import { addContactCandidateAddressAction } from 'src/store/contact-book/contact-book-actions';
 import { prepareSaplingTransactionActions } from 'src/store/sapling/sapling-actions';
 import { setOnRampOverlayStateAction } from 'src/store/settings/settings-actions';
@@ -42,12 +42,15 @@ export const useSendSubmission = ({
   tezosBalance
 }: UseSendSubmissionParams): UseSendSubmissionResult => {
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
   const navigateToModal = useNavigateToModal();
   const resolver = useMemo(() => tezosDomainsResolver(), []);
 
   const executeIntent = useCallback(
-    (intent: SendIntent) => {
+    (intent: SendIntent, transferBetweenOwnAccounts: boolean) => {
+      if (!transferBetweenOwnAccounts && (intent.type === 'evm-transfer' || intent.type === 'tezos-transfer')) {
+        dispatch(addContactCandidateAddressAction(intent.receiverAddress));
+      }
+
       switch (intent.type) {
         case 'evm-transfer':
           navigateToModal(ModalsEnum.Confirmation, {
@@ -85,7 +88,7 @@ export const useSendSubmission = ({
           break;
       }
     },
-    [dispatch, navigateToModal]
+    [navigateToModal]
   );
 
   const submit = useCallback(
@@ -114,10 +117,6 @@ export const useSendSubmission = ({
         receiverAddress = resolvedAddress;
       }
 
-      if (!transferBetweenOwnAccounts) {
-        dispatch(addContactCandidateAddressAction(receiverAddress));
-      }
-
       const result = createSendIntent({
         accountId,
         amount,
@@ -136,9 +135,9 @@ export const useSendSubmission = ({
         return;
       }
 
-      executeIntent(result.intent);
+      executeIntent(result.intent, transferBetweenOwnAccounts);
     },
-    [accountId, dispatch, evmAddress, executeIntent, resolver, tezosAddress, tezosBalance]
+    [accountId, evmAddress, executeIntent, resolver, tezosAddress, tezosBalance]
   );
 
   return { isLoading, submit };
