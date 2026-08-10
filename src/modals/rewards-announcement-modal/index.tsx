@@ -10,6 +10,8 @@ import { Disclaimer } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum.ts';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { LottieAnimation } from 'src/components/lottie-animation';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
@@ -66,13 +68,13 @@ export const RewardsAnnouncementModal: FC = () => {
           </View>
         </View>
         <Disclaimer
-          iconName={IconNameEnum.Info}
+          iconNameV2={IconNameV2Enum.Info}
           texts={[
             'Your IP helps us surface the best content and commission rate for your region and public wallet address collected for automatic reward payouts. You can turn this off anytime in Settings.'
           ]}
         />
         <TouchableOpacity style={styles.managePromo} onPress={managePromo}>
-          <Icon name={IconNameEnum.Settings} size={formatSize(14)} />
+          <IconV2 name={IconNameV2Enum.Settings} size={12} />
           <Text style={styles.managePromoText}>Manage Promo</Text>
         </TouchableOpacity>
       </ScreenContainer>
