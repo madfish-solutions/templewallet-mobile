@@ -24,6 +24,7 @@ import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
+import { fromTokenSlug } from 'src/utils/from-token-slug.ts';
 import { buildEvmCollectibleImagesStack, isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import { useCollectibleModalStyles } from './collectible-modal.styles';
@@ -44,7 +45,7 @@ export const EvmCollectibleModal = memo(() => {
   const imageSize = width - formatSize(32);
   const attributes = metadata?.attributes ?? [];
   const [selectedSegment, setSelectedSegment] = useState(0);
-  const [contractAddress, tokenId = ''] = slug.split('_');
+  const [contractAddress, tokenId] = fromTokenSlug(slug);
 
   usePageAnalytic(ModalsEnum.EvmCollectibleModal);
 

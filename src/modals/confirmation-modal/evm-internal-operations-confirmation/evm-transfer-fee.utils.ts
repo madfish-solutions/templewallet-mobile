@@ -24,8 +24,9 @@ interface LegacyFeeOption extends LegacyFees {
   fee: bigint;
 }
 
-const multiplyByPercentage = (value: bigint, percentage: bigint) =>
-  (value * percentage + FEE_PERCENTAGE_BASE - 1n) / FEE_PERCENTAGE_BASE;
+const ceilDivide = (dividend: bigint, divisor: bigint) => (dividend + divisor - 1n) / divisor;
+
+const multiplyByPercentage = (value: bigint, percentage: bigint) => ceilDivide(value * percentage, FEE_PERCENTAGE_BASE);
 
 export const getEvmFeesForGasPrice = (gasPrice: bigint, estimation: EvmEstimation): EvmFees => {
   if (estimation.type === 'legacy') return { type: 'legacy', gasPrice };
