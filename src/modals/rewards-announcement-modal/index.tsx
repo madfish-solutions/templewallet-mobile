@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import tkeyCoinAnimation from 'src/assets/animations/tkey-coin-animation.json';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { ButtonsFloatingContainer } from 'src/components/button/buttons-floating-container/buttons-floating-container';
-import { Disclaimer } from 'src/components/disclaimer/disclaimer';
+import { DisclaimerV2 } from 'src/components/disclaimer/disclaimer';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -67,8 +67,8 @@ export const RewardsAnnouncementModal: FC = () => {
             <Text style={styles.benefitText}>Ad content runs quietly without interruption.</Text>
           </View>
         </View>
-        <Disclaimer
-          iconNameV2={IconNameV2Enum.Info}
+        <DisclaimerV2
+          iconName={IconNameV2Enum.Info}
           texts={[
             'Your IP helps us surface the best content and commission rate for your region and public wallet address collected for automatic reward payouts. You can turn this off anytime in Settings.'
           ]}
