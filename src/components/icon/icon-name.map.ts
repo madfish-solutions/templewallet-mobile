@@ -18,6 +18,7 @@ import BrokenImage from './assets/broken-image.svg';
 import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
+import CalendarIcon from './assets/calendar.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
 import CheckboxOffIcon from './assets/checkbox-off.svg';
@@ -48,6 +49,7 @@ import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DocsIcon from './assets/docs.svg';
+import DollarFilledIcon from './assets/dollar-filled.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
@@ -65,6 +67,7 @@ import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
+import GearsIcon from './assets/gears.svg';
 import GlobeIcon from './assets/globe.svg';
 import GoogleDriveNativeIcon from './assets/google-drive-native.svg';
 import GoogleDriveIcon from './assets/google-drive.svg';
@@ -85,6 +88,7 @@ import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import ManualBackupIcon from './assets/manual-backup.svg';
 import MarketIcon from './assets/market.svg';
+import MegaphoneIcon from './assets/megaphone.svg';
 import MessageCircleIcon from './assets/message-circle.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
 import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
@@ -107,12 +111,14 @@ import QsEarnSource from './assets/qs-earn-source.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RetryIcon from './assets/retry.svg';
+import RewardIcon from './assets/reward.svg';
 import ScamInfoIcon from './assets/scam-info.svg';
 import SearchNewIcon from './assets/search-new.svg';
 import ShareIcon from './assets/share.svg';
 import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
 import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
 import SmileIcon from './assets/smile.svg';
+import SoundOffIcon from './assets/sound-off.svg';
 import SpicyIcon from './assets/spicy.svg';
 import StakeIcon from './assets/stake.svg';
 import SuccessIcon from './assets/success.svg';
@@ -133,6 +139,7 @@ import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import UpdateIcon from './assets/update.svg';
+import UptrendIcon from './assets/uptrend.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import WTezIcon from './assets/wtez.svg';
@@ -203,6 +210,13 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.InfoFilledAlt]: InfoFilledAltIcon,
   [IconNameEnum.NFTCollection]: NFTCollectionIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
+  [IconNameEnum.DollarFiled]: DollarFilledIcon,
+  [IconNameEnum.SoundOff]: SoundOffIcon,
+  [IconNameEnum.Reward]: RewardIcon,
+  [IconNameEnum.Gears]: GearsIcon,
+  [IconNameEnum.Calendar]: CalendarIcon,
+  [IconNameEnum.Uptrend]: UptrendIcon,
+  [IconNameEnum.Megaphone]: MegaphoneIcon,
   /** topup icons **/
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.Utorg]: UtorgIcon,
