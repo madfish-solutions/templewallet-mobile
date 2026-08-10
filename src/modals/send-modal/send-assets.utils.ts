@@ -20,11 +20,7 @@ const compareSendAssets = (first: SendAsset, second: SendAsset) => {
     .shiftedBy(-second.decimals)
     .minus(new BigNumber(first.balance).shiftedBy(-first.decimals));
 
-  return balanceDifference.isZero()
-    ? first.symbol.localeCompare(second.symbol)
-    : balanceDifference.isPositive()
-    ? 1
-    : -1;
+  return balanceDifference.isZero() ? first.symbol.localeCompare(second.symbol) : balanceDifference.toNumber();
 };
 
 export const sortSendAssets = (assets: SendAsset[]): SendAsset[] => [...assets].sort(compareSendAssets);

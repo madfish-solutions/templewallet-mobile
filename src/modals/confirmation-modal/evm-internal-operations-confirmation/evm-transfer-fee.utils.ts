@@ -90,7 +90,7 @@ export const getGasPriceForNetworkFee = (networkFee: number, gasLimit: bigint) =
 };
 
 export const formatNetworkFee = (fee: bigint) => {
-  const formatted = new BigNumber(formatEther(fee)).toFixed(6);
+  const formatted = new BigNumber(formatEther(fee)).decimalPlaces(6).toFixed();
 
   return fee > 0n && formatted === '0.000000' ? '<0.000001' : formatted;
 };
