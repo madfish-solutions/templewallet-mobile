@@ -22,8 +22,6 @@ import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-c
 import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
 
-export type DropdownAppearance = 'v1' | 'v2';
-
 export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>, TestIdProps {
   description: string;
   list: T[];
@@ -31,7 +29,10 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   isSearchable?: boolean;
   searchPlaceholder?: string;
   renderSearchActionButtons?: DropdownActionButtonsComponent;
-  itemHeight?: number;
+  listItemHeight?: number;
+  listItemSeparatorSize?: number;
+  listItemDividerSize?: number;
+  isCompactListItem?: boolean;
   itemContainerStyle?: StyleProp<ViewStyle>;
   isLoading?: boolean;
   setSearchValue?: SyncFn<string>;
@@ -41,7 +42,6 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
   listHeader?: ReactNode;
-  appearance?: DropdownAppearance;
   showCloseButton?: boolean;
   triggerWrapperRef?: Ref<View>;
   onLongPress?: EmptyFn;
@@ -49,7 +49,6 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
 
 export interface DropdownValueProps<T> extends TestIdProps {
   value?: T;
-  itemHeight?: number;
   list: T[];
   disabled?: boolean;
   isCollectibleScreen?: boolean;
@@ -77,14 +76,15 @@ export type DropdownActionButtonsComponent = SyncFC<{
   closeDropdown: (onClosed?: EmptyFn) => void;
 }>;
 
-const ItemSeparatorComponent = memo(() => <Divider size={formatSize(8)} />);
-
 const DropdownComponent = <T extends unknown>({
   value,
   list,
   emptyListText = 'No assets found.',
   description,
-  itemHeight = formatSize(64),
+  listItemHeight = formatSize(64),
+  listItemSeparatorSize = formatSize(16),
+  listItemDividerSize = formatSize(8),
+  isCompactListItem = false,
   itemContainerStyle,
   disabled = false,
   isLoading = false,
@@ -100,7 +100,6 @@ const DropdownComponent = <T extends unknown>({
   getListItemSectionTitle,
   renderActionButtons = emptyComponent,
   listHeader,
-  appearance = 'v1',
   keyExtractor,
   onValueChange,
   onLongPress,
@@ -129,15 +128,11 @@ const DropdownComponent = <T extends unknown>({
     return result;
   }, [getListItemSectionTitle, list]);
 
-  const isTokenSelector = appearance === 'v2';
-  const listItemHeight = isTokenSelector ? formatSize(44) : itemHeight;
-  const listItemSeparatorSize = isTokenSelector ? formatSize(8) : formatSize(16);
-
   const getItemLayout = useCallback(
     (_: unknown, index: number) => {
       const sectionTitle = itemsTitles[index];
       const sectionsTitlesBeforeCount = Object.keys(itemsTitles).filter(key => Number(key) < index).length;
-      const rowDividerSize = isTokenSelector ? 0 : formatSize(8);
+      const rowDividerSize = listItemDividerSize;
       const sectionTitleSize = formatSize(22);
       const itemSeparatorSize = listItemSeparatorSize;
 
@@ -148,9 +143,10 @@ const DropdownComponent = <T extends unknown>({
           index * (listItemHeight + rowDividerSize + itemSeparatorSize) + sectionsTitlesBeforeCount * sectionTitleSize
       };
     },
-    [isTokenSelector, itemsTitles, listItemHeight, listItemSeparatorSize]
+    [itemsTitles, listItemDividerSize, listItemHeight, listItemSeparatorSize]
   );
   const contentHeight = useDropdownHeight();
+  const renderItemSeparator = useCallback(() => <Divider size={listItemSeparatorSize} />, [listItemSeparatorSize]);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -165,7 +161,7 @@ const DropdownComponent = <T extends unknown>({
       return (
         <>
           {isDefined(sectionTitle) && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
-          {!isTokenSelector && <Divider size={formatSize(8)} />}
+          {listItemDividerSize > 0 && <Divider size={listItemDividerSize} />}
           <TouchableWithAnalytics
             Component={SafeTouchableOpacity}
             key={index}
@@ -173,7 +169,7 @@ const DropdownComponent = <T extends unknown>({
             testID={DropdownSelectors.option}
             testIDProperties={itemTestIDPropertiesFn?.(item)}
           >
-            <DropdownItemContainer isSelected={isSelected} isCompact={isTokenSelector} style={itemContainerStyle}>
+            <DropdownItemContainer isSelected={isSelected} isCompact={isCompactListItem} style={itemContainerStyle}>
               {renderListItem({ item, isSelected })}
             </DropdownItemContainer>
           </TouchableWithAnalytics>
@@ -187,7 +183,8 @@ const DropdownComponent = <T extends unknown>({
       onValueChange,
       dropdownBottomSheetController.close,
       itemTestIDPropertiesFn,
-      isTokenSelector,
+      isCompactListItem,
+      listItemDividerSize,
       styles.sectionHeaderText,
       itemContainerStyle,
       renderListItem
@@ -283,9 +280,9 @@ const DropdownComponent = <T extends unknown>({
               getItemLayout={getItemLayout}
               contentContainerStyle={[
                 styles.flatListContentContainer,
-                isTokenSelector && styles.tokenSelectorFlatListContentContainer
+                isCompactListItem && styles.tokenSelectorFlatListContentContainer
               ]}
-              ItemSeparatorComponent={ItemSeparatorComponent}
+              ItemSeparatorComponent={renderItemSeparator}
               ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
               windowSize={10}
               updateCellsBatchingPeriod={150}

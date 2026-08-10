@@ -1,8 +1,13 @@
 import { useField, useFormikContext } from 'formik';
 import React, { memo, useCallback, useMemo } from 'react';
 
-import { AssetAmountInput, AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
+import {
+  AssetAmountInput,
+  AssetAmountInputV2,
+  AssetAmountInterface
+} from 'src/components/asset-amount-input/asset-amount-input';
 import { AssetAmountInputProps } from 'src/components/asset-amount-input/asset-amount-input.props';
+import { AssetAmountInputVariant } from 'src/components/asset-amount-input/asset-amount-input.variants';
 import { AssetInterface } from 'src/interfaces/asset.interface';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useAssetBalanceSelector } from 'src/store/wallet/wallet-selectors';
@@ -17,6 +22,7 @@ interface Props<TAsset extends AssetInterface = TokenInterface>
   extends Omit<AssetAmountInputProps<TAsset>, 'value' | 'onValueChange'>,
     Partial<Pick<AssetAmountInputProps<TAsset>, 'onValueChange'>> {
   name: string;
+  variant?: AssetAmountInputVariant;
   showErrorInFooter?: boolean;
 }
 
@@ -100,10 +106,11 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
       [exchangeRateStored]
     );
 
+    const AssetAmountInputComponent = variant === 'v2' ? AssetAmountInputV2 : AssetAmountInput;
+
     return (
       <>
-        <AssetAmountInput
-          variant={variant}
+        <AssetAmountInputComponent
           value={field.value}
           label={label}
           assetsList={assetsList}

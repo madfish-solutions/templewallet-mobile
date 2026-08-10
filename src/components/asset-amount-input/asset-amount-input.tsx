@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { DEFAULT_EXPECTED_GAS_EXPENSE, emptyFn } from 'src/config/general';
@@ -34,7 +34,7 @@ import { IconNameV2Enum } from '../icon-v2/icon-name.enum';
 import { Label } from '../label/label';
 import { PatchedTextInput } from '../patched-text-input';
 import { TextSegmentControl } from '../segmented-control/text-segment-control/text-segment-control';
-import { TokenDropdownItem } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
+import { TokenDropdownItem, TokenDropdownItemV2 } from '../token-dropdown/token-dropdown-item/token-dropdown-item';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
 import { AssetAmountInputProps, AssetAmountInputStylesConfig } from './asset-amount-input.props';
@@ -46,7 +46,7 @@ import {
   getFiatInputAmount,
   tokenToDollarAmount
 } from './asset-amount-input.utils';
-import { assetAmountInputVariantConfigs } from './asset-amount-input.variants';
+import { assetAmountInputVariantConfigs, AssetAmountInputVariant } from './asset-amount-input.variants';
 import { AssetAmountInputSelectors } from './selectors';
 
 export interface AssetAmountInterface<TAsset extends AssetInterface = TokenInterface> {
@@ -75,13 +75,8 @@ const getDefinedAmount = (
       : dollarToTokenAmount(amount, decimals, exchangeRate)
     : undefined;
 
-type AssetAmountInputComponent = <TAsset extends AssetInterface = TokenInterface>(
-  props: AssetAmountInputProps<TAsset>
-) => React.JSX.Element;
-
-export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
-  ({
-    variant = 'v1',
+const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
+  const AssetAmountInput = <TAsset extends AssetInterface = TokenInterface>({
     value,
     label,
     assetsList,
@@ -113,7 +108,7 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
     tokenTestID,
     switcherTestID,
     maxButtonTestID
-  }) => {
+  }: AssetAmountInputProps<TAsset>) => {
     const styles = useAssetAmountInputStyles();
     const variantConfig = assetAmountInputVariantConfigs[variant];
     const { inputHeight, dropdownVerticalPadding, selectedTokenDropdownWidth } = variantConfig;
@@ -154,8 +149,8 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
 
     const amountInputRef = useRef<TextInput>(null);
     const renderTokenListItem = useCallback<DropdownListItemComponent<AssetInterface>>(
-      ({ item }) => <TokenDropdownItem token={item} variant={variant} />,
-      [variant]
+      ({ item }) => (variant === 'v1' ? <TokenDropdownItem token={item} /> : <TokenDropdownItemV2 token={item} />),
+      []
     );
 
     const [inputTypeIndex, setInputTypeIndex] = useState(0);
@@ -199,16 +194,18 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
     }, [value.amount, isTokenInputType, value.asset, exchangeRate]);
 
     const renderTokenValue = useCallback<DropdownValueComponent<AssetInterface>>(
-      ({ value: tokenValue }) => (
-        <TokenDropdownItem
-          token={tokenValue}
-          actionIconV2Name={isSingleAsset ? undefined : IconNameV2Enum.DropdownDown}
-          isShowBalance={false}
-          isShowName={isShowNameForValue}
-          variant={variant}
-        />
-      ),
-      [isShowNameForValue, isSingleAsset, variant]
+      ({ value: tokenValue }) =>
+        variant === 'v1' ? (
+          <TokenDropdownItem token={tokenValue} isShowBalance={false} isShowName={isShowNameForValue} />
+        ) : (
+          <TokenDropdownItemV2
+            token={tokenValue}
+            actionIconName={isSingleAsset ? undefined : IconNameV2Enum.DropdownDown}
+            isShowBalance={false}
+            isShowName={isShowNameForValue}
+          />
+        ),
+      [isShowNameForValue, isSingleAsset]
     );
 
     const onChange = useCallback(
@@ -271,10 +268,14 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
     };
 
     const handleTokenChange = useCallback(
-      (newAsset?: AssetInterface) => {
-        const decimals = newAsset?.decimals ?? 0;
-        const asset = newAsset ?? emptyTezosLikeToken;
-        const newExchangeRate = newAsset?.exchangeRate ?? getTokenExchangeRate(getAssetStoreKey(asset));
+      (newAsset?: TAsset) => {
+        if (!isDefined(newAsset)) {
+          return;
+        }
+
+        const { decimals, exchangeRate: assetExchangeRate } = newAsset;
+        const asset = newAsset;
+        const newExchangeRate = assetExchangeRate ?? getTokenExchangeRate(getAssetStoreKey(asset));
 
         trackEvent(tokenTestID, AnalyticsEventCategory.ButtonPress, {
           token: isShieldedAsset(asset) ? 'Shielded TEZ' : asset.symbol
@@ -375,7 +376,12 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
               renderValue={renderTokenValue}
               renderListItem={renderTokenListItem}
               listHeader={dropdownListHeader}
-              appearance={variant}
+              {...(variant === 'v2' && {
+                listItemHeight: formatSize(44),
+                listItemSeparatorSize: formatSize(8),
+                listItemDividerSize: 0,
+                isCompactListItem: true
+              })}
               keyExtractor={getAssetKey}
               onValueChange={handleTokenChange}
               testID={testID}
@@ -444,5 +450,12 @@ export const AssetAmountInput = memo<AssetAmountInputProps<AssetInterface>>(
         </View>
       </>
     );
-  }
-) as AssetAmountInputComponent;
+  };
+
+  return AssetAmountInput;
+};
+
+/** @deprecated Use AssetAmountInputV2 instead. */
+export const AssetAmountInput = AssetAmountInputHOC('v1');
+
+export const AssetAmountInputV2 = AssetAmountInputHOC('v2');
