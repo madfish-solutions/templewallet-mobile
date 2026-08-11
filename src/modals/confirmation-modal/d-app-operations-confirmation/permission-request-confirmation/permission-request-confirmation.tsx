@@ -1,35 +1,22 @@
 import { BeaconMessageType, PermissionRequestOutput } from '@airgap/beacon-sdk';
-import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
-import { AccountFormDropdown } from 'src/components/account-dropdown/account-form-dropdown';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from 'src/components/divider/divider';
-import { HeaderTitle } from 'src/components/header/header-title/header-title';
-import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { Label } from 'src/components/label/label';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { ApprovePermissionRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-permission-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
-import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos, getAccountPublicKeyForTezos } from 'src/utils/account.utils';
 
-import { AppMetadataConnectionView } from './app-metadata-connection-view/app-metadata-connection-view';
-import {
-  PermissionRequestConfirmationFormValues,
-  permissionRequestConfirmationModalValidationSchema
-} from './permission-request-confirmation.form';
+import { ConnectionRequestConfirmationContent } from '../../connection-request-confirmation/connection-request-confirmation-content';
+import { ConnectionRequestConfirmationFormValues } from '../../connection-request-confirmation/form';
+
 import { PermissionRequestConfirmationSelectors } from './permission-request-confirmation.selectors';
 
 interface Props {
@@ -63,12 +50,12 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
 
   const { confirmRequest, isLoading } = useDappRequestConfirmation(message, approvePermissionRequest);
 
-  const formInitialValues = useMemo<PermissionRequestConfirmationFormValues>(
+  const formInitialValues = useMemo<ConnectionRequestConfirmationFormValues>(
     () => ({ approver: getAccountAddressForTezos(selectedAccount) ? selectedAccount : tezosAccounts[0] }),
     [selectedAccount, tezosAccounts]
   );
 
-  const onSubmit = ({ approver }: PermissionRequestConfirmationFormValues) => {
+  const onSubmit = ({ approver }: ConnectionRequestConfirmationFormValues) => {
     if (approver.id !== selectedAccount.id) {
       dispatch(setSelectedAccountIdAction(approver.id));
     }
@@ -85,38 +72,18 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
     });
   };
 
-  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm Connection" /> }, []);
-
   return (
-    <Formik
+    <ConnectionRequestConfirmationContent
+      appName={message.appMetadata.name}
+      iconUri={message.appMetadata.icon}
+      iconSeed={message.appMetadata.senderId}
+      accounts={tezosAccounts}
       initialValues={formInitialValues}
-      validationSchema={permissionRequestConfirmationModalValidationSchema}
+      isLoading={isLoading}
+      cancelTestID={PermissionRequestConfirmationSelectors.cancelButton}
+      confirmTestID={PermissionRequestConfirmationSelectors.confirmButton}
+      onCancel={goBack}
       onSubmit={onSubmit}
-    >
-      {({ submitForm }) => (
-        <>
-          <ScreenContainer>
-            <AppMetadataConnectionView appMetadata={message.appMetadata} />
-            <Divider size={formatSize(24)} />
-            <Label label="Account" description="To be connected with dApp." />
-            <AccountFormDropdown name="approver" list={tezosAccounts} />
-          </ScreenContainer>
-          <ModalButtonsFloatingContainer variant="bordered">
-            <ButtonLargeSecondary
-              title="Cancel"
-              disabled={isLoading}
-              onPress={goBack}
-              testID={PermissionRequestConfirmationSelectors.cancelButton}
-            />
-            <ButtonLargePrimary
-              title="Confirm"
-              disabled={isLoading}
-              onPress={submitForm}
-              testID={PermissionRequestConfirmationSelectors.confirmButton}
-            />
-          </ModalButtonsFloatingContainer>
-        </>
-      )}
-    </Formik>
+    />
   );
 };

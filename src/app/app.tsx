@@ -1,3 +1,4 @@
+import '@walletconnect/react-native-compat';
 import 'react-native-url-polyfill/auto';
 
 import * as Sentry from '@sentry/react-native';

@@ -1,4 +1,3 @@
-import { PermissionInfo } from '@airgap/beacon-sdk';
 import React, { memo, useCallback } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';
@@ -8,62 +7,74 @@ import { Divider } from 'src/components/divider/divider';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TouchableIcon } from 'src/components/icon/touchable-icon/touchable-icon';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { removePermissionAction } from 'src/store/d-apps/d-apps-actions';
+import { DAppConnectionProtocol } from 'src/enums/dapp-connection-protocol.enum';
+import { DAppConnection } from 'src/interfaces/dapp-connection.interface';
+import { removeConnectionAction } from 'src/store/d-apps/d-apps-actions';
 import { formatSize } from 'src/styles/format-size';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isString } from 'src/utils/is-string';
 
 import { DAppsSettingsSelectors } from '../d-apps.settings.selectors';
 
-import { PermissionItemAnalyticsEvents } from './analytics-events';
-import { usePermissionItemStyles } from './permission-item.styles';
-import { PermissionItemSelectors } from './selectors';
+import { ConnectionItemAnalyticsEvents } from './analytics-events';
+import { ConnectionItemSelectors } from './selectors';
+import { useConnectionItemStyles } from './styles';
 
 interface Props {
-  permission: PermissionInfo;
+  connection: DAppConnection;
 }
 
-export const PermissionItem = memo<Props>(({ permission }) => {
-  const styles = usePermissionItemStyles();
+export const ConnectionItem = memo<Props>(({ connection }) => {
+  const styles = useConnectionItemStyles();
   const dispatch = useDispatch();
   const { trackEvent } = useAnalytics();
 
-  const removePermissionHandler = useCallback(
+  const removeConnectionHandler = useCallback(
     () =>
       Alert.alert('Delete connection? ', 'You can reconnect to this DApp later.', [
         {
           text: 'Cancel',
           style: 'cancel',
           onPress: () =>
-            trackEvent(PermissionItemAnalyticsEvents.DELETE_CONNECTION_CANCEL, AnalyticsEventCategory.General)
+            trackEvent(ConnectionItemAnalyticsEvents.DELETE_CONNECTION_CANCEL, AnalyticsEventCategory.General)
         },
         {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            dispatch(removePermissionAction(permission));
-            trackEvent(PermissionItemAnalyticsEvents.DELETE_CONNECTION_SUCCESS, AnalyticsEventCategory.General);
+            dispatch(removeConnectionAction(connection));
+            trackEvent(ConnectionItemAnalyticsEvents.DELETE_CONNECTION_SUCCESS, AnalyticsEventCategory.General);
           }
         }
       ]),
-    [permission]
+    [connection, dispatch, trackEvent]
   );
+
+  const protocolLabel = connection.protocol === DAppConnectionProtocol.WalletConnect ? 'WalletConnect' : 'Beacon';
 
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        <AppMetadataIcon appMetadata={permission.appMetadata} size={formatSize(44)} />
+        <AppMetadataIcon iconUri={connection.iconUri} iconSeed={connection.iconSeed} size={formatSize(44)} />
         <Divider size={formatSize(8)} />
         <View>
-          <Text style={styles.nameText}>{permission.appMetadata.name}</Text>
+          <Text style={styles.nameText}>{connection.name}</Text>
           <Divider size={formatSize(4)} />
           <Text style={styles.networkText}>
-            Network: <Text style={styles.networkValue}>{permission.network.type}</Text>
+            Network: <Text style={styles.networkValue}>{connection.networkLabel}</Text>
           </Text>
-          {permission.publicKey && (
+          <Divider size={formatSize(4)} />
+          <Text style={styles.networkText}>
+            Protocol: <Text style={styles.networkValue}>{protocolLabel}</Text>
+          </Text>
+          {isString(connection.accountAddress) && (
             <>
               <Divider size={formatSize(4)} />
-              <PublicKeyHashText publicKeyHash={permission.publicKey} testID={PermissionItemSelectors.publicKeyHash} />
+              <PublicKeyHashText
+                publicKeyHash={connection.accountAddress}
+                testID={ConnectionItemSelectors.accountAddress}
+              />
             </>
           )}
         </View>
@@ -72,7 +83,7 @@ export const PermissionItem = memo<Props>(({ permission }) => {
         name={IconNameEnum.Trash}
         size={formatSize(16)}
         style={styles.trashIcon}
-        onPress={removePermissionHandler}
+        onPress={removeConnectionHandler}
         testID={DAppsSettingsSelectors.trashButton}
       />
     </View>

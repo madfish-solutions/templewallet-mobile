@@ -1,4 +1,5 @@
 import { BeaconRequestOutputMessage } from '@airgap/beacon-sdk';
+import { WalletKitTypes } from '@reown/walletkit';
 import { ParamsWithKind } from '@taquito/taquito';
 
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
@@ -9,8 +10,19 @@ export type ConfirmationModalParams =
   | InternalOperationsConfirmationModalParams
   | DAppOperationsConfirmationModalParams
   | RebalanceConfirmationModalParams
-  | EvmInternalOperationsConfirmationModalParams;
+  | EvmInternalOperationsConfirmationModalParams
+  | WcSessionProposalConfirmationModalParams
+  | WcSessionRequestConfirmationModalParams;
 
+export interface WcSessionProposalConfirmationModalParams {
+  type: ConfirmationTypeEnum.WcSessionProposal;
+  proposal: WalletKitTypes.SessionProposal;
+}
+
+export interface WcSessionRequestConfirmationModalParams {
+  type: ConfirmationTypeEnum.WcSessionRequest;
+  request: WalletKitTypes.SessionRequest;
+}
 export interface InternalOperationsConfirmationModalParams extends TestIdProps {
   type: ConfirmationTypeEnum.InternalOperations;
   opParams: ParamsWithKind[];

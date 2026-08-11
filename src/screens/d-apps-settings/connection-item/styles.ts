@@ -2,7 +2,7 @@ import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStylesMemoized } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-export const usePermissionItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
+export const useConnectionItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',

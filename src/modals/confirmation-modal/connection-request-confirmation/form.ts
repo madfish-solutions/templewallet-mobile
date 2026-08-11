@@ -2,11 +2,11 @@ import { object, SchemaOf } from 'yup';
 
 import { Account } from 'src/interfaces/account.interfaces';
 
-export interface PermissionRequestConfirmationFormValues {
+export interface ConnectionRequestConfirmationFormValues {
   approver: Account;
 }
 
-export const permissionRequestConfirmationModalValidationSchema: SchemaOf<PermissionRequestConfirmationFormValues> =
+export const connectionRequestConfirmationValidationSchema: SchemaOf<ConnectionRequestConfirmationFormValues> =
   object().shape({
     approver: object().shape({}).required()
   });
