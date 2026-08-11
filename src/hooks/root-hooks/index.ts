@@ -12,7 +12,7 @@ import { useStorageAnalytics } from './use-storage-analytics';
 import { useSwapTokensLoading } from './use-swap-tokens-loading';
 import { useWhitelistLoading } from './use-whitelist-loading';
 
-const useRootHooks = () => {
+export const RootHooks = memo(() => {
   useStorageAnalytics();
 
   useWhitelistLoading();
@@ -26,10 +26,6 @@ const useRootHooks = () => {
 
   useFirebaseApp();
   usePushNotifications();
-};
-
-export const RootHooks = memo(() => {
-  useRootHooks();
 
   return null;
 });
