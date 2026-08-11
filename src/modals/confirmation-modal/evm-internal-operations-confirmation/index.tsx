@@ -57,10 +57,10 @@ export const EvmInternalOperationsConfirmation: FC<Props> = ({ accountId, asset,
   const getSubmissionFees = feeState.getSubmissionFees;
 
   useEffect(() => {
-    if (transactionError) {
+    if (transactionError?.message) {
       showErrorToast({ title: 'EVM transaction error', description: transactionError.message });
     }
-  }, [transactionError]);
+  }, [transactionError?.message]);
 
   const retry = useCallback(() => {
     resetSubmissionError();
@@ -71,6 +71,8 @@ export const EvmInternalOperationsConfirmation: FC<Props> = ({ accountId, asset,
 
     if (submissionFees) {
       await submit(submissionFees);
+    } else {
+      showErrorToast({ description: 'Failed to resolve submission fees.' });
     }
   }, [getSubmissionFees, submit]);
 

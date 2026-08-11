@@ -13,19 +13,11 @@ export const getInitialSendAsset = (
   assets: SendAsset[],
   initialAssetKey?: string,
   initialToken?: TezosTokenMetadata
-): SendAsset => {
-  const asset =
-    assets.find(item => item.assetKey === initialAssetKey) ??
-    assets.find(item => isTezosSendAsset(item) && tokenEqualityFn(item, initialToken)) ??
-    assets.find(item => item.assetSlug === TEZ_TOKEN_SLUG) ??
-    assets[0];
-
-  if (!asset) {
-    throw new Error('No sendable assets are available');
-  }
-
-  return asset;
-};
+): SendAsset =>
+  assets.find(item => item.assetKey === initialAssetKey) ??
+  assets.find(item => isTezosSendAsset(item) && tokenEqualityFn(item, initialToken)) ??
+  assets.find(item => item.assetSlug === TEZ_TOKEN_SLUG) ??
+  assets[0];
 
 const filterSendPickerAssets = (
   assets: SendAsset[],
