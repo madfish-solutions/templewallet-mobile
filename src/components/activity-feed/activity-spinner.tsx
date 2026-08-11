@@ -3,7 +3,6 @@ import { ActivityIndicator } from 'react-native';
 
 import { useColors } from 'src/styles/use-colors';
 
-// The native indicator only draws at 20 ('small') or 36 ('large') - scaling bridges to the design sizes
 const NATIVE_SMALL_SIZE = 20;
 const NATIVE_LARGE_SIZE = 36;
 

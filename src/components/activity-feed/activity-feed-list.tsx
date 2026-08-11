@@ -132,7 +132,6 @@ export const ActivityFeedList = memo<Props>(
         />
       ) : null;
 
-      // Always a measured wrapper: the empty state must know the header's height to center within the rest
       return (
         <View onLayout={handleHeaderLayout}>
           {headerComponent}
@@ -152,8 +151,6 @@ export const ActivityFeedList = memo<Props>(
     ]);
 
     const ListEmptyComponent = useMemo(() => {
-      // The list header renders above this component, so center within the remaining space only.
-      // `minHeight`, not `height`: the content must stay reachable when the remainder is smaller than it
       const minHeight = Math.max(listHeight - headerHeight, 0);
 
       return (

@@ -23,6 +23,8 @@ const hexToStringInteger = (hex: HexString) => hexToBigInt(hex).toString();
 
 const topicToAddress = (topic: HexString) => `0x${topic.slice(26)}`;
 
+const isRevoked = (data: HexString) => data.endsWith('0');
+
 export const isApprovalLog = ({ decoded, topics }: { decoded: { method_call: string } | null; topics: HexString[] }) =>
   topics.at(0) === ERC20_APPROVAL_EVENT_TOPIC ||
   [ERC20_APPROVAL_METHOD_CALL_REGEX, ERC721_APPROVAL_METHOD_CALL_REGEX].some(regex =>
@@ -45,8 +47,7 @@ export const parseApprovalLog = ({ topics, logIndex, data, address }: ApprovalLo
   const spenderAddress = topicToAddress(spenderTopic);
 
   if (topics.at(0) !== ERC20_APPROVAL_EVENT_TOPIC) {
-    // Not `Approval` but `ApprovalForAll`; its `data` holds the `approved` flag
-    if (data.endsWith('0')) {
+    if (isRevoked(data)) {
       return { kind: ActivityOperKindEnum.interaction, withAddress: address, logIndex };
     }
 

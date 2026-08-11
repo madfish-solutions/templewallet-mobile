@@ -453,7 +453,7 @@ export const fetchEtherlinkActivities = async (
     Array.from(rawActivitiesByHash, async ([hash, { tx, tokensTransfers: txTokensTransfers, nativeCoinDelta }]) => {
       throwIfAborted(signal);
 
-      // Failed transactions are dropped from the feed
+      // failed transactions are hidden
       if (tx?.status === 'error') {
         return undefined;
       }

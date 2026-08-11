@@ -47,7 +47,7 @@ const fetchTezosPage = async (
   throwIfAborted(signal);
 
   return {
-    // Failed groups are not shown; pending ones stay and show a spinner
+    // failed groups are hidden
     activities: groups
       .map(group => parseTezosOperationsGroup(group, chainId, accountAddress))
       .filter(isDefined)

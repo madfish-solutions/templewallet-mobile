@@ -228,8 +228,7 @@ function fetchIncomingOperTransactions_Fa_2(
 
 const MAX_CACHED_OPERATION_GROUPS = 500;
 
-// A group whose operations all reached a final status never changes, so re-opens skip its by-hash refetch.
-// Raw chain data with the account applied only at parse time - no account-switch reset is needed
+// A group whose operations all reached a final status never changes, so re-opens skip its by-hash refetch
 const operationGroupsCache = new Map<string, TzktOperation[]>();
 
 export async function fetchOperGroupsForOperations(

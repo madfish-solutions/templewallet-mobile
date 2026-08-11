@@ -26,7 +26,7 @@ const fetchEvmPage = async (
     signal
   );
 
-  // `scannedDownTo` is taken from raw items, so a page with zero parsed activities still moves the feed forward
+  // Measured on raw items, not on `activities`: a page that parses to nothing still moves the boundary
   const scannedDownTo = nextPageParams === null ? 0 : oldestRawTimestamp ?? UNKNOWN_SCANNED_DOWN_TO;
 
   return {

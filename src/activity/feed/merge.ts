@@ -35,7 +35,6 @@ const CHAIN_ORDER: Record<TempleChainKind, number> = {
 const compareActivities = (a: Activity, b: Activity) =>
   b.addedAt - a.addedAt || CHAIN_ORDER[a.chain] - CHAIN_ORDER[b.chain];
 
-// Stable sort keeps the new-to-old order inside each buffer
 export const mergeActivityBuffers = (buffers: Activity[][]): Activity[] => {
   const byKey = new Map<string, Activity>();
 
