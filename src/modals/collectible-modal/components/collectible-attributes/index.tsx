@@ -9,7 +9,7 @@ interface Props {
   attributes: CollectibleAttribute[];
 }
 
-export interface CollectibleAttributeCell {
+interface CollectibleAttributeCell {
   name: string;
   value: string;
   rarity?: number;

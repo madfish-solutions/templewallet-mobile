@@ -110,7 +110,7 @@ export const EvmCollectibleModal = memo(() => {
             />
           ) : null}
 
-          {selectedSegment === 0 ? (
+          {selectedSegment === 0 && tokenId ? (
             <EvmCollectibleDetails
               chainName={chain?.name ?? 'Etherlink'}
               tokenStandard={tokenStandard}
