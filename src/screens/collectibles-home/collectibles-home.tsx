@@ -63,7 +63,7 @@ export const CollectiblesHome = memo(() => {
 
   useEffect(() => {
     listTranslateY.value = withTiming('0%', {
-      duration: 500,
+      duration: 300,
       easing: Easing.out(Easing.cubic)
     });
   }, [listTranslateY]);
