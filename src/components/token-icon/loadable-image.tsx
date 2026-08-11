@@ -12,12 +12,13 @@ interface Props {
   isStackFailed: boolean;
   onError: EmptyFn;
   onLoad: EmptyFn;
-  uri?: string;
   size: number;
+  placeholderSize: number;
+  uri?: string;
 }
 
 export const LoadableTokenIconImage = memo<Props>(
-  ({ borderRadius, isCollectible = false, isLoading, isStackFailed, onError, onLoad, size, uri }) => {
+  ({ borderRadius, isCollectible = false, isLoading, isStackFailed, onError, onLoad, size, placeholderSize, uri }) => {
     const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
 
     const style = useMemo(
@@ -27,7 +28,7 @@ export const LoadableTokenIconImage = memo<Props>(
 
     return (
       <>
-        {isShowPlaceholder && <AssetIconPlaceholder isCollectible={isCollectible} size={size} />}
+        {isShowPlaceholder && <AssetIconPlaceholder isCollectible={isCollectible} size={placeholderSize} />}
         {uri != null && <FastImage style={style} source={{ uri }} onError={onError} onLoad={onLoad} />}
       </>
     );
