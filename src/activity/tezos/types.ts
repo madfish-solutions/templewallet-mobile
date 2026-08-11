@@ -11,12 +11,11 @@ export type TezosPreActivityStatus = 'applied' | 'backtracked' | 'skipped' | 'fa
 
 export interface TezosActivityOlderThan {
   hash: string;
-  oldestTzktOperation: Pick<TzktOperation, 'timestamp' | 'level' | 'id'>;
+  oldestTzktOperation: Pick<TzktOperation, 'id'>;
 }
 
 export interface TezosPreActivity {
   hash: string;
-  oldestTzktOperation: TzktOperation;
   /** ISO date string */
   addedAt: string;
   status: TezosPreActivityStatus;

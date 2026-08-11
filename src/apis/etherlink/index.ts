@@ -38,13 +38,11 @@ export type {
   EtherlinkTokenTransfer,
   EtherlinkInternalTransaction,
   EtherlinkLog,
-  EtherlinkDecodedInput,
   EtherlinkCoinBalanceHistoryItem,
   EtherlinkAccountTransactionsPageParams,
   EtherlinkTokenTransfersPageParams,
   EtherlinkTransactionLogsPageParams,
-  EtherlinkInternalTransactionsPageParams,
-  EtherlinkCoinBalanceHistoryPageParams
+  EtherlinkInternalTransactionsPageParams
 } from './types';
 
 const api = axios.create({ baseURL: ETHERLINK_API_BASE_URL });

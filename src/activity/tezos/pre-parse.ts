@@ -39,7 +39,6 @@ export function preparseTezosOperationsGroup(
     addedAt: lastOperation.timestamp,
     status: deriveActivityStatus(operations),
     operations,
-    oldestTzktOperation: lastOperation,
     chainId
   };
 }

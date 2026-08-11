@@ -3,19 +3,25 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import type { Activity, EvmOperation } from '../types';
 import { isEvmActivity, toActivityKey } from '../utils';
 
+// Gas/fallback operations carry a synthetic logIndex (tx position) that can numerically collide with a real log_index
+const toOperationMergeKey = (operation: EvmOperation) =>
+  `${operation.kind}:${operation.asset?.contract ?? ''}:${operation.logIndex}`;
+
 const mergeColliding = (existing: Activity, incoming: Activity): Activity => {
   if (isEvmActivity(existing) && isEvmActivity(incoming)) {
-    const byLogIndex = new Map<number, EvmOperation>();
-    existing.operations.forEach(operation => byLogIndex.set(operation.logIndex, operation));
+    const byMergeKey = new Map<string, EvmOperation>();
+    existing.operations.forEach(operation => byMergeKey.set(toOperationMergeKey(operation), operation));
     incoming.operations.forEach(operation => {
-      if (!byLogIndex.has(operation.logIndex)) {
-        byLogIndex.set(operation.logIndex, operation);
+      const key = toOperationMergeKey(operation);
+
+      if (!byMergeKey.has(key)) {
+        byMergeKey.set(key, operation);
       }
     });
 
-    const operations = Array.from(byLogIndex.values()).sort((a, b) => a.logIndex - b.logIndex);
+    const operations = Array.from(byMergeKey.values()).sort((a, b) => a.logIndex - b.logIndex);
 
-    return { ...existing, operations, operationsCount: operations.length };
+    return { ...existing, operations };
   }
 
   return incoming.operations.length > existing.operations.length ? incoming : existing;
@@ -29,7 +35,7 @@ const CHAIN_ORDER: Record<TempleChainKind, number> = {
 const compareActivities = (a: Activity, b: Activity) =>
   b.addedAt - a.addedAt || CHAIN_ORDER[a.chain] - CHAIN_ORDER[b.chain];
 
-// Stable sort keeps the new-to-old order inside each buffer (Hermes has no `toSorted`)
+// Stable sort keeps the new-to-old order inside each buffer
 export const mergeActivityBuffers = (buffers: Activity[][]): Activity[] => {
   const byKey = new Map<string, Activity>();
 
@@ -44,7 +50,7 @@ export const mergeActivityBuffers = (buffers: Activity[][]): Activity[] => {
   return Array.from(byKey.values()).sort(compareActivities);
 };
 
-export interface SourceBoundaryState {
+interface SourceBoundaryState {
   scannedDownTo: number;
   exhausted: boolean;
   errored: boolean;

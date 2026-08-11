@@ -10,7 +10,7 @@ const ERC20_APPROVAL_METHOD_CALL_REGEX =
 const ERC721_APPROVAL_METHOD_CALL_REGEX =
   /Approval\(address indexed [A-z_]+, address indexed [A-z_]+, uint256 indexed [A-z_]+\)/;
 
-export interface ApprovalLog {
+interface ApprovalLog {
   topics: HexString[];
   logIndex: number;
   data: HexString;

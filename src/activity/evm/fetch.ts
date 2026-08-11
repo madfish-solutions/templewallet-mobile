@@ -1,3 +1,5 @@
+import { zeroAddress } from 'viem';
+
 import {
   EtherlinkAccountTransactionsPageParams,
   EtherlinkCoinBalanceHistoryItem,
@@ -20,6 +22,7 @@ import {
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { DEFAULT_EVM_CURRENCY } from 'src/token/interfaces/token-metadata.interface';
 import { DEFAULT_EVM_CHAINS_SPECS } from 'src/types/networks';
+import { putToCappedCache } from 'src/utils/capped-cache.utils';
 import { equalsIgnoreCase } from 'src/utils/evm/on-chain/common.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -34,13 +37,11 @@ export interface EtherlinkActivitiesPageParams {
   tokensTransfersPageParams: EtherlinkTokenTransfersPageParams | nullish;
 }
 
-export interface EtherlinkActivitiesPage {
+interface EtherlinkActivitiesPage {
   activities: EvmActivity[];
   nextPageParams: EtherlinkActivitiesPageParams | null;
   oldestRawTimestamp: number | null;
 }
-
-const EVM_ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 const MAX_CACHED_ACTIVITIES = 500;
 
@@ -55,21 +56,13 @@ const toCacheKey = (chainId: number, hash: string, transfers: EtherlinkTokenTran
   return `${chainId}:${hash.toLowerCase()}:${range}`;
 };
 
-const putCachedActivity = (chainId: number, transfers: EtherlinkTokenTransfer[], activity: EvmActivity) => {
-  const key = toCacheKey(chainId, activity.hash, transfers);
-  parsedActivitiesCache.delete(key);
-  parsedActivitiesCache.set(key, activity);
-
-  while (parsedActivitiesCache.size > MAX_CACHED_ACTIVITIES) {
-    const oldestKey = parsedActivitiesCache.keys().next().value;
-
-    if (oldestKey === undefined) {
-      break;
-    }
-
-    parsedActivitiesCache.delete(oldestKey);
-  }
-};
+const putCachedActivity = (chainId: number, transfers: EtherlinkTokenTransfer[], activity: EvmActivity) =>
+  putToCappedCache(
+    parsedActivitiesCache,
+    toCacheKey(chainId, activity.hash, transfers),
+    activity,
+    MAX_CACHED_ACTIVITIES
+  );
 
 export const resetEvmActivityCache = () => parsedActivitiesCache.clear();
 
@@ -77,13 +70,16 @@ const INTEGER_REGEX = /^-?\d+$/;
 
 const toBigInt = (value: string) => (INTEGER_REGEX.test(value) ? BigInt(value) : 0n);
 
-const fetchAllTxLogs = async (txHash: string, signal?: AbortSignal) => {
-  const items: EtherlinkLog[] = [];
-  let pageParams: EtherlinkTransactionLogsPageParams | undefined = undefined;
+const fetchAllPages = async <T, P extends object>(
+  fetchPage: (pageParams: P | undefined, signal?: AbortSignal) => Promise<{ items: T[]; next_page_params: P | null }>,
+  signal?: AbortSignal
+) => {
+  const items: T[] = [];
+  let pageParams: P | undefined;
 
   do {
     throwIfAborted(signal);
-    const page = await fetchGetTransactionLogs(txHash, pageParams, signal);
+    const page = await fetchPage(pageParams, signal);
     items.push(...page.items);
     pageParams = page.next_page_params ?? undefined;
   } while (isDefined(pageParams));
@@ -91,33 +87,23 @@ const fetchAllTxLogs = async (txHash: string, signal?: AbortSignal) => {
   return items;
 };
 
-const fetchAllTxInternalTransactions = async (txHash: string, signal?: AbortSignal) => {
-  const items: EtherlinkInternalTransaction[] = [];
-  let pageParams: EtherlinkInternalTransactionsPageParams | undefined = undefined;
+const fetchAllTxLogs = (txHash: string, signal?: AbortSignal) =>
+  fetchAllPages<EtherlinkLog, EtherlinkTransactionLogsPageParams>(
+    (pageParams, pageSignal) => fetchGetTransactionLogs(txHash, pageParams, pageSignal),
+    signal
+  );
 
-  do {
-    throwIfAborted(signal);
-    const page = await fetchGetTransactionInternalTransactions(txHash, pageParams, signal);
-    items.push(...page.items);
-    pageParams = page.next_page_params ?? undefined;
-  } while (isDefined(pageParams));
+const fetchAllTxInternalTransactions = (txHash: string, signal?: AbortSignal) =>
+  fetchAllPages<EtherlinkInternalTransaction, EtherlinkInternalTransactionsPageParams>(
+    (pageParams, pageSignal) => fetchGetTransactionInternalTransactions(txHash, pageParams, pageSignal),
+    signal
+  );
 
-  return items;
-};
-
-const fetchAllTxTokenTransfers = async (txHash: string, signal?: AbortSignal) => {
-  const items: EtherlinkTokenTransfer[] = [];
-  let pageParams: EtherlinkTokenTransfersPageParams | undefined = undefined;
-
-  do {
-    throwIfAborted(signal);
-    const page = await fetchGetTransactionTokenTransfers(txHash, pageParams, signal);
-    items.push(...page.items);
-    pageParams = page.next_page_params ?? undefined;
-  } while (isDefined(pageParams));
-
-  return items;
-};
+const fetchAllTxTokenTransfers = (txHash: string, signal?: AbortSignal) =>
+  fetchAllPages<EtherlinkTokenTransfer, EtherlinkTokenTransfersPageParams>(
+    (pageParams, pageSignal) => fetchGetTransactionTokenTransfers(txHash, pageParams, pageSignal),
+    signal
+  );
 
 const makeGasAsset = (chainId: number) => {
   const currency = DEFAULT_EVM_CHAINS_SPECS.find(specs => specs.chainId === chainId)?.currency ?? DEFAULT_EVM_CURRENCY;
@@ -136,7 +122,7 @@ const makeGasTokenTransfer = (
   return {
     kind: ActivityOperKindEnum.transfer,
     fromAddress: from.hash,
-    toAddress: to?.hash ?? EVM_ZERO_ADDRESS,
+    toAddress: to?.hash ?? zeroAddress,
     asset: { ...makeGasAsset(chainId), amountSigned: isSending ? `-${value}` : value },
     logIndex,
     type: isSending ? ActivityOperTransferType.sendToAccount : ActivityOperTransferType.receiveFromAccount
@@ -462,7 +448,7 @@ export const fetchEtherlinkActivities = async (
     }
   });
 
-  // The extra per-transaction requests run in parallel; the shared rate limiter still controls their speed
+  // The shared rate limiter, not this loop, decides how fast the per-transaction requests go out
   const parsedActivities = await Promise.all(
     Array.from(rawActivitiesByHash, async ([hash, { tx, tokensTransfers: txTokensTransfers, nativeCoinDelta }]) => {
       throwIfAborted(signal);
@@ -496,7 +482,6 @@ export const fetchEtherlinkActivities = async (
         chainId,
         hash,
         operations,
-        operationsCount: operations.length,
         addedAt: new Date(shellSource.timestamp).getTime(),
         status: ActivityStatus.applied,
         blockHeight,

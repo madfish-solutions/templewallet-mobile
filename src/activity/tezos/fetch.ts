@@ -7,6 +7,8 @@ import { LIQUIDITY_BAKING_DEX_ADDRESS } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenStandard } from 'src/token/utils/token.utils';
+import { putToCappedCache } from 'src/utils/capped-cache.utils';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 
 import { isKnownTzktStatus } from './pre-parse';
@@ -31,7 +33,7 @@ export async function fetchOperations(
   signal?: AbortSignal
 ): Promise<TezosOperationsPage> {
   if (assetSlug) {
-    const [contractAddress, tokenId] = assetSlug.split('_');
+    const [contractAddress, tokenId] = fromTokenSlug(assetSlug);
 
     if (assetSlug === TEZ_TOKEN_SLUG) {
       return fetchOperations_TEZ(accountAddress, pseudoLimit, olderThan, signal);
@@ -226,7 +228,8 @@ function fetchIncomingOperTransactions_Fa_2(
 
 const MAX_CACHED_OPERATION_GROUPS = 500;
 
-// A group whose operations all reached a final status never changes, so re-opens skip its by-hash refetch
+// A group whose operations all reached a final status never changes, so re-opens skip its by-hash refetch.
+// Raw chain data with the account applied only at parse time - no account-switch reset is needed
 const operationGroupsCache = new Map<string, TzktOperation[]>();
 
 export async function fetchOperGroupsForOperations(
@@ -244,6 +247,7 @@ export async function fetchOperGroupsForOperations(
     const cachedOperations = operationGroupsCache.get(hash);
 
     if (cachedOperations) {
+      putToCappedCache(operationGroupsCache, hash, cachedOperations, MAX_CACHED_OPERATION_GROUPS);
       groups.push({ hash, operations: cachedOperations });
       continue;
     }
@@ -253,17 +257,7 @@ export async function fetchOperGroupsForOperations(
     groups.push({ hash, operations });
 
     if (operations.length > 0 && operations.every(({ status }) => isKnownTzktStatus(status))) {
-      operationGroupsCache.set(hash, operations);
-
-      while (operationGroupsCache.size > MAX_CACHED_OPERATION_GROUPS) {
-        const oldestKey = operationGroupsCache.keys().next().value;
-
-        if (oldestKey === undefined) {
-          break;
-        }
-
-        operationGroupsCache.delete(oldestKey);
-      }
+      putToCappedCache(operationGroupsCache, hash, operations, MAX_CACHED_OPERATION_GROUPS);
     }
   }
 

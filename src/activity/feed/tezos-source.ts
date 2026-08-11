@@ -1,5 +1,3 @@
-import { pick } from 'lodash-es';
-
 import { OPERATION_LIMIT } from 'src/config/general';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { isDefined } from 'src/utils/is-defined';
@@ -35,7 +33,7 @@ const fetchTezosPage = async (
 
   const nextCursor = {
     hash: oldestRawOperation.hash,
-    oldestTzktOperation: pick(oldestRawOperation, ['timestamp', 'level', 'id'])
+    oldestTzktOperation: { id: oldestRawOperation.id }
   };
   const scannedDownTo = new Date(oldestRawOperation.timestamp).getTime();
 

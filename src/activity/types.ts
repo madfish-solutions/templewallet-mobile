@@ -1,4 +1,3 @@
-import { TzktOperation } from 'src/apis/tzkt/types';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 
 export enum ActivityOperKindEnum {
@@ -28,8 +27,6 @@ export interface OperationMember {
 interface ChainActivityBase {
   chain: TempleChainKind;
   hash: string;
-  /** Number of operations left after filtering */
-  operationsCount: number;
   /** Epoch milliseconds */
   addedAt: number;
   status?: ActivityStatus;
@@ -42,7 +39,6 @@ interface OperationBase {
 export interface TezosActivity extends ChainActivityBase {
   chain: TempleChainKind.Tezos;
   chainId: string;
-  oldestTzktOperation: Pick<TzktOperation, 'timestamp' | 'level' | 'id' | 'hash'>;
   operations: TezosOperation[];
   status: ActivityStatus;
 }

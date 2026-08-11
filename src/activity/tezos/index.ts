@@ -1,5 +1,3 @@
-import { pick } from 'lodash-es';
-
 import { SAPLING_CONTRACT_ADDRESS } from 'src/config/sapling';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
@@ -26,16 +24,14 @@ export function parseTezosOperationsGroup(
 
   if (preActivity == null) return null;
 
-  const { hash, addedAt, operations: preOperations, oldestTzktOperation, status } = preActivity;
+  const { hash, addedAt, operations: preOperations, status } = preActivity;
 
   return {
     hash,
     chain: TempleChainKind.Tezos,
     chainId,
     operations: preOperations.map(operation => parseTezosPreActivityOperation(operation, address)),
-    operationsCount: preOperations.length,
     addedAt: new Date(addedAt).getTime(),
-    oldestTzktOperation: pick(oldestTzktOperation, ['timestamp', 'level', 'id', 'hash']),
     status: toActivityStatus(status)
   };
 }

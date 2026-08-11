@@ -33,6 +33,8 @@ import {
   EvmTokenMetadata
 } from 'src/token/interfaces/token-metadata.interface';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { putToCappedCache } from 'src/utils/capped-cache.utils';
+import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { sleep } from 'src/utils/timeouts.util';
 
@@ -53,6 +55,20 @@ interface SourceEntry {
   hasLoadedFirstPage: boolean;
 }
 
+type SourceEntryState = Pick<
+  SourceEntry,
+  'buffer' | 'scannedDownTo' | 'exhausted' | 'errored' | 'isLoading' | 'hasLoadedFirstPage'
+>;
+
+const initialSourceState = (): SourceEntryState => ({
+  buffer: [],
+  scannedDownTo: UNKNOWN_SCANNED_DOWN_TO,
+  exhausted: false,
+  errored: false,
+  isLoading: false,
+  hasLoadedFirstPage: false
+});
+
 const toSourceEntry = <C extends SourceCursor>(source: ActivityFeedSource<C>): SourceEntry => {
   let cursor: C | undefined;
 
@@ -71,26 +87,16 @@ const toSourceEntry = <C extends SourceCursor>(source: ActivityFeedSource<C>): S
     resetCursor() {
       cursor = undefined;
     },
-    buffer: [],
-    scannedDownTo: UNKNOWN_SCANNED_DOWN_TO,
-    exhausted: false,
-    errored: false,
-    isLoading: false,
-    hasLoadedFirstPage: false
+    ...initialSourceState()
   };
 };
 
 const resetEntry = (entry: SourceEntry) => {
   entry.resetCursor();
-  entry.buffer = [];
-  entry.scannedDownTo = UNKNOWN_SCANNED_DOWN_TO;
-  entry.exhausted = false;
-  entry.errored = false;
-  entry.isLoading = false;
-  entry.hasLoadedFirstPage = false;
+  Object.assign(entry, initialSourceState());
 };
 
-export interface ActivityFeedState {
+interface ActivityFeedState {
   activities: Activity[];
   isInitialLoading: boolean;
   isLoadingMore: boolean;
@@ -137,11 +143,26 @@ const pickBoundaryLimitingSource = (entries: SourceEntry[]) => {
   );
 };
 
-// Survives screen unmounts: a re-open paints the previous rows instantly while the sources reload behind them
-let sessionFeedSnapshot: { key: string; activities: Activity[] } | undefined = undefined;
+const MAX_SESSION_SNAPSHOTS = 5;
 
-const getSessionSnapshotActivities = (key: string) =>
-  sessionFeedSnapshot != null && sessionFeedSnapshot.key === key ? sessionFeedSnapshot.activities : [];
+// Survives screen unmounts: a re-open paints the previous rows instantly while the sources reload behind them.
+// Keyed per account+filter, so stacked screens (Activity + token page) keep their own snapshots
+const sessionFeedSnapshots = new Map<string, Activity[]>();
+
+const getSessionSnapshotActivities = (key: string) => sessionFeedSnapshots.get(key) ?? [];
+
+const buildInitialFeedState = (sessionKey: string): ActivityFeedState => {
+  const snapshotActivities = getSessionSnapshotActivities(sessionKey);
+
+  return {
+    activities: snapshotActivities,
+    isInitialLoading: snapshotActivities.length === 0,
+    isLoadingMore: false,
+    isEmpty: false,
+    isAllErrored: false,
+    isAllLoaded: false
+  };
+};
 
 const toAssetFilterKey = (filter: ActivityFeedAssetFilter | undefined) => {
   if (!filter) {
@@ -165,20 +186,18 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
   const assetFilterKey = toAssetFilterKey(assetFilter);
   const sessionKey = `${tezosAddress ?? ''}:${evmAddress ?? ''}|${assetFilterKey}`;
 
-  const [feedState, setFeedState] = useState<ActivityFeedState>(() => {
-    const snapshotActivities = getSessionSnapshotActivities(sessionKey);
-
-    return {
-      activities: snapshotActivities,
-      isInitialLoading: snapshotActivities.length === 0,
-      isLoadingMore: false,
-      isEmpty: false,
-      isAllErrored: false,
-      isAllLoaded: false
-    };
-  });
-
+  const [feedState, setFeedState] = useState<ActivityFeedState>(() => buildInitialFeedState(sessionKey));
+  const [renderedSessionKey, setRenderedSessionKey] = useState(sessionKey);
   const feedStateRef = useRef(feedState);
+
+  // Reset before paint on an account/filter change, so the previous account's rows never flash
+  if (renderedSessionKey !== sessionKey) {
+    setRenderedSessionKey(sessionKey);
+    const nextFeedState = buildInitialFeedState(sessionKey);
+    feedStateRef.current = nextFeedState;
+    setFeedState(nextFeedState);
+  }
+
   const staleActivitiesRef = useRef<Activity[]>([]);
   const previousAccountKeyRef = useRef<string | undefined>(undefined);
   const entriesRef = useRef<SourceEntry[]>([]);
@@ -195,13 +214,20 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
   assetFilterRef.current = assetFilter;
   const sessionKeyRef = useRef(sessionKey);
   sessionKeyRef.current = sessionKey;
+  const entriesSessionKeyRef = useRef<string | undefined>(undefined);
 
   const sync = useCallback(() => {
+    // The session key advances on render, the entries only in the setup effect: in between, a late
+    // callback of the old cycle must not publish the old account's buffers under the new key
+    if (entriesSessionKeyRef.current !== sessionKeyRef.current) {
+      return;
+    }
+
     const state = computeFeedState(entriesRef.current, isLoadingMoreRef.current, staleActivitiesRef.current);
     feedStateRef.current = state;
 
     if (state.activities.length > 0) {
-      sessionFeedSnapshot = { key: sessionKeyRef.current, activities: state.activities };
+      putToCappedCache(sessionFeedSnapshots, sessionKeyRef.current, state.activities, MAX_SESSION_SNAPSHOTS);
     }
 
     setFeedState(state);
@@ -251,7 +277,11 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
             entry.exhausted = page.exhausted;
             entry.errored = false;
             entry.hasLoadedFirstPage = true;
-            lastSuccessfulLoadRef.current = Date.now();
+
+            // A clock zeroed by a first-page failure must survive later successes, so the next focus still refetches
+            if (lastSuccessfulLoadRef.current !== 0) {
+              lastSuccessfulLoadRef.current = Date.now();
+            }
 
             return;
           } catch (error) {
@@ -351,6 +381,7 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
 
     harvestedAssetSlugsRef.current.clear();
     staleActivitiesRef.current = getSessionSnapshotActivities(sessionKeyRef.current);
+    entriesSessionKeyRef.current = sessionKeyRef.current;
     entriesRef.current = entries;
     sync();
     loadFirstPages(controller.signal);
@@ -358,18 +389,20 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
     return () => controller.abort();
   }, [assetFilterKey, evmAddress, loadFirstPages, startNewLoadCycle, sync, tezosAddress]);
 
-  useEffect(() => {
-    if (isFocused && Date.now() - lastSuccessfulLoadRef.current > FOCUS_REFETCH_THRESHOLD) {
+  const refreshIfStale = useCallback(() => {
+    if (isFocusedRef.current && Date.now() - lastSuccessfulLoadRef.current > FOCUS_REFETCH_THRESHOLD) {
       refresh();
     }
-  }, [isFocused, refresh]);
+  }, [refresh]);
+
+  useEffect(() => {
+    if (isFocused) {
+      refreshIfStale();
+    }
+  }, [isFocused, refreshIfStale]);
 
   useAppStateStatus({
-    onAppActiveState: () => {
-      if (isFocusedRef.current && Date.now() - lastSuccessfulLoadRef.current > FOCUS_REFETCH_THRESHOLD) {
-        refresh();
-      }
-    }
+    onAppActiveState: refreshIfStale
   });
 
   const handleLoadMore = useCallback(async () => {
@@ -381,8 +414,6 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
     }
 
     if (entries.every(entry => entry.exhausted || entry.errored)) {
-      sync();
-
       return;
     }
 
@@ -427,13 +458,17 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
       }
 
       for (const { asset } of activity.operations) {
-        const contract = asset?.contract.toLowerCase();
-
-        if (asset == null || contract == null || !isAddress(contract)) {
+        if (asset == null) {
           continue;
         }
 
-        const slug = asset.nft === true ? `${contract}_${asset.tokenId ?? '0'}` : contract;
+        const contract = asset.contract.toLowerCase();
+
+        if (!isAddress(contract)) {
+          continue;
+        }
+
+        const slug = toEvmAssetSlug(contract, asset.tokenId);
 
         if (harvested.has(slug)) {
           continue;
