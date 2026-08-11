@@ -24,14 +24,17 @@ import { useTokenDropdownItemStyles } from './token-dropdown-item.styles';
 import { tokenDropdownItemVariantConfigs } from './token-dropdown-item.variants';
 import type { TokenDropdownItemVariant } from './token-dropdown-item.variants';
 
-interface Props {
+interface TokenDropdownItemProps<IconName extends string> {
   token?: AssetInterface;
-  actionIconName?: IconNameEnum;
-  actionIconV2Name?: IconNameV2Enum;
+  actionIconName?: IconName;
   isShowBalance?: boolean;
   isShowBalanceLoading?: boolean;
   isShowName?: boolean;
-  variant?: TokenDropdownItemVariant;
+}
+
+interface EssentialIconProps<IconName extends string, Size extends number> {
+  name: IconName;
+  size?: Size;
 }
 
 interface EvmTokenAsset extends AssetInterface {
@@ -69,111 +72,121 @@ const getTokenIconProps = (token: AssetInterface): MultichainTokenIconProps => {
   return { iconName: token.iconName, thumbnailUri: token.thumbnailUri };
 };
 
-export const TokenDropdownItem: FC<Props> = ({
-  token = emptyToken,
-  actionIconName,
-  actionIconV2Name,
-  isShowBalance = true,
-  isShowBalanceLoading = false,
-  isShowName = true,
-  variant = 'v1'
-}) => {
-  const styles = useTokenDropdownItemStyles();
-  const { isCompact, listIconConfig, selectedIconConfig, showNetworkBadge } = tokenDropdownItemVariantConfigs[variant];
-  const {
-    gap: iconGap,
-    size: iconSize,
-    visualSize: iconVisualSize
-  } = isShowBalance ? listIconConfig : selectedIconConfig;
-  const hasActionIcon = isDefined(actionIconName) || isDefined(actionIconV2Name);
-  const tokenNameTextStyle = useMemo(
-    () => [styles.name, isCompact && styles.compactName, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
-    [hasActionIcon, isCompact, styles]
-  );
-  const iconContainerStyle = useMemo(
-    () => [styles.iconContainer, { width: iconSize, height: iconSize }],
-    [iconSize, styles]
-  );
-  const tokenIconProps = getTokenIconProps(token);
+const TokenDropdownItemHOC = <IconName extends string, Size extends number>(
+  IconComponent: FC<EssentialIconProps<IconName, Size>>,
+  variant: TokenDropdownItemVariant,
+  actionIconSize: Size
+): FC<TokenDropdownItemProps<IconName>> => {
+  const TokenDropdownItem: FC<TokenDropdownItemProps<IconName>> = ({
+    token = emptyToken,
+    actionIconName,
+    isShowBalance = true,
+    isShowBalanceLoading = false,
+    isShowName = true
+  }) => {
+    const styles = useTokenDropdownItemStyles();
+    const { isCompact, listIconConfig, selectedIconConfig, showNetworkBadge } =
+      tokenDropdownItemVariantConfigs[variant];
+    const {
+      gap: iconGap,
+      size: iconSize,
+      visualSize: iconVisualSize
+    } = isShowBalance ? listIconConfig : selectedIconConfig;
+    const hasActionIcon = isDefined(actionIconName);
+    const tokenNameTextStyle = useMemo(
+      () => [styles.name, isCompact && styles.compactName, conditionalStyle(!hasActionIcon, styles.fullWidthName)],
+      [hasActionIcon, isCompact, styles]
+    );
+    const iconContainerStyle = useMemo(
+      () => [styles.iconContainer, { width: iconSize, height: iconSize }],
+      [iconSize, styles]
+    );
+    const tokenIconProps = getTokenIconProps(token);
 
-  if (assetsEqualityFn(token, emptyToken)) {
+    if (assetsEqualityFn(token, emptyToken)) {
+      return (
+        <View style={styles.container}>
+          <TokenIcon iconName={token.iconName} size={iconVisualSize} thumbnailUri={token.thumbnailUri} />
+          <Divider size={iconGap} />
+
+          <View style={styles.infoContainer}>
+            <View style={styles.infoRow}>
+              <Text style={styles.name}>Select</Text>
+              <View style={styles.rightContainer}>
+                <Divider size={formatSize(4)} />
+                {isDefined(actionIconName) && <IconComponent name={actionIconName} size={actionIconSize} />}
+              </View>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.name}>Token</Text>
+            </View>
+          </View>
+        </View>
+      );
+    }
+
     return (
-      <View style={styles.container}>
-        <TokenIcon iconName={token.iconName} size={iconVisualSize} thumbnailUri={token.thumbnailUri} />
+      <View style={[styles.container, isCompact && styles.compactContainer]}>
+        {showNetworkBadge ? (
+          <MultichainTokenIcon {...tokenIconProps} size={iconVisualSize} showNetworkBadge />
+        ) : (
+          <View style={iconContainerStyle}>
+            <View style={styles.iconVisualContainer}>
+              <MultichainTokenIcon {...tokenIconProps} size={iconVisualSize} />
+            </View>
+          </View>
+        )}
         <Divider size={iconGap} />
 
         <View style={styles.infoContainer}>
           <View style={styles.infoRow}>
-            <Text style={styles.name}>Select</Text>
+            <TruncatedText style={[styles.symbol, isCompact && styles.compactSymbol]}>{token.symbol}</TruncatedText>
             <View style={styles.rightContainer}>
               <Divider size={formatSize(4)} />
-              {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
-              {isDefined(actionIconV2Name) && <IconV2 name={actionIconV2Name} size={12} />}
+              {isShowBalance && (
+                <HideBalance wrapperStyle={styles.balanceWrapper} textStyle={styles.balance}>
+                  {isShowBalanceLoading ? (
+                    '---'
+                  ) : (
+                    <AssetValueText asset={token} amount={token?.balance} showSymbol={false} />
+                  )}
+                </HideBalance>
+              )}
+              {isDefined(actionIconName) && <IconComponent name={actionIconName} size={actionIconSize} />}
             </View>
           </View>
+
           <View style={styles.infoRow}>
-            <Text style={styles.name}>Token</Text>
+            {isShowName && <TruncatedText style={tokenNameTextStyle}>{token.name}</TruncatedText>}
+
+            <View style={styles.rightContainer}>
+              {isShowName && <Divider size={formatSize(4)} />}
+              {isShowBalance && (
+                <HideBalance
+                  wrapperStyle={[
+                    styles.dollarEquivalentWrapper,
+                    conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
+                  ]}
+                  textStyle={styles.dollarEquivalent}
+                >
+                  {isShowBalanceLoading ? (
+                    '---'
+                  ) : (
+                    <AssetValueText asset={token} convertToDollar amount={token?.balance} />
+                  )}
+                </HideBalance>
+              )}
+            </View>
           </View>
         </View>
       </View>
     );
-  }
+  };
 
-  return (
-    <View style={[styles.container, isCompact && styles.compactContainer]}>
-      {showNetworkBadge ? (
-        <MultichainTokenIcon {...tokenIconProps} size={iconVisualSize} showNetworkBadge />
-      ) : (
-        <View style={iconContainerStyle}>
-          <View style={styles.iconVisualContainer}>
-            <MultichainTokenIcon {...tokenIconProps} size={iconVisualSize} />
-          </View>
-        </View>
-      )}
-      <Divider size={iconGap} />
-
-      <View style={styles.infoContainer}>
-        <View style={styles.infoRow}>
-          <TruncatedText style={[styles.symbol, isCompact && styles.compactSymbol]}>{token.symbol}</TruncatedText>
-          <View style={styles.rightContainer}>
-            <Divider size={formatSize(4)} />
-            {isShowBalance && (
-              <HideBalance wrapperStyle={styles.balanceWrapper} textStyle={styles.balance}>
-                {isShowBalanceLoading ? (
-                  '---'
-                ) : (
-                  <AssetValueText asset={token} amount={token?.balance} showSymbol={false} />
-                )}
-              </HideBalance>
-            )}
-            {isDefined(actionIconName) && <Icon name={actionIconName} size={formatSize(24)} />}
-            {isDefined(actionIconV2Name) && <IconV2 name={actionIconV2Name} size={12} />}
-          </View>
-        </View>
-
-        <View style={styles.infoRow}>
-          {isShowName && <TruncatedText style={tokenNameTextStyle}>{token.name}</TruncatedText>}
-
-          <View style={styles.rightContainer}>
-            {isShowName && <Divider size={formatSize(4)} />}
-            {isShowBalance && (
-              <HideBalance
-                wrapperStyle={[
-                  styles.dollarEquivalentWrapper,
-                  conditionalStyle(isDefined(actionIconName), styles.actionIconSubstitute)
-                ]}
-                textStyle={styles.dollarEquivalent}
-              >
-                {isShowBalanceLoading ? (
-                  '---'
-                ) : (
-                  <AssetValueText asset={token} convertToDollar amount={token?.balance} />
-                )}
-              </HideBalance>
-            )}
-          </View>
-        </View>
-      </View>
-    </View>
-  );
+  return TokenDropdownItem;
 };
+
+/** @deprecated Use TokenDropdownItemV2 instead. */
+export const TokenDropdownItem = TokenDropdownItemHOC<IconNameEnum, number>(Icon, 'v1', formatSize(24));
+
+export const TokenDropdownItemV2 = TokenDropdownItemHOC<IconNameV2Enum, 12>(IconV2, 'v2', 12);

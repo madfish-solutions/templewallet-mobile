@@ -7,7 +7,6 @@ import { TestIdProps } from 'src/interfaces/test-id.props';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import type { AssetAmountInterface } from './asset-amount-input';
-import type { AssetAmountInputVariant } from './asset-amount-input.variants';
 
 export interface AssetAmountInputStylesConfig {
   balanceText?: TextStyle;
@@ -16,7 +15,6 @@ export interface AssetAmountInputStylesConfig {
 }
 
 export interface AssetAmountInputProps<TAsset extends AssetInterface = TokenInterface> extends TestIdProps {
-  variant?: AssetAmountInputVariant;
   expectedGasExpense?: BigNumber.Value;
   /** Atomic amount to use when the MAX button is pressed. */
   maxAmount?: BigNumber.Value;

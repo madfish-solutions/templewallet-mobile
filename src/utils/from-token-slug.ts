@@ -1,4 +1,4 @@
-export const fromTokenSlug = (slug: string) => slug.split('_');
+export const fromTokenSlug = <T = string>(slug: string) => slug.split('_') as [contract: T, tokenId?: string];
 
 /**
  * EVM-only: collectible slugs are `${contract}_${tokenId}`, while fungible slugs are a bare contract

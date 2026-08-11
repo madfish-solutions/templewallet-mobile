@@ -48,7 +48,7 @@ const createEvmSendAssets = ({
     return [];
   }
 
-  const allEvmSlugs = new Set([EVM_TOKEN_SLUG, ...Object.keys(assets), ...Object.keys(balances)]);
+  const allEvmSlugs = new Set([EVM_TOKEN_SLUG].concat(Object.keys(assets), Object.keys(balances)));
   const sendAssets: EvmSendAsset[] = [];
 
   for (const assetSlug of allEvmSlugs) {

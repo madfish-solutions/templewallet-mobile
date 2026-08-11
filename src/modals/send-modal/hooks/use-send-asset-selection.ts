@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { tokenEqualityFn } from 'src/components/token-dropdown/token-equality-fn';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata.ts';
 import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { SendAsset, isTezosSendAsset } from 'src/types/send-asset';
 import { isCollectibleAsset } from 'src/utils/asset.utils';
@@ -12,19 +13,11 @@ export const getInitialSendAsset = (
   assets: SendAsset[],
   initialAssetKey?: string,
   initialToken?: TezosTokenMetadata
-): SendAsset => {
-  const asset =
-    assets.find(item => item.assetKey === initialAssetKey) ??
-    assets.find(item => isTezosSendAsset(item) && tokenEqualityFn(item, initialToken)) ??
-    assets.find(item => item.assetSlug === 'tez') ??
-    assets[0];
-
-  if (!asset) {
-    throw new Error('No sendable assets are available');
-  }
-
-  return asset;
-};
+): SendAsset =>
+  assets.find(item => item.assetKey === initialAssetKey) ??
+  assets.find(item => isTezosSendAsset(item) && tokenEqualityFn(item, initialToken)) ??
+  assets.find(item => item.assetSlug === TEZ_TOKEN_SLUG) ??
+  assets[0];
 
 const filterSendPickerAssets = (
   assets: SendAsset[],

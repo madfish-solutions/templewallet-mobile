@@ -86,7 +86,8 @@ export const toEvmSendAsset = ({
       : undefined;
   }
 
-  const contractAddress = collectibleMetadata?.address ?? (fromTokenSlug(assetSlug)[0] as HexString | undefined);
+  const [slugContractAddress] = fromTokenSlug<HexString>(assetSlug);
+  const contractAddress = collectibleMetadata?.address ?? slugContractAddress;
   if (!contractAddress || !tokenId) return undefined;
 
   return {
