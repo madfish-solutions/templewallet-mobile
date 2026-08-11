@@ -60,9 +60,6 @@ export const CollectiblesHome = memo(() => {
 
   const [screenHeight, setScreenHeight] = useState(0);
   const [headerHeight, setHeaderHeight] = useState(0);
-  const [profileHeight, setProfileHeight] = useState(0);
-
-  const hasCollections = collections.length > 0;
 
   const snapPoints = useMemo(() => {
     const firstSnapPoint = screenHeight - headerHeight;
@@ -70,10 +67,8 @@ export const CollectiblesHome = memo(() => {
       return null;
     }
 
-    const secondSnapPoint = firstSnapPoint + profileHeight;
-
-    return !hasCollections || firstSnapPoint === secondSnapPoint ? [firstSnapPoint] : [firstSnapPoint, secondSnapPoint];
-  }, [screenHeight, headerHeight, profileHeight, hasCollections]);
+    return [firstSnapPoint];
+  }, [screenHeight, headerHeight]);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const animatedIndex = useSharedValue(-1);
@@ -161,10 +156,7 @@ export const CollectiblesHome = memo(() => {
           <CurrentAccountDropdown isCollectibleScreen />
         </View>
 
-        <View
-          onLayout={event => void setProfileHeight(event.nativeEvent.layout.height)}
-          style={styles.profileContainer}
-        >
+        <View style={styles.profileContainer}>
           {collections.length > 0 ? (
             <>
               <View style={styles.collectionsHeader}>
