@@ -7,8 +7,8 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     flexDirection: 'column'
   },
   headerCard: {
+    marginBottom: 0,
     paddingHorizontal: 0,
-    paddingBottom: formatSize(4),
     backgroundColor: colors.pageBG
   },
   headerContainer: {
@@ -26,8 +26,7 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     alignItems: 'center'
   },
   profileContainer: {
-    paddingTop: formatSize(16),
-    paddingBottom: formatSize(12)
+    paddingTop: formatSize(16)
   },
   collectionsHeader: {
     flexDirection: 'row',
@@ -49,8 +48,7 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
   toolbarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: formatSize(8),
-    paddingHorizontal: formatSize(16)
+    paddingVertical: formatSize(12)
   },
   searchInputContainer: {
     flex: 1,

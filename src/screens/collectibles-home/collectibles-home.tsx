@@ -183,6 +183,18 @@ export const CollectiblesHome = memo(() => {
             </>
           ) : null}
         </View>
+
+        <View style={styles.toolbarContainer}>
+          <SearchInput
+            value={searchValue}
+            onChangeText={setSearchValue}
+            containerStyle={styles.searchInputContainer}
+            placeholder="Search"
+          />
+          <Divider size={formatSize(16)} />
+          <ActionButton iconName={IconNameV2Enum.Clock} onPress={navigateToActivity} />
+          <ActionButton iconName={IconNameV2Enum.Slider} onPress={navigateToManageCollectibles} />
+        </View>
       </HeaderCard>
 
       {snapPoints ? (
@@ -190,23 +202,12 @@ export const CollectiblesHome = memo(() => {
           ref={bottomSheetRef}
           animatedIndex={animatedIndex}
           enableDynamicSizing={false}
+          enableContentPanningGesture={false}
           snapPoints={snapPoints}
           handleStyle={styles.handleStyle}
           style={styles.bottomSheet}
           backgroundStyle={styles.bottomSheet}
         >
-          <View style={styles.toolbarContainer}>
-            <SearchInput
-              value={searchValue}
-              onChangeText={setSearchValue}
-              containerStyle={styles.searchInputContainer}
-              placeholder="Search"
-            />
-            <Divider size={formatSize(16)} />
-            <ActionButton iconName={IconNameV2Enum.Clock} onPress={navigateToActivity} />
-            <ActionButton iconName={IconNameV2Enum.Slider} onPress={navigateToManageCollectibles} />
-          </View>
-
           <CollectiblesList collectibles={collectibles} showInfo={isShowCollectibleInfo} />
         </BottomSheet>
       ) : null}
