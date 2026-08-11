@@ -30,7 +30,7 @@ interface Props {
 export const TabBarButton = memo<Props>(
   ({ label, iconName, routeName, focused, disabled = false, swapScreenParams, disabledOnPress }) => {
     const styles = useTabBarButtonStyles();
-    const navigateToScreen = useNavigateToScreen();
+    const navigateToScreen = useNavigateToScreen({ pop: true });
 
     const { iconColor, labelColor } = useNavigationBarColors(focused, disabled);
 

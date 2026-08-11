@@ -39,7 +39,7 @@ export const SideBarButton: FC<Props> = ({
   disabledOnPress
 }) => {
   const styles = useSideBarButtonStyles();
-  const navigateToScreen = useNavigateToScreen();
+  const navigateToScreen = useNavigateToScreen({ pop: true });
 
   const { iconColor, labelColor } = useNavigationBarColors(focused, disabled);
 

@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import { useCollectiblesDetailsLoading } from './use-collectibles-details-loading';
 import { useEnsureOldRpcUrlsRemoved } from './use-ensure-old-rpc-urls-removed';
 import { useFirebaseApp } from './use-firebase-app';
@@ -10,7 +12,7 @@ import { useStorageAnalytics } from './use-storage-analytics';
 import { useSwapTokensLoading } from './use-swap-tokens-loading';
 import { useWhitelistLoading } from './use-whitelist-loading';
 
-export const useRootHooks = () => {
+const useRootHooks = () => {
   useStorageAnalytics();
 
   useWhitelistLoading();
@@ -25,3 +27,9 @@ export const useRootHooks = () => {
   useFirebaseApp();
   usePushNotifications();
 };
+
+export const RootHooks = memo(() => {
+  useRootHooks();
+
+  return null;
+});
