@@ -5,15 +5,15 @@ export enum WalletSelectors {
   addAddressButton = 'Wallet (Contact Modal)/Add Address Button',
   accountDropdown = 'Wallet (Contact Modal)/Account Dropdown',
   notificationsButton = 'Wallet/Notifications Button',
-  tokenEquityButton = 'Wallet/Token Equity Button',
+  tokenEquity = 'Wallet/Token Equity',
   receiveButton = 'Wallet/Receive Button',
   buyButton = 'Wallet/Buy Button',
   earnButton = 'Wallet/Earn Button',
   sendButton = 'Wallet/Send Button',
-  hideZeroBalancesCheckbox = 'Wallet/Hide Zero Balances Checkbox',
   activityButton = 'Wallet/Activity Button',
   manageAssetsButton = 'Wallet/Manage Assets Button',
   searchTokenButton = 'Wallet/Search Token Button',
   promotion = 'Wallet/Promotion',
-  createNewAccountButton = 'Wallet/Create New Account Button'
+  createNewAccountButton = 'Wallet/Create New Account Button',
+  settingsButton = 'Wallet/Settings Button'
 }

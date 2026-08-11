@@ -28,7 +28,7 @@ export const setSlippage = createAction<number>('settings/SET_SLIPPAGE');
 export const toggleDomainAddressShown = createAction<void>('settings/TOGGLE_DOMAIN_ADDRESS_SHOWN');
 export const setIsDomainAddressShown = createAction<boolean>('settings/SET_IS_DOMAIN_ADDRESS_SHOWN');
 
-export const setZeroBalancesShown = createAction<boolean>('settings/SET_ZERO_BALANCES_SHOWN');
+export const setHideZeroBalances = createAction<boolean>('settings/SET_HIDE_ZERO_BALANCES');
 
 export const showLoaderAction = createAction('settings/SHOW_LOADER_ACTION');
 export const hideLoaderAction = createAction('settings/HIDE_LOADER_ACTION');

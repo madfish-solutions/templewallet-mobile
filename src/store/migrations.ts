@@ -17,6 +17,7 @@ import { DCP_RPC, MARIGOLD_RPC, OLD_TEMPLE_RPC_URLS, TEMPLE_RPC } from 'src/util
 
 import { createEntity } from './create-entity';
 import { LEGACY_IMPORTED_ACCOUNT_TYPE, MigratableAccount, TypedPersistedRootState } from './migrations.types.ts';
+import { rewardsInitialState } from './rewards/rewards-state';
 
 export const MIGRATIONS: MigrationManifest = {
   '2': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
@@ -197,6 +198,23 @@ export const MIGRATIONS: MigrationManifest = {
     return state;
   },
   '9': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
+    if (!untypedState) {
+      return untypedState;
+    }
+
+    const state = untypedState as TypedPersistedRootState;
+    state.partnersPromotion = {
+      ...state.partnersPromotion,
+      isEnabled: true
+    };
+    state.rewards = {
+      ...rewardsInitialState,
+      hasSeenRewardsAnnouncement: false
+    };
+
+    return state;
+  },
+  '10': (untypedState: PersistedState): undefined | TypedPersistedRootState => {
     if (!untypedState) {
       return untypedState;
     }

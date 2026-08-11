@@ -16,6 +16,7 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useInterval } from 'src/utils/hooks/use-interval';
 
 import { OpportunityCategoryCard } from './opportunity-category-card';
+import { PromoRewardsCard } from './promo-rewards-card';
 import { EarnPageSelectors } from './selectors';
 
 export const Earn: FC = () => {
@@ -50,6 +51,7 @@ export const Earn: FC = () => {
   return (
     <>
       <Divider size={formatSize(8)} />
+      <PromoRewardsCard />
       <OpportunityCategoryCard
         title="Savings"
         description="Earn passive income and diversify your assets on Tezos."

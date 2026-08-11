@@ -25,7 +25,8 @@ import {
   useIgnoredAddressesSelector
 } from 'src/store/contact-book/contact-book-selectors';
 import { useShouldShowNewsletterModalSelector } from 'src/store/newsletter/newsletter-selectors';
-import { useHasSeenAnnouncementSelector } from 'src/store/sapling';
+import { useHasSeenRewardsAnnouncementSelector } from 'src/store/rewards/rewards-selectors';
+import { useHasSeenSaplingAnnouncementSelector } from 'src/store/sapling';
 import { setKoloCardAnimationShownAction, walletOpenedAction } from 'src/store/settings/settings-actions';
 import { useIsAnyBackupMadeSelector, useIsKoloCardAnimationShownSelector } from 'src/store/settings/settings-selectors';
 import { useAllAccounts } from 'src/store/wallet/wallet-selectors';
@@ -34,8 +35,8 @@ import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
-import { NotificationsBell } from './notifications-bell/notifications-bell';
-import { Settings } from './settings/settings';
+import { NotificationsBell } from './notifications-bell';
+import { Settings } from './settings';
 import { TokensList } from './token-list/token-list';
 import { WalletOverlay } from './wallet-overlay';
 import { WalletSelectors } from './wallet.selectors';
@@ -54,7 +55,8 @@ export const Wallet = memo(() => {
   const contactsAddresses = useContactsAddresses();
   const bottomSheetController = useBottomSheetController();
   const shouldShowNewsletterModal = useShouldShowNewsletterModalSelector();
-  const hasSeenAnnouncement = useHasSeenAnnouncementSelector();
+  const hasSeenSaplingAnnouncement = useHasSeenSaplingAnnouncementSelector();
+  const hasSeenRewardsAnnouncement = useHasSeenRewardsAnnouncementSelector();
   const isKoloCardAnimationShown = useIsKoloCardAnimationShownSelector();
 
   const handleKoloCardAnimationComplete = useCallback(() => {
@@ -91,10 +93,16 @@ export const Wallet = memo(() => {
   }, [shouldShowNewsletterModal, isAnyBackupMade]);
 
   useEffect(() => {
-    if (!hasSeenAnnouncement) {
+    if (!hasSeenSaplingAnnouncement) {
       navigateToModal(ModalsEnum.ShieldedAnnouncement);
     }
-  }, [hasSeenAnnouncement]);
+  }, [hasSeenSaplingAnnouncement]);
+
+  useEffect(() => {
+    if (hasSeenSaplingAnnouncement && !hasSeenRewardsAnnouncement) {
+      navigateToModal(ModalsEnum.RewardsAnnouncement);
+    }
+  }, [hasSeenSaplingAnnouncement, hasSeenRewardsAnnouncement, navigateToModal]);
 
   const trackPageOpened = useCallback(() => {
     pageEvent(ScreensEnum.Wallet, '');
@@ -106,21 +114,17 @@ export const Wallet = memo(() => {
 
   return (
     <>
-      <HeaderCard hasInsetTop={true}>
+      <HeaderCard hasInsetTop>
         <View style={WalletStyles.accountContainer}>
           <CurrentAccountDropdown testID={WalletSelectors.accountDropdownButton} />
-
-          <Divider />
-
-          <NotificationsBell />
-
-          <Divider size={formatSize(24)} />
-
-          <Settings />
+          <View style={WalletStyles.topActionsContainer}>
+            <NotificationsBell />
+            <Settings />
+          </View>
         </View>
 
         <TokenEquityValue token={tezosToken} forTotalBalance={true} />
-        <Divider size={formatSize(16)} />
+        <Divider size={formatSize(24)} />
 
         <HeaderCardActionButtons token={tezosToken} />
 

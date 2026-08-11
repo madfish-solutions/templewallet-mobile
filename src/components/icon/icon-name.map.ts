@@ -10,7 +10,6 @@ import ArrowDownIcon from './assets/arrow-down.svg';
 import ArrowRightIcon from './assets/arrow-right.svg';
 import ArrowUpIcon from './assets/arrow-up.svg';
 import AudioIcon from './assets/audio.svg';
-import BellIcon from './assets/bell.svg';
 import BlurDark from './assets/blur-dark.svg';
 import BlurEyeBlack from './assets/blur-eye-black.svg';
 import BlurEyeWhite from './assets/blur-eye-white.svg';
@@ -19,6 +18,7 @@ import BrokenImage from './assets/broken-image.svg';
 import BurnIcon from './assets/burn.svg';
 import BuyWithCryptoIcon from './assets/buy-with-crypto.svg';
 import BuyIcon from './assets/buy.svg';
+import CalendarIcon from './assets/calendar.svg';
 import CheckCircleIcon from './assets/check-circle.svg';
 import CheckIcon from './assets/check.svg';
 import CheckboxOffIcon from './assets/checkbox-off.svg';
@@ -26,7 +26,6 @@ import CheckboxOnIcon from './assets/checkbox-on.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
 import ChevronUpIcon from './assets/chevron-up.svg';
 import ClipboardIcon from './assets/clipboard.svg';
-import ClockIcon from './assets/clock.svg';
 import CloseIcon from './assets/close.svg';
 import CloudFillOnDarkIcon from './assets/cloud-fill-on-dark.svg';
 import CloudFillIcon from './assets/cloud-fill.svg';
@@ -50,10 +49,10 @@ import DetailsArrowRightIcon from './assets/details-arrow-right.svg';
 import DetailsArrowUpIcon from './assets/details-arrow-up.svg';
 import DiezIcon from './assets/diez.svg';
 import DocsIcon from './assets/docs.svg';
+import DollarFilledIcon from './assets/dollar-filled.svg';
 import DownloadCloudIcon from './assets/download-cloud.svg';
 import DownloadIcon from './assets/download.svg';
 import EarnDappIcon from './assets/earn-dapp.svg';
-import EarnIcon from './assets/earn.svg';
 import EditNewIcon from './assets/edit-new.svg';
 import EditIcon from './assets/edit.svg';
 import EndorsementsIcon from './assets/endorsements.svg';
@@ -68,6 +67,7 @@ import GHighIcon from './assets/g-high.svg';
 import GLowIcon from './assets/g-low.svg';
 import GMidIcon from './assets/g-mid.svg';
 import GearIcon from './assets/gear.svg';
+import GearsIcon from './assets/gears.svg';
 import GlobeIcon from './assets/globe.svg';
 import GoogleDriveNativeIcon from './assets/google-drive-native.svg';
 import GoogleDriveIcon from './assets/google-drive.svg';
@@ -88,6 +88,7 @@ import LockIcon from './assets/lock.svg';
 import LogOutIcon from './assets/log-out.svg';
 import ManualBackupIcon from './assets/manual-backup.svg';
 import MarketIcon from './assets/market.svg';
+import MegaphoneIcon from './assets/megaphone.svg';
 import MessageCircleIcon from './assets/message-circle.svg';
 import MissedEndorsementsIcon from './assets/missed-endorsements.svg';
 import MissedOwnBlocksIcon from './assets/missed-own-blocks.svg';
@@ -110,19 +111,14 @@ import QsEarnSource from './assets/qs-earn-source.svg';
 import QuipuSwapIcon from './assets/quipuswap.svg';
 import QuipuSwapDarkIcon from './assets/quipuswapDark.svg';
 import RetryIcon from './assets/retry.svg';
+import RewardIcon from './assets/reward.svg';
 import ScamInfoIcon from './assets/scam-info.svg';
 import SearchNewIcon from './assets/search-new.svg';
-import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
-import ShoppingCardIcon from './assets/shopping-card.svg';
 import SmileWithDollarIcon from './assets/smile-with-dollar.svg';
 import SmileWithGlassesIcon from './assets/smile-with-glasses.svg';
 import SmileIcon from './assets/smile.svg';
-import DiscordIcon from './assets/socials/discord.svg';
-import RedditIcon from './assets/socials/reddit.svg';
-import TelegramIcon from './assets/socials/telegram.svg';
-import TwitterIcon from './assets/socials/twitter.svg';
-import YouTubeIcon from './assets/socials/you-tube.svg';
+import SoundOffIcon from './assets/sound-off.svg';
 import SpicyIcon from './assets/spicy.svg';
 import StakeIcon from './assets/stake.svg';
 import SuccessIcon from './assets/success.svg';
@@ -138,13 +134,12 @@ import TempleLogoIcon from './assets/temple-logo.svg';
 import TezWalletIcon from './assets/tez-wallet.svg';
 import NoNameTokenIcon from './assets/tokens/no-name.svg';
 import SwapTokenPlaceholderIcon from './assets/tokens/swap-token-placeholder.svg';
-import TezShieldedTokenIcon from './assets/tokens/tez-shielded.svg';
 import TezTokenIcon from './assets/tokens/tez.svg';
-import TzBtcTokenIcon from './assets/tokens/tzBtc.svg';
 import TouchIdIcon from './assets/touch-id.svg';
 import TrashIcon from './assets/trash.svg';
 import TriangleDownIcon from './assets/triangle-down.svg';
 import UpdateIcon from './assets/update.svg';
+import UptrendIcon from './assets/uptrend.svg';
 import UtorgIcon from './assets/utorg.svg';
 import VortexIcon from './assets/vortex.svg';
 import WTezIcon from './assets/wtez.svg';
@@ -163,7 +158,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.ArrowUp]: ArrowUpIcon,
   [IconNameEnum.ArrowDown]: ArrowDownIcon,
   [IconNameEnum.ArrowRight]: ArrowRightIcon,
-  [IconNameEnum.Bell]: BellIcon,
   [IconNameEnum.Burn]: BurnIcon,
   [IconNameEnum.BrokenImage]: BrokenImage,
   [IconNameEnum.DetailsArrowUp]: DetailsArrowUpIcon,
@@ -189,7 +183,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.InvertedCheckboxOn]: InvertedCheckboxOnIcon,
   [IconNameEnum.PlusSquare]: PlusSquareIcon,
   [IconNameEnum.HelpCircle]: HelpCircleIcon,
-  [IconNameEnum.ShoppingCard]: ShoppingCardIcon,
   [IconNameEnum.SwapArrow]: SwapArrowIcon,
   [IconNameEnum.SwapInfo]: SwapInfo,
   [IconNameEnum.Swap]: SwapIcon,
@@ -202,7 +195,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.EyeClosedBold]: EyeClosedBoldIcon,
   [IconNameEnum.EyeOpenBold]: EyeOpenBoldIcon,
   [IconNameEnum.TezWallet]: TezWalletIcon,
-  [IconNameEnum.Settings]: SettingsIcon,
   [IconNameEnum.Plenty]: PlentyIcon,
   [IconNameEnum.Spicy]: SpicyIcon,
   [IconNameEnum.WTez]: WTezIcon,
@@ -214,12 +206,17 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DApps]: DAppsIcon,
   [IconNameEnum.Close]: CloseIcon,
   [IconNameEnum.TezToken]: TezTokenIcon,
-  [IconNameEnum.TezShieldedToken]: TezShieldedTokenIcon,
-  [IconNameEnum.TzBtcToken]: TzBtcTokenIcon,
   [IconNameEnum.InfoFilled]: InfoFilledIcon,
   [IconNameEnum.InfoFilledAlt]: InfoFilledAltIcon,
   [IconNameEnum.NFTCollection]: NFTCollectionIcon,
   [IconNameEnum.GoogleDrive]: GoogleDriveIcon,
+  [IconNameEnum.DollarFiled]: DollarFilledIcon,
+  [IconNameEnum.SoundOff]: SoundOffIcon,
+  [IconNameEnum.Reward]: RewardIcon,
+  [IconNameEnum.Gears]: GearsIcon,
+  [IconNameEnum.Calendar]: CalendarIcon,
+  [IconNameEnum.Uptrend]: UptrendIcon,
+  [IconNameEnum.Megaphone]: MegaphoneIcon,
   /** topup icons **/
   [IconNameEnum.MoonPay]: MoonPayIcon,
   [IconNameEnum.Utorg]: UtorgIcon,
@@ -243,7 +240,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.DownloadCloud]: DownloadCloudIcon,
   [IconNameEnum.AlertCircle]: AlertCircleIcon,
   [IconNameEnum.AlertTriangle]: AlertTriangleIcon,
-  [IconNameEnum.Clock]: ClockIcon,
   [IconNameEnum.InfoAlt]: InfoAltIcon,
   [IconNameEnum.ChevronRight]: ChevronRightIcon,
   [IconNameEnum.ChevronUp]: ChevronUpIcon,
@@ -253,11 +249,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.TempleLogoUp]: TempleLogoUpIcon,
   [IconNameEnum.TempleLogoBottom]: TempleLogoBottomIcon,
   [IconNameEnum.TempleLogoWithText]: TempleLogoWithTextIcon,
-  [IconNameEnum.Telegram]: TelegramIcon,
-  [IconNameEnum.Discord]: DiscordIcon,
-  [IconNameEnum.Twitter]: TwitterIcon,
-  [IconNameEnum.YouTube]: YouTubeIcon,
-  [IconNameEnum.Reddit]: RedditIcon,
   [IconNameEnum.ExternalLink]: ExternalLinkIcon,
   [IconNameEnum.ExternalLinkTag]: ExternalLinkTagIcon,
   [IconNameEnum.IosSearch]: IosSearchIcon,
@@ -281,7 +272,6 @@ export const iconNameMap: Record<IconNameEnum, FC<SvgProps>> = {
   [IconNameEnum.RetryIcon]: RetryIcon,
   [IconNameEnum.PlusIconOrange]: PlusIconOrange,
   [IconNameEnum.Market]: MarketIcon,
-  [IconNameEnum.Earn]: EarnIcon,
   [IconNameEnum.EarnDapp]: EarnDappIcon,
   [IconNameEnum.Buy]: BuyIcon,
   [IconNameEnum.BuyWithCrypto]: BuyWithCryptoIcon,

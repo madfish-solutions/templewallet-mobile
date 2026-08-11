@@ -5,7 +5,8 @@ import GorhomBottomSheet, {
   TouchableOpacity
 } from '@gorhom/bottom-sheet';
 import { Portal } from '@gorhom/portal';
-import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import { uniqueId } from 'lodash-es';
+import React, { PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react';
 import { BackHandler, Keyboard, StyleProp, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { useOrientationChange } from 'react-native-orientation-locker';
 import { useSharedValue } from 'react-native-reanimated';
@@ -59,6 +60,10 @@ export const BottomSheet: FCWithChildren<Props> = ({
   const styles = useDropdownBottomSheetStyles();
   const insets = useSafeAreaInsets();
   const [isOpened, setIsOpened] = useState(false);
+  const [activeContentHeight, setActiveContentHeight] = useState(contentHeight);
+
+  const sheetId = useMemo(() => uniqueId(), []);
+  const [sheetNonce, setSheetNonce] = useState(0);
 
   const { height } = useWindowDimensions();
   const bottomInset = insets.bottom + formatSize(8);
@@ -105,6 +110,15 @@ export const BottomSheet: FCWithChildren<Props> = ({
 
   useEffect(() => {
     if (isOpened) {
+      setActiveContentHeight(contentHeight);
+    } else if (contentHeight !== activeContentHeight) {
+      setActiveContentHeight(contentHeight);
+      setSheetNonce(value => value + 1);
+    }
+  }, [activeContentHeight, contentHeight, isOpened]);
+
+  useEffect(() => {
+    if (isOpened) {
       const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
         controller.close();
 
@@ -117,15 +131,18 @@ export const BottomSheet: FCWithChildren<Props> = ({
 
   useOrientationChange(() => controller.close());
 
+  const snapPoints = useMemo(() => [activeContentHeight], [activeContentHeight]);
+
   return (
     <Portal>
       {!isLocked && (
         <GorhomBottomSheet
+          key={`${sheetId}-${sheetNonce}`}
           containerStyle={styles.bottomSheetContainer}
           containerLayoutState={containerLayoutState}
           ref={controller.ref}
           index={isInitiallyOpen ? 0 : -1}
-          snapPoints={[contentHeight]}
+          snapPoints={snapPoints}
           enableDynamicSizing={false}
           enablePanDownToClose={true}
           bottomInset={bottomInset}

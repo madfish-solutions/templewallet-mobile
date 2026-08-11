@@ -79,7 +79,7 @@ const backgroundDarkColors: typeof backgroundLightColors = {
   input: '#2D2D2D'
 };
 
-const commonTheme = {
+export const commonTheme = {
   ...accentColors,
   ...accentAlphaColors
 };

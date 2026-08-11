@@ -193,7 +193,7 @@ export const SelectBakerModal = memo(() => {
         <View style={styles.upperContainer}>
           <Label label={TEZ_LABEL} description={TEZ_DESCRIPTION} />
         </View>
-        <View style={styles.searchContainer}>
+        <View>
           <SearchInput
             placeholder="Search Baker"
             onChangeText={debouncedSetSearchValue}

@@ -33,6 +33,8 @@ export enum ModalsEnum {
   ImportAccountFromKeystoreFile = 'ImportAccountFromKeystoreFile',
   KoloCard = 'KoloCard',
   ShieldedAnnouncement = 'ShieldedAnnouncement',
+  PromoRewardsEnable = 'PromoRewardsEnable',
+  RewardsAnnouncement = 'RewardsAnnouncement',
   Rebalance = 'Rebalance'
 }
 
@@ -65,6 +67,8 @@ export type ModalsParamList = {
   [ModalsEnum.ImportAccountFromKeystoreFile]: undefined;
   [ModalsEnum.KoloCard]: undefined;
   [ModalsEnum.ShieldedAnnouncement]: undefined;
+  [ModalsEnum.PromoRewardsEnable]: undefined;
+  [ModalsEnum.RewardsAnnouncement]: undefined;
   [ModalsEnum.Rebalance]: undefined;
 };
 
@@ -101,4 +105,6 @@ export type ModalParams =
   | ModalParamsPart<ModalsEnum.ImportAccountFromKeystoreFile>
   | ModalParamsPart<ModalsEnum.KoloCard>
   | ModalParamsPart<ModalsEnum.ShieldedAnnouncement>
+  | ModalParamsPart<ModalsEnum.PromoRewardsEnable>
+  | ModalParamsPart<ModalsEnum.RewardsAnnouncement>
   | ModalParamsPart<ModalsEnum.Rebalance>;

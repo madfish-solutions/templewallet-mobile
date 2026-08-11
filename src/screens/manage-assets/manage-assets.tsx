@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
 
-import { Divider } from 'src/components/divider/divider';
-import { generateScreenOptions } from 'src/components/header/generate-screen-options.util';
-import { HeaderButton } from 'src/components/header/header-button/header-button';
-import { HeaderTitle } from 'src/components/header/header-title/header-title';
-import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
-import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useNavigateToModal, useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
-import { formatSize } from 'src/styles/format-size';
+import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { useManageAssetsStyles } from './manage-assets.styles';
@@ -21,7 +13,6 @@ import { ManageTokens } from './manage-tokens/manage-tokens';
 const manageTokensIndex = 0;
 
 export const ManageAssets = () => {
-  const navigateToModal = useNavigateToModal();
   const styles = useManageAssetsStyles();
   const { collectibles } = useScreenParams<ScreensEnum.ManageAssets>();
 
@@ -29,17 +20,9 @@ export const ManageAssets = () => {
   const showManageTokens = segmentedControlIndex === manageTokensIndex;
 
   usePageAnalytic(ScreensEnum.ManageAssets);
-  useNavigationSetOptions(
-    generateScreenOptions(
-      <HeaderTitle title="Manage Assets" />,
-      <HeaderButton iconName={IconNameV2Enum.PlusBig} onPress={() => navigateToModal(ModalsEnum.AddAsset)} />
-    ),
-    []
-  );
 
   return (
     <>
-      <Divider size={formatSize(8)} />
       <View style={styles.segmentControlContainer}>
         <TextSegmentControl
           selectedIndex={segmentedControlIndex}
@@ -47,8 +30,6 @@ export const ManageAssets = () => {
           onChange={setSegmentedControlIndex}
         />
       </View>
-
-      <Divider size={formatSize(8)} />
 
       {showManageTokens ? <ManageTokens /> : <ManageCollectibles />}
     </>

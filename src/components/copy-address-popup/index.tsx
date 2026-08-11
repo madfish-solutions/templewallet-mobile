@@ -1,5 +1,5 @@
-import React, { memo, Ref, useCallback, useImperativeHandle, useMemo, useState } from 'react';
-import { Modal, Text, TouchableWithoutFeedback, View } from 'react-native';
+import React, { memo, useCallback, useMemo } from 'react';
+import { Text, View } from 'react-native';
 
 import { Account } from 'src/interfaces/account.interfaces';
 import { useSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors.ts';
@@ -11,15 +11,10 @@ import { isTruthy } from 'src/utils/is-truthy.ts';
 
 import { CryptoLogo } from '../crypto-logo';
 import { CryptoLogoNameEnum } from '../crypto-logo/logo-name.enum';
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
+import { OptionsPopupHOC, OptionsPopupProps } from '../options-popup';
 import { TruncatedText } from '../truncated-text';
 
 import { useCopyAddressPopupStyles } from './styles';
-
-export interface CopyAddressPopupController {
-  open: EmptyFn;
-  close: EmptyFn;
-}
 
 interface CopyAddressOption {
   label: string;
@@ -27,15 +22,33 @@ interface CopyAddressOption {
   iconName: CryptoLogoNameEnum;
 }
 
-interface Props {
-  controlRef: Ref<CopyAddressPopupController>;
+interface Props extends Pick<OptionsPopupProps<CopyAddressOption>, 'controlRef' | 'triggerRef'> {
   account: Account;
 }
 
-export const CopyAddressPopup = memo<Props>(({ controlRef, account }) => {
-  const [isVisible, setIsVisible] = useState(false);
-
+const CopyAddressPopupBase = OptionsPopupHOC<CopyAddressOption>(({ option }) => {
   const styles = useCopyAddressPopupStyles();
+  const { label, address, iconName } = option;
+
+  return (
+    <View style={styles.option}>
+      <View style={styles.optionInfo}>
+        <Text style={styles.optionLabel}>{label}</Text>
+        <TruncatedText ellipsizeMode="middle" style={styles.optionAddress}>
+          {address}
+        </TruncatedText>
+      </View>
+
+      <View style={styles.iconContainer}>
+        <CryptoLogo name={iconName} size={formatSize(20)} />
+      </View>
+    </View>
+  );
+});
+
+const optionKeyFn = (option: CopyAddressOption) => option.label;
+
+export const CopyAddressPopup = memo<Props>(({ controlRef, account, triggerRef }) => {
   const saplingAddress = useSaplingAddressForAccount(account);
 
   const options = useMemo<CopyAddressOption[]>(() => {
@@ -61,50 +74,21 @@ export const CopyAddressPopup = memo<Props>(({ controlRef, account }) => {
     ].filter(isTruthy);
   }, [account, saplingAddress]);
 
-  const onClose = useCallback(() => setIsVisible(false), []);
-
-  useImperativeHandle(
-    controlRef,
-    () => ({
-      open: () => setIsVisible(true),
-      close: onClose
-    }),
-    [onClose]
-  );
-
-  const handleOptionPress = (address: string) => {
+  const onOptionPress = useCallback(({ address }: CopyAddressOption) => {
     copyStringToClipboard(address);
-    onClose();
-  };
+    controlRef.current?.close();
+  }, []);
 
   return (
-    <Modal visible={isVisible} transparent={true} animationType="fade" onRequestClose={onClose}>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.backdrop}>
-          <TouchableWithoutFeedback>
-            <View style={styles.container}>
-              <Text style={styles.title}>Copy address</Text>
-
-              {options.map(({ label, address, iconName }) => (
-                <React.Fragment key={label}>
-                  <SafeTouchableOpacity style={styles.option} onPress={() => handleOptionPress(address)}>
-                    <View style={styles.optionInfo}>
-                      <Text style={styles.optionLabel}>{label}</Text>
-                      <TruncatedText ellipsizeMode="middle" style={styles.optionAddress}>
-                        {address}
-                      </TruncatedText>
-                    </View>
-
-                    <View style={styles.iconContainer}>
-                      <CryptoLogo name={iconName} size={formatSize(20)} />
-                    </View>
-                  </SafeTouchableOpacity>
-                </React.Fragment>
-              ))}
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-      </TouchableWithoutFeedback>
-    </Modal>
+    <CopyAddressPopupBase
+      controlRef={controlRef}
+      title="Copy address"
+      options={options}
+      keyFn={optionKeyFn}
+      placement="bottom-left"
+      onOptionPress={onOptionPress}
+      yOffset={formatSize(8)}
+      triggerRef={triggerRef}
+    />
   );
 });
