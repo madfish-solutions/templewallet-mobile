@@ -43,30 +43,21 @@ interface UnspecifiedIconProps extends CommonProps, TezosTokenImagesStackParams 
 export type TokenIconProps = TezosIconProps | EvmIconProps | UnspecifiedIconProps;
 
 type ImagesStackState = ReturnType<typeof useImagesStack>;
-type TezosSourceStackHook = (params: TezosTokenImagesStackParams) => ImagesStackState;
-type EvmSourceStackHook = (params: EvmTokenImagesStackParams) => ImagesStackState;
 
-const TokenIconHOC = (
-  useTezosSourceStack: TezosSourceStackHook,
-  useEvmSourceStack: EvmSourceStackHook
-): FC<TokenIconProps> => {
-  const TezosTokenIcon: FC<TezosIconProps | UnspecifiedIconProps> = props => {
-    const sourceStack = useTezosSourceStack(props);
+const TezosTokenIcon: FC<TezosIconProps | UnspecifiedIconProps> = props => {
+  const sourceStack = useTezosTokenImagesStack(props);
 
-    return <TokenIconView {...props} sourceStack={sourceStack} supportsRectangularImages />;
-  };
-
-  const EvmTokenIcon: FC<EvmIconProps> = props => {
-    const sourceStack = useEvmSourceStack(props);
-
-    return <TokenIconView {...props} sourceStack={sourceStack} />;
-  };
-
-  return props =>
-    props.chainKind === TempleChainKind.EVM ? <EvmTokenIcon {...props} /> : <TezosTokenIcon {...props} />;
+  return <TokenIconView {...props} sourceStack={sourceStack} supportsRectangularImages />;
 };
 
-export const TokenIcon = TokenIconHOC(useTezosTokenImagesStack, useEvmTokenImagesStack);
+const EvmTokenIcon: FC<EvmIconProps> = props => {
+  const sourceStack = useEvmTokenImagesStack(props);
+
+  return <TokenIconView {...props} sourceStack={sourceStack} />;
+};
+
+export const TokenIcon: FC<TokenIconProps> = props =>
+  props.chainKind === TempleChainKind.EVM ? <EvmTokenIcon {...props} /> : <TezosTokenIcon {...props} />;
 
 interface TokenIconViewProps extends CommonProps {
   sourceStack: ImagesStackState;

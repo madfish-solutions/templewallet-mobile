@@ -24,7 +24,7 @@ interface LegacyFeeOption extends LegacyFees {
   fee: bigint;
 }
 
-const ceilDivide = (dividend: bigint, divisor: bigint) => (dividend + divisor - 1n) / divisor;
+const ceilDivide = (dividend: bigint, divisor: bigint): bigint => (dividend + divisor - 1n) / divisor;
 
 const multiplyByPercentage = (value: bigint, percentage: bigint) => ceilDivide(value * percentage, FEE_PERCENTAGE_BASE);
 
@@ -38,7 +38,7 @@ const getEip1559FeesForMaxFee = (maxFeePerGas: bigint, estimation: Eip1559Estima
   const scaledPriorityFee =
     estimation.maxFeePerGas === 0n
       ? 0n
-      : (estimation.maxPriorityFeePerGas * maxFeePerGas + estimation.maxFeePerGas - 1n) / estimation.maxFeePerGas;
+      : ceilDivide(estimation.maxPriorityFeePerGas * maxFeePerGas, estimation.maxFeePerGas);
 
   return {
     type: 'eip1559',
@@ -86,7 +86,7 @@ export const getEvmFeeOptions = (estimation: EvmEstimation) => {
 export const getGasPriceForNetworkFee = (networkFee: number, gasLimit: bigint) => {
   const feeInWei = parseEther(networkFee.toFixed(18));
 
-  return (feeInWei + gasLimit - 1n) / gasLimit;
+  return ceilDivide(feeInWei, gasLimit);
 };
 
 export const formatNetworkFee = (fee: bigint) => {
