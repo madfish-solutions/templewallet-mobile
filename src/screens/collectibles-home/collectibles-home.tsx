@@ -1,8 +1,7 @@
-import BottomSheet from '@gorhom/bottom-sheet';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ActivityIndicator, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { useSharedValue } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
@@ -57,42 +56,17 @@ export const CollectiblesHome = memo(() => {
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const styles = useCollectiblesHomeStyles();
+  const listTranslateY = useSharedValue<`${number}%`>('100%');
+  const listAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: listTranslateY.value }]
+  }));
 
-  const [screenHeight, setScreenHeight] = useState(0);
-  const [headerHeight, setHeaderHeight] = useState(0);
-
-  const snapPoints = useMemo(() => {
-    const firstSnapPoint = screenHeight - headerHeight;
-    if (firstSnapPoint < 1) {
-      return null;
-    }
-
-    return [firstSnapPoint];
-  }, [screenHeight, headerHeight]);
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const animatedIndex = useSharedValue(-1);
-  const firstSnapPoint = snapPoints?.[0];
-  // gorhom v5 + reanimated v4: the mount animation sometimes never starts, leaving the
-  // sheet stuck closed off-screen (animatedIndex stays -1), detect it and snap into place manually
   useEffect(() => {
-    if (firstSnapPoint == null) {
-      return;
-    }
-
-    let ticks = 0;
-    const id = setInterval(() => {
-      if (animatedIndex.value > -0.9 || ++ticks > 10) {
-        clearInterval(id);
-
-        return;
-      }
-
-      bottomSheetRef.current?.snapToPosition(firstSnapPoint);
-    }, 300);
-
-    return () => clearInterval(id);
-  }, [firstSnapPoint, animatedIndex]);
+    listTranslateY.value = withTiming('0%', {
+      duration: 500,
+      easing: Easing.out(Easing.cubic)
+    });
+  }, [listTranslateY]);
 
   useEffect(() => {
     if (tezosAddress != null) {
@@ -146,12 +120,8 @@ export const CollectiblesHome = memo(() => {
   useDidUpdate(() => void collectionsFlatListRef.current?.scrollToOffset({ offset: 0 }), [tezosAddress]);
 
   return (
-    <View style={styles.screen} onLayout={event => void setScreenHeight(event.nativeEvent.layout.height)}>
-      <HeaderCard
-        hasInsetTop={true}
-        style={styles.headerCard}
-        onLayout={event => void setHeaderHeight(event.nativeEvent.layout.height)}
-      >
+    <View style={styles.screen}>
+      <HeaderCard hasInsetTop={true} style={styles.headerCard}>
         <View style={styles.accountContainer}>
           <CurrentAccountDropdown isCollectibleScreen />
         </View>
@@ -189,20 +159,9 @@ export const CollectiblesHome = memo(() => {
         </View>
       </HeaderCard>
 
-      {snapPoints ? (
-        <BottomSheet
-          ref={bottomSheetRef}
-          animatedIndex={animatedIndex}
-          enableDynamicSizing={false}
-          enableContentPanningGesture={false}
-          snapPoints={snapPoints}
-          handleStyle={styles.handleStyle}
-          style={styles.bottomSheet}
-          backgroundStyle={styles.bottomSheet}
-        >
-          <CollectiblesList collectibles={collectibles} showInfo={isShowCollectibleInfo} />
-        </BottomSheet>
-      ) : null}
+      <Animated.View style={[styles.listContainer, listAnimatedStyle]}>
+        <CollectiblesList collectibles={collectibles} showInfo={isShowCollectibleInfo} />
+      </Animated.View>
     </View>
   );
 });

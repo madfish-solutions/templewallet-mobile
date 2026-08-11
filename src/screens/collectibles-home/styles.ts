@@ -4,7 +4,8 @@ import { formatSize } from 'src/styles/format-size';
 export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typography }) => ({
   screen: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
+    overflow: 'hidden'
   },
   headerCard: {
     marginBottom: 0,
@@ -54,11 +55,9 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     flex: 1,
     marginHorizontal: 0
   },
-  handleStyle: {
-    display: 'none'
-  },
-  bottomSheet: {
-    backgroundColor: colors.pageBG
+  listContainer: {
+    flex: 1,
+    overflow: 'hidden'
   }
 }));
 

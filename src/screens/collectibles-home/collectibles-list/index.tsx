@@ -1,7 +1,7 @@
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import React, { FC, memo, useCallback, useMemo } from 'react';
 import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
+import { FlatList } from 'react-native-gesture-handler';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -31,6 +31,7 @@ interface Props {
 }
 
 const ITEMS_PER_ROW = 3;
+const INITIAL_ROWS_TO_RENDER = 8;
 const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
 const keyExtractor = (item: DisplayedCollectible) =>
@@ -94,19 +95,17 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
   );
 
   return (
-    <>
-      <BottomSheetFlatList
-        data={collectibles}
-        numColumns={ITEMS_PER_ROW}
-        initialNumToRender={ITEMS_PER_ROW * 15}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        style={screenStyles.scrollView}
-        contentContainerStyle={screenStyles.scrollViewContentContainer}
-        ListFooterComponent={<ListFooterComponent empty={collectibles.length < 1} isSyncing={isSyncing} />}
-      />
-    </>
+    <FlatList
+      data={collectibles}
+      numColumns={ITEMS_PER_ROW}
+      initialNumToRender={ITEMS_PER_ROW * INITIAL_ROWS_TO_RENDER}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      getItemLayout={getItemLayout}
+      style={screenStyles.scrollView}
+      contentContainerStyle={screenStyles.scrollViewContentContainer}
+      ListFooterComponent={<ListFooterComponent empty={collectibles.length < 1} isSyncing={isSyncing} />}
+    />
   );
 });
 
