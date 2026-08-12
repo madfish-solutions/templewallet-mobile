@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import { ActivityIndicator, LayoutChangeEvent, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Animated, {
@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
-import { DeadEndBoundaryError } from 'src/components/error-boundary';
+import { Divider } from 'src/components/divider/divider.tsx';
 import { HeaderCard } from 'src/components/header-card/header-card';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
@@ -27,8 +27,9 @@ import { loadCollectionsActions } from 'src/store/collectons/collections-actions
 import { useCreatedCollectionsSelector } from 'src/store/collectons/collections-selectors';
 import { Collection } from 'src/store/collectons/collections-state';
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
-import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
+import { useAccount } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
+import { getAccountAddressForTezos } from 'src/utils/account.utils.ts';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { useCurrentAccountCollectibles, useCurrentAccountEvmCollectibles } from 'src/utils/assets/hooks';
 import { DisplayedCollectible } from 'src/utils/assets/types';
@@ -37,44 +38,42 @@ import { formatObjktLogoUri } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 import { isAssetSearched } from 'src/utils/token-metadata.utils';
 
-import { Divider } from '../../components/divider/divider.tsx';
 import { ActionButton } from '../wallet/action-button';
 
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
 
-const COLLECTIONS_SCROLL_RATIO = 5;
+const COLLECTIONS_SCROLL_RATIO = 4;
 
 export const CollectiblesHome = memo(() => {
   const navigateToScreen = useNavigateToScreen();
   usePageAnalytic(ScreensEnum.CollectiblesHome);
 
+  const account = useAccount();
   const collections = useCreatedCollectionsSelector();
   const tezosCollectibles = useCurrentAccountCollectibles(true);
   const evmCollectibles = useCurrentAccountEvmCollectibles();
-  const tezosAddress = useAccountAddressForTezos();
-  const evmAddress = useAccountAddressForEvm();
 
   useEtherlinkDataLoading();
-
-  if (!tezosAddress && !evmAddress) {
-    throw new DeadEndBoundaryError();
-  }
 
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const styles = useCollectiblesHomeStyles();
   const listTranslateY = useSharedValue<`${number}%`>('100%');
   const collectionsVisibility = useSharedValue(1);
-  const [collectionsSectionHeight, setCollectionsSectionHeight] = useState<number>();
+  const collectionsSectionHeight = useSharedValue(0);
 
   const listAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: listTranslateY.value }]
   }));
-  const collectionsAnimatedStyle = useAnimatedStyle(() => ({
-    height: collectionsSectionHeight == null ? undefined : collectionsSectionHeight * collectionsVisibility.value,
-    opacity: collectionsVisibility.value
-  }));
+  const collectionsAnimatedStyle = useAnimatedStyle(() => {
+    const sectionHeight = collectionsSectionHeight.value;
+
+    return {
+      height: sectionHeight === 0 ? undefined : sectionHeight * collectionsVisibility.value,
+      opacity: collectionsVisibility.value
+    };
+  });
 
   useEffect(() => {
     listTranslateY.value = withTiming('0%', {
@@ -84,14 +83,16 @@ export const CollectiblesHome = memo(() => {
   }, [listTranslateY]);
 
   useEffect(() => {
-    if (tezosAddress != null) {
+    const tezosAddress = getAccountAddressForTezos(account);
+
+    if (tezosAddress) {
       dispatch(loadCollectionsActions.submit(tezosAddress));
     }
-  }, [tezosAddress]);
+  }, [account.id]);
 
   useEffect(() => {
     collectionsVisibility.value = 1;
-  }, [collectionsVisibility, tezosAddress]);
+  }, [collectionsVisibility, account.id]);
 
   const {
     setSearchValue,
@@ -129,26 +130,28 @@ export const CollectiblesHome = memo(() => {
     [navigateToScreen]
   );
 
-  const handleCollectiblesScroll = useAnimatedScrollHandler(
-    event => {
-      if (collectionsSectionHeight == null || collectionsSectionHeight <= 0) {
-        return;
-      }
+  const handleCollectiblesScroll = useAnimatedScrollHandler(event => {
+    const sectionHeight = collectionsSectionHeight.value;
 
-      const scrollOffset = Math.max(0, event.contentOffset.y);
-      const collapsedCollectionsHeight = Math.min(collectionsSectionHeight, scrollOffset / COLLECTIONS_SCROLL_RATIO);
+    if (sectionHeight <= 0) {
+      return;
+    }
 
-      collectionsVisibility.value = 1 - collapsedCollectionsHeight / collectionsSectionHeight;
+    const scrollOffset = Math.max(0, event.contentOffset.y);
+    const collapsedCollectionsHeight = Math.min(sectionHeight, scrollOffset / COLLECTIONS_SCROLL_RATIO);
+
+    collectionsVisibility.value = 1 - collapsedCollectionsHeight / sectionHeight;
+  });
+
+  const handleCollectionsLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const { height } = event.nativeEvent.layout;
+
+      // Keep the natural height because the animated parent constrains later layout measurements.
+      collectionsSectionHeight.value = Math.max(collectionsSectionHeight.value, height);
     },
     [collectionsSectionHeight]
   );
-
-  const handleCollectionsLayout = useCallback((event: LayoutChangeEvent) => {
-    const { height } = event.nativeEvent.layout;
-
-    // Keep the natural height because the animated parent constrains later layout measurements.
-    setCollectionsSectionHeight(currentHeight => Math.max(currentHeight ?? 0, height));
-  }, []);
 
   const renderItemCollections: ListRenderItem<Collection> = useCallback(
     ({ item }) => <CollectionButton item={item} />,
@@ -157,7 +160,7 @@ export const CollectiblesHome = memo(() => {
 
   const collectionsFlatListRef = useRef<FlatList<Collection>>(null);
   // On collections number decrease scroll might not reposition & items remain off-view
-  useDidUpdate(() => void collectionsFlatListRef.current?.scrollToOffset({ offset: 0 }), [tezosAddress]);
+  useDidUpdate(() => void collectionsFlatListRef.current?.scrollToOffset({ offset: 0 }), [account.id]);
 
   return (
     <View style={styles.screen}>
