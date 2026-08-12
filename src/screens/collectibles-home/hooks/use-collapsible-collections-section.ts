@@ -8,7 +8,7 @@ import {
   useSharedValue
 } from 'react-native-reanimated';
 
-const COLLECTIONS_SCROLL_RATIO = 4;
+const COLLECTIONS_SCROLL_RATIO = 2;
 
 interface CollapsibleCollectionsSection {
   animatedStyle: AnimatedStyle<ViewStyle>;
