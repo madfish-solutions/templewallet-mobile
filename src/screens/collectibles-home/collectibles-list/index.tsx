@@ -1,7 +1,7 @@
 import React, { FC, memo, useCallback, useMemo } from 'react';
-import { ListRenderItem, NativeScrollEvent, NativeSyntheticEvent, useWindowDimensions, View } from 'react-native';
+import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
-import { FlatList } from 'react-native-gesture-handler';
+import Animated, { ScrollHandlerProcessed } from 'react-native-reanimated';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -28,7 +28,7 @@ import { CollectiblesListStyles, GRID_GAP } from './styles';
 interface Props {
   collectibles: DisplayedCollectible[];
   showInfo: boolean;
-  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+  onScroll: ScrollHandlerProcessed;
 }
 
 const ITEMS_PER_ROW = 3;
@@ -96,7 +96,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll 
   );
 
   return (
-    <FlatList
+    <Animated.FlatList
       data={collectibles}
       numColumns={ITEMS_PER_ROW}
       initialNumToRender={ITEMS_PER_ROW * INITIAL_ROWS_TO_RENDER}

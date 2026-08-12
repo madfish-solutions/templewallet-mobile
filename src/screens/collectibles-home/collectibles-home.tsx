@@ -1,16 +1,13 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  LayoutChangeEvent,
-  ListRenderItem,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import { ActivityIndicator, LayoutChangeEvent, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated';
 
 import { CurrentAccountDropdown } from 'src/components/account-dropdown/current-account-dropdown';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
@@ -45,6 +42,8 @@ import { ActionButton } from '../wallet/action-button';
 
 import { CollectiblesList } from './collectibles-list';
 import { useCollectiblesHomeStyles, useCollectionButtonStyles } from './styles';
+
+const COLLECTIONS_SCROLL_RATIO = 5;
 
 export const CollectiblesHome = memo(() => {
   const navigateToScreen = useNavigateToScreen();
@@ -130,19 +129,18 @@ export const CollectiblesHome = memo(() => {
     [navigateToScreen]
   );
 
-  const handleCollectiblesScroll = useCallback(
-    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-      const scrollOffset = Math.max(0, event.nativeEvent.contentOffset.y);
-
+  const handleCollectiblesScroll = useAnimatedScrollHandler(
+    event => {
       if (collectionsSectionHeight == null || collectionsSectionHeight <= 0) {
         return;
       }
 
-      const collapsedCollectionsHeight = Math.min(collectionsSectionHeight, scrollOffset);
+      const scrollOffset = Math.max(0, event.contentOffset.y);
+      const collapsedCollectionsHeight = Math.min(collectionsSectionHeight, scrollOffset / COLLECTIONS_SCROLL_RATIO);
 
       collectionsVisibility.value = 1 - collapsedCollectionsHeight / collectionsSectionHeight;
     },
-    [collectionsSectionHeight, collectionsVisibility]
+    [collectionsSectionHeight]
   );
 
   const handleCollectionsLayout = useCallback((event: LayoutChangeEvent) => {
