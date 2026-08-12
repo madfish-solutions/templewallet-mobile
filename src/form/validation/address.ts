@@ -31,7 +31,7 @@ export let addressValidation = stringSchema().required(makeRequiredErrorMessage(
 otherNetworks.forEach(({ slug, name, errorType }) => {
   addressValidation = addressValidation.test(
     errorType,
-    `You entered the ${name} network address. Please enter the Tezos network address`,
+    `You entered the ${name} address. Please enter the Tezos address`,
     value => !isDefined(value) || !validate(value, slug)
   );
 });
