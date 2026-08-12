@@ -1,5 +1,5 @@
 import React, { FC, memo, useCallback, useMemo } from 'react';
-import { ListRenderItem, useWindowDimensions, View } from 'react-native';
+import { ListRenderItem, NativeScrollEvent, NativeSyntheticEvent, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -28,6 +28,7 @@ import { CollectiblesListStyles, GRID_GAP } from './styles';
 interface Props {
   collectibles: DisplayedCollectible[];
   showInfo: boolean;
+  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
 }
 
 const ITEMS_PER_ROW = 3;
@@ -37,7 +38,7 @@ const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 const keyExtractor = (item: DisplayedCollectible) =>
   item.chainKind === TempleChainKind.EVM ? toChainAssetSlug(item.chainKind, item.chainId, item.slug) : item.slug;
 
-export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
+export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll }) => {
   const screenStyles = useScreenContainerStyles();
   const itemStyles = useCollectibleItemStyles();
 
@@ -105,6 +106,8 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
       style={screenStyles.scrollView}
       contentContainerStyle={screenStyles.scrollViewContentContainer}
       ListFooterComponent={<ListFooterComponent empty={collectibles.length < 1} isSyncing={isSyncing} />}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
     />
   );
 });

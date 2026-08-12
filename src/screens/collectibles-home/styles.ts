@@ -31,11 +31,14 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     justifyContent: 'space-between',
     paddingVertical: formatSize(4)
   },
+  collectionsSection: {
+    overflow: 'hidden'
+  },
   collectionsLabel: {
     ...typography.body15Semibold,
     color: colors.black
   },
-  collectionsContainer: {
+  collectionsList: {
     paddingTop: formatSize(8),
     paddingLeft: formatSize(4)
   },

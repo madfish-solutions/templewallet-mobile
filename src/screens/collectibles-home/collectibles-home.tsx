@@ -1,5 +1,14 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
-import { ActivityIndicator, ListRenderItem, Text, TouchableOpacity, View } from 'react-native';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  LayoutChangeEvent,
+  ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Text,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
@@ -57,8 +66,15 @@ export const CollectiblesHome = memo(() => {
 
   const styles = useCollectiblesHomeStyles();
   const listTranslateY = useSharedValue<`${number}%`>('100%');
+  const collectionsVisibility = useSharedValue(1);
+  const [collectionsSectionHeight, setCollectionsSectionHeight] = useState<number>();
+
   const listAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: listTranslateY.value }]
+  }));
+  const collectionsAnimatedStyle = useAnimatedStyle(() => ({
+    height: collectionsSectionHeight == null ? undefined : collectionsSectionHeight * collectionsVisibility.value,
+    opacity: collectionsVisibility.value
   }));
 
   useEffect(() => {
@@ -73,6 +89,10 @@ export const CollectiblesHome = memo(() => {
       dispatch(loadCollectionsActions.submit(tezosAddress));
     }
   }, [tezosAddress]);
+
+  useEffect(() => {
+    collectionsVisibility.value = 1;
+  }, [collectionsVisibility, tezosAddress]);
 
   const {
     setSearchValue,
@@ -110,6 +130,28 @@ export const CollectiblesHome = memo(() => {
     [navigateToScreen]
   );
 
+  const handleCollectiblesScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const scrollOffset = Math.max(0, event.nativeEvent.contentOffset.y);
+
+      if (collectionsSectionHeight == null || collectionsSectionHeight <= 0) {
+        return;
+      }
+
+      const collapsedCollectionsHeight = Math.min(collectionsSectionHeight, scrollOffset);
+
+      collectionsVisibility.value = 1 - collapsedCollectionsHeight / collectionsSectionHeight;
+    },
+    [collectionsSectionHeight, collectionsVisibility]
+  );
+
+  const handleCollectionsLayout = useCallback((event: LayoutChangeEvent) => {
+    const { height } = event.nativeEvent.layout;
+
+    // Keep the natural height because the animated parent constrains later layout measurements.
+    setCollectionsSectionHeight(currentHeight => Math.max(currentHeight ?? 0, height));
+  }, []);
+
   const renderItemCollections: ListRenderItem<Collection> = useCallback(
     ({ item }) => <CollectionButton item={item} />,
     []
@@ -129,21 +171,23 @@ export const CollectiblesHome = memo(() => {
         <Divider size={formatSize(16)} />
 
         {collections.length > 0 ? (
-          <>
-            <View style={styles.collectionsHeader}>
-              <Text style={styles.collectionsLabel}>Created collections</Text>
-            </View>
+          <Animated.View style={[styles.collectionsSection, collectionsAnimatedStyle]}>
+            <View onLayout={handleCollectionsLayout}>
+              <View style={styles.collectionsHeader}>
+                <Text style={styles.collectionsLabel}>Created collections</Text>
+              </View>
 
-            <FlatList
-              ref={collectionsFlatListRef}
-              data={collections}
-              renderItem={renderItemCollections}
-              keyExtractor={({ type, contract, galleryPk }) => `${type}/${contract}/${galleryPk}`}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.collectionsContainer}
-            />
-          </>
+              <FlatList
+                ref={collectionsFlatListRef}
+                data={collections}
+                renderItem={renderItemCollections}
+                keyExtractor={({ type, contract, galleryPk }) => `${type}/${contract}/${galleryPk}`}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.collectionsList}
+              />
+            </View>
+          </Animated.View>
         ) : null}
 
         <View style={styles.toolbarContainer}>
@@ -160,7 +204,11 @@ export const CollectiblesHome = memo(() => {
       </HeaderCard>
 
       <Animated.View style={[styles.listContainer, listAnimatedStyle]}>
-        <CollectiblesList collectibles={collectibles} showInfo={isShowCollectibleInfo} />
+        <CollectiblesList
+          collectibles={collectibles}
+          showInfo={isShowCollectibleInfo}
+          onScroll={handleCollectiblesScroll}
+        />
       </Animated.View>
     </View>
   );
