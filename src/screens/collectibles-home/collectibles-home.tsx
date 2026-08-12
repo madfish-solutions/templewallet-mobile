@@ -126,25 +126,25 @@ export const CollectiblesHome = memo(() => {
           <CurrentAccountDropdown isCollectibleScreen />
         </View>
 
-        <View style={styles.profileContainer}>
-          {collections.length > 0 ? (
-            <>
-              <View style={styles.collectionsHeader}>
-                <Text style={styles.collectionsLabel}>Created collections</Text>
-              </View>
+        <Divider size={formatSize(16)} />
 
-              <FlatList
-                ref={collectionsFlatListRef}
-                data={collections}
-                renderItem={renderItemCollections}
-                keyExtractor={({ type, contract, galleryPk }) => `${type}/${contract}/${galleryPk}`}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.collectionsContainer}
-              />
-            </>
-          ) : null}
-        </View>
+        {collections.length > 0 ? (
+          <>
+            <View style={styles.collectionsHeader}>
+              <Text style={styles.collectionsLabel}>Created collections</Text>
+            </View>
+
+            <FlatList
+              ref={collectionsFlatListRef}
+              data={collections}
+              renderItem={renderItemCollections}
+              keyExtractor={({ type, contract, galleryPk }) => `${type}/${contract}/${galleryPk}`}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.collectionsContainer}
+            />
+          </>
+        ) : null}
 
         <View style={styles.toolbarContainer}>
           <SearchInput

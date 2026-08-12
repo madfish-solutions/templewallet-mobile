@@ -26,9 +26,6 @@ export const useCollectiblesHomeStyles = createUseStylesMemoized(({ colors, typo
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  profileContainer: {
-    paddingTop: formatSize(16)
-  },
   collectionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
