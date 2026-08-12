@@ -1,3 +1,4 @@
+import FastImage from '@d11/react-native-fast-image';
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -29,11 +30,11 @@ export const ImageBlurOverlay = memo<Props>(({ size, isBigIcon = false, onPress 
   const isLightTheme = deviceTheme === ThemesEnum.light;
   const iconSize = formatSize(isBigIcon ? ICON_SIZE_BIG : ICON_SIZE_SMALL);
   const iconName = isLightTheme ? IconNameEnum.BlurEyeBlack : IconNameEnum.BlurEyeWhite;
-  const blurIcon = isLightTheme ? IconNameEnum.BlurLight : IconNameEnum.BlurDark;
+  const blurImage = isLightTheme ? require('./assets/blur-light.png') : require('./assets/blur-dark.png');
 
   const children = (
     <>
-      <Icon name={blurIcon} size={size} style={styles.blur} />
+      <FastImage source={blurImage} style={[styles.blur, { width: size, height: size }]} />
 
       <View style={styles.content}>
         <Icon name={iconName} size={iconSize} />
