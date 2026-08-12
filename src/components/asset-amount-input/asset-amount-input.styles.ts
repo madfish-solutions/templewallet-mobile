@@ -76,7 +76,8 @@ export const useAssetAmountInputStyles = createUseStyles(({ colors, typography }
   },
   footerErrorText: {
     ...typography.caption11Regular,
-    color: colors.destructive
+    color: colors.destructive,
+    marginLeft: formatSize(6)
   },
   balanceContainer: {
     alignSelf: 'flex-start'

@@ -1,17 +1,15 @@
 import { BigNumber } from 'bignumber.js';
-import { isAddress as isEvmAddress } from 'viem';
 import { boolean, mixed, object, SchemaOf, string, ValidationError } from 'yup';
 
 import { AssetAmountInterface } from 'src/components/asset-amount-input/asset-amount-input';
 import { SAPLING_MEMO_SIZE } from 'src/config/sapling';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { getAddressNetwork, getWrongNetworkAddressError } from 'src/form/validation/address';
 import { bigNumberSchema } from 'src/form/validation/big-number';
 import { TEZ_TOKEN_SLUG, TEZ_SHIELDED_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { SendAsset } from 'src/types/send-asset';
 import { isTezosDomainNameValid } from 'src/utils/dns.utils';
-import { isSaplingAddress } from 'src/utils/sapling/address-utils';
-import { isValidAddress } from 'src/utils/tezos.util';
 
 export interface SendAssetAmount extends AssetAmountInterface<SendAsset> {
   asset: SendAsset;
@@ -57,32 +55,40 @@ const assetAmountValidation = object()
     return true;
   });
 
-const isRecipientAddressValid = (value: string, asset: SendAsset, allowDomain: boolean) => {
-  if (asset.chainKind === TempleChainKind.EVM) {
-    return isEvmAddress(value);
+const getRecipientAddressError = (value: string, asset: SendAsset, allowDomain: boolean): string | undefined => {
+  if (asset.chainKind === TempleChainKind.Tezos && allowDomain && isTezosDomainNameValid(value)) {
+    return undefined;
   }
 
-  if (allowDomain && isTezosDomainNameValid(value)) {
-    return true;
+  const expectedNetwork = asset.chainKind === TempleChainKind.EVM ? 'EVM' : 'Tezos';
+  const addressNetwork = getAddressNetwork(value);
+
+  if (addressNetwork === expectedNetwork) {
+    return undefined;
   }
 
-  if (!isValidAddress(value) && !isSaplingAddress(value)) {
-    return false;
+  if (addressNetwork === 'Sapling' && expectedNetwork === 'Tezos') {
+    if (asset.assetSlug === TEZ_TOKEN_SLUG || asset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG) {
+      return undefined;
+    }
+
+    return 'You entered the Sapling address. Please enter a Tezos address that supports this asset';
   }
 
-  return !isSaplingAddress(value) || asset.assetSlug === TEZ_TOKEN_SLUG || asset.assetSlug === TEZ_SHIELDED_TOKEN_SLUG;
+  return getWrongNetworkAddressError(value, expectedNetwork) ?? 'Invalid address';
 };
 
 const recipientAddressValidation = string()
   .required('Required')
-  .test('network-address', 'Invalid address', function (value) {
+  .test('network-address', function (value) {
     if (!value) {
       return false;
     }
 
     const { asset } = (this.parent as SendModalFormValues).assetAmount;
+    const error = getRecipientAddressError(value, asset, true);
 
-    return isRecipientAddressValid(value, asset, true);
+    return error ? this.createError({ message: error }) : true;
   });
 
 export const sendModalValidationSchema = object().shape({
