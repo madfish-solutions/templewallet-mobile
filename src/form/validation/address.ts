@@ -4,7 +4,7 @@ import { isAddress as isEvmAddress } from 'viem';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 import { isValidAddress as isTezosAddress } from 'src/utils/tezos.util';
 
-export type AddressNetwork = 'Bitcoin' | 'EVM' | 'Sapling' | 'Tezos' | 'Tron';
+type AddressNetwork = 'Bitcoin' | 'EVM' | 'Sapling' | 'Tezos' | 'Tron';
 
 const otherNetworks: Array<{ slug: string; name: 'Bitcoin' | 'Tron' }> = [
   { slug: 'trx', name: 'Tron' },
