@@ -14,7 +14,7 @@ import { createReadOnlyTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { isKnownTzktStatus } from './pre-parse';
 import type { TempleTzktOperationsGroup, TezosActivityOlderThan } from './types';
 
-export interface TezosOperationsPage {
+interface TezosOperationsPage {
   operations: TzktOperation[];
   oldestRawOperation: TzktOperation | undefined;
 }

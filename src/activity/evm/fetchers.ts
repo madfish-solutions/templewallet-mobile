@@ -60,7 +60,7 @@ const fetchAllTxTokenTransfers = (txHash: string, signal?: AbortSignal) =>
     signal
   );
 
-export interface AlignedEtherlinkPage {
+interface AlignedEtherlinkPage {
   explicitOperations: EtherlinkTransaction[];
   explicitOperationsNextPageParams: EtherlinkAccountTransactionsPageParams | nullish;
   coinBalanceHistoryItems: EtherlinkCoinBalanceHistoryItem[];
