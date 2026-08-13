@@ -1,24 +1,16 @@
-import FastImage from '@d11/react-native-fast-image';
-import React, { memo, useMemo } from 'react';
-import { Platform, StyleProp, Text, View, ViewStyle } from 'react-native';
+import React, { memo } from 'react';
+import { StyleProp, Text, View, ViewStyle } from 'react-native';
 
-import { ActivityIndicator } from 'src/components/activity-indicator';
-import { BrokenImage } from 'src/components/broken-image';
-import { useCollectibleImageStyles } from 'src/components/collectible-image/styles';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
-import { DataUriImage } from 'src/components/data-uri-image';
+import { EvmCollectibleImage } from 'src/components/evm-collectible-image';
 import { NetworkIcon } from 'src/components/network-icon';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
-import { useImagesStack } from 'src/hooks/use-images-stack';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { EvmDisplayedCollectible } from 'src/utils/assets/types';
-import { buildEvmCollectibleImagesStack, isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import { Balance } from './balance';
 import { useCollectibleItemStyles } from './styles';
-
-const BLUR_RADIUS = Platform.select({ android: 42, default: 16 });
 
 interface Props {
   collectible: EvmDisplayedCollectible;
@@ -61,37 +53,5 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
         </View>
       ) : null}
     </SafeTouchableOpacity>
-  );
-});
-
-interface EvmCollectibleImageProps {
-  uri?: string;
-  size: number;
-}
-
-const EvmCollectibleImage = memo<EvmCollectibleImageProps>(({ uri, size }) => {
-  const styles = useCollectibleImageStyles();
-
-  const sourcesStack = useMemo(() => buildEvmCollectibleImagesStack(uri), [uri]);
-
-  const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sourcesStack);
-
-  if (isStackFailed) {
-    return <BrokenImage isBigIcon={false} style={styles.brokenImage} />;
-  }
-
-  if (src && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src))) {
-    return (
-      <DataUriImage dataUri={src} width={size} height={size} style={styles.image} onLoad={onSuccess} onError={onFail} />
-    );
-  }
-
-  return (
-    <>
-      <FastImage style={styles.image} source={{ uri: src }} resizeMode="cover" blurRadius={BLUR_RADIUS} />
-      <FastImage style={styles.image} source={{ uri: src }} resizeMode="contain" onError={onFail} onLoad={onSuccess} />
-
-      {isLoading ? <ActivityIndicator size="small" /> : null}
-    </>
   );
 });

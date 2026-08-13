@@ -17,7 +17,6 @@ const ICON_SIZE_SMALL = 24;
 interface Props {
   size: number;
   isBigIcon?: boolean;
-  isTouchable?: boolean;
   /** (!) Not allowed if descendant of <TouchableOpacity /> */
   onPress?: EmptyFn;
 }
@@ -29,22 +28,20 @@ export const ImageBlurOverlay = memo<Props>(({ size, isBigIcon = false, onPress 
   const isLightTheme = deviceTheme === ThemesEnum.light;
   const iconSize = formatSize(isBigIcon ? ICON_SIZE_BIG : ICON_SIZE_SMALL);
   const iconName = isLightTheme ? IconNameEnum.BlurEyeBlack : IconNameEnum.BlurEyeWhite;
-  const children = (
-    <>
-      <View style={styles.content}>
-        <Icon name={iconName} size={iconSize} />
-        {onPress ? <Text style={styles.text}>Tap to reveal</Text> : null}
-      </View>
-    </>
+  const content = (
+    <View style={styles.content}>
+      <Icon name={iconName} size={iconSize} />
+      {onPress ? <Text style={styles.text}>Tap to reveal</Text> : null}
+    </View>
   );
 
   if (onPress) {
     return (
       <SafeTouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.root, { width: size, height: size }]}>
-        {children}
+        {content}
       </SafeTouchableOpacity>
     );
   }
 
-  return <View style={[styles.root, { width: size, height: size }]}>{children}</View>;
+  return <View style={[styles.root, { width: size, height: size }]}>{content}</View>;
 });

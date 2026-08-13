@@ -1,19 +1,15 @@
-import FastImage from '@d11/react-native-fast-image';
 import React, { memo, useMemo, useState } from 'react';
-import { Dimensions, Platform, Text, View } from 'react-native';
+import { Dimensions, Text, View } from 'react-native';
 
-import { ActivityIndicator } from 'src/components/activity-indicator';
-import { BrokenImage } from 'src/components/broken-image';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { DataUriImage } from 'src/components/data-uri-image';
 import { Divider } from 'src/components/divider/divider';
+import { EvmCollectibleImage } from 'src/components/evm-collectible-image';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TruncatedText } from 'src/components/truncated-text';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
-import { useImagesStack } from 'src/hooks/use-images-stack';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useModalParams, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
@@ -24,16 +20,7 @@ import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { fromTokenSlug } from 'src/utils/from-token-slug.ts';
-import {
-  buildEvmCollectibleImagesStack,
-  IPFS_GATE,
-  IPFS_PROTOCOL,
-  isImgUriDataUri,
-  isSvgDataUriInBase64Encoding,
-  normalizeIpfsUri
-} from 'src/utils/image.utils';
-
-const BLUR_RADIUS = Platform.select({ android: 42, default: 16 });
+import { IPFS_GATE, IPFS_PROTOCOL, normalizeIpfsUri } from 'src/utils/image.utils';
 
 import { CryptoLogo } from '../../components/crypto-logo';
 import { CryptoLogoNameEnum } from '../../components/crypto-logo/logo-name.enum.ts';
@@ -79,7 +66,7 @@ export const EvmCollectibleModal = memo(() => {
 
         <View>
           <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
-            <EvmCollectibleMedia uri={metadata?.image ?? metadata?.iconURL} size={imageSize} />
+            <EvmCollectibleImage uri={metadata?.image ?? metadata?.iconURL} size={imageSize} isFullView />
           </View>
 
           <Divider size={formatSize(12)} />
@@ -153,35 +140,3 @@ const getMetadataLink = (uri?: string): string | undefined => {
     ? `${IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`
     : normalizedUri;
 };
-
-const EvmCollectibleMedia = memo(({ uri, size }: { uri?: string; size: number }) => {
-  const sources = useMemo(() => buildEvmCollectibleImagesStack(uri), [uri]);
-  const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sources);
-
-  if (isStackFailed) {
-    return <BrokenImage isBigIcon style={{ width: size, height: size }} />;
-  }
-
-  if (src && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src))) {
-    return <DataUriImage dataUri={src} width={size} height={size} onLoad={onSuccess} onError={onFail} />;
-  }
-
-  return (
-    <View style={{ width: size, height: size, overflow: 'hidden' }}>
-      <FastImage
-        source={{ uri: src }}
-        style={{ width: size, height: size }}
-        resizeMode="cover"
-        blurRadius={BLUR_RADIUS}
-      />
-      <FastImage
-        source={{ uri: src }}
-        style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
-        resizeMode="contain"
-        onLoad={onSuccess}
-        onError={onFail}
-      />
-      {isLoading ? <ActivityIndicator size="large" /> : null}
-    </View>
-  );
-});
