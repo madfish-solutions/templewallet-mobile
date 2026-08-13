@@ -3,7 +3,7 @@ import { uniq } from 'lodash-es';
 import * as TZKT from 'src/apis/tzkt';
 import type { TzktOperation } from 'src/apis/tzkt/types';
 import { refetchOnce429 } from 'src/apis/utils';
-import { LIQUIDITY_BAKING_DEX_ADDRESS } from 'src/token/data/token-slugs';
+import { SIRS_TOKEN } from 'src/token/data/token-slugs';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { TezosTokenStandardsEnum } from 'src/token/interfaces/token-metadata.interface';
 import { getTokenStandard } from 'src/token/utils/token.utils';
@@ -43,9 +43,8 @@ export const createOperationsFetcher = (accountAddress: string, assetSlug: strin
 
   const [contractAddress, tokenId] = fromTokenSlug(assetSlug);
 
-  if (contractAddress === LIQUIDITY_BAKING_DEX_ADDRESS) {
-    return (pseudoLimit, olderThan, signal) =>
-      fetchOperations_Contract(accountAddress, contractAddress, pseudoLimit, olderThan, signal);
+  if (contractAddress === SIRS_TOKEN.address) {
+    return (pseudoLimit, olderThan, signal) => fetchOperations_Sirs(accountAddress, pseudoLimit, olderThan, signal);
   }
 
   let tokenFetcherPromise: Promise<OperationsFetcher> | undefined;
@@ -96,7 +95,32 @@ const fetchOperations_TEZ = async (
     )
   );
 
-const fetchOperations_Contract = async (
+// SIRS history is both LP mints/burns (initiated by the account through the LB DEX) and plain transfers
+const fetchOperations_Sirs = async (
+  accountAddress: string,
+  pseudoLimit: number,
+  olderThan?: TezosActivityOlderThan,
+  signal?: AbortSignal
+) => {
+  const { operations: mintOrBurnOperations } = await fetchOperations_MintOrBurn(
+    accountAddress,
+    SIRS_TOKEN.address,
+    pseudoLimit,
+    olderThan,
+    signal
+  );
+  const { operations: transferOperations } = await fetchOperations_Token_Fa_1_2(
+    accountAddress,
+    SIRS_TOKEN.address,
+    pseudoLimit,
+    olderThan,
+    signal
+  );
+
+  return toOperationsPage(mintOrBurnOperations.concat(transferOperations).sort((b, a) => a.id - b.id));
+};
+
+const fetchOperations_MintOrBurn = async (
   accountAddress: string,
   contractAddress: string,
   pseudoLimit: number,
