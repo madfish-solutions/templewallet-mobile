@@ -38,6 +38,12 @@ Optimize for clarity, polish, and performance in every change.
 ## State Management
 - Migrations are mandatory for persisted state changes
 
+## Beacon / Octez Connect
+- Wallet pairing uses `@tezos-x/octez.connect-sdk` v5 (P2P / Matrix only). WalletConnect is not supported: reject those pairings with an error toast instead of leaving the connection modal loading.
+- Persist keys are still `beacon:*` (see `StorageKey`). Pairing/permission data in AsyncStorage does not need a Redux or storage-key migration when swapping package names or 4.x → 5.x.
+- Browser-only packages (`octez.connect-dapp`, `octez.connect-ui`, `octez.connect-transport-postmessage`, `octez.connect-transport-walletconnect`) must be stubbed in Metro `resolveRequest` (and Jest `moduleNameMapper`). Yarn resolutions-to-null fail because those packages declare `exports`; `extraNodeModules` is ignored when the real packages exist in `node_modules`. The umbrella SDK re-exports them, and they call `windowRef.addEventListener` — RN `window` does not implement that.
+- octez.connect v5 probes Matrix nodes with `AbortSignal.timeout()`. RN 0.83's AbortSignal polyfill does not implement that; shim it in `shim.js` or every probe fails with "No server responded." and `WalletClient.isConnected` never resolves.
+
 ## Reusable Components, Hooks, Utils, Constants
 - API clients: `src/apis/`
 - Constants for configuration: `src/config/`

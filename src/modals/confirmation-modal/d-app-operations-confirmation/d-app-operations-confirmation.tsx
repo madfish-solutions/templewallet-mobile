@@ -1,4 +1,4 @@
-import { BeaconMessageType } from '@airgap/beacon-sdk';
+import { BeaconMessageType } from '@tezos-x/octez.connect-sdk';
 import React, { FC } from 'react';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';

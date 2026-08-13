@@ -1,5 +1,5 @@
-import { TezosOperationType } from '@airgap/beacon-sdk';
 import { ParamsWithKind } from '@taquito/taquito';
+import { TezosOperationType } from '@tezos-x/octez.connect-sdk';
 import { of } from 'rxjs';
 
 import { BeaconHandler } from 'src/beacon/beacon-handler';
@@ -57,5 +57,21 @@ export const resetBeacon$ = () => {
 };
 
 const IS_BEACON_PAYLOAD_CHECK = /^tezos:\/\/[?]((type=.*&data=.*)|(data=.*&type=.*))/;
+const WALLETCONNECT_PAIRING_TYPE = 'walletconnect-pairing-request';
+
+export const WALLETCONNECT_NOT_SUPPORTED_MESSAGE = 'WalletConnect is not supported';
 
 export const isBeaconPayload = (link: string) => IS_BEACON_PAYLOAD_CHECK.test(link);
+
+export const isWalletConnectPayload = (link: string) => link.startsWith('wc:');
+
+export const isWalletConnectPairing = (obj: unknown): boolean => {
+  if (typeof obj !== 'object' || obj === null) {
+    return false;
+  }
+
+  const type = 'type' in obj ? obj.type : undefined;
+  const uri = 'uri' in obj ? obj.uri : undefined;
+
+  return type === WALLETCONNECT_PAIRING_TYPE || (typeof uri === 'string' && isWalletConnectPayload(uri));
+};

@@ -1,4 +1,4 @@
-import { BeaconErrorType, BeaconMessageType, getSenderId } from '@airgap/beacon-sdk';
+import { BeaconErrorType, BeaconMessageType, getSenderId } from '@tezos-x/octez.connect-sdk';
 import { Epic, combineEpics } from 'redux-observable';
 import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';

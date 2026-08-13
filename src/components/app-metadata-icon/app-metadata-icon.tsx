@@ -1,4 +1,4 @@
-import { AppMetadata } from '@airgap/beacon-sdk';
+import { AppMetadata } from '@tezos-x/octez.connect-sdk';
 import React, { FC } from 'react';
 
 import { isDefined } from 'src/utils/is-defined';

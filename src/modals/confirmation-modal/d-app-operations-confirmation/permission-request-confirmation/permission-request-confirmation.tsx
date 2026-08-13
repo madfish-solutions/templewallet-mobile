@@ -1,4 +1,4 @@
-import { BeaconMessageType, PermissionRequestOutput } from '@airgap/beacon-sdk';
+import { BeaconMessageType, PermissionRequestOutput } from '@tezos-x/octez.connect-sdk';
 import { Formik } from 'formik';
 import React, { FC, useMemo } from 'react';
 import { useDispatch } from 'react-redux';

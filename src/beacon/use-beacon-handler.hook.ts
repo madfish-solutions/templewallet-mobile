@@ -1,7 +1,10 @@
-import { Serializer } from '@airgap/beacon-sdk';
+import { Serializer } from '@tezos-x/octez.connect-sdk';
 import { useEffect } from 'react';
 import { EmitterSubscription, Linking } from 'react-native';
 
+import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
+import { isWalletConnectPairing, WALLETCONNECT_NOT_SUPPORTED_MESSAGE } from 'src/utils/beacon.utils';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
 import { getUrlQueryParams } from 'src/utils/url.utils';
 
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
@@ -12,29 +15,36 @@ import { isDefined } from '../utils/is-defined';
 
 import { BeaconHandler, isBeaconMessage } from './beacon-handler';
 
-export const beaconDeepLinkHandler = async (
-  url: string | null,
-  onValidDataCallback: EmptyFn,
-  onError: SyncFn<string>
-) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const beaconDeepLinkHandler = async (url: string | null, onValidDataCallback: EmptyFn, onError: SyncFn<any>) => {
   try {
     const searchParams = getUrlQueryParams(url ?? '');
     const type = searchParams.get('type');
     const data = searchParams.get('data');
 
     if (type === 'tzip10' && isDefined(data)) {
-      onValidDataCallback();
       const json = await new Serializer().deserialize(data);
-      if (isBeaconMessage(json)) {
-        await BeaconHandler.addPeer(json).catch(error => {
-          onError(error.toString());
-        });
+
+      if (isWalletConnectPairing(json)) {
+        showErrorToast({ description: WALLETCONNECT_NOT_SUPPORTED_MESSAGE });
+
+        return;
       }
+
+      if (!isBeaconMessage(json)) {
+        return;
+      }
+
+      onValidDataCallback();
+      await BeaconHandler.addPeer(json).catch(error => {
+        onError(error);
+      });
     }
   } catch {}
 };
 
 export const useBeaconHandler = () => {
+  const { trackErrorEvent } = useAnalytics();
   const navigateToModal = useNavigateToModal();
   const { goBack } = useNavigation();
 
@@ -48,9 +58,14 @@ export const useBeaconHandler = () => {
             message: null,
             loading: true
           }),
-        errorMessage => {
+        error => {
           goBack();
-          showErrorToast({ description: errorMessage });
+          trackErrorEvent('BeaconHandlerError', error, [], { url });
+          showErrorToast({
+            description: `Failed to connect to Beacon: ${JSON.stringify(error)}`,
+            isCopyButtonVisible: true,
+            onPress: () => copyStringToClipboard(JSON.stringify(error))
+          });
         }
       );
 

@@ -1,4 +1,4 @@
-import { BeaconRequestOutputMessage } from '@airgap/beacon-sdk';
+import { BeaconRequestOutputMessage } from '@tezos-x/octez.connect-sdk';
 import { ParamsWithKind } from '@taquito/taquito';
 
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';

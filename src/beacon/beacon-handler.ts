@@ -5,9 +5,9 @@ import {
   P2PPairingRequest,
   BeaconResponseInputMessage,
   PeerInfo,
-  WalletClient
-} from '@airgap/beacon-sdk';
-import type { ExtendedP2PPairingResponse } from '@airgap/beacon-types';
+  WalletClient,
+  type ExtendedP2PPairingResponse
+} from '@tezos-x/octez.connect-sdk';
 
 import { isDefined } from '../utils/is-defined';
 
@@ -43,10 +43,12 @@ export class BeaconHandler {
   }
 
   public static addPeer = async (peer: PeerInfo, sendPairingResponse?: boolean) => {
-    if (isDefined(BeaconHandler._walletClient)) {
-      const isConnected = await BeaconHandler._walletClient.isConnected;
-      isConnected && (await BeaconHandler._walletClient.addPeer(peer, sendPairingResponse));
+    if (!isDefined(BeaconHandler._walletClient)) {
+      return Promise.reject(WALLET_CLIENT_ERROR);
     }
+
+    // WalletClient._connect may never resolve `isConnected` after a Matrix failure.
+    return BeaconHandler._walletClient.addPeer(peer, sendPairingResponse);
   };
 
   public static respond = (message: BeaconResponseInputMessage) => {

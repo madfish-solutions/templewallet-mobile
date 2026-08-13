@@ -1,4 +1,4 @@
-import { TezosOperationType } from '@airgap/beacon-sdk';
+import { TezosOperationType } from '@tezos-x/octez.connect-sdk';
 
 import { SemiPartialTezosOperation } from './semi-partial-tezos-operation';
 

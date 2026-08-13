@@ -1,4 +1,4 @@
-import { PermissionInfo } from '@airgap/beacon-sdk';
+import { PermissionInfo } from '@tezos-x/octez.connect-sdk';
 import React, { memo, useCallback } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { useDispatch } from 'react-redux';

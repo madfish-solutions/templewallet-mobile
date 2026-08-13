@@ -1,4 +1,4 @@
-import { defaultValues, Storage, StorageKey, StorageKeyReturnType } from '@airgap/beacon-sdk';
+import { defaultValues, Storage, StorageKey, StorageKeyReturnType } from '@tezos-x/octez.connect-sdk';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { isDefined } from '../utils/is-defined';

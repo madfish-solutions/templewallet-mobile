@@ -1,4 +1,4 @@
-import { SignPayloadRequestOutput } from '@airgap/beacon-sdk';
+import { SignPayloadRequestOutput } from '@tezos-x/octez.connect-sdk';
 import { Uint8ArrayConsumer } from '@taquito/local-forging';
 import { valueDecoder } from '@taquito/local-forging/dist/lib/michelson/codec';
 import { emitMicheline } from '@taquito/michel-codec';

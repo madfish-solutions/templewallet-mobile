@@ -1,4 +1,4 @@
-import { BeaconMessageType, SignPayloadRequestOutput } from '@airgap/beacon-sdk';
+import { BeaconMessageType, SignPayloadRequestOutput } from '@tezos-x/octez.connect-sdk';
 import React, { FC, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
 import { map, switchMap } from 'rxjs/operators';

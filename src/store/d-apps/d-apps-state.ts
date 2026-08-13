@@ -1,4 +1,4 @@
-import { PermissionInfo } from '@airgap/beacon-sdk';
+import { PermissionInfo } from '@tezos-x/octez.connect-sdk';
 
 import { CustomDAppInfo } from 'src/interfaces/custom-dapps-info.interface';
 

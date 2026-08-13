@@ -1,4 +1,4 @@
-import { BeaconMessageType, OperationRequestOutput } from '@airgap/beacon-sdk';
+import { BeaconMessageType, OperationRequestOutput } from '@tezos-x/octez.connect-sdk';
 import React, { FC, useCallback, useMemo } from 'react';
 import { from } from 'rxjs';
 import { mapTo, switchMap } from 'rxjs/operators';

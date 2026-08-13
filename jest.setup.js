@@ -6,7 +6,7 @@ import './src/mocks/react-native-community/netinfo.mock';
 
 import './src/mocks/react-native-config.mock';
 
-import './src/mocks/airgap-beacontransport-postmessage.mock';
+import './src/mocks/octez-connecttransport-postmessage.mock';
 import './src/mocks/taquito-signer.mock';
 import './src/mocks/native-modules.mock';
 

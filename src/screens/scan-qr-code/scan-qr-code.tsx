@@ -24,7 +24,9 @@ import { formatSize } from 'src/styles/format-size';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics, usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
-import { isBeaconPayload } from 'src/utils/beacon.utils';
+import { isBeaconPayload, isWalletConnectPayload, WALLETCONNECT_NOT_SUPPORTED_MESSAGE } from 'src/utils/beacon.utils';
+import { copyStringToClipboard } from 'src/utils/clipboard.utils';
+import { getErrorDerivedEventProps } from 'src/utils/error-analytics-data.utils';
 import { isString } from 'src/utils/is-string';
 import { isSyncPayload } from 'src/utils/sync.utils';
 import { isValidAddress } from 'src/utils/tezos.util';
@@ -90,6 +92,8 @@ const CameraView = () => {
             trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_ZERO_BALANCE, AnalyticsEventCategory.General);
             showErrorToast({ description: `You need to have ${metadata.symbol} to pay gas fee` });
           }
+        } else if (isWalletConnectPayload(data)) {
+          showErrorToast({ description: WALLETCONNECT_NOT_SUPPORTED_MESSAGE });
         } else if (isBeaconPayload(data)) {
           let dataWasIgnored = true;
           beaconDeepLinkHandler(
@@ -102,13 +106,19 @@ const CameraView = () => {
                 loading: true
               });
             },
-            errorMessage => {
+            error => {
               dataWasIgnored = false;
               goBack();
-              trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR, AnalyticsEventCategory.General, {
-                errorMessage
+              trackEvent(
+                ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_HANDLE_ERROR,
+                AnalyticsEventCategory.General,
+                getErrorDerivedEventProps(error, [])
+              );
+              showErrorToast({
+                description: `Failed to handle Beacon payload: ${JSON.stringify(error)}`,
+                isCopyButtonVisible: true,
+                onPress: () => copyStringToClipboard(JSON.stringify(error))
               });
-              showErrorToast({ description: errorMessage });
             }
           );
           if (dataWasIgnored) {

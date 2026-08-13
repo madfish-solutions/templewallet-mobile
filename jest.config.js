@@ -41,8 +41,10 @@ module.exports = {
     '^@stablelib/ed25519$': '<rootDir>/src/mocks/stablelib/ed25519.mock.ts',
     '^@stablelib/bytes$': '<rootDir>/src/mocks/stablelib/bytes.mock.ts',
     '^@stablelib/x25519-session$': '<rootDir>/src/mocks/stablelib/x25519-session.mock.ts',
-    '@airgap/beacon-dapp': '<rootDir>/src/mocks/airgap-beacon-dapp.mock.js',
-    '@airgap/beacon-ui': '<rootDir>/src/mocks/airgap-beacon-ui.mock.js',
-    '@airgap/beacon-transport-postmessage': '<rootDir>/src/mocks/airgap-beacon-transport-postmessage.mock.js'
+    '@tezos-x/octez.connect-dapp': '<rootDir>/src/mocks/octez-connect-dapp.mock.js',
+    '@tezos-x/octez.connect-ui': '<rootDir>/src/mocks/octez-connect-ui.mock.js',
+    '@tezos-x/octez.connect-transport-postmessage': '<rootDir>/src/mocks/octez-connect-transport-postmessage.mock.js',
+    '@tezos-x/octez.connect-transport-walletconnect':
+      '<rootDir>/src/mocks/octez-connect-transport-walletconnect.mock.js'
   }
 };
