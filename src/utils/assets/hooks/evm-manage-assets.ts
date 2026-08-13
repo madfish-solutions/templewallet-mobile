@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
+import { toEvmSendAsset } from 'src/modals/send-modal/evm-send-asset.mapper';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainCollectiblesMetadataSelector } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-selectors';
@@ -14,8 +15,6 @@ import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { EvmSendAsset } from 'src/types/send-asset';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
-
-import { toEvmSendAsset } from '../../../modals/send-modal/evm-send-asset.mapper';
 
 export type EvmManageAsset = EvmSendAsset & {
   address: string;
