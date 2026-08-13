@@ -4,7 +4,7 @@ import { formatSize } from 'src/styles/format-size';
 export const useCollectibleModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
   mediaContainer: {
     backgroundColor: colors.blue10,
-    borderRadius: formatSize(4),
+    borderRadius: formatSize(10),
     overflow: 'hidden'
   },
   collectionContainer: {
