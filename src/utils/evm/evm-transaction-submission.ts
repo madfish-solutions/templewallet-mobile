@@ -17,16 +17,18 @@ type EvmTransactionData = SendTransactionRequest;
 
 type ReceiptOptions = Omit<WaitForTransactionReceiptParameters, 'hash'>;
 
+type EvmTransactionSubmissionResult =
+  | { success: true; receipt: TransactionReceipt }
+  | { success: false; error: unknown };
+
+type EvmTransactionBroadcastResult = { success: true; transactionHash: Hash } | { success: false; error: unknown };
+
 interface SubmitEvmTransactionParams {
   network: EvmNetworkEssentials;
   sourceAddress: HexString;
   transaction: EvmTransactionData;
-  /**
-   * Reuses a transaction that was already broadcast when its receipt could not be obtained.
-   * This prevents a retry from accidentally sending the transfer twice.
-   */
-  submittedHash?: Hash;
   receiptOptions?: ReceiptOptions;
+  onBroadcast?: (transactionHash: Hash) => void;
 }
 
 interface EvmTransactionSubmissionDependencies {
@@ -62,10 +64,19 @@ class EvmTransactionSubmissionService {
     network,
     sourceAddress,
     transaction,
-    submittedHash,
-    receiptOptions
-  }: SubmitEvmTransactionParams): Promise<TransactionReceipt> {
-    const transactionHash = submittedHash ?? (await this.signAndBroadcast(network, sourceAddress, transaction));
+    receiptOptions,
+    onBroadcast
+  }: SubmitEvmTransactionParams): Promise<EvmTransactionSubmissionResult> {
+    const broadcastResult = await this.signAndBroadcast(network, sourceAddress, transaction);
+
+    if (!broadcastResult.success) {
+      return broadcastResult;
+    }
+
+    const { transactionHash } = broadcastResult;
+
+    onBroadcast?.(transactionHash);
+
     let replacementReason: 'cancelled' | 'replaced' | 'repriced' | undefined;
     let receipt: TransactionReceipt;
 
@@ -78,45 +89,57 @@ class EvmTransactionSubmissionService {
         }
       });
     } catch (cause) {
-      throw new EvmTransactionSubmissionError('receipt-unavailable', 'Unable to obtain the transaction receipt', {
-        cause,
-        transactionHash
-      });
+      return {
+        success: false,
+        error: new EvmTransactionSubmissionError('receipt-unavailable', 'Unable to obtain the transaction receipt', {
+          cause,
+          transactionHash
+        })
+      };
     }
 
     if (replacementReason === 'cancelled' || replacementReason === 'replaced') {
-      throw new EvmTransactionSubmissionError(
-        'transaction-replaced',
-        replacementReason === 'cancelled'
-          ? 'The submitted transaction was cancelled'
-          : 'The submitted transaction was replaced by a different transaction',
-        { transactionHash: receipt.transactionHash, receipt }
-      );
+      return {
+        success: false,
+        error: new EvmTransactionSubmissionError(
+          'transaction-replaced',
+          replacementReason === 'cancelled'
+            ? 'The submitted transaction was cancelled'
+            : 'The submitted transaction was replaced by a different transaction',
+          { transactionHash: receipt.transactionHash, receipt }
+        )
+      };
     }
 
     if (receipt.status === 'reverted') {
-      throw new EvmTransactionSubmissionError('transaction-reverted', 'The submitted transaction reverted', {
-        transactionHash: receipt.transactionHash,
-        receipt
-      });
+      return {
+        success: false,
+        error: new EvmTransactionSubmissionError('transaction-reverted', 'The submitted transaction reverted', {
+          transactionHash: receipt.transactionHash,
+          receipt
+        })
+      };
     }
 
-    return receipt;
+    return { success: true, receipt };
   }
 
   private async signAndBroadcast(
     network: EvmNetworkEssentials,
     sourceAddress: HexString,
     transaction: EvmTransactionData
-  ): Promise<Hash> {
+  ): Promise<EvmTransactionBroadcastResult> {
     let account: LocalAccount;
 
     try {
       account = await this.dependencies.getAccount(sourceAddress);
     } catch (cause) {
-      throw new EvmTransactionSubmissionError('account-unavailable', 'Unable to access the selected account', {
-        cause
-      });
+      return {
+        success: false,
+        error: new EvmTransactionSubmissionError('account-unavailable', 'Unable to access the selected account', {
+          cause
+        })
+      };
     }
 
     let isMatchingAccount = false;
@@ -124,21 +147,33 @@ class EvmTransactionSubmissionService {
     try {
       isMatchingAccount = isAddressEqual(account.address, sourceAddress);
     } catch (cause) {
-      throw new EvmTransactionSubmissionError(
-        'signer-address-mismatch',
-        'The revealed signer or selected account address is invalid',
-        { cause }
-      );
+      return {
+        success: false,
+        error: new EvmTransactionSubmissionError(
+          'signer-address-mismatch',
+          'The revealed signer or selected account address is invalid',
+          { cause }
+        )
+      };
     }
 
     if (!isMatchingAccount) {
-      throw new EvmTransactionSubmissionError(
-        'signer-address-mismatch',
-        'The revealed signer does not match the selected account'
-      );
+      return {
+        success: false,
+        error: new EvmTransactionSubmissionError(
+          'signer-address-mismatch',
+          'The revealed signer does not match the selected account'
+        )
+      };
     }
 
-    return this.dependencies.sendTransaction(network, account, transaction);
+    try {
+      const transactionHash = await this.dependencies.sendTransaction(network, account, transaction);
+
+      return { success: true, transactionHash };
+    } catch (error) {
+      return { success: false, error };
+    }
   }
 }
 

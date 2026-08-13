@@ -8,12 +8,13 @@ import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interf
 import { SendAsset } from 'src/types/send-asset';
 import { estimateEvmTransaction } from 'src/utils/evm/estimate-evm-transaction';
 
-const ESTIMATION_RECIPIENT = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045' as HexString;
+const RECIPIENT_DEBOUNCE_MS = 300;
+const ESTIMATION_RECIPIENT: HexString = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
 
 interface UseEvmMaxAmountParams {
   asset: SendAsset;
   recipient: string;
-  sourceAddress?: string;
+  sourceAddress?: HexString;
 }
 
 /**
@@ -26,6 +27,7 @@ export const useEvmMaxAmount = ({ asset, recipient, sourceAddress }: UseEvmMaxAm
   const chainId = asset.chainKind === TempleChainKind.EVM ? asset.chainId : 0;
   const publicClient = useViemPublicClient(chainId);
   const [fee, setFee] = useState<bigint>();
+  const to = isAddress(recipient) ? recipient : ESTIMATION_RECIPIENT;
 
   useEffect(() => {
     let cancelled = false;
@@ -38,23 +40,26 @@ export const useEvmMaxAmount = ({ asset, recipient, sourceAddress }: UseEvmMaxAm
 
     const estimate = async () => {
       try {
-        const estimation = await estimateEvmTransaction(publicClient, sourceAddress as HexString, {
-          to: (isAddress(recipient) ? recipient : ESTIMATION_RECIPIENT) as HexString,
+        const estimation = await estimateEvmTransaction(publicClient, sourceAddress, {
+          to,
           value: 1n
         });
 
         if (!cancelled) setFee(estimation.estimatedFee);
       } catch {
-        if (!cancelled) setFee(undefined);
+        if (!cancelled) setFee(0n);
       }
     };
 
-    void estimate();
+    const timeoutId = setTimeout(() => {
+      void estimate();
+    }, RECIPIENT_DEBOUNCE_MS);
 
     return () => {
       cancelled = true;
+      clearTimeout(timeoutId);
     };
-  }, [isNativeEvmAsset, publicClient, recipient, sourceAddress]);
+  }, [to, isNativeEvmAsset, publicClient, sourceAddress]);
 
   const maxAmount = useMemo(() => {
     const balance = new BigNumber(asset.balance);

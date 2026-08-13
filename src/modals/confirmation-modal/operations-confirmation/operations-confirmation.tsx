@@ -210,6 +210,7 @@ export const OperationsConfirmation: FCWithChildren<Props> = ({
         }}
         confirmAction={{
           disabled: estimations.isLoading || isLoading || !isValid,
+          isLoading: estimations.isLoading || isLoading,
           onPress: submitForm,
           testID: ConfirmationModalSelectors.confirmButton,
           testIDProperties: confirmEventProperties

@@ -18,7 +18,7 @@ export const NetworkIcon: FC<Props> = ({ name, variant = 'compact' }) => {
   const styles = useNetworkLogoStyles();
 
   return (
-    <View style={styles[variant]}>
+    <View style={[styles.common, styles[variant]]}>
       <CryptoLogo name={name} size={variant === 'large' ? formatSize(28) : formatSize(12)} />
     </View>
   );

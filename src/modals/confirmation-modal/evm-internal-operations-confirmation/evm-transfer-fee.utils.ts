@@ -24,8 +24,9 @@ interface LegacyFeeOption extends LegacyFees {
   fee: bigint;
 }
 
-const multiplyByPercentage = (value: bigint, percentage: bigint) =>
-  (value * percentage + FEE_PERCENTAGE_BASE - 1n) / FEE_PERCENTAGE_BASE;
+const ceilDivide = (dividend: bigint, divisor: bigint): bigint => (dividend + divisor - 1n) / divisor;
+
+const multiplyByPercentage = (value: bigint, percentage: bigint) => ceilDivide(value * percentage, FEE_PERCENTAGE_BASE);
 
 export const getEvmFeesForGasPrice = (gasPrice: bigint, estimation: EvmEstimation): EvmFees => {
   if (estimation.type === 'legacy') return { type: 'legacy', gasPrice };
@@ -37,7 +38,7 @@ const getEip1559FeesForMaxFee = (maxFeePerGas: bigint, estimation: Eip1559Estima
   const scaledPriorityFee =
     estimation.maxFeePerGas === 0n
       ? 0n
-      : (estimation.maxPriorityFeePerGas * maxFeePerGas + estimation.maxFeePerGas - 1n) / estimation.maxFeePerGas;
+      : ceilDivide(estimation.maxPriorityFeePerGas * maxFeePerGas, estimation.maxFeePerGas);
 
   return {
     type: 'eip1559',
@@ -85,11 +86,11 @@ export const getEvmFeeOptions = (estimation: EvmEstimation) => {
 export const getGasPriceForNetworkFee = (networkFee: number, gasLimit: bigint) => {
   const feeInWei = parseEther(networkFee.toFixed(18));
 
-  return (feeInWei + gasLimit - 1n) / gasLimit;
+  return ceilDivide(feeInWei, gasLimit);
 };
 
 export const formatNetworkFee = (fee: bigint) => {
-  const formatted = new BigNumber(formatEther(fee)).toFixed(6);
+  const formatted = new BigNumber(formatEther(fee)).decimalPlaces(6).toFixed();
 
   return fee > 0n && formatted === '0.000000' ? '<0.000001' : formatted;
 };

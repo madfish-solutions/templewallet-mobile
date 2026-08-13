@@ -47,36 +47,34 @@ export const EvmInternalOperationsConfirmation: FC<Props> = ({ accountId, asset,
     [asset, atomicAmount, receiverAddress, sourceAddress]
   );
   const feeState = useEvmTransferFee({ sourceAddress, request, asset, atomicAmount });
-  const { isSubmitting, resetSubmissionError, submissionError, submit } = useEvmTransactionSubmission({
+  const { isSubmitting, submit } = useEvmTransactionSubmission({
     chainId: asset.chainId,
     sourceAddress,
     request
   });
-  const transactionError = submissionError ?? feeState.estimationError;
+  const estimationError = feeState.estimationError;
   const retryEstimation = feeState.retry;
   const getSubmissionFees = feeState.getSubmissionFees;
 
   useEffect(() => {
-    if (transactionError) {
-      showErrorToast({ title: 'EVM transaction error', description: transactionError.message });
+    if (estimationError?.message) {
+      showErrorToast({ title: 'Failed to estimate the transaction', description: estimationError.message });
     }
-  }, [transactionError]);
+  }, [estimationError?.message]);
 
-  const retry = useCallback(() => {
-    resetSubmissionError();
-    void retryEstimation();
-  }, [resetSubmissionError, retryEstimation]);
   const confirm = useCallback(async () => {
     const submissionFees = await getSubmissionFees();
 
     if (submissionFees) {
       await submit(submissionFees);
+    } else {
+      showErrorToast({ description: 'Failed to resolve submission fees.' });
     }
   }, [getSubmissionFees, submit]);
 
   useNavigationSetOptions({ headerTitle: renderHeaderTitle }, []);
 
-  const isConfirmDisabled = transactionError
+  const isConfirmDisabled = estimationError
     ? feeState.isEstimating || isSubmitting
     : feeState.isEstimating ||
       isSubmitting ||
@@ -93,9 +91,9 @@ export const EvmInternalOperationsConfirmation: FC<Props> = ({ accountId, asset,
       backAction={{ disabled: isSubmitting, onPress: goBack }}
       confirmAction={{
         disabled: isConfirmDisabled,
-        isLoading: feeState.isEstimating,
-        onPress: transactionError ? retry : confirm,
-        title: transactionError ? 'Retry' : 'Confirm'
+        isLoading: feeState.isEstimating || isSubmitting,
+        onPress: estimationError ? retryEstimation : confirm,
+        title: estimationError ? 'Retry' : 'Confirm'
       }}
     />
   );
