@@ -165,15 +165,16 @@ const EvmCollectibleMedia = memo(({ uri, size }: { uri?: string; size: number })
   }
 
   return (
-    <>
+    <View style={{ width: size, height: size, overflow: 'hidden' }}>
+      <FastImage source={{ uri: src }} style={{ width: size, height: size }} resizeMode="cover" blurRadius={16} />
       <FastImage
         source={{ uri: src }}
-        style={{ width: size, height: size }}
+        style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
         resizeMode="contain"
         onLoad={onSuccess}
         onError={onFail}
       />
       {isLoading ? <ActivityIndicator size="large" /> : null}
-    </>
+    </View>
   );
 });

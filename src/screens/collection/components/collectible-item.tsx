@@ -11,7 +11,6 @@ import { CollectibleImage } from 'src/components/collectible-image';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
 import { APIS_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
@@ -211,18 +210,15 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
         <View style={styles.topContainer}>
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={0.7}>
             <View style={styles.imageWrap}>
-              {item.isAdultContent ? (
-                <ImageBlurOverlay size={imageSize} isBigIcon={true} />
-              ) : (
-                <CollectibleImage
-                  isFullView={true}
-                  slug={slug}
-                  artifactUri={item.artifactUri}
-                  displayUri={item.displayUri}
-                  thumbnailUri={item.thumbnailUri}
-                  size={imageSize}
-                />
-              )}
+              <CollectibleImage
+                isFullView
+                slug={slug}
+                artifactUri={item.artifactUri}
+                displayUri={item.displayUri}
+                thumbnailUri={item.thumbnailUri}
+                size={imageSize}
+                isBlurred={item.isAdultContent}
+              />
             </View>
           </TouchableOpacity>
 

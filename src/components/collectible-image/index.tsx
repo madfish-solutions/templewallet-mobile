@@ -11,6 +11,7 @@ import { isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.u
 import { ActivityIndicator } from '../activity-indicator';
 import { BrokenImage } from '../broken-image';
 import { DataUriImage } from '../data-uri-image';
+import { ImageBlurOverlay } from '../image-blur-overlay';
 
 import { useCollectibleImageStyles } from './styles';
 
@@ -18,11 +19,23 @@ interface Props extends AssetMediaURIs {
   slug: string;
   size: number;
   isFullView?: boolean;
+  isBlurred?: boolean;
+  onReveal?: EmptyFn;
   Fallback?: ComponentType<{ isFullView?: boolean }>;
 }
 
 export const CollectibleImage = memo<Props>(
-  ({ slug, artifactUri, displayUri, thumbnailUri, size, isFullView = false, Fallback }) => {
+  ({
+    slug,
+    artifactUri,
+    displayUri,
+    thumbnailUri,
+    size,
+    isFullView = false,
+    isBlurred = false,
+    onReveal,
+    Fallback
+  }) => {
     const styles = useCollectibleImageStyles();
 
     const { src, isStackFailed, isLoading, onSuccess, onFail } = useCollectibleImagesStack(
@@ -48,7 +61,7 @@ export const CollectibleImage = memo<Props>(
           animated={isFullView} // Performance issues in NFTs grid on iOS
           width={size}
           height={size}
-          style={styles.image}
+          style={styles.containedImage}
           onLoad={onSuccess}
           onError={onFail}
         />
@@ -86,24 +99,34 @@ export const CollectibleImage = memo<Props>(
       } else {
         return (
           <View style={{ width: size, height: size }}>
-            <SvgXml xml={svgXml} width={size} height={size} onError={onFail} onLoad={onSuccess} />
+            <SvgXml
+              xml={svgXml}
+              width={size}
+              height={size}
+              style={styles.containedImage}
+              onError={onFail}
+              onLoad={onSuccess}
+            />
           </View>
         );
       }
     }
 
     return (
-      <>
+      <View style={[styles.container, { width: size, height: size }]}>
+        <FastImage style={styles.image} source={{ uri: src ?? artifactUri }} resizeMode="cover" blurRadius={16} />
         <FastImage
-          style={[styles.image, { height: size, width: size }]}
+          style={[styles.image, isBlurred && { opacity: 0 }]}
           source={{ uri: src ?? artifactUri }}
           resizeMode="contain"
           onError={onFail}
           onLoad={onSuccess}
         />
 
+        {isBlurred ? <ImageBlurOverlay size={size} isBigIcon={isFullView} onPress={onReveal} /> : null}
+
         {isLoading ? <ActivityIndicator size={isFullView ? 'large' : 'small'} /> : null}
-      </>
+      </View>
     );
   }
 );

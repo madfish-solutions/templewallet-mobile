@@ -4,7 +4,6 @@ import { View } from 'react-native';
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { AudioPlaceholder } from 'src/components/audio-placeholder';
 import { CollectibleImage } from 'src/components/collectible-image';
-import { ImageBlurOverlay } from 'src/components/image-blur-overlay';
 import { SimpleModelView } from 'src/components/simple-model-view';
 import { SimplePlayer } from 'src/components/simple-player';
 import { useCollectibleIsAdultSelector } from 'src/store/collectibles/collectibles-selectors';
@@ -25,7 +24,18 @@ export const CollectibleMedia = memo<Props>(({ slug, size, areDetailsLoading, ..
   const [shouldShowBlur = isAdultContent, setShouldShowBlur] = useState<boolean>();
 
   if (isAdultContent && shouldShowBlur) {
-    return <ImageBlurOverlay size={size} isBigIcon={true} onPress={() => setShouldShowBlur(false)} />;
+    return (
+      <CollectibleImage
+        isFullView
+        size={size}
+        slug={slug}
+        artifactUri={props.artifactUri}
+        displayUri={props.displayUri}
+        thumbnailUri={props.thumbnailUri}
+        isBlurred
+        onReveal={() => setShouldShowBlur(false)}
+      />
+    );
   }
 
   if (areDetailsLoading) {

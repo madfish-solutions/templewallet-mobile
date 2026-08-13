@@ -1,4 +1,3 @@
-import FastImage from '@d11/react-native-fast-image';
 import React, { memo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -30,12 +29,8 @@ export const ImageBlurOverlay = memo<Props>(({ size, isBigIcon = false, onPress 
   const isLightTheme = deviceTheme === ThemesEnum.light;
   const iconSize = formatSize(isBigIcon ? ICON_SIZE_BIG : ICON_SIZE_SMALL);
   const iconName = isLightTheme ? IconNameEnum.BlurEyeBlack : IconNameEnum.BlurEyeWhite;
-  const blurImage = isLightTheme ? require('./assets/blur-light.png') : require('./assets/blur-dark.png');
-
   const children = (
     <>
-      <FastImage source={blurImage} style={[styles.blur, { width: size, height: size }]} />
-
       <View style={styles.content}>
         <Icon name={iconName} size={iconSize} />
         {onPress ? <Text style={styles.text}>Tap to reveal</Text> : null}
@@ -45,11 +40,11 @@ export const ImageBlurOverlay = memo<Props>(({ size, isBigIcon = false, onPress 
 
   if (onPress) {
     return (
-      <SafeTouchableOpacity activeOpacity={0.7} onPress={onPress} style={styles.root}>
+      <SafeTouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.root, { width: size, height: size }]}>
         {children}
       </SafeTouchableOpacity>
     );
   }
 
-  return <View style={styles.root}>{children}</View>;
+  return <View style={[styles.root, { width: size, height: size }]}>{children}</View>;
 });

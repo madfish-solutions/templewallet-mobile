@@ -86,13 +86,8 @@ const EvmCollectibleImage = memo<EvmCollectibleImageProps>(({ uri, size }) => {
 
   return (
     <>
-      <FastImage
-        style={[styles.image, { height: size, width: size }]}
-        source={{ uri: src }}
-        resizeMode="contain"
-        onError={onFail}
-        onLoad={onSuccess}
-      />
+      <FastImage style={styles.image} source={{ uri: src }} resizeMode="cover" blurRadius={16} />
+      <FastImage style={styles.image} source={{ uri: src }} resizeMode="contain" onError={onFail} onLoad={onSuccess} />
 
       {isLoading ? <ActivityIndicator size="small" /> : null}
     </>
