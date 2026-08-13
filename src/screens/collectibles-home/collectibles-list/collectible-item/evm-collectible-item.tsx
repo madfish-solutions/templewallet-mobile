@@ -1,6 +1,6 @@
 import FastImage from '@d11/react-native-fast-image';
 import React, { memo, useMemo } from 'react';
-import { StyleProp, Text, View, ViewStyle } from 'react-native';
+import { Platform, StyleProp, Text, View, ViewStyle } from 'react-native';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { BrokenImage } from 'src/components/broken-image';
@@ -17,6 +17,8 @@ import { buildEvmCollectibleImagesStack, isImgUriDataUri, isSvgDataUriInBase64En
 
 import { Balance } from './balance';
 import { useCollectibleItemStyles } from './styles';
+
+const BLUR_RADIUS = Platform.select({ android: 42, default: 16 });
 
 interface Props {
   collectible: EvmDisplayedCollectible;
@@ -86,7 +88,7 @@ const EvmCollectibleImage = memo<EvmCollectibleImageProps>(({ uri, size }) => {
 
   return (
     <>
-      <FastImage style={styles.image} source={{ uri: src }} resizeMode="cover" blurRadius={16} />
+      <FastImage style={styles.image} source={{ uri: src }} resizeMode="cover" blurRadius={BLUR_RADIUS} />
       <FastImage style={styles.image} source={{ uri: src }} resizeMode="contain" onError={onFail} onLoad={onSuccess} />
 
       {isLoading ? <ActivityIndicator size="small" /> : null}

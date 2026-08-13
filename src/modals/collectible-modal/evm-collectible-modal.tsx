@@ -1,6 +1,6 @@
 import FastImage from '@d11/react-native-fast-image';
 import React, { memo, useMemo, useState } from 'react';
-import { Dimensions, Text, View } from 'react-native';
+import { Dimensions, Platform, Text, View } from 'react-native';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { BrokenImage } from 'src/components/broken-image';
@@ -32,6 +32,8 @@ import {
   isSvgDataUriInBase64Encoding,
   normalizeIpfsUri
 } from 'src/utils/image.utils';
+
+const BLUR_RADIUS = Platform.select({ android: 42, default: 16 });
 
 import { CryptoLogo } from '../../components/crypto-logo';
 import { CryptoLogoNameEnum } from '../../components/crypto-logo/logo-name.enum.ts';
@@ -166,7 +168,12 @@ const EvmCollectibleMedia = memo(({ uri, size }: { uri?: string; size: number })
 
   return (
     <View style={{ width: size, height: size, overflow: 'hidden' }}>
-      <FastImage source={{ uri: src }} style={{ width: size, height: size }} resizeMode="cover" blurRadius={16} />
+      <FastImage
+        source={{ uri: src }}
+        style={{ width: size, height: size }}
+        resizeMode="cover"
+        blurRadius={BLUR_RADIUS}
+      />
       <FastImage
         source={{ uri: src }}
         style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}

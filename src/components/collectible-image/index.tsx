@@ -1,6 +1,6 @@
 import FastImage from '@d11/react-native-fast-image';
 import React, { ComponentType, memo } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { WebView } from 'react-native-webview';
 
@@ -14,6 +14,8 @@ import { DataUriImage } from '../data-uri-image';
 import { ImageBlurOverlay } from '../image-blur-overlay';
 
 import { useCollectibleImageStyles } from './styles';
+
+const BLUR_RADIUS = Platform.select({ android: 42, default: 16 });
 
 interface Props extends AssetMediaURIs {
   slug: string;
@@ -44,6 +46,13 @@ export const CollectibleImage = memo<Props>(
       displayUri,
       thumbnailUri,
       isFullView
+    );
+    const { src: blurSrc, onFail: onBlurFail } = useCollectibleImagesStack(
+      slug,
+      artifactUri,
+      displayUri,
+      thumbnailUri,
+      false
     );
 
     if (isStackFailed && artifactUri == null) {
@@ -114,16 +123,22 @@ export const CollectibleImage = memo<Props>(
 
     return (
       <View style={[styles.container, { width: size, height: size }]}>
-        <FastImage style={styles.image} source={{ uri: src ?? artifactUri }} resizeMode="cover" blurRadius={16} />
         <FastImage
-          style={[styles.image, isBlurred && { opacity: 0 }]}
+          style={styles.image}
+          source={blurSrc ? { uri: blurSrc } : undefined}
+          resizeMode="cover"
+          blurRadius={BLUR_RADIUS}
+          onError={onBlurFail}
+        />
+        <FastImage
+          style={[styles.image, isBlurred && styles.zeroOpacity]}
           source={{ uri: src ?? artifactUri }}
           resizeMode="contain"
           onError={onFail}
           onLoad={onSuccess}
         />
 
-        {isBlurred ? <ImageBlurOverlay size={size} isBigIcon={isFullView} onPress={onReveal} /> : null}
+        {isBlurred && !isLoading ? <ImageBlurOverlay size={size} isBigIcon={isFullView} onPress={onReveal} /> : null}
 
         {isLoading ? <ActivityIndicator size={isFullView ? 'large' : 'small'} /> : null}
       </View>

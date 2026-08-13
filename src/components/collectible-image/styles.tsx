@@ -13,6 +13,9 @@ export const useCollectibleImageStyles = createUseStylesMemoized(() => ({
     bottom: 0,
     left: 0
   },
+  zeroOpacity: {
+    opacity: 0
+  },
   containedImage: {
     borderRadius: formatSize(4)
   },
