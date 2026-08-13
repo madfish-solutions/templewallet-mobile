@@ -27,10 +27,21 @@ export const EvmCollectibleImage = memo<Props>(({ uri, size, isFullView = false 
 
   const isDataUri = src != null && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src));
   const foreground = isDataUri ? (
-    <DataUriImage dataUri={src} width={size} height={size} onLoad={onSuccess} onError={onFail} />
+    <DataUriImage
+      dataUri={src}
+      width={size}
+      height={size}
+      style={!isFullView ? styles.rounded : undefined}
+      onLoad={onSuccess}
+      onError={onFail}
+    />
   ) : (
     <FastImage style={styles.image} source={{ uri: src }} resizeMode="contain" onLoad={onSuccess} onError={onFail} />
   );
+
+  if (isDataUri) {
+    return foreground;
+  }
 
   return (
     <BlurredImageFrame

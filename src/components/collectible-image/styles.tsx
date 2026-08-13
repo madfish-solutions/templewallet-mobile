@@ -9,6 +9,9 @@ export const useCollectibleImageStyles = createUseStylesMemoized(() => ({
     width: '100%',
     height: '100%'
   },
+  containedImage: {
+    borderRadius: formatSize(4)
+  },
   brokenImage: {
     width: '100%',
     height: '100%'
