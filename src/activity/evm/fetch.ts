@@ -47,24 +47,28 @@ const MAX_CACHED_ACTIVITIES = 500;
 
 const parsedActivitiesCache = new Map<string, EvmActivity>();
 
-// The key includes the slice's log-index range: a transaction split across page boundaries must not
+// The key includes the account: parsed operations are account-relative (direction, approvals, fees).
+// It also includes the slice's log-index range: a transaction split across page boundaries must not
 // freeze in its partial form - a different slice misses the cache, re-parses and merges downstream
-const toCacheKey = (chainId: number, hash: string, transfers: EtherlinkTokenTransfer[]) => {
+const toCacheKey = (accountAddress: string, chainId: number, hash: string, transfers: EtherlinkTokenTransfer[]) => {
   const logIndexes = transfers.map(({ log_index: logIndex }) => logIndex);
   const range = logIndexes.length > 0 ? `${Math.min(...logIndexes)}-${Math.max(...logIndexes)}` : '';
 
-  return `${chainId}:${hash.toLowerCase()}:${range}`;
+  return `${accountAddress.toLowerCase()}:${chainId}:${hash.toLowerCase()}:${range}`;
 };
 
-const putCachedActivity = (chainId: number, transfers: EtherlinkTokenTransfer[], activity: EvmActivity) =>
+const putCachedActivity = (
+  accountAddress: string,
+  chainId: number,
+  transfers: EtherlinkTokenTransfer[],
+  activity: EvmActivity
+) =>
   putToCappedCache(
     parsedActivitiesCache,
-    toCacheKey(chainId, activity.hash, transfers),
+    toCacheKey(accountAddress, chainId, activity.hash, transfers),
     activity,
     MAX_CACHED_ACTIVITIES
   );
-
-export const resetEvmActivityCache = () => parsedActivitiesCache.clear();
 
 const INTEGER_REGEX = /^-?\d+$/;
 
@@ -472,7 +476,7 @@ export const fetchEtherlinkActivities = async (
         return undefined;
       }
 
-      const cachedActivity = parsedActivitiesCache.get(toCacheKey(chainId, hash, txTokensTransfers));
+      const cachedActivity = parsedActivitiesCache.get(toCacheKey(accountAddress, chainId, hash, txTokensTransfers));
 
       if (cachedActivity) {
         return cachedActivity;
@@ -504,7 +508,7 @@ export const fetchEtherlinkActivities = async (
         value: tx?.value ?? null
       };
 
-      putCachedActivity(chainId, txTokensTransfers, activity);
+      putCachedActivity(accountAddress, chainId, txTokensTransfers, activity);
 
       return activity;
     })

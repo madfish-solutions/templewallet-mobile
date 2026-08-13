@@ -2,7 +2,6 @@ import { useIsFocused } from '@react-navigation/native';
 import { ChainIds } from '@taquito/taquito';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { resetEvmActivityCache } from 'src/activity/evm/fetch';
 import {
   ActivityFeedAssetFilter,
   ActivityFeedController,
@@ -74,7 +73,6 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
     setFeedState(buildInitialFeedState(sessionKey));
   }
 
-  const previousAccountKeyRef = useRef<string | undefined>(undefined);
   const controllerRef = useRef<ActivityFeedController | undefined>(undefined);
   const isFocusedRef = useRef(isFocused);
   isFocusedRef.current = isFocused;
@@ -140,14 +138,6 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
           filter?.chainKind === TempleChainKind.EVM ? filter.contract : undefined
         )
       );
-    }
-
-    // The cache is per account: clear it when the account changes, keep it when only the asset filter changes
-    const accountKey = `${tezosAddress ?? ''}:${evmAddress ?? ''}`;
-
-    if (previousAccountKeyRef.current !== accountKey) {
-      previousAccountKeyRef.current = accountKey;
-      resetEvmActivityCache();
     }
 
     const controller = createActivityFeedController({
