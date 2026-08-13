@@ -1,11 +1,10 @@
 import BigNumber from 'bignumber.js';
 import React, { memo, useCallback, useMemo } from 'react';
-import { StyleProp, Text, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { NetworkIcon } from 'src/components/network-icon';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import {
@@ -65,7 +64,7 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, showInfo 
   );
 
   return (
-    <SafeTouchableOpacity activeOpacity={0.7} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
+    <TouchableOpacity activeOpacity={0.7} onPress={handleNavigate} style={[styles.root, style, { width: size }]}>
       <View style={[styles.image, { width: size, height: size }]}>
         <CollectibleItemImage
           slug={slug}
@@ -99,6 +98,6 @@ export const CollectibleItem = memo<Props>(({ slug, collectible, size, showInfo 
           </Text>
         </View>
       ) : null}
-    </SafeTouchableOpacity>
+    </TouchableOpacity>
   );
 });
