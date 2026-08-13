@@ -426,15 +426,29 @@ export const fetchEtherlinkActivities = async (
   } = await getEtherlinkHistoryData(pageParams, accountAddress, signal);
 
   const rawActivitiesByHash = new Map<string, RawActivity>();
+  const coinDeltaByTxHash = new Map<string, bigint>();
 
-  explicitOperations.forEach((op, i) => {
-    const fee = op.fee?.value ?? '0';
-    const { delta: nativeCoinDeltaWithFee } = coinBalanceHistoryItems[i] ?? { delta: `-${fee}` };
+  coinBalanceHistoryItems.forEach(({ transaction_hash: transactionHash, delta }) => {
+    if (!transactionHash) {
+      return;
+    }
+
+    const key = transactionHash.toLowerCase();
+    const currentDelta = coinDeltaByTxHash.get(key) ?? 0n;
+
+    coinDeltaByTxHash.set(key, currentDelta + toBigInt(delta));
+  });
+
+  explicitOperations.forEach(op => {
+    const fee = toBigInt(op.fee?.value ?? '0');
+    const accountPaidFee = equalsIgnoreCase(op.from.hash, accountAddress) ? fee : 0n;
+    const balanceDelta = coinDeltaByTxHash.get(op.hash.toLowerCase());
+    const nativeCoinDelta = balanceDelta == null ? 0n : balanceDelta + accountPaidFee;
 
     rawActivitiesByHash.set(op.hash, {
       tx: op,
       tokensTransfers: [],
-      nativeCoinDelta: (toBigInt(nativeCoinDeltaWithFee) + toBigInt(fee)).toString()
+      nativeCoinDelta: nativeCoinDelta.toString()
     });
   });
 

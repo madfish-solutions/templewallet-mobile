@@ -240,7 +240,7 @@ export interface EtherlinkCoinBalanceHistoryItem {
   block_number: number;
   block_timestamp: string;
   delta: string;
-  transaction_hash: HexString;
+  transaction_hash: HexString | null;
   value: string;
 }
 
