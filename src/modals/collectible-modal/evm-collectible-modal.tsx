@@ -2,6 +2,8 @@ import React, { memo, useMemo, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
+import { CryptoLogo } from 'src/components/crypto-logo';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum.ts';
 import { Divider } from 'src/components/divider/divider';
 import { EvmCollectibleImage } from 'src/components/evm-collectible-image';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
@@ -21,9 +23,6 @@ import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { fromTokenSlug } from 'src/utils/from-token-slug.ts';
 import { IPFS_GATE, IPFS_PROTOCOL, normalizeIpfsUri } from 'src/utils/image.utils';
-
-import { CryptoLogo } from '../../components/crypto-logo';
-import { CryptoLogoNameEnum } from '../../components/crypto-logo/logo-name.enum.ts';
 
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributeGrid } from './components/collectible-attributes';
@@ -55,7 +54,7 @@ export const EvmCollectibleModal = memo(() => {
   const collectionName = metadata?.name ?? 'Unknown collection';
   const tokenStandard = metadata?.standard ? metadata.standard.replace('erc', 'ERC ') : '---';
 
-  const metadataLink = getMetadataLink(metadata?.metadataUri);
+  const metadataLink = getMetadataLink(metadata?.metadataUri ?? undefined);
   const contractLink = chain ? `${chain.activeBlockExplorer.url}/address/${contractAddress}` : undefined;
   const segments = attributes.length ? [Segment.Details, Segment.Attributes] : [];
 
@@ -132,11 +131,9 @@ export const EvmCollectibleModal = memo(() => {
 const getMetadataLink = (uri?: string): string | undefined => {
   const normalizedUri = normalizeIpfsUri(uri);
 
-  if (!normalizedUri) {
+  if (!normalizedUri?.startsWith(IPFS_PROTOCOL)) {
     return undefined;
   }
 
-  return normalizedUri.startsWith(IPFS_PROTOCOL)
-    ? `${IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`
-    : normalizedUri;
+  return `${IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`;
 };

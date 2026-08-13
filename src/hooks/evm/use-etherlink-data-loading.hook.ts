@@ -22,7 +22,11 @@ import {
   loadEtherlinkBalancesOnChain,
   readContractAssetsBalancesOnChain
 } from 'src/utils/evm/etherlink-balances.utils';
-import { getEvmCollectibleMetadata, getEvmTokenMetadata } from 'src/utils/evm/on-chain/metadata';
+import {
+  getEvmCollectibleMetadata,
+  getEvmCollectibleMetadataUri,
+  getEvmTokenMetadata
+} from 'src/utils/evm/on-chain/metadata';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { useInterval } from 'src/utils/hooks/use-interval';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
@@ -169,7 +173,8 @@ export const useEtherlinkDataLoading = () => {
             inFlightMetadataFetches.delete(checkedKey);
           });
       } else {
-        if (collectiblesMetadata[slug]) {
+        const existingMetadata = collectiblesMetadata[slug];
+        if (existingMetadata?.metadataUri !== undefined) {
           continue;
         }
 
@@ -181,6 +186,20 @@ export const useEtherlinkDataLoading = () => {
 
         inFlightMetadataFetches.add(checkedKey);
         (async () => {
+          if (existingMetadata) {
+            const metadataUri = await getEvmCollectibleMetadataUri(currentNetwork, contract, tokenId, standard);
+
+            dispatch(
+              processLoadedEvmCollectiblesMetadataAction({
+                chainId: ETHERLINK_MAINNET_CHAIN_ID,
+                metadata: { [slug]: { ...existingMetadata, metadataUri } }
+              })
+            );
+            checkedMetadataSlugs.add(checkedKey);
+
+            return;
+          }
+
           const metadata = await getEvmCollectibleMetadata(currentNetwork, contract, tokenId, standard);
           if (metadata == null) {
             checkedMetadataSlugs.add(checkedKey);

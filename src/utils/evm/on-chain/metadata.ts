@@ -90,6 +90,54 @@ export const getEvmCollectibleMetadata = async (
   }
 };
 
+export const getEvmCollectibleMetadataUri = async (
+  network: EvmNetworkEssentials,
+  contract: HexString,
+  tokenId = '0',
+  standard: EvmCollectibleAssetStandard
+): Promise<string | null> => {
+  try {
+    const bigIntTokenId = BigInt(tokenId);
+
+    if (standard === EvmAssetStandard.ERC1155) {
+      const rawUri = await executeEvmReadContract<string>(network, {
+        address: contract,
+        abi: erc1155Abi,
+        functionName: 'uri',
+        args: [bigIntTokenId]
+      });
+      if (!rawUri) {
+        throw new Error('ERC-1155 contract returned no uri');
+      }
+
+      return getErc1155CandidateUris(rawUri, bigIntTokenId)[0];
+    }
+
+    const metadataUri = await executeEvmReadContract<string>(network, {
+      address: contract,
+      abi: erc721Abi,
+      functionName: 'tokenURI',
+      args: [bigIntTokenId]
+    });
+    if (!metadataUri) {
+      throw new Error('ERC-721 contract returned no tokenURI');
+    }
+
+    return metadataUri;
+  } catch (error) {
+    if (isRetryableRpcError(error)) {
+      throw error;
+    }
+
+    console.error(
+      `ChainId: ${network.chainId}. Failed to get collectible metadata URI for: ${contract}_${tokenId}.`,
+      error
+    );
+
+    return null;
+  }
+};
+
 const getErc721Metadata = async (
   network: EvmNetworkEssentials,
   contract: HexString,
@@ -150,16 +198,8 @@ const getErc1155Metadata = async (
     throw new Error('ERC-1155 contract returned no uri');
   }
 
-  const tokenIdStr = tokenId.toString();
-
   // EIP-1155 requires `{id}` to be the lowercase 64-char hex form; some non-compliant contracts expect decimal
-  const candidateUris = [
-    ...new Set([
-      rawUri.replace('{id}', tokenId.toString(16).padStart(64, '0')),
-      rawUri.replace('{id}', tokenIdStr.padStart(64, '0')),
-      rawUri.replace('{id}', tokenIdStr)
-    ])
-  ];
+  const candidateUris = getErc1155CandidateUris(rawUri, tokenId);
 
   let metadataUri = candidateUris[0];
   let remoteMetadata: Awaited<ReturnType<typeof fetchCollectibleJsonMetadata>> | undefined;
@@ -184,6 +224,18 @@ const getErc1155Metadata = async (
     symbol: getSettledValue(symbol) ?? remoteMetadata.collectibleName,
     metadataUri
   };
+};
+
+const getErc1155CandidateUris = (rawUri: string, tokenId: bigint): string[] => {
+  const tokenIdStr = tokenId.toString();
+
+  return [
+    ...new Set([
+      rawUri.replace('{id}', tokenId.toString(16).padStart(64, '0')),
+      rawUri.replace('{id}', tokenIdStr.padStart(64, '0')),
+      rawUri.replace('{id}', tokenIdStr)
+    ])
+  ];
 };
 
 interface CollectibleJsonMetadata {
