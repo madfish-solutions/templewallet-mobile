@@ -20,7 +20,7 @@ export const CollectibleAttributes = memo<Props>(({ attributes }) => (
     attributes={attributes.map(({ attribute }) => ({
       name: attribute.name,
       value: attribute.value,
-      rarity: attribute.rarity ?? 0
+      rarity: attribute.rarity
     }))}
   />
 ));
@@ -50,7 +50,9 @@ const CollectibleAttributeView: FC<CollectibleAttributeProps> = ({ name, value, 
     <View style={styles.root}>
       <Text style={styles.name}>{name}</Text>
       <Text style={styles.value}>{value}</Text>
-      {rarity !== undefined ? <Text style={styles.rarity}>{`${rarity.toFixed(2)}%`}</Text> : null}
+      {rarity !== undefined && Number.isFinite(rarity) && rarity !== 0 ? (
+        <Text style={styles.rarity}>{`${rarity.toFixed(2)}%`}</Text>
+      ) : null}
     </View>
   );
 };
