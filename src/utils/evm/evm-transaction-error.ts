@@ -2,7 +2,6 @@ import {
   decodeErrorResult,
   FeeCapTooHighError,
   FeeCapTooLowError,
-  Hash,
   HttpRequestError,
   InsufficientFundsError,
   IntrinsicGasTooHighError,
@@ -37,8 +36,6 @@ export interface EvmTransactionError {
   code: EvmTransactionErrorCode;
   message: string;
   cause: unknown;
-  /** Present only when broadcasting succeeded and retrying must resume receipt polling. */
-  pendingTransactionHash?: Hash;
 }
 
 const EVM_TRANSACTION_ERROR_MESSAGES = {
@@ -207,7 +204,7 @@ const normalizeSubmissionError = (error: EvmTransactionSubmissionError): EvmTran
           ? causeError
           : makeError('timeout', EVM_TRANSACTION_ERROR_MESSAGES.timeout, error);
 
-      return { ...normalizedCause, cause: error, pendingTransactionHash: error.transactionHash };
+      return { ...normalizedCause, cause: error };
     }
     case 'signer-address-mismatch':
       return makeError('invalid-params', EVM_TRANSACTION_ERROR_MESSAGES.invalidParams, error);

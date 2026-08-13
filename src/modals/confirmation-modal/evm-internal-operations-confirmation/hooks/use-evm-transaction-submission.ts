@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Hash, TransactionReceipt } from 'viem';
+import { useCallback, useRef, useState } from 'react';
 
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { StacksEnum } from 'src/navigator/enums/stacks.enum';
 import { dispatch as storeDispatch } from 'src/store';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { navigateAction } from 'src/store/root-state.actions';
-import { showSuccessToast } from 'src/toast/toast.utils';
+import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { EvmTransferRequest } from 'src/utils/evm/build-evm-transfer-request';
 import { EvmFees } from 'src/utils/evm/estimate-evm-transaction';
 import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.utils';
-import { EvmTransactionError, normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
+import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import { evmTransactionSubmissionService } from 'src/utils/evm/evm-transaction-submission';
 
 interface Props {
@@ -27,8 +26,6 @@ interface SubmitParams {
 
 export const useEvmTransactionSubmission = ({ chainId, sourceAddress, request }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionError, setSubmissionError] = useState<EvmTransactionError>();
-  const [submittedHash, setSubmittedHash] = useState<Hash>();
   const submissionInProgressRef = useRef(false);
   const chain = useEvmChain(chainId);
   const knownAssets = useEvmAccountChainAssetsSelector(sourceAddress, chainId);
@@ -41,52 +38,46 @@ export const useEvmTransactionSubmission = ({ chainId, sourceAddress, request }:
 
       submissionInProgressRef.current = true;
       setIsSubmitting(true);
-      setSubmissionError(undefined);
       const network = toEvmNetworkEssentials(chain);
-      let receipt: TransactionReceipt;
+      const result = await evmTransactionSubmissionService.submit({
+        network,
+        sourceAddress,
+        transaction: { ...request, gas: gasLimit, ...fees },
+        onBroadcast: hash => {
+          showSuccessToast({
+            operationHash: hash,
+            operationUrl: `${chain.activeBlockExplorer.url}/tx/${hash}`,
+            title: 'Success!',
+            description: 'Transaction request sent! Confirming...'
+          });
+          storeDispatch(navigateAction({ screen: StacksEnum.MainStack }));
+        }
+      });
 
-      try {
-        receipt = await evmTransactionSubmissionService.submit({
-          network,
-          sourceAddress,
-          submittedHash,
-          transaction: { ...request, gas: gasLimit, ...fees }
-        });
-      } catch (error) {
-        const normalizedError = normalizeEvmTransactionError(error);
+      setIsSubmitting(false);
+      submissionInProgressRef.current = false;
 
-        setSubmittedHash(normalizedError.pendingTransactionHash);
-        setSubmissionError(normalizedError);
-        setIsSubmitting(false);
-        submissionInProgressRef.current = false;
+      if (!result.success) {
+        const { message } = normalizeEvmTransactionError(result.error);
+
+        showErrorToast({ title: `Failed to confirm ${chain.name} transaction`, description: message });
 
         return;
       }
 
-      const hash = receipt.transactionHash;
+      const hash = result.receipt.transactionHash;
 
-      setSubmittedHash(undefined);
-      setIsSubmitting(false);
-      submissionInProgressRef.current = false;
       showSuccessToast({
         operationHash: hash,
         operationUrl: `${chain.activeBlockExplorer.url}/tx/${hash}`,
         title: 'Success!',
         description: `${chain.name} transaction confirmed`
       });
-      storeDispatch(navigateAction({ screen: StacksEnum.MainStack }));
 
       void loadEtherlinkBalancesOnChain({ network, account: sourceAddress, knownAssets }).catch(console.error);
     },
-    [chain, knownAssets, request, sourceAddress, submittedHash]
+    [chain, knownAssets, request, sourceAddress]
   );
 
-  useEffect(() => {
-    setSubmittedHash(undefined);
-    setSubmissionError(undefined);
-  }, [chainId, request, sourceAddress]);
-
-  const resetSubmissionError = useCallback(() => setSubmissionError(undefined), []);
-
-  return { isSubmitting, resetSubmissionError, submissionError, submit };
+  return { isSubmitting, submit };
 };
