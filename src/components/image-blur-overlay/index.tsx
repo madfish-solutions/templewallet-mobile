@@ -1,13 +1,11 @@
 import React, { memo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { ThemesEnum } from 'src/interfaces/theme.enum';
 import { useThemeSelector } from 'src/store/settings/settings-selectors';
 import { formatSize } from 'src/styles/format-size';
-
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 
 import { useBlurStyles } from './styles';
 
@@ -37,9 +35,9 @@ export const ImageBlurOverlay = memo<Props>(({ size, isBigIcon = false, onPress 
 
   if (onPress) {
     return (
-      <SafeTouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.root, { width: size, height: size }]}>
+      <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.root, { width: size, height: size }]}>
         {content}
-      </SafeTouchableOpacity>
+      </TouchableOpacity>
     );
   }
 
