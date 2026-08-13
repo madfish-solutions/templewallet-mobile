@@ -5,7 +5,6 @@ import { CopyAddressPopup } from 'src/components/copy-address-popup';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
-import { formatSize } from 'src/styles/format-size';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { includesIgnoreCase } from 'src/utils/string.utils';
@@ -97,7 +96,6 @@ export const AccountDropdownBase = memo<Props>(
           isSearchable
           value={value}
           list={groupedList}
-          listItemHeight={formatSize(84)}
           equalityFn={accountEqualityFn}
           renderValue={props => renderValue({ ...props, value })}
           renderListItem={renderAccountListItem}

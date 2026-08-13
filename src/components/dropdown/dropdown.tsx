@@ -1,6 +1,6 @@
+import { FlashList, FlashListProps, FlashListRef, ListRenderItem } from '@shopify/flash-list';
 import React, { memo, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { StyleProp, Text, View, ViewStyle, ActivityIndicator, TouchableOpacity } from 'react-native';
 
 import { emptyComponent } from 'src/config/general';
 import { useDropdownHeight } from 'src/hooks/use-dropdown-height.hook';
@@ -14,7 +14,6 @@ import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { Divider } from '../divider/divider';
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { SearchInput } from '../search-input/search-input';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
@@ -22,14 +21,13 @@ import { DropdownItemContainer } from './dropdown-item-container/dropdown-item-c
 import { DropdownSelectors } from './selectors';
 import { useDropdownStyles } from './styles';
 
-export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>, TestIdProps {
+export interface DropdownProps<T> extends Pick<FlashListProps<T>, 'keyExtractor'>, TestIdProps {
   description: string;
   list: T[];
   emptyListText?: string;
   isSearchable?: boolean;
   searchPlaceholder?: string;
   renderSearchActionButtons?: DropdownActionButtonsComponent;
-  listItemHeight?: number;
   listItemSeparatorSize?: number;
   listItemDividerSize?: number;
   isCompactListItem?: boolean;
@@ -81,7 +79,6 @@ const DropdownComponent = <T extends unknown>({
   list,
   emptyListText = 'No assets found.',
   description,
-  listItemHeight = formatSize(64),
   listItemSeparatorSize = formatSize(16),
   listItemDividerSize = formatSize(8),
   isCompactListItem = false,
@@ -109,7 +106,7 @@ const DropdownComponent = <T extends unknown>({
   triggerWrapperRef
 }: DropdownProps<T> & DropdownValueProps<T>) => {
   const { trackEvent } = useAnalytics();
-  const ref = useRef<FlatList<T>>(null);
+  const ref = useRef<FlashListRef<T>>(null);
   const styles = useDropdownStyles();
   const dropdownBottomSheetController = useBottomSheetController();
   const afterCloseRef = useRef<EmptyFn>(undefined);
@@ -128,28 +125,16 @@ const DropdownComponent = <T extends unknown>({
     return result;
   }, [getListItemSectionTitle, list]);
 
-  const getItemLayout = useCallback(
-    (_: unknown, index: number) => {
-      const sectionTitle = itemsTitles[index];
-      const sectionsTitlesBeforeCount = Object.keys(itemsTitles).filter(key => Number(key) < index).length;
-      const rowDividerSize = listItemDividerSize;
-      const sectionTitleSize = formatSize(22);
-      const itemSeparatorSize = listItemSeparatorSize;
-
-      return {
-        length: listItemHeight + rowDividerSize + (sectionTitle ? sectionTitleSize : 0),
-        index,
-        offset:
-          index * (listItemHeight + rowDividerSize + itemSeparatorSize) + sectionsTitlesBeforeCount * sectionTitleSize
-      };
-    },
-    [itemsTitles, listItemDividerSize, listItemHeight, listItemSeparatorSize]
-  );
+  const listExtraData = useMemo(() => ({ itemsTitles, value }), [itemsTitles, value]);
   const contentHeight = useDropdownHeight();
   const renderItemSeparator = useCallback(() => <Divider size={listItemSeparatorSize} />, [listItemSeparatorSize]);
+  const getItemType = useCallback(
+    (_: T, index: number) => (isDefined(itemsTitles[index]) ? 'section-row' : 'row'),
+    [itemsTitles]
+  );
 
-  const renderItem = useCallback(
-    ({ item, index }: ListRenderItemInfo<T>) => {
+  const renderItem = useCallback<ListRenderItem<T>>(
+    ({ item, index }) => {
       const isSelected = equalityFn(item, value);
       const sectionTitle = itemsTitles[index];
 
@@ -163,8 +148,7 @@ const DropdownComponent = <T extends unknown>({
           {isDefined(sectionTitle) && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
           {listItemDividerSize > 0 && <Divider size={listItemDividerSize} />}
           <TouchableWithAnalytics
-            Component={SafeTouchableOpacity}
-            key={index}
+            Component={TouchableOpacity}
             onPress={handlePress}
             testID={DropdownSelectors.option}
             testIDProperties={itemTestIDPropertiesFn?.(item)}
@@ -192,21 +176,14 @@ const DropdownComponent = <T extends unknown>({
   );
 
   const scroll = useCallback(() => {
-    if (!isDefined(ref.current) || !isDefined(value) || !isDefined(list) || list.length === 0) {
+    if (!isDefined(ref.current) || !isDefined(value) || list.length === 0) {
       return void 0;
     }
     const foundIndex = list.findIndex(item => equalityFn(item, value));
     const index = foundIndex > -1 ? foundIndex : 0;
-    if (foundIndex >= list.length) {
-      return void 0;
-    }
 
-    try {
-      ref.current.scrollToIndex({ index, animated: true });
-    } catch (e) {
-      console.error(e);
-    }
-  }, [value, list]);
+    void ref.current.scrollToIndex({ index, animated: true }).catch(console.error);
+  }, [equalityFn, value, list]);
 
   const closeDropdown = useCallback(
     (onClosed?: EmptyFn) => {
@@ -225,7 +202,7 @@ const DropdownComponent = <T extends unknown>({
   return (
     <>
       <View style={styles.valueContainer} ref={triggerWrapperRef}>
-        <SafeTouchableOpacity
+        <TouchableOpacity
           style={styles.valueContainer}
           disabled={disabled}
           onPress={() => {
@@ -239,7 +216,7 @@ const DropdownComponent = <T extends unknown>({
           testID={testID}
         >
           {renderValue({ value, disabled, isCollectibleScreen })}
-        </SafeTouchableOpacity>
+        </TouchableOpacity>
       </View>
 
       <BottomSheet
@@ -272,20 +249,19 @@ const DropdownComponent = <T extends unknown>({
               <ActivityIndicator size="large" />
             </View>
           ) : (
-            <FlatList
+            <FlashList
               ref={ref}
               data={list}
+              extraData={listExtraData}
               renderItem={renderItem}
               keyExtractor={keyExtractor}
-              getItemLayout={getItemLayout}
+              getItemType={getItemType}
               contentContainerStyle={[
-                styles.flatListContentContainer,
-                isCompactListItem && styles.tokenSelectorFlatListContentContainer
+                styles.listContentContainer,
+                isCompactListItem && styles.compactListContentContainer
               ]}
               ItemSeparatorComponent={renderItemSeparator}
               ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
-              windowSize={10}
-              updateCellsBatchingPeriod={150}
             />
           )}
         </View>
