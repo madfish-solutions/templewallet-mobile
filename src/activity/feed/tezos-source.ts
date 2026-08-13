@@ -3,7 +3,7 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { isDefined } from 'src/utils/is-defined';
 
 import { parseTezosOperationsGroup } from '../tezos';
-import { fetchOperGroupsForOperations, fetchOperations } from '../tezos/fetch';
+import { createOperationsFetcher, fetchOperGroupsForOperations, OperationsFetcher } from '../tezos/fetch';
 import { ActivityStatus } from '../types';
 import { throwIfAborted } from '../utils';
 
@@ -11,20 +11,14 @@ import { fetchWithPageLoop } from './page-loop';
 import { ActivityFeedPage, ActivityFeedSource, TezosSourceCursor } from './types';
 
 const fetchTezosPage = async (
+  fetchOperations: OperationsFetcher,
   accountAddress: string,
   chainId: string,
-  assetSlug: string | undefined,
   cursor: TezosSourceCursor | undefined,
   signal: AbortSignal
 ): Promise<ActivityFeedPage<TezosSourceCursor>> => {
   throwIfAborted(signal);
-  const { operations, oldestRawOperation } = await fetchOperations(
-    accountAddress,
-    assetSlug,
-    OPERATION_LIMIT,
-    cursor,
-    signal
-  );
+  const { operations, oldestRawOperation } = await fetchOperations(OPERATION_LIMIT, cursor, signal);
 
   // Ids only decrease between pages, so an empty raw page means there is nothing older left
   if (!oldestRawOperation) {
@@ -61,12 +55,16 @@ export const createTezosActivitySource = (
   accountAddress: string,
   chainId: string,
   assetSlug?: string
-): ActivityFeedSource<TezosSourceCursor> => ({
-  chain: TempleChainKind.Tezos,
-  fetch: (cursor, signal) =>
-    fetchWithPageLoop(
-      (pageCursor, pageSignal) => fetchTezosPage(accountAddress, chainId, assetSlug, pageCursor, pageSignal),
-      cursor,
-      signal
-    )
-});
+): ActivityFeedSource<TezosSourceCursor> => {
+  const fetchOperations = createOperationsFetcher(accountAddress, assetSlug);
+
+  return {
+    chain: TempleChainKind.Tezos,
+    fetch: (cursor, signal) =>
+      fetchWithPageLoop(
+        (pageCursor, pageSignal) => fetchTezosPage(fetchOperations, accountAddress, chainId, pageCursor, pageSignal),
+        cursor,
+        signal
+      )
+  };
+};

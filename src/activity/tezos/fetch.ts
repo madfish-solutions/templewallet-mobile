@@ -25,34 +25,57 @@ const toOperationsPage = (rawOperations: TzktOperation[]): TezosOperationsPage =
 });
 
 /** `pseudoLimit`: the API can return fewer operations than this, even when older items exist */
-export async function fetchOperations(
-  accountAddress: string,
-  assetSlug: string | undefined,
+export type OperationsFetcher = (
   pseudoLimit: number,
   olderThan?: TezosActivityOlderThan,
   signal?: AbortSignal
-): Promise<TezosOperationsPage> {
-  if (assetSlug) {
-    const [contractAddress, tokenId] = fromTokenSlug(assetSlug);
+) => Promise<TezosOperationsPage>;
 
-    if (assetSlug === TEZ_TOKEN_SLUG) {
-      return fetchOperations_TEZ(accountAddress, pseudoLimit, olderThan, signal);
-    }
-
-    if (contractAddress === LIQUIDITY_BAKING_DEX_ADDRESS) {
-      return fetchOperations_Contract(accountAddress, contractAddress, pseudoLimit, olderThan, signal);
-    }
-
-    const tezos = createReadOnlyTezosToolkit();
-    const contract = await tezos.contract.at(contractAddress);
-
-    return getTokenStandard(contract) === TezosTokenStandardsEnum.Fa12
-      ? fetchOperations_Token_Fa_1_2(accountAddress, contractAddress, pseudoLimit, olderThan, signal)
-      : fetchOperations_Token_Fa_2(accountAddress, contractAddress, tokenId, pseudoLimit, olderThan, signal);
+// The token standard cannot change between pages, so the contract is inspected once per source, not per page
+export const createOperationsFetcher = (accountAddress: string, assetSlug: string | undefined): OperationsFetcher => {
+  if (!assetSlug) {
+    return (pseudoLimit, olderThan, signal) => fetchOperations_Any(accountAddress, pseudoLimit, olderThan, signal);
   }
 
-  return fetchOperations_Any(accountAddress, pseudoLimit, olderThan, signal);
-}
+  if (assetSlug === TEZ_TOKEN_SLUG) {
+    return (pseudoLimit, olderThan, signal) => fetchOperations_TEZ(accountAddress, pseudoLimit, olderThan, signal);
+  }
+
+  const [contractAddress, tokenId] = fromTokenSlug(assetSlug);
+
+  if (contractAddress === LIQUIDITY_BAKING_DEX_ADDRESS) {
+    return (pseudoLimit, olderThan, signal) =>
+      fetchOperations_Contract(accountAddress, contractAddress, pseudoLimit, olderThan, signal);
+  }
+
+  let tokenFetcherPromise: Promise<OperationsFetcher> | undefined;
+
+  const getTokenFetcher = () => {
+    tokenFetcherPromise ??= createTokenOperationsFetcher(accountAddress, contractAddress, tokenId).catch(error => {
+      tokenFetcherPromise = undefined;
+      throw error;
+    });
+
+    return tokenFetcherPromise;
+  };
+
+  return async (pseudoLimit, olderThan, signal) => (await getTokenFetcher())(pseudoLimit, olderThan, signal);
+};
+
+const createTokenOperationsFetcher = async (
+  accountAddress: string,
+  contractAddress: string,
+  tokenId: string | undefined
+): Promise<OperationsFetcher> => {
+  const tezos = createReadOnlyTezosToolkit();
+  const contract = await tezos.contract.at(contractAddress);
+
+  return getTokenStandard(contract) === TezosTokenStandardsEnum.Fa12
+    ? (pseudoLimit, olderThan, signal) =>
+        fetchOperations_Token_Fa_1_2(accountAddress, contractAddress, pseudoLimit, olderThan, signal)
+    : (pseudoLimit, olderThan, signal) =>
+        fetchOperations_Token_Fa_2(accountAddress, contractAddress, tokenId, pseudoLimit, olderThan, signal);
+};
 
 const fetchOperations_TEZ = async (
   accountAddress: string,

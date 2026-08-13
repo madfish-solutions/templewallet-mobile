@@ -273,7 +273,7 @@ const toUnorderedOperations = async (
   }
 };
 
-interface EtherlinkHistoryData {
+interface AlignedEtherlinkPage {
   explicitOperations: EtherlinkTransaction[];
   explicitOperationsNextPageParams: EtherlinkAccountTransactionsPageParams | nullish;
   coinBalanceHistoryItems: EtherlinkCoinBalanceHistoryItem[];
@@ -281,61 +281,31 @@ interface EtherlinkHistoryData {
   tokensTransfersNextPageParams: EtherlinkTokenTransfersPageParams | nullish;
 }
 
-const getEtherlinkHistoryData = async (
-  currentOlderThan: EtherlinkActivitiesPageParams | undefined,
-  accountAddress: string,
-  signal?: AbortSignal
-): Promise<EtherlinkHistoryData> => {
-  const { operationsPageParams, tokensTransfersPageParams } = currentOlderThan ?? {};
+interface AlignEtherlinkPagesInput {
+  accountAddress: string;
+  explicitOperations: EtherlinkTransaction[];
+  explicitOperationsNextPageParams: EtherlinkAccountTransactionsPageParams;
+  coinBalanceHistoryItems: EtherlinkCoinBalanceHistoryItem[];
+  tokensTransfers: EtherlinkTokenTransfer[];
+  tokensTransfersNextPageParams: EtherlinkTokenTransfersPageParams;
+  operationsPageParams: EtherlinkAccountTransactionsPageParams | nullish;
+  tokensTransfersPageParams: EtherlinkTokenTransfersPageParams | nullish;
+  /** All transfers of the boundary transaction, pre-fetched when the transfers page ends above the operations page */
+  lastTxTokensTransfers: EtherlinkTokenTransfer[] | undefined;
+}
 
-  let explicitOperations: EtherlinkTransaction[] = [];
-  let explicitOperationsNextPageParams: EtherlinkAccountTransactionsPageParams | nullish = null;
-  let coinBalanceHistoryItems: EtherlinkCoinBalanceHistoryItem[] = [];
-
-  if (operationsPageParams !== null) {
-    throwIfAborted(signal);
-    const operationsPage = await fetchGetAccountTransactions(accountAddress, operationsPageParams, signal);
-    explicitOperations = operationsPage.items;
-    explicitOperationsNextPageParams = operationsPage.next_page_params;
-
-    throwIfAborted(signal);
-    const coinBalanceHistoryPage = await fetchGetAccountCoinBalanceHistory(
-      accountAddress,
-      operationsPageParams && {
-        block_number: operationsPageParams.block_number,
-        items_count: operationsPageParams.items_count
-      },
-      signal
-    );
-    coinBalanceHistoryItems = coinBalanceHistoryPage.items;
-  }
-
-  let tokensTransfers: EtherlinkTokenTransfer[] = [];
-  let tokensTransfersNextPageParams: EtherlinkTokenTransfersPageParams | nullish = null;
-
-  if (tokensTransfersPageParams !== null) {
-    throwIfAborted(signal);
-    const tokensTransfersPage = await fetchGetAccountTokenTransfers(accountAddress, tokensTransfersPageParams, signal);
-    tokensTransfers = tokensTransfersPage.items;
-    tokensTransfersNextPageParams = tokensTransfersPage.next_page_params;
-  }
+const alignEtherlinkPages = (input: AlignEtherlinkPagesInput): AlignedEtherlinkPage => {
+  const { accountAddress, operationsPageParams, tokensTransfersPageParams, lastTxTokensTransfers } = input;
+  let { explicitOperations, coinBalanceHistoryItems, tokensTransfers } = input;
+  let explicitOperationsNextPageParams: EtherlinkAccountTransactionsPageParams | nullish =
+    input.explicitOperationsNextPageParams;
+  let tokensTransfersNextPageParams: EtherlinkTokenTransfersPageParams | nullish = input.tokensTransfersNextPageParams;
 
   const lastTransfer = tokensTransfers.at(-1);
   const lastOperation = explicitOperations.at(-1);
 
-  if (!explicitOperationsNextPageParams || !tokensTransfersNextPageParams) {
-    return {
-      explicitOperations,
-      explicitOperationsNextPageParams,
-      coinBalanceHistoryItems,
-      tokensTransfers,
-      tokensTransfersNextPageParams
-    };
-  }
-
-  if (explicitOperationsNextPageParams.block_number <= tokensTransfersNextPageParams.block_number && lastTransfer) {
+  if (lastTxTokensTransfers && lastTransfer) {
     const lastTransferHash = lastTransfer.transaction_hash;
-    const lastTxTokensTransfers = await fetchAllTxTokenTransfers(lastTransferHash, signal);
     tokensTransfers = tokensTransfers
       .filter(({ transaction_hash: txHash }) => txHash !== lastTransferHash)
       .concat(
@@ -373,7 +343,7 @@ const getEtherlinkHistoryData = async (
           operationsPageParams;
     }
   } else if (
-    explicitOperationsNextPageParams.block_number > tokensTransfersNextPageParams.block_number &&
+    input.explicitOperationsNextPageParams.block_number > input.tokensTransfersNextPageParams.block_number &&
     lastOperation
   ) {
     const lastOperationBlockNumber = lastOperation.block_number;
@@ -400,6 +370,75 @@ const getEtherlinkHistoryData = async (
     tokensTransfers,
     tokensTransfersNextPageParams
   };
+};
+
+const getEtherlinkHistoryData = async (
+  currentOlderThan: EtherlinkActivitiesPageParams | undefined,
+  accountAddress: string,
+  signal?: AbortSignal
+): Promise<AlignedEtherlinkPage> => {
+  const { operationsPageParams, tokensTransfersPageParams } = currentOlderThan ?? {};
+
+  let explicitOperations: EtherlinkTransaction[] = [];
+  let explicitOperationsNextPageParams: EtherlinkAccountTransactionsPageParams | nullish = null;
+  let coinBalanceHistoryItems: EtherlinkCoinBalanceHistoryItem[] = [];
+
+  if (operationsPageParams !== null) {
+    throwIfAborted(signal);
+    const operationsPage = await fetchGetAccountTransactions(accountAddress, operationsPageParams, signal);
+    explicitOperations = operationsPage.items;
+    explicitOperationsNextPageParams = operationsPage.next_page_params;
+
+    throwIfAborted(signal);
+    const coinBalanceHistoryPage = await fetchGetAccountCoinBalanceHistory(
+      accountAddress,
+      operationsPageParams && {
+        block_number: operationsPageParams.block_number,
+        items_count: operationsPageParams.items_count
+      },
+      signal
+    );
+    coinBalanceHistoryItems = coinBalanceHistoryPage.items;
+  }
+
+  let tokensTransfers: EtherlinkTokenTransfer[] = [];
+  let tokensTransfersNextPageParams: EtherlinkTokenTransfersPageParams | nullish = null;
+
+  if (tokensTransfersPageParams !== null) {
+    throwIfAborted(signal);
+    const tokensTransfersPage = await fetchGetAccountTokenTransfers(accountAddress, tokensTransfersPageParams, signal);
+    tokensTransfers = tokensTransfersPage.items;
+    tokensTransfersNextPageParams = tokensTransfersPage.next_page_params;
+  }
+
+  const lastTransfer = tokensTransfers.at(-1);
+
+  if (!explicitOperationsNextPageParams || !tokensTransfersNextPageParams) {
+    return {
+      explicitOperations,
+      explicitOperationsNextPageParams,
+      coinBalanceHistoryItems,
+      tokensTransfers,
+      tokensTransfersNextPageParams
+    };
+  }
+
+  const lastTxTokensTransfers =
+    explicitOperationsNextPageParams.block_number <= tokensTransfersNextPageParams.block_number && lastTransfer
+      ? await fetchAllTxTokenTransfers(lastTransfer.transaction_hash, signal)
+      : undefined;
+
+  return alignEtherlinkPages({
+    accountAddress,
+    explicitOperations,
+    explicitOperationsNextPageParams,
+    coinBalanceHistoryItems,
+    tokensTransfers,
+    tokensTransfersNextPageParams,
+    operationsPageParams,
+    tokensTransfersPageParams,
+    lastTxTokensTransfers
+  });
 };
 
 const getOldestTimestamp = (items: { timestamp: string }[]) =>
