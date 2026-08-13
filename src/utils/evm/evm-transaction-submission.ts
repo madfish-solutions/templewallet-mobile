@@ -17,7 +17,7 @@ type EvmTransactionData = SendTransactionRequest;
 
 type ReceiptOptions = Omit<WaitForTransactionReceiptParameters, 'hash'>;
 
-export type EvmTransactionSubmissionResult =
+type EvmTransactionSubmissionResult =
   | { success: true; receipt: TransactionReceipt }
   | { success: false; error: unknown };
 
