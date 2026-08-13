@@ -38,7 +38,7 @@ export const ManageCollectibles = memo(() => {
     () => [...collectiblesList, ...evmAssets.filter(isEvmCollectibleManageAsset)],
     [collectiblesList, evmAssets]
   );
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectibles);
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(collectibles, true);
   const isShowCollectibleInfo = useIsShowCollectibleInfoSelector();
 
   const handleShowDetailsChange = useCallback(() => void dispatch(switchIsShowCollectibleInfoAction()), []);
