@@ -92,6 +92,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
     isSearchable = false,
     searchPlaceholder,
     dropdownDescription = 'Assets',
+    scrollToSelectedOnOpen = true,
     selectionOptions = undefined,
     maxButton = false,
     expectedGasExpense = DEFAULT_EXPECTED_GAS_EXPENSE,
@@ -370,6 +371,7 @@ const AssetAmountInputHOC = (variant: AssetAmountInputVariant) => {
               list={assetsList}
               isSearchable={isSearchable}
               searchPlaceholder={searchPlaceholder}
+              scrollToSelectedOnOpen={scrollToSelectedOnOpen}
               isLoading={isLoading}
               setSearchValue={setSearchValue}
               equalityFn={assetsEqualityFn}
