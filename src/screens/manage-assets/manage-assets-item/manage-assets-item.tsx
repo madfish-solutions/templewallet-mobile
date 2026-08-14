@@ -16,38 +16,25 @@ import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { isCollectibleAsset } from 'src/utils/asset.utils';
-import { EvmManageAsset } from 'src/utils/assets/hooks';
-import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
+import { isEvmCollectibleManageAsset, isEvmManageAsset, ManageAsset } from 'src/utils/assets/hooks';
 
 interface Props {
-  asset: TokenInterface | EvmManageAsset;
+  asset: ManageAsset;
 }
 
 const ASSET_ICON_SIZE = formatSize(40);
 const ITEM_VERTICAL_PADDING = formatSize(8);
-
-const isEvmManageAsset = (asset: TokenInterface | EvmManageAsset): asset is EvmManageAsset => 'isVisible' in asset;
 
 export const ManageAssetsItem: FC<Props> = ({ asset }) => {
   const dispatch = useDispatch();
   const evmAddress = useAccountAddressForEvm();
   const isEvmAsset = isEvmManageAsset(asset);
   const slug = isEvmAsset ? asset.assetSlug : getTokenSlug(asset);
-  const isNetworkToken = isEvmAsset ? asset.sendStandard === EvmAssetStandardEnum.NATIVE : slug === TEZ_TOKEN_SLUG;
-  const token = isEvmAsset
-    ? {
-        ...asset,
-        standard: undefined,
-        visibility: asset.isVisible ? VisibilityEnum.Visible : VisibilityEnum.Hidden
-      }
-    : asset;
+  const isNetworkToken = isEvmAsset ? asset.standard === EvmAssetStandardEnum.NATIVE : slug === TEZ_TOKEN_SLUG;
   const isVisible = isNetworkToken || (isEvmAsset ? asset.isVisible : asset.visibility === VisibilityEnum.Visible);
-  const isCollectible = isEvmAsset
-    ? asset.sendStandard === 'erc721' || asset.sendStandard === 'erc1155'
-    : isCollectibleAsset(asset);
+  const isCollectible = isEvmAsset ? isEvmCollectibleManageAsset(asset) : isCollectibleAsset(asset);
   const iconProps: MultichainTokenIconProps = isEvmAsset
     ? {
         chainKind: TempleChainKind.EVM,
@@ -65,11 +52,11 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
       };
 
   const setEvmVisibility = (visibility: VisibilityEnum) => {
-    if (evmAddress) {
+    if (evmAddress && isEvmAsset) {
       dispatch(
         setEvmAssetVisibilityAction({
           account: evmAddress,
-          chainId: ETHERLINK_MAINNET_CHAIN_ID,
+          chainId: asset.chainId,
           slug,
           visibility
         })
@@ -104,7 +91,7 @@ export const ManageAssetsItem: FC<Props> = ({ asset }) => {
 
   return (
     <TokenContainer
-      token={token}
+      token={asset}
       style={{ paddingVertical: ITEM_VERTICAL_PADDING }}
       showTokenTag={false}
       leadingIcon={<MultichainTokenIcon {...iconProps} size={ASSET_ICON_SIZE} showNetworkBadge />}

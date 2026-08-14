@@ -24,7 +24,7 @@ import {
 } from 'src/utils/evm/etherlink-balances.utils';
 import {
   getEvmCollectibleMetadata,
-  getEvmCollectibleMetadataUri,
+  getEvmCollectibleMetadataResolution,
   getEvmTokenMetadata
 } from 'src/utils/evm/on-chain/metadata';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
@@ -187,12 +187,18 @@ export const useEtherlinkDataLoading = () => {
         inFlightMetadataFetches.add(checkedKey);
         (async () => {
           if (existingMetadata) {
-            const metadataUri = await getEvmCollectibleMetadataUri(currentNetwork, contract, tokenId, standard);
+            const resolution = await getEvmCollectibleMetadataResolution(currentNetwork, contract, tokenId, standard);
 
             dispatch(
               processLoadedEvmCollectiblesMetadataAction({
                 chainId: ETHERLINK_MAINNET_CHAIN_ID,
-                metadata: { [slug]: { ...existingMetadata, metadataUri } }
+                metadata: {
+                  [slug]: {
+                    ...existingMetadata,
+                    ...resolution?.remoteMetadata,
+                    metadataUri: resolution?.metadataUri ?? null
+                  }
+                }
               })
             );
             checkedMetadataSlugs.add(checkedKey);

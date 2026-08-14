@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
 import { formatSize } from 'src/styles/format-size';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
 
 import { Divider } from '../divider/divider';
 import { TokenIcon } from '../token-icon/token-icon';
@@ -22,6 +23,7 @@ export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
   children
 }) => {
   const styles = useTokenContainerStyles();
+  const tokenWithMetadata = isTokenWithMetadata(token) ? token : undefined;
 
   return (
     <View style={[styles.container, style]}>
@@ -31,7 +33,7 @@ export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
         <View style={styles.infoContainer}>
           <View style={styles.symbolContainer}>
             <TruncatedText style={styles.symbolText}>{token.symbol}</TruncatedText>
-            {showTokenTag && <TokenTag token={token} scam={scam} apy={apy} />}
+            {showTokenTag && tokenWithMetadata ? <TokenTag token={tokenWithMetadata} scam={scam} apy={apy} /> : null}
           </View>
           <TruncatedText style={styles.nameText}>{token.name}</TruncatedText>
         </View>
@@ -42,3 +44,6 @@ export const TokenContainer: FCWithChildren<TokenContainerProps> = ({
     </View>
   );
 };
+
+const isTokenWithMetadata = (token: TokenContainerProps['token']): token is TokenInterface =>
+  'address' in token && 'id' in token && 'visibility' in token;

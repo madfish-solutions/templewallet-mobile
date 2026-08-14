@@ -21,8 +21,8 @@ import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
+import { toHttpMetadataUri } from 'src/utils/evm/metadata-uri';
 import { fromTokenSlug } from 'src/utils/from-token-slug.ts';
-import { IPFS_GATE, IPFS_PROTOCOL, normalizeIpfsUri } from 'src/utils/image.utils';
 
 import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributeGrid } from './components/collectible-attributes';
@@ -54,7 +54,7 @@ export const EvmCollectibleModal = memo(() => {
   const collectionName = metadata?.name ?? 'Unknown collection';
   const tokenStandard = metadata?.standard ? metadata.standard.replace('erc', 'ERC ') : '---';
 
-  const metadataLink = getMetadataLink(metadata?.metadataUri ?? undefined);
+  const metadataLink = toHttpMetadataUri(metadata?.metadataUri);
   const contractLink = chain ? `${chain.activeBlockExplorer.url}/address/${contractAddress}` : undefined;
   const segments = attributes.length ? [Segment.Details, Segment.Attributes] : [];
 
@@ -127,17 +127,3 @@ export const EvmCollectibleModal = memo(() => {
     </>
   );
 });
-
-const getMetadataLink = (uri?: string): string | undefined => {
-  const normalizedUri = normalizeIpfsUri(uri);
-
-  if (!normalizedUri) {
-    return undefined;
-  }
-
-  if (normalizedUri.startsWith(IPFS_PROTOCOL)) {
-    return `${IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`;
-  }
-
-  return /^https?:\/\//i.test(normalizedUri) ? normalizedUri : undefined;
-};

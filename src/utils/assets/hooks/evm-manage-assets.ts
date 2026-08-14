@@ -1,10 +1,8 @@
-import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
-import { VisibilityEnum } from 'src/enums/visibility.enum';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
-import { toEvmSendAsset } from 'src/modals/send-modal/evm-send-asset.mapper';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainCollectiblesMetadataSelector } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-selectors';
@@ -12,15 +10,20 @@ import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/e
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
-import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
-import { EvmSendAsset } from 'src/types/send-asset';
+import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { buildEvmAssetCatalog, EvmDisplayedAsset, toEvmDisplayedAsset } from 'src/utils/assets/evm';
+import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
-export type EvmManageAsset = EvmSendAsset & {
-  address: string;
-  id: number;
+export interface EvmManageAsset extends EvmDisplayedAsset {
   isVisible: boolean;
-};
+}
+
+export type ManageAsset = TokenInterface | EvmManageAsset;
+
+export const isEvmManageAsset = (asset: ManageAsset): asset is EvmManageAsset =>
+  asset.chainKind === TempleChainKind.EVM;
 
 export const useCurrentAccountEvmManageAssets = (): EvmManageAsset[] => {
   const account = useAccountAddressForEvm();
@@ -37,48 +40,27 @@ export const useCurrentAccountEvmManageAssets = (): EvmManageAsset[] => {
       return [];
     }
 
-    const assetSlugs = new Set([EVM_TOKEN_SLUG, ...Object.keys(assets), ...Object.keys(balances)]);
-
-    return [...assetSlugs].flatMap(assetSlug => {
-      const asset = assets[assetSlug];
-      const standard =
-        assetSlug === EVM_TOKEN_SLUG
-          ? EvmAssetStandardEnum.NATIVE
-          : asset?.standard ?? tokensMetadata[assetSlug]?.standard ?? collectiblesMetadata[assetSlug]?.standard;
-      if (!standard) {
+    return buildEvmAssetCatalog({
+      assets,
+      balances,
+      collectiblesMetadata,
+      exchangeRates,
+      fiatToUsdRate,
+      tokensMetadata
+    }).flatMap(item => {
+      if (!item.isNative && !item.isManual && !isPositiveNumber(item.balance)) {
         return [];
       }
 
-      const balance = balances[assetSlug] ?? '0';
-      if (standard !== EvmAssetStandardEnum.NATIVE && !asset?.manual && !new BigNumber(balance).isGreaterThan(0)) {
-        return [];
-      }
-
-      const usdRate = exchangeRates[assetSlug];
-      const exchangeRate = usdRate != null && fiatToUsdRate != null ? usdRate * fiatToUsdRate : undefined;
-      const mappedAsset = toEvmSendAsset({
-        assetSlug,
-        balance,
-        exchangeRate,
-        network: { ...chain, nativeIconName: CryptoLogoNameEnum.Tezos },
-        standard,
-        tokenMetadata: tokensMetadata[assetSlug],
-        collectibleMetadata: collectiblesMetadata[assetSlug]
+      const mappedAsset = toEvmDisplayedAsset(item, {
+        ...chain,
+        nativeIconName: CryptoLogoNameEnum.Tezos
       });
 
-      return mappedAsset
-        ? [
-            {
-              ...mappedAsset,
-              address: 'contractAddress' in mappedAsset ? mappedAsset.contractAddress : mappedAsset.assetSlug,
-              id: 0,
-              isVisible: standard === EvmAssetStandardEnum.NATIVE || asset?.visibility !== VisibilityEnum.Hidden
-            }
-          ]
-        : [];
+      return mappedAsset ? [{ ...mappedAsset, isVisible: item.isVisible }] : [];
     });
   }, [account, assets, balances, chain, collectiblesMetadata, exchangeRates, fiatToUsdRate, tokensMetadata]);
 };
 
 export const isEvmCollectibleManageAsset = (asset: EvmManageAsset) =>
-  asset.sendStandard === EvmAssetStandardEnum.ERC721 || asset.sendStandard === EvmAssetStandardEnum.ERC1155;
+  asset.standard === EvmAssetStandardEnum.ERC721 || asset.standard === EvmAssetStandardEnum.ERC1155;

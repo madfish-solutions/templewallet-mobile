@@ -1,10 +1,10 @@
 import { ReactNode } from 'react';
 import { StyleProp, ViewStyle } from 'react-native';
 
-import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { AssetInterface } from 'src/interfaces/asset.interface';
 
 export interface TokenContainerProps {
-  token: TokenInterface;
+  token: AssetInterface;
   leadingIcon?: ReactNode;
   showTokenTag?: boolean;
   apy?: number;

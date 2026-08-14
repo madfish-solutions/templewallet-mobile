@@ -1,4 +1,3 @@
-import FastImage from '@d11/react-native-fast-image';
 import React, { ComponentType, memo } from 'react';
 import { View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
@@ -9,8 +8,9 @@ import { AssetMediaURIs } from 'src/utils/assets/types';
 import { isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import { ActivityIndicator } from '../activity-indicator';
-import { BlurredImageBackground, BlurredImageFrame } from '../blurred-image-frame';
+import { BlurredImageBackground } from '../blurred-image-frame';
 import { BrokenImage } from '../broken-image';
+import { CollectibleImageRenderer } from '../collectible-image-renderer';
 import { DataUriImage } from '../data-uri-image';
 import { ImageBlurOverlay } from '../image-blur-overlay';
 
@@ -46,19 +46,11 @@ export const CollectibleImage = memo<Props>(
       thumbnailUri,
       isFullView
     );
-    if (isStackFailed && artifactUri == null) {
-      return Fallback ? (
-        <Fallback isFullView={isFullView} />
-      ) : (
-        <BrokenImage isBigIcon={isFullView} style={styles.brokenImage} />
-      );
-    }
-
     const srcDataUri = src && isImgUriDataUri(src) ? src : undefined;
     const base64DataUri = artifactUri && isSvgDataUriInBase64Encoding(artifactUri) ? artifactUri : undefined;
     const isDataUri = srcDataUri != null || base64DataUri != null;
     const isMediaLoading = !isDataUri && isLoading;
-    const foreground = srcDataUri ? (
+    const dataUriForeground = srcDataUri ? (
       <DataUriImage
         dataUri={srcDataUri}
         animated={isFullView}
@@ -77,24 +69,23 @@ export const CollectibleImage = memo<Props>(
         onLoad={onSuccess}
         onError={onFail}
       />
-    ) : (
-      <FastImage
-        style={styles.image}
-        source={{ uri: src ?? artifactUri }}
-        resizeMode="contain"
-        onError={onFail}
-        onLoad={onSuccess}
-      />
-    );
-
-    if (isDataUri && !isBlurred) {
-      return foreground;
-    }
+    ) : undefined;
 
     return (
-      <BlurredImageFrame
+      <CollectibleImageRenderer
+        sourceUri={src ?? artifactUri}
         size={size}
-        style={styles.container}
+        isFailed={isStackFailed && artifactUri == null}
+        fallback={
+          Fallback ? (
+            <Fallback isFullView={isFullView} />
+          ) : (
+            <BrokenImage isBigIcon={isFullView} style={styles.brokenImage} />
+          )
+        }
+        dataUriForeground={dataUriForeground}
+        forceFrame={isBlurred}
+        frameStyle={styles.container}
         background={
           isDataUri ? null : isFullView ? (
             <CollectiblePreviewBackground
@@ -107,16 +98,16 @@ export const CollectibleImage = memo<Props>(
             <BlurredImageBackground uri={src} />
           )
         }
-        foreground={foreground}
         isForegroundHidden={isBlurred}
         overlay={
-          <>
-            {isBlurred && !isMediaLoading ? (
-              <ImageBlurOverlay size={size} isBigIcon={isFullView} onPress={onReveal} />
-            ) : null}
-            {isMediaLoading ? <ActivityIndicator size={isFullView ? 'large' : 'small'} /> : null}
-          </>
+          isBlurred && !isMediaLoading ? (
+            <ImageBlurOverlay size={size} isBigIcon={isFullView} onPress={onReveal} />
+          ) : null
         }
+        isLoading={isMediaLoading}
+        isFullView={isFullView}
+        onLoad={onSuccess}
+        onError={onFail}
       />
     );
   }

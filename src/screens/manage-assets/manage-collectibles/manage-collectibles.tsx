@@ -9,11 +9,11 @@ import { useFilteredAssetsList } from 'src/hooks/use-filtered-assets-list.hook';
 import { dispatch } from 'src/store';
 import { switchIsShowCollectibleInfoAction } from 'src/store/settings/settings-actions';
 import { useIsShowCollectibleInfoSelector } from 'src/store/settings/settings-selectors';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import {
-  EvmManageAsset,
   isEvmCollectibleManageAsset,
+  isEvmManageAsset,
+  ManageAsset,
   useCurrentAccountCollectibles,
   useCurrentAccountEvmManageAssets
 } from 'src/utils/assets/hooks';
@@ -21,11 +21,8 @@ import {
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
 
-type ManageCollectible = TokenInterface | EvmManageAsset;
-
-const isEvmManageAsset = (asset: ManageCollectible): asset is EvmManageAsset => 'isVisible' in asset;
-const keyExtractor = (item: ManageCollectible) => (isEvmManageAsset(item) ? item.assetKey : getTokenSlug(item));
-const renderItem: ListRenderItem<ManageCollectible> = ({ item }) => <ManageAssetsItem asset={item} />;
+const keyExtractor = (item: ManageAsset) => (isEvmManageAsset(item) ? item.assetKey : getTokenSlug(item));
+const renderItem: ListRenderItem<ManageAsset> = ({ item }) => <ManageAssetsItem asset={item} />;
 
 const ListEmptyComponent = <DataPlaceholder text="No collectibles matching search criteria were found" />;
 
@@ -34,7 +31,7 @@ export const ManageCollectibles = memo(() => {
 
   const collectiblesList = useCurrentAccountCollectibles();
   const evmAssets = useCurrentAccountEvmManageAssets();
-  const collectibles = useMemo<ManageCollectible[]>(
+  const collectibles = useMemo<ManageAsset[]>(
     () => [...collectiblesList, ...evmAssets.filter(isEvmCollectibleManageAsset)],
     [collectiblesList, evmAssets]
   );

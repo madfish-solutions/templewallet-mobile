@@ -2,7 +2,6 @@ import { BigNumber } from 'bignumber.js';
 import { useMemo } from 'react';
 
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
-import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
@@ -13,15 +12,9 @@ import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata
 import { EvmStoredTokenMetadata } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-state';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
-import {
-  EvmAssetStandardEnum,
-  EvmCollectibleMetadata,
-  EVM_TOKEN_SLUG
-} from 'src/token/interfaces/token-metadata.interface';
+import { EvmCollectibleMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { EvmSendAsset } from 'src/types/send-asset';
-import { isDefined } from 'src/utils/is-defined';
-
-import { EvmSendNetwork, toEvmSendAsset } from '../evm-send-asset.mapper';
+import { buildEvmAssetCatalog, EvmAssetNetwork, toEvmSendAsset } from 'src/utils/assets/evm';
 
 interface CreateEvmSendAssetsParams {
   assets: EvmChainAssetsRecord;
@@ -30,7 +23,7 @@ interface CreateEvmSendAssetsParams {
   exchangeRates: Record<string, number>;
   fiatToUsdRate?: number;
   hasAccount: boolean;
-  network?: EvmSendNetwork;
+  network?: EvmAssetNetwork;
   tokensMetadata: Record<string, EvmStoredTokenMetadata>;
 }
 
@@ -48,47 +41,22 @@ const createEvmSendAssets = ({
     return [];
   }
 
-  const allEvmSlugs = new Set([EVM_TOKEN_SLUG].concat(Object.keys(assets), Object.keys(balances)));
-  const sendAssets: EvmSendAsset[] = [];
-
-  for (const assetSlug of allEvmSlugs) {
-    const isNative = assetSlug === EVM_TOKEN_SLUG;
-    if (!isNative && assets[assetSlug]?.visibility === VisibilityEnum.Hidden) {
-      continue;
+  return buildEvmAssetCatalog({
+    assets,
+    balances,
+    collectiblesMetadata,
+    exchangeRates,
+    fiatToUsdRate,
+    tokensMetadata
+  }).flatMap(item => {
+    if ((!item.isNative && !item.isVisible) || !new BigNumber(item.balance).isGreaterThan(0)) {
+      return [];
     }
 
-    const standard = isNative
-      ? EvmAssetStandardEnum.NATIVE
-      : assets[assetSlug]?.standard ?? tokensMetadata[assetSlug]?.standard;
+    const asset = toEvmSendAsset(item, network);
 
-    if (!standard) {
-      continue;
-    }
-
-    const balance = balances[assetSlug] ?? '0';
-    if (!new BigNumber(balance).isGreaterThan(0)) {
-      continue;
-    }
-
-    const tokenMetadata = tokensMetadata[assetSlug];
-    const usdRate = exchangeRates[assetSlug];
-    const exchangeRate = isDefined(usdRate) && isDefined(fiatToUsdRate) ? usdRate * fiatToUsdRate : undefined;
-    const asset = toEvmSendAsset({
-      assetSlug,
-      balance,
-      exchangeRate,
-      network,
-      standard,
-      tokenMetadata,
-      collectibleMetadata: collectiblesMetadata[assetSlug]
-    });
-
-    if (asset) {
-      sendAssets.push(asset);
-    }
-  }
-
-  return sendAssets;
+    return asset ? [asset] : [];
+  });
 };
 
 export const useEvmSendAssets = (chainId: number, nativeIconName?: CryptoLogoNameEnum): EvmSendAsset[] => {

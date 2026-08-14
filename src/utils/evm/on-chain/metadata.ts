@@ -3,7 +3,8 @@ import { pickBy } from 'lodash-es';
 import { BaseError, erc20Abi, erc721Abi, HttpRequestError, parseAbi, RpcRequestError, TimeoutError } from 'viem';
 
 import { EvmNetworkEssentials } from 'src/types/networks';
-import { IPFS_GATE, IPFS_PROTOCOL, normalizeIpfsUri } from 'src/utils/image.utils';
+import { toHttpMetadataUri } from 'src/utils/evm/metadata-uri';
+import { normalizeIpfsUri } from 'src/utils/image.utils';
 
 import { erc1155Abi } from './abi/erc1155.abi';
 import { detectTokenStandard } from './common.utils';
@@ -21,21 +22,6 @@ const symbolAbi = parseAbi(['function symbol() external view returns (string)'])
 const isRetryableRpcError = (error: unknown): boolean =>
   error instanceof BaseError &&
   error.walk(e => e instanceof HttpRequestError || e instanceof TimeoutError || e instanceof RpcRequestError) != null;
-
-const COVALENT_IPFS_GATE = 'https://ipfs.covalenthq.com/ipfs';
-
-const buildHttpLinkFromUri = (uri?: string): string | undefined => {
-  const normalizedUri = normalizeIpfsUri(uri);
-  if (!normalizedUri) {
-    return undefined;
-  }
-
-  if (normalizedUri.startsWith(IPFS_PROTOCOL)) {
-    return `${IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`;
-  }
-
-  return normalizedUri.replace(COVALENT_IPFS_GATE, IPFS_GATE);
-};
 
 export const getEvmTokenMetadata = async (
   network: EvmNetworkEssentials,
@@ -90,12 +76,17 @@ export const getEvmCollectibleMetadata = async (
   }
 };
 
-export const getEvmCollectibleMetadataUri = async (
+export interface EvmCollectibleMetadataResolution {
+  metadataUri: string;
+  remoteMetadata?: ResolvedErc1155Metadata['remoteMetadata'];
+}
+
+export const getEvmCollectibleMetadataResolution = async (
   network: EvmNetworkEssentials,
   contract: HexString,
   tokenId = '0',
   standard: EvmCollectibleAssetStandard
-): Promise<string | null> => {
+): Promise<EvmCollectibleMetadataResolution | null> => {
   try {
     const bigIntTokenId = BigInt(tokenId);
 
@@ -110,7 +101,7 @@ export const getEvmCollectibleMetadataUri = async (
         throw new Error('ERC-1155 contract returned no uri');
       }
 
-      return (await resolveErc1155Metadata(rawUri, bigIntTokenId)).metadataUri;
+      return resolveErc1155Metadata(rawUri, bigIntTokenId);
     }
 
     const metadataUri = await executeEvmReadContract<string>(network, {
@@ -123,7 +114,7 @@ export const getEvmCollectibleMetadataUri = async (
       throw new Error('ERC-721 contract returned no tokenURI');
     }
 
-    return metadataUri;
+    return { metadataUri };
   } catch (error) {
     if (isRetryableRpcError(error)) {
       throw error;
@@ -258,7 +249,7 @@ const fetchCollectibleJsonMetadata = async (
     'collectibleName' | 'image' | 'description' | 'attributes' | 'externalUrl' | 'animationUrl'
   >
 > => {
-  const httpUri = buildHttpLinkFromUri(metadataUri);
+  const httpUri = toHttpMetadataUri(metadataUri);
   if (!httpUri) {
     throw new Error('Could not build an http link from the metadata uri');
   }

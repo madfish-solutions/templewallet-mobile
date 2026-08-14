@@ -10,11 +10,11 @@ import { dispatch } from 'src/store';
 import { setHideZeroBalances } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import {
-  EvmManageAsset,
   isEvmCollectibleManageAsset,
+  isEvmManageAsset,
+  ManageAsset,
   useCurrentAccountEvmManageAssets,
   useCurrentAccountTokens
 } from 'src/utils/assets/hooks';
@@ -23,11 +23,8 @@ import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
 
-type ManageToken = TokenInterface | EvmManageAsset;
-
-const isEvmManageAsset = (asset: ManageToken): asset is EvmManageAsset => 'isVisible' in asset;
-const keyExtractor = (item: ManageToken) => (isEvmManageAsset(item) ? item.assetKey : getTokenSlug(item));
-const renderItem: ListRenderItem<ManageToken> = ({ item }) => <ManageAssetsItem asset={item} />;
+const keyExtractor = (item: ManageAsset) => (isEvmManageAsset(item) ? item.assetKey : getTokenSlug(item));
+const renderItem: ListRenderItem<ManageAsset> = ({ item }) => <ManageAssetsItem asset={item} />;
 
 const ListEmptyComponent = <DataPlaceholder text="No tokens matching search criteria were found" />;
 
@@ -39,7 +36,7 @@ export const ManageTokens = memo(() => {
   const evmAssets = useCurrentAccountEvmManageAssets();
   const hideZeroBalances = useHideZeroBalancesSelector();
   const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
-  const assets = useMemo<ManageToken[]>(
+  const assets = useMemo<ManageAsset[]>(
     () => [tezosToken, ...tokensWithoutTkey, ...evmAssets.filter(asset => !isEvmCollectibleManageAsset(asset))],
     [evmAssets, tezosToken, tokensWithoutTkey]
   );
