@@ -16,7 +16,7 @@ import { buildEvmAssetCatalog, EvmDisplayedAsset, toEvmDisplayedAsset } from 'sr
 import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
-export interface EvmManageAsset extends EvmDisplayedAsset {
+interface EvmManageAsset extends EvmDisplayedAsset {
   isVisible: boolean;
 }
 

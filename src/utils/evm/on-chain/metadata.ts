@@ -76,7 +76,7 @@ export const getEvmCollectibleMetadata = async (
   }
 };
 
-export interface EvmCollectibleMetadataResolution {
+interface EvmCollectibleMetadataResolution {
   metadataUri: string;
   remoteMetadata?: ResolvedErc1155Metadata['remoteMetadata'];
 }
