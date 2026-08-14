@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import React, { FC, memo, useCallback, useMemo } from 'react';
 import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
@@ -38,11 +39,22 @@ const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 const keyExtractor = (item: DisplayedCollectible) =>
   item.chainKind === TempleChainKind.EVM ? toChainAssetSlug(item.chainKind, item.chainId, item.slug) : item.slug;
 
+const getCollectibleBalance = (collectible: DisplayedCollectible) =>
+  collectible.chainKind === TempleChainKind.EVM ? collectible.balance : collectible.asset.balance;
+
 export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll }) => {
   const screenStyles = useScreenContainerStyles();
   const itemStyles = useCollectibleItemStyles();
 
   const isSyncing = useAreMetadatasLoadingSelector();
+
+  const sortedCollectibles = useMemo(
+    () =>
+      [...collectibles].sort(
+        (a, b) => new BigNumber(getCollectibleBalance(b)).comparedTo(getCollectibleBalance(a)) ?? 0
+      ),
+    [collectibles]
+  );
 
   const { width: windowWidth } = useWindowDimensions();
 
@@ -97,7 +109,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll 
 
   return (
     <Animated.FlatList
-      data={collectibles}
+      data={sortedCollectibles}
       numColumns={ITEMS_PER_ROW}
       initialNumToRender={ITEMS_PER_ROW * INITIAL_ROWS_TO_RENDER}
       renderItem={renderItem}
@@ -105,7 +117,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll 
       getItemLayout={getItemLayout}
       style={screenStyles.scrollView}
       contentContainerStyle={screenStyles.scrollViewContentContainer}
-      ListFooterComponent={<ListFooterComponent empty={collectibles.length < 1} isSyncing={isSyncing} />}
+      ListFooterComponent={<ListFooterComponent empty={sortedCollectibles.length < 1} isSyncing={isSyncing} />}
       onScroll={onScroll}
       scrollEventThrottle={16}
     />
