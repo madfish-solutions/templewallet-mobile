@@ -43,6 +43,7 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   renderActionButtons?: DropdownActionButtonsComponent;
   listHeader?: ReactNode;
   showCloseButton?: boolean;
+  scrollToSelectedOnOpen?: boolean;
   triggerWrapperRef?: Ref<View>;
   onLongPress?: EmptyFn;
 }
@@ -97,6 +98,7 @@ const DropdownComponent = <T extends unknown>({
   renderValue,
   renderListItem,
   showCloseButton = true,
+  scrollToSelectedOnOpen = true,
   getListItemSectionTitle,
   renderActionButtons = emptyComponent,
   listHeader,
@@ -229,7 +231,9 @@ const DropdownComponent = <T extends unknown>({
           style={styles.valueContainer}
           disabled={disabled}
           onPress={() => {
-            scroll();
+            if (scrollToSelectedOnOpen) {
+              scroll();
+            }
 
             trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 

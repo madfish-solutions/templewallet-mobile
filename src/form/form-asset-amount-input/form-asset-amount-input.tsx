@@ -46,6 +46,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     searchPlaceholder,
     dropdownListHeader,
     dropdownDescription,
+    scrollToSelectedOnOpen,
     isSingleAsset,
     selectionOptions = undefined,
     maxButton = false,
@@ -127,6 +128,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
           searchPlaceholder={searchPlaceholder}
           dropdownListHeader={dropdownListHeader}
           dropdownDescription={dropdownDescription}
+          scrollToSelectedOnOpen={scrollToSelectedOnOpen}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}

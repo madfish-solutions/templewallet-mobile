@@ -249,6 +249,7 @@ export const SendModal: FC = () => {
             dropdownDescription="Select Token"
             searchPlaceholder="Search by name or address"
             dropdownListHeader={tokenFilterHeader}
+            scrollToSelectedOnOpen={false}
             setSearchValue={setAssetSearch}
             onValueChange={handleAssetChange}
             testID={SendModalSelectors.assetInput}
