@@ -3,7 +3,7 @@ import { formatSize } from 'src/styles/format-size';
 
 import { ITEM_WIDTH, GAP_SIZE, BORDER_RADIUS, IMAGE_SIZE } from '../utils';
 
-export const useCollectibleItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
+export const useCollectionCollectibleItemStyles = createUseStylesMemoized(({ colors, typography }) => ({
   collectibleContainer: {
     flex: 1,
     borderWidth: formatSize(1),

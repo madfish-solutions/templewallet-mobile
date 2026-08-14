@@ -5,14 +5,11 @@ import { Dimensions, Text, TouchableOpacity, View, Image } from 'react-native';
 import { SvgUri, SvgXml } from 'react-native-svg';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
 import { Divider } from 'src/components/divider/divider';
 import { DeadEndBoundaryError } from 'src/components/error-boundary';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { LinkWithIcon } from 'src/components/link-with-icon/link-with-icon';
-import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TruncatedText } from 'src/components/truncated-text';
@@ -21,9 +18,8 @@ import { emptyFn } from 'src/config/general';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
-import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { useModalParams, useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { dispatch } from 'src/store';
 import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
 import {
@@ -46,12 +42,13 @@ import { objktCollectionUrl } from 'src/utils/objkt-collection-url.util';
 import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
 import { mutezToTz } from 'src/utils/tezos.util';
 
-import { CollectibleModalSelectors } from './collectible-modal.selectors';
-import { useCollectibleModalStyles } from './collectible-modal.styles';
 import { CollectibleAttributes } from './components/collectible-attributes';
 import { CollectibleDetails } from './components/collectible-details';
 import { CollectibleMedia } from './components/collectible-media';
+import { CollectibleModalLayout } from './components/collectible-modal-layout';
 import { COLLECTION_ICON_SIZE } from './constants';
+import { CollectibleModalSelectors } from './selectors';
+import { useCollectibleModalStyles } from './styles';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
 import { useAttributesWithRarity } from './utils/use-attributes-with-rarity.hook';
 import { useBurnCollectible } from './utils/use-burn-collectible.hook';
@@ -61,8 +58,11 @@ enum SegmentControlNamesEnum {
   attributes = 'Attributes'
 }
 
-export const CollectibleModal = memo(() => {
-  const { slug } = useModalParams<ModalsEnum.CollectibleModal>();
+interface Props {
+  slug: string;
+}
+
+export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
   const navigateToModal = useNavigateToModal();
 
   const [address, id] = fromTokenSlug(slug);
@@ -212,106 +212,102 @@ export const CollectibleModal = memo(() => {
   }, [details, styles.collectionLogo]);
 
   return (
-    <>
-      <ScreenContainer isFullScreenMode={true} scrollEnabled={scrollEnabled}>
-        <ModalStatusBar />
-
-        <View>
-          <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
-            <CollectibleMedia
-              slug={slug}
-              artifactUri={artifactUri}
-              displayUri={displayUri}
-              thumbnailUri={thumbnailUri}
-              mime={details?.mime}
-              size={imageSize}
-              areDetailsLoading={areDetailsLoading && details === undefined}
-              setScrollEnabled={setScrollEnabled}
-            />
-          </View>
-
-          <Divider size={formatSize(12)} />
-
-          <View style={styles.collectionContainer}>
-            <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-              {collection?.logo ?? <View style={[styles.collectionLogo, styles.logoFallBack]} />}
-
-              <TruncatedText style={styles.collectionName}>{collection?.title ?? 'Unknown collection'}</TruncatedText>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-              <Icon name={IconNameEnum.Share} />
-              <Divider size={formatSize(4)} />
-              <Text style={styles.shareButtonText}>Share</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.nameContainer}>
-            <Text style={styles.name}>{name ?? '---'}</Text>
-          </View>
-
-          {details?.description ? (
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.description}>{details.description}</Text>
-            </View>
-          ) : null}
-
-          {creators?.length ? (
-            <View style={styles.creatorsContainer}>
-              <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
-
-              {creators.map(({ holder }, index) => (
-                <LinkWithIcon
-                  key={holder.address}
-                  text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                  link={getObjktProfileLink(holder.address)}
-                  valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
-                  style={[
-                    styles.linkWithIcon,
-                    conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
-                  ]}
-                />
-              ))}
-            </View>
-          ) : null}
-
-          {segments.values.length ? (
-            <TextSegmentControl
-              selectedIndex={segmentControlIndex}
-              values={segments.values}
-              onChange={setSegmentControlIndex}
-              style={styles.segmentControl}
-            />
-          ) : null}
-
-          {segments.current === 'details' ? (
-            <CollectibleDetails contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
-          ) : null}
-
-          {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
-
-          {isAccountHolder ? (
-            <TouchableWithAnalytics
-              Component={TouchableOpacity}
-              onPress={burnCollectible}
-              style={styles.burnButton}
-              testID={CollectibleModalSelectors.burnButton}
-            >
-              <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
-              <Icon name={IconNameEnum.Burn} />
-            </TouchableWithAnalytics>
-          ) : null}
+    <CollectibleModalLayout
+      scrollEnabled={scrollEnabled}
+      action={{
+        disabled: button.disabled,
+        title: button.title,
+        isLoading: button.loading,
+        onPress: button.onPress || emptyFn,
+        testID: CollectibleModalSelectors.sendButton
+      }}
+    >
+      <View>
+        <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
+          <CollectibleMedia
+            slug={slug}
+            artifactUri={artifactUri}
+            displayUri={displayUri}
+            thumbnailUri={thumbnailUri}
+            mime={details?.mime}
+            size={imageSize}
+            areDetailsLoading={areDetailsLoading && details === undefined}
+            setScrollEnabled={setScrollEnabled}
+          />
         </View>
-      </ScreenContainer>
-      <ModalButtonsFloatingContainer variant="bordered">
-        <ButtonLargePrimary
-          disabled={button.disabled}
-          title={button.title}
-          isLoading={button.loading}
-          onPress={button.onPress || emptyFn}
-          testID={CollectibleModalSelectors.sendButton}
-        />
-      </ModalButtonsFloatingContainer>
-    </>
+
+        <Divider size={formatSize(12)} />
+
+        <View style={styles.collectionContainer}>
+          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+            {collection?.logo ?? <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+
+            <TruncatedText style={styles.collectionName}>{collection?.title ?? 'Unknown collection'}</TruncatedText>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+            <Icon name={IconNameEnum.Share} />
+            <Divider size={formatSize(4)} />
+            <Text style={styles.shareButtonText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.nameContainer}>
+          <Text style={styles.name}>{name ?? '---'}</Text>
+        </View>
+
+        {details?.description ? (
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.description}>{details.description}</Text>
+          </View>
+        ) : null}
+
+        {creators?.length ? (
+          <View style={styles.creatorsContainer}>
+            <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
+
+            {creators.map(({ holder }, index) => (
+              <LinkWithIcon
+                key={holder.address}
+                text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                link={getObjktProfileLink(holder.address)}
+                valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                style={[
+                  styles.linkWithIcon,
+                  conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
+                ]}
+              />
+            ))}
+          </View>
+        ) : null}
+
+        {segments.values.length ? (
+          <TextSegmentControl
+            selectedIndex={segmentControlIndex}
+            values={segments.values}
+            onChange={setSegmentControlIndex}
+            style={styles.segmentControl}
+          />
+        ) : null}
+
+        {segments.current === 'details' ? (
+          <CollectibleDetails contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
+        ) : null}
+
+        {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
+
+        {isAccountHolder ? (
+          <TouchableWithAnalytics
+            Component={TouchableOpacity}
+            onPress={burnCollectible}
+            style={styles.burnButton}
+            testID={CollectibleModalSelectors.burnButton}
+          >
+            <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
+            <Icon name={IconNameEnum.Burn} />
+          </TouchableWithAnalytics>
+        ) : null}
+      </View>
+    </CollectibleModalLayout>
   );
 });

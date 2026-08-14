@@ -14,6 +14,7 @@ import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { APIS_SYNC_INTERVAL } from 'src/config/fixed-times';
 import { emptyFn } from 'src/config/general';
 import { LIMIT_NFT_FEATURES } from 'src/config/system';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useShareNFT } from 'src/hooks/use-share-nft.hook';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
@@ -29,7 +30,7 @@ import { mutezToTz } from 'src/utils/tezos.util';
 
 import { IMAGE_SIZE, navigateToObjktForBuy } from '../utils';
 
-import { useCollectibleItemStyles } from './collectible-item.styles';
+import { useCollectionCollectibleItemStyles } from './styles';
 
 interface Props {
   item: CollectionItemInterface;
@@ -37,10 +38,10 @@ interface Props {
   accountPkh: string;
 }
 
-export const CollectibleItem = memo<Props>(({ item, collectionContract, accountPkh }) => {
+export const CollectionCollectibleItem = memo<Props>(({ item, collectionContract, accountPkh }) => {
   const slug = getTokenSlug(item);
 
-  const styles = useCollectibleItemStyles();
+  const styles = useCollectionCollectibleItemStyles();
   const navigateToModal = useNavigateToModal();
 
   const lastPrice = useMemo(() => {
@@ -194,7 +195,8 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
 
   const handleShare = useShareNFT(slug, item.thumbnailUri, item.name, item.description);
 
-  const navigateToCollectibleModal = () => navigateToModal(ModalsEnum.CollectibleModal, { slug });
+  const navigateToCollectibleModal = () =>
+    navigateToModal(ModalsEnum.CollectibleModal, { chainKind: TempleChainKind.Tezos, slug });
 
   const imageSize = formatSize(IMAGE_SIZE);
 
@@ -211,6 +213,7 @@ export const CollectibleItem = memo<Props>(({ item, collectionContract, accountP
           <TouchableOpacity onPress={navigateToCollectibleModal} activeOpacity={0.7}>
             <View style={styles.imageWrap}>
               <CollectibleImage
+                chainKind={TempleChainKind.Tezos}
                 isFullView
                 slug={slug}
                 artifactUri={item.artifactUri}

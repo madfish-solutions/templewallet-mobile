@@ -1,9 +1,11 @@
-import React, { ComponentType, memo } from 'react';
-import { View } from 'react-native';
+import React, { ComponentType, FC, memo } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { WebView } from 'react-native-webview';
 
-import { useTezosCollectibleImagesStack } from 'src/hooks/use-images-stack';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { useEvmCollectibleImagesStack, useTezosCollectibleImagesStack } from 'src/hooks/use-images-stack';
+import { formatSize } from 'src/styles/format-size';
 import { AssetMediaURIs } from 'src/utils/assets/types';
 import { isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
@@ -16,16 +18,32 @@ import { ImageBlurOverlay } from '../image-blur-overlay';
 
 import { useCollectibleImageStyles } from './styles';
 
-interface Props extends AssetMediaURIs {
-  slug: string;
+interface CommonProps {
   size: number;
   isFullView?: boolean;
+}
+
+interface TezosProps extends CommonProps, AssetMediaURIs {
+  chainKind: TempleChainKind.Tezos;
+  slug: string;
   isBlurred?: boolean;
   onReveal?: EmptyFn;
   Fallback?: ComponentType<{ isFullView?: boolean }>;
 }
 
-export const CollectibleImage = memo<Props>(
+interface EvmProps extends CommonProps {
+  chainKind: TempleChainKind.EVM;
+  slug: string;
+  chainId: number;
+  uri?: string;
+}
+
+type CollectibleImageProps = TezosProps | EvmProps;
+
+export const CollectibleImage: FC<CollectibleImageProps> = props =>
+  props.chainKind === TempleChainKind.EVM ? <EvmCollectibleImage {...props} /> : <TezosCollectibleImage {...props} />;
+
+const TezosCollectibleImage = memo<TezosProps>(
   ({
     slug,
     artifactUri,
@@ -112,6 +130,44 @@ export const CollectibleImage = memo<Props>(
     );
   }
 );
+
+const EvmCollectibleImage = memo<EvmProps>(({ slug, chainId, uri, size, isFullView = false }) => {
+  const { src, isLoading, isStackFailed, onSuccess, onFail } = useEvmCollectibleImagesStack(chainId, slug, uri);
+
+  const isDataUri = src != null && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src));
+  const dataUriForeground = isDataUri ? (
+    <DataUriImage
+      dataUri={src}
+      width={size}
+      height={size}
+      style={!isFullView ? evmStyles.rounded : undefined}
+      onLoad={onSuccess}
+      onError={onFail}
+    />
+  ) : undefined;
+
+  return (
+    <CollectibleImageRenderer
+      sourceUri={src}
+      size={size}
+      isFailed={isStackFailed}
+      fallback={<BrokenImage isBigIcon={isFullView} style={{ width: size, height: size }} />}
+      dataUriForeground={dataUriForeground}
+      background={<BlurredImageBackground uri={src} />}
+      frameStyle={!isFullView && evmStyles.rounded}
+      isLoading={!isDataUri && isLoading}
+      isFullView={isFullView}
+      onLoad={onSuccess}
+      onError={onFail}
+    />
+  );
+});
+
+const evmStyles = StyleSheet.create({
+  rounded: {
+    borderRadius: formatSize(4)
+  }
+});
 
 interface Base64SvgImageProps {
   dataUri: string;

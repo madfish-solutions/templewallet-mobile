@@ -22,7 +22,6 @@ import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { useCollectiblesGridStyles } from '../styles';
 
 import { CollectibleItem } from './collectible-item';
-import { EvmCollectibleItem } from './collectible-item/evm-collectible-item';
 import { useCollectibleItemStyles } from './collectible-item/styles';
 import { CollectiblesListStyles, GRID_GAP } from './styles';
 
@@ -85,24 +84,7 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll 
     ({ item: collectible, index }) => {
       const style = (index + 1) % ITEMS_PER_ROW !== 0 ? CollectiblesListStyles.marginRight : undefined;
 
-      return collectible.chainKind === TempleChainKind.EVM ? (
-        <EvmCollectibleItem
-          key={collectible.slug}
-          collectible={collectible}
-          showInfo={showInfo}
-          size={itemSize}
-          style={style}
-        />
-      ) : (
-        <CollectibleItem
-          key={collectible.slug}
-          slug={collectible.slug}
-          collectible={collectible.asset}
-          showInfo={showInfo}
-          size={itemSize}
-          style={style}
-        />
-      );
+      return <CollectibleItem collectible={collectible} showInfo={showInfo} size={itemSize} style={style} />;
     },
     [itemSize, showInfo]
   );
