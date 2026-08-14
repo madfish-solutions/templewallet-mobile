@@ -1,12 +1,11 @@
 import BigNumber from 'bignumber.js';
 import React, { FC, memo, ReactNode, useCallback, useMemo } from 'react';
-import { StyleProp, Text, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
 import { CollectibleImage } from 'src/components/collectible-image';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { NetworkIcon } from 'src/components/network-icon';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
 import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
@@ -149,7 +148,7 @@ const CollectibleItemView = memo<CollectibleItemViewProps>(
     const styles = useCollectibleItemStyles();
 
     return (
-      <SafeTouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.root, style, { width: size }]}>
+      <TouchableOpacity activeOpacity={0.7} onPress={onPress} style={[styles.root, style, { width: size }]}>
         <View style={[styles.image, { width: size, height: size }]}>
           {image}
           {showInfo && isDefined(balance) ? <Balance balance={balance} /> : null}
@@ -166,7 +165,7 @@ const CollectibleItemView = memo<CollectibleItemViewProps>(
             <Text style={styles.price}>{subtitle}</Text>
           </View>
         ) : null}
-      </SafeTouchableOpacity>
+      </TouchableOpacity>
     );
   }
 );
