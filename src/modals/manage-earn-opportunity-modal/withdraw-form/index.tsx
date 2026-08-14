@@ -209,6 +209,7 @@ export const WithdrawForm: FC<WithdrawFormProps> = ({ earnOpportunityItem, formi
               <FormDropdown
                 name="tokenOption"
                 description="Choose token"
+                listItemHeight={formatSize(56)}
                 equalityFn={tokenOptionEqualityFn}
                 renderValue={renderTokenOptionValue}
                 renderListItem={renderTokenOptionListItem}

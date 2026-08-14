@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, TouchableOpacity, ViewStyle } from 'react-native';
 
 import { formatSize } from 'src/styles/format-size';
 import { copyStringToClipboard } from 'src/utils/clipboard.utils';
@@ -9,7 +9,6 @@ import { isValidAddress } from 'src/utils/tezos.util';
 
 import { Icon } from '../icon/icon';
 import { IconNameEnum } from '../icon/icon-name.enum';
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { TruncatedText } from '../truncated-text';
 
 import { useLinkWithIconStyles } from './link-with-icon.styles';
@@ -39,11 +38,11 @@ export const LinkWithIcon: FC<Props> = ({
     isDefined(valueToClipboard) ? copyStringToClipboard(valueToClipboard) : copyStringToClipboard(link);
 
   return (
-    <SafeTouchableOpacity onPress={handleLinkPress} onLongPress={handleLongPress} style={[styles.root, style]}>
+    <TouchableOpacity onPress={handleLinkPress} onLongPress={handleLongPress} style={[styles.root, style]}>
       <TruncatedText style={[styles.container, styles.text]} ellipsizeMode={isAddress ? 'middle' : 'tail'}>
         {text}
       </TruncatedText>
       <Icon name={iconName} size={formatSize(24)} style={styles.container} />
-    </SafeTouchableOpacity>
+    </TouchableOpacity>
   );
 };

@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreensEnum, ScreensParamList } from 'src/navigator/enums/screens.enum';
 import { useNavigateToScreen } from 'src/navigator/hooks/use-navigation.hook';
 import { conditionalStyle } from 'src/utils/conditional-style';
@@ -47,7 +46,7 @@ export const TabBarButton = memo<Props>(
     };
 
     return (
-      <SafeTouchableOpacity
+      <TouchableOpacity
         style={[styles.container, conditionalStyle(disabled, { borderLeftColor: iconColor })]}
         onPress={handlePress}
       >
@@ -55,7 +54,7 @@ export const TabBarButton = memo<Props>(
           <NavigationBarIcon name={iconName} color={iconColor} />
         </View>
         <Text style={[styles.label, { color: labelColor }]}>{label}</Text>
-      </SafeTouchableOpacity>
+      </TouchableOpacity>
     );
   }
 );

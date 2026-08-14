@@ -1,6 +1,6 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { getBakerLogoUrl } from 'src/apis/baking-bad';
 import { AvatarImage } from 'src/components/avatar-image/avatar-image';
@@ -9,7 +9,6 @@ import { ExternalLinkButton } from 'src/components/icon/external-link-button/ext
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { PublicKeyHashText } from 'src/components/public-key-hash-text/public-key-hash-text';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { formatSize } from 'src/styles/format-size';
 import { TEZ_TOKEN_SYMBOL } from 'src/token/data/tokens-metadata';
 import { isString } from 'src/utils/is-string';
@@ -143,10 +142,10 @@ export const BakerRewardItem: FC<{ item: BakingHistoryEntry }> = ({ item }) => {
             <Icon name={getCycleStatusIcon(status)} size={formatSize(16)} />
           </View>
           {isDetailsButtonVisible && (
-            <SafeTouchableOpacity style={styles.row} onPress={() => setIsDetailsOpen(!isDetailsOpen)}>
+            <TouchableOpacity style={styles.row} onPress={() => setIsDetailsOpen(!isDetailsOpen)}>
               <Text style={styles.detailsButtonText}>Details</Text>
               <Icon name={isDetailsOpen ? IconNameEnum.DetailsArrowUp : IconNameEnum.DetailsArrowDown} />
-            </SafeTouchableOpacity>
+            </TouchableOpacity>
           )}
         </View>
       </View>
