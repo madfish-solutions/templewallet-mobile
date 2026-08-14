@@ -65,7 +65,13 @@ export const EvmCollectibleModal = memo(() => {
 
         <View>
           <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
-            <EvmCollectibleImage uri={metadata?.image ?? metadata?.iconURL} size={imageSize} isFullView />
+            <EvmCollectibleImage
+              assetSlug={slug}
+              chainId={chainId}
+              uri={metadata?.image ?? metadata?.iconURL}
+              size={imageSize}
+              isFullView
+            />
           </View>
 
           <Divider size={formatSize(12)} />

@@ -1,9 +1,9 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { StyleSheet } from 'react-native';
 
-import { useImagesStack } from 'src/hooks/use-images-stack';
+import { useEvmCollectibleImagesStack } from 'src/hooks/use-images-stack';
 import { formatSize } from 'src/styles/format-size';
-import { buildEvmCollectibleImagesStack, isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
+import { isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import { BlurredImageBackground } from '../blurred-image-frame';
 import { BrokenImage } from '../broken-image';
@@ -11,14 +11,15 @@ import { CollectibleImageRenderer } from '../collectible-image-renderer';
 import { DataUriImage } from '../data-uri-image';
 
 interface Props {
+  assetSlug: string;
+  chainId: number;
   uri?: string;
   size: number;
   isFullView?: boolean;
 }
 
-export const EvmCollectibleImage = memo<Props>(({ uri, size, isFullView = false }) => {
-  const sources = useMemo(() => buildEvmCollectibleImagesStack(uri), [uri]);
-  const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sources);
+export const EvmCollectibleImage = memo<Props>(({ assetSlug, chainId, uri, size, isFullView = false }) => {
+  const { src, isLoading, isStackFailed, onSuccess, onFail } = useEvmCollectibleImagesStack(chainId, assetSlug, uri);
 
   const isDataUri = src != null && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src));
   const dataUriForeground = isDataUri ? (

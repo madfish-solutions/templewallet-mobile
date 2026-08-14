@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import {
-  buildCollectibleImagesStack,
+  buildTezosCollectibleImagesStack,
   buildEvmCollectibleImagesStack,
   buildEvmTokenIconSources,
   buildTokenImagesStack
@@ -56,7 +56,7 @@ const buildImagesStackState = (sourcesStack: string[], cacheKey?: string): Image
     : { cacheKey, index: successfulSourceIndex, sourcesStack, status: 'loaded' };
 };
 
-export const useCollectibleImagesStack = (
+export const useTezosCollectibleImagesStack = (
   assetSlug: string,
   artifactUri?: string,
   displayUri?: string,
@@ -64,11 +64,17 @@ export const useCollectibleImagesStack = (
   isFullView?: boolean
 ) => {
   const sourcesStack = useMemo(
-    () => buildCollectibleImagesStack(assetSlug, { artifactUri, displayUri, thumbnailUri }, isFullView),
+    () => buildTezosCollectibleImagesStack(assetSlug, { artifactUri, displayUri, thumbnailUri }, isFullView),
     [assetSlug, artifactUri, displayUri, thumbnailUri, isFullView]
   );
 
-  return useImagesStack(sourcesStack);
+  return useImagesStack(sourcesStack, `tezos-collectible:${assetSlug}`);
+};
+
+export const useEvmCollectibleImagesStack = (chainId: number, assetSlug: string, uri?: string) => {
+  const sourcesStack = useMemo(() => buildEvmCollectibleImagesStack(uri), [uri]);
+
+  return useImagesStack(sourcesStack, `evm-collectible:${chainId}:${assetSlug}`);
 };
 
 export const useTezosTokenImagesStack = ({ thumbnailUri = '' }: TezosTokenImagesStackParams) => {

@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { WebView } from 'react-native-webview';
 
-import { useCollectibleImagesStack } from 'src/hooks/use-images-stack';
+import { useTezosCollectibleImagesStack } from 'src/hooks/use-images-stack';
 import { AssetMediaURIs } from 'src/utils/assets/types';
 import { isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
@@ -39,7 +39,7 @@ export const CollectibleImage = memo<Props>(
   }) => {
     const styles = useCollectibleImageStyles();
 
-    const { src, isStackFailed, isLoading, onSuccess, onFail } = useCollectibleImagesStack(
+    const { src, isStackFailed, isLoading, onSuccess, onFail } = useTezosCollectibleImagesStack(
       slug,
       artifactUri,
       displayUri,
@@ -164,7 +164,7 @@ interface CollectiblePreviewBackgroundProps extends AssetMediaURIs {
 
 const CollectiblePreviewBackground = memo<CollectiblePreviewBackgroundProps>(
   ({ slug, artifactUri, displayUri, thumbnailUri }) => {
-    const { src, onFail } = useCollectibleImagesStack(slug, artifactUri, displayUri, thumbnailUri, false);
+    const { src, onFail } = useTezosCollectibleImagesStack(slug, artifactUri, displayUri, thumbnailUri, false);
 
     return <BlurredImageBackground uri={src} onError={onFail} />;
   }

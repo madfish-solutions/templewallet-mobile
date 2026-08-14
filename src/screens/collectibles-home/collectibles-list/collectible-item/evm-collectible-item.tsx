@@ -34,7 +34,7 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
       style={[styles.root, style, { width: size }]}
     >
       <View style={[styles.image, { width: size, height: size }]}>
-        <EvmCollectibleImage uri={imageUri} size={size} />
+        <EvmCollectibleImage assetSlug={collectible.slug} chainId={collectible.chainId} uri={imageUri} size={size} />
 
         {showInfo ? <Balance balance={balance} /> : null}
 
