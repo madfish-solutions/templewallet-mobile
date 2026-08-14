@@ -36,6 +36,7 @@ export interface AssetAmountInputProps<TAsset extends AssetInterface = TokenInte
   searchPlaceholder?: string;
   dropdownListHeader?: ReactNode;
   dropdownDescription?: string;
+  scrollToSelectedOnOpen?: boolean;
   isShowNameForValue?: boolean;
   isSingleAsset?: boolean;
   selectionOptions?: TextInputProps['selection'];

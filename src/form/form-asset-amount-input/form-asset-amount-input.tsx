@@ -19,11 +19,12 @@ import { useDidUpdate } from 'src/utils/hooks';
 import { ErrorMessage } from '../error-message/error-message';
 
 interface Props<TAsset extends AssetInterface = TokenInterface>
-  extends Omit<AssetAmountInputProps<TAsset>, 'value' | 'onValueChange'>,
-    Partial<Pick<AssetAmountInputProps<TAsset>, 'onValueChange'>> {
+  extends Omit<AssetAmountInputProps<TAsset>, 'value' | 'onValueChange'> {
   name: string;
   variant?: AssetAmountInputVariant;
   showErrorInFooter?: boolean;
+  /** Return false to prevent the default Formik value update. */
+  onValueChange?: (value: AssetAmountInterface<TAsset>) => boolean | void;
 }
 
 type FormAssetAmountInputComponent = <TAsset extends AssetInterface = TokenInterface>(
@@ -45,6 +46,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
     searchPlaceholder,
     dropdownListHeader,
     dropdownDescription,
+    scrollToSelectedOnOpen,
     isSingleAsset,
     selectionOptions = undefined,
     maxButton = false,
@@ -67,8 +69,11 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
 
     const handleValueChange: SyncFn<AssetAmountInterface<AssetInterface>, void> = useCallback(
       newValue => {
-        onValueChange?.(newValue);
-        formikContext.setFieldValue(name, newValue);
+        const shouldUpdateFormValue = onValueChange?.(newValue) !== false;
+
+        if (shouldUpdateFormValue) {
+          formikContext.setFieldValue(name, newValue);
+        }
       },
       [onValueChange, formikContext.setFieldValue, name]
     );
@@ -123,6 +128,7 @@ export const FormAssetAmountInput = memo<Props<AssetInterface>>(
           searchPlaceholder={searchPlaceholder}
           dropdownListHeader={dropdownListHeader}
           dropdownDescription={dropdownDescription}
+          scrollToSelectedOnOpen={scrollToSelectedOnOpen}
           isSingleAsset={isSingleAsset}
           editable={editable}
           toUsdToggle={toUsdToggle}

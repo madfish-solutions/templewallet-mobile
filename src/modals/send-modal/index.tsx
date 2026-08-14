@@ -125,7 +125,7 @@ export const SendModal: FC = () => {
     onSubmit
   });
 
-  const { isValid, submitCount, isSubmitting, values, setFieldError, setFieldValue, setValues, submitForm } = formik;
+  const { isValid, submitCount, isSubmitting, values, resetForm, setFieldError, setFieldValue, submitForm } = formik;
   const selectedAsset = values.assetAmount.asset;
   const { maxAmount, isEstimating: isEvmMaxAmountEstimating } = useEvmMaxAmount({
     asset: selectedAsset,
@@ -147,17 +147,27 @@ export const SendModal: FC = () => {
     tezosAddress
   });
 
-  const handleAssetAmountChange = useCallback(
+  const handleAssetChange = useCallback(
     (nextValue: SendAssetAmount) => {
-      if (nextValue.asset.assetKey !== selectedAsset.assetKey) {
-        void setValues(currentValues => ({
-          ...currentValues,
-          recipient: '',
-          transferBetweenOwnAccounts: false
-        }));
+      if (nextValue.asset.assetKey === selectedAsset.assetKey) {
+        return;
       }
+
+      resetForm({
+        values: {
+          assetAmount: {
+            asset: nextValue.asset,
+            amount: undefined
+          },
+          recipient: '',
+          transferBetweenOwnAccounts: false,
+          memo: ''
+        }
+      });
+
+      return false;
     },
-    [selectedAsset.assetKey, setValues]
+    [resetForm, selectedAsset.assetKey]
   );
 
   const isTezOrShieldedTez =
@@ -239,8 +249,9 @@ export const SendModal: FC = () => {
             dropdownDescription="Select Token"
             searchPlaceholder="Search by name or address"
             dropdownListHeader={tokenFilterHeader}
+            scrollToSelectedOnOpen={false}
             setSearchValue={setAssetSearch}
-            onValueChange={handleAssetAmountChange}
+            onValueChange={handleAssetChange}
             testID={SendModalSelectors.assetInput}
             tokenTestID={SendModalSelectors.tokenChange}
             maxButtonTestID={SendModalSelectors.maxButton}
