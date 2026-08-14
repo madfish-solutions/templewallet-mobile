@@ -174,6 +174,7 @@ const DropdownComponent = <T extends unknown>({
           {listItemDividerSize > 0 && <Divider size={listItemDividerSize} />}
           <TouchableWithAnalytics
             Component={TouchableOpacity}
+            key={index}
             onPress={handlePress}
             testID={DropdownSelectors.option}
             testIDProperties={itemTestIDPropertiesFn?.(item)}
@@ -206,15 +207,14 @@ const DropdownComponent = <T extends unknown>({
     }
     const foundIndex = list.findIndex(item => equalityFn(item, value));
     const index = foundIndex > -1 ? foundIndex : 0;
-
     if (foundIndex >= list.length) {
       return void 0;
     }
 
     try {
       ref.current.scrollToIndex({ index, animated: true });
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
+      console.error(e);
     }
   }, [value, list]);
 
