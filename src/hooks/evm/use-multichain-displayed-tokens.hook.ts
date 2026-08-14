@@ -121,8 +121,8 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
 
     const evmTokens: MultichainDisplayedToken[] = [];
 
-    // Manually added assets are displayed even with a zero balance
-    const evmSlugs = new Set(Object.keys(evmBalances));
+    // The native asset and manually added assets remain available to the wallet-level zero-balance filter.
+    const evmSlugs = new Set([EVM_TOKEN_SLUG, ...Object.keys(evmBalances)]);
     for (const slug in evmAssets) {
       if (evmAssets[slug].manual) {
         evmSlugs.add(slug);
@@ -130,16 +130,16 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
     }
 
     for (const slug of evmSlugs) {
-      if (slug !== EVM_TOKEN_SLUG && evmAssets[slug]?.visibility === VisibilityEnum.Hidden) {
+      const isNative = slug === EVM_TOKEN_SLUG;
+      if (!isNative && evmAssets[slug]?.visibility === VisibilityEnum.Hidden) {
         continue;
       }
 
       const atomicBalance = evmBalances[slug] ?? '0';
-      if (!isPositiveNumber(atomicBalance) && evmAssets[slug]?.manual !== true) {
+      if (!isNative && !isPositiveNumber(atomicBalance) && evmAssets[slug]?.manual !== true) {
         continue;
       }
 
-      const isNative = slug === EVM_TOKEN_SLUG;
       const standard = isNative
         ? EvmAssetStandardEnum.NATIVE
         : evmAssets[slug]?.standard ?? evmMetadata[slug]?.standard;

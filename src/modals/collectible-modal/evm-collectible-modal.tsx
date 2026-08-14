@@ -131,9 +131,13 @@ export const EvmCollectibleModal = memo(() => {
 const getMetadataLink = (uri?: string): string | undefined => {
   const normalizedUri = normalizeIpfsUri(uri);
 
-  if (!normalizedUri?.startsWith(IPFS_PROTOCOL)) {
+  if (!normalizedUri) {
     return undefined;
   }
 
-  return `${IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`;
+  if (normalizedUri.startsWith(IPFS_PROTOCOL)) {
+    return `${IPFS_GATE}/${normalizedUri.slice(IPFS_PROTOCOL.length)}`;
+  }
+
+  return /^https?:\/\//i.test(normalizedUri) ? normalizedUri : undefined;
 };

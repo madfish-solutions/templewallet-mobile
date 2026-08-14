@@ -110,7 +110,7 @@ export const getEvmCollectibleMetadataUri = async (
         throw new Error('ERC-1155 contract returned no uri');
       }
 
-      return getErc1155CandidateUris(rawUri, bigIntTokenId)[0];
+      return (await resolveErc1155Metadata(rawUri, bigIntTokenId)).metadataUri;
     }
 
     const metadataUri = await executeEvmReadContract<string>(network, {
@@ -198,25 +198,7 @@ const getErc1155Metadata = async (
     throw new Error('ERC-1155 contract returned no uri');
   }
 
-  // EIP-1155 requires `{id}` to be the lowercase 64-char hex form; some non-compliant contracts expect decimal
-  const candidateUris = getErc1155CandidateUris(rawUri, tokenId);
-
-  let metadataUri = candidateUris[0];
-  let remoteMetadata: Awaited<ReturnType<typeof fetchCollectibleJsonMetadata>> | undefined;
-  let lastFetchError: unknown;
-  for (const candidateUri of candidateUris) {
-    try {
-      remoteMetadata = await fetchCollectibleJsonMetadata(candidateUri);
-      metadataUri = candidateUri;
-      break;
-    } catch (error) {
-      lastFetchError = error;
-    }
-  }
-
-  if (!remoteMetadata) {
-    throw lastFetchError;
-  }
+  const { metadataUri, remoteMetadata } = await resolveErc1155Metadata(rawUri, tokenId);
 
   return {
     ...remoteMetadata,
@@ -236,6 +218,27 @@ const getErc1155CandidateUris = (rawUri: string, tokenId: bigint): string[] => {
       rawUri.replace('{id}', tokenIdStr)
     ])
   ];
+};
+
+interface ResolvedErc1155Metadata {
+  metadataUri: string;
+  remoteMetadata: Awaited<ReturnType<typeof fetchCollectibleJsonMetadata>>;
+}
+
+const resolveErc1155Metadata = async (rawUri: string, tokenId: bigint): Promise<ResolvedErc1155Metadata> => {
+  // EIP-1155 requires `{id}` to be the lowercase 64-char hex form; some non-compliant contracts expect decimal.
+  const candidateUris = getErc1155CandidateUris(rawUri, tokenId);
+  let lastFetchError: unknown;
+
+  for (const metadataUri of candidateUris) {
+    try {
+      return { metadataUri, remoteMetadata: await fetchCollectibleJsonMetadata(metadataUri) };
+    } catch (error) {
+      lastFetchError = error;
+    }
+  }
+
+  throw lastFetchError;
 };
 
 interface CollectibleJsonMetadata {

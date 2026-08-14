@@ -12,7 +12,7 @@ import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/e
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
-import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
+import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { EvmSendAsset } from 'src/types/send-asset';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
@@ -37,18 +37,20 @@ export const useCurrentAccountEvmManageAssets = (): EvmManageAsset[] => {
       return [];
     }
 
-    const assetSlugs = new Set([...Object.keys(assets), ...Object.keys(balances)]);
+    const assetSlugs = new Set([EVM_TOKEN_SLUG, ...Object.keys(assets), ...Object.keys(balances)]);
 
     return [...assetSlugs].flatMap(assetSlug => {
       const asset = assets[assetSlug];
       const standard =
-        asset?.standard ?? tokensMetadata[assetSlug]?.standard ?? collectiblesMetadata[assetSlug]?.standard;
+        assetSlug === EVM_TOKEN_SLUG
+          ? EvmAssetStandardEnum.NATIVE
+          : asset?.standard ?? tokensMetadata[assetSlug]?.standard ?? collectiblesMetadata[assetSlug]?.standard;
       if (!standard) {
         return [];
       }
 
       const balance = balances[assetSlug] ?? '0';
-      if (!asset?.manual && !new BigNumber(balance).isGreaterThan(0)) {
+      if (standard !== EvmAssetStandardEnum.NATIVE && !asset?.manual && !new BigNumber(balance).isGreaterThan(0)) {
         return [];
       }
 
