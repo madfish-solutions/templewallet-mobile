@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { StyleProp, TextStyle, Text } from 'react-native';
 
-import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { AssetInterface } from 'src/interfaces/asset.interface';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { BURN_ADDRESS } from 'src/utils/known-addresses';
@@ -15,7 +15,7 @@ interface Props {
    * Rework to accept TezosTokenMetadata
    * with `exchangeRate` as a separate property
    */
-  asset: TokenInterface;
+  asset: AssetInterface;
   style?: StyleProp<TextStyle>;
   showMinusSign?: boolean;
   showSymbol?: boolean;

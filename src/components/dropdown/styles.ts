@@ -27,6 +27,10 @@ export const useDropdownStyles = createUseStyles(({ typography, colors }) => ({
     padding: formatSize(16),
     paddingTop: formatSize(4)
   },
+  tokenSelectorFlatListContentContainer: {
+    paddingTop: formatSize(4),
+    paddingBottom: formatSize(6)
+  },
   sectionHeaderText: {
     ...typography.caption13Regular,
     lineHeight: formatSize(18),

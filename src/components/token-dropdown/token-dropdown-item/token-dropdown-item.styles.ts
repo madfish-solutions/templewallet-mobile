@@ -1,11 +1,22 @@
-import { createUseStyles } from '../../../styles/create-use-styles';
-import { formatSize } from '../../../styles/format-size';
+import { createUseStyles } from 'src/styles/create-use-styles';
+import { formatSize, formatTextSize } from 'src/styles/format-size';
 
 export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography }) => ({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     height: formatSize(40)
+  },
+  compactContainer: {
+    height: formatSize(44)
+  },
+  iconContainer: {
+    position: 'relative'
+  },
+  iconVisualContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center'
   },
   infoContainer: {
     flexGrow: 1,
@@ -23,9 +34,17 @@ export const useTokenDropdownItemStyles = createUseStyles(({ colors, typography 
     ...typography.numbersRegular15,
     color: colors.black
   },
+  compactSymbol: {
+    ...typography.numbersRegular17,
+    lineHeight: formatTextSize(22)
+  },
   name: {
     ...typography.numbersRegular11,
     color: colors.gray1
+  },
+  compactName: {
+    ...typography.numbersRegular13,
+    lineHeight: formatTextSize(18)
   },
   fullWidthName: {
     flexGrow: 1

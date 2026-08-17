@@ -12,8 +12,8 @@ const useSaplingAccountState = (): SaplingAccountState => {
   return useSelector(({ sapling }) => (pkh ? sapling.accountsRecord[pkh] : undefined) ?? initialSaplingAccountState);
 };
 
-export const useSaplingAddressForAccount = (account: Account) => {
-  const tezosAddress = getAccountAddressForTezos(account);
+export const useSaplingAddressForAccount = (account?: Account) => {
+  const tezosAddress = account ? getAccountAddressForTezos(account) : undefined;
 
   return useSelector(({ sapling }) =>
     tezosAddress ? sapling.accountsRecord[tezosAddress]?.saplingAddress : undefined

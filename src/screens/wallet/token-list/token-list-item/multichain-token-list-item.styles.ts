@@ -2,8 +2,6 @@ import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 import { formatSize } from 'src/styles/format-size';
 
-const BADGE_SIZE = formatSize(16);
-
 export const useMultichainTokenListItemStyles = createUseStyles(({ colors, typography }) => ({
   gasTokenContainer: {
     borderBottomWidth: DEFAULT_BORDER_WIDTH,
@@ -59,23 +57,6 @@ export const useMultichainTokenListItemStyles = createUseStyles(({ colors, typog
     flexDirection: 'row',
     alignItems: 'center',
     flexShrink: 1
-  },
-  iconContainer: {
-    position: 'relative',
-    margin: formatSize(2)
-  },
-  badge: {
-    position: 'absolute',
-    right: formatSize(2),
-    bottom: formatSize(2),
-    width: BADGE_SIZE,
-    height: BADGE_SIZE,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: BADGE_SIZE / 2,
-    borderWidth: formatSize(0.8),
-    borderColor: colors.lines,
-    backgroundColor: colors.pageBG
   },
   infoContainer: {
     justifyContent: 'center',

@@ -93,10 +93,11 @@ export const AccountDropdownBase = memo<Props>(
           testID={testID}
           testIDProperties={testIDProperties}
           description="My Accounts"
+          emptyListText="No records found"
           isSearchable
           value={value}
           list={groupedList}
-          itemHeight={formatSize(84)}
+          listItemHeight={formatSize(84)}
           equalityFn={accountEqualityFn}
           renderValue={props => renderValue({ ...props, value })}
           renderListItem={renderAccountListItem}

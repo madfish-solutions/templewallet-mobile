@@ -14,6 +14,7 @@ import {
 import { BehaviorSubject, firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { isAddress as isEvmAddress } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -548,6 +549,12 @@ export class Shelter {
     Shelter.revealAccountPrivateKey$(address).pipe(
       switchMap(value => (value === undefined ? throwError$('Failed to reveal private key') : of(value))),
       map(privateKey => new InMemorySigner(privateKey))
+    );
+
+  static getEvmAccount$ = (address: HexString) =>
+    Shelter.revealAccountPrivateKey$(address).pipe(
+      switchMap(value => (value === undefined ? throwError$('Failed to reveal private key') : of(value))),
+      map(privateKey => privateKeyToAccount(privateKey as HexString))
     );
 
   static enableBiometryPassword$ = (password: string) =>

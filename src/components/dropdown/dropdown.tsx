@@ -1,4 +1,4 @@
-import React, { memo, Ref, useCallback, useMemo, useRef } from 'react';
+import React, { memo, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -29,7 +29,10 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   isSearchable?: boolean;
   searchPlaceholder?: string;
   renderSearchActionButtons?: DropdownActionButtonsComponent;
-  itemHeight?: number;
+  listItemHeight?: number;
+  listItemSeparatorSize?: number;
+  listItemDividerSize?: number;
+  isCompactListItem?: boolean;
   itemContainerStyle?: StyleProp<ViewStyle>;
   isLoading?: boolean;
   setSearchValue?: SyncFn<string>;
@@ -38,14 +41,15 @@ export interface DropdownProps<T> extends Pick<FlatListProps<T>, 'keyExtractor'>
   renderListItem: DropdownListItemComponent<T>;
   getListItemSectionTitle?: (item: T) => string | undefined;
   renderActionButtons?: DropdownActionButtonsComponent;
+  listHeader?: ReactNode;
   showCloseButton?: boolean;
+  scrollToSelectedOnOpen?: boolean;
   triggerWrapperRef?: Ref<View>;
   onLongPress?: EmptyFn;
 }
 
 export interface DropdownValueProps<T> extends TestIdProps {
   value?: T;
-  itemHeight?: number;
   list: T[];
   disabled?: boolean;
   isCollectibleScreen?: boolean;
@@ -73,14 +77,15 @@ export type DropdownActionButtonsComponent = SyncFC<{
   closeDropdown: (onClosed?: EmptyFn) => void;
 }>;
 
-const ItemSeparatorComponent = memo(() => <Divider size={formatSize(8)} />);
-
 const DropdownComponent = <T extends unknown>({
   value,
   list,
   emptyListText = 'No assets found.',
   description,
-  itemHeight = formatSize(64),
+  listItemHeight = formatSize(64),
+  listItemSeparatorSize = formatSize(16),
+  listItemDividerSize = formatSize(8),
+  isCompactListItem = false,
   itemContainerStyle,
   disabled = false,
   isLoading = false,
@@ -93,8 +98,10 @@ const DropdownComponent = <T extends unknown>({
   renderValue,
   renderListItem,
   showCloseButton = true,
+  scrollToSelectedOnOpen = true,
   getListItemSectionTitle,
   renderActionButtons = emptyComponent,
+  listHeader,
   keyExtractor,
   onValueChange,
   onLongPress,
@@ -127,19 +134,21 @@ const DropdownComponent = <T extends unknown>({
     (_: unknown, index: number) => {
       const sectionTitle = itemsTitles[index];
       const sectionsTitlesBeforeCount = Object.keys(itemsTitles).filter(key => Number(key) < index).length;
-      const rowDividerSize = formatSize(8);
+      const rowDividerSize = listItemDividerSize;
       const sectionTitleSize = formatSize(22);
-      const itemSeparatorSize = formatSize(8);
+      const itemSeparatorSize = listItemSeparatorSize;
 
       return {
-        length: itemHeight + rowDividerSize + (sectionTitle ? sectionTitleSize : 0),
+        length: listItemHeight + rowDividerSize + (sectionTitle ? sectionTitleSize : 0),
         index,
-        offset: index * (itemHeight + rowDividerSize + itemSeparatorSize) + sectionsTitlesBeforeCount * sectionTitleSize
+        offset:
+          index * (listItemHeight + rowDividerSize + itemSeparatorSize) + sectionsTitlesBeforeCount * sectionTitleSize
       };
     },
-    [itemHeight, itemsTitles]
+    [itemsTitles, listItemDividerSize, listItemHeight, listItemSeparatorSize]
   );
   const contentHeight = useDropdownHeight();
+  const renderItemSeparator = useCallback(() => <Divider size={listItemSeparatorSize} />, [listItemSeparatorSize]);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<T>) => {
@@ -154,7 +163,7 @@ const DropdownComponent = <T extends unknown>({
       return (
         <>
           {isDefined(sectionTitle) && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
-          <Divider size={formatSize(8)} />
+          {listItemDividerSize > 0 && <Divider size={listItemDividerSize} />}
           <TouchableWithAnalytics
             Component={SafeTouchableOpacity}
             key={index}
@@ -162,7 +171,7 @@ const DropdownComponent = <T extends unknown>({
             testID={DropdownSelectors.option}
             testIDProperties={itemTestIDPropertiesFn?.(item)}
           >
-            <DropdownItemContainer isSelected={isSelected} style={itemContainerStyle}>
+            <DropdownItemContainer isSelected={isSelected} isCompact={isCompactListItem} style={itemContainerStyle}>
               {renderListItem({ item, isSelected })}
             </DropdownItemContainer>
           </TouchableWithAnalytics>
@@ -176,6 +185,8 @@ const DropdownComponent = <T extends unknown>({
       onValueChange,
       dropdownBottomSheetController.close,
       itemTestIDPropertiesFn,
+      isCompactListItem,
+      listItemDividerSize,
       styles.sectionHeaderText,
       itemContainerStyle,
       renderListItem
@@ -220,7 +231,9 @@ const DropdownComponent = <T extends unknown>({
           style={styles.valueContainer}
           disabled={disabled}
           onPress={() => {
-            scroll();
+            if (scrollToSelectedOnOpen) {
+              scroll();
+            }
 
             trackEvent(testID, AnalyticsEventCategory.ButtonPress, testIDProperties);
 
@@ -257,6 +270,7 @@ const DropdownComponent = <T extends unknown>({
               )}
             </View>
           )}
+          {listHeader}
           {isLoading ? (
             <View style={styles.activityIndicatorContainer}>
               <ActivityIndicator size="large" />
@@ -268,8 +282,11 @@ const DropdownComponent = <T extends unknown>({
               renderItem={renderItem}
               keyExtractor={keyExtractor}
               getItemLayout={getItemLayout}
-              contentContainerStyle={styles.flatListContentContainer}
-              ItemSeparatorComponent={ItemSeparatorComponent}
+              contentContainerStyle={[
+                styles.flatListContentContainer,
+                isCompactListItem && styles.tokenSelectorFlatListContentContainer
+              ]}
+              ItemSeparatorComponent={renderItemSeparator}
               ListEmptyComponent={<DataPlaceholder text={emptyListText} />}
               windowSize={10}
               updateCellsBatchingPeriod={150}

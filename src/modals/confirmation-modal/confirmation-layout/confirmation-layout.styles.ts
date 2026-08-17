@@ -1,12 +1,7 @@
 import { DEFAULT_BORDER_WIDTH } from 'src/config/styles';
 import { createUseStyles } from 'src/styles/create-use-styles';
 
-export const useOperationsConfirmationStyles = createUseStyles(({ colors, typography }) => ({
-  loadingMessage: {
-    ...typography.body17Semibold,
-    textAlign: 'center',
-    color: colors.black
-  },
+export const useConfirmationLayoutStyles = createUseStyles(({ colors, typography }) => ({
   sectionTitle: {
     ...typography.body15Semibold,
     color: colors.black

@@ -4,10 +4,10 @@ import QRCode from 'react-native-qrcode-svg';
 
 import { BottomSheet } from 'src/components/bottom-sheet/bottom-sheet';
 import { BottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
+import { NetworkIcon } from 'src/components/network-icon';
 import { black, white } from 'src/config/styles';
 import { formatSize } from 'src/styles/format-size';
 
-import { NetworkIcon } from '../network-icon';
 import { AddressCardProps } from '../types';
 
 import { useQrBottomSheetStyles } from './styles';
@@ -35,7 +35,7 @@ export const QrBottomSheet: FC<QrBottomSheetProps> = ({ controller, title, addre
           </View>
         </View>
 
-        <NetworkIcon iconName={cryptoLogoName} />
+        <NetworkIcon name={cryptoLogoName} variant="large" />
 
         <Text style={styles.text}>{warningText}</Text>
       </View>

@@ -12,6 +12,7 @@ import { CustomToast } from './toast/custom-toast';
 
 type CustomToastProps = ToastConfigParams<{
   operationHash: string;
+  operationUrl?: string;
   isCopyButtonVisible: boolean;
   iconName?: IconNameEnum;
 }>;
@@ -25,6 +26,7 @@ const config = {
       iconName={props?.iconName}
       toastType={ToastTypeEnum.Success}
       operationHash={props?.operationHash}
+      operationUrl={props?.operationUrl}
       hide={hide}
       onPress={onPress}
     />

@@ -195,7 +195,7 @@ export const BuyWithCreditCard: FC = () => {
               list={paymentProvidersToDisplay}
               description="Select payment provider"
               emptyListText="No providers found"
-              itemHeight={formatSize(81)}
+              listItemHeight={formatSize(81)}
               equalityFn={paymentProvidersAreSame}
               itemContainerStyle={styles.paymentProviderItemContainer}
               renderValue={renderSelectedPaymentProvider}
