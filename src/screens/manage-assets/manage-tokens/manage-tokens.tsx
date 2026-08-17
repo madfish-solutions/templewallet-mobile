@@ -37,7 +37,12 @@ export const ManageTokens = memo(() => {
   const hideZeroBalances = useHideZeroBalancesSelector();
   const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
   const assets = useMemo<ManageAsset[]>(
-    () => [tezosToken, ...tokensWithoutTkey, ...evmAssets.filter(asset => !isEvmCollectibleManageAsset(asset))],
+    () =>
+      Array<ManageAsset>().concat(
+        tezosToken,
+        tokensWithoutTkey,
+        evmAssets.filter(asset => !isEvmCollectibleManageAsset(asset))
+      ),
     [evmAssets, tezosToken, tokensWithoutTkey]
   );
   const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, hideZeroBalances, true);
