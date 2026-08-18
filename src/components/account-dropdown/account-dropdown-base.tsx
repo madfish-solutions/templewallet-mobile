@@ -5,6 +5,7 @@ import { CopyAddressPopup } from 'src/components/copy-address-popup';
 import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 import { TestIdProps } from 'src/interfaces/test-id.props';
+import { useGetSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { getAccountAddressForEvm, getAccountAddressForTezos } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
@@ -65,6 +66,7 @@ export const AccountDropdownBase = memo<Props>(
     const triggerRef = useRef<View>(null);
     const copyAddressPopupRef = useRef<OptionsPopupController>(null);
     const [searchValue, setSearchValue] = useState('');
+    const getSaplingAddressForAccount = useGetSaplingAddressForAccount();
 
     const groupedList = useMemo(
       () =>
@@ -72,15 +74,17 @@ export const AccountDropdownBase = memo<Props>(
           .filter(account => {
             const tezosAddress = getAccountAddressForTezos(account);
             const evmAddress = getAccountAddressForEvm(account);
+            const saplingAddress = getSaplingAddressForAccount(account);
 
             return (
               includesIgnoreCase(account.name, searchValue) ||
               (tezosAddress && includesIgnoreCase(tezosAddress, searchValue)) ||
+              (saplingAddress && includesIgnoreCase(saplingAddress, searchValue)) ||
               (evmAddress && includesIgnoreCase(evmAddress, searchValue))
             );
           })
           .sort((accountA, accountB) => getAccountSectionWeight(accountA) - getAccountSectionWeight(accountB)),
-      [list, searchValue]
+      [getSaplingAddressForAccount, list, searchValue]
     );
 
     const onLongPressHandler = useCallback(() => {
