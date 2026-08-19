@@ -11,9 +11,9 @@ import { showErrorToast } from '../toast/error-toast.utils';
 import { isDefined } from '../utils/is-defined';
 import { getUrlQueryParams } from '../utils/url.utils';
 
-import { isSupportedWcMethod } from './constants';
+import { isSupportedWcMethod } from './evm-request-method.utils';
 import { getSessionProposalRejectReason } from './validate-session-proposal';
-import { isWcUri, WcHandler } from './wc-handler';
+import { isWcUniversalLink, isWcUri, WcHandler } from './wc-handler';
 
 export const wcDeepLinkHandler = async (url: string | null, onValidDataCallback: EmptyFn, onError: SyncFn<string>) => {
   try {
@@ -22,7 +22,7 @@ export const wcDeepLinkHandler = async (url: string | null, onValidDataCallback:
       await WcHandler.pair(url).catch(error => {
         onError(error.toString());
       });
-    } else if (url?.startsWith('temple://wc')) {
+    } else if (isDefined(url) && (url.startsWith('temple://wc') || isWcUniversalLink(url))) {
       const searchParams = getUrlQueryParams(url);
       const uri = searchParams.get('uri');
 

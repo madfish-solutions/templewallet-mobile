@@ -6,18 +6,16 @@ import { uniq } from 'lodash-es';
 import { toEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
-import { isSupportedWcMethod } from './constants';
+import { isSupportedWcMethod } from './evm-request-method.utils';
 
-export const ETHERLINK_CAIP_CHAIN_ID = toEvmCaipChainId(ETHERLINK_MAINNET_CHAIN_ID);
-
-export const SUPPORTED_WC_CHAINS = [ETHERLINK_CAIP_CHAIN_ID];
+const SUPPORTED_WC_CHAINS = [toEvmCaipChainId(ETHERLINK_MAINNET_CHAIN_ID)];
 
 /** CAIP-10 chain-agnostic EOA id — dApps use this to accept any EVM chain the wallet offers. */
-export const EIP155_CHAIN_AGNOSTIC_ID = 'eip155:0';
+const EIP155_CHAIN_AGNOSTIC_ID = 'eip155:0';
 
 const isEip155NamespaceKey = (namespaceKey: string) => namespaceKey === 'eip155' || namespaceKey.startsWith('eip155:');
 
-export const isEip155ChainAgnostic = (caipChainId: string) => caipChainId === EIP155_CHAIN_AGNOSTIC_ID;
+const isEip155ChainAgnostic = (caipChainId: string) => caipChainId === EIP155_CHAIN_AGNOSTIC_ID;
 
 const getRequiredChains = (namespaceKey: string, namespace: ProposalTypes.RequiredNamespace) => {
   if (namespace.chains && namespace.chains.length > 0) {

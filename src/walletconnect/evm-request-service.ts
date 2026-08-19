@@ -27,13 +27,11 @@ import {
 import { WcEvmRequestError } from 'src/utils/evm/wc-evm-request-error';
 import { isDefined } from 'src/utils/is-defined';
 import { getViemWalletClient } from 'src/utils/rpc/evm-client.utils';
-import { isSupportedWcMethod } from 'src/walletconnect/constants';
-
-type EvmSignTypedDataMethod =
-  | 'eth_signTypedData'
-  | 'eth_signTypedData_v1'
-  | 'eth_signTypedData_v3'
-  | 'eth_signTypedData_v4';
+import {
+  EvmWcTypedDataMethod,
+  isSupportedWcMethod,
+  isWcOldTypedDataMethod
+} from 'src/walletconnect/evm-request-method.utils';
 
 interface HandleWcEvmRequestParams {
   method: string;
@@ -123,10 +121,10 @@ class WcEvmRequestService {
     }
   }
 
-  private async signTypedData(address: HexString, params: unknown[], method: EvmSignTypedDataMethod): Promise<Hex> {
+  private async signTypedData(address: HexString, params: unknown[], method: EvmWcTypedDataMethod): Promise<Hex> {
     let typedData: TypedDataDefinition | OldTypedDataField[];
     let requestedAddress: HexString;
-    if (method === 'eth_signTypedData' || method === 'eth_signTypedData_v1') {
+    if (isWcOldTypedDataMethod(method)) {
       [typedData, requestedAddress] = validateOldSignTypedDataParams(params);
     } else {
       [requestedAddress, typedData] = validateSignTypedDataParams(params);
@@ -202,7 +200,7 @@ class WcEvmRequestService {
       name: onChainMetadata?.name,
       symbol: options.symbol ?? onChainMetadata?.symbol,
       decimals,
-      ...(isDefined(options.image) ? { iconURL: options.image } : {})
+      iconURL: options.image
     };
 
     this.dependencies.dispatch(

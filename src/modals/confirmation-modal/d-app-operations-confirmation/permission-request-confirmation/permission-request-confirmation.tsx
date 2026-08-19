@@ -7,15 +7,14 @@ import { map } from 'rxjs/operators';
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { ApprovePermissionRequestActionPayloadInterface } from 'src/hooks/request-confirmation/approve-permission-request-action-payload.interface';
 import { useDappRequestConfirmation } from 'src/hooks/request-confirmation/use-dapp-request-confirmation.hook';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos, getAccountPublicKeyForTezos } from 'src/utils/account.utils';
 
-import { ConnectionRequestConfirmationContent } from '../../connection-request-confirmation/connection-request-confirmation-content';
-import { ConnectionRequestConfirmationFormValues } from '../../connection-request-confirmation/form';
+import { ConnectionRequestConfirmationContent } from '../../common/connection-request-confirmation/connection-request-confirmation-content';
+import { ConnectionRequestConfirmationFormValues } from '../../common/connection-request-confirmation/form';
 
 import { PermissionRequestConfirmationSelectors } from './permission-request-confirmation.selectors';
 
@@ -43,7 +42,6 @@ const approvePermissionRequest = ({ message, publicKey }: ApprovePermissionReque
 
 export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
   const dispatch = useDispatch();
-  const { goBack } = useNavigation();
   const accounts = useAllAccounts();
   const selectedAccount = useAccount();
   const tezosAccounts = useMemo(() => accounts.filter(account => getAccountAddressForTezos(account)), [accounts]);
@@ -80,9 +78,7 @@ export const PermissionRequestConfirmation: FC<Props> = ({ message }) => {
       accounts={tezosAccounts}
       initialValues={formInitialValues}
       isLoading={isLoading}
-      cancelTestID={PermissionRequestConfirmationSelectors.cancelButton}
       confirmTestID={PermissionRequestConfirmationSelectors.confirmButton}
-      onCancel={goBack}
       onSubmit={onSubmit}
     />
   );

@@ -3,7 +3,10 @@ import { PairingTypes, SessionTypes } from '@walletconnect/types';
 import { getSdkError } from '@walletconnect/utils';
 
 import { assert } from 'src/utils/assert.utils';
+import { UNIVERSAL_LINKS_DOMAIN_URI_PREFIX } from 'src/utils/env.utils';
 import { isDefined } from 'src/utils/is-defined';
+import { isTruthy } from 'src/utils/is-truthy';
+import { buildSafeURL } from 'src/utils/url.utils';
 
 import { walletKitPromise } from './walletkit';
 
@@ -114,3 +117,13 @@ export class WcHandler {
 }
 
 export const isWcUri = (uri: unknown): uri is `wc:${string}` => typeof uri === 'string' && uri.startsWith('wc:');
+
+export const isWcUniversalLink = (url: string) => {
+  const pathname = buildSafeURL(url)?.pathname;
+
+  return (
+    url.startsWith(UNIVERSAL_LINKS_DOMAIN_URI_PREFIX) &&
+    isTruthy(pathname) &&
+    (pathname.endsWith('/wc') || pathname.endsWith('/wc/'))
+  );
+};

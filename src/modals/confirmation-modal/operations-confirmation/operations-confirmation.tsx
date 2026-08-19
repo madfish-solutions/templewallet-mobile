@@ -24,7 +24,7 @@ import { isTruthy } from 'src/utils/is-truthy';
 import { HELP_UKRAINE_BAKER_ADDRESS } from 'src/utils/known-bakers';
 import { tzToMutez } from 'src/utils/tezos.util';
 
-import { ConfirmationLayout } from '../confirmation-layout/confirmation-layout';
+import { ConfirmationLayout } from '../common/confirmation-layout/confirmation-layout';
 import { ConfirmationModalSelectors } from '../confirmation-modal.selectors';
 
 import { FeeFormInput } from './fee-form-input/fee-form-input';

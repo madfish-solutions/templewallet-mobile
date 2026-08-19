@@ -1,7 +1,8 @@
 import { WalletKitTypes } from '@reown/walletkit';
 import { getSdkError } from '@walletconnect/utils';
-import React, { FC, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Text, View } from 'react-native';
+import { SendTransactionRequest } from 'viem';
 
 import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
 import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
@@ -15,19 +16,28 @@ import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
 import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
+import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useAccount, useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
 import { parseEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { isDefined } from 'src/utils/is-defined';
+import {
+  getWcRequestAddress,
+  isWcSendTransactionMethod,
+  isWcSigningMethod
+} from 'src/walletconnect/evm-request-method.utils';
+import { getWcSigningPayloadPreview } from 'src/walletconnect/get-wc-signing-payload-preview';
 import { WcHandler } from 'src/walletconnect/wc-handler';
 
-import { AppMetadataView } from '../app-metadata-view';
+import { AppMetadataView } from '../common/app-metadata-view';
+import { SignRequestConfirmationContent } from '../common/sign-request-confirmation-content';
 
 import { approveWcSessionRequest } from './approve-session-request';
 import { WcSessionRequestConfirmationSelectors } from './selectors';
 import { useWcSessionRequestConfirmationStyles } from './styles';
+import { WcSendTransactionConfirmation } from './wc-send-transaction-confirmation';
 
 interface Props {
   request: WalletKitTypes.SessionRequest;
@@ -43,25 +53,8 @@ const rejectWcSessionRequest = (request: WalletKitTypes.SessionRequest) =>
     }
   });
 
-const getRequestAddress = (request: WalletKitTypes.SessionRequest): string | undefined => {
-  const { method, params } = request.params.request;
-
-  switch (method) {
-    case 'eth_sendTransaction':
-      return params[0]?.from;
-    case 'personal_sign':
-    case 'eth_signTypedData':
-    case 'eth_signTypedData_v1':
-      return params[1];
-    case 'eth_signTypedData_v3':
-    case 'eth_signTypedData_v4':
-      return params[0];
-    default:
-      return undefined;
-  }
-};
-
 export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
+  console.log('request', request);
   const styles = useWcSessionRequestConfirmationStyles();
   const { goBack } = useNavigation();
   const accounts = useAllAccounts();
@@ -70,6 +63,10 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
 
   const { confirmRequest, isLoading, isConfirmed } = useRequestConfirmation(approveWcSessionRequest);
 
+  const { method, params } = request.params.request;
+  const isSigningRequest = isWcSigningMethod(method);
+  const isSendTransactionRequest = isWcSendTransactionMethod(method);
+
   const requestChainId = useMemo(() => parseEvmCaipChainId(request.params.chainId), [request.params.chainId]);
   const requestChain = useEvmChain(requestChainId ?? -1);
   const network = useMemo(
@@ -77,7 +74,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
     [requestChain]
   );
 
-  const requestAddress = useMemo(() => getRequestAddress(request)?.toLowerCase(), [request]);
+  const requestAddress = useMemo(() => getWcRequestAddress(method, params)?.toLowerCase(), [method, params]);
   const approver = useMemo(() => {
     if (isDefined(requestAddress)) {
       return accounts.find(account => getAccountAddressForEvm(account)?.toLowerCase() === requestAddress);
@@ -90,19 +87,33 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
     () => (isDefined(approver) ? getAccountAddressForEvm(approver) : undefined),
     [approver]
   );
+  const knownAssets = useEvmAccountChainAssetsSelector(approverAddress, requestChainId ?? -1);
 
-  const payloadText = useMemo(
+  const appName = peerMetadata?.name || peerMetadata?.url || 'Unknown dApp';
+  const iconUri = peerMetadata?.icons[0];
+  const iconSeed = peerMetadata?.url || peerMetadata?.name || request.topic;
+
+  const payloadPreview = useMemo(
+    () => (isSigningRequest ? getWcSigningPayloadPreview(method, params) : undefined),
+    [isSigningRequest, method, params]
+  );
+  const bytesPayload = useMemo(
+    () => (isSigningRequest && method === 'personal_sign' && !isDefined(payloadPreview) ? params[0] : undefined),
+    [isSigningRequest, method, params, payloadPreview]
+  );
+
+  const genericPayload = useMemo(
     () =>
       JSON.stringify(
         {
-          method: request.params.request.method,
+          method,
           chainId: request.params.chainId,
-          params: request.params.request.params
+          params
         },
         null,
         2
       ),
-    [request]
+    [method, params, request.params.chainId]
   );
 
   useEffect(() => {
@@ -122,33 +133,89 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
     [request, isConfirmed]
   );
 
-  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title="Confirm action" /> }, []);
+  useNavigationSetOptions(
+    {
+      headerTitle: () => (
+        <HeaderTitle
+          title={isSigningRequest ? 'Confirm Sign' : isSendTransactionRequest ? 'Confirm Operation' : 'Confirm action'}
+        />
+      )
+    },
+    [isSendTransactionRequest, isSigningRequest]
+  );
 
-  const onConfirm = () => {
-    if (!isDefined(approverAddress)) {
-      return;
-    }
-
-    confirmRequest({
-      request,
-      address: approverAddress,
-      network,
-      chainName: requestChain?.name,
-      blockExplorerUrl: requestChain?.activeBlockExplorer.url,
-      markResponded: () => {
-        isConfirmed.current = true;
+  const onConfirm = useCallback(
+    (preparedTransaction?: SendTransactionRequest) => {
+      if (!isDefined(approverAddress)) {
+        return;
       }
-    });
-  };
+
+      confirmRequest({
+        request,
+        address: approverAddress,
+        network,
+        chainName: requestChain?.name,
+        blockExplorerUrl: requestChain?.activeBlockExplorer.url,
+        knownAssets,
+        preparedTransaction,
+        markResponded: () => {
+          isConfirmed.current = true;
+        }
+      });
+    },
+    [
+      approverAddress,
+      confirmRequest,
+      isConfirmed,
+      knownAssets,
+      network,
+      request,
+      requestChain?.activeBlockExplorer.url,
+      requestChain?.name
+    ]
+  );
+
+  if (isSigningRequest) {
+    return (
+      <SignRequestConfirmationContent
+        headerTitle="Confirm Sign"
+        appName={appName}
+        iconUri={iconUri}
+        iconSeed={iconSeed}
+        account={approver}
+        accountAddressFallback={requestAddress}
+        payload={payloadPreview}
+        bytesPayload={bytesPayload}
+        isLoading={isLoading}
+        confirmDisabled={!isDefined(approverAddress)}
+        cancelTestID={WcSessionRequestConfirmationSelectors.cancelButton}
+        confirmTestID={WcSessionRequestConfirmationSelectors.confirmButton}
+        onCancel={goBack}
+        onConfirm={onConfirm}
+      />
+    );
+  }
+
+  if (isSendTransactionRequest && isDefined(requestChainId)) {
+    return (
+      <WcSendTransactionConfirmation
+        params={params}
+        chainId={requestChainId}
+        account={approver}
+        accountAddress={approverAddress}
+        appName={appName}
+        iconUri={iconUri}
+        iconSeed={iconSeed}
+        isSubmitting={isLoading}
+        onConfirm={onConfirm}
+      />
+    );
+  }
 
   return (
     <>
       <ScreenContainer>
-        <AppMetadataView
-          name={peerMetadata?.name ?? 'Unknown dApp'}
-          iconUri={peerMetadata?.icons[0]}
-          iconSeed={peerMetadata?.url || peerMetadata?.name || request.topic}
-        />
+        <AppMetadataView name={appName} iconUri={iconUri} iconSeed={iconSeed} />
         <Divider />
         <Label label="Account" />
         <Divider />
@@ -162,7 +229,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
           <Text style={styles.descriptionText}>Request payload</Text>
         </View>
         <Divider size={formatSize(16)} />
-        <Text style={styles.payloadText}>{payloadText}</Text>
+        <Text style={styles.payloadText}>{genericPayload}</Text>
       </ScreenContainer>
       <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary

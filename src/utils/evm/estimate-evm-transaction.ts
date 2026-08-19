@@ -1,6 +1,6 @@
 import { FeeValuesEIP1559, FeeValuesLegacy } from 'viem';
 
-import { EvmTransferRequest } from 'src/utils/evm/build-evm-transfer-request';
+import { EvmTransactionRequest } from 'src/interfaces/evm-transaction-request.interface';
 
 interface PreparedEvmTransaction {
   type: string;
@@ -11,7 +11,9 @@ interface PreparedEvmTransaction {
 }
 
 export interface EvmTransactionPreparer {
-  prepareTransactionRequest: (request: EvmTransferRequest & { account: HexString }) => Promise<PreparedEvmTransaction>;
+  prepareTransactionRequest: (
+    request: Pick<EvmTransactionRequest, 'to' | 'value' | 'data' | 'gas'> & { account: HexString }
+  ) => Promise<PreparedEvmTransaction>;
 }
 
 export interface LegacyFees extends FeeValuesLegacy {
@@ -23,6 +25,11 @@ export interface Eip1559Fees extends FeeValuesEIP1559 {
 }
 
 export type EvmFees = LegacyFees | Eip1559Fees;
+
+export interface EvmSubmissionFees {
+  gasLimit: bigint;
+  fees: EvmFees;
+}
 
 interface EstimationBase {
   gas: bigint;
@@ -36,9 +43,17 @@ export type EvmEstimation = LegacyEstimation | Eip1559Estimation;
 export const estimateEvmTransaction = async (
   publicClient: EvmTransactionPreparer,
   account: HexString,
-  request: EvmTransferRequest
+  request: EvmTransactionRequest
 ): Promise<EvmEstimation> => {
-  const transaction = await publicClient.prepareTransactionRequest({ ...request, account });
+  // Fee fields from a dApp must not drive prepare — otherwise network fee options collapse to the
+  // dApp suggestion. Gas limit may still be forwarded as a dApp-provided cap/hint.
+  const {
+    gasPrice: _gasPrice,
+    maxFeePerGas: _maxFeePerGas,
+    maxPriorityFeePerGas: _maxPriorityFeePerGas,
+    ...rest
+  } = request;
+  const transaction = await publicClient.prepareTransactionRequest({ ...rest, account });
 
   if (transaction.gas <= 0n) {
     throw new Error('Invalid EVM gas estimation');

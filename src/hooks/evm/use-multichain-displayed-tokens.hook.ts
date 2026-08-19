@@ -7,10 +7,9 @@ import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
-import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
+import { useEvmAssetExchangeRateGetter } from 'src/store/evm/exchange-rates/evm-exchange-rates-selectors';
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
-import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
 import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
@@ -95,8 +94,7 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
   const evmBalances = useEvmAccountChainBalancesSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const evmAssets = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const evmMetadata = useEvmChainTokensMetadataSelector(ETHERLINK_MAINNET_CHAIN_ID);
-  const evmExchangeRates = useEvmChainExchangeRatesSelector(ETHERLINK_MAINNET_CHAIN_ID);
-  const fiatToUsdRate = useFiatToUsdRateSelector();
+  const getEvmExchangeRate = useEvmAssetExchangeRateGetter(ETHERLINK_MAINNET_CHAIN_ID);
   const shieldedBalanceMutez = useShieldedBalanceSelector();
 
   return useMemo(() => {
@@ -150,8 +148,7 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
         continue;
       }
       const symbol = nativeCurrency?.symbol ?? metadata?.symbol ?? '';
-      const usdRate = evmExchangeRates[slug];
-      const fiatRate = isDefined(usdRate) && isDefined(fiatToUsdRate) ? usdRate * fiatToUsdRate : undefined;
+      const fiatRate = getEvmExchangeRate(slug);
       const fiatValue = isDefined(fiatRate) ? getDollarValue(atomicBalance, decimals, fiatRate).toNumber() : undefined;
 
       evmTokens.push({
@@ -182,7 +179,6 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
     evmBalances,
     evmAssets,
     evmMetadata,
-    evmExchangeRates,
-    fiatToUsdRate
+    getEvmExchangeRate
   ]);
 };

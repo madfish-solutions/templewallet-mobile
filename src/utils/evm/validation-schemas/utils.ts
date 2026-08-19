@@ -83,7 +83,7 @@ export const oldTypedDataValidationSchema = () =>
     }).required()
   );
 
-export const typedDataValidationSchema = () =>
+const typedDataValidationSchema = () =>
   objectSchema({
     types: typedDataTypesSchema,
     primaryType: stringSchema().required(),

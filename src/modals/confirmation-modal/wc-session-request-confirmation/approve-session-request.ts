@@ -1,15 +1,25 @@
 import { WalletKitTypes } from '@reown/walletkit';
 import { getInternalError, getSdkError } from '@walletconnect/utils';
-import { defer, EMPTY, from, of, throwError } from 'rxjs';
+import { defer, from, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { Hash, isHash } from 'viem';
+import { Hash, isHash, SendTransactionRequest } from 'viem';
 
+import { EvmChainAssetsRecord } from 'src/store/evm/assets/evm-assets-state';
 import { navigateBackAction } from 'src/store/root-state.actions';
-import { showSuccessToast } from 'src/toast/toast.utils';
+import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { EvmNetworkEssentials } from 'src/types/networks';
+import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.utils';
+import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
+import { evmTransactionSubmissionService } from 'src/utils/evm/evm-transaction-submission';
+import { getEvmTransactionExplorerUrl } from 'src/utils/evm/get-evm-transaction-explorer-url';
 import { WcEvmRequestError } from 'src/utils/evm/wc-evm-request-error';
 import { isDefined } from 'src/utils/is-defined';
-import { getViemPublicClient } from 'src/utils/rpc/evm-client.utils';
+import {
+  isWcAccountsMethod,
+  isWcSendTransactionMethod,
+  isWcSigningMethod,
+  isWcWatchAssetMethod
+} from 'src/walletconnect/evm-request-method.utils';
 import { wcEvmRequestService } from 'src/walletconnect/evm-request-service';
 import { WcHandler } from 'src/walletconnect/wc-handler';
 
@@ -19,10 +29,21 @@ interface ApproveWcSessionRequestPayload {
   network?: EvmNetworkEssentials;
   chainName?: string;
   blockExplorerUrl?: string;
+  knownAssets?: EvmChainAssetsRecord;
+  /**
+   * Prepared `eth_sendTransaction` payload with wallet-selected gas/fees.
+   * When set, broadcast uses the submission service instead of WC fee estimation.
+   */
+  preparedTransaction?: SendTransactionRequest;
   /**
    * Called after any WC response is sent so unmount cleanup does not send a duplicate rejection.
    */
   markResponded: EmptyFn;
+}
+
+interface WaitForWcTransactionConfirmationParams
+  extends Required<Omit<ApproveWcSessionRequestPayload, 'request' | 'markResponded' | 'preparedTransaction'>> {
+  hash: Hash;
 }
 
 const toWcJsonRpcError = (error: unknown) => {
@@ -47,70 +68,77 @@ const toWcJsonRpcError = (error: unknown) => {
   };
 };
 
-const getTransactionExplorerUrl = (blockExplorerUrl: string, hash: Hash) => `${blockExplorerUrl}/tx/${hash}`;
-
 const showWcRequestSuccessToast = (method: string, result: unknown, blockExplorerUrl?: string) => {
-  switch (method) {
-    case 'eth_sendTransaction': {
-      if (typeof result === 'string' && isHash(result) && isDefined(blockExplorerUrl)) {
-        showSuccessToast({
-          title: 'Success!',
-          description: 'Transaction request sent! Confirming...',
-          operationHash: result,
-          operationUrl: getTransactionExplorerUrl(blockExplorerUrl, result)
-        });
-      } else {
-        showSuccessToast({
-          title: 'Success!',
-          description: 'Transaction request sent! Confirming...'
-        });
-      }
-
-      return;
+  if (isWcSendTransactionMethod(method)) {
+    if (typeof result === 'string' && isHash(result) && isDefined(blockExplorerUrl)) {
+      showSuccessToast({
+        title: 'Success!',
+        description: 'Transaction request sent! Confirming...',
+        operationHash: result,
+        operationUrl: getEvmTransactionExplorerUrl(blockExplorerUrl, result)
+      });
+    } else {
+      showSuccessToast({
+        title: 'Success!',
+        description: 'Transaction request sent! Confirming...'
+      });
     }
-    case 'personal_sign':
-    case 'eth_signTypedData':
-    case 'eth_signTypedData_v1':
-    case 'eth_signTypedData_v3':
-    case 'eth_signTypedData_v4':
-      showSuccessToast({ description: 'Successfully signed!' });
 
-      return;
-    case 'eth_accounts':
-    case 'eth_requestAccounts':
-      showSuccessToast({ description: 'Successfully approved!' });
-
-      return;
-    case 'wallet_watchAsset':
-      showSuccessToast({ description: 'Successfully added token!' });
-
-      return;
-    default:
-      showSuccessToast({ description: 'Successfully confirmed!' });
+    return;
   }
+
+  if (isWcSigningMethod(method)) {
+    showSuccessToast({ description: 'Successfully signed!' });
+
+    return;
+  }
+
+  if (isWcAccountsMethod(method)) {
+    showSuccessToast({ description: 'Successfully approved!' });
+
+    return;
+  }
+
+  if (isWcWatchAssetMethod(method)) {
+    showSuccessToast({ description: 'Token successfully added' });
+
+    return;
+  }
+
+  showSuccessToast({ description: 'Successfully confirmed!' });
 };
 
-const waitForWcTransactionConfirmation = (
-  network: EvmNetworkEssentials,
-  hash: Hash,
-  chainName: string,
-  blockExplorerUrl: string
-) =>
-  from(getViemPublicClient(network).waitForTransactionReceipt({ hash })).pipe(
-    tap(receipt => {
+const waitForWcTransactionConfirmation = async ({
+  address,
+  network,
+  chainName,
+  blockExplorerUrl,
+  knownAssets,
+  hash
+}: WaitForWcTransactionConfirmationParams): Promise<void> => {
+  try {
+    const result = await evmTransactionSubmissionService.waitForConfirmation(network, hash);
+
+    if (result.success) {
       showSuccessToast({
         title: 'Success!',
         description: `${chainName} transaction confirmed`,
-        operationHash: receipt.transactionHash,
-        operationUrl: getTransactionExplorerUrl(blockExplorerUrl, receipt.transactionHash)
+        operationHash: result.receipt.transactionHash,
+        operationUrl: getEvmTransactionExplorerUrl(blockExplorerUrl, result.receipt.transactionHash)
       });
-    }),
-    catchError(error => {
-      console.error(error);
 
-      return EMPTY;
-    })
-  );
+      void loadEtherlinkBalancesOnChain({ network, account: address, knownAssets }).catch(console.error);
+
+      return;
+    }
+
+    const { message } = normalizeEvmTransactionError(result.error);
+
+    showErrorToast({ title: `Failed to confirm ${chainName} transaction`, description: message });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const respondWcSessionRequest = (
   request: WalletKitTypes.SessionRequest,
@@ -130,17 +158,54 @@ const respondWcSessionRequest = (
     })
   );
 
+const handleWcSessionRequest = ({
+  request,
+  address,
+  network,
+  preparedTransaction
+}: Pick<ApproveWcSessionRequestPayload, 'request' | 'address' | 'network' | 'preparedTransaction'>) => {
+  const { method, params } = request.params.request;
+
+  if (isDefined(preparedTransaction) && isWcSendTransactionMethod(method)) {
+    if (!isDefined(network)) {
+      return throwError(() => new WcEvmRequestError('invalid-params', 'eth_sendTransaction requires a network'));
+    }
+
+    return defer(() =>
+      from(
+        evmTransactionSubmissionService
+          .broadcast({
+            network,
+            sourceAddress: address,
+            transaction: preparedTransaction
+          })
+          .then(result => {
+            if (!result.success) {
+              throw result.error;
+            }
+
+            return result.transactionHash;
+          })
+      )
+    );
+  }
+
+  return defer(() => from(wcEvmRequestService.handle({ method, params, address, network })));
+};
+
 export const approveWcSessionRequest = ({
   request,
   address,
   network,
   chainName,
   blockExplorerUrl,
+  knownAssets = {},
+  preparedTransaction,
   markResponded
 }: ApproveWcSessionRequestPayload) => {
-  const { method, params } = request.params.request;
+  const { method } = request.params.request;
 
-  return defer(() => from(wcEvmRequestService.handle({ method, params, address, network }))).pipe(
+  return handleWcSessionRequest({ request, address, network, preparedTransaction }).pipe(
     switchMap(result =>
       respondWcSessionRequest(
         request,
@@ -155,14 +220,21 @@ export const approveWcSessionRequest = ({
           showWcRequestSuccessToast(method, result, blockExplorerUrl);
 
           if (
-            method === 'eth_sendTransaction' &&
+            isWcSendTransactionMethod(method) &&
             typeof result === 'string' &&
             isHash(result) &&
             isDefined(network) &&
             isDefined(chainName) &&
             isDefined(blockExplorerUrl)
           ) {
-            waitForWcTransactionConfirmation(network, result, chainName, blockExplorerUrl).subscribe();
+            void waitForWcTransactionConfirmation({
+              address,
+              network,
+              chainName,
+              blockExplorerUrl,
+              knownAssets,
+              hash: result
+            });
           }
         }),
         map(() => navigateBackAction())

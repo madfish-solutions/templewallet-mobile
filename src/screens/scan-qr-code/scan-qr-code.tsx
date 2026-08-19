@@ -30,7 +30,7 @@ import { isSyncPayload } from 'src/utils/sync.utils';
 import { isValidAddress } from 'src/utils/tezos.util';
 import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 import { wcDeepLinkHandler } from 'src/walletconnect/use-wc-handler.hook';
-import { isWcUri } from 'src/walletconnect/wc-handler';
+import { isWcUniversalLink, isWcUri } from 'src/walletconnect/wc-handler';
 
 import { ScanQrCodeAnalyticsEvents } from './analytics-events';
 import CustomMarker from './custom-marker.svg';
@@ -119,7 +119,7 @@ const CameraView = () => {
           if (dataWasIgnored) {
             trackEvent(ScanQrCodeAnalyticsEvents.SCAN_QR_CODE_DATA_IGNORED, AnalyticsEventCategory.General, { data });
           }
-        } else if (isWcUri(data)) {
+        } else if (isWcUri(data) || isWcUniversalLink(data)) {
           let dataWasIgnored = true;
           wcDeepLinkHandler(
             data,

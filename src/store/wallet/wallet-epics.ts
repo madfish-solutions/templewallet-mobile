@@ -11,7 +11,7 @@ import { LIMIT_FIN_FEATURES } from 'src/config/system';
 import { OnRampOverlayState } from 'src/enums/on-ramp-overlay-state.enum';
 import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from 'src/navigator/enums/modals.enum';
-import { showErrorToast } from 'src/toast/toast.utils';
+import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { getAccountAddressForTezos } from 'src/utils/account.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { MS_IN_SECOND } from 'src/utils/date.utils';
@@ -196,6 +196,14 @@ const waitForOperationCompletionEpic: AnyActionEpic = (action$, state$) =>
           }
         }),
         switchMap(results => {
+          if (results) {
+            showSuccessToast({
+              title: 'Success!',
+              description: 'Transaction confirmed',
+              operationHash: opHash
+            });
+          }
+
           const rawDelay = results && results[1].minimal_block_delay;
 
           return of(true).pipe(

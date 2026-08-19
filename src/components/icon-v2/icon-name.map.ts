@@ -10,6 +10,7 @@ import CheckboxCheckedFillIcon from './assets/checkbox-checked-fill.svg';
 import CheckboxCheckedIcon from './assets/checkbox-checked.svg';
 import CheckboxEmptyIcon from './assets/checkbox-empty.svg';
 import ChevronRightIcon from './assets/chevron-right.svg';
+import ChevronRight2Icon from './assets/chrevron-right2.svg';
 import ClockIcon from './assets/clock.svg';
 import CopyIcon from './assets/copy.svg';
 import DollarIcon from './assets/dollar.svg';
@@ -18,6 +19,8 @@ import EarthIcon from './assets/earth.svg';
 import ImportIcon from './assets/import.svg';
 import InfoFillIcon from './assets/info-fill.svg';
 import InfoIcon from './assets/info.svg';
+import LinkNoIcon from './assets/link-no.svg';
+import LinkYesIcon from './assets/link-yes.svg';
 import LogoutIcon from './assets/logout.svg';
 import NotificationIcon from './assets/notification.svg';
 import PlusBigIcon from './assets/plus-big.svg';
@@ -61,5 +64,8 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.CheckboxCheckedFill]: CheckboxCheckedFillIcon,
   [IconNameV2Enum.Share]: ShareIcon,
   [IconNameV2Enum.Logout]: LogoutIcon,
-  [IconNameV2Enum.Earth]: EarthIcon
+  [IconNameV2Enum.Earth]: EarthIcon,
+  [IconNameV2Enum.LinkYes]: LinkYesIcon,
+  [IconNameV2Enum.LinkNo]: LinkNoIcon,
+  [IconNameV2Enum.ChevronRight2]: ChevronRight2Icon
 };

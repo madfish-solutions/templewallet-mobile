@@ -15,7 +15,6 @@ import {
 import { ValidatedWatchAssetParams, watchAssetParamsValidationSchema } from './watch-asset';
 
 export type { ValidatedRpcAuthorization, ValidatedRpcTransactionRequest } from './transaction-request';
-export type { ValidatedWatchAssetParams } from './watch-asset';
 
 export type OldTypedDataField = {
   name: string;
@@ -23,17 +22,17 @@ export type OldTypedDataField = {
   value: unknown;
 };
 
-export const ethOldSignTypedDataValidationSchema = tupleSchema([
+const ethOldSignTypedDataValidationSchema = tupleSchema([
   oldTypedDataValidationSchema().required(),
   evmAddressValidationSchema().required()
 ]).required();
 
-export const ethSignTypedDataValidationSchema = tupleSchema([
+const ethSignTypedDataValidationSchema = tupleSchema([
   evmAddressValidationSchema().required(),
   jsonTypedDataValidationSchema().required()
 ]).required();
 
-export const ethPersonalSignPayloadValidationSchema = oneOfSchemas([
+const ethPersonalSignPayloadValidationSchema = oneOfSchemas([
   tupleSchema([
     hexByteStringSchema().required(),
     evmAddressValidationSchema().required(),
@@ -42,11 +41,11 @@ export const ethPersonalSignPayloadValidationSchema = oneOfSchemas([
   tupleSchema([hexByteStringSchema().required(), evmAddressValidationSchema().required()]).required()
 ]).required();
 
-export const sendTransactionPayloadValidationSchema = tupleSchema([
+const sendTransactionPayloadValidationSchema = tupleSchema([
   rpcTransactionRequestValidationSchema().required()
 ]).required();
 
-export const validateEvmRpcParams = <T>(schema: BaseSchema, params: unknown): T => {
+const validateEvmRpcParams = <T>(schema: BaseSchema, params: unknown): T => {
   try {
     return schema.validateSync(params, { abortEarly: true });
   } catch (cause) {

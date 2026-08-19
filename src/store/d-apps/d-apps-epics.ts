@@ -13,6 +13,7 @@ import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
 import { WcHandler } from 'src/walletconnect/wc-handler';
+import { cleanupDuplicateWcSessions } from 'src/walletconnect/wc-session-dedupe.utils';
 
 import { emptyAction } from '../root-state.actions';
 import type { AnyActionEpic } from '../types';
@@ -45,7 +46,7 @@ const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
           map(permissions => ({ success: true as const, permissions })),
           catchError((err: Error) => of({ success: false as const, error: err.message }))
         ),
-        wc: from(WcHandler.getActiveSessions()).pipe(
+        wc: from(cleanupDuplicateWcSessions()).pipe(
           map(sessions => ({ success: true as const, sessions })),
           catchError((err: Error) => of({ success: false as const, error: err.message }))
         )
@@ -56,9 +57,7 @@ const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
             ? beacon.permissions.map(mapBeaconPermissionToConnection)
             : previousBeaconConnections;
           const wcConnections = wc.success
-            ? Object.values(wc.sessions).map(session =>
-                mapWcSessionToConnection(session, state.settings.evmChainsSpecs)
-              )
+            ? wc.sessions.map(session => mapWcSessionToConnection(session, state.settings.evmChainsSpecs))
             : previousWcConnections;
 
           if (!beacon.success) {

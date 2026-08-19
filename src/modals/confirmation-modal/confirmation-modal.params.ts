@@ -14,12 +14,12 @@ export type ConfirmationModalParams =
   | WcSessionProposalConfirmationModalParams
   | WcSessionRequestConfirmationModalParams;
 
-export interface WcSessionProposalConfirmationModalParams {
+interface WcSessionProposalConfirmationModalParams {
   type: ConfirmationTypeEnum.WcSessionProposal;
   proposal: WalletKitTypes.SessionProposal;
 }
 
-export interface WcSessionRequestConfirmationModalParams {
+interface WcSessionRequestConfirmationModalParams {
   type: ConfirmationTypeEnum.WcSessionRequest;
   request: WalletKitTypes.SessionRequest;
 }

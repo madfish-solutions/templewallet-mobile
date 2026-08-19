@@ -1,21 +1,16 @@
 import { encodeFunctionData, erc20Abi, erc721Abi } from 'viem';
 
+import { EvmTransactionRequest } from 'src/interfaces/evm-transaction-request.interface';
 import { EvmAssetStandardEnum } from 'src/token/interfaces/token-metadata.interface';
 import { EvmSendAsset } from 'src/types/send-asset';
 import { erc1155Abi } from 'src/utils/evm/on-chain/abi/erc1155.abi';
-
-export interface EvmTransferRequest {
-  to: HexString;
-  value: bigint;
-  data?: HexString;
-}
 
 export const buildEvmTransferRequest = (
   sender: HexString,
   recipient: HexString,
   asset: EvmSendAsset,
   atomicAmount: string
-): EvmTransferRequest => {
+): EvmTransactionRequest => {
   const amount = BigInt(atomicAmount);
 
   switch (asset.sendStandard) {

@@ -10,6 +10,7 @@ interface EvmRpcTransactionRequestBase {
   to?: HexString;
   value: bigint;
   data?: HexString;
+  gas?: bigint;
   nonce?: number;
 }
 
@@ -112,13 +113,7 @@ export const parseRpcTransactionRequest = (
   const accessList = parseAccessList(transaction.accessList);
   const authorizationList = parseAuthorizationList(transaction.authorizationList);
 
-  const baseRequest: EvmRpcTransactionRequestBase = {
-    to: transaction.to,
-    value,
-    ...(isDefined(transaction.data) ? { data: transaction.data } : {}),
-    ...(isDefined(gas) ? { gas } : {}),
-    ...(isDefined(nonce) ? { nonce } : {})
-  };
+  const baseRequest: EvmRpcTransactionRequestBase = { to: transaction.to, value, data: transaction.data, gas, nonce };
 
   const hasLegacyFee = isDefined(gasPrice);
   const hasEip1559Fee = isDefined(maxFeePerGas) || isDefined(maxPriorityFeePerGas);
@@ -136,37 +131,22 @@ export const parseRpcTransactionRequest = (
       ...baseRequest,
       type: 'eip7702',
       authorizationList,
-      ...(isDefined(accessList) ? { accessList } : {}),
-      ...(isDefined(maxFeePerGas) ? { maxFeePerGas } : {}),
-      ...(isDefined(maxPriorityFeePerGas) ? { maxPriorityFeePerGas } : {})
+      accessList,
+      maxFeePerGas,
+      maxPriorityFeePerGas
     };
   }
 
   if (transaction.type === '0x1' || (isDefined(accessList) && hasLegacyFee && !hasEip1559Fee)) {
-    return {
-      ...baseRequest,
-      type: 'eip2930',
-      ...(isDefined(accessList) ? { accessList } : {}),
-      ...(isDefined(gasPrice) ? { gasPrice } : {})
-    };
+    return { ...baseRequest, type: 'eip2930', accessList, gasPrice };
   }
 
   if (hasEip1559Fee || (transaction.type === '0x2' && !hasLegacyFee)) {
-    return {
-      ...baseRequest,
-      type: 'eip1559',
-      ...(isDefined(accessList) ? { accessList } : {}),
-      ...(isDefined(maxFeePerGas) ? { maxFeePerGas } : {}),
-      ...(isDefined(maxPriorityFeePerGas) ? { maxPriorityFeePerGas } : {})
-    };
+    return { ...baseRequest, type: 'eip1559', accessList, maxFeePerGas, maxPriorityFeePerGas };
   }
 
   if (isDefined(gasPrice)) {
-    return {
-      ...baseRequest,
-      type: 'legacy',
-      gasPrice
-    };
+    return { ...baseRequest, type: 'legacy', gasPrice };
   }
 
   return baseRequest;

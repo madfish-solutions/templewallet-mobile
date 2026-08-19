@@ -3,10 +3,9 @@ import { buildApprovedNamespaces, getSdkError } from '@walletconnect/utils';
 import React, { FC, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
-import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
@@ -17,9 +16,10 @@ import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { EVM_WC_EVENTS, EVM_WC_METHODS } from 'src/walletconnect/constants';
 import { normalizeSessionProposalParams } from 'src/walletconnect/validate-session-proposal';
 import { WcHandler } from 'src/walletconnect/wc-handler';
+import { disconnectDuplicateWcSessionsForPeer } from 'src/walletconnect/wc-session-dedupe.utils';
 
-import { ConnectionRequestConfirmationContent } from '../connection-request-confirmation/connection-request-confirmation-content';
-import { ConnectionRequestConfirmationFormValues } from '../connection-request-confirmation/form';
+import { ConnectionRequestConfirmationContent } from '../common/connection-request-confirmation/connection-request-confirmation-content';
+import { ConnectionRequestConfirmationFormValues } from '../common/connection-request-confirmation/form';
 
 import { WcSessionProposalConfirmationSelectors } from './selectors';
 
@@ -46,7 +46,15 @@ const approveWcSessionProposal = ({ proposal, address }: ApproveWcSessionProposa
     }
   });
 
-  return from(WcHandler.approveSession({ id: proposal.id, namespaces })).pipe(
+  return from(disconnectDuplicateWcSessionsForPeer(proposal.params.proposer.metadata, address)).pipe(
+    switchMap(() =>
+      from(
+        WcHandler.approveSession({
+          id: proposal.id,
+          namespaces
+        })
+      )
+    ),
     map(() => {
       showSuccessToast({ description: 'Successfully approved!' });
 
@@ -57,7 +65,6 @@ const approveWcSessionProposal = ({ proposal, address }: ApproveWcSessionProposa
 
 export const WcSessionProposalConfirmation: FC<Props> = ({ proposal }) => {
   const dispatch = useDispatch();
-  const { goBack } = useNavigation();
   const accounts = useAllAccounts();
   const selectedAccount = useAccount();
   const evmAccounts = useMemo(() => accounts.filter(account => getAccountAddressForEvm(account)), [accounts]);
@@ -109,9 +116,7 @@ export const WcSessionProposalConfirmation: FC<Props> = ({ proposal }) => {
       accounts={evmAccounts}
       initialValues={formInitialValues}
       isLoading={isLoading}
-      cancelTestID={WcSessionProposalConfirmationSelectors.cancelButton}
       confirmTestID={WcSessionProposalConfirmationSelectors.confirmButton}
-      onCancel={goBack}
       onSubmit={onSubmit}
     />
   );
