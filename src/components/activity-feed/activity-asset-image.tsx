@@ -3,22 +3,24 @@ import React, { memo, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { ActivityOperTransferType } from 'src/activity/types';
-import { AssetIconPlaceholder } from 'src/components/asset-icon-placeholder';
 import { CryptoLogo } from 'src/components/crypto-logo';
+import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { getChainLogoName } from 'src/components/crypto-logo/utils';
+import { DataUriImage } from 'src/components/data-uri-image';
 import { IconV2 } from 'src/components/icon-v2';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useImagesStack } from 'src/hooks/use-images-stack';
 import { useColors } from 'src/styles/use-colors';
-import { buildEvmCollectibleImagesStack } from 'src/utils/image.utils';
+import { buildEvmCollectibleImagesStack, isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import {
   ACTIVITY_ASSET_BADGE_LOGO_SIZE,
   ACTIVITY_ASSET_IMAGE_SIZE,
   ACTIVITY_ASSET_NFT_BORDER_RADIUS,
   ACTIVITY_ASSET_STACK_FACE_NFT_BORDER_RADIUS,
-  ACTIVITY_ASSET_STACK_FACE_SIZE,
+  ACTIVITY_ASSET_STACK_NFT_FACE_SIZE,
+  ACTIVITY_ASSET_STACK_TOKEN_FACE_SIZE,
   useActivityAssetImageStyles
 } from './activity-asset-image.styles';
 import { ActivityAssetImageKind, ActivityAssetImageSource, ActivityFaceKind, BUNDLE_FACE_KIND } from './types';
@@ -38,17 +40,30 @@ const EvmCollectibleFace = memo<{ imageUri?: string; size: number; borderRadius:
     const sourcesStack = useMemo(() => buildEvmCollectibleImagesStack(imageUri), [imageUri]);
     const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sourcesStack);
 
-    const showPlaceholder = src == null || isLoading || isStackFailed;
+    const isDataUri = src != null && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src));
+    const showPlaceholder = src == null || isStackFailed || (isLoading && !isDataUri);
 
     const containerStyle = useMemo(
-      () => [styles.face, styles.placeholder, { width: size, height: size, borderRadius }],
-      [styles.face, styles.placeholder, size, borderRadius]
+      () => [styles.face, { width: size, height: size, borderRadius }],
+      [styles.face, size, borderRadius]
     );
 
     return (
       <View style={containerStyle}>
-        {showPlaceholder && <AssetIconPlaceholder isCollectible size={size} />}
-        {src == null ? null : (
+        {showPlaceholder && (
+          <CryptoLogo name={CryptoLogoNameEnum.CollectiblePlaceholder} size={size} internalSize={size} />
+        )}
+        {src == null ? null : isDataUri ? (
+          <DataUriImage
+            key={src}
+            dataUri={src}
+            width={size}
+            height={size}
+            style={styles.collectibleImage}
+            onLoad={onSuccess}
+            onError={onFail}
+          />
+        ) : (
           <FastImage
             key={src}
             style={styles.collectibleImage}
@@ -113,7 +128,11 @@ export const ActivityAssetImage = memo<Props>(({ chain, kind, transferType, sour
   const styles = useActivityAssetImageStyles();
 
   const isBundleView = kind === BUNDLE_FACE_KIND;
-  const faceSize = isBundleView ? ACTIVITY_ASSET_STACK_FACE_SIZE : ACTIVITY_ASSET_IMAGE_SIZE;
+  const faceSize = isBundleView
+    ? isNft === true
+      ? ACTIVITY_ASSET_STACK_NFT_FACE_SIZE
+      : ACTIVITY_ASSET_STACK_TOKEN_FACE_SIZE
+    : ACTIVITY_ASSET_IMAGE_SIZE;
   const faceBorderRadius =
     isNft === true
       ? isBundleView
