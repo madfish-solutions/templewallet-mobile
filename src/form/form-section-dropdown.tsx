@@ -13,11 +13,14 @@ export const FormSectionDropdown = <T extends unknown>({
   name,
   description,
   list,
+  emptyListText,
   itemHeight,
   equalityFn,
   renderValue,
   renderListItem,
   renderActionButtons,
+  itemContainerStyle,
+  showCloseButton,
   isSearchable,
   setSearchValue,
   testID,
@@ -29,6 +32,7 @@ export const FormSectionDropdown = <T extends unknown>({
     <>
       <SectionDropdown<T>
         list={list}
+        emptyListText={emptyListText}
         value={field.value}
         isSearchable={isSearchable}
         description={description}
@@ -37,6 +41,8 @@ export const FormSectionDropdown = <T extends unknown>({
         renderValue={renderValue}
         renderListItem={renderListItem}
         renderActionButtons={renderActionButtons}
+        itemContainerStyle={itemContainerStyle}
+        showCloseButton={showCloseButton}
         setSearchValue={setSearchValue}
         onValueChange={helpers.setValue}
         testID={testID}

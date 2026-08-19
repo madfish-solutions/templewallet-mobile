@@ -232,7 +232,7 @@ export const loadEtherlinkBalancesOnChain = async ({
   dispatch(
     processLoadedOnChainEvmBalancesAction({
       account,
-      chainId: ETHERLINK_MAINNET_CHAIN_ID,
+      chainId: network.chainId,
       balances,
       timestamp: Date.now()
     })

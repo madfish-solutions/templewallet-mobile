@@ -22,7 +22,7 @@ Optimize for clarity, polish, and performance in every change.
 - Add comments for complex logic only
 
 ## TypeScript
-- Enforce proper typing (avoid `any` unless absolutely necessary)
+- Enforce proper typing (avoid `any` and type assertions unless absolutely necessary)
 - Define explicit types for function parameters and return values
 - Use interfaces for object shapes
 - Use type aliases for complex types
@@ -40,6 +40,3 @@ Optimize for clarity, polish, and performance in every change.
 - Navigation-specific hooks, components, and types: `src/navigator/`
 - General utils: `src/utils/`
 - Secure storage implementation: `src/shelter`
-
-## A Note to the Agent
-We are building this together. When you learn something non-obvious, add it here so future changes go faster.

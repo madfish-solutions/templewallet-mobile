@@ -1,7 +1,23 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useDidUpdate } from 'src/utils/hooks';
-import { buildCollectibleImagesStack, buildTokenImagesStack } from 'src/utils/image.utils';
+import {
+  buildCollectibleImagesStack,
+  buildEvmCollectibleImagesStack,
+  buildEvmTokenIconSources,
+  buildTokenImagesStack
+} from 'src/utils/image.utils';
+
+export interface TezosTokenImagesStackParams {
+  thumbnailUri?: string;
+}
+
+export interface EvmTokenImagesStackParams {
+  address: string;
+  chainId: number;
+  iconURL?: string;
+  isCollectible?: boolean;
+}
 
 export const useCollectibleImagesStack = (
   assetSlug: string,
@@ -18,8 +34,23 @@ export const useCollectibleImagesStack = (
   return useImagesStack(sourcesStack);
 };
 
-export const useTokenImagesStack = (url: string, preferDirectSource = false) => {
-  const sourcesStack = useMemo(() => buildTokenImagesStack(url, preferDirectSource), [url, preferDirectSource]);
+export const useTezosTokenImagesStack = ({ thumbnailUri = '' }: TezosTokenImagesStackParams) => {
+  const sourcesStack = useMemo(() => buildTokenImagesStack(thumbnailUri), [thumbnailUri]);
+
+  return useImagesStack(sourcesStack);
+};
+
+export const useEvmTokenImagesStack = ({
+  address,
+  chainId,
+  iconURL,
+  isCollectible = false
+}: EvmTokenImagesStackParams) => {
+  const sourcesStack = useMemo(
+    () =>
+      isCollectible ? buildEvmCollectibleImagesStack(iconURL) : buildEvmTokenIconSources(chainId, address, iconURL),
+    [address, chainId, iconURL, isCollectible]
+  );
 
   return useImagesStack(sourcesStack);
 };
@@ -40,7 +71,7 @@ export const useImagesStack = (sourcesStack: string[]) => {
 
   const [index, setIndex] = useState(emptyStack ? -1 : 0);
 
-  const src = sourcesStack[index];
+  const src: string | undefined = sourcesStack[index];
 
   const onSuccess = useCallback(() => void setIsLoading(false), []);
 

@@ -1,7 +1,8 @@
 export enum CryptoLogoNameEnum {
-  Etherlink = 'etherlink',
-  Placeholder = 'placeholder',
+  Etherlink = 'Etherlink',
   Tezos = 'TezToken',
   ShieldedTezos = 'TezShieldedToken',
-  TzBtc = 'TzBtcToken'
+  TzBtc = 'TzBtcToken',
+  TokenPlaceholder = 'TokenPlaceholder',
+  CollectiblePlaceholder = 'CollectiblePlaceholder'
 }

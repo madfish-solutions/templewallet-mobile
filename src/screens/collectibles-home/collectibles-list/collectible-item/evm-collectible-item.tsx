@@ -7,10 +7,14 @@ import { BrokenImage } from 'src/components/broken-image';
 import { useCollectibleImageStyles } from 'src/components/collectible-image/styles';
 import { CryptoLogo } from 'src/components/crypto-logo';
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
+import { DataUriImage } from 'src/components/data-uri-image';
+import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { useImagesStack } from 'src/hooks/use-images-stack';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
 import { formatSize } from 'src/styles/format-size';
 import { EvmDisplayedCollectible } from 'src/utils/assets/types';
-import { buildEvmCollectibleImagesStack } from 'src/utils/image.utils';
+import { buildEvmCollectibleImagesStack, isImgUriDataUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 
 import { Balance } from './balance';
 import { useCollectibleItemStyles, useEvmCollectibleChainBadgeStyles } from './styles';
@@ -23,6 +27,7 @@ interface Props {
 }
 
 export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = false, style }) => {
+  const navigateToModal = useNavigateToModal();
   const styles = useCollectibleItemStyles();
   const badgeStyles = useEvmCollectibleChainBadgeStyles();
 
@@ -31,7 +36,11 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
   const imageUri = metadata?.image ?? metadata?.iconURL;
 
   return (
-    <View style={[styles.root, style, { width: size }]}>
+    <SafeTouchableOpacity
+      activeOpacity={0.7}
+      onPress={() => navigateToModal(ModalsEnum.EvmCollectibleModal, collectible)}
+      style={[styles.root, style, { width: size }]}
+    >
       <View style={[styles.image, { width: size, height: size }]}>
         <EvmCollectibleImage uri={imageUri} size={size} />
 
@@ -51,7 +60,7 @@ export const EvmCollectibleItem = memo<Props>(({ collectible, size, showInfo = f
           <Text style={styles.price} />
         </View>
       ) : null}
-    </View>
+    </SafeTouchableOpacity>
   );
 });
 
@@ -69,6 +78,12 @@ const EvmCollectibleImage = memo<EvmCollectibleImageProps>(({ uri, size }) => {
 
   if (isStackFailed) {
     return <BrokenImage isBigIcon={false} style={styles.brokenImage} />;
+  }
+
+  if (src && (isImgUriDataUri(src) || isSvgDataUriInBase64Encoding(src))) {
+    return (
+      <DataUriImage dataUri={src} width={size} height={size} style={styles.image} onLoad={onSuccess} onError={onFail} />
+    );
   }
 
   return (

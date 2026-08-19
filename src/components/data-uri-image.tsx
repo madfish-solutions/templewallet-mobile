@@ -3,7 +3,12 @@ import { StyleProp, ViewStyle } from 'react-native';
 import { SvgWithCss } from 'react-native-svg/css';
 import { WebView } from 'react-native-webview';
 
-import { fixSvgXml, getXmlFromSvgDataUriInUtf8Encoding, isImgUriDataUri } from 'src/utils/image.utils';
+import {
+  fixSvgXml,
+  getXmlFromSvgDataUriInUtf8Encoding,
+  isImgUriDataUri,
+  isSvgDataUriInBase64Encoding
+} from 'src/utils/image.utils';
 
 interface Props extends Omit<AnimatedDataUriImageProps, 'xml'> {
   dataUri: string;
@@ -13,14 +18,24 @@ interface Props extends Omit<AnimatedDataUriImageProps, 'xml'> {
 }
 
 export const DataUriImage = memo<Props>(({ dataUri, animated, width, height, style, onLoad, onError }) => {
-  if (!isImgUriDataUri(dataUri)) {
+  const isBase64Encoded = isSvgDataUriInBase64Encoding(dataUri);
+
+  if (!isImgUriDataUri(dataUri) && !isBase64Encoded) {
     throw new Error('URI format is unknown');
   }
 
-  const xml = useMemo(() => fixSvgXml(getXmlFromSvgDataUriInUtf8Encoding(dataUri)), [dataUri]);
+  const xml = useMemo(
+    () =>
+      fixSvgXml(
+        isBase64Encoded
+          ? Buffer.from(dataUri.split(',')[1], 'base64').toString('utf8')
+          : getXmlFromSvgDataUriInUtf8Encoding(dataUri)
+      ),
+    [dataUri, isBase64Encoded]
+  );
 
-  return animated ? (
-    <AnimatedDataUriImage xml={xml} style={style} onLoad={onLoad} onError={onError} />
+  return animated || xml.includes('<foreignObject') ? (
+    <AnimatedDataUriImage xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
   ) : (
     <SvgWithCss xml={xml} width={width} height={height} style={style} onLoad={onLoad} onError={onError} />
   );
@@ -28,13 +43,20 @@ export const DataUriImage = memo<Props>(({ dataUri, animated, width, height, sty
 
 interface AnimatedDataUriImageProps {
   xml: string;
+  width: number;
+  height: number;
   style?: StyleProp<ViewStyle>;
   onLoad?: EmptyFn;
   onError?: EmptyFn;
 }
 
-const AnimatedDataUriImage: FC<AnimatedDataUriImageProps> = ({ xml, style, onLoad, onError }) => (
-  <WebView source={{ html: buildWebViewHTML(xml) }} style={style} onLoadEnd={onLoad} onError={onError} />
+const AnimatedDataUriImage: FC<AnimatedDataUriImageProps> = ({ xml, width, height, style, onLoad, onError }) => (
+  <WebView
+    source={{ html: buildWebViewHTML(xml) }}
+    style={[style, { width, height }]}
+    onLoadEnd={onLoad}
+    onError={onError}
+  />
 );
 
 const buildWebViewHTML = (svgContent: string) =>

@@ -111,12 +111,12 @@ const ButtonHOC = <IconName extends string, Size extends number>(
         >
           {icon}
 
-          <Text style={[titleStyle, { color: titleColor }, textStyle]}>{title}</Text>
-
-          {Boolean(isLoading) && (
+          {isLoading ? (
             <View style={ButtonStyles.loader}>
               <ActivityIndicator size="small" />
             </View>
+          ) : (
+            <Text style={[titleStyle, { color: titleColor }, textStyle]}>{title}</Text>
           )}
         </SafeTouchableOpacity>
       </View>

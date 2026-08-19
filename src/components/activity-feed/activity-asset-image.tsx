@@ -3,10 +3,10 @@ import React, { memo, useMemo } from 'react';
 import { View } from 'react-native';
 
 import { ActivityOperTransferType } from 'src/activity/types';
+import { AssetIconPlaceholder } from 'src/components/asset-icon-placeholder';
 import { CryptoLogo } from 'src/components/crypto-logo';
 import { getChainLogoName } from 'src/components/crypto-logo/utils';
 import { IconV2 } from 'src/components/icon-v2';
-import { EvmTokenIcon } from 'src/components/token-icon/evm-token-icon';
 import { TokenIcon } from 'src/components/token-icon/token-icon';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useImagesStack } from 'src/hooks/use-images-stack';
@@ -21,7 +21,6 @@ import {
   ACTIVITY_ASSET_STACK_FACE_SIZE,
   useActivityAssetImageStyles
 } from './activity-asset-image.styles';
-import NftPlaceholderSvg from './nft.svg';
 import { ActivityAssetImageKind, ActivityAssetImageSource, ActivityFaceKind, BUNDLE_FACE_KIND } from './types';
 import { getActivityKindIconName } from './utils';
 
@@ -48,7 +47,7 @@ const EvmCollectibleFace = memo<{ imageUri?: string; size: number; borderRadius:
 
     return (
       <View style={containerStyle}>
-        {showPlaceholder && <NftPlaceholderSvg style={styles.collectibleImage} width="100%" height="100%" />}
+        {showPlaceholder && <AssetIconPlaceholder isCollectible size={size} />}
         {src == null ? null : (
           <FastImage
             key={src}
@@ -88,7 +87,8 @@ const ActivityAssetFace = memo<FaceProps>(({ source, kind, transferType, size, b
 
   if (source.kind === ActivityAssetImageKind.evmTokenIcon) {
     return (
-      <EvmTokenIcon
+      <TokenIcon
+        chainKind={TempleChainKind.EVM}
         size={size}
         chainId={source.chainId}
         address={source.contract}

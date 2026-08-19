@@ -1,4 +1,4 @@
-export const fromTokenSlug = (slug: string) => slug.split('_');
+export const fromTokenSlug = <T = string>(slug: string) => slug.split('_') as [contract: T, tokenId?: string];
 
 export const toEvmAssetSlug = (contract: string, tokenId?: string | number) => {
   const address = contract.toLowerCase();

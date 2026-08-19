@@ -1,43 +1,30 @@
 import { validate } from '@temple-wallet/wallet-address-validator';
-import { string as stringSchema } from 'yup';
+import { isAddress as isEvmAddress } from 'viem';
 
-import { AddressValidationErrorEnum } from 'src/enums/address-validation-error.enum';
-import { isDefined } from 'src/utils/is-defined';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
+import { isValidAddress as isTezosAddress } from 'src/utils/tezos.util';
 
-import { makeRequiredErrorMessage } from './messages';
+type AddressNetwork = 'Bitcoin' | 'EVM' | 'Sapling' | 'Tezos' | 'Tron';
 
-const otherNetworks = [
-  {
-    slug: 'trx',
-    name: 'Tron',
-    errorType: AddressValidationErrorEnum.TRON_NETWORK_ADDRESS
-  },
-  {
-    slug: 'eth',
-    name: 'EVM',
-    errorType: AddressValidationErrorEnum.EVM_NETWORK_ADDRESS
-  },
-  {
-    slug: 'btc',
-    name: 'Bitcoin',
-    errorType: AddressValidationErrorEnum.BTC_NETWORK_ADDRESS
-  }
+const otherNetworks: Array<{ slug: string; name: 'Bitcoin' | 'Tron' }> = [
+  { slug: 'trx', name: 'Tron' },
+  { slug: 'btc', name: 'Bitcoin' }
 ];
-const invalidWalletAddressError = 'Invalid address';
 
-export let addressValidation = stringSchema().required(makeRequiredErrorMessage('Address'));
+export const getAddressNetwork = (address: string): AddressNetwork | undefined => {
+  if (isSaplingAddress(address)) return 'Sapling';
+  if (isTezosAddress(address)) return 'Tezos';
+  if (isEvmAddress(address)) return 'EVM';
 
-otherNetworks.forEach(({ slug, name, errorType }) => {
-  addressValidation = addressValidation.test(
-    errorType,
-    `You entered the ${name} network address. Please enter the Tezos network address`,
-    value => !isDefined(value) || !validate(value, slug)
-  );
-});
+  return otherNetworks.find(({ slug }) => validate(address, slug))?.name;
+};
 
-addressValidation = addressValidation.test(
-  AddressValidationErrorEnum.INVALID_ADDRESS,
-  invalidWalletAddressError,
-  value => !isDefined(value) || validate(value, 'tezos') || isSaplingAddress(value)
-);
+export const getWrongNetworkAddressError = (address: string, expectedNetwork: AddressNetwork): string | undefined => {
+  const enteredNetwork = getAddressNetwork(address);
+
+  if (!enteredNetwork || enteredNetwork === expectedNetwork) {
+    return undefined;
+  }
+
+  return `You entered the ${enteredNetwork} address. Please enter the ${expectedNetwork} address`;
+};

@@ -43,7 +43,6 @@ export const useActivityAssetImageStyles = createUseStyles(({ colors }) => ({
     position: 'absolute',
     borderWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
-    // The design's white<->black flip token: white medallions in light theme, black in dark
     backgroundColor: colors.white
   },
   stackBack: {

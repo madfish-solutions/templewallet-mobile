@@ -35,6 +35,7 @@ export const mockShelter = {
   createHdAccount$: jest.fn(() => of(mockNewHdAccount)),
   saveSaplingSpendingKey$: jest.fn(() => of(undefined)),
   revealAccountPrivateKey$: jest.fn(() => of(mockRevealedSecretKey)),
+  getEvmAccount$: jest.fn(() => of({})),
   revealSeedPhrase$: jest.fn(() => of(mockRevealedSeedPhrase)),
   isPasswordCorrect$: jest.fn((password: string) => of(password === mockCorrectPassword)),
   createImportedChainAccount$: jest.fn<Observable<Account>, []>(() => of(mockHdAccount)),

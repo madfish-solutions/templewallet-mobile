@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import { Account } from 'src/interfaces/account.interfaces.ts';
 import { getAccountAddressForTezos } from 'src/utils/account.utils.ts';
 
@@ -12,11 +14,24 @@ const useSaplingAccountState = (): SaplingAccountState => {
   return useSelector(({ sapling }) => (pkh ? sapling.accountsRecord[pkh] : undefined) ?? initialSaplingAccountState);
 };
 
-export const useSaplingAddressForAccount = (account: Account) => {
-  const tezosAddress = getAccountAddressForTezos(account);
+export const useSaplingAddressForAccount = (account?: Account) => {
+  const tezosAddress = account ? getAccountAddressForTezos(account) : undefined;
 
   return useSelector(({ sapling }) =>
     tezosAddress ? sapling.accountsRecord[tezosAddress]?.saplingAddress : undefined
+  );
+};
+
+export const useGetSaplingAddressForAccount = () => {
+  const saplingAccountsRecord = useSelector(({ sapling }) => sapling.accountsRecord);
+
+  return useCallback(
+    (account: Account) => {
+      const tezosAddress = getAccountAddressForTezos(account);
+
+      return tezosAddress ? saplingAccountsRecord[tezosAddress]?.saplingAddress : undefined;
+    },
+    [saplingAccountsRecord]
   );
 };
 

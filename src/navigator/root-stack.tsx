@@ -15,6 +15,7 @@ import { AddAssetModal } from 'src/modals/add-asset-modal/add-asset-modal';
 import { ChooseAccountImportType } from 'src/modals/choose-account-import-type';
 import { ChooseWalletImportType } from 'src/modals/choose-wallet-import-type';
 import { CollectibleModal } from 'src/modals/collectible-modal/collectible-modal';
+import { EvmCollectibleModal } from 'src/modals/collectible-modal/evm-collectible-modal';
 import { ConfirmationModal } from 'src/modals/confirmation-modal/confirmation-modal';
 import { AddContactModal } from 'src/modals/contact-modals/add-contact-modal/add-contact-modal';
 import { EditContactModal } from 'src/modals/contact-modals/edit-contact-modal/edit-contact-modal';
@@ -33,7 +34,7 @@ import { RevealPrivateKeyModal } from 'src/modals/reveal-private-key-modal/revea
 import { RevealSeedPhraseModal } from 'src/modals/reveal-seed-phrase-modal/reveal-seed-phrase-modal';
 import { RewardsAnnouncementModal } from 'src/modals/rewards-announcement-modal';
 import { SelectBakerModal } from 'src/modals/select-baker-modal/select-baker-modal';
-import { SendModal } from 'src/modals/send-modal/send-modal';
+import { SendModal } from 'src/modals/send-modal';
 import { ShieldedAnnouncementModal } from 'src/modals/shielded-announcement-modal/shielded-announcement-modal';
 import { SplashModal } from 'src/modals/splash-modal/splash-modal';
 import { AfterSyncQRScan } from 'src/modals/sync-account/after-sync-qr-scan/after-sync-qr-scan';
@@ -150,6 +151,11 @@ export const RootStackScreen = () => {
             <RootStack.Screen
               name={ModalsEnum.CollectibleModal}
               component={CollectibleModal}
+              options={{ ...useModalOptions(), gestureEnabled: isIOS }}
+            />
+            <RootStack.Screen
+              name={ModalsEnum.EvmCollectibleModal}
+              component={EvmCollectibleModal}
               options={{ ...useModalOptions(), gestureEnabled: isIOS }}
             />
             <RootStack.Screen

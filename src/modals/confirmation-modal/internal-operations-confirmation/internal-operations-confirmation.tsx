@@ -35,6 +35,7 @@ import { OperationsConfirmation } from '../operations-confirmation/operations-co
 
 type Props = Omit<InternalOperationsConfirmationModalParams, 'type'> & {
   renderPreview?: (opParams: ParamsWithKind[]) => React.ReactNode;
+  isShieldedTez?: boolean;
   onEstimationComplete?: EmptyFn;
   confirmEventProperties?: AnalyticsEventProperties;
 };
@@ -71,6 +72,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
   disclaimerMessage,
   testID,
   renderPreview,
+  isShieldedTez = false,
   onEstimationComplete,
   confirmEventProperties
 }) => {
@@ -141,6 +143,7 @@ export const InternalOperationsConfirmation: FC<Props> = ({
       testID={testID}
       disclaimer={disclaimer}
       renderPreview={renderPreview}
+      isShieldedTez={isShieldedTez}
       onEstimationComplete={onEstimationComplete}
       confirmEventProperties={confirmEventProperties}
     />
