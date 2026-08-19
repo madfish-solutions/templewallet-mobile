@@ -66,7 +66,7 @@ export type ParseCallback<AbiFragment extends TxAbiFragment, Result> = (
   input: ParseCallbackInput<AbiFragment>
 ) => Promise<Result>;
 
-export type ContractCallTransaction = TransactionSerializable & { data: HexString; to: HexString };
+type ContractCallTransaction = TransactionSerializable & { data: HexString; to: HexString };
 
 export const isContractCallTransaction = (tx: TransactionSerializable): tx is ContractCallTransaction =>
   Boolean(tx.data && tx.data !== '0x' && tx.to);

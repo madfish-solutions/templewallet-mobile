@@ -1,4 +1,4 @@
-export const erc1155TransferBatchEvent = {
+const erc1155TransferBatchEvent = {
   anonymous: false,
   inputs: [
     {
@@ -104,7 +104,7 @@ export const erc1155SafeTransferFromAbi = {
   type: 'function'
 } as const;
 
-export const erc1155TransferSingleEvent = {
+const erc1155TransferSingleEvent = {
   anonymous: false,
   inputs: [
     {

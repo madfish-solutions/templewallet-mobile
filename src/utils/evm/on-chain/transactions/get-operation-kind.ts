@@ -40,7 +40,7 @@ import { TxEssentials } from './helpers';
 const deployContractAbis = [erc721SeaCreateCloneAbi, erc1155SeaCreateCloneAbi, raribleCreateTokenAbi] as const;
 
 // Parsing transaction data with erc20ApproveAbi and erc721ApproveAbi returns the same results
-export const approveAbis = [erc20ApproveAbi, erc20IncreaseAllowanceAbi] as const;
+const approveAbis = [erc20ApproveAbi, erc20IncreaseAllowanceAbi] as const;
 
 const approvalForAllAbis = [erc721SetApprovalForAllAbi, erc1155SetApprovalForAllAbi] as const;
 
@@ -67,7 +67,7 @@ const mintAbis = [
   erc1155SeaMultiConfigureAbi
 ] as const;
 
-export const dataMatchesAbis = (data: HexString, abis: readonly AbiFunction[]) => {
+const dataMatchesAbis = (data: HexString, abis: readonly AbiFunction[]) => {
   try {
     decodeFunctionData({ abi: abis, data });
 
