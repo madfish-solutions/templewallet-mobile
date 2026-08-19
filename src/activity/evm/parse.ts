@@ -77,7 +77,8 @@ export const parseTokenTransfer = (transfer: EtherlinkTokenTransfer, accountAddr
     address_hash: address,
     symbol,
     decimals: rawDecimals,
-    icon_url: iconFallback
+    icon_url: iconFallback,
+    name: collectionName
   } = instance?.token ?? transfer.token;
 
   return {
@@ -91,6 +92,7 @@ export const parseTokenTransfer = (transfer: EtherlinkTokenTransfer, accountAddr
       decimals: rawDecimals == null ? 0 : Number(rawDecimals),
       nft: true,
       symbol: symbol ?? undefined,
+      name: instance?.metadata?.name ?? collectionName ?? undefined,
       iconURL: instance?.metadata?.image ?? iconFallback ?? undefined
     },
     logIndex,

@@ -30,6 +30,8 @@ export interface ActivityRowAsset {
   amountSigned?: string | null;
   decimals?: number;
   symbol?: string;
+  /** The row title fallback for NFTs without a symbol */
+  name?: string;
   isNft: boolean;
   image?: ActivityAssetImageSource;
 }

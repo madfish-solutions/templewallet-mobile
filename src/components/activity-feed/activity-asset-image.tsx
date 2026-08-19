@@ -17,9 +17,11 @@ import {
   ACTIVITY_ASSET_BADGE_LOGO_SIZE,
   ACTIVITY_ASSET_IMAGE_SIZE,
   ACTIVITY_ASSET_NFT_BORDER_RADIUS,
+  ACTIVITY_ASSET_STACK_FACE_NFT_BORDER_RADIUS,
   ACTIVITY_ASSET_STACK_FACE_SIZE,
   useActivityAssetImageStyles
 } from './activity-asset-image.styles';
+import NftPlaceholderSvg from './nft.svg';
 import { ActivityAssetImageKind, ActivityAssetImageSource, ActivityFaceKind, BUNDLE_FACE_KIND } from './types';
 import { getActivityKindIconName } from './utils';
 
@@ -35,17 +37,21 @@ const EvmCollectibleFace = memo<{ imageUri?: string; size: number; borderRadius:
   ({ imageUri, size, borderRadius }) => {
     const styles = useActivityAssetImageStyles();
     const sourcesStack = useMemo(() => buildEvmCollectibleImagesStack(imageUri), [imageUri]);
-    const { src, onSuccess, onFail } = useImagesStack(sourcesStack);
+    const { src, isLoading, isStackFailed, onSuccess, onFail } = useImagesStack(sourcesStack);
+
+    const showPlaceholder = src == null || isLoading || isStackFailed;
 
     const containerStyle = useMemo(
-      () => [styles.face, { width: size, height: size, borderRadius }],
-      [styles.face, size, borderRadius]
+      () => [styles.face, styles.placeholder, { width: size, height: size, borderRadius }],
+      [styles.face, styles.placeholder, size, borderRadius]
     );
 
     return (
       <View style={containerStyle}>
+        {showPlaceholder && <NftPlaceholderSvg style={styles.collectibleImage} width="100%" height="100%" />}
         {src == null ? null : (
           <FastImage
+            key={src}
             style={styles.collectibleImage}
             source={{ uri: src }}
             resizeMode="cover"
@@ -108,12 +114,17 @@ export const ActivityAssetImage = memo<Props>(({ chain, kind, transferType, sour
 
   const isBundleView = kind === BUNDLE_FACE_KIND;
   const faceSize = isBundleView ? ACTIVITY_ASSET_STACK_FACE_SIZE : ACTIVITY_ASSET_IMAGE_SIZE;
-  const faceBorderRadius = !isBundleView && isNft === true ? ACTIVITY_ASSET_NFT_BORDER_RADIUS : faceSize / 2;
+  const faceBorderRadius =
+    isNft === true
+      ? isBundleView
+        ? ACTIVITY_ASSET_STACK_FACE_NFT_BORDER_RADIUS
+        : ACTIVITY_ASSET_NFT_BORDER_RADIUS
+      : faceSize / 2;
+  const medallionNftStyle = isNft === true && styles.stackMedallionNft;
 
   const face = (
     <ActivityAssetFace
-      // An NFT-led bundle shows the generic bundle icon; a token-led one keeps its token image
-      source={isBundleView && isNft === true ? undefined : source}
+      source={source}
       kind={kind}
       transferType={transferType}
       size={faceSize}
@@ -125,9 +136,9 @@ export const ActivityAssetImage = memo<Props>(({ chain, kind, transferType, sour
     <View style={styles.container}>
       {isBundleView ? (
         <>
-          <View style={[styles.stackMedallion, styles.stackBack]} />
-          <View style={[styles.stackMedallion, styles.stackMiddle]} />
-          <View style={[styles.stackMedallion, styles.stackFront]}>{face}</View>
+          <View style={[styles.stackMedallion, styles.stackBack, medallionNftStyle]} />
+          <View style={[styles.stackMedallion, styles.stackMiddle, medallionNftStyle]} />
+          <View style={[styles.stackMedallion, styles.stackFront, medallionNftStyle]}>{face}</View>
         </>
       ) : (
         face

@@ -33,6 +33,7 @@ export const useEvmActivityAsset = (chainId: number, assetBase?: EvmActivityAsse
     const isNft = assetBase.nft === true || collectibleMetadata != null;
 
     const symbol = collectibleMetadata?.symbol ?? tokenMetadata?.symbol ?? assetBase.symbol;
+    const name = collectibleMetadata?.collectibleName ?? assetBase.name;
     const decimals = tokenMetadata?.decimals ?? assetBase.decimals;
     const iconURL = tokenMetadata?.iconURL ?? assetBase.iconURL;
     const collectibleImageUri = collectibleMetadata?.image ?? collectibleMetadata?.iconURL ?? assetBase.iconURL;
@@ -48,6 +49,7 @@ export const useEvmActivityAsset = (chainId: number, assetBase?: EvmActivityAsse
       amountSigned: assetBase.amountSigned,
       decimals,
       symbol: symbol === '' ? undefined : symbol,
+      name: name === '' ? undefined : name,
       isNft,
       image
     };

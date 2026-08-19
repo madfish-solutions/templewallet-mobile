@@ -188,7 +188,7 @@ export const getActivityRowAmountView = (
     return { isPositive: false };
   }
 
-  const { amountSigned, decimals, symbol, isNft, contract } = asset;
+  const { amountSigned, decimals, symbol, name, isNft, contract } = asset;
 
   // An NFT-led bundle mixes editions, so per-unit sums mislead; the transfer count is the meaningful number
   if (kind === BUNDLE_FACE_KIND && isNft && nftBundleCount != null) {
@@ -223,7 +223,9 @@ export const getActivityRowAmountView = (
     };
   }
 
-  const symbolText = symbol == null ? undefined : truncateSymbol(symbol);
+  // An NFT without a symbol still gets a title - its name
+  const title = symbol ?? (isNft ? name : undefined);
+  const symbolText = title == null ? undefined : truncateSymbol(title);
 
   if (amountSigned == null || decimals == null) {
     return { amountText: symbolText ?? shortenHash(contract), isPositive: false, noteText: NO_VALUE_TEXT };

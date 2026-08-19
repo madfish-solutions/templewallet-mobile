@@ -43,6 +43,7 @@ export const useTezosActivityAsset = (assetSlug?: string, amountSigned?: string 
       amountSigned,
       decimals: metadata?.decimals,
       symbol: metadata?.symbol === '' ? undefined : metadata?.symbol,
+      name: metadata?.name === '' ? undefined : metadata?.name,
       isNft,
       image:
         cryptoLogoName != null

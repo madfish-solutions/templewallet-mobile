@@ -6,6 +6,7 @@ export const ACTIVITY_ASSET_IMAGE_SIZE = formatSize(40);
 export const ACTIVITY_ASSET_NFT_BORDER_RADIUS = formatSize(8);
 export const ACTIVITY_ASSET_BADGE_LOGO_SIZE = formatSize(12);
 export const ACTIVITY_ASSET_STACK_FACE_SIZE = formatSize(28);
+export const ACTIVITY_ASSET_STACK_FACE_NFT_BORDER_RADIUS = formatSize(6);
 
 const BADGE_SIZE = formatSize(16);
 const STACK_BACK_SIZE = formatSize(24);
@@ -42,7 +43,8 @@ export const useActivityAssetImageStyles = createUseStyles(({ colors }) => ({
     position: 'absolute',
     borderWidth: DEFAULT_BORDER_WIDTH,
     borderColor: colors.lines,
-    backgroundColor: colors.cardBG
+    // The design's white<->black flip token: white medallions in light theme, black in dark
+    backgroundColor: colors.white
   },
   stackBack: {
     top: 0,
@@ -68,7 +70,13 @@ export const useActivityAssetImageStyles = createUseStyles(({ colors }) => ({
     overflow: 'hidden',
     borderRadius: STACK_FRONT_SIZE / 2
   },
+  stackMedallionNft: {
+    borderRadius: ACTIVITY_ASSET_NFT_BORDER_RADIUS
+  },
   collectibleImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
     width: '100%',
     height: '100%'
   }

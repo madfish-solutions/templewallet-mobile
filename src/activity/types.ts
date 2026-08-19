@@ -78,6 +78,7 @@ export interface EvmActivityAsset {
   decimals?: number;
   nft?: boolean;
   symbol?: string;
+  name?: string;
   iconURL?: string;
 }
 
