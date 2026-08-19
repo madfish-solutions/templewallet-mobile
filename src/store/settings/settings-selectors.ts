@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { getExchangeRateSlug } from 'src/token/data/tokens-metadata';
 import { FIAT_CURRENCIES } from 'src/utils/exchange-rate.util';
@@ -84,4 +84,18 @@ export const useAssetExchangeRate = (slug: string) => {
   const fiatToUsdRate = useFiatToUsdRateSelector();
 
   return getFiatExchangeRate(assetUsdExchangeRate, fiatToUsdRate);
+};
+
+export const useAssetExchangeRateGetter = () => {
+  const tokenUsdExchangeRates = useSelector(state => state.currency.usdToTokenRates.data);
+  const fiatToUsdRate = useFiatToUsdRateSelector();
+
+  return useCallback(
+    (slug: string) => {
+      const rateSlug = getExchangeRateSlug(slug);
+
+      return getFiatExchangeRate(tokenUsdExchangeRates[rateSlug], fiatToUsdRate);
+    },
+    [tokenUsdExchangeRates, fiatToUsdRate]
+  );
 };

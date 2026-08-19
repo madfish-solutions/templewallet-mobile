@@ -29,7 +29,7 @@ const isFetchableEvmAssetStandard = (standard: EvmAssetStandard): standard is Fe
 export const useWcEvmBalancesChangesPreview = (
   transaction: ParsedEvmRpcTransactionRequest,
   chainId: number,
-  accountAddress: HexString | undefined
+  accountAddress: HexString
 ) => {
   const chain = useEvmChain(chainId);
   const network = useMemo(() => (isDefined(chain) ? toEvmNetworkEssentials(chain) : undefined), [chain]);
@@ -40,7 +40,7 @@ export const useWcEvmBalancesChangesPreview = (
   const [isMetadataResolved, setIsMetadataResolved] = useState(false);
 
   useEffect(() => {
-    if (!isDefined(accountAddress) || !isDefined(network)) {
+    if (!isDefined(network)) {
       setGroups(null);
       setIsMetadataResolved(false);
 

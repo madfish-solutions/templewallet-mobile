@@ -1,11 +1,9 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AvatarImage } from 'src/components/avatar-image/avatar-image';
+import { AppMetadataIcon } from 'src/components/app-metadata-icon/app-metadata-icon';
 import { Divider } from 'src/components/divider/divider';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { formatSize } from 'src/styles/format-size';
-import { isString } from 'src/utils/is-string';
 
 import { useAppMetadataViewStyles } from './styles';
 
@@ -25,11 +23,7 @@ export const AppMetadataView: FC<Props> = ({ name, iconUri, iconSeed, descriptio
     <View style={styles.container}>
       <Divider size={formatSize(8)} />
       <View style={styles.appContainer}>
-        {isString(iconUri) ? (
-          <AvatarImage uri={iconUri} size={iconSize} />
-        ) : (
-          <RobotIcon seed={iconSeed} size={iconSize} />
-        )}
+        <AppMetadataIcon iconUri={iconUri} iconSeed={iconSeed} size={iconSize} />
         <Divider size={formatSize(16)} />
         <View>
           <Divider size={formatSize(4)} />

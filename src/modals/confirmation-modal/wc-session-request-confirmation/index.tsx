@@ -21,6 +21,7 @@ import { useAccount, useAllAccounts } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
+import { assert } from 'src/utils/assert.utils';
 import { parseEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { isDefined } from 'src/utils/is-defined';
 import {
@@ -29,6 +30,7 @@ import {
   isWcSigningMethod
 } from 'src/walletconnect/evm-request-method.utils';
 import { getWcSigningPayloadPreview } from 'src/walletconnect/get-wc-signing-payload-preview';
+import { resolveWcSessionRequestApprover } from 'src/walletconnect/wc-account.utils';
 import { WcHandler } from 'src/walletconnect/wc-handler';
 
 import { AppMetadataView } from '../common/app-metadata-view';
@@ -54,7 +56,6 @@ const rejectWcSessionRequest = (request: WalletKitTypes.SessionRequest) =>
   });
 
 export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
-  console.log('request', request);
   const styles = useWcSessionRequestConfirmationStyles();
   const { goBack } = useNavigation();
   const accounts = useAllAccounts();
@@ -67,27 +68,29 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
   const isSigningRequest = isWcSigningMethod(method);
   const isSendTransactionRequest = isWcSendTransactionMethod(method);
 
-  const requestChainId = useMemo(() => parseEvmCaipChainId(request.params.chainId), [request.params.chainId]);
-  const requestChain = useEvmChain(requestChainId ?? -1);
+  const requestChainId = useMemo(() => {
+    const chainId = parseEvmCaipChainId(request.params.chainId);
+
+    assert(chainId, 'WC session request chain is expected to be supported before opening the confirmation modal');
+
+    return chainId;
+  }, [request.params.chainId]);
+  const requestChain = useEvmChain(requestChainId);
   const network = useMemo(
     () => (isDefined(requestChain) ? toEvmNetworkEssentials(requestChain) : undefined),
     [requestChain]
   );
 
-  const requestAddress = useMemo(() => getWcRequestAddress(method, params)?.toLowerCase(), [method, params]);
   const approver = useMemo(() => {
-    if (isDefined(requestAddress)) {
-      return accounts.find(account => getAccountAddressForEvm(account)?.toLowerCase() === requestAddress);
-    }
+    const resolved = resolveWcSessionRequestApprover(accounts, selectedAccount, getWcRequestAddress(method, params));
 
-    return getAccountAddressForEvm(selectedAccount) ? selectedAccount : accounts.find(getAccountAddressForEvm);
-  }, [accounts, requestAddress, selectedAccount]);
+    assert(resolved, 'WC session request approver is expected to be resolved before opening the confirmation modal');
 
-  const approverAddress = useMemo(
-    () => (isDefined(approver) ? getAccountAddressForEvm(approver) : undefined),
-    [approver]
-  );
-  const knownAssets = useEvmAccountChainAssetsSelector(approverAddress, requestChainId ?? -1);
+    return resolved;
+  }, [accounts, method, params, selectedAccount]);
+
+  const approverAddress = useMemo(() => getAccountAddressForEvm(approver), [approver]);
+  const knownAssets = useEvmAccountChainAssetsSelector(approverAddress, requestChainId);
 
   const appName = peerMetadata?.name || peerMetadata?.url || 'Unknown dApp';
   const iconUri = peerMetadata?.icons[0];
@@ -146,10 +149,6 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
 
   const onConfirm = useCallback(
     (preparedTransaction?: SendTransactionRequest) => {
-      if (!isDefined(approverAddress)) {
-        return;
-      }
-
       confirmRequest({
         request,
         address: approverAddress,
@@ -183,11 +182,9 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
         iconUri={iconUri}
         iconSeed={iconSeed}
         account={approver}
-        accountAddressFallback={requestAddress}
         payload={payloadPreview}
         bytesPayload={bytesPayload}
         isLoading={isLoading}
-        confirmDisabled={!isDefined(approverAddress)}
         cancelTestID={WcSessionRequestConfirmationSelectors.cancelButton}
         confirmTestID={WcSessionRequestConfirmationSelectors.confirmButton}
         onCancel={goBack}
@@ -196,7 +193,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
     );
   }
 
-  if (isSendTransactionRequest && isDefined(requestChainId)) {
+  if (isSendTransactionRequest) {
     return (
       <WcSendTransactionConfirmation
         params={params}
@@ -219,11 +216,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
         <Divider />
         <Label label="Account" />
         <Divider />
-        {isDefined(approver) ? (
-          <AccountDropdownItem account={approver} />
-        ) : (
-          <Text style={styles.payloadText}>{requestAddress}</Text>
-        )}
+        <AccountDropdownItem account={approver} />
         <Divider />
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>Request payload</Text>
@@ -240,7 +233,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
         />
         <ButtonLargePrimary
           title="Confirm"
-          disabled={isLoading || !isDefined(approverAddress)}
+          disabled={isLoading}
           onPress={onConfirm}
           testID={WcSessionRequestConfirmationSelectors.confirmButton}
         />

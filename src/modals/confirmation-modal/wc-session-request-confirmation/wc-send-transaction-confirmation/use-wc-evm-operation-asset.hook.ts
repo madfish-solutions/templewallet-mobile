@@ -29,7 +29,7 @@ type FetchOperationDetails<T extends EvmOperationAssetRef> = (
 export const useWcEvmOperationAsset = <T extends EvmOperationAssetRef>(
   transaction: ParsedEvmRpcTransactionRequest,
   chainId: number,
-  accountAddress: HexString | undefined,
+  accountAddress: HexString,
   fetchDetails: FetchOperationDetails<T>
 ) => {
   const chain = useEvmChain(chainId);
@@ -40,7 +40,7 @@ export const useWcEvmOperationAsset = <T extends EvmOperationAssetRef>(
   const [isMetadataResolved, setIsMetadataResolved] = useState(false);
 
   useEffect(() => {
-    if (!isDefined(accountAddress) || !isDefined(network)) {
+    if (!isDefined(network)) {
       setDetails(null);
       setIsMetadataResolved(false);
 

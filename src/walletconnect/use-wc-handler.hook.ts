@@ -1,18 +1,18 @@
-import { getSdkError } from '@walletconnect/utils';
 import { useEffect } from 'react';
 import { EmitterSubscription, Linking } from 'react-native';
 
 import { ConfirmationTypeEnum } from '../interfaces/confirm-payload/confirmation-type.enum';
 import { ModalsEnum } from '../navigator/enums/modals.enum';
 import { useNavigateToModal, useNavigation } from '../navigator/hooks/use-navigation.hook';
-import { dispatch } from '../store';
+import { dispatch, store } from '../store';
 import { loadConnectionsActions } from '../store/d-apps/d-apps-actions';
 import { showErrorToast } from '../toast/error-toast.utils';
+import { getSelectedAccountFromWallet } from '../utils/get-selected-account-from-wallet.util.ts';
 import { isDefined } from '../utils/is-defined';
 import { getUrlQueryParams } from '../utils/url.utils';
 
-import { isSupportedWcMethod } from './evm-request-method.utils';
 import { getSessionProposalRejectReason } from './validate-session-proposal';
+import { getSessionRequestRejectReason } from './validate-session-request';
 import { isWcUniversalLink, isWcUri, WcHandler } from './wc-handler';
 
 export const wcDeepLinkHandler = async (url: string | null, onValidDataCallback: EmptyFn, onError: SyncFn<string>) => {
@@ -57,7 +57,7 @@ export const useWcHandler = () => {
 
     WcHandler.init(
       proposal => {
-        const rejectReason = getSessionProposalRejectReason(proposal);
+        const rejectReason = getSessionProposalRejectReason(proposal, store.getState().wallet.accounts);
 
         if (isDefined(rejectReason)) {
           void WcHandler.rejectSession({
@@ -73,15 +73,20 @@ export const useWcHandler = () => {
         navigateToModal(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.WcSessionProposal, proposal });
       },
       request => {
-        const { method } = request.params.request;
+        const { wallet } = store.getState();
+        const rejectReason = getSessionRequestRejectReason(
+          request,
+          wallet.accounts,
+          getSelectedAccountFromWallet(wallet)
+        );
 
-        if (!isSupportedWcMethod(method)) {
+        if (isDefined(rejectReason)) {
           void WcHandler.respond({
             topic: request.topic,
             response: {
               id: request.id,
               jsonrpc: '2.0',
-              error: getSdkError('WC_METHOD_UNSUPPORTED')
+              error: rejectReason
             }
           }).catch(error => {
             console.error(error);

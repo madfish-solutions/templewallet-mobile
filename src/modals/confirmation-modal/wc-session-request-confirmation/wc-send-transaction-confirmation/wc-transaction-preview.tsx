@@ -10,7 +10,7 @@ import { WcTransferPreview } from './wc-transfer-preview';
 interface Props {
   transaction: ParsedEvmRpcTransactionRequest;
   chainId: number;
-  accountAddress?: HexString;
+  accountAddress: HexString;
 }
 
 export const WcTransactionPreview: FC<Props> = ({ transaction, chainId, accountAddress }) => {

@@ -23,8 +23,8 @@ import { WcTransactionPreview } from './wc-transaction-preview';
 interface Props {
   params: unknown;
   chainId: number;
-  account?: Account;
-  accountAddress?: HexString;
+  account: Account;
+  accountAddress: HexString;
   appName: string;
   iconUri?: string;
   iconSeed: string;
@@ -116,7 +116,7 @@ export const WcSendTransactionConfirmation: FC<Props> = ({
     ? true
     : estimationError
     ? isEstimating || isSubmitting
-    : isEstimating || isSubmitting || !gasLimit || !selectedFees || hasInsufficientNativeBalance || !accountAddress;
+    : isEstimating || isSubmitting || !gasLimit || !selectedFees || hasInsufficientNativeBalance;
 
   return (
     <ConfirmationLayout

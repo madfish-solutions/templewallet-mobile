@@ -6,11 +6,12 @@ import { from } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
+import { AccountWithEvmAddress } from 'src/interfaces/account.interfaces';
 import { navigateBackAction } from 'src/store/root-state.actions';
 import { setSelectedAccountIdAction } from 'src/store/wallet/wallet-actions';
 import { useAllAccounts, useAccount } from 'src/store/wallet/wallet-selectors';
 import { showSuccessToast } from 'src/toast/toast.utils';
-import { getAccountAddressForEvm } from 'src/utils/account.utils';
+import { getAccountAddressForEvm, hasEvmAddress } from 'src/utils/account.utils';
 import { toEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { EVM_WC_EVENTS, EVM_WC_METHODS } from 'src/walletconnect/constants';
@@ -20,8 +21,6 @@ import { disconnectDuplicateWcSessionsForPeer } from 'src/walletconnect/wc-sessi
 
 import { ConnectionRequestConfirmationContent } from '../common/connection-request-confirmation/connection-request-confirmation-content';
 import { ConnectionRequestConfirmationFormValues } from '../common/connection-request-confirmation/form';
-
-import { WcSessionProposalConfirmationSelectors } from './selectors';
 
 interface Props {
   proposal: WalletKitTypes.SessionProposal;
@@ -67,13 +66,13 @@ export const WcSessionProposalConfirmation: FC<Props> = ({ proposal }) => {
   const dispatch = useDispatch();
   const accounts = useAllAccounts();
   const selectedAccount = useAccount();
-  const evmAccounts = useMemo(() => accounts.filter(account => getAccountAddressForEvm(account)), [accounts]);
+  const evmAccounts = useMemo(() => accounts.filter(hasEvmAddress), [accounts]);
   const { metadata } = proposal.params.proposer;
 
   const { confirmRequest, isLoading, isConfirmed } = useRequestConfirmation(approveWcSessionProposal);
 
-  const formInitialValues = useMemo<ConnectionRequestConfirmationFormValues>(
-    () => ({ approver: getAccountAddressForEvm(selectedAccount) ? selectedAccount : evmAccounts[0] }),
+  const formInitialValues = useMemo<ConnectionRequestConfirmationFormValues<AccountWithEvmAddress>>(
+    () => ({ approver: hasEvmAddress(selectedAccount) ? selectedAccount : evmAccounts[0] }),
     [selectedAccount, evmAccounts]
   );
 
@@ -91,20 +90,14 @@ export const WcSessionProposalConfirmation: FC<Props> = ({ proposal }) => {
     [proposal.id, isConfirmed]
   );
 
-  const onSubmit = ({ approver }: ConnectionRequestConfirmationFormValues) => {
+  const onSubmit = ({ approver }: ConnectionRequestConfirmationFormValues<AccountWithEvmAddress>) => {
     if (approver.id !== selectedAccount.id) {
       dispatch(setSelectedAccountIdAction(approver.id));
     }
 
-    const address = getAccountAddressForEvm(approver);
-
-    if (!address) {
-      return;
-    }
-
     confirmRequest({
       proposal,
-      address
+      address: getAccountAddressForEvm(approver)
     });
   };
 
@@ -116,7 +109,6 @@ export const WcSessionProposalConfirmation: FC<Props> = ({ proposal }) => {
       accounts={evmAccounts}
       initialValues={formInitialValues}
       isLoading={isLoading}
-      confirmTestID={WcSessionProposalConfirmationSelectors.confirmButton}
       onSubmit={onSubmit}
     />
   );

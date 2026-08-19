@@ -3,12 +3,16 @@ import { ProposalTypes } from '@walletconnect/types';
 import { getSdkError } from '@walletconnect/utils';
 import { uniq } from 'lodash-es';
 
+import { Account } from 'src/interfaces/account.interfaces';
 import { toEvmCaipChainId } from 'src/utils/evm/caip.utils';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 import { isSupportedWcMethod } from './evm-request-method.utils';
+import { hasEvmAccount } from './wc-account.utils';
 
 const SUPPORTED_WC_CHAINS = [toEvmCaipChainId(ETHERLINK_MAINNET_CHAIN_ID)];
+
+export const isSupportedWcChain = (caipChainId: string) => SUPPORTED_WC_CHAINS.includes(caipChainId);
 
 /** CAIP-10 chain-agnostic EOA id — dApps use this to accept any EVM chain the wallet offers. */
 const EIP155_CHAIN_AGNOSTIC_ID = 'eip155:0';
@@ -87,7 +91,11 @@ export const normalizeSessionProposalParams = (params: ProposalTypes.Struct): Pr
   optionalNamespaces: normalizeProposalNamespaces(params.optionalNamespaces ?? {})
 });
 
-export const getSessionProposalRejectReason = (proposal: WalletKitTypes.SessionProposal) => {
+export const getSessionProposalRejectReason = (proposal: WalletKitTypes.SessionProposal, accounts: Account[]) => {
+  if (!hasEvmAccount(accounts)) {
+    return getSdkError('UNSUPPORTED_ACCOUNTS');
+  }
+
   const { requiredNamespaces } = proposal.params;
 
   for (const [namespaceKey, namespace] of Object.entries(requiredNamespaces)) {

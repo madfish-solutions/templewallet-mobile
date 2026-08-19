@@ -27,14 +27,12 @@ interface Props {
   iconUri?: string;
   iconSeed: string;
   appDescription?: string;
-  account?: Account;
-  accountAddressFallback?: string;
+  account: Account;
   /** Human-readable payload preview. */
   payload?: string;
   /** Raw bytes payload. When both `payload` and `bytesPayload` are defined, shows Preview / Bytes switcher. */
   bytesPayload?: string;
   isLoading: boolean;
-  confirmDisabled?: boolean;
   cancelTestID: string;
   confirmTestID: string;
   onCancel: EmptyFn;
@@ -48,11 +46,9 @@ export const SignRequestConfirmationContent: FC<Props> = ({
   iconSeed,
   appDescription,
   account,
-  accountAddressFallback,
   payload,
   bytesPayload,
   isLoading,
-  confirmDisabled = false,
   cancelTestID,
   confirmTestID,
   onCancel,
@@ -78,11 +74,7 @@ export const SignRequestConfirmationContent: FC<Props> = ({
         <Divider />
         <Label label="Account" />
         <Divider />
-        {isDefined(account) ? (
-          <AccountDropdownItem account={account} />
-        ) : (
-          isDefined(accountAddressFallback) && <Text style={styles.payloadText}>{accountAddressFallback}</Text>
-        )}
+        <AccountDropdownItem account={account} />
         <Divider />
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionText}>Payload to sign</Text>
@@ -100,12 +92,7 @@ export const SignRequestConfirmationContent: FC<Props> = ({
       </ScreenContainer>
       <ModalButtonsFloatingContainer variant="bordered">
         <ButtonLargeSecondary title="Cancel" disabled={isLoading} onPress={onCancel} testID={cancelTestID} />
-        <ButtonLargePrimary
-          title="Sign"
-          disabled={isLoading || confirmDisabled}
-          onPress={onConfirm}
-          testID={confirmTestID}
-        />
+        <ButtonLargePrimary title="Sign" disabled={isLoading} onPress={onConfirm} testID={confirmTestID} />
       </ModalButtonsFloatingContainer>
     </>
   );

@@ -1,13 +1,11 @@
 import React, { FC } from 'react';
 import { Text, View } from 'react-native';
 
-import { AvatarImage } from 'src/components/avatar-image/avatar-image';
+import { AppMetadataIcon } from 'src/components/app-metadata-icon/app-metadata-icon';
 import { Divider } from 'src/components/divider/divider';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { formatSize } from 'src/styles/format-size';
-import { isString } from 'src/utils/is-string';
 
 import { useAppMetadataConnectionViewStyles } from './styles';
 
@@ -26,11 +24,7 @@ export const AppMetadataConnectionView: FC<Props> = ({ name, iconUri, iconSeed }
       <View style={styles.headerContainer}>
         <View style={styles.appContainer}>
           <View style={styles.logoContainer}>
-            {isString(iconUri) ? (
-              <AvatarImage uri={iconUri} size={formatSize(24)} />
-            ) : (
-              <RobotIcon seed={iconSeed} size={formatSize(24)} />
-            )}
+            <AppMetadataIcon iconUri={iconUri} iconSeed={iconSeed} size={formatSize(24)} />
           </View>
           <Divider size={formatSize(8)} />
           <Text style={styles.nameText}>{name}</Text>
