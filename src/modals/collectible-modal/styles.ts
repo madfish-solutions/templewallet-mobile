@@ -22,19 +22,6 @@ export const useCollectibleModalStyles = createUseStylesMemoized(({ colors, typo
     alignItems: 'center',
     marginBottom: formatSize(12)
   },
-  evmCollectionLogo: {
-    margin: 0,
-    marginRight: formatSize(8)
-  },
-  collectionLogo: {
-    height: formatSize(36),
-    width: formatSize(36),
-    marginRight: formatSize(8),
-    borderRadius: formatSize(6)
-  },
-  logoFallBack: {
-    backgroundColor: colors.input
-  },
   collectionName: {
     ...typography.caption13Semibold,
     color: colors.black,

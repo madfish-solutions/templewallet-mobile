@@ -1,8 +1,6 @@
-import FastImage from '@d11/react-native-fast-image';
 import BigNumber from 'bignumber.js';
 import React, { memo, useMemo, useState } from 'react';
-import { Dimensions, Text, TouchableOpacity, View, Image } from 'react-native';
-import { SvgUri, SvgXml } from 'react-native-svg';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 
 import { objktCurrencies } from 'src/apis/objkt/constants';
 import { Divider } from 'src/components/divider/divider';
@@ -34,7 +32,7 @@ import { conditionalStyle } from 'src/utils/conditional-style';
 import { formatNumber } from 'src/utils/format-price';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { useInterval } from 'src/utils/hooks';
-import { formatImgUri, isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
+import { isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
 import { isString } from 'src/utils/is-string';
 import { openUrl } from 'src/utils/linking';
 import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams } from 'src/utils/objkt';
@@ -46,7 +44,7 @@ import { CollectibleAttributes } from './components/collectible-attributes';
 import { CollectibleDetails } from './components/collectible-details';
 import { CollectibleMedia } from './components/collectible-media';
 import { CollectibleModalLayout } from './components/collectible-modal-layout';
-import { COLLECTION_ICON_SIZE } from './constants';
+import { CollectionImage } from './components/collection-image';
 import { CollectibleModalSelectors } from './selectors';
 import { useCollectibleModalStyles } from './styles';
 import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
@@ -175,41 +173,8 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
 
     const title = galleries[0]?.gallery.name ?? collection?.name;
 
-    const logo = (() => {
-      if (!collection.logo) {
-        return null;
-      }
-
-      if (collection.logo.endsWith('.svg')) {
-        return (
-          <SvgUri
-            uri={collection.logo}
-            height={COLLECTION_ICON_SIZE}
-            width={COLLECTION_ICON_SIZE}
-            style={styles.collectionLogo}
-          />
-        );
-      }
-
-      if (isSvgDataUriInBase64Encoding(collection.logo)) {
-        const base64Data = collection.logo.replace(/^data:image\/svg\+xml;base64,/, '');
-        const svgXml = Buffer.from(base64Data, 'base64').toString('utf8');
-
-        return (
-          <View style={styles.collectionLogo}>
-            <SvgXml xml={svgXml} width={COLLECTION_ICON_SIZE} height={COLLECTION_ICON_SIZE} />
-          </View>
-        );
-      }
-      if (formatImgUri(collection.logo) == null) {
-        return <Image source={{ uri: collection.logo }} style={styles.collectionLogo} />;
-      }
-
-      return <FastImage source={{ uri: formatImgUri(collection.logo) }} style={styles.collectionLogo} />;
-    })();
-
-    return { title, logo };
-  }, [details, styles.collectionLogo]);
+    return { title, logoUri: collection?.logo };
+  }, [details]);
 
   return (
     <CollectibleModalLayout
@@ -240,7 +205,7 @@ export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
 
         <View style={styles.collectionContainer}>
           <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
-            {collection?.logo ?? <View style={[styles.collectionLogo, styles.logoFallBack]} />}
+            <CollectionImage uri={collection?.logoUri} />
 
             <TruncatedText style={styles.collectionName}>{collection?.title ?? 'Unknown collection'}</TruncatedText>
           </TouchableOpacity>

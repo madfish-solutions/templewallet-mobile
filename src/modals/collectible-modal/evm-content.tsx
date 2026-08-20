@@ -2,8 +2,6 @@ import React, { memo, useMemo, useState } from 'react';
 import { Dimensions, Text, View } from 'react-native';
 
 import { CollectibleImage } from 'src/components/collectible-image';
-import { CryptoLogo } from 'src/components/crypto-logo';
-import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum.ts';
 import { Divider } from 'src/components/divider/divider';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TruncatedText } from 'src/components/truncated-text';
@@ -23,6 +21,7 @@ import { fromTokenSlug } from 'src/utils/from-token-slug.ts';
 import { CollectibleAttributeGrid } from './components/collectible-attributes';
 import { EvmCollectibleDetails } from './components/collectible-details';
 import { CollectibleModalLayout } from './components/collectible-modal-layout';
+import { CollectionImage } from './components/collection-image';
 import { useCollectibleModalStyles } from './styles';
 
 enum Segment {
@@ -76,11 +75,7 @@ export const EvmCollectibleModalContent = memo<Props>(({ chainId, slug }) => {
         <Divider size={formatSize(12)} />
 
         <View style={styles.evmCollection}>
-          <CryptoLogo
-            name={CryptoLogoNameEnum.CollectiblePlaceholder}
-            size={formatSize(36)}
-            style={styles.evmCollectionLogo}
-          />
+          <CollectionImage />
           <TruncatedText style={styles.collectionName}>{collectionName}</TruncatedText>
         </View>
 
