@@ -7,9 +7,9 @@ import { Contact } from 'src/interfaces/contact.interface';
 import { SectionDropdownDataInterface } from 'src/interfaces/section-dropdown-data.interface';
 import { AccountReceiver, ContactReceiver, SendReceiver } from 'src/interfaces/send-receiver.interface';
 import { useContactsSelector } from 'src/store/contact-book/contact-book-selectors';
-import { useSelector } from 'src/store/selector';
+import { useGetSaplingAddressForAccount } from 'src/store/sapling/sapling-selectors';
 import { useAllVisibleAccounts } from 'src/store/wallet/wallet-selectors';
-import { getAccountAddressForChain, getAccountAddressForTezos } from 'src/utils/account.utils';
+import { getAccountAddressForChain } from 'src/utils/account.utils';
 import { isDefined } from 'src/utils/is-defined';
 import { isSaplingAddress } from 'src/utils/sapling/address-utils';
 import { isValidAddress } from 'src/utils/tezos.util';
@@ -22,17 +22,14 @@ const toContactReceiver = (contact: Contact): ContactReceiver => ({ ...contact, 
 export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddress?: string, isShieldedTez = false) => {
   const contacts = useContactsSelector();
   const allVisibleAccounts = useAllVisibleAccounts();
-  const saplingAccountsRecord = useSelector(({ sapling }) => sapling.accountsRecord);
+  const getSaplingAddressForAccount = useGetSaplingAddressForAccount();
 
   const myVisibleAccounts = useMemo(
     () =>
       allVisibleAccounts
         .map(account => {
-          const tezosAddress = getAccountAddressForTezos(account);
           const address = isShieldedTez
-            ? tezosAddress
-              ? saplingAccountsRecord[tezosAddress]?.saplingAddress
-              : undefined
+            ? getSaplingAddressForAccount(account)
             : getAccountAddressForChain(account, chainKind);
 
           return address
@@ -41,7 +38,7 @@ export const useFilteredReceiversList = (chainKind: TempleChainKind, sourceAddre
         })
         .filter(isDefined)
         .filter(({ address }) => address !== sourceAddress),
-    [allVisibleAccounts, chainKind, isShieldedTez, saplingAccountsRecord, sourceAddress]
+    [allVisibleAccounts, chainKind, getSaplingAddressForAccount, isShieldedTez, sourceAddress]
   );
 
   const [searchValue, setSearchValue] = useState<string>('');
