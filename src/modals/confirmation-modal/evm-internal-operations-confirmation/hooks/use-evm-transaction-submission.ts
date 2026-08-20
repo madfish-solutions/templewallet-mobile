@@ -8,6 +8,7 @@ import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-asset
 import { navigateAction } from 'src/store/root-state.actions';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { toEvmNetworkEssentials } from 'src/types/networks';
+import { buildPreparedEvmTransaction } from 'src/utils/evm/build-prepared-evm-transaction';
 import { EvmSubmissionFees } from 'src/utils/evm/estimate-evm-transaction';
 import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.utils';
 import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
@@ -35,17 +36,10 @@ export const useEvmTransactionSubmission = ({ chainId, sourceAddress, request }:
       submissionInProgressRef.current = true;
       setIsSubmitting(true);
       const network = toEvmNetworkEssentials(chain);
-      const {
-        gas: _gas,
-        gasPrice: _gasPrice,
-        maxFeePerGas: _maxFeePerGas,
-        maxPriorityFeePerGas: _maxPriorityFeePerGas,
-        ...baseRequest
-      } = request;
       const result = await evmTransactionSubmissionService.submit({
         network,
         sourceAddress,
-        transaction: { ...baseRequest, gas: gasLimit, ...fees },
+        transaction: buildPreparedEvmTransaction(request, { gasLimit, fees }),
         onBroadcast: hash => {
           showSuccessToast({
             operationHash: hash,

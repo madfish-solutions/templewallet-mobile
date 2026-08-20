@@ -1,36 +1,51 @@
 import { SendTransactionRequest } from 'viem';
 
+import { EvmTransactionRequest } from 'src/interfaces/evm-transaction-request.interface';
+import { isDefined } from 'src/utils/is-defined';
+
 import { EvmSubmissionFees } from './estimate-evm-transaction';
-import { ParsedEvmRpcTransactionRequest } from './parse-rpc-transaction-request';
 
 /**
- * Builds a viem `sendTransaction` payload from a WalletConnect/RPC-parsed request,
- * applying wallet-selected gas and fees (dApp fee fields are discarded).
+ * Builds a viem `sendTransaction` payload, applying wallet-selected gas and fees
+ * (request fee fields are discarded). Typed-tx fields (`type`, `accessList`,
+ * `authorizationList`) and `nonce` are preserved.
  *
  * Casts to {@link SendTransactionRequest}: viem's fee/type discriminant union is
  * impractical to construct field-by-field across legacy, EIP-1559, 2930, and 7702.
  */
 export const buildPreparedEvmTransaction = (
-  parsed: ParsedEvmRpcTransactionRequest,
+  request: Pick<EvmTransactionRequest, 'to' | 'value' | 'data' | 'type' | 'accessList' | 'authorizationList'> & {
+    nonce?: number;
+  },
   { gasLimit, fees }: EvmSubmissionFees
 ): SendTransactionRequest => {
-  const { to, value, data, nonce } = parsed;
-  const accessList = 'accessList' in parsed ? parsed.accessList : undefined;
-  const base = { to, value, data, nonce, accessList, gas: gasLimit };
+  const { to, value, data, nonce, type, accessList, authorizationList } = request;
+  const base = {
+    to,
+    value,
+    data,
+    nonce,
+    gas: gasLimit,
+    ...(isDefined(accessList) ? { accessList } : {})
+  };
 
-  if ('type' in parsed && parsed.type === 'eip7702') {
+  if (type === 'eip7702') {
+    if (!isDefined(authorizationList)) {
+      throw new Error('EIP-7702 transactions require authorizationList');
+    }
+
     // eslint-disable-next-line no-type-assertion/no-type-assertion
     return {
       ...base,
       type: 'eip7702',
-      authorizationList: parsed.authorizationList,
+      authorizationList,
       ...(fees.type === 'eip1559'
         ? { maxFeePerGas: fees.maxFeePerGas, maxPriorityFeePerGas: fees.maxPriorityFeePerGas }
         : { maxFeePerGas: fees.gasPrice, maxPriorityFeePerGas: 0n })
     } as SendTransactionRequest;
   }
 
-  if ('type' in parsed && parsed.type === 'eip2930') {
+  if (type === 'eip2930') {
     // eslint-disable-next-line no-type-assertion/no-type-assertion
     return {
       ...base,

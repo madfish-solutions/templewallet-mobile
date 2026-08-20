@@ -57,8 +57,8 @@ export const SignPayloadRequestConfirmation: FC<Props> = ({ message }) => {
       iconUri={message.appMetadata.icon}
       iconSeed={message.appMetadata.senderId}
       account={approver}
-      payload={isPayloadParsed ? payloadPreview : message.payload}
-      bytesPayload={isPayloadParsed ? message.payload : undefined}
+      payloadPreview={isPayloadParsed ? payloadPreview : undefined}
+      bytesPayload={message.payload}
       isLoading={isLoading}
       cancelTestID={SignPayloadRequestConfirmationSelectors.cancelButton}
       confirmTestID={SignPayloadRequestConfirmationSelectors.signButton}

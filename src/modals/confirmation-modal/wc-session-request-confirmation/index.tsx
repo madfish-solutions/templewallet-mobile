@@ -182,7 +182,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
         iconUri={iconUri}
         iconSeed={iconSeed}
         account={approver}
-        payload={payloadPreview}
+        payloadPreview={payloadPreview}
         bytesPayload={bytesPayload}
         isLoading={isLoading}
         cancelTestID={WcSessionRequestConfirmationSelectors.cancelButton}

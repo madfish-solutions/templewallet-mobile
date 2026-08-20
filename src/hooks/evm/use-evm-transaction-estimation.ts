@@ -5,7 +5,6 @@ import { useAppStateStatus } from 'src/hooks/use-app-state-status.hook';
 import { EvmTransactionRequest } from 'src/interfaces/evm-transaction-request.interface';
 import {
   EvmEstimation,
-  EvmFees,
   EvmSubmissionFees,
   EvmTransactionPreparer,
   estimateEvmTransaction
@@ -13,9 +12,9 @@ import {
 import { EvmTransactionError, normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import {
   getEvmFeeOptions,
-  getEvmFeesForGasPrice,
   getGasPriceForNetworkFee,
-  resolveEvmGasLimit
+  resolveEvmGasLimit,
+  resolveEvmSubmissionFees
 } from 'src/utils/evm/evm-transaction-fee.utils';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -36,28 +35,6 @@ const getProvidedGasPrice = (request?: EvmTransactionRequest) => {
   if (isDefined(request.gasPrice) && request.gasPrice > 0n) return request.gasPrice;
 
   return undefined;
-};
-
-const resolveSubmissionFees = (
-  gasPrice: bigint,
-  estimation: EvmEstimation,
-  request?: EvmTransactionRequest
-): EvmFees => {
-  if (
-    estimation.type === 'eip1559' &&
-    isDefined(request?.maxFeePerGas) &&
-    isDefined(request.maxPriorityFeePerGas) &&
-    gasPrice === request.maxFeePerGas
-  ) {
-    return {
-      type: 'eip1559',
-      maxFeePerGas: request.maxFeePerGas,
-      maxPriorityFeePerGas:
-        request.maxPriorityFeePerGas < request.maxFeePerGas ? request.maxPriorityFeePerGas : request.maxFeePerGas
-    };
-  }
-
-  return getEvmFeesForGasPrice(gasPrice, estimation);
 };
 
 const parsePositiveGasPrice = (value: string) => {
@@ -229,7 +206,7 @@ export const useEvmTransactionEstimation = ({ sourceAddress, request, publicClie
 
     return {
       gasLimit: resolveEvmGasLimit(latestEstimation.gas, latestRequest?.gas),
-      fees: resolveSubmissionFees(latestGasPrice, latestEstimation, latestRequest)
+      fees: resolveEvmSubmissionFees(latestGasPrice, latestEstimation, latestRequest)
     };
   }, [runEstimation]);
 

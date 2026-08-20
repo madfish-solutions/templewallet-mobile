@@ -10,9 +10,9 @@ import { getDollarValue } from 'src/utils/balance.utils';
 import {
   formatNetworkFee,
   getEvmFeeOptions,
-  getEvmFeesForGasPrice,
   getNetworkFeeSliderValues,
-  resolveEvmGasLimit
+  resolveEvmGasLimit,
+  resolveEvmSubmissionFees
 } from 'src/utils/evm/evm-transaction-fee.utils';
 
 import { useEvmTransactionEstimation } from './use-evm-transaction-estimation';
@@ -46,8 +46,8 @@ export const useEvmTransactionFee = ({ chainId, sourceAddress, request, nativeCu
     const minimumGasPrice = feeOptions.slow.type === 'legacy' ? feeOptions.slow.gasPrice : feeOptions.slow.maxFeePerGas;
     if (selectedGasPrice < minimumGasPrice) return undefined;
 
-    return getEvmFeesForGasPrice(selectedGasPrice, estimation);
-  }, [estimation, feeOptions, selectedGasPrice]);
+    return resolveEvmSubmissionFees(selectedGasPrice, estimation, request);
+  }, [estimation, feeOptions, request, selectedGasPrice]);
   const gasLimit = estimation?.gas !== undefined ? resolveEvmGasLimit(estimation.gas, request?.gas) : undefined;
   const fee = gasLimit !== undefined && selectedGasPrice ? gasLimit * selectedGasPrice : undefined;
   const gasPriceError = useMemo(() => {

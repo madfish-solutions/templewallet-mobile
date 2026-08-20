@@ -9,9 +9,12 @@ export const toEvmTransactionRequest = (parsed: ParsedEvmRpcTransactionRequest):
   value: parsed.value,
   data: parsed.data,
   gas: parsed.gas,
+  ...('type' in parsed ? { type: parsed.type } : {}),
   ...('gasPrice' in parsed && isDefined(parsed.gasPrice) ? { gasPrice: parsed.gasPrice } : {}),
   ...('maxFeePerGas' in parsed && isDefined(parsed.maxFeePerGas) ? { maxFeePerGas: parsed.maxFeePerGas } : {}),
   ...('maxPriorityFeePerGas' in parsed && isDefined(parsed.maxPriorityFeePerGas)
     ? { maxPriorityFeePerGas: parsed.maxPriorityFeePerGas }
-    : {})
+    : {}),
+  ...('accessList' in parsed && isDefined(parsed.accessList) ? { accessList: parsed.accessList } : {}),
+  ...('authorizationList' in parsed ? { authorizationList: parsed.authorizationList } : {})
 });

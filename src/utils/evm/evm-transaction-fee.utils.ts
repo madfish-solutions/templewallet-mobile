@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js';
 import { formatEther, parseEther } from 'viem';
 
+import { EvmTransactionRequest } from 'src/interfaces/evm-transaction-request.interface';
 import {
   Eip1559Estimation,
   Eip1559Fees,
@@ -9,6 +10,7 @@ import {
   LegacyEstimation,
   LegacyFees
 } from 'src/utils/evm/estimate-evm-transaction';
+import { isDefined } from 'src/utils/is-defined';
 
 const NETWORK_FEE_STEP = 1e-6;
 
@@ -32,6 +34,29 @@ export const getEvmFeesForGasPrice = (gasPrice: bigint, estimation: EvmEstimatio
   if (estimation.type === 'legacy') return { type: 'legacy', gasPrice };
 
   return getEip1559FeesForMaxFee(gasPrice, estimation);
+};
+
+/** Prefer request-provided EIP-1559 priority fee when present; otherwise scale from the estimate. */
+export const resolveEvmSubmissionFees = (
+  gasPrice: bigint,
+  estimation: EvmEstimation,
+  request?: EvmTransactionRequest
+): EvmFees => {
+  if (estimation.type === 'legacy') {
+    return { type: 'legacy', gasPrice };
+  }
+
+  const providedPriorityFee = request?.maxPriorityFeePerGas;
+
+  if (isDefined(providedPriorityFee)) {
+    return {
+      type: 'eip1559',
+      maxFeePerGas: gasPrice,
+      maxPriorityFeePerGas: providedPriorityFee < gasPrice ? providedPriorityFee : gasPrice
+    };
+  }
+
+  return getEvmFeesForGasPrice(gasPrice, estimation);
 };
 
 const getEip1559FeesForMaxFee = (maxFeePerGas: bigint, estimation: Eip1559Estimation): Eip1559Fees => {
@@ -89,9 +114,9 @@ export const getGasPriceForNetworkFee = (networkFee: number, gasLimit: bigint) =
   return ceilDivide(feeInWei, gasLimit);
 };
 
-/** Prefer a dApp-provided gas limit only when it is at least the wallet estimate. */
+/** Prefer a provided gas limit when present; otherwise use the wallet estimate. */
 export const resolveEvmGasLimit = (estimatedGas: bigint, providedGas?: bigint) =>
-  providedGas !== undefined && providedGas > estimatedGas ? providedGas : estimatedGas;
+  isDefined(providedGas) && providedGas > 0n ? providedGas : estimatedGas;
 
 export const formatNetworkFee = (fee: bigint) => {
   const formatted = new BigNumber(formatEther(fee)).decimalPlaces(6).toFixed();

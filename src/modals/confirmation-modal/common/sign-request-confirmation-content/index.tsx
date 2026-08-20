@@ -29,7 +29,7 @@ interface Props {
   appDescription?: string;
   account: Account;
   /** Human-readable payload preview. */
-  payload?: string;
+  payloadPreview?: string;
   /** Raw bytes payload. When both `payload` and `bytesPayload` are defined, shows Preview / Bytes switcher. */
   bytesPayload?: string;
   isLoading: boolean;
@@ -46,7 +46,7 @@ export const SignRequestConfirmationContent: FC<Props> = ({
   iconSeed,
   appDescription,
   account,
-  payload,
+  payloadPreview,
   bytesPayload,
   isLoading,
   cancelTestID,
@@ -56,15 +56,15 @@ export const SignRequestConfirmationContent: FC<Props> = ({
 }) => {
   const styles = useSignRequestConfirmationContentStyles();
   const [payloadTypeIndex, setPayloadTypeIndex] = useState(PAYLOAD_PREVIEW_TYPE_INDEX);
-  const hasSwitcher = isDefined(bytesPayload) && isDefined(payload);
+  const hasSwitcher = isDefined(bytesPayload) && isDefined(payloadPreview);
 
   useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={headerTitle} /> }, [headerTitle]);
 
   let payloadText: string;
   if (hasSwitcher) {
-    payloadText = payloadTypeIndex === PAYLOAD_PREVIEW_TYPE_INDEX ? payload : bytesPayload;
+    payloadText = payloadTypeIndex === PAYLOAD_PREVIEW_TYPE_INDEX ? payloadPreview : bytesPayload;
   } else {
-    payloadText = payload ?? bytesPayload ?? '';
+    payloadText = payloadPreview ?? bytesPayload ?? '';
   }
 
   return (
