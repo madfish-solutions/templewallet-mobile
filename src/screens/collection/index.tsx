@@ -13,7 +13,7 @@ import { formatSize } from 'src/styles/format-size';
 import { CollectionItemInterface } from 'src/token/interfaces/collectible-interfaces.interface';
 import { isDefined } from 'src/utils/is-defined';
 
-import { CollectibleItem } from './components/collectible-item';
+import { CollectionCollectibleItem } from './collection-collectible-item';
 import { useCollectionStyles, useCollectionClosingComponentStyles } from './styles';
 import { useCollectionItemsLoading } from './use-items-loading';
 import { ITEM_WIDTH, GAP_SIZE } from './utils';
@@ -53,7 +53,9 @@ export const Collection = memo(() => {
   const snapToInterval = useMemo(() => formatSize(ITEM_WIDTH) + formatSize(GAP_SIZE), []);
 
   const renderItem: ListRenderItem<CollectionItemInterface> = useCallback(
-    ({ item }) => <CollectibleItem item={item} collectionContract={collectionContract} accountPkh={tezosAddress} />,
+    ({ item }) => (
+      <CollectionCollectibleItem item={item} collectionContract={collectionContract} accountPkh={tezosAddress} />
+    ),
     [tezosAddress]
   );
 

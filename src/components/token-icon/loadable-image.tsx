@@ -1,9 +1,7 @@
-import FastImage from '@d11/react-native-fast-image';
+import FastImage, { ImageStyle } from '@d11/react-native-fast-image';
 import React, { memo, useMemo } from 'react';
 
 import { AssetIconPlaceholder } from '../asset-icon-placeholder';
-
-import { TokenIconStyles } from './token-icon.styles';
 
 interface Props {
   borderRadius?: number;
@@ -12,23 +10,31 @@ interface Props {
   isStackFailed: boolean;
   onError: EmptyFn;
   onLoad: EmptyFn;
-  uri?: string;
   size: number;
+  placeholderSize: number;
+  uri?: string;
 }
 
 export const LoadableTokenIconImage = memo<Props>(
-  ({ borderRadius, isCollectible = false, isLoading, isStackFailed, onError, onLoad, size, uri }) => {
+  ({ borderRadius, isCollectible = false, isLoading, isStackFailed, onError, onLoad, size, placeholderSize, uri }) => {
     const isShowPlaceholder = useMemo(() => isLoading || isStackFailed, [isLoading, isStackFailed]);
 
-    const style = useMemo(
-      () => [isShowPlaceholder && TokenIconStyles.hiddenImage, { borderRadius, width: size, height: size }],
-      [borderRadius, isShowPlaceholder, size]
+    const style = useMemo<ImageStyle>(
+      () => ({
+        borderRadius,
+        height: size,
+        left: (placeholderSize - size) / 2,
+        position: 'absolute',
+        top: (placeholderSize - size) / 2,
+        width: size
+      }),
+      [borderRadius, placeholderSize, size]
     );
 
     return (
       <>
-        {isShowPlaceholder && <AssetIconPlaceholder isCollectible={isCollectible} size={size} />}
-        {uri != null && <FastImage style={style} source={{ uri }} onError={onError} onLoad={onLoad} />}
+        {isShowPlaceholder && <AssetIconPlaceholder isCollectible={isCollectible} size={placeholderSize} />}
+        {uri != null && <FastImage key={uri} style={style} source={{ uri }} onError={onError} onLoad={onLoad} />}
       </>
     );
   }

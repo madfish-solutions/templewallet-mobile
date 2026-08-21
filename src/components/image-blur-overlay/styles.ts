@@ -10,11 +10,6 @@ export const useBlurStyles = createUseStylesMemoized(({ colors, typography }) =>
     flexDirection: 'row',
     alignItems: 'center'
   },
-  blur: {
-    position: 'absolute',
-    top: 0,
-    left: 0
-  },
   content: {
     width: '100%',
     flexDirection: 'column',

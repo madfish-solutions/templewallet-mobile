@@ -1,6 +1,6 @@
 import { noop } from 'lodash-es';
 import React, { useCallback } from 'react';
-import { Share, Text, View } from 'react-native';
+import { Share, Text, TouchableOpacity, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import { useDispatch } from 'react-redux';
 
@@ -13,7 +13,6 @@ import { OctopusWithLove } from 'src/components/octopus-with-love/octopus-with-l
 import { Quote } from 'src/components/quote/quote';
 import { RobotIcon } from 'src/components/robot-icon/robot-icon';
 import { getSeedFromAccount } from 'src/components/robot-icon/robot-icon.utils.ts';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { ScreenContainer } from 'src/components/screen-container/screen-container';
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
@@ -249,7 +248,7 @@ export const Settings = () => {
           <Divider />
 
           <TouchableWithAnalytics
-            Component={SafeTouchableOpacity}
+            Component={TouchableOpacity}
             style={styles.logoutButton}
             onPress={resetInProgress ? noop : handleLogoutButtonPress}
             testID={SettingsSelectors.resetWalletButton}

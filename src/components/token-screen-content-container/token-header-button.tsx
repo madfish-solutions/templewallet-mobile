@@ -1,13 +1,11 @@
 import { BigNumber } from 'bignumber.js';
 import React, { FC, useCallback, useMemo } from 'react';
-import { Alert, Text } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Alert, Text, TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { INITIAL_APR_VALUE } from 'src/apis/youves/constants';
 import { Icon } from 'src/components/icon/icon';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { white } from 'src/config/styles';
 import { useTokenApyInfo } from 'src/hooks/use-token-apy.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
@@ -90,9 +88,9 @@ export const TokenHeaderButton: FC<Props> = ({ token, scam }) => {
 
   if (isTezos) {
     return (
-      <SafeTouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
+      <TouchableOpacity style={styles.delegateContainer} onPress={navigationFlow}>
         <Text style={styles.delegateText}>{currentBaker ? 'Delegate & Stake' : 'Not Delegated'}</Text>
-      </SafeTouchableOpacity>
+      </TouchableOpacity>
     );
   }
 

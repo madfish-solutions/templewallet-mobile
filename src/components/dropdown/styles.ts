@@ -22,12 +22,12 @@ export const useDropdownStyles = createUseStyles(({ typography, colors }) => ({
     flexShrink: 1,
     backgroundColor: colors.pageBG
   },
-  flatListContentContainer: {
+  listContentContainer: {
     justifyContent: 'space-between',
     padding: formatSize(16),
     paddingTop: formatSize(4)
   },
-  tokenSelectorFlatListContentContainer: {
+  compactListContentContainer: {
     paddingTop: formatSize(4),
     paddingBottom: formatSize(6)
   },

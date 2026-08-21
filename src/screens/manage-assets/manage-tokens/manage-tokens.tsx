@@ -10,15 +10,21 @@ import { dispatch } from 'src/store';
 import { setHideZeroBalances } from 'src/store/settings/settings-actions';
 import { useHideZeroBalancesSelector } from 'src/store/settings/settings-selectors';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
-import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
-import { useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import {
+  isEvmCollectibleManageAsset,
+  isEvmManageAsset,
+  ManageAsset,
+  useCurrentAccountEvmManageAssets,
+  useCurrentAccountTokens
+} from 'src/utils/assets/hooks';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { ManageAssetsItem } from '../manage-assets-item/manage-assets-item';
 import { useManageAssetsStyles } from '../manage-assets.styles';
 
-const keyExtractor = (item: TokenInterface) => getTokenSlug(item);
-const renderItem: ListRenderItem<TokenInterface> = ({ item }) => <ManageAssetsItem asset={item} />;
+const keyExtractor = (item: ManageAsset) => (isEvmManageAsset(item) ? item.assetKey : getTokenSlug(item));
+const renderItem: ListRenderItem<ManageAsset> = ({ item }) => <ManageAssetsItem asset={item} />;
 
 const ListEmptyComponent = <DataPlaceholder text="No tokens matching search criteria were found" />;
 
@@ -26,9 +32,20 @@ export const ManageTokens = memo(() => {
   const styles = useManageAssetsStyles();
 
   const tokensList = useCurrentAccountTokens();
-  const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
-  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(tokensWithoutTkey, false, true);
+  const tezosToken = useTezosTokenOfCurrentAccount();
+  const evmAssets = useCurrentAccountEvmManageAssets();
   const hideZeroBalances = useHideZeroBalancesSelector();
+  const tokensWithoutTkey = useMemo(() => tokensList.filter(token => token.slug !== TEMPLE_TOKEN_SLUG), [tokensList]);
+  const assets = useMemo<ManageAsset[]>(
+    () =>
+      Array<ManageAsset>().concat(
+        tezosToken,
+        tokensWithoutTkey,
+        evmAssets.filter(asset => !isEvmCollectibleManageAsset(asset))
+      ),
+    [evmAssets, tezosToken, tokensWithoutTkey]
+  );
+  const { filteredAssetsList, setSearchValue } = useFilteredAssetsList(assets, hideZeroBalances, true);
   const [isScrolled, setIsScrolled] = useState(false);
 
   const handleHideZeroBalancesChange = useCallback(() => {

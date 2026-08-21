@@ -76,7 +76,7 @@ export interface EvmCollectibleMetadata extends EvmAssetMetadataBase {
   standard?: EvmAssetStandardEnum.ERC721 | EvmAssetStandardEnum.ERC1155;
   address: HexString;
   tokenId: string;
-  metadataUri?: string;
+  metadataUri?: string | null;
   image?: string;
   collectibleName?: string;
   description?: string;

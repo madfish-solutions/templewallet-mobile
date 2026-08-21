@@ -1,43 +1,43 @@
 import { CryptoLogoNameEnum } from 'src/components/crypto-logo/logo-name.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { AssetInterface } from 'src/interfaces/asset.interface';
 import {
   EvmAssetStandardEnum,
-  EvmCollectibleMetadata,
   EvmNativeTokenMetadata,
-  EvmTokenMetadata,
   EVM_TOKEN_SLUG
 } from 'src/token/interfaces/token-metadata.interface';
-import { EvmNativeSendAsset, EvmSendAsset } from 'src/types/send-asset';
+import { EvmSendAsset } from 'src/types/send-asset';
 import { toChainAssetSlug } from 'src/utils/chain-asset-slug';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 
-export interface EvmSendNetwork {
+import { EvmAssetCatalogItem } from './asset-catalog';
+
+export interface EvmAssetNetwork {
   chainId: number;
   currency: EvmNativeTokenMetadata;
   name: string;
   nativeIconName?: CryptoLogoNameEnum;
 }
 
-interface ToEvmSendAssetParams {
+export interface EvmDisplayedAsset extends AssetInterface {
+  assetKey: string;
   assetSlug: string;
-  balance: string;
-  exchangeRate?: number;
-  network: EvmSendNetwork;
+  chainId: number;
+  chainKind: TempleChainKind.EVM;
+  networkName: string;
   standard: EvmAssetStandardEnum;
-  tokenMetadata?: EvmTokenMetadata | EvmNativeTokenMetadata;
-  collectibleMetadata?: EvmCollectibleMetadata;
 }
 
-export const toEvmSendAsset = ({
-  assetSlug,
-  balance,
-  exchangeRate,
-  network,
-  standard,
-  tokenMetadata,
-  collectibleMetadata
-}: ToEvmSendAssetParams): EvmSendAsset | undefined => {
+export const toEvmDisplayedAsset = (
+  item: EvmAssetCatalogItem,
+  network: EvmAssetNetwork
+): EvmDisplayedAsset | undefined => {
+  const { assetSlug, balance, collectibleMetadata, exchangeRate, standard, tokenMetadata } = item;
+  if (!standard) {
+    return undefined;
+  }
+
   const isNative = standard === EvmAssetStandardEnum.NATIVE;
   const isCollectible = standard === EvmAssetStandardEnum.ERC721 || standard === EvmAssetStandardEnum.ERC1155;
   const decimals = isNative ? network.currency.decimals : isCollectible ? 0 : tokenMetadata?.decimals;
@@ -46,7 +46,6 @@ export const toEvmSendAsset = ({
     return undefined;
   }
 
-  const [, tokenId] = isCollectible ? fromTokenSlug(assetSlug) : [];
   const symbol =
     (isNative ? network.currency.symbol : isCollectible ? collectibleMetadata?.symbol : tokenMetadata?.symbol) ??
     (isCollectible ? 'NFT' : 'Token');
@@ -56,7 +55,8 @@ export const toEvmSendAsset = ({
       : isCollectible
       ? collectibleMetadata?.collectibleName ?? collectibleMetadata?.name
       : tokenMetadata?.name) ?? symbol;
-  const commonAsset: Omit<EvmNativeSendAsset, 'assetSlug' | 'sendStandard'> = {
+
+  return {
     name,
     symbol,
     decimals,
@@ -69,12 +69,24 @@ export const toEvmSendAsset = ({
     balance,
     exchangeRate,
     assetKey: toChainAssetSlug(TempleChainKind.EVM, network.chainId, assetSlug),
+    assetSlug,
     chainKind: TempleChainKind.EVM,
     chainId: network.chainId,
-    networkName: network.name
+    networkName: network.name,
+    standard
   };
+};
 
-  if (isNative) {
+export const toEvmSendAsset = (item: EvmAssetCatalogItem, network: EvmAssetNetwork): EvmSendAsset | undefined => {
+  const displayedAsset = toEvmDisplayedAsset(item, network);
+  if (!displayedAsset) {
+    return undefined;
+  }
+
+  const { standard, ...commonAsset } = displayedAsset;
+  const { assetSlug, tokenMetadata, collectibleMetadata } = item;
+
+  if (standard === EvmAssetStandardEnum.NATIVE) {
     return { ...commonAsset, assetSlug: EVM_TOKEN_SLUG, sendStandard: EvmAssetStandardEnum.NATIVE };
   }
 
@@ -86,15 +98,11 @@ export const toEvmSendAsset = ({
       : undefined;
   }
 
-  const [slugContractAddress] = fromTokenSlug<HexString>(assetSlug);
+  const [slugContractAddress, tokenId] = fromTokenSlug<HexString>(assetSlug);
   const contractAddress = collectibleMetadata?.address ?? slugContractAddress;
-  if (!contractAddress || !tokenId) return undefined;
+  if (!contractAddress || !tokenId || !standard) {
+    return undefined;
+  }
 
-  return {
-    ...commonAsset,
-    assetSlug,
-    sendStandard: standard,
-    contractAddress,
-    tokenId
-  };
+  return { ...commonAsset, assetSlug, sendStandard: standard, contractAddress, tokenId };
 };

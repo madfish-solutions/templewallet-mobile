@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from 'react';
+import { TouchableOpacity } from 'react-native';
 
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TestIdProps } from 'src/interfaces/test-id.props';
 import { formatSize } from 'src/styles/format-size';
@@ -29,12 +29,7 @@ export const SocialButton: FC<Props> = ({ iconName, url, testID }) => {
   }, [url]);
 
   return (
-    <TouchableWithAnalytics
-      Component={SafeTouchableOpacity}
-      style={styles.container}
-      onPress={handlePress}
-      testID={testID}
-    >
+    <TouchableWithAnalytics Component={TouchableOpacity} style={styles.container} onPress={handlePress} testID={testID}>
       <IconComponent
         color={url ? colors.orange : colors.disabled}
         width={formatSize(iconName === SocialIconNameEnum.Discord ? 27.5 : 25)}

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { VisibilityEnum } from 'src/enums/visibility.enum';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useEvmAccountChainBalancesSelector } from 'src/store/evm/balances/evm-balances-selectors';
 import { useEvmChainCollectiblesMetadataSelector } from 'src/store/evm/collectibles-metadata/evm-collectibles-metadata-selectors';
@@ -26,6 +27,10 @@ export const useCurrentAccountEvmCollectibles = (): EvmDisplayedCollectible[] =>
     const collectibles: EvmDisplayedCollectible[] = [];
 
     for (const [assetSlug, { standard }] of Object.entries(assets)) {
+      if (assets[assetSlug].visibility === VisibilityEnum.Hidden) {
+        continue;
+      }
+
       if (standard !== EvmAssetStandardEnum.ERC721 && standard !== EvmAssetStandardEnum.ERC1155) {
         continue;
       }

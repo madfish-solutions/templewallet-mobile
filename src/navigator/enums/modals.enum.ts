@@ -3,7 +3,7 @@ import { Contact } from 'src/interfaces/contact.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
 import { TezosTokenMetadata } from 'src/token/interfaces/token-metadata.interface';
 import { EarnOpportunity } from 'src/types/earn-opportunity.types';
-import { EvmDisplayedCollectible } from 'src/utils/assets/types';
+import { CollectibleReference } from 'src/utils/assets/types';
 
 export enum ModalsEnum {
   Receive = 'Receive',
@@ -16,7 +16,6 @@ export enum ModalsEnum {
   RevealPrivateKey = 'RevealPrivateKey',
   EnableBiometryPassword = 'EnableBiometryPassword',
   CollectibleModal = 'CollectibleModal',
-  EvmCollectibleModal = 'EvmCollectibleModal',
   AddCustomRpc = 'AddCustomRpc',
   EditCustomRpc = 'EditCustomRpc',
   AddContact = 'AddContact',
@@ -50,8 +49,7 @@ export type ModalsParamList = {
   [ModalsEnum.RevealSeedPhrase]: { account?: Account };
   [ModalsEnum.RevealPrivateKey]: { account: Account };
   [ModalsEnum.EnableBiometryPassword]: undefined;
-  [ModalsEnum.CollectibleModal]: { slug: string };
-  [ModalsEnum.EvmCollectibleModal]: Pick<EvmDisplayedCollectible, 'chainId' | 'slug'>;
+  [ModalsEnum.CollectibleModal]: CollectibleReference;
   [ModalsEnum.AddCustomRpc]: undefined;
   [ModalsEnum.EditCustomRpc]: { url: string };
   [ModalsEnum.AddContact]: Contact | undefined;
@@ -90,7 +88,6 @@ export type ModalParams =
   | ModalParamsPart<ModalsEnum.RevealPrivateKey>
   | ModalParamsPart<ModalsEnum.EnableBiometryPassword>
   | ModalParamsPart<ModalsEnum.CollectibleModal>
-  | ModalParamsPart<ModalsEnum.EvmCollectibleModal>
   | ModalParamsPart<ModalsEnum.AddCustomRpc>
   | ModalParamsPart<ModalsEnum.EditCustomRpc>
   | ModalParamsPart<ModalsEnum.AddContact>

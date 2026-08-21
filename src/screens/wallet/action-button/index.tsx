@@ -1,9 +1,9 @@
 import { memo } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { Circle, Svg } from 'react-native-svg';
 
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 
@@ -18,7 +18,7 @@ interface ActionButtonProps {
 }
 
 export const ActionButton = memo(({ iconName, isDotVisible, testID, onPress, onLongPress }: ActionButtonProps) => (
-  <SafeTouchableOpacity
+  <TouchableOpacity
     onPress={onPress}
     onLongPress={onLongPress}
     delayLongPress={4000}
@@ -27,7 +27,7 @@ export const ActionButton = memo(({ iconName, isDotVisible, testID, onPress, onL
   >
     {isDotVisible && <Dot />}
     <IconV2 name={iconName} size={24} />
-  </SafeTouchableOpacity>
+  </TouchableOpacity>
 ));
 
 const Dot = memo(() => {

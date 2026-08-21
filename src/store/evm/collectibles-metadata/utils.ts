@@ -14,7 +14,9 @@ export const buildEvmCollectibleMetadataFromApi = (
   symbol: nft.token.symbol ?? undefined,
   collectibleName: nft.metadata?.name ?? undefined,
   image: normalizeIpfsUri(nft.metadata?.image),
-  iconURL: nft.image_url ?? undefined
+  iconURL: nft.image_url ?? undefined,
+  description: nft.metadata?.description ?? undefined,
+  attributes: nft.metadata?.attributes ?? undefined
 });
 
 export const buildEvmCollectibleMetadataFromOnChain = (

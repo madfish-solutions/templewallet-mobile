@@ -4,7 +4,7 @@ import { formatSize } from 'src/styles/format-size';
 export const useCollectibleModalStyles = createUseStylesMemoized(({ colors, typography }) => ({
   mediaContainer: {
     backgroundColor: colors.blue10,
-    borderRadius: formatSize(4),
+    borderRadius: formatSize(10),
     overflow: 'hidden'
   },
   collectionContainer: {
@@ -17,14 +17,10 @@ export const useCollectibleModalStyles = createUseStylesMemoized(({ colors, typo
     flexDirection: 'row',
     alignItems: 'center'
   },
-  collectionLogo: {
-    height: formatSize(36),
-    width: formatSize(36),
-    marginRight: formatSize(8),
-    borderRadius: formatSize(6)
-  },
-  logoFallBack: {
-    backgroundColor: colors.input
+  evmCollection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: formatSize(12)
   },
   collectionName: {
     ...typography.caption13Semibold,

@@ -23,7 +23,7 @@ import { Buy } from 'src/screens/buy/buy';
 import { BuyWithCreditCard } from 'src/screens/buy/buy-with-credit-card';
 import { Exolix } from 'src/screens/buy/crypto/exolix/exolix';
 import { CloudBackup } from 'src/screens/cloud-backup';
-import { CollectiblesHome } from 'src/screens/collectibles-home/collectibles-home';
+import { CollectiblesHome } from 'src/screens/collectibles-home';
 import { Collection } from 'src/screens/collection';
 import { Contacts } from 'src/screens/contacts/contacts';
 import { ContinueWithCloud } from 'src/screens/continue-with-cloud';

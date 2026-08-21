@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Animated, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Animated, StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -9,7 +9,6 @@ import { setTestID } from 'src/utils/test-id.utils';
 
 import { Icon } from '../icon/icon';
 import { IconV2 } from '../icon-v2';
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 
 import { ButtonSharedProps } from './button-shared.props';
 import { ButtonStyleConfig } from './button-style.config';
@@ -97,7 +96,7 @@ const ButtonHOC = <IconName extends string, Size extends number>(
 
     return (
       <View style={[conditionalStyle(isFullWidth, ButtonStyles.container), style]}>
-        <SafeTouchableOpacity
+        <TouchableOpacity
           disabled={disabled}
           style={[
             ButtonStyles.touchableOpacity,
@@ -118,7 +117,7 @@ const ButtonHOC = <IconName extends string, Size extends number>(
           ) : (
             <Text style={[titleStyle, { color: titleColor }, textStyle]}>{title}</Text>
           )}
-        </SafeTouchableOpacity>
+        </TouchableOpacity>
       </View>
     );
   };

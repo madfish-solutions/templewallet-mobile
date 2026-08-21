@@ -1,0 +1,278 @@
+import BigNumber from 'bignumber.js';
+import React, { memo, useMemo, useState } from 'react';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+
+import { objktCurrencies } from 'src/apis/objkt/constants';
+import { Divider } from 'src/components/divider/divider';
+import { DeadEndBoundaryError } from 'src/components/error-boundary';
+import { Icon } from 'src/components/icon/icon';
+import { IconNameEnum } from 'src/components/icon/icon-name.enum';
+import { LinkWithIcon } from 'src/components/link-with-icon/link-with-icon';
+import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
+import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
+import { TruncatedText } from 'src/components/truncated-text';
+import { APIS_SYNC_INTERVAL } from 'src/config/fixed-times';
+import { emptyFn } from 'src/config/general';
+import { LIMIT_NFT_FEATURES } from 'src/config/system';
+import { useShareNFT } from 'src/hooks/use-share-nft.hook';
+import { ConfirmationTypeEnum } from 'src/interfaces/confirm-payload/confirmation-type.enum';
+import { ModalsEnum } from 'src/navigator/enums/modals.enum';
+import { useNavigateToModal } from 'src/navigator/hooks/use-navigation.hook';
+import { dispatch } from 'src/store';
+import { loadCollectiblesDetailsActions } from 'src/store/collectibles/collectibles-actions';
+import {
+  useCollectibleDetailsLoadingSelector,
+  useCollectibleDetailsSelector
+} from 'src/store/collectibles/collectibles-selectors';
+import { useAssetMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
+import { useAssetBalanceSelector, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
+import { formatSize } from 'src/styles/format-size';
+import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
+import { conditionalStyle } from 'src/utils/conditional-style';
+import { formatNumber } from 'src/utils/format-price';
+import { fromTokenSlug } from 'src/utils/from-token-slug';
+import { useInterval } from 'src/utils/hooks';
+import { isSvgDataUriInBase64Encoding } from 'src/utils/image.utils';
+import { isString } from 'src/utils/is-string';
+import { openUrl } from 'src/utils/linking';
+import { SUPPORTED_CONTRACTS, buildBuyCollectibleParams } from 'src/utils/objkt';
+import { objktCollectionUrl } from 'src/utils/objkt-collection-url.util';
+import { createTezosToolkit } from 'src/utils/rpc/tezos-toolkit.utils';
+import { mutezToTz } from 'src/utils/tezos.util';
+
+import { CollectibleAttributes } from './components/collectible-attributes';
+import { CollectibleDetails } from './components/collectible-details';
+import { CollectibleMedia } from './components/collectible-media';
+import { CollectibleModalLayout } from './components/collectible-modal-layout';
+import { CollectionImage } from './components/collection-image';
+import { CollectibleModalSelectors } from './selectors';
+import { useCollectibleModalStyles } from './styles';
+import { getObjktProfileLink } from './utils/get-objkt-profile-link.util';
+import { useAttributesWithRarity } from './utils/use-attributes-with-rarity.hook';
+import { useBurnCollectible } from './utils/use-burn-collectible.hook';
+
+enum SegmentControlNamesEnum {
+  details = 'Details',
+  attributes = 'Attributes'
+}
+
+interface Props {
+  slug: string;
+}
+
+export const TezosCollectibleModalContent = memo<Props>(({ slug }) => {
+  const navigateToModal = useNavigateToModal();
+
+  const [address, id] = fromTokenSlug(slug);
+  const tezosAddress = useAccountAddressForTezos();
+
+  if (!tezosAddress) {
+    throw new DeadEndBoundaryError();
+  }
+
+  const { width } = Dimensions.get('window');
+  const imageSize = width - formatSize(32);
+
+  usePageAnalytic(ModalsEnum.CollectibleModal);
+
+  const styles = useCollectibleModalStyles();
+
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
+  const metadata = useAssetMetadataSelector(slug);
+  const details = useCollectibleDetailsSelector(slug);
+  const balance = useAssetBalanceSelector(slug);
+  const isAccountHolder = isString(balance) && balance !== '0';
+  const areDetailsLoading = useCollectibleDetailsLoadingSelector();
+
+  const attributes = useAttributesWithRarity(details);
+
+  const burnCollectible = useBurnCollectible(metadata);
+
+  const creators = details?.creators;
+
+  useInterval(() => void dispatch(loadCollectiblesDetailsActions.submit([slug])), APIS_SYNC_INTERVAL, [slug], true);
+
+  const handleCollectionNamePress = () => openUrl(objktCollectionUrl(address));
+
+  const button = useMemo(() => {
+    if (isAccountHolder) {
+      return {
+        title: 'Send',
+        disabled: !metadata,
+        onPress: metadata ? () => navigateToModal(ModalsEnum.Send, { token: metadata }) : undefined
+      };
+    }
+
+    const listing = details?.listingsActive[0] ?? null;
+
+    if (!listing) {
+      return {
+        title: 'Not listed',
+        disabled: true,
+        loading: areDetailsLoading
+      };
+    }
+
+    const isSupportedContract = SUPPORTED_CONTRACTS.includes(listing.marketplace_contract);
+    const purchaseCurrency = objktCurrencies[listing.currency_id];
+
+    if (!isSupportedContract || !purchaseCurrency) {
+      return {
+        title: 'Buy',
+        disabled: true
+      };
+    }
+
+    const priceToDisplay = +mutezToTz(new BigNumber(listing.price), purchaseCurrency.decimals);
+
+    return {
+      title: `Buy for ${formatNumber(priceToDisplay)} ${purchaseCurrency.symbol}`,
+      onPress: () =>
+        void buildBuyCollectibleParams(createTezosToolkit(), tezosAddress, listing, purchaseCurrency).then(opParams =>
+          navigateToModal(ModalsEnum.Confirmation, {
+            type: ConfirmationTypeEnum.InternalOperations,
+            opParams
+          })
+        )
+    };
+  }, [isAccountHolder, areDetailsLoading, metadata, details?.listingsActive, tezosAddress, navigateToModal]);
+
+  const name = metadata?.name ?? details?.name;
+  let artifactUri: string | undefined;
+  if (
+    details?.artifactUri != null &&
+    (isSvgDataUriInBase64Encoding(details.artifactUri) || metadata?.artifactUri === 'UNSUPPORTED_EXTENSION')
+  ) {
+    artifactUri = details.artifactUri;
+  } else {
+    artifactUri = metadata?.artifactUri;
+  }
+  const thumbnailUri = metadata?.thumbnailUri ?? details?.thumbnailUri;
+  const displayUri = metadata?.displayUri ?? details?.displayUri;
+
+  const handleShare = useShareNFT(slug, thumbnailUri, name, details?.description);
+
+  const [segmentControlIndex, setSegmentControlIndex] = useState(0);
+
+  const segments = useMemo<{ values: string[]; current: keyof typeof SegmentControlNamesEnum }>(
+    () =>
+      attributes.length
+        ? {
+            values: [SegmentControlNamesEnum.details, SegmentControlNamesEnum.attributes],
+            current: segmentControlIndex === 1 ? 'attributes' : 'details'
+          }
+        : { values: [], current: 'details' },
+    [attributes.length, segmentControlIndex]
+  );
+  const collection = useMemo(() => {
+    if (!details) {
+      return null;
+    }
+    const { collection, galleries } = details;
+
+    const title = galleries[0]?.gallery.name ?? collection?.name;
+
+    return { title, logoUri: collection?.logo };
+  }, [details]);
+
+  return (
+    <CollectibleModalLayout
+      scrollEnabled={scrollEnabled}
+      action={{
+        disabled: button.disabled,
+        title: button.title,
+        isLoading: button.loading,
+        onPress: button.onPress || emptyFn,
+        testID: CollectibleModalSelectors.sendButton
+      }}
+    >
+      <View>
+        <View style={[styles.mediaContainer, { width: imageSize, height: imageSize }]}>
+          <CollectibleMedia
+            slug={slug}
+            artifactUri={artifactUri}
+            displayUri={displayUri}
+            thumbnailUri={thumbnailUri}
+            mime={details?.mime}
+            size={imageSize}
+            areDetailsLoading={areDetailsLoading && details === undefined}
+            setScrollEnabled={setScrollEnabled}
+          />
+        </View>
+
+        <Divider size={formatSize(12)} />
+
+        <View style={styles.collectionContainer}>
+          <TouchableOpacity onPress={handleCollectionNamePress} style={styles.collection}>
+            <CollectionImage uri={collection?.logoUri} />
+
+            <TruncatedText style={styles.collectionName}>{collection?.title ?? 'Unknown collection'}</TruncatedText>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+            <Icon name={IconNameEnum.Share} />
+            <Divider size={formatSize(4)} />
+            <Text style={styles.shareButtonText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.nameContainer}>
+          <Text style={styles.name}>{name ?? '---'}</Text>
+        </View>
+
+        {details?.description ? (
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.description}>{details.description}</Text>
+          </View>
+        ) : null}
+
+        {creators?.length ? (
+          <View style={styles.creatorsContainer}>
+            <Text style={styles.creatorsText}>{creators.length > 1 ? 'Creators' : 'Creator'}:</Text>
+
+            {creators.map(({ holder }, index) => (
+              <LinkWithIcon
+                key={holder.address}
+                text={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                link={getObjktProfileLink(holder.address)}
+                valueToClipboard={isString(holder.tzdomain) ? holder.tzdomain : holder.address}
+                style={[
+                  styles.linkWithIcon,
+                  conditionalStyle(creators.length > 0 && creators.length !== index + 1, styles.marginRight)
+                ]}
+              />
+            ))}
+          </View>
+        ) : null}
+
+        {segments.values.length ? (
+          <TextSegmentControl
+            selectedIndex={segmentControlIndex}
+            values={segments.values}
+            onChange={setSegmentControlIndex}
+            style={styles.segmentControl}
+          />
+        ) : null}
+
+        {segments.current === 'details' ? (
+          <CollectibleDetails contract={address} tokenId={Number(id)} details={details} owned={balance ?? '0'} />
+        ) : null}
+
+        {segments.current === 'attributes' ? <CollectibleAttributes attributes={attributes!} /> : null}
+
+        {isAccountHolder ? (
+          <TouchableWithAnalytics
+            Component={TouchableOpacity}
+            onPress={burnCollectible}
+            style={styles.burnButton}
+            testID={CollectibleModalSelectors.burnButton}
+          >
+            <Text style={styles.burnButtonText}>{LIMIT_NFT_FEATURES ? 'Burn Collectible' : 'Burn Nft'}</Text>
+            <Icon name={IconNameEnum.Burn} />
+          </TouchableWithAnalytics>
+        ) : null}
+      </View>
+    </CollectibleModalLayout>
+  );
+});
