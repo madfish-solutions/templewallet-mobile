@@ -1,5 +1,3 @@
-import FiatCurrencyInfo from 'currency-codes';
-
 import { MOONPAY_ASSETS_BASE_URL } from 'src/apis/moonpay/consts';
 import {
   CurrencyType as MoonPayCurrencyType,
@@ -7,68 +5,88 @@ import {
   FiatCurrency as MoonPayFiatCurrency,
   Currency
 } from 'src/apis/moonpay/types';
-import { UTORG_CRYPTO_ICONS_BASE_URL, UTORG_FIAT_ICONS_BASE_URL } from 'src/apis/utorg/consts';
-import { CurrencyInfoType as UtorgCurrencyType, UtorgCurrencyInfo } from 'src/apis/utorg/types';
+import { MtPelerinCurrenciesResponse } from 'src/apis/mt-pelerin/types';
 import { toTokenSlug } from 'src/token/utils/token.utils';
-import { isDefined } from 'src/utils/is-defined';
 
-const getCurrencyNameByCode = (code: string) => {
-  const currencyInfo = FiatCurrencyInfo.code(code);
+import { TopUpProviderCurrencies } from './state';
 
-  return isDefined(currencyInfo) ? currencyInfo.currency : '???';
+const EVM_ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+const irregularMoonPayTokenCodes = [
+  { regex: /^usd1/, iconName: 'usd1.png' },
+  { regex: /^pyusd/, iconName: 'paypal-usd-pyusd-logo.svg' },
+  { regex: /^(pol_polygon|pol)$/, iconName: 'matic.svg' }
+];
+
+const toContractAddressOrNative = (address?: string | null) => {
+  if (!address?.trim()) {
+    return null;
+  }
+
+  return address.toLowerCase() === EVM_ZERO_ADDRESS ? null : address;
 };
 
-export const mapMoonPayProviderCurrencies = (currencies: Currency[]) => ({
+const getMoonPayIconUrl = (code: string) => {
+  const normalizedCode = code.toLowerCase();
+  const exception = irregularMoonPayTokenCodes.find(({ regex }) => regex.test(normalizedCode));
+
+  return `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/${exception?.iconName ?? `${normalizedCode}.svg`}`;
+};
+
+export const mapMoonPayProviderCurrencies = (currencies: Currency[]): TopUpProviderCurrencies => ({
   fiat: currencies
-    .filter((currency): currency is MoonPayFiatCurrency => currency.type === MoonPayCurrencyType.Fiat)
+    .filter(
+      (currency): currency is MoonPayFiatCurrency =>
+        currency.type === MoonPayCurrencyType.Fiat && currency.isSellSupported
+    )
     .map(({ name, code, minBuyAmount, maxBuyAmount, precision }) => ({
       name,
       code: code.toUpperCase(),
       codeToDisplay: code.toUpperCase().split('_')[0],
-      icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/${code}.svg`,
+      icon: getMoonPayIconUrl(code),
       minAmount: minBuyAmount,
       maxAmount: maxBuyAmount,
-      precision: Math.min(precision, 2) // Currencies like JOD have 3 decimals but Moonpay fails to process input with 3 decimals
+      precision: Math.min(precision, 2)
     })),
   crypto: currencies
     .filter(
       (currency): currency is CryptoCurrency =>
-        currency.type === MoonPayCurrencyType.Crypto && currency.metadata.networkCode.toLowerCase() === 'tezos'
+        currency.type === MoonPayCurrencyType.Crypto &&
+        currency.supportsLiveMode &&
+        !currency.isSuspended &&
+        currency.metadata.networkCode.toLowerCase() === 'tezos'
     )
     .map(({ name, code, precision, minBuyAmount, maxBuyAmount, metadata }) => ({
       name,
       code: code.toUpperCase(),
       codeToDisplay: code.toUpperCase().split('_')[0],
-      icon: `${MOONPAY_ASSETS_BASE_URL}/widget/currencies/${code}.svg`,
+      icon: getMoonPayIconUrl(code),
       minAmount: minBuyAmount ?? undefined,
       maxAmount: maxBuyAmount ?? undefined,
       precision,
-      slug: isDefined(metadata.contractAddress)
-        ? toTokenSlug(metadata.contractAddress, metadata.coinType ?? undefined)
-        : ''
+      slug: toTokenSlug(toContractAddressOrNative(metadata.contractAddress), metadata.coinType ?? undefined)
     }))
 });
 
-export const mapUtorgProviderCurrencies = (currencies: UtorgCurrencyInfo[]) => ({
-  fiat: currencies
-    .filter(({ type, depositMax }) => type === UtorgCurrencyType.FIAT && depositMax > 0)
-    .map(({ display, symbol: code, depositMin, depositMax, precision }) => ({
-      name: getCurrencyNameByCode(code),
-      code,
-      codeToDisplay: display,
-      icon: `${UTORG_FIAT_ICONS_BASE_URL}${code.slice(0, -1)}.svg`,
-      precision,
-      minAmount: depositMin,
-      maxAmount: depositMax
+export const mapMtPelerinProviderCurrencies = ({
+  cryptoTokens,
+  fiatCurrencies
+}: MtPelerinCurrenciesResponse): TopUpProviderCurrencies => ({
+  fiat: fiatCurrencies
+    .filter(({ isBuySupported }) => isBuySupported)
+    .map(({ name, symbol, iconUrl }) => ({
+      name,
+      code: symbol.toUpperCase(),
+      icon: iconUrl,
+      precision: 2
     })),
-  crypto: currencies
-    .filter(({ chain, type, depositMax }) => type === UtorgCurrencyType.CRYPTO && depositMax > 0 && chain === 'TEZOS')
-    .map(({ currency, display, precision }) => ({
-      name: display,
-      code: currency,
-      codeToDisplay: display,
-      icon: `${UTORG_CRYPTO_ICONS_BASE_URL}/${currency}.svg`,
-      precision,
-      slug: '' // TODO: implement making correct slug as soon as any Tezos token is supported by Utorg
+  crypto: cryptoTokens
+    .filter(({ network }) => network === 'tezos_mainnet')
+    .map(({ symbol, name, iconUrl, decimals, address, tokenId }) => ({
+      name,
+      code: symbol,
+      icon: iconUrl,
+      precision: decimals,
+      slug: toTokenSlug(toContractAddressOrNative(address), tokenId)
     }))
 });

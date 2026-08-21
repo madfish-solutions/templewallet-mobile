@@ -7,10 +7,10 @@ export const useFilteredCurrencies = <T extends TopUpInputInterface>(allCurrenci
   const [searchValue, setSearchValue] = useState('');
   const debouncedSetSearchValue = useMemo(() => debounce(setSearchValue, 300), []);
 
-  const filteredCurrencies = useMemo<TopUpInputInterface[]>(() => {
+  const filteredCurrencies = useMemo<T[]>(() => {
     if (searchValue) {
       const lowerCaseSearchValue = searchValue.toLowerCase();
-      const result: TopUpInputInterface[] = [];
+      const result: T[] = [];
 
       for (const currency of allCurrencies) {
         if (currency.code.toLowerCase().includes(lowerCaseSearchValue)) {

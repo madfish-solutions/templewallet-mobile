@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { useCallback, useMemo } from 'react';
 
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
-import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
+import { TopUpInputInterface, TopUpOutputInterface } from 'src/store/buy-with-credit-card/types';
 import { getPaymentProvidersToDisplay } from 'src/utils/fiat-purchase-providers.utils';
 
 import { usePaymentProvider } from './use-one-payment-provider.hook';
@@ -10,7 +10,7 @@ import { usePaymentProvider } from './use-one-payment-provider.hook';
 export const usePaymentProviders = (
   inputAmount: BigNumber | undefined,
   inputAsset: TopUpInputInterface,
-  outputAsset: TopUpInputInterface
+  outputAsset: TopUpOutputInterface
 ) => {
   const {
     provider: moonPayProvider,
@@ -19,28 +19,28 @@ export const usePaymentProviders = (
     updateOutputAmount: updateMoonPayOutputAmount
   } = usePaymentProvider(TopUpProviderEnum.MoonPay, inputAmount, inputAsset, outputAsset);
   const {
-    provider: utorgProvider,
-    outputAmountLoading: utorgLoading,
-    errors: utorgErrors,
-    updateOutputAmount: updateUtorgOutputAmount
-  } = usePaymentProvider(TopUpProviderEnum.Utorg, inputAmount, inputAsset, outputAsset);
+    provider: mtPelerinProvider,
+    outputAmountLoading: mtPelerinLoading,
+    errors: mtPelerinErrors,
+    updateOutputAmount: updateMtPelerinOutputAmount
+  } = usePaymentProvider(TopUpProviderEnum.MtPelerin, inputAmount, inputAsset, outputAsset);
 
-  const allPaymentProviders = useMemo(() => [moonPayProvider, utorgProvider], [moonPayProvider, utorgProvider]);
+  const allPaymentProviders = useMemo(() => [moonPayProvider, mtPelerinProvider], [moonPayProvider, mtPelerinProvider]);
 
   const providersErrors = useMemo(
     () => ({
       [TopUpProviderEnum.MoonPay]: moonPayErrors,
-      [TopUpProviderEnum.Utorg]: utorgErrors
+      [TopUpProviderEnum.MtPelerin]: mtPelerinErrors
     }),
-    [moonPayErrors, utorgErrors]
+    [moonPayErrors, mtPelerinErrors]
   );
 
   const providersOutputsLoading = useMemo(
     () => ({
       [TopUpProviderEnum.MoonPay]: moonPayLoading,
-      [TopUpProviderEnum.Utorg]: utorgLoading
+      [TopUpProviderEnum.MtPelerin]: mtPelerinLoading
     }),
-    [moonPayLoading, utorgLoading]
+    [moonPayLoading, mtPelerinLoading]
   );
 
   const paymentProvidersToDisplay = useMemo(
@@ -52,21 +52,21 @@ export const usePaymentProviders = (
     async (
       newInputAmount: BigNumber | undefined,
       newInputAsset: TopUpInputInterface,
-      newOutputAsset: TopUpInputInterface
+      newOutputAsset: TopUpOutputInterface
     ) => {
-      const [moonPayOutputAmount, utorgOutputAmount] = await Promise.all([
+      const [moonPayOutputAmount, mtPelerinOutputAmount] = await Promise.all([
         updateMoonPayOutputAmount(newInputAmount, newInputAsset, newOutputAsset),
-        updateUtorgOutputAmount(newInputAmount, newInputAsset, newOutputAsset)
+        updateMtPelerinOutputAmount(newInputAmount, newInputAsset, newOutputAsset)
       ]);
 
       return {
         [TopUpProviderEnum.MoonPay]: moonPayOutputAmount,
-        [TopUpProviderEnum.Utorg]: utorgOutputAmount
+        [TopUpProviderEnum.MtPelerin]: mtPelerinOutputAmount
       };
     },
-    [updateMoonPayOutputAmount, updateUtorgOutputAmount]
+    [updateMoonPayOutputAmount, updateMtPelerinOutputAmount]
   );
-  const loading = moonPayLoading || utorgLoading;
+  const loading = moonPayLoading || mtPelerinLoading;
 
   return { allPaymentProviders, paymentProvidersToDisplay, updateOutputAmounts, loading };
 };

@@ -17,6 +17,7 @@ export interface FiatCurrency extends CurrencyBase {
   type: CurrencyType.Fiat;
   minBuyAmount: number;
   maxBuyAmount: number;
+  isSellSupported: boolean;
   /** @deprecated */
   minAmount: number;
   /** @deprecated */

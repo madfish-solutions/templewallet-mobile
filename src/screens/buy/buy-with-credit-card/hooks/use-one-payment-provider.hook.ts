@@ -3,7 +3,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { getMoonPayBuyQuote } from 'src/apis/moonpay';
-import { convertFiatAmountToCrypto } from 'src/apis/utorg';
+import { getMtPelerinOutputAmount } from 'src/apis/mt-pelerin';
+import { MT_PELERIN_NETWORK } from 'src/apis/mt-pelerin/consts';
 import { IconNameEnum } from 'src/components/icon/icon-name.enum';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
 import { ProviderErrors } from 'src/interfaces/buy-with-card';
@@ -15,7 +16,7 @@ import {
   useProviderCurrenciesErrorSelector,
   useProviderPairLimitsErrorSelector
 } from 'src/store/buy-with-credit-card/selectors';
-import { TopUpInputInterface } from 'src/store/buy-with-credit-card/types';
+import { TopUpInputInterface, TopUpOutputInterface } from 'src/store/buy-with-credit-card/types';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
@@ -28,7 +29,7 @@ import { useInputLimits } from './use-input-limits.hook';
 type getOutputAmountFunction = (
   inputAmount: BigNumber,
   inputAsset: TopUpInputInterface,
-  outputAsset: TopUpInputInterface
+  outputAsset: TopUpOutputInterface
 ) => Promise<number>;
 
 type PaymentProviderInitialData = Pick<PaymentProviderInterface, 'name' | 'iconName' | 'id' | 'kycRequired'>;
@@ -57,8 +58,8 @@ const getOutputAmountFunctions: Record<TopUpProviderEnum, getOutputAmountFunctio
 
     return quoteCurrencyAmount;
   },
-  [TopUpProviderEnum.Utorg]: (inputAmount, inputAsset, outputAsset) =>
-    convertFiatAmountToCrypto(inputAsset.code, outputAsset.code, inputAmount.toNumber())
+  [TopUpProviderEnum.MtPelerin]: (inputAmount, inputAsset, outputAsset) =>
+    getMtPelerinOutputAmount(inputAsset.code, outputAsset.code, inputAmount.toNumber(), MT_PELERIN_NETWORK)
 };
 
 const initialPaymentProvidersData: Record<TopUpProviderEnum, PaymentProviderInitialData> = {
@@ -68,10 +69,10 @@ const initialPaymentProvidersData: Record<TopUpProviderEnum, PaymentProviderInit
     iconName: IconNameEnum.MoonPay,
     kycRequired: true
   },
-  [TopUpProviderEnum.Utorg]: {
-    name: 'Utorg',
-    id: TopUpProviderEnum.Utorg,
-    iconName: IconNameEnum.Utorg,
+  [TopUpProviderEnum.MtPelerin]: {
+    name: 'Mt Pelerin',
+    id: TopUpProviderEnum.MtPelerin,
+    iconName: IconNameEnum.MtPelerin,
     kycRequired: true
   }
 };
@@ -80,7 +81,7 @@ export const usePaymentProvider = (
   providerId: TopUpProviderEnum,
   inputAmount: BigNumber | undefined,
   inputAsset: TopUpInputInterface,
-  outputAsset: TopUpInputInterface
+  outputAsset: TopUpOutputInterface
 ) => {
   const [outputAmount, setOutputAmount] = useState<number>();
   const [isOutputError, setIsError] = useState(false);
@@ -88,8 +89,8 @@ export const usePaymentProvider = (
   const fiatCurrencies = useFiatCurrenciesSelector(providerId);
   const cryptoCurrencies = useCryptoCurrenciesSelector(providerId);
   const currenciesError = useProviderCurrenciesErrorSelector(providerId);
-  const limitsError = useProviderPairLimitsErrorSelector(inputAsset.code, outputAsset.code, providerId);
-  const { min: minInputAmount, max: maxInputAmount } = useInputLimits(providerId, inputAsset.code, outputAsset.code);
+  const limitsError = useProviderPairLimitsErrorSelector(inputAsset.code, outputAsset.slug, providerId);
+  const { min: minInputAmount, max: maxInputAmount } = useInputLimits(providerId, inputAsset.code, outputAsset.slug);
   const initialData = initialPaymentProvidersData[providerId];
   const getOutputAmount = getOutputAmountFunctions[providerId];
   const dispatch = useDispatch();
@@ -99,11 +100,11 @@ export const usePaymentProvider = (
     async (
       newInputAmount: BigNumber | undefined,
       newInputAsset: TopUpInputInterface,
-      newOutputAsset: TopUpInputInterface
+      newOutputAsset: TopUpOutputInterface
     ) => {
       setIsError(false);
       const currentProviderFiatCurrency = fiatCurrencies.find(({ code }) => code === newInputAsset.code);
-      const currentProviderCryptoCurrency = cryptoCurrencies.find(({ code }) => code === newOutputAsset.code);
+      const currentProviderCryptoCurrency = cryptoCurrencies.find(({ slug }) => slug === newOutputAsset.slug);
       const updatedPairLimits =
         isDefined(currentProviderFiatCurrency) && isDefined(currentProviderCryptoCurrency)
           ? (
@@ -126,7 +127,7 @@ export const usePaymentProvider = (
         dispatch(
           updateTopUpProviderPairLimitsAction({
             fiatSymbol: newInputAsset.code,
-            cryptoSymbol: newOutputAsset.code,
+            cryptoSlug: newOutputAsset.slug,
             topUpProvider: providerId,
             value: updatedPairLimits
           })
@@ -139,6 +140,10 @@ export const usePaymentProvider = (
         newInputAmount.lt(updatedPairLimits.min) ||
         newInputAmount.gt(updatedPairLimits.max)
       ) {
+        if (isTruthy(newInputAmount) && !isDefined(updatedPairLimits)) {
+          setIsError(true);
+        }
+
         const newOutputAmount = isDefined(newInputAmount) && newInputAmount?.isZero() ? 0 : undefined;
         setOutputAmount(newOutputAmount);
 
@@ -148,7 +153,13 @@ export const usePaymentProvider = (
       let newOutputAmount: number | undefined;
       try {
         setOutputAmountLoading(true);
-        newOutputAmount = await getOutputAmount(newInputAmount, newInputAsset, newOutputAsset);
+        if (isDefined(currentProviderFiatCurrency) && isDefined(currentProviderCryptoCurrency)) {
+          newOutputAmount = await getOutputAmount(
+            newInputAmount,
+            currentProviderFiatCurrency,
+            currentProviderCryptoCurrency
+          );
+        }
       } catch (error) {
         trackErrorEvent('UpdatePaymentProviderOutputAmountError', error, [], {
           inputAmount: newInputAmount?.toFixed(),
