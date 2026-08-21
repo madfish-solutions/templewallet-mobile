@@ -31,7 +31,7 @@ import { getEvmAssetBalance, getEvmNativeBalance } from 'src/utils/evm/on-chain/
 import { getEvmAssetsBalances, EvmAssetToReadBalanceFor } from 'src/utils/evm/on-chain/multicall-balances';
 import { EvmContractAssetStandard } from 'src/utils/evm/on-chain/types';
 import { fetchTezExchangeRate } from 'src/utils/exchange-rate.util';
-import { fromTokenSlug } from 'src/utils/from-token-slug';
+import { fromTokenSlug, toEvmAssetSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
@@ -85,7 +85,7 @@ export const getEtherlinkAccountData = async (address: HexString): Promise<Norma
     }
 
     const { token, value } = tokenBalance;
-    const slug = token.address_hash.toLowerCase();
+    const slug = toEvmAssetSlug(token.address_hash);
 
     if (token.decimals != null) {
       tokensMetadata[slug] = buildEvmTokenMetadataFromApi(token, Number(token.decimals));
@@ -113,8 +113,7 @@ export const getEtherlinkAccountData = async (address: HexString): Promise<Norma
       continue;
     }
 
-    const contract = token.address_hash.toLowerCase();
-    const slug = `${contract}_${id}`;
+    const slug = toEvmAssetSlug(token.address_hash, id);
     const standard = etherlinkTokenTypeToStandard(token.type);
 
     assets[slug] = { standard };

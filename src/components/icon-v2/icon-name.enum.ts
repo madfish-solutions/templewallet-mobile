@@ -27,5 +27,10 @@ export enum IconNameV2Enum {
   CheckboxCheckedFill = 'CheckboxCheckedFill',
   Share = 'Share',
   Logout = 'Logout',
-  Earth = 'Earth'
+  Earth = 'Earth',
+  Send = 'Send',
+  Income = 'Income',
+  Documents = 'Documents',
+  Ok = 'Ok',
+  OutLink = 'OutLink'
 }

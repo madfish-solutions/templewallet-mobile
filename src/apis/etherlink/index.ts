@@ -1,40 +1,64 @@
 import axios from 'axios';
-
-import { ConcurrencyLimiter } from 'src/utils/concurrency-limiter.utils';
+import PQueue from 'p-queue';
 
 import { refetchOnce429 } from '../utils';
 
 import { ETHERLINK_API_BASE_URL } from './constants';
 import {
+  EtherlinkAccountCoinBalanceHistoryResponse,
   EtherlinkAccountInfo,
   EtherlinkAccountNftsPageParams,
   EtherlinkAccountNftsResponse,
+  EtherlinkAccountTokenTransfersResponse,
+  EtherlinkAccountTransactionsPageParams,
+  EtherlinkAccountTransactionsResponse,
   EtherlinkAddressNftInstance,
+  EtherlinkCoinBalanceHistoryPageParams,
+  EtherlinkInternalTransactionsPageParams,
   EtherlinkTokenBalance,
-  EtherlinkTokenInfo
+  EtherlinkTokenInfo,
+  EtherlinkTokenTransfersPageParams,
+  EtherlinkTransactionInternalTransactionsResponse,
+  EtherlinkTransactionLogsPageParams,
+  EtherlinkTransactionLogsResponse,
+  EtherlinkTransactionTokenTransfersResponse
 } from './types';
 
-export { isErc20TokenBalance, isEtherlinkCollectibleTokenType } from './types';
-export type { EtherlinkTokenType, EtherlinkTokenInfo, EtherlinkAddressNftInstance } from './types';
+export {
+  isErc20TokenBalance,
+  isEtherlinkCollectibleTokenType,
+  isErc20TokenTransfer,
+  isErc721TokenTransfer
+} from './types';
+export type {
+  EtherlinkTokenType,
+  EtherlinkTokenInfo,
+  EtherlinkAddressNftInstance,
+  EtherlinkTransaction,
+  EtherlinkTokenTransfer,
+  EtherlinkInternalTransaction,
+  EtherlinkLog,
+  EtherlinkCoinBalanceHistoryItem,
+  EtherlinkAccountTransactionsPageParams,
+  EtherlinkTokenTransfersPageParams,
+  EtherlinkTransactionLogsPageParams,
+  EtherlinkInternalTransactionsPageParams
+} from './types';
 
 const api = axios.create({ baseURL: ETHERLINK_API_BASE_URL });
 
-const apiConcurrencyLimiter = new ConcurrencyLimiter(10);
+const apiQueue = new PQueue({ intervalCap: 170, interval: 60_000, carryoverConcurrencyCount: true, concurrency: 10 });
 
 interface FetchGetParams<P extends object> {
   endpoint: string;
   pageParams?: P;
+  signal?: AbortSignal;
 }
 
-async function fetchGet<R, P extends object = never>({ endpoint, pageParams }: FetchGetParams<P>) {
-  const release = await apiConcurrencyLimiter.acquire();
-  setTimeout(release, 1000);
+async function fetchGet<R, P extends object = never>({ endpoint, pageParams, signal }: FetchGetParams<P>) {
+  const response = await apiQueue.add(() => api.get<R>(endpoint, { params: pageParams, signal }), { signal });
 
-  const { data } = await api.get<R>(endpoint, {
-    params: pageParams
-  });
-
-  return data;
+  return response.data;
 }
 
 export const fetchGetAccountInfo = (address: string) =>
@@ -66,3 +90,81 @@ export const fetchAllAccountNfts = async (address: string) => {
 
   return allItems;
 };
+
+export const fetchGetAccountTransactions = (
+  address: string,
+  pageParams?: EtherlinkAccountTransactionsPageParams,
+  signal?: AbortSignal
+) =>
+  refetchOnce429(() =>
+    fetchGet<EtherlinkAccountTransactionsResponse, EtherlinkAccountTransactionsPageParams>({
+      endpoint: `/addresses/${address}/transactions`,
+      pageParams,
+      signal
+    })
+  );
+
+export const fetchGetAccountTokenTransfers = (
+  address: string,
+  pageParams?: EtherlinkTokenTransfersPageParams,
+  signal?: AbortSignal
+) =>
+  refetchOnce429(() =>
+    fetchGet<EtherlinkAccountTokenTransfersResponse, EtherlinkTokenTransfersPageParams>({
+      endpoint: `/addresses/${address}/token-transfers`,
+      pageParams,
+      signal
+    })
+  );
+
+export const fetchGetAccountCoinBalanceHistory = (
+  address: string,
+  pageParams?: EtherlinkCoinBalanceHistoryPageParams,
+  signal?: AbortSignal
+) =>
+  refetchOnce429(() =>
+    fetchGet<EtherlinkAccountCoinBalanceHistoryResponse, EtherlinkCoinBalanceHistoryPageParams>({
+      endpoint: `/addresses/${address}/coin-balance-history`,
+      pageParams,
+      signal
+    })
+  );
+
+export const fetchGetTransactionLogs = (
+  txHash: string,
+  pageParams?: EtherlinkTransactionLogsPageParams,
+  signal?: AbortSignal
+) =>
+  refetchOnce429(() =>
+    fetchGet<EtherlinkTransactionLogsResponse, EtherlinkTransactionLogsPageParams>({
+      endpoint: `/transactions/${txHash}/logs`,
+      pageParams,
+      signal
+    })
+  );
+
+export const fetchGetTransactionInternalTransactions = (
+  txHash: string,
+  pageParams?: EtherlinkInternalTransactionsPageParams,
+  signal?: AbortSignal
+) =>
+  refetchOnce429(() =>
+    fetchGet<EtherlinkTransactionInternalTransactionsResponse, EtherlinkInternalTransactionsPageParams>({
+      endpoint: `/transactions/${txHash}/internal-transactions`,
+      pageParams,
+      signal
+    })
+  );
+
+export const fetchGetTransactionTokenTransfers = (
+  txHash: string,
+  pageParams?: EtherlinkTokenTransfersPageParams,
+  signal?: AbortSignal
+) =>
+  refetchOnce429(() =>
+    fetchGet<EtherlinkTransactionTokenTransfersResponse, EtherlinkTokenTransfersPageParams>({
+      endpoint: `/transactions/${txHash}/token-transfers`,
+      pageParams,
+      signal
+    })
+  );

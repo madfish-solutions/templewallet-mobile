@@ -1,21 +1,35 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { ActivityGroupsList } from 'src/components/activity-groups-list/activity-groups-list';
-import { useContractActivity } from 'src/hooks/use-contract-activity';
+import { ActivityFeedList } from 'src/components/activity-feed/activity-feed-list';
+import { useActivityFeed } from 'src/hooks/use-activity-feed.hook';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 export const Activity = () => {
-  const { activities, handleUpdate, isAllLoaded, isLoading } = useContractActivity();
+  const { activities, isInitialLoading, isLoadingMore, isEmpty, isAllErrored, isAllLoaded, handleLoadMore, refresh } =
+    useActivityFeed();
+
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   usePageAnalytic(ScreensEnum.Activity);
 
+  const handleRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    refresh().finally(() => setIsRefreshing(false));
+  }, [refresh]);
+
   return (
-    <ActivityGroupsList
-      handleUpdate={handleUpdate}
-      activityGroups={activities}
+    <ActivityFeedList
+      activities={activities}
+      isInitialLoading={isInitialLoading}
+      isEmpty={isEmpty}
+      isAllErrored={isAllErrored}
       isAllLoaded={isAllLoaded}
-      isLoading={isLoading}
+      isLoadingMore={isLoadingMore}
+      isRefreshing={isRefreshing}
+      withPromotion
+      onEndReached={handleLoadMore}
+      onRefresh={handleRefresh}
       pageName="Activity"
     />
   );
