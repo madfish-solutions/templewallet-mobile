@@ -34,7 +34,7 @@ const MT_PELERIN_FEE_PROBE_AMOUNT = 100;
 const roundToFiatPrecision = (value: number, precision: number, roundingMode: BigNumber.RoundingMode) =>
   new BigNumber(value).decimalPlaces(precision, roundingMode).toNumber();
 
-export const getMtPelerinUpdatedFiatLimits = async (
+const getMtPelerinUpdatedFiatLimits = async (
   fiatCurrency: TopUpInputInterface,
   cryptoCurrency: TopUpOutputInterface
 ): Promise<PairLimitsRecord[TopUpProviderEnum]> => {

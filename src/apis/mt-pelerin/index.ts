@@ -16,7 +16,7 @@ import {
   MtPelerinSellLimitResponse
 } from './types';
 
-export const mtPelerinApi = axios.create({ baseURL: MT_PELERIN_API_URL });
+const mtPelerinApi = axios.create({ baseURL: MT_PELERIN_API_URL });
 
 export const getMtPelerinAssets = () =>
   templeWalletApi.get<MtPelerinCurrenciesResponse>('/mtpelerin-assets').then(({ data }) => data);
