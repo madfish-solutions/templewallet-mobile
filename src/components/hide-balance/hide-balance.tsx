@@ -1,9 +1,8 @@
 import React from 'react';
-import { StyleProp, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleProp, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { useHideBalance } from 'src/hooks/hide-balance/hide-balance.hook';
 
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { TruncatedText } from '../truncated-text';
 
 interface Props {
@@ -31,8 +30,8 @@ export const HideBalance: FCWithChildren<Props> = ({
   }
 
   return (
-    <SafeTouchableOpacity onPress={toggleHideBalance} style={wrapperStyle} testID={testID}>
+    <TouchableOpacity onPress={toggleHideBalance} style={wrapperStyle} testID={testID}>
       {text}
-    </SafeTouchableOpacity>
+    </TouchableOpacity>
   );
 };

@@ -27,6 +27,13 @@ export const useNetworkLogoStyles = createUseStylesMemoized(({ colors }) => ({
     height: formatSize(16),
     width: formatSize(16)
   },
+  nftBadge: {
+    backgroundColor: colors.cardBG,
+    borderColor: colors.gray4,
+    borderRadius: formatSize(12),
+    height: formatSize(24),
+    width: formatSize(24)
+  },
   large: {
     borderColor: colors.gray4,
     borderRadius: formatSize(18),

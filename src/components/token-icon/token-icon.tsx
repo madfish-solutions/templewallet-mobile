@@ -143,6 +143,7 @@ const TokenIconImage: FC<TokenIconImageProps> = ({
       onError={onFail}
       onLoad={onSuccess}
       size={imgSize}
+      placeholderSize={size}
       uri={src}
     />
   );

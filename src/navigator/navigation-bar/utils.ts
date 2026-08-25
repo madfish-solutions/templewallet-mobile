@@ -15,6 +15,14 @@ export const NOT_AVAILABLE_MESSAGE = 'Not available on this RPC node';
 type RouteType = { params?: { descriptor: TokenScreenDescriptor } };
 type RouteParams = { name: string } & RouteType;
 
+export const useIsManageCollectiblesTab = (currentRouteName: ScreensOrModalsEnum) => {
+  const route = useNavigationState(state =>
+    state.routes[0]?.state?.routes?.find(route => route.name === ScreensEnum.ManageAssets)
+  );
+
+  return currentRouteName === ScreensEnum.ManageAssets && isManageAssetsRoute(route) && route.params.collectibles;
+};
+
 export const useSwapScreenParams = (currentRouteName: ScreensOrModalsEnum) => {
   const routes = useNavigationState(state => state.routes[0]?.state?.routes);
   const tokens = useTezosAccountTokens();
@@ -36,6 +44,14 @@ export const useSwapScreenParams = (currentRouteName: ScreensOrModalsEnum) => {
     return isDefined(inputToken) ? { inputToken } : undefined;
   }, [routes, currentRouteName, tokens]);
 };
+
+interface ManageAssetsRoute {
+  name: ScreensEnum.ManageAssets;
+  params: { collectibles: boolean };
+}
+
+const isManageAssetsRoute = (route: { name: string; params?: object } | undefined): route is ManageAssetsRoute =>
+  route?.name === ScreensEnum.ManageAssets && 'collectibles' in (route.params ?? {});
 
 const getTokenParams = (routes: RouteParams[] | undefined): null | RouteType => {
   let result = null;

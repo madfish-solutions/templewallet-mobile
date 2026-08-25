@@ -1,5 +1,14 @@
 import React, { memo, ReactNode, Ref, useCallback, useMemo, useRef } from 'react';
-import { FlatListProps, ListRenderItemInfo, StyleProp, Text, View, ViewStyle, ActivityIndicator } from 'react-native';
+import {
+  FlatListProps,
+  ListRenderItemInfo,
+  StyleProp,
+  Text,
+  View,
+  ViewStyle,
+  ActivityIndicator,
+  TouchableOpacity
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import { emptyComponent } from 'src/config/general';
@@ -14,7 +23,6 @@ import { BottomSheet } from '../bottom-sheet/bottom-sheet';
 import { useBottomSheetController } from '../bottom-sheet/use-bottom-sheet-controller';
 import { DataPlaceholder } from '../data-placeholder/data-placeholder';
 import { Divider } from '../divider/divider';
-import { SafeTouchableOpacity } from '../safe-touchable-opacity';
 import { SearchInput } from '../search-input/search-input';
 import { TouchableWithAnalytics } from '../touchable-with-analytics';
 
@@ -165,7 +173,7 @@ const DropdownComponent = <T extends unknown>({
           {isDefined(sectionTitle) && <Text style={styles.sectionHeaderText}>{sectionTitle}</Text>}
           {listItemDividerSize > 0 && <Divider size={listItemDividerSize} />}
           <TouchableWithAnalytics
-            Component={SafeTouchableOpacity}
+            Component={TouchableOpacity}
             key={index}
             onPress={handlePress}
             testID={DropdownSelectors.option}
@@ -227,7 +235,7 @@ const DropdownComponent = <T extends unknown>({
   return (
     <>
       <View style={styles.valueContainer} ref={triggerWrapperRef}>
-        <SafeTouchableOpacity
+        <TouchableOpacity
           style={styles.valueContainer}
           disabled={disabled}
           onPress={() => {
@@ -243,7 +251,7 @@ const DropdownComponent = <T extends unknown>({
           testID={testID}
         >
           {renderValue({ value, disabled, isCollectibleScreen })}
-        </SafeTouchableOpacity>
+        </TouchableOpacity>
       </View>
 
       <BottomSheet
@@ -283,8 +291,8 @@ const DropdownComponent = <T extends unknown>({
               keyExtractor={keyExtractor}
               getItemLayout={getItemLayout}
               contentContainerStyle={[
-                styles.flatListContentContainer,
-                isCompactListItem && styles.tokenSelectorFlatListContentContainer
+                styles.listContentContainer,
+                isCompactListItem && styles.compactListContentContainer
               ]}
               ItemSeparatorComponent={renderItemSeparator}
               ListEmptyComponent={<DataPlaceholder text={emptyListText} />}

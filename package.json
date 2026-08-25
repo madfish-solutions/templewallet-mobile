@@ -8,6 +8,7 @@
     "android": "react-native run-android",
     "android:release:aab": "cd android && ./gradlew bundleRelease",
     "android:release:apk": "cd android && ./gradlew app:assembleRelease",
+    "android:release:apk:local": "SENTRY_DISABLE_AUTO_UPLOAD=true yarn android:release:apk",
     "android:test-flight": "cd android && bundle exec fastlane alpha",
     "ios": "react-native run-ios",
     "ios:pods": "cd ios && pod install",

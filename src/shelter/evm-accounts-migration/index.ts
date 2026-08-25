@@ -5,21 +5,19 @@ import { AccountTypeEnum } from 'src/enums/account-type.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 import { dispatch } from 'src/store';
 import { completeEvmAccountsMigrationAction } from 'src/store/wallet/wallet-actions.ts';
-import { WalletState } from 'src/store/wallet/wallet-state';
 import { mnemonicToEvmAccountCredentials } from 'src/utils/keys.utils';
 
 import { Shelter } from '../shelter';
 
-export const walletNeedsMigration = (wallet: WalletState) =>
-  wallet.accounts.some(account => accountNeedsMigration(account));
+export const accountsNeedMigration = (accounts: Account[]) => accounts.some(account => accountNeedsMigration(account));
 
-export const runEvmAccountsMigration = async (wallet: WalletState) => {
+export const runEvmAccountsMigration = async (accounts: Account[]) => {
   const mnemonic = await firstValueFrom(Shelter.revealSeedPhrase$());
   let hdPosition = 0;
 
   const migratedAccounts: Account[] = [];
 
-  for (const account of wallet.accounts) {
+  for (const account of accounts) {
     if (account.type !== AccountTypeEnum.HD) {
       migratedAccounts.push(account);
       continue;

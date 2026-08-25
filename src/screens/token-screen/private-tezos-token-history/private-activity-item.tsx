@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { ActivityOperKindEnum, ActivityOperTransferType } from 'src/activity/types';
 import { ActivityAssetImage } from 'src/components/activity-feed/activity-asset-image';
@@ -9,7 +9,6 @@ import { getActivityRowAmountView, getActivityTitle, shortenHash } from 'src/com
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TruncatedText } from 'src/components/truncated-text';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -55,7 +54,7 @@ export const PrivateActivityItem = memo<Props>(({ transaction }) => {
 
   return (
     <TouchableWithAnalytics
-      Component={SafeTouchableOpacity}
+      Component={TouchableOpacity}
       style={styles.container}
       onPress={handleCopyAddress}
       testID="PrivateTezosTokenHistory/ActivityItem"

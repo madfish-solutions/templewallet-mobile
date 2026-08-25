@@ -25,6 +25,10 @@ export interface EvmDisplayedCollectible {
 
 export type DisplayedCollectible = TezosDisplayedCollectible | EvmDisplayedCollectible;
 
+export type CollectibleReference =
+  | Pick<TezosDisplayedCollectible, 'chainKind' | 'slug'>
+  | Pick<EvmDisplayedCollectible, 'chainKind' | 'chainId' | 'slug'>;
+
 export interface AssetMediaURIs {
   thumbnailUri?: string;
   displayUri?: string;

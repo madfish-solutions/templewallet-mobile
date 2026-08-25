@@ -168,7 +168,7 @@ const SectionDropdownComponent = <T extends unknown>({
           <BottomSheetSectionList
             sections={list}
             getItemLayout={createGetItemLayout(itemHeight)}
-            contentContainerStyle={styles.flatListContentContainer}
+            contentContainerStyle={styles.listContentContainer}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
             renderSectionHeader={renderSectionHeader}

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View } from 'react-native';
 
 import { TextSegmentControl } from 'src/components/segmented-control/text-segment-control/text-segment-control';
 import { ScreensEnum } from 'src/navigator/enums/screens.enum';
-import { useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
+import { useNavigation, useScreenParams } from 'src/navigator/hooks/use-navigation.hook';
 import { usePageAnalytic } from 'src/utils/analytics/use-analytics.hook';
 
 import { useManageAssetsStyles } from './manage-assets.styles';
@@ -15,9 +15,18 @@ const manageTokensIndex = 0;
 export const ManageAssets = () => {
   const styles = useManageAssetsStyles();
   const { collectibles } = useScreenParams<ScreensEnum.ManageAssets>();
+  const { setParams } = useNavigation();
 
   const [segmentedControlIndex, setSegmentedControlIndex] = useState(collectibles ? 1 : 0);
   const showManageTokens = segmentedControlIndex === manageTokensIndex;
+
+  const handleSegmentedControlChange = useCallback(
+    (index: number) => {
+      setSegmentedControlIndex(index);
+      setParams({ collectibles: index !== manageTokensIndex });
+    },
+    [setParams]
+  );
 
   usePageAnalytic(ScreensEnum.ManageAssets);
 
@@ -27,7 +36,7 @@ export const ManageAssets = () => {
         <TextSegmentControl
           selectedIndex={segmentedControlIndex}
           values={['Tokens', 'Collectibles']}
-          onChange={setSegmentedControlIndex}
+          onChange={handleSegmentedControlChange}
         />
       </View>
 

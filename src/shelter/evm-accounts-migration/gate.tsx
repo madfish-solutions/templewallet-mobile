@@ -7,8 +7,7 @@ import { ButtonsContainer } from 'src/components/button/buttons-container/button
 import { Divider } from 'src/components/divider/divider';
 import { InsetSubstitute } from 'src/components/inset-substitute/inset-substitute';
 import { ModalStatusBar } from 'src/components/modal-status-bar/modal-status-bar';
-import { useSelector } from 'src/store/selector';
-import { useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
+import { useAllAccounts, useIsAuthorisedSelector } from 'src/store/wallet/wallet-selectors';
 import { formatSize } from 'src/styles/format-size';
 import { useColors } from 'src/styles/use-colors';
 
@@ -16,7 +15,7 @@ import { useAppLock } from '../app-lock/app-lock';
 
 import { useEvmAccountsMigrationGateStyles } from './styles';
 
-import { runEvmAccountsMigration, walletNeedsMigration } from './index';
+import { accountsNeedMigration, runEvmAccountsMigration } from './index';
 
 type MigrationStatus = 'idle' | 'migrating' | 'failed';
 
@@ -31,10 +30,10 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
 
   const { isLocked, lock } = useAppLock();
   const isAuthorised = useIsAuthorisedSelector();
-  const wallet = useSelector(({ wallet }) => wallet);
+  const accounts = useAllAccounts();
 
   const startMigration = useCallback(async () => {
-    if (migrationInProgressRef.current || !isAuthorised || isLocked || !walletNeedsMigration(wallet)) {
+    if (migrationInProgressRef.current || !isAuthorised || isLocked || !accountsNeedMigration(accounts)) {
       return;
     }
 
@@ -43,7 +42,7 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
     setErrorMessage(undefined);
 
     try {
-      await runEvmAccountsMigration(wallet);
+      await runEvmAccountsMigration(accounts);
 
       setStatus('idle');
     } catch (error) {
@@ -53,7 +52,7 @@ export const EvmAccountsMigrationGate: FCWithChildren = memo(({ children }) => {
     } finally {
       migrationInProgressRef.current = false;
     }
-  }, [isAuthorised, isLocked, wallet]);
+  }, [accounts, isAuthorised, isLocked]);
 
   useEffect(() => {
     void startMigration();

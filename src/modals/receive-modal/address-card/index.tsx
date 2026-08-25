@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { useBottomSheetController } from 'src/components/bottom-sheet/use-bottom-sheet-controller';
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { NetworkIcon } from 'src/components/network-icon';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { useColors } from 'src/styles/use-colors';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -45,13 +44,13 @@ export const AddressCard = ({ title, address, cryptoLogoName, showWarningOnCard,
         <View style={styles.addressRow}>
           <Text style={styles.address}>{address}</Text>
 
-          <SafeTouchableOpacity onPress={handleCopyClick} style={styles.actionButton}>
+          <TouchableOpacity onPress={handleCopyClick} style={styles.actionButton}>
             <IconV2 name={IconNameV2Enum.Copy} color={colors.blue} />
-          </SafeTouchableOpacity>
+          </TouchableOpacity>
 
-          <SafeTouchableOpacity onPress={handleQrButtonClick} style={styles.actionButton}>
+          <TouchableOpacity onPress={handleQrButtonClick} style={styles.actionButton}>
             <IconV2 name={IconNameV2Enum.Qr} color={colors.blue} />
-          </SafeTouchableOpacity>
+          </TouchableOpacity>
         </View>
 
         {showWarningOnCard && (

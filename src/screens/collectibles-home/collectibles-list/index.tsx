@@ -1,7 +1,8 @@
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import BigNumber from 'bignumber.js';
 import React, { FC, memo, useCallback, useMemo } from 'react';
 import { ListRenderItem, useWindowDimensions, View } from 'react-native';
 import { isTablet } from 'react-native-device-info';
+import Animated, { ScrollHandlerProcessed } from 'react-native-reanimated';
 
 import { ActivityIndicator } from 'src/components/activity-indicator';
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -21,26 +22,38 @@ import { createGetItemLayout } from 'src/utils/flat-list.utils';
 import { useCollectiblesGridStyles } from '../styles';
 
 import { CollectibleItem } from './collectible-item';
-import { EvmCollectibleItem } from './collectible-item/evm-collectible-item';
 import { useCollectibleItemStyles } from './collectible-item/styles';
 import { CollectiblesListStyles, GRID_GAP } from './styles';
 
 interface Props {
   collectibles: DisplayedCollectible[];
   showInfo: boolean;
+  onScroll: ScrollHandlerProcessed;
 }
 
 const ITEMS_PER_ROW = 3;
+const INITIAL_ROWS_TO_RENDER = 8;
 const GRID_GAPS_TOTAL_WIDTH = GRID_GAP * (ITEMS_PER_ROW - 1);
 
 const keyExtractor = (item: DisplayedCollectible) =>
   item.chainKind === TempleChainKind.EVM ? toChainAssetSlug(item.chainKind, item.chainId, item.slug) : item.slug;
 
-export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
+const getCollectibleBalance = (collectible: DisplayedCollectible) =>
+  collectible.chainKind === TempleChainKind.EVM ? collectible.balance : collectible.asset.balance;
+
+export const CollectiblesList = memo<Props>(({ collectibles, showInfo, onScroll }) => {
   const screenStyles = useScreenContainerStyles();
   const itemStyles = useCollectibleItemStyles();
 
   const isSyncing = useAreMetadatasLoadingSelector();
+
+  const sortedCollectibles = useMemo(
+    () =>
+      [...collectibles].sort(
+        (a, b) => new BigNumber(getCollectibleBalance(b)).comparedTo(getCollectibleBalance(a)) ?? 0
+      ),
+    [collectibles]
+  );
 
   const { width: windowWidth } = useWindowDimensions();
 
@@ -71,42 +84,25 @@ export const CollectiblesList = memo<Props>(({ collectibles, showInfo }) => {
     ({ item: collectible, index }) => {
       const style = (index + 1) % ITEMS_PER_ROW !== 0 ? CollectiblesListStyles.marginRight : undefined;
 
-      return collectible.chainKind === TempleChainKind.EVM ? (
-        <EvmCollectibleItem
-          key={collectible.slug}
-          collectible={collectible}
-          showInfo={showInfo}
-          size={itemSize}
-          style={style}
-        />
-      ) : (
-        <CollectibleItem
-          key={collectible.slug}
-          slug={collectible.slug}
-          collectible={collectible.asset}
-          showInfo={showInfo}
-          size={itemSize}
-          style={style}
-        />
-      );
+      return <CollectibleItem collectible={collectible} showInfo={showInfo} size={itemSize} style={style} />;
     },
     [itemSize, showInfo]
   );
 
   return (
-    <>
-      <BottomSheetFlatList
-        data={collectibles}
-        numColumns={ITEMS_PER_ROW}
-        initialNumToRender={ITEMS_PER_ROW * 15}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        style={screenStyles.scrollView}
-        contentContainerStyle={screenStyles.scrollViewContentContainer}
-        ListFooterComponent={<ListFooterComponent empty={collectibles.length < 1} isSyncing={isSyncing} />}
-      />
-    </>
+    <Animated.FlatList
+      data={sortedCollectibles}
+      numColumns={ITEMS_PER_ROW}
+      initialNumToRender={ITEMS_PER_ROW * INITIAL_ROWS_TO_RENDER}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      getItemLayout={getItemLayout}
+      style={screenStyles.scrollView}
+      contentContainerStyle={screenStyles.scrollViewContentContainer}
+      ListFooterComponent={<ListFooterComponent empty={sortedCollectibles.length < 1} isSyncing={isSyncing} />}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
+    />
   );
 });
 

@@ -23,7 +23,7 @@ interface EvmSendAssetBase extends SendAssetBase {
   chainId: number;
 }
 
-export interface EvmNativeSendAsset extends EvmSendAssetBase {
+interface EvmNativeSendAsset extends EvmSendAssetBase {
   assetSlug: typeof EVM_TOKEN_SLUG;
   sendStandard: EvmAssetStandardEnum.NATIVE;
 }
