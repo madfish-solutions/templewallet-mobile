@@ -1,6 +1,5 @@
 import { ChainIds } from '@taquito/taquito';
 import { BigNumber } from 'bignumber.js';
-import { uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
@@ -11,20 +10,19 @@ import { useEvmChainExchangeRatesSelector } from 'src/store/evm/exchange-rates/e
 import { useEvmChainTokensMetadataSelector } from 'src/store/evm/tokens-metadata/evm-tokens-metadata-selectors';
 import { useShieldedBalanceSelector } from 'src/store/sapling';
 import { useFiatToUsdRateSelector } from 'src/store/settings/settings-selectors';
-import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
+import { useAccountAddressForEvm } from 'src/store/wallet/wallet-selectors';
 import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { EvmAssetStandardEnum, EVM_TOKEN_SLUG } from 'src/token/interfaces/token-metadata.interface';
 import { TokenInterface } from 'src/token/interfaces/token.interface';
 import { getTokenSlug } from 'src/token/utils/token.utils';
 import { ETHERLINK_MAINNET_CHAIN_SPECS } from 'src/types/networks';
-import { useAccountTkeyToken, useCurrentAccountTokens } from 'src/utils/assets/hooks';
+import { useTezosAccountTokens } from 'src/utils/assets/hooks';
 import { getDollarValue } from 'src/utils/balance.utils';
 import { isEvmCollectibleSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
 import { isPositiveNumber } from 'src/utils/number.util';
 import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 import { mutezToTz } from 'src/utils/tezos.util';
-import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 const etherlinkNativeCurrency = ETHERLINK_MAINNET_CHAIN_SPECS.currency;
 
@@ -43,7 +41,7 @@ export interface MultichainDisplayedToken {
   original?: TokenInterface;
 }
 
-const buildTezosDisplayedToken = (
+export const buildTezosDisplayedToken = (
   token: TokenInterface,
   fiatValue: number | undefined,
   shieldedAtomicBalance?: string
@@ -85,12 +83,9 @@ const compareDisplayedTokens = (a: SortableDisplayedToken, b: SortableDisplayedT
 };
 
 export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
-  const tezosToken = useTezosTokenOfCurrentAccount();
-  const tkeyToken = useAccountTkeyToken();
-  const visibleTokensList = useCurrentAccountTokens(true);
+  const accountTezosTokens = useTezosAccountTokens();
   const getExchangeRate = useTokenExchangeRateGetter();
 
-  const tezosAddress = useAccountAddressForTezos();
   const evmAddress = useAccountAddressForEvm();
   const evmBalances = useEvmAccountChainBalancesSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
   const evmAssets = useEvmAccountChainAssetsSelector(evmAddress, ETHERLINK_MAINNET_CHAIN_ID);
@@ -100,8 +95,7 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
   const shieldedBalanceMutez = useShieldedBalanceSelector();
 
   return useMemo(() => {
-    const accountTezosTokens = tezosAddress == null ? [] : [tezosToken, tkeyToken].concat(visibleTokensList);
-    const tezosTokens = uniqBy(accountTezosTokens, getTokenSlug).map(token => {
+    const tezosTokens = accountTezosTokens.map(token => {
       const slug = getTokenSlug(token);
       const isGasToken = slug === TEZ_TOKEN_SLUG;
       // The gas-token row displays and sorts by the combined public + shielded balance
@@ -173,10 +167,7 @@ export const useMultichainDisplayedTokens = (): MultichainDisplayedToken[] => {
       .sort(compareDisplayedTokens)
       .map(({ token }) => token);
   }, [
-    tezosAddress,
-    tezosToken,
-    tkeyToken,
-    visibleTokensList,
+    accountTezosTokens,
     getExchangeRate,
     shieldedBalanceMutez,
     evmBalances,

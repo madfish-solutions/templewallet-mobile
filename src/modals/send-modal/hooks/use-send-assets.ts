@@ -16,7 +16,7 @@ const createSendAssets = (tezosAssets: SendAsset[], evmAssets: SendAsset[]): Sen
 export const useSendAssets = (): SendAsset[] => {
   const tezosToken = useTezosTokenOfCurrentAccount();
   const tezosAssets = useTezosSendAssets(tezosToken);
-  const evmAssets = useEvmSendAssets(ETHERLINK_MAINNET_CHAIN_ID, CryptoLogoNameEnum.Tezos);
+  const evmAssets = useEvmSendAssets(ETHERLINK_MAINNET_CHAIN_ID, CryptoLogoNameEnum.Etherlink);
 
   return useMemo(() => createSendAssets(tezosAssets, evmAssets), [evmAssets, tezosAssets]);
 };

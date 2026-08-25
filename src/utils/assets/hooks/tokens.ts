@@ -1,4 +1,4 @@
-import { isEqual } from 'lodash-es';
+import { isEqual, uniqBy } from 'lodash-es';
 import { useMemo } from 'react';
 
 import { VisibilityEnum } from 'src/enums/visibility.enum';
@@ -6,10 +6,17 @@ import { useMemoWithCompare } from 'src/hooks/use-memo-with-compare';
 import { useTokenExchangeRateGetter } from 'src/hooks/use-token-exchange-rate-getter.hook';
 import { useAssetExchangeRate } from 'src/store/settings/settings-selectors';
 import { useTokensMetadataSelector } from 'src/store/tokens-metadata/tokens-metadata-selectors';
-import { useAssetBalanceSelector, useCurrentAccountStoredAssetsSelector } from 'src/store/wallet/wallet-selectors';
+import {
+  useAccountAddressForTezos,
+  useAssetBalanceSelector,
+  useCurrentAccountStoredAssetsSelector
+} from 'src/store/wallet/wallet-selectors';
 import { TEMPLE_TOKEN_SLUG } from 'src/token/data/token-slugs';
 import { TEMPLE_TOKEN_METADATA } from 'src/token/data/tokens-metadata';
 import { AccountTokenInterface } from 'src/token/interfaces/account-token.interface';
+import { TokenInterface } from 'src/token/interfaces/token.interface';
+import { getTokenSlug } from 'src/token/utils/token.utils';
+import { useTezosTokenOfCurrentAccount } from 'src/utils/wallet.utils';
 
 import { UsableAccountAsset } from '../types';
 
@@ -23,11 +30,14 @@ export const useCurrentAccountTokens = (enabledOnly = false) => {
   return useMemo(
     () =>
       accountTokens.reduce<UsableAccountAsset[]>((acc, curr) => {
-        const token = buildUsableAccountAsset(
-          curr,
-          allMetadatas[curr.slug]!, // `accountTokens` r already filtered for metadata presence
-          getExchangeRate(curr.slug)
-        );
+        const metadata = allMetadatas[curr.slug];
+
+        // `accountTokens` r already filtered for metadata presence
+        if (metadata == null) {
+          return acc;
+        }
+
+        const token = buildUsableAccountAsset(curr, metadata, getExchangeRate(curr.slug));
 
         if (enabledOnly) {
           return token.visibility === VisibilityEnum.Visible ? acc.concat(token) : acc;
@@ -63,7 +73,7 @@ export const useAccountTokenBySlug = (slug: string): UsableAccountAsset | undefi
   );
 };
 
-export const useAccountTkeyToken = (): UsableAccountAsset => {
+const useAccountTkeyToken = (): UsableAccountAsset => {
   const balance = useAssetBalanceSelector(TEMPLE_TOKEN_SLUG);
   const token: AccountTokenInterface = useMemo(
     () => ({
@@ -77,6 +87,19 @@ export const useAccountTkeyToken = (): UsableAccountAsset => {
   const exchageRate = useAssetExchangeRate(TEMPLE_TOKEN_SLUG);
 
   return useMemo(() => buildUsableAccountAsset(token, TEMPLE_TOKEN_METADATA, exchageRate), [token, exchageRate]);
+};
+
+/** Every Tezos token the account can open a page for: the gas token and TKEY are synthesized, not stored */
+export const useTezosAccountTokens = (): TokenInterface[] => {
+  const tezosAddress = useAccountAddressForTezos();
+  const tezosToken = useTezosTokenOfCurrentAccount();
+  const tkeyToken = useAccountTkeyToken();
+  const visibleTokens = useCurrentAccountTokens(true);
+
+  return useMemo(
+    () => (tezosAddress == null ? [] : uniqBy([tezosToken, tkeyToken].concat(visibleTokens), getTokenSlug)),
+    [tezosAddress, tezosToken, tkeyToken, visibleTokens]
+  );
 };
 
 export const useAccountTokensBalancesRecord = () => {

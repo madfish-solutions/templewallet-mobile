@@ -7,6 +7,8 @@ const accentColors = {
   orange: '#FF5B00',
   blue: '#1373E4',
   peach: '#FF5B00',
+  // The design system's Peach10% derives from a warmer base than Peach itself (Brand/Peach10% = #FF7A00 @ 10%)
+  peach10Base: '#FF7A00',
   liteGreen: '#3EBD93',
   darkGreen: '#143A3A',
   accentDarkGray: '#434343',
@@ -36,13 +38,13 @@ const basicDarkColors: typeof basicLightColors = {
 const basicLightAlphaColors = {
   black10: hexa(basicLightColors.black, 0.1),
   black16: hexa(basicLightColors.black, 0.16),
-  peach10: hexa(accentColors.peach, 0.1)
+  peach10: hexa(accentColors.peach10Base, 0.1)
 };
 
 const basicDarkAlphaColors: typeof basicLightAlphaColors = {
   black10: hexa(basicDarkColors.black, 0.1),
   black16: hexa(basicDarkColors.black, 0.16),
-  peach10: hexa(accentColors.peach, 0.1)
+  peach10: hexa(accentColors.peach10Base, 0.1)
 };
 
 const graybaseLightColors = {
