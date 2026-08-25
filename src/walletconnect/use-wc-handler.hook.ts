@@ -74,7 +74,6 @@ export const useWcHandler = () => {
         navigateToModal(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.WcSessionProposal, proposal });
       },
       request => {
-        console.log('request', request);
         const { wallet } = store.getState();
         const rejectReason = getSessionRequestRejectReason(
           request,
