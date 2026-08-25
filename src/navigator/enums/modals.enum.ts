@@ -1,3 +1,4 @@
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { Account } from 'src/interfaces/account.interfaces';
 import { Contact } from 'src/interfaces/contact.interface';
 import { ConfirmationModalParams } from 'src/modals/confirmation-modal/confirmation-modal.params';
@@ -41,7 +42,7 @@ export enum ModalsEnum {
 }
 
 export type ModalsParamList = {
-  [ModalsEnum.Receive]: { token: TezosTokenMetadata };
+  [ModalsEnum.Receive]: { chainKind?: TempleChainKind; withShielded?: boolean };
   [ModalsEnum.Send]: { token?: TezosTokenMetadata; receiverPublicKeyHash?: string; assetKey?: string };
   [ModalsEnum.AddAsset]: undefined;
   [ModalsEnum.RenameAccount]: { account: Account };

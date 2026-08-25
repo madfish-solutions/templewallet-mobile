@@ -1,5 +1,5 @@
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import { DataPlaceholder } from 'src/components/data-placeholder/data-placeholder';
@@ -20,7 +20,11 @@ const keyExtractor = (item: SaplingTransactionHistoryItem) => `${item.type}-${it
 const PROMOTION_ID = 'private-activities-promotion';
 const PAGE_NAME = 'PrivateTezosTokenHistory';
 
-export const PrivateTezosTokenHistory = () => {
+interface Props {
+  headerComponent?: ReactElement;
+}
+
+export const PrivateTezosTokenHistory = ({ headerComponent }: Props) => {
   const transactions = useSaplingTransactionHistorySelector();
   const isLoading = useIsSaplingHistoryLoadingSelector();
   const styles = usePrivateTezosTokenHistoryStyles();
@@ -42,21 +46,33 @@ export const PrivateTezosTokenHistory = () => {
   );
 
   const ListHeaderComponent = useMemo(
-    () =>
-      shouldShowPromotion ? (
-        <PromotionItem
-          ref={adRef}
-          id={PROMOTION_ID}
-          pageName={PAGE_NAME}
-          testID="PrivateTezosTokenHistory/promotion"
-          style={styles.promotionItemWrapper}
-          onLayout={onElementOrParentLayout}
-          onError={handlePromotionError}
-          onLoad={onAdLoad}
-          onImpression={onAdImpression}
-        />
-      ) : undefined,
-    [shouldShowPromotion, styles, onElementOrParentLayout, handlePromotionError, onAdLoad, onAdImpression]
+    () => (
+      <View>
+        {headerComponent}
+        {shouldShowPromotion ? (
+          <PromotionItem
+            ref={adRef}
+            id={PROMOTION_ID}
+            pageName={PAGE_NAME}
+            testID="PrivateTezosTokenHistory/promotion"
+            style={styles.promotionItemWrapper}
+            onLayout={onElementOrParentLayout}
+            onError={handlePromotionError}
+            onLoad={onAdLoad}
+            onImpression={onAdImpression}
+          />
+        ) : null}
+      </View>
+    ),
+    [
+      headerComponent,
+      shouldShowPromotion,
+      styles,
+      onElementOrParentLayout,
+      handlePromotionError,
+      onAdLoad,
+      onAdImpression
+    ]
   );
 
   const ListEmptyComponent = useMemo(
