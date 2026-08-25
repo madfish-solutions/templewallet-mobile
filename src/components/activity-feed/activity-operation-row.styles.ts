@@ -27,6 +27,9 @@ export const useActivityOperationRowStyles = createUseStyles(({ colors, typograp
     ...typography.numbersRegular17,
     color: colors.black
   },
+  shieldIcon: {
+    marginRight: formatSize(2)
+  },
   statusContainer: {
     marginLeft: formatSize(4)
   },

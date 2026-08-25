@@ -18,6 +18,7 @@ import { EVM_ADDRESS_PLACEHOLDER } from 'src/config/wallet.const';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useAppStateStatus } from 'src/hooks/use-app-state-status.hook';
 import { useHarvestEvmActivityMetadata } from 'src/hooks/use-harvest-evm-activity-metadata.hook';
+import { useLoadTezosActivityMetadata } from 'src/hooks/use-load-tezos-activity-metadata.hook';
 import { useAccountAddressForEvm, useAccountAddressForTezos } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
@@ -65,12 +66,14 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
   const sessionKey = `${tezosAddress ?? ''}:${evmAddress ?? ''}|${assetFilterKey}`;
 
   const [feedState, setFeedState] = useState<ActivityFeedState>(() => buildInitialFeedState(sessionKey));
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [renderedSessionKey, setRenderedSessionKey] = useState(sessionKey);
 
   // Reset before paint on an account/filter change, so the previous account's rows never flash
   if (renderedSessionKey !== sessionKey) {
     setRenderedSessionKey(sessionKey);
     setFeedState(buildInitialFeedState(sessionKey));
+    setIsRefreshing(false);
   }
 
   const controllerRef = useRef<ActivityFeedController | undefined>(undefined);
@@ -154,6 +157,11 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
 
   const refresh = useCallback(() => controllerRef.current?.refresh() ?? Promise.resolve(), []);
 
+  const handleRefresh = useCallback(() => {
+    setIsRefreshing(true);
+    refresh().finally(() => setIsRefreshing(false));
+  }, [refresh]);
+
   const refreshIfStale = useCallback(() => {
     if (isFocusedRef.current) {
       controllerRef.current?.refreshIfStale();
@@ -173,6 +181,7 @@ export const useActivityFeed = (assetFilter?: ActivityFeedAssetFilter) => {
   const handleLoadMore = useCallback(() => controllerRef.current?.loadMore() ?? Promise.resolve(), []);
 
   useHarvestEvmActivityMetadata(feedState.activities, sessionKey);
+  useLoadTezosActivityMetadata(feedState.activities, sessionKey);
 
-  return { ...feedState, handleLoadMore, refresh };
+  return { ...feedState, isRefreshing, handleLoadMore, handleRefresh };
 };

@@ -26,11 +26,14 @@ import OkIcon from './assets/ok.svg';
 import OutLinkIcon from './assets/out-link.svg';
 import PlusBigIcon from './assets/plus-big.svg';
 import QrIcon from './assets/qr.svg';
+import ScamInfoIcon from './assets/scam-info.svg';
 import SearchIcon from './assets/search.svg';
 import SendIcon from './assets/send.svg';
 import SettingsIcon from './assets/settings.svg';
 import ShareIcon from './assets/share.svg';
+import ShieldIcon from './assets/shield.svg';
 import SliderIcon from './assets/slider.svg';
+import SwapArrowIcon from './assets/swap-arrow.svg';
 import TrashIcon from './assets/trash.svg';
 import UserAddIcon from './assets/user-add.svg';
 import XBigIcon from './assets/x-big.svg';
@@ -71,5 +74,8 @@ export const IconNameV2Map: Record<IconNameV2Enum, FC<SvgProps>> = {
   [IconNameV2Enum.Income]: IncomeIcon,
   [IconNameV2Enum.Documents]: DocumentsIcon,
   [IconNameV2Enum.Ok]: OkIcon,
-  [IconNameV2Enum.OutLink]: OutLinkIcon
+  [IconNameV2Enum.OutLink]: OutLinkIcon,
+  [IconNameV2Enum.Shield]: ShieldIcon,
+  [IconNameV2Enum.ScamInfo]: ScamInfoIcon,
+  [IconNameV2Enum.SwapArrow]: SwapArrowIcon
 };

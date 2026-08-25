@@ -13,7 +13,11 @@ const FOCUS_REFETCH_THRESHOLD = 60_000;
 
 interface SourceEntry {
   readonly chain: TempleChainKind;
-  loadNextPage(signal: AbortSignal): Promise<{ activities: Activity[]; exhausted: boolean; scannedDownTo: number }>;
+  loadNextPage(signal: AbortSignal): Promise<{
+    activities: Activity[];
+    exhausted: boolean;
+    scannedDownTo: number;
+  }>;
   resetCursor(): void;
   buffer: Activity[];
   scannedDownTo: number;
@@ -86,15 +90,18 @@ const computeFeedState = (
 ): ActivityFeedState => {
   const isReloading = isAwaitingFirstPages(entries);
   const isAllErrored = entries.length > 0 && entries.every(entry => entry.errored);
+  const activities = isReloading ? staleActivities : getRenderableActivities(entries);
 
   return {
     // Nothing is shown until every source loaded its first page; during a refresh the previous rows stay on screen
-    activities: isReloading ? staleActivities : getRenderableActivities(entries),
-    isInitialLoading: entries.length > 0 && isReloading && staleActivities.length === 0,
+    activities,
+    isInitialLoading: entries.length > 0 && activities.length === 0 && (isReloading || isLoadingMore),
     isLoadingMore,
     // Errored sources do not block the empty state - the toast already told the user about them
     isEmpty:
-      !isAllErrored && entries.every(entry => entry.errored || (entry.hasLoadedFirstPage && entry.buffer.length === 0)),
+      !isAllErrored &&
+      !isLoadingMore &&
+      entries.every(entry => entry.errored || (entry.hasLoadedFirstPage && entry.buffer.length === 0)),
     isAllErrored,
     isAllLoaded: entries.every(entry => entry.exhausted || entry.errored)
   };
@@ -247,20 +254,74 @@ export const createActivityFeedController = ({
     return controller;
   };
 
-  const refresh = () => {
+  const canScanDeeper = () => entries.some(entry => !entry.exhausted && !entry.errored);
+
+  const loadMore = async () => {
+    const controller = abortController;
+
+    if (!controller || isLoadingMore || entries.some(entry => entry.isLoading)) {
+      return;
+    }
+
+    if (entries.every(entry => entry.exhausted || entry.errored)) {
+      return;
+    }
+
+    const { signal } = controller;
+    isLoadingMore = true;
+    publish();
+
+    try {
+      const renderableCountBefore = getRenderableActivities(entries).length;
+
+      for (let cycle = 0; cycle < MAX_LOAD_MORE_CYCLES; cycle++) {
+        const limitingSource = pickBoundaryLimitingSource(entries);
+
+        if (!limitingSource) {
+          break;
+        }
+
+        await loadSourcePage(limitingSource, signal, false);
+
+        if (signal.aborted) {
+          return;
+        }
+
+        if (getRenderableActivities(entries).length - renderableCountBefore >= MIN_NEW_ROWS_PER_LOAD_MORE) {
+          break;
+        }
+      }
+    } finally {
+      // An aborted cycle must not touch shared state - the cycle that superseded it already owns isLoadingMore
+      if (!signal.aborted) {
+        isLoadingMore = false;
+        publish();
+      }
+    }
+  };
+
+  // An empty feed gives the user nothing to scroll, so the cycles a scroll would have triggered run here instead.
+  const maybeAutoContinue = (signal: AbortSignal) => {
+    if (!signal.aborted && getRenderableActivities(entries).length === 0 && canScanDeeper()) {
+      void loadMore();
+    }
+  };
+
+  const refresh = async () => {
     const controller = startNewLoadCycle();
     staleActivities = currentState.activities;
     entries.forEach(resetEntry);
     publish();
 
-    return loadFirstPages(controller.signal);
+    await loadFirstPages(controller.signal);
+    maybeAutoContinue(controller.signal);
   };
 
   return {
     start() {
       const controller = startNewLoadCycle();
       publish();
-      loadFirstPages(controller.signal);
+      loadFirstPages(controller.signal).then(() => maybeAutoContinue(controller.signal));
     },
     refresh,
     refreshIfStale() {
@@ -268,46 +329,7 @@ export const createActivityFeedController = ({
         refresh();
       }
     },
-    async loadMore() {
-      const controller = abortController;
-
-      if (!controller || isLoadingMore || entries.some(entry => entry.isLoading)) {
-        return;
-      }
-
-      if (entries.every(entry => entry.exhausted || entry.errored)) {
-        return;
-      }
-
-      const { signal } = controller;
-      isLoadingMore = true;
-      publish();
-
-      try {
-        const renderableCountBefore = getRenderableActivities(entries).length;
-
-        for (let cycle = 0; cycle < MAX_LOAD_MORE_CYCLES; cycle++) {
-          const limitingSource = pickBoundaryLimitingSource(entries);
-
-          if (!limitingSource) {
-            break;
-          }
-
-          await loadSourcePage(limitingSource, signal, false);
-
-          if (signal.aborted) {
-            return;
-          }
-
-          if (getRenderableActivities(entries).length - renderableCountBefore >= MIN_NEW_ROWS_PER_LOAD_MORE) {
-            break;
-          }
-        }
-      } finally {
-        isLoadingMore = false;
-        publish();
-      }
-    },
+    loadMore,
     destroy() {
       destroyed = true;
       abortController?.abort();

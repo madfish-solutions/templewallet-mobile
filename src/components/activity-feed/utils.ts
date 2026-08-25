@@ -9,7 +9,9 @@ import {
 } from 'src/activity/types';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
+import { TEZ_TOKEN_SLUG } from 'src/token/data/tokens-metadata';
 import { formatDayMonthYear, isToday, isYesterday } from 'src/utils/date.utils';
+import { equalsIgnoreCase } from 'src/utils/evm/on-chain/common.utils';
 import { toEvmAssetSlug } from 'src/utils/from-token-slug';
 import { formatAssetAmount, ZERO } from 'src/utils/number.util';
 import { mutezToTz } from 'src/utils/tezos.util';
@@ -109,58 +111,66 @@ export const getActivityOperTransferType = (operation?: TezosOperation | EvmOper
 export const getTezosOperationIsShielded = (operation?: TezosOperation) =>
   operation?.kind === ActivityOperKindEnum.interaction ? operation.isShielded : undefined;
 
+export const getTezosBundleIsShielded = (operations: TezosOperation[]) =>
+  operations.some(operation => getTezosOperationIsShielded(operation) === true);
+
 interface TezosBundleFaceAsset {
   assetSlug?: string;
   amountSigned?: string;
 }
 
-export const getTezosBundleFaceAsset = (operations: TezosOperation[]): TezosBundleFaceAsset => {
-  const faceSlug = operations.find(
-    operation =>
-      operation.kind === ActivityOperKindEnum.transfer &&
-      operation.assetSlug != null &&
-      operation.amountSigned != null &&
-      Number(operation.amountSigned) !== 0
-  )?.assetSlug;
-
-  if (faceSlug == null) {
-    return {};
-  }
-
+const sumTezosTransfersOf = (operations: TezosOperation[], assetSlug: string) => {
   let amount = ZERO;
 
   for (const operation of operations) {
     if (
       operation.kind === ActivityOperKindEnum.transfer &&
-      operation.assetSlug === faceSlug &&
+      operation.assetSlug === assetSlug &&
       operation.amountSigned != null
     ) {
       amount = amount.plus(operation.amountSigned);
     }
   }
 
-  return { assetSlug: faceSlug, amountSigned: amount.toFixed() };
+  return amount;
+};
+
+export const getTezosBundleFaceAsset = (
+  operations: TezosOperation[],
+  preferredAssetSlug?: string
+): TezosBundleFaceAsset => {
+  // Candidates are judged by their net across the bundle - a round-trip (e.g. the TEZ legs of a swap routed through TEZ) is not a face
+  const preferredSlug =
+    preferredAssetSlug != null && !sumTezosTransfersOf(operations, preferredAssetSlug).isZero()
+      ? preferredAssetSlug
+      : undefined;
+
+  // A nonzero gas net is the bundle's outcome (sale proceeds / purchase cost)
+  const gasSlug = sumTezosTransfersOf(operations, TEZ_TOKEN_SLUG).isZero() ? undefined : TEZ_TOKEN_SLUG;
+
+  const faceSlug =
+    preferredSlug ??
+    gasSlug ??
+    operations.find(
+      operation =>
+        operation.kind === ActivityOperKindEnum.transfer &&
+        operation.assetSlug != null &&
+        operation.assetSlug !== TEZ_TOKEN_SLUG &&
+        !sumTezosTransfersOf(operations, operation.assetSlug).isZero()
+    )?.assetSlug;
+
+  if (faceSlug == null) {
+    return {};
+  }
+
+  return { assetSlug: faceSlug, amountSigned: sumTezosTransfersOf(operations, faceSlug).toFixed() };
 };
 
 export const getNftTransfersCount = (operations: EvmOperation[]) =>
   operations.filter(operation => operation.kind === ActivityOperKindEnum.transfer && operation.asset?.nft === true)
     .length;
 
-export const getEvmBundleFaceAsset = (operations: EvmOperation[]): EvmActivityAsset | undefined => {
-  const faceOperation = operations.find(
-    operation =>
-      operation.kind === ActivityOperKindEnum.transfer &&
-      operation.asset?.amountSigned != null &&
-      Number(operation.asset.amountSigned) !== 0
-  );
-
-  const faceAsset = faceOperation?.asset;
-
-  if (faceAsset == null) {
-    return undefined;
-  }
-
-  const faceSlug = toEvmAssetSlug(faceAsset.contract, faceAsset.tokenId);
+const sumEvmTransfersOf = (operations: EvmOperation[], faceSlug: string) => {
   let amount = ZERO;
 
   for (const operation of operations) {
@@ -175,7 +185,37 @@ export const getEvmBundleFaceAsset = (operations: EvmOperation[]): EvmActivityAs
     }
   }
 
-  return { ...faceAsset, amountSigned: amount.toFixed() };
+  return amount;
+};
+
+export const getEvmBundleFaceAsset = (
+  operations: EvmOperation[],
+  preferredContract?: string
+): EvmActivityAsset | undefined => {
+  // Same net-based rule as the Tezos face: a candidate whose legs cancel out is not a face
+  const findNonzeroNetTransfer = (matchesAsset: (asset: EvmActivityAsset) => boolean) =>
+    operations.find(
+      operation =>
+        operation.kind === ActivityOperKindEnum.transfer &&
+        operation.asset?.amountSigned != null &&
+        matchesAsset(operation.asset) &&
+        !sumEvmTransfersOf(operations, toEvmAssetSlug(operation.asset.contract, operation.asset.tokenId)).isZero()
+    );
+
+  const preferredOperation =
+    preferredContract == null
+      ? undefined
+      : findNonzeroNetTransfer(asset => equalsIgnoreCase(asset.contract, preferredContract));
+
+  const faceAsset = (preferredOperation ?? findNonzeroNetTransfer(() => true))?.asset;
+
+  if (faceAsset == null) {
+    return undefined;
+  }
+
+  const faceSlug = toEvmAssetSlug(faceAsset.contract, faceAsset.tokenId);
+
+  return { ...faceAsset, amountSigned: sumEvmTransfersOf(operations, faceSlug).toFixed() };
 };
 
 export const getActivityRowAmountView = (
@@ -184,7 +224,8 @@ export const getActivityRowAmountView = (
   fiatRate: number | undefined,
   nftBundleCount?: number
 ): ActivityRowAmountView => {
-  if (asset == null || kind === ActivityOperKindEnum.interaction) {
+  // An interaction can still carry a native-value asset (e.g. a contract call sending XTZ) - render it
+  if (asset == null) {
     return { isPositive: false };
   }
 

@@ -30,6 +30,7 @@ interface FaceProps {
   source?: ActivityAssetImageSource;
   kind: ActivityFaceKind;
   transferType?: ActivityOperTransferType;
+  isNft?: boolean;
   size: number;
   borderRadius: number;
 }
@@ -78,7 +79,7 @@ const EvmCollectibleFace = memo<{ imageUri?: string; size: number; borderRadius:
   }
 );
 
-const ActivityAssetFace = memo<FaceProps>(({ source, kind, transferType, size, borderRadius }) => {
+const ActivityAssetFace = memo<FaceProps>(({ source, kind, transferType, isNft, size, borderRadius }) => {
   const styles = useActivityAssetImageStyles();
   const colors = useColors();
 
@@ -93,7 +94,7 @@ const ActivityAssetFace = memo<FaceProps>(({ source, kind, transferType, size, b
   }
 
   if (source.kind === ActivityAssetImageKind.tokenIcon) {
-    return <TokenIcon size={size} thumbnailUri={source.thumbnailUri} style={sizeStyle} />;
+    return <TokenIcon size={size} thumbnailUri={source.thumbnailUri} isCollectible={isNft} style={sizeStyle} />;
   }
 
   if (source.kind === ActivityAssetImageKind.cryptoLogo) {
@@ -146,6 +147,7 @@ export const ActivityAssetImage = memo<Props>(({ chain, kind, transferType, sour
       source={source}
       kind={kind}
       transferType={transferType}
+      isNft={isNft}
       size={faceSize}
       borderRadius={faceBorderRadius}
     />

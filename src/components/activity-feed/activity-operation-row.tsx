@@ -3,9 +3,12 @@ import { Text, View } from 'react-native';
 
 import { ActivityOperTransferType, ActivityStatus } from 'src/activity/types';
 import { FormattedAmount } from 'src/components/formatted-amount';
+import { IconV2 } from 'src/components/icon-v2';
+import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
 import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TruncatedText } from 'src/components/truncated-text';
+import { useColors } from 'src/styles/use-colors';
 
 import { ActivityAssetImage } from './activity-asset-image';
 import { ActivityExplorerLink } from './activity-explorer-link';
@@ -31,6 +34,7 @@ interface Props {
 export const ActivityOperationRow = memo<Props>(
   ({ chainRef, kind, transferType, isShielded, hash, status, asset, fiatRate, nftBundleCount }) => {
     const styles = useActivityOperationRowStyles();
+    const colors = useColors();
 
     const title = getActivityTitle(kind, transferType, isShielded);
     const amountView = useMemo(
@@ -65,6 +69,9 @@ export const ActivityOperationRow = memo<Props>(
         <View style={styles.infoContainer}>
           <View style={styles.line}>
             <View style={styles.titleContainer}>
+              {isShielded === true && (
+                <IconV2 name={IconNameV2Enum.Shield} size={16} color={colors.gray1} style={styles.shieldIcon} />
+              )}
               <Text style={styles.titleText}>{title}</Text>
 
               <View style={styles.statusContainer}>

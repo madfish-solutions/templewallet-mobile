@@ -11,13 +11,17 @@ import { getEvmBundleFaceAsset, getNftTransfersCount } from './utils';
 
 interface Props {
   activity: EvmActivity;
+  faceAssetContract?: string;
 }
 
-const EvmActivityBundleItem = memo<Props>(({ activity }) => {
+const EvmActivityBundleItem = memo<Props>(({ activity, faceAssetContract }) => {
   const { chainId, hash, operations } = activity;
 
   const chainRef = useEvmChainRef(chainId);
-  const faceAsset = useMemo(() => getEvmBundleFaceAsset(operations), [operations]);
+  const faceAsset = useMemo(
+    () => getEvmBundleFaceAsset(operations, faceAssetContract),
+    [operations, faceAssetContract]
+  );
   const nftBundleCount = useMemo(() => getNftTransfersCount(operations), [operations]);
   const { asset, fiatRate } = useEvmActivityAsset(chainId, faceAsset);
 
@@ -33,11 +37,11 @@ const EvmActivityBundleItem = memo<Props>(({ activity }) => {
   );
 });
 
-export const EvmActivityItem = memo<Props>(({ activity }) => {
+export const EvmActivityItem = memo<Props>(({ activity, faceAssetContract }) => {
   const { chainId, hash, operations } = activity;
 
   if (operations.length > 1) {
-    return <EvmActivityBundleItem activity={activity} />;
+    return <EvmActivityBundleItem activity={activity} faceAssetContract={faceAssetContract} />;
   }
 
   return <EvmActivityOperationItem chainId={chainId} hash={hash} operation={operations.at(0)} />;
