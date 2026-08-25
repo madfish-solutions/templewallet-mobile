@@ -65,10 +65,12 @@ export const ConfirmationLayout: FC<Props> = ({
           <>
             {beforeAccount}
 
-            <Text style={styles.sectionTitle}>Account</Text>
-            <Divider />
             {account ? (
-              <AccountCard account={account} chainKind={accountChainKind} isShieldedTez={isShieldedTez} />
+              <>
+                <Text style={styles.sectionTitle}>Account</Text>
+                <Divider />
+                <AccountCard account={account} chainKind={accountChainKind} isShieldedTez={isShieldedTez} />
+              </>
             ) : null}
             <Divider size={formatSize(24)} />
 

@@ -11,16 +11,12 @@ import { EvmAssetStandardEnum, EvmTokenMetadata } from 'src/token/interfaces/tok
 import { EvmNetworkEssentials } from 'src/types/networks';
 import { getEvmTokenMetadata } from 'src/utils/evm/on-chain/metadata';
 import { EvmTokenOnChainMetadata } from 'src/utils/evm/on-chain/types';
-import {
-  ParsedEvmRpcTransactionRequest,
-  parseRpcTransactionRequest
-} from 'src/utils/evm/parse-rpc-transaction-request';
+import { ParsedEvmRpcTransactionRequest } from 'src/utils/evm/parse-rpc-transaction-request';
 import { typedV1SignatureHash } from 'src/utils/evm/typed-v1-signature-hash';
 import {
   OldTypedDataField,
   validateOldSignTypedDataParams,
   validatePersonalSignParams,
-  validateSendTransactionParams,
   validateSignTypedDataParams,
   validateWatchAssetParams
 } from 'src/utils/evm/validation-schemas';
@@ -96,7 +92,7 @@ class WcEvmRequestService {
       case 'eth_signTypedData_v4':
         return this.signTypedData(address, asParamsArray(params), method);
       case 'eth_sendTransaction':
-        return this.sendTransaction(address, asParamsArray(params), network);
+        throw new Error('Send transactions with evmTransactionSubmissionService instead');
       case 'wallet_watchAsset':
         return this.watchAsset(address, params, network);
       default: {
@@ -146,25 +142,6 @@ class WcEvmRequestService {
       return await account.signTypedData(typedData);
     } catch (cause) {
       throw new WcEvmRequestError('signing-failed', 'Failed to sign typed data', { cause });
-    }
-  }
-
-  private async sendTransaction(address: HexString, params: unknown[], network?: EvmNetworkEssentials): Promise<Hash> {
-    if (!isDefined(network)) {
-      throw new WcEvmRequestError('invalid-params', 'eth_sendTransaction requires a network');
-    }
-
-    const [rawTransaction] = validateSendTransactionParams(params);
-
-    this.assertMatchingAddress(rawTransaction.from, address);
-
-    const account = await this.getVerifiedAccount(address);
-    const request = parseRpcTransactionRequest(rawTransaction);
-
-    try {
-      return await this.dependencies.sendTransaction(network, account, request);
-    } catch (cause) {
-      throw new WcEvmRequestError('broadcast-failed', 'Failed to broadcast the transaction', { cause });
     }
   }
 

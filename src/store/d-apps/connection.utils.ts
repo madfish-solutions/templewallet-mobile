@@ -25,8 +25,8 @@ export const mapWcSessionToConnection = (
 ): WalletConnectDAppConnection => {
   const namespaceValues = Object.values(session.namespaces);
   const accounts = namespaceValues.flatMap(namespace => namespace.accounts);
-  const chains = [
-    ...new Set(
+  const chains = Array.from(
+    new Set(
       namespaceValues.flatMap(namespace => {
         if (namespace.chains && namespace.chains.length > 0) {
           return namespace.chains;
@@ -35,7 +35,7 @@ export const mapWcSessionToConnection = (
         return namespace.accounts.map(account => account.split(':').slice(0, 2).join(':'));
       })
     )
-  ];
+  );
 
   return {
     id: `wc:${session.topic}`,

@@ -17,6 +17,7 @@ import { EvmAssetStandard, EvmCollectibleAssetStandard } from 'src/utils/evm/on-
 import { ParsedEvmRpcTransactionRequest } from 'src/utils/evm/parse-rpc-transaction-request';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
+import { cancellablePromiseFlow } from 'src/utils/promise.util';
 
 import { buildEvmPreviewAsset, hasUsableEvmPreviewMetadata } from './build-evm-preview-asset';
 import { ensureMissingEvmAssetMetadata } from './ensure-missing-evm-asset-metadata';
@@ -51,17 +52,12 @@ export const useWcEvmBalancesChangesPreview = (
     setGroups(undefined);
     setIsMetadataResolved(false);
 
-    void getEvmBalancesChanges(transaction, accountAddress, network)
-      .then(balancesChanges => {
-        if (!cancelled) {
-          setGroups(groupBalancesChangesByReceiver(balancesChanges));
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setGroups(null);
-        }
-      });
+    cancellablePromiseFlow({
+      promise: getEvmBalancesChanges(transaction, accountAddress, network),
+      isCancelled: () => cancelled,
+      then: balancesChanges => setGroups(groupBalancesChangesByReceiver(balancesChanges)),
+      catch: () => setGroups(null)
+    });
 
     return () => {
       cancelled = true;
@@ -123,31 +119,30 @@ export const useWcEvmBalancesChangesPreview = (
     let cancelled = false;
     setIsMetadataResolved(false);
 
-    void Promise.all(
-      assetsToFetch.map(change => {
-        const [contractAddress, tokenId] = fromTokenSlug<HexString>(change.assetSlug);
+    cancellablePromiseFlow({
+      promise: Promise.all(
+        assetsToFetch.map(change => {
+          const [contractAddress, tokenId] = fromTokenSlug<HexString>(change.assetSlug);
 
-        if (!isAddress(contractAddress)) {
-          return Promise.resolve();
-        }
+          if (!isAddress(contractAddress)) {
+            return Promise.resolve();
+          }
 
-        return ensureMissingEvmAssetMetadata({
-          network,
-          chainId,
-          assetSlug: change.assetSlug,
-          standard: change.standard,
-          contractAddress,
-          tokenId,
-          isCancelled: () => cancelled
-        });
-      })
-    )
-      .catch(error => console.error(error))
-      .finally(() => {
-        if (!cancelled) {
-          setIsMetadataResolved(true);
-        }
-      });
+          return ensureMissingEvmAssetMetadata({
+            network,
+            chainId,
+            assetSlug: change.assetSlug,
+            standard: change.standard,
+            contractAddress,
+            tokenId,
+            isCancelled: () => cancelled
+          });
+        })
+      ),
+      isCancelled: () => cancelled,
+      catch: console.error,
+      finally: () => setIsMetadataResolved(true)
+    });
 
     return () => {
       cancelled = true;

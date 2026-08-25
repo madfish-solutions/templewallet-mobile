@@ -29,7 +29,7 @@ interface Props {
   iconUri?: string;
   iconSeed: string;
   isSubmitting: boolean;
-  onConfirm: (preparedTransaction: SendTransactionRequest) => void;
+  onConfirm: SyncFn<SendTransactionRequest>;
 }
 
 const renderHeaderTitle = () => <HeaderTitle title="Confirm Operation" />;
@@ -137,7 +137,7 @@ export const WcSendTransactionConfirmation: FC<Props> = ({
       confirmAction={{
         disabled: isConfirmDisabled,
         isLoading: isEstimating || isSubmitting,
-        onPress: estimationError && parsedResult.ok ? () => void retry() : () => void confirm(),
+        onPress: estimationError && parsedResult.ok ? retry : confirm,
         title: estimationError && parsedResult.ok ? 'Retry' : 'Confirm',
         testID: WcSessionRequestConfirmationSelectors.confirmButton
       }}

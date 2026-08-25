@@ -13,16 +13,15 @@ interface Props {
   accountAddress: HexString;
 }
 
-export const WcTransactionPreview: FC<Props> = ({ transaction, chainId, accountAddress }) => {
-  const kind = useMemo(() => getOperationKind(transaction), [transaction]);
+export const WcTransactionPreview: FC<Props> = props => {
+  const kind = useMemo(() => getOperationKind(props.transaction), [props.transaction]);
 
-  if (kind === EvmOperationKind.Approval) {
-    return <WcApprovalPreview transaction={transaction} chainId={chainId} accountAddress={accountAddress} />;
+  switch (kind) {
+    case EvmOperationKind.Approval:
+      return <WcApprovalPreview {...props} />;
+    case EvmOperationKind.Send:
+      return <WcTransferPreview {...props} />;
+    default:
+      return <WcGenericTransactionPreview {...props} />;
   }
-
-  if (kind === EvmOperationKind.Send) {
-    return <WcTransferPreview transaction={transaction} chainId={chainId} accountAddress={accountAddress} />;
-  }
-
-  return <WcGenericTransactionPreview transaction={transaction} chainId={chainId} accountAddress={accountAddress} />;
 };

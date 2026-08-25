@@ -7,8 +7,9 @@ import { useNavigateToModal, useNavigation } from '../navigator/hooks/use-naviga
 import { dispatch, store } from '../store';
 import { loadConnectionsActions } from '../store/d-apps/d-apps-actions';
 import { showErrorToast } from '../toast/error-toast.utils';
-import { getSelectedAccountFromWallet } from '../utils/get-selected-account-from-wallet.util.ts';
+import { getSelectedAccountFromWallet } from '../utils/get-selected-account-from-wallet.util';
 import { isDefined } from '../utils/is-defined';
+import { isString } from '../utils/is-string';
 import { getUrlQueryParams } from '../utils/url.utils';
 
 import { getSessionProposalRejectReason } from './validate-session-proposal';
@@ -22,11 +23,11 @@ export const wcDeepLinkHandler = async (url: string | null, onValidDataCallback:
       await WcHandler.pair(url).catch(error => {
         onError(error.toString());
       });
-    } else if (isDefined(url) && (url.startsWith('temple://wc') || isWcUniversalLink(url))) {
+    } else if (isString(url) && (url.startsWith('temple://wc') || isWcUniversalLink(url))) {
       const searchParams = getUrlQueryParams(url);
       const uri = searchParams.get('uri');
 
-      if (isDefined(uri)) {
+      if (isString(uri)) {
         onValidDataCallback();
         await WcHandler.pair(uri).catch(error => {
           onError(error.toString());
@@ -73,6 +74,7 @@ export const useWcHandler = () => {
         navigateToModal(ModalsEnum.Confirmation, { type: ConfirmationTypeEnum.WcSessionProposal, proposal });
       },
       request => {
+        console.log('request', request);
         const { wallet } = store.getState();
         const rejectReason = getSessionRequestRejectReason(
           request,

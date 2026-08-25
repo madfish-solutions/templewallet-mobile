@@ -17,9 +17,6 @@ type EvmTransactionData = SendTransactionRequest;
 
 type ReceiptOptions = Omit<WaitForTransactionReceiptParameters, 'hash'>;
 
-/** Inclusion + one following block — reduces stale balance reads behind load-balanced RPCs. */
-const DEFAULT_CONFIRMATIONS = 2;
-
 type EvmTransactionSubmissionResult =
   | { success: true; receipt: TransactionReceipt }
   | { success: false; error: unknown };
@@ -110,7 +107,6 @@ class EvmTransactionSubmissionService {
 
     try {
       receipt = await this.dependencies.waitForReceipt(network, transactionHash, {
-        confirmations: DEFAULT_CONFIRMATIONS,
         ...receiptOptions,
         onReplaced: replacement => {
           replacementReason = replacement.reason;

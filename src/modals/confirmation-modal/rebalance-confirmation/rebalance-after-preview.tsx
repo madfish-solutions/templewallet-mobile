@@ -57,15 +57,7 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
         iconSeed={tezosAddress}
         iconSize={formatSize(40)}
         description={
-          <View>
-            <OperationPreviewDescription>{minusLabel}</OperationPreviewDescription>
-            {isUnshield && !!saplingAddress && (
-              <>
-                <Divider size={formatSize(4)} />
-                <PublicKeyHashText publicKeyHash={saplingAddress} />
-              </>
-            )}
-          </View>
+          <RebalanceOperationDescription label={minusLabel} saplingAddress={isUnshield ? saplingAddress : null} />
         }
       >
         <View>
@@ -78,15 +70,7 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
         iconSeed={tezosAddress}
         iconSize={formatSize(40)}
         description={
-          <View>
-            <OperationPreviewDescription>{plusLabel}</OperationPreviewDescription>
-            {!isUnshield && !!saplingAddress && (
-              <>
-                <Divider size={formatSize(4)} />
-                <PublicKeyHashText publicKeyHash={saplingAddress} />
-              </>
-            )}
-          </View>
+          <RebalanceOperationDescription label={plusLabel} saplingAddress={isUnshield ? null : saplingAddress} />
         }
       >
         <View>
@@ -102,3 +86,20 @@ export const RebalanceAfterPreview: FC<Props> = ({ amount, direction }) => {
     </>
   );
 };
+
+interface RebalanceOperationDescriptionProps {
+  label: string;
+  saplingAddress: string | null;
+}
+
+const RebalanceOperationDescription: FC<RebalanceOperationDescriptionProps> = ({ label, saplingAddress }) => (
+  <View>
+    <OperationPreviewDescription>{label}</OperationPreviewDescription>
+    {!!saplingAddress && (
+      <>
+        <Divider size={formatSize(4)} />
+        <PublicKeyHashText publicKeyHash={saplingAddress} />
+      </>
+    )}
+  </View>
+);

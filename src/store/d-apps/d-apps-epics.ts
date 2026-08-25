@@ -9,6 +9,7 @@ import { templeWalletApi } from 'src/api.service';
 import { BeaconHandler } from 'src/beacon/beacon-handler';
 import { DAppConnectionProtocol } from 'src/enums/dapp-connection-protocol.enum';
 import { CustomDAppsInfo } from 'src/interfaces/custom-dapps-info.interface';
+import { DAppConnection } from 'src/interfaces/dapp-connection.interface';
 import { showErrorToast, showSuccessToast } from 'src/toast/toast.utils';
 import { sendErrorAnalyticsEvent } from 'src/utils/analytics/analytics.util';
 import { withUserAnalyticsCredentials } from 'src/utils/error-analytics-data.utils';
@@ -53,7 +54,7 @@ const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
       }).pipe(
         concatMap(({ beacon, wc }) => {
           const errors: string[] = [];
-          const beaconConnections = beacon.success
+          const beaconConnections: DAppConnection[] = beacon.success
             ? beacon.permissions.map(mapBeaconPermissionToConnection)
             : previousBeaconConnections;
           const wcConnections = wc.success
@@ -70,7 +71,7 @@ const loadConnectionsEpic: AnyActionEpic = (action$, state$) =>
           const actions = [];
 
           if (beacon.success || wc.success) {
-            actions.push(loadConnectionsActions.success([...beaconConnections, ...wcConnections]));
+            actions.push(loadConnectionsActions.success(beaconConnections.concat(wcConnections)));
           }
 
           if (errors.length > 0) {

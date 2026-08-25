@@ -17,7 +17,7 @@ export const useWcTransactionPreviewStyles = createUseStyles(({ colors, typograp
     color: colors.destructive,
     textAlign: 'right'
   },
-  amountDollarSuccess: {
+  amountDollarAdding: {
     ...typography.numbersRegular11,
     color: colors.adding,
     textAlign: 'right'

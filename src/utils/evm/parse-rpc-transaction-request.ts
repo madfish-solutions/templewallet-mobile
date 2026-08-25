@@ -51,14 +51,14 @@ const toNumber = (value: string | undefined): number | undefined => {
 
 const toYParity = (authorization: ValidatedRpcAuthorization): number => {
   if (isDefined(authorization.yParity)) {
-    return Number(BigInt(authorization.yParity));
+    return toNumber(authorization.yParity)!;
   }
 
   if (!isDefined(authorization.v)) {
     throw new WcEvmRequestError('invalid-params', 'authorizationList items require yParity or v');
   }
 
-  const v = Number(BigInt(authorization.v));
+  const v = toNumber(authorization.v);
 
   if (v === 0 || v === 1) {
     return v;

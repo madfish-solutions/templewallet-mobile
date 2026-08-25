@@ -1,24 +1,17 @@
 import { WalletKitTypes } from '@reown/walletkit';
 import { getSdkError } from '@walletconnect/utils';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text } from 'react-native';
 import { SendTransactionRequest } from 'viem';
 
-import { AccountDropdownItem } from 'src/components/account-dropdown/account-dropdown-item/account-dropdown-item';
-import { ButtonLargePrimary } from 'src/components/button/button-large/button-large-primary/button-large-primary';
-import { ButtonLargeSecondary } from 'src/components/button/button-large/button-large-secondary/button-large-secondary';
-import { Divider } from 'src/components/divider/divider';
 import { HeaderTitle } from 'src/components/header/header-title/header-title';
 import { useNavigationSetOptions } from 'src/components/header/use-navigation-set-options.hook';
-import { Label } from 'src/components/label/label';
-import { ScreenContainer } from 'src/components/screen-container/screen-container';
+import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useEvmChain } from 'src/hooks/evm/use-evm-chains.hook';
 import { useRequestConfirmation } from 'src/hooks/request-confirmation/use-request-confirmation.hook';
-import { ModalButtonsFloatingContainer } from 'src/layouts/modal-buttons-floating-container';
 import { useNavigation } from 'src/navigator/hooks/use-navigation.hook';
 import { useEvmAccountChainAssetsSelector } from 'src/store/evm/assets/evm-assets-selectors';
 import { useAccount, useAllAccounts } from 'src/store/wallet/wallet-selectors';
-import { formatSize } from 'src/styles/format-size';
 import { toEvmNetworkEssentials } from 'src/types/networks';
 import { getAccountAddressForEvm } from 'src/utils/account.utils';
 import { assert } from 'src/utils/assert.utils';
@@ -27,18 +20,21 @@ import { isDefined } from 'src/utils/is-defined';
 import {
   getWcRequestAddress,
   isWcSendTransactionMethod,
-  isWcSigningMethod
+  isWcSigningMethod,
+  isWcWatchAssetMethod
 } from 'src/walletconnect/evm-request-method.utils';
 import { getWcSigningPayloadPreview } from 'src/walletconnect/get-wc-signing-payload-preview';
 import { resolveWcSessionRequestApprover } from 'src/walletconnect/wc-account.utils';
 import { WcHandler } from 'src/walletconnect/wc-handler';
 
 import { AppMetadataView } from '../common/app-metadata-view';
+import { ConfirmationLayout } from '../common/confirmation-layout/confirmation-layout';
 import { SignRequestConfirmationContent } from '../common/sign-request-confirmation-content';
 
 import { approveWcSessionRequest } from './approve-session-request';
 import { WcSessionRequestConfirmationSelectors } from './selectors';
 import { useWcSessionRequestConfirmationStyles } from './styles';
+import { WatchAssetConfirmationContent } from './watch-asset-confirmation-content';
 import { WcSendTransactionConfirmation } from './wc-send-transaction-confirmation';
 
 interface Props {
@@ -67,6 +63,7 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
   const { method, params } = request.params.request;
   const isSigningRequest = isWcSigningMethod(method);
   const isSendTransactionRequest = isWcSendTransactionMethod(method);
+  const isWatchAssetRequest = isWcWatchAssetMethod(method);
 
   const requestChainId = useMemo(() => {
     const chainId = parseEvmCaipChainId(request.params.chainId);
@@ -136,16 +133,18 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
     [request, isConfirmed]
   );
 
-  useNavigationSetOptions(
-    {
-      headerTitle: () => (
-        <HeaderTitle
-          title={isSigningRequest ? 'Confirm Sign' : isSendTransactionRequest ? 'Confirm Operation' : 'Confirm action'}
-        />
-      )
-    },
-    [isSendTransactionRequest, isSigningRequest]
-  );
+  let title: string;
+  if (isSigningRequest) {
+    title = 'Confirm Sign';
+  } else if (isSendTransactionRequest) {
+    title = 'Confirm Operation';
+  } else if (isWatchAssetRequest) {
+    title = 'Confirm Adding Token';
+  } else {
+    title = 'Confirm Action';
+  }
+
+  useNavigationSetOptions({ headerTitle: () => <HeaderTitle title={title} /> }, [title]);
 
   const onConfirm = useCallback(
     (preparedTransaction?: SendTransactionRequest) => {
@@ -209,35 +208,34 @@ export const WcSessionRequestConfirmation: FC<Props> = ({ request }) => {
     );
   }
 
+  if (isWatchAssetRequest) {
+    return (
+      <WatchAssetConfirmationContent
+        params={params}
+        chainId={requestChainId}
+        isLoading={isLoading}
+        onCancel={goBack}
+        onConfirm={onConfirm}
+      />
+    );
+  }
+
   return (
-    <>
-      <ScreenContainer>
-        <AppMetadataView name={appName} iconUri={iconUri} iconSeed={iconSeed} />
-        <Divider />
-        <Label label="Account" />
-        <Divider />
-        <AccountDropdownItem account={approver} />
-        <Divider />
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionText}>Request payload</Text>
-        </View>
-        <Divider size={formatSize(16)} />
-        <Text style={styles.payloadText}>{genericPayload}</Text>
-      </ScreenContainer>
-      <ModalButtonsFloatingContainer variant="bordered">
-        <ButtonLargeSecondary
-          title="Cancel"
-          disabled={isLoading}
-          onPress={goBack}
-          testID={WcSessionRequestConfirmationSelectors.cancelButton}
-        />
-        <ButtonLargePrimary
-          title="Confirm"
-          disabled={isLoading}
-          onPress={onConfirm}
-          testID={WcSessionRequestConfirmationSelectors.confirmButton}
-        />
-      </ModalButtonsFloatingContainer>
-    </>
+    <ConfirmationLayout
+      account={approver}
+      accountChainKind={TempleChainKind.EVM}
+      preview={<Text style={styles.payloadText}>{genericPayload}</Text>}
+      headerContent={<AppMetadataView name={appName} iconUri={iconUri} iconSeed={iconSeed} />}
+      backAction={{
+        disabled: isLoading,
+        onPress: goBack,
+        testID: WcSessionRequestConfirmationSelectors.cancelButton
+      }}
+      confirmAction={{
+        disabled: isLoading,
+        onPress: onConfirm,
+        testID: WcSessionRequestConfirmationSelectors.confirmButton
+      }}
+    />
   );
 };

@@ -37,7 +37,7 @@ export const useEvmTransactionFee = ({ chainId, sourceAddress, request, nativeCu
   const nativeExchangeRate = useEvmAssetExchangeRate(chainId, EVM_TOKEN_SLUG);
   const [isDetailedInputVisible, setIsDetailedInputVisible] = useState(false);
   const estimationState = useEvmTransactionEstimation({ sourceAddress, request, publicClient });
-  const { estimation, gasPriceInput, selectedGasPrice } = estimationState;
+  const { estimation, gasPriceInput, selectedGasPrice, ...restEstimationState } = estimationState;
 
   const feeOptions = useMemo(() => (estimation ? getEvmFeeOptions(estimation) : undefined), [estimation]);
   const selectedFees = useMemo(() => {
@@ -84,7 +84,7 @@ export const useEvmTransactionFee = ({ chainId, sourceAddress, request, nativeCu
   const toggleDetailedInput = useCallback(() => setIsDetailedInputVisible(value => !value), []);
 
   return {
-    estimationError: estimationState.estimationError,
+    ...restEstimationState,
     fee,
     feeAsset,
     feeFiatValue,
@@ -92,14 +92,9 @@ export const useEvmTransactionFee = ({ chainId, sourceAddress, request, nativeCu
     gasLimit,
     gasPriceError,
     gasPriceInput,
-    getSubmissionFees: estimationState.getSubmissionFees,
-    handleGasPriceInputChange: estimationState.handleGasPriceInputChange,
-    handleSliderValueChange: estimationState.handleSliderValueChange,
     hasInsufficientNativeBalance,
     isDetailedInputVisible,
-    isEstimating: estimationState.isEstimating,
     isSliderAvailable: feeOptions !== undefined && fee !== undefined,
-    retry: estimationState.retry,
     selectedFees,
     slider,
     toggleDetailedInput

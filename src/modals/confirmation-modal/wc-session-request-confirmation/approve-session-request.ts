@@ -69,43 +69,32 @@ const toWcJsonRpcError = (error: unknown) => {
 };
 
 const showWcRequestSuccessToast = (method: string, result: unknown, blockExplorerUrl?: string) => {
-  if (isWcSendTransactionMethod(method)) {
-    if (typeof result === 'string' && isHash(result) && isDefined(blockExplorerUrl)) {
-      showSuccessToast({
-        title: 'Success!',
-        description: 'Transaction request sent! Confirming...',
-        operationHash: result,
-        operationUrl: getEvmTransactionExplorerUrl(blockExplorerUrl, result)
-      });
-    } else {
-      showSuccessToast({
-        title: 'Success!',
-        description: 'Transaction request sent! Confirming...'
-      });
-    }
-
-    return;
-  }
-
-  if (isWcSigningMethod(method)) {
+  if (
+    isWcSendTransactionMethod(method) &&
+    typeof result === 'string' &&
+    isHash(result) &&
+    isDefined(blockExplorerUrl)
+  ) {
+    showSuccessToast({
+      title: 'Success!',
+      description: 'Transaction request sent! Confirming...',
+      operationHash: result,
+      operationUrl: getEvmTransactionExplorerUrl(blockExplorerUrl, result)
+    });
+  } else if (isWcSendTransactionMethod(method)) {
+    showSuccessToast({
+      title: 'Success!',
+      description: 'Transaction request sent! Confirming...'
+    });
+  } else if (isWcSigningMethod(method)) {
     showSuccessToast({ description: 'Successfully signed!' });
-
-    return;
-  }
-
-  if (isWcAccountsMethod(method)) {
+  } else if (isWcAccountsMethod(method)) {
     showSuccessToast({ description: 'Successfully approved!' });
-
-    return;
-  }
-
-  if (isWcWatchAssetMethod(method)) {
+  } else if (isWcWatchAssetMethod(method)) {
     showSuccessToast({ description: 'Token successfully added' });
-
-    return;
+  } else {
+    showSuccessToast({ description: 'Successfully confirmed!' });
   }
-
-  showSuccessToast({ description: 'Successfully confirmed!' });
 };
 
 const waitForWcTransactionConfirmation = async ({

@@ -30,7 +30,7 @@ const ceilDivide = (dividend: bigint, divisor: bigint): bigint => (dividend + di
 
 const multiplyByPercentage = (value: bigint, percentage: bigint) => ceilDivide(value * percentage, FEE_PERCENTAGE_BASE);
 
-export const getEvmFeesForGasPrice = (gasPrice: bigint, estimation: EvmEstimation): EvmFees => {
+const getEvmFeesForGasPrice = (gasPrice: bigint, estimation: EvmEstimation): EvmFees => {
   if (estimation.type === 'legacy') return { type: 'legacy', gasPrice };
 
   return getEip1559FeesForMaxFee(gasPrice, estimation);

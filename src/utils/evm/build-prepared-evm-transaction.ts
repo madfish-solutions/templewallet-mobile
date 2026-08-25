@@ -34,7 +34,6 @@ export const buildPreparedEvmTransaction = (
       throw new Error('EIP-7702 transactions require authorizationList');
     }
 
-    // eslint-disable-next-line no-type-assertion/no-type-assertion
     return {
       ...base,
       type: 'eip7702',
@@ -42,16 +41,15 @@ export const buildPreparedEvmTransaction = (
       ...(fees.type === 'eip1559'
         ? { maxFeePerGas: fees.maxFeePerGas, maxPriorityFeePerGas: fees.maxPriorityFeePerGas }
         : { maxFeePerGas: fees.gasPrice, maxPriorityFeePerGas: 0n })
-    } as SendTransactionRequest;
+    };
   }
 
   if (type === 'eip2930') {
-    // eslint-disable-next-line no-type-assertion/no-type-assertion
     return {
       ...base,
       type: 'eip2930',
       gasPrice: fees.type === 'legacy' ? fees.gasPrice : fees.maxFeePerGas
-    } as SendTransactionRequest;
+    };
   }
 
   // eslint-disable-next-line no-type-assertion/no-type-assertion

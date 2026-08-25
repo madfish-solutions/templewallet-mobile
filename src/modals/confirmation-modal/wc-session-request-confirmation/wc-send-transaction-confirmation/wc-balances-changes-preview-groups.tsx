@@ -17,9 +17,9 @@ import { useWcTransactionPreviewStyles } from './wc-transaction-preview.styles';
 
 interface Props {
   groups: EvmBalancesChangesGroup[];
-  getAsset: (change: EvmBalanceChange) => AssetInterface | undefined;
-  getDescription: (group: EvmBalancesChangesGroup) => string;
-  getPublicKeyHash?: (group: EvmBalancesChangesGroup) => string | undefined;
+  getAsset: SyncFn<EvmBalanceChange, AssetInterface | undefined>;
+  getDescription: SyncFn<EvmBalancesChangesGroup, string>;
+  getPublicKeyHash?: SyncFn<EvmBalancesChangesGroup, string | undefined>;
 }
 
 export const WcBalancesChangesPreviewGroups: FC<Props> = ({ groups, getAsset, getDescription, getPublicKeyHash }) => (
@@ -46,7 +46,7 @@ interface GroupProps {
   description: string;
   publicKeyHash?: string;
   changes: EvmBalanceChange[];
-  getAsset: (change: EvmBalanceChange) => AssetInterface | undefined;
+  getAsset: SyncFn<EvmBalanceChange, AssetInterface | undefined>;
 }
 
 const WcBalancesChangesPreviewGroup: FC<GroupProps> = ({ description, publicKeyHash, changes, getAsset }) => {
@@ -64,7 +64,7 @@ const WcBalancesChangesPreviewGroup: FC<GroupProps> = ({ description, publicKeyH
       }
 
       hasPricedAsset = true;
-      const dollarValue = getDollarValue(change.amount.abs().toFixed(), asset.decimals, asset.exchangeRate);
+      const dollarValue = getDollarValue(change.amount.abs(), asset.decimals, asset.exchangeRate);
       total = change.amount.isNegative() ? total.minus(dollarValue) : total.plus(dollarValue);
     }
 
@@ -110,7 +110,7 @@ const WcBalancesChangesPreviewGroup: FC<GroupProps> = ({ description, publicKeyH
               isDollarValue
               showMinusSign={totalEquity.isNegative()}
               showPlusSign={totalEquity.isPositive()}
-              style={totalEquity.isNegative() ? styles.amountDollar : styles.amountDollarSuccess}
+              style={totalEquity.isNegative() ? styles.amountDollar : styles.amountDollarAdding}
             />
           </>
         ) : null}

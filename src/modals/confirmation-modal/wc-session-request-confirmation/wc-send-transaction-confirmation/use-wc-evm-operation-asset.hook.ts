@@ -11,6 +11,7 @@ import { EvmAssetStandard } from 'src/utils/evm/on-chain/types';
 import { ParsedEvmRpcTransactionRequest } from 'src/utils/evm/parse-rpc-transaction-request';
 import { fromTokenSlug } from 'src/utils/from-token-slug';
 import { isDefined } from 'src/utils/is-defined';
+import { cancellablePromiseFlow } from 'src/utils/promise.util';
 
 import { buildEvmPreviewAsset, hasUsableEvmPreviewMetadata } from './build-evm-preview-asset';
 import { ensureMissingEvmAssetMetadata } from './ensure-missing-evm-asset-metadata';
@@ -51,17 +52,12 @@ export const useWcEvmOperationAsset = <T extends EvmOperationAssetRef>(
     setDetails(undefined);
     setIsMetadataResolved(false);
 
-    void fetchDetails(transaction, accountAddress, network)
-      .then(result => {
-        if (!cancelled) {
-          setDetails(result);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setDetails(null);
-        }
-      });
+    cancellablePromiseFlow({
+      promise: fetchDetails(transaction, accountAddress, network),
+      isCancelled: () => cancelled,
+      then: result => setDetails(result),
+      catch: () => setDetails(null)
+    });
 
     return () => {
       cancelled = true;
@@ -110,21 +106,20 @@ export const useWcEvmOperationAsset = <T extends EvmOperationAssetRef>(
     let cancelled = false;
     setIsMetadataResolved(false);
 
-    void ensureMissingEvmAssetMetadata({
-      network,
-      chainId,
-      assetSlug: details.assetSlug,
-      standard: details.standard,
-      contractAddress,
-      tokenId,
-      isCancelled: () => cancelled
-    })
-      .catch(error => console.error(error))
-      .finally(() => {
-        if (!cancelled) {
-          setIsMetadataResolved(true);
-        }
-      });
+    cancellablePromiseFlow({
+      promise: ensureMissingEvmAssetMetadata({
+        network,
+        chainId,
+        assetSlug: details.assetSlug,
+        standard: details.standard,
+        contractAddress,
+        tokenId,
+        isCancelled: () => cancelled
+      }),
+      isCancelled: () => cancelled,
+      catch: console.error,
+      finally: () => setIsMetadataResolved(true)
+    });
 
     return () => {
       cancelled = true;

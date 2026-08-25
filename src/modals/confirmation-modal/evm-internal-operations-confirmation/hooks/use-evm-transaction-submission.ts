@@ -14,6 +14,7 @@ import { loadEtherlinkBalancesOnChain } from 'src/utils/evm/etherlink-balances.u
 import { normalizeEvmTransactionError } from 'src/utils/evm/evm-transaction-error';
 import { evmTransactionSubmissionService } from 'src/utils/evm/evm-transaction-submission';
 import { getEvmTransactionExplorerUrl } from 'src/utils/evm/get-evm-transaction-explorer-url';
+import { ETHERLINK_MAINNET_CHAIN_ID } from 'src/utils/rpc/rpc-list';
 
 interface Props {
   chainId: number;
@@ -40,6 +41,8 @@ export const useEvmTransactionSubmission = ({ chainId, sourceAddress, request }:
         network,
         sourceAddress,
         transaction: buildPreparedEvmTransaction(request, { gasLimit, fees }),
+        // Increase confirmations amount for other blockchains to reduce stale balance reads
+        receiptOptions: { confirmations: network.chainId === ETHERLINK_MAINNET_CHAIN_ID ? 2 : 1 },
         onBroadcast: hash => {
           showSuccessToast({
             operationHash: hash,
