@@ -1,11 +1,10 @@
 import React, { memo, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { ActivityOperTransferType, ActivityStatus } from 'src/activity/types';
 import { FormattedAmount } from 'src/components/formatted-amount';
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TruncatedText } from 'src/components/truncated-text';
 import { useColors } from 'src/styles/use-colors';
@@ -51,7 +50,7 @@ export const ActivityOperationRow = memo<Props>(
 
     return (
       <TouchableWithAnalytics
-        Component={SafeTouchableOpacity}
+        Component={TouchableOpacity}
         style={styles.container}
         disabled={url == null}
         onPress={handlePress}

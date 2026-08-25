@@ -1,9 +1,8 @@
 import React, { memo, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 import { IconV2 } from 'src/components/icon-v2';
 import { IconNameV2Enum } from 'src/components/icon-v2/icon-name.enum';
-import { SafeTouchableOpacity } from 'src/components/safe-touchable-opacity';
 import { TouchableWithAnalytics } from 'src/components/touchable-with-analytics';
 import { TempleChainKind } from 'src/enums/temple-chain-kind.enum';
 import { useColors } from 'src/styles/use-colors';
@@ -28,7 +27,7 @@ export const ActivityExplorerLink = memo<Props>(({ chain, hash, url, onPress }) 
   return (
     <View style={styles.container}>
       <TouchableWithAnalytics
-        Component={SafeTouchableOpacity}
+        Component={TouchableOpacity}
         disabled={url == null}
         onPress={onPress}
         testID={ActivityFeedSelectors.operationHash}
@@ -38,7 +37,7 @@ export const ActivityExplorerLink = memo<Props>(({ chain, hash, url, onPress }) 
       </TouchableWithAnalytics>
 
       <TouchableWithAnalytics
-        Component={SafeTouchableOpacity}
+        Component={TouchableOpacity}
         style={styles.iconContainer}
         disabled={url == null}
         onPress={onPress}
