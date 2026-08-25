@@ -5,8 +5,8 @@ import { getSignedMoonPayUrl } from 'src/apis/moonpay';
 import { buildMtPelerinBuyUrl, createMtPelerinAddressProof, getMtPelerinOutputAmount } from 'src/apis/mt-pelerin';
 import { MT_PELERIN_NETWORK } from 'src/apis/mt-pelerin/consts';
 import { TopUpProviderEnum } from 'src/enums/top-up-providers.enum';
+import { useOpenUrl } from 'src/hooks/use-open-url.hook.ts';
 import { useCryptoCurrenciesSelector, useFiatCurrenciesSelector } from 'src/store/buy-with-credit-card/selectors';
-import { useIsInAppBrowserEnabledSelector } from 'src/store/settings/settings-selectors';
 import { useCurrentAccountPkhSelector } from 'src/store/wallet/wallet-selectors';
 import { showErrorToast } from 'src/toast/toast.utils';
 import { AnalyticsEventCategory } from 'src/utils/analytics/analytics-event.enum';
@@ -14,7 +14,6 @@ import { useAnalytics } from 'src/utils/analytics/use-analytics.hook';
 import { PAIR_NOT_FOUND_MESSAGE } from 'src/utils/constants/buy-with-credit-card';
 import { getAxiosQueryErrorMessage } from 'src/utils/get-axios-query-error-message';
 import { isDefined } from 'src/utils/is-defined';
-import { openUrl, useOpenUrlInAppBrowser } from 'src/utils/linking';
 
 import { BuyWithCreditCardFormValues, BuyWithCreditCardValidationSchema } from '../form';
 
@@ -52,8 +51,7 @@ const initialValues: BuyWithCreditCardFormValues = {
 export const useBuyWithCreditCardFormik = () => {
   const { trackEvent, trackErrorEvent } = useAnalytics();
   const publicKeyHash = useCurrentAccountPkhSelector();
-  const isInAppBrowserEnabled = useIsInAppBrowserEnabledSelector();
-  const openUrlInAppBrowser = useOpenUrlInAppBrowser();
+  const openUrl = useOpenUrl({ rethrowError: true });
   const mtPelerinFiatCurrencies = useFiatCurrenciesSelector(TopUpProviderEnum.MtPelerin);
   const mtPelerinCryptoCurrencies = useCryptoCurrenciesSelector(TopUpProviderEnum.MtPelerin);
 
@@ -116,25 +114,13 @@ export const useBuyWithCreditCardFormik = () => {
             throw new Error('Payment provider is not selected');
         }
 
-        if (isInAppBrowserEnabled) {
-          openUrlInAppBrowser(urlToOpen);
-        } else {
-          await openUrl(urlToOpen, { rethrowError: true });
-        }
+        await openUrl(urlToOpen);
       } catch (error) {
         trackErrorEvent('BuyWithCreditCardFormSubmitError', error, [publicKeyHash], { values });
         showErrorToast({ description: getAxiosQueryErrorMessage(error) });
       }
     },
-    [
-      isInAppBrowserEnabled,
-      mtPelerinCryptoCurrencies,
-      mtPelerinFiatCurrencies,
-      openUrlInAppBrowser,
-      publicKeyHash,
-      trackEvent,
-      trackErrorEvent
-    ]
+    [mtPelerinCryptoCurrencies, mtPelerinFiatCurrencies, openUrl, publicKeyHash, trackEvent, trackErrorEvent]
   );
 
   return useFormik<BuyWithCreditCardFormValues>({
