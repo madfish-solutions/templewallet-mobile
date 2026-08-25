@@ -36,7 +36,6 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSize(32) }) 
     [isFailed, isLoading]
   );
   const isMoonpayIcon = uri.startsWith(MOONPAY_ASSETS_BASE_URL);
-  const isMtPelerinFiatFlag = uri.includes('/images/rate-calculator/flag-');
   const flagScaleFactor = Math.sqrt(size ** 2 / (flagWidth ** 2 + flagHeight ** 2));
 
   const handleLoad = useCallback(() => {
@@ -60,8 +59,8 @@ export const StaticTokenIcon: FC<Props> = ({ uri = '', size = formatSize(32) }) 
     return (
       <View style={[styles.center, { width: size, height: size, borderRadius: size / 2 }]}>
         <SvgUri
-          width={isMoonpayIcon || !isMtPelerinFiatFlag ? size : flagWidth * flagScaleFactor}
-          height={isMoonpayIcon || !isMtPelerinFiatFlag ? size : flagHeight * flagScaleFactor}
+          width={isMoonpayIcon ? size : flagWidth * flagScaleFactor}
+          height={isMoonpayIcon ? size : flagHeight * flagScaleFactor}
           uri={uri}
           style={svgImageStyle}
           onLoad={handleLoad}
